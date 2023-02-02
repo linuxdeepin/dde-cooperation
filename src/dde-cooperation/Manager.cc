@@ -42,7 +42,6 @@ Manager::Manager(const std::filesystem::path &dataDir)
     , m_powersaverProxy("org.freedesktop.ScreenSaver",
                         "/org/freedesktop/ScreenSaver",
                         "org.freedesktop.ScreenSaver")
-    , m_keypair(m_dataDir, KeyPair::KeyType::ED25519)
     , m_dConfig(DConfig::create(dConfigAppID, dConfigName))
     , m_androidMainWindow(nullptr)
     , m_inputGrabbersManager(new InputGrabbersManager(this)) {
@@ -53,8 +52,6 @@ Manager::Manager(const std::filesystem::path &dataDir)
     initSharedDevicesStatus();
     initCooperatedMachines();
     initServiceSwitch();
-
-    m_keypair.load();
 
     connect(m_socketScan, &QUdpSocket::readyRead, this, &Manager::handleReceivedSocketScan);
     m_socketScan->bind(QHostAddress::Any, m_scanPort);

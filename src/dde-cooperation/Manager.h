@@ -12,7 +12,6 @@
 
 #include <DConfig>
 
-#include "KeyPair.h"
 #include "Wrappers/InputGrabberWrapper.h"
 #include "ClipboardBase.h"
 #include "ManagerDBusAdaptor.h"
@@ -107,8 +106,6 @@ private:
 
     int m_deviceSharingCnt;
     uint32_t m_inhibitCookie;
-
-    KeyPair m_keypair;
 
     bool m_sharedClipboard;
     bool m_sharedDevices;

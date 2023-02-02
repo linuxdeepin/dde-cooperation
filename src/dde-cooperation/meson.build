@@ -3,8 +3,6 @@ dde_cooperation_sources = files('''
   Manager.cc
   ManagerDBusAdaptor.cc
   ConfirmDialog.cc
-  KeyPair.h
-  KeyPair.cc
   Machine/Machine.cc
   Machine/MachineDBusAdaptor.cc
   Machine/PCMachine.cc
@@ -84,7 +82,6 @@ executable('dde-cooperation',
     thread,
     uuid,
     fmt,
-    openssl,
     libevdev,
     tl_expected,
     fuse3,

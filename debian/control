@@ -17,7 +17,6 @@ Build-Depends:
  libprotobuf-dev,
  libqrcodegencpp-dev,
  libqt5x11extras5-dev,
- libssl-dev,
  libswscale-dev,
  libxcb-randr0-dev,
  libxcb-util-dev,
