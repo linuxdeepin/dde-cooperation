@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2015 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef ANDROID_QRCODEPROXY_H
 #define ANDROID_QRCODEPROXY_H
 
