@@ -4,4 +4,3 @@ Name=DDE Cooperation
 Exec=/usr/bin/busctl --user call org.deepin.dde.Cooperation1 /org/deepin/dde/Cooperation1 org.deepin.dde.Cooperation1 ConnectAndroidDevice
 Icon=org.deepin.dde.cooperation
 Terminal=false
-Hidden=true
