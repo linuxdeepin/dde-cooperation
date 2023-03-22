@@ -20,3 +20,8 @@ Files:
 Copyright:
  2022 barry-ran <870709864@qq.com>
 License: Apache-2.0
+
+# ci
+Files: .obs/workflows.yml
+Copyright: None
+License: CC0-1.0
