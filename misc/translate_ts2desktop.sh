@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2018 - 2023 Deepin Technology Co., Ltd.
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
 DESKTOP_TEMP_FILE=misc/config/compressor-singlefile.config.tmp
 DESKTOP_SOURCE_FILE=misc/config/compressor-singlefile.config
 

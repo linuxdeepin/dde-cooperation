@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2018 - 2023 Deepin Technology Co., Ltd.
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
 #ifndef UTILS_MESSAGE_H
 #define UTILS_MESSAGE_H
 

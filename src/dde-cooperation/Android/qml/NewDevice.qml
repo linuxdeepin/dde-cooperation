@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2018 - 2023 Deepin Technology Co., Ltd.
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
 import QtQuick 2.12
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.12

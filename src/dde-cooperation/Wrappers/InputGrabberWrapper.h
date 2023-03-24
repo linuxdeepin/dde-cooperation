@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2018 - 2023 Deepin Technology Co., Ltd.
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later
+
 #ifndef WRAPPERS_INPUTGRABBERWRAPPER_H
 #define WRAPPERS_INPUTGRABBERWRAPPER_H
 

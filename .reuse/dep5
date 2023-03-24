@@ -1,0 +1,54 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: dde-cooperation
+Upstream-Contact: Deepin Technology Co., Ltd.
+Source: https://github.com/linuxdeepin/dde-cooperation
+
+# ci
+Files: .github/* .obs/* .gitlab-ci.yml
+Copyright: None
+License: CC0-1.0
+
+# Packaging configuration
+Files: rpm/* debian/* archlinux/*
+Copyright: None
+License: CC0-1.0
+
+# Project file
+Files: CMakeLists.txt */CMakeLists.txt *.cmake meson.build */meson.build .gitignore .clang-format
+Copyright: None
+License: CC0-1.0
+
+# README & DOC
+Files: *.md
+Copyright: Deepin Technology Co., Ltd.
+License: CC-BY-4.0
+
+# desktop service config
+Files: *.desktop *.service *.service.in *.conf
+Copyright: None
+License: CC0-1.0
+
+# translation
+Files: *.ts
+Copyright: Deepin Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# xml yaml toml json policy
+Files: *.ui *.qrc *.json
+Copyright: None
+License: CC0-1.0
+
+# png svg
+Files: *.png *.svg
+Copyright: Deepin Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# sh
+Files: *.sh
+Copyright: None
+License: CC0-1.0
+
+# QtScrcpyCore
+Files: src/scrcpy-core/*
+Copyright: barry-ran <870709864@qq.com>
+License: Apache-2.0
