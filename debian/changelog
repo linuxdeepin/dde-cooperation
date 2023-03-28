@@ -1,3 +1,9 @@
+dde-cooperation (0.0.6) unstable; urgency=medium
+
+  * show desktop entry
+
+ -- zsien <quezhiyong@uniontech.com>  Tue, 28 Mar 2023 15:44:25 +0800
+
 dde-cooperation (0.0.5) unstable; urgency=medium
 
   [ TagBuilder ]
