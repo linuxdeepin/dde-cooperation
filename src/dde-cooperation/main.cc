@@ -21,7 +21,8 @@ int main(int argc, char *argv[]) {
     DApplication::setQuitOnLastWindowClosed(false);
     DApplication app(argc, argv);
     app.setOrganizationName("deepin");
-    app.setApplicationName("DDE Cooperation");
+    app.setApplicationName("dde-cooperation");
+    app.loadTranslator();
 
     Manager cooperation(dataDir);
 

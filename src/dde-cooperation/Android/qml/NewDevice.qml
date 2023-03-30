@@ -10,11 +10,11 @@ Rectangle {
 
     ColumnLayout {
         Label {
-            text: qsTr("使用“统信UOS助手”App扫码投屏")
+            text: qsTr("Scan with UnionTech OS Assistant")
         }
 
         Label {
-            text: qsTr("首次连接需要通过USB连接手机与电脑")
+            text: qsTr("Connect your phone to the computer via a USB cable for the first time")
         }
 
         Canvas {

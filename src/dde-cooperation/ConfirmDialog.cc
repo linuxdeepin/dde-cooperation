@@ -27,15 +27,15 @@ ConfirmDialog::ConfirmDialog(const QString &ip, const QString &machineName)
     font.setBold(true);
     font.setPixelSize(16);
     m_titleLabel->setFont(font);
-    m_titleLabel->setText(tr("Cooperation request confirm:"));
+    m_titleLabel->setText(tr("PC Collaboration"));
     addContent(m_titleLabel, Qt::AlignTop | Qt::AlignHCenter);
 
-    QString content = QString(tr("Machine(%1) %2 request cooperation")).arg(ip).arg(machineName);
+    QString content = QString(tr(R"RAW("%1" is requesting a connection to your device)RAW")).arg(ip);
     m_contentLabel->setText(content);
     addContent(m_contentLabel, Qt::AlignBottom | Qt::AlignHCenter);
 
     QStringList btnTexts;
-    btnTexts << tr("reject") << tr("accept");
+    btnTexts << tr("Decline") << tr("Accept");
     addButtons(btnTexts);
 
     connect(this, &ConfirmDialog::buttonClicked, this, [=](int index, const QString &text) {

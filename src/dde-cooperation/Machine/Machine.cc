@@ -424,7 +424,7 @@ void Machine::handlePairResponseAux(const PairResponse &resp) {
     // send notification
     QString msgBody;
     if (agree) {
-        msgBody = QString(QObject::tr("Successfully connected to %1"))
+        msgBody = QString(QObject::tr(R"RAW(Successfully connected to "%1")RAW"))
                       .arg(QString::fromStdString(m_name));
     } else {
         msgBody = QString(QObject::tr("Your connection request has been declined"));
@@ -623,10 +623,10 @@ void Machine::handleFsSendFileRequest(const FsSendFileRequest &req) {
             std::string fileName = path.substr(iPos, path.length() - iPos);
             QString msgBody;
             if (exitStatus == QProcess::NormalExit) {
-                msgBody = QString(QObject::tr("Successfully received the file sent by device %1"))
+                msgBody = QString(QObject::tr(R"RAW(Successfully received files from "%1")RAW"))
                               .arg(QString::fromStdString(m_name));
             } else {
-                msgBody = QString(QObject::tr("Unable to receive the file sent by device A %1"))
+                msgBody = QString(QObject::tr(R"RAW(Failed to receive files from "%1")RAW"))
                               .arg(QString::fromStdString(m_name));
             }
 
@@ -643,10 +643,10 @@ void Machine::handleFsSendFileRequest(const FsSendFileRequest &req) {
 void Machine::handleFsSendFileResult(const FsSendFileResult &resp) {
     QString msgBody;
     if (resp.result()) {
-        msgBody = QString(QObject::tr("File successfully sent to the collaboration device %1"))
+        msgBody = QString(QObject::tr(R"RAW(Successfully sent to "%1")RAW"))
                       .arg(QString::fromStdString(m_name));
     } else {
-        msgBody = QString(QObject::tr("Unable to send files to the cooperating device %1"))
+        msgBody = QString(QObject::tr(R"RAW(Failed to send files to"%1")RAW"))
                       .arg(QString::fromStdString(m_name));
     }
 
@@ -846,7 +846,7 @@ void Machine::receivedUserConfirm(bool accepted) {
     // send notification
     if (accepted) {
         QString msgBody;
-        msgBody = QString(QObject::tr("Successfully connected to %1"))
+        msgBody = QString(QObject::tr(R"RAW(Successfully connected to "%1")RAW"))
                       .arg(QString::fromStdString(m_name));
         sendReceivedFilesSystemNtf(msgBody);
     }

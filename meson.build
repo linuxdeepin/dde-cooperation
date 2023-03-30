@@ -78,6 +78,19 @@ configure_file(
   install_dir: systemd_user_unit_dir,
 )
 
+translationSourceFiles = files([
+   'translations/dde-cooperation_en.ts',
+   'translations/dde-cooperation_zh_CN.ts',
+   'translations/dde-cooperation_zh_HK.ts',
+   'translations/dde-cooperation_zh_TW.ts',
+])
+translations = qt5.compile_translations(
+  ts_files: translationSourceFiles,
+  build_by_default: true,
+  install: true,
+  install_dir: datadir / 'dde-cooperation' / 'translations',
+)
+
 install_data('misc/org.deepin.dde.cooperation.desktop',
              install_dir: join_paths(datadir, 'applications'))
 

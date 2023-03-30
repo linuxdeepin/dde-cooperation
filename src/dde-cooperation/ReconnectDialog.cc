@@ -19,7 +19,7 @@ ReconnectDialog::ReconnectDialog(const QString &machineName)
     titleLabel->setText(tr("PC Collaboration:"));
     addContent(titleLabel, Qt::AlignTop | Qt::AlignHCenter);
 
-    QString content = QString(tr("Failed to connect to %1")).arg(machineName);
+    QString content = QString(tr(R"RAW(Failed to connect to "%1")RAW")).arg(machineName);
     auto *contentLabel = new QLabel(this);
     contentLabel->setText(content);
     addContent(contentLabel, Qt::AlignBottom | Qt::AlignHCenter);
