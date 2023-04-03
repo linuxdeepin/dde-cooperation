@@ -545,6 +545,8 @@ void Machine::handleFlowDirectionNtf(const FlowDirectionNtf &ntf) {
         m_direction = FLOW_DIRECTION_LEFT;
         break;
     }
+
+    m_dbusAdaptor->updateDirection(m_direction);
 }
 
 void Machine::handleFlowRequest(const FlowRequest &req) {
