@@ -6,14 +6,14 @@ import QtMultimedia 5.8
 
 Window {
     id: window
-    width: 640
-    height: 480
-    visible: backend.stage != 0
+    width: loader.width
+    height: loader.height
+    visible: loader.status == Loader.Ready
 
     Loader {
         id: loader
         focus: true
-        anchors.fill: parent
+        anchors.centerIn: parent
 
         source: getSource()
 

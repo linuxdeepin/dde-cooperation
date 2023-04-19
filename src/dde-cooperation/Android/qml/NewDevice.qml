@@ -4,23 +4,41 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.15
 import QtMultimedia 5.8
 
-Rectangle {
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.verticalCenter: parent.verticalCenter
+ColumnLayout {
+    spacing: 4
 
-    ColumnLayout {
-        Label {
-            text: qsTr("Scan with UnionTech OS Assistant")
-        }
+    Text {
+        Layout.topMargin: 20
+        Layout.alignment : Qt.AlignHCenter
+        font.pixelSize: 14
+        text: qsTr("Scan with UnionTech OS Assistant")
+    }
 
-        Label {
-            text: qsTr("Connect your phone to the computer via a USB cable for the first time")
-        }
+    Text {
+        Layout.alignment : Qt.AlignHCenter
+        font.pixelSize: 11
+        opacity: 0.6
+        text: qsTr("Connect your phone to the computer via a USB cable for the first time")
+    }
+
+    Rectangle {
+        Layout.topMargin: 20
+        Layout.bottomMargin: 40
+        Layout.leftMargin: 85
+        Layout.rightMargin: 85
+        width: 230
+        height: 230
+        radius: 18
+        border.color: Qt.rgba(0,0,0,0.05)
+        border.width: 11
 
         Canvas {
             id: canvas
-            width: 400
-            height: 400
+            width: 190
+            height: 190
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            antialiasing: true
 
             onPaint: {
                 const s = qrCode.getSize();
