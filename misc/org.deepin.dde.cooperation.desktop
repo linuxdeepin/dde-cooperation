@@ -4,6 +4,7 @@ Name=UnionTech Mobile Assistant
 Exec=/usr/bin/busctl --user call org.deepin.dde.Cooperation1 /org/deepin/dde/Cooperation1 org.deepin.dde.Cooperation1 ConnectAndroidDevice
 Icon=org.deepin.dde.cooperation
 Terminal=false
+StartupWMClass=dde-cooperation
 
 Name[zh_CN]=统信手机助手
 Name[zh_HK]=統信手機助手
