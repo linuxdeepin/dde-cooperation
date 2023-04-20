@@ -6,6 +6,7 @@ import QtMultimedia 5.8
 
 Window {
     id: window
+    title: " "
     width: loader.width
     height: loader.height
     visible: loader.status == Loader.Ready
