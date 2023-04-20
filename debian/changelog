@@ -1,3 +1,11 @@
+dde-cooperation (0.0.8) unstable; urgency=medium
+
+  * fix dock icon display incorrectly
+  * optimize UI
+  * change the name of desktop entry
+
+ -- zsien <quezhiyong@uniontech.com>  Thu, 20 Apr 2023 10:40:05 +0800
+
 dde-cooperation (0.0.7) unstable; urgency=medium
 
   * add multilingual support
