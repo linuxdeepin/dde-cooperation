@@ -30,5 +30,9 @@ Window {
             return "";
         }
     }
+
+    onClosing: {
+        backend.closeWindow();
+    }
 }
 

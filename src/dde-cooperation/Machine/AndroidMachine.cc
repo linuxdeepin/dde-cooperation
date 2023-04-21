@@ -58,9 +58,6 @@ void AndroidMachine::handleCastRequest(const CastRequest &req) {
         castResponse->set_well(true);
         sendMessage(msg);
     });
-    QObject::connect(m_mainWindow, &AndroidMainWindow::destroyed, this, [this]() {
-        m_mainWindow = nullptr;
-    });
     QObject::connect(m_mainWindow,
                      &AndroidMainWindow::requestSendFiles,
                      this,

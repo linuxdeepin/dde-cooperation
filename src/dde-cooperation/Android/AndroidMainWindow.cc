@@ -57,6 +57,10 @@ void AndroidMainWindow::showConnectDevice() {
     setStage(STAGE_SHOW_QR_CODE);
 }
 
+void AndroidMainWindow::closeWindow() {
+    deleteLater();
+}
+
 void AndroidMainWindow::sendFiles(const QList<QUrl> &urls) {
     qInfo() << "urls:" << urls;
     QStringList paths;

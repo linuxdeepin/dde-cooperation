@@ -197,14 +197,14 @@ void Manager::completeDeviceInfo(DeviceInfo *info) {
     info->set_compositor(COMPOSITOR_X11);
 }
 
-AndroidMainWindow* Manager::getAndroidMainWindow() {
+QPointer<AndroidMainWindow> Manager::getAndroidMainWindow() {
     if (!m_androidMainWindow) {
         return new AndroidMainWindow(QString::fromStdString(m_uuid));
     }
 
-    auto androidMainWindow = m_androidMainWindow;
-    m_androidMainWindow = nullptr;
-    return androidMainWindow;
+    QPointer<AndroidMainWindow> tmp;
+    m_androidMainWindow.swap(tmp);
+    return tmp;
 }
 
 bool Manager::sendFile(const QStringList &files, int osType) noexcept {

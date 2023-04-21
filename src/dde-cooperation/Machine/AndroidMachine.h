@@ -35,7 +35,7 @@ protected:
 
 private:
     AndroidMachineDBusAdaptor *m_dbusAdaptorAndroid;
-    AndroidMainWindow *m_mainWindow;
+    QPointer<AndroidMainWindow> m_mainWindow;
 };
 
 #endif // !MACHINE_ANDROIDMACHINE_H

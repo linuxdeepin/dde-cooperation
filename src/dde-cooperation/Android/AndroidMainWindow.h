@@ -39,6 +39,7 @@ public:
     ~AndroidMainWindow();
 
     Q_INVOKABLE void sendFiles(const QList<QUrl> &urls);
+    Q_INVOKABLE void closeWindow();
 
     void showConnectDevice();
     void setWirelessDbgAddress(const QString &ip, uint16_t port);

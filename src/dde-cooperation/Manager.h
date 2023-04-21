@@ -72,7 +72,7 @@ public:
 
     const QString &getFileStoragePath() const { return m_fileStoragePath; }
     void completeDeviceInfo(DeviceInfo *info);
-    AndroidMainWindow *getAndroidMainWindow();
+    QPointer<AndroidMainWindow> getAndroidMainWindow();
 
 protected:
     void scan() noexcept;
@@ -116,7 +116,7 @@ private:
     QStringList m_cooperatedMachines;
     std::shared_ptr<DConfig> m_dConfig;
 
-    AndroidMainWindow *m_androidMainWindow;
+    QPointer<AndroidMainWindow> m_androidMainWindow;
     InputGrabbersManager *m_inputGrabbersManager;
 
     void ensureDataDirExists();
