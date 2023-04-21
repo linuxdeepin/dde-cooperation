@@ -11,7 +11,7 @@ ColumnLayout {
         Layout.topMargin: 20
         Layout.alignment : Qt.AlignHCenter
         font.pixelSize: 14
-        text: qsTr("Scan with UnionTech OS Assistant")
+        text: qsTr("Scan with UnionTech Mobile Assistant")
     }
 
     Text {

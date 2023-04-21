@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_TW">
+<TS version="2.1" language="zh_HK">
 <context>
     <name>ConfirmDialog</name>
     <message>
@@ -27,12 +27,12 @@
 <context>
     <name>NewDevice</name>
     <message>
-        <location filename="../src/dde-cooperation/Android/qml/NewDevice.qml" line="13"/>
-        <source>Scan with UnionTech OS Assistant</source>
-        <translation>使用“統信助手”App掃碼投屏</translation>
+        <location filename="../src/dde-cooperation/Android/qml/NewDevice.qml" line="14"/>
+        <source>Scan with UnionTech Mobile Assistant</source>
+        <translation>使用“統信手機助手”App掃碼投屏</translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Android/qml/NewDevice.qml" line="17"/>
+        <location filename="../src/dde-cooperation/Android/qml/NewDevice.qml" line="21"/>
         <source>Connect your phone to the computer via a USB cable for the first time</source>
         <translation>首次連線需要透過USB連線手機與電腦</translation>
     </message>
@@ -41,7 +41,7 @@
     <name>QObject</name>
     <message>
         <location filename="../src/dde-cooperation/Machine/Machine.cc" line="427"/>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="849"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="851"/>
         <source>Successfully connected to &quot;%1&quot;</source>
         <translation>已成功協同連線至“%1”</translation>
     </message>
@@ -51,27 +51,27 @@
         <translation>您的協同連線請求已被拒絕</translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="626"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="628"/>
         <source>Successfully received files from &quot;%1&quot;</source>
         <translation>成功接收到“%1”傳送的檔案</translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="629"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="631"/>
         <source>Failed to receive files from &quot;%1&quot;</source>
         <translation>無法接收到“%1”傳送的檔案</translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="646"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="648"/>
         <source>Successfully sent to &quot;%1&quot;</source>
         <translation>成功傳送檔案至協同裝置“%1”</translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="649"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="651"/>
         <source>Failed to send files to&quot;%1&quot;</source>
         <translation>無法傳送檔案至協同裝置“%1”</translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="895"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="897"/>
         <source>PC Collaboration</source>
         <translation>電腦協同</translation>
     </message>

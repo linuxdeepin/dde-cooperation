@@ -27,12 +27,12 @@
 <context>
     <name>NewDevice</name>
     <message>
-        <location filename="../src/dde-cooperation/Android/qml/NewDevice.qml" line="13"/>
-        <source>Scan with UnionTech OS Assistant</source>
+        <location filename="../src/dde-cooperation/Android/qml/NewDevice.qml" line="14"/>
+        <source>Scan with UnionTech Mobile Assistant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Android/qml/NewDevice.qml" line="17"/>
+        <location filename="../src/dde-cooperation/Android/qml/NewDevice.qml" line="21"/>
         <source>Connect your phone to the computer via a USB cable for the first time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -41,7 +41,7 @@
     <name>QObject</name>
     <message>
         <location filename="../src/dde-cooperation/Machine/Machine.cc" line="427"/>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="849"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="851"/>
         <source>Successfully connected to &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51,27 +51,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="626"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="628"/>
         <source>Successfully received files from &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="629"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="631"/>
         <source>Failed to receive files from &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="646"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="648"/>
         <source>Successfully sent to &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="649"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="651"/>
         <source>Failed to send files to&quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="895"/>
+        <location filename="../src/dde-cooperation/Machine/Machine.cc" line="897"/>
         <source>PC Collaboration</source>
         <translation type="unfinished"></translation>
     </message>
