@@ -5,6 +5,7 @@ Exec=/usr/bin/busctl --user call org.deepin.dde.Cooperation1 /org/deepin/dde/Coo
 Icon=org.deepin.dde.cooperation
 Terminal=false
 StartupWMClass=dde-cooperation
+Hidden=true
 
 Name[zh_CN]=统信手机助手
 Name[zh_HK]=統信手機助手
