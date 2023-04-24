@@ -1,3 +1,9 @@
+dde-cooperation (0.0.10) unstable; urgency=medium
+
+  * hide the desktop entry
+
+ -- zsien <quezhiyong@uniontech.com>  Mon, 24 Apr 2023 16:38:59 +0800
+
 dde-cooperation (0.0.9) unstable; urgency=medium
 
   * fix window can't be reopened after closing
