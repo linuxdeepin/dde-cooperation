@@ -203,10 +203,12 @@ void SendTransfer::send(const std::string &ip, uint16_t port) {
         Net::tcpSocketSetKeepAliveOption(m_conn->socketDescriptor());
         sendNextObject();
     });
-    connect(m_conn, &QTcpSocket::errorOccurred, [this](QAbstractSocket::SocketError err) {
+
+    connect(m_conn, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), [this](QAbstractSocket::SocketError err) {
         qWarning() << "transfer connection failed:" << err;
         deleteLater();
     });
+
     connect(m_conn, &QTcpSocket::readyRead, this, &SendTransfer::dispatcher);
     connect(m_conn, &QTcpSocket::disconnected, this, &SendTransfer::handleDisconnected);
     m_conn->connectToHost(QHostAddress(QString::fromStdString(ip)), port);

@@ -19,7 +19,6 @@ Build-Depends:
  libqt5x11extras5-dev,
  libswscale-dev,
  libxcb-randr0-dev,
- libxcb-util-dev,
  libxcb-xfixes0-dev,
  libxcb-xinput-dev,
  libxcb1-dev,

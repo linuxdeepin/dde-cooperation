@@ -138,12 +138,13 @@ void Machine::connect() {
 
         m_pairTimeoutTimer->start(getPairTimeoutInterval() * 1000);
     });
-    QObject::connect(m_conn, &QTcpSocket::errorOccurred, [this](QAbstractSocket::SocketError err) {
+    QObject::connect(m_conn, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), [this](QAbstractSocket::SocketError err) {
         qWarning() << "connect failed:" << err;
 
         // TODO tips and send scan
         m_manager->ping(m_ip);
     });
+
     m_conn->connectToHost(QHostAddress(QString::fromStdString(m_ip)), m_port);
 }
 

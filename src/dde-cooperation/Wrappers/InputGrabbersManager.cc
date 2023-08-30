@@ -96,8 +96,8 @@ void InputGrabbersManager::dirChanged() {
 
     QStringList newEntryList = dir.entryList(QDir::System);
 
-    QSet<QString> curDirSet(m_files.begin(), m_files.end());
-    QSet<QString> newDirSet(newEntryList.begin(), newEntryList.end());
+    QSet<QString> curDirSet = QSet<QString>::fromList(m_files);;
+    QSet<QString> newDirSet = QSet<QString>::fromList(newEntryList);
 
     // added files
     QSet<QString> newFiles = newDirSet - curDirSet;

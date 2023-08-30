@@ -38,7 +38,7 @@ protected:
     xcb_screen_t *m_screen;
 
     xcb_screen_t *screenOfDisplay(int screen);
-    void onEvent(QSocketDescriptor socket, QSocketNotifier::Type activationEvent);
+    void onEvent();
 };
 
 } // namespace X11

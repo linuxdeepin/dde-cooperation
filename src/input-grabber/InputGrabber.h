@@ -51,7 +51,7 @@ private:
 
     std::function<void(unsigned int type, unsigned int code, int value)> m_onEvent;
 
-    void handlePollEvent(QSocketDescriptor socket, QSocketNotifier::Type type);
+    void handlePollEvent();
 };
 
 #endif // !INPUTEGRABBER_H

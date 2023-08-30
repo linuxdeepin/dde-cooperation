@@ -120,7 +120,7 @@ std::string Manager::newUUID() const {
 
 bool Manager::isValidUUID(const std::string &str) const noexcept {
     uuid_t uuid;
-    int res = uuid_parse_range(str.data(), str.data() + str.size(), uuid);
+    int res = uuid_parse(str.data(), uuid);
     return res == 0;
 }
 

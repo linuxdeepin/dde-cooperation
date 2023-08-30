@@ -54,8 +54,7 @@ xcb_screen_t *X11::screenOfDisplay(int screen) {
     return nullptr;
 }
 
-void X11::onEvent([[maybe_unused]] QSocketDescriptor socket,
-                  [[maybe_unused]] QSocketNotifier::Type activationEvent) {
+void X11::onEvent() {
     std::shared_ptr<xcb_generic_event_t> event;
     while (event.reset(xcb_poll_for_event(m_conn)), event) {
         handleEvent(event);

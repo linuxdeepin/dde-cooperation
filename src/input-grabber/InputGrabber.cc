@@ -89,8 +89,7 @@ void InputGrabber::stop() {
     qDebug("stopped");
 }
 
-void InputGrabber::handlePollEvent([[maybe_unused]] QSocketDescriptor socket,
-                                   [[maybe_unused]] QSocketNotifier::Type type) {
+void InputGrabber::handlePollEvent() {
     input_event ev;
     int rc;
     do {
