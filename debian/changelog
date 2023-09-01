@@ -1,3 +1,9 @@
+dde-cooperation (0.1.0) unstable; urgency=medium
+
+  * adaptation dependency V20 1060 UOS
+
+ -- liujinchang <liujinchang@uniontech.com>  Fri, 1 Sep 2023 16:05:29 +0800
+
 dde-cooperation (0.0.10) unstable; urgency=medium
 
   * hide the desktop entry

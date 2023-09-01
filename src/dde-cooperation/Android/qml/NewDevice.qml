@@ -1,7 +1,7 @@
-import QtQuick 2.12
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.15
+import QtQuick 2.11
+import QtQuick.Window 2.11
+import QtQuick.Controls 2.4
+import QtQuick.Layouts 1.3
 import QtMultimedia 5.8
 
 ColumnLayout {
@@ -50,8 +50,8 @@ ColumnLayout {
                 ctx.reset();
                 ctx.fillStyle = Qt.rgba(0, 0, 0, 1);
 
-                for (let y = 0; y < s; y++) {
-                    for (let x = 0; x < s; x++) {
+                for (var y = 0; y < s; y++) {
+                    for (var x = 0; x < s; x++) {
                         if (qrCode.getModule(x, y)) {
                             const rx1 = x * scale;
                             const ry1 = y * scale;
@@ -64,10 +64,11 @@ ColumnLayout {
             }
 
             Component.onCompleted: {
-                qrCode.textChanged.connect(() => {
-                    console.debug("update")
-                    canvas.requestPaint()
-                })
+                id: qrCode
+                ontextChanged: {
+                    console.debug("update");
+                    canvas.requestPaint();
+                }
             }
         }
     }

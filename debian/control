@@ -37,9 +37,9 @@ Package: dde-cooperation
 Architecture: any
 Depends:
  adb,
- qml-module-qtmultimedia (>= 5.15.2~),
- qml-module-qtquick-controls (>= 5.15.2~),
- qml-module-qtquick2 (>= 5.15.2~),
+ qml-module-qtmultimedia (>= 5.11.2~),
+ qml-module-qtquick-controls (>= 5.11.2~),
+ qml-module-qtquick2 (>= 5.11.2~),
  ${misc:Depends},
  ${shlibs:Depends},
 Description: cross-device collaboration by deepin
