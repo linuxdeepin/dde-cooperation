@@ -55,10 +55,12 @@ dde_cooperation_moc_headers = files('''
   Android/AndroidMainWindow.h
 '''.split())
 
+ui_res = files('''
+  Android/resources.qrc
+'''.split())
+
 dde_cooperation_sources += qt5.preprocess(
-  qresources: [
-    'Android/resources.qrc',
-  ],
+  qresources: ui_res,
   moc_headers: dde_cooperation_moc_headers,
 )
 
