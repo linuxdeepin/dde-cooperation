@@ -1,0 +1,32 @@
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef CONFIG_H_IN
+#define CONFIG_H_IN
+
+#ifndef DDE_COOPERATION_PLUGIN_ROOT_DIR
+#    define DDE_COOPERATION_PLUGIN_ROOT_DIR "${DDE_COOPERATION_PLUGIN_ROOT_DIR}"
+#elif
+#    warning "cmake unseting definition DDE_COOPERATION_PLUGIN_ROOT_DIR"
+#endif
+
+#ifndef DEEPIN_DATA_TRANS_PLUGIN_DIR
+#    define DEEPIN_DATA_TRANS_PLUGIN_DIR "${DEEPIN_DATA_TRANS_PLUGIN_DIR}"
+#elif
+#    warning "cmake unseting definition DEEPIN_DATA_TRANS_PLUGIN_DIR"
+#endif
+
+#ifndef DEEPIN_COOPERATION_PLUGIN_DIR
+#    define DEEPIN_COOPERATION_PLUGIN_DIR "${DEEPIN_COOPERATION_PLUGIN_DIR}"
+#elif
+#    warning "cmake unseting definition DEEPIN_COOPERATION_PLUGIN_DIR"
+#endif
+
+#ifndef DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR
+#    define DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR "${DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR}"
+#elif
+#    warning "cmake unseting definition DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR"
+#endif
+
+#endif   // CONFIG_H_IN

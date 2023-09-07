@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-// windows need know uos-end sharedClipboard on status
-// TCP; paired 后发送；服务状态变化发送
-message ServiceOnOffNotification
-{
-    bool sharedClipboardOn = 1;
-    bool sharedDevicesOn = 2;
-}

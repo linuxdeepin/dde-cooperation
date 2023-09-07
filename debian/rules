@@ -1,25 +1,11 @@
 #!/usr/bin/make -f
-
-# See debhelper(7) (uncomment to enable).
-# Output every command that modifies files on the build system.
-#export DH_VERBOSE = 1
-
-
-# See FEATURE AREAS in dpkg-buildflags(1).
-#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-
-# See ENVIRONMENT in dpkg-buildflags(1).
-# Package maintainers to append CFLAGS.
-#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
-# Package maintainers to append LDFLAGS.
-#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
-
+include /usr/share/dpkg/default.mk
+export QT_SELECT = qt5
+DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 %:
-	dh $@
+	dh $@ --parallel
 
-override_dh_installsystemd:
-	dh_installsystemd --no-enable --no-start
-
-override_dh_fixperms:
-	dh_fixperms --exclude /usr/libexec/dde-cooperation/input-emitter --exclude /usr/libexec/dde-cooperation/input-grabber
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	  -DHOST_MULTIARCH="$(DEB_HOST_MULTIARCH)"

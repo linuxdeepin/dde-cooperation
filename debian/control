@@ -1,46 +1,26 @@
 Source: dde-cooperation
-Section: utils
 Priority: optional
-Maintainer: planc <hubenchang0515@outlook.com>
-Rules-Requires-Root: no
+Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
 Build-Depends:
+ debhelper (>= 11)
  cmake,
- debhelper-compat (= 12),
- libavcodec-dev,
- libavformat-dev,
- libavutil-dev,
- libdtkwidget-dev,
- libevdev-dev,
- libexpected-dev,
- libfmt-dev,
- libfuse3-dev,
- libprotobuf-dev,
- libqrcodegencpp-dev,
- libqt5x11extras5-dev,
- libswscale-dev,
- libxcb-randr0-dev,
- libxcb-xfixes0-dev,
- libxcb-xinput-dev,
- libxcb1-dev,
- meson,
- protobuf-compiler,
- qtbase5-dev,
- qtdeclarative5-dev,
- qtmultimedia5-dev,
- qttools5-dev-tools,
- systemd,
- uuid-dev,
-Standards-Version: 4.5.1
-Homepage: https://www.deepin.org
+ qtbase5-dev
+
+Standards-Version: 4.1.3
+Section: utils
+Homepage: http://www.deepin.org
+
+Package: dde-cooperation-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: dde-cooperation (= ${binary:Version}), ${misc:Depends}
+Description: Dev package for deepin cooperation and data transfer project
+ Dev package for deepin cooperation and data transfer project
 
 Package: dde-cooperation
 Architecture: any
-Depends:
- adb,
- qml-module-qtmultimedia (>= 5.11.2~),
- qml-module-qtquick-controls (>= 5.11.2~),
- qml-module-qtquick2 (>= 5.11.2~),
- ${misc:Depends},
- ${shlibs:Depends},
-Description: cross-device collaboration by deepin
- dde-cooperation is a cross-device collaboration.
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Deepin cooperation and data transfer project
+ Deepin cooperation and data transfer project

@@ -1,4 +1,0 @@
-[D-BUS Service]
-Name=org.deepin.dde.Cooperation1
-SystemdService=dbus-org.deepin.dde.Cooperation1.service
-Exec=/bin/false

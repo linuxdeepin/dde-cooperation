@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>gui/linux/mainwin_receiver.qml</file>
+        <file>gui/win/mainwin_sender.qml</file>
+    </qresource>
+</RCC>

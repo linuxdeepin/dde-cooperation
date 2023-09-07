@@ -1,1 +1,0 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_HK"><context><name>desktop</name><message><location filename="Menu Action Zero]Name" line="0"/><source>Send to PC for collaboration</source><translation>發送到協同電腦</translation></message></context></TS>
