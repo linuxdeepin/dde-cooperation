@@ -5,8 +5,8 @@
 #ifndef PLUGINMETAOBJECT_H
 #define PLUGINMETAOBJECT_H
 
-#include <dfm-framework/dfm_framework_global.h>
-#include <dfm-framework/lifecycle/plugindepend.h>
+#include <dde-cooperation-framework/dde_cooperation_framework_global.h>
+#include <dde-cooperation-framework/lifecycle/plugindepend.h>
 
 #include <QSharedData>
 #include <QPluginLoader>

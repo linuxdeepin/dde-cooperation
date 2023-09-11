@@ -5,9 +5,9 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
-#include <dfm-framework/dfm_framework_global.h>
-#include <dfm-framework/lifecycle/plugin.h>
-#include <dfm-framework/lifecycle/pluginmetaobject.h>
+#include <dde-cooperation-framework/dde_cooperation_framework_global.h>
+#include <dde-cooperation-framework/lifecycle/plugin.h>
+#include <dde-cooperation-framework/lifecycle/pluginmetaobject.h>
 
 #include <QPluginLoader>
 #include <QSettings>
