@@ -65,7 +65,7 @@ DPF_END_NAMESPACE
 
 // define namespace for plugin's event
 #undef DPF_EVENT_NAMESPACE
-#define DPF_EVENT_NAMESPACE2(space) static constexpr char __KPF_EVENT_NAMESPACE__[] { #space };
+#define DPF_EVENT_NAMESPACE2(space) static constexpr char *__KPF_EVENT_NAMESPACE__ { #space };
 #define DPF_EVENT_NAMESPACE(spaceMacro) DPF_EVENT_NAMESPACE2(spaceMacro)
 
 // register event

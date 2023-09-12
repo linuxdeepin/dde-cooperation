@@ -57,7 +57,7 @@ class Plugin;
  * \details 该类与SharedPointer配套使用时是线程安全的
  */
 class PluginMetaObjectPrivate;
-class PluginMetaObject final : public PluginMetaT1<Plugin>
+class DPF_EXPORT PluginMetaObject final : public PluginMetaT1<Plugin>
 {
     friend class PluginManager;
     friend class PluginManagerPrivate;

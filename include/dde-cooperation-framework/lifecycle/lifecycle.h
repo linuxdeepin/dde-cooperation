@@ -16,26 +16,26 @@
 DPF_BEGIN_NAMESPACE
 
 namespace LifeCycle {
-void initialize(const QStringList &IIDs, const QStringList &paths);
-void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames);
-void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames,
+DPF_EXPORT void initialize(const QStringList &IIDs, const QStringList &paths);
+DPF_EXPORT void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames);
+DPF_EXPORT void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames,
                 const QStringList &lazyNames);
 
-bool isAllPluginsInitialized();
-bool isAllPluginsStarted();
-QStringList pluginIIDs();
-QStringList pluginPaths();
-QStringList blackList();
-QStringList lazyLoadList();
-PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
+DPF_EXPORT bool isAllPluginsInitialized();
+DPF_EXPORT bool isAllPluginsStarted();
+DPF_EXPORT QStringList pluginIIDs();
+DPF_EXPORT QStringList pluginPaths();
+DPF_EXPORT QStringList blackList();
+DPF_EXPORT QStringList lazyLoadList();
+DPF_EXPORT PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
                                       const QString version = "");
 
-bool readPlugins();
-bool loadPlugins();
-void shutdownPlugins();
+DPF_EXPORT bool readPlugins();
+DPF_EXPORT bool loadPlugins();
+DPF_EXPORT void shutdownPlugins();
 
-bool loadPlugin(PluginMetaObjectPointer &pointer);
-void shutdownPlugin(PluginMetaObjectPointer &pointer);
+DPF_EXPORT bool loadPlugin(PluginMetaObjectPointer &pointer);
+DPF_EXPORT void shutdownPlugin(PluginMetaObjectPointer &pointer);
 }   // namepsace LifeCycle
 
 DPF_END_NAMESPACE

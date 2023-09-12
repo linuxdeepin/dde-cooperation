@@ -14,6 +14,8 @@ file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
 find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 
+add_compile_definitions(${BIN_NAME} EXPORT_LIB)
+
 add_library(${BIN_NAME} SHARED
     ${INCLUDE_FILES}
     ${SRCS}

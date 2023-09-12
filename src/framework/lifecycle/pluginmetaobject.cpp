@@ -209,7 +209,7 @@ QT_BEGIN_NAMESPACE
  * \param depend
  * \return
  */
-Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginDepend &depend)
+DPF_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginDepend &depend)
 {
     DPF_USE_NAMESPACE
     out << "PluginDepend(" << QString("0x%0").arg(qint64(&depend), 0, 16) << "){";
@@ -226,7 +226,7 @@ Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginDepend &d
  * \param metaObj
  * \return
  */
-Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObject &metaObj)
+DPF_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObject &metaObj)
 {
     DPF_USE_NAMESPACE
     out << "PluginMetaObject(" << QString("0x%0").arg(qint64(&metaObj), 0, 16) << "){";
@@ -251,7 +251,7 @@ Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjec
  * \param pointer
  * \return
  */
-Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjectPointer &pointer)
+DPF_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjectPointer &pointer)
 {
     out << *pointer;
     return out;

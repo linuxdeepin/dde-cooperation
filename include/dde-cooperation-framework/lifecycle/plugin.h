@@ -12,7 +12,7 @@
 
 DPF_BEGIN_NAMESPACE
 
-class Plugin : public QObject
+class DPF_EXPORT Plugin : public QObject
 {
     Q_OBJECT
 public:

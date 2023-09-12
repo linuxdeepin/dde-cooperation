@@ -122,7 +122,14 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
         return;
 
     for (const QString &path : pluginPaths) {
-        QDirIterator dirItera(path, { "*.so" },
+        QString libSuffix =
+        #ifdef WIN32
+                "*.dll"
+        #else
+                "*.so"
+        #endif
+                ;
+        QDirIterator dirItera(path, { libSuffix },
                               QDir::Filter::Files,
                               QDirIterator::IteratorFlag::NoIteratorFlags);
 

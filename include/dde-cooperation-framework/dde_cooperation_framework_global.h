@@ -14,4 +14,10 @@
 #define DPF_STR(s) #s
 #define DPF_MACRO_TO_STR(s) DPF_STR(s)
 
+#ifdef EXPORT_LIB
+#define DPF_EXPORT Q_DECL_EXPORT
+#else
+#define DPF_EXPORT Q_DECL_IMPORT
+#endif
+
 #endif   // GLOBAL_DDE_COOPERATION_FRAMEWORK_H

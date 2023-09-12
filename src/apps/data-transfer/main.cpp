@@ -10,7 +10,11 @@
 
 static constexpr char kPluginInterface[] { "org.deepin.plugin.datatransfer" };
 static constexpr char kPluginCore[] { "data-transfer-core" };
-static constexpr char kLibCore[] { "libdata-transfer-core.so" };
+#ifdef WIN32
+#define LIB_FILE_NAME(lib_name) QString("%1.dll").arg(#lib_name)
+#else
+#define LIB_FILE_NAME(lib_name) QString("lib%1.so").arg(#lib_name)
+#endif
 
 static bool loadPlugins()
 {
@@ -20,6 +24,7 @@ static bool loadPlugins()
     qInfo() << QString("Load plugins path : %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/data-transfer");
+    pluginsDirs.push_back(pluginsDir + "/data-transfer/core");
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
     pluginsDirs << QString(DEEPIN_DATA_TRANS_PLUGIN_DIR);
@@ -43,7 +48,7 @@ static bool loadPlugins()
     auto corePlugin = DPF_NAMESPACE::LifeCycle::pluginMetaObj(kPluginCore);
     if (corePlugin.isNull())
         return false;
-    if (!corePlugin->fileName().contains(kLibCore))
+    if (!corePlugin->fileName().contains(LIB_FILE_NAME(data-transfer-core)))
         return false;
     if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
         return false;
