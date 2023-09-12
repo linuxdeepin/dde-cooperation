@@ -6,6 +6,7 @@
 #define DATATRANSFERCOREPLUGIN_H
 
 #include <dde-cooperation-framework/dpf.h>
+#include "gui/linux/mainwindow.h"
 
 QT_BEGIN_NAMESPACE
 class QQmlApplicationEngine;
@@ -23,12 +24,14 @@ class DataTransferCorePlugin : public DPF_NAMESPACE::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
+    virtual void stop() override;
 
 private:
     bool loadMainPage();
 
 private:
     QQmlApplicationEngine *engine { nullptr };
+    MainWindow *w { nullptr };
 };
 
 }

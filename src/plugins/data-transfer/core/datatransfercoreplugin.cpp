@@ -20,6 +20,14 @@ bool DataTransferCorePlugin::start()
     return loadMainPage();
 }
 
+void DataTransferCorePlugin::stop()
+{
+    if (w) {
+        delete w;
+        w = nullptr;
+    }
+}
+
 bool DataTransferCorePlugin::loadMainPage()
 {
     QUrl url;
@@ -27,16 +35,20 @@ bool DataTransferCorePlugin::loadMainPage()
     case deepin_cross::BaseUtils::kWindows:
         url = QUrl(QStringLiteral("qrc:/gui/win/mainwin_sender.qml"));
         break;
-    case deepin_cross::BaseUtils::kLinux:
-        url = QUrl(QStringLiteral("qrc:/gui/linux/mainwin_receiver.qml"));
+    case deepin_cross::BaseUtils::kLinux: {
+        //url = QUrl(QStringLiteral("qrc:/gui/linux/mainwin_receiver.qml"));
+        w = new MainWindow();
+        w->show();
+        w->moveCenter();
         break;
+    }
     default:
         qInfo() << "os type not support, exit" << deepin_cross::BaseUtils::osType();
         return false;
     }
 
-    engine = new QQmlApplicationEngine(this);
-    engine->load(url);
+    //    engine = new QQmlApplicationEngine(this);
+    //    engine->load(url);
 
     return true;
 }

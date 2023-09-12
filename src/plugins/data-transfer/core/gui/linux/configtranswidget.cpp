@@ -1,0 +1,101 @@
+#include "configtranswidget.h"
+
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QDebug>
+#include <QToolButton>
+#include <QStackedWidget>
+#include <QCheckBox>
+
+ConfigTransWidget::ConfigTransWidget(QWidget *parent)
+    : QFrame(parent)
+{
+    initUI();
+}
+
+ConfigTransWidget::~ConfigTransWidget()
+{
+}
+
+void ConfigTransWidget::initUI()
+{
+    setStyleSheet("background-color: white; border-radius: 10px;");
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    setLayout(mainLayout);
+    mainLayout->setSpacing(0);
+    mainLayout->addSpacing(30);
+
+    QLabel *titileLabel = new QLabel("请确认需要同步的配置", this);
+    titileLabel->setFixedHeight(40);
+    QFont font;
+    font.setPointSize(16);
+    font.setWeight(QFont::DemiBold);
+    titileLabel->setFont(font);
+    titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+
+    QHBoxLayout *layout1 = new QHBoxLayout(this);
+    selectFrame = new QFrame(this);
+    layout1->addWidget(selectFrame, Qt::AlignCenter);
+    initSelectFrame();
+
+    QLabel *tipLabel1 = new QLabel("请选择需要同步的用户配置，将为您配置到\nUOS中。", this);
+    tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    tipLabel1->setFixedHeight(80);
+    font.setPointSize(10);
+    font.setWeight(QFont::Thin);
+    tipLabel1->setFont(font);
+
+    QToolButton *nextButton = new QToolButton(this);
+    nextButton->setText("开始传输");
+    nextButton->setFixedSize(300, 35);
+    nextButton->setStyleSheet("background-color: blue;");
+    connect(nextButton, &QToolButton::clicked, this, &ConfigTransWidget::nextPage);
+
+    QHBoxLayout *layout = new QHBoxLayout(this);
+    layout->addWidget(nextButton, Qt::AlignCenter);
+
+    mainLayout->addWidget(titileLabel);
+    mainLayout->addLayout(layout1);
+    mainLayout->addWidget(tipLabel1);
+    mainLayout->addLayout(layout);
+}
+
+void ConfigTransWidget::initSelectFrame()
+{
+    QGridLayout *layout = new QGridLayout(this);
+
+    QLabel *label = new QLabel("浏览器", selectFrame);
+    QCheckBox *box = new QCheckBox("书签", selectFrame);
+    layout->addWidget(label, 0, 0);
+    layout->addWidget(box, 0, 1);
+
+    QLabel *label1 = new QLabel("个人配置", selectFrame);
+    QCheckBox *box1 = new QCheckBox("自定义桌面", selectFrame);
+    QCheckBox *box2 = new QCheckBox("自定义屏保", selectFrame);
+    layout->addWidget(label1, 1, 0);
+    layout->addWidget(box1, 1, 1);
+    layout->addWidget(box2, 2, 1);
+
+    layout->setHorizontalSpacing(30);
+    layout->setVerticalSpacing(10);
+    layout->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+
+    QHBoxLayout *layout2 = new QHBoxLayout(this);
+    layout2->addSpacing(80);
+    layout2->addLayout(layout);
+
+    selectFrame->setLayout(layout2);
+    selectFrame->setStyleSheet("background-color: lightgray; border-radius: 8px;");
+    selectFrame->setFixedWidth(450);
+}
+
+void ConfigTransWidget::nextPage()
+{
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    if (stackedWidget) {
+        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
+    } else {
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+    }
+}

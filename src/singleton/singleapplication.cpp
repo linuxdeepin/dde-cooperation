@@ -12,7 +12,7 @@
 using namespace deepin_cross;
 
 SingleApplication::SingleApplication(int &argc, char **argv, int)
-    : QGuiApplication(argc, argv), localServer(new QLocalServer(this))
+    : QApplication(argc, argv), localServer(new QLocalServer(this))
 {
     initConnect();
 }

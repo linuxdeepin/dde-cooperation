@@ -11,6 +11,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
@@ -18,7 +20,9 @@ set(QRC_RES "${CMAKE_CURRENT_SOURCE_DIR}/data-transfer.qrc")
 
 #find_package(PkgConfig REQUIRED)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Gui)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Gui)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Gui Widgets)
+find_package(Dtk COMPONENTS Widget REQUIRED)
+
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -38,6 +42,9 @@ target_link_libraries(${PROJECT_NAME}
     deepin_cross::framework
     Qt${QT_VERSION_MAJOR}::Quick
     Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    ${DtkWidget_LIBRARIES}
 )
 
 #install library file

@@ -5,14 +5,14 @@
 #ifndef SINGLEAPPLICATION_H
 #define SINGLEAPPLICATION_H
 
-#include <QGuiApplication>
+#include <QApplication>
 
 QT_BEGIN_NAMESPACE
 class QLocalServer;
 QT_END_NAMESPACE
 
 namespace deepin_cross {
-class SingleApplication : public QGuiApplication
+class SingleApplication : public QApplication
 {
     Q_OBJECT
 public:
