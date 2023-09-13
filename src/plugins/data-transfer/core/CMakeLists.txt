@@ -10,6 +10,9 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/datatransfercoreplugin.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/datatransfercoreplugin.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/type_defines.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/mainwindow.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/mainwindow.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
@@ -29,16 +32,13 @@ else()
     message (FATAL_ERROR "not support on ${CMAKE_SYSTEM} yet.")
 endif()
 
-set(QRC_RES "${CMAKE_CURRENT_SOURCE_DIR}/data-transfer.qrc")
-
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Gui)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Gui Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${PLUGIN_FILES}
     ${BUSS_FILES}
-    ${QRC_RES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
@@ -51,7 +51,6 @@ target_include_directories(${PROJECT_NAME}
 # 公共依赖库，添加到这里
 target_link_libraries(${PROJECT_NAME}
     deepin_cross::framework
-    Qt${QT_VERSION_MAJOR}::Quick
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets

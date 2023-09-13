@@ -4,9 +4,9 @@
 
 #include "datatransfercoreplugin.h"
 #include "base/baseutils.h"
+#include "gui/mainwindow.h"
 
 #include <QDebug>
-#include <QQmlApplicationEngine>
 #include <QUrl>
 
 using namespace data_transfer_core;
@@ -30,25 +30,7 @@ void DataTransferCorePlugin::stop()
 
 bool DataTransferCorePlugin::loadMainPage()
 {
-    QUrl url;
-    switch (deepin_cross::BaseUtils::osType()) {
-    case deepin_cross::BaseUtils::kWindows:
-        url = QUrl(QStringLiteral("qrc:/gui/win/mainwin_sender.qml"));
-        break;
-    case deepin_cross::BaseUtils::kLinux: {
-        //url = QUrl(QStringLiteral("qrc:/gui/linux/mainwin_receiver.qml"));
-        w = new MainWindow();
-        w->show();
-        w->moveCenter();
-        break;
-    }
-    default:
-        qInfo() << "os type not support, exit" << deepin_cross::BaseUtils::osType();
-        return false;
-    }
-
-    //    engine = new QQmlApplicationEngine(this);
-    //    engine->load(url);
-
+    w = new MainWindow();
+    w->show();
     return true;
 }

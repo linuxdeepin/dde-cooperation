@@ -6,13 +6,10 @@
 #define DATATRANSFERCOREPLUGIN_H
 
 #include <dde-cooperation-framework/dpf.h>
-#include "gui/linux/mainwindow.h"
-
-QT_BEGIN_NAMESPACE
-class QQmlApplicationEngine;
-QT_END_NAMESPACE
 
 namespace data_transfer_core {
+
+class MainWindow;
 
 class DataTransferCorePlugin : public DPF_NAMESPACE::Plugin
 {
@@ -30,7 +27,6 @@ private:
     bool loadMainPage();
 
 private:
-    QQmlApplicationEngine *engine { nullptr };
     MainWindow *w { nullptr };
 };
 
