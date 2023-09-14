@@ -6,6 +6,8 @@
 #include <QToolButton>
 #include <QStackedWidget>
 
+#include <utils/transferhepler.h>
+
 TransferringWidget::TransferringWidget(QWidget *parent)
     : QFrame(parent)
 {

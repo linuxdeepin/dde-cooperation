@@ -3,6 +3,7 @@
 
 #include <QCheckBox>
 #include <QFrame>
+#include <QGridLayout>
 #include <QIcon>
 #include <QLabel>
 
@@ -20,7 +21,11 @@ public slots:
 private:
     void initUI();
     void initSelectFrame();
-    QFrame *selectFrame = nullptr;
+    void sendOptions();
+
+private:
+    QFrame *selectFrame { nullptr };
+    QGridLayout *selectLayout { nullptr };
 };
 
 #endif

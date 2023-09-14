@@ -7,6 +7,9 @@
 #include <QStackedWidget>
 #include <QCheckBox>
 
+#include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
+
 ConfigTransWidget::ConfigTransWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -63,35 +66,56 @@ void ConfigTransWidget::initUI()
 
 void ConfigTransWidget::initSelectFrame()
 {
-    QGridLayout *layout = new QGridLayout(this);
+    selectLayout = new QGridLayout(this);
 
     QLabel *label = new QLabel("浏览器", selectFrame);
     QCheckBox *box = new QCheckBox("书签", selectFrame);
-    layout->addWidget(label, 0, 0);
-    layout->addWidget(box, 0, 1);
+    selectLayout->addWidget(label, 0, 0);
+    selectLayout->addWidget(box, 0, 1);
 
     QLabel *label1 = new QLabel("个人配置", selectFrame);
     QCheckBox *box1 = new QCheckBox("自定义桌面", selectFrame);
     QCheckBox *box2 = new QCheckBox("自定义屏保", selectFrame);
-    layout->addWidget(label1, 1, 0);
-    layout->addWidget(box1, 1, 1);
-    layout->addWidget(box2, 2, 1);
+    selectLayout->addWidget(label1, 1, 0);
+    selectLayout->addWidget(box1, 1, 1);
+    selectLayout->addWidget(box2, 2, 1);
 
-    layout->setHorizontalSpacing(30);
-    layout->setVerticalSpacing(10);
-    layout->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    selectLayout->setHorizontalSpacing(30);
+    selectLayout->setVerticalSpacing(10);
+    selectLayout->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
     QHBoxLayout *layout2 = new QHBoxLayout(this);
     layout2->addSpacing(80);
-    layout2->addLayout(layout);
+    layout2->addLayout(selectLayout);
 
     selectFrame->setLayout(layout2);
     selectFrame->setStyleSheet("background-color: lightgray; border-radius: 8px;");
     selectFrame->setFixedWidth(450);
 }
 
+void ConfigTransWidget::sendOptions()
+{
+    QStringList config;
+    for (int i = 0; i < selectLayout->rowCount(); i++) {
+        QCheckBox *checkBox = qobject_cast<QCheckBox *>(selectLayout->itemAtPosition(i, 1)->widget());
+        if (checkBox && checkBox->isChecked()) {
+            const QString dir = checkBox->text();
+            config.append(dir);
+        }
+    }
+    qInfo() << "select config :" << config;
+    OptionsManager::instance()->addUserOption(Options::kConfig, config);
+}
+
 void ConfigTransWidget::nextPage()
 {
+    //send useroptions
+    sendOptions();
+
+    //start
+    TransferHelper::instance()->startTransfer();
+
+    //nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);

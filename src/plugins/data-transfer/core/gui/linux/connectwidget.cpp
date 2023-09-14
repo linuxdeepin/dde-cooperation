@@ -6,6 +6,8 @@
 #include <QStackedWidget>
 #include <QLineEdit>
 
+#include <utils/transferhepler.h>
+
 ConnectWidget::ConnectWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -71,22 +73,33 @@ void ConnectWidget::initUI()
 
 void ConnectWidget::initPassWord()
 {
-    passwordLayout->setSpacing(15);
-    passwordLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    const int digitCount = 6;
-
-    for (int i = 0; i < digitCount; i++) {
-        QLabel *digitLabel = new QLabel("6", this);
+    QString password = QString::number(TransferHelper::instance()->getConnectPassword());
+    for (int i = 0; i < password.count(); i++) {
+        QLabel *digitLabel = new QLabel(QString(password[i]), this);
         digitLabel->setAlignment(Qt::AlignCenter);
         digitLabel->setStyleSheet("border: 2px solid gray; border-radius: 7px;");
         digitLabel->setFixedSize(50, 50);
         passwordLayout->addWidget(digitLabel, 0, i);
     }
+
     QToolButton *refreshButton = new QToolButton(this);
     refreshButton->setIcon(QIcon::fromTheme("folder"));
     refreshButton->setIconSize(QSize(50, 50));
     refreshButton->setFixedSize(50, 50);
-    passwordLayout->addWidget(refreshButton, 0, digitCount + 1);
+    connect(refreshButton, &QToolButton::clicked, this, &ConnectWidget::updatePassWord);
+    passwordLayout->addWidget(refreshButton, 0, password.count() + 1);
+
+    passwordLayout->setSpacing(15);
+    passwordLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+}
+
+void ConnectWidget::updatePassWord()
+{
+    QString password = QString::number(TransferHelper::instance()->getConnectPassword());
+    for (int i = 0; i < password.count(); i++) {
+        QLabel *digitLabel = qobject_cast<QLabel *>(passwordLayout->itemAt(i)->widget());
+        digitLabel->setText(QString(password[i]));
+    }
 }
 
 void ConnectWidget::nextPage()

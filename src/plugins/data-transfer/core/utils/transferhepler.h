@@ -1,0 +1,26 @@
+#ifndef TRANSFEHELPER_H
+#define TRANSFEHELPER_H
+
+#include <QMap>
+#include <QObject>
+
+class TransferHelper : public QObject
+{
+    Q_OBJECT
+
+public:
+    TransferHelper();
+    ~TransferHelper();
+
+    static TransferHelper *instance();
+
+    const QStringList getUesr();
+    int getConnectPassword();
+    QMap<QString, double> getUserDataSize();
+    qint64 getRemainStorage();
+    QMap<QString, QString> getAppList();
+
+    void startTransfer();
+};
+
+#endif

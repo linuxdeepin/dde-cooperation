@@ -13,6 +13,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/type_defines.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/mainwindow.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/mainwindow.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 

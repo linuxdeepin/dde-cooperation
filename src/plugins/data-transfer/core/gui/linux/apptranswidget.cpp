@@ -7,6 +7,9 @@
 #include <QStackedWidget>
 #include <QCheckBox>
 
+#include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
+
 AppTransWidget::AppTransWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -63,32 +66,48 @@ void AppTransWidget::initUI()
 
 void AppTransWidget::initSelectFrame()
 {
-    QGridLayout *layout = new QGridLayout(this);
-    for (int i = 0; i < 3; i++) {
-        QCheckBox *checkBox1 = new QCheckBox("企业微信", selectFrame);
-        checkBox1->setIcon(QIcon::fromTheme("com.qq.weixin.work.deepin"));
-        checkBox1->setIconSize(QSize(30, 30));
-        layout->addWidget(checkBox1, i, 0);
+    selectLayout = new QGridLayout(this);
+    auto appList = TransferHelper::instance()->getAppList();
+    QList<QString> appName = appList.keys();
+
+    for (int i = 0; i < appList.count(); i++) {
+        const QString name = appName[i];
+        const QString icon = appList[name];
+        QCheckBox *checkBox = new QCheckBox(name, selectFrame);
+        checkBox->setIcon(QIcon::fromTheme(icon));
+        checkBox->setIconSize(QSize(30, 30));
+        selectLayout->addWidget(checkBox, i, 0);
     }
 
-    for (int i = 0; i < 3; i++) {
-        QCheckBox *checkBox1 = new QCheckBox("企业微信", selectFrame);
-        checkBox1->setIcon(QIcon::fromTheme("com.qq.weixin.work.deepin"));
-        checkBox1->setIconSize(QSize(30, 30));
-        layout->addWidget(checkBox1, i, 1);
-    }
+    selectLayout->setHorizontalSpacing(70);
+    selectLayout->setVerticalSpacing(20);
+    selectLayout->setAlignment(Qt::AlignCenter);
 
-    layout->setHorizontalSpacing(70);
-    layout->setVerticalSpacing(20);
-    layout->setAlignment(Qt::AlignCenter);
-
-    selectFrame->setLayout(layout);
+    selectFrame->setLayout(selectLayout);
     selectFrame->setStyleSheet("background-color: lightgray; border-radius: 8px;");
     selectFrame->setFixedWidth(450);
 }
 
+void AppTransWidget::sendOptions()
+{
+    QStringList appName;
+    for (int i = 0; i < selectLayout->count(); i++) {
+        QCheckBox *checkBox = qobject_cast<QCheckBox *>(selectLayout->itemAt(i)->widget());
+        if (checkBox && checkBox->isChecked()) {
+            const QString dir = checkBox->text();
+            appName.append(dir);
+        }
+    }
+    qInfo() << "select app :" << appName;
+    OptionsManager::instance()->addUserOption(Options::kApp, appName);
+}
+
 void AppTransWidget::nextPage()
 {
+    //send useroptions
+    sendOptions();
+
+    //nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);

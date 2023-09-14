@@ -1,10 +1,13 @@
-#include "searchwidget.h"
+﻿#include "searchwidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
 #include <QToolButton>
 #include <QStackedWidget>
+
+#include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
 
 SearchWidget::SearchWidget(QWidget *parent)
     : QFrame(parent)
@@ -33,20 +36,24 @@ void SearchWidget::initUI()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tipLabel = new QLabel("已查找到的设备：", this);
-    tipLabel->setFixedHeight(60);
+    QLabel *textLabel = new QLabel("已查找到的设备：", this);
+    textLabel->setFixedHeight(60);
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
-    tipLabel->setFont(font);
+    textLabel->setFont(font);
 
     QHBoxLayout *layout1 = new QHBoxLayout(this);
     layout1->addSpacing(175);
-    layout1->addWidget(tipLabel);
+    layout1->addWidget(textLabel);
 
     userlayout = new QGridLayout(this);
     QHBoxLayout *layout2 = new QHBoxLayout(this);
     layout2->addLayout(userlayout);
-    initUserlayout();
+    updateUserlayout();
+
+    tipLabel = new QLabel("请选择连接的对象", this);
+    tipLabel->setVisible(false);
+    tipLabel->setAlignment(Qt::AlignCenter);
 
     QToolButton *nextButton = new QToolButton(this);
     nextButton->setText("下一步");
@@ -60,42 +67,73 @@ void SearchWidget::initUI()
     mainLayout->addWidget(titileLabel);
     mainLayout->addLayout(layout1);
     mainLayout->addLayout(layout2);
+    mainLayout->addWidget(tipLabel);
     mainLayout->addLayout(layout);
 }
 
-void SearchWidget::initUserlayout()
+void SearchWidget::updateUserlayout()
 {
-    QLabel *iconLabel1 = new QLabel();
-    QPixmap iconPixmap1(QIcon::fromTheme("folder").pixmap(200, 100));
-    iconLabel1->setPixmap(iconPixmap1);
-    QLabel *descriptionLabel1 = new QLabel("Icon 1 Description");
-
-    QLabel *iconLabel2 = new QLabel();
-    QPixmap iconPixmap2(QIcon::fromTheme("folder").pixmap(200, 100));
-    iconLabel2->setPixmap(iconPixmap2);
-    QLabel *descriptionLabel2 = new QLabel("Icon 2 Description");
-
-    QLabel *iconLabel3 = new QLabel();
-    QPixmap iconPixmap3(QIcon::fromTheme("folder").pixmap(200, 100));
-    iconLabel3->setPixmap(iconPixmap3);
-    QLabel *descriptionLabel3 = new QLabel("Icon 3 Description");
-
-    userlayout->addWidget(iconLabel1, 0, 0);
-    userlayout->addWidget(descriptionLabel1, 1, 0);
-    userlayout->addWidget(iconLabel2, 0, 1);
-    userlayout->addWidget(descriptionLabel2, 1, 1);
-    userlayout->addWidget(iconLabel3, 0, 2);
-    userlayout->addWidget(descriptionLabel3, 1, 2);
+    QStringList userList = TransferHelper::instance()->getUesr();
+    for (int i = 0; i < userList.count(); i++) {
+        Useritem *item = new Useritem(userList[i], this);
+        userlayout->addWidget(item, 0, i);
+    }
     userlayout->setHorizontalSpacing(50);
     userlayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 }
 
 void SearchWidget::nextPage()
 {
+    if (OptionsManager::instance()->getUserOption(Options::kUser).isEmpty()) {
+        qInfo() << "No connection user selected";
+        tipLabel->setVisible(true);
+        return;
+    }
+
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
+}
+
+void SearchWidget::setTip(bool status) const
+{
+    tipLabel->setVisible(status);
+}
+
+Useritem::Useritem(QString name, QWidget *parent)
+    : QWidget(parent), name(name)
+{
+    QLabel *iconLabel = new QLabel(this);
+    iconLabel->setPixmap(QIcon::fromTheme("folder").pixmap(200, 100));
+
+    QLabel *descriptionLabel = new QLabel(name, this);
+    descriptionLabel->setAlignment(Qt::AlignCenter);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    setLayout(mainLayout);
+
+    mainLayout->addWidget(iconLabel);
+    mainLayout->addWidget(descriptionLabel);
+}
+
+Useritem::~Useritem()
+{
+}
+
+void Useritem::mousePressEvent(QMouseEvent *event)
+{
+    OptionsManager::instance()->addUserOption(Options::kUser, QStringList() << name);
+    qInfo() << "select user :" << name;
+
+    SearchWidget *parent = qobject_cast<SearchWidget *>(this->parent());
+    if (parent) {
+        parent->setTip(false);
+    } else {
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+    }
+
+    return QWidget::mousePressEvent(event);
 }

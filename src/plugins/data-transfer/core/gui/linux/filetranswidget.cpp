@@ -1,4 +1,4 @@
-#include "filetranswidget.h"
+﻿#include "filetranswidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -7,9 +7,22 @@
 #include <QStackedWidget>
 #include <QCheckBox>
 
+#include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
+
+const QStringList directories = {
+    Directory::kDocuments,
+    Directory::kMusic,
+    Directory::kPicture,
+    Directory::kMovie,
+    Directory::kDownload
+};
+
 FileTransWidget::FileTransWidget(QWidget *parent)
     : QFrame(parent)
 {
+    userData = TransferHelper::instance()->getUserDataSize();
+    remainStorage = TransferHelper::instance()->getRemainStorage();
     initUI();
 }
 
@@ -63,44 +76,93 @@ void FileTransWidget::initUI()
 
 void FileTransWidget::initSelectFrame()
 {
-    QLabel *tipLabel1 = new QLabel("windows user", this);
+    QLabel *userLabel = new QLabel("windows user", this);
     QHBoxLayout *layout1 = new QHBoxLayout(this);
     layout1->addSpacing(50);
-    layout1->addWidget(tipLabel1, Qt::AlignCenter);
+    layout1->addWidget(userLabel, Qt::AlignCenter);
 
-    QGridLayout *layout = new QGridLayout(this);
-    for (int i = 0; i < 5; i++) {
-        QCheckBox *checkBox1 = new QCheckBox("文档", selectFrame);
-        QLabel *label1 = new QLabel("13G", selectFrame);
-        layout->addWidget(checkBox1, i, 0);
-        layout->addWidget(label1, i, 1);
+    selectLayout = new QGridLayout(this);
+
+    for (int i = 0; i < directories.count(); i++) {
+        const QString dir = directories[i];
+        const QString size = QString::number(userData[dir]);
+        QCheckBox *checkBox = new QCheckBox(dir, selectFrame);
+        QLabel *label = new QLabel(size + "G", selectFrame);
+
+        connect(checkBox, &QCheckBox::stateChanged, this, &FileTransWidget::update);
+
+        selectLayout->addWidget(checkBox, i, 0);
+        selectLayout->addWidget(label, i, 1);
     }
+
     QHBoxLayout *layout2 = new QHBoxLayout(this);
     layout2->addSpacing(50);
-    layout2->addLayout(layout);
+    layout2->addLayout(selectLayout);
 
-    QLabel *tipLabel2 = new QLabel("数据盘可用空间128G，已选数据共约11G", this);
-    tipLabel2->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+    QString tip = "数据盘可用空间%1G，已选数据共约11G";
+    tip = tip.arg(remainStorage);
+    storageInfoLabel = new QLabel(tip, this);
+    storageInfoLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
     QFont font;
     font.setPointSize(8);
-    tipLabel2->setFont(font);
+    storageInfoLabel->setFont(font);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(layout1);
     mainLayout->addLayout(layout2);
-    mainLayout->addWidget(tipLabel2);
+    mainLayout->addWidget(storageInfoLabel);
 
     selectFrame->setLayout(mainLayout);
     selectFrame->setStyleSheet("background-color: lightgray; border-radius: 8px;");
     selectFrame->setFixedWidth(450);
 }
 
+void FileTransWidget::sendOptions()
+{
+    QStringList dirs;
+    for (int i = 0; i < 5; i++) {
+        QCheckBox *checkBox = qobject_cast<QCheckBox *>(selectLayout->itemAtPosition(i, 0)->widget());
+        if (checkBox && checkBox->isChecked()) {
+            const QString dir = checkBox->text();
+            dirs.append(dir);
+        }
+    }
+    qInfo() << "select file :" << dirs;
+    OptionsManager::instance()->addUserOption(Options::kFile, dirs);
+}
+
 void FileTransWidget::nextPage()
 {
+    //send useroptions
+    sendOptions();
+
+    //nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
+}
+
+void FileTransWidget::update()
+{
+    int total = 0;
+    QStringList dirs;
+    for (int i = 0; i < 5; i++) {
+        QCheckBox *checkBox = qobject_cast<QCheckBox *>(selectLayout->itemAtPosition(i, 0)->widget());
+        if (checkBox && checkBox->isChecked()) {
+            const QString dir = directories[i];
+            total += userData[dir];
+            dirs.append(dir);
+        }
+    }
+    //update options
+    OptionsManager::instance()->addUserOption(Options::kFile, dirs);
+
+    //update ui
+    QString StorageInfo = "数据盘可用空间%1G，已选数据共约%2G";
+    StorageInfo = StorageInfo.arg(remainStorage).arg(QString::number(total));
+    qInfo() << StorageInfo;
+    storageInfoLabel->setText(StorageInfo);
 }
