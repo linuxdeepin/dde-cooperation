@@ -1,0 +1,234 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "uniapis";
+package uniapis;
+
+message LoginRequest {
+  string name = 1;
+  bytes auth = 2;
+  string my_uid = 4;
+  string my_name = 5;
+  OptionMessage option = 6;
+  uint64 session_id = 7;
+  string version = 8;
+}
+
+message LoginResponse {
+  oneof union {
+    string error = 1;
+    PeerInfo peer_info = 2;
+  }
+  bytes token = 3;
+}
+
+message ChatMessage { string text = 1; }
+
+message PeerInfo {
+  string username = 1;
+  string hostname = 2;
+  string platform = 3;
+  string version = 4;
+  bool privacy_mode = 5;
+}
+
+message PermissionInfo {
+  enum Permission {
+    Keyboard = 0;
+    Clipboard = 1;
+    File = 2;
+  }
+
+  Permission permission = 1;
+  bool enabled = 2;
+}
+
+message OptionMessage {
+  enum BoolOption {
+    NotSet = 0;
+    No = 1;
+    Yes = 2;
+  }
+  BoolOption lock_after_session_end = 2;
+  BoolOption show_remote_cursor = 3;
+  BoolOption privacy_mode = 4;
+  BoolOption block_input = 5;
+  BoolOption disable_clipboard = 6;
+  BoolOption enable_file_transfer = 7;
+  BoolOption disable_keyboard = 8;
+}
+
+// file actions
+enum FileType {
+  DIR = 0;
+  DIR_LINK = 1;
+  FILE = 2;
+  FILE_LINK = 3;
+}
+
+message FileEntry {
+  FileType type = 1;
+  string name = 2;
+  bool hidden = 3;
+  uint64 size = 4;
+  uint64 modified_time = 5;
+}
+
+message FileDirectory {
+  int32 id = 1;
+  string path = 2;
+  repeated FileEntry entries = 3;
+}
+
+message ReadDirFiles {
+  int32 id = 1;
+  string path = 2;
+  bool include_hidden = 3;
+  bool recursive = 4;
+}
+
+// message FileRemoveDir {
+//   int32 id = 1;
+//   string path = 2;
+//   bool recursive = 3;
+// }
+
+// message FileRemoveFile {
+//   int32 id = 1;
+//   string path = 2;
+//   sint32 file_num = 3;
+// }
+
+message FileRemove {
+  int32 id = 1;
+  string path = 2;
+  oneof union {
+    bool recursive = 3;
+    sint32 file_num = 4;
+  }
+}
+
+message FileRename {
+  int32 id = 1;
+  string path = 2;
+}
+
+message FileCreate {
+  int32 id = 1;
+  string path = 2;
+  bool is_dir = 3;
+}
+
+message FileAction {
+  oneof union {
+    ReadDirFiles read_files = 1;
+    FileCreate create = 2;
+    FileRemove remove = 3;
+    FileRename rename = 4;
+    FileTransferRequest transfer = 5;
+    FileTransferCancel cancel = 6;
+  }
+}
+
+message FileTransferCancel {
+  int32 id = 1;
+}
+
+message FileResponse {
+  oneof union {
+    FileDirectory dir = 1;
+    FileTransferBlock block = 2;
+    FileTransferError error = 3;
+    FileTransferDone done = 4;
+    FileTransferDigest digest = 5;
+  }
+}
+
+message FileTransferDigest {
+  int32 id = 1;
+  sint32 file_num = 2;
+  uint64 last_modified = 3;
+  uint64 file_size = 4;
+  bool is_upload = 5;
+  bool is_identical = 6;
+}
+
+message FileTransferBlock {
+  int32 id = 1;
+  sint32 file_num = 2;
+  bytes data = 3;
+  bool compressed = 4;
+  uint32 blk_id = 5;
+}
+
+message FileTransferError {
+  int32 id = 1;
+  string error = 2;
+  sint32 file_num = 3;
+}
+
+message FileTransferDone {
+  int32 id = 1;
+  sint32 file_num = 2;
+}
+
+message FileTransferRequest {
+  enum Direction {
+    NotSet = 0;
+    Send = 1;
+    Receive = 2;
+  }
+  int32 id = 1;
+  string path = 2; // 请求读取或接收保存的目录
+  int32 file_num = 3;
+  bool include_hidden = 4;
+  Direction ask = 5;
+}
+
+// message FileTransferSendRequest {
+//   int32 id = 1;
+//   string path = 2;
+//   bool include_hidden = 3;
+//   int32 file_num = 4;
+// }
+
+// message FileTransferSendConfirmRequest {
+//   int32 id = 1;
+//   sint32 file_num = 2;
+//   oneof union {
+//     bool skip = 3;
+//     uint32 offset_blk = 4;
+//   }
+// }
+
+// message FileTransferReceiveRequest {
+//   int32 id = 1;
+//   string path = 2; // path written to
+//   repeated FileEntry files = 3;
+//   int32 file_num = 4;
+// }
+
+// file actions end
+
+// normal message for external
+message Misc {
+  oneof union {
+    ChatMessage chat_message = 1;
+    PermissionInfo permission_info = 2;
+    OptionMessage option = 3;
+    string close_reason = 4;
+    bool stop_service = 5;
+  }
+}
+
+message Message {
+  string version = 1;  // 协议版本，如：1.0.0
+  oneof union {
+    LoginRequest login_request = 2;
+    LoginResponse login_response = 3;
+    FileAction file_action = 4;
+    FileResponse file_response = 5;
+    Misc misc = 6;
+    PeerInfo peer_info = 7;
+  }
+}
