@@ -9,6 +9,8 @@
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
 
+#pragma execution_character_set("utf-8")
+
 SearchWidget::SearchWidget(QWidget *parent)
     : QFrame(parent)
 {

@@ -1,14 +1,14 @@
 #include "../mainwindow.h"
 #include "../mainwindow_p.h"
 
-#include "startwidget.h"
-#include "searchwidget.h"
-#include "connectwidget.h"
-#include "filetranswidget.h"
-#include "apptranswidget.h"
-#include "configtranswidget.h"
-#include "transferringwidget.h"
-#include "successwidget.h"
+#include "../startwidget.h"
+#include "../searchwidget.h"
+#include "../connectwidget.h"
+#include "../filetranswidget.h"
+#include "../apptranswidget.h"
+#include "../configtranswidget.h"
+#include "../transferringwidget.h"
+#include "../successwidget.h"
 
 #include <DTitlebar>
 #include <QHBoxLayout>
@@ -42,7 +42,6 @@ void MainWindowPrivate::initWindow()
     q->setCentralWidget(centerWidget);
 }
 
-
 void MainWindowPrivate::initWidgets()
 {
     StartWidget *startwidget = new StartWidget(q);
@@ -67,4 +66,3 @@ void MainWindowPrivate::initWidgets()
 
     q->centralWidget()->layout()->addWidget(stackedWidget);
 }
-

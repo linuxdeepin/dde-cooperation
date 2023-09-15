@@ -1,4 +1,4 @@
-#include "transferringwidget.h"
+﻿#include "transferringwidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -7,6 +7,8 @@
 #include <QStackedWidget>
 
 #include <utils/transferhepler.h>
+
+#pragma execution_character_set("utf-8")
 
 TransferringWidget::TransferringWidget(QWidget *parent)
     : QFrame(parent)

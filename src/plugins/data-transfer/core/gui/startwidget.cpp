@@ -1,10 +1,12 @@
-#include "startwidget.h"
+﻿#include "startwidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
 #include <QToolButton>
 #include <QStackedWidget>
+
+#pragma execution_character_set("utf-8")
 
 StartWidget::StartWidget(QWidget *parent)
     : QFrame(parent)

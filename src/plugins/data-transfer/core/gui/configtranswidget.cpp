@@ -1,4 +1,4 @@
-#include "configtranswidget.h"
+﻿#include "configtranswidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -9,6 +9,8 @@
 
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
+
+#pragma execution_character_set("utf-8")
 
 ConfigTransWidget::ConfigTransWidget(QWidget *parent)
     : QFrame(parent)

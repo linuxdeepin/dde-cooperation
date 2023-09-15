@@ -1,4 +1,4 @@
-#include "apptranswidget.h"
+﻿#include "apptranswidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -9,6 +9,8 @@
 
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
+
+#pragma execution_character_set("utf-8")
 
 AppTransWidget::AppTransWidget(QWidget *parent)
     : QFrame(parent)

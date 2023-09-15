@@ -1,4 +1,4 @@
-#include "connectwidget.h"
+﻿#include "connectwidget.h"
 
 #include <QLabel>
 #include <QDebug>
@@ -7,6 +7,8 @@
 #include <QLineEdit>
 
 #include <utils/transferhepler.h>
+
+#pragma execution_character_set("utf-8")
 
 ConnectWidget::ConnectWidget(QWidget *parent)
     : QFrame(parent)

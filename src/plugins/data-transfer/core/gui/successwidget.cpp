@@ -1,10 +1,12 @@
-#include "successwidget.h"
+﻿#include "successwidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
 #include <QToolButton>
 #include <QStackedWidget>
+
+#pragma execution_character_set("utf-8")
 
 SuccessWidget::SuccessWidget(QWidget *parent)
     : QFrame(parent)

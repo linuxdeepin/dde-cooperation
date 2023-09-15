@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+﻿cmake_minimum_required(VERSION 3.10)
 
 project(data-transfer-core)
 
@@ -11,8 +11,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/datatransfercoreplugin.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/datatransfercoreplugin.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/type_defines.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/gui/mainwindow.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/gui/mainwindow.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
