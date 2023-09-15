@@ -14,9 +14,9 @@ IpcSession::IpcSession(Whoami ami)
 IpcSession::~IpcSession()
 {
     try {
-        ipc::message_queue::remove("uniapi-queue");
+        bipc::message_queue::remove("uniapi-queue");
         std::cout << "Removed uniapi-queue" << std::endl;
-    } catch (ipc::interprocess_exception &ex) {
+    } catch (bipc::interprocess_exception &ex) {
         std::cout << "Error: " << ex.what() << std::endl;
     }
 }
@@ -24,12 +24,12 @@ IpcSession::~IpcSession()
 int IpcSession::createMQ()
 {
     try {
-        msg_queue = std::make_unique<ipc::message_queue>(
-            ipc::open_or_create, "uniapi-queue", MAX_MQ_LEN, sizeof(IpcMessage));
+        msg_queue = std::make_unique<bipc::message_queue>(
+            bipc::open_or_create, "uniapi-queue", MAX_MQ_LEN, sizeof(IpcMessage));
 
         // mq_down = std::make_unique<boost::interprocess::message_queue>(
-        //     ipc::open_or_create, "uniapi-down-queue", MAX_MQ_LEN, sizeof(IpcMessage));
-    } catch (ipc::interprocess_exception &ex) {
+        //     bipc::open_or_create, "uniapi-down-queue", MAX_MQ_LEN, sizeof(IpcMessage));
+    } catch (bipc::interprocess_exception &ex) {
         std::cout << "Error: " << ex.what() << std::endl;
         return 1;
     }
@@ -97,7 +97,7 @@ bool IpcSession::sendMessage(IpcMessage *message)
     try {
         message->from = identity;
          msg_queue->send(message, sizeof(IpcMessage), 0);
-    } catch (ipc::interprocess_exception &ex) {
+    } catch (bipc::interprocess_exception &ex) {
         std::cout << "Error: " << ex.what() << std::endl;
         return false;
     }

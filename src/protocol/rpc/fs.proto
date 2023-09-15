@@ -1,0 +1,85 @@
+package ipc
+
+service FS {
+    compatible, // check the proto version whether it is compatible
+    readDir,
+    removeDir,
+    create,
+    rename,
+    removeFiles,
+    sendFiles, //return a job which have added
+    receiveFiles, //return a job which have added
+    resumeJob,
+    cancelJob,
+    fsReport, // notify a FS related report from backend
+}
+
+object FileEntry {
+    uint32 type
+    string name
+    bool hidden
+    uint64 size
+    uint64 modified_time
+}
+
+object FileDirectory {
+    int32 id
+    string path
+    [FileEntry] entries
+}
+
+object DirRead {
+    int32 id
+    string path
+    bool include_hidden
+    bool recursive
+}
+
+object DirRemove {
+    int32 id
+    string path
+    bool recursive
+    bool trash
+}
+
+object CreateNew {
+    int32 id
+    string path
+    bool is_dir
+}
+
+object Rename {
+    string from
+    string to
+}
+
+object FileRemove {
+    int32 id
+    [string] paths // arrary path of files
+    int32 file_num // number of files
+    bool trash  // trash remove
+}
+
+// send or receive files, return a job which have added
+object FilesTrans {
+    int32 id
+    [string] paths // arrary path of files will be transfer
+    int32 file_num // number of files
+    bool sub // whether include the all files in sub if it's dir
+    string savedir // the file storage path, default config_save_dir
+}
+
+object TransJob {
+    int32 session_id
+    int32 job_id
+    bool is_remote  // remote: write_jobs; local: read_jobs
+}
+
+// notify a FS report, ig. speed, action result, etc
+object ReportFS {
+    int32 id
+    int32 type // type defined in constant::FSType
+    int32 result
+    string path  // the file path
+    string content // the json format content what want to delivery
+}

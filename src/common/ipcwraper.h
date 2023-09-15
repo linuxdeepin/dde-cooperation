@@ -21,7 +21,7 @@
 #include "ipcaction.h"
 
 namespace asio = boost::asio;
-namespace ipc = boost::interprocess;
+namespace bipc = boost::interprocess;
 
 
 class IpcSession : public QObject

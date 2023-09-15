@@ -15,6 +15,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
@@ -44,8 +46,11 @@ include_directories(${Boost_INCLUDE_DIRS})
 # include_directories(${CMAKE_SOURCE_DIR}/3rdparty/tinyrpc/include)
 message("Boost: ${Boost_INCLUDE_DIRS}")
 
+include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/src/protocol)
+
 link_libraries(uniapi)
-link_libraries(bocom)
+link_libraries(co)
 
 add_library(${PROJECT_NAME}
     SHARED
