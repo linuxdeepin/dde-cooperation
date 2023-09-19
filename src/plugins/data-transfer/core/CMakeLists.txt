@@ -13,6 +13,12 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/type_defines.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/connect/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/connect/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/select/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/select/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
@@ -37,10 +43,15 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 
+
+qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
+
+
 add_library(${PROJECT_NAME}
     SHARED
     ${PLUGIN_FILES}
     ${BUSS_FILES}
+    ${RESOURCE_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)

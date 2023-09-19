@@ -1,5 +1,5 @@
-#ifndef CONFIGTRANSWIDGET_H
-#define CONFIGTRANSWIDGET_H
+#ifndef CONFIGSELECTWIDGET_H
+#define CONFIGSELECTWIDGET_H
 
 #include <QCheckBox>
 #include <QFrame>
@@ -7,13 +7,13 @@
 #include <QIcon>
 #include <QLabel>
 
-class ConfigTransWidget : public QFrame
+class ConfigSelectWidget : public QFrame
 {
     Q_OBJECT
 
 public:
-    ConfigTransWidget(QWidget *parent = nullptr);
-    ~ConfigTransWidget();
+    ConfigSelectWidget(QWidget *parent = nullptr);
+    ~ConfigSelectWidget();
 
 public slots:
     void nextPage();

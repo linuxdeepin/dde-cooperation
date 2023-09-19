@@ -1,5 +1,5 @@
-#ifndef APPTRANSWIDGET_H
-#define APPTRANSWIDGET_H
+#ifndef APPSELECTWIDGET_H
+#define APPSELECTWIDGET_H
 
 #include <QCheckBox>
 #include <QFrame>
@@ -7,13 +7,13 @@
 #include <QIcon>
 #include <QLabel>
 
-class AppTransWidget : public QFrame
+class AppSelectWidget : public QFrame
 {
     Q_OBJECT
 
 public:
-    AppTransWidget(QWidget *parent = nullptr);
-    ~AppTransWidget();
+    AppSelectWidget(QWidget *parent = nullptr);
+    ~AppSelectWidget();
 
 public slots:
     void nextPage();

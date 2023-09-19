@@ -1,4 +1,4 @@
-﻿#include "apptranswidget.h"
+﻿#include "appselectwidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -12,17 +12,17 @@
 
 #pragma execution_character_set("utf-8")
 
-AppTransWidget::AppTransWidget(QWidget *parent)
+AppSelectWidget::AppSelectWidget(QWidget *parent)
     : QFrame(parent)
 {
     initUI();
 }
 
-AppTransWidget::~AppTransWidget()
+AppSelectWidget::~AppSelectWidget()
 {
 }
 
-void AppTransWidget::initUI()
+void AppSelectWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
@@ -55,7 +55,7 @@ void AppTransWidget::initUI()
     nextButton->setText("确定");
     nextButton->setFixedSize(300, 35);
     nextButton->setStyleSheet("background-color: blue;");
-    connect(nextButton, &QToolButton::clicked, this, &AppTransWidget::nextPage);
+    connect(nextButton, &QToolButton::clicked, this, &AppSelectWidget::nextPage);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(nextButton, Qt::AlignCenter);
@@ -66,7 +66,7 @@ void AppTransWidget::initUI()
     mainLayout->addLayout(layout);
 }
 
-void AppTransWidget::initSelectFrame()
+void AppSelectWidget::initSelectFrame()
 {
     selectLayout = new QGridLayout(this);
     auto appList = TransferHelper::instance()->getAppList();
@@ -90,7 +90,7 @@ void AppTransWidget::initSelectFrame()
     selectFrame->setFixedWidth(450);
 }
 
-void AppTransWidget::sendOptions()
+void AppSelectWidget::sendOptions()
 {
     QStringList appName;
     for (int i = 0; i < selectLayout->count(); i++) {
@@ -104,7 +104,7 @@ void AppTransWidget::sendOptions()
     OptionsManager::instance()->addUserOption(Options::kApp, appName);
 }
 
-void AppTransWidget::nextPage()
+void AppSelectWidget::nextPage()
 {
     //send useroptions
     sendOptions();

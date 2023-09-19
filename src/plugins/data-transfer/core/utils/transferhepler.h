@@ -1,5 +1,5 @@
-#ifndef TRANSFEHELPER_H
-#define TRANSFEHELPER_H
+#ifndef TRANSFERHELPER_H
+#define TRANSFERHELPER_H
 
 #include <QMap>
 #include <QObject>

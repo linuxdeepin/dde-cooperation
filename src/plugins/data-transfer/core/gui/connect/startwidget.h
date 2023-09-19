@@ -1,6 +1,7 @@
 #ifndef STARTWIDGET_H
 #define STARTWIDGET_H
 
+#include <QCheckBox>
 #include <QFrame>
 
 class StartWidget : public QFrame
@@ -16,6 +17,7 @@ public slots:
 
 private:
     void initUI();
+    QCheckBox *checkBox { nullptr };
 };
 
 #endif

@@ -1,4 +1,4 @@
-﻿#include "configtranswidget.h"
+﻿#include "configselectwidget.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -12,17 +12,17 @@
 
 #pragma execution_character_set("utf-8")
 
-ConfigTransWidget::ConfigTransWidget(QWidget *parent)
+ConfigSelectWidget::ConfigSelectWidget(QWidget *parent)
     : QFrame(parent)
 {
     initUI();
 }
 
-ConfigTransWidget::~ConfigTransWidget()
+ConfigSelectWidget::~ConfigSelectWidget()
 {
 }
 
-void ConfigTransWidget::initUI()
+void ConfigSelectWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
@@ -55,7 +55,7 @@ void ConfigTransWidget::initUI()
     nextButton->setText("开始传输");
     nextButton->setFixedSize(300, 35);
     nextButton->setStyleSheet("background-color: blue;");
-    connect(nextButton, &QToolButton::clicked, this, &ConfigTransWidget::nextPage);
+    connect(nextButton, &QToolButton::clicked, this, &ConfigSelectWidget::nextPage);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(nextButton, Qt::AlignCenter);
@@ -66,7 +66,7 @@ void ConfigTransWidget::initUI()
     mainLayout->addLayout(layout);
 }
 
-void ConfigTransWidget::initSelectFrame()
+void ConfigSelectWidget::initSelectFrame()
 {
     selectLayout = new QGridLayout(this);
 
@@ -95,7 +95,7 @@ void ConfigTransWidget::initSelectFrame()
     selectFrame->setFixedWidth(450);
 }
 
-void ConfigTransWidget::sendOptions()
+void ConfigSelectWidget::sendOptions()
 {
     QStringList config;
     for (int i = 0; i < selectLayout->rowCount(); i++) {
@@ -109,7 +109,7 @@ void ConfigTransWidget::sendOptions()
     OptionsManager::instance()->addUserOption(Options::kConfig, config);
 }
 
-void ConfigTransWidget::nextPage()
+void ConfigSelectWidget::nextPage()
 {
     //send useroptions
     sendOptions();
