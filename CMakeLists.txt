@@ -6,7 +6,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # build 3rd party libraries first
 add_subdirectory(3rdparty)
-set(TINYRPC_DIR "${PROJECT_SOURCE_DIR}/3rdparty/tinyrpc")
 set(COOST_DIR "${PROJECT_SOURCE_DIR}/3rdparty/coost")
 
 set(CMAKE_AUTOUIC ON)
@@ -21,7 +20,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake ${TINYRPC
 
 include(protobuf-generate)
 include_directories(include)
-include_directories(${TINYRPC_DIR}/include)
 include_directories(${COOST_DIR}/include)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -fPIE")

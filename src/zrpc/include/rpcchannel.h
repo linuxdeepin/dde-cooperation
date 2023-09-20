@@ -1,0 +1,34 @@
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef ZRPC_RPCCHANNEL_H
+#define ZRPC_RPCCHANNEL_H
+
+#include <memory>
+#include <google/protobuf/service.h>
+#include "netaddress.h"
+#include "co/tcp.h"
+
+namespace zrpc {
+
+class ZRpcChannel : public google::protobuf::RpcChannel {
+
+public:
+    typedef std::shared_ptr<ZRpcChannel> ptr;
+    ZRpcChannel(AbNetAddress::ptr addr);
+    ~ZRpcChannel() = default;
+
+    void CallMethod(const google::protobuf::MethodDescriptor *method,
+                    google::protobuf::RpcController *controller,
+                    const google::protobuf::Message *request,
+                    google::protobuf::Message *response,
+                    google::protobuf::Closure *done);
+
+private:
+    AbNetAddress::ptr m_addr;
+};
+
+} // namespace zrpc
+
+#endif
