@@ -83,6 +83,7 @@ void TransferringWidget::initUI()
     mainLayout->addWidget(fileLabel);
     mainLayout->addWidget(displayLabel);
     mainLayout->addLayout(indexLayout);
+
 }
 
 void TransferringWidget::nextPage()

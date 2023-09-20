@@ -1,4 +1,4 @@
-#include "optionsmanager.h"
+﻿#include "optionsmanager.h"
 #include "transferhepler.h"
 
 #include <QDateTime>
@@ -6,15 +6,16 @@
 #include <QDebug>
 #include <QDir>
 #include <QStorageInfo>
+#include <QCoreApplication>
 
-TransferHelper::TransferHelper()
-    : QObject()
-{
-}
+#ifdef WIN32
+#    include <QProcess>
+#endif
 
-TransferHelper::~TransferHelper()
-{
-}
+#pragma execution_character_set("utf-8")
+TransferHelper::TransferHelper() : QObject() { }
+
+TransferHelper::~TransferHelper() { }
 
 TransferHelper *TransferHelper::instance()
 {
@@ -32,10 +33,8 @@ const QStringList TransferHelper::getUesr()
 int TransferHelper::getConnectPassword()
 {
     qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
-
     // 生成随机的六位数字
     int randomNumber = QRandomGenerator::global()->bounded(100000, 999999);
-
     qDebug() << randomNumber;
     return randomNumber;
 }
@@ -88,3 +87,70 @@ void TransferHelper::startTransfer()
 {
     qInfo() << OptionsManager::instance()->getUserOptions();
 }
+
+#ifdef WIN32
+void TransferHelper::windowsZipFile(const QList<QUrl> &sourceFilePath, QUrl &zipFileSavePath)
+{
+    QString destination;
+    if (zipFileSavePath.isEmpty()) {
+        destination = QString("./uos.zip");
+    } else {
+        destination = zipFileSavePath.toLocalFile();
+    }
+    QList<QString> filePaths;
+    for (auto sourcefile : sourceFilePath) {
+        filePaths.push_back(sourcefile.toLocalFile());
+    }
+    QProcess process;
+
+    QString command = "powershell";
+    QStringList arguments;
+    arguments << "-Command";
+    QString cmd = "Compress-Archive -Path ";
+    for (const QString &path : filePaths) {
+        cmd.append(QString("'%1',").arg(path));
+    }
+    cmd.chop(1);
+    cmd.append(QString(" -DestinationPath '%1'").arg(destination));
+
+    arguments << cmd;
+    process.start(command, arguments);
+    process.waitForFinished(-1);
+
+    if (process.readAllStandardOutput() != "") {
+        qDebug() << process.readAllStandardOutput();
+    }
+    if (process.readAllStandardError() != "") {
+        qDebug() << process.readAllStandardError();
+    }
+}
+
+void TransferHelper::windowsUnZipFile(const QUrl &zipFilePath, QUrl &unZipFilePath)
+{
+    QString destinationDir;
+    if (unZipFilePath.isEmpty()) {
+        destinationDir = QString("./ousUnzip/");
+    }
+    QProcess process;
+
+    QString archivePath = zipFilePath.toLocalFile();
+    QString command = "powershell";
+    QStringList arguments;
+    arguments << "-Command";
+
+    QString cmd = QString("Expand-Archive -Path '%1' -DestinationPath '%2'")
+                          .arg(archivePath, destinationDir);
+
+    arguments << cmd;
+
+    process.start(command, arguments);
+    process.waitForFinished(-1);
+
+    if (process.readAllStandardOutput() != "") {
+        qDebug() << process.readAllStandardOutput();
+    }
+    if (process.readAllStandardError() != "") {
+        qDebug() << process.readAllStandardError();
+    }
+}
+#endif

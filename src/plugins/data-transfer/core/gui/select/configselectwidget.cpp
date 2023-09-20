@@ -9,18 +9,15 @@
 
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
-
+#include <gui/mainwindow_p.h>
 #pragma execution_character_set("utf-8")
 
-ConfigSelectWidget::ConfigSelectWidget(QWidget *parent)
-    : QFrame(parent)
+ConfigSelectWidget::ConfigSelectWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
 }
 
-ConfigSelectWidget::~ConfigSelectWidget()
-{
-}
+ConfigSelectWidget::~ConfigSelectWidget() { }
 
 void ConfigSelectWidget::initUI()
 {
@@ -51,19 +48,32 @@ void ConfigSelectWidget::initUI()
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
 
-    QToolButton *nextButton = new QToolButton(this);
-    nextButton->setText("开始传输");
-    nextButton->setFixedSize(300, 35);
-    nextButton->setStyleSheet("background-color: blue;");
-    connect(nextButton, &QToolButton::clicked, this, &ConfigSelectWidget::nextPage);
+    QToolButton *determineButton = new QToolButton(this);
+    QPalette palette = determineButton->palette();
+    palette.setColor(QPalette::ButtonText, Qt::white);
+    determineButton->setPalette(palette);
+    determineButton->setText("确定");
+    determineButton->setFixedSize(120, 35);
+    determineButton->setStyleSheet("background-color: #0098FF;");
+    QObject::connect(determineButton, &QToolButton::clicked, this, &ConfigSelectWidget::nextPage);
 
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(nextButton, Qt::AlignCenter);
+    QToolButton *cancelButton = new QToolButton(this);
+    cancelButton->setText("取消");
+    cancelButton->setFixedSize(120, 35);
+    cancelButton->setStyleSheet("background-color: lightgray;");
+    QObject::connect(cancelButton, &QToolButton::clicked, this, &ConfigSelectWidget::backPage);
+
+    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    buttonLayout->addWidget(cancelButton);
+    buttonLayout->addSpacing(15);
+    buttonLayout->addWidget(determineButton);
+    buttonLayout->setAlignment(Qt::AlignHCenter);
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addLayout(layout1);
     mainLayout->addWidget(tipLabel1);
-    mainLayout->addLayout(layout);
+    mainLayout->addLayout(buttonLayout);
+    mainLayout->addSpacing(20);
 }
 
 void ConfigSelectWidget::initSelectFrame()
@@ -99,7 +109,8 @@ void ConfigSelectWidget::sendOptions()
 {
     QStringList config;
     for (int i = 0; i < selectLayout->rowCount(); i++) {
-        QCheckBox *checkBox = qobject_cast<QCheckBox *>(selectLayout->itemAtPosition(i, 1)->widget());
+        QCheckBox *checkBox =
+                qobject_cast<QCheckBox *>(selectLayout->itemAtPosition(i, 1)->widget());
         if (checkBox && checkBox->isChecked()) {
             const QString dir = checkBox->text();
             config.append(dir);
@@ -111,17 +122,28 @@ void ConfigSelectWidget::sendOptions()
 
 void ConfigSelectWidget::nextPage()
 {
-    //send useroptions
+    // send useroptions
     sendOptions();
 
-    //start
+    // start
     TransferHelper::instance()->startTransfer();
 
-    //nextpage
+    // nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
+        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+                      "nullptr";
+    }
+}
+void ConfigSelectWidget::backPage()
+{
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    if (stackedWidget) {
+        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
+    } else {
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+                      "nullptr";
     }
 }

@@ -14,5 +14,13 @@
         <file>icon/transfer.png</file>
         <file>icon/transfer@2x.png</file>
         <file>icon/success-128.svg</file>
+        <file>icon/close_normal.svg</file>
+        <file>icon/menu_normal.svg</file>
+        <file>icon/minimise_normal.svg</file>
+        <file>icon/app.svg</file>
+        <file>icon/disposition.svg</file>
+        <file>icon/file.svg</file>
+        <file>icon/checked.svg</file>
+        <file>icon/edit.svg</file>
     </qresource>
 </RCC>

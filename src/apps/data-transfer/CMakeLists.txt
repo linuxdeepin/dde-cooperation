@@ -1,4 +1,4 @@
-set(PROJ_NAME "deepin-data-transfer")
+﻿set(PROJ_NAME "deepin-data-transfer")
 
 configure_file(
     "../config.h.in"
@@ -38,6 +38,7 @@ target_link_libraries(${PROJ_NAME}
   Qt${QT_VERSION_MAJOR}::Widgets
   deepin_cross::framework
 )
+
 
 install(TARGETS ${PROJ_NAME} DESTINATION bin)
 

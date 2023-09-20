@@ -10,15 +10,12 @@
 
 #pragma execution_character_set("utf-8")
 
-ChooseWidget::ChooseWidget(QWidget *parent)
-    : QFrame(parent)
+ChooseWidget::ChooseWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
 }
 
-ChooseWidget::~ChooseWidget()
-{
-}
+ChooseWidget::~ChooseWidget() { }
 
 void ChooseWidget::initUI()
 {
@@ -47,7 +44,7 @@ void ChooseWidget::initUI()
     QToolButton *nextButton = new QToolButton(this);
     nextButton->setText("下一步");
     nextButton->setFixedSize(250, 35);
-    nextButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.03);");
+    nextButton->setStyleSheet("background-color: lightgray;");
     nextButton->setEnabled(false);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
@@ -76,14 +73,15 @@ void ChooseWidget::initUI()
         else
             nextButton->setEnabled(false);
     });
-    connect(packageItem->checkBox, &QCheckBox::stateChanged, this, [winItem, nextButton](int state) {
-        if (state == Qt::Checked)
-            winItem->checkBox->setCheckState(Qt::Unchecked);
-        if (state == Qt::Checked || winItem->checkBox->checkState() == Qt::Checked)
-            nextButton->setEnabled(true);
-        else
-            nextButton->setEnabled(false);
-    });
+    connect(packageItem->checkBox, &QCheckBox::stateChanged, this,
+            [winItem, nextButton](int state) {
+                if (state == Qt::Checked)
+                    winItem->checkBox->setCheckState(Qt::Unchecked);
+                if (state == Qt::Checked || winItem->checkBox->checkState() == Qt::Checked)
+                    nextButton->setEnabled(true);
+                else
+                    nextButton->setEnabled(false);
+            });
 }
 
 void ChooseWidget::nextPage()
@@ -92,12 +90,12 @@ void ChooseWidget::nextPage()
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+                      "nullptr";
     }
 }
 
-ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
-    : QFrame(parent)
+ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : QFrame(parent)
 {
     setStyleSheet("background-color: rgba(0, 0, 0, 0.03); border-radius: 10px;");
     setFixedSize(268, 222);
@@ -117,9 +115,7 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
     mainLayout->addWidget(iconLabel);
 }
 
-ModeItem::~ModeItem()
-{
-}
+ModeItem::~ModeItem() { }
 
 void ModeItem::mousePressEvent(QMouseEvent *event)
 {

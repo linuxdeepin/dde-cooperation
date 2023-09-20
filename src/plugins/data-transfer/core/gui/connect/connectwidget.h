@@ -1,4 +1,4 @@
-#ifndef CONNECTWIDGET_H
+﻿#ifndef CONNECTWIDGET_H
 #define CONNECTWIDGET_H
 
 #include <QFrame>

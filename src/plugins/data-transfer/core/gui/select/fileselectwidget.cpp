@@ -14,15 +14,16 @@
 
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
+#include <gui/mainwindow_p.h>
 #pragma execution_character_set("utf-8")
 
 const QList<QString> directories = {
-    Directory::kMovie, QStandardPaths::writableLocation(QStandardPaths::MoviesLocation),
-    Directory::kPicture, QStandardPaths::writableLocation(QStandardPaths::PicturesLocation),
-    Directory::kDocuments, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-    Directory::kDownload, QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
-    Directory::kMusic, QStandardPaths::writableLocation(QStandardPaths::MusicLocation),
-    Directory::kDesktop, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)
+    QString::fromLocal8Bit(Directory::kMovie), QStandardPaths::writableLocation(QStandardPaths::MoviesLocation),
+    QString::fromLocal8Bit(Directory::kPicture), QStandardPaths::writableLocation(QStandardPaths::PicturesLocation),
+    QString::fromLocal8Bit(Directory::kDocuments), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
+    QString::fromLocal8Bit(Directory::kDownload), QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
+    QString::fromLocal8Bit(Directory::kMusic), QStandardPaths::writableLocation(QStandardPaths::MusicLocation),
+    QString::fromLocal8Bit(Directory::kDesktop), QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)
 };
 
 FileSelectWidget::FileSelectWidget(QListView *siderbarWidget, QWidget *parent)
@@ -64,26 +65,32 @@ void FileSelectWidget::initUI()
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
 
-    QToolButton *backButton = new QToolButton(this);
-    backButton->setText("取消");
-    backButton->setFixedSize(120, 36);
-    backButton->setStyleSheet("background-color: lightgray;");
-    connect(backButton, &QToolButton::clicked, this, &FileSelectWidget::backPage);
+    QToolButton *determineButton = new QToolButton(this);
+    QPalette palette = determineButton->palette();
+    palette.setColor(QPalette::ButtonText, Qt::white);
+    determineButton->setPalette(palette);
+    determineButton->setText("确定");
+    determineButton->setFixedSize(120, 35);
+    determineButton->setStyleSheet("background-color: #0098FF;");
+    QObject::connect(determineButton, &QToolButton::clicked, this, &FileSelectWidget::nextPage);
 
-    QToolButton *nextButton = new QToolButton(this);
-    nextButton->setText("确定");
-    nextButton->setFixedSize(120, 36);
-    nextButton->setStyleSheet("background-color: blue;");
-    connect(nextButton, &QToolButton::clicked, this, &FileSelectWidget::nextPage);
+    QToolButton *cancelButton = new QToolButton(this);
+    cancelButton->setText("取消");
+    cancelButton->setFixedSize(120, 35);
+    cancelButton->setStyleSheet("background-color: lightgray;");
+    QObject::connect(cancelButton, &QToolButton::clicked, this, &FileSelectWidget::backPage);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
-    buttonLayout->addWidget(backButton, Qt::AlignCenter);
-    buttonLayout->addWidget(nextButton, Qt::AlignCenter);
+    buttonLayout->addWidget(cancelButton);
+    buttonLayout->addSpacing(15);
+    buttonLayout->addWidget(determineButton);
+    buttonLayout->setAlignment(Qt::AlignHCenter);
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel1);
     mainLayout->addWidget(fileview);
     mainLayout->addLayout(buttonLayout);
+    mainLayout->addSpacing(20);
 }
 
 void FileSelectWidget::initConnect(QAbstractItemView *view)
@@ -168,7 +175,7 @@ void FileSelectWidget::nextPage()
     //nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
+        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
@@ -178,7 +185,7 @@ void FileSelectWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }

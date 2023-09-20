@@ -71,6 +71,7 @@ void SearchWidget::initUI()
     mainLayout->addLayout(layout2);
     mainLayout->addWidget(tipLabel);
     mainLayout->addLayout(layout);
+
 }
 
 void SearchWidget::updateUserlayout()

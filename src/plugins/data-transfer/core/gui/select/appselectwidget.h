@@ -1,4 +1,4 @@
-#ifndef APPSELECTWIDGET_H
+﻿#ifndef APPSELECTWIDGET_H
 #define APPSELECTWIDGET_H
 
 #include <QCheckBox>
@@ -17,13 +17,14 @@ public:
 
 public slots:
     void nextPage();
+    void backPage();
 
 private:
     void initUI();
     void initSelectFrame();
     void sendOptions();
-    QFrame *selectFrame { nullptr };
-    QGridLayout *selectLayout { nullptr };
+    QFrame *selectFrame{ nullptr };
+    QGridLayout *selectLayout{ nullptr };
 };
 
 #endif

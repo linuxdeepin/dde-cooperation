@@ -1,4 +1,4 @@
-#ifndef CONFIGSELECTWIDGET_H
+﻿#ifndef CONFIGSELECTWIDGET_H
 #define CONFIGSELECTWIDGET_H
 
 #include <QCheckBox>
@@ -17,6 +17,7 @@ public:
 
 public slots:
     void nextPage();
+    void backPage();
 
 private:
     void initUI();

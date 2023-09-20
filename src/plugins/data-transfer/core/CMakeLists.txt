@@ -30,6 +30,7 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.cpp"
     )
+   find_package(Qt5 COMPONENTS Sql REQUIRED)
 elseif (CMAKE_SYSTEM MATCHES "Linux")
     FILE(GLOB BUSS_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
@@ -75,7 +76,11 @@ if (CMAKE_SYSTEM MATCHES "Linux")
         ${DtkWidget_LIBRARIES}
     )
 endif()
-
+if (CMAKE_SYSTEM MATCHES "Windows")
+    target_link_libraries(${PROJECT_NAME}
+        Qt5::Sql
+    )
+endif()
 #install library file
 install(TARGETS
     ${PROJECT_NAME}

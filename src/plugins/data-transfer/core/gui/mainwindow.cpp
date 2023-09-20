@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "mainwindow_p.h"
 
 #include <QScreen>
@@ -18,6 +18,29 @@ MainWindow::~MainWindow()
 {
 
 }
+
+#ifdef WIN32
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    d->paintEvent(event);
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    d->mouseMoveEvent(event);
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    d->mousePressEvent(event);
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    d->mousePressEvent(event);
+}
+#endif
+
 
 MainWindowPrivate::MainWindowPrivate(MainWindow *qq)
     : q(qq)
