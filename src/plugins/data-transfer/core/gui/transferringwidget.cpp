@@ -51,6 +51,7 @@ void TransferringWidget::initUI()
     mainLayout->addWidget(iconLabel);
     mainLayout->addWidget(userLabel);
     mainLayout->addWidget(fileLabel);
+
 }
 
 void TransferringWidget::nextPage()

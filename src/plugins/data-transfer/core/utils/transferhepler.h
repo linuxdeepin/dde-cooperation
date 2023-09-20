@@ -1,8 +1,10 @@
-#ifndef TRANSFEHELPER_H
+﻿#ifndef TRANSFEHELPER_H
 #define TRANSFEHELPER_H
 
 #include <QMap>
 #include <QObject>
+
+#include <QUrl>
 
 class TransferHelper : public QObject
 {
@@ -21,6 +23,10 @@ public:
     QMap<QString, QString> getAppList();
 
     void startTransfer();
+#ifdef WIN32
+    void zipFile(const QUrl& sourceFilePath,QUrl& zipFileSavePath = QUrl());
+    void unZipFile(const QUrl& zipFilePath, QUrl& unZipFilePath = QUrl());
+#endif
 };
 
 #endif

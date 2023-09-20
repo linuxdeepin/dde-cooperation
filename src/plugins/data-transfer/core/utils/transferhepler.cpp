@@ -1,4 +1,4 @@
-#include "optionsmanager.h"
+﻿#include "optionsmanager.h"
 #include "transferhepler.h"
 
 #include <QDateTime>
@@ -6,6 +6,17 @@
 #include <QDebug>
 #include <QDir>
 #include <QStorageInfo>
+#include <QCoreApplication>
+
+#ifdef WIN32
+#include <QProcess>
+namespace zipFileCommand {
+inline constexpr char zipFileBat[] { "./archive.bat" };
+inline constexpr char zipFile[] { "./archive.tar.gz" };
+inline constexpr char unzipFileBat[] { "./unarchive.bat" };
+inline constexpr char unzipFile[] { "./unzipFile" };
+}
+#endif
 
 TransferHelper::TransferHelper()
     : QObject()
@@ -32,10 +43,8 @@ const QStringList TransferHelper::getUesr()
 int TransferHelper::getConnectPassword()
 {
     qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
-
     // 生成随机的六位数字
     int randomNumber = QRandomGenerator::global()->bounded(100000, 999999);
-
     qDebug() << randomNumber;
     return randomNumber;
 }
@@ -88,3 +97,53 @@ void TransferHelper::startTransfer()
 {
     qInfo() << OptionsManager::instance()->getUserOptions();
 }
+
+
+#ifdef WIN32
+
+void TransferHelper::zipFile(const QUrl &sourceFilePath, QUrl &zipFileSavePath)
+{
+    QString filePath = sourceFilePath.toLocalFile();
+    QString zipFile;
+    if(zipFileSavePath.isEmpty())
+    {
+        zipFile =  QString(zipFileCommand::zipFile);
+    }else
+    {
+        zipFile = zipFileSavePath.toLocalFile();
+    }
+
+    QString command = QString(zipFileCommand::zipFileBat) + " " + filePath +" "+zipFile;
+    QProcess process;
+    process.start(command);
+    process.waitForFinished();
+    if (process.exitCode() == 0) {
+        qInfo() << "zip file Command executed successfully!";
+    } else {
+        qInfo() << "zip file Command execution failed."<<process.readAllStandardError();
+    }
+}
+
+void TransferHelper::unZipFile(const QUrl &zipFilePath, QUrl &unZipFilePath)
+{
+    QString zipFile = zipFilePath.toLocalFile();
+    QString unzipFile;
+    if(unZipFilePath.isEmpty())
+    {
+        unzipFile =  QString(zipFileCommand::unzipFile);
+    }else
+    {
+        unzipFile = unZipFilePath.toLocalFile();
+    }
+
+    QString command = QString(zipFileCommand::unzipFileBat) + " " + zipFile +" "+unzipFile;
+    QProcess process;
+    process.start(command);
+    process.waitForFinished();
+    if (process.exitCode() == 0) {
+        qInfo() << "unzip file Command executed successfully!";
+    } else {
+        qInfo() << "unzip file Command execution failed."<<process.readAllStandardError();
+    }
+}
+#endif

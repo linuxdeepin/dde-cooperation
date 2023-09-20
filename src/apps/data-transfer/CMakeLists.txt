@@ -1,4 +1,4 @@
-set(PROJ_NAME "deepin-data-transfer")
+﻿set(PROJ_NAME "deepin-data-transfer")
 
 configure_file(
     "../config.h.in"
@@ -38,6 +38,10 @@ target_link_libraries(${PROJ_NAME}
   Qt${QT_VERSION_MAJOR}::Widgets
   deepin_cross::framework
 )
+
+# 将脚本文件复制到生成目录中
+configure_file(unarchive.bat ${CMAKE_CURRENT_BINARY_DIR}/unarchive.bat COPYONLY)
+configure_file(archive.bat ${CMAKE_CURRENT_BINARY_DIR}/archive.bat COPYONLY)
 
 install(TARGETS ${PROJ_NAME} DESTINATION bin)
 

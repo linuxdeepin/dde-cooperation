@@ -24,6 +24,7 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.cpp"
     )
+
 elseif (CMAKE_SYSTEM MATCHES "Linux")
     FILE(GLOB BUSS_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
@@ -70,6 +71,7 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
+
     ${DEEPIN_DATA_TRANS_PLUGIN_DIR}
 )
 
