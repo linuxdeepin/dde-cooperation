@@ -1,2 +1,2 @@
 add_subdirectory(data-transfer)
-add_subdirectory(cooperation)
+add_subdirectory(deamon)

@@ -8,9 +8,9 @@
 
 #include <dde-cooperation-framework/dpf.h>
 
-static constexpr char kPluginInterface[] { "org.deepin.plugin.cooperation" };
-static constexpr char kPluginCore[] { "cooperation-core" };
-static constexpr char kLibCore[] { "libcooperation-core.so" };
+static constexpr char kPluginInterface[] { "org.deepin.plugin.deamon" };
+static constexpr char kPluginCore[] { "deamon-core" };
+static constexpr char kLibCore[] { "libdeamon-core.so" };
 
 static bool loadPlugins()
 {
@@ -19,7 +19,7 @@ static bool loadPlugins()
     const QString &pluginsDir { DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR };
     qInfo() << QString("Load plugins path : %1").arg(pluginsDir);
     pluginsDirs.push_back(pluginsDir);
-    pluginsDirs.push_back(pluginsDir + "/cooperation");
+    pluginsDirs.push_back(pluginsDir + "/deamon");
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
     pluginsDirs << QString(DEEPIN_DATA_TRANS_PLUGIN_DIR);
