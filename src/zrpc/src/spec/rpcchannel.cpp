@@ -19,7 +19,7 @@
 
 namespace zrpc {
 
-ZRpcChannel::ZRpcChannel(AbNetAddress::ptr addr)
+ZRpcChannel::ZRpcChannel(NetAddress::ptr addr)
     : m_addr(addr) {
 }
 
@@ -41,8 +41,8 @@ void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
         ELOG << "client can not connect to server: " << m_addr.get()->toString();
         return;
     }
-    rpc_controller->SetLocalAddr(m_client->getLocalAddr());
-    rpc_controller->SetPeerAddr(m_client->getPeerAddr());
+    // rpc_controller->SetLocalAddr(m_client->getLocalAddr());
+    // rpc_controller->SetPeerAddr(m_client->getPeerAddr());
 
     pb_struct.service_full_name = method->full_name();
     // DLOG << "call service_name = " << pb_struct.service_full_name;

@@ -10,23 +10,56 @@
 #include <stdio.h>
 #include <functional>
 #include "net/tcpserver.h"
+#include "rpcchannel.h"
+#include "rpccontroller.h"
+#include "netaddress.h"
 
 namespace zrpc {
 
-#define REGISTER_RPCSERVICE(service)                                                               \
+class ZRpcClient {
+
+public:
+    ZRpcClient(char *ip, uint16 port, bool ssl = true);
+
+    void setTimeout(uint32 timeout);
+
+    ZRpcChannel* getChannel() const { return m_channel.get(); }
+    ZRpcController* getControler() const { return m_controller.get(); }
+
+private:
+    ZRpcChannel::ptr m_channel{nullptr};
+    ZRpcController::ptr m_controller{nullptr};
+};
+
+class ZRpcServer {
+
+    #define REG_RPCSERVICE(reg, service)                                                           \
     do {                                                                                           \
-        if (!zrpc::GetServer()->registerService(std::make_shared<service>())) {                    \
-            printf("Start RPC server error, because register protobuf service error, please "  \
-                   "look up rpc log get more details!\n");                                         \
-            _exit(0);                                                                              \
+        if (!reg->registerService(std::make_shared<service>())) {                                  \
+            ELOG << "register protobuf service error!!!";                                          \
+            return false;                                                                          \
         }                                                                                          \
     } while (0)
 
-// bool RegisterService(google::protobuf::Service* service);
+public:
+    ZRpcServer(uint16 port, char *key, char *crt);
 
-void StartRpcServer();
+    template <class T>
+    bool registerService()
+    {
+        if (m_tcpserver == nullptr) {
+            ELOG << "ZRPCServer::init failed!";
+            return false;
+        }
+        // REG_RPCSERVICE(m_tcpserver, T);
+        m_tcpserver->registerService(std::make_shared<T>());
+        return true;
+    }
+    bool start();
 
-TcpServer::ptr GetServer();
+private:
+    TcpServer::ptr m_tcpserver{nullptr};
+};
 
 } // namespace zrpc
 

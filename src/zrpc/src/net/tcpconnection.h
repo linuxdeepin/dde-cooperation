@@ -36,12 +36,12 @@ public:
     TcpConnection(TcpServer *tcp_svr,
                   tcp::Connection *serv_conn,
                   int buff_size,
-                  AbNetAddress::ptr peer_addr);
+                  NetAddress::ptr peer_addr);
 
     TcpConnection(TcpClient *tcp_cli,
                   tcp::Client *cli_conn,
                   int buff_size,
-                  AbNetAddress::ptr peer_addr);
+                  NetAddress::ptr peer_addr);
 
     void setUpClient();
 
@@ -90,7 +90,7 @@ private:
     TcpServer *m_tcp_svr{nullptr};
     TcpClient *m_tcp_cli{nullptr};
 
-    AbNetAddress::ptr m_peer_addr;
+    NetAddress::ptr m_peer_addr;
 
     tcp::Connection *m_serv_conn{nullptr};
     tcp::Client *m_cli_conn{nullptr};

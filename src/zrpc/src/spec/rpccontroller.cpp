@@ -55,18 +55,18 @@ void ZRpcController::SetError(const int err_code, const std::string &err_info) {
     SetErrorCode(err_code);
 }
 
-void ZRpcController::SetPeerAddr(AbNetAddress::ptr addr) {
+void ZRpcController::SetPeerAddr(NetAddress::ptr addr) {
     m_peer_addr = addr;
 }
 
-void ZRpcController::SetLocalAddr(AbNetAddress::ptr addr) {
+void ZRpcController::SetLocalAddr(NetAddress::ptr addr) {
     m_local_addr = addr;
 }
-AbNetAddress::ptr ZRpcController::PeerAddr() {
+NetAddress::ptr ZRpcController::PeerAddr() {
     return m_peer_addr;
 }
 
-AbNetAddress::ptr ZRpcController::LocalAddr() {
+NetAddress::ptr ZRpcController::LocalAddr() {
     return m_local_addr;
 }
 

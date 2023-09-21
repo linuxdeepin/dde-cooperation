@@ -18,10 +18,8 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/coost")
     
 endif()
 
-# 定义功能宏
-add_definitions(-DWITH_OPENSSL)
-add_definitions(-DBUILD_SHARED_LIBS)
-add_subdirectory(coost) 
-
-# coost 打开SSL和动态库 cmake .. -DWITH_LIBCURL=ON -DWITH_OPENSSL=ON -DBUILD_SHARED_LIBS=ON
-# target_compile_definitions(coost PRIVATE WITH_OPENSSL=ON BUILD_SHARED_LIBS=ON)
+# coost 打开SSL和动态库
+# cmake .. -DWITH_LIBCURL=ON -DWITH_OPENSSL=ON -DBUILD_SHARED_LIBS=ON
+set(WITH_OPENSSL ON)
+set(BUILD_SHARED_LIBS ON)
+add_subdirectory(coost)

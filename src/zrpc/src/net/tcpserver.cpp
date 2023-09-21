@@ -14,16 +14,14 @@
 
 namespace zrpc {
 
-TcpServer::TcpServer(AbNetAddress::ptr addr)
+TcpServer::TcpServer(NetAddress::ptr addr)
     : m_addr(addr) {
     m_dispatcher = std::make_shared<ZRpcDispacther>();
     m_codec = std::make_shared<ZRpcCodeC>();
-
-    LOG << "TcpServer setup on [" << m_addr->toString() << "]";
 }
 
 void TcpServer::start() {
-    const char *ip = m_addr.get()->getIP().c_str();
+    const char *ip = m_addr.get()->getIP();
     uint16 port = m_addr.get()->getPort();
     bool ssl = m_addr.get()->isSSL();
 
@@ -32,8 +30,8 @@ void TcpServer::start() {
     _tcp_serv.on_exit([this]() { co::del(this); });
 
     if (ssl) {
-        const char *key_path = m_addr.get()->getKey().c_str();
-        const char *ca_path = m_addr.get()->getCa().c_str();
+        const char *key_path = m_addr.get()->getKey();
+        const char *ca_path = m_addr.get()->getCrt();
         _tcp_serv.start(ip, port, key_path, ca_path);
     } else {
         _tcp_serv.start(ip, port, NULL, NULL);
@@ -93,12 +91,12 @@ TcpConnection::ptr TcpServer::addClient(tcp::Connection *conntion) {
     }
 }
 
-AbNetAddress::ptr TcpServer::getPeerAddr() {
+NetAddress::ptr TcpServer::getPeerAddr() {
     // return m_acceptor->getPeerAddr();
     return m_addr;
 }
 
-AbNetAddress::ptr TcpServer::getLocalAddr() {
+NetAddress::ptr TcpServer::getLocalAddr() {
     return m_addr;
 }
 

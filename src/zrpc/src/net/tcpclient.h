@@ -17,7 +17,7 @@ class TcpClient {
 public:
     typedef std::shared_ptr<TcpClient> ptr;
 
-    TcpClient(AbNetAddress::ptr addr);
+    TcpClient(NetAddress::ptr addr);
 
     ~TcpClient();
 
@@ -39,9 +39,9 @@ public:
 
     const std::string &getErrInfo() { return m_err_info; }
 
-    AbNetAddress::ptr getPeerAddr() const { return m_peer_addr; }
+    NetAddress::ptr getPeerAddr() const { return m_peer_addr; }
 
-    AbNetAddress::ptr getLocalAddr() const { return m_local_addr; }
+    NetAddress::ptr getLocalAddr() const { return m_local_addr; }
 
     AbstractCodeC::ptr getCodeC() { return m_codec; }
 
@@ -53,8 +53,8 @@ private:
     bool m_is_stop{false};
     std::string m_err_info; // error info of client
 
-    AbNetAddress::ptr m_local_addr{nullptr};
-    AbNetAddress::ptr m_peer_addr{nullptr};
+    NetAddress::ptr m_local_addr{nullptr};
+    NetAddress::ptr m_peer_addr{nullptr};
     TcpConnection::ptr m_connection{nullptr};
 
     AbstractCodeC::ptr m_codec{nullptr};

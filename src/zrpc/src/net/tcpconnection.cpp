@@ -17,7 +17,7 @@ namespace zrpc {
 TcpConnection::TcpConnection(TcpServer *tcp_svr,
                              tcp::Connection *serv_conn,
                              int buff_size,
-                             AbNetAddress::ptr peer_addr)
+                             NetAddress::ptr peer_addr)
     : m_state(Connected)
     , m_connection_type(ServerConnection)
     , m_peer_addr(peer_addr) {
@@ -34,7 +34,7 @@ TcpConnection::TcpConnection(TcpServer *tcp_svr,
 TcpConnection::TcpConnection(TcpClient *tcp_cli,
                              tcp::Client *cli_conn,
                              int buff_size,
-                             AbNetAddress::ptr peer_addr)
+                             NetAddress::ptr peer_addr)
     : m_state(NotConnected)
     , m_connection_type(ClientConnection)
     , m_peer_addr(peer_addr) {

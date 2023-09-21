@@ -64,11 +64,18 @@ public:
 int main(int argc, char *argv[]) {
     printf("Start RPC server\n");
     flag::parse(argc, argv);
-    REGISTER_RPCSERVICE(QueryServiceImpl);
+
+    char key[] = "/home/doll/public/certificates/desktop.key";
+    char crt[] = "/home/doll/public/certificates/desktop.crt";
+
+    zrpc::ZRpcServer *server = new zrpc::ZRpcServer(7788, key, crt);
+    server->registerService<QueryServiceImpl>();
 
     printf("RPC server run..\n");
-    zrpc::StartRpcServer();
+    // run in other co is OK
+    server->start();
 
+    printf("RPC server listening..\n");
     while (true)
         sleep::sec(80000);
 

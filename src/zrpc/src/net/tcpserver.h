@@ -19,7 +19,7 @@ class TcpServer {
 public:
     typedef std::shared_ptr<TcpServer> ptr;
 
-    TcpServer(ServerAddress::ptr addr);
+    TcpServer(NetAddress::ptr addr);
 
     ~TcpServer();
 
@@ -38,9 +38,9 @@ public:
 
     AbstractCodeC::ptr getCodec();
 
-    AbNetAddress::ptr getPeerAddr();
+    NetAddress::ptr getPeerAddr();
 
-    AbNetAddress::ptr getLocalAddr();
+    NetAddress::ptr getLocalAddr();
 
 private:
     TcpConnection::ptr addClient(tcp::Connection *conntion);
@@ -51,7 +51,7 @@ private:
     bool _started;
     bool _stopped;
 
-    AbNetAddress::ptr m_addr;
+    NetAddress::ptr m_addr;
 
     int m_tcp_counts{0};
 

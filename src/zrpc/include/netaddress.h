@@ -12,89 +12,44 @@
 
 namespace zrpc {
 
-class AbNetAddress {
+// typedef  struct net_address_t {
+//     char ip[128] = {0};
+//     uint16 port;
+//     bool use_ssl;
+//     char ssl_key[4096] = {0};
+//     char ssl_crt[4096] = {0};
+// } NetAddress;
+
+class NetAddress {
 
 public:
-    typedef std::shared_ptr<AbNetAddress> ptr;
+    typedef std::shared_ptr<NetAddress> ptr;
 
-    virtual fastring toString() const = 0;
-
-    virtual fastring getIP() const = 0;
-
-    virtual int getPort() const = 0;
-
-    virtual bool isSSL() const = 0;
-
-    virtual fastring getKey() const = 0;
-
-    virtual fastring getCa() const = 0;
-};
-
-class ServerAddress : public AbNetAddress {
-
-public:
-    ServerAddress(const fastring &ip, uint16 port, fastring key, fastring ca);
-
-    ServerAddress(const fastring &addr, fastring key, fastring ca);
-
-    ServerAddress(uint16 port, fastring key, fastring ca);
+    NetAddress(const char *ip, uint16 port, char *key, char *crt);
+    NetAddress(const char *ip, uint16 port, bool ssl);
 
     fastring toString() const {
         fastream ss;
-        ss << m_ip << ":" << m_port;
+        ss << m_ip << ":" << m_port << ":" << m_ssl_key << ":" << m_ssl_crt;
         return ss.str();
     }
 
-    fastring getIP() const { return m_ip; }
+    char* getIP() { return m_ip; }
 
-    int getPort() const { return m_port; }
+    int getPort() { return m_port; }
 
-    bool isSSL() const { return m_useSSL; }
+    bool isSSL() { return m_ssl; }
 
-    fastring getKey() const { return m_key_path; }
+    char* getKey() { return m_ssl_key; }
 
-    fastring getCa() const { return m_ca_path; }
-
-private:
-    fastring m_key_path;
-    fastring m_ca_path;
-
-    fastring m_ip;
-    uint16 m_port;
-
-    bool m_useSSL;
-};
-
-class ClientAddress : public AbNetAddress {
-
-public:
-    ClientAddress(const fastring &ip, uint16 port, bool ssl);
-
-    ClientAddress(const fastring &addr, bool ssl);
-
-    ClientAddress(uint16 port, bool ssl);
-
-    fastring toString() const {
-        fastream ss;
-        ss << m_ip << ":" << m_port;
-        return ss.str();
-    }
-
-    fastring getIP() const { return m_ip; }
-
-    int getPort() const { return m_port; }
-
-    bool isSSL() const { return m_useSSL; }
-
-    fastring getKey() const { return ""; }
-
-    fastring getCa() const { return ""; }
+    char* getCrt() { return m_ssl_crt; }
 
 private:
-    fastring m_ip;
+    char m_ip[128] = {0};
     uint16 m_port;
-
-    bool m_useSSL;
+    bool m_ssl;
+    char m_ssl_key[4096] = {0};
+    char m_ssl_crt[4096] = {0};
 };
 
 } // namespace zrpc

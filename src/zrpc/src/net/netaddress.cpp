@@ -7,57 +7,32 @@
 
 namespace zrpc {
 
-ServerAddress::ServerAddress(const fastring &ip, uint16 port, fastring key, fastring ca)
-    : m_ip(ip)
-    , m_port(port)
-    , m_key_path(key)
-    , m_ca_path(ca) {
-}
-
-ServerAddress::ServerAddress(const fastring &addr, fastring key, fastring ca) {
-    size_t i = addr.find_first_of(":");
-    if (i == addr.npos) {
-        ELOG << "invalid addr[" << addr << "]";
-        return;
-    }
-    m_ip = addr.substr(0, i);
-    m_port = std::atoi(addr.substr(i + 1, addr.size() - i - 1).c_str());
-    m_key_path = key;
-    m_ca_path = ca;
-}
-
-ServerAddress::ServerAddress(uint16 port, fastring key, fastring ca)
-    : m_key_path(key)
-    , m_ca_path(ca)
-    , m_port(port) {
-
-    if (m_key_path.empty() || m_ca_path.empty()) {
-        m_useSSL = false;
+NetAddress::NetAddress(const char *ip, uint16 port, char *key, char *crt) {
+    if ((ip && *ip)) {
+        strcpy(m_ip, ip);
     } else {
-        m_useSSL = true;
+        strcpy(m_ip, "0.0.0.0");
     }
-}
-
-ClientAddress::ClientAddress(const fastring &ip, uint16 port, bool ssl)
-    : m_ip(ip)
-    , m_port(port)
-    , m_useSSL(ssl) {
-}
-
-ClientAddress::ClientAddress(const fastring &addr, bool ssl) {
-    size_t i = addr.find_first_of(":");
-    if (i == addr.npos) {
-        ELOG << "invalid addr[" << addr << "]";
-        return;
+    if ((key && *key) && (crt && *crt)) {
+      strcpy(m_ssl_key, key);
+      strcpy(m_ssl_crt, crt);
+      m_ssl = true;
+    } else {
+      m_ssl = false;
     }
-    m_ip = addr.substr(0, i);
-    m_port = std::atoi(addr.substr(i + 1, addr.size() - i - 1).c_str());
-    m_useSSL = ssl;
+
+    m_port = port;
 }
 
-ClientAddress::ClientAddress(uint16 port, bool ssl)
-    : m_port(port)
-    , m_useSSL(ssl) {
+NetAddress::NetAddress(const char *ip, uint16 port, bool ssl) {
+    if ((ip && *ip)) {
+        strcpy(m_ip, ip);
+    } else {
+        strcpy(m_ip, "0.0.0.0");
+    }
+
+    m_port = port;
+    m_ssl = ssl;
 }
 
 } // namespace zrpc

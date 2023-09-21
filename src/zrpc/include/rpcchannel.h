@@ -16,7 +16,7 @@ class ZRpcChannel : public google::protobuf::RpcChannel {
 
 public:
     typedef std::shared_ptr<ZRpcChannel> ptr;
-    ZRpcChannel(AbNetAddress::ptr addr);
+    ZRpcChannel(NetAddress::ptr addr);
     ~ZRpcChannel() = default;
 
     void CallMethod(const google::protobuf::MethodDescriptor *method,
@@ -26,7 +26,7 @@ public:
                     google::protobuf::Closure *done);
 
 private:
-    AbNetAddress::ptr m_addr;
+    NetAddress::ptr m_addr;
 };
 
 } // namespace zrpc

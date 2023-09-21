@@ -12,14 +12,12 @@
 
 namespace zrpc {
 
-TcpClient::TcpClient(AbNetAddress::ptr addr)
+TcpClient::TcpClient(NetAddress::ptr addr)
     : m_peer_addr(addr) {
-    m_local_addr = std::make_shared<ClientAddress>("127.0.0.1", 0, true);
 
     m_codec = std::make_shared<ZRpcCodeC>();
 
-    char ip[16] = {0};
-    strcpy(ip, m_peer_addr.get()->getIP().c_str());
+    char *ip = m_peer_addr.get()->getIP();
     uint16 port = m_peer_addr.get()->getPort();
     bool ssl = m_peer_addr.get()->isSSL();
 

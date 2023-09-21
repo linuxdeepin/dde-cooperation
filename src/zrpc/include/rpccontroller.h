@@ -51,13 +51,13 @@ public:
 
     void SetError(const int err_code, const std::string &err_info);
 
-    void SetPeerAddr(AbNetAddress::ptr addr);
+    void SetPeerAddr(NetAddress::ptr addr);
 
-    void SetLocalAddr(AbNetAddress::ptr addr);
+    void SetLocalAddr(NetAddress::ptr addr);
 
-    AbNetAddress::ptr PeerAddr();
+    NetAddress::ptr PeerAddr();
 
-    AbNetAddress::ptr LocalAddr();
+    NetAddress::ptr LocalAddr();
 
     void SetTimeout(const int timeout);
 
@@ -77,8 +77,8 @@ private:
     std::string m_msg_req;    // msg_req, identify once rpc request and response
     bool m_is_failed{false};
     bool m_is_cancled{false};
-    AbNetAddress::ptr m_peer_addr;
-    AbNetAddress::ptr m_local_addr;
+    NetAddress::ptr m_peer_addr;
+    NetAddress::ptr m_local_addr;
 
     int m_timeout{5000};       // max call rpc timeout
     std::string m_method_name; // method name
