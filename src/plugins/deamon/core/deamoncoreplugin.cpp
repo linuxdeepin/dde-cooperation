@@ -2,19 +2,19 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "cooperationcoreplugin.h"
+#include "deamoncoreplugin.h"
 #include "base/baseutils.h"
 
 #include <QDebug>
 #include <QUrl>
 
-using namespace cooperation_core;
+using namespace deamon_core;
 
-void CooperationCorePlugin::initialize()
+void DeamonCorePlugin::initialize()
 {
 }
 
-bool CooperationCorePlugin::start()
+bool DeamonCorePlugin::start()
 {
     // return loadMainPage();
     return true;

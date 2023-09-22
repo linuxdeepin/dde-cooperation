@@ -11,6 +11,12 @@
 #    warning "cmake unseting definition DDE_COOPERATION_PLUGIN_ROOT_DIR"
 #endif
 
+#ifndef DEEPIN_DEAMON_PLUGIN_DIR
+#    define DEEPIN_DEAMON_PLUGIN_DIR "${DEEPIN_DEAMON_PLUGIN_DIR}"
+#elif
+#    warning "cmake unseting definition DEEPIN_DEAMON_PLUGIN_DIR"
+#endif
+
 #ifndef DEEPIN_DATA_TRANS_PLUGIN_DIR
 #    define DEEPIN_DATA_TRANS_PLUGIN_DIR "${DEEPIN_DATA_TRANS_PLUGIN_DIR}"
 #elif

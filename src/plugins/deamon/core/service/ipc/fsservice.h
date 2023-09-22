@@ -8,7 +8,7 @@
 
 #include <QObject>
 
-#include "rpc/fs.h"
+#include "ipc/fs.h"
 
 namespace ipc {
 

@@ -9,10 +9,8 @@
 #include <memory>
 #include <stdio.h>
 #include <functional>
-#include "net/tcpserver.h"
 #include "rpcchannel.h"
 #include "rpccontroller.h"
-#include "netaddress.h"
 
 namespace zrpc {
 
@@ -33,32 +31,22 @@ private:
 
 class ZRpcServer {
 
-    #define REG_RPCSERVICE(reg, service)                                                           \
-    do {                                                                                           \
-        if (!reg->registerService(std::make_shared<service>())) {                                  \
-            ELOG << "register protobuf service error!!!";                                          \
-            return false;                                                                          \
-        }                                                                                          \
-    } while (0)
-
 public:
     ZRpcServer(uint16 port, char *key, char *crt);
+    ~ZRpcServer();
 
     template <class T>
     bool registerService()
     {
-        if (m_tcpserver == nullptr) {
-            ELOG << "ZRPCServer::init failed!";
-            return false;
-        }
-        // REG_RPCSERVICE(m_tcpserver, T);
-        m_tcpserver->registerService(std::make_shared<T>());
-        return true;
+        return doregister(std::make_shared<T>());
     }
+
     bool start();
 
 private:
-    TcpServer::ptr m_tcpserver{nullptr};
+    bool doregister(std::shared_ptr<google::protobuf::Service> service);
+
+    void* _p;
 };
 
 } // namespace zrpc

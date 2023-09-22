@@ -6,35 +6,17 @@ enable_language(ASM)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11 -Wall -Wno-deprecated -Wno-unused-but-set-variable")
 
-include(protobuf-generate)
-
 # do not find, check system installed protobuf package
 if(NOT EXISTS "${PROTOBUF_PROTOC_EXECUTABLE}")
-    find_package(Protobuf REQUIRED)
-    if (${PROTOBUF_FOUND})
-        message("protobuf found")
-    else ()
-        message(FATAL_ERROR "Cannot find Protobuf")
-    endif ()
-
-    include_directories(${Protobuf_INCLUDE_DIRS})
-
-# 生成转换proto文件
-# protoc --cpp_out=./ sample.proto
+    # 生成转换proto文件
+    # protoc --cpp_out=./ sample.proto
     set(PROTO_FILES ${PROJECT_SOURCE_DIR}/sample.pb.cc)
-    set(PROTOBUF_LIB
-        ${Protobuf_LIBRARY}
-    )
 # use the local customize protobuf package
 else ()
-    include_directories(${PROTOBUF_DIR}/src)
     PROTOBUF_GENERATE_CPP(PROTO_RPC_SAMPLE_SRC PROTO_RPC_SAMPLE_HDR sample.proto)
     set(PROTO_FILES
         ${PROTO_RPC_SAMPLE_SRC}
         ${PROTO_RPC_SAMPLE_HDR}
-    )
-    set(PROTOBUF_LIB
-        protobuf::libprotobuf
     )
 endif()
 
@@ -45,10 +27,6 @@ message("use PROTOBUF_LIB: ${PROTOBUF_LIB}")
 set(PATH_BIN bin)
 set(LIBS
     zrpc
-    ${PROTOBUF_LIB}
-    # dl
-    # pthread
-    co
 )
 
 # server

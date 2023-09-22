@@ -11,12 +11,12 @@ QT_BEGIN_NAMESPACE
 // class QQmlApplicationEngine;
 QT_END_NAMESPACE
 
-namespace cooperation_core {
+namespace deamon_core {
 
-class CooperationCorePlugin : public DPF_NAMESPACE::Plugin
+class DeamonCorePlugin : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.cooperation" FILE "cooperationcoreplugin.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.deamon" FILE "deamoncoreplugin.json")
 
     DPF_EVENT_NAMESPACE(deepin_cross_cooperation)
 

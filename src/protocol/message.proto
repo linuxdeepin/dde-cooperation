@@ -1,4 +1,5 @@
 syntax = "proto3";
+option cc_generic_services = true;
 
 option java_multiple_files = true;
 option java_package = "uniapis";
@@ -221,14 +222,24 @@ message Misc {
   }
 }
 
-message Message {
-  string version = 1;  // 协议版本，如：1.0.0
-  oneof union {
-    LoginRequest login_request = 2;
-    LoginResponse login_response = 3;
-    FileAction file_action = 4;
-    FileResponse file_response = 5;
-    Misc misc = 6;
-    PeerInfo peer_info = 7;
-  }
+// message Message {
+//   string version = 1;  // 协议版本，如：1.0.0
+//   oneof union {
+//     LoginRequest login_request = 2;
+//     LoginResponse login_response = 3;
+//     FileAction file_action = 4;
+//     FileResponse file_response = 5;
+//     Misc misc = 6;
+//     PeerInfo peer_info = 7;
+//   }
+// }
+
+service RemoteService {
+  rpc login(LoginRequest) returns (LoginResponse);
+
+  rpc query_peerinfo(PeerInfo) returns (PeerInfo);
+
+  rpc misc(Misc) returns (Misc);
+
+  rpc fsaction(FileAction) returns (FileResponse);
 }

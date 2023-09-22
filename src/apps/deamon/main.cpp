@@ -22,7 +22,7 @@ static bool loadPlugins()
     pluginsDirs.push_back(pluginsDir + "/deamon");
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
-    pluginsDirs << QString(DEEPIN_DATA_TRANS_PLUGIN_DIR);
+    pluginsDirs << QString(DEEPIN_DEAMON_PLUGIN_DIR);
 #endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
