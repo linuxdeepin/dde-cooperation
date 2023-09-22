@@ -11,6 +11,8 @@ public:
     SuccessWidget(QWidget *parent = nullptr);
     ~SuccessWidget();
 
+    void backPage();
+
 private:
     void initUI();
 };

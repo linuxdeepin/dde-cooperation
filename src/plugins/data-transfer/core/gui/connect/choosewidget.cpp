@@ -35,8 +35,8 @@ void ChooseWidget::initUI()
     textLabel1->setFont(font);
     textLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    ModeItem *winItem = new ModeItem("从windows PC", QIcon ::fromTheme("folder"), this);
-    ModeItem *packageItem = new ModeItem("从备份文件导入", QIcon ::fromTheme("folder"), this);
+    ModeItem *winItem = new ModeItem("从windows PC", QIcon(":/icon/select1.png"), this);
+    ModeItem *packageItem = new ModeItem("从备份文件导入", QIcon(":/icon/select2.png"), this);
 
     QHBoxLayout *modeLayout = new QHBoxLayout(this);
     modeLayout->addWidget(winItem, Qt::AlignTop);
@@ -46,18 +46,26 @@ void ChooseWidget::initUI()
 
     QToolButton *nextButton = new QToolButton(this);
     nextButton->setText("下一步");
-    nextButton->setFixedSize(300, 35);
-    nextButton->setStyleSheet("background-color: lightgray;");
+    nextButton->setFixedSize(250, 35);
+    nextButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.03);");
     nextButton->setEnabled(false);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     buttonLayout->addWidget(nextButton, Qt::AlignCenter);
 
-    mainLayout->addSpacing(40);
+    IndexLabel *indelabel = new IndexLabel(0, this);
+    indelabel->setAlignment(Qt::AlignCenter);
+
+    QHBoxLayout *indexLayout = new QHBoxLayout(this);
+    indexLayout->addWidget(indelabel, Qt::AlignCenter);
+
+    mainLayout->addSpacing(30);
     mainLayout->addWidget(textLabel1);
     mainLayout->addLayout(modeLayout);
-    mainLayout->addSpacing(40);
+    mainLayout->addSpacing(100);
     mainLayout->addLayout(buttonLayout);
+    mainLayout->addSpacing(10);
+    mainLayout->addLayout(indexLayout);
 
     connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
     connect(winItem->checkBox, &QCheckBox::stateChanged, [packageItem, nextButton](int state) {
@@ -91,13 +99,15 @@ void ChooseWidget::nextPage()
 ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
     : QFrame(parent)
 {
-    setStyleSheet("background-color: gray; border-radius: 10px;");
-    setFixedSize(250, 250);
+    setStyleSheet("background-color: rgba(0, 0, 0, 0.03); border-radius: 10px;");
+    setFixedSize(268, 222);
 
     checkBox = new QCheckBox(text, this);
+    checkBox->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
 
     QLabel *iconLabel = new QLabel(this);
-    iconLabel->setPixmap(icon.pixmap(120, 120));
+    iconLabel->setPixmap(icon.pixmap(150, 120));
+    iconLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
     iconLabel->setAlignment(Qt::AlignCenter);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);

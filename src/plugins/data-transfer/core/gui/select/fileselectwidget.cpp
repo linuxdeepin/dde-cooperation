@@ -139,7 +139,6 @@ void FileSelectWidget::updateFileView()
     aync = false;
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(fileview->model());
     for (int i = 0; model && i < fileinfos.count() && i < 20; i++) {
-
         auto item = model->item(i);
         if (!seletFileList.contains(fileinfos[i].filePath()))
             item->setCheckState(Qt::Unchecked);

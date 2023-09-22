@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QToolButton>
 #include <QStackedWidget>
+#include <QApplication>
 
 #pragma execution_character_set("utf-8")
 
@@ -27,7 +28,11 @@ void SuccessWidget::initUI()
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
 
-    QLabel *titileLabel = new QLabel("传输成功", this);
+    QLabel *iconLabel = new QLabel(this);
+    iconLabel->setPixmap(QIcon(":/icon/success-128.svg").pixmap(73, 73));
+    iconLabel->setAlignment(Qt::AlignCenter);
+
+    QLabel *titileLabel = new QLabel("迁移完成", this);
     titileLabel->setFixedHeight(50);
     QFont font;
     font.setPointSize(16);
@@ -35,11 +40,39 @@ void SuccessWidget::initUI()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *iconLabel = new QLabel(this);
-    iconLabel->setPixmap(QIcon::fromTheme("folder").pixmap(200, 100));
-    iconLabel->setAlignment(Qt::AlignCenter);
+    QToolButton *backButton = new QToolButton(this);
+    backButton->setText("返回");
+    backButton->setFixedSize(120, 35);
+    backButton->setStyleSheet("background-color: lightgray;");
+    connect(backButton, &QToolButton::clicked, this, &SuccessWidget::backPage);
+
+    QToolButton *nextButton = new QToolButton(this);
+    QPalette palette = nextButton->palette();
+    palette.setColor(QPalette::ButtonText, Qt::white);
+    nextButton->setPalette(palette);
+    nextButton->setText("退出");
+    nextButton->setFixedSize(120, 35);
+    nextButton->setStyleSheet("background-color: #0098FF;");
+    connect(nextButton, &QToolButton::clicked, qApp, &QApplication::quit);
+
+    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    buttonLayout->addWidget(backButton);
+    buttonLayout->addSpacing(15);
+    buttonLayout->addWidget(nextButton);
+    buttonLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(iconLabel);
     mainLayout->addSpacing(100);
+    mainLayout->addLayout(buttonLayout);
+}
+
+void SuccessWidget::backPage()
+{
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    if (stackedWidget) {
+        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+    } else {
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+    }
 }

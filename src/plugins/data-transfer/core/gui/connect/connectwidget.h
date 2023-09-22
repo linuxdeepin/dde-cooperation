@@ -12,15 +12,17 @@ public:
     ConnectWidget(QWidget *parent = nullptr);
     ~ConnectWidget();
 
-    void initPassWord();
+    void initConnectLayout();
     void updatePassWord();
 
 public slots:
     void nextPage();
+    void backPage();
 
 private:
     void initUI();
-    QGridLayout *passwordLayout = nullptr;
+    QHBoxLayout *connectLayout = nullptr;
+    int remainingTime = 300;
 };
 
 #endif

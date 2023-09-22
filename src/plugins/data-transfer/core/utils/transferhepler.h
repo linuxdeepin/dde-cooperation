@@ -21,6 +21,10 @@ public:
     QMap<QString, QString> getAppList();
 
     void startTransfer();
+
+Q_SIGNALS:
+    void connectSucceed();
+    void transferSucceed();
 };
 
 #endif

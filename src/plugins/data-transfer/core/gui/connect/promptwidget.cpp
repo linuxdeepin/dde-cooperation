@@ -57,22 +57,29 @@ void PromptWidget::initUI()
 
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
-    backButton->setFixedSize(300, 35);
+    backButton->setFixedSize(120, 35);
     backButton->setStyleSheet("background-color: lightgray;");
     connect(backButton, &QToolButton::clicked, this, &PromptWidget::backPage);
 
     QToolButton *nextButton = new QToolButton(this);
+    QPalette palette = nextButton->palette();
+    palette.setColor(QPalette::ButtonText, Qt::white);
+    nextButton->setPalette(palette);
     nextButton->setText("确定");
-    nextButton->setFixedSize(300, 35);
-    nextButton->setStyleSheet("background-color: blue;");
+    nextButton->setFixedSize(120, 35);
+    nextButton->setStyleSheet("background-color: #0098FF;");
     connect(nextButton, &QToolButton::clicked, this, &PromptWidget::nextPage);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
-    buttonLayout->addWidget(backButton, Qt::AlignCenter);
-    buttonLayout->addWidget(nextButton, Qt::AlignCenter);
+    buttonLayout->addWidget(backButton);
+    buttonLayout->addSpacing(15);
+    buttonLayout->addWidget(nextButton);
+    buttonLayout->setAlignment(Qt::AlignCenter);
 
+    mainLayout->addSpacing(30);
     mainLayout->addWidget(textLabel);
     mainLayout->addLayout(gridLayout);
+    mainLayout->addSpacing(250);
     mainLayout->addLayout(buttonLayout);
 }
 

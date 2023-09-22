@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>computer</title>
+    <defs>
+        <filter x="6.8%" y="14.1%" width="86.5%" height="75.0%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.15 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="46.8261315%" y1="0.564822635%" x2="46.8261315%" y2="99.6640703%" id="linearGradient-2">
+            <stop stop-color="#2F80FF" offset="0%"></stop>
+            <stop stop-color="#00296A" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="48.4916239%" y1="0%" x2="89.6040815%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#FFFFFF" stop-opacity="0.0831819548" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="65.4361786%" id="linearGradient-4">
+            <stop stop-color="#B2C0E1" offset="0%"></stop>
+            <stop stop-color="#E1EEFB" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="computer" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="电脑" filter="url(#filter-1)">
+            <path d="M14,16 L82,16 C84.209139,16 86,17.790861 86,20 L86,66 L86,66 L10,66 L10,20 C10,17.790861 11.790861,16 14,16 Z" id="蒙版" fill="#F6FAFF"></path>
+            <path d="M14.0034783,18 L81.9965217,18 C83.1030122,18 84,18.8969878 84,20.0034783 L84,64 L84,64 L12,64 L12,20.0034783 C12,18.8969878 12.8969878,18 14.0034783,18 Z" id="蒙版" fill="url(#linearGradient-2)"></path>
+            <rect id="矩形" fill-opacity="0.457797817" fill="#FFFFFF" x="19" y="24" width="4" height="4" rx="0.319999993"></rect>
+            <rect id="矩形" fill-opacity="0.457797817" fill="#FFFFFF" x="19" y="32" width="4" height="4" rx="0.319999993"></rect>
+            <rect id="矩形" fill-opacity="0.457797817" fill="#FFFFFF" x="19" y="40" width="4" height="4" rx="0.319999993"></rect>
+            <polygon id="路径-4" fill="url(#linearGradient-3)" points="37 16 69.1914364 66 86 66 86 16"></polygon>
+            <path d="M10,66 L86,66 L86,69.9965217 C86,71.1030122 85.1030122,72 83.9965217,72 L12.0034783,72 C10.8969878,72 10,71.1030122 10,69.9965217 L10,66 L10,66 Z" id="矩形" fill="#E1EEFB"></path>
+            <path d="M36.8283403,81 C36.0791982,81.003238 35.5408432,80.8997916 35.2132755,80.6895837 C34.9029481,80.4904393 34.9312781,80.2243833 35.2982653,79.8914158 L35.3625656,79.8353016 L39.9620416,78.0661814 C40.5553944,77.837957 40.9676438,77.2925628 41.0253488,76.6594561 L41.4500387,72 L41.4500387,72 L54.5499613,72 L54.9746512,76.6594561 C55.0323562,77.2925628 55.4446056,77.837957 56.0379584,78.0661814 L60.6374344,79.8353016 L60.6374344,79.8353016 C61.0645289,80.194615 61.1142923,80.4793757 60.7867245,80.6895837 C60.4809946,80.8857777 59.9916457,80.9889706 59.3186776,80.9991623 L36.8283403,81 Z" id="路径" fill="url(#linearGradient-4)"></path>
+        </g>
+    </g>
+</svg>

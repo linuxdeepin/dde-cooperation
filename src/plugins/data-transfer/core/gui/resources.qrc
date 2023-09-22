@@ -4,5 +4,15 @@
         <file>icon/icon.svg</file>
         <file>icon/picture-home.png</file>
         <file>icon/picture-home@2x.png</file>
+        <file>icon/select1.png</file>
+        <file>icon/select1@2x.png</file>
+        <file>icon/select2.png</file>
+        <file>icon/select2@2x.png</file>
+        <file>icon/computer.svg</file>
+        <file>icon/wait.png</file>
+        <file>icon/wait@2x.png</file>
+        <file>icon/transfer.png</file>
+        <file>icon/transfer@2x.png</file>
+        <file>icon/success-128.svg</file>
     </qresource>
 </RCC>

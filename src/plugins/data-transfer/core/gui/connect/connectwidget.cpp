@@ -1,10 +1,14 @@
-﻿#include "connectwidget.h"
+﻿#include "choosewidget.h"
+#include "connectwidget.h"
 
 #include <QLabel>
 #include <QDebug>
 #include <QToolButton>
 #include <QStackedWidget>
 #include <QLineEdit>
+#include <QTimer>
+#include <QHostInfo>
+#include <QNetworkInterface>
 
 #include <utils/transferhepler.h>
 
@@ -30,76 +34,161 @@ void ConnectWidget::initUI()
     mainLayout->addSpacing(30);
 
     QLabel *titileLabel = new QLabel("准备连接", this);
-    titileLabel->setFixedHeight(70);
+    titileLabel->setFixedHeight(40);
     QFont font;
     font.setPointSize(16);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tipLabel1 = new QLabel("请在传输设备上输入以下连接密码，确认输入后\n请点击“下一步”。", this);
+    QLabel *tipLabel1 = new QLabel("请前往Windows，打开迁移工具，输入本机IP和连接密码。", this);
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    tipLabel1->setFixedHeight(80);
+    tipLabel1->setFixedHeight(20);
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
 
-    passwordLayout = new QGridLayout(this);
-    initPassWord();
+    connectLayout = new QHBoxLayout(this);
+    initConnectLayout();
 
-    QLabel *tipLabel2 = new QLabel("密码有效时间为5分钟，请尽快输入密码。", this);
-    tipLabel2->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    tipLabel2->setFixedHeight(80);
-    font.setPointSize(10);
+    QLabel *tipLabel = new QLabel("验证码已过期，请刷新获取新的验证码", this);
+    tipLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+    tipLabel->setFixedHeight(80);
+    font.setPointSize(8);
     font.setWeight(QFont::Thin);
-    tipLabel2->setFont(font);
+    tipLabel->setFont(font);
     QPalette palette;
-    palette.setColor(QPalette::WindowText, Qt::red);   // 设置文本颜色为红色
-    tipLabel2->setPalette(palette);
+    QColor color;
+    color.setNamedColor("#FF5736");
+    palette.setColor(QPalette::WindowText, color);   // 设置文本颜色为红色
+    tipLabel->setPalette(palette);
+    tipLabel->setMargin(5);
+    tipLabel->setVisible(false);
 
     QToolButton *nextButton = new QToolButton(this);
-    nextButton->setText("下一步");
-    nextButton->setFixedSize(300, 35);
-    nextButton->setStyleSheet("background-color: lightgray;");
+    nextButton->setText("返回");
+    nextButton->setFixedSize(250, 36);
+    nextButton->setStyleSheet("background-color: #E3E3E3;");
     connect(nextButton, &QToolButton::clicked, this, &ConnectWidget::nextPage);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(nextButton, Qt::AlignCenter);
 
+    IndexLabel *indelabel = new IndexLabel(1, this);
+    indelabel->setAlignment(Qt::AlignCenter);
+
+    QHBoxLayout *indexLayout = new QHBoxLayout(this);
+    indexLayout->addWidget(indelabel, Qt::AlignCenter);
+
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel1);
-    mainLayout->addLayout(passwordLayout);
-    mainLayout->addWidget(tipLabel2);
+    mainLayout->addLayout(connectLayout);
+    mainLayout->addWidget(tipLabel);
     mainLayout->addLayout(layout);
+    mainLayout->addSpacing(10);
+    mainLayout->addLayout(indexLayout);
 }
 
-void ConnectWidget::initPassWord()
+void ConnectWidget::initConnectLayout()
 {
+    //ipLayout
+    QList<QHostAddress> address = QNetworkInterface::allAddresses();
+
+    QVBoxLayout *ipVLayout = new QVBoxLayout(this);
+    QLabel *iconLabel = new QLabel(this);
+    QLabel *nameLabel = new QLabel(QHostInfo::localHostName() + "的电脑", this);
+    QLabel *ipLabel = new QLabel(this);
+
+    iconLabel->setPixmap(QIcon(":/icon/computer.svg").pixmap(96, 96));
+
+    ipLabel->setStyleSheet("background-color: rgba(0, 129, 255, 0.2); border-radius: 16;");
+    QString ip = QString("<font size=12px >本机 IP： </font><span style='font-size: 17px; font-weight: 600;'>%1</span>")
+                         .arg(address[2].toString());
+    ipLabel->setText(ip);
+    ipLabel->setFixedSize(204, 32);
+
+    iconLabel->setAlignment(Qt::AlignCenter);
+    nameLabel->setAlignment(Qt::AlignCenter);
+    ipLabel->setAlignment(Qt::AlignCenter);
+
+    ipVLayout->addWidget(iconLabel);
+    ipVLayout->addWidget(nameLabel);
+    ipVLayout->addWidget(ipLabel);
+    ipVLayout->setAlignment(Qt::AlignCenter);
+
+    //passwordLayout
+
     QString password = QString::number(TransferHelper::instance()->getConnectPassword());
-    for (int i = 0; i < password.count(); i++) {
-        QLabel *digitLabel = new QLabel(QString(password[i]), this);
-        digitLabel->setAlignment(Qt::AlignCenter);
-        digitLabel->setStyleSheet("border: 2px solid gray; border-radius: 7px;");
-        digitLabel->setFixedSize(50, 50);
-        passwordLayout->addWidget(digitLabel, 0, i);
-    }
+    QHBoxLayout *passwordHLayout = new QHBoxLayout(this);
+    QVBoxLayout *passwordVLayout = new QVBoxLayout(this);
+    QLabel *passwordLabel = new QLabel(password, this);
+    QLabel *refreshLabel = new QLabel("", this);
+    QLabel *tipLabel = new QLabel(this);
 
-    QToolButton *refreshButton = new QToolButton(this);
-    refreshButton->setIcon(QIcon::fromTheme("folder"));
-    refreshButton->setIconSize(QSize(50, 50));
-    refreshButton->setFixedSize(50, 50);
-    connect(refreshButton, &QToolButton::clicked, this, &ConnectWidget::updatePassWord);
-    passwordLayout->addWidget(refreshButton, 0, password.count() + 1);
+    QFont font;
+    font.setPointSize(40);
+    font.setLetterSpacing(QFont::AbsoluteSpacing, 4);
+    font.setWeight(QFont::Normal);
+    font.setStyleHint(QFont::Helvetica);
+    passwordLabel->setFont(font);
 
-    passwordLayout->setSpacing(15);
-    passwordLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    QFont tipfont;
+    tipfont.setPointSize(8);
+    refreshLabel->setFont(tipfont);
+    refreshLabel->setAlignment(Qt::AlignBottom);
+    refreshLabel->setText("<a href=\"https://\" style=\"text-decoration:none;\">刷新</a>");
+
+    tipLabel->setFont(tipfont);
+
+    remainingTime = 300;
+    QTimer *timer = new QTimer();
+    connect(timer, &QTimer::timeout, [timer, tipLabel, this]() {
+        if (remainingTime > 0) {
+            remainingTime--;
+            QString tip = QString("密码有效时间还剩<font color='#6199CA'>%1s</font>，请尽快输入连接密码").arg(QString::number(remainingTime));
+            tipLabel->setText(tip);
+        } else {
+            tipLabel->setText("0");
+            timer->stop();
+        }
+    });
+    timer->start(1000);
+    connect(refreshLabel, &QLabel::linkActivated, this, [this, timer, passwordLabel] {
+        QString password = QString::number(TransferHelper::instance()->getConnectPassword());
+        passwordLabel->setText(password);
+        remainingTime = 300;
+        if (!timer->isActive())
+            timer->start(1000);
+    });
+
+    passwordHLayout->addWidget(passwordLabel);
+    passwordHLayout->addWidget(refreshLabel);
+
+    passwordVLayout->addLayout(passwordHLayout);
+    passwordVLayout->addWidget(tipLabel);
+    passwordVLayout->setAlignment(Qt::AlignCenter);
+
+    //separatorLabel
+    QString styleSheet = "QLabel { background-color: rgba(0, 0, 0, 0.1); width: 2px; }";
+    QLabel *separatorLabel = new QLabel(this);
+    separatorLabel->setFixedSize(2, 160);
+    separatorLabel->setStyleSheet(styleSheet);
+
+    connectLayout->addSpacing(60);
+    connectLayout->addLayout(ipVLayout);
+    connectLayout->addSpacing(30);
+    connectLayout->addWidget(separatorLabel);
+    connectLayout->addSpacing(30);
+    connectLayout->addLayout(passwordVLayout);
+    connectLayout->setSpacing(15);
+    connectLayout->setAlignment(Qt::AlignCenter);
 }
 
 void ConnectWidget::updatePassWord()
 {
     QString password = QString::number(TransferHelper::instance()->getConnectPassword());
     for (int i = 0; i < password.count(); i++) {
-        QLabel *digitLabel = qobject_cast<QLabel *>(passwordLayout->itemAt(i)->widget());
+        QLabel *digitLabel = qobject_cast<QLabel *>(connectLayout->itemAt(i)->widget());
         digitLabel->setText(QString(password[i]));
     }
 }
@@ -109,6 +198,16 @@ void ConnectWidget::nextPage()
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
+    } else {
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+    }
+}
+
+void ConnectWidget::backPage()
+{
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    if (stackedWidget) {
+        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }

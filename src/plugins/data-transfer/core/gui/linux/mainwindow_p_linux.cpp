@@ -19,6 +19,9 @@
 
 #include <gui/transfer/successwidget.h>
 #include <gui/transfer/transferringwidget.h>
+#include <gui/transfer/waittransferwidget.h>
+
+#include <utils/transferhepler.h>
 
 using namespace data_transfer_core;
 
@@ -59,42 +62,39 @@ void MainWindowPrivate::initSideBar()
 
 void MainWindowPrivate::initWidgets()
 {
-
     StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
     PromptWidget *promptidget = new PromptWidget(q);
-    SearchWidget *searchwidget = new SearchWidget(q);
     ConnectWidget *connectwidget = new ConnectWidget(q);
-
-    FileSelectWidget *filewidget = new FileSelectWidget(qobject_cast<SidebarWidget *>(sidebar->widget()), q);
-    AppSelectWidget *appwidget = new AppSelectWidget(q);
-    ConfigSelectWidget *configwidget = new ConfigSelectWidget(q);
-
+    WaitTransferWidget *waitgwidget = new WaitTransferWidget(q);
     TransferringWidget *transferringwidget = new TransferringWidget(q);
     SuccessWidget *successtranswidget = new SuccessWidget(q);
 
     QStackedWidget *stackedWidget = new QStackedWidget(q);
-
     stackedWidget->addWidget(startwidget);
     stackedWidget->addWidget(choosewidget);
     stackedWidget->addWidget(promptidget);
-    stackedWidget->addWidget(searchwidget);
     stackedWidget->addWidget(connectwidget);
-    stackedWidget->addWidget(filewidget);
-    stackedWidget->addWidget(appwidget);
-    stackedWidget->addWidget(configwidget);
+    stackedWidget->addWidget(waitgwidget);
     stackedWidget->addWidget(transferringwidget);
     stackedWidget->addWidget(successtranswidget);
-    stackedWidget->setCurrentIndex(4);
+    stackedWidget->setCurrentIndex(0);
 
     connect(stackedWidget, &QStackedWidget::currentChanged, this, &MainWindowPrivate::handleCurrentChanged);
+    connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [transferringwidget, stackedWidget] {
+        stackedWidget->setCurrentWidget(transferringwidget);
+    });
+    connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [successtranswidget, stackedWidget] {
+        stackedWidget->setCurrentWidget(successtranswidget);
+    });
+
     q->centralWidget()->layout()->addWidget(stackedWidget);
 }
 
 void MainWindowPrivate::handleCurrentChanged(int index)
 {
-    if (index == 5)
-        sidebar->setVisible(true);
-    else
-        sidebar->setVisible(false);
+    //    if (index == 4)
+    //        sidebar->setVisible(true);
+    //    else
+    //        sidebar->setVisible(false);
 }
