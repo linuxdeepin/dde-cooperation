@@ -82,6 +82,11 @@ QMap<QString, QString> TransferHelper::getAppList()
     return appList;
 }
 
+void TransferHelper::tryConnect(const QString &ip, const QString &password)
+{
+    transferhandle.tryConnect(ip , password);
+}
+
 void TransferHelper::startTransfer()
 {
     qInfo() << OptionsManager::instance()->getUserOptions();

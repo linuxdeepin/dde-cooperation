@@ -12,6 +12,9 @@
 #include <gui/mainwindow_p.h>
 #pragma execution_character_set("utf-8")
 
+inline constexpr char internetMethodSelectConfigName[] {"请选择要同步的配置"};
+inline constexpr char localFileMethodSelectConfigName[] {"请选择要备份的配置"};
+
 ConfigSelectWidget::ConfigSelectWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
@@ -28,7 +31,7 @@ void ConfigSelectWidget::initUI()
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
 
-    QLabel *titileLabel = new QLabel("请确认需要同步的配置", this);
+    QLabel *titileLabel = new QLabel(internetMethodSelectConfigName, this);
     titileLabel->setFixedHeight(40);
     QFont font;
     font.setPointSize(16);

@@ -8,8 +8,11 @@
 #include <QCheckBox>
 #include <QTextBrowser>
 #include <QLineEdit>
+#include <QtWidgets>
 
 #include <gui/connect/choosewidget.h>
+
+#include <utils/transferhepler.h>
 
 #pragma execution_character_set("utf-8")
 
@@ -43,13 +46,23 @@ void ReadyWidget::initUI()
     ipLayout->addWidget(ipLabel);
     ipLayout->setAlignment(Qt::AlignBottom);
 
-    QLineEdit *ipInput = new QLineEdit(this);
+    ipInput = new QLineEdit(this);
     ipInput->setPlaceholderText("请输入您想要连接的电脑IP地址");
     ipInput->setStyleSheet("border-radius: 8px;"
                            "opacity: 1;"
+                           "padding-left: 10px;"
                            "background-color: rgba(0,0,0, 0.08);");
     ipInput->setFixedSize(340, 36);
 
+    QRegularExpressionValidator *ipValidator = new QRegularExpressionValidator(
+        QRegularExpression("^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$")
+    );
+
+    ipInput->setValidator(ipValidator);
+    connect(ipInput, &QLineEdit::textChanged, [ = ]() {
+        bool isEmpty = ipInput->text().isEmpty();
+        ipInput->setClearButtonEnabled(!isEmpty);
+    });
     QHBoxLayout *editLayout1 = new QHBoxLayout(this);
     editLayout1->setAlignment(Qt::AlignLeft);
     editLayout1->addSpacing(200);
@@ -67,10 +80,13 @@ void ReadyWidget::initUI()
     captchaLayout->addWidget(Captcha);
     captchaLayout->setAlignment(Qt::AlignBottom);
 
-    QLineEdit *captchaInput = new QLineEdit(this);
+    captchaInput = new QLineEdit(this);
+    QIntValidator *captchaValidator = new QIntValidator(10000, 99999, captchaInput);
+    captchaInput->setValidator(captchaValidator);
     captchaInput->setPlaceholderText("请输入PC上显示的验证码");
     captchaInput->setStyleSheet("border-radius: 8px;"
                                 "opacity: 1;"
+                                "padding-left: 10px;"
                                 "background-color: rgba(0,0,0, 0.08);");
     captchaInput->setFixedSize(340, 36);
 
@@ -85,9 +101,10 @@ void ReadyWidget::initUI()
     backButton->setStyleSheet("background-color: lightgray;");
     connect(backButton, &QToolButton::clicked, this, &ReadyWidget::backPage);
 
-    QToolButton *nextButton = new QToolButton(this);
+    nextButton = new QToolButton(this);
     QPalette palette = nextButton->palette();
     palette.setColor(QPalette::ButtonText, Qt::white);
+    nextButton->setEnabled(false);
     nextButton->setPalette(palette);
     nextButton->setText("确定");
     nextButton->setFixedSize(120, 35);
@@ -106,27 +123,38 @@ void ReadyWidget::initUI()
     QHBoxLayout *indexLayout = new QHBoxLayout(this);
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
+    mainLayout->addSpacing(20);
     mainLayout->addWidget(mainLabel);
+    mainLayout->addSpacing(20);
     mainLayout->addLayout(ipLayout);
     mainLayout->addLayout(editLayout1);
     mainLayout->addLayout(cueLayout);
-    mainLayout->addSpacing(20);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(captchaLayout);
     mainLayout->addLayout(editLayout2);
-    mainLayout->addSpacing(30);
+    mainLayout->addSpacing(130);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
+
+    QObject::connect(ipInput,&QLineEdit::textChanged,this,&ReadyWidget::onLineTextChange);
+    QObject::connect(captchaInput,&QLineEdit::textChanged,this,&ReadyWidget::onLineTextChange);
+}
+
+void ReadyWidget::updateOption()
+{
+    TransferHelper::instance()->tryConnect(ipInput->text() , captchaInput->text());
 }
 
 void ReadyWidget::nextPage()
 {
+    updateOption();
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
+                   "nullptr";
     }
 }
 
@@ -137,6 +165,31 @@ void ReadyWidget::backPage()
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
+                   "nullptr";
     }
 }
+
+void ReadyWidget::onLineTextChange()
+{
+    QRegularExpression ipRegex("^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$");
+    QRegularExpressionMatch ipMatch = ipRegex.match(ipInput->text());
+
+    if(!ipMatch.hasMatch())
+    {
+        nextButton->setEnabled(false);
+        return;
+    }
+
+    QRegularExpression captchaRegex("^\\d{5}$");
+    QRegularExpressionMatch captchaMatch = captchaRegex.match(captchaInput->text());
+
+    if(!captchaMatch.hasMatch())
+    {
+        nextButton->setEnabled(false);
+        return;
+    }
+
+    nextButton->setEnabled(true);
+}
+
+

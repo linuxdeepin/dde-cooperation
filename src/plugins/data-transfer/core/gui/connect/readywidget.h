@@ -3,6 +3,8 @@
 
 #include <QFrame>
 
+class QLineEdit;
+class QToolButton;
 class ReadyWidget : public QFrame
 {
 public:
@@ -12,8 +14,14 @@ public:
 public slots:
     void nextPage();
     void backPage();
-public:
+    void onLineTextChange();
+private:
     void initUI();
+    void updateOption();
+
+    QLineEdit *ipInput{ nullptr };
+    QLineEdit *captchaInput{ nullptr };
+    QToolButton *nextButton{ nullptr };
 };
 
 #endif // READYWIDGET_H

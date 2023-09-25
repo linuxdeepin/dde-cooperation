@@ -10,6 +10,13 @@
 
 #pragma execution_character_set("utf-8")
 
+inline constexpr char internetMethodName[]{ "从windows PC" };
+#ifdef WIN32
+inline constexpr char localFileMethodName[]{ "本地导出备份" };
+#else
+inline constexpr char localFileMethodName[]{ "从备份文件导入" };
+#endif
+
 ChooseWidget::ChooseWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
@@ -33,7 +40,7 @@ void ChooseWidget::initUI()
     textLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     ModeItem *winItem = new ModeItem("从windows PC", QIcon(":/icon/select1.png"), this);
-    ModeItem *packageItem = new ModeItem("从备份文件导入", QIcon(":/icon/select2.png"), this);
+    ModeItem *packageItem = new ModeItem(localFileMethodName, QIcon(":/icon/select2.png"), this);
 
     QHBoxLayout *modeLayout = new QHBoxLayout(this);
     modeLayout->addWidget(winItem, Qt::AlignTop);
@@ -97,7 +104,7 @@ void ChooseWidget::nextPage()
 
 ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : QFrame(parent)
 {
-    setStyleSheet("background-color: rgba(0, 0, 0, 0.03); border-radius: 10px;");
+    setStyleSheet("background-color: rgba(0, 0, 0, 0.1); border-radius: 8px;");
     setFixedSize(268, 222);
 
     checkBox = new QCheckBox(text, this);

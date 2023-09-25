@@ -10,6 +10,7 @@
 #include "../select/selectmainwidget.h"
 #include "../select/configselectwidget.h"
 #include "../select/fileselectwidget.h"
+#include "../select/createbackupfilewidget.h"
 #include "../transfer/successwidget.h"
 #include "../transfer/transferringwidget.h"
 
@@ -54,7 +55,7 @@ void MainWindowPrivate::initWindow()
 
 void MainWindowPrivate::initWidgets()
 {
-    StartWidget *startwidget = new StartWidget(q);
+ //   StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
 
     TransferringWidget *transferringwidget = new TransferringWidget(q);
@@ -68,9 +69,11 @@ void MainWindowPrivate::initWidgets()
     ConfigSelectWidget *configselectwidget = new ConfigSelectWidget(q);
     AppSelectWidget *appselectwidget = new AppSelectWidget(q);
 
+    CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
+
     QStackedWidget *stackedWidget = new QStackedWidget(q);
 
-    stackedWidget->insertWidget(PageName::startwidget,startwidget);
+    stackedWidget->insertWidget(PageName::startwidget,createbackupfilewidget);
     stackedWidget->insertWidget(PageName::choosewidget,choosewidget);
     stackedWidget->insertWidget(PageName::promptwidget,promptwidget);
     stackedWidget->insertWidget(PageName::readywidget,readywidget);
@@ -84,7 +87,7 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::configselectwidget,configselectwidget);
     stackedWidget->insertWidget(PageName::appselectwidget,appselectwidget);
 
-    stackedWidget->setCurrentIndex(PageName::selectmainwidget);
+    stackedWidget->setCurrentIndex(PageName::startwidget);
 
     QObject::connect(stackedWidget, &QStackedWidget::currentChanged, this,
                      &MainWindowPrivate::handleCurrentChanged);
@@ -115,7 +118,8 @@ void MainWindowPrivate::initSideBar()
     SidebarWidget *sidebarWidget = new SidebarWidget(q);
     sidebar->setWidget(sidebarWidget);
     sidebar->setVisible(false);
-    sidebar->setStyleSheet("border-bottom-left-radius: 18px;");
+    sidebar->setStyleSheet("background-color: white;"
+                           " border-bottom-left-radius: 18px;");
 
     windowsCentralWidgetSidebar->addWidget(sidebar);
 }

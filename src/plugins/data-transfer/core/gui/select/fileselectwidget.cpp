@@ -30,6 +30,9 @@ const QList<QString> directories = {
     QString::fromLocal8Bit(Directory::kDesktop), QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)
 };
 
+inline constexpr char internetMethodSelectFileName[] {"请选择要同步的文件"};
+inline constexpr char localFileMethodSelectFileName[] {"请选择要备份的文件"};
+
 FileSelectWidget::FileSelectWidget(QListView *siderbarWidget, QWidget *parent)
     : QFrame(parent)
 {
@@ -50,7 +53,7 @@ void FileSelectWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
 
-    QLabel *titileLabel = new QLabel("请选择要传输的文件", this);
+    QLabel *titileLabel = new QLabel(internetMethodSelectFileName, this);
     titileLabel->setFixedHeight(30);
     QFont font;
     font.setPointSize(16);
@@ -286,14 +289,18 @@ void SidebarWidget::initData()
     }
 
     // Storage dir
-    //    QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
+        QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
 
-    //    for (const QStorageInfo &drive : drives) {
-    //        QStandardItem *item = new QStandardItem();
-    //        item->setCheckable(true);
-    //        item->setCheckState(Qt::Unchecked);
-    //        item->setData(drive.name(), Qt::DisplayRole);
-    //        item->setData(drive.device(), Qt::UserRole);
-    //        model->appendRow(item);
-    //    }
+        for (const QStorageInfo &drive : drives) {
+            QStandardItem *item = new QStandardItem();
+            item->setCheckable(true);
+            item->setCheckState(Qt::Unchecked);
+            QString rootPath = drive.rootPath();
+            QString displayName = (drive.name().isEmpty()?"本地磁盘":drive.name()) +"("+rootPath.at(0)+":)";
+
+
+            item->setData(displayName, Qt::DisplayRole);
+            item->setData(rootPath, Qt::UserRole);
+            model->appendRow(item);
+        }
 }

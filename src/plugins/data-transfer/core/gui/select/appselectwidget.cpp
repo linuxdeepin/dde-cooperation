@@ -12,6 +12,8 @@
 #include <gui/mainwindow_p.h>
 #pragma execution_character_set("utf-8")
 
+inline constexpr char internetMethodSelectAppName[] {"请选择要同步的应用"};
+inline constexpr char localFileMethodSelectAppName[] {"请选择要备份的应用"};
 AppSelectWidget::AppSelectWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
@@ -28,7 +30,7 @@ void AppSelectWidget::initUI()
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
 
-    QLabel *titileLabel = new QLabel("同步应用", this);
+    QLabel *titileLabel = new QLabel(internetMethodSelectAppName, this);
     titileLabel->setFixedHeight(40);
     QFont font;
     font.setPointSize(16);
@@ -125,7 +127,7 @@ void AppSelectWidget::nextPage()
         stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
+                   "nullptr";
     }
 }
 void AppSelectWidget::backPage()
@@ -135,6 +137,6 @@ void AppSelectWidget::backPage()
         stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
+                   "nullptr";
     }
 }
