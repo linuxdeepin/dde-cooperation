@@ -62,19 +62,22 @@ void MainWindowPrivate::initSideBar()
 
 void MainWindowPrivate::initWidgets()
 {
+    QStackedWidget *stackedWidget = new QStackedWidget(q);
+
     StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
     PromptWidget *promptidget = new PromptWidget(q);
     ConnectWidget *connectwidget = new ConnectWidget(q);
+    FileSelectWidget *connectwidget1 = new FileSelectWidget(qobject_cast<SidebarWidget *>(sidebar->widget()), stackedWidget);
     WaitTransferWidget *waitgwidget = new WaitTransferWidget(q);
     TransferringWidget *transferringwidget = new TransferringWidget(q);
     SuccessWidget *successtranswidget = new SuccessWidget(q);
 
-    QStackedWidget *stackedWidget = new QStackedWidget(q);
     stackedWidget->addWidget(startwidget);
     stackedWidget->addWidget(choosewidget);
     stackedWidget->addWidget(promptidget);
     stackedWidget->addWidget(connectwidget);
+    stackedWidget->addWidget(connectwidget1);
     stackedWidget->addWidget(waitgwidget);
     stackedWidget->addWidget(transferringwidget);
     stackedWidget->addWidget(successtranswidget);
@@ -93,8 +96,4 @@ void MainWindowPrivate::initWidgets()
 
 void MainWindowPrivate::handleCurrentChanged(int index)
 {
-    //    if (index == 4)
-    //        sidebar->setVisible(true);
-    //    else
-    //        sidebar->setVisible(false);
 }

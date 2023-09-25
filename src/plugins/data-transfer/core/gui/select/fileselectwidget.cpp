@@ -1,4 +1,5 @@
 ﻿#include "fileselectwidget.h"
+#include "item.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -11,6 +12,9 @@
 #include <QStandardPaths>
 #include <QUrl>
 #include <QDir>
+#include <QScrollBar>
+#include <QHeaderView>
+#include <QStorageInfo>
 
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
@@ -45,22 +49,31 @@ void FileSelectWidget::initUI()
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
-    mainLayout->setSpacing(0);
-    mainLayout->addSpacing(30);
 
     QLabel *titileLabel = new QLabel("请选择要传输的文件", this);
-    titileLabel->setFixedHeight(40);
+    titileLabel->setFixedHeight(30);
     QFont font;
     font.setPointSize(16);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
+    QHBoxLayout *headerLayout = new QHBoxLayout(this);
+    QLabel *hedaerIcon = new QLabel(this);
+    QLabel *filename = new QLabel("文件名", this);
+    QLabel *hedaerIcon2 = new QLabel(this);
+    QLabel *size = new QLabel("大小", this);
+
+    headerLayout->addWidget(hedaerIcon);
+    headerLayout->addWidget(filename);
+    headerLayout->addWidget(hedaerIcon2);
+    headerLayout->addWidget(size);
+
     initFileView();
 
     QLabel *tipLabel1 = new QLabel("传输完成的数据，将被存放在用户的 home 目录下", this);
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    tipLabel1->setFixedHeight(80);
+    tipLabel1->setFixedHeight(50);
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
@@ -84,13 +97,14 @@ void FileSelectWidget::initUI()
     buttonLayout->addWidget(cancelButton);
     buttonLayout->addSpacing(15);
     buttonLayout->addWidget(determineButton);
-    buttonLayout->setAlignment(Qt::AlignHCenter);
+    buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
+    mainLayout->addSpacing(30);
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel1);
+    mainLayout->addLayout(headerLayout);
     mainLayout->addWidget(fileview);
     mainLayout->addLayout(buttonLayout);
-    mainLayout->addSpacing(20);
 }
 
 void FileSelectWidget::initConnect(QAbstractItemView *view)
@@ -117,18 +131,12 @@ void FileSelectWidget::initConnect(QAbstractItemView *view)
 void FileSelectWidget::initFileView()
 {
     QStandardItemModel *model = new QStandardItemModel(this);
-
-    for (int i = 0; model && i < 20; i++) {
-        QStandardItem *item = new QStandardItem();
-        item->setCheckable(true);
-        item->setCheckState(Qt::Unchecked);
-        model->appendRow(item);
-    }
-
-    fileview = new QTreeView(this);
+    fileview = new QListView(this);
     fileview->setEditTriggers(QAbstractItemView::NoEditTriggers);
     fileview->setModel(model);
-    fileview->setStyleSheet("QTreeView { border: none; }");
+    fileview->setItemDelegate(new ItemDelegate());
+    fileview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    fileview->setSelectionMode(QAbstractItemView::NoSelection);
     updateFileView();
 }
 
@@ -143,16 +151,51 @@ void FileSelectWidget::updateFileView()
     QString path = sidebar->model()->data(index, Qt::UserRole).toString();
 
     QFileInfoList fileinfos = QDir(path).entryInfoList();
-    aync = false;
+    if (fileinfos.size() >= 2) {
+        // remove Current directory and parent directory
+        fileinfos.removeAt(0);
+        fileinfos.removeAt(0);
+    }
+
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(fileview->model());
-    for (int i = 0; model && i < fileinfos.count() && i < 20; i++) {
-        auto item = model->item(i);
+    if (!model)
+        return;
+
+    aync = false;
+    model->clear();
+    for (int i = 0; i < fileinfos.count(); i++) {
+        if (!fileinfos[i].isDir())
+            continue;
+
+        ListItem *item = new ListItem();
+        item->setData(fileinfos[i].fileName(), Qt::DisplayRole);
+        item->setData(fileinfos[i].filePath(), Qt::UserRole);
+        item->setIcon(QIcon(":/icon/folder.svg"));
+        item->setCheckable(true);
+
         if (!seletFileList.contains(fileinfos[i].filePath()))
             item->setCheckState(Qt::Unchecked);
         else
             item->setCheckState(Qt::Checked);
-        item->setData(fileinfos[i].filePath(), Qt::UserRole);
+
+        model->appendRow(item);
+    }
+    for (int i = 0; i < fileinfos.count(); i++) {
+        if (fileinfos[i].isDir())
+            continue;
+
+        ListItem *item = new ListItem();
         item->setData(fileinfos[i].fileName(), Qt::DisplayRole);
+        item->setIcon(QIcon(":/icon/fileicon.svg"));
+        item->setData(fileinfos[i].filePath(), Qt::UserRole);
+        item->setCheckable(true);
+
+        if (!seletFileList.contains(fileinfos[i].filePath()))
+            item->setCheckState(Qt::Unchecked);
+        else
+            item->setCheckState(Qt::Checked);
+
+        model->appendRow(item);
     }
     aync = true;
 }
@@ -164,6 +207,17 @@ void FileSelectWidget::initSiderBar(QListView *siderbarWidget)
         return;
     }
     sidebar = siderbarWidget;
+    sidebar->setStyleSheet("QListView::item { width: 170px; height: 36px; }");
+
+    QWidget *parent = qobject_cast<QWidget *>(sidebar->parent());
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    if (stackedWidget && parent)
+        connect(stackedWidget, &QStackedWidget::currentChanged, this, [this, stackedWidget, parent]() {
+            if (stackedWidget->currentWidget() == this)
+                parent->setVisible(true);
+            else
+                parent->setVisible(false);
+        });
     connect(sidebar->selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileSelectWidget::updateFileView);
 }
 
@@ -217,6 +271,8 @@ void SidebarWidget::initData()
 {
     QStandardItemModel *model = new QStandardItemModel(this);
     setModel(model);
+
+    // user dir
     int row = 0;
     for (int i = 0; i < 6; i++) {
         QStandardItem *item = new QStandardItem();
@@ -227,4 +283,16 @@ void SidebarWidget::initData()
         model->appendRow(item);
         row += 2;
     }
+
+    // Storage dir
+    //    QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
+
+    //    for (const QStorageInfo &drive : drives) {
+    //        QStandardItem *item = new QStandardItem();
+    //        item->setCheckable(true);
+    //        item->setCheckState(Qt::Unchecked);
+    //        item->setData(drive.name(), Qt::DisplayRole);
+    //        item->setData(drive.device(), Qt::UserRole);
+    //        model->appendRow(item);
+    //    }
 }

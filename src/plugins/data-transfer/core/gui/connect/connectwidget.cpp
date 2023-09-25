@@ -7,8 +7,8 @@
 #include <QStackedWidget>
 #include <QLineEdit>
 #include <QTimer>
-//#include <QHostInfo>
-//#include <QNetworkInterface>
+#include <QHostInfo>
+#include <QNetworkInterface>
 
 #include <utils/transferhepler.h>
 

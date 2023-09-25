@@ -8,7 +8,7 @@
 
 class TransferHelper : public QObject
 {
-//    Q_OBJECT
+    Q_OBJECT
 
 public:
     TransferHelper();

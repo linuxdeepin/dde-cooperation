@@ -3,9 +3,11 @@
 
 #include <QFrame>
 #include <QGridLayout>
+#include <QItemDelegate>
 #include <QLabel>
 #include <QListView>
 #include <QMap>
+#include <QPainter>
 #include <QTreeView>
 
 class FileSelectWidget : public QFrame
@@ -33,7 +35,7 @@ private:
 
 private:
     QListView *sidebar { nullptr };
-    QTreeView *fileview { nullptr };
+    QListView *fileview { nullptr };
     QStringList seletFileList;
     bool aync = true;
 };

@@ -22,5 +22,7 @@
         <file>icon/file.svg</file>
         <file>icon/checked.svg</file>
         <file>icon/edit.svg</file>
+        <file>icon/folder.svg</file>
+        <file>icon/fileicon.svg</file>
     </qresource>
 </RCC>
