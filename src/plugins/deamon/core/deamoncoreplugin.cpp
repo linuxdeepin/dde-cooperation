@@ -8,6 +8,9 @@
 #include <QDebug>
 #include <QUrl>
 
+#include <service/ipc/commonservice.h>
+#include <service/ipc/fsservice.h>
+
 using namespace deamon_core;
 
 void DeamonCorePlugin::initialize()
@@ -16,6 +19,7 @@ void DeamonCorePlugin::initialize()
 
 bool DeamonCorePlugin::start()
 {
-    // return loadMainPage();
+    CommonService *service = new CommonService(this);
+    FSService *fsservice = new FSService(this);
     return true;
 }

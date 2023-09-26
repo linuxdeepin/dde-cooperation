@@ -13,7 +13,6 @@ public:
     ~ConnectWidget();
 
     void initConnectLayout();
-    void updatePassWord();
 
 public slots:
     void nextPage();

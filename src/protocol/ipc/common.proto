@@ -5,6 +5,7 @@ service Common {
     syncConfig,
     syncPeers,
     tryConnect,
+    getSettingPassword,
     tryTargetSpace,
     tryApplist,
     chatMessage,

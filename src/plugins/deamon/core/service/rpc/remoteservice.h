@@ -11,7 +11,8 @@
 
 namespace uniapis {
 
-class RemoteServiceImpl : public RemoteService {
+class RemoteServiceImpl : public RemoteService
+{
 public:
     RemoteServiceImpl() = default;
     virtual ~RemoteServiceImpl() = default;
@@ -37,13 +38,14 @@ public:
                   ::google::protobuf::Closure *done);
 };
 
-} // namespace uniapis
+}   // namespace uniapis
 
-class RemoteServiceBinder : public QObject {
+class RemoteServiceBinder : public QObject
+{
     Q_OBJECT
 public:
-    explicit RemoteServiceBinder(QObject *parent = nullptr);
-    ~RemoteServiceBinder();
+    explicit RemoteServiceBinder(QObject *parent = nullptr) {};
+    ~RemoteServiceBinder() {};
 
 signals:
 
@@ -52,4 +54,4 @@ public slots:
 private:
 };
 
-#endif // REMOTE_SERVICE_H
+#endif   // REMOTE_SERVICE_H

@@ -5,42 +5,43 @@
 #ifndef FS_SERVICE_H
 #define FS_SERVICE_H
 
-
 #include <QObject>
+#include <QDebug>
 
 #include "ipc/fs.h"
 
 namespace ipc {
 
-class FSImpl : public FS {
-  public:
+class FSImpl : public FS
+{
+public:
     FSImpl() = default;
     virtual ~FSImpl() = default;
 
-    virtual void compatible(co::Json& req, co::Json& res) override;
+    virtual void compatible(co::Json &req, co::Json &res) override;
 
-    virtual void readDir(co::Json& req, co::Json& res) override;
+    virtual void readDir(co::Json &req, co::Json &res) override;
 
-    virtual void removeDir(co::Json& req, co::Json& res) override;
+    virtual void removeDir(co::Json &req, co::Json &res) override;
 
-    virtual void create(co::Json& req, co::Json& res) override;
+    virtual void create(co::Json &req, co::Json &res) override;
 
-    virtual void rename(co::Json& req, co::Json& res) override;
+    virtual void rename(co::Json &req, co::Json &res) override;
 
-    virtual void removeFiles(co::Json& req, co::Json& res) override;
+    virtual void removeFiles(co::Json &req, co::Json &res) override;
 
-    virtual void sendFiles(co::Json& req, co::Json& res) override;
+    virtual void sendFiles(co::Json &req, co::Json &res) override;
 
-    virtual void receiveFiles(co::Json& req, co::Json& res) override;
+    virtual void receiveFiles(co::Json &req, co::Json &res) override;
 
-    virtual void resumeJob(co::Json& req, co::Json& res) override;
+    virtual void resumeJob(co::Json &req, co::Json &res) override;
 
-    virtual void cancelJob(co::Json& req, co::Json& res) override;
+    virtual void cancelJob(co::Json &req, co::Json &res) override;
 
-    virtual void fsReport(co::Json& req, co::Json& res) override;
+    virtual void fsReport(co::Json &req, co::Json &res) override;
 };
 
-} // ipc
+}   // ipc
 
 class FSService : public QObject
 {
@@ -54,7 +55,6 @@ signals:
 public slots:
 
 private:
-
 };
 
-#endif // FS_SERVICE_H
+#endif   // FS_SERVICE_H

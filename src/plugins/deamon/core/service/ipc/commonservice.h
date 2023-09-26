@@ -5,38 +5,41 @@
 #ifndef COMMON_SERVICE_H
 #define COMMON_SERVICE_H
 
-
 #include <QObject>
+#include <QDebug>
 
 #include "ipc/common.h"
 
 namespace ipc {
 
-class CommonImpl : public Common {
-  public:
+class CommonImpl : public Common
+{
+public:
     CommonImpl() = default;
     virtual ~CommonImpl() = default;
 
-    virtual void compatible(co::Json& req, co::Json& res) override;
+    virtual void tryConnect(co::Json &req, co::Json &res) override;
 
-    virtual void syncConfig(co::Json& req, co::Json& res) override;
+    virtual void getSettingPassword(co::Json &req, co::Json &res) override;
 
-    virtual void syncPeers(co::Json& req, co::Json& res) override;
+    virtual void compatible(co::Json &req, co::Json &res) override;
 
-    virtual void tryConnect(co::Json& req, co::Json& res) override;
+    virtual void syncConfig(co::Json &req, co::Json &res) override;
 
-    virtual void tryTargetSpace(co::Json& req, co::Json& res) override;
+    virtual void syncPeers(co::Json &req, co::Json &res) override;
 
-    virtual void tryApplist(co::Json& req, co::Json& res) override;
+    virtual void tryTargetSpace(co::Json &req, co::Json &res) override;
 
-    virtual void chatMessage(co::Json& req, co::Json& res) override;
+    virtual void tryApplist(co::Json &req, co::Json &res) override;
 
-    virtual void miscMessage(co::Json& req, co::Json& res) override;
+    virtual void chatMessage(co::Json &req, co::Json &res) override;
 
-    virtual void commNotify(co::Json& req, co::Json& res) override;
+    virtual void miscMessage(co::Json &req, co::Json &res) override;
+
+    virtual void commNotify(co::Json &req, co::Json &res) override;
 };
 
-} // ipc
+}   // ipc
 
 class CommonService : public QObject
 {
@@ -50,7 +53,6 @@ signals:
 public slots:
 
 private:
-
 };
 
-#endif // COMMON_SERVICE_H
+#endif   // COMMON_SERVICE_H

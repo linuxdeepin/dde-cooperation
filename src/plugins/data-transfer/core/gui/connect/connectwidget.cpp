@@ -117,8 +117,9 @@ void ConnectWidget::initConnectLayout()
     ipVLayout->setAlignment(Qt::AlignCenter);
 
     //passwordLayout
-
-    QString password = QString::number(TransferHelper::instance()->getConnectPassword());
+    QString password = TransferHelper::instance()->getConnectPassword();
+    if (password.isEmpty())
+        password = "777777";
     QHBoxLayout *passwordHLayout = new QHBoxLayout(this);
     QVBoxLayout *passwordVLayout = new QVBoxLayout(this);
     QLabel *passwordLabel = new QLabel(password, this);
@@ -154,7 +155,7 @@ void ConnectWidget::initConnectLayout()
     });
     timer->start(1000);
     connect(refreshLabel, &QLabel::linkActivated, this, [this, timer, passwordLabel] {
-        QString password = QString::number(TransferHelper::instance()->getConnectPassword());
+        QString password = TransferHelper::instance()->getConnectPassword();
         passwordLabel->setText(password);
         remainingTime = 300;
         if (!timer->isActive())
@@ -182,15 +183,6 @@ void ConnectWidget::initConnectLayout()
     connectLayout->addLayout(passwordVLayout);
     connectLayout->setSpacing(15);
     connectLayout->setAlignment(Qt::AlignCenter);
-}
-
-void ConnectWidget::updatePassWord()
-{
-    QString password = QString::number(TransferHelper::instance()->getConnectPassword());
-    for (int i = 0; i < password.count(); i++) {
-        QLabel *digitLabel = qobject_cast<QLabel *>(connectLayout->itemAt(i)->widget());
-        digitLabel->setText(QString(password[i]));
-    }
 }
 
 void ConnectWidget::nextPage()

@@ -24,5 +24,6 @@
         <file>icon/edit.svg</file>
         <file>icon/folder.svg</file>
         <file>icon/fileicon.svg</file>
+        <file>icon/zip-64.svg</file>
     </qresource>
 </RCC>

@@ -9,6 +9,8 @@
 #include <QDebug>
 #include <QUrl>
 
+#include <utils/transferworker.h>
+
 using namespace data_transfer_core;
 
 void DataTransferCorePlugin::initialize()

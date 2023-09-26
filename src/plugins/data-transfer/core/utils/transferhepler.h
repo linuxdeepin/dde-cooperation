@@ -1,6 +1,8 @@
 ﻿#ifndef TRANSFERHELPER_H
 #define TRANSFERHELPER_H
 
+#include "transferworker.h"
+
 #include <QMap>
 #include <QObject>
 
@@ -17,7 +19,7 @@ public:
     static TransferHelper *instance();
 
     const QStringList getUesr();
-    int getConnectPassword();
+    QString getConnectPassword();
     QMap<QString, double> getUserDataSize();
     qint64 getRemainStorage();
     QMap<QString, QString> getAppList();
@@ -32,6 +34,9 @@ Q_SIGNALS:
     void windowsZipFile(const QList<QUrl> &sourceFilePath, QUrl &zipFileSavePath = QUrl());
     void windowsUnZipFile(const QUrl &zipFilePath, QUrl &unZipFilePath = QUrl());
 #endif
+
+private:
+    TransferHandle transferhandle;
 };
 
 #endif

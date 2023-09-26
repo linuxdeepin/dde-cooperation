@@ -51,6 +51,20 @@ private:
     void initData();
 };
 
+class SidebarItemDelegate : public QItemDelegate
+{
+    Q_OBJECT
+public:
+    SidebarItemDelegate() {}
+
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
+        Q_UNUSED(option);
+        Q_UNUSED(index);
+        return QSize(170, 36);
+    }
+};
+
 namespace Directory {
 inline constexpr char kMovie[] { "视频" };
 inline constexpr char kPicture[] { "图片" };

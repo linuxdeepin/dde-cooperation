@@ -19,6 +19,7 @@
 
 #include <gui/transfer/successwidget.h>
 #include <gui/transfer/transferringwidget.h>
+#include <gui/transfer/uploadfilewidget.h>
 #include <gui/transfer/waittransferwidget.h>
 
 #include <utils/transferhepler.h>
@@ -64,6 +65,7 @@ void MainWindowPrivate::initWidgets()
 {
     QStackedWidget *stackedWidget = new QStackedWidget(q);
 
+    //fileselectwidget *startwidget1 = new fileselectwidget(q);
     StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
     PromptWidget *promptidget = new PromptWidget(q);
@@ -73,6 +75,7 @@ void MainWindowPrivate::initWidgets()
     TransferringWidget *transferringwidget = new TransferringWidget(q);
     SuccessWidget *successtranswidget = new SuccessWidget(q);
 
+    //stackedWidget->addWidget(startwidget1);
     stackedWidget->addWidget(startwidget);
     stackedWidget->addWidget(choosewidget);
     stackedWidget->addWidget(promptidget);

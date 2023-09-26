@@ -17,6 +17,7 @@ class Common : public rpc::Service {
         _methods["Common.syncConfig"] = std::bind(&Common::syncConfig, this, _1, _2);
         _methods["Common.syncPeers"] = std::bind(&Common::syncPeers, this, _1, _2);
         _methods["Common.tryConnect"] = std::bind(&Common::tryConnect, this, _1, _2);
+        _methods["Common.getSettingPassword"] = std::bind(&Common::getSettingPassword, this, _1, _2);
         _methods["Common.tryTargetSpace"] = std::bind(&Common::tryTargetSpace, this, _1, _2);
         _methods["Common.tryApplist"] = std::bind(&Common::tryApplist, this, _1, _2);
         _methods["Common.chatMessage"] = std::bind(&Common::chatMessage, this, _1, _2);
@@ -41,6 +42,8 @@ class Common : public rpc::Service {
     virtual void syncPeers(co::Json& req, co::Json& res) = 0;
 
     virtual void tryConnect(co::Json& req, co::Json& res) = 0;
+
+    virtual void getSettingPassword(co::Json& req, co::Json& res) = 0;
 
     virtual void tryTargetSpace(co::Json& req, co::Json& res) = 0;
 

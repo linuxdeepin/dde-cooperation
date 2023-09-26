@@ -13,9 +13,12 @@
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper() : QObject() { }
+TransferHelper::TransferHelper()
+    : QObject()
+{
+}
 
-TransferHelper::~TransferHelper() { }
+TransferHelper::~TransferHelper() {}
 
 TransferHelper *TransferHelper::instance()
 {
@@ -30,13 +33,9 @@ const QStringList TransferHelper::getUesr()
                          << "UOS-user3";
 }
 
-int TransferHelper::getConnectPassword()
+QString TransferHelper::getConnectPassword()
 {
-    qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
-    // 生成随机的六位数字
-    int randomNumber = QRandomGenerator::global()->bounded(100000, 999999);
-    qDebug() << randomNumber;
-    return randomNumber;
+    return transferhandle.getConnectPassWord();
 }
 
 QMap<QString, double> TransferHelper::getUserDataSize()
@@ -86,6 +85,8 @@ QMap<QString, QString> TransferHelper::getAppList()
 void TransferHelper::startTransfer()
 {
     qInfo() << OptionsManager::instance()->getUserOptions();
+    QStringList paths = OptionsManager::instance()->getUserOptions()["file"];
+    transferhandle.senFiles(paths);
 }
 
 #ifdef WIN32

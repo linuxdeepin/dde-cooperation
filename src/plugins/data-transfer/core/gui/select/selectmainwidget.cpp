@@ -7,9 +7,11 @@
 #include <QLabel>
 #include <gui/connect/choosewidget.h>
 #include <gui/mainwindow_p.h>
+#include <utils/transferhepler.h>
 #pragma execution_character_set("utf-8")
 
-selectMainWidget::selectMainWidget(QWidget *parent) : QFrame(parent)
+selectMainWidget::selectMainWidget(QWidget *parent)
+    : QFrame(parent)
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
@@ -74,9 +76,13 @@ selectMainWidget::selectMainWidget(QWidget *parent) : QFrame(parent)
     mainLayout->addLayout(indexLayout);
 }
 
-selectMainWidget::~selectMainWidget() { }
+selectMainWidget::~selectMainWidget() {}
 void selectMainWidget::nextPage()
 {
+    //transfer
+    TransferHelper::instance()->startTransfer();
+
+    //ui
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
@@ -99,22 +105,21 @@ void selectMainWidget::backPage()
 
 void selectMainWidget::selectPage()
 {
-    SelectItem *selectitem = qobject_cast<SelectItem*>(QObject::sender());
+    SelectItem *selectitem = qobject_cast<SelectItem *>(QObject::sender());
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     int pageNum = -1;
     if (selectitem->name == SelectItemName::FILES) {
         pageNum = data_transfer_core::PageName::filewselectidget;
-    }else if(selectitem->name == SelectItemName::APP){
+    } else if (selectitem->name == SelectItemName::APP) {
         pageNum = data_transfer_core::PageName::appselectwidget;
-    }else if(selectitem->name == SelectItemName::DISPOSITION){
+    } else if (selectitem->name == SelectItemName::DISPOSITION) {
         pageNum = data_transfer_core::PageName::configselectwidget;
     }
-    if(pageNum == -1)
-    {
+    if (pageNum == -1) {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
-    }else{
-         stackedWidget->setCurrentIndex(pageNum);
+    } else {
+        stackedWidget->setCurrentIndex(pageNum);
     }
 }
 
@@ -147,9 +152,9 @@ SelectItem::SelectItem(QString text, QIcon icon, SelectItemName itemName, QWidge
 
     initEditFrame();
 
-    QObject::connect(this,&SelectItem::changePage,qobject_cast<selectMainWidget*>(parent),&selectMainWidget::selectPage);
+    QObject::connect(this, &SelectItem::changePage, qobject_cast<selectMainWidget *>(parent), &selectMainWidget::selectPage);
 }
-SelectItem::~SelectItem() { }
+SelectItem::~SelectItem() {}
 
 void SelectItem::updateSelectSize(int num)
 {
@@ -183,7 +188,7 @@ void SelectItem::leaveEvent(QEvent *event)
 void SelectItem::initEditFrame()
 {
     editFrame = new QFrame(this);
-    editFrame->setStyleSheet("background-color: rgba(0, 0, 0, 0.3);"); // 背景色设置为半透明黑色
+    editFrame->setStyleSheet("background-color: rgba(0, 0, 0, 0.3);");   // 背景色设置为半透明黑色
     editFrame->setGeometry(0, 0, width(), height());
     editFrame->hide();
 
@@ -210,7 +215,6 @@ void SelectItem::initEditFrame()
     editLayout->addWidget(iconLabel);
     editLayout->addWidget(textLabel);
     editLayout->setSpacing(10);
-
 }
 
 void SelectItem::changeStyle()

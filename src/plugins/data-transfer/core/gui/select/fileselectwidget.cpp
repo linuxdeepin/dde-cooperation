@@ -207,8 +207,6 @@ void FileSelectWidget::initSiderBar(QListView *siderbarWidget)
         return;
     }
     sidebar = siderbarWidget;
-    sidebar->setStyleSheet("QListView::item { width: 170px; height: 36px; }");
-
     QWidget *parent = qobject_cast<QWidget *>(sidebar->parent());
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget && parent)
@@ -253,12 +251,15 @@ void FileSelectWidget::sendOptions()
 {
     qInfo() << "select file :" << seletFileList;
     OptionsManager::instance()->addUserOption(Options::kFile, seletFileList);
+
+    //transfer
+    TransferHelper::instance()->startTransfer();
 }
 
 SidebarWidget::SidebarWidget(QWidget *parent)
     : QListView(parent)
 {
-    setStyleSheet("background-color: white;");
+    setItemDelegate(new SidebarItemDelegate());
     setEditTriggers(QAbstractItemView::NoEditTriggers);
     initData();
 }

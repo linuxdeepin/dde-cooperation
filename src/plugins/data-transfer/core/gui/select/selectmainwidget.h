@@ -5,7 +5,9 @@
 #include <QCheckBox>
 class QLabel;
 class SidebarWidget;
-enum SelectItemName { FILES, APP, DISPOSITION };
+enum SelectItemName { FILES,
+                      APP,
+                      DISPOSITION };
 class SelectItem : public QFrame
 {
     Q_OBJECT
@@ -24,11 +26,13 @@ protected:
 private:
     void initEditFrame();
     void changeStyle();
-    QFrame *editFrame{ nullptr };
-    QLabel *sizeLabel{ nullptr };
+    QFrame *editFrame { nullptr };
+    QLabel *sizeLabel { nullptr };
+
 signals:
     void changePage();
 };
+
 class selectMainWidget : public QFrame
 {
     Q_OBJECT
@@ -42,4 +46,4 @@ public slots:
     void selectPage();
 };
 
-#endif // SELECTMAINWIDGET_H
+#endif   // SELECTMAINWIDGET_H
