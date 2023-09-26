@@ -1,0 +1,95 @@
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "fsadapter.h"
+#include "message.pb.h"
+#include "utils/utils.h"
+#include "utils/config.h"
+
+#include "co/log.h"
+
+using namespace deamon_core;
+
+FSAdapter::FSAdapter(QObject *parent) : QObject(parent)
+{
+
+}
+
+int FSAdapter::getFileEntry(const char *path, FileEntry **entry)
+{
+    FileEntry *temp = *entry;
+    if (!fs::exists(path)) {
+        ELOG << "FSAdapter::getFileEntry path not exists";
+        return -1;
+    }
+
+    if (fs::isdir(path)) {
+        temp->set_type(FileType::DIR);
+    } else {
+        temp->set_type(FileType::FILE_B);
+    }
+
+    fastring name = Util::parseFileName(path);
+    temp->set_name(name.c_str());
+    if (name.starts_with('.')) {
+        temp->set_hidden(true);
+    } else {
+        temp->set_hidden(false);
+    }
+
+    temp->set_size(fs::fsize(path));
+    temp->set_modified_time(fs::mtime(path));
+
+    return 0;
+}
+
+
+bool FSAdapter::newFile(const char *name, bool isdir)
+{
+    fastring dir = Config::getStorageDir();
+    if (!fs::exists(dir)) {
+        fs::mkdir(name, true);
+    }
+    fastring fullpath = dir + "/" + name;
+    if (isdir) {
+        fs::mkdir(name, true);
+    } else {
+        if (!fs::exists(fullpath)) {
+            fs::file fx(fullpath, 'm');
+            fx.close();
+        }
+    }
+    LOG << "new file -> fullpath: " << fullpath;
+    // fs::file fd(fullpath, 'm');
+
+    // _filemaps_cache.insert(std::make_pair(id, fd));
+
+    return fs::exists(fullpath);
+}
+
+bool FSAdapter::writeBlock(const char *name, size_t seek_len, const char *data, size_t size)
+{
+    fastring fullpath = Config::getStorageDir() + "/" + name;
+    fs::file fx(fullpath, 'w');
+    if (!fx.exists()) {
+        ELOG << "writeBlock File does not exist";
+        return false;
+    }
+    LOG << "writeBlock file -> fullpath: " << fullpath;
+
+    size_t wirted_size = 0;
+    size_t rem_size = size;
+    fx.seek(seek_len);
+    do {
+        size_t wsize = fx.write(data, rem_size);
+        if (wsize <= 0) {
+            break;
+        }
+        wirted_size += wsize;
+        rem_size = size - wsize;
+    } while(wirted_size < size);
+    fx.close();
+
+    return true;
+}

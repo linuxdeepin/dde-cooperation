@@ -14,7 +14,7 @@
 #include "zrpc.h"
 
 void test_client() {
-    zrpc_ns::ZRpcClient *client = new zrpc_ns::ZRpcClient("127.0.0.1", 7788, true);
+    zrpc_ns::ZRpcClient *client = new zrpc_ns::ZRpcClient("10.8.11.98", 8899, true);
     QueryService_Stub stub(client->getChannel());
     zrpc_ns::ZRpcController *rpc_controller = client->getControler();
 

@@ -6,6 +6,13 @@
 #define CONSTANT_H
 
 #define UNI_KEY "UOS-COOPERATION"
+#define UNI_RPC_PORT_UDP  51595
+#define UNI_RPC_PORT_BASE (UNI_RPC_PORT_UDP + 2)
+
+#define BLOCK_SIZE 1 * 1024 * 1024
+
+const int LOGIN_CONFIRM_TIMEOUT = 30000; // 5 minutes
+
 
 typedef enum whoami_t {
     ServiceDeamon = 0,
@@ -79,6 +86,20 @@ typedef enum fs_type_t {
     JOB_CANCEL = 8,
     JOB_DONE = 9,
 } FSType;
+
+typedef enum flow_type_t {
+    TRANS_BLOCK = 0,
+    TRANS_DIGEST = 1,
+    TRANS_ERROR = 2,
+    TRANS_DONE = 3,
+} FSFlowType;
+
+typedef enum rpc_result_t {
+    PARAM_ERROR = -2,
+    INVOKE_FAIL = -1,
+    INVOKE_OK = 0,
+    INVOKE_DONE = 1,
+} RpcResult;
 
 
 #endif // CONSTANT_H

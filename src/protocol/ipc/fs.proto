@@ -83,3 +83,31 @@ object ReportFS {
     string path  // the file path
     string content // the json format content what want to delivery
 }
+
+// send or receive file's block, but the binrary data not incuded in the
+object FileTransBlock {
+    int32 id
+    int32 file_num // file trans number
+    bool compressed // compressed for big file
+    uint32 blk_id
+}
+
+// file's block digest
+object FileTransDigest {
+    int32 id
+    int32 blk_id // file block number
+    string blk_md5 // md5digest 16 字节
+}
+
+// file trans error hanppend
+object FileTransError {
+    int32 id
+    int32 file_num // file trans number
+    string error // error message
+}
+
+// file trans done
+object FileTransDone {
+    int32 id
+    int32 file_num // file trans number
+}

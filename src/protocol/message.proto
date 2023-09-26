@@ -3,7 +3,7 @@ option cc_generic_services = true;
 
 option java_multiple_files = true;
 option java_package = "uniapis";
-package uniapis;
+// package uniapis;
 
 message LoginRequest {
   string name = 1;
@@ -63,7 +63,7 @@ message OptionMessage {
 enum FileType {
   DIR = 0;
   DIR_LINK = 1;
-  FILE = 2;
+  FILE_B = 2;
   FILE_LINK = 3;
 }
 
@@ -97,7 +97,7 @@ message ReadDirFiles {
 // message FileRemoveFile {
 //   int32 id = 1;
 //   string path = 2;
-//   sint32 file_num = 3;
+//   uint32 file_num = 3;
 // }
 
 message FileRemove {
@@ -105,7 +105,7 @@ message FileRemove {
   string path = 2;
   oneof union {
     bool recursive = 3;
-    sint32 file_num = 4;
+    uint32 file_num = 4;
   }
 }
 
@@ -138,39 +138,42 @@ message FileTransferCancel {
 message FileResponse {
   oneof union {
     FileDirectory dir = 1;
-    FileTransferBlock block = 2;
-    FileTransferError error = 3;
-    FileTransferDone done = 4;
-    FileTransferDigest digest = 5;
+    FileTransferConfirm confirm = 2;
+    FileTransferBlock block = 3;
+    FileTransferDigest digest = 4;
+    FileTransferError error = 5;
+    FileTransferDone done = 6;
   }
 }
 
-message FileTransferDigest {
-  int32 id = 1;
-  sint32 file_num = 2;
-  uint64 last_modified = 3;
-  uint64 file_size = 4;
-  bool is_upload = 5;
-  bool is_identical = 6;
+message FileTransferConfirm {
+  int32 id = 1;    // 成功：返回原来的请求id； 失败：-1
+  string path = 2; // 返回请求时的文件路径
 }
 
 message FileTransferBlock {
   int32 id = 1;
-  sint32 file_num = 2;
+  uint32 file_num = 2; // 传输总数的第几个文件，不是块数
   bytes data = 3;
   bool compressed = 4;
   uint32 blk_id = 5;
 }
 
+message FileTransferDigest {
+  int32 id = 1;
+  uint32 blk_id = 2;
+  string blk_md5 = 3; // md5digest 16 字节
+}
+
 message FileTransferError {
   int32 id = 1;
   string error = 2;
-  sint32 file_num = 3;
+  uint32 file_num = 3; //第几个文件错误
 }
 
 message FileTransferDone {
   int32 id = 1;
-  sint32 file_num = 2;
+  uint32 file_num = 2; //传输的总数，也就是最后一个
 }
 
 message FileTransferRequest {
@@ -181,21 +184,48 @@ message FileTransferRequest {
   }
   int32 id = 1;
   string path = 2; // 请求读取或接收保存的目录
-  int32 file_num = 3;
+  uint32 file_num = 3; // 传输的文件数量
   bool include_hidden = 4;
   Direction ask = 5;
 }
 
-// message FileTransferSendRequest {
-//   int32 id = 1;
-//   string path = 2;
-//   bool include_hidden = 3;
-//   int32 file_num = 4;
-// }
+// 文件传输请求响应结果
+enum FileTransRe {
+  IO_ERROR = 0; // 出现读写错误
+  OK = 1;  //无错误
+  FINIASH = 2; // 完成
+}
+
+message FileTransResponse {
+  int32 id = 1;  // 创建作业任务的jobid或单个文件的id
+  string name = 2;     //目录或文件名
+  FileTransRe result = 3; //请求结果
+}
+
+message FileTransJob {
+  int32 job_id = 1;
+  string path = 2;     //文件目录路径
+  bool include_hidden = 3; //是否包含着.开头隐藏文件
+  bool recursive = 4; //是否迭代包含着子目录
+  bool push = 5; // push or pull
+}
+
+message FileTransCreate {
+  int32 id = 1;       // 文件创建id
+  FileEntry entry = 2; // 文件信息
+}
+
+message FileTransBlock {
+  int32 id = 1;
+  string filename = 2;
+  uint32 blk_id = 3;
+  bytes data = 4;
+  bool compressed = 5;
+}
 
 // message FileTransferSendConfirmRequest {
 //   int32 id = 1;
-//   sint32 file_num = 2;
+//   uint32 file_num = 2;
 //   oneof union {
 //     bool skip = 3;
 //     uint32 offset_blk = 4;
@@ -206,7 +236,7 @@ message FileTransferRequest {
 //   int32 id = 1;
 //   string path = 2; // path written to
 //   repeated FileEntry files = 3;
-//   int32 file_num = 4;
+//   uint32 file_num = 4;
 // }
 
 // file actions end
@@ -242,4 +272,12 @@ service RemoteService {
   rpc misc(Misc) returns (Misc);
 
   rpc fsaction(FileAction) returns (FileResponse);
+
+  rpc fsflow(FileResponse) returns (FileResponse);
+
+  rpc filetrans_job(FileTransJob) returns (FileTransResponse);
+
+  rpc filetrans_create(FileTransCreate) returns (FileTransResponse);
+
+  rpc filetrans_block(FileTransBlock) returns (FileTransResponse);
 }

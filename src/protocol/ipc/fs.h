@@ -321,4 +321,84 @@ struct ReportFS {
     }
 };
 
+struct FileTransBlock {
+    int32 id;
+    int32 file_num;
+    bool compressed;
+    uint32 blk_id;
+
+    void from_json(const co::Json& _x_) {
+        id = (int32)_x_.get("id").as_int64();
+        file_num = (int32)_x_.get("file_num").as_int64();
+        compressed = _x_.get("compressed").as_bool();
+        blk_id = (uint32)_x_.get("blk_id").as_int64();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("id", id);
+        _x_.add_member("file_num", file_num);
+        _x_.add_member("compressed", compressed);
+        _x_.add_member("blk_id", blk_id);
+        return _x_;
+    }
+};
+
+struct FileTransDigest {
+    int32 id;
+    int32 blk_id;
+    fastring blk_md5;
+
+    void from_json(const co::Json& _x_) {
+        id = (int32)_x_.get("id").as_int64();
+        blk_id = (int32)_x_.get("blk_id").as_int64();
+        blk_md5 = _x_.get("blk_md5").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("id", id);
+        _x_.add_member("blk_id", blk_id);
+        _x_.add_member("blk_md5", blk_md5);
+        return _x_;
+    }
+};
+
+struct FileTransError {
+    int32 id;
+    int32 file_num;
+    fastring error;
+
+    void from_json(const co::Json& _x_) {
+        id = (int32)_x_.get("id").as_int64();
+        file_num = (int32)_x_.get("file_num").as_int64();
+        error = _x_.get("error").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("id", id);
+        _x_.add_member("file_num", file_num);
+        _x_.add_member("error", error);
+        return _x_;
+    }
+};
+
+struct FileTransDone {
+    int32 id;
+    int32 file_num;
+
+    void from_json(const co::Json& _x_) {
+        id = (int32)_x_.get("id").as_int64();
+        file_num = (int32)_x_.get("file_num").as_int64();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("id", id);
+        _x_.add_member("file_num", file_num);
+        return _x_;
+    }
+};
+
 } // ipc

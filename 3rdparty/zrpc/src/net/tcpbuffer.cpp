@@ -107,7 +107,7 @@ void TcpBuffer::recycleRead(int index) {
 void TcpBuffer::recycleWrite(int index) {
     int j = m_write_index + index;
     if (j > (int)m_buffer.size()) {
-        ELOG << "recycleWrite error";
+        ELOG << "recycleWrite error, j=" << j;
         return;
     }
     m_write_index = j;

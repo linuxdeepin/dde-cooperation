@@ -77,14 +77,14 @@ TcpConnection::ptr TcpServer::addClient(tcp::Connection *conntion) {
         it->second.reset();
         // set new Tcpconnection
         DLOG << "fd " << fd << " have exist, reset it";
-        it->second = std::make_shared<TcpConnection>(this, conntion, 128, getPeerAddr());
+        it->second = std::make_shared<TcpConnection>(this, conntion, 1024, getPeerAddr());
         return it->second;
 
     } else {
         DLOG << "fd " << fd << " did't exist, new it";
         TcpConnection::ptr conn = std::make_shared<TcpConnection>(this,
                                                                   conntion,
-                                                                  128,
+                                                                  1024,
                                                                   getPeerAddr());
         m_clients.insert(std::make_pair(fd, conn));
         return conn;

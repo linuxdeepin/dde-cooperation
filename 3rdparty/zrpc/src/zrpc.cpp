@@ -9,12 +9,6 @@
 
 namespace zrpc_ns {
 
-zrpc_ns::TcpServer::ptr gRpcServer;
-
-TcpServer::ptr GetServer() {
-    return gRpcServer;
-}
-
 ZRpcClient::ZRpcClient(char *ip, uint16 port, bool ssl) {
     zrpc_ns::NetAddress::ptr addr = std::make_shared<zrpc_ns::NetAddress>(ip, port, ssl);
     m_channel = std::make_shared<ZRpcChannel>(addr);
@@ -62,8 +56,7 @@ ZRpcServer::~ZRpcServer() {
     co::del((ZRpcServerImpl *)_p);
 }
 
-bool ZRpcServer::doregister(std::shared_ptr<google::protobuf::Service> service)
-{
+bool ZRpcServer::doregister(std::shared_ptr<google::protobuf::Service> service) {
     TcpServer::ptr tcpserver = ((ZRpcServerImpl *)_p)->getServer();
     return tcpserver->registerService(service);
 }

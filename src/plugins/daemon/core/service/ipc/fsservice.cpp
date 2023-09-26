@@ -38,7 +38,15 @@ void FSImpl::sendFiles(co::Json &req, co::Json &res)
 {
     qInfo() << "sendFiles";
     co::Json filepaths = req.get("filepaths");
-    qInfo() << filepaths.str().c_str();
+
+    QStringList paths;
+    uint32 size = filepaths.size();
+    for (int i = 0; i < size; i++) {
+        paths << filepaths[i].as_c_str();
+    }
+
+    qInfo() << "paths: " << paths;
+    _interface->handleSendFiles(paths);
 }
 
 void FSImpl::receiveFiles(co::Json &req, co::Json &res)
@@ -64,4 +72,10 @@ FSService::FSService(QObject *parent)
 
 FSService::~FSService()
 {
+}
+
+void FSService::handleSendFiles(QStringList &paths)
+{
+    QString savedir("/home");
+    emit sigSendFiles(_job_id, paths, savedir);
 }

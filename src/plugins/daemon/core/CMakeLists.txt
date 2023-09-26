@@ -20,11 +20,12 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-#find_package(PkgConfig REQUIRED)
+find_package(PkgConfig REQUIRED)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
 find_package(Threads REQUIRED)
+pkg_search_module(UUID REQUIRED uuid)
 
 include_directories(include)
 
@@ -55,7 +56,7 @@ target_link_libraries(${PROJECT_NAME}
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} ws2_32 wsock32)
 endif ()
-target_link_libraries(${PROJECT_NAME} Threads::Threads)
+target_link_libraries(${PROJECT_NAME} Threads::Threads ${UUID_LIBRARIES})
 
 #install library file
 install(TARGETS

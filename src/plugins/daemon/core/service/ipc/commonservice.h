@@ -10,6 +10,25 @@
 
 #include "ipc/common.h"
 
+class CommonService : public QObject
+{
+    Q_OBJECT
+public:
+    explicit CommonService(QObject *parent = nullptr);
+    ~CommonService();
+
+    fastring getSettingPin() const;
+
+    void handleConnect(const char *ip, const char *password);
+
+signals:
+    void sigConnect(QString ip, QString name, QString pin);
+
+public slots:
+
+private:
+};
+
 namespace ipc {
 
 class CommonImpl : public Common
@@ -17,6 +36,10 @@ class CommonImpl : public Common
 public:
     CommonImpl() = default;
     virtual ~CommonImpl() = default;
+
+    void setInterface(CommonService *interface) {
+        _interface = interface;
+    }
 
     virtual void tryConnect(co::Json &req, co::Json &res) override;
 
@@ -37,22 +60,11 @@ public:
     virtual void miscMessage(co::Json &req, co::Json &res) override;
 
     virtual void commNotify(co::Json &req, co::Json &res) override;
+
+private:
+    CommonService *_interface;
 };
 
 }   // ipc
-
-class CommonService : public QObject
-{
-    Q_OBJECT
-public:
-    explicit CommonService(QObject *parent = nullptr);
-    ~CommonService();
-
-signals:
-
-public slots:
-
-private:
-};
 
 #endif   // COMMON_SERVICE_H

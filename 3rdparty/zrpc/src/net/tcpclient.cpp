@@ -23,7 +23,7 @@ TcpClient::TcpClient(NetAddress::ptr addr)
 
     _tcp_cli = new tcp::Client(ip, port, ssl);
 
-    m_connection = std::make_shared<TcpConnection>(this, _tcp_cli, 128, m_peer_addr);
+    m_connection = std::make_shared<TcpConnection>(this, _tcp_cli, 1024, m_peer_addr);
 }
 
 TcpClient::~TcpClient() {
@@ -52,7 +52,7 @@ bool TcpClient::connect() {
 
 TcpConnection *TcpClient::getConnection() {
     if (!m_connection.get()) {
-        m_connection = std::make_shared<TcpConnection>(this, _tcp_cli, 128, m_peer_addr);
+        m_connection = std::make_shared<TcpConnection>(this, _tcp_cli, 1024, m_peer_addr);
     }
     return m_connection.get();
 }

@@ -29,3 +29,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 #zrpc library which has include protobuf library
 target_link_libraries(${PROJECT_NAME} zrpc)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+
+#install library file
+install(TARGETS
+    ${PROJECT_NAME}
+    LIBRARY
+    DESTINATION
+    ${LIB_INSTALL_DIR}
+)

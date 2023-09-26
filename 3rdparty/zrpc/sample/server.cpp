@@ -65,10 +65,10 @@ int main(int argc, char *argv[]) {
     printf("Start RPC server\n");
     flag::parse(argc, argv);
 
-    char key[] = "/home/doll/public/certificates/desktop.key";
-    char crt[] = "/home/doll/public/certificates/desktop.crt";
+    char key[] = "/usr/share/mobile-assistant-daemon/certificates/desktop.key";
+    char crt[] = "/usr/share/mobile-assistant-daemon/certificates/desktop.crt";
 
-    zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(7788, key, crt);
+    zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(8899, key, crt);
     server->registerService<QueryServiceImpl>();
 
     printf("RPC server run..\n");

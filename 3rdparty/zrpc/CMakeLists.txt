@@ -49,7 +49,7 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DDE_COOPERATION_PLUGIN_ROOT_DIR}
+    ${LIB_INSTALL_DIR}
 )
 
 add_subdirectory(sample)

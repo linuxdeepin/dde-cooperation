@@ -10,6 +10,24 @@
 
 #include "ipc/fs.h"
 
+class FSService : public QObject
+{
+    Q_OBJECT
+public:
+    explicit FSService(QObject *parent = nullptr);
+    ~FSService();
+
+    void handleSendFiles(QStringList &paths);
+
+signals:
+    void sigSendFiles(int jobId, QStringList paths, QString savedir);
+
+public slots:
+
+private:
+    int _job_id = 0;
+};
+
 namespace ipc {
 
 class FSImpl : public FS
@@ -17,6 +35,10 @@ class FSImpl : public FS
 public:
     FSImpl() = default;
     virtual ~FSImpl() = default;
+
+    void setInterface(FSService *interface) {
+        _interface = interface;
+    }
 
     virtual void compatible(co::Json &req, co::Json &res) override;
 
@@ -39,22 +61,11 @@ public:
     virtual void cancelJob(co::Json &req, co::Json &res) override;
 
     virtual void fsReport(co::Json &req, co::Json &res) override;
+
+private:
+    FSService *_interface;
 };
 
 }   // ipc
-
-class FSService : public QObject
-{
-    Q_OBJECT
-public:
-    explicit FSService(QObject *parent = nullptr);
-    ~FSService();
-
-signals:
-
-public slots:
-
-private:
-};
 
 #endif   // FS_SERVICE_H

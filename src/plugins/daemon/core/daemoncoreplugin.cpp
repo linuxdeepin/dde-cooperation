@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QUrl>
 
-#include <service/ipc/commonservice.h>
+#include <service/servicemanager.h>
 #include <service/ipc/fsservice.h>
 
 using namespace daemon_core;
@@ -19,7 +19,7 @@ void daemonCorePlugin::initialize()
 
 bool daemonCorePlugin::start()
 {
-    CommonService *service = new CommonService(this);
-    FSService *fsservice = new FSService(this);
+    ServiceManager *manager = new ServiceManager(this);
+    manager->startRemoteServer();
     return true;
 }
