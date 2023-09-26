@@ -6,7 +6,7 @@
 #include <google/protobuf/stubs/callback.h>
 #include "rpccontroller.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 void ZRpcController::Reset() {
 }
@@ -93,4 +93,4 @@ std::string ZRpcController::GetMethodFullName() {
     return m_full_name;
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns

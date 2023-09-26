@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,7 +10,7 @@
 #include "abstractdata.h"
 #include "../net/tcpconnection.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 class TcpConnection;
 
@@ -25,6 +25,6 @@ public:
     virtual void dispatch(AbstractData *data, TcpConnection *conn) = 0;
 };
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

@@ -13,7 +13,7 @@
 #include "abstractdata.h"
 #include "specdata.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 static const char PB_START = 0x02; // start char
 static const char PB_END = 0x03;   // end char
@@ -297,4 +297,4 @@ void ZRpcCodeC::decode(TcpBuffer *buf, AbstractData *data) {
     data = pb_struct;
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns

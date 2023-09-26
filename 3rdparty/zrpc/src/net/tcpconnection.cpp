@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <unistd.h>
+//#include <unistd.h>
 #include <string.h>
-#include <sys/socket.h>
+//#include <sys/socket.h>
 #include "tcpconnection.h"
 #include "tcpserver.h"
 #include "tcpclient.h"
@@ -12,7 +12,7 @@
 #include "specdata.h"
 #include "co/co.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 TcpConnection::TcpConnection(TcpServer *tcp_svr,
                              tcp::Connection *serv_conn,
@@ -68,8 +68,8 @@ void TcpConnection::initBuffer(int size) {
     m_read_buffer = std::make_shared<TcpBuffer>(size);
 }
 
-ssize_t TcpConnection::read_hook(char *buf) {
-    ssize_t r = 0;
+__int64 TcpConnection::read_hook(char *buf) {
+    __int64 r = 0;
 
     if (m_connection_type == ServerConnection) {
         if (m_serv_conn) {
@@ -88,8 +88,8 @@ ssize_t TcpConnection::read_hook(char *buf) {
     return r;
 }
 
-ssize_t TcpConnection::write_hook(const void *buf, size_t count) {
-    ssize_t r = 0;
+__int64 TcpConnection::write_hook(const void *buf, size_t count) {
+    __int64 r = 0;
     if (m_connection_type == ServerConnection) {
         if (m_serv_conn) {
             r = m_serv_conn->send(buf, count, m_trans_timeout);
@@ -289,4 +289,4 @@ void TcpConnection::setState(const TcpConnectionState &state) {
     m_state = state;
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns

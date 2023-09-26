@@ -1,13 +1,13 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <unistd.h>
+//#include <unistd.h>
 #include <string.h>
 #include "tcpbuffer.h"
 #include "co/log.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 TcpBuffer::TcpBuffer(int size) {
     m_buffer.resize(size);
@@ -124,4 +124,4 @@ std::vector<char> TcpBuffer::getBufferVector() {
     return m_buffer;
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,10 +11,11 @@
 #include "tcpconnection.h"
 #include "abstractcodec.h"
 #include "abstractdispatcher.h"
+#include "zrpc_defines.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
-class TcpServer {
+ZRPC_API class TcpServer {
 
 public:
     typedef std::shared_ptr<TcpServer> ptr;
@@ -64,6 +65,6 @@ private:
     std::map<int, std::shared_ptr<TcpConnection>> m_clients;
 };
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

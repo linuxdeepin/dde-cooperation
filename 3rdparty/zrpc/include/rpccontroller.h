@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,10 +10,11 @@
 #include <stdio.h>
 #include <memory>
 #include "netaddress.h"
+#include "zrpc_defines.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
-class ZRpcController : public google::protobuf::RpcController {
+class ZRPC_API ZRpcController : public google::protobuf::RpcController {
 
 public:
     typedef std::shared_ptr<ZRpcController> ptr;

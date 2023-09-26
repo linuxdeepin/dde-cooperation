@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -8,8 +8,9 @@
 #include <google/protobuf/stubs/callback.h>
 #include <functional>
 #include <memory>
+#include "zrpc_defines.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 class ZRpcClosure : public google::protobuf::Closure {
 public:
@@ -29,6 +30,6 @@ private:
     std::function<void()> m_cb{nullptr};
 };
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,7 +10,7 @@
 #include "co/byte_order.h"
 #include "co/rand.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 class Util {
 public:
@@ -26,6 +26,6 @@ public:
     }
 };
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

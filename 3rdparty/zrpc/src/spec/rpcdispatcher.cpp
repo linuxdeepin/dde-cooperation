@@ -16,7 +16,7 @@
 #include "specodec.h"
 #include "utils.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 class TcpBuffer;
 
@@ -158,4 +158,4 @@ void ZRpcDispacther::registerService(service_ptr service) {
     // LOG << "succ register service[" << service_name << "]!";
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns

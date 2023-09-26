@@ -17,7 +17,7 @@
 
 #include "utils.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 ZRpcChannel::ZRpcChannel(NetAddress::ptr addr)
     : m_addr(addr) {
@@ -107,4 +107,4 @@ void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
     }
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns

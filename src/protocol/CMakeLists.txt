@@ -21,7 +21,7 @@ else ()
     )
 endif()
 
-add_library(${PROJECT_NAME} SHARED 
+add_library(${PROJECT_NAME} STATIC
     ${PROTO_FILES}
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)

@@ -1,16 +1,16 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <sys/socket.h>
-#include <arpa/inet.h>
+//#include <sys/socket.h>
+//#include <arpa/inet.h>
 #include <sstream>
 #include "co/log.h"
 #include "netaddress.h"
 #include "tcpclient.h"
 #include "specodec.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 TcpClient::TcpClient(NetAddress::ptr addr)
     : m_peer_addr(addr) {
@@ -99,4 +99,4 @@ void TcpClient::stop() {
     }
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns

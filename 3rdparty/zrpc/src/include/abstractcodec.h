@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,7 +10,7 @@
 #include "../net/tcpbuffer.h"
 #include "abstractdata.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 class AbstractCodeC {
 
@@ -26,6 +26,6 @@ public:
     virtual void decode(TcpBuffer *buf, AbstractData *data) = 0;
 };
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

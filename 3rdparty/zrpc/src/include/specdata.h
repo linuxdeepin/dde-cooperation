@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,7 +12,7 @@
 #include "co/log.h"
 #include "co/fastring.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 class SpecDataStruct : public AbstractData {
 public:
@@ -46,6 +46,6 @@ public:
     // char end;                        // identify end of a spec data protocal data
 };
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

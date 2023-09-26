@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     char key[] = "/home/doll/public/certificates/desktop.key";
     char crt[] = "/home/doll/public/certificates/desktop.crt";
 
-    zrpc::ZRpcServer *server = new zrpc::ZRpcServer(7788, key, crt);
+    zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(7788, key, crt);
     server->registerService<QueryServiceImpl>();
 
     printf("RPC server run..\n");

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -15,9 +15,9 @@
 #include "specdata.h"
 // #include "co/tcp.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
-class ZRpcDispacther : public AbstractDispatcher {
+class ZRPC_API ZRpcDispacther : public AbstractDispatcher {
 public:
     typedef std::shared_ptr<google::protobuf::Service> service_ptr;
 

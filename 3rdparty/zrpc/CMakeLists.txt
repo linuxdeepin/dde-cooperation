@@ -42,6 +42,7 @@ add_library(${PROJECT_NAME} SHARED
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(${PROJECT_NAME} ${PROTOBUF_LIB} co)
+add_compile_definitions(${PROJECT_NAME} EXPORT_ZRPC_API)
 
 #install library file
 install(TARGETS

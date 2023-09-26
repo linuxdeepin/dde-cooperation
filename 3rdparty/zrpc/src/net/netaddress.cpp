@@ -5,7 +5,7 @@
 #include "netaddress.h"
 #include "co/log.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 NetAddress::NetAddress(const char *ip, uint16 port, char *key, char *crt) {
     if ((ip && *ip)) {
@@ -35,4 +35,4 @@ NetAddress::NetAddress(const char *ip, uint16 port, bool ssl) {
     m_ssl = ssl;
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns

@@ -14,9 +14,9 @@
 #include "zrpc.h"
 
 void test_client() {
-    zrpc::ZRpcClient *client = new zrpc::ZRpcClient("127.0.0.1", 7788, true);
+    zrpc_ns::ZRpcClient *client = new zrpc_ns::ZRpcClient("127.0.0.1", 7788, true);
     QueryService_Stub stub(client->getChannel());
-    zrpc::ZRpcController *rpc_controller = client->getControler();
+    zrpc_ns::ZRpcController *rpc_controller = client->getControler();
 
     queryAgeReq rpc_req;
     queryAgeRes rpc_res;

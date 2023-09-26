@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -16,7 +16,7 @@
 #include "specodec.h"
 #include "netaddress.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 class TcpServer;
 class TcpClient;
@@ -81,8 +81,8 @@ public:
     void initServer();
 
 private:
-    ssize_t read_hook(char *buf);
-    ssize_t write_hook(const void *buf, size_t count);
+    __int64 read_hook(char *buf);
+    __int64 write_hook(const void *buf, size_t count);
 
     void clearClient();
 
@@ -109,6 +109,6 @@ private:
     std::map<std::string, std::shared_ptr<SpecDataStruct>> m_reply_datas;
 };
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

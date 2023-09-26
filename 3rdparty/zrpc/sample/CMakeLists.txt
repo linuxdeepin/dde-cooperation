@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.0)
+﻿cmake_minimum_required(VERSION 3.0)
 project(rpctest)
 
 SET(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR})
 enable_language(ASM)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11 -Wall -Wno-deprecated -Wno-unused-but-set-variable")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11 -Wall")
 
 # do not find, check system installed protobuf package
 if(NOT EXISTS "${PROTOBUF_PROTOC_EXECUTABLE}")

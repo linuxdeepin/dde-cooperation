@@ -1,8 +1,8 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <sys/socket.h>
+//#include <sys/socket.h>
 #include <assert.h>
 #include <fcntl.h>
 #include <string.h>
@@ -12,7 +12,7 @@
 
 #include "co/tcp.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 TcpServer::TcpServer(NetAddress::ptr addr)
     : m_addr(addr) {
@@ -108,4 +108,4 @@ AbstractCodeC::ptr TcpServer::getCodec() {
     return m_codec;
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns

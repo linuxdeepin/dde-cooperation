@@ -1,18 +1,19 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef ZRPC_NETADDRESS_H
 #define ZRPC_NETADDRESS_H
 
-#include <unistd.h>
+//#include <unistd.h>
 #include <memory>
 #include "co/fastring.h"
 #include "co/fastream.h"
+#include "zrpc_defines.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
-class NetAddress {
+class ZRPC_API NetAddress {
 
 public:
     typedef std::shared_ptr<NetAddress> ptr;

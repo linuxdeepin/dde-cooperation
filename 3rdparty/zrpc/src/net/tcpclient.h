@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,7 +11,7 @@
 #include "netaddress.h"
 #include "tcpconnection.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 class TcpClient {
 public:
@@ -62,6 +62,6 @@ private:
     bool m_connect_succ{false};
 };
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

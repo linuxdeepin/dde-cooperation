@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,8 +7,10 @@
 
 #include <vector>
 #include <memory>
+#include <string>
+#include "zrpc_defines.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
 class TcpBuffer {
 
@@ -60,6 +62,6 @@ public:
     std::vector<char> m_buffer;
 };
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

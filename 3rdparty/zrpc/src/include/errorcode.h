@@ -1,11 +1,11 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef ZRPC_ERRORCODE_H
 #define ZRPC_ERRORCODE_H
 
-namespace zrpc {
+namespace zrpc_ns {
 
 #ifndef SYS_ERROR_PREFIX
 #define SYS_ERROR_PREFIX(xx) 1000##xx
@@ -34,6 +34,6 @@ const int ERROR_NOT_SET_ASYNC_PRE_CALL = SYS_ERROR_PREFIX(
     0011); // you didn't set some nessary param before call async rpc
 const int ERROR_CONNECT_SYS_ERR = SYS_ERROR_PREFIX(0012); // connect sys error
 
-} // namespace zrpc
+} // namespace zrpc_ns
 
 #endif

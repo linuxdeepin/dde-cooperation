@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,9 +12,9 @@
 #include "rpcchannel.h"
 #include "rpccontroller.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
-class ZRpcClient {
+class ZRPC_API ZRpcClient {
 
 public:
     ZRpcClient(char *ip, uint16 port, bool ssl = true);
@@ -29,7 +29,7 @@ private:
     ZRpcController::ptr m_controller{nullptr};
 };
 
-class ZRpcServer {
+class ZRPC_API ZRpcServer {
 
 public:
     ZRpcServer(uint16 port, char *key, char *crt);

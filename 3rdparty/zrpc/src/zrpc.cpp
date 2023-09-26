@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,16 +7,16 @@
 #include "co/log.h"
 #include "net/tcpserver.h"
 
-namespace zrpc {
+namespace zrpc_ns {
 
-zrpc::TcpServer::ptr gRpcServer;
+zrpc_ns::TcpServer::ptr gRpcServer;
 
 TcpServer::ptr GetServer() {
     return gRpcServer;
 }
 
 ZRpcClient::ZRpcClient(char *ip, uint16 port, bool ssl) {
-    zrpc::NetAddress::ptr addr = std::make_shared<zrpc::NetAddress>(ip, port, ssl);
+    zrpc_ns::NetAddress::ptr addr = std::make_shared<zrpc_ns::NetAddress>(ip, port, ssl);
     m_channel = std::make_shared<ZRpcChannel>(addr);
 
     m_controller = std::make_shared<ZRpcController>();
@@ -32,7 +32,7 @@ class ZRpcServerImpl {
 public:
     ZRpcServerImpl(uint16 port, char *key, char *crt) {
         // ip is localhost: "0.0.0.0"
-        zrpc::NetAddress::ptr addr = std::make_shared<zrpc::NetAddress>("0.0.0.0", port, key, crt);
+        zrpc_ns::NetAddress::ptr addr = std::make_shared<zrpc_ns::NetAddress>("0.0.0.0", port, key, crt);
         _tcpserver = std::make_shared<TcpServer>(addr);
     }
 
@@ -72,4 +72,4 @@ bool ZRpcServer::start() {
     return ((ZRpcServerImpl *)_p)->start();
 }
 
-} // namespace zrpc
+} // namespace zrpc_ns
