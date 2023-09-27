@@ -3,6 +3,11 @@ Priority: optional
 Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
 Build-Depends:
  debhelper (>= 11),
+ pkg-config,
+ libdtkwidget-dev,
+ libdtkgui-dev,
+ libdtkcore-dev,
+ libdtkcore5-bin,
  cmake,
  qtbase5-dev,
  libssl-dev,

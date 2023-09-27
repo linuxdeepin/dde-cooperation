@@ -1,3 +1,9 @@
+dde-cooperation (0.2.1-4) unstable; urgency=medium
+
+  * First test package.
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 27 Sep 2023 18:05:07 +0800
+
 dde-cooperation (0.2.0-3) unstable; urgency=medium
 
   * First build package.
