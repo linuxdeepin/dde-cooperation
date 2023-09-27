@@ -44,6 +44,7 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_SOURCE_DIR}/src/
 )
 
+
 target_link_libraries(${PROJECT_NAME}
     deepin_cross::framework
     uniapi
@@ -61,6 +62,6 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DEEPIN_DEAMON_PLUGIN_DIR}
+    ${DEEPIN_DAEMON_PLUGIN_DIR}
 )
 

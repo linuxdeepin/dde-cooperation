@@ -18,9 +18,8 @@ TcpConnection::TcpConnection(TcpServer *tcp_svr,
                              tcp::Connection *serv_conn,
                              int buff_size,
                              NetAddress::ptr peer_addr)
-    : m_state(Connected)
-    , m_connection_type(ServerConnection)
-    , m_peer_addr(peer_addr) {
+    : m_state(Connected), m_connection_type(ServerConnection), m_peer_addr(peer_addr)
+{
 
     m_tcp_svr = tcp_svr;
     m_serv_conn = serv_conn;
@@ -35,9 +34,8 @@ TcpConnection::TcpConnection(TcpClient *tcp_cli,
                              tcp::Client *cli_conn,
                              int buff_size,
                              NetAddress::ptr peer_addr)
-    : m_state(NotConnected)
-    , m_connection_type(ClientConnection)
-    , m_peer_addr(peer_addr) {
+    : m_state(NotConnected), m_connection_type(ClientConnection), m_peer_addr(peer_addr)
+{
 
     m_tcp_cli = tcp_cli;
     m_cli_conn = cli_conn;
@@ -49,27 +47,32 @@ TcpConnection::TcpConnection(TcpClient *tcp_cli,
     DLOG << "succ create tcp connection[NotConnected]";
 }
 
-void TcpConnection::initServer() {
+void TcpConnection::initServer()
+{
     this->MainServerLoopCorFunc();
 }
 
-void TcpConnection::setUpClient() {
+void TcpConnection::setUpClient()
+{
     setState(Connected);
 }
 
-TcpConnection::~TcpConnection() {
+TcpConnection::~TcpConnection()
+{
     DLOG << "~TcpConnection";
 }
 
-void TcpConnection::initBuffer(int size) {
+void TcpConnection::initBuffer(int size)
+{
 
     // 初始化缓冲区大小
     m_write_buffer = std::make_shared<TcpBuffer>(size);
     m_read_buffer = std::make_shared<TcpBuffer>(size);
 }
 
-__int64 TcpConnection::read_hook(char *buf) {
-    __int64 r = 0;
+int64 TcpConnection::read_hook(char *buf)
+{
+    int64 r = 0;
 
     if (m_connection_type == ServerConnection) {
         if (m_serv_conn) {
@@ -88,8 +91,9 @@ __int64 TcpConnection::read_hook(char *buf) {
     return r;
 }
 
-__int64 TcpConnection::write_hook(const void *buf, size_t count) {
-    __int64 r = 0;
+int64 TcpConnection::write_hook(const void *buf, size_t count)
+{
+    int64 r = 0;
     if (m_connection_type == ServerConnection) {
         if (m_serv_conn) {
             r = m_serv_conn->send(buf, count, m_trans_timeout);
@@ -107,7 +111,8 @@ __int64 TcpConnection::write_hook(const void *buf, size_t count) {
     return r;
 }
 
-void TcpConnection::MainServerLoopCorFunc() {
+void TcpConnection::MainServerLoopCorFunc()
+{
 
     while (!m_stop) {
         input();
@@ -119,7 +124,8 @@ void TcpConnection::MainServerLoopCorFunc() {
     LOG << "this connection has already end loop";
 }
 
-void TcpConnection::input() {
+void TcpConnection::input()
+{
     TcpConnectionState state = getState();
     if (state == Closed || state == NotConnected) {
         return;
@@ -176,7 +182,8 @@ void TcpConnection::input() {
     }
 }
 
-void TcpConnection::execute() {
+void TcpConnection::execute()
+{
     // it only server do this
     while (m_read_buffer->readAble() > 0) {
         std::shared_ptr<AbstractData> data;
@@ -200,7 +207,8 @@ void TcpConnection::execute() {
     }
 }
 
-void TcpConnection::output() {
+void TcpConnection::output()
+{
     while (true) {
         TcpConnectionState state = getState();
         if (state != Connected) {
@@ -232,7 +240,8 @@ void TcpConnection::output() {
     }
 }
 
-void TcpConnection::clearClient() {
+void TcpConnection::clearClient()
+{
     if (getState() == Closed) {
         DLOG << "this client has closed";
         return;
@@ -246,7 +255,8 @@ void TcpConnection::clearClient() {
     }
 }
 
-void TcpConnection::shutdownConnection() {
+void TcpConnection::shutdownConnection()
+{
     TcpConnectionState state = getState();
     if (state == Closed || state == NotConnected) {
         DLOG << "this client has closed";
@@ -256,16 +266,19 @@ void TcpConnection::shutdownConnection() {
     LOG << "shutdown conn[" << m_peer_addr->toString() << "]";
 }
 
-TcpBuffer *TcpConnection::getInBuffer() {
+TcpBuffer *TcpConnection::getInBuffer()
+{
     return m_read_buffer.get();
 }
 
-TcpBuffer *TcpConnection::getOutBuffer() {
+TcpBuffer *TcpConnection::getOutBuffer()
+{
     return m_write_buffer.get();
 }
 
 bool TcpConnection::getResPackageData(const std::string &msg_req,
-                                      SpecDataStruct::pb_ptr &pb_struct) {
+                                      SpecDataStruct::pb_ptr &pb_struct)
+{
     auto it = m_reply_datas.find(msg_req);
     if (it != m_reply_datas.end()) {
         // DLOG << "return a res data";
@@ -277,16 +290,19 @@ bool TcpConnection::getResPackageData(const std::string &msg_req,
     return false;
 }
 
-AbstractCodeC::ptr TcpConnection::getCodec() const {
+AbstractCodeC::ptr TcpConnection::getCodec() const
+{
     return m_codec;
 }
 
-TcpConnectionState TcpConnection::getState() {
+TcpConnectionState TcpConnection::getState()
+{
     return m_state;
 }
 
-void TcpConnection::setState(const TcpConnectionState &state) {
+void TcpConnection::setState(const TcpConnectionState &state)
+{
     m_state = state;
 }
 
-} // namespace zrpc_ns
+}   // namespace zrpc_ns

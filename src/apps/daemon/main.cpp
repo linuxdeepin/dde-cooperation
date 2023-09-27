@@ -23,7 +23,7 @@ static bool loadPlugins()
     pluginsDirs.push_back(pluginsDir + "/daemon/core");
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
-    pluginsDirs << QString(DEEPIN_DEAMON_PLUGIN_DIR);
+    pluginsDirs << QString(DEEPIN_DAEMON_PLUGIN_DIR);
 #endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;

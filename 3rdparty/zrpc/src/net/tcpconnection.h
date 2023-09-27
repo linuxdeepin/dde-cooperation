@@ -22,13 +22,14 @@ class TcpServer;
 class TcpClient;
 
 enum TcpConnectionState {
-    NotConnected = 1, // can do io
-    Connected = 2,    // can do io
-    HalfClosing = 3,  // server call shutdown, write half close. can read,but can't write
-    Closed = 4,       // can't do io
+    NotConnected = 1,   // can do io
+    Connected = 2,   // can do io
+    HalfClosing = 3,   // server call shutdown, write half close. can read,but can't write
+    Closed = 4,   // can't do io
 };
 
-class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
+class TcpConnection : public std::enable_shared_from_this<TcpConnection>
+{
 
 public:
     typedef std::shared_ptr<TcpConnection> ptr;
@@ -50,8 +51,8 @@ public:
     void initBuffer(int size);
 
     enum ConnectionType {
-        ServerConnection = 1, // owned by tcp_server
-        ClientConnection = 2, // owned by tcp_client
+        ServerConnection = 1,   // owned by tcp_server
+        ClientConnection = 2,   // owned by tcp_client
     };
 
 public:
@@ -81,34 +82,34 @@ public:
     void initServer();
 
 private:
-    __int64 read_hook(char *buf);
-    __int64 write_hook(const void *buf, size_t count);
+    int64 read_hook(char *buf);
+    int64 write_hook(const void *buf, size_t count);
 
     void clearClient();
 
 private:
-    TcpServer *m_tcp_svr{nullptr};
-    TcpClient *m_tcp_cli{nullptr};
+    TcpServer *m_tcp_svr { nullptr };
+    TcpClient *m_tcp_cli { nullptr };
 
     NetAddress::ptr m_peer_addr;
 
-    tcp::Connection *m_serv_conn{nullptr};
-    tcp::Client *m_cli_conn{nullptr};
-    int m_trans_timeout{10000}; // max receive or send timeout, ms
+    tcp::Connection *m_serv_conn { nullptr };
+    tcp::Client *m_cli_conn { nullptr };
+    int m_trans_timeout { 10000 };   // max receive or send timeout, ms
 
-    TcpConnectionState m_state{TcpConnectionState::Connected};
-    ConnectionType m_connection_type{ServerConnection};
+    TcpConnectionState m_state { TcpConnectionState::Connected };
+    ConnectionType m_connection_type { ServerConnection };
 
     TcpBuffer::ptr m_read_buffer;
     TcpBuffer::ptr m_write_buffer;
 
     AbstractCodeC::ptr m_codec;
 
-    bool m_stop{false};
+    bool m_stop { false };
 
     std::map<std::string, std::shared_ptr<SpecDataStruct>> m_reply_datas;
 };
 
-} // namespace zrpc_ns
+}   // namespace zrpc_ns
 
 #endif
