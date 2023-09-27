@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QStorageInfo>
 #include <QCoreApplication>
+#include <QTimer>
 
 #ifdef WIN32
 #    include <QProcess>
@@ -84,7 +85,7 @@ QMap<QString, QString> TransferHelper::getAppList()
 
 void TransferHelper::tryConnect(const QString &ip, const QString &password)
 {
-    transferhandle.tryConnect(ip , password);
+    transferhandle.tryConnect(ip, password);
 }
 
 void TransferHelper::startTransfer()

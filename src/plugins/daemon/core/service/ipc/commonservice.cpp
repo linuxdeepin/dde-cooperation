@@ -18,6 +18,34 @@ void CommonImpl::compatible(co::Json &req, co::Json &res)
 
 void CommonImpl::syncConfig(co::Json &req, co::Json &res)
 {
+    qInfo() << "syncConfig";
+    int status = DaemonConfig::instance()->getStatus();
+
+    bool connnect = false;
+    bool transfer = false;
+    bool result = false;
+    switch (status) {
+    case status::connected:
+        connnect = true;
+        break;
+    case status::transferring:
+        connnect = true;
+        transfer = true;
+        break;
+    case status::result:
+        connnect = true;
+        transfer = true;
+        result = true;
+        break;
+    default:
+        break;
+    }
+
+    res = {
+        { "connected", connnect },
+        { "tranfer", transfer },
+        { "result", result }
+    };
 }
 
 void CommonImpl::syncPeers(co::Json &req, co::Json &res)
@@ -75,7 +103,7 @@ CommonService::~CommonService()
 
 fastring CommonService::getSettingPin() const
 {
-    return ::Config::refreshPin();
+    return DaemonConfig::instance()->refreshPin();
 }
 
 void CommonService::handleConnect(const char *ip, const char *password)

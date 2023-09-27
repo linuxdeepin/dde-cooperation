@@ -12,57 +12,60 @@
 #include "co/os.h"
 #include "utils.h"
 
-static fastring _pinCode;
-static uint64 _sessionId;
-static fastring _authedToken;
-static fastring _storageDir;
-static fastring _targetName;
-
-class Config {
+class DaemonConfig
+{
 public:
+    DaemonConfig() {}
+    ~DaemonConfig() {}
 
-    static bool needConfirm()
+    static DaemonConfig *instance()
+    {
+        static DaemonConfig ins;
+        return &ins;
+    }
+
+    bool needConfirm()
     {
         return false;
     }
 
-    static const fastring getPin()
+    const fastring getPin()
     {
         return _pinCode;
     }
 
-    static const fastring refreshPin()
+    const fastring refreshPin()
     {
         _pinCode = Util::genRandPin();
         return _pinCode;
     }
 
-    static void saveSession(uint64 session)
+    void saveSession(uint64 session)
     {
         _sessionId = session;
     }
 
-    static const uint64 getSession()
+    const uint64 getSession()
     {
         return _sessionId;
     }
 
-    static void saveAuthed(fastring token)
+    void saveAuthed(fastring token)
     {
         _authedToken = token;
     }
 
-    static const fastring getAuthed()
+    const fastring getAuthed()
     {
         return _authedToken;
     }
 
-    static void setTargetName(const char *name)
+    void setTargetName(const char *name)
     {
         _targetName = fastring(name);
     }
 
-    static const fastring getStorageDir()
+    const fastring getStorageDir()
     {
         fastring home = os::homedir();
         if (_targetName.empty()) {
@@ -73,6 +76,25 @@ public:
         return _storageDir;
     }
 
+    const int getStatus()
+    {
+        return status;
+    }
+
+private:
+    fastring _pinCode;
+    uint64 _sessionId;
+    fastring _authedToken;
+    fastring _storageDir;
+    fastring _targetName;
+    int status = 0;
+};
+
+enum status {
+    ready = 0,
+    connected = 1,
+    transferring = 2,
+    result = 3,
 };
 
 #endif

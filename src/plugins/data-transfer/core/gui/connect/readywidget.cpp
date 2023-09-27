@@ -8,7 +8,7 @@
 #include <QCheckBox>
 #include <QTextBrowser>
 #include <QLineEdit>
-#include <QtWidgets>
+#include <QRegularExpressionValidator>
 
 #include <gui/connect/choosewidget.h>
 
@@ -16,12 +16,13 @@
 
 #pragma execution_character_set("utf-8")
 
-ReadyWidget::ReadyWidget(QWidget *parent) : QFrame(parent)
+ReadyWidget::ReadyWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
-ReadyWidget::~ReadyWidget() { }
+ReadyWidget::~ReadyWidget() {}
 
 void ReadyWidget::initUI()
 {
@@ -55,11 +56,10 @@ void ReadyWidget::initUI()
     ipInput->setFixedSize(340, 36);
 
     QRegularExpressionValidator *ipValidator = new QRegularExpressionValidator(
-        QRegularExpression("^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$")
-    );
+            QRegularExpression("^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$"));
 
     ipInput->setValidator(ipValidator);
-    connect(ipInput, &QLineEdit::textChanged, [ = ]() {
+    connect(ipInput, &QLineEdit::textChanged, [=]() {
         bool isEmpty = ipInput->text().isEmpty();
         ipInput->setClearButtonEnabled(!isEmpty);
     });
@@ -137,13 +137,13 @@ void ReadyWidget::initUI()
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
 
-    QObject::connect(ipInput,&QLineEdit::textChanged,this,&ReadyWidget::onLineTextChange);
-    QObject::connect(captchaInput,&QLineEdit::textChanged,this,&ReadyWidget::onLineTextChange);
+    QObject::connect(ipInput, &QLineEdit::textChanged, this, &ReadyWidget::onLineTextChange);
+    QObject::connect(captchaInput, &QLineEdit::textChanged, this, &ReadyWidget::onLineTextChange);
 }
 
 void ReadyWidget::updateOption()
 {
-    TransferHelper::instance()->tryConnect(ipInput->text() , captchaInput->text());
+    TransferHelper::instance()->tryConnect(ipInput->text(), captchaInput->text());
 }
 
 void ReadyWidget::nextPage()
@@ -154,7 +154,7 @@ void ReadyWidget::nextPage()
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                   "nullptr";
+                      "nullptr";
     }
 }
 
@@ -165,7 +165,7 @@ void ReadyWidget::backPage()
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                   "nullptr";
+                      "nullptr";
     }
 }
 
@@ -174,8 +174,7 @@ void ReadyWidget::onLineTextChange()
     QRegularExpression ipRegex("^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$");
     QRegularExpressionMatch ipMatch = ipRegex.match(ipInput->text());
 
-    if(!ipMatch.hasMatch())
-    {
+    if (!ipMatch.hasMatch()) {
         nextButton->setEnabled(false);
         return;
     }
@@ -183,13 +182,10 @@ void ReadyWidget::onLineTextChange()
     QRegularExpression captchaRegex("^\\d{5}$");
     QRegularExpressionMatch captchaMatch = captchaRegex.match(captchaInput->text());
 
-    if(!captchaMatch.hasMatch())
-    {
+    if (!captchaMatch.hasMatch()) {
         nextButton->setEnabled(false);
         return;
     }
 
     nextButton->setEnabled(true);
 }
-
-

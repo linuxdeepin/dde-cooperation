@@ -30,6 +30,7 @@ public:
 
 Q_SIGNALS:
     void connectSucceed();
+    void transferring();
     void transferSucceed();
 
 #ifdef WIN32

@@ -37,7 +37,7 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
         response->set_error("Invalid version");
         response->set_token("");
     } else {
-        if (Config::needConfirm()) {
+        if (DaemonConfig::instance()->needConfirm()) {
             // wait for user's confirmation
             co::Timer t;
             // t.restart();
@@ -46,17 +46,17 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
         }
 
         fastring pass = Util::decodeBase64(request->auth().c_str());
-        LOG << "pass= " << pass << " getPin=" << Config::getPin();
+        LOG << "pass= " << pass << " getPin=" << DaemonConfig::instance()->getPin();
         //FIXME: getPin is empty
-        if (Config::getPin().compare(pass) != 0) {
+        if (DaemonConfig::instance()->getPin().compare(pass) != 0) {
             response->set_error("Invalid auth code");
             response->set_token("");
         } else {
-            Config::saveSession(request->session_id());
+            DaemonConfig::instance()->saveSession(request->session_id());
 
             //TODO: generate auth token
             char *auth_token = "thatsgood";
-            Config::setTargetName(request->name().c_str()); // save the login name
+            DaemonConfig::instance()->setTargetName(request->name().c_str());   // save the login name
 
             PeerInfo *info = new PeerInfo();
             info->set_version(version);
@@ -144,7 +144,6 @@ void RemoteServiceImpl::filetrans_job(::google::protobuf::RpcController *control
     fastring name = Util::parseFileName(request->path().c_str());
     if (request->push()) {
         // create write job and push into write_jobs
-
     }
 
     response->set_id(job_id);
@@ -176,7 +175,7 @@ void RemoteServiceImpl::filetrans_create(::google::protobuf::RpcController *cont
 
     response->set_id(id);
     response->set_name(filename.c_str());
-    response->set_result(exist? OK : IO_ERROR);
+    response->set_result(exist ? OK : IO_ERROR);
 
     LOG << "res= " << response->ShortDebugString().c_str();
 
@@ -198,15 +197,13 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
     fastring buffer = request->data();
     bool comp = request->compressed();
     size_t len = buffer.size();
-    size_t offset = (blk_id > 0)? ((blk_id - 1) * BLOCK_SIZE) : 0;
+    size_t offset = (blk_id > 0) ? ((blk_id - 1) * BLOCK_SIZE) : 0;
 
     bool good = FSAdapter::writeBlock(name.c_str(), offset, buffer.data(), len);
-    
 
     response->set_id(id);
     response->set_name(name.c_str());
-    response->set_result(good? OK : IO_ERROR);
-
+    response->set_result(good ? OK : IO_ERROR);
 
     LOG << "res= " << response->ShortDebugString().c_str();
 
@@ -215,7 +212,8 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
     }
 }
 
-class ZRpcClientExecutor {
+class ZRpcClientExecutor
+{
 public:
     ZRpcClientExecutor(char *targetip, uint16 port)
     {
@@ -229,7 +227,7 @@ public:
     zrpc_ns::ZRpcController *control() { return _client->getControler(); }
 
 private:
-    zrpc_ns::ZRpcClient *_client{ nullptr };
+    zrpc_ns::ZRpcClient *_client { nullptr };
 };
 
 RemoteServiceBinder::RemoteServiceBinder(QObject *parent)
@@ -286,14 +284,14 @@ void RemoteServiceBinder::doLogin(char *username, const char *pincode)
     OptionMessage option;
     option.set_lock_after_session_end(OptionMessage_BoolOption_NotSet);
 
-    rpc_req.set_session_id(hash64(uuid)); // gen from the uuid
+    rpc_req.set_session_id(hash64(uuid));   // gen from the uuid
     rpc_req.set_version(UNIAPI_VERSION);
 
     stub.login(rpc_controller, &rpc_req, &rpc_res, NULL);
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
-            << ", error info: " << rpc_controller->ErrorText();
+             << ", error info: " << rpc_controller->ErrorText();
         emit loginResult(false, rpc_controller->ErrorText().c_str());
         return;
     }
@@ -305,7 +303,7 @@ void RemoteServiceBinder::doLogin(char *username, const char *pincode)
         // TODO: save the target peer info into target's map
         PeerInfo target_info = rpc_res.peer_info();
         // login successful
-        Config::saveAuthed(token);
+        DaemonConfig::instance()->saveAuthed(token);
 
         return emit loginResult(true, "");
     }
@@ -330,7 +328,7 @@ void RemoteServiceBinder::doQuery()
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
-            << ", error info: " << rpc_controller->ErrorText();
+             << ", error info: " << rpc_controller->ErrorText();
         emit queryResult(false, rpc_controller->ErrorText().c_str());
         return;
     }
@@ -357,7 +355,7 @@ void RemoteServiceBinder::doMisc()
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
-            << ", error info: " << rpc_controller->ErrorText();
+             << ", error info: " << rpc_controller->ErrorText();
         emit miscResult(false, rpc_controller->ErrorText().c_str());
         return;
     }
@@ -386,12 +384,10 @@ void RemoteServiceBinder::doFileAction(int type, const char *actionjson)
     }
     LOG << "type: " << type << " jsonObject: " << jsonObject;
 
-    switch (type)
-    {
+    switch (type) {
         // Just tell target to create read_job or write_job for file transfer.
     case TRANS_SEND:
-    case TRANS_RECV:
-    {
+    case TRANS_RECV: {
         ipc::FilesTrans trans;
         trans.from_json(jsonObject);
         std::string path = trans.paths[0].c_str();
@@ -421,7 +417,7 @@ void RemoteServiceBinder::doFileAction(int type, const char *actionjson)
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
-            << ", error info: " << rpc_controller->ErrorText();
+             << ", error info: " << rpc_controller->ErrorText();
         emit fileActionResult(false, -1);
         return;
     }
@@ -466,11 +462,9 @@ int RemoteServiceBinder::doFileFlow(int type, const char *flowjson, const void *
     }
     LOG << "type: " << type << " jsonObject: " << jsonObject;
 
-    switch (type)
-    {
+    switch (type) {
         // Just tell target to create read_job or write_job for file transfer.
-    case TRANS_BLOCK:
-    {
+    case TRANS_BLOCK: {
         if (bindata == nullptr || binlen <= 0) {
             ELOG << "bindata is nullptr!!!";
             return PARAM_ERROR;
@@ -490,8 +484,7 @@ int RemoteServiceBinder::doFileFlow(int type, const char *flowjson, const void *
 
         break;
     }
-    case TRANS_DIGEST:
-    {
+    case TRANS_DIGEST: {
         ipc::FileTransDigest digest;
         digest.from_json(jsonObject);
         req_id = digest.id;
@@ -505,8 +498,7 @@ int RemoteServiceBinder::doFileFlow(int type, const char *flowjson, const void *
 
         break;
     }
-    case TRANS_ERROR:
-    {
+    case TRANS_ERROR: {
         ipc::FileTransError error;
         error.from_json(jsonObject);
         req_id = error.id;
@@ -519,8 +511,7 @@ int RemoteServiceBinder::doFileFlow(int type, const char *flowjson, const void *
         rpc_req.set_allocated_error(&transError);
         break;
     }
-    case TRANS_DONE:
-    {
+    case TRANS_DONE: {
         ipc::FileTransDone godone;
         godone.from_json(jsonObject);
         req_id = godone.id;
@@ -541,7 +532,7 @@ int RemoteServiceBinder::doFileFlow(int type, const char *flowjson, const void *
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
-            << ", error info: " << rpc_controller->ErrorText();
+             << ", error info: " << rpc_controller->ErrorText();
         emit fileActionResult(false, -1);
         return INVOKE_FAIL;
     }
@@ -592,7 +583,7 @@ int RemoteServiceBinder::doPushfileJob(int id, const char *filepath)
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call filetrans_create, error code: " << rpc_controller->ErrorCode()
-            << ", error info: " << rpc_controller->ErrorText();
+             << ", error info: " << rpc_controller->ErrorText();
         return INVOKE_FAIL;
     }
 
@@ -634,7 +625,7 @@ int RemoteServiceBinder::doPushfileJob(int id, const char *filepath)
 
         if (rpc_controller->ErrorCode() != 0) {
             ELOG << "Failed to call filetrans_block, error code: " << rpc_controller->ErrorCode()
-                << ", error info: " << rpc_controller->ErrorText();
+                 << ", error info: " << rpc_controller->ErrorText();
             if (try_max > 0) {
                 try_max--;
                 goto retry;

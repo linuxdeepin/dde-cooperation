@@ -78,14 +78,18 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->addWidget(choosewidget);
     stackedWidget->addWidget(promptidget);
     stackedWidget->addWidget(connectwidget);
-    stackedWidget->addWidget(connectwidget1);
+    //stackedWidget->addWidget(connectwidget1);
     stackedWidget->addWidget(waitgwidget);
     stackedWidget->addWidget(transferringwidget);
     stackedWidget->addWidget(successtranswidget);
     stackedWidget->setCurrentIndex(0);
 
     connect(stackedWidget, &QStackedWidget::currentChanged, this, &MainWindowPrivate::handleCurrentChanged);
-    connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [transferringwidget, stackedWidget] {
+    connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [waitgwidget, stackedWidget] {
+        stackedWidget->setCurrentWidget(waitgwidget);
+    });
+
+    connect(TransferHelper::instance(), &TransferHelper::transferring, this, [transferringwidget, stackedWidget] {
         stackedWidget->setCurrentWidget(transferringwidget);
     });
     connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [successtranswidget, stackedWidget] {

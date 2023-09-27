@@ -17,6 +17,8 @@ public:
     QString getConnectPassWord();
     void senFiles(QStringList paths);
 
+    void pollingStatus();
+
 private:
 };
 
@@ -30,6 +32,8 @@ public:
     static QString getConnectPassWord();
     static void senFiles(QStringList paths);
     static void tryConnect(const std::string &ip, const std::string &password);
+
+    static int getStatus();
 
 private:
 };

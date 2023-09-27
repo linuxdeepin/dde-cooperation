@@ -11,9 +11,9 @@
 
 using namespace deamon_core;
 
-FSAdapter::FSAdapter(QObject *parent) : QObject(parent)
+FSAdapter::FSAdapter(QObject *parent)
+    : QObject(parent)
 {
-
 }
 
 int FSAdapter::getFileEntry(const char *path, FileEntry **entry)
@@ -44,10 +44,9 @@ int FSAdapter::getFileEntry(const char *path, FileEntry **entry)
     return 0;
 }
 
-
 bool FSAdapter::newFile(const char *name, bool isdir)
 {
-    fastring dir = Config::getStorageDir();
+    fastring dir = DaemonConfig::instance()->getStorageDir();
     if (!fs::exists(dir)) {
         fs::mkdir(name, true);
     }
@@ -70,7 +69,7 @@ bool FSAdapter::newFile(const char *name, bool isdir)
 
 bool FSAdapter::writeBlock(const char *name, size_t seek_len, const char *data, size_t size)
 {
-    fastring fullpath = Config::getStorageDir() + "/" + name;
+    fastring fullpath = DaemonConfig::instance()->getStorageDir() + "/" + name;
     fs::file fx(fullpath, 'w');
     if (!fx.exists()) {
         ELOG << "writeBlock File does not exist";
@@ -88,7 +87,7 @@ bool FSAdapter::writeBlock(const char *name, size_t seek_len, const char *data, 
         }
         wirted_size += wsize;
         rem_size = size - wsize;
-    } while(wirted_size < size);
+    } while (wirted_size < size);
     fx.close();
 
     return true;
