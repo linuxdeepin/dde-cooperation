@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,6 +7,8 @@
 #include "config.h"
 
 #include <dde-cooperation-framework/dpf.h>
+
+#include <QDir>
 
 static constexpr char kPluginInterface[] { "org.deepin.plugin.datatransfer" };
 static constexpr char kPluginCore[] { "data-transfer-core" };
@@ -28,6 +30,9 @@ static bool loadPlugins()
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
     pluginsDirs << QString(DEEPIN_DATA_TRANS_PLUGIN_DIR);
+    pluginsDirs << QDir::currentPath() + "/plugins";
+    pluginsDirs << QDir::currentPath() + "/plugins/data-transfer";
+    pluginsDirs << QDir::currentPath() + "/plugins/data-transfer/core";
 #endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
