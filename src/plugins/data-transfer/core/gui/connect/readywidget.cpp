@@ -81,7 +81,8 @@ void ReadyWidget::initUI()
     captchaLayout->setAlignment(Qt::AlignBottom);
 
     captchaInput = new QLineEdit(this);
-    QIntValidator *captchaValidator = new QIntValidator(10000, 99999, captchaInput);
+    QRegularExpressionValidator *captchaValidator = new QRegularExpressionValidator(
+        QRegularExpression("^\\d{6}$"));
     captchaInput->setValidator(captchaValidator);
     captchaInput->setPlaceholderText("请输入PC上显示的验证码");
     captchaInput->setStyleSheet("border-radius: 8px;"
@@ -143,6 +144,7 @@ void ReadyWidget::initUI()
 
 void ReadyWidget::updateOption()
 {
+    qInfo()<<ipInput->text()<<" "<<captchaInput->text();
     TransferHelper::instance()->tryConnect(ipInput->text(), captchaInput->text());
 }
 
@@ -179,7 +181,7 @@ void ReadyWidget::onLineTextChange()
         return;
     }
 
-    QRegularExpression captchaRegex("^\\d{5}$");
+    QRegularExpression captchaRegex("^\\d{6}$");
     QRegularExpressionMatch captchaMatch = captchaRegex.match(captchaInput->text());
 
     if (!captchaMatch.hasMatch()) {

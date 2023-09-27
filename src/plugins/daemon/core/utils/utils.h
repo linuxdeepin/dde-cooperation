@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -17,9 +17,9 @@
 #include <uuid/uuid.h>
 #include <pwd.h>
 #elif _WIN32
-#include <windows.h>
-#include <objbase.h>
-#include <Lmcons.h>
+//#include <windows.h>
+//#include <objbase.h>
+//#include <Lmcons.h>
 #else
 #error "Unsupported platform"
 #endif
@@ -65,11 +65,11 @@ public:
         gethostname(hostName, _SC_HOST_NAME_MAX);
         return hostName;
 #else 
-        char hostname[MAX_COMPUTERNAME_LENGTH + 1];
-        DWORD size = sizeof(hostname) / sizeof(hostname[0]);
-        if (GetComputerNameA(hostname, &size)) {
-            return std::string(hostname);
-        }
+//        char hostname[MAX_COMPUTERNAME_LENGTH + 1];
+//        DWORD size = sizeof(hostname) / sizeof(hostname[0]);
+//        if (GetComputerNameA(hostname, &size)) {
+//            return std::string(hostname);
+//        }
         return "";
 #endif
     }
@@ -84,10 +84,11 @@ public:
         }
         return "";
 #else 
-        TCHAR username[UNLEN + 1];
-        DWORD usernameLen = UNLEN + 1;
-        GetUserName(username, &usernameLen);
-        return std::string(username);
+//        TCHAR username[UNLEN + 1];
+//        DWORD usernameLen = UNLEN + 1;
+//        GetUserName(username, &usernameLen);
+//        return std::string(username);
+        return "";
 #endif
     }
 
@@ -101,17 +102,17 @@ public:
 
         return uuidStr;
 #else
-        UUID uuid;
-        UuidCreate(&uuid);
+//        UUID uuid;
+//        UuidCreate(&uuid);
 
-        RPC_CSTR uuidStr;
-        UuidToStringA(&uuid, &uuidStr);
+//        RPC_CSTR uuidStr;
+//        UuidToStringA(&uuid, &uuidStr);
 
-        std::string uuidString(reinterpret_cast<char *>(uuidStr));
+//        std::string uuidString(reinterpret_cast<char *>(uuidStr));
 
-        RpcStringFreeA(&uuidStr);
+//        RpcStringFreeA(&uuidStr);
 
-        return uuidString;
+        return "";
 #endif
     }
 

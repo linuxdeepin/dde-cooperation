@@ -1,10 +1,11 @@
-#include "transferhepler.h"
+﻿#include "transferhepler.h"
 #include "transferworker.h"
 
 #include <co/rpc.h>
 #include <co/co.h>
 
 #include <QTimer>
+#include <QDebug>
 
 TransferHandle::TransferHandle()
     : QObject()
@@ -88,10 +89,12 @@ void TransferWoker::tryConnect(const std::string &ip, const std::string &passwor
     proto.reset(new rpc::Client("127.0.0.1", 7788, false));
     rpc::Client c(*proto);
     co::Json req, res;
+    fastring target_ip(ip);
+    fastring pin_code(password);
 
     req = {
-        { "ip", ip },
-        { "password", password },
+        { "ip", target_ip },
+        { "password", pin_code },
     };
     req.add_member("api", "Common.tryConnect");
     c.call(req, res);

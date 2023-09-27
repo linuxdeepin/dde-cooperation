@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -73,9 +73,9 @@ public:
 
     void startRpcListen();
 
-    void createExecutor(char *targetip, int16_t port);
+    void createExecutor(const char *targetip, int16_t port);
 
-    void doLogin(char *username, const char *pincode);
+    void doLogin(const char *username, const char *pincode);
 
     void doQuery();
 

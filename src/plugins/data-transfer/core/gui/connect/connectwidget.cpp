@@ -1,4 +1,4 @@
- #include "choosewidget.h"
+﻿ #include "choosewidget.h"
 #include "connectwidget.h"
 
 #include <QLabel>

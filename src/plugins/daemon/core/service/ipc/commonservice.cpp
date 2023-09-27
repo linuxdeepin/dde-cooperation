@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -18,7 +18,6 @@ void CommonImpl::compatible(co::Json &req, co::Json &res)
 
 void CommonImpl::syncConfig(co::Json &req, co::Json &res)
 {
-    qInfo() << "syncConfig";
     int status = DaemonConfig::instance()->getStatus();
 
     bool connnect = false;
@@ -54,10 +53,9 @@ void CommonImpl::syncPeers(co::Json &req, co::Json &res)
 
 void CommonImpl::tryConnect(co::Json &req, co::Json &res)
 {
-    const char *ip = req.get("ip").as_string().c_str();
-    const char *password = req.get("password").as_string().c_str();
-    qInfo() << "tryConnect :" << password;
-    _interface->handleConnect(ip, password);
+    fastring ip = req.get("ip").as_string();
+    fastring pass = req.get("password").as_string();
+    _interface->handleConnect(ip.c_str(), pass.c_str());
     res = {
         { "result", "sended" }
     };

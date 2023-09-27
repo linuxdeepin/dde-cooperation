@@ -14,6 +14,8 @@
 #include "../transfer/successwidget.h"
 #include "../transfer/transferringwidget.h"
 
+#include "utils/transferhepler.h"
+
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMenuBar>
@@ -55,7 +57,7 @@ void MainWindowPrivate::initWindow()
 
 void MainWindowPrivate::initWidgets()
 {
- //   StartWidget *startwidget = new StartWidget(q);
+    StartWidget *startwidget1 = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
 
     TransferringWidget *transferringwidget = new TransferringWidget(q);
@@ -69,11 +71,11 @@ void MainWindowPrivate::initWidgets()
     ConfigSelectWidget *configselectwidget = new ConfigSelectWidget(q);
     AppSelectWidget *appselectwidget = new AppSelectWidget(q);
 
-    CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
+   // CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
 
     QStackedWidget *stackedWidget = new QStackedWidget(q);
 
-    stackedWidget->insertWidget(PageName::startwidget,createbackupfilewidget);
+    stackedWidget->insertWidget(PageName::startwidget,startwidget1);
     stackedWidget->insertWidget(PageName::choosewidget,choosewidget);
     stackedWidget->insertWidget(PageName::promptwidget,promptwidget);
     stackedWidget->insertWidget(PageName::readywidget,readywidget);
@@ -93,6 +95,10 @@ void MainWindowPrivate::initWidgets()
                      &MainWindowPrivate::handleCurrentChanged);
     windowsCentralWidgetContent->setContentsMargins(8, 8, 8, 8);
     windowsCentralWidgetContent->addWidget(stackedWidget);
+
+    QObject::connect(TransferHelper::instance(),&TransferHelper::transferSucceed,this,[stackedWidget]{
+        stackedWidget->setCurrentIndex(PageName::successtranswidget);
+    });
 }
 
 void MainWindowPrivate::paintEvent(QPaintEvent *event)

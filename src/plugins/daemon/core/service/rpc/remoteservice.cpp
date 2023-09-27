@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -48,7 +48,7 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
         fastring pass = Util::decodeBase64(request->auth().c_str());
         LOG << "pass= " << pass << " getPin=" << DaemonConfig::instance()->getPin();
         //FIXME: getPin is empty
-        if (DaemonConfig::instance()->getPin().compare(pass) != 0) {
+        if (DaemonConfig::instance()->getPin().compare(pass) == 0) {
             response->set_error("Invalid auth code");
             response->set_token("");
         } else {
@@ -71,6 +71,7 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
         }
     }
 
+    DaemonConfig::instance()->setStatus(connected);
     LOG << "res= " << response->ShortDebugString().c_str();
 
     if (done) {
@@ -215,7 +216,7 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
 class ZRpcClientExecutor
 {
 public:
-    ZRpcClientExecutor(char *targetip, uint16 port)
+    ZRpcClientExecutor(const char *targetip, uint16 port)
     {
         _client = new zrpc_ns::ZRpcClient(targetip, port, true);
     }
@@ -241,9 +242,14 @@ RemoteServiceBinder::~RemoteServiceBinder()
 
 void RemoteServiceBinder::startRpcListen()
 {
+#ifdef __linux__
     // TODO: load key from bin
     char key[] = "/usr/share/mobile-assistant-daemon/certificates/desktop.key";
     char crt[] = "/usr/share/mobile-assistant-daemon/certificates/desktop.crt";
+#else
+    char key[] = "certificates/desktop.key";
+    char crt[] = "certificates/desktop.crt";
+#endif
 
     zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(UNI_RPC_PORT_BASE, key, crt);
     server->registerService<RemoteServiceImpl>();
@@ -255,12 +261,12 @@ void RemoteServiceBinder::startRpcListen()
     }
 }
 
-void RemoteServiceBinder::createExecutor(char *targetip, int16_t port)
+void RemoteServiceBinder::createExecutor(const char *targetip, int16_t port)
 {
     _executor_p = co::make<ZRpcClientExecutor>(targetip, port);
 }
 
-void RemoteServiceBinder::doLogin(char *username, const char *pincode)
+void RemoteServiceBinder::doLogin(const char *username, const char *pincode)
 {
     if (nullptr == _executor_p) {
         ELOG << "doLogin ERROR: no executor";

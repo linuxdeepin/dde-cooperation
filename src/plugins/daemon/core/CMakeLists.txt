@@ -20,12 +20,15 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-find_package(PkgConfig REQUIRED)
+if (NOT WIN32)
+    find_package(PkgConfig REQUIRED)
+    pkg_search_module(UUID REQUIRED uuid)
+endif ()
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
 find_package(Threads REQUIRED)
-pkg_search_module(UUID REQUIRED uuid)
 
 include_directories(include)
 

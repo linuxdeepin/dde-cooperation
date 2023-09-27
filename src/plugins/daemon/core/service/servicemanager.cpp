@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -83,17 +83,16 @@ void ServiceManager::notifyConnect(QString ip, QString name, QString password)
     if (ip == nullptr) {
         return;
     }
+    DaemonConfig::instance()->setStatus(transferring);
 
     if (_rpcServiceBinder) {
-        QByteArray byteArray = ip.toUtf8();
-        char* target_ip = byteArray.data();
-        byteArray = name.toUtf8();
-        char* user = byteArray.data();
+        fastring target_ip = ip.toStdString();
+        fastring user = name.toStdString();
+        fastring pincode = password.toStdString();
 
-        byteArray = password.toUtf8();
-        const char* pincode = byteArray.constData();
-
-        _rpcServiceBinder->createExecutor(target_ip, UNI_RPC_PORT_BASE);
-        _rpcServiceBinder->doLogin(user, pincode);
+        go([this, target_ip, user, pincode]() {
+            _rpcServiceBinder->createExecutor(target_ip.c_str(), UNI_RPC_PORT_BASE);
+            _rpcServiceBinder->doLogin(user.c_str(), pincode.c_str());
+        });
     }
 }

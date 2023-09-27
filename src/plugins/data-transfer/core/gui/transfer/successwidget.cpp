@@ -7,6 +7,7 @@
 #include <QStackedWidget>
 #include <QApplication>
 
+#include <gui/mainwindow_p.h>
 #pragma execution_character_set("utf-8")
 
 SuccessWidget::SuccessWidget(QWidget *parent)
@@ -71,7 +72,7 @@ void SuccessWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
