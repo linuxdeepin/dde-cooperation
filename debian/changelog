@@ -1,14 +1,20 @@
+dde-cooperation (0.2.2-5) unstable; urgency=medium
+
+  * Remove submodules.
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 28 Sep 2023 10:53:55 +0800
+
 dde-cooperation (0.2.1-4) unstable; urgency=medium
 
   * First test package.
 
- -- re2zero <yangwu@uniontech.com>  Thu, 27 Sep 2023 18:05:07 +0800
+ -- re2zero <yangwu@uniontech.com>  Wed, 27 Sep 2023 18:05:07 +0800
 
 dde-cooperation (0.2.0-3) unstable; urgency=medium
 
   * First build package.
 
- -- re2zero <yangwu@uniontech.com>  Thu, 27 Sep 2023 15:05:07 +0800
+ -- re2zero <yangwu@uniontech.com>  Wed, 27 Sep 2023 15:05:07 +0800
 
 dde-cooperation (0.1.0-2) unstable; urgency=medium
 
