@@ -14,10 +14,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags /*flags*/)
     d->moveCenter();
 }
 
-MainWindow::~MainWindow()
-{
-
-}
+MainWindow::~MainWindow() { }
 
 #ifdef WIN32
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -39,17 +36,16 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     d->mousePressEvent(event);
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QApplication::quit();
+}
 #endif
 
+MainWindowPrivate::MainWindowPrivate(MainWindow *qq) : q(qq) { }
 
-MainWindowPrivate::MainWindowPrivate(MainWindow *qq)
-    : q(qq)
-{
-}
-
-MainWindowPrivate::~MainWindowPrivate()
-{
-}
+MainWindowPrivate::~MainWindowPrivate() { }
 
 void MainWindowPrivate::moveCenter()
 {

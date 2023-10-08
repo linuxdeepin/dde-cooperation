@@ -10,6 +10,8 @@
 #include <QPainter>
 #include <QTreeView>
 
+#include "../select/selectmainwidget.h"
+
 class FileSelectWidget : public QFrame
 {
     Q_OBJECT
@@ -28,7 +30,8 @@ public slots:
     void backPage();
 
     void update();
-
+signals:
+    void isOk(const SelectItemName& name,const bool &ok);
 private:
     void initUI();
     void sendOptions();

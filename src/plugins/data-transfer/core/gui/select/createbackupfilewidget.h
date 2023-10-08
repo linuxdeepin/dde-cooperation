@@ -9,7 +9,8 @@ class CreateBackupFileWidget : public QFrame
 public:
     CreateBackupFileWidget(QWidget *parent = nullptr);
     ~CreateBackupFileWidget();
-
+private:
+    void initUI();
 public slots:
     void nextPage();
     void backPage();

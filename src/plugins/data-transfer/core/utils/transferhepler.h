@@ -23,21 +23,25 @@ public:
     QMap<QString, double> getUserDataSize();
     qint64 getRemainStorage();
     QMap<QString, QString> getAppList();
+    QMap<QString, QString> getBrowserList();
 
     void tryConnect(const QString &ip, const QString &password);
 
     void startTransfer();
 
+    void getJsonfile(const QJsonObject &jsonData,const QString &save = QString());
+#ifdef WIN32
+public:
+    void windowsZipFile(const QStringList &sourceFilePath,const QString &zipFileSave =QString() );
+    void windowsUnZipFile(const QString &zipFilePath,const QString &unZipFile = QString());
+
+    void getUserDataPackagingFile();
+#endif
+
 Q_SIGNALS:
     void connectSucceed();
     void transferring();
     void transferSucceed();
-
-#ifdef WIN32
-public:
-    void windowsZipFile(const QList<QUrl> &sourceFilePath, QUrl &zipFileSavePath = QUrl());
-    void windowsUnZipFile(const QUrl &zipFilePath, QUrl &unZipFilePath = QUrl());
-#endif
 
 private:
     TransferHandle transferhandle;

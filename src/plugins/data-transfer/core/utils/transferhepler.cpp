@@ -1,5 +1,6 @@
 ﻿#include "optionsmanager.h"
 #include "transferhepler.h"
+#include "drapwindowsdata.h"
 
 #include <QDateTime>
 #include <QRandomGenerator>
@@ -8,18 +9,19 @@
 #include <QStorageInfo>
 #include <QCoreApplication>
 #include <QTimer>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QTextCodec>
 
 #ifdef WIN32
 #    include <QProcess>
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper()
-    : QObject()
-{
-}
+TransferHelper::TransferHelper() : QObject() { }
 
-TransferHelper::~TransferHelper() {}
+TransferHelper::~TransferHelper() { }
 
 TransferHelper *TransferHelper::instance()
 {
@@ -83,6 +85,14 @@ QMap<QString, QString> TransferHelper::getAppList()
     return appList;
 }
 
+QMap<QString, QString> TransferHelper::getBrowserList()
+{
+    QMap<QString, QString> browserList;
+    browserList["火狐"] = "com.FireFox.deepin";
+    browserList["Goole"] = "com.Goole.deepin";
+    return browserList;
+}
+
 void TransferHelper::tryConnect(const QString &ip, const QString &password)
 {
     transferhandle.tryConnect(ip, password);
@@ -95,18 +105,43 @@ void TransferHelper::startTransfer()
     transferhandle.senFiles(paths);
 }
 
-#ifdef WIN32
-void TransferHelper::windowsZipFile(const QList<QUrl> &sourceFilePath, QUrl &zipFileSavePath)
+void TransferHelper::getJsonfile(const QJsonObject &jsonData,const QString &save)
 {
+    QString savePath = save;
+    // 创建一个 JSON 文档
+    QJsonDocument jsonDoc(jsonData);
+
+    if (savePath.isEmpty()) {
+        savePath = QString("./transfer.json");
+    } else {
+        savePath += "/transfer.json";
+    }
+    // 打开文件以保存 JSON 数据
+    QFile file(savePath);
+    if (file.open(QIODevice::WriteOnly)) {
+        // 将 JSON 数据写入文件
+        file.write(jsonDoc.toJson());
+        file.close();
+        qDebug() << "JSON data exported to transfer.json";
+    } else {
+        qDebug() << "Failed to open file for writing.";
+    }
+}
+
+#ifdef WIN32
+void TransferHelper::windowsZipFile(const QStringList &sourceFilePath,const QString &zipFileSave)
+{
+    QString zipFileSavePath = zipFileSave;
     QString destination;
     if (zipFileSavePath.isEmpty()) {
         destination = QString("./uos.zip");
     } else {
-        destination = zipFileSavePath.toLocalFile();
+        destination = zipFileSavePath;
+        destination += "/uos.zip";
     }
     QList<QString> filePaths;
     for (auto sourcefile : sourceFilePath) {
-        filePaths.push_back(sourcefile.toLocalFile());
+        filePaths.push_back(sourcefile);
     }
     QProcess process;
 
@@ -120,28 +155,36 @@ void TransferHelper::windowsZipFile(const QList<QUrl> &sourceFilePath, QUrl &zip
     cmd.chop(1);
     cmd.append(QString(" -DestinationPath '%1'").arg(destination));
 
+    qInfo() << cmd;
     arguments << cmd;
+    //    process.setReadBufferSize(65536);
+    //    process.setProcessChannelMode(QProcess::MergedChannels);
+    //    process.setProcessChannelMode(QProcess::SeparateChannels);
     process.start(command, arguments);
     process.waitForFinished(-1);
 
-    if (process.readAllStandardOutput() != "") {
-        qDebug() << process.readAllStandardOutput();
+    if (!process.readAllStandardOutput().isEmpty()) {
+        qInfo() << process.readAllStandardOutput();
     }
-    if (process.readAllStandardError() != "") {
-        qDebug() << process.readAllStandardError();
+
+    if (!process.readAllStandardError().isEmpty()) {
+        qInfo() << process.readAllStandardError();
     }
 }
 
-void TransferHelper::windowsUnZipFile(const QUrl &zipFilePath, QUrl &unZipFilePath)
+void TransferHelper::windowsUnZipFile(const QString &zipFilePath,const QString &unZipFile)
 {
+    QString unZipFilePath;
     QString destinationDir;
     if (unZipFilePath.isEmpty()) {
         destinationDir = QString("./ousUnzip/");
+    } else {
+        destinationDir = unZipFilePath;
     }
     QProcess process;
 
-    QString archivePath = zipFilePath.toLocalFile();
-    QString command = "powershell";
+    QString archivePath = zipFilePath;
+    QString command = "powershell.exe";
     QStringList arguments;
     arguments << "-Command";
 
@@ -153,11 +196,73 @@ void TransferHelper::windowsUnZipFile(const QUrl &zipFilePath, QUrl &unZipFilePa
     process.start(command, arguments);
     process.waitForFinished(-1);
 
-    if (process.readAllStandardOutput() != "") {
+    if (!process.readAllStandardOutput().isEmpty()) {
         qDebug() << process.readAllStandardOutput();
     }
-    if (process.readAllStandardError() != "") {
+    if (!process.readAllStandardError().isEmpty()) {
         qDebug() << process.readAllStandardError();
     }
+}
+
+void TransferHelper::getUserDataPackagingFile()
+{
+    QStringList filePathList; //= OptionsManager::instance()->getUserOption(Options::kFile);
+    QStringList appList; //= OptionsManager::instance()->getUserOption(Options::kApp);
+    QStringList
+            browserList; // OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
+    QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
+
+    browserList.append(BrowerName::MicrosoftEdge);
+    browserList.append(BrowerName::MozillaFirefox);
+    filePathList.append(QString("C:/Users/deep/Documents/test01/test/1"));
+    filePathList.append(QString("C:/Users/deep/Documents/test01/test/cdemo"));
+    filePathList.append(QString("C:/Users/deep/Documents/test01/libarchive-master"));
+    appList.append(QString("WeChat"));
+    appList.append(QString("QQ"));
+
+    QStringList zipFilePathList;
+    for (auto file : filePathList) {
+        zipFilePathList.append(file);
+    }
+
+    QString bookmark("C:/Users/deep/Documents/test01/bookmarks.html");
+    if (!browserList.isEmpty()) {
+        QSet<QString> browserName(browserList.begin(), browserList.end());
+        DrapWindowsData::instance()->getBrowserBookmarkInfo(browserName);
+//      DrapWindowsData::instance()->getBrowserBookmarkHtml(QString("C:/Users/deep/Documents/test01"));
+        DrapWindowsData::instance()->getBrowserBookmarkJSON(QString("C:/Users/deep/Documents/test01"));
+        zipFilePathList.append(bookmark);
+    }
+
+    QString wallparerPath;
+    // if (!configList.isEmpty()) {
+    wallparerPath = DrapWindowsData::instance()->getDesktopWallpaperPath();
+    zipFilePathList.append(wallparerPath);
+    // }
+
+    QJsonArray appArray;
+    for (auto app : appList) {
+        appArray.append(app);
+    }
+    QJsonArray fileArray;
+    //    for(auto file :filePathList)
+    //    {
+
+    //    }
+    fileArray.append("Documents/test01/test/1");
+    fileArray.append("Documents/test01/test/cdemo");
+    fileArray.append("Documents/test01/libarchive-master");
+    // 创建一个 JSON 对象并添加数据
+    QJsonObject jsonObject;
+    jsonObject["user_data"] = "100";
+    jsonObject["user_file"] = fileArray;
+    jsonObject["app"] = appArray;
+    jsonObject["wallpapers"] = "img0.jpg";
+    jsonObject["borwerbookmark"]="bookmarks.html";
+    QString qjsonPath("C:/Users/deep/Documents/test01/transfer.json");
+    getJsonfile(jsonObject, QString("C:/Users/deep/Documents/test01"));
+    zipFilePathList.append(qjsonPath);
+
+    windowsZipFile(zipFilePathList, QString("C:/Users/deep/Documents"));
 }
 #endif

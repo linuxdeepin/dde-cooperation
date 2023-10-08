@@ -1,5 +1,5 @@
 ﻿#include "createbackupfilewidget.h"
-
+#include "../type_defines.h"
 #include <QColor>
 #include <QDebug>
 #include <QLabel>
@@ -17,7 +17,15 @@
 
 #pragma execution_character_set("utf-8")
 
-CreateBackupFileWidget::CreateBackupFileWidget(QWidget *parent) : QFrame(parent)
+CreateBackupFileWidget::CreateBackupFileWidget(QWidget *parent)
+    : QFrame(parent)
+{
+    initUI();
+}
+
+CreateBackupFileWidget::~CreateBackupFileWidget() { }
+
+void CreateBackupFileWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
@@ -204,14 +212,12 @@ CreateBackupFileWidget::CreateBackupFileWidget(QWidget *parent) : QFrame(parent)
     });
 }
 
-CreateBackupFileWidget::~CreateBackupFileWidget() { }
-
 void CreateBackupFileWidget::nextPage()
 {
     // nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
+        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                    "nullptr";
@@ -221,7 +227,7 @@ void CreateBackupFileWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
+        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                    "nullptr";

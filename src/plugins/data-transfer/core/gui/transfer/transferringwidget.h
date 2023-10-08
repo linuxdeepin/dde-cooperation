@@ -1,4 +1,4 @@
-#ifndef TRANSFERRWIDGET_H
+﻿#ifndef TRANSFERRWIDGET_H
 #define TRANSFERRWIDGET_H
 
 #include <QFrame>
@@ -6,6 +6,8 @@
 #include <QLabel>
 #include <QPainter>
 
+class ProgressBarLabel;
+class QTextBrowser;
 class TransferringWidget : public QFrame
 {
     Q_OBJECT
@@ -15,17 +17,29 @@ public:
     ~TransferringWidget();
 
 public slots:
-    void nextPage();
+    void informationPage();
+    void changeTimeLabel(const QString &time);
+    void changeProgressLabel(const int &ratio);
+    void updateProcessTextBrowser(const QString &process);
 
 private:
     void initUI();
+
+private:
+    QLabel *iconLabel{ nullptr };
+    QLabel *fileLabel{ nullptr };
+    QLabel *displayLabel{ nullptr };
+    QLabel *timeLabel{ nullptr };
+    ProgressBarLabel *progressLabel{ nullptr };
+    QFrame *fileNameFrame{ nullptr };
+    QTextBrowser *processTextBrowser{ nullptr };
+    bool isVisible = false;
 };
 
 class ProgressBarLabel : public QLabel
 {
 public:
-    ProgressBarLabel(QWidget *parent = nullptr)
-        : QLabel(parent), m_progress(0)
+    ProgressBarLabel(QWidget *parent = nullptr) : QLabel(parent), m_progress(0)
     {
         setFixedSize(280, 8);
     }

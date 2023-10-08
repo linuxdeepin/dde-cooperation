@@ -1,4 +1,4 @@
-#ifndef TYPE_DEFINES_H
+﻿#ifndef TYPE_DEFINES_H
 #define TYPE_DEFINES_H
 
 #ifdef WIN32
@@ -20,7 +20,8 @@ enum PageName {
     successtranswidget = 6,
     filewselectidget = 7,
     configselectwidget = 8,
-    appselectwidget = 9
+    appselectwidget = 9,
+    errorwidget = 10
 };
 #else
 enum PageName {

@@ -8,36 +8,50 @@
 #pragma execution_chatacter_set("utf_8")
 class QJsonObject;
 
-class drapWindowsData
+namespace BrowerName {
+inline constexpr char MicrosoftEdge[]{ "Microsoft Edge" };
+inline constexpr char GoogleChrome[]{ "Google Chrome" };
+inline constexpr char MozillaFirefox[]{ "Mozilla Firefox" };
+} // namespace BrowerName
+
+class DrapWindowsData
 {
 public:
-    drapWindowsData();
-    ~drapWindowsData();
+
+    ~DrapWindowsData();
+
+    static DrapWindowsData *instance();
+
     QSet<QString> getApplianceList();
     QString getDesktopWallpaperPath();
-    QVector<QPair<QString,QString>>  getBrowerBookmarkPaths();
-    QSet<QPair<QString,QString>> getBrowerBookmarkList();
-    QSet<QString> getBrowerList();
-    void getBrowerBookmarkHtml(QString& htmlPath = QString());
+    QVector<QPair<QString,QString>>  getBrowserBookmarkPaths();
+    QSet<QPair<QString,QString>> getBrowserBookmarkList();
+    QSet<QString> getBrowserList();
+    void getBrowserBookmarkHtml(QString& htmlPath = QString());
+    void getBrowserBookmarkInfo(const QSet<QString> &Browsername);
 
 private:
-    void getBrowerBookmarkPathInfo();
-    void getBrowerBookmarkInfo();
+    DrapWindowsData();
+
+    void getBrowserBookmarkPathInfo();
+
     void getApplianceListInfo();
-    void getBrowerListInfo();
+    void getBrowserListInfo();
     void getDesktopWallpaperPathInfo();
+
     void applianceFromRegistry(const HKEY &RootKey,const LPCTSTR &lpSubKey);
     bool isControlPanelProgram(const HKEY &subKey);
+
     void readFirefoxBookmarks(const QString &dbPath);
     void readMicrosoftEdgeAndGoogleChromeBookmark(const QString &jsonPath);
-    void browerBookmarkJsonNode(QJsonObject node);
-    void insertBrowerBookmarkList(const QPair<QString,QString>& titleAndUrl);
+    void browserBookmarkJsonNode(QJsonObject node);
+    void insertBrowserBookmarkList(const QPair<QString,QString>& titleAndUrl);
 
     QSet<QString> applianceList;
-    QSet<QString> browerList;
+    QSet<QString> browserList;
     QString desktopWallpaperPath;
-    QVector<QPair<QString,QString>> browerBookmarkPath;
-    QSet<QPair<QString,QString>> browerBookmarkList;
+    QVector<QPair<QString,QString>> browserBookmarkPath;
+    QSet<QPair<QString,QString>> browserBookmarkList;
 };
 #endif
 

@@ -1,90 +1,96 @@
 ﻿#ifdef WIN32
 
-#include "drapwindowsdata.h"
-#include <tchar.h>
-#include <QDebug>
-#include <QFile>
+#    include "drapwindowsdata.h"
+#    include <tchar.h>
+#    include <QDebug>
+#    include <QFile>
 
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QProcess>
-#include <QDateTime>
+#    include <QSqlDatabase>
+#    include <QSqlQuery>
+#    include <QSqlError>
+#    include <QProcess>
+#    include <QDateTime>
 
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
+#    include <QJsonDocument>
+#    include <QJsonObject>
+#    include <QJsonArray>
 
-#define MAXNAME 256
+#    define MAXNAME 256
 
 namespace Registry {
 inline constexpr char BrowerRegistryPath[]{ "SOFTWARE\\Clients\\StartMenuInternet" };
-inline constexpr char ApplianceRegistryPath1[]{ "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall" };
-inline constexpr char ApplianceRegistryPath2[]{ "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall" };
+inline constexpr char ApplianceRegistryPath1[]{
+    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
+};
+inline constexpr char ApplianceRegistryPath2[]{
+    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
+};
 inline constexpr char DesktopwallpaperRegistryPath[]{ "Control Panel\\Desktop" };
 } // namespace Registry
 
 namespace BrowerPath {
-inline constexpr char MicrosoftEdgeBookMark[]{ "\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Bookmarks" };
-inline constexpr char GoogleChromeBookMark[]{ "\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Bookmarks" };
+inline constexpr char MicrosoftEdgeBookMark[]{
+    "\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Bookmarks"
+};
+inline constexpr char GoogleChromeBookMark[]{
+    "\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Bookmarks"
+};
 inline constexpr char MozillaFirefoxBookMark[]{ "\\AppData\\Roaming\\Mozilla\\Firefox" };
 } // namespace BrowerPath
 
-namespace BrowerName {
-inline constexpr char MicrosoftEdge[]{ "Microsoft Edge" };
-inline constexpr char GoogleChrome[]{ "Google Chrome" };
-inline constexpr char MozillaFirefox[]{ "Mozilla Firefox" };
-} // namespace BrowerName
-
-drapWindowsData::drapWindowsData()
+DrapWindowsData::DrapWindowsData()
 {
-    getApplianceListInfo();
-    getBrowerListInfo();
-    getDesktopWallpaperPathInfo();
-    getBrowerBookmarkPathInfo();
-    getBrowerBookmarkInfo();
+    //    getApplianceListInfo();
+    //    getBrowerListInfo();
+    //    getDesktopWallpaperPathInfo();
+    //    getBrowerBookmarkPathInfo();
+    //    getBrowerBookmarkInfo();
 }
 
-drapWindowsData::~drapWindowsData()
-{
 
-}
-QSet<QString> drapWindowsData::getBrowerList()
+DrapWindowsData *DrapWindowsData::instance()
 {
-    return browerList;
+    static DrapWindowsData ins;
+    return &ins;
 }
 
-void drapWindowsData::getBrowerBookmarkHtml(QString &htmlPath)
+DrapWindowsData::~DrapWindowsData() { }
+QSet<QString> DrapWindowsData::getBrowserList()
+{
+    return browserList;
+}
+
+void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
 {
     if (htmlPath.isEmpty()) {
-        htmlPath = QString::fromLocal8Bit("C:\\Users\\deep\\Documents\\test01\\test");
+        htmlPath = QString::fromLocal8Bit(".");
     }
 
     QStringList bookmarkItems;
-    for (const QPair<QString, QString> &bookmark : browerBookmarkList) {
+    for (const QPair<QString, QString> &bookmark : browserBookmarkList) {
         QString bookmarkItem =
-            QString("<a href=\"%1\">%2</a>").arg(bookmark.second).arg(bookmark.first);
+                QString("<a href=\"%1\">%2</a>").arg(bookmark.second).arg(bookmark.first);
         bookmarkItems.append(bookmarkItem);
     }
 
     QString htmlTemplate = QString::fromLocal8Bit(
-        "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n"
-        "<!-- This is an automatically generated file. It will be read and overwritten."
-        "DO NOT EDIT! -->\n"
-        "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n"
-        "<TITLE>Bookmarks</TITLE>\n"
-        "<H1>Bookmarks</H1>\n"
-        "<DL><p>\n"
-        "<DT><H3 ADD_DATE=\"1688527902\" LAST_MODIFIED=\"1693460686\" "
-        "PERSONAL_TOOLBAR_FOLDER=\"true\">书签栏</H3>\n"
-        "<DL><p>\n"
-        "<urlAndtile>\n"
-        "</DL><p>\n"
-        "</DL><p>\n");
+            "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n"
+            "<!-- This is an automatically generated file. It will be read and overwritten."
+            "DO NOT EDIT! -->\n"
+            "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n"
+            "<TITLE>Bookmarks</TITLE>\n"
+            "<H1>Bookmarks</H1>\n"
+            "<DL><p>\n"
+            "<DT><H3 ADD_DATE=\"1688527902\" LAST_MODIFIED=\"1693460686\" "
+            "PERSONAL_TOOLBAR_FOLDER=\"true\">书签栏</H3>\n"
+            "<DL><p>\n"
+            "<urlAndtile>\n"
+            "</DL><p>\n"
+            "</DL><p>\n");
 
     QString bookmarkList = bookmarkItems.join("\n");
     QString htmlContent = htmlTemplate.replace("<urlAndtile>", bookmarkList);
-    QString htmlFile = htmlPath + "\\bookmarks.html";
+    QString htmlFile = htmlPath + "/bookmarks.html";
 
     QFile outputFile(htmlFile);
     if (outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -92,23 +98,27 @@ void drapWindowsData::getBrowerBookmarkHtml(QString &htmlPath)
         out.setCodec("UTF-8");
         out << htmlContent;
         outputFile.close();
-    }else{
+    } else {
         qDebug() << "Failed to open file";
         return;
     }
 }
 
-QSet<QString> drapWindowsData::getApplianceList()
+QSet<QString> DrapWindowsData::getApplianceList()
 {
     return applianceList;
 }
 
-QString drapWindowsData::getDesktopWallpaperPath()
+QString DrapWindowsData::getDesktopWallpaperPath()
 {
+    if(desktopWallpaperPath.isEmpty())
+    {
+        getDesktopWallpaperPathInfo();
+    }
     return desktopWallpaperPath;
 }
 
-void drapWindowsData::readFirefoxBookmarks(const QString &dbPath)
+void DrapWindowsData::readFirefoxBookmarks(const QString &dbPath)
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbPath);
@@ -125,7 +135,7 @@ void drapWindowsData::readFirefoxBookmarks(const QString &dbPath)
             QString url = query.value(0).toString();
             QString title = query.value(1).toString();
             QPair<QString, QString> titleAndUrl(title, url);
-            insertBrowerBookmarkList(titleAndUrl);
+            insertBrowserBookmarkList(titleAndUrl);
         }
     } else {
         qDebug() << "read firefox bookmark failed:" << query.lastError();
@@ -133,7 +143,7 @@ void drapWindowsData::readFirefoxBookmarks(const QString &dbPath)
     db.close();
 }
 
-void drapWindowsData::readMicrosoftEdgeAndGoogleChromeBookmark(const QString &jsonPath)
+void DrapWindowsData::readMicrosoftEdgeAndGoogleChromeBookmark(const QString &jsonPath)
 {
     QFile file(jsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -149,41 +159,41 @@ void drapWindowsData::readMicrosoftEdgeAndGoogleChromeBookmark(const QString &js
 
     QJsonObject roots = obj["roots"].toObject();
     for (const QString &key : roots.keys()) {
-        browerBookmarkJsonNode(roots[key].toObject());
+        browserBookmarkJsonNode(roots[key].toObject());
     }
 }
 
-QVector<QPair<QString, QString>> drapWindowsData::getBrowerBookmarkPaths()
+QVector<QPair<QString, QString>> DrapWindowsData::getBrowserBookmarkPaths()
 {
-    return browerBookmarkPath;
+    return browserBookmarkPath;
 }
 
-QSet<QPair<QString, QString>> drapWindowsData::getBrowerBookmarkList()
+QSet<QPair<QString, QString>> DrapWindowsData::getBrowserBookmarkList()
 {
-    return browerBookmarkList;
+    return browserBookmarkList;
 }
 
-void drapWindowsData::getBrowerBookmarkPathInfo()
+void DrapWindowsData::getBrowserBookmarkPathInfo()
 {
-    if (browerList.isEmpty()) {
-        getBrowerListInfo();
+    if (browserList.isEmpty()) {
+        getBrowserListInfo();
     }
 
     QString appData = std::getenv("USERPROFILE");
 
-    if (browerList.find(BrowerName::MicrosoftEdge) != browerList.end()) {
+    if (browserList.find(BrowerName::MicrosoftEdge) != browserList.end()) {
         QString path = appData + BrowerPath::MicrosoftEdgeBookMark;
         auto bookMark = QPair<QString, QString>(BrowerName::MicrosoftEdge, path);
-        browerBookmarkPath.push_back(bookMark);
+        browserBookmarkPath.push_back(bookMark);
     }
 
-    if (browerList.find(BrowerName::GoogleChrome) != browerList.end()) {
+    if (browserList.find(BrowerName::GoogleChrome) != browserList.end()) {
         QString path = appData + BrowerPath::GoogleChromeBookMark;
         auto bookMark = QPair<QString, QString>(BrowerName::GoogleChrome, path);
-        browerBookmarkPath.push_back(bookMark);
+        browserBookmarkPath.push_back(bookMark);
     }
 
-    if (browerList.find(BrowerName::MozillaFirefox) != browerList.end()) {
+    if (browserList.find(BrowerName::MozillaFirefox) != browserList.end()) {
         QString path = appData + BrowerPath::MozillaFirefoxBookMark;
         QString installIni = path + QString("\\installs.ini");
         QFile file(installIni);
@@ -204,38 +214,45 @@ void drapWindowsData::getBrowerBookmarkPathInfo()
         if (!bookMarkPath.isEmpty()) {
             path = path + bookMarkPath;
             auto bookMark = QPair<QString, QString>(BrowerName::MozillaFirefox, path);
-            browerBookmarkPath.push_back(bookMark);
+            browserBookmarkPath.push_back(bookMark);
         } else {
             qDebug() << "Can not find bookMark path in installs.ini";
         }
     }
 }
 
-void drapWindowsData::getBrowerBookmarkInfo()
+void DrapWindowsData::getBrowserBookmarkInfo(const QSet<QString> &Browsername)
 {
-    if (browerBookmarkPath.isEmpty()) {
-        getBrowerBookmarkPathInfo();
+    if (browserBookmarkPath.isEmpty()) {
+        getBrowserBookmarkPathInfo();
     }
+    // clear browserBookmark
+    browserBookmarkList.clear();
 
-    for (auto &value : browerBookmarkPath) {
-        if (value.first == BrowerName::MozillaFirefox) {
-            readFirefoxBookmarks(value.second);
-        } else if (value.first == BrowerName::MicrosoftEdge) {
-            readMicrosoftEdgeAndGoogleChromeBookmark(value.second);
-        } else if (value.first == BrowerName::GoogleChrome) {
-            readMicrosoftEdgeAndGoogleChromeBookmark(value.second);
+    if (!Browsername.isEmpty()) {
+        for (auto &value : browserBookmarkPath) {
+            if (value.first == BrowerName::MozillaFirefox) {
+                if (Browsername.contains(BrowerName::MozillaFirefox) )
+                    readFirefoxBookmarks(value.second);
+            } else if (value.first == BrowerName::MicrosoftEdge) {
+                if (Browsername.contains(BrowerName::MicrosoftEdge))
+                    readMicrosoftEdgeAndGoogleChromeBookmark(value.second);
+            } else if (value.first == BrowerName::GoogleChrome) {
+                if (Browsername.contains(BrowerName::GoogleChrome))
+                    readMicrosoftEdgeAndGoogleChromeBookmark(value.second);
+            }
         }
     }
 }
 
-void drapWindowsData::getApplianceListInfo()
+void DrapWindowsData::getApplianceListInfo()
 {
     applianceFromRegistry(HKEY_LOCAL_MACHINE, _T(Registry::ApplianceRegistryPath1));
     applianceFromRegistry(HKEY_LOCAL_MACHINE, _T(Registry::ApplianceRegistryPath2));
     applianceFromRegistry(HKEY_CURRENT_USER, _T(Registry::ApplianceRegistryPath1));
 }
 
-void drapWindowsData::getBrowerListInfo()
+void DrapWindowsData::getBrowserListInfo()
 {
     HKEY hKey;
     LSTATUS queryStatus;
@@ -262,15 +279,15 @@ void drapWindowsData::getBrowerListInfo()
             LPCSTR strMidReglpcstr = byteArray.constData();
 
             LSTATUS status =
-                RegOpenKeyEx(HKEY_LOCAL_MACHINE, strMidReglpcstr, 0, KEY_READ, &hkRKey);
+                    RegOpenKeyEx(HKEY_LOCAL_MACHINE, strMidReglpcstr, 0, KEY_READ, &hkRKey);
             if (status == ERROR_SUCCESS) {
                 status = RegQueryValueEx(hkRKey, NULL, NULL, &valueType, (LPBYTE)browerNameBuffer,
                                          &bufferSize);
                 if (status == ERROR_SUCCESS) {
                     QString name = QString::fromLocal8Bit(browerNameBuffer);
 
-                    if ((!name.isEmpty()) && (browerList.find(name) == browerList.end())) {
-                        browerList.insert(name);
+                    if ((!name.isEmpty()) && (browserList.find(name) == browserList.end())) {
+                        browserList.insert(name);
                     }
                 } else {
                     qDebug() << "Failed to read brower name on registry. error code:" << status;
@@ -289,7 +306,7 @@ void drapWindowsData::getBrowerListInfo()
     }
 }
 
-void drapWindowsData::getDesktopWallpaperPathInfo()
+void DrapWindowsData::getDesktopWallpaperPathInfo()
 {
     HKEY hKey;
     LSTATUS status;
@@ -314,7 +331,7 @@ void drapWindowsData::getDesktopWallpaperPathInfo()
     }
 }
 
-void drapWindowsData::applianceFromRegistry(const HKEY &RootKey, const LPCTSTR &lpSubKey)
+void DrapWindowsData::applianceFromRegistry(const HKEY &RootKey, const LPCTSTR &lpSubKey)
 {
     HKEY hKey;
     LSTATUS status;
@@ -352,7 +369,7 @@ void drapWindowsData::applianceFromRegistry(const HKEY &RootKey, const LPCTSTR &
     }
 }
 
-bool drapWindowsData::isControlPanelProgram(const HKEY &subKey)
+bool DrapWindowsData::isControlPanelProgram(const HKEY &subKey)
 {
     char systemComponent[MAXNAME];
     DWORD systemComponentSize = sizeof(systemComponent);
@@ -377,35 +394,36 @@ bool drapWindowsData::isControlPanelProgram(const HKEY &subKey)
     return false;
 }
 
-void drapWindowsData::browerBookmarkJsonNode(QJsonObject node)
+void DrapWindowsData::browserBookmarkJsonNode(QJsonObject node)
 {
     if (node.contains("name") && node.contains("url")) {
         QString url = node["url"].toString();
         QString title = node["name"].toString();
         QPair<QString, QString> titleAndUrl(title, url);
-        insertBrowerBookmarkList(titleAndUrl);
+        insertBrowserBookmarkList(titleAndUrl);
     }
 
     if (node.contains("children")) {
         QJsonArray children = node["children"].toArray();
         for (const QJsonValue &child : children) {
-            browerBookmarkJsonNode(child.toObject());
+            browserBookmarkJsonNode(child.toObject());
         }
     }
 }
 
-void drapWindowsData::insertBrowerBookmarkList(const QPair<QString, QString> &titleAndUrl)
+void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &titleAndUrl)
 {
-    auto find = std::find_if(browerBookmarkList.begin(), browerBookmarkList.end(),
+    auto find = std::find_if(browserBookmarkList.begin(), browserBookmarkList.end(),
                              [&titleAndUrl](const QPair<QString, QString> &mem) {
                                  if (mem.second == titleAndUrl.second) {
                                      return true;
                                  }
                              });
-    if (find == browerBookmarkList.end()) {
-        browerBookmarkList.insert(titleAndUrl);
+    if (find == browserBookmarkList.end()) {
+        browserBookmarkList.insert(titleAndUrl);
         qDebug() << titleAndUrl.first << ": " << titleAndUrl.second;
     }
 }
 
 #endif
+

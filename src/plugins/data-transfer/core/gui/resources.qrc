@@ -1,4 +1,4 @@
-<RCC>
+﻿<RCC>
     <qresource prefix="/">
         <file>icon/dialog-warning.svg</file>
         <file>icon/icon.svg</file>
@@ -28,5 +28,8 @@
         <file>icon/application-x-zip.svg</file>
         <file>icon/tab_close_normal.svg</file>
         <file>icon/warning.svg</file>
+        <file>icon/zipfileprocess.png</file>
+        <file>icon/zipfileprocess@2x.png</file>
+        <file>icon/fail.svg</file>
     </qresource>
 </RCC>

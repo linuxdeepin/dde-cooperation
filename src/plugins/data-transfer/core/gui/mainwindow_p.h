@@ -28,12 +28,14 @@ private slots:
     void handleCurrentChanged(int index);
 
 #ifdef WIN32
+protected:
     void paintEvent(QPaintEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *);
+    void mouseReleaseEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
-
+private:
     void initTitleBar();
+    void initSideBar();
 #endif
 
 protected:
@@ -42,9 +44,12 @@ protected:
     QDockWidget *sidebar { nullptr };
 
 #ifdef WIN32
-    QHBoxLayout *windowsCentralWidget { nullptr };
-    QHBoxLayout *windowsCentralWidgetContent { nullptr };
-    QHBoxLayout *windowsCentralWidgetSidebar { nullptr };
+
+protected:
+    QHBoxLayout *windowsCentralWidget{ nullptr };
+    QHBoxLayout *windowsCentralWidgetContent{ nullptr };
+    QHBoxLayout *windowsCentralWidgetSidebar{ nullptr };
+
     QPoint lastPosition;
     bool leftButtonPressed { false };
 #endif
