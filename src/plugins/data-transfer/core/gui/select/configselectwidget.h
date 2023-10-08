@@ -7,6 +7,10 @@
 #include <QIcon>
 #include <QLabel>
 
+#include "../select/selectmainwidget.h"
+class SelectTitlebar;
+class QToolButton;
+class QListView;
 class ConfigSelectWidget : public QFrame
 {
     Q_OBJECT
@@ -18,15 +22,27 @@ public:
 public slots:
     void nextPage();
     void backPage();
+signals:
+    void isOk(const SelectItemName &name, const bool &ok);
 
 private:
     void initUI();
-    void initSelectFrame();
+    void initSelectBrowerBookMarkFrame();
+    void initSelectConfigFrame();
     void sendOptions();
 
 private:
-    QFrame *selectFrame { nullptr };
-    QGridLayout *selectLayout { nullptr };
+    QFrame *selectBrowerBookMarkFrame{ nullptr };
+    QFrame *selectConfigFrame{ nullptr };
+
+    QListView *browserView{nullptr};
+    QListView *configView{nullptr};
+
+    QVBoxLayout *selectMainLayout{ nullptr };
+
+
+    QToolButton *determineButton{ nullptr };
+    QToolButton *cancelButton{ nullptr };
 };
 
 #endif

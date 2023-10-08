@@ -15,6 +15,8 @@
 inline constexpr char internetMethodName[] { "从windows PC" };
 #ifdef WIN32
 inline constexpr char localFileMethodName[] { "本地导出备份" };
+inline constexpr int selecPage1 = PageName::startwidget;
+inline constexpr int selecPage2 = PageName::startwidget;
 #else
 inline constexpr char localFileMethodName[] { "从备份文件导入" };
 inline constexpr int selecPage1 = PageName::connectwidget;
@@ -33,7 +35,7 @@ void ChooseWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
 
@@ -47,7 +49,7 @@ void ChooseWidget::initUI()
     ModeItem *winItem = new ModeItem("从windows PC", QIcon(":/icon/select1.png"), this);
     ModeItem *packageItem = new ModeItem(localFileMethodName, QIcon(":/icon/select2.png"), this);
 
-    QHBoxLayout *modeLayout = new QHBoxLayout(this);
+    QHBoxLayout *modeLayout = new QHBoxLayout();
     modeLayout->addWidget(winItem, Qt::AlignTop);
     modeLayout->addSpacing(20);
     modeLayout->addWidget(packageItem, Qt::AlignTop);
@@ -59,13 +61,13 @@ void ChooseWidget::initUI()
     nextButton->setStyleSheet("background-color: lightgray;");
     nextButton->setEnabled(false);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(nextButton, Qt::AlignCenter);
 
     IndexLabel *indelabel = new IndexLabel(0, this);
     indelabel->setAlignment(Qt::AlignCenter);
 
-    QHBoxLayout *indexLayout = new QHBoxLayout(this);
+    QHBoxLayout *indexLayout = new QHBoxLayout();
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addSpacing(30);

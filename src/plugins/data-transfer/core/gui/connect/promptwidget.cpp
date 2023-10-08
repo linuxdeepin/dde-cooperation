@@ -24,7 +24,7 @@ void PromptWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
 
@@ -41,7 +41,7 @@ void PromptWidget::initUI()
         "建议暂时关闭UOS自动更新程序，以免打断迁移过程。",
     };
 
-    QGridLayout *gridLayout = new QGridLayout(this);
+    QGridLayout *gridLayout = new QGridLayout();
     for (int i = 0; i < prompts.count(); i++) {
         QLabel *iconlabel = new QLabel(this);
         iconlabel->setPixmap(QIcon(":/icon/dialog-warning.svg").pixmap(14, 14));
@@ -58,7 +58,19 @@ void PromptWidget::initUI()
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
     backButton->setFixedSize(120, 35);
-    backButton->setStyleSheet("background-color: lightgray;");
+    backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                              "border: 1px solid rgba(0,0,0, 0.03);"
+                              "opacity: 1;"
+                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                              "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                              "font-family: \"SourceHanSansSC-Medium\";"
+                              "font-size: 14px;"
+                              "font-weight: 500;"
+                              "color: rgba(65,77,104,1);"
+                              "font-style: normal;"
+                              "letter-spacing: 3px;"
+                              "text-align: center;"
+                              ";}");
     connect(backButton, &QToolButton::clicked, this, &PromptWidget::backPage);
 
     QToolButton *nextButton = new QToolButton(this);
@@ -67,10 +79,22 @@ void PromptWidget::initUI()
     nextButton->setPalette(palette);
     nextButton->setText("确定");
     nextButton->setFixedSize(120, 35);
-    nextButton->setStyleSheet("background-color: #0098FF;");
+    nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                              "border: 1px solid rgba(0,0,0, 0.03);"
+                              "opacity: 1;"
+                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                              "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
+                              "font-family: \"SourceHanSansSC-Medium\";"
+                              "font-size: 14px;"
+                              "font-weight: 500;"
+                              "color: rgba(255,255,255,1);"
+                              "font-style: normal;"
+                              "letter-spacing: 3px;"
+                              "text-align: center;"
+                              "}");
     connect(nextButton, &QToolButton::clicked, this, &PromptWidget::nextPage);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
     buttonLayout->addSpacing(15);
     buttonLayout->addWidget(nextButton);

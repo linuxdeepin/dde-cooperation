@@ -1,5 +1,6 @@
 ﻿#include "fileselectwidget.h"
 #include "item.h"
+#include "../type_defines.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -19,6 +20,7 @@
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
 #include <gui/mainwindow_p.h>
+
 #pragma execution_character_set("utf-8")
 
 const QList<QString> directories = {
@@ -50,7 +52,7 @@ void FileSelectWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
 
     QLabel *titileLabel = new QLabel(internetMethodSelectFileName, this);
@@ -61,22 +63,15 @@ void FileSelectWidget::initUI()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QHBoxLayout *headerLayout = new QHBoxLayout(this);
-    QLabel *hedaerIcon = new QLabel(this);
-    QLabel *filename = new QLabel("文件名", this);
-    QLabel *hedaerIcon2 = new QLabel(this);
-    QLabel *size = new QLabel("大小", this);
-
-    headerLayout->addWidget(hedaerIcon);
-    headerLayout->addWidget(filename);
-    headerLayout->addWidget(hedaerIcon2);
-    headerLayout->addWidget(size);
-
+    QHBoxLayout *headerLayout = new QHBoxLayout();
+    ItemTitlebar *titlebar = new ItemTitlebar("文件名","大小",50,360,QRectF(10,12,16,16),3, this);
+    titlebar->setFixedSize(500,36);
+    headerLayout->addWidget(titlebar);
     initFileView();
 
     QLabel *tipLabel1 = new QLabel("传输完成的数据，将被存放在用户的 home 目录下", this);
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    tipLabel1->setFixedHeight(50);
+    tipLabel1->setFixedHeight(30);
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
@@ -87,26 +82,60 @@ void FileSelectWidget::initUI()
     determineButton->setPalette(palette);
     determineButton->setText("确定");
     determineButton->setFixedSize(120, 35);
-    determineButton->setStyleSheet("background-color: #0098FF;");
+    determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                   "border: 1px solid rgba(0,0,0, 0.03);"
+                                   "opacity: 1;"
+                                   "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                   "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
+                                   "font-family: \"SourceHanSansSC-Medium\";"
+                                   "font-size: 14px;"
+                                   "font-weight: 500;"
+                                   "color: rgba(255,255,255,1);"
+                                   "font-style: normal;"
+                                   "letter-spacing: 3px;"
+                                   "text-align: center;"
+                                   "}");
     QObject::connect(determineButton, &QToolButton::clicked, this, &FileSelectWidget::nextPage);
+    QObject::connect(determineButton,&QToolButton::clicked,this,[this](){
+        emit isOk(SelectItemName::FILES,true);
+    });
+
 
     QToolButton *cancelButton = new QToolButton(this);
     cancelButton->setText("取消");
     cancelButton->setFixedSize(120, 35);
-    cancelButton->setStyleSheet("background-color: lightgray;");
+    cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                "border: 1px solid rgba(0,0,0, 0.03);"
+                                "opacity: 1;"
+                                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                                "font-family: \"SourceHanSansSC-Medium\";"
+                                "font-size: 14px;"
+                                "font-weight: 500;"
+                                "color: rgba(65,77,104,1);"
+                                "font-style: normal;"
+                                "letter-spacing: 3px;"
+                                "text-align: center;"
+                                ";}");
     QObject::connect(cancelButton, &QToolButton::clicked, this, &FileSelectWidget::backPage);
+    QObject::connect(cancelButton,&QToolButton::clicked,this,[this](){
+        emit isOk(SelectItemName::FILES,false);
+    });
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(cancelButton);
     buttonLayout->addSpacing(15);
     buttonLayout->addWidget(determineButton);
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
     mainLayout->addSpacing(30);
+    mainLayout->setSpacing(0);
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel1);
     mainLayout->addLayout(headerLayout);
+   // mainLayout->addWidget(titlebar);
     mainLayout->addWidget(fileview);
+    mainLayout->addSpacing(5);
     mainLayout->addLayout(buttonLayout);
 }
 
@@ -137,7 +166,7 @@ void FileSelectWidget::initFileView()
     fileview = new QListView(this);
     fileview->setEditTriggers(QAbstractItemView::NoEditTriggers);
     fileview->setModel(model);
-    fileview->setItemDelegate(new ItemDelegate());
+    fileview->setItemDelegate(new ItemDelegate(99,250,379,100,50,QPoint(65,6),QPoint(10,9)));
     fileview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     fileview->setSelectionMode(QAbstractItemView::NoSelection);
     updateFileView();
@@ -172,6 +201,7 @@ void FileSelectWidget::updateFileView()
 
         ListItem *item = new ListItem();
         item->setData(fileinfos[i].fileName(), Qt::DisplayRole);
+        item->setData("", Qt::ToolTipRole);
         item->setData(fileinfos[i].filePath(), Qt::UserRole);
         item->setIcon(QIcon(":/icon/folder.svg"));
         item->setCheckable(true);
@@ -189,6 +219,7 @@ void FileSelectWidget::updateFileView()
 
         ListItem *item = new ListItem();
         item->setData(fileinfos[i].fileName(), Qt::DisplayRole);
+        item->setData("1M", Qt::ToolTipRole);
         item->setIcon(QIcon(":/icon/fileicon.svg"));
         item->setData(fileinfos[i].filePath(), Qt::UserRole);
         item->setCheckable(true);
@@ -230,7 +261,7 @@ void FileSelectWidget::nextPage()
     //nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
+        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
@@ -240,7 +271,7 @@ void FileSelectWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
+        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }

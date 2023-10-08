@@ -13,6 +13,9 @@
 #include "../select/createbackupfilewidget.h"
 #include "../transfer/successwidget.h"
 #include "../transfer/transferringwidget.h"
+#include "../transfer/zipfileprocesswidget.h"
+#include "../transfer/zipfileprocessresultwidget.h"
+#include "../transfer/errorwidget.h"
 
 #include "utils/transferhepler.h"
 
@@ -28,6 +31,8 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPaintEvent>
+#include <QCoreApplication>
+#include <QApplication>
 
 using namespace data_transfer_core;
 
@@ -53,11 +58,12 @@ void MainWindowPrivate::initWindow()
     initTitleBar();
     layout->setSpacing(0);
     layout->addLayout(windowsCentralWidget);
+
 }
 
 void MainWindowPrivate::initWidgets()
 {
-    StartWidget *startwidget1 = new StartWidget(q);
+    StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
 
     TransferringWidget *transferringwidget = new TransferringWidget(q);
@@ -71,34 +77,39 @@ void MainWindowPrivate::initWidgets()
     ConfigSelectWidget *configselectwidget = new ConfigSelectWidget(q);
     AppSelectWidget *appselectwidget = new AppSelectWidget(q);
 
-   // CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
+    ErrorWidget *errorwidget = new ErrorWidget(q);
 
     QStackedWidget *stackedWidget = new QStackedWidget(q);
 
-    stackedWidget->insertWidget(PageName::startwidget,startwidget1);
-    stackedWidget->insertWidget(PageName::choosewidget,choosewidget);
-    stackedWidget->insertWidget(PageName::promptwidget,promptwidget);
-    stackedWidget->insertWidget(PageName::readywidget,readywidget);
-
-    stackedWidget->insertWidget(PageName::selectmainwidget,selectmainwidget);
-
-    stackedWidget->insertWidget(PageName::transferringwidget,transferringwidget);
-    stackedWidget->insertWidget(PageName::successtranswidget,successtranswidget);
-
-    stackedWidget->insertWidget(PageName::filewselectidget,filewselectidget);
-    stackedWidget->insertWidget(PageName::configselectwidget,configselectwidget);
-    stackedWidget->insertWidget(PageName::appselectwidget,appselectwidget);
-
+    stackedWidget->insertWidget(PageName::startwidget, startwidget);
+    stackedWidget->insertWidget(PageName::choosewidget, choosewidget);
+    stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
+    stackedWidget->insertWidget(PageName::readywidget, readywidget);
+    stackedWidget->insertWidget(PageName::selectmainwidget, selectmainwidget);
+    stackedWidget->insertWidget(PageName::transferringwidget, transferringwidget);
+    stackedWidget->insertWidget(PageName::successtranswidget, successtranswidget);
+    stackedWidget->insertWidget(PageName::filewselectidget, filewselectidget);
+    stackedWidget->insertWidget(PageName::configselectwidget, configselectwidget);
+    stackedWidget->insertWidget(PageName::appselectwidget, appselectwidget);
+    stackedWidget->insertWidget(PageName::errorwidget, errorwidget);
     stackedWidget->setCurrentIndex(PageName::startwidget);
 
-    QObject::connect(stackedWidget, &QStackedWidget::currentChanged, this,
-                     &MainWindowPrivate::handleCurrentChanged);
     windowsCentralWidgetContent->setContentsMargins(8, 8, 8, 8);
     windowsCentralWidgetContent->addWidget(stackedWidget);
 
-    QObject::connect(TransferHelper::instance(),&TransferHelper::transferSucceed,this,[stackedWidget]{
-        stackedWidget->setCurrentIndex(PageName::successtranswidget);
-    });
+    QObject::connect(stackedWidget, &QStackedWidget::currentChanged, this,
+                     &MainWindowPrivate::handleCurrentChanged);
+
+    QObject::connect(
+            TransferHelper::instance(), &TransferHelper::transferSucceed, this,
+            [stackedWidget] { stackedWidget->setCurrentIndex(PageName::successtranswidget); });
+
+    QObject::connect(appselectwidget, &AppSelectWidget::isOk, selectmainwidget,
+                     &selectMainWidget::changeSelectframeState);
+    QObject::connect(filewselectidget, &FileSelectWidget::isOk, selectmainwidget,
+                     &selectMainWidget::changeSelectframeState);
+    QObject::connect(configselectwidget, &ConfigSelectWidget::isOk, selectmainwidget,
+                     &selectMainWidget::changeSelectframeState);
 }
 
 void MainWindowPrivate::paintEvent(QPaintEvent *event)
@@ -124,8 +135,10 @@ void MainWindowPrivate::initSideBar()
     SidebarWidget *sidebarWidget = new SidebarWidget(q);
     sidebar->setWidget(sidebarWidget);
     sidebar->setVisible(false);
-    sidebar->setStyleSheet("background-color: white;"
-                           " border-bottom-left-radius: 18px;");
+    sidebar->setStyleSheet(".SidebarWidget{"
+                           "background-color: white;"
+                           "border-bottom-left-radius: 18px;"
+                           "}");
 
     windowsCentralWidgetSidebar->addWidget(sidebar);
 }
@@ -137,7 +150,7 @@ void MainWindowPrivate::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
-void MainWindowPrivate::mouseReleaseEvent(QMouseEvent *)
+void MainWindowPrivate::mouseReleaseEvent(QMouseEvent *event)
 {
     leftButtonPressed = false;
 }
@@ -184,7 +197,10 @@ void MainWindowPrivate::initTitleBar()
                              "}");
     mainLabel->setPixmap(QPixmap(":/icon/icon.svg"));
 
-    QObject::connect(closeButton, &QToolButton::clicked, q, &QWidget::close);
+    QObject::connect(closeButton, &QToolButton::clicked, q, [this]() {
+        // this->q->MainWindow::close();
+        QApplication::quit();
+    });
     QObject::connect(minButton, &QToolButton::clicked, q, &MainWindow::showMinimized);
 
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);
@@ -198,6 +214,7 @@ void MainWindowPrivate::initTitleBar()
 
     q->centralWidget()->layout()->addWidget(titleBar);
 }
+
 void MainWindowPrivate::handleCurrentChanged(int index)
 {
     if (index == PageName::filewselectidget)

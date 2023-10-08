@@ -25,7 +25,7 @@ void SuccessWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
@@ -57,7 +57,7 @@ void SuccessWidget::initUI()
     nextButton->setStyleSheet("background-color: #0098FF;");
     connect(nextButton, &QToolButton::clicked, qApp, &QApplication::quit);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
     buttonLayout->addSpacing(15);
     buttonLayout->addWidget(nextButton);

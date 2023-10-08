@@ -99,7 +99,19 @@ void ReadyWidget::initUI()
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
     backButton->setFixedSize(120, 35);
-    backButton->setStyleSheet("background-color: lightgray;");
+    backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                              "border: 1px solid rgba(0,0,0, 0.03);"
+                              "opacity: 1;"
+                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                              "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                              "font-family: \"SourceHanSansSC-Medium\";"
+                              "font-size: 14px;"
+                              "font-weight: 500;"
+                              "color: rgba(65,77,104,1);"
+                              "font-style: normal;"
+                              "letter-spacing: 3px;"
+                              "text-align: center;"
+                              ";}");
     connect(backButton, &QToolButton::clicked, this, &ReadyWidget::backPage);
 
     nextButton = new QToolButton(this);
@@ -109,7 +121,19 @@ void ReadyWidget::initUI()
     nextButton->setPalette(palette);
     nextButton->setText("确定");
     nextButton->setFixedSize(120, 35);
-    nextButton->setStyleSheet("background-color: #0098FF;");
+    nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                              "border: 1px solid rgba(0,0,0, 0.03);"
+                              "opacity: 1;"
+                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                              "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
+                              "font-family: \"SourceHanSansSC-Medium\";"
+                              "font-size: 14px;"
+                              "font-weight: 500;"
+                              "color: rgba(255,255,255,1);"
+                              "font-style: normal;"
+                              "letter-spacing: 3px;"
+                              "text-align: center;"
+                              "}");
     connect(nextButton, &QToolButton::clicked, this, &ReadyWidget::nextPage);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);

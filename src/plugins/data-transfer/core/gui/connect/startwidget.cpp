@@ -24,7 +24,7 @@ void StartWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
 
@@ -52,7 +52,7 @@ void StartWidget::initUI()
     connect(label, &QLabel::linkActivated, this, &StartWidget::nextPage);
 
     checkBox = new QCheckBox(this);
-    QHBoxLayout *checkLayout = new QHBoxLayout(this);
+    QHBoxLayout *checkLayout = new QHBoxLayout();
 
     checkLayout->addStretch();
     checkLayout->addWidget(checkBox);
@@ -74,7 +74,7 @@ void StartWidget::initUI()
             nextButton->setEnabled(false);
     });
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(nextButton, Qt::AlignCenter);
 
     mainLayout->addSpacing(50);
