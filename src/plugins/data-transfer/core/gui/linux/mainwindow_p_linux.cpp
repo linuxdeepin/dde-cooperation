@@ -44,21 +44,6 @@ void MainWindowPrivate::initWindow()
     layout->setContentsMargins(8, 8, 8, 8);
 
     q->setCentralWidget(centerWidget);
-
-    initSideBar();
-}
-
-void MainWindowPrivate::initSideBar()
-{
-    sidebar = new QDockWidget("Sidebar", q);
-    q->setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks);
-    q->addDockWidget(Qt::LeftDockWidgetArea, sidebar);
-    sidebar->setTitleBarWidget(new QWidget());
-    sidebar->setFixedWidth(200);
-
-    SidebarWidget *sidebarWidget = new SidebarWidget(q);
-    sidebar->setWidget(sidebarWidget);
-    sidebar->setVisible(false);
 }
 
 void MainWindowPrivate::initWidgets()
@@ -67,21 +52,24 @@ void MainWindowPrivate::initWidgets()
 
     StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
-    PromptWidget *promptidget = new PromptWidget(q);
+    UploadFileWidget *uploadwidget = new UploadFileWidget(q);
+    PromptWidget *promptwidget = new PromptWidget(q);
     ConnectWidget *connectwidget = new ConnectWidget(q);
-    FileSelectWidget *connectwidget1 = new FileSelectWidget(qobject_cast<SidebarWidget *>(sidebar->widget()), stackedWidget);
     WaitTransferWidget *waitgwidget = new WaitTransferWidget(q);
     TransferringWidget *transferringwidget = new TransferringWidget(q);
     SuccessWidget *successtranswidget = new SuccessWidget(q);
 
-    stackedWidget->addWidget(startwidget);
-    stackedWidget->addWidget(choosewidget);
-    stackedWidget->addWidget(promptidget);
-    stackedWidget->addWidget(connectwidget);
-    //stackedWidget->addWidget(connectwidget1);
-    stackedWidget->addWidget(waitgwidget);
-    stackedWidget->addWidget(transferringwidget);
-    stackedWidget->addWidget(successtranswidget);
+    stackedWidget->insertWidget(PageName::startwidget, startwidget);
+    stackedWidget->insertWidget(PageName::choosewidget, choosewidget);
+
+    stackedWidget->insertWidget(PageName::uploadwidget, uploadwidget);
+
+    stackedWidget->insertWidget(PageName::connectwidget, connectwidget);
+    stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
+    stackedWidget->insertWidget(PageName::waitgwidget, waitgwidget);
+    stackedWidget->insertWidget(PageName::transferringwidget, transferringwidget);
+    stackedWidget->insertWidget(PageName::successtranswidget, successtranswidget);
+
     stackedWidget->setCurrentIndex(0);
 
     connect(stackedWidget, &QStackedWidget::currentChanged, this, &MainWindowPrivate::handleCurrentChanged);

@@ -15,8 +15,6 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/connect/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/connect/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/gui/select/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/gui/select/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
@@ -29,6 +27,8 @@ if (CMAKE_SYSTEM MATCHES "Windows")
     FILE(GLOB BUSS_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/select/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/select/*.cpp"
     )
    find_package(Qt5 COMPONENTS Sql REQUIRED)
 elseif (CMAKE_SYSTEM MATCHES "Linux")

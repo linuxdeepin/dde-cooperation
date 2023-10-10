@@ -19,6 +19,9 @@ public slots:
 
 private:
     void initUI();
+
+private:
+    int nextpage = 0;
 };
 
 class ModeItem : public QFrame

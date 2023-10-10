@@ -1,5 +1,7 @@
 ﻿#include "choosewidget.h"
 
+#include "../type_defines.h"
+
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
@@ -10,19 +12,22 @@
 
 #pragma execution_character_set("utf-8")
 
-inline constexpr char internetMethodName[]{ "从windows PC" };
+inline constexpr char internetMethodName[] { "从windows PC" };
 #ifdef WIN32
-inline constexpr char localFileMethodName[]{ "本地导出备份" };
+inline constexpr char localFileMethodName[] { "本地导出备份" };
 #else
-inline constexpr char localFileMethodName[]{ "从备份文件导入" };
+inline constexpr char localFileMethodName[] { "从备份文件导入" };
+inline constexpr int selecPage1 = PageName::connectwidget;
+inline constexpr int selecPage2 = PageName::uploadwidget;
 #endif
 
-ChooseWidget::ChooseWidget(QWidget *parent) : QFrame(parent)
+ChooseWidget::ChooseWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
-ChooseWidget::~ChooseWidget() { }
+ChooseWidget::~ChooseWidget() {}
 
 void ChooseWidget::initUI()
 {
@@ -66,45 +71,47 @@ void ChooseWidget::initUI()
     mainLayout->addSpacing(30);
     mainLayout->addWidget(textLabel1);
     mainLayout->addLayout(modeLayout);
-    mainLayout->addSpacing(100);
+    mainLayout->addSpacing(90);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
 
     connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
-    connect(winItem->checkBox, &QCheckBox::stateChanged, [packageItem, nextButton](int state) {
-        if (state == Qt::Checked)
+    connect(winItem->checkBox, &QCheckBox::stateChanged, [this, packageItem, nextButton](int state) {
+        if (state == Qt::Checked) {
             packageItem->checkBox->setCheckState(Qt::Unchecked);
-        if (state == Qt::Checked || packageItem->checkBox->checkState() == Qt::Checked)
             nextButton->setEnabled(true);
-        else
+            nextpage = selecPage1;
+        } else {
             nextButton->setEnabled(false);
+        }
     });
-    connect(packageItem->checkBox, &QCheckBox::stateChanged, this,
-            [winItem, nextButton](int state) {
-                if (state == Qt::Checked)
-                    winItem->checkBox->setCheckState(Qt::Unchecked);
-                if (state == Qt::Checked || winItem->checkBox->checkState() == Qt::Checked)
-                    nextButton->setEnabled(true);
-                else
-                    nextButton->setEnabled(false);
-            });
+    connect(packageItem->checkBox, &QCheckBox::stateChanged, this, [this, winItem, nextButton](int state) {
+        if (state == Qt::Checked) {
+            winItem->checkBox->setCheckState(Qt::Unchecked);
+            nextButton->setEnabled(true);
+            nextpage = selecPage2;
+        } else {
+            nextButton->setEnabled(false);
+        }
+    });
 }
 
 void ChooseWidget::nextPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
+        stackedWidget->setCurrentIndex(nextpage);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
 }
 
-ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : QFrame(parent)
+ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
+    : QFrame(parent)
 {
-    setStyleSheet("background-color: rgba(0, 0, 0, 0.1); border-radius: 8px;");
+    setStyleSheet("background-color: rgba(0, 0, 0, 0.03); border-radius: 8px;");
     setFixedSize(268, 222);
 
     checkBox = new QCheckBox(text, this);
@@ -122,7 +129,7 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : QFrame(parent)
     mainLayout->addWidget(iconLabel);
 }
 
-ModeItem::~ModeItem() { }
+ModeItem::~ModeItem() {}
 
 void ModeItem::mousePressEvent(QMouseEvent *event)
 {

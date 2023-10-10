@@ -25,16 +25,33 @@ class UploadFileFrame : public QFrame
 
 public:
     UploadFileFrame(QWidget *parent = nullptr);
-    ~UploadFileFrame();
+    ~UploadFileFrame() override;
 
     void uploadFile();
-    void update();
+
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+
+signals:
+    void updateUI(int status);
 
 private:
     void initUI();
+    void initStyleSheet();
+    void initFileFrame();
 
 private:
     QString selectedFilePath;
+    QFrame *fileFrame { nullptr };
+};
+
+enum uploadStatus {
+    invalid = 0,
+    valid,
+    formaterror
 };
 
 #endif
