@@ -1,5 +1,6 @@
-﻿ #include "choosewidget.h"
+#include "choosewidget.h"
 #include "connectwidget.h"
+#include "../type_defines.h"
 
 #include <QLabel>
 #include <QDebug>
@@ -189,7 +190,7 @@ void ConnectWidget::nextPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
+        stackedWidget->setCurrentIndex(PageName::choosewidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }

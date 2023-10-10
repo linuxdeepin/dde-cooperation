@@ -1,4 +1,5 @@
 ﻿#include "successwidget.h"
+#include "../type_defines.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -45,7 +46,7 @@ void SuccessWidget::initUI()
     backButton->setText("返回");
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet("background-color: lightgray;");
-    connect(backButton, &QToolButton::clicked, this, &SuccessWidget::backPage);
+    connect(backButton, &QToolButton::clicked, qApp, &QApplication::quit);
 
     QToolButton *nextButton = new QToolButton(this);
     QPalette palette = nextButton->palette();
@@ -66,14 +67,4 @@ void SuccessWidget::initUI()
     mainLayout->addWidget(iconLabel);
     mainLayout->addSpacing(100);
     mainLayout->addLayout(buttonLayout);
-}
-
-void SuccessWidget::backPage()
-{
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
-    }
 }

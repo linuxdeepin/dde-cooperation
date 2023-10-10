@@ -48,7 +48,7 @@ void StartWidget::initUI()
     QLabel *label = new QLabel(this);
     font.setPointSize(9);
     label->setFont(font);
-    label->setText("我已阅读并同意<a href=\"https://www.google.com\" style=\"text-decoration:none;\">《UOS迁移工具》</a>");
+    label->setText("我已阅读并同意<a href=\"https://\" style=\"text-decoration:none;\">《UOS迁移工具》</a>");
     connect(label, &QLabel::linkActivated, this, &StartWidget::nextPage);
 
     checkBox = new QCheckBox(this);
