@@ -19,9 +19,10 @@
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper() : QObject() { }
+TransferHelper::TransferHelper()
+    : QObject() {}
 
-TransferHelper::~TransferHelper() { }
+TransferHelper::~TransferHelper() {}
 
 TransferHelper *TransferHelper::instance()
 {
@@ -105,7 +106,7 @@ void TransferHelper::startTransfer()
     transferhandle.senFiles(paths);
 }
 
-void TransferHelper::getJsonfile(const QJsonObject &jsonData,const QString &save)
+void TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &save)
 {
     QString savePath = save;
     // 创建一个 JSON 文档
@@ -129,7 +130,7 @@ void TransferHelper::getJsonfile(const QJsonObject &jsonData,const QString &save
 }
 
 #ifdef WIN32
-void TransferHelper::windowsZipFile(const QStringList &sourceFilePath,const QString &zipFileSave)
+void TransferHelper::windowsZipFile(const QStringList &sourceFilePath, const QString &zipFileSave)
 {
     QString zipFileSavePath = zipFileSave;
     QString destination;
@@ -172,7 +173,7 @@ void TransferHelper::windowsZipFile(const QStringList &sourceFilePath,const QStr
     }
 }
 
-void TransferHelper::windowsUnZipFile(const QString &zipFilePath,const QString &unZipFile)
+void TransferHelper::windowsUnZipFile(const QString &zipFilePath, const QString &unZipFile)
 {
     QString unZipFilePath;
     QString destinationDir;
@@ -206,10 +207,10 @@ void TransferHelper::windowsUnZipFile(const QString &zipFilePath,const QString &
 
 void TransferHelper::getUserDataPackagingFile()
 {
-    QStringList filePathList; //= OptionsManager::instance()->getUserOption(Options::kFile);
-    QStringList appList; //= OptionsManager::instance()->getUserOption(Options::kApp);
+    QStringList filePathList;   //= OptionsManager::instance()->getUserOption(Options::kFile);
+    QStringList appList;   //= OptionsManager::instance()->getUserOption(Options::kApp);
     QStringList
-            browserList; // OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
+            browserList;   // OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
     QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
 
     browserList.append(BrowerName::MicrosoftEdge);
@@ -229,7 +230,7 @@ void TransferHelper::getUserDataPackagingFile()
     if (!browserList.isEmpty()) {
         QSet<QString> browserName(browserList.begin(), browserList.end());
         DrapWindowsData::instance()->getBrowserBookmarkInfo(browserName);
-//      DrapWindowsData::instance()->getBrowserBookmarkHtml(QString("C:/Users/deep/Documents/test01"));
+        //      DrapWindowsData::instance()->getBrowserBookmarkHtml(QString("C:/Users/deep/Documents/test01"));
         DrapWindowsData::instance()->getBrowserBookmarkJSON(QString("C:/Users/deep/Documents/test01"));
         zipFilePathList.append(bookmark);
     }
@@ -258,11 +259,19 @@ void TransferHelper::getUserDataPackagingFile()
     jsonObject["user_file"] = fileArray;
     jsonObject["app"] = appArray;
     jsonObject["wallpapers"] = "img0.jpg";
-    jsonObject["borwerbookmark"]="bookmarks.html";
+    jsonObject["borwerbookmark"] = "bookmarks.html";
     QString qjsonPath("C:/Users/deep/Documents/test01/transfer.json");
     getJsonfile(jsonObject, QString("C:/Users/deep/Documents/test01"));
     zipFilePathList.append(qjsonPath);
 
     windowsZipFile(zipFilePathList, QString("C:/Users/deep/Documents"));
+}
+#else
+bool TransferHelper::setWallpaper(const QString &filepath)
+{
+    qInfo() << OptionsManager::instance()->getUserOptions();
+    QStringList paths = OptionsManager::instance()->getUserOptions()["file"];
+    transferhandle.senFiles(paths);
+    return true;
 }
 #endif

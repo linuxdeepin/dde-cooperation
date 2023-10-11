@@ -19,7 +19,7 @@
 
 #include <gui/transfer/successwidget.h>
 #include <gui/transfer/transferringwidget.h>
-#include <gui/transfer/uploadfilewidget.h>
+#include <gui/backupload/uploadfilewidget.h>
 #include <gui/transfer/waittransferwidget.h>
 
 #include <utils/transferhepler.h>

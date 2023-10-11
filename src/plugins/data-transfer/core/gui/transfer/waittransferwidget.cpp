@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QToolButton>
 #include <QStackedWidget>
+#include <QMovie>
 
 #include <utils/transferhepler.h>
 
@@ -43,7 +44,12 @@ void WaitTransferWidget::initUI()
     tipLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
     QLabel *iconLabel = new QLabel(this);
-    iconLabel->setPixmap(QIcon(":/icon/wait.png").pixmap(200, 160));
+    QMovie *iconmovie = new QMovie(this);
+    iconmovie->setFileName(":/icon/GIF/waiting.gif");
+    iconmovie->setScaledSize(QSize(200, 160));
+    iconmovie->setSpeed(80);
+    iconmovie->start();
+    iconLabel->setMovie(iconmovie);
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     QToolButton *backButton = new QToolButton(this);

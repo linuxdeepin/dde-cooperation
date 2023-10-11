@@ -1,4 +1,5 @@
-﻿#include "uploadfilewidget.h"
+#include "uploadfilewidget.h"
+#include "unzipwoker.h"
 
 #include "../type_defines.h"
 
@@ -48,20 +49,46 @@ void UploadFileWidget::initUI()
     QHBoxLayout *uploadLayout = new QHBoxLayout(this);
     uploadLayout->addWidget(uploadFileFrame, Qt::AlignCenter);
 
+    QLabel *tipLabel = new QLabel("<font size=12px color='#FF5736' >文件错误，无法迁移，请更换备份文件</font>", this);
+    tipLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
+    tipLabel->setFixedHeight(20);
+    tipLabel->setAlignment(Qt::AlignCenter);
+    tipLabel->setVisible(false);
+
+    QHBoxLayout *tipLayout = new QHBoxLayout(this);
+    tipLayout->addSpacing(15);
+    tipLayout->addWidget(tipLabel);
+    tipLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
+
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet("background-color: lightgray;");
     connect(backButton, &QToolButton::clicked, this, &UploadFileWidget::backPage);
 
-    QToolButton *nextButton = new QToolButton(this);
+    nextButton = new QToolButton(this);
     QPalette palette = nextButton->palette();
     palette.setColor(QPalette::ButtonText, Qt::white);
     nextButton->setPalette(palette);
     nextButton->setText("下一步");
     nextButton->setFixedSize(120, 35);
-    nextButton->setStyleSheet("background-color: #0098FF;");
-    connect(nextButton, &QToolButton::clicked, this, &UploadFileWidget::nextPage);
+    nextButton->setStyleSheet("background-color: rgba(0, 152, 255, 0.12);");
+    nextButton->setEnabled(true);
+    connect(nextButton, &QToolButton::clicked, this, [this, tipLabel, uploadFileFrame]() {
+        if (nextButton->text() == "重试") {
+            emit uploadFileFrame->updateUI(uploadStatus::Initial);
+            tipLabel->setVisible(false);
+            return;
+        }
+        if (!checkBackupFile()) {
+            tipLabel->setVisible(true);
+            nextButton->setText("重试");
+            return;
+        }
+        UnzipWorker *woker = new UnzipWorker(uploadFileFrame->getZipFilePath());
+        woker->start();
+        nextPage();
+    });
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     buttonLayout->addWidget(backButton);
@@ -77,9 +104,26 @@ void UploadFileWidget::initUI()
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addLayout(uploadLayout);
+    mainLayout->addLayout(tipLayout);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
+
+    connect(uploadFileFrame, &UploadFileFrame::updateUI, this, [this](int status) {
+        if (status == uploadStatus::valid) {
+            nextButton->setEnabled(true);
+            nextButton->setStyleSheet("background-color: rgb(0, 152, 255);");
+        } else {
+            nextButton->setEnabled(false);
+            nextButton->setText("下一步");
+            nextButton->setStyleSheet("background-color: rgba(0, 152, 255, 0.12);");
+        }
+    });
+}
+
+bool UploadFileWidget::checkBackupFile()
+{
+    return true;
 }
 
 void UploadFileWidget::nextPage()
@@ -164,12 +208,12 @@ void UploadFileFrame::initUI()
     mainLayout->addSpacing(70);
 
     connect(closeBtn, &QToolButton::clicked, this, [this] {
-        emit updateUI(uploadStatus::invalid);
+        emit updateUI(uploadStatus::Initial);
     });
 
     connect(this, &UploadFileFrame::updateUI, this, [WarningIconLabel, this, closeBtn, iconLabel, textLabel, displayLabel](int status) {
         switch (status) {
-        case uploadStatus::invalid: {
+        case uploadStatus::Initial: {
             fileFrame->setVisible(false);
             closeBtn->setVisible(false);
             WarningIconLabel->setVisible(false);
@@ -236,17 +280,22 @@ void UploadFileFrame::initFileFrame()
     fileFrame->setLayout(fileFrameLayout);
 
     connect(this, &UploadFileFrame::updateUI, this, [this, textLabel](int status) {
-        if (status == uploadStatus::valid)
-            textLabel->setText("<font size=12px color='gray' >" + selectedFilePath + " </font>");
+        if (status == uploadStatus::valid) {
+            QFileInfo info(zipFilePath);
+            textLabel->setText("<font size=12px color='gray' >" + info.fileName() + " </font>");
+        }
     });
+}
+
+QString UploadFileFrame::getZipFilePath() const
+{
+    return zipFilePath;
 }
 
 void UploadFileFrame::uploadFile()
 {
-    selectedFilePath = QFileDialog::getOpenFileName(nullptr, "选择zip文件", "", "ZIP 文件 (*.zip)");
-    QFileInfo info(selectedFilePath);
-    selectedFilePath = info.fileName();
-    if (!selectedFilePath.isEmpty())
+    zipFilePath = QFileDialog::getOpenFileName(nullptr, "选择zip文件", "", "ZIP 文件 (*.zip)");
+    if (!zipFilePath.isEmpty())
         emit updateUI(uploadStatus::valid);
 }
 
@@ -278,8 +327,8 @@ void UploadFileFrame::dropEvent(QDropEvent *event)
         emit updateUI(uploadStatus::formaterror);
         return;
     } else {
-        selectedFilePath = info.fileName();
-        if (!selectedFilePath.isEmpty())
+        zipFilePath = info.filePath();
+        if (!zipFilePath.isEmpty())
             emit updateUI(uploadStatus::valid);
     }
 }

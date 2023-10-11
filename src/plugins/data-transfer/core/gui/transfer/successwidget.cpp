@@ -36,17 +36,37 @@ void SuccessWidget::initUI()
 
     QLabel *titileLabel = new QLabel("迁移完成", this);
     titileLabel->setFixedHeight(50);
-    QFont font;
-    font.setPointSize(16);
-    font.setWeight(QFont::DemiBold);
-    titileLabel->setFont(font);
+    titileLabel->setStyleSheet("color: black;"
+                               "font-size: 24px;"
+                               "font-weight: 700;");
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+
+    processTextBrowser = new QTextBrowser(this);
+    processTextBrowser->setFixedSize(460, 122);
+    processTextBrowser->setReadOnly(true);
+    processTextBrowser->setLineWrapMode(QTextBrowser::NoWrap);
+    processTextBrowser->setContextMenuPolicy(Qt::NoContextMenu);
+    processTextBrowser->setStyleSheet("QTextBrowser {"
+                                      "padding-top: 10px;"
+                                      "padding-bottom: 10px;"
+                                      "padding-left: 5px;"
+                                      "padding-right: 5px;"
+                                      "font-size: 12px;"
+                                      "font-weight: 400;"
+                                      "color: rgb(82, 106, 127);"
+                                      "line-height: 300%;"
+                                      "background-color:rgba(0, 0, 0,0.08);}");
+    processTextBrowser->append("迁移完成！！！");
+
+    QHBoxLayout *textBrowerlayout = new QHBoxLayout(this);
+    textBrowerlayout->setAlignment(Qt::AlignCenter);
+    textBrowerlayout->addWidget(processTextBrowser);
 
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet("background-color: lightgray;");
-    connect(backButton, &QToolButton::clicked, qApp, &QApplication::quit);
+    connect(backButton, &QToolButton::clicked, this, &SuccessWidget::nextPage);
 
     QToolButton *nextButton = new QToolButton(this);
     QPalette palette = nextButton->palette();
@@ -63,8 +83,20 @@ void SuccessWidget::initUI()
     buttonLayout->addWidget(nextButton);
     buttonLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(iconLabel);
-    mainLayout->addSpacing(100);
+    mainLayout->addSpacing(20);
+    mainLayout->addWidget(titileLabel);
+    mainLayout->addSpacing(40);
+    mainLayout->addLayout(textBrowerlayout);
     mainLayout->addLayout(buttonLayout);
+}
+
+void SuccessWidget::nextPage()
+{
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    if (stackedWidget) {
+        stackedWidget->setCurrentIndex(PageName::transferringwidget);
+    } else {
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+    }
 }

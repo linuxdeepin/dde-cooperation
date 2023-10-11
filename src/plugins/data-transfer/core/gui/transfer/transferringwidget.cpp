@@ -1,4 +1,5 @@
 ﻿#include "transferringwidget.h"
+#include "../type_defines.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -9,6 +10,8 @@
 #include <QPropertyAnimation>
 #include <QEventLoop>
 #include <QPainterPath>
+#include <QMovie>
+#include <QScrollBar>
 
 #include <utils/transferhepler.h>
 
@@ -16,12 +19,14 @@
 
 #pragma execution_character_set("utf-8")
 
-TransferringWidget::TransferringWidget(QWidget *parent) : QFrame(parent)
+TransferringWidget::TransferringWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
+    initConnect();
 }
 
-TransferringWidget::~TransferringWidget() { }
+TransferringWidget::~TransferringWidget() {}
 
 void TransferringWidget::initUI()
 {
@@ -33,10 +38,15 @@ void TransferringWidget::initUI()
     mainLayout->addSpacing(30);
 
     iconLabel = new QLabel(this);
-    iconLabel->setPixmap(QIcon(":/icon/transfer.png").pixmap(200, 160));
+    QMovie *iconmovie = new QMovie(this);
+    iconmovie->setFileName(":/icon/GIF/transferring.gif");
+    iconmovie->setScaledSize(QSize(200, 160));
+    iconmovie->setSpeed(80);
+    iconmovie->start();
+    iconLabel->setMovie(iconmovie);
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    QLabel *titileLabel = new QLabel("正在迁移…", this);
+    titileLabel = new QLabel("正在迁移…", this);
     titileLabel->setFixedHeight(50);
     QFont font;
     font.setPointSize(16);
@@ -78,7 +88,6 @@ void TransferringWidget::initUI()
 
     fileNameFrame = new QFrame(this);
     fileNameFrame->setFixedSize(500, 250);
-    // fileNameFrame->setStyleSheet("background-color:red;");
     processTextBrowser = new QTextBrowser(fileNameFrame);
     processTextBrowser->setFixedSize(500, 250);
     processTextBrowser->setReadOnly(true);
@@ -89,10 +98,14 @@ void TransferringWidget::initUI()
                                       "padding-bottom: 10px;"
                                       "padding-left: 5px;"
                                       "padding-right: 5px;"
-                                      "font-size: 16px;"
-                                      "font-weight: bold;"
-                                      "line-height: 150%;"
+                                      "font-size: 12px;"
+                                      "font-weight: 400;"
+                                      "color: rgb(82, 106, 127);"
+                                      "line-height: 300%;"
                                       "background-color:rgba(0, 0, 0,0.08);}");
+
+    processTextBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    processTextBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QHBoxLayout *textBrowerlayout = new QHBoxLayout(fileNameFrame);
     fileNameFrame->setLayout(textBrowerlayout);
@@ -112,11 +125,13 @@ void TransferringWidget::initUI()
     mainLayout->addSpacing(5);
     mainLayout->addLayout(indexLayout);
 
-    updateProcessTextBrowser(QString("正在传输.../XXX/XXXX/Documents/......doc"));
-    updateProcessTextBrowser(QString("正在传输.../XXX/XXXX/Documents/......doc"));
     fileNameFrame->setVisible(false);
 }
 
+void TransferringWidget::initConnect()
+{
+    connect(TransferHelper::instance(), &TransferHelper::transferContent, this, &TransferringWidget::updateProcess);
+}
 
 void TransferringWidget::informationPage()
 {
@@ -168,7 +183,21 @@ void TransferringWidget::changeProgressLabel(const int &ratio)
     progressLabel->setProgress(ratio);
 }
 
-void TransferringWidget::updateProcessTextBrowser(const QString &process)
+void TransferringWidget::updateProcess(const QString &content, int progressbar, int estimatedtime)
 {
-    processTextBrowser->append(process);
+    QString info = QString("正在传输<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
+    processTextBrowser->append(info);
+    progressLabel->setProgress(progressbar);
+    fileLabel->setText(info);
+    if (estimatedtime == 0) {
+        timeLabel->setText("迁移完成");
+        fileLabel->setText("迁移完成");
+        processTextBrowser->append("迁移完成");
+        titileLabel->setText("迁移完成!!!");
+        QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+        if (stackedWidget) {
+            stackedWidget->setCurrentIndex(PageName::successtranswidget);
+        }
+    } else
+        timeLabel->setText(QString("预计迁移时间还剩 %1分钟").arg(estimatedtime));
 }

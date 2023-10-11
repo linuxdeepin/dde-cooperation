@@ -2,6 +2,7 @@
 #define UPLOADFILEWIDGET_H
 
 #include <QFrame>
+#include <QToolButton>
 
 class UploadFileWidget : public QFrame
 {
@@ -11,12 +12,16 @@ public:
     UploadFileWidget(QWidget *parent = nullptr);
     ~UploadFileWidget();
 
+    bool checkBackupFile();
 public slots:
     void nextPage();
     void backPage();
 
 private:
     void initUI();
+
+private:
+    QToolButton *nextButton { nullptr };
 };
 
 class UploadFileFrame : public QFrame
@@ -28,6 +33,7 @@ public:
     ~UploadFileFrame() override;
 
     void uploadFile();
+    QString getZipFilePath() const;
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
@@ -44,12 +50,12 @@ private:
     void initFileFrame();
 
 private:
-    QString selectedFilePath;
+    QString zipFilePath;
     QFrame *fileFrame { nullptr };
 };
 
 enum uploadStatus {
-    invalid = 0,
+    Initial = 0,
     valid,
     formaterror
 };

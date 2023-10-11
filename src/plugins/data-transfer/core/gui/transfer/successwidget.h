@@ -2,6 +2,7 @@
 #define SUCCESSWIDGET_H
 
 #include <QFrame>
+#include <QTextBrowser>
 
 class SuccessWidget : public QFrame
 {
@@ -13,6 +14,10 @@ public:
 
 private:
     void initUI();
+    void nextPage();
+
+private:
+    QTextBrowser *processTextBrowser { nullptr };
 };
 
 #endif
