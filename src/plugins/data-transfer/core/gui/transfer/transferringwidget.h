@@ -20,26 +20,29 @@ public slots:
     void informationPage();
     void changeTimeLabel(const QString &time);
     void changeProgressLabel(const int &ratio);
-    void updateProcessTextBrowser(const QString &process);
+    void updateProcess(const QString &content, int progressbar, int estimatedtime);
 
 private:
     void initUI();
+    void initConnect();
 
 private:
-    QLabel *iconLabel{ nullptr };
-    QLabel *fileLabel{ nullptr };
-    QLabel *displayLabel{ nullptr };
-    QLabel *timeLabel{ nullptr };
-    ProgressBarLabel *progressLabel{ nullptr };
-    QFrame *fileNameFrame{ nullptr };
-    QTextBrowser *processTextBrowser{ nullptr };
+    QLabel *titileLabel { nullptr };
+    QLabel *iconLabel { nullptr };
+    QLabel *fileLabel { nullptr };
+    QLabel *displayLabel { nullptr };
+    QLabel *timeLabel { nullptr };
+    ProgressBarLabel *progressLabel { nullptr };
+    QFrame *fileNameFrame { nullptr };
+    QTextBrowser *processTextBrowser { nullptr };
     bool isVisible = false;
 };
 
 class ProgressBarLabel : public QLabel
 {
 public:
-    ProgressBarLabel(QWidget *parent = nullptr) : QLabel(parent), m_progress(0)
+    ProgressBarLabel(QWidget *parent = nullptr)
+        : QLabel(parent), m_progress(0)
     {
         setFixedSize(280, 8);
     }

@@ -26,8 +26,8 @@ class TransferWoker
 {
 
 public:
-    TransferWoker() {};
-    ~TransferWoker() {};
+    TransferWoker() {}
+    ~TransferWoker() {}
 
     static QString getConnectPassWord();
     static void senFiles(QStringList paths);

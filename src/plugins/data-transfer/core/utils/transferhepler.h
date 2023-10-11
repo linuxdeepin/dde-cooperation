@@ -29,19 +29,27 @@ public:
 
     void startTransfer();
 
-    void getJsonfile(const QJsonObject &jsonData,const QString &save = QString());
+    void getJsonfile(const QJsonObject &jsonData, const QString &save = QString());
+
 #ifdef WIN32
 public:
-    void windowsZipFile(const QStringList &sourceFilePath,const QString &zipFileSave =QString() );
-    void windowsUnZipFile(const QString &zipFilePath,const QString &unZipFile = QString());
-
-    void getUserDataPackagingFile();
+    void windowsZipFile(const QList<QUrl> &sourceFilePath, QUrl &zipFileSavePath = QUrl());
+    void windowsUnZipFile(const QUrl &zipFilePath, QUrl &unZipFilePath = QUrl());
+#else
+public:
+    bool setWallpaper(const QString &filepath);
+    bool setBrowserBookMark(const QString &filepath);
 #endif
 
 Q_SIGNALS:
     void connectSucceed();
     void transferring();
     void transferSucceed();
+
+    //Used to control the current operation content, progress, and estimated completion time
+    //during transmission or decompression process
+    //progressbar use percentage and the time unit is seconds
+    void transferContent(const QString &content, int progressbar, int estimatedtime);
 
 private:
     TransferHandle transferhandle;

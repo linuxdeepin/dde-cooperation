@@ -31,5 +31,8 @@
         <file>icon/zipfileprocess.png</file>
         <file>icon/zipfileprocess@2x.png</file>
         <file>icon/fail.svg</file>
+        <file>icon/GIF/compress.gif</file>
+        <file>icon/GIF/transferring.gif</file>
+        <file>icon/GIF/waiting.gif</file>
     </qresource>
 </RCC>

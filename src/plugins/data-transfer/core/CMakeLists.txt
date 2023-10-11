@@ -35,6 +35,8 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
     FILE(GLOB BUSS_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/backupload/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/backupload/*.cpp"
     )
     find_package(Dtk COMPONENTS Widget REQUIRED)
 else()
