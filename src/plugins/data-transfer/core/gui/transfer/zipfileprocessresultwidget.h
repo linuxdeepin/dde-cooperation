@@ -2,22 +2,31 @@
 #define ZIPFILEPROCESSRESULTWIDGET_H
 
 #include <QFrame>
-class zipFileProcessResultWidget : public QFrame
+class QLabel;
+class QToolButton;
+class ZipFileProcessResultWidget : public QFrame
 {
+    Q_OBJECT
 public:
-    zipFileProcessResultWidget(QWidget *parent = nullptr);
-    ~zipFileProcessResultWidget();
+    ZipFileProcessResultWidget(QWidget *parent = nullptr);
+    ~ZipFileProcessResultWidget();
+    void upWidgetToFailed();
 
 private:
     void initUI();
-
     void successed();
-    void failed();
+
 private slots:
     void backPage();
     void informationPage();
     void exit();
 
+private:
+    QLabel *displayLabel{ nullptr };
+    QLabel *tipLabel1{ nullptr };
+    QLabel *tipLabel2{ nullptr };
+    QLabel *icon{ nullptr };
+    QToolButton *exitButton{ nullptr };
 };
 
 #endif // ZIPFILEPROCESSRESULTWIDGET_H

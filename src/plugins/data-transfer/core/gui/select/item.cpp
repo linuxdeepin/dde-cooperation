@@ -126,6 +126,7 @@ ItemDelegate::ItemDelegate(const qreal &filenameTextLeftMargin_, const qreal &fi
 void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                          const QModelIndex &index) const
 {
+
     // draw back
     paintBackground(painter, option, index);
 
@@ -171,8 +172,7 @@ void ItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem
     painter->setPen(Qt::NoPen);
 
     QPoint topleft = option.rect.topLeft();
-    QRect positon(backgroundColorLeftMargin, topleft.y(), 440,
-                  36); //= option.rect.adjusted(backgroundColorLeftMargin, 0, 0, 0);
+    QRect positon(backgroundColorLeftMargin, topleft.y(), 440, 36);
     if (index.row() % 2 != 0) {
         painter->setBrush(evencolor);
         painter->drawRoundedRect(positon, 10, 10);
@@ -209,11 +209,64 @@ void ItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionViewItem &
                                  const QModelIndex &index) const
 {
     painter->save();
-    QPoint pos = option.rect.topLeft();
-    pos = pos + checkBoxPos;
-    QItemDelegate::drawCheck(painter, option, QRect(pos, QSize(18, 18)),
+    QPoint pos = option.rect.topLeft() + checkBoxPos;
+    QRect checkBoxRect = QRect(pos.x(), pos.y(), 18, 18);
+
+    QItemDelegate::drawCheck(painter, option, checkBoxRect,
                              index.data(Qt::CheckStateRole).value<Qt::CheckState>());
     painter->restore();
+}
+
+bool ItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+                               const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    Q_ASSERT(event);
+    Q_ASSERT(model);
+
+    // make sure that the item is checkable
+    Qt::ItemFlags flags = model->flags(index);
+    if (!(flags & Qt::ItemIsUserCheckable) || !(option.state & QStyle::State_Enabled)
+        || !(flags & Qt::ItemIsEnabled))
+        return false;
+
+    // make sure that we have a check state
+    QVariant value = index.data(Qt::CheckStateRole);
+    if (!value.isValid())
+        return false;
+
+    // make sure that we have the right event type
+    if ((event->type() == QEvent::MouseButtonRelease)
+        || (event->type() == QEvent::MouseButtonDblClick)
+        || (event->type() == QEvent::MouseButtonPress)) {
+
+        QPoint pos = option.rect.topLeft() + checkBoxPos;
+        QRect checkBoxRect = QRect(pos.x(), pos.y(), 18, 18);
+
+        QRect emptyRect;
+        doLayout(option, &checkBoxRect, &emptyRect, &emptyRect, false);
+        QMouseEvent *me = static_cast<QMouseEvent *>(event);
+        if (me->button() != Qt::LeftButton || !checkBoxRect.contains(me->pos()))
+            return false;
+
+        // eat the double click events inside the check rect
+        if ((event->type() == QEvent::MouseButtonPress)
+            || (event->type() == QEvent::MouseButtonDblClick))
+            return true;
+
+    } else if (event->type() == QEvent::KeyPress) {
+        if (static_cast<QKeyEvent *>(event)->key() != Qt::Key_Space
+            && static_cast<QKeyEvent *>(event)->key() != Qt::Key_Select)
+            return false;
+    } else {
+        return false;
+    }
+
+    Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt());
+    if (flags & Qt::ItemIsUserTristate)
+        state = ((Qt::CheckState)((state + 1) % 3));
+    else
+        state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
+    return model->setData(index, state, Qt::CheckStateRole);
 }
 
 void ItemDelegate::setCheckBoxPos(QPoint newCheckBoxPos)
@@ -249,4 +302,165 @@ void ItemDelegate::setRemarkTextMaxLen(qreal newRemarkTextMaxLen)
 void ItemDelegate::setRemarkTextLeftMargin(qreal newRemarkTextLeftMargin)
 {
     remarkTextLeftMargin = newRemarkTextLeftMargin;
+}
+
+SaveItemDelegate::SaveItemDelegate() { }
+
+SaveItemDelegate::~SaveItemDelegate() { }
+
+void SaveItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                             const QModelIndex &index) const
+{
+
+    // draw back
+    paintBackground(painter, option, index);
+
+    // draw icon
+    paintIcon(painter, option, index);
+
+    // draw text
+    paintText(painter, option, index);
+
+    // draw checkbox
+    // paintCheckbox(painter, option, index);
+}
+
+QSize SaveItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    Q_UNUSED(option);
+    Q_UNUSED(index);
+    return QSize(440, 58);
+}
+
+void SaveItemDelegate::paintIcon(QPainter *painter, const QStyleOptionViewItem &option,
+                                 const QModelIndex &index) const
+{
+    painter->save();
+    QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
+    if (!icon.isNull()) {
+        QPoint pos = option.rect.topLeft();
+        pos += iconPos;
+        QRect positon = QRect(pos, QSize(32, 32));
+        icon.paint(painter, positon, Qt::AlignLeft | Qt::AlignVCenter);
+    }
+    painter->restore();
+}
+
+void SaveItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option,
+                                       const QModelIndex &index) const
+{
+    painter->save();
+
+    QPoint topleft = option.rect.topLeft();
+    QRect positon(topleft.x(), topleft.y(), 440, 48);
+
+    if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
+        QPen pen;
+        pen.setColor(QColor(0, 129, 255, 100));
+        pen.setWidth(2);
+        painter->setPen(pen);
+        painter->setBrush(QColor(0, 129, 255, 50));
+
+        painter->drawRoundedRect(positon, 8, 8);
+
+        QIcon icon(":/icon/select.svg");
+        icon.paint(painter, QRect(topleft.x() + 400, topleft.y() + 11, 32, 32));
+    } else {
+        QColor evencolor(0, 0, 0, 12);
+
+        painter->setPen(Qt::NoPen);
+
+
+        painter->setBrush(evencolor);
+        painter->drawRoundedRect(positon, 8, 8);
+    }
+    painter->restore();
+}
+
+void SaveItemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &option,
+                                 const QModelIndex &index) const
+{
+    painter->save();
+
+    QRect filenameTextPos = option.rect.adjusted(filenameTextLeftMargin, -5, 0, 0);
+
+    QFont filenameTextFont;
+    filenameTextFont.setPixelSize(12);
+    QString filenameText = index.data(Qt::DisplayRole).toString();
+    QFontMetrics filenameMetrics(filenameTextFont);
+    filenameText = filenameMetrics.elidedText(filenameText, Qt::ElideRight, filenameTextMaxLen);
+    painter->drawText(filenameTextPos, Qt::AlignLeft | Qt::AlignVCenter, filenameText);
+
+    QRect remarkTextPos = option.rect.adjusted(remarkTextLeftMargin, -5, 0, 0);
+    QFont remarkTextFont;
+    remarkTextFont.setPixelSize(12);
+    QString remarkText = index.data(Qt::ToolTipRole).toString();
+    QFontMetrics remarkMetrics(remarkTextFont);
+    remarkTextFont = remarkMetrics.elidedText(filenameText, Qt::ElideRight, remarkTextMaxLen);
+    painter->drawText(remarkTextPos, Qt::AlignLeft | Qt::AlignVCenter, remarkText);
+
+    painter->restore();
+}
+
+void SaveItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionViewItem &option,
+                                     const QModelIndex &index) const
+{
+    painter->save();
+    QPoint pos = option.rect.topLeft() + checkBoxPos;
+    QRect checkBoxRect = QRect(pos.x(), pos.y(), 18, 18);
+
+    QItemDelegate::drawCheck(painter, option, checkBoxRect,
+                             index.data(Qt::CheckStateRole).value<Qt::CheckState>());
+    painter->restore();
+}
+
+bool SaveItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+                                   const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    Q_ASSERT(event);
+    Q_ASSERT(model);
+
+    // make sure that the item is checkable
+    Qt::ItemFlags flags = model->flags(index);
+    if (!(flags & Qt::ItemIsUserCheckable) || !(option.state & QStyle::State_Enabled)
+        || !(flags & Qt::ItemIsEnabled))
+        return false;
+
+    // make sure that we have a check state
+    QVariant value = index.data(Qt::CheckStateRole);
+    if (!value.isValid())
+        return false;
+
+    // make sure that we have the right event type
+    if ((event->type() == QEvent::MouseButtonRelease)
+        || (event->type() == QEvent::MouseButtonDblClick)
+        || (event->type() == QEvent::MouseButtonPress)) {
+
+        QRect checkBoxRect = option.rect;
+
+        QRect emptyRect;
+        doLayout(option, &checkBoxRect, &emptyRect, &emptyRect, false);
+        QMouseEvent *me = static_cast<QMouseEvent *>(event);
+        if (me->button() != Qt::LeftButton || !checkBoxRect.contains(me->pos()))
+            return false;
+
+        // eat the double click events inside the check rect
+        if ((event->type() == QEvent::MouseButtonPress)
+            || (event->type() == QEvent::MouseButtonDblClick))
+            return true;
+
+    } else if (event->type() == QEvent::KeyPress) {
+        if (static_cast<QKeyEvent *>(event)->key() != Qt::Key_Space
+            && static_cast<QKeyEvent *>(event)->key() != Qt::Key_Select)
+            return false;
+    } else {
+        return false;
+    }
+
+    Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt());
+    if (flags & Qt::ItemIsUserTristate)
+        state = ((Qt::CheckState)((state + 1) % 3));
+    else
+        state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
+    return model->setData(index, state, Qt::CheckStateRole);
 }

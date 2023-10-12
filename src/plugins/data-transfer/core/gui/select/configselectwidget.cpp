@@ -16,8 +16,8 @@
 #include <gui/mainwindow_p.h>
 #pragma execution_character_set("utf-8")
 
-inline constexpr char internetMethodSelectConfigName[]{ "请选择要同步的配置" };
-inline constexpr char localFileMethodSelectConfigName[]{ "请选择要备份的配置" };
+static inline constexpr char InternetText[]{ "请选择要同步的配置" };
+static inline constexpr char LocalText[]{ "请选择要备份的配置" };
 
 ConfigSelectWidget::ConfigSelectWidget(QWidget *parent) : QFrame(parent)
 {
@@ -33,7 +33,7 @@ void ConfigSelectWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
 
-    QLabel *titileLabel = new QLabel(localFileMethodSelectConfigName, this);
+    titileLabel = new QLabel(LocalText, this);
     titileLabel->setFixedHeight(20);
     QFont font;
     font.setPointSize(16);
@@ -139,8 +139,8 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
     browserView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     browserView->setSelectionMode(QAbstractItemView::NoSelection);
 
-    QMap<QString, QString> appList = TransferHelper::instance()->getAppList();
-    for (auto iterator = appList.begin(); iterator != appList.end(); iterator++) {
+    QMap<QString, QString> browserList = TransferHelper::instance()->getBrowserList();
+    for (auto iterator = browserList.begin(); iterator != browserList.end(); iterator++) {
         ListItem *item = new ListItem();
         item->setData(iterator.key(), Qt::DisplayRole);
         item->setData("是", Qt::ToolTipRole);
@@ -224,6 +224,16 @@ void ConfigSelectWidget::sendOptions()
 
     qInfo() << "select config :" << config;
     OptionsManager::instance()->addUserOption(Options::kConfig, config);
+}
+
+void ConfigSelectWidget::changeText()
+{
+    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+    if (method == TransferMethod::kLocalExport) {
+        titileLabel->setText(LocalText);
+    } else if (method == TransferMethod::kNetworkTransmission) {
+        titileLabel->setText(InternetText);
+    }
 }
 
 void ConfigSelectWidget::nextPage()

@@ -5,6 +5,7 @@
 #include <QCheckBox>
 class QLabel;
 class SidebarWidget;
+class QToolButton;
 enum SelectItemName { FILES, APP, CONFIG };
 class SelectItem : public QFrame
 {
@@ -36,14 +37,15 @@ signals:
     void changePage();
 };
 
-class selectMainWidget : public QFrame
+class SelectMainWidget : public QFrame
 {
     Q_OBJECT
 public:
-    selectMainWidget(QWidget *parent = nullptr);
-    ~selectMainWidget();
+    SelectMainWidget(QWidget *parent = nullptr);
+    ~SelectMainWidget();
     void changeSelectframeState(const SelectItemName &name,const bool &ok);
 
+    void changeText();
 private:
     void initUi();
 
@@ -56,6 +58,8 @@ private:
     SelectItem *fileItem;
     SelectItem *appItem;
     SelectItem *configItem;
+    QLabel *titileLabel;
+    QToolButton *nextButton;
 };
 
 #endif // SELECTMAINWIDGET_H

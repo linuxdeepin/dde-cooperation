@@ -12,14 +12,18 @@
 #include <utils/optionsmanager.h>
 #pragma execution_character_set("utf-8")
 
-selectMainWidget::selectMainWidget(QWidget *parent) : QFrame(parent)
+static inline constexpr char InternetText[]{ "请选择要传输的内容" };
+static inline constexpr char LocalText[]{ "请选择要备份的内容" };
+static inline constexpr char BtnInternetText[]{ "开始传输" };
+static inline constexpr char BtnLocalText[]{ "下一步" };
+SelectMainWidget::SelectMainWidget(QWidget *parent) : QFrame(parent)
 {
     initUi();
 }
 
-selectMainWidget::~selectMainWidget() { }
+SelectMainWidget::~SelectMainWidget() { }
 
-void selectMainWidget::changeSelectframeState(const SelectItemName &name, const bool &ok)
+void SelectMainWidget::changeSelectframeState(const SelectItemName &name, const bool &ok)
 {
     if (name == SelectItemName::APP) {
         appItem->isOk = ok;
@@ -34,30 +38,42 @@ void selectMainWidget::changeSelectframeState(const SelectItemName &name, const 
         configItem->isOk = ok;
         configItem->update();
         QStringList ConfigList = OptionsManager::instance()->getUserOption(Options::kConfig);
-        QStringList BrowserList = OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
-        configItem->updateSelectSize(ConfigList.size()+BrowserList.size());
+        QStringList BrowserList =
+                OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
+        configItem->updateSelectSize(ConfigList.size() + BrowserList.size());
     }
 }
 
-void selectMainWidget::initUi()
+void SelectMainWidget::changeText()
+{
+    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+    if (method == TransferMethod::kLocalExport) {
+        titileLabel->setText(LocalText);
+        nextButton->setText(BtnLocalText);
+    } else if (method == TransferMethod::kNetworkTransmission) {
+        titileLabel->setText(InternetText);
+        nextButton->setText(BtnInternetText);
+    }
+}
+
+void SelectMainWidget::initUi()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
 
-    QLabel *textLabel = new QLabel("选择要传输的内容", this);
+    titileLabel = new QLabel(LocalText, this);
     QFont font;
     font.setPointSize(16);
     font.setWeight(QFont::DemiBold);
-    textLabel->setFont(font);
-    textLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    titileLabel->setFont(font);
+    titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     fileItem = new SelectItem("文件", QIcon(":/icon/file.svg"), SelectItemName::FILES, this);
     appItem = new SelectItem("应用", QIcon(":/icon/app.svg"), SelectItemName::APP, this);
-    configItem = new SelectItem("配置", QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
-
-
+    configItem =
+            new SelectItem("配置", QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
 
     QHBoxLayout *modeLayout = new QHBoxLayout();
     modeLayout->addWidget(fileItem, Qt::AlignTop);
@@ -83,13 +99,13 @@ void selectMainWidget::initUi()
                               "letter-spacing: 3px;"
                               "text-align: center;"
                               ";}");
-    QObject::connect(backButton, &QToolButton::clicked, this, &selectMainWidget::backPage);
+    QObject::connect(backButton, &QToolButton::clicked, this, &SelectMainWidget::backPage);
 
-    QToolButton *nextButton = new QToolButton(this);
+    nextButton = new QToolButton(this);
     QPalette palette = nextButton->palette();
     palette.setColor(QPalette::ButtonText, Qt::white);
     nextButton->setPalette(palette);
-    nextButton->setText("开始传输");
+    nextButton->setText(BtnLocalText);
     nextButton->setFixedSize(120, 35);
     nextButton->setStyleSheet(".QToolButton{"
                               "border-radius: 8px;"
@@ -106,7 +122,7 @@ void selectMainWidget::initUi()
                               "text-align: center;"
                               "}");
 
-    QObject::connect(nextButton, &QToolButton::clicked, this, &selectMainWidget::nextPage);
+    QObject::connect(nextButton, &QToolButton::clicked, this, &SelectMainWidget::nextPage);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
@@ -121,38 +137,52 @@ void selectMainWidget::initUi()
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addSpacing(60);
-    mainLayout->addWidget(textLabel);
+    mainLayout->addWidget(titileLabel);
     mainLayout->addLayout(modeLayout);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addLayout(indexLayout);
 }
-void selectMainWidget::nextPage()
+void SelectMainWidget::nextPage()
 {
-    // transfer
-    TransferHelper::instance()->startTransfer();
+    PageName next;
+    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+    if (method == TransferMethod::kLocalExport) {
+        next = PageName::createbackupfilewidget;
+    } else if (method == TransferMethod::kNetworkTransmission) {
+        next = PageName::transferringwidget;
+        // transfer
+        TransferHelper::instance()->startTransfer();
+    }
 
     // ui
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
+        stackedWidget->setCurrentIndex(next);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
 }
 
-void selectMainWidget::backPage()
+void SelectMainWidget::backPage()
 {
+    PageName back;
+    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+    if (method == TransferMethod::kLocalExport) {
+        back = PageName::choosewidget;
+    } else if (method == TransferMethod::kNetworkTransmission) {
+        back = PageName::readywidget;
+    }
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+        stackedWidget->setCurrentIndex(back);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
 }
 
-void selectMainWidget::selectPage()
+void SelectMainWidget::selectPage()
 {
     SelectItem *selectitem = qobject_cast<SelectItem *>(QObject::sender());
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
@@ -201,8 +231,8 @@ SelectItem::SelectItem(QString text, QIcon icon, SelectItemName itemName, QWidge
 
     initEditFrame();
 
-    QObject::connect(this, &SelectItem::changePage, qobject_cast<selectMainWidget *>(parent),
-                     &selectMainWidget::selectPage);
+    QObject::connect(this, &SelectItem::changePage, qobject_cast<SelectMainWidget *>(parent),
+                     &SelectMainWidget::selectPage);
 }
 SelectItem::~SelectItem() { }
 

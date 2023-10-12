@@ -1,4 +1,4 @@
-#ifndef OPTIONSMANAGER_H
+﻿#ifndef OPTIONSMANAGER_H
 #define OPTIONSMANAGER_H
 
 #include <QMap>
@@ -25,11 +25,18 @@ private:
 };
 
 namespace Options {
-inline constexpr char kUser[] { "user" };
-inline constexpr char kFile[] { "file" };
-inline constexpr char kApp[] { "app" };
-inline constexpr char kBrowserBookmarks[] { "browserbookmarks" };
-inline constexpr char kConfig[] { "config" };
-}
+inline constexpr char kUser[]{ "user" };
+inline constexpr char kFile[]{ "file" };
+inline constexpr char kApp[]{ "app" };
+inline constexpr char kBrowserBookmarks[]{ "browserbookmarks" };
+inline constexpr char kConfig[]{ "config" };
+inline constexpr char kBackupFileSavePath[]{ "BackupFileSavePath" };
+inline constexpr char kBackupFileName[]{ "BackupFileName" };
+inline constexpr char kTransferMethod[]{ "TransferMethod" };
+} // namespace Options
 
+namespace TransferMethod {
+inline constexpr char kLocalExport[]{ "LocalExport" };
+inline constexpr char kNetworkTransmission[]{ "NetworkTransmission" };
+}
 #endif

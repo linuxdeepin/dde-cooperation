@@ -18,7 +18,7 @@ class AppSelectWidget : public QFrame
 public:
     AppSelectWidget(QWidget *parent = nullptr);
     ~AppSelectWidget();
-
+    void changeText();
 public slots:
     void nextPage();
     void backPage();
@@ -31,12 +31,14 @@ private:
     void initSelectFrame();
     void sendOptions();
 
+private:
     QFrame *selectFrame{ nullptr };
-    QListView *fileview{ nullptr };
+    QListView *appView{ nullptr };
 
     QVBoxLayout *selectMainLayout{ nullptr };
     QToolButton *determineButton{ nullptr };
     QToolButton *cancelButton{ nullptr };
+    QLabel *titileLabel{ nullptr };
 };
 
 #endif

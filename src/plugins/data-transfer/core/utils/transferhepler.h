@@ -22,19 +22,15 @@ public:
     QString getConnectPassword();
     QMap<QString, double> getUserDataSize();
     qint64 getRemainStorage();
-    QMap<QString, QString> getAppList();
-    QMap<QString, QString> getBrowserList();
 
     void tryConnect(const QString &ip, const QString &password);
 
     void startTransfer();
 
-    void getJsonfile(const QJsonObject &jsonData, const QString &save = QString());
-
 #ifdef WIN32
-public:
-    void windowsZipFile(const QList<QUrl> &sourceFilePath, QUrl &zipFileSavePath = QUrl());
-    void windowsUnZipFile(const QUrl &zipFilePath, QUrl &unZipFilePath = QUrl());
+    QMap<QString, QString> getAppList();
+    QMap<QString, QString> getBrowserList();
+
 #else
 public:
     bool setWallpaper(const QString &filepath);
