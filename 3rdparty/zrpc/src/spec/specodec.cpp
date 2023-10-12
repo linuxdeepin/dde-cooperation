@@ -33,7 +33,7 @@ void ZRpcCodeC::encode(TcpBuffer *buf, AbstractData *data) {
     // DLOG << "test encode start";
     SpecDataStruct *tmp = dynamic_cast<SpecDataStruct *>(data);
 
-    uint len = 0;
+    uint32_t len = 0;
     const char *re = encodePbData(tmp, len);
     if (re == nullptr || len == 0 || !tmp->encode_succ) {
         ELOG << "encode error";
@@ -53,7 +53,7 @@ void ZRpcCodeC::encode(TcpBuffer *buf, AbstractData *data) {
     // DLOG << "test encode end";
 }
 
-const char *ZRpcCodeC::encodePbData(SpecDataStruct *data, uint &len) {
+const char *ZRpcCodeC::encodePbData(SpecDataStruct *data, uint32_t &len) {
     if (data->service_full_name.empty()) {
         ELOG << "parse error, service_full_name is empty";
         data->encode_succ = false;
