@@ -10,7 +10,7 @@
 #include "co/fs.h"
 #include "message.pb.h"
 
-namespace deamon_core {
+//namespace deamon_core {
 
 class FSAdapter : public QObject
 {
@@ -20,7 +20,7 @@ public:
 
     static int getFileEntry(const char *path, FileEntry **entry);
     static bool newFile(const char *path, bool isdir);
-    static bool writeBlock(const char *name, size_t seek_len, const char *data, size_t size);
+    static bool writeBlock(const char *name, int64 seek_len, const char *data, size_t size);
 
 signals:
 
@@ -31,6 +31,6 @@ private:
 
 };
 
-} // namespace deamon_core
+//} // namespace deamon_core
 
 #endif // FSADAPTER_H

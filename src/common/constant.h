@@ -9,7 +9,7 @@
 #define UNI_RPC_PORT_UDP  51595
 #define UNI_RPC_PORT_BASE (UNI_RPC_PORT_UDP + 2)
 
-#define BLOCK_SIZE 1 * 1024 * 1024
+#define BLOCK_SIZE 4 * 1024
 
 const int LOGIN_CONFIRM_TIMEOUT = 30000; // 5 minutes
 

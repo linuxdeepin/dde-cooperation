@@ -80,7 +80,7 @@ void ZRpcDispacther::dispatch(AbstractData *data, TcpConnection *conn) {
     }
 
     google::protobuf::Message *request = service->GetRequestPrototype(method).New();
-    DLOG << reply_pk.msg_req << "|request.name = " << request->GetDescriptor()->full_name();
+    // DLOG << reply_pk.msg_req << "|request.name = " << request->GetDescriptor()->full_name();
 
     if (!request->ParseFromString(tmp->pb_data)) {
         reply_pk.err_code = ERROR_FAILED_SERIALIZE;
@@ -112,7 +112,7 @@ void ZRpcDispacther::dispatch(AbstractData *data, TcpConnection *conn) {
     ZRpcClosure closure(reply_package_func);
     service->CallMethod(method, &rpc_controller, request, response, &closure);
 
-    DLOG << "Call [" << reply_pk.service_full_name << "] succ, now send reply package";
+    // DLOG << "Call [" << reply_pk.service_full_name << "] succ, now send reply package";
 
     if (!(response->SerializeToString(&(reply_pk.pb_data)))) {
         reply_pk.pb_data = "";

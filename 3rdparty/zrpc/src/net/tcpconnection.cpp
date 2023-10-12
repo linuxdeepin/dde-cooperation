@@ -70,19 +70,19 @@ void TcpConnection::initBuffer(int size)
     m_read_buffer = std::make_shared<TcpBuffer>(size);
 }
 
-int64 TcpConnection::read_hook(char *buf)
+int64 TcpConnection::read_hook(char *buf, size_t len)
 {
     int64 r = 0;
 
     if (m_connection_type == ServerConnection) {
         if (m_serv_conn) {
-            r = m_serv_conn->recv(buf, m_trans_timeout);
+            r = m_serv_conn->recv(buf, len);
         } else {
             ELOG << "TcpConnection::read_hook NULL m_serv_conn";
         }
     } else if (m_connection_type == ClientConnection) {
         if (m_cli_conn) {
-            r = m_cli_conn->recv(buf, m_trans_timeout);
+            r = m_cli_conn->recv(buf, len);
         } else {
             ELOG << "TcpConnection::read_hook NULL m_cli_conn";
         }
@@ -143,9 +143,9 @@ void TcpConnection::input()
         int read_count = m_read_buffer->writeAble();
         int write_index = m_read_buffer->writeIndex();
 
-         DLOG << "m_read_buffer size=" << m_read_buffer->getBufferVector().size()
-              << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
-        int rt = read_hook(&(m_read_buffer->m_buffer[write_index]));
+        // DLOG << "m_read_buffer size=" << m_read_buffer->getBufferVector().size()
+        //      << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
+        int rt = read_hook(&(m_read_buffer->m_buffer[write_index]), read_count);
         if (rt > 0) {
             m_read_buffer->recycleWrite(rt);
         }
@@ -154,10 +154,10 @@ void TcpConnection::input()
 
         count += rt;
         if (rt <= 0) {
-            DLOG << "rt <= 0";
-            // ELOG << "read empty while occur read event, because of peer close, sys error="
-            //      << strerror(errno) << ", now to clear tcp connection";
-            // this cor can destroy
+            DLOG << "rt <= 0 >>> " << rt;
+//             ELOG << "read empty while occur read event, because of peer close, sys error="
+//                  << strerror(errno) << ", now to clear tcp connection";
+//            // this cor can destroy
             close_flag = true;
             break;
         } else {
@@ -225,6 +225,7 @@ void TcpConnection::output()
         int rt = write_hook(&(m_write_buffer->m_buffer[read_index]), total_size);
         if (rt <= 0) {
             ELOG << "write empty, error=" << strerror(errno);
+            break;
         }
 
         // DLOG << "succ write " << rt << " bytes";
@@ -234,7 +235,7 @@ void TcpConnection::output()
         //      << "readable = " << m_write_buffer->readAble();
         // LOG << "send[" << rt << "] bytes data to [" << m_peer_addr->toString() << "]";
         if (m_write_buffer->readAble() <= 0) {
-            LOG << "send all data, now unregister write event and break";
+            // LOG << "send all data, now unregister write event and break";
             break;
         }
     }
@@ -253,6 +254,12 @@ void TcpConnection::clearClient()
     if (m_serv_conn) {
         m_serv_conn->reset(3000);
     }
+
+    if (m_cli_conn) {
+        m_cli_conn->close();
+    }
+
+    setState(Closed);
 }
 
 void TcpConnection::shutdownConnection()
@@ -286,7 +293,7 @@ bool TcpConnection::getResPackageData(const std::string &msg_req,
         m_reply_datas.erase(it);
         return true;
     }
-    DLOG << msg_req << "|reply data not exist";
+    // DLOG << msg_req << "|reply data not exist";
     return false;
 }
 

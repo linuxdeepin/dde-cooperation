@@ -8,8 +8,9 @@
 #include "utils/config.h"
 
 #include "co/log.h"
+#include "co/path.h"
 
-using namespace deamon_core;
+//using namespace deamon_core;
 
 FSAdapter::FSAdapter(QObject *parent)
     : QObject(parent)
@@ -20,7 +21,7 @@ int FSAdapter::getFileEntry(const char *path, FileEntry **entry)
 {
     FileEntry *temp = *entry;
     if (!fs::exists(path)) {
-        ELOG << "FSAdapter::getFileEntry path not exists";
+        ELOG << "FSAdapter::getFileEntry path not exists: " << path;
         return -1;
     }
 
@@ -46,36 +47,29 @@ int FSAdapter::getFileEntry(const char *path, FileEntry **entry)
 
 bool FSAdapter::newFile(const char *name, bool isdir)
 {
-    fastring dir = DaemonConfig::instance()->getStorageDir();
-    if (!fs::exists(dir)) {
-        fs::mkdir(name, true);
-    }
-    fastring fullpath = dir + "/" + name;
+    fastring fullpath = path::join(DaemonConfig::instance()->getStorageDir(), name);
     if (isdir) {
-        fs::mkdir(name, true);
+        fs::mkdir(fullpath, true);
     } else {
+        fastring parent = path::dir(fullpath);
+        fs::mkdir(parent, true); // 创建文件保存的根/子目录
         if (!fs::exists(fullpath)) {
             fs::file fx(fullpath, 'm');
             fx.close();
         }
     }
-    LOG << "new file -> fullpath: " << fullpath;
-    // fs::file fd(fullpath, 'm');
-
-    // _filemaps_cache.insert(std::make_pair(id, fd));
+//    LOG << "new file -> fullpath: " << fullpath;
 
     return fs::exists(fullpath);
 }
 
-bool FSAdapter::writeBlock(const char *name, size_t seek_len, const char *data, size_t size)
+bool FSAdapter::writeBlock(const char *name, int64 seek_len, const char *data, size_t size)
 {
-    fastring fullpath = DaemonConfig::instance()->getStorageDir() + "/" + name;
-    fs::file fx(fullpath, 'w');
+    fs::file fx(name, 'm');
     if (!fx.exists()) {
-        ELOG << "writeBlock File does not exist";
+        ELOG << "writeBlock File does not exist: " << name;
         return false;
     }
-    LOG << "writeBlock file -> fullpath: " << fullpath;
 
     size_t wirted_size = 0;
     size_t rem_size = size;
@@ -83,6 +77,7 @@ bool FSAdapter::writeBlock(const char *name, size_t seek_len, const char *data, 
     do {
         size_t wsize = fx.write(data, rem_size);
         if (wsize <= 0) {
+            ELOG << "fx write done: " << rem_size << " => " << wsize;
             break;
         }
         wirted_size += wsize;

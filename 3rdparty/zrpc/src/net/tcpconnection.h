@@ -82,7 +82,7 @@ public:
     void initServer();
 
 private:
-    int64 read_hook(char *buf);
+    int64 read_hook(char *buf, size_t len);
     int64 write_hook(const void *buf, size_t count);
 
     void clearClient();
@@ -95,7 +95,7 @@ private:
 
     tcp::Connection *m_serv_conn { nullptr };
     tcp::Client *m_cli_conn { nullptr };
-    int m_trans_timeout { 10000 };   // max receive or send timeout, ms
+    int m_trans_timeout { -1 };   // max receive or send timeout, ms
 
     TcpConnectionState m_state { TcpConnectionState::Connected };
     ConnectionType m_connection_type { ServerConnection };

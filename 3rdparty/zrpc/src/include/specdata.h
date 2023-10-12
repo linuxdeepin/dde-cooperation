@@ -30,14 +30,14 @@ public:
     */
 
     // char start;                      // indentify start of a spec data protocal data
-    int32_t pk_len{0};             // len of all package(include start char and end char)
-    int32_t msg_req_len{0};        // len of msg_req
+    uint32_t pk_len{0};             // len of all package(include start char and end char)
+    uint32_t msg_req_len{0};        // len of msg_req
     std::string msg_req;           // msg_req, which identify a request
-    int32_t service_name_len{0};   // len of service full name
+    uint32_t service_name_len{0};   // len of service full name
     std::string service_full_name; // service full name, like QueryService.query_name
-    int32_t err_code{0}; // err_code, 0 -- call rpc success, otherwise -- call rpc failed. it only
+    uint32_t err_code{0}; // err_code, 0 -- call rpc success, otherwise -- call rpc failed. it only
                          // be seted by RpcController
-    int32_t err_info_len{0}; // len of err_info
+    uint32_t err_info_len{0}; // len of err_info
     std::string err_info; // err_info, empty -- call rpc success, otherwise -- call rpc failed, it
                           // will display details of reason why call rpc failed. it only be seted by
                           // RpcController

@@ -10,6 +10,7 @@
 #include <service/ipc/commonservice.h>
 #include <service/ipc/fsservice.h>
 #include <service/transferjob.h>
+#include "co/co.h"
 
 class RemoteServiceBinder;
 class TransferJob;
@@ -32,6 +33,13 @@ public slots:
     void notifyConnect(QString ip, QString name, QString password);
 
 private:
+    bool handleRemoteRequestJob(co::Json &info);
+    bool handleFSData(co::Json &info, fastring buf);
+    bool handleFSInfo(co::Json &info);
+    bool handleCancelJob(co::Json &info);
+    bool handleTransReport(co::Json &info);
+
+private:
     RemoteServiceBinder *_rpcServiceBinder = nullptr;
     CommonService *_ipcCommonService = nullptr;
     FSService *_ipcFsService = nullptr;
@@ -39,7 +47,12 @@ private:
     QMap<int, TransferJob *> _transjob_sends;
     QMap<int, TransferJob *> _transjob_recvs;
 
+    // record the send jobs which have error happend. that can be resumed by user.
+    QMap<int, TransferJob *> _transjob_break;
+
     bool _hasConnected = false;
+    fastring _connected_target;
+    co::mutex g_m;
 };
 
 #endif // SERVICEMANAGER_H

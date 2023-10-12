@@ -7,40 +7,70 @@
 
 #include <QObject>
 #include <service/rpc/remoteservice.h>
+#include <ipc/chan.h>
+#include "co/co.h"
 
 class TransferJob : public QObject
 {
     Q_OBJECT
 
-    typedef int (*PushfileJobFunc)(int id, const char *);
-
 public:
     explicit TransferJob(QObject *parent = nullptr);
-    void initJob(int id, QStringList paths, bool sub, QString savedir);
+    void initRpc(fastring target, uint16 port);
+    void initJob(int id, fastring path, bool sub, fastring savedir);
 
-    void startJob(bool push, RemoteServiceBinder *binder);
+    void start();
     void stop();
+    void waitFinish();
     bool finished();
 
     bool isRunning() {
         return !_stoped;
     }
 
+    bool isWriteJob() {
+        return _writejob;
+    }
+
+    void pushQueque(FSDataBlock &block);
+    void insertFileInfo(FileInfo &info);
+
 signals:
+    // 传输作业结果通知：文件（目录），结果，速度
+    void notifyJobResult(QString path, bool result, size_t speed);
 
 public slots:
 
 private:
-    void trySend(const char *path, int id, RemoteServiceBinder *binder);
+    fastring getSubdir(const char *path);
+    void readPath(const char *path, int id);
+    bool readFile(const char *filepath, int fileid);
+    void readFileBlock(const char *filepath, int fileid, const fastring subname);
 
+    void handleBlockQueque();
+
+    void handleUpdate(FileTransRe result, const char *path, const char *emsg);
+
+private:
+    int _jobid;
     bool _inited = false;
     bool _stoped = true;
     bool _finished = false;
+    bool _waitfinish = false;
 
-    int _id;
-    QStringList _paths;
     bool _sub;
-    QString _savedir;
+    bool _writejob;
+    fastring _path; // 目录或文件路径
+    fastring _savedir; // 写作业，文件保存的目录
+
+    RemoteServiceBinder *_rpcBinder = nullptr;
+
+    co::mutex _queque_mutex;
+    co::deque<FSDataBlock> _block_queue;
+    co::Tasked _checkerTimer;
+    co::map<int32, FileInfo> _file_info_maps;
+
+    int _empty_max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
 };
 
 #endif // TRANSFERJOB_H

@@ -70,7 +70,7 @@ int TcpClient::sendAndRecvData(const std::string &msg_no, SpecDataStruct::pb_ptr
     m_connection->output();
 
     while (!m_connection->getResPackageData(msg_no, res)) {
-        DLOG << "redo getResPackageData";
+        // DLOG << "redo getResPackageData";
         m_connection->input();
 
         if (m_connection->getState() == Closed) {
@@ -88,8 +88,7 @@ err_deal:
 
     // FIXME: distory m_connection ?
     this->stop();
-
-    return 0;
+    return -1;
 }
 
 void TcpClient::stop() {

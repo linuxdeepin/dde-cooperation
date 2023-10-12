@@ -1,0 +1,58 @@
+// package chan
+
+object LoginConfirm {
+    string user_name  //用户名
+    int32 session_id //会话应用id
+    string host_ip //请求主机的IP
+}
+
+object ConfirmResult {
+    int32 session_id  //会话应用id
+    bool result //请求结果
+    string reason //原因
+}
+
+
+object FSResult {
+    int32 job_id  //请求的id
+    bool result //请求结果
+    string reason //原因
+}
+
+object FSJob {
+    int32 job_id
+    string path     //文件目录路径
+    bool hidden //是否包含着.开头隐藏文件
+    bool sub //是否迭代包含着子目录
+    bool write // write(receive) or read(send) task
+}
+
+object FSDataBlock {
+    int32 job_id
+    int32 file_id
+    string filename // 相对于TransJob中path的相对路径
+    uint32 blk_id
+    bool compressed
+    string data // 块数据
+}
+
+object FileInfo {
+    int32 job_id
+    int32 file_id
+    string name
+    int64 total_size
+    int64 current_size
+    int32 time_spended
+}
+
+object FSJobCancel {
+    int32 job_id
+    string path     //文件目录路径
+}
+
+object FSReport {
+    int32 job_id
+    string path     //文件目录路径
+    int32 result //请求结果
+    string error //原因
+}
