@@ -11,7 +11,7 @@ message LoginRequest {
   string my_uid = 4;
   string my_name = 5;
   OptionMessage option = 6;
-  uint64 session_id = 7;
+  int32 session_id = 7;
   string version = 8;
 }
 
@@ -71,8 +71,8 @@ message FileEntry {
   FileType type = 1;
   string name = 2;
   bool hidden = 3;
-  uint64 size = 4;
-  uint64 modified_time = 5;
+  int64 size = 4;
+  int64 modified_time = 5;
 }
 
 message FileDirectory {
@@ -211,16 +211,38 @@ message FileTransJob {
 }
 
 message FileTransCreate {
-  int32 id = 1;       // 文件创建id
-  FileEntry entry = 2; // 文件信息
+  int32 job_id = 1;
+  int32 file_id = 2;
+  string sub_dir = 3; // 创建的子目录
+  FileEntry entry = 4; // 文件信息
 }
 
 message FileTransBlock {
-  int32 id = 1;
-  string filename = 2;
-  uint32 blk_id = 3;
-  bytes data = 4;
-  bool compressed = 5;
+  int32 job_id = 1;
+  int32 file_id = 2;
+  string filename = 3; // 相对于TransJob中path的相对路径
+  uint32 blk_id = 4;
+  bytes data = 5;
+  bool compressed = 6;
+}
+
+message FileTransJobCancel {
+  int32 job_id = 1;
+  string path = 2;     //文件目录路径
+}
+
+message FileTransJobReport {
+  int32 job_id = 1;
+  string path = 2;     //文件目录路径
+  string error = 3;
+  FileTransRe result = 4; //结果
+}
+
+message FileTransUpdate {
+  oneof union {
+    FileTransJobCancel cancel = 1;
+    FileTransJobReport report = 2;
+  }
 }
 
 // message FileTransferSendConfirmRequest {
@@ -280,4 +302,6 @@ service RemoteService {
   rpc filetrans_create(FileTransCreate) returns (FileTransResponse);
 
   rpc filetrans_block(FileTransBlock) returns (FileTransResponse);
+
+  rpc filetrans_update(FileTransUpdate) returns (FileTransResponse);
 }

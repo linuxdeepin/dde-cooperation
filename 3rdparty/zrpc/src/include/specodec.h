@@ -24,7 +24,7 @@ public:
     // overwrite
     void decode(TcpBuffer *buf, AbstractData *data);
 
-    const char *encodePbData(SpecDataStruct *data, int &len);
+    const char *encodePbData(SpecDataStruct *data, uint &len);
 };
 
 } // namespace zrpc_ns

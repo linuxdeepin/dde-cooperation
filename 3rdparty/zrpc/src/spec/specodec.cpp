@@ -33,7 +33,7 @@ void ZRpcCodeC::encode(TcpBuffer *buf, AbstractData *data) {
     // DLOG << "test encode start";
     SpecDataStruct *tmp = dynamic_cast<SpecDataStruct *>(data);
 
-    int len = 0;
+    uint len = 0;
     const char *re = encodePbData(tmp, len);
     if (re == nullptr || len == 0 || !tmp->encode_succ) {
         ELOG << "encode error";
@@ -43,7 +43,7 @@ void ZRpcCodeC::encode(TcpBuffer *buf, AbstractData *data) {
     // DLOG << "encode package len = " << len;
     if (buf != nullptr) {
         buf->writeToBuffer(re, len);
-        DLOG << "succ encode and write to buffer, writeindex=" << buf->writeIndex();
+        // DLOG << "succ encode and write to buffer, writeindex=" << buf->writeIndex();
     }
     data = tmp;
     if (re) {
@@ -53,7 +53,7 @@ void ZRpcCodeC::encode(TcpBuffer *buf, AbstractData *data) {
     // DLOG << "test encode end";
 }
 
-const char *ZRpcCodeC::encodePbData(SpecDataStruct *data, int &len) {
+const char *ZRpcCodeC::encodePbData(SpecDataStruct *data, uint &len) {
     if (data->service_full_name.empty()) {
         ELOG << "parse error, service_full_name is empty";
         data->encode_succ = false;
@@ -65,7 +65,7 @@ const char *ZRpcCodeC::encodePbData(SpecDataStruct *data, int &len) {
         // DLOG << "generate msgno = " << data->msg_req;
     }
 
-    int32_t pk_len = 2 * sizeof(char) + 6 * sizeof(int32_t) + data->pb_data.length() +
+    uint32_t pk_len = 2 * sizeof(char) + 6 * sizeof(uint32_t) + data->pb_data.length() +
                      data->service_full_name.length() + data->msg_req.length() +
                      data->err_info.length();
 
@@ -75,15 +75,15 @@ const char *ZRpcCodeC::encodePbData(SpecDataStruct *data, int &len) {
     *tmp = PB_START;
     tmp++;
 
-    int32_t pk_len_net = hton32(pk_len);
-    memcpy(tmp, &pk_len_net, sizeof(int32_t));
-    tmp += sizeof(int32_t);
+    uint32_t pk_len_net = hton32(pk_len);
+    memcpy(tmp, &pk_len_net, sizeof(uint32_t));
+    tmp += sizeof(uint32_t);
 
-    int32_t msg_req_len = data->msg_req.length();
+    uint32_t msg_req_len = data->msg_req.length();
     // DLOG << "msg_req_len= " << msg_req_len;
-    int32_t msg_req_len_net = hton32(msg_req_len);
-    memcpy(tmp, &msg_req_len_net, sizeof(int32_t));
-    tmp += sizeof(int32_t);
+    uint32_t msg_req_len_net = hton32(msg_req_len);
+    memcpy(tmp, &msg_req_len_net, sizeof(uint32_t));
+    tmp += sizeof(uint32_t);
 
     if (msg_req_len != 0) {
 
@@ -91,28 +91,28 @@ const char *ZRpcCodeC::encodePbData(SpecDataStruct *data, int &len) {
         tmp += msg_req_len;
     }
 
-    int32_t service_full_name_len = data->service_full_name.length();
+    uint32_t service_full_name_len = data->service_full_name.length();
     // DLOG << "src service_full_name_len = " << service_full_name_len;
-    int32_t service_full_name_len_net = hton32(service_full_name_len);
-    memcpy(tmp, &service_full_name_len_net, sizeof(int32_t));
-    tmp += sizeof(int32_t);
+    uint32_t service_full_name_len_net = hton32(service_full_name_len);
+    memcpy(tmp, &service_full_name_len_net, sizeof(uint32_t));
+    tmp += sizeof(uint32_t);
 
     if (service_full_name_len != 0) {
         memcpy(tmp, &(data->service_full_name[0]), service_full_name_len);
         tmp += service_full_name_len;
     }
 
-    int32_t err_code = data->err_code;
+    uint32_t err_code = data->err_code;
     // DLOG << "err_code= " << err_code;
-    int32_t err_code_net = hton32(err_code);
-    memcpy(tmp, &err_code_net, sizeof(int32_t));
-    tmp += sizeof(int32_t);
+    uint32_t err_code_net = hton32(err_code);
+    memcpy(tmp, &err_code_net, sizeof(uint32_t));
+    tmp += sizeof(uint32_t);
 
-    int32_t err_info_len = data->err_info.length();
+    uint32_t err_info_len = data->err_info.length();
     // DLOG << "err_info_len= " << err_info_len;
-    int32_t err_info_len_net = hton32(err_info_len);
-    memcpy(tmp, &err_info_len_net, sizeof(int32_t));
-    tmp += sizeof(int32_t);
+    uint32_t err_info_len_net = hton32(err_info_len);
+    memcpy(tmp, &err_info_len_net, sizeof(uint32_t));
+    tmp += sizeof(uint32_t);
 
     if (err_info_len != 0) {
         memcpy(tmp, &(data->err_info[0]), err_info_len);
@@ -155,7 +155,7 @@ void ZRpcCodeC::decode(TcpBuffer *buf, AbstractData *data) {
     // int total_size = buf->readAble();
     int start_index = buf->readIndex();
     int end_index = -1;
-    int32_t pk_len = -1;
+    uint32_t pk_len = 0;
 
     bool parse_full_pack = false;
 
@@ -163,7 +163,7 @@ void ZRpcCodeC::decode(TcpBuffer *buf, AbstractData *data) {
         // first find start
         if (tmp[i] == PB_START) {
             if (i + 1 < buf->writeIndex()) {
-                pk_len = Util::Util::netByteToInt32(&tmp[i + 1]);
+                pk_len = Util::netByteToInt32(&tmp[i + 1]);
                 // DLOG << "prase pk_len =" << pk_len;
                 int j = i + pk_len - 1;
                 // DLOG << "j =" << j << ", i=" << i;

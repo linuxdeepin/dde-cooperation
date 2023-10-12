@@ -19,10 +19,11 @@
 #include "version.h"
 #include "utils/utils.h"
 #include "utils/config.h"
-#include "common/constant.h"
 #include "ipc/fs.h"
+#include "ipc/chan.h"
+#include "../comshare.h"
 
-using namespace deamon_core;
+//using namespace deamon_core;
 
 void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
                               const ::LoginRequest *request,
@@ -37,18 +38,39 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
         response->set_error("Invalid version");
         response->set_token("");
     } else {
-        if (DaemonConfig::instance()->needConfirm()) {
-            // wait for user's confirmation
-            co::Timer t;
-            // t.restart();
-            sleep::ms(20);
-            int64 ms = t.ms();
+        bool authOK = false;
+
+        fastring pwd = request->auth();
+        if (pwd.empty()) {
+            // TODO: 无认证，用户确认
+            if (DaemonConfig::instance()->needConfirm()) {
+                IncomeData in;
+
+                LoginConfirm confirm;
+                confirm.user_name = request->my_name();
+                confirm.session_id = request->session_id();
+//                confirm.host_ip = ?
+
+                in.type = IN_LOGIN;
+                in.json = confirm.as_json().str();
+                _income_chan << in;
+
+                // wait for user's confirmation
+                co::Timer t;
+                // t.restart();
+                sleep::ms(20);
+                int64 ms = t.ms();
+                OutData out;
+                _outgo_chan >> out;
+            }
+        } else {
+            fastring pass = Util::decodeBase64(pwd.c_str());
+            LOG << "pass= " << pass << " getPin=" << DaemonConfig::instance()->getPin();
+            //FIXME: getPin is empty
+            authOK = DaemonConfig::instance()->getPin().compare(pass) != 0;
         }
 
-        fastring pass = Util::decodeBase64(request->auth().c_str());
-        LOG << "pass= " << pass << " getPin=" << DaemonConfig::instance()->getPin();
-        //FIXME: getPin is empty
-        if (DaemonConfig::instance()->getPin().compare(pass) == 0) {
+        if (!authOK) {
             response->set_error("Invalid auth code");
             response->set_token("");
         } else {
@@ -142,13 +164,21 @@ void RemoteServiceImpl::filetrans_job(::google::protobuf::RpcController *control
 {
     LOG << "req= " << request->ShortDebugString().c_str();
     int32 job_id = request->job_id();
-    fastring name = Util::parseFileName(request->path().c_str());
-    if (request->push()) {
-        // create write job and push into write_jobs
-    }
+    IncomeData in;
+
+    FSJob job;
+    job.job_id = job_id;
+    job.path = request->path();
+    job.hidden = request->include_hidden();
+    job.sub = request->recursive();
+    job.write = request->push();
+
+    in.type = IN_TRANSJOB;
+    in.json = job.as_json().str();
+    _income_chan << in;
 
     response->set_id(job_id);
-    response->set_name(name.c_str());
+    response->set_name(request->path().c_str());
     response->set_result(OK);
 
     LOG << "res= " << response->ShortDebugString().c_str();
@@ -156,6 +186,34 @@ void RemoteServiceImpl::filetrans_job(::google::protobuf::RpcController *control
     if (done) {
         done->Run();
     }
+
+//    OutData out;
+//    _outgo_chan >> out;
+//    if (OUT_TRANSJOB == out.type) {
+//        co::Json v = json::parse(out.json);
+//        if (!v.is_object()) {
+//            ELOG << "parse OutData error: " << out.json;
+//            return;
+//        }
+//        FSResult reply;
+//        reply.from_json(v);
+//        if (reply.job_id == job_id) {
+//            // set response result if create job OK.
+//            response->set_id(job_id);
+//            response->set_name(request->path().c_str());
+//            if (reply.result) {
+//                response->set_result(OK);
+//            } else {
+//                response->set_result(IO_ERROR);
+//            }
+
+//            LOG << "res= " << response->ShortDebugString().c_str();
+
+//            if (done) {
+//                done->Run();
+//            }
+//        }
+//    }
 }
 
 void RemoteServiceImpl::filetrans_create(::google::protobuf::RpcController *controller,
@@ -164,17 +222,36 @@ void RemoteServiceImpl::filetrans_create(::google::protobuf::RpcController *cont
                                          ::google::protobuf::Closure *done)
 {
     LOG << "req= " << request->ShortDebugString().c_str();
-    int32 id = request->id();
+    int32 fileid = request->file_id();
 
     FileEntry entry = request->entry();
 
-    fastring filename = entry.name();
-    size_t filesize = entry.size();
     FileType type = entry.type();
+    fastring filename;
+    if (request->sub_dir().empty()) {
+        filename = entry.name();
+    } else {
+        filename = request->sub_dir() + "/" + entry.name();
+    }
+
+    if (type == FILE_B) {
+        FileInfo info;
+        info.job_id = request->job_id();
+        info.file_id = fileid;
+        info.name = filename;
+        info.total_size = entry.size();
+        info.current_size = 0;
+        info.time_spended = -1;
+
+        IncomeData in;
+        in.type = FS_INFO;
+        in.json = info.as_json().str();
+        _income_chan << in;
+    }
 
     bool exist = FSAdapter::newFile(filename.c_str(), type == DIR);
 
-    response->set_id(id);
+    response->set_id(fileid);
     response->set_name(filename.c_str());
     response->set_result(exist ? OK : IO_ERROR);
 
@@ -190,21 +267,86 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
                                         ::FileTransResponse *response,
                                         ::google::protobuf::Closure *done)
 {
-    LOG << "req= " << request->ShortDebugString().c_str();
+    // LOG << "req= " << request->ShortDebugString().c_str();
 
-    int32 id = request->id();
+    int32 job_id = request->job_id();
+    int32 file_id = request->file_id();
     uint32 blk_id = request->blk_id();
     fastring name = request->filename();
-    fastring buffer = request->data();
+    std::string buffer = request->data();
     bool comp = request->compressed();
     size_t len = buffer.size();
-    size_t offset = (blk_id > 0) ? ((blk_id - 1) * BLOCK_SIZE) : 0;
+    size_t offset = blk_id * BLOCK_SIZE;
+    recv_block_pres += len;
 
-    bool good = FSAdapter::writeBlock(name.c_str(), offset, buffer.data(), len);
+    IncomeData in;
 
-    response->set_id(id);
+    FSDataBlock block;
+    block.job_id = job_id;
+    block.file_id = file_id;
+    block.filename = name;
+    block.blk_id = blk_id;
+    block.compressed = comp;
+    // do not set buffer at here, it will be cut by json.
+    // block.data = buffer;
+
+    in.type = FS_DATA;
+    in.json = block.as_json().str();
+    in.buf = buffer;
+    _income_chan << in;
+
+    // LOG << "filetrans_block name= " << name << " data len=" << len << " blk_id=" << blk_id;
+
+    response->set_id(file_id);
     response->set_name(name.c_str());
-    response->set_result(good ? OK : IO_ERROR);
+    response->set_result(_income_chan.done() ? OK : IO_ERROR);
+
+    // LOG << "res= " << response->ShortDebugString().c_str();
+
+    if (done) {
+        done->Run();
+    }
+}
+
+void RemoteServiceImpl::filetrans_update(::google::protobuf::RpcController* controller,
+                     const ::FileTransUpdate* request,
+                     ::FileTransResponse* response,
+                     ::google::protobuf::Closure* done)
+{
+    LOG << "req= " << request->ShortDebugString().c_str();
+    if (request->has_report()) {
+        FileTransJobReport report = request->report();
+
+        FSReport info;
+        info.job_id = report.job_id();
+        info.path = report.path();
+        info.result = report.result();
+        info.error = report.error();
+
+        IncomeData in;
+        in.type = FS_REPORT;
+        in.json = info.as_json().str();
+        _income_chan << in;
+
+        response->set_id(report.job_id());
+        response->set_name(report.path());
+    } else if (request->has_cancel()) {
+        FileTransJobCancel cancel = request->cancel();
+
+        FSJobCancel info;
+        info.job_id = cancel.job_id();
+        info.path = cancel.path();
+
+        IncomeData in;
+        in.type = TRANS_CANCEL;
+        in.json = info.as_json().str();
+        _income_chan << in;
+
+        response->set_id(cancel.job_id());
+        response->set_name(cancel.path());
+    }
+
+    response->set_result(OK);
 
     LOG << "res= " << response->ShortDebugString().c_str();
 
@@ -261,7 +403,7 @@ void RemoteServiceBinder::startRpcListen()
     }
 }
 
-void RemoteServiceBinder::createExecutor(const char *targetip, int16_t port)
+void RemoteServiceBinder::createExecutor(const char *targetip, uint16 port)
 {
     _executor_p = co::make<ZRpcClientExecutor>(targetip, port);
 }
@@ -560,11 +702,45 @@ int RemoteServiceBinder::doFileFlow(int type, const char *flowjson, const void *
     return INVOKE_OK;
 }
 
-int RemoteServiceBinder::doPushfileJob(int id, const char *filepath)
+int RemoteServiceBinder::doTransfileJob(int id, const char *path, bool hidden, bool recursive, bool recv)
 {
-    int result = 0;
+    if (nullptr == _executor_p || nullptr == path) {
+        ELOG << "doTransfileJob ERROR: no executor";
+        return PARAM_ERROR;
+    }
+
+    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
+    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
+
+    FileTransJob req_job;
+    FileTransResponse res_job;
+
+    req_job.set_job_id(id);
+    req_job.set_path(path);
+    req_job.set_include_hidden(hidden);
+    req_job.set_recursive(recursive);
+    req_job.set_push(!recv);
+
+    stub.filetrans_job(rpc_controller, &req_job, &res_job, nullptr);
+
+    if (rpc_controller->ErrorCode() != 0) {
+        ELOG << "Failed to call filetrans_job, error code: " << rpc_controller->ErrorCode()
+             << ", error info: " << rpc_controller->ErrorText();
+        return INVOKE_FAIL;
+    }
+
+    FileTransRe result_res = res_job.result();
+    if (OK == result_res) {
+        return INVOKE_OK;
+    }
+
+    return INVOKE_FAIL;
+}
+
+int RemoteServiceBinder::doSendFileInfo(int jobid, int fileid, const char *subdir, const char *filepath)
+{
     if (nullptr == _executor_p || nullptr == filepath) {
-        ELOG << "doPushfileJob ERROR: no executor";
+        ELOG << "doSendFileInfo ERROR: no executor";
         return PARAM_ERROR;
     }
 
@@ -578,14 +754,16 @@ int RemoteServiceBinder::doPushfileJob(int id, const char *filepath)
     // read file info
     FileEntry *entry = new FileEntry();
     if (FSAdapter::getFileEntry(filepath, &entry) < 0) {
-        ELOG << "doPushfileJob getFileEntry ERROR!";
+        ELOG << "doSendFileInfo getFileEntry ERROR!";
         return PARAM_ERROR;
     }
 
-    req_create.set_id(id);
+    req_create.set_job_id(jobid);
+    req_create.set_file_id(fileid);
+    req_create.set_sub_dir(subdir);
     req_create.set_allocated_entry(entry);
 
-    stub.filetrans_create(rpc_controller, &req_create, &res_create, NULL);
+    stub.filetrans_create(rpc_controller, &req_create, &res_create, nullptr);
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call filetrans_create, error code: " << rpc_controller->ErrorCode()
@@ -593,69 +771,69 @@ int RemoteServiceBinder::doPushfileJob(int id, const char *filepath)
         return INVOKE_FAIL;
     }
 
-    fs::file fd(filepath, 'r');
-    if (!fd) {
-        ELOG << "open file failed: " << filepath;
+    return INVOKE_DONE;
+}
+
+int RemoteServiceBinder::doSendFileBlock(FileTransBlock fileblock)
+{
+    if (nullptr == _executor_p) {
+        ELOG << "doSendFileBlock ERROR: no executor";
+        return PARAM_ERROR;
+    }
+
+    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
+    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
+
+    FileTransResponse res_block;
+    int try_max = 3;
+retry:
+    stub.filetrans_block(rpc_controller, &fileblock, &res_block, nullptr);
+
+    if (rpc_controller->ErrorCode() != 0) {
+        ELOG << "Failed to call filetrans_block, error code: " << rpc_controller->ErrorCode()
+             << ", error info: " << rpc_controller->ErrorText();
+        if (try_max > 0) {
+            try_max--;
+            goto retry;
+        }
         return INVOKE_FAIL;
     }
 
-    // Step2: send file block in loop
-    FileTransBlock req_block;
-    FileTransResponse res_block;
+    // DLOG << "send block response body: " << res_block.ShortDebugString();
 
-    int try_max = 3;
-    size_t block_size = BLOCK_SIZE;
-    size_t file_size = entry->size();
-    size_t read_size = 0;
-    uint32 block_id = 0;
-    // void *buffer = co::alloc(block_size);
-    fastring buf;
-    buf.reserve(block_size);
-    do {
-        if (buf.capacity() == 0) buf.reserve(block_size);
-        buf.resize(block_size);
-        size_t resize = fd.read((char *)buf.data(), block_size);
-        if (resize <= 0) {
-            LOG << "read file ERROR or END, resize = " << resize;
-            break;
-        }
-        // req_block.Clear();
+    FileTransRe result_res = res_block.result();
+    if (IO_ERROR == result_res) {
+        ELOG << "The target return ERROR, maybe it's IO";
+        return INVOKE_OK;
+    }
 
-        req_block.set_id(id);
-        req_block.set_filename(entry->name());
-        req_block.set_blk_id(block_id);
-        req_block.set_data(buf.data());
-        req_block.set_compressed(false);
-    retry:
-        stub.filetrans_block(rpc_controller, &req_block, &res_block, NULL);
+    return INVOKE_DONE;
+}
 
-        if (rpc_controller->ErrorCode() != 0) {
-            ELOG << "Failed to call filetrans_block, error code: " << rpc_controller->ErrorCode()
-                 << ", error info: " << rpc_controller->ErrorText();
-            if (try_max > 0) {
-                try_max--;
-                goto retry;
-            }
-            fd.close();
-            return INVOKE_FAIL;
-        }
+int RemoteServiceBinder::doUpdateTrans(FileTransUpdate update)
+{
+    if (nullptr == _executor_p) {
+        ELOG << "doUpdateTrans ERROR: no executor";
+        return PARAM_ERROR;
+    }
 
-        FileTransRe result_res = res_block.result();
-        if (IO_ERROR == result_res) {
-            ELOG << "The target return ERROR, maybe it's IO";
-            fd.close();
-            emit fileTransResult(false, filepath, id);
-            return INVOKE_OK;
-        } else if (FINIASH == result_res) {
-            emit fileTransResult(true, filepath, id);
-        }
+    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
+    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
 
-        read_size += resize;
-        block_id++;
+    FileTransResponse res;
+    stub.filetrans_update(rpc_controller, &update, &res, nullptr);
 
-    } while (read_size < file_size);
+    if (rpc_controller->ErrorCode() != 0) {
+        ELOG << "Failed to call filetrans_update, error code: " << rpc_controller->ErrorCode()
+             << ", error info: " << rpc_controller->ErrorText();
+        return INVOKE_FAIL;
+    }
 
-end:
-    fd.close();
+    FileTransRe result_res = res.result();
+    if (IO_ERROR == result_res) {
+        ELOG << "The target return ERROR, maybe it's IO";
+        return INVOKE_OK;
+    }
+
     return INVOKE_DONE;
 }

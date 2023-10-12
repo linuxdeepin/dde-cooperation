@@ -9,8 +9,7 @@
 
 #include "message.pb.h"
 #include "../fsadapter.h"
-
-// namespace uniapis {
+#include "co/tasked.h"
 
 class RemoteServiceImpl : public RemoteService
 {
@@ -58,11 +57,15 @@ public:
                          ::FileTransResponse *response,
                          ::google::protobuf::Closure *done);
 
+    void filetrans_update(::google::protobuf::RpcController* controller,
+                         const ::FileTransUpdate* request,
+                         ::FileTransResponse* response,
+                         ::google::protobuf::Closure* done);
+
 private:
-
+    co::Tasked _speedChecker;
+    size_t recv_block_pres;
 };
-
-// }   // namespace uniapis
 
 class RemoteServiceBinder : public QObject
 {
@@ -73,7 +76,7 @@ public:
 
     void startRpcListen();
 
-    void createExecutor(const char *targetip, int16_t port);
+    void createExecutor(const char *targetip, uint16 port);
 
     void doLogin(const char *username, const char *pincode);
 
@@ -85,8 +88,17 @@ public:
 
     int doFileFlow(int type, const char *flowjson, const void *bindata = nullptr, int binlen = 0);
 
-    // 传输单个文件的作业，不断的调用RPC实现，包含文件传输的步骤。
-    int doPushfileJob(int id, const char *filepath);
+    // 通知远端准备执行作业：接收或发送。
+    int doTransfileJob(int id, const char *jobpath, bool hidden, bool recursive, bool recv);
+
+    // 发送文件数据信息。
+    int doSendFileInfo(int jobid, int fileid, const char *subdir, const char *filepath);
+
+    // 发送文件数据块。
+    int doSendFileBlock(FileTransBlock fileblock);
+
+    // 发送文件传输报告。
+    int doUpdateTrans(FileTransUpdate update);
 
 signals:
     void loginResult(bool result, const char *reason);
@@ -94,8 +106,8 @@ signals:
     void miscResult(bool result, const char *reason);
     void fileActionResult(bool result, int id);
 
-    void fileTransResult(bool ok, const char *path, int id);
-    void fileTransSpeed(const char *path, int id);
+    void fileTransResult(const char *path, int id, bool result);
+    void fileTransSpeed(const char *path, int id, size_t speed);
 
 public slots:
 

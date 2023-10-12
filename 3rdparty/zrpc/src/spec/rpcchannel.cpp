@@ -19,6 +19,7 @@
 
 namespace zrpc_ns {
 
+TcpClient::ptr m_client = nullptr;
 ZRpcChannel::ZRpcChannel(NetAddress::ptr addr)
     : m_addr(addr) {
 }
@@ -36,7 +37,10 @@ void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
         return;
     }
 
-    TcpClient::ptr m_client = std::make_shared<TcpClient>(m_addr);
+    if (m_client.get() == nullptr) {
+        m_client = std::make_shared<TcpClient>(m_addr);
+    }
+
     if (!m_client->tryConnect()) {
         ELOG << "client can not connect to server: " << m_addr.get()->toString();
         return;

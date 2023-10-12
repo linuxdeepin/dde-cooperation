@@ -23,7 +23,7 @@ public:
 
     fastring toString() const {
         fastream ss;
-        ss << m_ip << ":" << m_port << ":" << m_ssl_key << ":" << m_ssl_crt;
+        ss << m_ip << ":" << m_port;
         return ss.str();
     }
 
