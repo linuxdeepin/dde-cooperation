@@ -21,7 +21,11 @@ enum PageName {
     filewselectidget = 7,
     configselectwidget = 8,
     appselectwidget = 9,
-    errorwidget = 10
+    errorwidget = 10,
+    createbackupfilewidget = 11,
+    networkdisconnectionwidget = 12,
+    zipfileprocesswidget = 13,
+    zipfileprocessresultwidget = 14
 };
 #else
 enum PageName {
@@ -36,4 +40,4 @@ enum PageName {
 };
 #endif
 
-#endif   // TYPE_DEFINES_H
+#endif // TYPE_DEFINES_H

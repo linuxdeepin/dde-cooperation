@@ -6,6 +6,9 @@
 #include <QPainter>
 #include <QStandardItemModel>
 #include <QFrame>
+#include <QListView>
+#include <QModelIndex>
+#include <QMouseEvent>
 
 class ItemTitlebar : public QFrame
 {
@@ -47,16 +50,7 @@ private:
 class ListItem : public QStandardItem
 {
 public:
-    ListItem() : QStandardItem()
-    {
-        checkBox = new QCheckBox();
-        checkBox->setChecked(false);
-    }
-
-    QCheckBox *getCheckBox() const { return checkBox; }
-
-private:
-    QCheckBox *checkBox;
+    ListItem() : QStandardItem() { }
 };
 
 class ItemDelegate : public QItemDelegate
@@ -96,6 +90,9 @@ private:
                    const QModelIndex &index) const;
     void paintCheckbox(QPainter *painter, const QStyleOptionViewItem &option,
                        const QModelIndex &index) const;
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
+                     const QModelIndex &index) override;
+
 private:
     qreal remarkTextLeftMargin{ 379 };
     qreal remarkTextMaxLen{ 100 };
@@ -107,6 +104,39 @@ private:
 
     QPoint iconPos{ 65, 6 };
     QPoint checkBoxPos{ 10, 9 };
+
 };
 
+class SaveItemDelegate : public QItemDelegate
+{
+    Q_OBJECT
+public:
+    SaveItemDelegate();
+    ~SaveItemDelegate();
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+private:
+    void paintIcon(QPainter *painter, const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const;
+    void paintBackground(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const;
+    void paintText(QPainter *painter, const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const;
+    void paintCheckbox(QPainter *painter, const QStyleOptionViewItem &option,
+                       const QModelIndex &index) const;
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
+                     const QModelIndex &index) override;
+private:
+    qreal remarkTextLeftMargin{ 290 };
+    qreal remarkTextMaxLen{ 100 };
+
+    qreal filenameTextLeftMargin{ 52 };
+    qreal filenameTextMaxLen{ 250 };
+
+    qreal backgroundColorLeftMargin{ 0 };
+
+    QPoint iconPos{14, 10 };
+    QPoint checkBoxPos{ 0, 0 };
+};
 #endif

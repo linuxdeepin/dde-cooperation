@@ -1,4 +1,4 @@
-#ifndef CHOOSEWIDGET_H
+﻿#ifndef CHOOSEWIDGET_H
 #define CHOOSEWIDGET_H
 
 #include <QCheckBox>
@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QPainter>
 
+class ModeItem;
 class ChooseWidget : public QFrame
 {
     Q_OBJECT
@@ -19,9 +20,12 @@ public slots:
 
 private:
     void initUI();
-
+    void sendOptions();
+    void changeAllWidgtText();
 private:
-    int nextpage = 0;
+    QString transferMethod;
+
+    int nextpage;
 };
 
 class ModeItem : public QFrame
@@ -38,14 +42,13 @@ protected:
     virtual void mousePressEvent(QMouseEvent *event) override;
 
 private:
-    QCheckBox *checkBox { nullptr };
+    QCheckBox *checkBox{ nullptr };
 };
 
 class IndexLabel : public QLabel
 {
 public:
-    IndexLabel(int index, QWidget *parent = nullptr)
-        : QLabel(parent), index(index)
+    IndexLabel(int index, QWidget *parent = nullptr) : QLabel(parent), index(index)
     {
         setFixedSize(50, 10);
     }

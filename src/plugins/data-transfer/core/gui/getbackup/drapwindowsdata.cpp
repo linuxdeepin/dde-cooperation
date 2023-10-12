@@ -1,21 +1,23 @@
-﻿#ifdef WIN32
+﻿#include "drapwindowsdata.h"
+#include <tchar.h>
+#include <QDebug>
+#include <QFile>
 
-#    include "drapwindowsdata.h"
-#    include <tchar.h>
-#    include <QDebug>
-#    include <QFile>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QProcess>
+#include <QDateTime>
 
-#    include <QSqlDatabase>
-#    include <QSqlQuery>
-#    include <QSqlError>
-#    include <QProcess>
-#    include <QDateTime>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFileInfo>
 
-#    include <QJsonDocument>
-#    include <QJsonObject>
-#    include <QJsonArray>
+#include <QStandardPaths>
+#include <QHostInfo>
 
-#    define MAXNAME 256
+#define MAXNAME 256
 
 namespace Registry {
 inline constexpr char BrowerRegistryPath[]{ "SOFTWARE\\Clients\\StartMenuInternet" };
@@ -47,7 +49,6 @@ DrapWindowsData::DrapWindowsData()
     //    getBrowerBookmarkInfo();
 }
 
-
 DrapWindowsData *DrapWindowsData::instance()
 {
     static DrapWindowsData ins;
@@ -57,6 +58,8 @@ DrapWindowsData *DrapWindowsData::instance()
 DrapWindowsData::~DrapWindowsData() { }
 QSet<QString> DrapWindowsData::getBrowserList()
 {
+    if (browserList.isEmpty())
+        getBrowserListInfo();
     return browserList;
 }
 
@@ -106,13 +109,14 @@ void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
 
 QSet<QString> DrapWindowsData::getApplianceList()
 {
+    if (applianceList.isEmpty())
+        getApplianceListInfo();
     return applianceList;
 }
 
 QString DrapWindowsData::getDesktopWallpaperPath()
 {
-    if(desktopWallpaperPath.isEmpty())
-    {
+    if (desktopWallpaperPath.isEmpty()) {
         getDesktopWallpaperPathInfo();
     }
     return desktopWallpaperPath;
@@ -181,19 +185,19 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
 
     QString appData = std::getenv("USERPROFILE");
 
-    if (browserList.find(BrowerName::MicrosoftEdge) != browserList.end()) {
+    if (browserList.find(BrowserName::MicrosoftEdge) != browserList.end()) {
         QString path = appData + BrowerPath::MicrosoftEdgeBookMark;
-        auto bookMark = QPair<QString, QString>(BrowerName::MicrosoftEdge, path);
+        auto bookMark = QPair<QString, QString>(BrowserName::MicrosoftEdge, path);
         browserBookmarkPath.push_back(bookMark);
     }
 
-    if (browserList.find(BrowerName::GoogleChrome) != browserList.end()) {
+    if (browserList.find(BrowserName::GoogleChrome) != browserList.end()) {
         QString path = appData + BrowerPath::GoogleChromeBookMark;
-        auto bookMark = QPair<QString, QString>(BrowerName::GoogleChrome, path);
+        auto bookMark = QPair<QString, QString>(BrowserName::GoogleChrome, path);
         browserBookmarkPath.push_back(bookMark);
     }
 
-    if (browserList.find(BrowerName::MozillaFirefox) != browserList.end()) {
+    if (browserList.find(BrowserName::MozillaFirefox) != browserList.end()) {
         QString path = appData + BrowerPath::MozillaFirefoxBookMark;
         QString installIni = path + QString("\\installs.ini");
         QFile file(installIni);
@@ -213,7 +217,7 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
 
         if (!bookMarkPath.isEmpty()) {
             path = path + bookMarkPath;
-            auto bookMark = QPair<QString, QString>(BrowerName::MozillaFirefox, path);
+            auto bookMark = QPair<QString, QString>(BrowserName::MozillaFirefox, path);
             browserBookmarkPath.push_back(bookMark);
         } else {
             qDebug() << "Can not find bookMark path in installs.ini";
@@ -231,18 +235,160 @@ void DrapWindowsData::getBrowserBookmarkInfo(const QSet<QString> &Browsername)
 
     if (!Browsername.isEmpty()) {
         for (auto &value : browserBookmarkPath) {
-            if (value.first == BrowerName::MozillaFirefox) {
-                if (Browsername.contains(BrowerName::MozillaFirefox) )
+            if (value.first == BrowserName::MozillaFirefox) {
+                if (Browsername.contains(BrowserName::MozillaFirefox))
                     readFirefoxBookmarks(value.second);
-            } else if (value.first == BrowerName::MicrosoftEdge) {
-                if (Browsername.contains(BrowerName::MicrosoftEdge))
+            } else if (value.first == BrowserName::MicrosoftEdge) {
+                if (Browsername.contains(BrowserName::MicrosoftEdge))
                     readMicrosoftEdgeAndGoogleChromeBookmark(value.second);
-            } else if (value.first == BrowerName::GoogleChrome) {
-                if (Browsername.contains(BrowerName::GoogleChrome))
+            } else if (value.first == BrowserName::GoogleChrome) {
+                if (Browsername.contains(BrowserName::GoogleChrome))
                     readMicrosoftEdgeAndGoogleChromeBookmark(value.second);
             }
         }
     }
+}
+
+void DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
+{
+    if (jsonPath.isEmpty()) {
+        jsonPath = QString::fromLocal8Bit(".");
+    }
+
+    QJsonArray childrenArray;
+    int id = 0;
+    for (auto bookmark : browserBookmarkList) {
+        QJsonObject bookmarkJsonObject;
+        bookmarkJsonObject["date_added"] = QString::number(QDateTime::currentMSecsSinceEpoch());
+        bookmarkJsonObject["id"] = QString::number(id);
+        bookmarkJsonObject["name"] = bookmark.first;
+        bookmarkJsonObject["type"] = "url";
+        bookmarkJsonObject["url"] = bookmark.second;
+        childrenArray.append(bookmarkJsonObject);
+        id++;
+    }
+
+    QJsonObject bookmarkBarObject;
+    bookmarkBarObject["children"] = childrenArray;
+    bookmarkBarObject["date_added"] = QString::number(QDateTime::currentMSecsSinceEpoch());
+    bookmarkBarObject["date_modified"] = "0";
+    bookmarkBarObject["id"] = "1";
+    bookmarkBarObject["name"] = "Bookmarks Bar";
+    bookmarkBarObject["type"] = "folder";
+
+    QJsonObject otherBookmarksObject;
+    otherBookmarksObject["children"] = QJsonArray();
+    otherBookmarksObject["date_added"] = QString::number(QDateTime::currentMSecsSinceEpoch());
+    otherBookmarksObject["date_modified"] = "0";
+    otherBookmarksObject["id"] = "2";
+    otherBookmarksObject["name"] = "Other Bookmarks";
+    otherBookmarksObject["type"] = "folder";
+
+    QJsonObject syncedBookmarksObject;
+    syncedBookmarksObject["children"] = QJsonArray();
+    syncedBookmarksObject["date_added"] = QString::number(QDateTime::currentMSecsSinceEpoch());
+    syncedBookmarksObject["date_modified"] = "0";
+    syncedBookmarksObject["id"] = "3";
+    syncedBookmarksObject["name"] = "synced Bookmarks";
+    syncedBookmarksObject["type"] = "folder";
+
+    QJsonObject rootsObject;
+    rootsObject["bookmark_bar"] = bookmarkBarObject;
+    rootsObject["other"] = otherBookmarksObject;
+    rootsObject["synced"] = syncedBookmarksObject;
+
+    QJsonObject rootObject;
+    rootObject["roots"] = rootsObject;
+    rootObject["version"] = 1;
+
+    QJsonDocument doc(rootObject);
+    QString jsonfilePaht = jsonPath + "/bookmarks.json";
+    QFile file(jsonfilePaht);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+        stream << doc.toJson();
+        file.close();
+        qDebug() << "JSON file saved successfully.";
+    } else {
+        qWarning() << "Failed to save JSON file.";
+    }
+}
+
+QString DrapWindowsData::getUserName()
+{
+    QString userDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    // 获取主文件夹的名称
+    QFileInfo fileInfo(userDir);
+    QString userName = fileInfo.fileName();
+
+    qDebug() << "User Name: " << userName;
+    return userName;
+}
+
+QString DrapWindowsData::getIP()
+{
+    QString hostname = QHostInfo::localHostName();
+    QHostInfo hostinfo = QHostInfo::fromName(hostname);
+    QString localip = "";
+    QList<QHostAddress> addList = hostinfo.addresses();
+    if (!addList.isEmpty())
+        for (int i = 0; i < addList.size(); i++) {
+            QHostAddress aHost = addList.at(i);
+            if (QAbstractSocket::IPv4Protocol == aHost.protocol()) {
+                localip = aHost.toString();
+                break;
+            }
+        }
+    return localip;
+}
+
+QStringList DrapWindowsData::getLinuxApplist(QList<QStringList> &list)
+{
+    QFile file("..\\..\\resource\\app.json");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "can not open app json";
+        return QStringList();
+    }
+
+    QByteArray jsonData = file.readAll();
+    file.close();
+
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
+    if (jsonDoc.isNull()) {
+        qWarning() << "app json Parsing failed";
+        return QStringList();
+    }
+
+    QJsonObject jsonObj = jsonDoc.object();
+
+    QStringList keys = jsonObj.keys();
+
+    QList<QStringList> data;
+    for (const QString &key : keys) {
+        QJsonValue value = jsonObj.value(key);
+        if (value.isArray()) {
+            QStringList values;
+            for (const QJsonValue &element : value.toArray()) {
+                values.push_back(element.toString());
+            }
+            data.push_back(values);
+        }
+    }
+    list = data;
+
+    qInfo() << "linux app:";
+    // 输出数据
+    int index = 0;
+    foreach (const QString &key, keys) {
+        qInfo() << key << ":";
+        QStringList values = data[index++];
+        foreach (const QString &value, values) {
+            qInfo() << "    " << value;
+        }
+    }
+    return keys;
 }
 
 void DrapWindowsData::getApplianceListInfo()
@@ -425,5 +571,44 @@ void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &t
     }
 }
 
-#endif
+bool DrapWindowsData::containsAnyString(const QString &haystack, const QStringList &needles)
+{
+    for (const QString &needle : needles) {
+        if (!haystack.contains(needle, Qt::CaseInsensitive)) {
+            return false;
+        }
+    }
+    return true;
+}
 
+QStringList DrapWindowsData::RecommendedInstallationAppList()
+{
+    QStringList dataStructure;
+    QSet<QString> applist = getApplianceList();
+    for (auto value : applist) {
+        dataStructure.push_back(value);
+    }
+
+    QList<QStringList> MatchFielddata;
+    QStringList LinuxAPPdata = getLinuxApplist(MatchFielddata);
+
+    QStringList resultAPP;
+    for (QString &valueA : dataStructure) {
+        bool result;
+        int i = 0;
+        for (QStringList &valueB : MatchFielddata) {
+            result = containsAnyString(valueA, valueB);
+            if (result) {
+                resultAPP.push_back(LinuxAPPdata[i]);
+                qDebug() << valueA << ": " << LinuxAPPdata[i] << "  " << valueB;
+                break;
+            }
+            i++;
+        }
+
+        if (!result)
+            qDebug() << valueA << ": ";
+    }
+
+    return resultAPP;
+}

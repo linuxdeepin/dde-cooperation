@@ -18,7 +18,7 @@ class ConfigSelectWidget : public QFrame
 public:
     ConfigSelectWidget(QWidget *parent = nullptr);
     ~ConfigSelectWidget();
-
+    void changeText();
 public slots:
     void nextPage();
     void backPage();
@@ -35,14 +35,14 @@ private:
     QFrame *selectBrowerBookMarkFrame{ nullptr };
     QFrame *selectConfigFrame{ nullptr };
 
-    QListView *browserView{nullptr};
-    QListView *configView{nullptr};
+    QListView *browserView{ nullptr };
+    QListView *configView{ nullptr };
 
     QVBoxLayout *selectMainLayout{ nullptr };
-
-
     QToolButton *determineButton{ nullptr };
     QToolButton *cancelButton{ nullptr };
+
+    QLabel *titileLabel{ nullptr };
 };
 
 #endif

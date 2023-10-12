@@ -15,10 +15,11 @@
 #include <utils/transferhepler.h>
 #include <gui/mainwindow_p.h>
 
+
 #pragma execution_character_set("utf-8")
 
-inline constexpr char internetMethodSelectAppName[]{ "请选择要同步的应用" };
-inline constexpr char localFileMethodSelectAppName[]{ "请选择要备份的应用" };
+static inline constexpr char InternetText[]{ "请选择要同步的应用" };
+static inline constexpr char LocalText[]{ "请选择要备份的应用" };
 AppSelectWidget::AppSelectWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
@@ -33,7 +34,7 @@ void AppSelectWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
 
-    QLabel *titileLabel = new QLabel(localFileMethodSelectAppName, this);
+    titileLabel = new QLabel(LocalText, this);
     titileLabel->setFixedHeight(20);
     QFont font;
     font.setPointSize(16);
@@ -129,16 +130,26 @@ void AppSelectWidget::initSelectFrame()
     selectFrame->setLayout(selectframeLayout);
 
     QStandardItemModel *model = new QStandardItemModel(this);
-    fileview = new QListView(this);
-    fileview->setStyleSheet(".QListView{"
+    appView = new QListView(this);
+    appView->setStyleSheet(".QListView{"
                             "border: none;"
                             "}");
-    fileview->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    fileview->setModel(model);
-    fileview->setItemDelegate(
+    appView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    appView->setModel(model);
+    appView->setItemDelegate(
             new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
-    fileview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    fileview->setSelectionMode(QAbstractItemView::NoSelection);
+    appView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    appView->setSelectionMode(QAbstractItemView::NoSelection);
+
+
+//    QStandardItemModel *model = new QStandardItemModel(this);
+//    fileview = new QListView(this);
+//    fileview->setEditTriggers(QAbstractItemView::NoEditTriggers);
+//    fileview->setModel(model);
+//    fileview->setItemDelegate(delegate);
+//    fileview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    fileview->setSelectionMode(QAbstractItemView::NoSelection);
+
 
     QMap<QString, QString> appList = TransferHelper::instance()->getAppList();
     for (auto iterator = appList.begin(); iterator != appList.end(); iterator++) {
@@ -146,20 +157,30 @@ void AppSelectWidget::initSelectFrame()
         item->setData(iterator.key(), Qt::DisplayRole);
         // item->setData(fileinfos[i].filePath(), Qt::UserRole);
         item->setData("是", Qt::ToolTipRole);
-        item->setIcon(QIcon(":/icon/app.svg"));
+        item->setIcon(QIcon(iterator.value()));
         item->setCheckable(true);
 
         model->appendRow(item);
     }
 
     selectframeLayout->addWidget(titlebar);
-    selectframeLayout->addWidget(fileview);
+    selectframeLayout->addWidget(appView);
+}
+
+void AppSelectWidget::changeText()
+{
+    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+    if (method == TransferMethod::kLocalExport) {
+        titileLabel->setText(LocalText);
+    } else if (method == TransferMethod::kNetworkTransmission) {
+        titileLabel->setText(InternetText);
+    }
 }
 
 void AppSelectWidget::sendOptions()
 {
     QStringList appName;
-    QAbstractItemModel *model = fileview->model();
+    QAbstractItemModel *model = appView->model();
     for (int row = 0; row < model->rowCount(); ++row) {
         QModelIndex index = model->index(row, 0);
         QVariant checkboxData = model->data(index, Qt::CheckStateRole);

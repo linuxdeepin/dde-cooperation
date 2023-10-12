@@ -24,19 +24,23 @@
 #pragma execution_character_set("utf-8")
 
 const QList<QString> directories = {
-    QString::fromLocal8Bit(Directory::kMovie), QStandardPaths::writableLocation(QStandardPaths::MoviesLocation),
-    QString::fromLocal8Bit(Directory::kPicture), QStandardPaths::writableLocation(QStandardPaths::PicturesLocation),
-    QString::fromLocal8Bit(Directory::kDocuments), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-    QString::fromLocal8Bit(Directory::kDownload), QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
-    QString::fromLocal8Bit(Directory::kMusic), QStandardPaths::writableLocation(QStandardPaths::MusicLocation),
-    QString::fromLocal8Bit(Directory::kDesktop), QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)
+    QString::fromLocal8Bit(Directory::kMovie),
+    QStandardPaths::writableLocation(QStandardPaths::MoviesLocation),
+    QString::fromLocal8Bit(Directory::kPicture),
+    QStandardPaths::writableLocation(QStandardPaths::PicturesLocation),
+    QString::fromLocal8Bit(Directory::kDocuments),
+    QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
+    QString::fromLocal8Bit(Directory::kDownload),
+    QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
+    QString::fromLocal8Bit(Directory::kMusic),
+    QStandardPaths::writableLocation(QStandardPaths::MusicLocation),
+    QString::fromLocal8Bit(Directory::kDesktop),
+    QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)
 };
 
-inline constexpr char internetMethodSelectFileName[] {"请选择要同步的文件"};
-inline constexpr char localFileMethodSelectFileName[] {"请选择要备份的文件"};
-
-FileSelectWidget::FileSelectWidget(QListView *siderbarWidget, QWidget *parent)
-    : QFrame(parent)
+static inline constexpr char InternetText[]{ "请选择要同步的文件" };
+static inline constexpr char LocalText[]{ "请选择要备份的文件" };
+FileSelectWidget::FileSelectWidget(QListView *siderbarWidget, QWidget *parent) : QFrame(parent)
 {
     initSiderBar(siderbarWidget);
     initUI();
@@ -44,9 +48,7 @@ FileSelectWidget::FileSelectWidget(QListView *siderbarWidget, QWidget *parent)
     initConnect(fileview);
 }
 
-FileSelectWidget::~FileSelectWidget()
-{
-}
+FileSelectWidget::~FileSelectWidget() { }
 
 void FileSelectWidget::initUI()
 {
@@ -55,7 +57,7 @@ void FileSelectWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
 
-    QLabel *titileLabel = new QLabel(internetMethodSelectFileName, this);
+    titileLabel = new QLabel(LocalText, this);
     titileLabel->setFixedHeight(30);
     QFont font;
     font.setPointSize(16);
@@ -64,8 +66,9 @@ void FileSelectWidget::initUI()
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QHBoxLayout *headerLayout = new QHBoxLayout();
-    ItemTitlebar *titlebar = new ItemTitlebar("文件名","大小",50,360,QRectF(10,12,16,16),3, this);
-    titlebar->setFixedSize(500,36);
+    ItemTitlebar *titlebar =
+            new ItemTitlebar("文件名", "大小", 50, 360, QRectF(10, 12, 16, 16), 3, this);
+    titlebar->setFixedSize(500, 36);
     headerLayout->addWidget(titlebar);
     initFileView();
 
@@ -96,10 +99,8 @@ void FileSelectWidget::initUI()
                                    "text-align: center;"
                                    "}");
     QObject::connect(determineButton, &QToolButton::clicked, this, &FileSelectWidget::nextPage);
-    QObject::connect(determineButton,&QToolButton::clicked,this,[this](){
-        emit isOk(SelectItemName::FILES,true);
-    });
-
+    QObject::connect(determineButton, &QToolButton::clicked, this,
+                     [this]() { emit isOk(SelectItemName::FILES, true); });
 
     QToolButton *cancelButton = new QToolButton(this);
     cancelButton->setText("取消");
@@ -118,9 +119,8 @@ void FileSelectWidget::initUI()
                                 "text-align: center;"
                                 ";}");
     QObject::connect(cancelButton, &QToolButton::clicked, this, &FileSelectWidget::backPage);
-    QObject::connect(cancelButton,&QToolButton::clicked,this,[this](){
-        emit isOk(SelectItemName::FILES,false);
-    });
+    QObject::connect(cancelButton, &QToolButton::clicked, this,
+                     [this]() { emit isOk(SelectItemName::FILES, false); });
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(cancelButton);
@@ -133,7 +133,7 @@ void FileSelectWidget::initUI()
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel1);
     mainLayout->addLayout(headerLayout);
-   // mainLayout->addWidget(titlebar);
+    // mainLayout->addWidget(titlebar);
     mainLayout->addWidget(fileview);
     mainLayout->addSpacing(5);
     mainLayout->addLayout(buttonLayout);
@@ -162,13 +162,15 @@ void FileSelectWidget::initConnect(QAbstractItemView *view)
 
 void FileSelectWidget::initFileView()
 {
+    ItemDelegate *delegate = new ItemDelegate(99, 250, 379, 100, 50, QPoint(65, 6), QPoint(10, 9));
     QStandardItemModel *model = new QStandardItemModel(this);
     fileview = new QListView(this);
     fileview->setEditTriggers(QAbstractItemView::NoEditTriggers);
     fileview->setModel(model);
-    fileview->setItemDelegate(new ItemDelegate(99,250,379,100,50,QPoint(65,6),QPoint(10,9)));
+    fileview->setItemDelegate(delegate);
     fileview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     fileview->setSelectionMode(QAbstractItemView::NoSelection);
+
     updateFileView();
 }
 
@@ -197,6 +199,9 @@ void FileSelectWidget::updateFileView()
     model->clear();
     for (int i = 0; i < fileinfos.count(); i++) {
         if (!fileinfos[i].isDir())
+            continue;
+        // del Users
+        if (fileinfos[i].fileName() == "Users")
             continue;
 
         ListItem *item = new ListItem();
@@ -244,26 +249,29 @@ void FileSelectWidget::initSiderBar(QListView *siderbarWidget)
     QWidget *parent = qobject_cast<QWidget *>(sidebar->parent());
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget && parent)
-        connect(stackedWidget, &QStackedWidget::currentChanged, this, [this, stackedWidget, parent]() {
-            if (stackedWidget->currentWidget() == this)
-                parent->setVisible(true);
-            else
-                parent->setVisible(false);
-        });
-    connect(sidebar->selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileSelectWidget::updateFileView);
+        connect(stackedWidget, &QStackedWidget::currentChanged, this,
+                [this, stackedWidget, parent]() {
+                    if (stackedWidget->currentWidget() == this)
+                        parent->setVisible(true);
+                    else
+                        parent->setVisible(false);
+                });
+    connect(sidebar->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+            &FileSelectWidget::updateFileView);
 }
 
 void FileSelectWidget::nextPage()
 {
-    //send useroptions
+    // send useroptions
     sendOptions();
 
-    //nextpage
+    // nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::selectmainwidget);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+                      "nullptr";
     }
 }
 
@@ -273,34 +281,40 @@ void FileSelectWidget::backPage()
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::selectmainwidget);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+                      "nullptr";
     }
 }
 
-void FileSelectWidget::update()
-{
-}
+void FileSelectWidget::update() { }
 
 void FileSelectWidget::sendOptions()
 {
     qInfo() << "select file :" << seletFileList;
     OptionsManager::instance()->addUserOption(Options::kFile, seletFileList);
 
-    //transfer
+    // transfer
     TransferHelper::instance()->startTransfer();
 }
 
-SidebarWidget::SidebarWidget(QWidget *parent)
-    : QListView(parent)
+void FileSelectWidget::changeText()
+{
+    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+    if (method == TransferMethod::kLocalExport) {
+        titileLabel->setText(LocalText);
+    } else if (method == TransferMethod::kNetworkTransmission) {
+        titileLabel->setText(InternetText);
+    }
+}
+
+SidebarWidget::SidebarWidget(QWidget *parent) : QListView(parent)
 {
     setItemDelegate(new SidebarItemDelegate());
     setEditTriggers(QAbstractItemView::NoEditTriggers);
     initData();
 }
 
-SidebarWidget::~SidebarWidget()
-{
-}
+SidebarWidget::~SidebarWidget() { }
 
 void SidebarWidget::initData()
 {
@@ -320,18 +334,18 @@ void SidebarWidget::initData()
     }
 
     // Storage dir
-        QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
+    QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
 
-        for (const QStorageInfo &drive : drives) {
-            QStandardItem *item = new QStandardItem();
-            item->setCheckable(true);
-            item->setCheckState(Qt::Unchecked);
-            QString rootPath = drive.rootPath();
-            QString displayName = (drive.name().isEmpty()?"本地磁盘":drive.name()) +"("+rootPath.at(0)+":)";
+    for (const QStorageInfo &drive : drives) {
+        QStandardItem *item = new QStandardItem();
+        item->setCheckable(true);
+        item->setCheckState(Qt::Unchecked);
+        QString rootPath = drive.rootPath();
+        QString displayName =
+                (drive.name().isEmpty() ? "本地磁盘" : drive.name()) + "(" + rootPath.at(0) + ":)";
 
-
-            item->setData(displayName, Qt::DisplayRole);
-            item->setData(rootPath, Qt::UserRole);
-            model->appendRow(item);
-        }
+        item->setData(displayName, Qt::DisplayRole);
+        item->setData(rootPath, Qt::UserRole);
+        model->appendRow(item);
+    }
 }

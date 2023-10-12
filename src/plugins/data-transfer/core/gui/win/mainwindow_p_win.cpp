@@ -10,12 +10,13 @@
 #include "../select/selectmainwidget.h"
 #include "../select/configselectwidget.h"
 #include "../select/fileselectwidget.h"
-#include "../select/createbackupfilewidget.h"
 #include "../transfer/successwidget.h"
 #include "../transfer/transferringwidget.h"
 #include "../transfer/zipfileprocesswidget.h"
 #include "../transfer/zipfileprocessresultwidget.h"
 #include "../transfer/errorwidget.h"
+#include "../transfer/networkdisconnectionwidget.h"
+#include "../getbackup/createbackupfilewidget.h"
 
 #include "utils/transferhepler.h"
 
@@ -54,45 +55,50 @@ void MainWindowPrivate::initWindow()
     windowsCentralWidget->addLayout(windowsCentralWidgetSidebar);
     windowsCentralWidget->addLayout(windowsCentralWidgetContent);
 
+    q->setWindowIcon(QIcon(":/icon/icon.svg"));
+
     initSideBar();
     initTitleBar();
     layout->setSpacing(0);
     layout->addLayout(windowsCentralWidget);
-
 }
 
 void MainWindowPrivate::initWidgets()
 {
     StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
-
     TransferringWidget *transferringwidget = new TransferringWidget(q);
-    SuccessWidget *successtranswidget = new SuccessWidget(q);
     ReadyWidget *readywidget = new ReadyWidget(q);
     PromptWidget *promptwidget = new PromptWidget(q);
-
-    selectMainWidget *selectmainwidget = new selectMainWidget(q);
+    SuccessWidget *successwidget = new SuccessWidget(q);
     FileSelectWidget *filewselectidget =
             new FileSelectWidget(qobject_cast<SidebarWidget *>(sidebar->widget()), q);
     ConfigSelectWidget *configselectwidget = new ConfigSelectWidget(q);
     AppSelectWidget *appselectwidget = new AppSelectWidget(q);
-
     ErrorWidget *errorwidget = new ErrorWidget(q);
-
     QStackedWidget *stackedWidget = new QStackedWidget(q);
-
+    NetworkDisconnectionWidget *networkdisconnectionwidget = new NetworkDisconnectionWidget(q);
+    zipFileProcessWidget *zipfileprocesswidget = new zipFileProcessWidget(q);
+    ZipFileProcessResultWidget *zipfileprocessresultwidget = new ZipFileProcessResultWidget(q);
+    CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
+    SelectMainWidget *selectmainwidget = new SelectMainWidget(q);
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
     stackedWidget->insertWidget(PageName::choosewidget, choosewidget);
     stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
     stackedWidget->insertWidget(PageName::readywidget, readywidget);
     stackedWidget->insertWidget(PageName::selectmainwidget, selectmainwidget);
     stackedWidget->insertWidget(PageName::transferringwidget, transferringwidget);
-    stackedWidget->insertWidget(PageName::successtranswidget, successtranswidget);
+    stackedWidget->insertWidget(PageName::successtranswidget,successwidget);
     stackedWidget->insertWidget(PageName::filewselectidget, filewselectidget);
     stackedWidget->insertWidget(PageName::configselectwidget, configselectwidget);
     stackedWidget->insertWidget(PageName::appselectwidget, appselectwidget);
     stackedWidget->insertWidget(PageName::errorwidget, errorwidget);
-    stackedWidget->setCurrentIndex(PageName::startwidget);
+    stackedWidget->insertWidget(PageName::createbackupfilewidget, createbackupfilewidget);
+    stackedWidget->insertWidget(PageName::networkdisconnectionwidget, networkdisconnectionwidget);
+    stackedWidget->insertWidget(PageName::zipfileprocesswidget, zipfileprocesswidget);
+    stackedWidget->insertWidget(PageName::zipfileprocessresultwidget, zipfileprocessresultwidget);
+
+    stackedWidget->setCurrentIndex(PageName::choosewidget);
 
     windowsCentralWidgetContent->setContentsMargins(8, 8, 8, 8);
     windowsCentralWidgetContent->addWidget(stackedWidget);
@@ -105,11 +111,11 @@ void MainWindowPrivate::initWidgets()
             [stackedWidget] { stackedWidget->setCurrentIndex(PageName::successtranswidget); });
 
     QObject::connect(appselectwidget, &AppSelectWidget::isOk, selectmainwidget,
-                     &selectMainWidget::changeSelectframeState);
+                     &SelectMainWidget::changeSelectframeState);
     QObject::connect(filewselectidget, &FileSelectWidget::isOk, selectmainwidget,
-                     &selectMainWidget::changeSelectframeState);
+                     &SelectMainWidget::changeSelectframeState);
     QObject::connect(configselectwidget, &ConfigSelectWidget::isOk, selectmainwidget,
-                     &selectMainWidget::changeSelectframeState);
+                     &SelectMainWidget::changeSelectframeState);
 }
 
 void MainWindowPrivate::paintEvent(QPaintEvent *event)

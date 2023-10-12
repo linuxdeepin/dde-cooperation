@@ -34,5 +34,11 @@
         <file>icon/GIF/compress.gif</file>
         <file>icon/GIF/transferring.gif</file>
         <file>icon/GIF/waiting.gif</file>
+        <file>icon/noInternet.png</file>
+        <file>icon/noInternet@2x.png</file>
+        <file>icon/drive-harddisk-32px.svg</file>
+        <file>icon/drive-harddisk-usb-32px.svg</file>
+        <file>icon/select.svg</file>
+        <file>icon/media-optical-32px.svg</file>
     </qresource>
 </RCC>

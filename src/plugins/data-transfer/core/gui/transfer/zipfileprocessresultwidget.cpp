@@ -1,41 +1,67 @@
 ﻿#include "zipfileprocessresultwidget.h"
-
+#include "../type_defines.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QStackedWidget>
 #include <QToolButton>
 #include <QDebug>
 #include <QLabel>
+#include <QApplication>
 
 #pragma execution_character_set("utf-8")
 
-zipFileProcessResultWidget::zipFileProcessResultWidget(QWidget *parent) : QFrame(parent)
+ZipFileProcessResultWidget::ZipFileProcessResultWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
 }
 
-zipFileProcessResultWidget::~zipFileProcessResultWidget() { }
+ZipFileProcessResultWidget::~ZipFileProcessResultWidget() { }
 
-void zipFileProcessResultWidget::initUI()
+void ZipFileProcessResultWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
 
-    failed();
-    QToolButton *exitButton = new QToolButton(this);
+    successed();
+    exitButton = new QToolButton(this);
     exitButton->setText("退出");
     exitButton->setFixedSize(120, 35);
-    exitButton->setStyleSheet("background-color: lightgray;");
+    exitButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                              "border: 1px solid rgba(0,0,0, 0.03);"
+                              "opacity: 1;"
+                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                              "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                              "font-family: \"SourceHanSansSC-Medium\";"
+                              "font-size: 14px;"
+                              "font-weight: 500;"
+                              "color: rgba(65,77,104,1);"
+                              "font-style: normal;"
+                              "letter-spacing: 3px;"
+                              "text-align: center;"
+                              "}");
     exitButton->setEnabled(false);
-    QObject::connect(exitButton, &QToolButton::clicked, this, &zipFileProcessResultWidget::exit);
+    QObject::connect(exitButton, &QToolButton::clicked, this, &ZipFileProcessResultWidget::exit);
 
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
     backButton->setFixedSize(120, 35);
-    backButton->setStyleSheet("background-color: lightgray;");
-    QObject::connect(backButton, &QToolButton::clicked, this, &zipFileProcessResultWidget::backPage);
+    backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                              "border: 1px solid rgba(0,0,0, 0.03);"
+                              "opacity: 1;"
+                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                              "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                              "font-family: \"SourceHanSansSC-Medium\";"
+                              "font-size: 14px;"
+                              "font-weight: 500;"
+                              "color: rgba(65,77,104,1);"
+                              "font-style: normal;"
+                              "letter-spacing: 3px;"
+                              "text-align: center;"
+                              "}");
+    QObject::connect(backButton, &QToolButton::clicked, this,
+                     &ZipFileProcessResultWidget::backPage);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     buttonLayout->addWidget(backButton);
@@ -46,21 +72,22 @@ void zipFileProcessResultWidget::initUI()
     mainLayout->addLayout(buttonLayout);
 }
 
-void zipFileProcessResultWidget::successed()
+void ZipFileProcessResultWidget::successed()
 {
-    QLabel *icon = new QLabel(this);
+    icon = new QLabel(this);
     icon->setPixmap(QIcon(":/icon/success-128.svg").pixmap(128, 128));
     icon->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tipLabel1 = new QLabel("备份成功", this);
+    tipLabel1 = new QLabel("备份成功", this);
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    QLabel *tipLabel2 = new QLabel("恭喜您，信息备份成功", this);
+    tipLabel2 = new QLabel("恭喜您，信息备份成功", this);
     tipLabel2->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QString display = "<a href=\"https://\" style=\"text-decoration:none;\">前往查看</a>";
-    QLabel *displayLabel = new QLabel(display, this);
+    displayLabel = new QLabel(display, this);
     displayLabel->setAlignment(Qt::AlignCenter);
-    connect(displayLabel, &QLabel::linkActivated, this, &zipFileProcessResultWidget::informationPage);
+    QObject::connect(displayLabel, &QLabel::linkActivated, this,
+                     &ZipFileProcessResultWidget::informationPage);
 
     ((QHBoxLayout *)(this->layout()))->addSpacing(100);
     this->layout()->addWidget(icon);
@@ -72,27 +99,39 @@ void zipFileProcessResultWidget::successed()
     this->layout()->addWidget(displayLabel);
 }
 
-void zipFileProcessResultWidget::failed()
+void ZipFileProcessResultWidget::upWidgetToFailed()
 {
-    QLabel *icon = new QLabel(this);
+    displayLabel->setVisible(false);
     icon->setPixmap(QIcon(":/icon/fail.svg").pixmap(128, 128));
-    icon->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-
-    QLabel *tipLabel1 = new QLabel("备份失败", this);
-    tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    QLabel *tipLabel2 = new QLabel("xxxxxxx,信息备份失败", this);
-    tipLabel2->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-
-    ((QHBoxLayout *)(this->layout()))->addSpacing(100);
-    this->layout()->addWidget(icon);
-    ((QHBoxLayout *)(this->layout()))->addSpacing(10);
-    this->layout()->addWidget(tipLabel1);
-    ((QHBoxLayout *)(this->layout()))->addSpacing(0);
-    this->layout()->addWidget(tipLabel2);
-    ((QHBoxLayout *)(this->layout()))->addSpacing(120);
+    tipLabel1->setText("备份失败");
+    tipLabel2->setText("xxxxxxx,信息备份失败");
+    exitButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                "border: 1px solid rgba(0,0,0, 0.03);"
+                                "opacity: 1;"
+                                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                                "font-family: \"SourceHanSansSC-Medium\";"
+                                "font-size: 14px;"
+                                "font-weight: 500;"
+                                "color: rgba(65,77,104,1);"
+                                "font-style: normal;"
+                                "letter-spacing: 3px;"
+                                "text-align: center;"
+                                "}");
 }
 
-void zipFileProcessResultWidget::backPage()
+void ZipFileProcessResultWidget::backPage()
+{
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    if (stackedWidget) {
+        stackedWidget->setCurrentIndex(PageName::choosewidget);
+    } else {
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+                      "nullptr";
+    }
+}
+
+void ZipFileProcessResultWidget::informationPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
@@ -103,24 +142,7 @@ void zipFileProcessResultWidget::backPage()
     }
 }
 
-void zipFileProcessResultWidget::informationPage()
+void ZipFileProcessResultWidget::exit()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        // stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
-}
-
-void zipFileProcessResultWidget::exit()
-{
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        // stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+     QApplication::quit();
 }
