@@ -7,10 +7,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.h"
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.cpp"
-    # "${CMAKE_SOURCE_DIR}/src/common/rpcwraper.h"
-    # "${CMAKE_SOURCE_DIR}/src/common/rpcwraper.cpp"
-    # "${CMAKE_SOURCE_DIR}/src/common/ipcwraper.h"
-    # "${CMAKE_SOURCE_DIR}/src/common/ipcwraper.cpp"
+    "${CMAKE_SOURCE_DIR}/src/ipc/backendservice.h"
+    "${CMAKE_SOURCE_DIR}/src/ipc/backendservice.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"

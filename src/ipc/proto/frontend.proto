@@ -1,0 +1,76 @@
+package ipc
+
+service Frontend {
+    ping, // ping frontend and check proto version
+    cbPeerInfo, // callback a remote information
+    cbConnect, // callback the connect result
+    cbTargetSpace, // callback the target space
+    cbApplist, // {AppList}
+    cbMiscMessage, // any message by json format
+    cbTransStatus, // callback transfer job status: doing, done, breaked
+    cbFsPull, // callback remote FS, FileDirectory
+    cbFsAction, // callback result for remote FS action: create, delete, rename
+    notifyFileStatus, // notify file status
+}
+
+// return {GenericResult}
+object PingFrontParam {
+    string session // session id string
+    string version
+}
+
+object FileEntry {
+    uint32 type
+    string name
+    bool hidden
+    uint64 size
+    uint64 modified_time
+}
+
+object FileDirectory {
+    int32 id
+    string path
+    [FileEntry] entries
+}
+
+object GenericResult {
+    int32 id
+    int32 result
+    string msg
+}
+
+object FileStatus {
+    int32 job_id
+    int32 file_id
+    string name
+    int32 status
+    int64 total
+    int64 current
+    int32 second
+}
+
+object SpaceSize {
+    // get target availables space size
+    string dir
+    uint64 size
+}
+
+object PeerInfo {
+    // peer info
+    string uuid
+    string ipv4
+    string username
+    string hostname
+    int32 device_os
+    string proto_version
+    bool mode
+}
+
+object AppList {
+    // get target portable app list
+    string displayname
+    int32 run_type    // linux or  wine
+    string pkgname  // full package name
+    string version
+    string vonder
+}

@@ -5,6 +5,7 @@
 #include <co/rpc.h>
 #include <co/co.h>
 
+class FrontendService;
 class TransferHandle : public QObject
 {
     Q_OBJECT
@@ -15,27 +16,42 @@ public:
 
     void tryConnect(QString ip, QString password);
     QString getConnectPassWord();
-    void senFiles(QStringList paths);
+    void sendFiles(QStringList paths);
 
-    void pollingStatus();
+public slots:
+    void saveSession(QString sessionid);
+    void handleConnectStatus(int result, QString msg);
+    void handleTransJobStatus(int id, int result, QString msg);
+    void handleFileTransStatus(QString statusstr);
 
 private:
+    FrontendService *_frontendIpcService = nullptr;
+    bool _backendOK = false;
+    QString _sessionid = "";
 };
 
 class TransferWoker
 {
 
 public:
-    TransferWoker() {}
-    ~TransferWoker() {}
+    ~TransferWoker();
 
-    static QString getConnectPassWord();
-    static void senFiles(QStringList paths);
-    static void tryConnect(const std::string &ip, const std::string &password);
+    bool pingBackend();
+    QString getConnectPassWord();
+    void sendFiles(QStringList paths);
+    void tryConnect(const std::string &ip, const std::string &password);
 
-    static int getStatus();
+    static TransferWoker *instance()
+    {
+        static TransferWoker ins;
+        return &ins;
+    }
 
 private:
+    TransferWoker();
+
+    co::pool *_gPool = nullptr;
+    fastring _session_id = "";
 };
 
 #endif

@@ -8,8 +8,7 @@
 #include <QDebug>
 #include <QUrl>
 
-#include <service/servicemanager.h>
-#include <service/ipc/fsservice.h>
+#include "service/servicemanager.h"
 
 using namespace daemon_core;
 

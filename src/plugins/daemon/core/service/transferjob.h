@@ -7,8 +7,9 @@
 
 #include <QObject>
 #include <service/rpc/remoteservice.h>
-#include <ipc/chan.h>
+#include <ipc/proto/chan.h>
 #include "co/co.h"
+#include "co/tasked.h"
 
 class TransferJob : public QObject
 {
