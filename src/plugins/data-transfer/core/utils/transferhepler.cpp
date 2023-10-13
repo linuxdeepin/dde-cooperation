@@ -103,7 +103,7 @@ void TransferHelper::startTransfer()
 {
     qInfo() << OptionsManager::instance()->getUserOptions();
     QStringList paths = OptionsManager::instance()->getUserOptions()["file"];
-    transferhandle.senFiles(paths);
+    transferhandle.sendFiles(paths);
 }
 
 void TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &save)
@@ -271,7 +271,7 @@ bool TransferHelper::setWallpaper(const QString &filepath)
 {
     qInfo() << OptionsManager::instance()->getUserOptions();
     QStringList paths = OptionsManager::instance()->getUserOptions()["file"];
-    transferhandle.senFiles(paths);
+    transferhandle.sendFiles(paths);
     return true;
 }
 #endif

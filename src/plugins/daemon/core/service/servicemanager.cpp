@@ -4,14 +4,12 @@
 
 #include "servicemanager.h"
 #include "rpc/remoteservice.h"
-#include "ipc/common.h"
-#include "ipc/fs.h"
-#include "ipc/chan.h"
-#include "ipc/commonservice.h"
-#include "ipc/fsservice.h"
+#include "ipc/proto/chan.h"
+#include "ipc/backendservice.h"
 #include "common/constant.h"
 #include "comshare.h"
 #include "co/cout.h"
+#include "session.h"
 
 #include "utils/config.h"
 
@@ -22,25 +20,29 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
     flag::set_value("rpc_log", "false");
     _rpcServiceBinder = new RemoteServiceBinder(this);
-    _ipcCommonService = new CommonService(this);
-    _ipcFsService = new FSService(this);
+    _backendIpcService = new BackendService(this);
 
-    connect(_ipcCommonService, &CommonService::sigConnect, this, &ServiceManager::notifyConnect, Qt::QueuedConnection);
-    connect(_ipcFsService, &FSService::sigSendFiles, this, &ServiceManager::newTransJob, Qt::QueuedConnection);
+    connect(_backendIpcService, &BackendService::sigSaveSession, this, &ServiceManager::saveSession, Qt::QueuedConnection);
+    connect(_backendIpcService, &BackendService::sigConnect, this, &ServiceManager::notifyConnect, Qt::QueuedConnection);
+    connect(_backendIpcService, &BackendService::sigSendFiles, this, &ServiceManager::newTransSendJob, Qt::QueuedConnection);
+
+    connect(_rpcServiceBinder, &RemoteServiceBinder::loginResult, this, &ServiceManager::handleLoginResult, Qt::QueuedConnection);
 
     // start ipc services
-    ipc::CommonImpl *commimp = new ipc::CommonImpl();
-    commimp->setInterface(_ipcCommonService);
-    ipc::FSImpl *fsimp = new ipc::FSImpl();
-    fsimp->setInterface(_ipcFsService);
-    rpc::Server()
-            .add_service(commimp)
-            .add_service(fsimp)
-            .start("0.0.0.0", 7788, "/common", "", "");
+    ipc::BackendImpl *backendimp = new ipc::BackendImpl();
+    backendimp->setInterface(_backendIpcService);
+    rpc::Server().add_service(backendimp)
+                 .start("0.0.0.0", UNI_IPC_BACKEND_PORT, "/backend", "", "");
 
     _transjob_sends.clear();
     _transjob_recvs.clear();
     _transjob_break.clear();
+
+    _sessions.clear();
+
+    // init the pin code.
+    DaemonConfig::instance()->refreshPin();
+    DLOG << "!!!!!! here pin: " << DaemonConfig::instance()->getPin();
 }
 
 ServiceManager::~ServiceManager()
@@ -48,12 +50,11 @@ ServiceManager::~ServiceManager()
     if (_rpcServiceBinder) {
         _rpcServiceBinder->deleteLater();
     }
-    if (_ipcCommonService) {
-        _ipcCommonService->deleteLater();
+    if (_backendIpcService) {
+        _backendIpcService->deleteLater();
     }
-    if (_ipcFsService) {
-        _ipcFsService->deleteLater();
-    }
+
+    _sessions.reset();
 }
 
 void ServiceManager::startRemoteServer()
@@ -74,6 +75,8 @@ void ServiceManager::startRemoteServer()
             switch (indata.type) {
             case IN_LOGIN:
             {
+                fastring pin = DaemonConfig::instance()->getPin();
+                DLOG << "!!!!!! this get pin: " << pin;
                 break;
             }
             case IN_TRANSJOB:
@@ -134,7 +137,7 @@ bool ServiceManager::handleRemoteRequestJob(co::Json &info)
     go([this, job]() {
         // start job one by one
         co::mutex_guard g(g_m);
-        DLOG << ".........start job: sched: " << co::sched_id() << " co: " << co::coroutine_id();
+        // DLOG << ".........start job: sched: " << co::sched_id() << " co: " << co::coroutine_id();
         job->start();
     });
 
@@ -228,24 +231,49 @@ bool ServiceManager::handleTransReport(co::Json &info)
     return true;
 }
 
-void ServiceManager::newTransJob(int32 jobId, QStringList paths, QString savedir)
+Session* ServiceManager::sessionById(QString &id)
 {
+    // find the session by id
+    for (size_t i = 0; i < _sessions.size(); ++i) {
+        Session *s = _sessions[i];
+        if (s->getSession().compare(id) == 0) {
+            return s;
+        }
+    }
+    return nullptr;
+}
+
+void ServiceManager::saveSession(QString who, QString session, int cbport)
+{
+    Session *s = new Session(who, session, cbport);
+    _sessions.push_back(s);
+}
+
+void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList paths, bool sub, QString savedir)
+{
+    Session *s = sessionById(session);
+    if (!s || s->valid()) {
+        DLOG << "this session is invalid." << session.toStdString();
+        return;
+    }
+
     int32 id = jobId;
     for (QString path : paths) {
         QByteArray byteArray = path.toUtf8();
         const char *filepath = byteArray.constData();
+        //FSJob
         co::Json jobjson = {
             { "job_id", id },
             { "path", filepath },
             { "hidden", false },
-            { "sub", true },
+            { "sub", sub },
             { "write", false }
         };
         handleRemoteRequestJob(jobjson);
+        s->addJob(id); // record this job into session
+
         id++;
     }
-
-//    DaemonConfig::instance()->setStatus(transferring);
 }
 
 void ServiceManager::notifyConnect(QString ip, QString name, QString password)
@@ -264,5 +292,30 @@ void ServiceManager::notifyConnect(QString ip, QString name, QString password)
             _rpcServiceBinder->createExecutor(target_ip.c_str(), UNI_RPC_PORT_BASE);
             _rpcServiceBinder->doLogin(user.c_str(), pincode.c_str());
         });
+    }
+}
+
+void ServiceManager::handleLoginResult(bool result, QString session)
+{
+    qInfo() << session << " LoginResult: " << result;
+    fastring session_id(session.toStdString());
+
+    // find the session by session id
+    Session *s = sessionById(session);
+    if (s && s->valid()) {
+        go ([s, result, session_id]() {
+            co::pool_guard<rpc::Client> c(s->clientPool());
+            co::Json req, res;
+            //cbConnect {GenericResult}
+            req = {
+                { "id", 0 },
+                { "result", result ? 1 : 0 },
+                { "msg", session_id },
+            };
+            req.add_member("api", "Frontend.cbConnect");
+            c->call(req, res);
+        });
+    } else {
+        DLOG << "Donot find login seesion: " << session_id;
     }
 }

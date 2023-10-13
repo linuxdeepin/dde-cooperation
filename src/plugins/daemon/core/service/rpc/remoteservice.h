@@ -8,8 +8,6 @@
 #include <QObject>
 
 #include "message.pb.h"
-#include "../fsadapter.h"
-#include "co/tasked.h"
 
 class RemoteServiceImpl : public RemoteService
 {
@@ -63,8 +61,6 @@ public:
                          ::google::protobuf::Closure* done);
 
 private:
-    co::Tasked _speedChecker;
-    size_t recv_block_pres;
 };
 
 class RemoteServiceBinder : public QObject
@@ -76,17 +72,13 @@ public:
 
     void startRpcListen();
 
-    void createExecutor(const char *targetip, uint16 port);
+    void createExecutor(const char *targetip, uint16_t port);
 
     void doLogin(const char *username, const char *pincode);
 
     void doQuery();
 
     void doMisc();
-
-    void doFileAction(int type, const char *actionjson);
-
-    int doFileFlow(int type, const char *flowjson, const void *bindata = nullptr, int binlen = 0);
 
     // 通知远端准备执行作业：接收或发送。
     int doTransfileJob(int id, const char *jobpath, bool hidden, bool recursive, bool recv);
@@ -101,9 +93,9 @@ public:
     int doUpdateTrans(FileTransUpdate update);
 
 signals:
-    void loginResult(bool result, const char *reason);
-    void queryResult(bool result, const char *reason);
-    void miscResult(bool result, const char *reason);
+    void loginResult(bool result, QString who);
+    void queryResult(bool result, QString msg);
+    void miscResult(bool result, QString msg);
     void fileActionResult(bool result, int id);
 
     void fileTransResult(const char *path, int id, bool result);
