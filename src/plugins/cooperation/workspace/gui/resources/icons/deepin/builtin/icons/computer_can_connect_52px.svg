@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>电脑-已连接 2</title>
+    <defs>
+        <filter x="-12.3%" y="4.8%" width="124.7%" height="109.3%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.15 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <path d="M3.53875236,0 L36.9728755,0 C38.9272745,-8.03106475e-16 40.5116279,1.5843534 40.5116279,3.53875236 L40.5116279,27.0303776 L40.5116279,27.0303776 L0,27.0303776 L0,3.53875236 C-6.83434053e-16,1.5843534 1.5843534,1.69128489e-15 3.53875236,0 Z" id="path-2"></path>
+        <linearGradient x1="18.6039735%" y1="29.1545758%" x2="120.533046%" y2="91.5042686%" id="linearGradient-4">
+            <stop stop-color="#192A5E" offset="0%"></stop>
+            <stop stop-color="#3D7592" offset="100%"></stop>
+        </linearGradient>
+        <path d="M4.71300245,1.19451864 L35.7986255,1.19451864 C37.7530244,1.19451864 39.3373778,2.77887204 39.3373778,4.733271 L39.3373778,25.835859 L39.3373778,25.835859 L1.17425008,25.835859 L1.17425008,4.733271 C1.17425008,2.77887204 2.75860348,1.19451864 4.71300245,1.19451864 Z" id="path-5"></path>
+        <linearGradient x1="48.4906452%" y1="0%" x2="89.6297784%" y2="100%" id="linearGradient-7">
+            <stop stop-color="#FFFFFF" stop-opacity="0.333835842" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="65.4361786%" id="linearGradient-8">
+            <stop stop-color="#68778F" offset="0%"></stop>
+            <stop stop-color="#A6B0C0" offset="100%"></stop>
+        </linearGradient>
+        <filter x="-44.2%" y="-35.4%" width="188.5%" height="188.5%" filterUnits="objectBoundingBox" id="filter-9">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.15 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="新" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="跨端协同-切图" transform="translate(-261, -900)">
+            <g id="电脑-已连接" transform="translate(261, 900)">
+                <rect id="矩形" x="0" y="0" width="52" height="52"></rect>
+                <g id="电脑-2" filter="url(#filter-1)" transform="translate(6.0465, 1.814)" opacity="0.596892154">
+                    <g id="电脑">
+                        <g id="矩形-+-路径-4-蒙版" transform="translate(0, 6.0465)">
+                            <mask id="mask-3" fill="white">
+                                <use xlink:href="#path-2"></use>
+                            </mask>
+                            <use id="蒙版" fill="#ECF3FD" xlink:href="#path-2"></use>
+                            <mask id="mask-6" fill="white">
+                                <use xlink:href="#path-5"></use>
+                            </mask>
+                            <use id="蒙版" fill="url(#linearGradient-4)" xlink:href="#path-5"></use>
+                            <rect id="矩形" fill="#6E88A3" mask="url(#mask-6)" x="4.12740142" y="4.57431749" width="2.26086957" height="2.26086957" rx="0.565217391"></rect>
+                            <rect id="矩形" fill="#6E88A3" mask="url(#mask-6)" x="4.12740142" y="9.09605662" width="2.26086957" height="2.26086957" rx="0.565217391"></rect>
+                            <rect id="矩形" fill="#6E88A3" mask="url(#mask-6)" x="4.12740142" y="13.6177958" width="2.26086957" height="2.26086957" rx="0.565217391"></rect>
+                            <polygon id="路径-4" fill="url(#linearGradient-7)" mask="url(#mask-6)" points="14.0132653 0 31.421844 27.0303776 40.5116279 27.0303776 40.5116279 0"></polygon>
+                        </g>
+                        <path d="M0,32.923181 L40.5116279,32.923181 L40.5116279,33.8526211 C40.5116279,35.80702 38.9272745,37.3913734 36.9728755,37.3913734 L3.53875236,37.3913734 C1.5843534,37.3913734 1.57161247e-15,35.80702 0,33.8526211 L0,32.923181 L0,32.923181 Z" id="矩形" fill="#CAD9EF"></path>
+                        <path d="M13.9015887,42.3255814 C13.4980623,42.3273566 13.2080768,42.2706426 13.031632,42.1553971 C12.8644738,42.0462171 12.8797338,41.9003532 13.0774119,41.7178053 L13.1120473,41.687041 L14.0160754,41.2437704 C14.941643,40.7899383 15.5630484,39.8857406 15.6549933,38.8590054 L15.7864209,37.3913734 L15.7864209,37.3913734 L24.0520124,37.3913734 L24.18344,38.8590054 C24.275385,39.8857406 24.8967903,40.7899383 25.822358,41.2437704 L26.726386,41.687041 L26.726386,41.687041 C26.956441,41.8840329 26.9832461,42.0401516 26.8068013,42.1553971 C26.6421196,42.2629596 26.3785311,42.3195346 26.0160361,42.3251222 L13.9015887,42.3255814 Z" id="路径" fill="url(#linearGradient-8)"></path>
+                    </g>
+                </g>
+                <g id="DTK/Button/Action/List_Add_normal" filter="url(#filter-9)" transform="translate(37.3043, 30.5217)" fill="#2B98FE" stroke="#FFFFFF" stroke-width="1.13043478">
+                    <g id="list_add_normal">
+                        <rect id="Rectangle-9" x="0.565217391" y="0.565217391" width="10.173913" height="10.173913" rx="5.08695652"></rect>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

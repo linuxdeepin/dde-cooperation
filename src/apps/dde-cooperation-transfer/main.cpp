@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "singleton/singleapplication.h"
+#include "singleapplication.h"
+#include "commandparser.h"
 #include "base/baseutils.h"
 #include "config.h"
 
@@ -66,12 +67,13 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-    deepin_cross::SingleApplication app(argc, argv);
+    SingleApplication app(argc, argv);
     app.setOrganizationName("deepin");
 
-    bool canSetSingle = app.setSingleInstance(app.applicationName());
-    if (!canSetSingle) {
-        qInfo() << "single application is already running.";
+    bool isSingleInstance = app.setSingleInstance(app.applicationName());
+    if (!isSingleInstance) {
+        qInfo() << "new client";
+        app.handleNewClient(app.applicationName());
         return 0;
     }
 
@@ -84,6 +86,8 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    CommandParser::instance().process();
+    CommandParser::instance().processCommand();
     int ret = app.exec();
 
     app.closeServer();
