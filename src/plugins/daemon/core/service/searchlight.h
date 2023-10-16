@@ -60,9 +60,7 @@ public:
 
     void start();
 
-    bool started() {
-        return !_stop;
-    }
+    bool started();
 
     void exit();
 private:
@@ -95,9 +93,7 @@ public:
     // start announce
     void start();
 
-    bool started() {
-        return !_stop;
-    }
+    bool started();
 
     // exit announce
     void exit();

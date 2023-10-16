@@ -44,14 +44,14 @@ void Discoverer::start()
     bool init = co::init_addr(&addr, FLG_udp_ip.c_str(), FLG_udp_port);
     if (!init) {
         ELOG << "Failed to init address";
-        close(sockfd);
+        co::close(sockfd);
         return;
     }
 
     int res = co::bind(sockfd, &addr, sizeof(addr));
     if (res < 0) {
         ELOG << "Failed to bind address";
-        close(sockfd);
+        co::close(sockfd);
         return;
     }
 
@@ -64,7 +64,7 @@ void Discoverer::start()
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
     if (co::setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char*)&mreq, sizeof(mreq)) < 0) {
         ELOG << "Failed to join multicast group";
-        close(sockfd);
+        co::close(sockfd);
         return;
     }
 
@@ -104,6 +104,10 @@ void Discoverer::start()
     co::close(sockfd);
 
     _stop = true;
+}
+
+bool Discoverer::started() {
+    return !_stop;
 }
 
 void Discoverer::exit()
@@ -201,7 +205,7 @@ void Announcer::start()
     int enable = 0;
     if (co::setsockopt(sockfd, IPPROTO_IP, IP_MULTICAST_LOOP, &enable, sizeof(enable)) < 0) {
         ELOG << "Failed to set socket options";
-        close(sockfd);
+        co::close(sockfd);
         return;
     }
 
@@ -211,7 +215,7 @@ void Announcer::start()
     bool init = co::init_addr(&dest_addr, FLG_mcast_ip.c_str(), FLG_udp_port);
     if (!init) {
         ELOG << "Failed to set destination address";
-        close(sockfd);
+        co::close(sockfd);
         return;
     }
 
@@ -231,7 +235,7 @@ void Announcer::start()
 
         //DLOG << "UDP send: " << message;
 
-        ssize_t send_len = co::sendto(sockfd, message.data(), message.size(), &dest_addr, len);
+        int send_len = co::sendto(sockfd, message.data(), message.size(), &dest_addr, len);
         if (send_len < 0) {
             ELOG << "Failed to send data";
             break;
@@ -244,6 +248,10 @@ void Announcer::start()
     co::close(sockfd);
 
     _stop = true;
+}
+
+bool Announcer::started() {
+    return !_stop;
 }
 
 void Announcer::exit()

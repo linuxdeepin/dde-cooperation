@@ -10,6 +10,7 @@
 #include "co/byte_order.h"
 #include "co/rand.h"
 #include "co/os.h"
+#include "co/log.h"
 #include "utils.h"
 
 #include <QSettings>
@@ -36,8 +37,11 @@ public:
     void initPin()
     {
         fastring pin = _fileConfig->value(KEY_AUTHPIN).toString().toStdString();
+        DLOG << "init pin:" << pin;
         if (pin.empty()) {
             refreshPin();
+        } else {
+            _pinCode = pin;
         }
     }
 
