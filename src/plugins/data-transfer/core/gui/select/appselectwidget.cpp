@@ -142,15 +142,6 @@ void AppSelectWidget::initSelectFrame()
     appView->setSelectionMode(QAbstractItemView::NoSelection);
 
 
-//    QStandardItemModel *model = new QStandardItemModel(this);
-//    fileview = new QListView(this);
-//    fileview->setEditTriggers(QAbstractItemView::NoEditTriggers);
-//    fileview->setModel(model);
-//    fileview->setItemDelegate(delegate);
-//    fileview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    fileview->setSelectionMode(QAbstractItemView::NoSelection);
-
-
     QMap<QString, QString> appList = TransferHelper::instance()->getAppList();
     for (auto iterator = appList.begin(); iterator != appList.end(); iterator++) {
         ListItem *item = new ListItem();

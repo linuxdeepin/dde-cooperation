@@ -13,6 +13,11 @@ inline constexpr char GoogleChrome[]{ "Google Chrome" };
 inline constexpr char MozillaFirefox[]{ "Mozilla Firefox" };
 } // namespace BrowerName
 
+struct UosApp{
+    QString UosName;
+    QString windowsName;
+    QStringList feature;
+};
 class DrapWindowsData
 {
 public:
@@ -32,8 +37,8 @@ public:
     QString getUserName();
     QString getIP();
 
-    QStringList getLinuxApplist(QList<QStringList>& list);
-    QStringList RecommendedInstallationAppList();
+    void  getLinuxApplist(QList<UosApp>& list);
+    QMap<QString,QString> RecommendedInstallationAppList();
 
 private:
     DrapWindowsData();

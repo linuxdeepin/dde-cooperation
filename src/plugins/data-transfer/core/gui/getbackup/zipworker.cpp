@@ -11,6 +11,8 @@
 #include <QJsonArray>
 #include <QFile>
 #include <QTextCodec>
+#include <QDir>
+#include <QElapsedTimer>
 
 #pragma execution_character_set("utf-8")
 ZipWork::ZipWork() { }
@@ -24,8 +26,6 @@ void ZipWork::run()
 
 void ZipWork::zipFile(const QStringList &sourceFilePath, const QString &zipFileSave)
 {
-    emit TransferHelper::instance()->transferContent(QString("压缩文件%1已存在,请删除后重试。").arg(zipFileSave), -1, 500);
-                                                     return;
     // Check if the zipFileSave exists
     QFile file(zipFileSave);
     if (file.exists()) {
@@ -35,7 +35,8 @@ void ZipWork::zipFile(const QStringList &sourceFilePath, const QString &zipFileS
         } else {
             // can not zip file
             qDebug() << "Can not deleted " << zipFileSave;
-            emit TransferHelper::instance()->transferContent(QString("压缩文件%1已存在,请删除后重试。").arg(zipFileSave), -1, 500);
+            emit TransferHelper::instance()->transferContent(
+                    QString("压缩文件%1已存在,请删除后重试。").arg(zipFileSave), -1, 500);
             return;
         }
     }
@@ -54,7 +55,8 @@ void ZipWork::zipFile(const QStringList &sourceFilePath, const QString &zipFileS
         cmd.append(QString("'%1',").arg(path));
     }
     cmd.chop(1);
-    cmd.append(QString(" -DestinationPath '%1' -CompressionLevel Optimal -Verbose").arg(zipFileSave));
+    cmd.append(
+            QString(" -DestinationPath '%1' -CompressionLevel Optimal -Verbose").arg(zipFileSave));
 
     qInfo() << cmd;
     arguments << cmd;
@@ -62,15 +64,43 @@ void ZipWork::zipFile(const QStringList &sourceFilePath, const QString &zipFileS
     process.setProcessChannelMode(QProcess::SeparateChannels);
 
     bool success = true;
-    QObject::connect(&process, &QProcess::readyReadStandardOutput, &process, [&process]() {
+    QObject::connect(&process, &QProcess::readyReadStandardOutput, &process, [&process, this]() {
         QString output =
                 QTextCodec::codecForName("GB18030")->toUnicode(process.readAllStandardOutput());
+
+        int currentfileNum = output.count("正在添加");
+
+        qInfo() << "Standard Output:" << output;
         QRegExp regex("[\\x4e00-\\x9fa5]+");
         output.replace(regex, "");
         output.remove(':');
-        qDebug() << "Standard Output:" << output;
 
-        emit TransferHelper::instance()->transferContent(output.left(50), 0, 500);
+        zipFileNum += currentfileNum;
+        int processbar = qBound(0, (int)((float)zipFileNum / (float)allFileNum * 100), 99);
+        int needSecond = 1;
+        if (!timer.isValid()) {
+            timer.start();
+        } else {
+            // If the timer is started, the elapsed time is calculated and the timer is restarted
+            qint64 elapsed = timer.restart();
+            if (lastZipFileNum == 0) {
+                needSecond = 100;
+            } else {
+                needSecond = (allFileNum - zipFileNum) / lastZipFileNum * elapsed / 1000;
+                if (needSecond <= 1)
+                    needSecond = 1;
+            }
+        }
+        qInfo() << "all file:" << allFileNum;
+        qInfo() << "zipFileNum" << zipFileNum;
+        qInfo() << "need time: " << needSecond;
+        qInfo() << "processbar:" << processbar;
+        qInfo() << "currentfileNum" << currentfileNum;
+
+        emit TransferHelper::instance()->transferContent(output, processbar, needSecond);
+
+        // update lastzipfilenum
+        lastZipFileNum = currentfileNum;
     });
 
     QObject::connect(&process, &QProcess::readyReadStandardError, &process, [&process, &success]() {
@@ -149,15 +179,6 @@ void ZipWork::getUserDataPackagingFile()
     QStringList browserList = OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
     QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
 
-    //    browserList.append(BrowserName::MicrosoftEdge);
-    //    browserList.append(BrowserName::MozillaFirefox);
-    //    browserList.append(BrowserName::GoogleChrome);
-    //    filePathList.append(QString("C:/Users/deep/Documents/test01/test/1"));
-    //    filePathList.append(QString("C:/Users/deep/Documents/test01/test/cdemo"));
-    //    filePathList.append(QString("C:/Users/deep/Documents/test01/libarchive-master"));
-    //    appList.append(QString("WeChat"));
-    //    appList.append(QString("QQ"));
-
     QStringList zipFilePathList;
     for (auto file : filePathList) {
         zipFilePathList.append(file);
@@ -210,7 +231,7 @@ void ZipWork::getUserDataPackagingFile()
                 OptionsManager::instance()->getUserOption(Options::kBackupFileName);
 
         QString zipFileName;
-        if (zipFileNameList.isEmpty()) {
+        if (zipFileNameList[0]=="") {
             zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName()
                     + "_" + DrapWindowsData::instance()->getIP() + "_uos.zip";
         } else {
@@ -218,6 +239,38 @@ void ZipWork::getUserDataPackagingFile()
         }
         qInfo() << "backup file save path:" << zipFileName;
 
+        // Get the number of files to zip
+        allFileNum = getAllFileNum(zipFilePathList);
+
         zipFile(zipFilePathList, zipFileName);
     }
 }
+
+int ZipWork::getPathFileNum(const QString &filePath)
+{
+    int fileCount = 0;
+    QDir dir(filePath);
+    QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs);
+
+    for (const QFileInfo &entry : entries) {
+        if (entry.isDir()) {
+            fileCount += getPathFileNum(entry.absoluteFilePath());
+        } else {
+            fileCount++;
+        }
+    }
+
+    return fileCount;
+}
+
+int ZipWork::getAllFileNum(const QStringList &fileList)
+{
+    int fileNum = 0;
+
+    for (const QString &filePath : fileList) {
+        int curPathFileNum = getPathFileNum(filePath);
+        fileNum += curPathFileNum;
+    }
+    return fileNum;
+}
+

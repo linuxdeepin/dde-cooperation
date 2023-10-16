@@ -1,4 +1,6 @@
 ﻿#include "zipfileprocessresultwidget.h"
+#include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
 #include "../type_defines.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -7,7 +9,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QApplication>
-
+#include <QDesktopServices>
 #pragma execution_character_set("utf-8")
 
 ZipFileProcessResultWidget::ZipFileProcessResultWidget(QWidget *parent) : QFrame(parent)
@@ -70,6 +72,10 @@ void ZipFileProcessResultWidget::initUI()
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
     mainLayout->addLayout(buttonLayout);
+
+
+    QObject::connect(TransferHelper::instance(), &TransferHelper::transferContent, this,
+                     &ZipFileProcessResultWidget::upWidgetToFailed);
 }
 
 void ZipFileProcessResultWidget::successed()
@@ -99,12 +105,16 @@ void ZipFileProcessResultWidget::successed()
     this->layout()->addWidget(displayLabel);
 }
 
-void ZipFileProcessResultWidget::upWidgetToFailed()
+void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int progressbar, int estimatedtime)
 {
+    if(progressbar!=-1)
+    {
+        return;
+    }
     displayLabel->setVisible(false);
     icon->setPixmap(QIcon(":/icon/fail.svg").pixmap(128, 128));
     tipLabel1->setText("备份失败");
-    tipLabel2->setText("xxxxxxx,信息备份失败");
+    tipLabel2->setText(content);
     exitButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                 "border: 1px solid rgba(0,0,0, 0.03);"
                                 "opacity: 1;"
@@ -133,13 +143,10 @@ void ZipFileProcessResultWidget::backPage()
 
 void ZipFileProcessResultWidget::informationPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        // stackedWidget->setCurrentIndex(data_transfer_core::PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    QString folderPath = OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath)[0];
+
+    QDesktopServices::openUrl(QUrl::fromLocalFile(folderPath));
+
 }
 
 void ZipFileProcessResultWidget::exit()

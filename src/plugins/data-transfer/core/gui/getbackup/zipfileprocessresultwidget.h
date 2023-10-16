@@ -10,7 +10,7 @@ class ZipFileProcessResultWidget : public QFrame
 public:
     ZipFileProcessResultWidget(QWidget *parent = nullptr);
     ~ZipFileProcessResultWidget();
-    void upWidgetToFailed();
+    void upWidgetToFailed(const QString &content, int progressbar, int estimatedtime);
 
 private:
     void initUI();

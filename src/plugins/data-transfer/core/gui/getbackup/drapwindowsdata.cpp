@@ -16,6 +16,8 @@
 
 #include <QStandardPaths>
 #include <QHostInfo>
+#include <QApplication>
+#include <QDir>
 
 #define MAXNAME 256
 
@@ -344,12 +346,15 @@ QString DrapWindowsData::getIP()
     return localip;
 }
 
-QStringList DrapWindowsData::getLinuxApplist(QList<QStringList> &list)
+void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 {
-    QFile file("..\\..\\resource\\app.json");
+    // QString jsonFilePath = QDir(qApp->applicationDirPath()).filePath("app.json");
+
+    QFile file("C:\\Users\\deep\\Documents\\project\\scx\\dde-cooperation\\src\\plugins\\data-"
+               "transfer\\core\\resource\\apps.json");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "can not open app json";
-        return QStringList();
+        return ;
     }
 
     QByteArray jsonData = file.readAll();
@@ -358,37 +363,36 @@ QStringList DrapWindowsData::getLinuxApplist(QList<QStringList> &list)
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
         qWarning() << "app json Parsing failed";
-        return QStringList();
+        return ;
     }
 
     QJsonObject jsonObj = jsonDoc.object();
 
     QStringList keys = jsonObj.keys();
 
-    QList<QStringList> data;
     for (const QString &key : keys) {
-        QJsonValue value = jsonObj.value(key);
-        if (value.isArray()) {
-            QStringList values;
-            for (const QJsonValue &element : value.toArray()) {
-                values.push_back(element.toString());
+        UosApp app;
+        QJsonObject appValue = jsonObj.value(key).toObject();
+
+        QVariantList variantList = appValue.value("feature").toArray().toVariantList();
+        QStringList featureList;
+        for (const QVariant &variant : variantList) {
+            if (variant.canConvert<QString>()) {
+                featureList.append(variant.toString());
             }
-            data.push_back(values);
         }
+        app.feature = featureList;
+        app.windowsName = key;
+        app.UosName = appValue.value("packageName").toString();
+        list.push_back(app);
     }
-    list = data;
 
     qInfo() << "linux app:";
-    // 输出数据
-    int index = 0;
-    foreach (const QString &key, keys) {
-        qInfo() << key << ":";
-        QStringList values = data[index++];
-        foreach (const QString &value, values) {
-            qInfo() << "    " << value;
-        }
+
+    for (const UosApp &app : list) {
+        qInfo() << app.windowsName << " " << app.UosName << " featrue:" << app.feature;
     }
-    return keys;
+    return;
 }
 
 void DrapWindowsData::getApplianceListInfo()
@@ -581,7 +585,7 @@ bool DrapWindowsData::containsAnyString(const QString &haystack, const QStringLi
     return true;
 }
 
-QStringList DrapWindowsData::RecommendedInstallationAppList()
+QMap<QString, QString> DrapWindowsData::RecommendedInstallationAppList()
 {
     QStringList dataStructure;
     QSet<QString> applist = getApplianceList();
@@ -589,18 +593,19 @@ QStringList DrapWindowsData::RecommendedInstallationAppList()
         dataStructure.push_back(value);
     }
 
-    QList<QStringList> MatchFielddata;
-    QStringList LinuxAPPdata = getLinuxApplist(MatchFielddata);
+    QList<UosApp> MatchFielddata;
+    getLinuxApplist(MatchFielddata);
 
-    QStringList resultAPP;
+    QMap<QString, QString> resultAPP;
     for (QString &valueA : dataStructure) {
         bool result;
         int i = 0;
-        for (QStringList &valueB : MatchFielddata) {
+        for (UosApp &uosValue : MatchFielddata) {
+            QStringList valueB = uosValue.feature;
             result = containsAnyString(valueA, valueB);
             if (result) {
-                resultAPP.push_back(LinuxAPPdata[i]);
-                qDebug() << valueA << ": " << LinuxAPPdata[i] << "  " << valueB;
+                resultAPP[uosValue.windowsName] = uosValue.UosName;
+                qDebug() << valueA << ": " << uosValue.windowsName;
                 break;
             }
             i++;

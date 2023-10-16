@@ -1,4 +1,4 @@
-﻿#include "transferringwidget.h"
+﻿#include "../transfer/transferringwidget.h"
 #include "zipfileprocesswidget.h"
 #include "zipfileprocessresultwidget.h"
 #include "../type_defines.h"
@@ -12,7 +12,7 @@
 
 #include <gui/connect/choosewidget.h>
 #include <utils/transferhepler.h>
-
+#include <utils/optionsmanager.h>
 #pragma execution_character_set("utf-8")
 
 zipFileProcessWidget::zipFileProcessWidget(QWidget *parent) : QFrame(parent)
@@ -24,16 +24,12 @@ zipFileProcessWidget::~zipFileProcessWidget() { }
 
 void zipFileProcessWidget::updateProcess(const QString &content, int processbar, int estimatedtime)
 {
-    if(processbar == -1)
-    {
-        QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-        ZipFileProcessResultWidget *widgeZipfileresutlt = qobject_cast<ZipFileProcessResultWidget *>(stackedWidget->widget(PageName::zipfileprocessresultwidget));
-        widgeZipfileresutlt->upWidgetToFailed();
-        nextPage();
+    if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
+        == TransferMethod::kNetworkTransmission) {
         return;
     }
-    if(processbar ==100)
-    {
+    // Transfer success or failure to go to the next page
+    if (processbar == 100 || processbar == -1) {
         nextPage();
         return;
     }
@@ -44,7 +40,10 @@ void zipFileProcessWidget::updateProcess(const QString &content, int processbar,
 
 void zipFileProcessWidget::changeFileLabel(const QString &path)
 {
-    fileLabel->setText(QString("正在打包 %1").arg(path));
+    // fileLabel->setText(QString("正在打包 %1").arg(path));
+    fileLabel->setText(QString("<p style='white-space: nowrap; width: 150px; overflow: hidden; "
+                               "text-overflow: ellipsis;'>正在打包%1</p>")
+                               .arg(path));
 }
 
 void zipFileProcessWidget::changeTimeLabel(const int &time)
@@ -70,7 +69,7 @@ void zipFileProcessWidget::initUI()
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     QMovie *iconmovie = new QMovie(this);
-    iconmovie->setFileName(":/icon/GIF/transferring.gif");
+    iconmovie->setFileName(":/icon/GIF/light/compress.gif");
     iconmovie->setScaledSize(QSize(200, 160));
     iconmovie->setSpeed(80);
     iconmovie->start();
@@ -86,21 +85,28 @@ void zipFileProcessWidget::initUI()
 
     progressLabel = new ProgressBarLabel(this);
     progressLabel->setAlignment(Qt::AlignCenter);
-    progressLabel->setProgress(50);
-
+    progressLabel->setProgress(0);
+    progressLabel->setFixedSize(280, 8);
     QHBoxLayout *progressLayout = new QHBoxLayout(this);
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
     timeLabel = new QLabel(this);
     int time = 43;
-    timeLabel->setText(QString("预计迁移时间还剩 %1分钟").arg(QString::number(time)));
+    timeLabel->setText(QString("预计完成时间还剩 %1分钟").arg(QString::number(time)));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     QFont timefont;
     font.setPointSize(7);
     timeLabel->setFont(timefont);
 
     fileLabel = new QLabel(this);
-    fileLabel->setText(QString("正在打包 %1").arg(QString("/Documents/....doc")));
+    fileLabel->setFixedSize(162, 17);
+    fileLabel->setStyleSheet(".QLabel {"
+                             " elide-mode: middle; "
+                             " padding: 2px;"
+                             "}");
+//    fileLabel->setText(QString("<p style='white-space: nowrap; width: 160px; overflow: hidden; "
+//                               "text-overflow: ellipsis;'>%1</p>")
+//                               .arg(QString("正在打包 %1").arg(QString("/Documents/....doc"))));
     fileLabel->setAlignment(Qt::AlignCenter);
 
     IndexLabel *indelabel = new IndexLabel(3, this);
@@ -132,6 +138,7 @@ void zipFileProcessWidget::nextPage()
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::zipfileprocessresultwidget);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+                      "nullptr";
     }
 }
