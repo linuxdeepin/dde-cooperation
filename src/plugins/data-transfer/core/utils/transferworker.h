@@ -37,6 +37,7 @@ public:
     ~TransferWoker();
 
     bool pingBackend();
+    void setEmptyPassWord();
     QString getConnectPassWord();
     void sendFiles(QStringList paths);
     void tryConnect(const std::string &ip, const std::string &password);

@@ -151,68 +151,6 @@ struct PeerParam {
     }
 };
 
-struct OnePeer {
-    fastring uuid;
-    fastring ipv4;
-    fastring username;
-    fastring hostname;
-    int32 device_os;
-    fastring proto_version;
-    bool mode;
-
-    void from_json(const co::Json& _x_) {
-        uuid = _x_.get("uuid").as_c_str();
-        ipv4 = _x_.get("ipv4").as_c_str();
-        username = _x_.get("username").as_c_str();
-        hostname = _x_.get("hostname").as_c_str();
-        device_os = (int32)_x_.get("device_os").as_int64();
-        proto_version = _x_.get("proto_version").as_c_str();
-        mode = _x_.get("mode").as_bool();
-    }
-
-    co::Json as_json() const {
-        co::Json _x_;
-        _x_.add_member("uuid", uuid);
-        _x_.add_member("ipv4", ipv4);
-        _x_.add_member("username", username);
-        _x_.add_member("hostname", hostname);
-        _x_.add_member("device_os", device_os);
-        _x_.add_member("proto_version", proto_version);
-        _x_.add_member("mode", mode);
-        return _x_;
-    }
-};
-
-struct PeerList {
-    int32 code;
-    co::vector<OnePeer> peers;
-
-    void from_json(const co::Json& _x_) {
-        code = (int32)_x_.get("code").as_int64();
-        do {
-            auto& _unamed_v1 = _x_.get("peers");
-            for (uint32 i = 0; i < _unamed_v1.array_size(); ++i) {
-                OnePeer _unamed_v2;
-                _unamed_v2.from_json(_unamed_v1[i]);
-                peers.emplace_back(std::move(_unamed_v2));
-            }
-        } while (0);
-    }
-
-    co::Json as_json() const {
-        co::Json _x_;
-        _x_.add_member("code", code);
-        do {
-            co::Json _unamed_v1;
-            for (size_t i = 0; i < peers.size(); ++i) {
-                _unamed_v1.push_back(peers[i].as_json());
-            }
-            _x_.add_member("peers", _unamed_v1);
-        } while (0);
-        return _x_;
-    }
-};
-
 struct TransFilesParam {
     fastring session;
     int32 id;

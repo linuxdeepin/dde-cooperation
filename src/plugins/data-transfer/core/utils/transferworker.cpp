@@ -95,6 +95,7 @@ QString TransferHandle::getConnectPassWord()
     g_wg.add(1);
     QString password;
     go([&password, g_wg]() {
+        TransferWoker::instance()->setEmptyPassWord();
         password = TransferWoker::instance()->getConnectPassWord();
         g_wg.done();
     });
@@ -140,6 +141,20 @@ bool TransferWoker::pingBackend()
 
     //CallResult
     return res.get("result").as_bool();
+}
+
+void TransferWoker::setEmptyPassWord()
+{
+    // set empty password, it will refresh password by random
+    co::pool_guard<rpc::Client> c(_gPool);
+    co::Json req, res;
+    req = {
+        { "password", "" },
+    };
+
+    req.add_member("api", "Backend.setPassword"); //BackendImpl::setPassword
+
+    c->call(req, res);
 }
 
 QString TransferWoker::getConnectPassWord()

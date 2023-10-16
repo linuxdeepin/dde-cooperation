@@ -55,17 +55,6 @@ object SpaceSize {
     uint64 size
 }
 
-object PeerInfo {
-    // peer info
-    string uuid
-    string ipv4
-    string username
-    string hostname
-    int32 device_os
-    string proto_version
-    bool mode
-}
-
 object AppList {
     // get target portable app list
     string displayname

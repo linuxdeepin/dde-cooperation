@@ -21,12 +21,14 @@ public:
     void handleConnectstatus(int result, QString msg);
     void handleTransJobstatus(int id, int result, QString msg);
     void handleFileTransstatus(QString statusstr);
+    void handlePeerChanges(bool find, fastring peerinfo);
 
 signals:
     void sigSession(QString sessionid);
     void sigConnectStatus(int result, QString msg);
     void sigTransJobtatus(int id, int result, QString msg);
     void sigFileTransStatus(QString statusstr);
+    void sigPeerChanged(bool find, QString peerinfo);
 
 public slots:
 

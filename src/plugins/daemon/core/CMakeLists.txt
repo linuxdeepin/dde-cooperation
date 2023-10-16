@@ -18,13 +18,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-if (NOT WIN32)
-    find_package(PkgConfig REQUIRED)
-    pkg_search_module(UUID REQUIRED uuid)
-endif ()
-
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Network)
 
 find_package(Threads REQUIRED)
 
@@ -49,6 +44,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     deepin_cross::framework
+    Qt${QT_VERSION_MAJOR}::Network
     uniapi
     co
 )
@@ -57,7 +53,7 @@ target_link_libraries(${PROJECT_NAME}
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} ws2_32 wsock32)
 endif ()
-target_link_libraries(${PROJECT_NAME} Threads::Threads ${UUID_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} Threads::Threads)
 
 #install library file
 install(TARGETS
