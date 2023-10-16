@@ -43,8 +43,19 @@ fastring BackendService::handlePing(const char *who, const char *version, int cb
 
 fastring BackendService::getSettingPin() const
 {
-    return DaemonConfig::instance()->refreshPin();
+    return DaemonConfig::instance()->getPin();
 }
+
+void BackendService::setSettingPin(fastring password)
+{
+    if (password.empty()) {
+        //refresh as random password
+        DaemonConfig::instance()->refreshPin();
+    } else {
+        DaemonConfig::instance()->setPin(password);
+    }
+}
+
 
 void BackendService::handleConnect(const char *session, const char *ip, const char *password)
 {

@@ -2,7 +2,7 @@ package ipc
 
 service Backend {
     ping, // ping backend and check proto version
-    getDiscovery, // get all discovery peers, return { PeerList }
+    getDiscovery, // return { PeerList } in comstruct
     getPeerInfo, // get a remote information
     getPassword, // return { "password" : "xx"}
     setPassword, // { "password" : "xx"}
@@ -40,23 +40,6 @@ object ConnectParam {
 object PeerParam {
     string session
     string host
-}
-
-object OnePeer {
-    // peer info
-    string uuid
-    string ipv4
-    string username
-    string hostname
-    int32 device_os
-    string proto_version
-    bool mode
-}
-
-object PeerList {
-    // peer info list
-    int32 code
-    [OnePeer] peers
 }
 
 // send or receive files, return a job which have added

@@ -71,18 +71,25 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
             response->set_error("Invalid auth code");
             response->set_token("");
         } else {
-            DaemonConfig::instance()->saveSession(request->session_id());
+            DaemonConfig::instance()->saveRemoteSession(request->session_id());
 
             //TODO: generate auth token
             fastring auth_token = "thatsgood";
             DaemonConfig::instance()->setTargetName(request->name().c_str());   // save the login name
+            fastring plattsr;
+            if (WINDOWS == Util::getOSType()) {
+                plattsr = "Windows";
+            } else {
+                //TODO: other OS
+                plattsr = "UOS";
+            }
 
             PeerInfo *info = new PeerInfo();
             info->set_version(version);
             info->set_hostname(Util::getHostname());
             info->set_privacy_mode(false);
-            info->set_platform("UOS");
-            info->set_username(Util::getCurrentUsername());
+            info->set_platform(plattsr.c_str());
+            info->set_username(Util::getUsername());
 
             response->set_allocated_peer_info(info);
 
@@ -364,7 +371,7 @@ void RemoteServiceBinder::startRpcListen()
 
     LOG << "RPC server run...";
     // run in other co is OK
-    if (server->start()) {
+    if (!server->start()) {
         ELOG << "RPC server start failed.";
     }
 }

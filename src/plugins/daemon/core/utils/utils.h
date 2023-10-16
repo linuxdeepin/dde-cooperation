@@ -11,19 +11,13 @@
 #include "co/rand.h"
 #include "co/hash.h"
 #include "co/str.h"
+#include "common/constant.h"
 
-#ifdef __linux__
-#include <unistd.h>
-#include <uuid/uuid.h>
-#include <pwd.h>
-#elif _WIN32
-//#include <windows.h>
-//#include <objbase.h>
-//#include <Lmcons.h>
-#else
-#error "Unsupported platform"
-#endif
-
+#include <QDir>
+#include <QUuid>
+#include <QStandardPaths>
+#include <QHostInfo>
+#include <QNetworkInterface>
 
 class Util {
 public:
@@ -58,62 +52,72 @@ public:
         return std::string(encodes.c_str());
     }
 
+    static std::string getFirstIp()
+    {
+        QString ip;
+        // QNetworkInterface 类提供了一个主机 IP 地址和网络接口的列表
+        foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
+        {
+            // 每个网络接口包含 0 个或多个 IP 地址
+            QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
+            if (netInterface.name().startsWith("virbr") || netInterface.name().startsWith("vmnet")
+                    || netInterface.name().startsWith("docker")) {
+                // 跳过桥接，虚拟机和docker的网络接口
+                qInfo() << "netInterface name:" << netInterface.name();
+                continue;
+            }
+
+            // 遍历每一个 IP 地址
+            foreach(QNetworkAddressEntry entry, entryList)
+            {
+                if(entry.ip().protocol() == QAbstractSocket::IPv4Protocol && entry.ip() != QHostAddress::LocalHost)
+                {
+                    //IP地址
+                    ip = QString(entry.ip().toString());
+                    qDebug() << "IP Address:" << ip;
+                    return ip.toStdString();
+                }
+            }
+        }
+        return ip.toStdString();
+    }
+
     static std::string getHostname(void)
     {
-#ifdef __linux__
-        char hostName[_SC_HOST_NAME_MAX];
-        gethostname(hostName, _SC_HOST_NAME_MAX);
-        return hostName;
-#else 
-//        char hostname[MAX_COMPUTERNAME_LENGTH + 1];
-//        DWORD size = sizeof(hostname) / sizeof(hostname[0]);
-//        if (GetComputerNameA(hostname, &size)) {
-//            return std::string(hostname);
-//        }
-        return "";
+        QString hostName = QHostInfo::localHostName();
+        return hostName.toStdString();
+    }
+
+    static std::string getUsername()
+    {
+        QString userName = QStandardPaths::displayName(QStandardPaths::HomeLocation);
+        return userName.toStdString();
+    }
+
+    static int getOSType()
+    {
+#ifdef _WIN32
+        return WINDOWS;
+#elif __linux__
+        return LINUX;
 #endif
     }
 
-    static std::string getCurrentUsername()
+    static QString configPath()
     {
-#ifdef __linux__
-        uid_t uid = geteuid();
-        struct passwd *pw = getpwuid(uid);
-        if (pw != nullptr) {
-            return std::string(pw->pw_name);
+        QDir winInfoPath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+        if (!winInfoPath.exists()) {
+            winInfoPath.mkpath(winInfoPath.absolutePath());
         }
-        return "";
-#else 
-//        TCHAR username[UNLEN + 1];
-//        DWORD usernameLen = UNLEN + 1;
-//        GetUserName(username, &usernameLen);
-//        return std::string(username);
-        return "";
-#endif
+
+        QString winInfoFilePath(winInfoPath.filePath("cooperation-config.conf"));
+        return winInfoFilePath;
     }
 
     static std::string genUUID()
     {
-#ifdef __linux__
-        uuid_t uuid;
-        uuid_generate(uuid);
-        char uuidStr[100];
-        uuid_unparse(uuid, uuidStr);
-
-        return uuidStr;
-#else
-//        UUID uuid;
-//        UuidCreate(&uuid);
-
-//        RPC_CSTR uuidStr;
-//        UuidToStringA(&uuid, &uuidStr);
-
-//        std::string uuidString(reinterpret_cast<char *>(uuidStr));
-
-//        RpcStringFreeA(&uuidStr);
-
-        return "";
-#endif
+        QString hostid = QUuid::createUuid().toString(QUuid::Id128);
+        return hostid.toStdString();
     }
 
     static bool isValidUUID(const std::string &uuid)

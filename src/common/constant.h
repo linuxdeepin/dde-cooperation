@@ -5,9 +5,15 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
+#define UNI_RPC_PROTO 1.0
 #define UNI_KEY "UOS-COOPERATION"
 #define UNI_RPC_PORT_UDP  51595
 #define UNI_RPC_PORT_BASE (UNI_RPC_PORT_UDP + 2)
+
+#define KEY_HOSTUUID "hostuuid"
+#define KEY_NICKNAME "nickname"
+#define KEY_MODE "privacymode"
+#define KEY_AUTHPIN "authpin"
 
 
 #define UNI_IPC_PROTO 1.0
