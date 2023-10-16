@@ -15,6 +15,8 @@ class RemoteServiceBinder;
 class TransferJob;
 class BackendService;
 class Session;
+class DiscoveryJob;
+class QSettings;
 class ServiceManager : public QObject
 {
     Q_OBJECT
@@ -33,6 +35,8 @@ public slots:
     void notifyConnect(QString ip, QString name, QString password);
     void handleLoginResult(bool result, QString who);
 
+    void handleNodeChanged(bool lost, QString info);
+
 private:
     bool handleRemoteRequestJob(co::Json &info);
     bool handleFSData(co::Json &info, fastring buf);
@@ -41,7 +45,9 @@ private:
     bool handleTransReport(co::Json &info);
 
     Session* sessionById(QString &id);
+    fastring genPeerInfo();
 
+    void asyncDiscovery();
 private:
     RemoteServiceBinder *_rpcServiceBinder = nullptr;
     BackendService *_backendIpcService = nullptr;

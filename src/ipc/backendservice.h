@@ -19,7 +19,7 @@ public:
 
     fastring handlePing(const char *who, const char *version, int cbport);
     fastring getSettingPin() const;
-    void setSettingPin(fastring password) const;
+    void setSettingPin(fastring password);
     void handleConnect(const char *session, const char *ip, const char *password);
     void handleSendFiles(QString session, int jobId, QStringList &paths, bool sub, QString savedir);
 

@@ -204,38 +204,6 @@ struct SpaceSize {
     }
 };
 
-struct PeerInfo {
-    fastring uuid;
-    fastring ipv4;
-    fastring username;
-    fastring hostname;
-    int32 device_os;
-    fastring proto_version;
-    bool mode;
-
-    void from_json(const co::Json& _x_) {
-        uuid = _x_.get("uuid").as_c_str();
-        ipv4 = _x_.get("ipv4").as_c_str();
-        username = _x_.get("username").as_c_str();
-        hostname = _x_.get("hostname").as_c_str();
-        device_os = (int32)_x_.get("device_os").as_int64();
-        proto_version = _x_.get("proto_version").as_c_str();
-        mode = _x_.get("mode").as_bool();
-    }
-
-    co::Json as_json() const {
-        co::Json _x_;
-        _x_.add_member("uuid", uuid);
-        _x_.add_member("ipv4", ipv4);
-        _x_.add_member("username", username);
-        _x_.add_member("hostname", hostname);
-        _x_.add_member("device_os", device_os);
-        _x_.add_member("proto_version", proto_version);
-        _x_.add_member("mode", mode);
-        return _x_;
-    }
-};
-
 struct AppList {
     fastring displayname;
     int32 run_type;

@@ -12,10 +12,14 @@
 #include "co/os.h"
 #include "utils.h"
 
+#include <QSettings>
+
 class DaemonConfig
 {
 public:
-    DaemonConfig() {}
+    DaemonConfig() {
+        _fileConfig = new QSettings(Util::configPath(), QSettings::IniFormat);
+    }
     ~DaemonConfig() {}
 
     static DaemonConfig *instance()
@@ -29,25 +33,67 @@ public:
         return false;
     }
 
+    void initPin()
+    {
+        fastring pin = _fileConfig->value(KEY_AUTHPIN).toString().toStdString();
+        if (pin.empty()) {
+            refreshPin();
+        }
+    }
+
     const fastring getPin()
     {
         return _pinCode;
     }
 
+    void setPin(fastring pin)
+    {
+        _pinCode = pin;
+        _fileConfig->setValue(KEY_AUTHPIN, _pinCode.c_str());
+    }
+
     const fastring refreshPin()
     {
         _pinCode = Util::genRandPin();
+        _fileConfig->setValue(KEY_AUTHPIN, _pinCode.c_str());
+
         return _pinCode;
     }
 
-    void saveSession(uint64 session)
-    {
-        _sessionId = session;
+    const fastring getUUID() {
+        QString uuid = _fileConfig->value(KEY_HOSTUUID).toString();
+        return uuid.toStdString();
     }
 
-    const uint64 getSession()
+    void setUUID(const char *name) {
+        _fileConfig->setValue(KEY_HOSTUUID, name);
+    }
+
+    const fastring getNickName() {
+        QString nick = _fileConfig->value(KEY_NICKNAME).toString();
+        return nick.toStdString();
+    }
+
+    void setNickName(const char *name) {
+        _fileConfig->setValue(KEY_NICKNAME, name);
+    }
+
+    int getMode() {
+        return _fileConfig->value(KEY_MODE).toInt();
+    }
+
+    void setMode(int mode) {
+        _fileConfig->setValue(KEY_MODE, mode);
+    }
+
+    void saveRemoteSession(uint64 session)
     {
-        return _sessionId;
+        _remote_sessionId = session;
+    }
+
+    uint64 getRemoteSession()
+    {
+        return _remote_sessionId;
     }
 
     void saveAuthed(fastring token)
@@ -88,11 +134,13 @@ public:
 
 private:
     fastring _pinCode;
-    uint64 _sessionId;
+    uint64 _remote_sessionId;
     fastring _authedToken;
     fastring _storageDir;
     fastring _targetName;
     int status = 0;
+
+    QSettings *_fileConfig;
 };
 
 enum status {

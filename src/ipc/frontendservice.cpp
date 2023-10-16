@@ -4,6 +4,7 @@
 
 #include "frontendservice.h"
 #include "common/constant.h"
+#include "ipc/proto/comstruct.h"
 
 #include "co/co.h"
 #include "co/time.h"
@@ -42,6 +43,21 @@ void FrontendService::handleFileTransstatus(QString statusstr)
     emit sigFileTransStatus(statusstr);
 }
 
+void FrontendService::handlePeerChanges(bool find, fastring peerinfo)
+{
+    QString info(peerinfo.c_str());
+    qInfo() << "handlePeerChanges: " << info << " find=" << find;
+    emit sigPeerChanged(find, info);
+
+    // example to parse string to PeerInfo object
+//    PeerInfo peerobj;
+//    co::Json peerJson;
+//    peerJson.parse_from(info.toStdString());
+//    peerobj.from_json(peerJson);
+
+//    qInfo() << " peer : " << peerobj.as_json().str().c_str();
+}
+
 
 void FrontendImpl::ping(co::Json &req, co::Json &res)
 {
@@ -68,7 +84,15 @@ void FrontendImpl::ping(co::Json &req, co::Json &res)
 
 void FrontendImpl::cbPeerInfo(co::Json &req, co::Json &res)
 {
+    GenericResult param;
+    param.from_json(req);
 
+    res = {
+        { "result", true },
+        { "msg", "ok" }
+    };
+
+    _interface->handlePeerChanges(param.result > 0, param.msg);
 }
 
 void FrontendImpl::cbConnect(co::Json &req, co::Json &res)

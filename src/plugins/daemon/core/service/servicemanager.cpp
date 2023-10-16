@@ -10,8 +10,11 @@
 #include "comshare.h"
 #include "co/cout.h"
 #include "session.h"
+#include "discoveryjob.h"
 
 #include "utils/config.h"
+
+#include <QSettings>
 
 co::chan<IncomeData> _income_chan(10);
 co::chan<OutData> _outgo_chan(10, 10);
@@ -40,9 +43,19 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 
     _sessions.clear();
 
-    // init the pin code.
-    DaemonConfig::instance()->refreshPin();
+    // init the pin code: no setting then refresh as random
+    DaemonConfig::instance()->initPin();
+
     DLOG << "!!!!!! here pin: " << DaemonConfig::instance()->getPin();
+
+    // init the host uuid. no setting then gen a random
+    fastring hostid = DaemonConfig::instance()->getUUID();
+    if (hostid.empty()) {
+        hostid = Util::genUUID();
+        DaemonConfig::instance()->setUUID(hostid.c_str());
+    }
+
+    asyncDiscovery();
 }
 
 ServiceManager::~ServiceManager()
@@ -243,6 +256,52 @@ Session* ServiceManager::sessionById(QString &id)
     return nullptr;
 }
 
+#include <QNetworkInterface>
+fastring ServiceManager::genPeerInfo()
+{
+    QList<QHostAddress> address = QNetworkInterface::allAddresses();
+    qInfo() << "local ip" << address[2].toString();
+    fastring nick = DaemonConfig::instance()->getNickName();
+    int mode = DaemonConfig::instance()->getMode();
+    co::Json info = {
+        { "proto_version", UNI_RPC_PROTO },
+        { "uuid", DaemonConfig::instance()->getUUID() },
+        { "nickname", nick },
+        { "username", Util::getUsername() },
+        { "hostname", Util::getHostname() },
+        { "ipv4", Util::getFirstIp() },
+        { "port", UNI_RPC_PORT_BASE },
+        { "os_type", Util::getOSType() },
+        { "mode_type", mode },
+    };
+
+    return info.str();
+}
+
+void ServiceManager::asyncDiscovery()
+{
+    connect(DiscoveryJob::instance(), &DiscoveryJob::sigNodeChanged, this, &ServiceManager::handleNodeChanged, Qt::QueuedConnection);
+    go ([]() {
+        DiscoveryJob::instance()->discovererRun();
+    });
+    go ([this]() {
+//        co::Json info = {
+//            { "proto_version", "1.0" },
+//            { "uuid", "this is uid" },
+//            { "nickname", "doll-ok" },
+//            { "username", "doll" },
+//            { "hostname", "doll-pc" },
+//            { "ipv4", "10.8.11.52" },
+//            { "port", 7788 },
+//            { "os_type", 2 },
+//            { "mode_type", 1 }
+
+//        };
+        fastring peerinfo = genPeerInfo();
+        DiscoveryJob::instance()->announcerRun(peerinfo);
+    });
+}
+
 void ServiceManager::saveSession(QString who, QString session, int cbport)
 {
     Session *s = new Session(who, session, cbport);
@@ -252,7 +311,7 @@ void ServiceManager::saveSession(QString who, QString session, int cbport)
 void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList paths, bool sub, QString savedir)
 {
     Session *s = sessionById(session);
-    if (!s || s->valid()) {
+    if (!s || !s->valid()) {
         DLOG << "this session is invalid." << session.toStdString();
         return;
     }
@@ -317,5 +376,32 @@ void ServiceManager::handleLoginResult(bool result, QString session)
         });
     } else {
         DLOG << "Donot find login seesion: " << session_id;
+    }
+}
+
+void ServiceManager::handleNodeChanged(bool found, QString info)
+{
+    //qInfo() << info << " node found: " << found;
+
+    // notify to all frontend sessions
+    for (size_t i = 0; i < _sessions.size(); ++i) {
+        Session *s = _sessions[i];
+        if (s->valid()) {
+            go ([s, found, info]() {
+                // fastring session_id(s->getSession().toStdString());
+                fastring nodeinfo(info.toStdString());
+                co::pool_guard<rpc::Client> c(s->clientPool());
+                co::Json req, res;
+                //cbPeerInfo {GenericResult}
+                req = {
+                    { "id", 0 },
+                    { "result", found ? 1 : 0 },
+                    { "msg", nodeinfo },
+                };
+
+                req.add_member("api", "Frontend.cbPeerInfo");
+                c->call(req, res);
+            });
+        }
     }
 }

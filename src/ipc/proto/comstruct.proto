@@ -1,0 +1,19 @@
+
+object PeerInfo {
+    // peer info
+    string proto_version
+    string uuid
+    string nickname
+    string username
+    string hostname
+    string ipv4
+    int32 port
+    int32 os_type // OS type
+    int32 mode_type // privacy mode type
+}
+
+object PeerList {
+    // peer info list
+    int32 code
+    [PeerInfo] peers
+}
