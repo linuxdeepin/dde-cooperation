@@ -76,6 +76,7 @@ void SelectMainWidget::initUi()
             new SelectItem("配置", QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
 
     QHBoxLayout *modeLayout = new QHBoxLayout();
+
     modeLayout->addWidget(fileItem, Qt::AlignTop);
     modeLayout->addSpacing(0);
     modeLayout->addWidget(appItem, Qt::AlignTop);
@@ -167,12 +168,12 @@ void SelectMainWidget::nextPage()
 void SelectMainWidget::backPage()
 {
     PageName back;
-    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
-    if (method == TransferMethod::kLocalExport) {
-        back = PageName::choosewidget;
-    } else if (method == TransferMethod::kNetworkTransmission) {
+  //  QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+  //  if (method == TransferMethod::kLocalExport) {
+      //  back = PageName::choosewidget;
+//    } else if (method == TransferMethod::kNetworkTransmission) {
         back = PageName::readywidget;
-    }
+//    }
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(back);

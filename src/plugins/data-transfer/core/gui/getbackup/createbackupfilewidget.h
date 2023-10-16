@@ -17,6 +17,7 @@ public:
 private:
     void initUI();
     void initDiskListView();
+    QString fromByteToGBorMB(quint64 bytes);
 public slots:
     void nextPage();
     void backPage();
@@ -26,7 +27,7 @@ private:
     QString backupFileSize{ "0GB" };
 
     QListView *diskListView{ nullptr };
-    QLineEdit *fileNameInput{nullptr};
+    QLineEdit *fileNameInput{ nullptr };
 };
 
 #endif // CREATEBACKUPFILEWIDGET_H

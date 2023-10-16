@@ -90,10 +90,13 @@ void TransferHelper::startTransfer()
 QMap<QString, QString> TransferHelper::getAppList()
 {
     QMap<QString, QString> appList;
-    QStringList appNameList = DrapWindowsData::instance()->RecommendedInstallationAppList();
-    for (QString name : appNameList) {
-        appList[name] = ":/icon/app.svg";
+    QMap<QString, QString> appNameList =
+            DrapWindowsData::instance()->RecommendedInstallationAppList();
+
+    for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++) {
+        appList[iterator.key()] = QString(":/icon/AppIcons/%1.svg").arg(iterator.value());
     }
+
     return appList;
 }
 
@@ -102,9 +105,13 @@ QMap<QString, QString> TransferHelper::getBrowserList()
     QMap<QString, QString> browserList;
     QSet<QString> borwserNameList = DrapWindowsData::instance()->getBrowserList();
     for (QString name : borwserNameList) {
-        if ((name == BrowserName::GoogleChrome) || (name == BrowserName::MicrosoftEdge)
-            || (name == BrowserName::MozillaFirefox))
-            browserList[name] = ":/icon/app.svg";
+        if (name == BrowserName::GoogleChrome) {
+            browserList[name] = ":/icon/AppIcons/cn.google.chrome.svg";
+        } else if (name == BrowserName::MicrosoftEdge) {
+            browserList[name] = ":/icon/AppIcons/com.browser.softedge.stable.svg";
+        } else if (name == BrowserName::MozillaFirefox) {
+            browserList[name] = ":/icon/AppIcons/com.mozilla.firefox-zh.svg";
+        }
     }
     return browserList;
 }

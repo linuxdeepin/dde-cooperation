@@ -17,6 +17,7 @@
 #include <gui/connect/choosewidget.h>
 #include <gui/mainwindow_p.h>
 #include <utils/optionsmanager.h>
+
 #pragma execution_character_set("utf-8")
 
 CreateBackupFileWidget::CreateBackupFileWidget(QWidget *parent) : QFrame(parent)
@@ -43,6 +44,7 @@ void CreateBackupFileWidget::sendOptions()
 
     QStringList saveName;
     saveName << fileNameInput->text();
+    OptionsManager::instance()->addUserOption(Options::kBackupFileName, saveName);
     qInfo() << "backup file save path:" << savePath;
     qInfo() << "backup file name:" << saveName;
 }
@@ -262,8 +264,15 @@ void CreateBackupFileWidget::initDiskListView()
         QStandardItem *item = new QStandardItem();
         item->setData(displayName, Qt::DisplayRole);
         item->setData(rootPath, Qt::WhatsThisRole);
-        item->setData(QString("200.2GB/256GB可用"), Qt::ToolTipRole);
-        item->setIcon(QIcon(":/icon/app.svg"));
+        item->setData(QString("%1/%2可用")
+                              .arg(fromByteToGBorMB(drive.bytesAvailable()))
+                              .arg(fromByteToGBorMB(drive.bytesTotal())),
+                      Qt::ToolTipRole);
+        if (drive.name().isEmpty()) {
+            item->setIcon(QIcon(":/icon/drive-harddisk-32px.svg"));
+        } else {
+            item->setIcon(QIcon(":/icon/drive-harddisk-usb-32px.svg"));
+        }
 
         item->setCheckable(true);
 
@@ -277,6 +286,18 @@ void CreateBackupFileWidget::initDiskListView()
             }
         }
     });
+}
+
+QString CreateBackupFileWidget::fromByteToGBorMB(quint64 bytes)
+{
+    float result = static_cast<float>(bytes) / (1024 * 1024 * 1024);
+    result = roundf(result * 10) / 10;
+    if (result > 0) {
+        return QString("%1GB").arg(QString::number(result));
+    }
+    result = static_cast<float>(bytes) / (1024 * 1024);
+    result = roundf(result * 10) / 10;
+    return QString("%1MB").arg(QString::number(result));
 }
 
 void CreateBackupFileWidget::nextPage()

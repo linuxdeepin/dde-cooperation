@@ -144,8 +144,7 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
         ListItem *item = new ListItem();
         item->setData(iterator.key(), Qt::DisplayRole);
         item->setData("是", Qt::ToolTipRole);
-        // item->setData(fileinfos[i].filePath(), Qt::UserRole);
-        item->setIcon(QIcon(":/icon/app.svg"));
+        item->setIcon(QIcon(iterator.value()));
         item->setCheckable(true);
         model->appendRow(item);
     }
@@ -180,14 +179,14 @@ void ConfigSelectWidget::initSelectConfigFrame()
     configView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     configView->setModel(model);
     configView->setItemDelegate(
-            new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
+            new ItemDelegate(55, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
     configView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     configView->setSelectionMode(QAbstractItemView::NoSelection);
 
     ListItem *item = new ListItem();
     item->setData("自定义桌面", Qt::DisplayRole);
     item->setData("是", Qt::ToolTipRole);
-    item->setIcon(QIcon(":/icon/app.svg"));
+    //item->setIcon(QIcon(":/icon/app.svg"));
     item->setCheckable(true);
     model->appendRow(item);
 

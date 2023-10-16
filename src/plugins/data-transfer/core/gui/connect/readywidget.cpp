@@ -59,7 +59,8 @@ void ReadyWidget::initUI()
             QRegularExpression("^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$"));
 
     ipInput->setValidator(ipValidator);
-    connect(ipInput, &QLineEdit::textChanged, [=]() {
+
+    QObject::connect(ipInput, &QLineEdit::textChanged, [ = ]() {
         bool isEmpty = ipInput->text().isEmpty();
         ipInput->setClearButtonEnabled(!isEmpty);
     });
@@ -90,6 +91,10 @@ void ReadyWidget::initUI()
                                 "padding-left: 10px;"
                                 "background-color: rgba(0,0,0, 0.08);");
     captchaInput->setFixedSize(340, 36);
+    QObject::connect(captchaInput, &QLineEdit::textChanged, [ = ]() {
+        bool isEmpty = captchaInput->text().isEmpty();
+        captchaInput->setClearButtonEnabled(!isEmpty);
+    });
 
     QHBoxLayout *editLayout2 = new QHBoxLayout(this);
     editLayout2->setAlignment(Qt::AlignLeft);

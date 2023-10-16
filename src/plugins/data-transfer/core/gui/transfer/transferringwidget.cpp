@@ -16,17 +16,16 @@
 #include <utils/transferhepler.h>
 
 #include <gui/connect/choosewidget.h>
-
+#include <utils/optionsmanager.h>
 #pragma execution_character_set("utf-8")
 
-TransferringWidget::TransferringWidget(QWidget *parent)
-    : QFrame(parent)
+TransferringWidget::TransferringWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
     initConnect();
 }
 
-TransferringWidget::~TransferringWidget() {}
+TransferringWidget::~TransferringWidget() { }
 
 void TransferringWidget::initUI()
 {
@@ -135,7 +134,8 @@ void TransferringWidget::initUI()
 
 void TransferringWidget::initConnect()
 {
-    connect(TransferHelper::instance(), &TransferHelper::transferContent, this, &TransferringWidget::updateProcess);
+    connect(TransferHelper::instance(), &TransferHelper::transferContent, this,
+            &TransferringWidget::updateProcess);
 }
 
 void TransferringWidget::informationPage()
@@ -190,10 +190,18 @@ void TransferringWidget::changeProgressLabel(const int &ratio)
 
 void TransferringWidget::updateProcess(const QString &content, int progressbar, int estimatedtime)
 {
-    QString info = QString("正在传输<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
+#ifdef WIN32
+    if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
+        == TransferMethod::kLocalExport) {
+        return;
+    }
+#endif
+    QString info =
+            QString("正在传输<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
     processTextBrowser->append(info);
     progressLabel->setProgress(progressbar);
     fileLabel->setText(info);
+
     if (estimatedtime == 0) {
         timeLabel->setText("迁移完成");
         fileLabel->setText("迁移完成");

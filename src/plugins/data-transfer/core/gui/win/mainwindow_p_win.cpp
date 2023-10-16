@@ -12,12 +12,12 @@
 #include "../select/fileselectwidget.h"
 #include "../transfer/successwidget.h"
 #include "../transfer/transferringwidget.h"
-#include "../transfer/zipfileprocesswidget.h"
-#include "../transfer/zipfileprocessresultwidget.h"
-#include "../transfer/errorwidget.h"
-#include "../transfer/networkdisconnectionwidget.h"
-#include "../getbackup/createbackupfilewidget.h"
 
+#include "../transfer/errorwidget.h"
+#include "../connect/networkdisconnectionwidget.h"
+#include "../getbackup/createbackupfilewidget.h"
+#include "../getbackup/zipfileprocesswidget.h"
+#include "../getbackup/zipfileprocessresultwidget.h"
 #include "utils/transferhepler.h"
 
 #include <QHBoxLayout>
@@ -98,7 +98,7 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::zipfileprocesswidget, zipfileprocesswidget);
     stackedWidget->insertWidget(PageName::zipfileprocessresultwidget, zipfileprocessresultwidget);
 
-    stackedWidget->setCurrentIndex(PageName::choosewidget);
+    stackedWidget->setCurrentIndex(PageName::readywidget);
 
     windowsCentralWidgetContent->setContentsMargins(8, 8, 8, 8);
     windowsCentralWidgetContent->addWidget(stackedWidget);
@@ -116,6 +116,8 @@ void MainWindowPrivate::initWidgets()
                      &SelectMainWidget::changeSelectframeState);
     QObject::connect(configselectwidget, &ConfigSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
+
+
 }
 
 void MainWindowPrivate::paintEvent(QPaintEvent *event)
