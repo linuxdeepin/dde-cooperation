@@ -104,18 +104,11 @@ void BackendImpl::setPassword(co::Json &req, co::Json &res)
 {
     // { "password", "pin" }
     fastring pin = req.get("password").as_string();
-    if (pin.empty()) {
-        res = {
-            { "result", false},
-            { "msg", "no key: password"}
-        };
-    } else {
-        _interface->setSettingPin(pin);
-        res = {
-            { "result", true},
-            { "msg", ""}
-        };
-    }
+    _interface->setSettingPin(pin);
+    res = {
+        { "result", true},
+        { "msg", ""}
+    };
 }
 
 void BackendImpl::tryConnect(co::Json &req, co::Json &res)

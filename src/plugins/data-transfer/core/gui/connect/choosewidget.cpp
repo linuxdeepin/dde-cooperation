@@ -117,19 +117,6 @@ void ChooseWidget::sendOptions()
     OptionsManager::instance()->addUserOption(Options::kTransferMethod, method);
 }
 
-void ChooseWidget::changeAllWidgtText()
-{
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    SelectMainWidget *widgetMainselect = qobject_cast<SelectMainWidget*>(stackedWidget->widget(PageName::selectmainwidget));
-    ConfigSelectWidget *widgetConfig = qobject_cast<ConfigSelectWidget*>(stackedWidget->widget(PageName::configselectwidget));
-    AppSelectWidget *widgetApp = qobject_cast<AppSelectWidget*>(stackedWidget->widget(PageName::appselectwidget));
-    FileSelectWidget *widgetFile =  qobject_cast<FileSelectWidget*>(stackedWidget->widget(PageName::filewselectidget));
-    widgetMainselect->changeText();
-    widgetConfig->changeText();
-    widgetApp->changeText();
-    widgetFile->changeText();
-}
-
 void ChooseWidget::nextPage()
 {
     sendOptions();
@@ -176,4 +163,20 @@ void ModeItem::mousePressEvent(QMouseEvent *event)
     else
         checkBox->setCheckState(Qt::Checked);
     return QFrame::mousePressEvent(event);
+}
+
+
+void ChooseWidget::changeAllWidgtText()
+{
+#ifdef _WIN32
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    SelectMainWidget *widgetMainselect = qobject_cast<SelectMainWidget*>(stackedWidget->widget(PageName::selectmainwidget));
+    ConfigSelectWidget *widgetConfig = qobject_cast<ConfigSelectWidget*>(stackedWidget->widget(PageName::configselectwidget));
+    AppSelectWidget *widgetApp = qobject_cast<AppSelectWidget*>(stackedWidget->widget(PageName::appselectwidget));
+    FileSelectWidget *widgetFile =  qobject_cast<FileSelectWidget*>(stackedWidget->widget(PageName::filewselectidget));
+    widgetMainselect->changeText();
+    widgetConfig->changeText();
+    widgetApp->changeText();
+    widgetFile->changeText();
+#endif
 }

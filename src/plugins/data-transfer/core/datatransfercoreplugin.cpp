@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QUrl>
 
+#include <utils/transferhepler.h>
 #include <utils/transferworker.h>
 
 using namespace data_transfer_core;
@@ -19,6 +20,7 @@ void DataTransferCorePlugin::initialize()
 
 bool DataTransferCorePlugin::start()
 {
+    TransferHelper::instance();
     return loadMainPage();
 }
 
