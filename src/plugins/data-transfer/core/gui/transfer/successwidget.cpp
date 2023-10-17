@@ -100,3 +100,14 @@ void SuccessWidget::nextPage()
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
 }
+
+void SuccessWidget::themeChanged(int theme)
+{
+    //light
+    if (theme == 1) {
+        setStyleSheet("background-color: white; border-radius: 10px;");
+    } else {
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        //dark
+    }
+}

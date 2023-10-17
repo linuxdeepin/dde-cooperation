@@ -3,6 +3,8 @@
 
 #include <QFrame>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QToolButton>
 
 class WaitTransferWidget : public QFrame
 {
@@ -15,9 +17,16 @@ public:
 public slots:
     void nextPage();
     void backPage();
+    void themeChanged(int theme);
 
 private:
     void initUI();
+
+private:
+    QToolButton *backButton { nullptr };
+    QLabel *iconLabel { nullptr };
+    QMovie *lighticonmovie { nullptr };
+    QMovie *darkiconmovie { nullptr };
 };
 
 #endif

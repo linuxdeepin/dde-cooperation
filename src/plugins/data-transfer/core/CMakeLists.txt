@@ -44,6 +44,8 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/backupload/*.cpp"
     )
     find_package(Dtk COMPONENTS Widget REQUIRED)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(libzip REQUIRED IMPORTED_TARGET libzip)
 else()
     message (FATAL_ERROR "not support on ${CMAKE_SYSTEM} yet.")
 endif()
@@ -51,9 +53,7 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network)
 
-
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
-
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -83,6 +83,7 @@ target_link_libraries(${PROJECT_NAME}
 if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJECT_NAME}
         ${DtkWidget_LIBRARIES}
+         PkgConfig::libzip
     )
 endif()
 if (CMAKE_SYSTEM MATCHES "Windows")

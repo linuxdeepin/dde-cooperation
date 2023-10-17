@@ -14,6 +14,7 @@ public:
 public slots:
     void nextPage();
     void backPage();
+    void themeChanged(int theme);
 
 private:
     void initUI();

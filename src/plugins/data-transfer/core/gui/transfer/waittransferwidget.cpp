@@ -43,16 +43,21 @@ void WaitTransferWidget::initUI()
     QLabel *tipLabel = new QLabel("请前往windows PC 端选择要传输的内容", this);
     tipLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-    QLabel *iconLabel = new QLabel(this);
-    QMovie *iconmovie = new QMovie(this);
-    iconmovie->setFileName(":/icon/GIF/waiting.gif");
-    iconmovie->setScaledSize(QSize(200, 160));
-    iconmovie->setSpeed(80);
-    iconmovie->start();
-    iconLabel->setMovie(iconmovie);
+    iconLabel = new QLabel(this);
+    lighticonmovie = new QMovie(this);
+    lighticonmovie->setFileName(":/icon/GIF/light/transferring.gif");
+    lighticonmovie->setScaledSize(QSize(200, 160));
+    lighticonmovie->setSpeed(80);
+    lighticonmovie->start();
+    darkiconmovie = new QMovie(this);
+    darkiconmovie->setFileName(":/icon/GIF/dark/transferring.gif");
+    darkiconmovie->setScaledSize(QSize(200, 160));
+    darkiconmovie->setSpeed(80);
+    darkiconmovie->start();
+    iconLabel->setMovie(lighticonmovie);
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    QToolButton *backButton = new QToolButton(this);
+    backButton = new QToolButton(this);
     backButton->setText("取消");
     backButton->setFixedSize(250, 36);
     backButton->setStyleSheet("background-color: lightgray;");
@@ -94,5 +99,20 @@ void WaitTransferWidget::backPage()
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+    }
+}
+
+void WaitTransferWidget::themeChanged(int theme)
+{
+    //light
+    if (theme == 1) {
+        setStyleSheet("background-color: white; border-radius: 10px;");
+        backButton->setStyleSheet("background-color: lightgray;");
+        iconLabel->setMovie(lighticonmovie);
+    } else {
+        //dark
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        backButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.08);");
+        iconLabel->setMovie(darkiconmovie);
     }
 }

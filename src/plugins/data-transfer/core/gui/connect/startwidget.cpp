@@ -61,13 +61,13 @@ void StartWidget::initUI()
     checkLayout->setMargin(10);
     checkLayout->setAlignment(Qt::AlignBottom);
 
-    QToolButton *nextButton = new QToolButton(this);
+    nextButton = new QToolButton(this);
     nextButton->setText("下一步");
     nextButton->setFixedSize(250, 36);
     nextButton->setStyleSheet("background-color: lightgray;");
     nextButton->setEnabled(false);
     connect(nextButton, &QToolButton::clicked, this, &StartWidget::nextPage);
-    connect(checkBox, &QCheckBox::stateChanged, this, [nextButton](int state) {
+    connect(checkBox, &QCheckBox::stateChanged, this, [this](int state) {
         if (state == Qt::Checked)
             nextButton->setEnabled(true);
         else
@@ -93,5 +93,18 @@ void StartWidget::nextPage()
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+    }
+}
+
+void StartWidget::themeChanged(int theme)
+{
+    //light
+    if (theme == 1) {
+        setStyleSheet("background-color: white; border-radius: 10px;");
+        nextButton->setStyleSheet("background-color: lightgray;");
+    } else {
+        //dark
+        nextButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.08);");
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
 }

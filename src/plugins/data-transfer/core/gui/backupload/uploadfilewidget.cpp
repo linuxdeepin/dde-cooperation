@@ -146,6 +146,17 @@ void UploadFileWidget::backPage()
     }
 }
 
+void UploadFileWidget::themeChanged(int theme)
+{
+    //light
+    if (theme == 1) {
+        setStyleSheet("background-color: white; border-radius: 10px;");
+    } else {
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        //dark
+    }
+}
+
 UploadFileFrame::UploadFileFrame(QWidget *parent)
     : QFrame(parent)
 {

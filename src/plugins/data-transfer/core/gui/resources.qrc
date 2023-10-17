@@ -31,14 +31,17 @@
         <file>icon/zipfileprocess.png</file>
         <file>icon/zipfileprocess@2x.png</file>
         <file>icon/fail.svg</file>
-        <file>icon/GIF/compress.gif</file>
-        <file>icon/GIF/transferring.gif</file>
-        <file>icon/GIF/waiting.gif</file>
         <file>icon/noInternet.png</file>
         <file>icon/noInternet@2x.png</file>
         <file>icon/drive-harddisk-32px.svg</file>
         <file>icon/drive-harddisk-usb-32px.svg</file>
         <file>icon/select.svg</file>
         <file>icon/media-optical-32px.svg</file>
+        <file>icon/GIF/light/compress.gif</file>
+        <file>icon/GIF/light/transferring.gif</file>
+        <file>icon/GIF/light/waiting.gif</file>
+        <file>icon/GIF/dark/compress.gif</file>
+        <file>icon/GIF/dark/transferring.gif</file>
+        <file>icon/GIF/dark/waiting.gif</file>
     </qresource>
 </RCC>

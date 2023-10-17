@@ -31,6 +31,7 @@ enum PageName {
 enum PageName {
     startwidget = 0,
     choosewidget,
+    networkdisconnectwidget,
     connectwidget,
     uploadwidget,
     promptwidget,
@@ -40,4 +41,4 @@ enum PageName {
 };
 #endif
 
-#endif // TYPE_DEFINES_H
+#endif   // TYPE_DEFINES_H
