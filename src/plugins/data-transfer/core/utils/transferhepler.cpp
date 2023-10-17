@@ -8,17 +8,24 @@
 #include <QStorageInfo>
 #include <QCoreApplication>
 #include <QTimer>
-
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QDBusMessage>
+#include <QDBusConnection>
+#include <QDBusInterface>
+#include <QGuiApplication>
 #include <QTextCodec>
+#include <QScreen>
 
 #ifdef WIN32
 #    include <gui/getbackup/drapwindowsdata.h>
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper() : QObject() { }
+TransferHelper::TransferHelper()
+    : QObject() {}
 
-TransferHelper::~TransferHelper() { }
+TransferHelper::~TransferHelper() {}
 
 TransferHelper *TransferHelper::instance()
 {
@@ -116,11 +123,56 @@ QMap<QString, QString> TransferHelper::getBrowserList()
     return browserList;
 }
 #else
+bool TransferHelper::handleDataConfiguration(const QString &filepath)
+{
+    QFile file(filepath + "/" + "transfer.json");
+    qInfo() << "Parsing the configuration file for transmission" << file.fileName();
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "could not open datajson file";
+        return false;
+    }
+    QByteArray jsonData = file.readAll();
+    file.close();
+
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
+    if (jsonDoc.isNull()) {
+        qWarning() << "Parsing JSON data failed";
+        return false;
+    }
+    QJsonObject jsonObj = jsonDoc.object();
+
+    //Configure desktop wallpaper
+    QString image = filepath + "/" + jsonObj["wallpapers"].toString();
+    setWallpaper(image);
+
+    return true;
+}
+
 bool TransferHelper::setWallpaper(const QString &filepath)
 {
-    qInfo() << OptionsManager::instance()->getUserOptions();
-    QStringList paths = OptionsManager::instance()->getUserOptions()["file"];
-    transferhandle.sendFiles(paths);
-    return true;
+    qInfo() << "Setting picture as wallpaper" << filepath;
+    //服务
+    QString service = "com.deepin.daemon.Appearance";
+    QString path = "/com/deepin/daemon/Appearance";
+    QString interfaceName = "com.deepin.daemon.Appearance";
+
+    //dbus连接
+    QDBusInterface interface(service, path, interfaceName);
+
+    //调用方法
+    QString func = "SetMonitorBackground";
+    QString screenName = QGuiApplication::screens().first()->name();
+    QVariant monitorName = QVariant::fromValue(screenName);
+    QVariant imageFile = QVariant::fromValue(filepath);
+
+    // 发送DBus消息并等待回复
+    QDBusMessage reply = interface.call(func, monitorName, imageFile);
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        qDebug() << "SetMonitorBackground method called successfully";
+        return true;
+    } else {
+        qDebug() << "Failed to call SetMonitorBackground method";
+        return false;
+    }
 }
 #endif
