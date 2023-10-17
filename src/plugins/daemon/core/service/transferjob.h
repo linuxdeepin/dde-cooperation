@@ -18,20 +18,16 @@ class TransferJob : public QObject
 public:
     explicit TransferJob(QObject *parent = nullptr);
     void initRpc(fastring target, uint16 port);
-    void initJob(int id, fastring path, bool sub, fastring savedir);
+    void initJob(fastring appname, int id, fastring path, bool sub, fastring savedir, bool write);
 
     void start();
     void stop();
     void waitFinish();
     bool finished();
 
-    bool isRunning() {
-        return !_stoped;
-    }
-
-    bool isWriteJob() {
-        return _writejob;
-    }
+    bool isRunning();
+    bool isWriteJob();
+    fastring getAppName();
 
     void pushQueque(FSDataBlock &block);
     void insertFileInfo(FileInfo &info);
@@ -39,6 +35,9 @@ public:
 signals:
     // 传输作业结果通知：文件（目录），结果，速度
     void notifyJobResult(QString path, bool result, size_t speed);
+
+    // 传输文件状态
+    void notifyFileTransStatus(QString appname, int jobid, QString fileinfo);
 
 public slots:
 
@@ -61,6 +60,7 @@ private:
 
     bool _sub;
     bool _writejob;
+    fastring _app_name; // //前端应用名
     fastring _path; // 目录或文件路径
     fastring _savedir; // 写作业，文件保存的目录
 

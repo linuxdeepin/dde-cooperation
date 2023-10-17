@@ -37,7 +37,6 @@ public:
     void initPin()
     {
         fastring pin = _fileConfig->value(KEY_AUTHPIN).toString().toStdString();
-        DLOG << "init pin:" << pin;
         if (pin.empty()) {
             refreshPin();
         } else {

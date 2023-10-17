@@ -32,9 +32,9 @@ public slots:
     void saveSession(QString who, QString session, int cbport);
 
     void newTransSendJob(QString session, int jobId, QStringList paths, bool sub, QString savedir);
-    void notifyConnect(QString ip, QString name, QString password);
+    void notifyConnect(QString session, QString ip, QString password);
     void handleLoginResult(bool result, QString who);
-
+    void handleFileTransStatus(QString appname, int jobid, QString fileinfo);
     void handleNodeChanged(bool lost, QString info);
 
 private:
@@ -45,6 +45,7 @@ private:
     bool handleTransReport(co::Json &info);
 
     Session* sessionById(QString &id);
+    Session* sessionByName(QString &name);
     fastring genPeerInfo();
 
     void asyncDiscovery();

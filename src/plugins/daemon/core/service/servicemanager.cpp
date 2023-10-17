@@ -46,8 +46,6 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     // init the pin code: no setting then refresh as random
     DaemonConfig::instance()->initPin();
 
-    DLOG << "!!!!!! here pin: " << DaemonConfig::instance()->getPin();
-
     // init the host uuid. no setting then gen a random
     fastring hostid = DaemonConfig::instance()->getUUID();
     if (hostid.empty()) {
@@ -88,8 +86,7 @@ void ServiceManager::startRemoteServer()
             switch (indata.type) {
             case IN_LOGIN:
             {
-                fastring pin = DaemonConfig::instance()->getPin();
-                DLOG << "!!!!!! this get pin: " << pin;
+                //TODO: notify user confirm login
                 break;
             }
             case IN_TRANSJOB:
@@ -130,21 +127,22 @@ bool ServiceManager::handleRemoteRequestJob(co::Json &info)
     FSJob fsjob;
     fsjob.from_json(info);
     int32 jobId = fsjob.job_id;
+    fastring savedir = fsjob.save;
+    if (savedir.empty()) {
+        // 如果未指定保存相对路径，则默认保存到$home/hostname
+        savedir = DaemonConfig::instance()->getStorageDir();
+    }
 
     TransferJob *job = new TransferJob();
     job->initRpc(_connected_target, UNI_RPC_PORT_BASE);
+    job->initJob(fsjob.who, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
+    connect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus, Qt::QueuedConnection);
 
     if (fsjob.write) {
-        // 写文件任务，path也是保存路径
-        fastring savedir = fsjob.path;
-        if (savedir.empty()) {
-            savedir = DaemonConfig::instance()->getStorageDir();
-        }
-        DLOG << "write job: " << savedir;
-        job->initJob(jobId, fsjob.path, fsjob.sub, savedir);
+        DLOG << "write job save to: " << savedir;
         _transjob_recvs.insert(jobId, job);
     } else {
-        job->initJob(jobId, fsjob.path, fsjob.sub, "");
+        DLOG << "read job save to: " << savedir;
         _transjob_sends.insert(jobId, job);
     }
     go([this, job]() {
@@ -190,6 +188,7 @@ bool ServiceManager::handleFSInfo(co::Json &info)
     return true;
 }
 
+// cancel the receive job from remote
 bool ServiceManager::handleCancelJob(co::Json &info)
 {
     FSJobCancel obj;
@@ -198,7 +197,15 @@ bool ServiceManager::handleCancelJob(co::Json &info)
 
     TransferJob *job = _transjob_recvs.value(jobId);
     if (nullptr != job) {
+        //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
         job->stop();
+        _transjob_recvs.remove(jobId);
+        QString name(job->getAppName().c_str());
+        Session *s = sessionByName(name);
+        if (s && s->valid()) {
+            DLOG << "notify cancel success:" << s->getName().toStdString();
+            return true;
+        }
     } else {
         return false;
     }
@@ -229,8 +236,15 @@ bool ServiceManager::handleTransReport(co::Json &info)
     {
         TransferJob *job = _transjob_recvs.value(jobId);
         if (nullptr != job) {
+            //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
             job->waitFinish();
             _transjob_recvs.remove(jobId);
+            QString name(job->getAppName().c_str());
+            Session *s = sessionByName(name);
+            if (s && s->valid()) {
+                DLOG << "notify job finish success:" << s->getName().toStdString();
+                return true;
+            }
         } else {
             return false;
         }
@@ -256,11 +270,20 @@ Session* ServiceManager::sessionById(QString &id)
     return nullptr;
 }
 
-#include <QNetworkInterface>
+Session* ServiceManager::sessionByName(QString &name)
+{
+    // find the session by name
+    for (size_t i = 0; i < _sessions.size(); ++i) {
+        Session *s = _sessions[i];
+        if (s->getName().compare(name) == 0) {
+            return s;
+        }
+    }
+    return nullptr;
+}
+
 fastring ServiceManager::genPeerInfo()
 {
-    QList<QHostAddress> address = QNetworkInterface::allAddresses();
-    qInfo() << "local ip" << address[2].toString();
     fastring nick = DaemonConfig::instance()->getNickName();
     int mode = DaemonConfig::instance()->getMode();
     co::Json info = {
@@ -285,18 +308,6 @@ void ServiceManager::asyncDiscovery()
         DiscoveryJob::instance()->discovererRun();
     });
     go ([this]() {
-//        co::Json info = {
-//            { "proto_version", "1.0" },
-//            { "uuid", "this is uid" },
-//            { "nickname", "doll-ok" },
-//            { "username", "doll" },
-//            { "hostname", "doll-pc" },
-//            { "ipv4", "10.8.11.52" },
-//            { "port", 7788 },
-//            { "os_type", 2 },
-//            { "mode_type", 1 }
-
-//        };
         fastring peerinfo = genPeerInfo();
         DiscoveryJob::instance()->announcerRun(peerinfo);
     });
@@ -317,13 +328,16 @@ void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList p
     }
 
     int32 id = jobId;
+    fastring who = s->getName().toStdString();
+    fastring savepath = savedir.toStdString();
     for (QString path : paths) {
-        QByteArray byteArray = path.toUtf8();
-        const char *filepath = byteArray.constData();
+        fastring filepath = path.toStdString();
         //FSJob
         co::Json jobjson = {
+            { "who", who },
             { "job_id", id },
             { "path", filepath },
+            { "save", savepath },
             { "hidden", false },
             { "sub", sub },
             { "write", false }
@@ -335,15 +349,22 @@ void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList p
     }
 }
 
-void ServiceManager::notifyConnect(QString ip, QString name, QString password)
+void ServiceManager::notifyConnect(QString session, QString ip, QString password)
 {
-    if (ip == nullptr) {
+    Session *s = sessionById(session);
+    if (!s || !s->valid()) {
+        DLOG << "this session is invalid." << session.toStdString();
         return;
     }
+    //TODO: check ipv4 format
+    if (ip.isEmpty()) {
+        return;
+    }
+    fastring name = Util::getHostname();
 
     if (_rpcServiceBinder) {
         fastring target_ip = ip.toStdString();
-        fastring user = name.toStdString();
+        fastring user = name;
         fastring pincode = password.toStdString();
         _connected_target = target_ip;
 
@@ -376,6 +397,36 @@ void ServiceManager::handleLoginResult(bool result, QString session)
         });
     } else {
         DLOG << "Donot find login seesion: " << session_id;
+    }
+}
+
+void ServiceManager::handleFileTransStatus(QString appname, int jobid, QString fileinfo)
+{
+    Session *s = sessionByName(appname);
+    if (s && s->valid()) {
+        DLOG << "notify file trans status to:" << s->getName().toStdString();
+        go ([s, fileinfo]() {
+            co::Json infojson;
+            infojson.parse_from(fileinfo.toStdString());
+            FileInfo filejob;
+            filejob.from_json(infojson);
+
+            co::pool_guard<rpc::Client> c(s->clientPool());
+            co::Json req, res;
+            //notifyFileStatus {FileStatus}
+            req = {
+                { "job_id", filejob.job_id },
+                { "file_id", filejob.file_id },
+                { "name", filejob.name },
+                { "status", TRANS_SPEED },
+                { "total", filejob.total_size },
+                { "current", filejob.current_size },
+                { "second", filejob.time_spended },
+            };
+
+            req.add_member("api", "Frontend.notifyFileStatus");
+            c->call(req, res);
+        });
     }
 }
 

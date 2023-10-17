@@ -25,18 +25,14 @@ void TransferJob::initRpc(fastring target, uint16 port)
     }
 }
 
-void TransferJob::initJob(int id, fastring path, bool sub, fastring savedir)
+void TransferJob::initJob(fastring appname, int id, fastring path, bool sub, fastring savedir, bool write)
 {
+    _app_name = appname;
     _jobid = id;
     _path = path;
     _sub = sub;
-    if (!savedir.empty()) {
-        _savedir = savedir;
-        _writejob = true;
-    } else {
-        _writejob = false;
-    }
-
+    _savedir = savedir;
+    _writejob = write;
     _inited = true;
 }
 
@@ -51,12 +47,19 @@ void TransferJob::start()
     } else {
         //并行读取文件数据
         fastring path; // file save path
-        if (fs::isdir(jobpath)) {
-            path = path::base(jobpath);
+        if (!_savedir.empty()) {
+            // 如果指定保存目录
+            path = _savedir;
         } else {
-            path = ""; // 文件没有指定保存目录，默认目标机设置的保存目录
+            if (fs::isdir(jobpath)) {
+                // 没有指定保存相对目录，且是一个文件夹，则保存到$home/hostname/文件夹名
+                path = path::base(jobpath);
+            } else {
+                path = ""; // 文件没有指定保存目录，默认目标机设置的保存目录
+            }
         }
-        int res = _rpcBinder->doTransfileJob(_jobid, path.c_str(), false, true, _writejob);
+
+        int res = _rpcBinder->doTransfileJob(_jobid, path.c_str(), false, _sub, _writejob);
         if (res < 0) {
             ELOG << "binder doTransfileJob failed: " << res << " jobpath: " << jobpath;
             _stoped = true;
@@ -85,6 +88,21 @@ void TransferJob::waitFinish()
 bool TransferJob::finished()
 {
     return _finished;
+}
+
+bool TransferJob::isRunning()
+{
+    return !_stoped;
+}
+
+bool TransferJob::isWriteJob()
+{
+    return _writejob;
+}
+
+fastring TransferJob::getAppName()
+{
+    return _app_name;
 }
 
 void TransferJob::pushQueque(FSDataBlock &block)
@@ -252,6 +270,13 @@ void TransferJob::handleBlockQueque()
 
                 // double speed = pair.second.current_size / (1024 * 1024) / pair.second.time_spended;
                 // LOG << pair.second.name << " (" << pair.second.current_size << ") speed: " << speed << " M/s";
+                fastring filepath = path::join(_path.c_str(), pair.second.name.c_str());
+                DLOG << "notify file status:" << filepath;
+                QString appname(_app_name.c_str());
+                QString fileinfo(pair.second.as_json().str().c_str());
+
+                // FileInfo > FileStatus in handle func
+                emit notifyFileTransStatus(appname, _jobid, fileinfo);
 
                 if (pair.second.current_size >= pair.second.total_size) {
                     DLOG << "should notify file finish: " << pair.second.name;

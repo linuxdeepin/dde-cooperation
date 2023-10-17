@@ -33,9 +33,9 @@ void FrontendService::handleConnectstatus(int result, QString msg)
     emit sigConnectStatus(result, msg);
 }
 
-void FrontendService::handleTransJobstatus(int id, int result, QString msg)
+void FrontendService::handleTransJobstatus(int id, int result, QString path)
 {
-    emit sigTransJobtatus(id, result, msg);
+    emit sigTransJobtatus(id, result, path);
 }
 
 void FrontendService::handleFileTransstatus(QString statusstr)
@@ -126,7 +126,7 @@ void FrontendImpl::cbTransStatus(co::Json &req, co::Json &res)
 {
     GenericResult param;
     param.from_json(req);
-    QString mesg(param.msg.c_str());
+    QString mesg(param.msg.c_str()); // job path
     _interface->handleTransJobstatus(param.id, param.result, mesg);
     res = {
         { "result", true},

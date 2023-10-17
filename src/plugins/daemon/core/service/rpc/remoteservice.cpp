@@ -176,6 +176,7 @@ void RemoteServiceImpl::filetrans_job(::google::protobuf::RpcController *control
     job.hidden = request->include_hidden();
     job.sub = request->recursive();
     job.write = request->push();
+    job.who = request->app_who();
 
     in.type = IN_TRANSJOB;
     in.json = job.as_json().str();
