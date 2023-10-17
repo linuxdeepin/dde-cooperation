@@ -8,7 +8,7 @@
 namespace data_transfer_core {
 
 class MainWindowPrivate;
-class MainWindow: public CrossMainWindow
+class MainWindow : public CrossMainWindow
 {
     Q_OBJECT
 public:
@@ -29,4 +29,4 @@ private:
 
 }
 
-#endif // MAINWINDOW_H
+#endif   // MAINWINDOW_H

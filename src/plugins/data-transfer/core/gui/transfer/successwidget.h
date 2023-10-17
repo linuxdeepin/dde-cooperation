@@ -12,6 +12,9 @@ public:
     SuccessWidget(QWidget *parent = nullptr);
     ~SuccessWidget();
 
+public slots:
+    void themeChanged(int theme);
+
 private:
     void initUI();
     void nextPage();

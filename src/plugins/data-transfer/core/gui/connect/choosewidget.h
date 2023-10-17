@@ -5,6 +5,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QPainter>
+#include <QToolButton>
 
 class ModeItem;
 class ChooseWidget : public QFrame
@@ -17,14 +18,16 @@ public:
 
 public slots:
     void nextPage();
+    void themeChanged(int theme);
 
 private:
     void initUI();
     void sendOptions();
     void changeAllWidgtText();
+
 private:
     QString transferMethod;
-
+    QToolButton *nextButton = nullptr;
     int nextpage;
 };
 
@@ -42,13 +45,14 @@ protected:
     virtual void mousePressEvent(QMouseEvent *event) override;
 
 private:
-    QCheckBox *checkBox{ nullptr };
+    QCheckBox *checkBox { nullptr };
 };
 
 class IndexLabel : public QLabel
 {
 public:
-    IndexLabel(int index, QWidget *parent = nullptr) : QLabel(parent), index(index)
+    IndexLabel(int index, QWidget *parent = nullptr)
+        : QLabel(parent), index(index)
     {
         setFixedSize(50, 10);
     }

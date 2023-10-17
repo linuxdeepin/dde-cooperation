@@ -3,6 +3,7 @@
 
 #include <QCheckBox>
 #include <QFrame>
+#include <QToolButton>
 
 class StartWidget : public QFrame
 {
@@ -14,10 +15,12 @@ public:
 
 public slots:
     void nextPage();
+    void themeChanged(int theme);
 
 private:
     void initUI();
     QCheckBox *checkBox { nullptr };
+    QToolButton *nextButton { nullptr };
 };
 
 #endif

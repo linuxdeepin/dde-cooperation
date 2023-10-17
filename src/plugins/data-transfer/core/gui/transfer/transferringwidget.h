@@ -21,6 +21,7 @@ public slots:
     void changeTimeLabel(const QString &time);
     void changeProgressLabel(const int &ratio);
     void updateProcess(const QString &content, int progressbar, int estimatedtime);
+    void themeChanged(int theme);
 
 private:
     void initUI();
@@ -29,6 +30,8 @@ private:
 private:
     QLabel *titileLabel { nullptr };
     QLabel *iconLabel { nullptr };
+    QMovie *lighticonmovie { nullptr };
+    QMovie *darkiconmovie { nullptr };
     QLabel *fileLabel { nullptr };
     QLabel *displayLabel { nullptr };
     QLabel *timeLabel { nullptr };

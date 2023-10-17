@@ -9,6 +9,9 @@
 #include <QDir>
 #include <utils/transferhepler.h>
 
+#include <QTimer>
+#include <zip.h>
+
 inline constexpr char datajson[] { "transfer.json" };
 
 UnzipWorker::UnzipWorker(QString filepath)
@@ -16,6 +19,15 @@ UnzipWorker::UnzipWorker(QString filepath)
 {
     QFileInfo fileInfo(filepath);
     targetDir = fileInfo.path() + "/" + fileInfo.baseName();
+    count = getNumFiles();
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this]() {
+        speed = currentTotal - previousTotal + 1;
+        previousTotal = currentTotal;
+    });
+
+    //Calculate transmission speed
+    timer->start(500);
 }
 
 UnzipWorker::~UnzipWorker()
@@ -26,12 +38,31 @@ void UnzipWorker::run()
 {
     //decompression
     extract();
+
     //configuration
     //set();
 }
 
+int UnzipWorker::getNumFiles()
+{
+    const char *zipFilePath = filepath.toLocal8Bit().constData();
+    struct zip *archive = zip_open(zipFilePath, 0, NULL);
+
+    if (archive) {
+        int fileCount = zip_get_num_files(archive);
+        qInfo() << "Number of files in ZIP file:" << fileCount;
+
+        zip_close(archive);
+        return fileCount;
+    } else {
+        qInfo() << "Unable to open ZIP file";
+        return 0;
+    }
+}
+
 bool UnzipWorker::extract()
 {
+
     QStringList arguments;
     arguments << "-O"
               << "utf-8"
@@ -45,18 +76,24 @@ bool UnzipWorker::extract()
     process.start("unzip", arguments);
 
     qInfo() << process.arguments();
+
     while (process.waitForReadyRead()) {
         QByteArray output = process.readAllStandardOutput();
         QString outputText = QString::fromLocal8Bit(output);
         if (outputText.startsWith("  inflating: ")) {
             outputText = outputText.mid(outputText.indexOf("inflating:") + QString("inflating:").length() + 1);
-            emit TransferHelper::instance()->transferContent(outputText, 0, 500);
+            currentTotal++;
+            double value = static_cast<double>(currentTotal) / count;
+            int progressbar = static_cast<int>(value * 100);
+            int estimatedtime = (count - currentTotal) / speed / 2;
+            emit TransferHelper::instance()->transferContent(outputText, progressbar, estimatedtime);
+            qInfo() << value << outputText;
         }
-        qInfo() << outputText;
     }
     emit TransferHelper::instance()->transferContent("迁移完成！！！", 100, 0);
     if (process.exitCode() != 0)
         qInfo() << "Error message:" << process.errorString();
+    qInfo() << "777777777:" << currentTotal << count;
     process.waitForFinished();
     return true;
 }

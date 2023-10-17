@@ -1,21 +1,20 @@
 #include "../mainwindow.h"
 #include "../mainwindow_p.h"
 
+#include <DGuiApplicationHelper>
 #include <DTitlebar>
 #include <QDockWidget>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QNetworkConfigurationManager>
 #include <QStackedWidget>
 
 #include <gui/connect/choosewidget.h>
 #include <gui/connect/connectwidget.h>
+#include <gui/connect/networkdisconnectionwidget.h>
 #include <gui/connect/promptwidget.h>
 #include <gui/connect/searchwidget.h>
 #include <gui/connect/startwidget.h>
-
-#include <gui/select/appselectwidget.h>
-#include <gui/select/configselectwidget.h>
-#include <gui/select/fileselectwidget.h>
 
 #include <gui/transfer/successwidget.h>
 #include <gui/transfer/transferringwidget.h>
@@ -23,6 +22,9 @@
 #include <gui/transfer/waittransferwidget.h>
 
 #include <utils/transferhepler.h>
+
+DWIDGET_USE_NAMESPACE
+DTK_USE_NAMESPACE
 
 using namespace data_transfer_core;
 
@@ -52,6 +54,7 @@ void MainWindowPrivate::initWidgets()
 
     StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
+    NetworkDisconnectionWidget *networkdisconnectwidget = new NetworkDisconnectionWidget(q);
     UploadFileWidget *uploadwidget = new UploadFileWidget(q);
     PromptWidget *promptwidget = new PromptWidget(q);
     ConnectWidget *connectwidget = new ConnectWidget(q);
@@ -64,6 +67,7 @@ void MainWindowPrivate::initWidgets()
 
     stackedWidget->insertWidget(PageName::uploadwidget, uploadwidget);
 
+    stackedWidget->insertWidget(PageName::networkdisconnectwidget, networkdisconnectwidget);
     stackedWidget->insertWidget(PageName::connectwidget, connectwidget);
     stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
     stackedWidget->insertWidget(PageName::waitgwidget, waitgwidget);
@@ -83,6 +87,33 @@ void MainWindowPrivate::initWidgets()
     connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [successtranswidget, stackedWidget] {
         stackedWidget->setCurrentWidget(successtranswidget);
     });
+
+    QNetworkConfigurationManager *configManager = new QNetworkConfigurationManager(this);
+    connect(configManager, &QNetworkConfigurationManager::onlineStateChanged, this, [stackedWidget](bool isOnline) {
+        int page = stackedWidget->currentIndex();
+        // Only these two pages are used networkdisconnectwidget
+        if (page != PageName::connectwidget && page != PageName::promptwidget)
+            return;
+        if (!isOnline)
+            stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
+        else
+            stackedWidget->setCurrentIndex(PageName::choosewidget);
+    });
+
+    //Adapt Theme Colors
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this,
+            [startwidget, choosewidget, uploadwidget, networkdisconnectwidget, connectwidget, promptwidget, waitgwidget, transferringwidget, successtranswidget](DGuiApplicationHelper::ColorType themeType) {
+                int theme = themeType == DGuiApplicationHelper::LightType ? 1 : 0;
+                startwidget->themeChanged(theme);
+                choosewidget->themeChanged(theme);
+                uploadwidget->themeChanged(theme);
+                networkdisconnectwidget->themeChanged(theme);
+                connectwidget->themeChanged(theme);
+                promptwidget->themeChanged(theme);
+                waitgwidget->themeChanged(theme);
+                transferringwidget->themeChanged(theme);
+                successtranswidget->themeChanged(theme);
+            });
 
     q->centralWidget()->layout()->addWidget(stackedWidget);
 }

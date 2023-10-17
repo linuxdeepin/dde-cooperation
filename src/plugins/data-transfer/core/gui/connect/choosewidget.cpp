@@ -18,23 +18,24 @@
 
 #pragma execution_character_set("utf-8")
 
-inline constexpr char internetMethodName[]{ "从windows PC" };
+inline constexpr char internetMethodName[] { "从windows PC" };
 #ifdef WIN32
-inline constexpr char localFileMethodName[]{ "本地导出备份" };
+inline constexpr char localFileMethodName[] { "本地导出备份" };
 inline constexpr int selecPage1 = PageName::promptwidget;
 inline constexpr int selecPage2 = PageName::selectmainwidget;
 #else
-inline constexpr char localFileMethodName[]{ "从备份文件导入" };
+inline constexpr char localFileMethodName[] { "从备份文件导入" };
 inline constexpr int selecPage1 = PageName::connectwidget;
 inline constexpr int selecPage2 = PageName::uploadwidget;
 #endif
 
-ChooseWidget::ChooseWidget(QWidget *parent) : QFrame(parent)
+ChooseWidget::ChooseWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
-ChooseWidget::~ChooseWidget() { }
+ChooseWidget::~ChooseWidget() {}
 
 void ChooseWidget::initUI()
 {
@@ -60,7 +61,7 @@ void ChooseWidget::initUI()
     modeLayout->addWidget(packageItem, Qt::AlignTop);
     modeLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QToolButton *nextButton = new QToolButton(this);
+    nextButton = new QToolButton(this);
     nextButton->setText("下一步");
     nextButton->setFixedSize(250, 35);
     nextButton->setStyleSheet("background-color: lightgray;");
@@ -85,7 +86,7 @@ void ChooseWidget::initUI()
 
     QObject::connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
     QObject::connect(winItem->checkBox, &QCheckBox::stateChanged,
-                     [this, packageItem, nextButton](int state) {
+                     [this, packageItem](int state) {
                          if (state == Qt::Checked) {
                              packageItem->checkBox->setCheckState(Qt::Unchecked);
                              nextButton->setEnabled(true);
@@ -96,7 +97,7 @@ void ChooseWidget::initUI()
                          }
                      });
     QObject::connect(packageItem->checkBox, &QCheckBox::stateChanged, this,
-                     [this, winItem, nextButton](int state) {
+                     [this, winItem](int state) {
                          if (state == Qt::Checked) {
                              winItem->checkBox->setCheckState(Qt::Unchecked);
                              nextButton->setEnabled(true);
@@ -131,7 +132,21 @@ void ChooseWidget::nextPage()
     }
 }
 
-ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : QFrame(parent)
+void ChooseWidget::themeChanged(int theme)
+{
+    //light
+    if (theme == 1) {
+        setStyleSheet("background-color: white; border-radius: 10px;");
+        nextButton->setStyleSheet("background-color: lightgray;");
+    } else {
+        //dark
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        nextButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.08);");
+    }
+}
+
+ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
+    : QFrame(parent)
 {
     setStyleSheet(".ModeItem{"
                   "border-radius: 8px;"
@@ -154,7 +169,7 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : QFrame(parent)
     mainLayout->addWidget(iconLabel);
 }
 
-ModeItem::~ModeItem() { }
+ModeItem::~ModeItem() {}
 
 void ModeItem::mousePressEvent(QMouseEvent *event)
 {
@@ -165,15 +180,14 @@ void ModeItem::mousePressEvent(QMouseEvent *event)
     return QFrame::mousePressEvent(event);
 }
 
-
 void ChooseWidget::changeAllWidgtText()
 {
 #ifdef _WIN32
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    SelectMainWidget *widgetMainselect = qobject_cast<SelectMainWidget*>(stackedWidget->widget(PageName::selectmainwidget));
-    ConfigSelectWidget *widgetConfig = qobject_cast<ConfigSelectWidget*>(stackedWidget->widget(PageName::configselectwidget));
-    AppSelectWidget *widgetApp = qobject_cast<AppSelectWidget*>(stackedWidget->widget(PageName::appselectwidget));
-    FileSelectWidget *widgetFile =  qobject_cast<FileSelectWidget*>(stackedWidget->widget(PageName::filewselectidget));
+    SelectMainWidget *widgetMainselect = qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
+    ConfigSelectWidget *widgetConfig = qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
+    AppSelectWidget *widgetApp = qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
+    FileSelectWidget *widgetFile = qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
     widgetMainselect->changeText();
     widgetConfig->changeText();
     widgetApp->changeText();

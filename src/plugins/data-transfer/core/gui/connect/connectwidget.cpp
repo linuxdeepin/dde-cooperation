@@ -42,38 +42,39 @@ void ConnectWidget::initUI()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tipLabel1 = new QLabel("请前往Windows，打开迁移工具，输入本机IP和连接密码。", this);
-    tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    tipLabel1->setFixedHeight(20);
+    QLabel *tipLabel = new QLabel("请前往Windows，打开迁移工具，输入本机IP和连接密码。", this);
+    tipLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    tipLabel->setFixedHeight(20);
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
-    tipLabel1->setFont(font);
+    tipLabel->setFont(font);
 
     connectLayout = new QHBoxLayout(this);
     initConnectLayout();
 
-    QLabel *tipLabel = new QLabel("验证码已过期，请刷新获取新的验证码", this);
-    tipLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
-    tipLabel->setFixedHeight(80);
+    WarnningLabel = new QLabel("验证码已过期，请刷新获取新的验证码", this);
+    WarnningLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+    WarnningLabel->setFixedHeight(80);
     font.setPointSize(8);
     font.setWeight(QFont::Thin);
-    tipLabel->setFont(font);
+    WarnningLabel->setFont(font);
+
     QPalette palette;
     QColor color;
     color.setNamedColor("#FF5736");
     palette.setColor(QPalette::WindowText, color);   // 设置文本颜色为红色
-    tipLabel->setPalette(palette);
-    tipLabel->setMargin(5);
-    tipLabel->setVisible(false);
+    WarnningLabel->setPalette(palette);
+    WarnningLabel->setMargin(5);
+    WarnningLabel->setVisible(false);
 
-    QToolButton *nextButton = new QToolButton(this);
-    nextButton->setText("返回");
-    nextButton->setFixedSize(250, 36);
-    nextButton->setStyleSheet("background-color: #E3E3E3;");
-    connect(nextButton, &QToolButton::clicked, this, &ConnectWidget::nextPage);
+    backButton = new QToolButton(this);
+    backButton->setText("返回");
+    backButton->setFixedSize(250, 36);
+    backButton->setStyleSheet("background-color: #E3E3E3;");
+    connect(backButton, &QToolButton::clicked, this, &ConnectWidget::nextPage);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(nextButton, Qt::AlignCenter);
+    layout->addWidget(backButton, Qt::AlignCenter);
 
     IndexLabel *indelabel = new IndexLabel(1, this);
     indelabel->setAlignment(Qt::AlignCenter);
@@ -82,9 +83,9 @@ void ConnectWidget::initUI()
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addWidget(titileLabel);
-    mainLayout->addWidget(tipLabel1);
-    mainLayout->addLayout(connectLayout);
     mainLayout->addWidget(tipLabel);
+    mainLayout->addLayout(connectLayout);
+    mainLayout->addWidget(WarnningLabel);
     mainLayout->addLayout(layout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
@@ -94,6 +95,7 @@ void ConnectWidget::initConnectLayout()
 {
     //ipLayout
     QList<QHostAddress> address = QNetworkInterface::allAddresses();
+    QString ipaddress = address.count() > 2 ? address[2].toString() : "";
 
     QVBoxLayout *ipVLayout = new QVBoxLayout(this);
     QLabel *iconLabel = new QLabel(this);
@@ -104,7 +106,7 @@ void ConnectWidget::initConnectLayout()
 
     ipLabel->setStyleSheet("background-color: rgba(0, 129, 255, 0.2); border-radius: 16;");
     QString ip = QString("<font size=12px >本机 IP： </font><span style='font-size: 17px; font-weight: 600;'>%1</span>")
-                         .arg(address[2].toString());
+                         .arg(ipaddress);
     ipLabel->setText(ip);
     ipLabel->setFixedSize(204, 32);
 
@@ -120,12 +122,19 @@ void ConnectWidget::initConnectLayout()
     //passwordLayout
     QString password = TransferHelper::instance()->getConnectPassword();
     if (password.isEmpty())
-        password = "777777";
+        remainingTime = 0;
+    else
+        remainingTime = 300;
+
     QHBoxLayout *passwordHLayout = new QHBoxLayout(this);
     QVBoxLayout *passwordVLayout = new QVBoxLayout(this);
     QLabel *passwordLabel = new QLabel(password, this);
     QLabel *refreshLabel = new QLabel("", this);
     QLabel *tipLabel = new QLabel(this);
+    QLabel *nullLabel = new QLabel("<font color='#D8D8D8' size='14'>---- ---- ---- --</font>", this);
+
+    nullLabel->setFixedWidth(200);
+    nullLabel->setVisible(false);
 
     QFont font;
     font.setPointSize(40);
@@ -142,27 +151,34 @@ void ConnectWidget::initConnectLayout()
 
     tipLabel->setFont(tipfont);
 
-    remainingTime = 300;
     QTimer *timer = new QTimer();
-    connect(timer, &QTimer::timeout, [timer, tipLabel, this]() {
+    connect(timer, &QTimer::timeout, [tipLabel, passwordLabel, nullLabel, timer, this]() {
         if (remainingTime > 0) {
             remainingTime--;
             QString tip = QString("密码有效时间还剩<font color='#6199CA'>%1s</font>，请尽快输入连接密码").arg(QString::number(remainingTime));
             tipLabel->setText(tip);
         } else {
-            tipLabel->setText("0");
+            tipLabel->setVisible(false);
+            passwordLabel->setVisible(false);
+            nullLabel->setVisible(true);
+            WarnningLabel->setVisible(true);
             timer->stop();
         }
     });
     timer->start(1000);
-    connect(refreshLabel, &QLabel::linkActivated, this, [this, timer, passwordLabel] {
+    connect(refreshLabel, &QLabel::linkActivated, this, [this, timer, passwordLabel, tipLabel, nullLabel] {
         QString password = TransferHelper::instance()->getConnectPassword();
         passwordLabel->setText(password);
+        tipLabel->setVisible(true);
+        passwordLabel->setVisible(true);
+        nullLabel->setVisible(false);
+        WarnningLabel->setVisible(false);
         remainingTime = 300;
         if (!timer->isActive())
             timer->start(1000);
     });
 
+    passwordHLayout->addWidget(nullLabel);
     passwordHLayout->addWidget(passwordLabel);
     passwordHLayout->addWidget(refreshLabel);
 
@@ -203,5 +219,18 @@ void ConnectWidget::backPage()
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+    }
+}
+
+void ConnectWidget::themeChanged(int theme)
+{
+    //light
+    if (theme == 1) {
+        setStyleSheet("background-color: white; border-radius: 10px;");
+        backButton->setStyleSheet("background-color: #E3E3E3;");
+    } else {
+        //dark
+        backButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.08);");
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
 }

@@ -10,14 +10,13 @@
 #pragma execution_character_set("utf-8")
 
 NetworkDisconnectionWidget::NetworkDisconnectionWidget(QWidget *parent)
-    :QFrame(parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
 NetworkDisconnectionWidget::~NetworkDisconnectionWidget()
 {
-
 }
 
 void NetworkDisconnectionWidget::initUI()
@@ -32,7 +31,6 @@ void NetworkDisconnectionWidget::initUI()
     QLabel *iconLabel = new QLabel(this);
     iconLabel->setPixmap(QPixmap(":/icon/noInternet.png"));
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
-
 
     QLabel *promptLabel = new QLabel(this);
     promptLabel->setText("网络已断开,请检查您的网络");
@@ -61,18 +59,18 @@ void NetworkDisconnectionWidget::initUI()
     retryButton->setText("重试");
     retryButton->setFixedSize(120, 35);
     retryButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                              "border: 1px solid rgba(0,0,0, 0.03);"
-                              "opacity: 1;"
-                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                              "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                              "font-family: \"SourceHanSansSC-Medium\";"
-                              "font-size: 14px;"
-                              "font-weight: 500;"
-                              "color: rgba(65,77,104,1);"
-                              "font-style: normal;"
-                              "letter-spacing: 3px;"
-                              "text-align: center;"
-                              "}");
+                               "border: 1px solid rgba(0,0,0, 0.03);"
+                               "opacity: 1;"
+                               "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                               "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                               "font-family: \"SourceHanSansSC-Medium\";"
+                               "font-size: 14px;"
+                               "font-weight: 500;"
+                               "color: rgba(65,77,104,1);"
+                               "font-style: normal;"
+                               "letter-spacing: 3px;"
+                               "text-align: center;"
+                               "}");
 
     QObject::connect(retryButton, &QToolButton::clicked, this, &NetworkDisconnectionWidget::retryPage);
     QHBoxLayout *buttonLayout = new QHBoxLayout();
@@ -117,5 +115,16 @@ void NetworkDisconnectionWidget::retryPage()
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
+    }
+}
+
+void NetworkDisconnectionWidget::themeChanged(int theme)
+{
+    //light
+    if (theme == 1) {
+        setStyleSheet("background-color: white; border-radius: 10px;");
+    } else {
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        //dark
     }
 }
