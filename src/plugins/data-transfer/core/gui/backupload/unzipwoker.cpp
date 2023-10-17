@@ -40,7 +40,7 @@ void UnzipWorker::run()
     extract();
 
     //configuration
-    //set();
+    TransferHelper::instance()->handleDataConfiguration(targetDir);
 }
 
 int UnzipWorker::getNumFiles()

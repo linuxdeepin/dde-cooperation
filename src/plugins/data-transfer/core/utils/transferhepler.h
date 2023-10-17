@@ -33,6 +33,7 @@ public:
 
 #else
 public:
+    bool handleDataConfiguration(const QString &filepath);
     bool setWallpaper(const QString &filepath);
     bool setBrowserBookMark(const QString &filepath);
 #endif
