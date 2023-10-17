@@ -59,10 +59,10 @@ void BackendService::setSettingPin(fastring password)
 
 void BackendService::handleConnect(const char *session, const char *ip, const char *password)
 {
-    QString username(session);
+    QString ses_id(session);
     QString target_ip(ip);
     QString user_password(password);
-    emit sigConnect(target_ip, username, user_password);
+    emit sigConnect(ses_id, target_ip, user_password);
 }
 
 void BackendService::handleSendFiles(QString session, int jobid, QStringList &paths, bool sub, QString savedir)

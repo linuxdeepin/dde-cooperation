@@ -24,7 +24,7 @@ public:
     void handleSendFiles(QString session, int jobId, QStringList &paths, bool sub, QString savedir);
 
 signals:
-    void sigConnect(QString ip, QString name, QString pin);
+    void sigConnect(QString session, QString ip, QString pin);
     void sigSendFiles(QString session, int jobId, QStringList paths, bool sub, QString savedir);
     void sigSaveSession(QString who, QString session, int cbport);
 

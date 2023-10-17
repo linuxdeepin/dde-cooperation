@@ -11,6 +11,7 @@
 
 #include <QTimer>
 #include <QDebug>
+#include <QCoreApplication>
 
 TransferHandle::TransferHandle()
     : QObject()
@@ -28,10 +29,15 @@ TransferHandle::TransferHandle()
     connect(_frontendIpcService, &FrontendService::sigTransJobtatus, this, &TransferHandle::handleTransJobStatus, Qt::QueuedConnection);
     connect(_frontendIpcService, &FrontendService::sigFileTransStatus, this, &TransferHandle::handleFileTransStatus, Qt::QueuedConnection);
 
-    _backendOK = false;
+    QString appName = QCoreApplication::applicationName();
 
-    go([this]() {
-        _backendOK = TransferWoker::instance()->pingBackend();
+    _backendOK = false;
+    _request_job_id = appName.length(); // default start at appName's lenght
+    _job_maps.clear();
+    _file_ids.clear();
+
+    go([this, appName]() {
+        _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
     });
 }
 
@@ -52,17 +58,28 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
     }
 }
 
-void TransferHandle::handleTransJobStatus(int id, int result, QString msg)
+void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 {
+    auto it = _job_maps.find(id);
+
     switch (result)
     {
     case -1:
-        qInfo() << "Send job failed: (" << id << ") " << msg;
+        // remove job from maps
+        if (it != _job_maps.end()) {
+            _job_maps.erase(it);
+        }
+        qInfo() << "Send job failed: (" << id << ") " << path;
         break;
     case 0:
+        _job_maps.insert(id, path);
         emit TransferHelper::instance()->transferring();
         break;
     case 1:
+        // remove job from maps
+        if (it != _job_maps.end()) {
+            _job_maps.erase(it);
+        }
         emit TransferHelper::instance()->transferSucceed();
         break;
     default:
@@ -72,10 +89,47 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString msg)
 
 void TransferHandle::handleFileTransStatus(QString statusstr)
 {
+    // FileStatus
     qInfo() << "handleFileTransStatus: " << statusstr;
-//    FileStatus param;
-//    param.from_json(statusstr.toStdString());
+    co::Json status_json;
+    status_json.parse_from(statusstr.toStdString());
+    ipc::FileStatus param;
+    param.from_json(status_json);
+    auto file = _file_ids.find(param.file_id);
+    if (file != _file_ids.end()) {
+        // 已经记录过，只更新数据
+        if (param.current >= param.total) {
+            // 此文件已完成，从文件统计中删除
+            _file_stats.all_total_size -= param.total;
+            _file_stats.all_current_size -= param.current;
+            _file_ids.erase(file);
+        } else {
+            _file_stats.all_current_size += param.current - file.value(); //增量值
+        }
+    } else {
+        // 这个文件未被统计
+        _file_stats.all_total_size += param.total;
+        _file_stats.all_current_size += param.current;
+    }
 
+    if (param.second > _file_stats.max_time_sec) {
+        _file_stats.max_time_sec = param.second;
+    }
+
+    // 全部file_id的all_total_size, all_current/all_total_size
+    QString relname(param.name.c_str());
+    double value = static_cast<double>(_file_stats.all_current_size) / _file_stats.all_total_size;
+    int progressbar = static_cast<int>(value * 100);
+    int remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
+
+    float speed = param.current / 1024 / param.second;
+    if (speed > 1024) {
+        qInfo() << relname << "speed: " << speed / 1024 << "MB/s";
+    } else {
+        qInfo() << relname << "speed: " << speed << "KB/s";
+    }
+
+    emit TransferHelper::instance()->transferContent(relname, progressbar, remain_time);
 }
 
 void TransferHandle::tryConnect(QString ip, QString password)
@@ -107,9 +161,13 @@ void TransferHandle::sendFiles(QStringList paths)
 {
     if (!_backendOK) return;
 
-    go([paths]() {
-        TransferWoker::instance()->sendFiles(paths);
+    //清空上次任务的所有文件统计
+    _file_ids.clear();
+    int current_id = _request_job_id;
+    go([paths, current_id]() {
+        TransferWoker::instance()->sendFiles(current_id, paths);
     });
+    current_id++;
 }
 
 TransferWoker::TransferWoker() {
@@ -123,13 +181,13 @@ TransferWoker::~TransferWoker() {
     delete _gPool;
 }
 
-bool TransferWoker::pingBackend()
+bool TransferWoker::pingBackend(const std::string &who)
 {
     co::pool_guard<rpc::Client> c(_gPool);
     co::Json req, res;
     //PingBackParam
     req = {
-        { "who", "data-transfer" },
+        { "who", who },
         { "version", UNI_IPC_PROTO },
         { "cb_port", UNI_IPC_FRONTEND_PORT },
     };
@@ -137,6 +195,7 @@ bool TransferWoker::pingBackend()
     req.add_member("api", "Backend.ping"); //BackendImpl::ping
 
     c->call(req, res);
+    c->close();
     _session_id = res.get("msg").as_string(); // save the return session.
 
     //CallResult
@@ -155,6 +214,7 @@ void TransferWoker::setEmptyPassWord()
     req.add_member("api", "Backend.setPassword"); //BackendImpl::setPassword
 
     c->call(req, res);
+    c->close();
 }
 
 QString TransferWoker::getConnectPassWord()
@@ -165,7 +225,7 @@ QString TransferWoker::getConnectPassWord()
     req.add_member("api", "Backend.getPassword"); //BackendImpl::getPassword
 
     c->call(req, res);
-//    c->close();
+    c->close();
 
     return res.get("password").as_string().c_str();
 }
@@ -184,10 +244,10 @@ void TransferWoker::tryConnect(const std::string &ip, const std::string &passwor
     };
     req.add_member("api", "Backend.tryConnect"); //BackendImpl::tryConnect
     c->call(req, res);
-//    c->close();
+    c->close();
 }
 
-void TransferWoker::sendFiles(QStringList filepaths)
+void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 {
     co::pool_guard<rpc::Client> c(_gPool);
     co::Json req, res, paths;
@@ -199,7 +259,7 @@ void TransferWoker::sendFiles(QStringList filepaths)
     //TransFilesParam
     req = {
         { "session", _session_id },
-        { "id", -1 }, // TODO: set trans job id
+        { "id", reqid },
         { "paths", paths },
         { "sub", true },
         { "savedir", "" },
@@ -208,5 +268,5 @@ void TransferWoker::sendFiles(QStringList filepaths)
     req.add_member("api", "Backend.tryTransFiles"); //BackendImpl::tryTransFiles
 
     c->call(req, res);
-//    c->close();
+    c->close();
 }

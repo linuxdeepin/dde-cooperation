@@ -208,6 +208,7 @@ message FileTransJob {
   bool include_hidden = 3; //是否包含着.开头隐藏文件
   bool recursive = 4; //是否迭代包含着子目录
   bool push = 5; // push or pull
+  string app_who = 6;     //是哪个前端应用创建的传输任务
 }
 
 message FileTransCreate {

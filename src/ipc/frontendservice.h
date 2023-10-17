@@ -19,7 +19,7 @@ public:
 
     void handlePing(QString sessionid);
     void handleConnectstatus(int result, QString msg);
-    void handleTransJobstatus(int id, int result, QString msg);
+    void handleTransJobstatus(int id, int result, QString path);
     void handleFileTransstatus(QString statusstr);
     void handlePeerChanges(bool find, fastring peerinfo);
 
@@ -33,7 +33,6 @@ signals:
 public slots:
 
 private:
-    int _job_id = 0;
 };
 
 namespace ipc {

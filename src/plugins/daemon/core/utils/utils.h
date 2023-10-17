@@ -54,6 +54,10 @@ public:
 
     static std::string getFirstIp()
     {
+        // another way
+        //QList<QHostAddress> address = QNetworkInterface::allAddresses();
+        //qInfo() << "local ip" << address[2].toString();
+
         QString ip;
         // QNetworkInterface 类提供了一个主机 IP 地址和网络接口的列表
         foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
