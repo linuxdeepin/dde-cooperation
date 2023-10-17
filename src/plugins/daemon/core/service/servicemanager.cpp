@@ -13,6 +13,7 @@
 #include "discoveryjob.h"
 
 #include "utils/config.h"
+#include "utils/cert.h"
 
 #include <QSettings>
 
@@ -71,7 +72,11 @@ ServiceManager::~ServiceManager()
 void ServiceManager::startRemoteServer()
 {
     if (_rpcServiceBinder) {
-        _rpcServiceBinder->startRpcListen();
+        fastring key = Cert::instance()->writeKey();
+        fastring crt = Cert::instance()->writeCrt();
+        _rpcServiceBinder->startRpcListen(key.c_str(), crt.c_str());
+        Cert::instance()->removeFile(key);
+        Cert::instance()->removeFile(crt);
     }
     go([this]() {
         while(true) {

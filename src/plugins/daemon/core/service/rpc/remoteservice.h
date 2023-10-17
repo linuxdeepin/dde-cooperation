@@ -70,7 +70,7 @@ public:
     explicit RemoteServiceBinder(QObject *parent = nullptr);
     ~RemoteServiceBinder();
 
-    void startRpcListen();
+    void startRpcListen(const char *keypath, const char *crtpath);
 
     void createExecutor(const char *targetip, uint16_t port);
 
