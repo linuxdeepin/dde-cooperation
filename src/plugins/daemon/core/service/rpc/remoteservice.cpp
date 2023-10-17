@@ -356,17 +356,12 @@ RemoteServiceBinder::~RemoteServiceBinder()
 {
 }
 
-void RemoteServiceBinder::startRpcListen()
+void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpath)
 {
-#ifdef __linux__
-    // TODO: load key from bin
-    char key[] = "/usr/share/mobile-assistant-daemon/certificates/desktop.key";
-    char crt[] = "/usr/share/mobile-assistant-daemon/certificates/desktop.crt";
-#else
-    char key[] = "certificates/desktop.key";
-    char crt[] = "certificates/desktop.crt";
-#endif
-
+    char key[1024];
+    char crt[1024];
+    strcpy(key, keypath);
+    strcpy(crt, crtpath);
     zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(UNI_RPC_PORT_BASE, key, crt);
     server->registerService<RemoteServiceImpl>();
 
