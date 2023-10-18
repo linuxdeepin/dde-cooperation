@@ -1,4 +1,5 @@
 ﻿#include "waittransferwidget.h"
+#include "../type_defines.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -61,8 +62,9 @@ void WaitTransferWidget::initUI()
     backButton->setText("取消");
     backButton->setFixedSize(250, 36);
     backButton->setStyleSheet("background-color: lightgray;");
-    connect(backButton, &QToolButton::clicked, this, &WaitTransferWidget::nextPage);
-
+#ifndef WIN32
+    connect(backButton, &QToolButton::clicked, this, &WaitTransferWidget::cancel);
+#endif
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
@@ -86,7 +88,7 @@ void WaitTransferWidget::nextPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 2);
+        stackedWidget->setCurrentIndex(PageName::transferringwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
@@ -96,7 +98,7 @@ void WaitTransferWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+        stackedWidget->setCurrentIndex(PageName::connectwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
@@ -116,3 +118,24 @@ void WaitTransferWidget::themeChanged(int theme)
         iconLabel->setMovie(darkiconmovie);
     }
 }
+
+#ifndef WIN32
+#    include <DDialog>
+DWIDGET_USE_NAMESPACE
+void WaitTransferWidget::cancel()
+{
+    DDialog dlg;
+    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+    dlg.addButton("取 消");
+    dlg.addButton("关 闭", true, DDialog::ButtonWarning);
+
+    dlg.setTitle("该操作会清空传输进度，您要继续吗");
+    dlg.setMessage("此操作不可恢复");
+
+    int code = dlg.exec();
+    if (code == 1) {
+        backPage();
+    }
+}
+
+#endif

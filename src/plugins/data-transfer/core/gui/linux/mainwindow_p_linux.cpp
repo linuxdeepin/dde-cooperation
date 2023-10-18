@@ -19,6 +19,7 @@
 #include <gui/transfer/transferringwidget.h>
 #include <gui/backupload/uploadfilewidget.h>
 #include <gui/transfer/errorwidget.h>
+#include <gui/transfer/resultdisplay.h>
 #include <gui/transfer/waittransferwidget.h>
 
 #include <utils/transferhepler.h>
@@ -63,6 +64,7 @@ void MainWindowPrivate::initWidgets()
     TransferringWidget *transferringwidget = new TransferringWidget(q);
     ErrorWidget *errorwidget = new ErrorWidget(q);
     SuccessWidget *successtranswidget = new SuccessWidget(q);
+    ResultDisplayWidget *resultwidget = new ResultDisplayWidget(q);
 
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
     stackedWidget->insertWidget(PageName::licensewidget, licensewidget);
@@ -77,6 +79,7 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::transferringwidget, transferringwidget);
     stackedWidget->insertWidget(PageName::errorwidget, errorwidget);
     stackedWidget->insertWidget(PageName::successtranswidget, successtranswidget);
+    stackedWidget->insertWidget(PageName::resultwidget, resultwidget);
 
     stackedWidget->setCurrentIndex(0);
 

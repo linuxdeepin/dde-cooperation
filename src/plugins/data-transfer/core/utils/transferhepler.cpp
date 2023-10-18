@@ -19,6 +19,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QProcess>
+#include <QJsonArray>
 
 #ifdef WIN32
 #    include <gui/getbackup/drapwindowsdata.h>
@@ -138,6 +139,9 @@ bool TransferHelper::handleDataConfiguration(const QString &filepath)
     QString image = filepath + "/" + jsonObj["wallpapers"].toString();
     setWallpaper(image);
 
+    //Configure file
+    setFile(jsonObj, filepath);
+
     return true;
 }
 
@@ -167,6 +171,23 @@ bool TransferHelper::setWallpaper(const QString &filepath)
         qDebug() << "Failed to call SetMonitorBackground method";
         return false;
     }
+}
+
+bool TransferHelper::setFile(QJsonObject jsonObj, QString filepath)
+{
+    QJsonValue userFileValue = jsonObj["user_file"];
+    if (userFileValue.isArray()) {
+        const QJsonArray &userFileArray = userFileValue.toArray();
+        for (const auto &value : userFileArray) {
+            QString filename = value.toString();
+            QString targetFile = QDir::homePath() + "/" + filename;
+            QString file = filepath + filename.mid(filename.indexOf('/'));
+            bool success = QFile::rename(file, targetFile);
+            qInfo() << file << success;
+        }
+    }
+    qInfo() << jsonObj["user_file"].toString();
+    return true;
 }
 
 #endif
