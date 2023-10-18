@@ -90,26 +90,29 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 void TransferHandle::handleFileTransStatus(QString statusstr)
 {
     // FileStatus
-    qInfo() << "handleFileTransStatus: " << statusstr;
+//    qInfo() << "handleFileTransStatus: " << statusstr;
     co::Json status_json;
     status_json.parse_from(statusstr.toStdString());
     ipc::FileStatus param;
     param.from_json(status_json);
-    auto file = _file_ids.find(param.file_id);
-    if (file != _file_ids.end()) {
+
+    if (_file_ids.contains(param.file_id)) {
         // 已经记录过，只更新数据
+        int64_t increment = param.current - _file_ids[param.file_id];
+//        qInfo() << "_file_ids " << param.file_id << " increment: " << increment;
+        _file_stats.all_current_size += increment; //增量值
+        _file_ids[param.file_id] = param.current;
+
         if (param.current >= param.total) {
             // 此文件已完成，从文件统计中删除
-            _file_stats.all_total_size -= param.total;
-            _file_stats.all_current_size -= param.current;
-            _file_ids.erase(file);
-        } else {
-            _file_stats.all_current_size += param.current - file.value(); //增量值
+            _file_ids.remove(param.file_id);
         }
     } else {
+//        qInfo() << "_file_ids not contain: " << param.file_id;
         // 这个文件未被统计
         _file_stats.all_total_size += param.total;
         _file_stats.all_current_size += param.current;
+        _file_ids.insert(param.file_id, param.current);
     }
 
     if (param.second > _file_stats.max_time_sec) {
@@ -120,7 +123,15 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     QString relname(param.name.c_str());
     double value = static_cast<double>(_file_stats.all_current_size) / _file_stats.all_total_size;
     int progressbar = static_cast<int>(value * 100);
-    int remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
+    int remain_time;
+    if (progressbar <= 0) {
+        remain_time = -1;
+    } else if (progressbar > 100) {
+        progressbar = 100;
+        remain_time = 0;
+    } else {
+        remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
+    }
 
     float speed = param.current / 1024 / param.second;
     if (speed > 1024) {
@@ -128,6 +139,8 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     } else {
         qInfo() << relname << "speed: " << speed << "KB/s";
     }
+//    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
+//    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
     emit TransferHelper::instance()->transferContent(relname, progressbar, remain_time);
 }

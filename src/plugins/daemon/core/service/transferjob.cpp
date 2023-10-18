@@ -59,7 +59,7 @@ void TransferJob::start()
             }
         }
 
-        int res = _rpcBinder->doTransfileJob(_jobid, path.c_str(), false, _sub, _writejob);
+        int res = _rpcBinder->doTransfileJob(_app_name.c_str(), _jobid, path.c_str(), false, _sub, _writejob);
         if (res < 0) {
             ELOG << "binder doTransfileJob failed: " << res << " jobpath: " << jobpath;
             _stoped = true;
@@ -120,6 +120,10 @@ void TransferJob::insertFileInfo(FileInfo &info)
         // skip 0B file
         if (info.total_size > 0) {
             _file_info_maps.insert(std::make_pair(fileid, info));
+            // FileInfo > FileStatus in handle func
+            QString appname(_app_name.c_str());
+            QString fileinfo(info.as_json().str().c_str());
+            emit notifyFileTransStatus(appname, _jobid, fileinfo);
         }
     }
 }
@@ -262,55 +266,24 @@ void TransferJob::readFileBlock(const char *filepath, int fileid, const fastring
 
 void TransferJob::handleBlockQueque()
 {
-    _checkerTimer.run_every(std::bind([this]() {
-        // update the file info
-        for (auto& pair : _file_info_maps) {
-            if (pair.second.time_spended >= 0) {
-                pair.second.time_spended += 1;
-
-                // double speed = pair.second.current_size / (1024 * 1024) / pair.second.time_spended;
-                // LOG << pair.second.name << " (" << pair.second.current_size << ") speed: " << speed << " M/s";
-                fastring filepath = path::join(_path.c_str(), pair.second.name.c_str());
-                DLOG << "notify file status:" << filepath;
-                QString appname(_app_name.c_str());
-                QString fileinfo(pair.second.as_json().str().c_str());
-
-                // FileInfo > FileStatus in handle func
-                emit notifyFileTransStatus(appname, _jobid, fileinfo);
-
-                if (pair.second.current_size >= pair.second.total_size) {
-                    DLOG << "should notify file finish: " << pair.second.name;
-                    _file_info_maps.erase(pair.first);
-                    if (!_writejob) {
-                    //TODO: check sum
-                    // handleUpdate(OK, block.filename.c_str(), "");
-                    }
-                }
-           }
-        }
-        if (_file_info_maps.empty()) {
-            if (!_writejob) {
-                DLOG << "all file finished, send job finish.";
-                handleUpdate(FINIASH, _path.c_str(), "");
-            } else {
-                _empty_max_count--;
-                if (_empty_max_count < 0) {
-                    DLOG << " wait block data timeout NOW!";
-                    this->stop();
-                }
-            }
-        } else {
-            //reset timeout
-            _empty_max_count = 5;
-        }
-    }), 1);
+    _timer.restart();
+    int64 now = _timer.ms();
 
     bool exception = false;
     while (!_stoped) {
+        if (_timer.ms() - now >= 1000) {
+            now = _timer.ms();
+            go(std::bind(&TransferJob::syncHandleStatus, this));
+        }
         if (_block_queue.empty()) {
             // job has been sat wait finish.
             if (_waitfinish) {
-                break;
+                syncHandleStatus();
+                if (_writejob && _empty_max_count > 0) {
+                    continue; // wait for receive timeout
+                } else {
+                    break; // finish
+                }
             }
             co::sleep(10);
             continue;
@@ -324,6 +297,16 @@ void TransferJob::handleBlockQueque()
         fastring buffer = block.data;
         size_t len = buffer.size();
         bool comp = block.compressed;
+
+        // update the file info
+        auto it = _file_info_maps.find(file_id);
+        if (it != _file_info_maps.end()) {
+            it->second.current_size += len;
+            if (blk_id == 0) {
+                // first block data, file begin, start record time
+                it->second.time_spended = 0;
+            }
+        }
 
         if (_writejob) {
             int64 offset = blk_id * BLOCK_SIZE;
@@ -353,24 +336,13 @@ void TransferJob::handleBlockQueque()
             }
         }
         _block_queue.pop_front();
-
-        // update the file info
-        auto it = _file_info_maps.find(file_id);
-        if (it != _file_info_maps.end()) {
-            it->second.current_size += len;
-            if (blk_id == 0) {
-                // first block data, file begin, start record time
-                it->second.time_spended = 0;
-            }
-        }
     };
     if (exception) {
-        DLOG << "trans job exception hanpend";
+        DLOG << "trans job exception hanpend: " << _jobid;
     } else {
-        LOG << "trans job finished!!";
+        LOG << "trans job finished: " << _jobid;
         _finished = true;
     }
-    _checkerTimer.stop();
 }
 
 void TransferJob::handleUpdate(FileTransRe result, const char *path, const char *emsg)
@@ -394,4 +366,44 @@ void TransferJob::handleUpdate(FileTransRe result, const char *path, const char 
             this->stop();
         }
     });
+}
+
+void TransferJob::syncHandleStatus()
+{
+    // update the file info
+    for (auto& pair : _file_info_maps) {
+        if (pair.second.time_spended >= 0) {
+            pair.second.time_spended += 1;
+
+            QString appname(_app_name.c_str());
+            QString fileinfo(pair.second.as_json().str().c_str());
+
+            // FileInfo > FileStatus in handle func
+            emit notifyFileTransStatus(appname, _jobid, fileinfo);
+
+            if (pair.second.current_size >= pair.second.total_size) {
+                DLOG << "should notify file finish: " << pair.second.name;
+                _file_info_maps.erase(pair.first);
+                if (!_writejob) {
+                //TODO: check sum
+                // handleUpdate(OK, block.filename.c_str(), "");
+                }
+            }
+       }
+    }
+    if (_file_info_maps.empty()) {
+        if (!_writejob) {
+            DLOG << "all file finished, send job finish.";
+            handleUpdate(FINIASH, _path.c_str(), "");
+        } else {
+            _empty_max_count--;
+            if (_empty_max_count < 0) {
+                DLOG << " wait block data timeout NOW!";
+                this->stop();
+            }
+        }
+    } else {
+        //reset timeout
+        _empty_max_count = 5;
+    }
 }
