@@ -4,17 +4,19 @@
 #include "../connect/choosewidget.h"
 #include "../connect/connectwidget.h"
 #include "../connect/promptwidget.h"
-#include "../connect/searchwidget.h" #
 #include "../connect/startwidget.h"
+#include "../connect/networkdisconnectionwidget.h"
+#include "../connect/licensewidget.h"
+
 #include "../select/appselectwidget.h"
 #include "../select/selectmainwidget.h"
 #include "../select/configselectwidget.h"
 #include "../select/fileselectwidget.h"
+
 #include "../transfer/successwidget.h"
 #include "../transfer/transferringwidget.h"
-
 #include "../transfer/errorwidget.h"
-#include "../connect/networkdisconnectionwidget.h"
+
 #include "../getbackup/createbackupfilewidget.h"
 #include "../getbackup/zipfileprocesswidget.h"
 #include "../getbackup/zipfileprocessresultwidget.h"
@@ -66,6 +68,7 @@ void MainWindowPrivate::initWindow()
 void MainWindowPrivate::initWidgets()
 {
     StartWidget *startwidget = new StartWidget(q);
+    LicenseWidget *licensewidget = new LicenseWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
     TransferringWidget *transferringwidget = new TransferringWidget(q);
     ReadyWidget *readywidget = new ReadyWidget(q);
@@ -83,6 +86,7 @@ void MainWindowPrivate::initWidgets()
     CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
     SelectMainWidget *selectmainwidget = new SelectMainWidget(q);
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
+    stackedWidget->insertWidget(PageName::licensewidget,licensewidget);
     stackedWidget->insertWidget(PageName::choosewidget, choosewidget);
     stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
     stackedWidget->insertWidget(PageName::readywidget, readywidget);
@@ -98,7 +102,7 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::zipfileprocesswidget, zipfileprocesswidget);
     stackedWidget->insertWidget(PageName::zipfileprocessresultwidget, zipfileprocessresultwidget);
 
-    stackedWidget->setCurrentIndex(PageName::choosewidget);
+    stackedWidget->setCurrentIndex(PageName::startwidget);
 
     windowsCentralWidgetContent->setContentsMargins(8, 8, 8, 8);
     windowsCentralWidgetContent->addWidget(stackedWidget);

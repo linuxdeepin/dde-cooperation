@@ -9,11 +9,12 @@
 #include <QCoreApplication>
 #include <QTimer>
 #include <QJsonDocument>
+
 #include <QJsonObject>
-#include <QDBusMessage>
-#include <QDBusConnection>
-#include <QDBusInterface>
 #include <QGuiApplication>
+#include <QJsonArray>
+#include <QJsonObject>
+
 #include <QTextCodec>
 #include <QScreen>
 #include <QNetworkAccessManager>
@@ -23,16 +24,19 @@
 
 #ifdef WIN32
 #    include <gui/getbackup/drapwindowsdata.h>
+#else
+#    include <QDBusMessage>
+#    include <QDBusConnection>
+#    include <QDBusInterface>
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper()
-    : QObject()
+TransferHelper::TransferHelper() : QObject()
 {
     initOnlineState();
 }
 
-TransferHelper::~TransferHelper() {}
+TransferHelper::~TransferHelper() { }
 
 TransferHelper *TransferHelper::instance()
 {
@@ -46,9 +50,17 @@ void TransferHelper::initOnlineState()
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]() {
         QProcess pingProcess;
-        pingProcess.start("ping", QStringList() << "-c"
-                                                << "1"
-                                                << "www.baidu.com");
+#ifdef WIN32
+        pingProcess.start("ping",
+                          QStringList() << "-n"
+                                        << "1"
+                                        << "www.baidu.com");
+#else
+        pingProcess.start("ping",
+                          QStringList() << "-c"
+                                        << "1"
+                                        << "www.baidu.com");
+#endif
         pingProcess.waitForFinished(500);
         if (pingProcess.exitCode() == 0 && online != true) {
             online = true;
@@ -80,14 +92,36 @@ void TransferHelper::tryConnect(const QString &ip, const QString &password)
     transferhandle.tryConnect(ip, password);
 }
 
-void TransferHelper::startTransfer()
+
+void TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &save)
 {
-    qInfo() << OptionsManager::instance()->getUserOptions();
-    QStringList paths = OptionsManager::instance()->getUserOptions()["file"];
-    transferhandle.sendFiles(paths);
+    QString savePath = save;
+    QJsonDocument jsonDoc(jsonData);
+
+    if (savePath.isEmpty()) {
+        savePath = QString("./transfer.json");
+    } else {
+        savePath += "/transfer.json";
+    }
+
+    QFile file(savePath);
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(jsonDoc.toJson());
+        file.close();
+        qDebug() << "JSON data exported to transfer.json";
+    } else {
+        qDebug() << "Failed to open file for writing.";
+    }
 }
 
 #ifdef WIN32
+void TransferHelper::startTransfer()
+{
+    QStringList paths = getTransferFilePath();
+    qInfo() << "transferring file list: " << paths;
+    transferhandle.sendFiles(paths);
+}
+
 QMap<QString, QString> TransferHelper::getAppList()
 {
     QMap<QString, QString> appList;
@@ -116,6 +150,72 @@ QMap<QString, QString> TransferHelper::getBrowserList()
     }
     return browserList;
 }
+
+QStringList TransferHelper::getTransferFilePath()
+{
+    QStringList filePathList = OptionsManager::instance()->getUserOption(Options::kFile);
+    QStringList appList = OptionsManager::instance()->getUserOption(Options::kApp);
+    QStringList browserList = OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
+    QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
+
+    QStringList transferFilePathList;
+    for (auto file : filePathList) {
+        transferFilePathList.append(file);
+    }
+
+    QString tempSavePath = QCoreApplication::applicationDirPath();
+
+    QString bookmarksName;
+    if (!browserList.isEmpty()) {
+        QSet<QString> browserName(browserList.begin(), browserList.end());
+        DrapWindowsData::instance()->getBrowserBookmarkInfo(browserName);
+        DrapWindowsData::instance()->getBrowserBookmarkJSON(QString("."));
+        transferFilePathList.append(tempSavePath + QString("/bookmarks.json"));
+        bookmarksName = "bookmarks.json";
+    }
+
+    QString wallpaperName;
+    if (!configList.isEmpty()) {
+        QString wallparerPath = DrapWindowsData::instance()->getDesktopWallpaperPath();
+        QFileInfo fileInfo(wallparerPath);
+        wallpaperName = fileInfo.fileName();
+        transferFilePathList.append(QString(fileInfo.path() + "/" + wallpaperName));
+    }
+
+    QJsonArray appArray;
+    for (auto app : appList) {
+        appArray.append(app);
+    }
+    QJsonArray fileArray;
+    for (QString file : filePathList) {
+        if (file.contains("C:/Users/deep/")) {
+            file.replace("C:/Users/deep/", "");
+        } else {
+            int found = file.indexOf(":/");
+            if (found != -1) {
+                file = file.mid(found + 2);
+            }
+        }
+        fileArray.append(file);
+    }
+
+    QJsonObject jsonObject;
+    jsonObject["user_data"] = "NA";
+    jsonObject["user_file"] = fileArray;
+    if (!appArray.isEmpty())
+        jsonObject["app"] = appArray;
+    //  jsonObject["app"] = appArray;
+    if (!wallpaperName.isEmpty())
+        jsonObject["wallpapers"] = wallpaperName;
+    if (!bookmarksName.isEmpty())
+        jsonObject["borwserbookmark"] = bookmarksName;
+
+    QString qjsonPath("/transfer.json");
+    getJsonfile(jsonObject, QString(tempSavePath));
+    transferFilePathList.append(tempSavePath + qjsonPath);
+
+    return transferFilePathList;
+}
 #else
 bool TransferHelper::handleDataConfiguration(const QString &filepath)
 {
@@ -137,18 +237,19 @@ bool TransferHelper::handleDataConfiguration(const QString &filepath)
 
     bool ret = true;
 
-    //Configure desktop wallpaper
+    // Configure desktop wallpaper
     QString image = filepath + "/" + jsonObj["wallpapers"].toString();
-    ret &= setWallpaper(image);
+    if(!jsonObj["wallpapers"].isNull())
+         ret &= setWallpaper(image);
 
     //Configure file
     ret &= setFile(jsonObj, filepath);
 
     //setBrowserBookMark
-    ret &= setBrowserBookMark(jsonObj["wallpapers"].toString());
+    ret &= setBrowserBookMark(jsonObj["browerbookmark"].toString());
 
     //installApps
-    ret &= jsonObj["wallpapers"].isNull();
+    ret &= jsonObj["app"].isNull();
 
     return ret;
 }
@@ -161,7 +262,7 @@ bool TransferHelper::setWallpaper(const QString &filepath)
     QString path = "/com/deepin/daemon/Appearance";
     QString interfaceName = "com.deepin.daemon.Appearance";
 
-    //dbus连接
+    // dbus连接
     QDBusInterface interface(service, path, interfaceName);
 
     //调用方法

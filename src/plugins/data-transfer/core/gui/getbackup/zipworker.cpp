@@ -6,9 +6,6 @@
 
 #include <QProcess>
 #include <QDebug>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 #include <QFile>
 #include <QTextCodec>
 #include <QDir>
@@ -149,101 +146,28 @@ void ZipWork::unZipFile(const QString &zipFilePath, const QString &unZipFile)
         qDebug() << process.readAllStandardError();
     }
 }
-void ZipWork::getJsonfile(const QJsonObject &jsonData, const QString &save)
-{
-    QString savePath = save;
-    // 创建一个 JSON 文档
-    QJsonDocument jsonDoc(jsonData);
-
-    if (savePath.isEmpty()) {
-        savePath = QString("./transfer.json");
-    } else {
-        savePath += "/transfer.json";
-    }
-    // 打开文件以保存 JSON 数据
-    QFile file(savePath);
-    if (file.open(QIODevice::WriteOnly)) {
-        // 将 JSON 数据写入文件
-        file.write(jsonDoc.toJson());
-        file.close();
-        qDebug() << "JSON data exported to transfer.json";
-    } else {
-        qDebug() << "Failed to open file for writing.";
-    }
-}
 
 void ZipWork::getUserDataPackagingFile()
 {
-    QStringList filePathList = OptionsManager::instance()->getUserOption(Options::kFile);
-    QStringList appList = OptionsManager::instance()->getUserOption(Options::kApp);
-    QStringList browserList = OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
-    QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
+    QStringList zipFilePathList = TransferHelper::instance()->getTransferFilePath();
+    QStringList zipFileSavePath =
+            OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath);
+    QStringList zipFileNameList =
+            OptionsManager::instance()->getUserOption(Options::kBackupFileName);
 
-    QStringList zipFilePathList;
-    for (auto file : filePathList) {
-        zipFilePathList.append(file);
+    QString zipFileName;
+    if (zipFileNameList[0] == "") {
+        zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName() + "_"
+                + DrapWindowsData::instance()->getIP() + "_uos.zip";
+    } else {
+        zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] + ".zip";
     }
+    qInfo() << "backup file save path:" << zipFileName;
 
-    if (!browserList.isEmpty()) {
-        QSet<QString> browserName(browserList.begin(), browserList.end());
-        DrapWindowsData::instance()->getBrowserBookmarkInfo(browserName);
-        DrapWindowsData::instance()->getBrowserBookmarkJSON(QString("."));
-        zipFilePathList.append(QString("./bookmarks.json"));
-    }
+    // Get the number of files to zip
+    allFileNum = getAllFileNum(zipFilePathList);
 
-    if (!configList.isEmpty()) {
-        QString wallparerPath = DrapWindowsData::instance()->getDesktopWallpaperPath();
-        zipFilePathList.append(wallparerPath);
-    }
-
-    QJsonArray appArray;
-    for (auto app : appList) {
-        appArray.append(app);
-    }
-    QJsonArray fileArray;
-    for (QString file : filePathList) {
-        if (file.contains("C:/Users/deep/")) {
-            file.replace("C:/Users/deep/", "");
-        } else {
-            int found = file.indexOf(":/");
-            if (found != -1) {
-                file = file.mid(found + 2);
-            }
-        }
-        fileArray.append(file);
-    }
-
-    QJsonObject jsonObject;
-    jsonObject["user_data"] = "100";
-    jsonObject["user_file"] = fileArray;
-    jsonObject["app"] = appArray;
-    jsonObject["wallpapers"] = "img0.jpg";
-    jsonObject["borwerbookmark"] = "./bookmarks.json";
-
-    QString qjsonPath("./transfer.json");
-    getJsonfile(jsonObject, QString("."));
-    zipFilePathList.append(qjsonPath);
-
-    {
-        QStringList zipFileSavePath =
-                OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath);
-        QStringList zipFileNameList =
-                OptionsManager::instance()->getUserOption(Options::kBackupFileName);
-
-        QString zipFileName;
-        if (zipFileNameList[0]=="") {
-            zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName()
-                    + "_" + DrapWindowsData::instance()->getIP() + "_uos.zip";
-        } else {
-            zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] + ".zip";
-        }
-        qInfo() << "backup file save path:" << zipFileName;
-
-        // Get the number of files to zip
-        allFileNum = getAllFileNum(zipFilePathList);
-
-        zipFile(zipFilePathList, zipFileName);
-    }
+    zipFile(zipFilePathList, zipFileName);
 }
 
 int ZipWork::getPathFileNum(const QString &filePath)
@@ -273,4 +197,3 @@ int ZipWork::getAllFileNum(const QStringList &fileList)
     }
     return fileNum;
 }
-

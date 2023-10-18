@@ -19,7 +19,6 @@ private:
 private slots:
     void backPage();
     void informationPage();
-    void exit();
 
 private:
     QLabel *displayLabel{ nullptr };

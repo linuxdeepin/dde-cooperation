@@ -44,11 +44,6 @@ inline constexpr char MozillaFirefoxBookMark[]{ "\\AppData\\Roaming\\Mozilla\\Fi
 
 DrapWindowsData::DrapWindowsData()
 {
-    //    getApplianceListInfo();
-    //    getBrowerListInfo();
-    //    getDesktopWallpaperPathInfo();
-    //    getBrowerBookmarkPathInfo();
-    //    getBrowerBookmarkInfo();
 }
 
 DrapWindowsData *DrapWindowsData::instance()
@@ -321,7 +316,6 @@ QString DrapWindowsData::getUserName()
 {
     QString userDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
-    // 获取主文件夹的名称
     QFileInfo fileInfo(userDir);
     QString userName = fileInfo.fileName();
 
@@ -348,10 +342,7 @@ QString DrapWindowsData::getIP()
 
 void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 {
-    // QString jsonFilePath = QDir(qApp->applicationDirPath()).filePath("app.json");
-
-    QFile file("C:\\Users\\deep\\Documents\\project\\scx\\dde-cooperation\\src\\plugins\\data-"
-               "transfer\\core\\resource\\apps.json");
+    QFile file(":/fileResource/apps.json");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "can not open app json";
         return ;
@@ -387,11 +378,11 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
         list.push_back(app);
     }
 
-    qInfo() << "linux app:";
+    qInfo() << "get linux app list.";
 
-    for (const UosApp &app : list) {
-        qInfo() << app.windowsName << " " << app.UosName << " featrue:" << app.feature;
-    }
+//    for (const UosApp &app : list) {
+//        qInfo() << app.windowsName << " " << app.UosName << " featrue:" << app.feature;
+//    }
     return;
 }
 

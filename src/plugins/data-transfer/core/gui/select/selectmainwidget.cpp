@@ -29,18 +29,25 @@ void SelectMainWidget::changeSelectframeState(const SelectItemName &name, const 
         appItem->isOk = ok;
         appItem->update();
         QStringList list = OptionsManager::instance()->getUserOption(Options::kApp);
-        appItem->updateSelectSize(list.size());
+        appItem->updateSelectSize(QString::number(list.size()));
     } else if (name == SelectItemName::FILES) {
         fileItem->isOk = ok;
         fileItem->update();
-        fileItem->updateSelectSize(9);
+        QStringList sizeList = OptionsManager::instance()->getUserOption(Options::KSelectFileSize);
+        QString size;
+        if (sizeList.isEmpty()) {
+            size = QString("");
+        } else {
+            size = sizeList[0];
+        }
+        fileItem->updateSelectSize(size);
     } else if (name == SelectItemName::CONFIG) {
         configItem->isOk = ok;
         configItem->update();
         QStringList ConfigList = OptionsManager::instance()->getUserOption(Options::kConfig);
         QStringList BrowserList =
                 OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
-        configItem->updateSelectSize(ConfigList.size() + BrowserList.size());
+        configItem->updateSelectSize(QString::number(ConfigList.size() + BrowserList.size()));
     }
 }
 
@@ -137,9 +144,12 @@ void SelectMainWidget::initUi()
     QHBoxLayout *indexLayout = new QHBoxLayout();
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
-    mainLayout->addSpacing(60);
+    mainLayout->addSpacing(40);
+ //   mainLayout->setSpacing(0);
     mainLayout->addWidget(titileLabel);
+    mainLayout->addSpacing(45);
     mainLayout->addLayout(modeLayout);
+    mainLayout->addSpacing(60);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addLayout(indexLayout);
 }
@@ -168,12 +178,12 @@ void SelectMainWidget::nextPage()
 void SelectMainWidget::backPage()
 {
     PageName back;
-  //  QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
-  //  if (method == TransferMethod::kLocalExport) {
-      //  back = PageName::choosewidget;
-//    } else if (method == TransferMethod::kNetworkTransmission) {
+    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+    if (method == TransferMethod::kLocalExport) {
+        back = PageName::choosewidget;
+    } else if (method == TransferMethod::kNetworkTransmission) {
         back = PageName::readywidget;
-//    }
+    }
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(back);
@@ -237,12 +247,12 @@ SelectItem::SelectItem(QString text, QIcon icon, SelectItemName itemName, QWidge
 }
 SelectItem::~SelectItem() { }
 
-void SelectItem::updateSelectSize(int num)
+void SelectItem::updateSelectSize(QString num)
 {
     if (name == SelectItemName::APP) {
         sizeLabel->setText(QString("已选:%1").arg(num));
     } else if (name == SelectItemName::FILES) {
-        sizeLabel->setText(QString("已选:%1GB").arg(num));
+        sizeLabel->setText(QString("已选:%1").arg(num));
     } else if (name == SelectItemName::CONFIG) {
         sizeLabel->setText(QString("已选:%1项").arg(num));
     } else {

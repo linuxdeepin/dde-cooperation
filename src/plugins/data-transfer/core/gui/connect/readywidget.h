@@ -5,6 +5,7 @@
 
 class QLineEdit;
 class QToolButton;
+class QLabel;
 class ReadyWidget : public QFrame
 {
 public:
@@ -15,13 +16,15 @@ public slots:
     void nextPage();
     void backPage();
     void onLineTextChange();
+
 private:
     void initUI();
-    void updateOption();
+    void tryConnect();
 
     QLineEdit *ipInput{ nullptr };
     QLineEdit *captchaInput{ nullptr };
     QToolButton *nextButton{ nullptr };
+    QLabel *tiptextlabel{ nullptr };
 };
 
 #endif // READYWIDGET_H

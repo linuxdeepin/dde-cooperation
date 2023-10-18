@@ -16,13 +16,12 @@
 
 #pragma execution_character_set("utf-8")
 
-ReadyWidget::ReadyWidget(QWidget *parent)
-    : QFrame(parent)
+ReadyWidget::ReadyWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
 }
 
-ReadyWidget::~ReadyWidget() {}
+ReadyWidget::~ReadyWidget() { }
 
 void ReadyWidget::initUI()
 {
@@ -55,12 +54,12 @@ void ReadyWidget::initUI()
                            "background-color: rgba(0,0,0, 0.08);");
     ipInput->setFixedSize(340, 36);
 
-    QRegularExpressionValidator *ipValidator = new QRegularExpressionValidator(
-            QRegularExpression("^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$"));
+    QRegularExpressionValidator *ipValidator = new QRegularExpressionValidator(QRegularExpression(
+            "^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$"));
 
     ipInput->setValidator(ipValidator);
 
-    QObject::connect(ipInput, &QLineEdit::textChanged, [ = ]() {
+    QObject::connect(ipInput, &QLineEdit::textChanged, [=]() {
         bool isEmpty = ipInput->text().isEmpty();
         ipInput->setClearButtonEnabled(!isEmpty);
     });
@@ -82,8 +81,8 @@ void ReadyWidget::initUI()
     captchaLayout->setAlignment(Qt::AlignBottom);
 
     captchaInput = new QLineEdit(this);
-    QRegularExpressionValidator *captchaValidator = new QRegularExpressionValidator(
-        QRegularExpression("^\\d{6}$"));
+    QRegularExpressionValidator *captchaValidator =
+            new QRegularExpressionValidator(QRegularExpression("^\\d{6}$"));
     captchaInput->setValidator(captchaValidator);
     captchaInput->setPlaceholderText("请输入PC上显示的验证码");
     captchaInput->setStyleSheet("border-radius: 8px;"
@@ -91,7 +90,7 @@ void ReadyWidget::initUI()
                                 "padding-left: 10px;"
                                 "background-color: rgba(0,0,0, 0.08);");
     captchaInput->setFixedSize(340, 36);
-    QObject::connect(captchaInput, &QLineEdit::textChanged, [ = ]() {
+    QObject::connect(captchaInput, &QLineEdit::textChanged, [=]() {
         bool isEmpty = captchaInput->text().isEmpty();
         captchaInput->setClearButtonEnabled(!isEmpty);
     });
@@ -119,6 +118,11 @@ void ReadyWidget::initUI()
                               ";}");
     connect(backButton, &QToolButton::clicked, this, &ReadyWidget::backPage);
 
+    tiptextlabel = new QLabel(this);
+    tiptextlabel->setText("<font size='4' color='#FF5736' >密码或IP错误！请重新输入。</font>");
+    tiptextlabel->setVisible(false);
+    tiptextlabel->setAlignment(Qt::AlignCenter);
+
     nextButton = new QToolButton(this);
     QPalette palette = nextButton->palette();
     palette.setColor(QPalette::ButtonText, Qt::white);
@@ -139,7 +143,7 @@ void ReadyWidget::initUI()
                               "letter-spacing: 3px;"
                               "text-align: center;"
                               "}");
-    connect(nextButton, &QToolButton::clicked, this, &ReadyWidget::nextPage);
+    connect(nextButton, &QToolButton::clicked, this, &ReadyWidget::tryConnect);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     buttonLayout->addWidget(backButton);
@@ -163,23 +167,27 @@ void ReadyWidget::initUI()
     mainLayout->addLayout(captchaLayout);
     mainLayout->addLayout(editLayout2);
     mainLayout->addSpacing(130);
+    mainLayout->addWidget(tiptextlabel);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
 
     QObject::connect(ipInput, &QLineEdit::textChanged, this, &ReadyWidget::onLineTextChange);
     QObject::connect(captchaInput, &QLineEdit::textChanged, this, &ReadyWidget::onLineTextChange);
+    QObject::connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this,
+                     &ReadyWidget::nextPage);
 }
 
-void ReadyWidget::updateOption()
+void ReadyWidget::tryConnect()
 {
-    qInfo()<<ipInput->text()<<" "<<captchaInput->text();
+    qInfo() << ipInput->text() << " " << captchaInput->text();
     TransferHelper::instance()->tryConnect(ipInput->text(), captchaInput->text());
+    tiptextlabel->setVisible(true);
 }
 
 void ReadyWidget::nextPage()
 {
-    updateOption();
+    tiptextlabel->setVisible(false);
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
@@ -202,7 +210,8 @@ void ReadyWidget::backPage()
 
 void ReadyWidget::onLineTextChange()
 {
-    QRegularExpression ipRegex("^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$");
+    QRegularExpression ipRegex(
+            "^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$");
     QRegularExpressionMatch ipMatch = ipRegex.match(ipInput->text());
 
     if (!ipMatch.hasMatch()) {

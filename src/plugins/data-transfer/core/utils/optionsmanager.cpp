@@ -1,8 +1,9 @@
-#include "optionsmanager.h"
+﻿#include "optionsmanager.h"
 
 OptionsManager::OptionsManager()
     : QObject()
 {
+
 }
 
 OptionsManager::~OptionsManager()
@@ -35,5 +36,8 @@ void OptionsManager::setUserOptions(const QMap<QString, QStringList> &value)
 
 void OptionsManager::addUserOption(const QString &option, const QStringList &value)
 {
+    //update user options
+    if(userOptions.contains(option))
+        userOptions.remove(option);
     userOptions[option] = value;
 }

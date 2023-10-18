@@ -16,7 +16,6 @@ public:
 private:
     void zipFile(const QStringList &sourceFilePath, const QString &zipFileSave = QString());
     void unZipFile(const QString &zipFilePath, const QString &unZipFile = QString());
-    void getJsonfile(const QJsonObject &jsonData, const QString &save);
 
     void getUserDataPackagingFile();
 

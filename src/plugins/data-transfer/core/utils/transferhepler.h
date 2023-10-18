@@ -22,12 +22,14 @@ public:
     bool getOnlineState() const;
 
     void tryConnect(const QString &ip, const QString &password);
-    void startTransfer();
+
+    void getJsonfile(const QJsonObject &jsonData, const QString &save);
 
 #ifdef WIN32
     QMap<QString, QString> getAppList();
     QMap<QString, QString> getBrowserList();
-
+    QStringList getTransferFilePath();
+    void startTransfer();
 #else
 public:
     bool handleDataConfiguration(const QString &filepath);
@@ -45,12 +47,12 @@ Q_SIGNALS:
     // isall mean Have all files been transferred and configured successfully
     void transferSucceed(bool isall);
 
-    //Used to control the current operation content, progress, and estimated completion time
-    //during transmission or decompression process
-    //progressbar use percentage and the time unit is seconds
+    // Used to control the current operation content, progress, and estimated completion time
+    // during transmission or decompression process
+    // progressbar use percentage and the time unit is seconds
     void transferContent(const QString &content, int progressbar, int estimatedtime);
 
-    //network
+    // network
     void onlineStateChanged(bool online);
 
 private:

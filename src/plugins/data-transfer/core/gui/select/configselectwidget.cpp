@@ -14,6 +14,7 @@
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
 #include <gui/mainwindow_p.h>
+
 #pragma execution_character_set("utf-8")
 
 static inline constexpr char InternetText[]{ "请选择要同步的配置" };
@@ -127,17 +128,10 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
                                              "}");
     selectBrowerBookMarkFrame->setLayout(selectframeLayout);
 
-    QStandardItemModel *model = new QStandardItemModel(this);
-    browserView = new QListView(this);
-    browserView->setStyleSheet(".QListView{"
-                               " border: none;"
-                               "}");
-    browserView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    browserView->setModel(model);
+    browserView = new SelectListView(this);
+    QStandardItemModel *model =qobject_cast<QStandardItemModel*>(browserView->model()) ;
     browserView->setItemDelegate(
             new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
-    browserView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    browserView->setSelectionMode(QAbstractItemView::NoSelection);
 
     QMap<QString, QString> browserList = TransferHelper::instance()->getBrowserList();
     for (auto iterator = browserList.begin(); iterator != browserList.end(); iterator++) {
@@ -151,6 +145,7 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
 
     selectframeLayout->addWidget(titlebar);
     selectframeLayout->addWidget(browserView);
+    QObject::connect(titlebar,&ItemTitlebar::selectAll,browserView,&SelectListView::selectorDelAllItem);
 }
 
 void ConfigSelectWidget::initSelectConfigFrame()
@@ -171,27 +166,22 @@ void ConfigSelectWidget::initSelectConfigFrame()
                                      "}");
     selectConfigFrame->setLayout(selectframeLayout);
 
-    QStandardItemModel *model = new QStandardItemModel(this);
-    configView = new QListView(this);
-    configView->setStyleSheet(".QListView{"
-                              " border: none;"
-                              "}");
-    configView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    configView->setModel(model);
+
+    configView = new SelectListView(this);
+    QStandardItemModel *model =qobject_cast<QStandardItemModel*>(configView->model()) ;
     configView->setItemDelegate(
             new ItemDelegate(55, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
-    configView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    configView->setSelectionMode(QAbstractItemView::NoSelection);
+
 
     ListItem *item = new ListItem();
     item->setData("自定义桌面", Qt::DisplayRole);
     item->setData("是", Qt::ToolTipRole);
-    //item->setIcon(QIcon(":/icon/app.svg"));
     item->setCheckable(true);
     model->appendRow(item);
 
     selectframeLayout->addWidget(titlebar);
     selectframeLayout->addWidget(configView);
+    QObject::connect(titlebar,&ItemTitlebar::selectAll,configView,&SelectListView::selectorDelAllItem);
 }
 
 void ConfigSelectWidget::sendOptions()
@@ -239,9 +229,6 @@ void ConfigSelectWidget::nextPage()
 {
     // send useroptions
     sendOptions();
-
-    // start
-    TransferHelper::instance()->startTransfer();
 
     // nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());

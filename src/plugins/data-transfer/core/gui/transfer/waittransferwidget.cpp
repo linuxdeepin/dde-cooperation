@@ -98,7 +98,9 @@ void WaitTransferWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
+#ifndef WIN32
         stackedWidget->setCurrentIndex(PageName::connectwidget);
+#endif
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
