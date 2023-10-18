@@ -16,7 +16,7 @@ public slots:
     void retryPage();
 
 private:
-    qreal state{ 1 }; // 1 interneterror，2 transfererror
+    int state = 1;   // 1 interneterror，2 transfererror
 };
 
-#endif // ERRORWIDGET_H
+#endif   // ERRORWIDGET_H

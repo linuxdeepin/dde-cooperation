@@ -10,16 +10,17 @@
 
 #pragma execution_character_set("utf-8")
 
-inline constexpr char internetError[]{ "网络异常" };
-inline constexpr char transferError[]{ "传输中断" };
-inline constexpr char internetErrorPrompt[]{ "网络断开,传输失败,请连接网络后重试" };
-inline constexpr char transferErrorPrompt[]{ "UOS空间不足,请清除至少10G后重试" };
-ErrorWidget::ErrorWidget(QWidget *parent) : QFrame(parent)
+inline constexpr char internetError[] { "网络异常" };
+inline constexpr char transferError[] { "传输中断" };
+inline constexpr char internetErrorPrompt[] { "网络断开,传输失败,请连接网络后重试" };
+inline constexpr char transferErrorPrompt[] { "UOS空间不足,请清除至少10G后重试" };
+ErrorWidget::ErrorWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
-ErrorWidget::~ErrorWidget() { }
+ErrorWidget::~ErrorWidget() {}
 void ErrorWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
@@ -30,7 +31,9 @@ void ErrorWidget::initUI()
     mainLayout->addSpacing(30);
 
     QLabel *iconLabel = new QLabel(this);
-    iconLabel->setPixmap(QPixmap(":/icon/transfer.png"));
+    QPixmap icon(":/icon/transfer.png");
+    QPixmap transparentPixmap(icon.size());
+    iconLabel->setPixmap(icon);
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     QLabel *errorLabel = new QLabel(this);
@@ -38,6 +41,7 @@ void ErrorWidget::initUI()
                               "background-color: transparent;"
                               "}");
     QPixmap errorPixmap(":/icon/warning.svg");
+
     errorPixmap.scaled(32, 32, Qt::KeepAspectRatio);
     errorLabel->setPixmap(errorPixmap);
     errorLabel->setGeometry(420, 180, errorPixmap.width(), errorPixmap.height());
@@ -67,55 +71,27 @@ void ErrorWidget::initUI()
     timeLabel->setText(QString("预计迁移时间还剩 - -"));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     QFont timefont;
-    font.setPointSize(7);
+    font.setPointSize(5);
     timeLabel->setFont(timefont);
 
-    QString promptStr;
-    if (state == 1) {
-        promptStr = internetErrorPrompt;
-    } else if (state == 2) {
-        promptStr = transferErrorPrompt;
-    }
     QLabel *promptLabel = new QLabel(this);
-    promptLabel->setText(promptStr);
+    promptLabel->setText("<font size='2' color='#FF5736'>网络断开,传输失败,请连接网络后重试</font>");
     promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
     backButton->setFixedSize(120, 35);
-    backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                              "border: 1px solid rgba(0,0,0, 0.03);"
-                              "opacity: 1;"
-                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                              "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                              "font-family: \"SourceHanSansSC-Medium\";"
-                              "font-size: 14px;"
-                              "font-weight: 500;"
-                              "color: rgba(65,77,104,1);"
-                              "font-style: normal;"
-                              "letter-spacing: 3px;"
-                              "text-align: center;"
-                              ";}");
+    backButton->setStyleSheet("background-color: lightgray;");
     QObject::connect(backButton, &QToolButton::clicked, this, &ErrorWidget::backPage);
 
     QToolButton *retryButton = new QToolButton(this);
 
     retryButton->setText("重试");
+    retryButton->setStyleSheet("background-color: #0098FF;");
+    QPalette palette = retryButton->palette();
+    palette.setColor(QPalette::ButtonText, Qt::white);
+    retryButton->setPalette(palette);
     retryButton->setFixedSize(120, 35);
-    retryButton->setStyleSheet(".QToolButton{"
-                               "border-radius: 8px;"
-                               "border: 1px solid rgba(0,0,0, 0.03);"
-                               "opacity: 1;"
-                               "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                               "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
-                               "font-family: \"SourceHanSansSC-Medium\";"
-                               "font-size: 14px;"
-                               "font-weight: 500;"
-                               "color: rgba(255,255,255,1);"
-                               "font-style: normal;"
-                               "letter-spacing: 3px;"
-                               "text-align: center;"
-                               "}");
 
     QObject::connect(retryButton, &QToolButton::clicked, this, &ErrorWidget::retryPage);
     QHBoxLayout *buttonLayout = new QHBoxLayout();

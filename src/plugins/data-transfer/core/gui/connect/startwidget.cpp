@@ -1,4 +1,5 @@
 ﻿#include "startwidget.h"
+#include "../type_defines.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -90,7 +91,8 @@ void StartWidget::nextPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
+        int page = checkBox->checkState() == Qt::Checked ? PageName::choosewidget : PageName::licensewidget;
+        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + page);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }

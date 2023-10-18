@@ -16,6 +16,9 @@
 #include <QGuiApplication>
 #include <QTextCodec>
 #include <QScreen>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QProcess>
 
 #ifdef WIN32
 #    include <gui/getbackup/drapwindowsdata.h>
@@ -23,7 +26,10 @@
 
 #pragma execution_character_set("utf-8")
 TransferHelper::TransferHelper()
-    : QObject() {}
+    : QObject()
+{
+    initOnlineState();
+}
 
 TransferHelper::~TransferHelper() {}
 
@@ -33,52 +39,39 @@ TransferHelper *TransferHelper::instance()
     return &ins;
 }
 
-const QStringList TransferHelper::getUesr()
+void TransferHelper::initOnlineState()
 {
-    return QStringList() << "UOS-user1"
-                         << "UOS-user2"
-                         << "UOS-user3";
+    // 发送网络请求并等待响应
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this]() {
+        QProcess pingProcess;
+        pingProcess.start("ping", QStringList() << "-c"
+                                                << "1"
+                                                << "www.baidu.com");
+        pingProcess.waitForFinished(500);
+        if (pingProcess.exitCode() == 0 && online != true) {
+            online = true;
+            emit onlineStateChanged(online);
+            qInfo() << "Network is connected";
+        }
+        if (pingProcess.exitCode() != 0 && online == true) {
+            online = false;
+            emit onlineStateChanged(online);
+            qInfo() << "Network is not connected";
+        }
+    });
+
+    timer->start(1000);
+}
+
+bool TransferHelper::getOnlineState() const
+{
+    return online;
 }
 
 QString TransferHelper::getConnectPassword()
 {
     return transferhandle.getConnectPassWord();
-}
-
-QMap<QString, double> TransferHelper::getUserDataSize()
-{
-    QMap<QString, double> userStorage;
-    userStorage["documents"] = 13;
-    userStorage["music"] = 6;
-    userStorage["picture"] = 2;
-    userStorage["movie"] = 3;
-    userStorage["download"] = 9;
-
-    return userStorage;
-}
-
-qint64 TransferHelper::getRemainStorage()
-{
-    QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
-    foreach (const QStorageInfo &drive, drives) {
-        if (drive.device().startsWith("/dev/sd")) {
-            QString deviceName = drive.device();
-            QString displayName = drive.displayName();
-            qint64 bytesFree = drive.bytesFree();
-            qint64 bytesTotal = drive.bytesTotal();
-
-            qInfo() << "Device Name:" << deviceName;
-            qInfo() << "Display Name:" << displayName;
-            qInfo() << "Free Space (Bytes):" << bytesFree;
-            qInfo() << "Total Space (Bytes):" << bytesTotal;
-            qInfo() << "Free Space (GB):" << bytesFree / (1024 * 1024 * 1024);
-            qInfo() << "Total Space (GB):" << bytesTotal / (1024 * 1024 * 1024);
-
-            return bytesFree / (1024 * 1024 * 1024);
-        }
-    }
-
-    return 0;
 }
 
 void TransferHelper::tryConnect(const QString &ip, const QString &password)
@@ -175,4 +168,5 @@ bool TransferHelper::setWallpaper(const QString &filepath)
         return false;
     }
 }
+
 #endif

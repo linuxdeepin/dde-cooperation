@@ -41,11 +41,15 @@ public:
     ModeItem(QString text, QIcon icon, QWidget *parent = nullptr);
     ~ModeItem() override;
 
+    void setEnable(bool able);
+
 protected:
     virtual void mousePressEvent(QMouseEvent *event) override;
 
 private:
+    bool enable = true;
     QCheckBox *checkBox { nullptr };
+    QLabel *iconLabel { nullptr };
 };
 
 class IndexLabel : public QLabel

@@ -90,7 +90,7 @@ void PromptWidget::nextPage()
 #ifdef _WIN32
         stackedWidget->setCurrentIndex(PageName::readywidget);
 #else
-        stackedWidget->setCurrentIndex(PageName::waitgwidget);
+        stackedWidget->setCurrentIndex(PageName::connectwidget);
 #endif
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
@@ -101,7 +101,11 @@ void PromptWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+#ifdef _WIN32
+        stackedWidget->setCurrentIndex(PageName::readywidget);
+#else
+        stackedWidget->setCurrentIndex(PageName::choosewidget);
+#endif
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
