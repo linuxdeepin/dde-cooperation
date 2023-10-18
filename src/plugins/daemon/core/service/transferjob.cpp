@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -58,7 +58,7 @@ void TransferJob::start()
                 path = ""; // 文件没有指定保存目录，默认目标机设置的保存目录
             }
         }
-
+        DLOG << "doTransfileJob path:" << path.c_str();
         int res = _rpcBinder->doTransfileJob(_app_name.c_str(), _jobid, path.c_str(), false, _sub, _writejob);
         if (res < 0) {
             ELOG << "binder doTransfileJob failed: " << res << " jobpath: " << jobpath;
@@ -130,15 +130,17 @@ void TransferJob::insertFileInfo(FileInfo &info)
 
 fastring TransferJob::getSubdir(const char *path)
 {
-    fastring topdir = "";
+    fastring topdir = "", indir = "";
     std::pair<fastring, fastring> pairs = path::split(path);
     fastring filedir = pairs.first;
 
     if (fs::isdir(_path)) {
         // 传输文件夹，文件夹为保存子目录。
         topdir = path::base(_path);
+        indir = filedir.remove_prefix(_path);
+    } else {
+        indir = str::trim(filedir, _path.c_str(), 'l');
     }
-    fastring indir = str::trim(filedir, _path.c_str(), 'l');
     fastring subdir = path::join(topdir.c_str(), indir.c_str());
 
     return subdir;
@@ -288,6 +290,7 @@ void TransferJob::handleBlockQueque()
             co::sleep(10);
             continue;
         }
+        co::mutex_guard g(_queque_mutex);
         FSDataBlock block = _block_queue.front();
 
         int32 job_id = block.job_id;
