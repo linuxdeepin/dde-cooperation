@@ -64,6 +64,21 @@ void ChooseWidget::initUI()
     modeLayout->addWidget(packageItem, Qt::AlignTop);
     modeLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
+    QLabel *tipiconlabel = new QLabel(this);
+    tipiconlabel->setPixmap(QIcon(":/icon/warning.svg").pixmap(14, 14));
+
+    QLabel *tiptextlabel = new QLabel(this);
+    tiptextlabel->setText("<font size=13px color='#FF5736' >无法连接服务器！请检查网络连接或者选择本地迁移。</font>");
+
+    tipiconlabel->setVisible(false);
+    tiptextlabel->setVisible(false);
+
+    QHBoxLayout *tiplayout = new QHBoxLayout(this);
+    tiplayout->addWidget(tipiconlabel);
+    tiplayout->addSpacing(5);
+    tiplayout->addWidget(tiptextlabel);
+    tiplayout->setAlignment(Qt::AlignCenter);
+
     nextButton = new QToolButton(this);
     nextButton->setText("下一步");
     nextButton->setFixedSize(250, 35);
@@ -81,17 +96,24 @@ void ChooseWidget::initUI()
 
     mainLayout->addSpacing(30);
     mainLayout->addWidget(textLabel1);
+    mainLayout->addSpacing(40);
     mainLayout->addLayout(modeLayout);
     mainLayout->addSpacing(90);
+    mainLayout->addLayout(tiplayout);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
-            [winItem](bool online) {
+            [winItem, tipiconlabel, tiptextlabel](bool online) {
                 if (online) {
+                    tipiconlabel->setVisible(false);
+                    tiptextlabel->setVisible(false);
                     winItem->setEnable(true);
                 } else {
+                    tipiconlabel->setVisible(true);
+                    tiptextlabel->setVisible(true);
                     winItem->setEnable(false);
                 }
             });
@@ -193,6 +215,7 @@ void ModeItem::setEnable(bool able)
     } else {
         palette.setColor(QPalette::WindowText, Qt::gray);
         checkBox->setPalette(palette);
+        checkBox->setCheckState(Qt::Unchecked);
     }
 }
 

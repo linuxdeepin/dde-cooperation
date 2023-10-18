@@ -33,6 +33,7 @@ public:
     bool handleDataConfiguration(const QString &filepath);
     bool setWallpaper(const QString &filepath);
     bool setBrowserBookMark(const QString &filepath);
+    bool setFile(QJsonObject jsonObj, QString filepath);
 #endif
 
 Q_SIGNALS:

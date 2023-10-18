@@ -39,7 +39,8 @@ enum PageName {
     waitgwidget,
     errorwidget,
     transferringwidget,
-    successtranswidget
+    successtranswidget,
+    resultwidget
 };
 #endif
 

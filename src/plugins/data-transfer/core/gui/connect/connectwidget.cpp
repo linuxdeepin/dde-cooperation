@@ -71,7 +71,7 @@ void ConnectWidget::initUI()
     backButton->setText("返回");
     backButton->setFixedSize(250, 36);
     backButton->setStyleSheet("background-color: #E3E3E3;");
-    connect(backButton, &QToolButton::clicked, this, &ConnectWidget::nextPage);
+    connect(backButton, &QToolButton::clicked, this, &ConnectWidget::backPage);
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(backButton, Qt::AlignCenter);

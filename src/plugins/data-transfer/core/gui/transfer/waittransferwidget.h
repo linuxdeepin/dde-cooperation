@@ -27,6 +27,11 @@ private:
     QLabel *iconLabel { nullptr };
     QMovie *lighticonmovie { nullptr };
     QMovie *darkiconmovie { nullptr };
+
+#ifndef WIN32
+public:
+    void cancel();
+#endif
 };
 
 #endif

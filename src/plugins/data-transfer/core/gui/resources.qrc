@@ -112,5 +112,6 @@
         <file>icon/AppIcons/org.virtualbox.virtualbox.svg</file>
         <file>icon/AppIcons/uengine.com.tencent.mm.svg</file>
         <file>icon/AppIcons/uos-remote-assistance.svg</file>
+        <file>icon/success half-96.svg</file>
     </qresource>
 </RCC>
