@@ -22,7 +22,6 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
-    "${CMAKE_CURRENT_SOURCE_DIR}/resource/*.json"
 )
 
 # 在这里添加业务代码

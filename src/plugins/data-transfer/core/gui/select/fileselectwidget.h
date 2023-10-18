@@ -2,15 +2,28 @@
 #define FILESELECTWIDGET_H
 
 #include <QFrame>
-#include <QGridLayout>
-#include <QItemDelegate>
 #include <QLabel>
 #include <QListView>
 #include <QMap>
-#include <QPainter>
-#include <QTreeView>
 
 #include "../select/selectmainwidget.h"
+
+class QHBoxLayout;
+class QStackedWidget;
+class SelectListView;
+class SidebarWidget : public QListView
+{
+    Q_OBJECT
+public:
+    SidebarWidget(QWidget *parent = nullptr);
+    ~SidebarWidget();
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
+private:
+    void initData();
+};
 
 class FileSelectWidget : public QFrame
 {
@@ -21,54 +34,35 @@ public:
     ~FileSelectWidget();
 
     void initFileView();
-    void initSiderBar(QListView *siderbarWidget);
-    void initConnect(QAbstractItemView *view);
     void changeText();
-    void updateFileView();
+
 public slots:
     void nextPage();
     void backPage();
+    void updateFileView(const QModelIndex &index);
+    void selectOrDelAllItem();
+    void updateFilesize(qlonglong fileSize, QListView *listview, QModelIndex index);
 
-    void update();
+   // void updateSideFilesize(qlonglong fileSize, QModelIndex index);
+
 signals:
     void isOk(const SelectItemName &name, const bool &ok);
 
 private:
     void initUI();
     void sendOptions();
+    SelectListView *getFileView(const QString &path);
+
+    void createFilesizeListen(QListView* listView);
 
 private:
     QListView *sidebar{ nullptr };
-    QListView *fileview{ nullptr };
+
+    QMap<QString, quint8> fileViewList;
+    QStackedWidget *stackedWidget{ nullptr };
     QLabel *titileLabel{ nullptr };
-    QStringList seletFileList;
 
     bool aync = true;
-};
-
-class SidebarWidget : public QListView
-{
-    Q_OBJECT
-public:
-    SidebarWidget(QWidget *parent = nullptr);
-    ~SidebarWidget();
-
-private:
-    void initData();
-};
-
-class SidebarItemDelegate : public QItemDelegate
-{
-    Q_OBJECT
-public:
-    SidebarItemDelegate() { }
-
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
-    {
-        Q_UNUSED(option);
-        Q_UNUSED(index);
-        return QSize(170, 36);
-    }
 };
 
 namespace Directory {

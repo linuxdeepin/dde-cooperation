@@ -11,6 +11,7 @@
 class QVBoxLayout;
 class QListView;
 class QToolButton;
+class SelectListView;
 class AppSelectWidget : public QFrame
 {
     Q_OBJECT
@@ -33,7 +34,7 @@ private:
 
 private:
     QFrame *selectFrame{ nullptr };
-    QListView *appView{ nullptr };
+    SelectListView *appView{ nullptr };
 
     QVBoxLayout *selectMainLayout{ nullptr };
     QToolButton *determineButton{ nullptr };

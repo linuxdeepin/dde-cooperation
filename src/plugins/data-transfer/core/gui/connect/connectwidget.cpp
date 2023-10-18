@@ -1,4 +1,5 @@
-﻿#include "choosewidget.h"
+﻿#ifndef WIN32
+#include "choosewidget.h"
 #include "connectwidget.h"
 #include "../type_defines.h"
 
@@ -234,3 +235,4 @@ void ConnectWidget::themeChanged(int theme)
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
 }
+#endif

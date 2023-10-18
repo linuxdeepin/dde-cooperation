@@ -13,7 +13,7 @@ class SelectItem : public QFrame
 public:
     SelectItem(QString text, QIcon icon, SelectItemName name, QWidget *parent = nullptr);
     ~SelectItem() override;
-    void updateSelectSize(int num);
+    void updateSelectSize(QString num);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

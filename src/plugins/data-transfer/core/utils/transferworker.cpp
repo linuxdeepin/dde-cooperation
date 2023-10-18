@@ -79,8 +79,12 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
         if (it != _job_maps.end()) {
             _job_maps.erase(it);
         }
+#ifdef WIN32
+        emit TransferHelper::instance()->transferSucceed(true);
+#else
         ret = TransferHelper::instance()->handleDataConfiguration(path);
         emit TransferHelper::instance()->transferSucceed(ret);
+#endif
         break;
     default:
         break;

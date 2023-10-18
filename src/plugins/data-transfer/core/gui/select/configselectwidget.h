@@ -11,6 +11,7 @@
 class SelectTitlebar;
 class QToolButton;
 class QListView;
+class SelectListView;
 class ConfigSelectWidget : public QFrame
 {
     Q_OBJECT
@@ -35,8 +36,8 @@ private:
     QFrame *selectBrowerBookMarkFrame{ nullptr };
     QFrame *selectConfigFrame{ nullptr };
 
-    QListView *browserView{ nullptr };
-    QListView *configView{ nullptr };
+    SelectListView *browserView{ nullptr };
+    SelectListView *configView{ nullptr };
 
     QVBoxLayout *selectMainLayout{ nullptr };
     QToolButton *determineButton{ nullptr };

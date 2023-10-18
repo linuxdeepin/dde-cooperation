@@ -102,7 +102,7 @@ void PromptWidget::backPage()
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
 #ifdef _WIN32
-        stackedWidget->setCurrentIndex(PageName::readywidget);
+        stackedWidget->setCurrentIndex(PageName::choosewidget);
 #else
         stackedWidget->setCurrentIndex(PageName::choosewidget);
 #endif

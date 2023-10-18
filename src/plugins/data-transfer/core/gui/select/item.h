@@ -10,6 +10,22 @@
 #include <QModelIndex>
 #include <QMouseEvent>
 
+class SelectAllButton : public QFrame
+{
+    Q_OBJECT
+public:
+    SelectAllButton(QWidget *parent = nullptr);
+    ~SelectAllButton();
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
+    void mousePressEvent(QMouseEvent *event)override;
+signals:
+    void selectAll();
+private:
+    QRectF iconPosSize{ 2, 2, 16, 16 };
+    qreal iconRadius{ 3 };
+};
 class ItemTitlebar : public QFrame
 {
     Q_OBJECT
@@ -17,7 +33,7 @@ public:
     ItemTitlebar(const QString &label1_, const QString &label2_, const qreal &label1LeftMargin_,
                  const qreal &label2LeftMargin_, const QRectF &iconPosSize_,
                  const qreal &iconRadius_, QWidget *parent = nullptr);
-    ItemTitlebar();
+    ItemTitlebar(QWidget *parent = nullptr);
     ~ItemTitlebar();
 
     void setLabel1(const QString &newLabel1);
@@ -35,6 +51,9 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override;
 
+signals:
+    void selectAll();
+
 private:
     void initUI();
 
@@ -45,6 +64,8 @@ private:
     qreal label2LeftMargin{ 360 };
     QRectF iconPosSize{ 10, 12, 16, 16 };
     qreal iconRadius{ 3 };
+
+    SelectAllButton *selectAllButton{ nullptr };
 };
 
 class ListItem : public QStandardItem
@@ -104,7 +125,6 @@ private:
 
     QPoint iconPos{ 65, 6 };
     QPoint checkBoxPos{ 10, 9 };
-
 };
 
 class SaveItemDelegate : public QItemDelegate
@@ -116,6 +136,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
                const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
 private:
     void paintIcon(QPainter *painter, const QStyleOptionViewItem &option,
                    const QModelIndex &index) const;
@@ -127,6 +148,7 @@ private:
                        const QModelIndex &index) const;
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
                      const QModelIndex &index) override;
+
 private:
     qreal remarkTextLeftMargin{ 290 };
     qreal remarkTextMaxLen{ 100 };
@@ -136,7 +158,41 @@ private:
 
     qreal backgroundColorLeftMargin{ 0 };
 
-    QPoint iconPos{14, 10 };
+    QPoint iconPos{ 14, 10 };
     QPoint checkBoxPos{ 0, 0 };
+};
+
+class SidebarItemDelegate : public QItemDelegate
+{
+    Q_OBJECT
+public:
+    SidebarItemDelegate();
+    ~SidebarItemDelegate();
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+private:
+    void paintText(QPainter *painter, const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const;
+    void paintCheckbox(QPainter *painter, const QStyleOptionViewItem &option,
+                       const QModelIndex &index) const;
+    void paintBackground(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const;
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
+                     const QModelIndex &index) override;
+};
+
+class SelectListView : public QListView
+{
+    Q_OBJECT
+public:
+    SelectListView(QFrame *parent = nullptr);
+    ~SelectListView();
+
+private:
+    bool isSelectAll{false};
+public slots:
+    void selectorDelAllItem();
 };
 #endif

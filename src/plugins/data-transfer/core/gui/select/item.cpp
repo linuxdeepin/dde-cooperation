@@ -15,11 +15,18 @@ ItemTitlebar::ItemTitlebar(const QString &label1_, const QString &label2_,
       iconPosSize(iconPosSize_),
       iconRadius(iconRadius_)
 {
+    selectAllButton = new SelectAllButton(this);
+    selectAllButton->move(iconPosSize.x(), iconPosSize.y());
+
+    QObject::connect(selectAllButton, &SelectAllButton::selectAll, this, &ItemTitlebar::selectAll);
+
     initUI();
 }
 
-ItemTitlebar::ItemTitlebar()
+ItemTitlebar::ItemTitlebar(QWidget *parent) : QFrame(parent)
 {
+    selectAllButton = new SelectAllButton(this);
+    selectAllButton->move(iconPosSize.x(), iconPosSize.y());
     initUI();
 }
 
@@ -29,17 +36,6 @@ void ItemTitlebar::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-
-    QPainterPath path1;
-    path1.addRoundedRect(iconPosSize, iconRadius, iconRadius);
-    painter.setPen(QPen(QColor(65, 77, 104), 2));
-    painter.drawPath(path1);
-
-    painter.setPen(QPen(QColor(0, 26, 46), 2));
-    QPainterPath path2;
-    path2.moveTo(iconPosSize.x() + 4, iconPosSize.y() + 8);
-    path2.lineTo(iconPosSize.x() + 12, iconPosSize.y() + 8);
-    painter.drawPath(path2);
 
     painter.setPen(QPen(QColor(0, 0, 0, 50), 1));
     QPainterPath path3;
@@ -370,7 +366,6 @@ void SaveItemDelegate::paintBackground(QPainter *painter, const QStyleOptionView
 
         painter->setPen(Qt::NoPen);
 
-
         painter->setBrush(evencolor);
         painter->drawRoundedRect(positon, 8, 8);
     }
@@ -463,4 +458,195 @@ bool SaveItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     else
         state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
     return model->setData(index, state, Qt::CheckStateRole);
+}
+
+SidebarItemDelegate::SidebarItemDelegate() { }
+
+SidebarItemDelegate::~SidebarItemDelegate() { }
+
+void SidebarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                                const QModelIndex &index) const
+{
+    paintBackground(painter, option, index);
+    paintText(painter, option, index);
+
+    paintCheckbox(painter, option, index);
+}
+
+QSize SidebarItemDelegate::sizeHint(const QStyleOptionViewItem &option,
+                                    const QModelIndex &index) const
+{
+    Q_UNUSED(option);
+    Q_UNUSED(index);
+    return QSize(180, 36);
+}
+
+void SidebarItemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &option,
+                                    const QModelIndex &index) const
+{
+    painter->save();
+    QPen pen;
+    if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
+        pen.setColor(Qt::white);
+    } else {
+        pen.setColor(Qt::black);
+    }
+    painter->setPen(pen);
+    QRect filenameTextPos = option.rect.adjusted(37, 0, 0, 0);
+
+    QFont filenameTextFont;
+    filenameTextFont.setPixelSize(12);
+    QString filenameText = index.data(Qt::DisplayRole).toString();
+    QFontMetrics filenameMetrics(filenameTextFont);
+    filenameText = filenameMetrics.elidedText(filenameText, Qt::ElideRight, 150);
+    painter->drawText(filenameTextPos, Qt::AlignLeft | Qt::AlignVCenter, filenameText);
+
+    QRect remarkTextPos = option.rect.adjusted(148, 0, 0, 0);
+    QFont remarkTextFont;
+    remarkTextFont.setPixelSize(12);
+    QString remarkText = index.data(Qt::ToolTipRole).toString();
+    QFontMetrics remarkMetrics(remarkTextFont);
+    remarkTextFont = remarkMetrics.elidedText(filenameText, Qt::ElideRight, 20);
+    painter->drawText(remarkTextPos, Qt::AlignLeft | Qt::AlignVCenter, remarkText);
+
+    painter->restore();
+}
+void SidebarItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionViewItem &option,
+                                        const QModelIndex &index) const
+{
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
+
+    QColor color;
+    if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
+        color = Qt::white;
+    } else {
+        color = Qt::black;
+    }
+    painter->setPen(color);
+    QPoint pos = option.rect.topLeft() + QPoint(9, 7);
+    QRect checkBoxRect = QRect(pos.x(), pos.y(), 18, 18);
+    painter->drawRoundedRect(checkBoxRect, 4, 4);
+
+    painter->restore();
+}
+void SidebarItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option,
+                                          const QModelIndex &index) const
+{
+    painter->save();
+    QRect positon(option.rect);
+    painter->setPen(Qt::NoPen);
+    if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
+        painter->setBrush(QColor(0, 129, 255, 255));
+        painter->drawRoundedRect(positon, 8, 8);
+    } else {
+        painter->setBrush(QColor(0, 0, 0, 12));
+        painter->drawRoundedRect(positon, 8, 8);
+    }
+    painter->restore();
+}
+bool SidebarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+                                      const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    Q_ASSERT(event);
+    Q_ASSERT(model);
+
+    // make sure that the item is checkable
+    Qt::ItemFlags flags = model->flags(index);
+    if (!(flags & Qt::ItemIsUserCheckable) || !(option.state & QStyle::State_Enabled)
+        || !(flags & Qt::ItemIsEnabled))
+        return false;
+
+    // make sure that we have a check state
+    QVariant value = index.data(Qt::CheckStateRole);
+    if (!value.isValid())
+        return false;
+
+    // make sure that we have the right event type
+    if ((event->type() == QEvent::MouseButtonRelease)
+        || (event->type() == QEvent::MouseButtonDblClick)
+        || (event->type() == QEvent::MouseButtonPress)) {
+
+        QRect checkBoxRect = option.rect;
+        QRect emptyRect;
+        doLayout(option, &checkBoxRect, &emptyRect, &emptyRect, false);
+        QMouseEvent *me = static_cast<QMouseEvent *>(event);
+        if (me->button() != Qt::LeftButton || !checkBoxRect.contains(me->pos()))
+            return false;
+
+        // eat the double click events inside the check rect
+        if ((event->type() == QEvent::MouseButtonPress)
+            || (event->type() == QEvent::MouseButtonDblClick))
+            return true;
+
+    } else if (event->type() == QEvent::KeyPress) {
+        if (static_cast<QKeyEvent *>(event)->key() != Qt::Key_Space
+            && static_cast<QKeyEvent *>(event)->key() != Qt::Key_Select)
+            return false;
+    } else {
+        return false;
+    }
+
+    Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt());
+    if (flags & Qt::ItemIsUserTristate)
+        state = ((Qt::CheckState)((state + 1) % 3));
+    else
+        state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
+    return model->setData(index, state, Qt::CheckStateRole);
+}
+
+SelectAllButton::SelectAllButton(QWidget *parent) : QFrame(parent)
+{
+    setFixedSize(20, 20);
+}
+
+SelectAllButton::~SelectAllButton() { }
+
+void SelectAllButton::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QPainterPath path1;
+    path1.addRoundedRect(iconPosSize, iconRadius, iconRadius);
+    painter.setPen(QPen(QColor(65, 77, 104), 2));
+    painter.drawPath(path1);
+
+    painter.setPen(QPen(QColor(0, 26, 46), 2));
+    QPainterPath path2;
+    path2.moveTo(iconPosSize.x() + 4, iconPosSize.y() + 8);
+    path2.lineTo(iconPosSize.x() + 12, iconPosSize.y() + 8);
+    painter.drawPath(path2);
+}
+
+void SelectAllButton::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        emit selectAll();
+    }
+}
+
+SelectListView::SelectListView(QFrame *parent) : QListView(parent)
+{
+    QStandardItemModel *model = new QStandardItemModel(this);
+    setStyleSheet(".SelectListView{"
+                  "border: none;"
+                  "}");
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    setModel(model);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setSelectionMode(QAbstractItemView::NoSelection);
+}
+
+SelectListView::~SelectListView() { }
+
+void SelectListView::selectorDelAllItem()
+{
+    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex itemIndex = model->index(row, 0);
+        Qt::CheckState state =itemIndex.data(Qt::CheckStateRole) == Qt::Checked ? Qt::Unchecked : Qt::Checked;
+        model->setData(itemIndex, state, Qt::CheckStateRole);
+    }
 }

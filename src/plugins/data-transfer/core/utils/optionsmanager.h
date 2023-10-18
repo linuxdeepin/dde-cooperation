@@ -28,11 +28,12 @@ namespace Options {
 inline constexpr char kUser[]{ "user" };
 inline constexpr char kFile[]{ "file" };
 inline constexpr char kApp[]{ "app" };
+inline constexpr char KSelectFileSize[]{"selectFileSize"};
 inline constexpr char kBrowserBookmarks[]{ "browserbookmarks" };
 inline constexpr char kConfig[]{ "config" };
-inline constexpr char kBackupFileSavePath[]{ "BackupFileSavePath" };
-inline constexpr char kBackupFileName[]{ "BackupFileName" };
-inline constexpr char kTransferMethod[]{ "TransferMethod" };
+inline constexpr char kBackupFileSavePath[]{ "backupFileSavePath" };
+inline constexpr char kBackupFileName[]{ "backupFileName" };
+inline constexpr char kTransferMethod[]{ "transferMethod" };
 } // namespace Options
 
 namespace TransferMethod {

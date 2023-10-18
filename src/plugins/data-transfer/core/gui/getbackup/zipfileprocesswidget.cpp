@@ -104,9 +104,9 @@ void zipFileProcessWidget::initUI()
                              " elide-mode: middle; "
                              " padding: 2px;"
                              "}");
-//    fileLabel->setText(QString("<p style='white-space: nowrap; width: 160px; overflow: hidden; "
-//                               "text-overflow: ellipsis;'>%1</p>")
-//                               .arg(QString("正在打包 %1").arg(QString("/Documents/....doc"))));
+    fileLabel->setText(QString("<p style='white-space: nowrap; width: 160px; overflow: hidden; "
+                               "text-overflow: ellipsis;'>%1</p>")
+                               .arg(QString("正在打包 %1").arg(QString("/Documents/....doc"))));
     fileLabel->setAlignment(Qt::AlignCenter);
 
     IndexLabel *indelabel = new IndexLabel(3, this);

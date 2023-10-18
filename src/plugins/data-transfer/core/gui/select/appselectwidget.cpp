@@ -15,7 +15,6 @@
 #include <utils/transferhepler.h>
 #include <gui/mainwindow_p.h>
 
-
 #pragma execution_character_set("utf-8")
 
 static inline constexpr char InternetText[]{ "请选择要同步的应用" };
@@ -129,33 +128,25 @@ void AppSelectWidget::initSelectFrame()
                                "}");
     selectFrame->setLayout(selectframeLayout);
 
-    QStandardItemModel *model = new QStandardItemModel(this);
-    appView = new QListView(this);
-    appView->setStyleSheet(".QListView{"
-                            "border: none;"
-                            "}");
-    appView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    appView->setModel(model);
-    appView->setItemDelegate(
-            new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
-    appView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    appView->setSelectionMode(QAbstractItemView::NoSelection);
+    appView = new SelectListView(this);
+    QStandardItemModel *model =qobject_cast<QStandardItemModel *>(appView->model());
+    appView->setItemDelegate(new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
 
 
     QMap<QString, QString> appList = TransferHelper::instance()->getAppList();
     for (auto iterator = appList.begin(); iterator != appList.end(); iterator++) {
         ListItem *item = new ListItem();
         item->setData(iterator.key(), Qt::DisplayRole);
-        // item->setData(fileinfos[i].filePath(), Qt::UserRole);
         item->setData("是", Qt::ToolTipRole);
         item->setIcon(QIcon(iterator.value()));
         item->setCheckable(true);
-
         model->appendRow(item);
     }
 
     selectframeLayout->addWidget(titlebar);
     selectframeLayout->addWidget(appView);
+
+    QObject::connect(titlebar,&ItemTitlebar::selectAll,appView,&SelectListView::selectorDelAllItem);
 }
 
 void AppSelectWidget::changeText()

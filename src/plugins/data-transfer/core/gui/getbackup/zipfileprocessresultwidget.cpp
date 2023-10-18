@@ -44,7 +44,7 @@ void ZipFileProcessResultWidget::initUI()
                               "text-align: center;"
                               "}");
     exitButton->setEnabled(false);
-    QObject::connect(exitButton, &QToolButton::clicked, this, &ZipFileProcessResultWidget::exit);
+    QObject::connect(exitButton, &QToolButton::clicked, qApp, & QApplication::quit);
 
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
@@ -144,12 +144,6 @@ void ZipFileProcessResultWidget::backPage()
 void ZipFileProcessResultWidget::informationPage()
 {
     QString folderPath = OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath)[0];
-
     QDesktopServices::openUrl(QUrl::fromLocalFile(folderPath));
-
 }
 
-void ZipFileProcessResultWidget::exit()
-{
-     QApplication::quit();
-}

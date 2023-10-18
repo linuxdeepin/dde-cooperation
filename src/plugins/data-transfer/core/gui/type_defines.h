@@ -12,20 +12,21 @@ typedef DTK_WIDGET_NAMESPACE::DMainWindow CrossMainWindow;
 #ifdef WIN32
 enum PageName {
     startwidget = 0,
-    choosewidget = 1,
-    promptwidget = 2,
-    readywidget = 3,
-    selectmainwidget = 4,
-    transferringwidget = 5,
-    successtranswidget = 6,
-    filewselectidget = 7,
-    configselectwidget = 8,
-    appselectwidget = 9,
-    errorwidget = 10,
-    createbackupfilewidget = 11,
-    networkdisconnectionwidget = 12,
-    zipfileprocesswidget = 13,
-    zipfileprocessresultwidget = 14
+    licensewidget,
+    choosewidget ,
+    promptwidget,
+    readywidget ,
+    selectmainwidget ,
+    transferringwidget,
+    successtranswidget,
+    filewselectidget ,
+    configselectwidget ,
+    appselectwidget ,
+    errorwidget ,
+    createbackupfilewidget ,
+    networkdisconnectionwidget ,
+    zipfileprocesswidget,
+    zipfileprocessresultwidget
 };
 #else
 enum PageName {

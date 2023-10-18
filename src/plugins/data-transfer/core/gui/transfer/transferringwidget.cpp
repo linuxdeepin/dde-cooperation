@@ -74,7 +74,7 @@ void TransferringWidget::initUI()
     font.setPointSize(7);
     timeLabel->setFont(timefont);
 
-    QString file = "/Documents/…….doc";
+    QString file = "";
     fileLabel = new QLabel(
             QString("正在传输<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1s</font>").arg(file), this);
     fileLabel->setAlignment(Qt::AlignCenter);

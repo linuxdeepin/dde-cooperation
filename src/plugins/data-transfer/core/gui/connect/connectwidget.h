@@ -1,6 +1,6 @@
 ﻿#ifndef CONNECTWIDGET_H
 #define CONNECTWIDGET_H
-
+#ifndef WIN32
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -30,5 +30,5 @@ private:
     int remainingTime = 300;
     QToolButton *backButton = nullptr;
 };
-
+#endif
 #endif
