@@ -32,7 +32,7 @@ void UploadFileWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
@@ -46,7 +46,7 @@ void UploadFileWidget::initUI()
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     UploadFileFrame *uploadFileFrame = new UploadFileFrame(this);
-    QHBoxLayout *uploadLayout = new QHBoxLayout(this);
+    QHBoxLayout *uploadLayout = new QHBoxLayout();
     uploadLayout->addWidget(uploadFileFrame, Qt::AlignCenter);
 
     QLabel *tipLabel = new QLabel("<font size=12px color='#FF5736' >文件错误，无法迁移，请更换备份文件</font>", this);
@@ -55,7 +55,7 @@ void UploadFileWidget::initUI()
     tipLabel->setAlignment(Qt::AlignCenter);
     tipLabel->setVisible(false);
 
-    QHBoxLayout *tipLayout = new QHBoxLayout(this);
+    QHBoxLayout *tipLayout = new QHBoxLayout();
     tipLayout->addSpacing(15);
     tipLayout->addWidget(tipLabel);
     tipLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
@@ -73,7 +73,7 @@ void UploadFileWidget::initUI()
     nextButton->setText("下一步");
     nextButton->setFixedSize(120, 35);
     nextButton->setStyleSheet("background-color: rgba(0, 152, 255, 0.12);");
-    nextButton->setEnabled(true);
+    nextButton->setEnabled(false);
     connect(nextButton, &QToolButton::clicked, this, [this, tipLabel, uploadFileFrame]() {
         if (nextButton->text() == "重试") {
             emit uploadFileFrame->updateUI(uploadStatus::Initial);
@@ -90,7 +90,7 @@ void UploadFileWidget::initUI()
         nextPage();
     });
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
     buttonLayout->addSpacing(15);
     buttonLayout->addWidget(nextButton);
@@ -99,7 +99,7 @@ void UploadFileWidget::initUI()
     IndexLabel *indelabel = new IndexLabel(1, this);
     indelabel->setAlignment(Qt::AlignCenter);
 
-    QHBoxLayout *indexLayout = new QHBoxLayout(this);
+    QHBoxLayout *indexLayout = new QHBoxLayout();
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addWidget(titileLabel);
@@ -207,7 +207,7 @@ void UploadFileFrame::initUI()
     QHBoxLayout *fileHLayout = new QHBoxLayout(fileFrame);
     fileHLayout->addWidget(fileFrame);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(50);

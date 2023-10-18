@@ -30,12 +30,14 @@ enum PageName {
 #else
 enum PageName {
     startwidget = 0,
+    licensewidget,
     choosewidget,
     networkdisconnectwidget,
+    promptwidget,
     connectwidget,
     uploadwidget,
-    promptwidget,
     waitgwidget,
+    errorwidget,
     transferringwidget,
     successtranswidget
 };

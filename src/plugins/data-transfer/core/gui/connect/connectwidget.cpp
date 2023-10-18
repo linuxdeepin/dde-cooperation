@@ -29,7 +29,7 @@ void ConnectWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
@@ -49,7 +49,7 @@ void ConnectWidget::initUI()
     font.setWeight(QFont::Thin);
     tipLabel->setFont(font);
 
-    connectLayout = new QHBoxLayout(this);
+    connectLayout = new QHBoxLayout();
     initConnectLayout();
 
     WarnningLabel = new QLabel("验证码已过期，请刷新获取新的验证码", this);
@@ -73,13 +73,13 @@ void ConnectWidget::initUI()
     backButton->setStyleSheet("background-color: #E3E3E3;");
     connect(backButton, &QToolButton::clicked, this, &ConnectWidget::nextPage);
 
-    QHBoxLayout *layout = new QHBoxLayout(this);
+    QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(backButton, Qt::AlignCenter);
 
     IndexLabel *indelabel = new IndexLabel(1, this);
     indelabel->setAlignment(Qt::AlignCenter);
 
-    QHBoxLayout *indexLayout = new QHBoxLayout(this);
+    QHBoxLayout *indexLayout = new QHBoxLayout();
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addWidget(titileLabel);
@@ -97,7 +97,7 @@ void ConnectWidget::initConnectLayout()
     QList<QHostAddress> address = QNetworkInterface::allAddresses();
     QString ipaddress = address.count() > 2 ? address[2].toString() : "";
 
-    QVBoxLayout *ipVLayout = new QVBoxLayout(this);
+    QVBoxLayout *ipVLayout = new QVBoxLayout();
     QLabel *iconLabel = new QLabel(this);
     QLabel *nameLabel = new QLabel(QHostInfo::localHostName() + "的电脑", this);
     QLabel *ipLabel = new QLabel(this);
@@ -126,8 +126,8 @@ void ConnectWidget::initConnectLayout()
     else
         remainingTime = 300;
 
-    QHBoxLayout *passwordHLayout = new QHBoxLayout(this);
-    QVBoxLayout *passwordVLayout = new QVBoxLayout(this);
+    QHBoxLayout *passwordHLayout = new QHBoxLayout();
+    QVBoxLayout *passwordVLayout = new QVBoxLayout();
     QLabel *passwordLabel = new QLabel(password, this);
     QLabel *refreshLabel = new QLabel("", this);
     QLabel *tipLabel = new QLabel(this);
@@ -206,7 +206,7 @@ void ConnectWidget::nextPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::promptwidget);
+        stackedWidget->setCurrentIndex(PageName::waitgwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }

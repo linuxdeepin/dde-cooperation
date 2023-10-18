@@ -6,19 +6,19 @@
 #include <QDockWidget>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QNetworkConfigurationManager>
 #include <QStackedWidget>
 
 #include <gui/connect/choosewidget.h>
 #include <gui/connect/connectwidget.h>
+#include <gui/connect/licensewidget.h>
 #include <gui/connect/networkdisconnectionwidget.h>
 #include <gui/connect/promptwidget.h>
-#include <gui/connect/searchwidget.h>
 #include <gui/connect/startwidget.h>
 
 #include <gui/transfer/successwidget.h>
 #include <gui/transfer/transferringwidget.h>
 #include <gui/backupload/uploadfilewidget.h>
+#include <gui/transfer/errorwidget.h>
 #include <gui/transfer/waittransferwidget.h>
 
 #include <utils/transferhepler.h>
@@ -53,6 +53,7 @@ void MainWindowPrivate::initWidgets()
     QStackedWidget *stackedWidget = new QStackedWidget(q);
 
     StartWidget *startwidget = new StartWidget(q);
+    LicenseWidget *licensewidget = new LicenseWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
     NetworkDisconnectionWidget *networkdisconnectwidget = new NetworkDisconnectionWidget(q);
     UploadFileWidget *uploadwidget = new UploadFileWidget(q);
@@ -60,46 +61,48 @@ void MainWindowPrivate::initWidgets()
     ConnectWidget *connectwidget = new ConnectWidget(q);
     WaitTransferWidget *waitgwidget = new WaitTransferWidget(q);
     TransferringWidget *transferringwidget = new TransferringWidget(q);
+    ErrorWidget *errorwidget = new ErrorWidget(q);
     SuccessWidget *successtranswidget = new SuccessWidget(q);
 
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
+    stackedWidget->insertWidget(PageName::licensewidget, licensewidget);
     stackedWidget->insertWidget(PageName::choosewidget, choosewidget);
 
     stackedWidget->insertWidget(PageName::uploadwidget, uploadwidget);
 
     stackedWidget->insertWidget(PageName::networkdisconnectwidget, networkdisconnectwidget);
-    stackedWidget->insertWidget(PageName::connectwidget, connectwidget);
     stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
+    stackedWidget->insertWidget(PageName::connectwidget, connectwidget);
     stackedWidget->insertWidget(PageName::waitgwidget, waitgwidget);
     stackedWidget->insertWidget(PageName::transferringwidget, transferringwidget);
+    stackedWidget->insertWidget(PageName::errorwidget, errorwidget);
     stackedWidget->insertWidget(PageName::successtranswidget, successtranswidget);
 
     stackedWidget->setCurrentIndex(0);
 
     connect(stackedWidget, &QStackedWidget::currentChanged, this, &MainWindowPrivate::handleCurrentChanged);
-    connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [waitgwidget, stackedWidget] {
-        stackedWidget->setCurrentWidget(waitgwidget);
+    connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [stackedWidget] {
+        stackedWidget->setCurrentIndex(PageName::waitgwidget);
     });
 
-    connect(TransferHelper::instance(), &TransferHelper::transferring, this, [transferringwidget, stackedWidget] {
-        stackedWidget->setCurrentWidget(transferringwidget);
+    connect(TransferHelper::instance(), &TransferHelper::transferring, this, [stackedWidget] {
+        stackedWidget->setCurrentIndex(PageName::transferringwidget);
     });
-    connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [successtranswidget, stackedWidget] {
-        stackedWidget->setCurrentWidget(successtranswidget);
-    });
-
-    QNetworkConfigurationManager *configManager = new QNetworkConfigurationManager(this);
-    connect(configManager, &QNetworkConfigurationManager::onlineStateChanged, this, [stackedWidget](bool isOnline) {
-        int page = stackedWidget->currentIndex();
-        // Only these two pages are used networkdisconnectwidget
-        if (page != PageName::connectwidget && page != PageName::promptwidget)
-            return;
-        if (!isOnline)
-            stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
-        else
-            stackedWidget->setCurrentIndex(PageName::choosewidget);
+    connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [stackedWidget] {
+        stackedWidget->setCurrentIndex(PageName::successtranswidget);
     });
 
+    connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
+            [stackedWidget](bool online) {
+                if (online)
+                    return;
+                int index = stackedWidget->currentIndex();
+                //only these need jump to networkdisconnectwidget
+                if (index == PageName::connectwidget || index == PageName::waitgwidget || index == PageName::promptwidget)
+                    stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
+                if (index == PageName::transferringwidget)
+                    stackedWidget->setCurrentIndex(PageName::errorwidget);
+            });
     //Adapt Theme Colors
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this,
             [startwidget, choosewidget, uploadwidget, networkdisconnectwidget, connectwidget, promptwidget, waitgwidget, transferringwidget, successtranswidget](DGuiApplicationHelper::ColorType themeType) {

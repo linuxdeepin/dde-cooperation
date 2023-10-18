@@ -27,7 +27,7 @@ void WaitTransferWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
@@ -63,14 +63,14 @@ void WaitTransferWidget::initUI()
     backButton->setStyleSheet("background-color: lightgray;");
     connect(backButton, &QToolButton::clicked, this, &WaitTransferWidget::nextPage);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
     IndexLabel *indelabel = new IndexLabel(2, this);
     indelabel->setAlignment(Qt::AlignCenter);
 
-    QHBoxLayout *indexLayout = new QHBoxLayout(this);
+    QHBoxLayout *indexLayout = new QHBoxLayout();
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addWidget(titileLabel);
@@ -86,7 +86,7 @@ void WaitTransferWidget::nextPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
+        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 2);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }

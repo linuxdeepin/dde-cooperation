@@ -18,13 +18,10 @@ public:
 
     static TransferHelper *instance();
 
-    const QStringList getUesr();
     QString getConnectPassword();
-    QMap<QString, double> getUserDataSize();
-    qint64 getRemainStorage();
+    bool getOnlineState() const;
 
     void tryConnect(const QString &ip, const QString &password);
-
     void startTransfer();
 
 #ifdef WIN32
@@ -39,6 +36,7 @@ public:
 #endif
 
 Q_SIGNALS:
+    // transfer state
     void connectSucceed();
     void transferring();
     void transferSucceed();
@@ -48,8 +46,15 @@ Q_SIGNALS:
     //progressbar use percentage and the time unit is seconds
     void transferContent(const QString &content, int progressbar, int estimatedtime);
 
+    //network
+    void onlineStateChanged(bool online);
+
+private:
+    void initOnlineState();
+
 private:
     TransferHandle transferhandle;
+    bool online = true;
 };
 
 #endif

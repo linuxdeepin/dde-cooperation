@@ -38,39 +38,15 @@ void NetworkDisconnectionWidget::initUI()
 
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
+    backButton->setStyleSheet("background-color: #E3E3E3;");
     backButton->setFixedSize(120, 35);
-    backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                              "border: 1px solid rgba(0,0,0, 0.03);"
-                              "opacity: 1;"
-                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                              "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                              "font-family: \"SourceHanSansSC-Medium\";"
-                              "font-size: 14px;"
-                              "font-weight: 500;"
-                              "color: rgba(65,77,104,1);"
-                              "font-style: normal;"
-                              "letter-spacing: 3px;"
-                              "text-align: center;"
-                              "}");
     QObject::connect(backButton, &QToolButton::clicked, this, &NetworkDisconnectionWidget::backPage);
 
     QToolButton *retryButton = new QToolButton(this);
 
     retryButton->setText("重试");
+    retryButton->setStyleSheet("background-color: #E3E3E3;");
     retryButton->setFixedSize(120, 35);
-    retryButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                               "border: 1px solid rgba(0,0,0, 0.03);"
-                               "opacity: 1;"
-                               "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                               "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                               "font-family: \"SourceHanSansSC-Medium\";"
-                               "font-size: 14px;"
-                               "font-weight: 500;"
-                               "color: rgba(65,77,104,1);"
-                               "font-style: normal;"
-                               "letter-spacing: 3px;"
-                               "text-align: center;"
-                               "}");
 
     QObject::connect(retryButton, &QToolButton::clicked, this, &NetworkDisconnectionWidget::retryPage);
     QHBoxLayout *buttonLayout = new QHBoxLayout();

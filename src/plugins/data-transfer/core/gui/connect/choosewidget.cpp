@@ -8,6 +8,7 @@
 #include "../type_defines.h"
 
 #include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
@@ -15,6 +16,8 @@
 #include <QStackedWidget>
 #include <QCheckBox>
 #include <QTextBrowser>
+#include <QToolTip>
+#include <QImage>
 
 #pragma execution_character_set("utf-8")
 
@@ -25,7 +28,7 @@ inline constexpr int selecPage1 = PageName::promptwidget;
 inline constexpr int selecPage2 = PageName::selectmainwidget;
 #else
 inline constexpr char localFileMethodName[] { "从备份文件导入" };
-inline constexpr int selecPage1 = PageName::connectwidget;
+inline constexpr int selecPage1 = PageName::promptwidget;
 inline constexpr int selecPage2 = PageName::uploadwidget;
 #endif
 
@@ -84,29 +87,38 @@ void ChooseWidget::initUI()
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
 
-    QObject::connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
-    QObject::connect(winItem->checkBox, &QCheckBox::stateChanged,
-                     [this, packageItem](int state) {
-                         if (state == Qt::Checked) {
-                             packageItem->checkBox->setCheckState(Qt::Unchecked);
-                             nextButton->setEnabled(true);
-                             nextpage = selecPage1;
-                             transferMethod = TransferMethod::kNetworkTransmission;
-                         } else {
-                             nextButton->setEnabled(false);
-                         }
-                     });
-    QObject::connect(packageItem->checkBox, &QCheckBox::stateChanged, this,
-                     [this, winItem](int state) {
-                         if (state == Qt::Checked) {
-                             winItem->checkBox->setCheckState(Qt::Unchecked);
-                             nextButton->setEnabled(true);
-                             nextpage = selecPage2;
-                             transferMethod = TransferMethod::kLocalExport;
-                         } else {
-                             nextButton->setEnabled(false);
-                         }
-                     });
+    connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
+            [winItem](bool online) {
+                if (online) {
+                    winItem->setEnable(true);
+                } else {
+                    winItem->setEnable(false);
+                }
+            });
+
+    connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
+    connect(winItem->checkBox, &QCheckBox::stateChanged,
+            [this, packageItem](int state) {
+                if (state == Qt::Checked) {
+                    packageItem->checkBox->setCheckState(Qt::Unchecked);
+                    nextButton->setEnabled(true);
+                    nextpage = selecPage1;
+                    transferMethod = TransferMethod::kNetworkTransmission;
+                } else {
+                    nextButton->setEnabled(false);
+                }
+            });
+    connect(packageItem->checkBox, &QCheckBox::stateChanged, this,
+            [this, winItem](int state) {
+                if (state == Qt::Checked) {
+                    winItem->checkBox->setCheckState(Qt::Unchecked);
+                    nextButton->setEnabled(true);
+                    nextpage = selecPage2;
+                    transferMethod = TransferMethod::kLocalExport;
+                } else {
+                    nextButton->setEnabled(false);
+                }
+            });
 }
 
 void ChooseWidget::sendOptions()
@@ -157,12 +169,12 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
     checkBox = new QCheckBox(text, this);
     checkBox->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
 
-    QLabel *iconLabel = new QLabel(this);
+    iconLabel = new QLabel(this);
     iconLabel->setPixmap(icon.pixmap(150, 120));
     iconLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
     iconLabel->setAlignment(Qt::AlignCenter);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
     mainLayout->addWidget(checkBox);
@@ -171,8 +183,24 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
 
 ModeItem::~ModeItem() {}
 
+void ModeItem::setEnable(bool able)
+{
+    enable = able;
+    QPalette palette;
+    if (able) {
+        palette.setColor(QPalette::WindowText, QColor("#414D68"));
+        checkBox->setPalette(palette);
+    } else {
+        palette.setColor(QPalette::WindowText, Qt::gray);
+        checkBox->setPalette(palette);
+    }
+}
+
 void ModeItem::mousePressEvent(QMouseEvent *event)
 {
+    if (!enable)
+        return QFrame::mousePressEvent(event);
+
     if (checkBox->checkState() == Qt::Checked)
         checkBox->setCheckState(Qt::Unchecked);
     else
