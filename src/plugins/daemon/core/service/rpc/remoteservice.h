@@ -81,7 +81,7 @@ public:
     void doMisc();
 
     // 通知远端准备执行作业：接收或发送。
-    int doTransfileJob(int id, const char *jobpath, bool hidden, bool recursive, bool recv);
+    int doTransfileJob(const char *appname, int id, const char *jobpath, bool hidden, bool recursive, bool recv);
 
     // 发送文件数据信息。
     int doSendFileInfo(int jobid, int fileid, const char *subdir, const char *filepath);

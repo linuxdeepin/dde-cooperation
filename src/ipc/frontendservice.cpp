@@ -147,7 +147,6 @@ void FrontendImpl::cbFsAction(co::Json &req, co::Json &res)
 void FrontendImpl::notifyFileStatus(co::Json &req, co::Json &res)
 {
     QString objstr(req.str().c_str());
-    qInfo() << "notifyFileStatus: " << objstr;
     _interface->handleFileTransstatus(objstr);
     res = {
         { "result", true},
