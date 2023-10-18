@@ -13,7 +13,9 @@
 #include "discoveryjob.h"
 
 #include "utils/config.h"
+#include "utils/cert.h"
 
+#include <functional>
 #include <QSettings>
 
 co::chan<IncomeData> _income_chan(10);
@@ -53,7 +55,8 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
         DaemonConfig::instance()->setUUID(hostid.c_str());
     }
 
-    asyncDiscovery();
+    // temp disable discovery service.
+    //asyncDiscovery();
 }
 
 ServiceManager::~ServiceManager()
@@ -71,7 +74,11 @@ ServiceManager::~ServiceManager()
 void ServiceManager::startRemoteServer()
 {
     if (_rpcServiceBinder) {
-        _rpcServiceBinder->startRpcListen();
+        fastring key = Cert::instance()->writeKey();
+        fastring crt = Cert::instance()->writeCrt();
+        _rpcServiceBinder->startRpcListen(key.c_str(), crt.c_str());
+        Cert::instance()->removeFile(key);
+        Cert::instance()->removeFile(crt);
     }
     go([this]() {
         while(true) {
@@ -91,7 +98,7 @@ void ServiceManager::startRemoteServer()
             }
             case IN_TRANSJOB:
             {
-                handleRemoteRequestJob(json_obj);
+                go(std::bind(&ServiceManager::handleRemoteRequestJob, this, json_obj));
                 break;
             }
             case FS_DATA:
@@ -128,7 +135,7 @@ bool ServiceManager::handleRemoteRequestJob(co::Json &info)
     fsjob.from_json(info);
     int32 jobId = fsjob.job_id;
     fastring savedir = fsjob.save;
-    if (savedir.empty()) {
+    if (savedir.empty() && fsjob.write) {
         // 如果未指定保存相对路径，则默认保存到$home/hostname
         savedir = DaemonConfig::instance()->getStorageDir();
     }
@@ -138,13 +145,15 @@ bool ServiceManager::handleRemoteRequestJob(co::Json &info)
     job->initJob(fsjob.who, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
     connect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus, Qt::QueuedConnection);
 
+    g_m.lock();
     if (fsjob.write) {
-        DLOG << "write job save to: " << savedir;
+        DLOG << "(" << jobId <<")write job save to: " << savedir;
         _transjob_recvs.insert(jobId, job);
     } else {
-        DLOG << "read job save to: " << savedir;
+        DLOG << "(" << jobId <<")read job save to: " << savedir;
         _transjob_sends.insert(jobId, job);
     }
+    g_m.unlock();
     go([this, job]() {
         // start job one by one
         co::mutex_guard g(g_m);
@@ -342,8 +351,9 @@ void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList p
             { "sub", sub },
             { "write", false }
         };
-        handleRemoteRequestJob(jobjson);
+        go(std::bind(&ServiceManager::handleRemoteRequestJob, this, jobjson));
         s->addJob(id); // record this job into session
+        co::sleep(1); // FIXME: too fast to call rpc failed
 
         id++;
     }
@@ -364,7 +374,7 @@ void ServiceManager::notifyConnect(QString session, QString ip, QString password
 
     if (_rpcServiceBinder) {
         fastring target_ip = ip.toStdString();
-        fastring user = name;
+        fastring user = session.toStdString();
         fastring pincode = password.toStdString();
         _connected_target = target_ip;
 
@@ -404,7 +414,7 @@ void ServiceManager::handleFileTransStatus(QString appname, int jobid, QString f
 {
     Session *s = sessionByName(appname);
     if (s && s->valid()) {
-        DLOG << "notify file trans status to:" << s->getName().toStdString();
+        //DLOG << "notify file trans status to:" << s->getName().toStdString();
         go ([s, fileinfo]() {
             co::Json infojson;
             infojson.parse_from(fileinfo.toStdString());

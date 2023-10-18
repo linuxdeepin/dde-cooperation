@@ -9,7 +9,7 @@
 #include <service/rpc/remoteservice.h>
 #include <ipc/proto/chan.h>
 #include "co/co.h"
-#include "co/tasked.h"
+#include "co/time.h"
 
 class TransferJob : public QObject
 {
@@ -50,6 +50,7 @@ private:
     void handleBlockQueque();
 
     void handleUpdate(FileTransRe result, const char *path, const char *emsg);
+    void syncHandleStatus();
 
 private:
     int _jobid;
@@ -68,7 +69,7 @@ private:
 
     co::mutex _queque_mutex;
     co::deque<FSDataBlock> _block_queue;
-    co::Tasked _checkerTimer;
+    co::Timer _timer;
     co::map<int32, FileInfo> _file_info_maps;
 
     int _empty_max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）

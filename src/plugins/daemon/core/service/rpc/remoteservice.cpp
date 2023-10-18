@@ -75,7 +75,7 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
 
             //TODO: generate auth token
             fastring auth_token = "thatsgood";
-            DaemonConfig::instance()->setTargetName(request->name().c_str());   // save the login name
+            DaemonConfig::instance()->setTargetName(request->my_name().c_str());   // save the login name
             fastring plattsr;
             if (WINDOWS == Util::getOSType()) {
                 plattsr = "Windows";
@@ -356,17 +356,12 @@ RemoteServiceBinder::~RemoteServiceBinder()
 {
 }
 
-void RemoteServiceBinder::startRpcListen()
+void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpath)
 {
-#ifdef __linux__
-    // TODO: load key from bin
-    char key[] = "/usr/share/mobile-assistant-daemon/certificates/desktop.key";
-    char crt[] = "/usr/share/mobile-assistant-daemon/certificates/desktop.crt";
-#else
-    char key[] = "certificates/desktop.key";
-    char crt[] = "certificates/desktop.crt";
-#endif
-
+    char key[1024];
+    char crt[1024];
+    strcpy(key, keypath);
+    strcpy(crt, crtpath);
     zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(UNI_RPC_PORT_BASE, key, crt);
     server->registerService<RemoteServiceImpl>();
 
@@ -487,9 +482,9 @@ void RemoteServiceBinder::doMisc()
     emit miscResult(true, "");
 }
 
-int RemoteServiceBinder::doTransfileJob(int id, const char *path, bool hidden, bool recursive, bool recv)
+int RemoteServiceBinder::doTransfileJob(const char *appname, int id, const char *jobpath, bool hidden, bool recursive, bool recv)
 {
-    if (nullptr == _executor_p || nullptr == path) {
+    if (nullptr == _executor_p || nullptr == jobpath) {
         ELOG << "doTransfileJob ERROR: no executor";
         return PARAM_ERROR;
     }
@@ -501,10 +496,11 @@ int RemoteServiceBinder::doTransfileJob(int id, const char *path, bool hidden, b
     FileTransResponse res_job;
 
     req_job.set_job_id(id);
-    req_job.set_path(path);
+    req_job.set_path(jobpath);
     req_job.set_include_hidden(hidden);
     req_job.set_recursive(recursive);
     req_job.set_push(!recv);
+    req_job.set_app_who(appname);
 
     stub.filetrans_job(rpc_controller, &req_job, &res_job, nullptr);
 
