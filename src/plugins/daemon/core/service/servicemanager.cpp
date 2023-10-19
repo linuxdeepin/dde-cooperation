@@ -340,24 +340,25 @@ void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList p
     int32 id = jobId;
     fastring who = s->getName().toStdString();
     fastring savepath = savedir.toStdString();
+
+    co::Json pathjson;
     for (QString path : paths) {
         fastring filepath = path.toStdString();
-        //FSJob
-        co::Json jobjson = {
-            { "who", who },
-            { "job_id", id },
-            { "path", filepath },
-            { "save", savepath },
-            { "hidden", false },
-            { "sub", sub },
-            { "write", false }
-        };
-        go(std::bind(&ServiceManager::handleRemoteRequestJob, this, jobjson));
-        s->addJob(id); // record this job into session
-        co::sleep(1); // FIXME: too fast to call rpc failed
-
-        id++;
+        pathjson.push_back(filepath);
     }
+    //FSJob
+    co::Json jobjson = {
+        { "who", who },
+        { "job_id", id },
+        { "path", pathjson.str() },
+        { "save", savepath },
+        { "hidden", false },
+        { "sub", sub },
+        { "write", false }
+    };
+
+    go(std::bind(&ServiceManager::handleRemoteRequestJob, this, jobjson));
+    s->addJob(id); // record this job into session
 }
 
 void ServiceManager::notifyConnect(QString session, QString ip, QString password)
