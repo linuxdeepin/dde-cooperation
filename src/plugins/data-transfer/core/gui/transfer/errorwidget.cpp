@@ -144,3 +144,13 @@ void ErrorWidget::retryPage()
                       "nullptr";
     }
 }
+void ErrorWidget::themeChanged(int theme)
+{
+    //light
+    if (theme == 1) {
+        setStyleSheet("background-color: white; border-radius: 10px;");
+    } else {
+        //dark
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+    }
+}

@@ -21,8 +21,7 @@ TransferHandle::TransferHandle()
     // start ipc services
     ipc::FrontendImpl *frontendimp = new ipc::FrontendImpl();
     frontendimp->setInterface(_frontendIpcService);
-    rpc::Server().add_service(frontendimp)
-                 .start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
+    rpc::Server().add_service(frontendimp).start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
 
     connect(_frontendIpcService, &FrontendService::sigSession, this, &TransferHandle::saveSession, Qt::QueuedConnection);
     connect(_frontendIpcService, &FrontendService::sigConnectStatus, this, &TransferHandle::handleConnectStatus, Qt::QueuedConnection);
@@ -32,7 +31,7 @@ TransferHandle::TransferHandle()
     QString appName = QCoreApplication::applicationName();
 
     _backendOK = false;
-    _request_job_id = appName.length(); // default start at appName's lenght
+    _request_job_id = appName.length();   // default start at appName's lenght
     _job_maps.clear();
     _file_ids.clear();
 
@@ -62,8 +61,8 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 {
     auto it = _job_maps.find(id);
     qInfo() << "handleTransJobStatus " << result << " saved:" << path;
-    switch (result)
-    {
+    bool ret = true;
+    switch (result) {
     case JOB_TRANS_FAILED:
         // remove job from maps
         if (it != _job_maps.end()) {
@@ -80,8 +79,8 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
         if (it != _job_maps.end()) {
             _job_maps.erase(it);
         }
-        emit TransferHelper::instance()->transferSucceed();
-        TransferHelper::instance()->handleDataConfiguration(path);
+        ret = TransferHelper::instance()->handleDataConfiguration(path);
+        emit TransferHelper::instance()->transferSucceed(ret);
         break;
     default:
         break;
@@ -91,7 +90,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 void TransferHandle::handleFileTransStatus(QString statusstr)
 {
     // FileStatus
-//    qInfo() << "handleFileTransStatus: " << statusstr;
+    //    qInfo() << "handleFileTransStatus: " << statusstr;
     co::Json status_json;
     status_json.parse_from(statusstr.toStdString());
     ipc::FileStatus param;
@@ -100,8 +99,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     QString filepath(param.name.c_str());
 
     switch (param.status) {
-    case FILE_TRANS_IDLE:
-    {
+    case FILE_TRANS_IDLE: {
         // 这个文件未被统计
         _file_stats.all_total_size += param.total;
         _file_stats.all_current_size += param.current;
@@ -110,13 +108,12 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         qInfo() << "file receive IDLE: " << filepath;
         break;
     }
-    case FILE_TRANS_SPEED:
-    {
+    case FILE_TRANS_SPEED: {
         if (_file_ids.contains(param.file_id)) {
             // 已经记录过，只更新数据
             int64_t increment = param.current - _file_ids[param.file_id];
-    //        qInfo() << "_file_ids " << param.file_id << " increment: " << increment;
-            _file_stats.all_current_size += increment; //增量值
+            //        qInfo() << "_file_ids " << param.file_id << " increment: " << increment;
+            _file_stats.all_current_size += increment;   //增量值
             _file_ids[param.file_id] = param.current;
 
             if (param.current >= param.total) {
@@ -132,11 +129,10 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         }
         break;
     }
-    case FILE_TRANS_END:
-    {
+    case FILE_TRANS_END: {
         // 此文件已完成，从文件统计中删除
         int64_t increment = param.current - _file_ids[param.file_id];
-        _file_stats.all_current_size += increment; //增量值
+        _file_stats.all_current_size += increment;   //增量值
         _file_ids.remove(param.file_id);
 
         qInfo() << "file receive END: " << filepath;
@@ -164,8 +160,8 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
     }
 
-//    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
-//    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
+    //    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
+    //    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
     emit TransferHelper::instance()->transferContent(filepath, progressbar, remain_time);
 }
@@ -208,14 +204,15 @@ void TransferHandle::sendFiles(QStringList paths)
     current_id++;
 }
 
-TransferWoker::TransferWoker() {
+TransferWoker::TransferWoker()
+{
     _gPool = new co::Pool(
-        []() { return (void*) new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false); },
-        [](void* p) { delete (rpc::Client*) p; }
-    );
+            []() { return (void *)new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false); },
+            [](void *p) { delete (rpc::Client *)p; });
 }
 
-TransferWoker::~TransferWoker() {
+TransferWoker::~TransferWoker()
+{
     delete _gPool;
 }
 
@@ -230,11 +227,11 @@ bool TransferWoker::pingBackend(const std::string &who)
         { "cb_port", UNI_IPC_FRONTEND_PORT },
     };
 
-    req.add_member("api", "Backend.ping"); //BackendImpl::ping
+    req.add_member("api", "Backend.ping");   //BackendImpl::ping
 
     c->call(req, res);
     c->close();
-    _session_id = res.get("msg").as_string(); // save the return session.
+    _session_id = res.get("msg").as_string();   // save the return session.
 
     //CallResult
     return res.get("result").as_bool();
@@ -249,7 +246,7 @@ void TransferWoker::setEmptyPassWord()
         { "password", "" },
     };
 
-    req.add_member("api", "Backend.setPassword"); //BackendImpl::setPassword
+    req.add_member("api", "Backend.setPassword");   //BackendImpl::setPassword
 
     c->call(req, res);
     c->close();
@@ -260,7 +257,7 @@ QString TransferWoker::getConnectPassWord()
     co::pool_guard<rpc::Client> c(_gPool);
     co::Json req, res;
 
-    req.add_member("api", "Backend.getPassword"); //BackendImpl::getPassword
+    req.add_member("api", "Backend.getPassword");   //BackendImpl::getPassword
 
     c->call(req, res);
     c->close();
@@ -280,7 +277,7 @@ void TransferWoker::tryConnect(const std::string &ip, const std::string &passwor
         { "host", target_ip },
         { "password", pin_code },
     };
-    req.add_member("api", "Backend.tryConnect"); //BackendImpl::tryConnect
+    req.add_member("api", "Backend.tryConnect");   //BackendImpl::tryConnect
     c->call(req, res);
     c->close();
 }
@@ -303,7 +300,7 @@ void TransferWoker::sendFiles(int reqid, QStringList filepaths)
         { "savedir", "" },
     };
 
-    req.add_member("api", "Backend.tryTransFiles"); //BackendImpl::tryTransFiles
+    req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
 
     c->call(req, res);
     c->close();

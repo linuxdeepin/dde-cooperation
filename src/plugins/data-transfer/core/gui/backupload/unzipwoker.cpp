@@ -40,7 +40,10 @@ void UnzipWorker::run()
     extract();
 
     //configuration
-    TransferHelper::instance()->handleDataConfiguration(targetDir);
+    bool ret = TransferHelper::instance()->handleDataConfiguration(targetDir);
+
+    emit TransferHelper::instance()->transferContent("迁移完成！！！", 100, 0);
+    emit TransferHelper::instance()->transferSucceed(ret);
 }
 
 int UnzipWorker::getNumFiles()
@@ -85,12 +88,11 @@ bool UnzipWorker::extract()
             currentTotal++;
             double value = static_cast<double>(currentTotal) / count;
             int progressbar = static_cast<int>(value * 100);
-            int estimatedtime = (count - currentTotal) / speed / 2;
+            int estimatedtime = (count - currentTotal) / speed / 2 + 1;
             emit TransferHelper::instance()->transferContent(outputText, progressbar, estimatedtime);
             qInfo() << value << outputText;
         }
     }
-    emit TransferHelper::instance()->transferContent("迁移完成！！！", 100, 0);
     if (process.exitCode() != 0)
         qInfo() << "Error message:" << process.errorString();
     qInfo() << "777777777:" << currentTotal << count;

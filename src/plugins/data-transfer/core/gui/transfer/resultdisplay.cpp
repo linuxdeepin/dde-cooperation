@@ -7,6 +7,7 @@
 #include <QToolButton>
 #include <QStackedWidget>
 #include <QApplication>
+#include <QStandardItemModel>
 
 #include <gui/mainwindow_p.h>
 #pragma execution_character_set("utf-8")
@@ -23,6 +24,9 @@ ResultDisplayWidget::~ResultDisplayWidget()
 
 void ResultDisplayWidget::initUI()
 {
+    initListTitle();
+    initListView();
+
     setStyleSheet("background-color: white; border-radius: 10px;");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -51,10 +55,13 @@ void ResultDisplayWidget::initUI()
     tiptextlabel->setText("<font size=12px color='gray' >部分信息迁移失败，请手动迁移。</font>");
 
     QHBoxLayout *tiplayout = new QHBoxLayout(this);
-    tiplayout->addSpacing(80);
+    tiplayout->addSpacing(95);
     tiplayout->addWidget(tipiconlabel);
     tiplayout->addWidget(tiptextlabel);
     tiplayout->setAlignment(Qt::AlignLeft);
+
+    QHBoxLayout *listlayout = new QHBoxLayout();
+    listlayout->addWidget(listview);
 
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
@@ -79,11 +86,51 @@ void ResultDisplayWidget::initUI()
 
     mainLayout->addSpacing(30);
     mainLayout->addLayout(titilelayout);
-    mainLayout->addSpacing(20);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(tiplayout);
+    mainLayout->addWidget(listTitle);
+    mainLayout->addLayout(listlayout);
     mainLayout->addSpacing(300);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(5);
+}
+
+void ResultDisplayWidget::initListTitle()
+{
+    QLabel *text1 = new QLabel("内容", this);
+    QLabel *text2 = new QLabel("类别", this);
+    QLabel *text3 = new QLabel("失败原因", this);
+
+    QHBoxLayout *layout = new QHBoxLayout();
+    layout->addSpacing(90);
+    layout->addWidget(text1);
+    layout->addSpacing(250);
+    layout->addWidget(text2);
+    layout->addSpacing(100);
+    layout->addWidget(text3);
+    layout->setAlignment(Qt::AlignLeft);
+
+    listTitle = new QFrame(this);
+    listTitle->setLayout(layout);
+}
+
+void ResultDisplayWidget::initListView()
+{
+    listview = new QListView(this);
+    listview->setSelectionMode(QAbstractItemView::NoSelection);
+    listview->setFixedSize(520, 235);
+    listview->setStyleSheet("background-color:rgba(0, 0, 0, 0.03);");
+    QStandardItemModel *model = new QStandardItemModel();
+    listview->setModel(model);
+
+    {
+        QStandardItem *item = new QStandardItem();
+        item->setData("应用安装失败", Qt::DisplayRole);
+        QStandardItem *item2 = new QStandardItem();
+        item2->setData("浏览器书签配置失败", Qt::DisplayRole);
+        model->appendRow(item);
+        model->appendRow(item2);
+    }
 }
 
 void ResultDisplayWidget::nextPage()
@@ -100,9 +147,11 @@ void ResultDisplayWidget::themeChanged(int theme)
 {
     //light
     if (theme == 1) {
+        listTitle->setStyleSheet("background-color: white; border-radius: 10px;");
         setStyleSheet("background-color: white; border-radius: 10px;");
     } else {
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
         //dark
+        listTitle->setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
 }

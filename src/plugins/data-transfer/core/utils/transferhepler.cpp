@@ -135,14 +135,22 @@ bool TransferHelper::handleDataConfiguration(const QString &filepath)
     }
     QJsonObject jsonObj = jsonDoc.object();
 
+    bool ret = true;
+
     //Configure desktop wallpaper
     QString image = filepath + "/" + jsonObj["wallpapers"].toString();
-    setWallpaper(image);
+    ret &= setWallpaper(image);
 
     //Configure file
-    setFile(jsonObj, filepath);
+    ret &= setFile(jsonObj, filepath);
 
-    return true;
+    //setBrowserBookMark
+    ret &= setBrowserBookMark(jsonObj["wallpapers"].toString());
+
+    //installApps
+    ret &= jsonObj["wallpapers"].isNull();
+
+    return ret;
 }
 
 bool TransferHelper::setWallpaper(const QString &filepath)
@@ -171,6 +179,22 @@ bool TransferHelper::setWallpaper(const QString &filepath)
         qDebug() << "Failed to call SetMonitorBackground method";
         return false;
     }
+}
+
+bool TransferHelper::setBrowserBookMark(const QString &filepath)
+{
+    if (filepath.isEmpty())
+        return true;
+    else
+        return false;
+}
+
+bool TransferHelper::installApps(const QStringList &applist)
+{
+    if (applist.isEmpty())
+        return true;
+    else
+        return false;
 }
 
 bool TransferHelper::setFile(QJsonObject jsonObj, QString filepath)
