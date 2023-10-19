@@ -91,9 +91,17 @@ void ServiceManager::startRemoteServer()
                 continue;
             }
             switch (indata.type) {
-            case IN_LOGIN:
+            case IN_LOGIN_CONFIRM:
             {
                 //TODO: notify user confirm login
+                break;
+            }
+            case IN_LOGIN_RESULT:
+            {
+                UserLoginResult result;
+                result.from_json(json_obj);
+                QString appname(result.appname.c_str());
+                handleLoginResult(result.result, appname);
                 break;
             }
             case IN_TRANSJOB:
@@ -363,7 +371,7 @@ void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList p
 
 void ServiceManager::notifyConnect(QString session, QString ip, QString password)
 {
-    Session *s = sessionById(session);
+    Session *s = sessionByName(session);
     if (!s || !s->valid()) {
         DLOG << "this session is invalid." << session.toStdString();
         return;
@@ -390,25 +398,25 @@ void ServiceManager::notifyConnect(QString session, QString ip, QString password
 void ServiceManager::handleLoginResult(bool result, QString session)
 {
     qInfo() << session << " LoginResult: " << result;
-    fastring session_id(session.toStdString());
+    fastring session_name(session.toStdString());
 
     // find the session by session id
-    Session *s = sessionById(session);
+    Session *s = sessionByName(session);
     if (s && s->valid()) {
-        go ([s, result, session_id]() {
+        go ([s, result, session_name]() {
             co::pool_guard<rpc::Client> c(s->clientPool());
             co::Json req, res;
             //cbConnect {GenericResult}
             req = {
                 { "id", 0 },
                 { "result", result ? 1 : 0 },
-                { "msg", session_id },
+                { "msg", session_name },
             };
             req.add_member("api", "Frontend.cbConnect");
             c->call(req, res);
         });
     } else {
-        DLOG << "Donot find login seesion: " << session_id;
+        DLOG << "Donot find login seesion: " << session_name;
     }
 }
 

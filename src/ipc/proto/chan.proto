@@ -1,5 +1,11 @@
 // package chan
 
+object UserLoginResult {
+    string appname  //应用名
+    string uuid //请求主机的uuid
+    bool result
+}
+
 object LoginConfirm {
     string user_name  //用户名
     int32 session_id //会话应用id
