@@ -41,7 +41,6 @@ void TransferJob::start()
     _stoped = false;
     _finished = false;
 
-    const char *jobpath = _path.c_str();
     if (_writejob) {
         DLOG << "start write job: " << _savedir;
         handleJobStatus(JOB_TRANS_DOING);
@@ -50,12 +49,21 @@ void TransferJob::start()
         DLOG << "doTransfileJob path to save:" << _savedir;
         int res = _rpcBinder->doTransfileJob(_app_name.c_str(), _jobid, _savedir.c_str(), false, _sub, _writejob);
         if (res < 0) {
-            ELOG << "binder doTransfileJob failed: " << res << " jobpath: " << jobpath;
+            ELOG << "binder doTransfileJob failed: " << res << " jobpath: " << _path;
             _stoped = true;
             handleJobStatus(JOB_TRANS_FAILED);
         }
 
-        readPath(jobpath, _jobid);
+        co::Json pathJson;
+        pathJson.parse_from(_path);
+        DLOG << "read job start path: " << pathJson;
+        for (uint32 i = 0; i < pathJson.array_size(); i++) {
+            const char *jobpath = pathJson[i].as_string().c_str();
+            std::pair<fastring, fastring> pairs = path::split(fastring(jobpath));
+            const char *rootpath = pairs.first.c_str();
+
+            scanPath(rootpath, jobpath, _jobid);
+        }
     }
 
     // 开始循环处理数据块
@@ -114,73 +122,56 @@ void TransferJob::insertFileInfo(FileInfo &info)
     }
 }
 
-fastring TransferJob::getSubdir(const char *path)
+fastring TransferJob::getSubdir(const char *path, const char *root)
 {
-    fastring topdir = "", indir = "";
-    std::pair<fastring, fastring> pairs = path::split(path);
+    fastring indir = "";
+    std::pair<fastring, fastring> pairs = path::split(fastring(path));
     fastring filedir = pairs.first;
 
-    if (fs::isdir(_path)) {
-        // 传输文件夹，文件夹为保存子目录。
-        topdir = path::base(_path);
-        indir = filedir.remove_prefix(_path);
+    if (fs::isdir(path)) {
+        indir = filedir.size() > strlen(root) ? filedir.remove_prefix(root) : "";
     } else {
-        indir = str::trim(filedir, _path.c_str(), 'l');
+        indir = str::trim(filedir, root, 'l');
     }
-    fastring subdir = path::join(topdir.c_str(), indir.c_str());
 
+    fastring subdir = path::join(indir.c_str(), "");
     return subdir;
 }
 
-void TransferJob::readPath(const char *path, int id)
+void TransferJob::scanPath(const char *root, const char *path, int id)
 {
-    int file_id = id;
+    fastring subdir = getSubdir(path, root);
+    int res = _rpcBinder->doSendFileInfo(_jobid, id, subdir.c_str(), path);
+    if (res <= 0) {
+        ELOG << "error file info : " << path;
+        return;
+    }
     if (fs::isdir(path)) {
-        fs::dir d(path);
-        auto v = d.all(); // 读取所有子项
-        for (const fastring &file : v) {
-            file_id++;
-            fastring file_path = path::join(d.path(), file.c_str());
-            if (fs::isdir(file_path) && _sub) {
-                // create sub dir name
-                fastring subdir = getSubdir(file_path.c_str());
-                int res = _rpcBinder->doSendFileInfo(_jobid, file_id, subdir.c_str(), file_path.c_str());
-                if (res <= 0) {
-                    ELOG << "fail to create dir info : " << path;
-                }
-
-                readPath(file_path.c_str(), file_id);
-            } else {
-                if (!readFile(file_path.c_str(), file_id)) {
-                    continue;
-                }
-            }
-
-            if (_stoped) {
-                // job has been canceled
-                QString jobpath(_path.c_str());
-                handleJobStatus(JOB_CANCEL);
-                break;
-            }
-        }
+        readPath(path, id, root);
     } else {
-        readFile(path, file_id);
+        readFile(path, id, subdir.c_str());
     }
 }
 
-bool TransferJob::readFile(const char *filepath, int fileid)
+void TransferJob::readPath(const char *path, int id, const char *root)
 {
-    std::pair<fastring, fastring> pairs = path::split(filepath);
+    int file_id = id;  
+    fastring dirpath = path::join(path, "");
+    fs::dir d(dirpath);
+    auto v = d.all(); // 读取所有子项
+    for (const fastring &file : v) {
+        file_id++;
+        fastring file_path = path::join(d.path(), file.c_str());
+        scanPath(root, file_path.c_str(), file_id);
+    }
+}
+
+bool TransferJob::readFile(const char *filepath, int fileid, const char *subdir)
+{
+    std::pair<fastring, fastring> pairs = path::split(fastring(filepath));
     fastring filename = pairs.second;
 
-    fastring subdir = getSubdir(filepath);
-    int res = _rpcBinder->doSendFileInfo(_jobid, fileid, subdir.c_str(), filepath);
-    if (res <= 0) {
-        ELOG << "error file info : " << filepath;
-        return false;
-    }
-
-    fastring subname = path::join(subdir.c_str(), filename.c_str());
+    fastring subname = path::join(subdir, filename.c_str());
     readFileBlock(filepath, fileid, subname);
     return true;
 }

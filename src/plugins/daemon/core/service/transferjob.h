@@ -42,9 +42,10 @@ signals:
 public slots:
 
 private:
-    fastring getSubdir(const char *path);
-    void readPath(const char *path, int id);
-    bool readFile(const char *filepath, int fileid);
+    fastring getSubdir(const char *path, const char *root);
+    void scanPath(const char *root, const char *path, int id);
+    void readPath(const char *path, int id, const char *root);
+    bool readFile(const char *filepath, int fileid, const char *subdir);
     void readFileBlock(const char *filepath, int fileid, const fastring subname);
 
     void handleBlockQueque();
