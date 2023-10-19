@@ -1,4 +1,4 @@
-usr/bin/*
+usr/bin/cooperation-daemon
 usr/lib/*/*.so*
-usr/lib/*/dde-cooperation/plugins/data-transfer/*.so*
 usr/lib/*/dde-cooperation/plugins/daemon/*.so*
+usr/lib/systemd/system/ lib/systemd/
