@@ -44,26 +44,15 @@ void TransferJob::start()
     const char *jobpath = _path.c_str();
     if (_writejob) {
         DLOG << "start write job: " << _savedir;
+        handleJobStatus(JOB_TRANS_DOING);
     } else {
         //并行读取文件数据
-        fastring path; // file save path
-        if (!_savedir.empty()) {
-            // 如果指定保存目录
-            path = _savedir;
-        } else {
-            if (fs::isdir(jobpath)) {
-                // 没有指定保存相对目录，且是一个文件夹，则保存到$home/hostname/文件夹名
-                path = path::base(jobpath);
-            } else {
-                path = ""; // 文件没有指定保存目录，默认目标机设置的保存目录
-            }
-        }
-        DLOG << "doTransfileJob path:" << path.c_str();
-        int res = _rpcBinder->doTransfileJob(_app_name.c_str(), _jobid, path.c_str(), false, _sub, _writejob);
+        DLOG << "doTransfileJob path to save:" << _savedir;
+        int res = _rpcBinder->doTransfileJob(_app_name.c_str(), _jobid, _savedir.c_str(), false, _sub, _writejob);
         if (res < 0) {
             ELOG << "binder doTransfileJob failed: " << res << " jobpath: " << jobpath;
             _stoped = true;
-            emit notifyJobResult(QString(jobpath), false, 0);
+            handleJobStatus(JOB_TRANS_FAILED);
         }
 
         readPath(jobpath, _jobid);
@@ -120,10 +109,7 @@ void TransferJob::insertFileInfo(FileInfo &info)
         // skip 0B file
         if (info.total_size > 0) {
             _file_info_maps.insert(std::make_pair(fileid, info));
-            // FileInfo > FileStatus in handle func
-            QString appname(_app_name.c_str());
-            QString fileinfo(info.as_json().str().c_str());
-            emit notifyFileTransStatus(appname, _jobid, fileinfo);
+            handleTransStatus(FILE_TRANS_IDLE, info);
         }
     }
 }
@@ -173,7 +159,7 @@ void TransferJob::readPath(const char *path, int id)
             if (_stoped) {
                 // job has been canceled
                 QString jobpath(_path.c_str());
-                emit notifyJobResult(jobpath, false, 0);
+                handleJobStatus(JOB_CANCEL);
                 break;
             }
         }
@@ -268,25 +254,50 @@ void TransferJob::readFileBlock(const char *filepath, int fileid, const fastring
 
 void TransferJob::handleBlockQueque()
 {
-    _timer.restart();
-    int64 now = _timer.ms();
+    // 定时获取状态并通知，检测是否结束
+    go ([this]() {
+        bool exit = false;
+        bool next_exit = false;
+        int _max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
+        do {
+            co::sleep(1000); // 每秒检测发送一次状态
+            bool empty = this->syncHandleStatus(); //检测一次
+            if (empty) {
+                if (_waitfinish) {
+                    if (next_exit) {
+                        // 已经被标记等待结束，这里定时更新，说明一定时间内无数据，直接结束
+                        handleJobStatus(JOB_TRANS_FINISHED);
+                        break;
+                    } else {
+                        next_exit = true; //标记等待下一次状态检测退出
+                        continue;
+                    }
+                }
+                if (_writejob) {
+                    // 写作业，计算等待时间
+                    _max_count--;
+                    if (_max_count < 0) {
+                        DLOG << " wait block data timeout NOW!";
+                        handleJobStatus(JOB_TRANS_FINISHED);
+                        exit = true;
+                    }
+                } else {
+                    DLOG << "all file finished, send job finish.";
+                    handleUpdate(FINIASH, _path.c_str(), "");
+                    _waitfinish = true;
+                }
+            } else {
+                //reset timeout
+                _empty_max_count = 5;
+            }
+        } while (!exit);
+
+        this->stop();
+    });
 
     bool exception = false;
     while (!_stoped) {
-        if (_timer.ms() - now >= 1000) {
-            now = _timer.ms();
-            go(std::bind(&TransferJob::syncHandleStatus, this));
-        }
         if (_block_queue.empty()) {
-            // job has been sat wait finish.
-            if (_waitfinish) {
-                syncHandleStatus();
-                if (_writejob && _empty_max_count > 0) {
-                    continue; // wait for receive timeout
-                } else {
-                    break; // finish
-                }
-            }
             co::sleep(10);
             continue;
         }
@@ -342,6 +353,7 @@ void TransferJob::handleBlockQueque()
     };
     if (exception) {
         DLOG << "trans job exception hanpend: " << _jobid;
+        handleJobStatus(JOB_TRANS_FAILED);
     } else {
         LOG << "trans job finished: " << _jobid;
         _finished = true;
@@ -364,49 +376,50 @@ void TransferJob::handleUpdate(FileTransRe result, const char *path, const char 
         if (res <= 0) {
             ELOG << "update failed: " << _path << " result=" << result;
         }
-
-        if (FINIASH == result) {
-            this->stop();
-        }
     });
 }
 
-void TransferJob::syncHandleStatus()
+bool TransferJob::syncHandleStatus()
 {
     // update the file info
     for (auto& pair : _file_info_maps) {
         if (pair.second.time_spended >= 0) {
             pair.second.time_spended += 1;
 
-            QString appname(_app_name.c_str());
-            QString fileinfo(pair.second.as_json().str().c_str());
-
-            // FileInfo > FileStatus in handle func
-            emit notifyFileTransStatus(appname, _jobid, fileinfo);
-
-            if (pair.second.current_size >= pair.second.total_size) {
+            bool end = pair.second.current_size >= pair.second.total_size;
+            handleTransStatus(end ? FILE_TRANS_END : FILE_TRANS_SPEED, pair.second);
+            if (end) {
                 DLOG << "should notify file finish: " << pair.second.name;
                 _file_info_maps.erase(pair.first);
                 if (!_writejob) {
-                //TODO: check sum
-                // handleUpdate(OK, block.filename.c_str(), "");
+                    //TODO: check sum
+                    // handleUpdate(OK, block.filename.c_str(), "");
                 }
             }
        }
     }
-    if (_file_info_maps.empty()) {
-        if (!_writejob) {
-            DLOG << "all file finished, send job finish.";
-            handleUpdate(FINIASH, _path.c_str(), "");
-        } else {
-            _empty_max_count--;
-            if (_empty_max_count < 0) {
-                DLOG << " wait block data timeout NOW!";
-                this->stop();
-            }
-        }
-    } else {
-        //reset timeout
-        _empty_max_count = 5;
-    }
+
+    return _file_info_maps.empty();
+}
+
+void TransferJob::handleJobStatus(int status)
+{
+    QString appname(_app_name.c_str());
+    QString savepath(_savedir.c_str());
+
+    emit notifyJobResult(appname, _jobid, status, savepath);
+}
+
+void TransferJob::handleTransStatus(int status, FileInfo &info)
+{
+    co::Json filejson = info.as_json();
+    //update the file relative to abs path
+    fastring savedpath = path::join(DaemonConfig::instance()->getStorageDir(), info.name);
+    filejson.remove("name");
+    filejson.add_member("name", savedpath);
+    QString appname(_app_name.c_str());
+    QString fileinfo(filejson.str().c_str());
+
+    // FileInfo > FileStatus in handle func
+    emit notifyFileTransStatus(appname, status, fileinfo);
 }
