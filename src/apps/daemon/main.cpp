@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "singleton/singleapplication.h"
 #include "base/baseutils.h"
 #include "config.h"
 
@@ -67,12 +66,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-    deepin_cross::SingleApplication app(argc, argv);
-    bool canSetSingle = app.setSingleInstance(app.applicationName());
-    if (!canSetSingle) {
-        qInfo() << "single application is already running.";
-        return 0;
-    }
+    QCoreApplication app(argc, argv);
 
     if (deepin_cross::BaseUtils::isWayland()) {
         // do something
@@ -85,6 +79,5 @@ int main(int argc, char *argv[])
 
     int ret = app.exec();
 
-    app.closeServer();
     return ret;
 }

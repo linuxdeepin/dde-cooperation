@@ -1,3 +1,9 @@
+dde-cooperation (0.3.1-1) unstable; urgency=medium
+
+  * Second pre-release package.
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 19 Oct 2023 18:53:55 +0800
+
 dde-cooperation (0.3.0-6) unstable; urgency=medium
 
   * First pre-release package.
