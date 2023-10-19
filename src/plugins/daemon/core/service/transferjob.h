@@ -33,11 +33,11 @@ public:
     void insertFileInfo(FileInfo &info);
 
 signals:
-    // 传输作业结果通知：文件（目录），结果，速度
-    void notifyJobResult(QString path, bool result, size_t speed);
+    // 传输作业结果通知：文件（目录），结果，保存路径
+    void notifyJobResult(QString appname, int jobid, int status, QString savedir);
 
     // 传输文件状态
-    void notifyFileTransStatus(QString appname, int jobid, QString fileinfo);
+    void notifyFileTransStatus(QString appname, int status, QString fileinfo);
 
 public slots:
 
@@ -50,7 +50,9 @@ private:
     void handleBlockQueque();
 
     void handleUpdate(FileTransRe result, const char *path, const char *emsg);
-    void syncHandleStatus();
+    bool syncHandleStatus();
+    void handleJobStatus(int status);
+    void handleTransStatus(int status, FileInfo &info);
 
 private:
     int _jobid;
@@ -69,7 +71,6 @@ private:
 
     co::mutex _queque_mutex;
     co::deque<FSDataBlock> _block_queue;
-    co::Timer _timer;
     co::map<int32, FileInfo> _file_info_maps;
 
     int _empty_max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）

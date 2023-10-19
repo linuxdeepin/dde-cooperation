@@ -86,16 +86,21 @@ typedef enum comm_type_t {
 } CommType;
 
 typedef enum fs_type_t {
-    TRANS_SPEED = 0,
-    TRANS_SEND = 1,
-    TRANS_RECV = 2,
-    ACTION_READ = 3,
-    ACTION_REMOVE = 4,
-    ACTION_CREATE = 5,
-    ACTION_RENAME = 6,
-    JOB_RESUME = 7,
-    JOB_CANCEL = 8,
-    JOB_DONE = 9,
+    FILE_TRANS_IDLE = 0,
+    FILE_TRANS_SPEED = 1,
+    FILE_TRANS_END = 2,
+    JOB_TRANS_FAILED = -1,
+    JOB_TRANS_DOING = 11,
+    JOB_TRANS_FINISHED = 12,
+    TRANS_TYPE_SEND = 101,
+    TRANS_TYPE_RECV = 102,
+    ACTION_READ = 21,
+    ACTION_REMOVE = 22,
+    ACTION_CREATE = 23,
+    ACTION_RENAME = 24,
+    JOB_RESUME = 31,
+    JOB_CANCEL = 32,
+    JOB_DONE = 33,
 } FSType;
 
 typedef enum flow_type_t {

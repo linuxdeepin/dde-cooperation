@@ -61,26 +61,27 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
 void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 {
     auto it = _job_maps.find(id);
-
+    qInfo() << "handleTransJobStatus " << result << " saved:" << path;
     switch (result)
     {
-    case -1:
+    case JOB_TRANS_FAILED:
         // remove job from maps
         if (it != _job_maps.end()) {
             _job_maps.erase(it);
         }
         qInfo() << "Send job failed: (" << id << ") " << path;
         break;
-    case 0:
+    case JOB_TRANS_DOING:
         _job_maps.insert(id, path);
         emit TransferHelper::instance()->transferring();
         break;
-    case 1:
+    case JOB_TRANS_FINISHED:
         // remove job from maps
         if (it != _job_maps.end()) {
             _job_maps.erase(it);
         }
         emit TransferHelper::instance()->transferSucceed();
+        TransferHelper::instance()->handleDataConfiguration(path);
         break;
     default:
         break;
@@ -96,23 +97,54 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     ipc::FileStatus param;
     param.from_json(status_json);
 
-    if (_file_ids.contains(param.file_id)) {
-        // 已经记录过，只更新数据
-        int64_t increment = param.current - _file_ids[param.file_id];
-//        qInfo() << "_file_ids " << param.file_id << " increment: " << increment;
-        _file_stats.all_current_size += increment; //增量值
-        _file_ids[param.file_id] = param.current;
+    QString filepath(param.name.c_str());
 
-        if (param.current >= param.total) {
-            // 此文件已完成，从文件统计中删除
-            _file_ids.remove(param.file_id);
-        }
-    } else {
-//        qInfo() << "_file_ids not contain: " << param.file_id;
+    switch (param.status) {
+    case FILE_TRANS_IDLE:
+    {
         // 这个文件未被统计
         _file_stats.all_total_size += param.total;
         _file_stats.all_current_size += param.current;
         _file_ids.insert(param.file_id, param.current);
+
+        qInfo() << "file receive IDLE: " << filepath;
+        break;
+    }
+    case FILE_TRANS_SPEED:
+    {
+        if (_file_ids.contains(param.file_id)) {
+            // 已经记录过，只更新数据
+            int64_t increment = param.current - _file_ids[param.file_id];
+    //        qInfo() << "_file_ids " << param.file_id << " increment: " << increment;
+            _file_stats.all_current_size += increment; //增量值
+            _file_ids[param.file_id] = param.current;
+
+            if (param.current >= param.total) {
+                // 此文件已完成，从文件统计中删除
+                _file_ids.remove(param.file_id);
+            }
+        }
+        float speed = param.current / 1024 / param.second;
+        if (speed > 1024) {
+            qInfo() << filepath << "SPEED: " << speed / 1024 << "MB/s";
+        } else {
+            qInfo() << filepath << "SPEED: " << speed << "KB/s";
+        }
+        break;
+    }
+    case FILE_TRANS_END:
+    {
+        // 此文件已完成，从文件统计中删除
+        int64_t increment = param.current - _file_ids[param.file_id];
+        _file_stats.all_current_size += increment; //增量值
+        _file_ids.remove(param.file_id);
+
+        qInfo() << "file receive END: " << filepath;
+        break;
+    }
+    default:
+        qInfo() << "unhandle status: " << param.status;
+        break;
     }
 
     if (param.second > _file_stats.max_time_sec) {
@@ -120,7 +152,6 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     }
 
     // 全部file_id的all_total_size, all_current/all_total_size
-    QString relname(param.name.c_str());
     double value = static_cast<double>(_file_stats.all_current_size) / _file_stats.all_total_size;
     int progressbar = static_cast<int>(value * 100);
     int remain_time;
@@ -133,16 +164,10 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
     }
 
-    float speed = param.current / 1024 / param.second;
-    if (speed > 1024) {
-        qInfo() << relname << "speed: " << speed / 1024 << "MB/s";
-    } else {
-        qInfo() << relname << "speed: " << speed << "KB/s";
-    }
 //    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
 //    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
-    emit TransferHelper::instance()->transferContent(relname, progressbar, remain_time);
+    emit TransferHelper::instance()->transferContent(filepath, progressbar, remain_time);
 }
 
 void TransferHandle::tryConnect(QString ip, QString password)

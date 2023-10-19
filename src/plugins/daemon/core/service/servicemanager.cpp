@@ -144,6 +144,7 @@ bool ServiceManager::handleRemoteRequestJob(co::Json &info)
     job->initRpc(_connected_target, UNI_RPC_PORT_BASE);
     job->initJob(fsjob.who, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
     connect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus, Qt::QueuedConnection);
+    connect(job, &TransferJob::notifyJobResult, this, &ServiceManager::handleJobTransStatus, Qt::QueuedConnection);
 
     g_m.lock();
     if (fsjob.write) {
@@ -410,12 +411,12 @@ void ServiceManager::handleLoginResult(bool result, QString session)
     }
 }
 
-void ServiceManager::handleFileTransStatus(QString appname, int jobid, QString fileinfo)
+void ServiceManager::handleFileTransStatus(QString appname, int status, QString fileinfo)
 {
     Session *s = sessionByName(appname);
     if (s && s->valid()) {
         //DLOG << "notify file trans status to:" << s->getName().toStdString();
-        go ([s, fileinfo]() {
+        go ([s, status, fileinfo]() {
             co::Json infojson;
             infojson.parse_from(fileinfo.toStdString());
             FileInfo filejob;
@@ -428,13 +429,34 @@ void ServiceManager::handleFileTransStatus(QString appname, int jobid, QString f
                 { "job_id", filejob.job_id },
                 { "file_id", filejob.file_id },
                 { "name", filejob.name },
-                { "status", TRANS_SPEED },
+                { "status", status },
                 { "total", filejob.total_size },
                 { "current", filejob.current_size },
                 { "second", filejob.time_spended },
             };
 
             req.add_member("api", "Frontend.notifyFileStatus");
+            c->call(req, res);
+        });
+    }
+}
+
+void ServiceManager::handleJobTransStatus(QString appname, int jobid, int status, QString savedir)
+{
+    Session *s = sessionByName(appname);
+    if (s && s->valid()) {
+        //DLOG << "notify file trans status to:" << s->getName().toStdString();
+        go ([s, jobid, status, savedir]() {
+            co::pool_guard<rpc::Client> c(s->clientPool());
+            co::Json req, res;
+            //cbTransStatus {GenericResult}
+            req = {
+                { "id", jobid },
+                { "result", status },
+                { "msg", savedir.toStdString() },
+            };
+
+            req.add_member("api", "Frontend.cbTransStatus");
             c->call(req, res);
         });
     }

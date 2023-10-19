@@ -34,7 +34,8 @@ public slots:
     void newTransSendJob(QString session, int jobId, QStringList paths, bool sub, QString savedir);
     void notifyConnect(QString session, QString ip, QString password);
     void handleLoginResult(bool result, QString who);
-    void handleFileTransStatus(QString appname, int jobid, QString fileinfo);
+    void handleFileTransStatus(QString appname, int status, QString fileinfo);
+    void handleJobTransStatus(QString appname, int jobid, int status, QString savedir);
     void handleNodeChanged(bool lost, QString info);
 
 private:
