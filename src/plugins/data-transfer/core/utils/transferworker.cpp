@@ -275,9 +275,10 @@ void TransferWoker::tryConnect(const std::string &ip, const std::string &passwor
     co::Json req, res;
     fastring target_ip(ip);
     fastring pin_code(password);
+    QString appName = QCoreApplication::applicationName();
 
     req = {
-        { "session", _session_id },
+        { "session", appName.toStdString() },
         { "host", target_ip },
         { "password", pin_code },
     };

@@ -49,7 +49,7 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
                 confirm.session_id = request->session_id();
 //                confirm.host_ip = ?
 
-                in.type = IN_LOGIN;
+                in.type = IN_LOGIN_CONFIRM;
                 in.json = confirm.as_json().str();
                 _income_chan << in;
 
@@ -60,6 +60,8 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
 //                int64 ms = t.ms();
                 OutData out;
                 _outgo_chan >> out;
+            } else {
+                authOK = true;
             }
         } else {
             fastring pass = Util::decodeBase64(pwd.c_str());
@@ -95,6 +97,16 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
 
             response->set_token(auth_token.c_str());
         }
+
+        IncomeData in;
+        UserLoginResult result;
+        result.appname = request->name();
+        result.uuid = request->my_uid();
+        result.result = authOK;
+
+        in.type = IN_LOGIN_RESULT;
+        in.json = result.as_json().str();
+        _income_chan << in;
     }
 
     DaemonConfig::instance()->setStatus(connected);

@@ -4,6 +4,26 @@
 
 #include "co/json.h"
 
+struct UserLoginResult {
+    fastring appname;
+    fastring uuid;
+    bool result;
+
+    void from_json(const co::Json& _x_) {
+        appname = _x_.get("appname").as_c_str();
+        uuid = _x_.get("uuid").as_c_str();
+        result = _x_.get("result").as_bool();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("appname", appname);
+        _x_.add_member("uuid", uuid);
+        _x_.add_member("result", result);
+        return _x_;
+    }
+};
+
 struct LoginConfirm {
     fastring user_name;
     int32 session_id;

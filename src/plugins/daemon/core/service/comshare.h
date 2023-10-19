@@ -10,7 +10,8 @@
 #include <co/json.h>
 
 typedef enum income_type_t {
-    IN_LOGIN = 1000,
+    IN_LOGIN_RESULT= 100,
+    IN_LOGIN_CONFIRM = 1000,
     IN_TRANSJOB = 1001,
     IN_PEER = 1002,
     FS_ACTION = 1003,
