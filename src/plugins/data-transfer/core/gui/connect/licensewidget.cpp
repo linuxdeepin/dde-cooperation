@@ -134,10 +134,8 @@ void LicenseWidget::themeChanged(int theme)
     //light
     if (theme == 1) {
         setStyleSheet("background-color: white; border-radius: 10px;");
-        nextButton->setStyleSheet("background-color: lightgray;");
     } else {
         //dark
-        nextButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.08);");
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
 }

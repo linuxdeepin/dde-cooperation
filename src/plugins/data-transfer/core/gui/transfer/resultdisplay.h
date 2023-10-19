@@ -2,7 +2,7 @@
 #define RESULTDISPLAYWIDGET_H
 
 #include <QFrame>
-#include <QTextBrowser>
+#include <QListView>
 
 class ResultDisplayWidget : public QFrame
 {
@@ -17,10 +17,13 @@ public slots:
 
 private:
     void initUI();
+    void initListTitle();
+    void initListView();
     void nextPage();
 
 private:
-    QTextBrowser *processTextBrowser { nullptr };
+    QListView *listview { nullptr };
+    QFrame *listTitle { nullptr };
 };
 
 #endif

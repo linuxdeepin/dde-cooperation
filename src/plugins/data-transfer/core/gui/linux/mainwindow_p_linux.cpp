@@ -91,8 +91,9 @@ void MainWindowPrivate::initWidgets()
     connect(TransferHelper::instance(), &TransferHelper::transferring, this, [stackedWidget] {
         stackedWidget->setCurrentIndex(PageName::transferringwidget);
     });
-    connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [stackedWidget] {
-        stackedWidget->setCurrentIndex(PageName::successtranswidget);
+    connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [stackedWidget](bool isall) {
+        int nextpage = isall ? PageName::successtranswidget : PageName::resultwidget;
+        stackedWidget->setCurrentIndex(nextpage);
     });
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
@@ -108,8 +109,11 @@ void MainWindowPrivate::initWidgets()
             });
     //Adapt Theme Colors
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this,
-            [startwidget, choosewidget, uploadwidget, networkdisconnectwidget, connectwidget, promptwidget, waitgwidget, transferringwidget, successtranswidget](DGuiApplicationHelper::ColorType themeType) {
+            [startwidget, licensewidget, errorwidget, resultwidget, choosewidget, uploadwidget, networkdisconnectwidget, connectwidget, promptwidget, waitgwidget, transferringwidget, successtranswidget](DGuiApplicationHelper::ColorType themeType) {
                 int theme = themeType == DGuiApplicationHelper::LightType ? 1 : 0;
+                licensewidget->themeChanged(theme);
+                errorwidget->themeChanged(theme);
+                resultwidget->themeChanged(theme);
                 startwidget->themeChanged(theme);
                 choosewidget->themeChanged(theme);
                 uploadwidget->themeChanged(theme);

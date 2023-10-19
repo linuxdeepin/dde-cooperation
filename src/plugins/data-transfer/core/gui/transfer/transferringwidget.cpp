@@ -19,13 +19,14 @@
 #include <utils/optionsmanager.h>
 #pragma execution_character_set("utf-8")
 
-TransferringWidget::TransferringWidget(QWidget *parent) : QFrame(parent)
+TransferringWidget::TransferringWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
     initConnect();
 }
 
-TransferringWidget::~TransferringWidget() { }
+TransferringWidget::~TransferringWidget() {}
 
 void TransferringWidget::initUI()
 {
@@ -207,10 +208,6 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
         fileLabel->setText("迁移完成");
         processTextBrowser->append("迁移完成");
         titileLabel->setText("迁移完成!!!");
-        QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-        if (stackedWidget) {
-            stackedWidget->setCurrentIndex(PageName::successtranswidget);
-        }
     } else if (estimatedtime > 0) {
         if (estimatedtime > 60)
             timeLabel->setText(QString("预计迁移时间还剩 %1分钟").arg(estimatedtime / 60));

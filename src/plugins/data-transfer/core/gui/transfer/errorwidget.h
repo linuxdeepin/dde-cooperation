@@ -14,6 +14,7 @@ private:
 public slots:
     void backPage();
     void retryPage();
+    void themeChanged(int theme);
 
 private:
     int state = 1;   // 1 interneterror，2 transfererror

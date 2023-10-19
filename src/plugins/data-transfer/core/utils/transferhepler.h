@@ -33,6 +33,7 @@ public:
     bool handleDataConfiguration(const QString &filepath);
     bool setWallpaper(const QString &filepath);
     bool setBrowserBookMark(const QString &filepath);
+    bool installApps(const QStringList &applist);
     bool setFile(QJsonObject jsonObj, QString filepath);
 #endif
 
@@ -40,7 +41,9 @@ Q_SIGNALS:
     // transfer state
     void connectSucceed();
     void transferring();
-    void transferSucceed();
+
+    // isall mean Have all files been transferred and configured successfully
+    void transferSucceed(bool isall);
 
     //Used to control the current operation content, progress, and estimated completion time
     //during transmission or decompression process

@@ -21,7 +21,6 @@ public slots:
 private:
     void initUI();
     QCheckBox *checkBox { nullptr };
-    QToolButton *nextButton { nullptr };
 };
 
 #endif
