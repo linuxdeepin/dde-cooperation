@@ -162,9 +162,14 @@ QStringList TransferHelper::getTransferFilePath()
     for (auto file : filePathList) {
         transferFilePathList.append(file);
     }
-
+    //add app
+    QJsonArray appArray;
+    for (auto app : appList) {
+        appArray.append(app);
+    }
     QString tempSavePath = QCoreApplication::applicationDirPath();
 
+    //add bookmarks
     QString bookmarksName;
     if (!browserList.isEmpty()) {
         QSet<QString> browserName(browserList.begin(), browserList.end());
@@ -174,6 +179,7 @@ QStringList TransferHelper::getTransferFilePath()
         bookmarksName = "bookmarks.json";
     }
 
+    //add wallpaper
     QString wallpaperName;
     if (!configList.isEmpty()) {
         QString wallparerPath = DrapWindowsData::instance()->getDesktopWallpaperPath();
@@ -182,14 +188,14 @@ QStringList TransferHelper::getTransferFilePath()
         transferFilePathList.append(QString(fileInfo.path() + "/" + wallpaperName));
     }
 
-    QJsonArray appArray;
-    for (auto app : appList) {
-        appArray.append(app);
-    }
+
+
+    //add file
     QJsonArray fileArray;
     for (QString file : filePathList) {
-        if (file.contains("C:/Users/deep/")) {
-            file.replace("C:/Users/deep/", "");
+        qInfo()<<QDir::homePath();
+        if (file.contains(QDir::homePath())) {
+            file.replace(QDir::homePath(), "");
         } else {
             int found = file.indexOf(":/");
             if (found != -1) {
@@ -200,19 +206,20 @@ QStringList TransferHelper::getTransferFilePath()
     }
 
     QJsonObject jsonObject;
-    jsonObject["user_data"] = "NA";
+    QString userData = OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];
+    jsonObject["user_data"] = userData;
     jsonObject["user_file"] = fileArray;
     if (!appArray.isEmpty())
         jsonObject["app"] = appArray;
-    //  jsonObject["app"] = appArray;
     if (!wallpaperName.isEmpty())
         jsonObject["wallpapers"] = wallpaperName;
     if (!bookmarksName.isEmpty())
         jsonObject["borwserbookmark"] = bookmarksName;
 
+    //add transfer.json
     QString qjsonPath("/transfer.json");
     getJsonfile(jsonObject, QString(tempSavePath));
-    transferFilePathList.append(tempSavePath + qjsonPath);
+    transferFilePathList.prepend(tempSavePath + qjsonPath);
 
     return transferFilePathList;
 }

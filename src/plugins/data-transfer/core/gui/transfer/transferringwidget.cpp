@@ -67,8 +67,6 @@ void TransferringWidget::initUI()
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
     timeLabel = new QLabel(this);
-    int time = 43;
-    timeLabel->setText(QString("预计迁移时间还剩 %1分钟").arg(QString::number(time)));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     QFont timefont;
     font.setPointSize(7);
@@ -196,15 +194,16 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
         == TransferMethod::kLocalExport) {
         return;
     }
+#else
+    if (content.contains("transfer.json"))
+            TransferHelper::instance()->checkSize(content);
 #endif
+
     QString info =
             QString("正在传输<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
     processTextBrowser->append(info);
     progressLabel->setProgress(progressbar);
     fileLabel->setText(info);
-
-    if (content.contains("transfer.json"))
-        TransferHelper::instance()->checkSize(content);
 
     if (estimatedtime == 0) {
         timeLabel->setText("迁移完成");

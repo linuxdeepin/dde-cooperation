@@ -1,5 +1,7 @@
 ﻿#include "selectmainwidget.h"
 #include "../type_defines.h"
+#include "userselectfilesize.h"
+
 #include <QToolButton>
 #include <QHBoxLayout>
 #include <QStackedWidget>
@@ -33,14 +35,6 @@ void SelectMainWidget::changeSelectframeState(const SelectItemName &name, const 
     } else if (name == SelectItemName::FILES) {
         fileItem->isOk = ok;
         fileItem->update();
-        QStringList sizeList = OptionsManager::instance()->getUserOption(Options::KSelectFileSize);
-        QString size;
-        if (sizeList.isEmpty()) {
-            size = QString("");
-        } else {
-            size = sizeList[0];
-        }
-        fileItem->updateSelectSize(size);
     } else if (name == SelectItemName::CONFIG) {
         configItem->isOk = ok;
         configItem->update();
@@ -78,6 +72,9 @@ void SelectMainWidget::initUi()
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     fileItem = new SelectItem("文件", QIcon(":/icon/file.svg"), SelectItemName::FILES, this);
+    QObject::connect(UserSelectFileSize::instance(), &UserSelectFileSize::updateUserFileSelectSize,
+                     fileItem, &SelectItem::updateSelectSize);
+
     appItem = new SelectItem("应用", QIcon(":/icon/app.svg"), SelectItemName::APP, this);
     configItem =
             new SelectItem("配置", QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
@@ -145,7 +142,7 @@ void SelectMainWidget::initUi()
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addSpacing(40);
- //   mainLayout->setSpacing(0);
+    //   mainLayout->setSpacing(0);
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(45);
     mainLayout->addLayout(modeLayout);
@@ -155,12 +152,24 @@ void SelectMainWidget::initUi()
 }
 void SelectMainWidget::nextPage()
 {
+    //If the selected file is being calculated ,return
+    if (!UserSelectFileSize::instance()->done()) {
+        return;
+    }
+    QStringList sizelist;
+    sizelist.push_back(QString::number(
+        static_cast<qint64>(UserSelectFileSize::instance()->getAllSelectSize())));
+    OptionsManager::instance()->addUserOption(Options::KSelectFileSize, sizelist);
+    qInfo() << "user select file size:"
+            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];
+
     PageName next;
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
         next = PageName::createbackupfilewidget;
     } else if (method == TransferMethod::kNetworkTransmission) {
         next = PageName::transferringwidget;
+
         // transfer
         TransferHelper::instance()->startTransfer();
     }

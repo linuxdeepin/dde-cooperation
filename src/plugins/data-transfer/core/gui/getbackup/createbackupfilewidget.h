@@ -5,6 +5,7 @@
 
 class QListView;
 class QLineEdit;
+class QLabel;
 class CreateBackupFileWidget : public QFrame
 {
     Q_OBJECT
@@ -17,15 +18,14 @@ public:
 private:
     void initUI();
     void initDiskListView();
-    QString fromByteToGBorMB(quint64 bytes);
 public slots:
     void nextPage();
     void backPage();
-
+    void updateBackupFileSize(const QString &sizeStr);
 private:
     QString backupFileName{ "" };
-    QString backupFileSize{ "0GB" };
 
+    QLabel *backupFileSizeLabel{nullptr};
     QListView *diskListView{ nullptr };
     QLineEdit *fileNameInput{ nullptr };
 };

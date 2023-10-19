@@ -135,7 +135,7 @@ void AppSelectWidget::initSelectFrame()
 
     QMap<QString, QString> appList = TransferHelper::instance()->getAppList();
     for (auto iterator = appList.begin(); iterator != appList.end(); iterator++) {
-        ListItem *item = new ListItem();
+        QStandardItem *item = new QStandardItem();
         item->setData(iterator.key(), Qt::DisplayRole);
         item->setData("是", Qt::ToolTipRole);
         item->setIcon(QIcon(iterator.value()));
@@ -192,6 +192,17 @@ void AppSelectWidget::nextPage()
 }
 void AppSelectWidget::backPage()
 {
+    //Clear All App Selections
+    QAbstractItemModel *model = appView->model();
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex index = model->index(row, 0);
+        QVariant checkboxData = model->data(index, Qt::CheckStateRole);
+        Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
+        if (checkState == Qt::Checked) {
+            model->setData(index,Qt::Unchecked,Qt::CheckStateRole);
+        }
+    }
+    OptionsManager::instance()->addUserOption(Options::kApp, QStringList());
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::selectmainwidget);

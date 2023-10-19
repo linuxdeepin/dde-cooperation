@@ -67,37 +67,43 @@ void ZipWork::zipFile(const QStringList &sourceFilePath, const QString &zipFileS
 
         int currentfileNum = output.count("正在添加");
 
-        qInfo() << "Standard Output:" << output;
-        QRegExp regex("[\\x4e00-\\x9fa5]+");
+        QRegExp regex("[\\p{Pd}\\x4e00-\\x9fa5]+");
         output.replace(regex, "");
         output.remove(':');
-
+        output.remove('。');
         zipFileNum += currentfileNum;
         int processbar = qBound(0, (int)((float)zipFileNum / (float)allFileNum * 100), 99);
-        int needSecond = 1;
+        qint64 needSecond = 1;
         if (!timer.isValid()) {
             timer.start();
         } else {
             // If the timer is started, the elapsed time is calculated and the timer is restarted
             qint64 elapsed = timer.restart();
             if (lastZipFileNum == 0) {
-                needSecond = 100;
+                needSecond = 0;
             } else {
-                needSecond = (allFileNum - zipFileNum) / lastZipFileNum * elapsed / 1000;
+                qint64 elapsedSeconds = elapsed / 1000;
+                int elapsedInt = static_cast<int>(elapsedSeconds);
+                if (elapsedInt <= 1)
+                    elapsedInt = 1;
+                needSecond = ((allFileNum - zipFileNum) / lastZipFileNum) * elapsedInt;
                 if (needSecond <= 1)
                     needSecond = 1;
             }
         }
-        qInfo() << "all file:" << allFileNum;
-        qInfo() << "zipFileNum" << zipFileNum;
-        qInfo() << "need time: " << needSecond;
-        qInfo() << "processbar:" << processbar;
-        qInfo() << "currentfileNum" << currentfileNum;
 
-        emit TransferHelper::instance()->transferContent(output, processbar, needSecond);
+        int needMinute = needSecond / 60;
+        if (needMinute <= 1)
+            needMinute = 1;
+        if (needMinute > lastTime) {
+            needMinute = lastTime;
+        }
+        emit TransferHelper::instance()->transferContent(output.right(50), processbar, needMinute);
 
         // update lastzipfilenum
         lastZipFileNum = currentfileNum;
+        //update lasttime
+        lastTime = needMinute;
     });
 
     QObject::connect(&process, &QProcess::readyReadStandardError, &process, [&process, &success]() {

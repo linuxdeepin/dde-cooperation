@@ -2,6 +2,8 @@
 #include "../select/item.h"
 #include "../type_defines.h"
 #include "./zipworker.h"
+#include "../select/userselectfilesize.h"
+#include "../select/calculatefilesize.h"
 #include <QColor>
 #include <QDebug>
 #include <QLabel>
@@ -114,7 +116,6 @@ void CreateBackupFileWidget::initUI()
                                  "background-position: center;}");
     connect(fileNameInput, &QLineEdit::textChanged, [=]() {
         bool isEmpty = fileNameInput->text().isEmpty();
-        // fileNameInput->setClearButtonEnabled(!isEmpty);
         if (!isEmpty) {
             fileNameInput->setStyleSheet("QLineEdit { "
                                          "background-color: rgba(0,0,0,0.01);"
@@ -134,8 +135,8 @@ void CreateBackupFileWidget::initUI()
     fileNameInputLabel1Layout->addSpacing(10);
     fileNameInputLabel1Layout->addWidget(fileNameInput);
 
-    QLabel *fileNameInputLabel2 = new QLabel(QString("大小:  %1").arg(backupFileSize), fileName);
-    fileNameInputLabel2->setStyleSheet("opacity: 1;"
+    backupFileSizeLabel = new QLabel(QString("大小:  0B"), fileName);
+    backupFileSizeLabel->setStyleSheet("opacity: 1;"
                                        "background-color: rgba(0,0,0,0);"
                                        "color: rgba(65,77,104,1);"
                                        "font-family: \"SourceHanSansSC-Medium\";"
@@ -145,7 +146,7 @@ void CreateBackupFileWidget::initUI()
                                        "text-align: left;");
     QHBoxLayout *fileNameInputLabel2Layout = new QHBoxLayout();
     fileNameInputLabel2Layout->addSpacing(20);
-    fileNameInputLabel2Layout->addWidget(fileNameInputLabel2);
+    fileNameInputLabel2Layout->addWidget(backupFileSizeLabel);
 
     fileNameEditLayout->addLayout(fileNameInputLabel1Layout);
     fileNameEditLayout->addLayout(fileNameInputLabel2Layout);
@@ -234,6 +235,8 @@ void CreateBackupFileWidget::initUI()
                              determineButton->setEnabled(true);
                          }
                      });
+
+    QObject::connect(UserSelectFileSize::instance(),&UserSelectFileSize::updateUserFileSelectSize,this,&CreateBackupFileWidget::updateBackupFileSize);
 }
 
 void CreateBackupFileWidget::initDiskListView()
@@ -256,7 +259,7 @@ void CreateBackupFileWidget::initDiskListView()
     diskListView->setSelectionMode(QAbstractItemView::SingleSelection);
 
     QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
-    // 添加文件项数据
+    // add file data
     for (const QStorageInfo &drive : drives) {
         QString rootPath = drive.rootPath();
         QString displayName =
@@ -265,8 +268,8 @@ void CreateBackupFileWidget::initDiskListView()
         item->setData(displayName, Qt::DisplayRole);
         item->setData(rootPath, Qt::WhatsThisRole);
         item->setData(QString("%1/%2可用")
-                              .arg(fromByteToGBorMB(drive.bytesAvailable()))
-                              .arg(fromByteToGBorMB(drive.bytesTotal())),
+                              .arg(fromByteToQstring(drive.bytesAvailable()))
+                              .arg(fromByteToQstring(drive.bytesTotal())),
                       Qt::ToolTipRole);
         if (drive.name().isEmpty()) {
             item->setIcon(QIcon(":/icon/drive-harddisk-32px.svg"));
@@ -288,17 +291,6 @@ void CreateBackupFileWidget::initDiskListView()
     });
 }
 
-QString CreateBackupFileWidget::fromByteToGBorMB(quint64 bytes)
-{
-    float result = static_cast<float>(bytes) / (1024 * 1024 * 1024);
-    result = roundf(result * 10) / 10;
-    if (result > 0) {
-        return QString("%1GB").arg(QString::number(result));
-    }
-    result = static_cast<float>(bytes) / (1024 * 1024);
-    result = roundf(result * 10) / 10;
-    return QString("%1MB").arg(QString::number(result));
-}
 
 void CreateBackupFileWidget::nextPage()
 {
@@ -322,4 +314,9 @@ void CreateBackupFileWidget::backPage()
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
+}
+
+void CreateBackupFileWidget::updateBackupFileSize(const QString &sizeStr)
+{
+    backupFileSizeLabel->setText(QString("大小:  %1").arg(sizeStr));
 }
