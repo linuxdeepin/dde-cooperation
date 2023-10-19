@@ -8,6 +8,7 @@
 #include <QStackedWidget>
 #include <QApplication>
 #include <QStandardItemModel>
+#include <QPainter>
 
 #include <gui/mainwindow_p.h>
 

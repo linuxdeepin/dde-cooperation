@@ -68,11 +68,6 @@ private:
     SelectAllButton *selectAllButton{ nullptr };
 };
 
-class ListItem : public QStandardItem
-{
-public:
-    ListItem() : QStandardItem() { }
-};
 
 class ItemDelegate : public QItemDelegate
 {

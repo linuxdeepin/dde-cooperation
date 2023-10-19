@@ -15,7 +15,6 @@ class SelectListView;
 class ConfigSelectWidget : public QFrame
 {
     Q_OBJECT
-
 public:
     ConfigSelectWidget(QWidget *parent = nullptr);
     ~ConfigSelectWidget();

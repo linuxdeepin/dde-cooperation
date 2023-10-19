@@ -40,10 +40,7 @@ void zipFileProcessWidget::updateProcess(const QString &content, int processbar,
 
 void zipFileProcessWidget::changeFileLabel(const QString &path)
 {
-    // fileLabel->setText(QString("正在打包 %1").arg(path));
-    fileLabel->setText(QString("<p style='white-space: nowrap; width: 150px; overflow: hidden; "
-                               "text-overflow: ellipsis;'>正在打包%1</p>")
-                               .arg(path));
+    fileLabel->setText(QString("正在打包 %1").arg(path));
 }
 
 void zipFileProcessWidget::changeTimeLabel(const int &time)
@@ -91,28 +88,35 @@ void zipFileProcessWidget::initUI()
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
     timeLabel = new QLabel(this);
-    int time = 43;
-    timeLabel->setText(QString("预计完成时间还剩 %1分钟").arg(QString::number(time)));
+    timeLabel->setText(QString("预计完成时间还剩 %1分钟").arg(QString::number(0)));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     QFont timefont;
     font.setPointSize(7);
     timeLabel->setFont(timefont);
 
     fileLabel = new QLabel(this);
-    fileLabel->setFixedSize(162, 17);
+    fileLabel->setFixedSize(220, 15);
     fileLabel->setStyleSheet(".QLabel {"
-                             " elide-mode: middle; "
-                             " padding: 2px;"
+                             "opacity: 1;"
+                             "color: rgba(82,106,127,1);"
+                             " font-family: \"SourceHanSansSC-Normal\";"
+                             " font-size: 12px;"
+                             "font-weight: 400;"
+                             "font-style: normal;"
+                             "letter-spacing: 0px;"
+                             "text-align: left;"
                              "}");
-    fileLabel->setText(QString("<p style='white-space: nowrap; width: 160px; overflow: hidden; "
-                               "text-overflow: ellipsis;'>%1</p>")
-                               .arg(QString("正在打包 %1").arg(QString("/Documents/....doc"))));
-    fileLabel->setAlignment(Qt::AlignCenter);
+    fileLabel->setTextFormat(Qt::PlainText);
+    fileLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    fileLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    QHBoxLayout *fileLabelLayout = new QHBoxLayout();
+    fileLabelLayout->setAlignment(Qt::AlignCenter);
+    fileLabelLayout->addWidget(fileLabel);
 
     IndexLabel *indelabel = new IndexLabel(3, this);
     indelabel->setAlignment(Qt::AlignCenter);
 
-    QHBoxLayout *indexLayout = new QHBoxLayout(this);
+    QHBoxLayout *indexLayout = new QHBoxLayout();
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->setAlignment(Qt::AlignHCenter);
@@ -125,7 +129,7 @@ void zipFileProcessWidget::initUI()
     mainLayout->addWidget(progressLabel);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(timeLabel);
-    mainLayout->addWidget(fileLabel);
+    mainLayout->addLayout(fileLabelLayout);
     mainLayout->addLayout(indexLayout);
 
     QObject::connect(TransferHelper::instance(), &TransferHelper::transferContent, this,

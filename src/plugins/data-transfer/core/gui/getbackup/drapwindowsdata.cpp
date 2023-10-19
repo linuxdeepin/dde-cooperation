@@ -42,9 +42,7 @@ inline constexpr char GoogleChromeBookMark[]{
 inline constexpr char MozillaFirefoxBookMark[]{ "\\AppData\\Roaming\\Mozilla\\Firefox" };
 } // namespace BrowerPath
 
-DrapWindowsData::DrapWindowsData()
-{
-}
+DrapWindowsData::DrapWindowsData() { }
 
 DrapWindowsData *DrapWindowsData::instance()
 {
@@ -345,7 +343,7 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
     QFile file(":/fileResource/apps.json");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "can not open app json";
-        return ;
+        return;
     }
 
     QByteArray jsonData = file.readAll();
@@ -354,7 +352,7 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
         qWarning() << "app json Parsing failed";
-        return ;
+        return;
     }
 
     QJsonObject jsonObj = jsonDoc.object();
@@ -378,11 +376,6 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
         list.push_back(app);
     }
 
-    qInfo() << "get linux app list.";
-
-//    for (const UosApp &app : list) {
-//        qInfo() << app.windowsName << " " << app.UosName << " featrue:" << app.feature;
-//    }
     return;
 }
 
@@ -596,14 +589,10 @@ QMap<QString, QString> DrapWindowsData::RecommendedInstallationAppList()
             result = containsAnyString(valueA, valueB);
             if (result) {
                 resultAPP[uosValue.windowsName] = uosValue.UosName;
-                qDebug() << valueA << ": " << uosValue.windowsName;
                 break;
             }
             i++;
         }
-
-        if (!result)
-            qDebug() << valueA << ": ";
     }
 
     return resultAPP;

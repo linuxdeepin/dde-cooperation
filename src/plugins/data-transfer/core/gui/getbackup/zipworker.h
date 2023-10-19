@@ -27,5 +27,6 @@ private:
     int allFileNum{ 0 };
     int zipFileNum{ 0 };
     int lastZipFileNum{ 0 };
+    int lastTime{ INT_MAX };
 };
 #endif

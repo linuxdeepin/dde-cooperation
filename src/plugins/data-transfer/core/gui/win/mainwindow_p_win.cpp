@@ -102,7 +102,7 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::zipfileprocesswidget, zipfileprocesswidget);
     stackedWidget->insertWidget(PageName::zipfileprocessresultwidget, zipfileprocessresultwidget);
 
-    stackedWidget->setCurrentIndex(PageName::startwidget);
+    stackedWidget->setCurrentIndex(PageName::choosewidget);
 
     windowsCentralWidgetContent->setContentsMargins(8, 8, 8, 8);
     windowsCentralWidgetContent->addWidget(stackedWidget);

@@ -129,13 +129,13 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
     selectBrowerBookMarkFrame->setLayout(selectframeLayout);
 
     browserView = new SelectListView(this);
-    QStandardItemModel *model =qobject_cast<QStandardItemModel*>(browserView->model()) ;
+    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(browserView->model());
     browserView->setItemDelegate(
             new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
 
     QMap<QString, QString> browserList = TransferHelper::instance()->getBrowserList();
     for (auto iterator = browserList.begin(); iterator != browserList.end(); iterator++) {
-        ListItem *item = new ListItem();
+        QStandardItem *item = new QStandardItem();
         item->setData(iterator.key(), Qt::DisplayRole);
         item->setData("是", Qt::ToolTipRole);
         item->setIcon(QIcon(iterator.value()));
@@ -145,7 +145,8 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
 
     selectframeLayout->addWidget(titlebar);
     selectframeLayout->addWidget(browserView);
-    QObject::connect(titlebar,&ItemTitlebar::selectAll,browserView,&SelectListView::selectorDelAllItem);
+    QObject::connect(titlebar, &ItemTitlebar::selectAll, browserView,
+                     &SelectListView::selectorDelAllItem);
 }
 
 void ConfigSelectWidget::initSelectConfigFrame()
@@ -166,14 +167,12 @@ void ConfigSelectWidget::initSelectConfigFrame()
                                      "}");
     selectConfigFrame->setLayout(selectframeLayout);
 
-
     configView = new SelectListView(this);
-    QStandardItemModel *model =qobject_cast<QStandardItemModel*>(configView->model()) ;
+    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(configView->model());
     configView->setItemDelegate(
             new ItemDelegate(55, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
 
-
-    ListItem *item = new ListItem();
+    QStandardItem *item = new QStandardItem();
     item->setData("自定义桌面", Qt::DisplayRole);
     item->setData("是", Qt::ToolTipRole);
     item->setCheckable(true);
@@ -181,7 +180,8 @@ void ConfigSelectWidget::initSelectConfigFrame()
 
     selectframeLayout->addWidget(titlebar);
     selectframeLayout->addWidget(configView);
-    QObject::connect(titlebar,&ItemTitlebar::selectAll,configView,&SelectListView::selectorDelAllItem);
+    QObject::connect(titlebar, &ItemTitlebar::selectAll, configView,
+                     &SelectListView::selectorDelAllItem);
 }
 
 void ConfigSelectWidget::sendOptions()
@@ -241,6 +241,27 @@ void ConfigSelectWidget::nextPage()
 }
 void ConfigSelectWidget::backPage()
 {
+    // Clear All config Selections
+    QAbstractItemModel *model = browserView->model();
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex index = model->index(row, 0);
+        QVariant checkboxData = model->data(index, Qt::CheckStateRole);
+        Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
+        if (checkState == Qt::Checked) {
+            model->setData(index, Qt::Unchecked, Qt::CheckStateRole);
+        }
+    }
+    model = configView->model();
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex index = model->index(row, 0);
+        QVariant checkboxData = model->data(index, Qt::CheckStateRole);
+        Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
+        if (checkState == Qt::Checked) {
+            model->setData(index, Qt::Unchecked, Qt::CheckStateRole);
+        }
+    }
+    OptionsManager::instance()->addUserOption(Options::kBrowserBookmarks, QStringList());
+    OptionsManager::instance()->addUserOption(Options::kConfig, QStringList());
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::selectmainwidget);

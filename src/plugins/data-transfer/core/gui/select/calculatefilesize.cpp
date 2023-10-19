@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QTimer>
 #include <QThread>
+#include <QDebug>
 
 QString fromByteToQstring(quint64 bytes)
 {
@@ -30,10 +31,13 @@ QString fromByteToQstring(quint64 bytes)
     if (result < 1024.0) {
         return QString("%1GB").arg(QString::number(result));
     }
+    tempresult = tempresult / 1024;
+    result = roundf(tempresult * 10) / 10;
+    return QString("%1TB").arg(QString::number(result));
 }
 quint64 fromQstringToByte(QString sizeString)
 {
-    quint64 bytes;
+    quint64 bytes = 0;
     if (sizeString.endsWith("KB")) {
         sizeString.chop(2);
         bytes = sizeString.toDouble() * 1024;
@@ -53,9 +57,8 @@ quint64 fromQstringToByte(QString sizeString)
     return bytes;
 }
 
-CalculateFileSizeTask::CalculateFileSizeTask(QObject *pool, const QString &path,
-                                             QListView *listview, const QModelIndex &qindex)
-    : filePath(path), listView(listview), index(qindex), calculatePool(pool)
+CalculateFileSizeTask::CalculateFileSizeTask(QObject *pool, const QString &path)
+    : filePath(path), calculatePool(pool)
 {
 }
 
@@ -63,11 +66,9 @@ CalculateFileSizeTask::~CalculateFileSizeTask() { }
 
 void CalculateFileSizeTask::run()
 {
-
     fileSize = calculate(filePath);
     QMetaObject::invokeMethod(calculatePool, "sendFileSizeSlots", Qt::QueuedConnection,
-                              Q_ARG(qlonglong,fileSize), Q_ARG(QListView*, listView),
-                              Q_ARG(QModelIndex, index));
+                              Q_ARG(quint64, fileSize), Q_ARG(QString, filePath));
 }
 
 qlonglong CalculateFileSizeTask::calculate(const QString &path)
@@ -79,10 +80,12 @@ qlonglong CalculateFileSizeTask::calculate(const QString &path)
     for (const QFileInfo &fileInfo : fileList) {
         if (fileInfo.isDir()) {
             tempSize += calculate(fileInfo.absoluteFilePath());
+
         } else {
             tempSize += fileInfo.size();
         }
     }
+
     return tempSize;
 }
 
@@ -95,81 +98,52 @@ CalculateFileSizeThreadPool *CalculateFileSizeThreadPool::instance()
 CalculateFileSizeThreadPool::~CalculateFileSizeThreadPool()
 {
     delete threadPool;
+    delete fileMap;
 }
 
 CalculateFileSizeThreadPool::CalculateFileSizeThreadPool()
 {
-    qRegisterMetaType<QListView*>("QListView*");
-
     threadPool = new QThreadPool();
+    fileMap = new QMap<QString, FileInfo>();
 }
 
-void CalculateFileSizeThreadPool::init(const QList<QListView *> &list)
+void CalculateFileSizeThreadPool::work(const QList<QString> &list)
 {
-    listView = list;
     threadPool->setMaxThreadCount(4);
-    for (QListView *view : listView) {
-        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(view->model());
-        for (int row = 0; row < model->rowCount(); ++row) {
-            QModelIndex index = model->index(row, 0);
-            QString path = index.data(Qt::UserRole).toString();
-            QFileInfo fileInfo(path);
-            if (fileInfo.isFile()) {
-                continue;
-            } else if (fileInfo.isDir()) {
-                CalculateFileSizeTask *task = new CalculateFileSizeTask(this,path, view, index);
-                threadPool->start(task);
-            } else {
-                qWarning() << "Path is neither a file nor a directory:" << path;
-            }
+    for (const QString &path : list) {
+        QFileInfo fileInfo(path);
+        if (fileInfo.isFile()) {
+            continue;
+        } else if (fileInfo.isDir()) {
+            CalculateFileSizeTask *task = new CalculateFileSizeTask(this, path);
+            threadPool->start(task);
+        } else {
+            qWarning() << "Path is neither a file nor a directory:" << path;
         }
     }
 }
 
-void CalculateFileSizeThreadPool::sendFileSizeSlots(qlonglong fileSize, QListView *listview,
-                                                    QModelIndex index)
+void CalculateFileSizeThreadPool::addFileMap(const QString &path, const FileInfo &fileinfo)
 {
-    emit sendFileSizeSignal(fileSize, listview, index);
+    (*fileMap)[path] = fileinfo;
 }
 
-CalculateFileSizeListen::CalculateFileSizeListen(QObject *parent) : QObject(parent) { }
-
-CalculateFileSizeListen::~CalculateFileSizeListen() { }
-
-void CalculateFileSizeListen::doWork()
+void CalculateFileSizeThreadPool::delFileMap(const QString &path)
 {
-    QTimer *timer = new QTimer(this);
-    timer->moveToThread(thread);
-
-    QObject::connect(timer, &QTimer::timeout, this, &CalculateFileSizeListen::calculate);
-    QObject::connect(thread, &QThread::started, timer, [timer]() { timer->start(1000); });
-    thread->start();
+    if (fileMap->contains(path))
+        fileMap->remove(path);
 }
 
-void CalculateFileSizeListen::calculate()
+QMap<QString, FileInfo> *CalculateFileSizeThreadPool::getFileMap()
 {
-    for (QPair<QListView *, QModelIndex> value : fileLlist) {
-        QListView *listview = value.first;
-        QModelIndex index = value.second;
-        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(listview->model());
-        QString sizeStr = model->data(index, Qt::UserRole).toString();
-        if (sizeStr != "") {
-            fileLlist.removeOne(value);
-            size += fromQstringToByte(sizeStr);
-        }
-    }
-    if (fileLlist.size() == 0) {
-        if (done == false) {
-            done = true;
-            emit updateFileSize(fromByteToQstring(size));
-        }
-    }
-    emit updateFileSize(QString(""));
+    return fileMap;
 }
 
-void CalculateFileSizeListen::addFileList(QListView *listView, QModelIndex index)
+void CalculateFileSizeThreadPool::sendFileSizeSlots(quint64 fileSize, const QString &path)
 {
-    fileLlist.push_back(qMakePair(listView, index));
-    done = false;
-}
 
+    (*fileMap)[path].size = fileSize;
+    (*fileMap)[path].isCalculate = true;
+
+    emit sendFileSizeSignal(fileSize, path);
+}
