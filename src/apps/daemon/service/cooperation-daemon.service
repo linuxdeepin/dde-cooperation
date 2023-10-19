@@ -1,0 +1,8 @@
+[Unit]
+Description=Deepin Cooperation Daemon
+
+[Service]
+ExecStart=/usr/bin/cooperation-daemon
+
+[Install]
+WantedBy=multi-user.target

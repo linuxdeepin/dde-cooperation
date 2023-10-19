@@ -41,3 +41,7 @@ target_link_libraries(${PROJ_NAME}
 
 install(TARGETS ${PROJ_NAME} DESTINATION bin)
 
+# systemd service
+install(FILES service/${PROJ_NAME}.service
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/system)
+

@@ -22,12 +22,18 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends: dde-cooperation (= ${binary:Version}), ${misc:Depends}
-Description: Dev package for deepin cooperation and data transfer project
- Dev package for deepin cooperation and data transfer project
+Description: Dev package for deepin cooperation project
+ Dev package for deepin cooperation project
 
 Package: dde-cooperation
 Architecture: any
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Deepin cooperation and data transfer project
- Deepin cooperation and data transfer project
+Description: Deepin cooperation backend
+ Deepin cooperation backend
+
+Package: deepin-data-transfer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation
+Description: deepin data transfer frontend
+ Deepin Desktop Environment (DDE) - data transfer frontend.
