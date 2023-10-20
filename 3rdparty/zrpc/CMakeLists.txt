@@ -9,7 +9,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/include)
 include(protobuf-generate)
 
 # do not find, check system installed protobuf package
-if(NOT EXISTS "${PROTOBUF_PROTOC_EXECUTABLE}")
+if(NOT EXISTS "${PROTOBUF_DIR}")
     find_package(Protobuf REQUIRED)
     if (${PROTOBUF_FOUND})
         message("protobuf found")
@@ -52,5 +52,5 @@ install(TARGETS
     ${LIB_INSTALL_DIR}
 )
 
-add_subdirectory(sample)
+# add_subdirectory(sample)
 
