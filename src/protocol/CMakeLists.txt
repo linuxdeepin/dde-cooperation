@@ -6,8 +6,8 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
 # do not find, check system installed protobuf package
-if(NOT EXISTS "${PROTOBUF_PROTOC_EXECUTABLE}")
-    # 生成转换proto文件
+if(USE_PROTOBUF_FILES)
+    # 生成转换proto文件: update_proto.sh
     # protoc --cpp_out=./ message.proto
     set(PROTO_FILES ${PROJECT_SOURCE_DIR}/message.pb.cc)
 
