@@ -2,6 +2,7 @@
 #define GLOBAL_DEFINES_H
 
 #include <QString>
+#include <QObject>
 
 namespace OperationKey {
 inline constexpr char kID[] { "id" };
@@ -26,5 +27,7 @@ struct DeviceInfo
     QString ipStr;
     ConnectState state;
 };
+
+Q_DECLARE_METATYPE(DeviceInfo)
 
 #endif   // GLOBAL_DEFINES_H

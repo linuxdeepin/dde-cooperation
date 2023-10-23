@@ -20,7 +20,6 @@ public:
 
 public Q_SLOTS:
     void handleRegisterWorkspace(QVariant param);
-    void handleRegisterSettings();
 
 private:
     explicit CooperationCoreEventReceiver(QObject *parent = nullptr);

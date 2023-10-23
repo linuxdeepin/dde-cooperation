@@ -7,13 +7,22 @@
 #include "widgets/cooperationstatewidget.h"
 #include "widgets/devicelistwidget.h"
 
-#include <QPainter>
-
 using namespace cooperation_workspace;
 
 WorkspaceWidgetPrivate::WorkspaceWidgetPrivate(WorkspaceWidget *qq)
-    : q(qq)
+    : q(qq),
+      sortFilterWorker(new SortFilterWorker),
+      workThread(new QThread)
 {
+    sortFilterWorker->moveToThread(workThread.data());
+    workThread->start();
+}
+
+WorkspaceWidgetPrivate::~WorkspaceWidgetPrivate()
+{
+    sortFilterWorker->stop();
+    workThread->quit();
+    workThread->wait();
 }
 
 void WorkspaceWidgetPrivate::initUI()
@@ -39,21 +48,57 @@ void WorkspaceWidgetPrivate::initUI()
     q->setLayout(mainLayout);
 }
 
+void WorkspaceWidgetPrivate::initConnect()
+{
+    connect(searchEdit, &CooperationSearchEdit::textChanged, this, &WorkspaceWidgetPrivate::onSearchValueChanged);
+    connect(this, &WorkspaceWidgetPrivate::deviceAdded, sortFilterWorker.data(), &SortFilterWorker::sortDevice, Qt::QueuedConnection);
+    connect(this, &WorkspaceWidgetPrivate::filterDevice, sortFilterWorker.data(), &SortFilterWorker::filterDevice, Qt::QueuedConnection);
+    connect(this, &WorkspaceWidgetPrivate::clearDevice, sortFilterWorker.data(), &SortFilterWorker::clear, Qt::QueuedConnection);
+    connect(sortFilterWorker.data(), &SortFilterWorker::sortFilterResult, this, &WorkspaceWidgetPrivate::onSortFilterResult, Qt::QueuedConnection);
+    connect(sortFilterWorker.data(), &SortFilterWorker::filterFinished, this, &WorkspaceWidgetPrivate::onFilterFinished, Qt::QueuedConnection);
+}
+
+void WorkspaceWidgetPrivate::onSearchValueChanged(const QString &text)
+{
+    stackedLayout->setCurrentWidget(dlWidget);
+    dlWidget->clear();
+    Q_EMIT filterDevice(text);
+}
+
+void WorkspaceWidgetPrivate::onSortFilterResult(int index, const DeviceInfo &info)
+{
+    dlWidget->insertItem(index, info);
+}
+
+void WorkspaceWidgetPrivate::onFilterFinished()
+{
+    if (dlWidget->itemCount() == 0) {
+        if (searchEdit->text().isEmpty()) {
+            stackedLayout->setCurrentIndex(currentPage);
+            return;
+        }
+
+        stackedLayout->setCurrentWidget(nrWidget);
+    }
+}
+
 WorkspaceWidget::WorkspaceWidget(QWidget *parent)
     : QWidget(parent),
       d(new WorkspaceWidgetPrivate(this))
 {
     d->initUI();
+    d->initConnect();
 }
 
 void WorkspaceWidget::switchWidget(PageName page)
 {
+    d->currentPage = page;
     d->stackedLayout->setCurrentIndex(page);
 }
 
 void WorkspaceWidget::addDeviceInfo(const DeviceInfo &info)
 {
-    d->dlWidget->appendItem(info);
+    Q_EMIT d->deviceAdded(info);
 }
 
 void WorkspaceWidget::addDeviceOperation(const QVariantMap &map)
@@ -64,4 +109,5 @@ void WorkspaceWidget::addDeviceOperation(const QVariantMap &map)
 void WorkspaceWidget::clear()
 {
     d->dlWidget->clear();
+    Q_EMIT d->clearDevice();
 }

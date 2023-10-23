@@ -21,8 +21,8 @@ SettingItem::SettingItem(QWidget *parent)
 void SettingItem::setItemInfo(const QString &text, QWidget *w)
 {
     QLabel *label = new QLabel(text, this);
-    mainLayout->addWidget(label, 1, Qt::AlignLeft);
-    mainLayout->addWidget(w, 1, Qt::AlignRight);
+    mainLayout->addWidget(label, 0, Qt::AlignLeft);
+    mainLayout->addWidget(w, 0, Qt::AlignRight);
 }
 
 void SettingItem::paintEvent(QPaintEvent *event)

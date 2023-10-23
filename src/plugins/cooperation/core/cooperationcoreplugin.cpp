@@ -4,8 +4,8 @@
 
 #include "cooperationcoreplugin.h"
 #include "base/baseutils.h"
-#include "gui/mainwindow.h"
 #include "events/cooperationcoreeventreceiver.h"
+#include "utils/cooperationutil.h"
 
 #include <QDebug>
 
@@ -18,18 +18,17 @@ void CooperaionCorePlugin::initialize()
 
 bool CooperaionCorePlugin::start()
 {
-    MainWindow::instance()->show();
+    CooperationUtil::instance()->mainWindow()->show();
     return true;
 }
 
 void CooperaionCorePlugin::stop()
 {
+    CooperationUtil::instance()->destroyMainWindow();
 }
 
 void CooperaionCorePlugin::bindEvents()
 {
     dpfSlotChannel->connect("cooperation_core", "slot_Register_Workspace",
                             CooperationCoreEventReceiver::instance(), &CooperationCoreEventReceiver::handleRegisterWorkspace);
-    dpfSlotChannel->connect("cooperation_core", "slot_Register_Settings",
-                            CooperationCoreEventReceiver::instance(), &CooperationCoreEventReceiver::handleRegisterSettings);
 }

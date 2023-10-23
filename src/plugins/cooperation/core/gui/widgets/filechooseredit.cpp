@@ -4,6 +4,8 @@
 
 #include "filechooseredit.h"
 
+#include <DStyle>
+
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QPainter>
@@ -21,7 +23,8 @@ void FileChooserEdit::initUI()
     pathLabel = new QLabel(this);
     pathLabel->setContentsMargins(8, 8, 8, 8);
 
-    fileChooserBtn = new QPushButton(this);
+    fileChooserBtn = new CooperationSuggestButton(this);
+    fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
     fileChooserBtn->setFixedSize(36, 36);
     connect(fileChooserBtn, &QPushButton::clicked, this, &FileChooserEdit::onButtonClicked);
 
@@ -36,21 +39,21 @@ void FileChooserEdit::initUI()
 
 void FileChooserEdit::setText(const QString &text)
 {
-    pathLabel->setText(text);
+    QFontMetrics fontMetrices(pathLabel->font());
+    QString showName = fontMetrices.elidedText(text, Qt::ElideRight, pathLabel->width() - 16);
+    if (showName != text)
+        pathLabel->setToolTip(text);
+
+    pathLabel->setText(showName);
 }
 
 void FileChooserEdit::onButtonClicked()
 {
     auto dirPath = QFileDialog::getExistingDirectory(this);
     if (dirPath.isEmpty())
-        return;
+        return;    
 
-    QFontMetrics fontMetrices(pathLabel->font());
-    QString showName = fontMetrices.elidedText(dirPath, Qt::ElideRight, pathLabel->width() - 16);
-    if (showName != dirPath)
-        pathLabel->setToolTip(dirPath);
-
-    pathLabel->setText(showName);
+    setText(dirPath);
     emit fileChoosed(dirPath);
 }
 

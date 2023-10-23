@@ -37,6 +37,7 @@ public Q_SLOTS:
     void onNameEditingFinished();
     void onDeviceShareButtonClicked(bool clicked);
     void onClipboardShareButtonClicked(bool clicked);
+    void onFileChoosed(const QString &path);
 
 private:
     void createBasicWidget();

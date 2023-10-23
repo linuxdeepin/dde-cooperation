@@ -73,7 +73,10 @@ void SettingDialogPrivate::initWindow()
 void SettingDialogPrivate::createBasicWidget()
 {
     QLabel *basicLable = new QLabel(tr("Basic"), q);
-    // TODO: set font
+    QFont font = basicLable->font();
+    font.setPointSize(16);
+    font.setWeight(QFont::Medium);
+    basicLable->setFont(font);
 
     findCB = new QComboBox(q);
     findCB->addItems(findComboBoxInfo);
@@ -87,7 +90,6 @@ void SettingDialogPrivate::createBasicWidget()
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
-    // set font
 
     nameEdit = new QLineEdit(q);
     nameEdit->setFixedWidth(280);
@@ -147,6 +149,8 @@ void SettingDialogPrivate::createTransferWidget()
 
     chooserEdit = new FileChooserEdit(q);
     chooserEdit->setFixedWidth(280);
+    connect(chooserEdit, &FileChooserEdit::fileChoosed, this, &SettingDialogPrivate::onFileChoosed);
+
     SettingItem *fileSaveItem = new SettingItem(q);
     fileSaveItem->setItemInfo(tr("File save location"), chooserEdit);
 
@@ -205,14 +209,17 @@ void SettingDialogPrivate::onClipboardShareButtonClicked(bool clicked)
     ConfigManager::instance()->setAppAttribute("GenericAttribute", "ClipboardShare", clicked);
 }
 
+void SettingDialogPrivate::onFileChoosed(const QString &path)
+{
+    ConfigManager::instance()->setAppAttribute("GenericAttribute", "StoragePath", path);
+}
+
 SettingDialog::SettingDialog(QWidget *parent)
     : CooperationDialog(parent),
       d(new SettingDialogPrivate(this))
 {
     d->initWindow();
     d->initTitleBar();
-
-    loadConfig();
 }
 
 SettingDialog::~SettingDialog()
@@ -221,6 +228,7 @@ SettingDialog::~SettingDialog()
 
 bool SettingDialog::eventFilter(QObject *watched, QEvent *event)
 {
+    // 绘制背景
     if (watched == d->mainWidget && event->type() == QEvent::Paint) {
         QPainter painter(d->mainWidget);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -232,6 +240,12 @@ bool SettingDialog::eventFilter(QObject *watched, QEvent *event)
     }
 
     return CooperationDialog::eventFilter(watched, event);
+}
+
+void SettingDialog::showEvent(QShowEvent *event)
+{
+    loadConfig();
+    CooperationDialog::showEvent(event);
 }
 
 void SettingDialog::loadConfig()
@@ -252,7 +266,7 @@ void SettingDialog::loadConfig()
     value = ConfigManager::instance()->appAttribute("GenericAttribute", "Transfer");
     d->transferCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute("GenericAttribute", "SaveLocation");
+    value = ConfigManager::instance()->appAttribute("GenericAttribute", "StoragePath");
     d->chooserEdit->setText(value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
 
     value = ConfigManager::instance()->appAttribute("GenericAttribute", "ClipboardShare");

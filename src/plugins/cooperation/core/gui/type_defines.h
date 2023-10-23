@@ -8,9 +8,11 @@ typedef QMainWindow CooperationMainWindow;
 #include <DMainWindow>
 #include <DAbstractDialog>
 #include <DSwitchButton>
+#include <DSuggestButton>
 typedef DTK_WIDGET_NAMESPACE::DMainWindow CooperationMainWindow;
 typedef DTK_WIDGET_NAMESPACE::DAbstractDialog CooperationDialog;
 typedef DTK_WIDGET_NAMESPACE::DSwitchButton CooperationSwitchButton;
+typedef DTK_WIDGET_NAMESPACE::DSuggestButton CooperationSuggestButton;
 #endif
 
 // Setting menu action list

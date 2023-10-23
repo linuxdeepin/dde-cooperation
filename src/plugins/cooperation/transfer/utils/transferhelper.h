@@ -27,10 +27,17 @@ public:
         Transfering
     };
 
+    struct TransferInfo
+    {
+        int64_t totalSize;   // 总量
+        int64_t transferSize;   // 当前传输量
+        int32_t maxTimeSec;   // 耗时
+    };
+
     static TransferHelper *instance();
 
     void init();
-    void sendFiles(const QString &ip, const QStringList &fileList);
+    void sendFiles(const QString &ip, const QString &devName, const QStringList &fileList);
     TransferStatus transferStatus();
 
     static void buttonClicked(const QVariantMap &info);
@@ -42,6 +49,7 @@ protected Q_SLOTS:
     void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onFileTransStatusChanged(const QString &status);
     void onMiscMessage(QString jsonmsg);
+    void cancelTransfer();
 
 private:
     explicit TransferHelper(QObject *parent = nullptr);
@@ -54,6 +62,7 @@ private:
     void handleTryConnect(const QString &ip);
     void handleSetConfig(const QString &key, const QString &value);
     QString handleGetConfig(const QString &key);
+    void handleCancelTransfer();
 
 private:
     FrontendService *frontendIpcSer { nullptr };
@@ -63,10 +72,15 @@ private:
     bool backendOk { false };
     bool thisDestruct { false };
 
+    TransferInfo transferInfo;
+    QMap<int, QString> jobMap;   // <jobId, filePath>
+    QMap<int, int64_t> fileIds;   // <file_id, last_current_size> 统计正在传输的文件量<文件id，上次已传输量>
     QString sessionId;
     QStringList readyToSendFiles;
+    QString sendToWho;
 
     TransferDialog transferDialog;
+    bool canTransfer { false };
 };
 
 }   // namespace cooperation_transfer

@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cooperationstatewidget.h"
-#include "hyperlinklabel.h"
 #ifdef WIN32
 #else
-#    include "gui/linux/backgroundwidget.h"
-#endif
+#include "gui/linux/backgroundwidget.h"
 
-#include <DCommandLinkButton>
+#include <DGuiApplicationHelper>
+
+DGUI_USE_NAMESPACE
+#endif
 
 #include <QVBoxLayout>
 #include <QIcon>
@@ -74,6 +75,11 @@ NoResultWidget::NoResultWidget(QWidget *parent)
     initUI();
 }
 
+void NoResultWidget::onLinkActivated(const QString &link)
+{
+    DGuiApplicationHelper::openUrl(link);
+}
+
 void NoResultWidget::initUI()
 {
     QLabel *iconLabel = new QLabel(this);
@@ -87,9 +93,16 @@ void NoResultWidget::initUI()
     contentBackgroundWidget->setBackground(17, BackgroundWidget::kItemBackground);
     QString leadintText = tr("1.Enable cross-end collaborative applications. Applications on the UOS "
                              "can be downloaded from the App Store, and applications on the Windows "
-                             "side can be downloaded from:");
+                             "side can be downloaded from: ");
     QString hyperlink = "https://www.deepin.org/index/assistant";
-    HyperlinkLabel *contentLable1 = new HyperlinkLabel(leadintText, hyperlink, "", this);
+
+    QString websiteLinkTemplate = "<a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
+    QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
+    QLabel *contentLable1 = new QLabel(this);
+    contentLable1->setWordWrap(true);
+    contentLable1->setText(content1);
+    connect(contentLable1, &QLabel::linkActivated, this, &NoResultWidget::onLinkActivated);
+
     QLabel *contentLable2 = new QLabel(tr("2.On the same LAN as the device"), this);
     contentLable2->setWordWrap(true);
     QLabel *contentLable3 = new QLabel(tr("3.xx xxv xx ff"), this);

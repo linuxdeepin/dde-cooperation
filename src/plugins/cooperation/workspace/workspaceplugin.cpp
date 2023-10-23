@@ -18,7 +18,7 @@ void WorkspacePlugin::initialize()
 
 bool WorkspacePlugin::start()
 {
-    CreateWorkspaceWidgetCallback creatWidget { []() { return MainController::instance()->widget(); } };
+    CreateWorkspaceWidgetCallback creatWidget { []() { return MainController::instance()->workspaceWidget(); } };
     dpfSlotChannel->push("cooperation_core", "slot_Register_Workspace", QVariant::fromValue(creatWidget));
 
     MainController::instance()->start();

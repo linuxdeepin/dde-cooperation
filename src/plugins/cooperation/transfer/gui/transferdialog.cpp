@@ -14,16 +14,20 @@ TransferDialog::TransferDialog(QWidget *parent)
 
 void TransferDialog::initUI()
 {
-    setFixedSize(380, 223);
+    setFixedSize(380, 234);
     setIcon(QIcon::fromTheme("collaboration"));
+    setTitle(tr("File Transfer"));
+    setContentsMargins(0, 0, 0, 0);
 
     QWidget *contentWidget = new QWidget(this);
     stackedLayout = new QStackedLayout;
     okBtn = new QPushButton(this);
+    connect(okBtn, &QPushButton::clicked, this, &TransferDialog::close);
 
     QVBoxLayout *vLayout = new QVBoxLayout(contentWidget);
+    vLayout->setMargin(0);
     vLayout->addLayout(stackedLayout);
-    vLayout->addWidget(okBtn);
+    vLayout->addWidget(okBtn, 0, Qt::AlignBottom);
 
     addContent(contentWidget);
 
@@ -39,15 +43,17 @@ void TransferDialog::createWaitConfirmPage()
     stackedLayout->addWidget(widget);
 
     spinner = new CooperationSpinner(this);
-    spinner->setFixedSize(36, 36);
+    spinner->setFixedSize(48, 48);
     spinner->setAttribute(Qt::WA_TransparentForMouseEvents);
     spinner->setFocusPolicy(Qt::NoFocus);
 
-    QLabel *label = new QLabel(tr("Wait for confirmation"), this);
+    QLabel *label = new QLabel(tr("Wait for confirmation..."), this);
     label->setAlignment(Qt::AlignHCenter);
 
     vLayout->addWidget(spinner, 0, Qt::AlignHCenter);
+    vLayout->addSpacing(15);
     vLayout->addWidget(label, 0, Qt::AlignHCenter);
+    vLayout->addSpacerItem(new QSpacerItem(1, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 void TransferDialog::createResultPage()
@@ -91,7 +97,7 @@ void TransferDialog::switchWaitConfirmPage()
 {
     stackedLayout->setCurrentIndex(0);
     spinner->start();
-    okBtn->setText(tr("Cancel"));
+    okBtn->setVisible(false);
 }
 
 void TransferDialog::switchResultPage(bool success, const QString &msg)
@@ -101,13 +107,14 @@ void TransferDialog::switchResultPage(bool success, const QString &msg)
 
     if (success) {
         auto icon = QIcon::fromTheme("transfer_success");
-        iconLabel->setPixmap(icon.pixmap(36, 36));
+        iconLabel->setPixmap(icon.pixmap(48, 48));
     } else {
         auto icon = QIcon::fromTheme("transfer_fail");
-        iconLabel->setPixmap(icon.pixmap(36, 36));
+        iconLabel->setPixmap(icon.pixmap(48, 48));
     }
     msgLabel->setText(msg);
     okBtn->setText(tr("Ok"));
+    okBtn->setVisible(true);
 }
 
 void TransferDialog::switchProgressPage(const QString &title)
@@ -115,12 +122,23 @@ void TransferDialog::switchProgressPage(const QString &title)
     spinner->stop();
     stackedLayout->setCurrentIndex(2);
 
+    progressBar->setValue(1);
     titleLabel->setText(title);
     okBtn->setText(tr("Cancel"));
+    okBtn->setVisible(true);
 }
 
-void TransferDialog::updateProgress(int value, const QString &msg)
+void TransferDialog::updateProgress(int value, const QString &remainTime)
 {
-    progressBar->setValue(value);
-    progressMsgLael->setText(msg);
+    if (progressBar->value() < value)
+        progressBar->setValue(value);
+
+    QString remainTimeMsg(tr("Remaining time %1 | %2%").arg(remainTime, QString::number(value)));
+    progressMsgLael->setText(remainTimeMsg);
+}
+
+void TransferDialog::closeEvent(QCloseEvent *event)
+{
+    Q_EMIT cancel();
+    CooperationDialog::closeEvent(event);
 }
