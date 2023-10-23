@@ -2,6 +2,13 @@
 #define ERRORWIDGET_H
 
 #include <QFrame>
+#include <QLabel>
+
+enum ErrorType {
+    networkError = 0,
+    outOfStorageError
+};
+
 class ErrorWidget : public QFrame
 {
     Q_OBJECT
@@ -9,15 +16,17 @@ public:
     ErrorWidget(QWidget *parent = nullptr);
     ~ErrorWidget();
 
-private:
-    void initUI();
 public slots:
     void backPage();
     void retryPage();
     void themeChanged(int theme);
+    void setErrorType(ErrorType type, int size = 0);
 
 private:
-    int state = 1;   // 1 interneterror，2 transfererror
-};
+    void initUI();
 
+private:
+    QLabel *titleLabel = nullptr;
+    QLabel *promptLabel = nullptr;
+};
 #endif   // ERRORWIDGET_H

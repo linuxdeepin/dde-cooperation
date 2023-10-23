@@ -97,16 +97,25 @@ void MainWindowPrivate::initWidgets()
     });
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
-            [stackedWidget](bool online) {
+            [stackedWidget, errorwidget](bool online) {
                 if (online)
                     return;
                 int index = stackedWidget->currentIndex();
                 //only these need jump to networkdisconnectwidget
                 if (index == PageName::connectwidget || index == PageName::waitgwidget || index == PageName::promptwidget)
                     stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
-                if (index == PageName::transferringwidget)
+                if (index == PageName::transferringwidget) {
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
+                    errorwidget->setErrorType(ErrorType::networkError);
+                }
             });
+
+    connect(TransferHelper::instance(), &TransferHelper::outOfStorage,
+            [stackedWidget, errorwidget](int size) {
+                stackedWidget->setCurrentIndex(PageName::errorwidget);
+                errorwidget->setErrorType(ErrorType::outOfStorageError, size);
+            });
+
     //Adapt Theme Colors
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this,
             [startwidget, licensewidget, errorwidget, resultwidget, choosewidget, uploadwidget, networkdisconnectwidget, connectwidget, promptwidget, waitgwidget, transferringwidget, successtranswidget](DGuiApplicationHelper::ColorType themeType) {

@@ -10,6 +10,8 @@
 #include <QStandardItemModel>
 
 #include <gui/mainwindow_p.h>
+
+#include <utils/transferhepler.h>
 #pragma execution_character_set("utf-8")
 
 ResultDisplayWidget::ResultDisplayWidget(QWidget *parent)
@@ -93,6 +95,8 @@ void ResultDisplayWidget::initUI()
     mainLayout->addSpacing(300);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(5);
+
+    connect(TransferHelper::instance(), &TransferHelper::failure, this, &ResultDisplayWidget::addFailure);
 }
 
 void ResultDisplayWidget::initListTitle()
@@ -104,7 +108,7 @@ void ResultDisplayWidget::initListTitle()
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addSpacing(90);
     layout->addWidget(text1);
-    layout->addSpacing(250);
+    layout->addSpacing(200);
     layout->addWidget(text2);
     layout->addSpacing(100);
     layout->addWidget(text3);
@@ -122,15 +126,8 @@ void ResultDisplayWidget::initListView()
     listview->setStyleSheet("background-color:rgba(0, 0, 0, 0.03);");
     QStandardItemModel *model = new QStandardItemModel();
     listview->setModel(model);
-
-    {
-        QStandardItem *item = new QStandardItem();
-        item->setData("应用安装失败", Qt::DisplayRole);
-        QStandardItem *item2 = new QStandardItem();
-        item2->setData("浏览器书签配置失败", Qt::DisplayRole);
-        model->appendRow(item);
-        model->appendRow(item2);
-    }
+    listview->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    listview->setItemDelegate(new itemDelegate());
 }
 
 void ResultDisplayWidget::nextPage()
@@ -154,4 +151,73 @@ void ResultDisplayWidget::themeChanged(int theme)
         listTitle->setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
+}
+
+void ResultDisplayWidget::addFailure(QString name, QString type, QString reason)
+{
+    auto model = qobject_cast<QStandardItemModel *>(listview->model());
+    QStandardItem *item = new QStandardItem();
+    item->setData(name, Qt::DisplayRole);
+    item->setData(type, Qt::ToolTipRole);
+    item->setData(reason, Qt::UserRole);
+    model->appendRow(item);
+}
+
+itemDelegate::itemDelegate()
+{
+}
+
+itemDelegate::~itemDelegate()
+{
+}
+
+void itemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    paintBackground(painter, option, index);
+    paintText(painter, option, index);
+}
+
+QSize itemDelegate::sizeHint(const QStyleOptionViewItem &option,
+                             const QModelIndex &index) const
+{
+    Q_UNUSED(option);
+    Q_UNUSED(index);
+    return QSize(180, 36);
+}
+
+void itemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    painter->save();
+
+    painter->setPen(QColor("#526A7F"));
+    QFont font;
+    font.setPixelSize(12);
+    painter->setFont(font);
+
+    QRect namePos = option.rect.adjusted(20, 0, 0, 0);
+    QString fileText = index.data(Qt::DisplayRole).toString();
+    painter->drawText(namePos, Qt::AlignLeft | Qt::AlignVCenter, fileText);
+
+    QRect tpyePos = option.rect.adjusted(220, 0, 0, 0);
+    QString tpyeText = index.data(Qt::ToolTipRole).toString();
+    painter->drawText(tpyePos, Qt::AlignLeft | Qt::AlignVCenter, tpyeText);
+
+    painter->setPen(QColor("#FF5736"));
+    QRect reasonPos = option.rect.adjusted(370, 0, 0, 0);
+    QString reasonText = index.data(Qt::UserRole).toString();
+    painter->drawText(reasonPos, Qt::AlignLeft | Qt::AlignVCenter, reasonText);
+
+    painter->restore();
+}
+
+void itemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    painter->save();
+    QRect positon(option.rect);
+    painter->setPen(Qt::NoPen);
+    if (index.row() % 2 == 0) {
+        painter->setBrush(QColor(0, 0, 0, 12));
+        painter->drawRoundedRect(positon, 8, 8);
+    }
+    painter->restore();
 }

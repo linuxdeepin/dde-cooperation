@@ -19,7 +19,7 @@ UnzipWorker::UnzipWorker(QString filepath)
 {
     QFileInfo fileInfo(filepath);
     targetDir = fileInfo.path() + "/" + fileInfo.baseName();
-    count = getNumFiles();
+    count = getNumFiles(filepath);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]() {
         speed = currentTotal - previousTotal + 1;
@@ -46,7 +46,7 @@ void UnzipWorker::run()
     emit TransferHelper::instance()->transferSucceed(ret);
 }
 
-int UnzipWorker::getNumFiles()
+int UnzipWorker::getNumFiles(QString filepath)
 {
     const char *zipFilePath = filepath.toLocal8Bit().constData();
     struct zip *archive = zip_open(zipFilePath, 0, NULL);

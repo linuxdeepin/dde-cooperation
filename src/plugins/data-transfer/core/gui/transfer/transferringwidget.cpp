@@ -203,6 +203,9 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
     progressLabel->setProgress(progressbar);
     fileLabel->setText(info);
 
+    if (content.contains("transfer.json"))
+        TransferHelper::instance()->checkSize(content);
+
     if (estimatedtime == 0) {
         timeLabel->setText("迁移完成");
         fileLabel->setText("迁移完成");
