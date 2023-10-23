@@ -297,21 +297,11 @@ void TransferJob::handleBlockQueque()
 
         int32 job_id = block.job_id;
         int32 file_id = block.file_id;
-        uint32 blk_id = block.blk_id;
+        uint64 blk_id = block.blk_id;
         fastring name = path::join(DaemonConfig::instance()->getStorageDir(), block.filename);
         fastring buffer = block.data;
         size_t len = buffer.size();
         bool comp = block.compressed;
-
-        // update the file info
-        auto it = _file_info_maps.find(file_id);
-        if (it != _file_info_maps.end()) {
-            it->second.current_size += len;
-            if (blk_id == 0) {
-                // first block data, file begin, start record time
-                it->second.time_spended = 0;
-            }
-        }
 
         if (_writejob) {
             int64 offset = blk_id * BLOCK_SIZE;
@@ -341,6 +331,18 @@ void TransferJob::handleBlockQueque()
             }
         }
         _block_queue.pop_front();
+
+        if (!exception) {
+            // update the file info
+            auto it = _file_info_maps.find(file_id);
+            if (it != _file_info_maps.end()) {
+                it->second.current_size += len;
+                if (blk_id == 0) {
+                    // first block data, file begin, start record time
+                    it->second.time_spended = 0;
+                }
+            }
+        }
     };
     if (exception) {
         DLOG << "trans job exception hanpend: " << _jobid;
