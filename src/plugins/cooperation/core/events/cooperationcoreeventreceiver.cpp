@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cooperationcoreeventreceiver.h"
-#include "gui/mainwindow.h"
+#include "utils/cooperationutil.h"
+
+#include <QVariant>
 
 using CreateWorkspaceWidgetCallback = std::function<QWidget *()>;
 Q_DECLARE_METATYPE(CreateWorkspaceWidgetCallback);
@@ -29,11 +31,7 @@ void CooperationCoreEventReceiver::handleRegisterWorkspace(QVariant param)
 
     auto widget = func();
     if (widget && !widget->parent())
-        widget->setParent(MainWindow::instance());
+        widget->setParent(CooperationUtil::instance()->mainWindow());
 
-    MainWindow::instance()->setCentralWidget(widget);
-}
-
-void CooperationCoreEventReceiver::handleRegisterSettings()
-{
+    CooperationUtil::instance()->registWorkspace(widget);
 }

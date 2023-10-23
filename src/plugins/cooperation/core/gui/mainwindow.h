@@ -16,9 +16,6 @@ class MainWindow : public CooperationMainWindow
 {
     Q_OBJECT
 public:
-    static MainWindow *instance();
-
-private:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 

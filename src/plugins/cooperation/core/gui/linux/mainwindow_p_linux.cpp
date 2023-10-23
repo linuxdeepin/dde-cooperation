@@ -27,6 +27,7 @@ void MainWindowPrivate::initTitleBar()
     auto titleBar = q->titlebar();
     DIconButton *refreshBtn = new DIconButton(q);
     refreshBtn->setIcon(QIcon::fromTheme("refresh"));
+    refreshBtn->setToolTip(tr("Re-scan for devices"));
     titleBar->addWidget(refreshBtn, Qt::AlignLeft);
     connect(refreshBtn, &DIconButton::clicked, CooperationCoreEventSender::instance(), &CooperationCoreEventSender::sendRequestRefresh);
 

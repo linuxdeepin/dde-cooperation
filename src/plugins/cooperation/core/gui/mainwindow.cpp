@@ -48,8 +48,17 @@ void MainWindowPrivate::handleSettingMenuTriggered(int action)
 {
     switch (static_cast<MenuAction>(action)) {
     case MenuAction::kSettings: {
-        SettingDialog dialog;
-        dialog.exec();
+        if (q->property("SettingDialogShown").toBool()) {
+            return;
+        }
+
+        SettingDialog *dialog = new SettingDialog(q);
+        dialog->show();
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        q->setProperty("SettingDialogShown", true);
+        QObject::connect(dialog, &SettingDialog::finished, [=] {
+            q->setProperty("SettingDialogShown", false);
+        });
     } break;
     case MenuAction::kDownloadWindowClient:
         break;
@@ -67,10 +76,4 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-}
-
-MainWindow *MainWindow::instance()
-{
-    static MainWindow ins;
-    return &ins;
 }

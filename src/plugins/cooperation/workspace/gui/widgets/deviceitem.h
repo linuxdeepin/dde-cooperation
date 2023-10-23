@@ -69,9 +69,9 @@ public Q_SLOTS:
     void onButtonClicked(int index);
 
 protected:
-    void enterEvent(QEvent *event);
-    void leaveEvent(QEvent *event);
-    void showEvent(QShowEvent *event);
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
     void initUI();

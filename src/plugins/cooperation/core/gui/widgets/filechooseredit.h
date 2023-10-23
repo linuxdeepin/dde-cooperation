@@ -5,6 +5,8 @@
 #ifndef FILECHOOSEREDIT_H
 #define FILECHOOSEREDIT_H
 
+#include "gui/type_defines.h"
+
 #include <QWidget>
 #include <QLabel>
 #include <QPushButton>
@@ -32,7 +34,7 @@ private:
     void initUI();
 
     QLabel *pathLabel { nullptr };
-    QPushButton *fileChooserBtn { nullptr };
+    CooperationSuggestButton *fileChooserBtn { nullptr };
 };
 
 }   // namespace cooperation_core

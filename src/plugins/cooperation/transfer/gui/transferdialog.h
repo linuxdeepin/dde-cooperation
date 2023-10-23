@@ -16,6 +16,8 @@ namespace cooperation_transfer {
 
 class TransferDialog : public CooperationDialog
 {
+    Q_OBJECT
+
 public:
     explicit TransferDialog(QWidget *parent = nullptr);
 
@@ -24,7 +26,13 @@ public:
     void switchProgressPage(const QString &title);
 
 public Q_SLOTS:
-    void updateProgress(int value, const QString &msg);
+    void updateProgress(int value, const QString &remainTime);
+
+Q_SIGNALS:
+    void cancel();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     void initUI();

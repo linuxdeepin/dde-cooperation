@@ -15,7 +15,11 @@
 
 #include <QApplication>
 #include <QFileDialog>
+#include <QTime>
+#include <QTimer>
 #include <QDebug>
+
+inline constexpr int TransferJobStartId = 1000;
 
 using namespace cooperation_transfer;
 
@@ -48,7 +52,7 @@ void TransferHelper::localIPCStart()
 //            LOG << "get bridge json: " << bridge.type << " json:" << bridge.json;
             co::Json json_obj = json::parse(bridge.json);
             if (json_obj.is_null()) {
-                ELOG << "parse error from: " << bridge.json;
+                qWarning() << "parse error from: " << bridge.json.c_str();
                 continue;
             }
             switch (bridge.type) {
@@ -62,7 +66,7 @@ void TransferHelper::localIPCStart()
                 if (my_ver.compare(param.version) == 0 && param.session.compare(sessionId.toStdString()) == 0) {
                     result = true;
                 } else {
-                    DLOG << param.version << " =version not match= " << my_ver;
+                    qWarning() << param.version.c_str() << " =version not match= " << my_ver.c_str();
                 }
 
                 BridgeJsonData res;
@@ -137,6 +141,7 @@ void TransferHelper::localIPCStart()
 void TransferHelper::init()
 {
     localIPCStart();
+    connect(&transferDialog, &TransferDialog::cancel, this, &TransferHelper::cancelTransfer);
 
     coPool = std::shared_ptr<co::pool>(new co::pool(
             []() { return reinterpret_cast<void *>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false)); },
@@ -153,16 +158,21 @@ TransferHelper *TransferHelper::instance()
     return &ins;
 }
 
-void TransferHelper::sendFiles(const QString &ip, const QStringList &fileList)
+void TransferHelper::sendFiles(const QString &ip, const QString &devName, const QStringList &fileList)
 {
+    sendToWho = devName;
     readyToSendFiles = fileList;
     if (fileList.isEmpty())
         return;
 
     status = Connecting;
+    canTransfer = true;
     go([ip, this] {
         this->handleTryConnect(ip);
     });
+
+    transferDialog.switchWaitConfirmPage();
+    transferDialog.exec();
 }
 
 TransferHelper::TransferStatus TransferHelper::transferStatus()
@@ -174,6 +184,7 @@ void TransferHelper::buttonClicked(const QVariantMap &info)
 {
     auto id = info.value("id").toString();
     auto ip = info.value("ip").toString();
+    auto devName = info.value("device").toString();
 
     if (id == kTransferId) {
         QStringList selectedFiles = qApp->property("sendFiles").toStringList();
@@ -183,7 +194,7 @@ void TransferHelper::buttonClicked(const QVariantMap &info)
         if (selectedFiles.isEmpty())
             return;
 
-        TransferHelper::instance()->sendFiles(ip, selectedFiles);
+        TransferHelper::instance()->sendFiles(ip, devName, selectedFiles);
     } else if (id == kHistoryId) {
         // TODO:
     }
@@ -216,23 +227,87 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg)
 {
     qInfo() << "connect status: " << result << " msg:" << msg;
     if (result > 0) {
+        if (!canTransfer) {
+            status = Idle;
+            return;
+        }
+
         status = Transfering;
+        QString title = tr("Sending files to \"%1\"").arg(sendToWho);
+        transferDialog.switchProgressPage(title);
+        transferDialog.updateProgress(1, tr("calculating"));
+
         go([this] {
             this->handleSendFiles(readyToSendFiles);
         });
     } else {
         status = Idle;
+        transferDialog.switchResultPage(false, "xxxxxxx");
     }
-
-    transferDialog.switchResultPage(false, "xxx");
 }
 
 void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &msg)
 {
+    qInfo() << "======" << id << result << msg;
 }
 
 void TransferHelper::onFileTransStatusChanged(const QString &status)
 {
+    co::Json statusJson;
+    statusJson.parse_from(status.toStdString());
+    ipc::FileStatus param;
+    param.from_json(statusJson);
+
+    if (fileIds.contains(param.file_id)) {
+        // 已经记录过，只更新数据
+        int64_t increment = param.current - fileIds[param.file_id];
+        transferInfo.transferSize += increment;   //增量值
+        fileIds[param.file_id] = param.current;
+
+        if (param.current >= param.total) {
+            // 此文件已完成，从文件统计中删除
+            fileIds.remove(param.file_id);
+        }
+    } else {
+        transferInfo.totalSize += param.total;
+        transferInfo.transferSize += param.current;
+        fileIds.insert(param.file_id, param.current);
+    }
+
+    if (param.second > transferInfo.maxTimeSec)
+        transferInfo.maxTimeSec = param.second;
+
+    // 计算传输进度与剩余时间
+    double value = static_cast<double>(transferInfo.transferSize) / transferInfo.totalSize;
+    int progressValue = static_cast<int>(value * 100);
+    if (progressValue <= 0) {
+        return;
+    } else if (progressValue >= 100) {
+        transferDialog.updateProgress(100, "00:00:00");
+
+        QTimer::singleShot(1000, this, [this] {
+            this->status = Idle;
+            transferDialog.switchResultPage(true, tr("File sent successfully"));
+        });
+    } else {
+        int remainTime = transferInfo.maxTimeSec * 100 / progressValue - transferInfo.maxTimeSec;
+        QTime time(0, 0, 0);
+        time = time.addSecs(remainTime);
+        transferDialog.updateProgress(progressValue, time.toString("hh:mm:ss"));
+    }
+}
+
+void TransferHelper::cancelTransfer()
+{
+    canTransfer = false;
+    if (status != Transfering) {
+        status = Idle;
+        return;
+    }
+
+    go([this] {
+        this->handleCancelTransfer();
+    });
 }
 
 void TransferHelper::onMiscMessage(QString jsonmsg)
@@ -254,6 +329,7 @@ bool TransferHelper::handlePingBacked()
     req.add_member("api", "Backend.ping");   //BackendImpl::ping
 
     c->call(req, res);
+    c->close();
     sessionId = res.get("msg").as_string().c_str();   // save the return session.
 
     //CallResult
@@ -262,6 +338,7 @@ bool TransferHelper::handlePingBacked()
 
 void TransferHelper::handleSendFiles(const QStringList &fileList)
 {
+    qInfo() << "send files: " << fileList;
     co::pool_guard<rpc::Client> c(coPool.get());
     co::Json req, res, paths;
 
@@ -272,15 +349,16 @@ void TransferHelper::handleSendFiles(const QStringList &fileList)
     //TransFilesParam
     req = {
         { "session", sessionId.toStdString() },
-        { "id", 0 },   // TODO: set trans job id
+        { "id", TransferJobStartId },
         { "paths", paths },
         { "sub", true },
-        { "savedir", "" },
+        { "savedir", sendToWho.toStdString() },
     };
 
     req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
 
     c->call(req, res);
+    c->close();
 }
 
 void TransferHelper::handleTryConnect(const QString &ip)
@@ -299,6 +377,12 @@ void TransferHelper::handleTryConnect(const QString &ip)
     };
     req.add_member("api", "Backend.tryConnect");
     c->call(req, res);
+    c->close();
+}
+
+void TransferHelper::handleCancelTransfer()
+{
+    // TODO
 }
 
 void TransferHelper::handleSetConfig(const QString &key, const QString &value)

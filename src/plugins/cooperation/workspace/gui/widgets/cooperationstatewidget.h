@@ -35,6 +35,9 @@ class NoResultWidget : public QWidget
 public:
     explicit NoResultWidget(QWidget *parent = nullptr);
 
+public Q_SLOTS:
+    void onLinkActivated(const QString &link);
+
 private:
     void initUI();
 };

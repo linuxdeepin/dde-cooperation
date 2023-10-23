@@ -29,10 +29,10 @@ void DeviceListWidget::initUI()
 
 void DeviceListWidget::appendItem(const DeviceInfo &info)
 {
-    insertItem(info, mainLayout->count());
+    insertItem(mainLayout->count(), info);
 }
 
-void DeviceListWidget::insertItem(const DeviceInfo &info, int index)
+void DeviceListWidget::insertItem(int index, const DeviceInfo &info)
 {
     DeviceItem *item = new DeviceItem(this);
     item->setDeviceName(info.deviceName);
@@ -83,6 +83,11 @@ int DeviceListWidget::indexOf(const QString &ipStr)
     return -1;
 }
 
+int DeviceListWidget::itemCount()
+{
+    return mainLayout->count();
+}
+
 void DeviceListWidget::addItemOperation(const QVariantMap &map)
 {
     DeviceItem::Operation op;
@@ -102,6 +107,6 @@ void DeviceListWidget::clear()
 {
     const int count = mainLayout->count();
     for (int i = 0; i != count; ++i) {
-        removeItem(i);
+        removeItem(0);
     }
 }

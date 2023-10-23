@@ -20,10 +20,11 @@ public:
     explicit DeviceListWidget(QWidget *parent = nullptr);
 
     void appendItem(const DeviceInfo &info);
-    void insertItem(const DeviceInfo &info, int index);
+    void insertItem(int index, const DeviceInfo &info);
     void removeItem(int index);
     void moveItem(int srcIndex, int toIndex);
     int indexOf(const QString &ipStr);
+    int itemCount();
 
     void addItemOperation(const QVariantMap &map);
 

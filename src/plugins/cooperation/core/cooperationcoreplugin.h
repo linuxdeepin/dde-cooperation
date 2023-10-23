@@ -21,7 +21,6 @@ class CooperaionCorePlugin : public DPF_NAMESPACE::Plugin
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_Register_Workspace)
-    DPF_EVENT_REG_SLOT(slot_Register_Settings)
 
 public:
     virtual void initialize() override;

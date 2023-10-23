@@ -6,7 +6,7 @@
 #define MAINCONTROLLER_H
 
 #include <QObject>
-#include <QNetworkConfigurationManager>
+#include <QTimer>
 
 namespace cooperation_workspace {
 
@@ -17,14 +17,15 @@ class MainController : public QObject
 public:
     static MainController *instance();
 
-    QWidget *widget();
+    QWidget *workspaceWidget();
     void start();
     void stop();
 
     void registerDeviceOperation(const QVariantMap &map);
 
 private Q_SLOTS:
-    void onlineStateChanged(bool isOnline);
+    void onlineStateChanged();
+    void checkNetworkState();
 
 private:
     explicit MainController(QObject *parent = nullptr);
@@ -32,9 +33,10 @@ private:
 
 private:
     WorkspaceWidget *w { nullptr };
-    QNetworkConfigurationManager *networkMgr { nullptr };
+    QTimer *networkMonitorTimer { nullptr };
 
     bool isRuning = false;
+    bool isOnline = true;
 };
 
 }   // namespace cooperation_workspace
