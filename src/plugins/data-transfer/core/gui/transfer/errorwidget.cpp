@@ -1,5 +1,6 @@
 ﻿#include "errorwidget.h"
 #include "transferringwidget.h"
+#include "../type_defines.h"
 
 #include <QLabel>
 #include <QToolButton>
@@ -13,7 +14,7 @@
 inline constexpr char internetError[] { "网络异常" };
 inline constexpr char transferError[] { "传输中断" };
 inline constexpr char internetErrorPrompt[] { "网络断开,传输失败,请连接网络后重试" };
-inline constexpr char transferErrorPrompt[] { "UOS空间不足,请清除至少10G后重试" };
+inline constexpr char transferErrorPrompt[] { "UOS空间不足,请清除至少%1G后重试" };
 ErrorWidget::ErrorWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -46,13 +47,8 @@ void ErrorWidget::initUI()
     errorLabel->setPixmap(errorPixmap);
     errorLabel->setGeometry(420, 180, errorPixmap.width(), errorPixmap.height());
 
-    QString titleStr;
-    if (state == 1) {
-        titleStr = internetError;
-    } else if (state == 2) {
-        titleStr = transferError;
-    }
-    QLabel *titleLabel = new QLabel(titleStr, this);
+    QString titleStr = internetError;
+    titleLabel = new QLabel(titleStr, this);
     titleLabel->setFixedHeight(50);
     QFont font;
     font.setPointSize(16);
@@ -74,7 +70,7 @@ void ErrorWidget::initUI()
     font.setPointSize(5);
     timeLabel->setFont(timefont);
 
-    QLabel *promptLabel = new QLabel(this);
+    promptLabel = new QLabel(this);
     promptLabel->setText("<font size='2' color='#FF5736'>网络断开,传输失败,请连接网络后重试</font>");
     promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
@@ -121,13 +117,15 @@ void ErrorWidget::initUI()
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
+
+    setErrorType(ErrorType::outOfStorageError);
 }
 
 void ErrorWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+        stackedWidget->setCurrentIndex(PageName::choosewidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
@@ -152,5 +150,17 @@ void ErrorWidget::themeChanged(int theme)
     } else {
         //dark
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+    }
+}
+
+void ErrorWidget::setErrorType(ErrorType type, int size)
+{
+    if (type == ErrorType::networkError) {
+        titleLabel->setText(internetError);
+        promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(internetErrorPrompt));
+    } else {
+        titleLabel->setText(transferError);
+        QString prompt = QString(transferErrorPrompt).arg(size);
+        promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(prompt));
     }
 }

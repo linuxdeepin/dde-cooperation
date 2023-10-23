@@ -16,6 +16,8 @@
 
 #include <gui/connect/choosewidget.h>
 
+#include <utils/transferhepler.h>
+
 #pragma execution_character_set("utf-8")
 
 UploadFileWidget::UploadFileWidget(QWidget *parent)
@@ -49,7 +51,7 @@ void UploadFileWidget::initUI()
     QHBoxLayout *uploadLayout = new QHBoxLayout();
     uploadLayout->addWidget(uploadFileFrame, Qt::AlignCenter);
 
-    QLabel *tipLabel = new QLabel("<font size=12px color='#FF5736' >文件错误，无法迁移，请更换备份文件</font>", this);
+    tipLabel = new QLabel("<font size=12px color='#FF5736' >文件错误，无法迁移，请更换备份文件</font>", this);
     tipLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
     tipLabel->setFixedHeight(20);
     tipLabel->setAlignment(Qt::AlignCenter);
@@ -74,13 +76,13 @@ void UploadFileWidget::initUI()
     nextButton->setFixedSize(120, 35);
     nextButton->setStyleSheet("background-color: rgba(0, 152, 255, 0.12);");
     nextButton->setEnabled(false);
-    connect(nextButton, &QToolButton::clicked, this, [this, tipLabel, uploadFileFrame]() {
+    connect(nextButton, &QToolButton::clicked, this, [this, uploadFileFrame]() {
         if (nextButton->text() == "重试") {
             emit uploadFileFrame->updateUI(uploadStatus::Initial);
             tipLabel->setVisible(false);
             return;
         }
-        if (!checkBackupFile()) {
+        if (!checkBackupFile(uploadFileFrame->getZipFilePath())) {
             tipLabel->setVisible(true);
             nextButton->setText("重试");
             return;
@@ -104,12 +106,14 @@ void UploadFileWidget::initUI()
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addLayout(uploadLayout);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(tipLayout);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
 
     connect(uploadFileFrame, &UploadFileFrame::updateUI, this, [this](int status) {
+        tipLabel->setVisible(false);
         if (status == uploadStatus::valid) {
             nextButton->setEnabled(true);
             nextButton->setStyleSheet("background-color: rgb(0, 152, 255);");
@@ -121,8 +125,24 @@ void UploadFileWidget::initUI()
     });
 }
 
-bool UploadFileWidget::checkBackupFile()
+bool UploadFileWidget::checkBackupFile(const QString &filePath)
 {
+    //Verify effectiveness
+    if (UnzipWorker::getNumFiles(filePath) == 0) {
+        tipLabel->setText("<font size=12px color='#FF5736' >文件错误，无法迁移，请更换备份文件</font>");
+        tipLabel->setVisible(true);
+        return false;
+    }
+
+    // Verify size
+    QFileInfo info(filePath);
+    qInfo() << "<<info.size();" << info.size();
+    int size = static_cast<int>(info.size() / 1024 / 1024 / 1024 + 1);
+    if (size > TransferHelper::instance()->getRemainSize()) {
+        tipLabel->setVisible(true);
+        tipLabel->setText(QString("<font size=12px color='#FF5736' >UOS空间不足，请至少预留 %1G 空间后重试</font>").arg(size));
+        return false;
+    }
     return true;
 }
 

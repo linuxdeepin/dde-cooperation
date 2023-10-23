@@ -2,6 +2,7 @@
 #define UPLOADFILEWIDGET_H
 
 #include <QFrame>
+#include <QLabel>
 #include <QToolButton>
 
 class UploadFileWidget : public QFrame
@@ -12,7 +13,7 @@ public:
     UploadFileWidget(QWidget *parent = nullptr);
     ~UploadFileWidget();
 
-    bool checkBackupFile();
+    bool checkBackupFile(const QString &filePath);
 
 public slots:
     void nextPage();
@@ -24,6 +25,7 @@ private:
 
 private:
     QToolButton *nextButton { nullptr };
+    QLabel *tipLabel { nullptr };
 };
 
 class UploadFileFrame : public QFrame

@@ -2,6 +2,7 @@
 #define RESULTDISPLAYWIDGET_H
 
 #include <QFrame>
+#include <QItemDelegate>
 #include <QListView>
 
 class ResultDisplayWidget : public QFrame
@@ -14,6 +15,7 @@ public:
 
 public slots:
     void themeChanged(int theme);
+    void addFailure(QString name, QString type, QString reason);
 
 private:
     void initUI();
@@ -24,6 +26,23 @@ private:
 private:
     QListView *listview { nullptr };
     QFrame *listTitle { nullptr };
+};
+
+class itemDelegate : public QItemDelegate
+{
+    Q_OBJECT
+public:
+    itemDelegate();
+    ~itemDelegate() override;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+private:
+    void paintText(QPainter *painter, const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const;
+    void paintBackground(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const;
 };
 
 #endif

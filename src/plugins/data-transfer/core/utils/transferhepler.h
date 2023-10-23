@@ -32,6 +32,9 @@ public:
     void startTransfer();
 #else
 public:
+    int getRemainSize();
+    bool checkSize(const QString &filepath);
+    QJsonObject ParseJson(const QString &filepath);
     bool handleDataConfiguration(const QString &filepath);
     bool setWallpaper(const QString &filepath);
     bool setBrowserBookMark(const QString &filepath);
@@ -54,6 +57,12 @@ Q_SIGNALS:
 
     // network
     void onlineStateChanged(bool online);
+
+    //outOfStorage
+    void outOfStorage(int size);
+
+    //display config failure
+    void failure(QString name, QString type, QString reason);
 
 private:
     void initOnlineState();

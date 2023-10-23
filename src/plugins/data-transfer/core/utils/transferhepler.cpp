@@ -31,12 +31,13 @@
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper() : QObject()
+TransferHelper::TransferHelper()
+    : QObject()
 {
     initOnlineState();
 }
 
-TransferHelper::~TransferHelper() { }
+TransferHelper::~TransferHelper() {}
 
 TransferHelper *TransferHelper::instance()
 {
@@ -91,7 +92,6 @@ void TransferHelper::tryConnect(const QString &ip, const QString &password)
 {
     transferhandle.tryConnect(ip, password);
 }
-
 
 void TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &save)
 {
@@ -217,13 +217,37 @@ QStringList TransferHelper::getTransferFilePath()
     return transferFilePathList;
 }
 #else
-bool TransferHelper::handleDataConfiguration(const QString &filepath)
+
+bool TransferHelper::checkSize(const QString &filepath)
 {
-    QFile file(filepath + "/" + "transfer.json");
+    QJsonObject jsonObj = ParseJson(filepath);
+    if (jsonObj.isEmpty())
+        return false;
+    auto size = jsonObj["user_data"].toInt();
+    qInfo() << "jsonObj[ user_data ].toInt();" << size;
+    int remainSize = getRemainSize();
+    if (size < remainSize) {
+        //emit outOfStorage(size);
+        return false;
+    }
+    return true;
+}
+
+int TransferHelper::getRemainSize()
+{
+    QStorageInfo storage("/data");
+    auto remainSize = storage.bytesAvailable() / 1024 / 1024 / 1024;
+    return static_cast<int>(remainSize);
+}
+
+QJsonObject TransferHelper::ParseJson(const QString &filepath)
+{
+    QJsonObject jsonObj;
+    QFile file(filepath);
     qInfo() << "Parsing the configuration file for transmission" << file.fileName();
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "could not open datajson file";
-        return false;
+        return jsonObj;
     }
     QByteArray jsonData = file.readAll();
     file.close();
@@ -231,16 +255,25 @@ bool TransferHelper::handleDataConfiguration(const QString &filepath)
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
         qWarning() << "Parsing JSON data failed";
-        return false;
+        return jsonObj;
     }
-    QJsonObject jsonObj = jsonDoc.object();
+    jsonObj = jsonDoc.object();
 
+    return jsonObj;
+}
+
+bool TransferHelper::handleDataConfiguration(const QString &filepath)
+{
     bool ret = true;
+
+    QJsonObject jsonObj = ParseJson(filepath + "/" + "transfer.json");
+    if (jsonObj.isEmpty())
+        return false;
 
     // Configure desktop wallpaper
     QString image = filepath + "/" + jsonObj["wallpapers"].toString();
-    if(!jsonObj["wallpapers"].isNull())
-         ret &= setWallpaper(image);
+    if (!jsonObj["wallpapers"].isNull())
+        ret &= setWallpaper(image);
 
     //Configure file
     ret &= setFile(jsonObj, filepath);
@@ -286,16 +319,20 @@ bool TransferHelper::setBrowserBookMark(const QString &filepath)
 {
     if (filepath.isEmpty())
         return true;
-    else
+    else {
+        emit failure("浏览器书签", "书签", "暂不支持");
         return false;
+    }
 }
 
 bool TransferHelper::installApps(const QStringList &applist)
 {
     if (applist.isEmpty())
         return true;
-    else
+    else {
+        emit failure("应用安装", "应用", "暂不支持");
         return false;
+    }
 }
 
 bool TransferHelper::setFile(QJsonObject jsonObj, QString filepath)

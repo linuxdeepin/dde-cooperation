@@ -17,7 +17,7 @@ public:
     bool extract();
     bool set();
 
-    int getNumFiles();
+    static int getNumFiles(QString filepath);
 
 private:
     bool setUesrFile(QJsonObject jsonObj);
