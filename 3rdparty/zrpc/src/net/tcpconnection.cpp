@@ -2,9 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-//#include <unistd.h>
 #include <string.h>
-//#include <sys/socket.h>
 #include "tcpconnection.h"
 #include "tcpserver.h"
 #include "tcpclient.h"
@@ -134,21 +132,28 @@ void TcpConnection::input()
     bool read_all = false;
     bool close_flag = false;
     int count = 0;
+
     while (!read_all) {
 
         if (m_read_buffer->writeAble() == 0) {
-            m_read_buffer->resizeBuffer(2 * m_read_buffer->getSize());
+            m_read_buffer->resizeBuffer(m_read_buffer->getSize() + PERPKG_MAX_LEN);
         }
 
         int read_count = m_read_buffer->writeAble();
         int write_index = m_read_buffer->writeIndex();
+        if (read_count > PERPKG_MAX_LEN) {
+            read_count = PERPKG_MAX_LEN;
+        }
 
         // DLOG << "m_read_buffer size=" << m_read_buffer->getBufferVector().size()
         //      << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
-        int rt = read_hook(&(m_read_buffer->m_buffer[write_index]), read_count);
+        size_t rt = read_hook(&(m_read_buffer->m_buffer[write_index]), read_count);
         if (rt > 0) {
             m_read_buffer->recycleWrite(rt);
         }
+
+
+
         // DLOG << "m_read_buffer size=" << m_read_buffer->getBufferVector().size()
         //      << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
 
@@ -205,6 +210,8 @@ void TcpConnection::execute()
             }
         }
     }
+    // clear read buffer after execute has take it
+    m_read_buffer->clearBuffer();
 }
 
 void TcpConnection::output()
@@ -239,6 +246,8 @@ void TcpConnection::output()
             break;
         }
     }
+    // clear write buffer after has send it
+    m_write_buffer->clearBuffer();
 }
 
 void TcpConnection::clearClient()

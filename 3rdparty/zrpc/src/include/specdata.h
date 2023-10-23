@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
+#include <memory>
 #include "abstractdata.h"
 #include "co/log.h"
 #include "co/fastring.h"

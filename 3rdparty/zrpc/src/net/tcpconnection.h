@@ -21,6 +21,9 @@ namespace zrpc_ns {
 class TcpServer;
 class TcpClient;
 
+// the max socket buffer len
+#define PERPKG_MAX_LEN 16*1024
+
 enum TcpConnectionState {
     NotConnected = 1,   // can do io
     Connected = 2,   // can do io
