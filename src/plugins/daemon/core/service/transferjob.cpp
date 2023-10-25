@@ -102,6 +102,27 @@ fastring TransferJob::getAppName()
     return _app_name;
 }
 
+void TransferJob::cancel()
+{
+    if (_writejob) {
+        go ([this] {
+            FileTransJobCancel *cancel = new FileTransJobCancel();
+            FileTransUpdate update;
+
+            cancel->set_job_id(_jobid);
+            cancel->set_path(_path.c_str());
+
+            update.set_allocated_cancel(cancel);
+            int res = _rpcBinder->doUpdateTrans(update);
+            if (res <= 0) {
+                ELOG << "update failed: " << _path << " result=" << result;
+            }
+        });
+    } else {
+        this->stop();
+    }
+}
+
 void TransferJob::pushQueque(FSDataBlock &block)
 {
     co::mutex_guard g(_queque_mutex);

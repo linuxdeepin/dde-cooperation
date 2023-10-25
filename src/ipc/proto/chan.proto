@@ -8,7 +8,7 @@ object UserLoginResult {
 
 object LoginConfirm {
     string user_name  //用户名
-    int32 session_id //会话应用id
+    string session_id //会话应用id
     string host_ip //请求主机的IP
 }
 

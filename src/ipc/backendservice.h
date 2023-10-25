@@ -8,7 +8,12 @@
 #include <QObject>
 #include <QDebug>
 
+#include "bridge.h"
 #include "proto/backend.h"
+#include "co/co.h"
+
+// must change the version if the IPC API changed.
+#define BACKEND_PROTO_VERSION UNI_IPC_PROTO
 
 class BackendService : public QObject
 {
@@ -17,20 +22,18 @@ public:
     explicit BackendService(QObject *parent = nullptr);
     ~BackendService();
 
-    fastring handlePing(const char *who, const char *version, int cbport);
+    co::chan<BridgeJsonData>* bridgeChan();
+    co::chan<BridgeJsonData>* bridgeResult();
+
     fastring getSettingPin() const;
     void setSettingPin(fastring password);
-    void handleConnect(const char *session, const char *ip, const char *password);
-    void handleSendFiles(QString session, int jobId, QStringList &paths, bool sub, QString savedir);
 
-signals:
-    void sigConnect(QString session, QString ip, QString pin);
-    void sigSendFiles(QString session, int jobId, QStringList paths, bool sub, QString savedir);
-    void sigSaveSession(QString who, QString session, int cbport);
-
-public slots:
+    fastring getOneAppConfig(fastring &app, fastring &key) const;
+    void setOneAppConfig(fastring &app, fastring &key, fastring &value);
 
 private:
+    co::chan<BridgeJsonData> *_bridge_chan = nullptr;
+    co::chan<BridgeJsonData> *_bridge_result = nullptr;
 };
 
 namespace ipc {
@@ -57,9 +60,9 @@ public:
 
     virtual void tryConnect(co::Json& req, co::Json& res) override;
 
-    virtual void tryTargetSpace(co::Json& req, co::Json& res) override;
+    virtual void setAppConfig(co::Json& req, co::Json& res) override;
 
-    virtual void tryApplist(co::Json& req, co::Json& res) override;
+    virtual void getAppConfig(co::Json& req, co::Json& res) override;
 
     virtual void miscMessage(co::Json& req, co::Json& res) override;
 

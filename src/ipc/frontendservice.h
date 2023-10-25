@@ -8,7 +8,12 @@
 #include <QObject>
 #include <QDebug>
 
+#include "bridge.h"
 #include "proto/frontend.h"
+#include "co/co.h"
+
+// must change the version if the IPC API changed.
+#define FRONTEND_PROTO_VERSION UNI_IPC_PROTO
 
 class FrontendService : public QObject
 {
@@ -17,22 +22,12 @@ public:
     explicit FrontendService(QObject *parent = nullptr);
     ~FrontendService();
 
-    void handlePing(QString sessionid);
-    void handleConnectstatus(int result, QString msg);
-    void handleTransJobstatus(int id, int result, QString path);
-    void handleFileTransstatus(QString statusstr);
-    void handlePeerChanges(bool find, fastring peerinfo);
-
-signals:
-    void sigSession(QString sessionid);
-    void sigConnectStatus(int result, QString msg);
-    void sigTransJobtatus(int id, int result, QString msg);
-    void sigFileTransStatus(QString statusstr);
-    void sigPeerChanged(bool find, QString peerinfo);
-
-public slots:
+    co::chan<BridgeJsonData>* bridgeChan();
+    co::chan<BridgeJsonData>* bridgeResult();
 
 private:
+    co::chan<BridgeJsonData> *_bridge_chan = nullptr;
+    co::chan<BridgeJsonData> *_bridge_result = nullptr;
 };
 
 namespace ipc {
@@ -52,10 +47,6 @@ public:
     virtual void cbPeerInfo(co::Json& req, co::Json& res) override;
 
     virtual void cbConnect(co::Json& req, co::Json& res) override;
-
-    virtual void cbTargetSpace(co::Json& req, co::Json& res) override;
-
-    virtual void cbApplist(co::Json& req, co::Json& res) override;
 
     virtual void cbMiscMessage(co::Json& req, co::Json& res) override;
 

@@ -1,5 +1,5 @@
 
-object PeerInfo {
+object NodePeerInfo {
     // peer info
     string proto_version
     string uuid
@@ -12,8 +12,14 @@ object PeerInfo {
     int32 mode_type // privacy mode type
 }
 
-object PeerList {
+object NodePeerList {
     // peer info list
     int32 code
-    [PeerInfo] peers
+    [NodePeerInfo] peers
+}
+
+object MiscJsonCall {
+    // any misc json call
+    string app
+    string json
 }

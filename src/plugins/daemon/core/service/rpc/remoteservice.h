@@ -15,50 +15,45 @@ public:
     RemoteServiceImpl() = default;
     virtual ~RemoteServiceImpl() = default;
 
-    void login(::google::protobuf::RpcController *controller,
-               const ::LoginRequest *request,
-               ::LoginResponse *response,
-               ::google::protobuf::Closure *done);
-
-    void query_peerinfo(::google::protobuf::RpcController *controller,
-                        const ::PeerInfo *request,
-                        ::PeerInfo *response,
-                        ::google::protobuf::Closure *done);
-
-    void misc(::google::protobuf::RpcController *controller,
-              const ::Misc *request,
-              ::Misc *response,
-              ::google::protobuf::Closure *done);
-
-    void fsaction(::google::protobuf::RpcController *controller,
-                  const ::FileAction *request,
-                  ::FileResponse *response,
-                  ::google::protobuf::Closure *done);
-
-    void fsflow(::google::protobuf::RpcController *controller,
-                const ::FileResponse *request,
-                ::FileResponse *response,
-                ::google::protobuf::Closure *done);
-
-    void filetrans_job(::google::protobuf::RpcController *controller,
-                       const ::FileTransJob *request,
-                       ::FileTransResponse *response,
+    virtual void login(::google::protobuf::RpcController *controller,
+                       const ::LoginRequest *request,
+                       ::LoginResponse *response,
                        ::google::protobuf::Closure *done);
 
-    void filetrans_create(::google::protobuf::RpcController *controller,
-                          const ::FileTransCreate *request,
-                          ::FileTransResponse *response,
+    virtual void query_peerinfo(::google::protobuf::RpcController *controller,
+                                const ::PeerInfo *request,
+                                ::PeerInfo *response,
+                                ::google::protobuf::Closure *done);
+
+    virtual void misc(::google::protobuf::RpcController *controller,
+                      const ::JsonMessage *request,
+                      ::JsonMessage *response,
+                      ::google::protobuf::Closure *done);
+
+    virtual void fsaction(::google::protobuf::RpcController *controller,
+                          const ::FileAction *request,
+                          ::FileResponse *response,
                           ::google::protobuf::Closure *done);
 
-    void filetrans_block(::google::protobuf::RpcController *controller,
-                         const ::FileTransBlock *request,
-                         ::FileTransResponse *response,
-                         ::google::protobuf::Closure *done);
+    virtual void filetrans_job(::google::protobuf::RpcController *controller,
+                               const ::FileTransJob *request,
+                               ::FileTransResponse *response,
+                               ::google::protobuf::Closure *done);
 
-    void filetrans_update(::google::protobuf::RpcController* controller,
-                         const ::FileTransUpdate* request,
-                         ::FileTransResponse* response,
-                         ::google::protobuf::Closure* done);
+    virtual void filetrans_create(::google::protobuf::RpcController *controller,
+                                  const ::FileTransCreate *request,
+                                  ::FileTransResponse *response,
+                                  ::google::protobuf::Closure *done);
+
+    virtual void filetrans_block(::google::protobuf::RpcController *controller,
+                                 const ::FileTransBlock *request,
+                                 ::FileTransResponse *response,
+                                 ::google::protobuf::Closure *done);
+
+    virtual void filetrans_update(::google::protobuf::RpcController *controller,
+                                  const ::FileTransUpdate *request,
+                                  ::FileTransResponse *response,
+                                  ::google::protobuf::Closure *done);
 
 private:
 };
@@ -78,7 +73,8 @@ public:
 
     void doQuery();
 
-    void doMisc();
+    //发到哪一个前端的自定义信息
+    QString doMisc(const char *appname, const char *miscdata);
 
     // 通知远端准备执行作业：接收或发送。
     int doTransfileJob(const char *appname, int id, const char *jobpath, bool hidden, bool recursive, bool recv);
@@ -104,7 +100,7 @@ signals:
 public slots:
 
 private:
-    void *_executor_p {nullptr};
+    void *_executor_p{ nullptr };
 };
 
 #endif   // REMOTE_SERVICE_H

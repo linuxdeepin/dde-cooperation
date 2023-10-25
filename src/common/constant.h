@@ -10,10 +10,22 @@
 #define UNI_RPC_PORT_UDP  51595
 #define UNI_RPC_PORT_BASE (UNI_RPC_PORT_UDP + 2)
 
-#define KEY_HOSTUUID "hostuuid"
-#define KEY_NICKNAME "nickname"
-#define KEY_MODE "privacymode"
-#define KEY_AUTHPIN "authpin"
+// 前端应用独立配置的关键字
+#define KEY_APP_LOGIN_CONFIRM "loginconfirm"
+#define KEY_APP_STORAGE_DIR "storagedir"
+#define KEY_APP_MODE "mode"
+#define KEY_APP_NICK "appnick"
+#define KEY_APP_OPTION_BACKRUN "option_backrun"
+#define KEY_APP_OPTION_KEYBOARD "option_keyboard"
+#define KEY_APP_OPTION_MOUSE "option_mouse"
+#define KEY_APP_OPTION_FILETRANS "option_filetrans"
+
+
+// 功能设置关键字
+#define FEATURE_NAME_FILETRANS "file_transfer"
+#define FEATURE_NAME_CLIPBOARD "share_clipboard"
+#define FEATURE_NAME_KEYBOARD "share_keyboard"
+#define FEATURE_NAME_MOUSE "share_mouse"
 
 
 #define UNI_IPC_PROTO 1.0

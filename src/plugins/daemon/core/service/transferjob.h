@@ -24,10 +24,11 @@ public:
     void stop();
     void waitFinish();
     bool finished();
-
     bool isRunning();
     bool isWriteJob();
     fastring getAppName();
+
+    void cancel();
 
     void pushQueque(FSDataBlock &block);
     void insertFileInfo(FileInfo &info);

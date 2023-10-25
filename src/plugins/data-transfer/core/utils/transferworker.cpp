@@ -4,6 +4,7 @@
 #include "common/constant.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/frontend.h"
+#include "ipc/proto/comstruct.h"
 
 #include <co/rpc.h>
 #include <co/co.h>
@@ -16,17 +17,8 @@
 TransferHandle::TransferHandle()
     : QObject()
 {
-    _frontendIpcService = new FrontendService(this);
-
-    // start ipc services
-    ipc::FrontendImpl *frontendimp = new ipc::FrontendImpl();
-    frontendimp->setInterface(_frontendIpcService);
-    rpc::Server().add_service(frontendimp).start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
-
-    connect(_frontendIpcService, &FrontendService::sigSession, this, &TransferHandle::saveSession, Qt::QueuedConnection);
-    connect(_frontendIpcService, &FrontendService::sigConnectStatus, this, &TransferHandle::handleConnectStatus, Qt::QueuedConnection);
-    connect(_frontendIpcService, &FrontendService::sigTransJobtatus, this, &TransferHandle::handleTransJobStatus, Qt::QueuedConnection);
-    connect(_frontendIpcService, &FrontendService::sigFileTransStatus, this, &TransferHandle::handleFileTransStatus, Qt::QueuedConnection);
+    _this_destruct = false;
+    localIPCStart();
 
     QString appName = QCoreApplication::applicationName();
 
@@ -37,14 +29,122 @@ TransferHandle::TransferHandle()
 
     go([this, appName]() {
         _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
+        if (_backendOK) {
+            saveSession(TransferWoker::instance()->getSessionId());
+        }
     });
 }
 
 TransferHandle::~TransferHandle()
 {
+    _this_destruct = true;
 }
 
-void TransferHandle::saveSession(QString sessionid)
+void TransferHandle::localIPCStart()
+{
+    if (_frontendIpcService) return;
+
+    _frontendIpcService = new FrontendService(this);
+
+    go([this]() {
+        while(!_this_destruct) {
+            BridgeJsonData bridge;
+            _frontendIpcService->bridgeChan()->operator>>(bridge); //300ms超时
+            if (!_frontendIpcService->bridgeChan()->done()) {
+                // timeout, next read
+                continue;
+            }
+
+//            LOG << "TransferHandle get bridge json: " << bridge.type << " json:" << bridge.json;
+            co::Json json_obj = json::parse(bridge.json);
+            if (json_obj.is_null()) {
+                ELOG << "parse error from: " << bridge.json;
+                continue;
+            }
+            switch (bridge.type) {
+            case PING:
+            {
+                ipc::PingFrontParam param;
+                param.from_json(json_obj);
+
+                bool result = false;
+                fastring my_ver(FRONTEND_PROTO_VERSION);
+                if (my_ver.compare(param.version) == 0 && param.session.compare(_sessionid) == 0) {
+                    result = true;
+                } else {
+                    DLOG << param.version << " =version not match= " << my_ver;
+                }
+
+                BridgeJsonData res;
+                res.type = PING;
+                res.json = result ? param.session : ""; // 成功则返回session，否则为空
+
+                _frontendIpcService->bridgeResult()->operator<<(res);
+                break;
+            }
+            case MISC_MSG:
+            {
+                QString json(bridge.json.c_str());
+                handleMiscMessage(json);
+                break;
+            }
+            case FRONT_PEER_CB:
+            {
+                ipc::GenericResult param;
+                param.from_json(json_obj);
+                // example to parse string to NodePeerInfo object
+                NodePeerInfo peerobj;
+                peerobj.from_json(param.msg);
+
+                qInfo() << param.result << " peer : " << param.msg.c_str();
+
+                break;
+            }
+            case FRONT_CONNECT_CB:
+            {
+                ipc::GenericResult param;
+                param.from_json(json_obj);
+                QString mesg(param.msg.c_str());
+                handleConnectStatus(param.result, mesg);
+                break;
+            }
+            case FRONT_TRANS_STATUS_CB:
+            {
+                ipc::GenericResult param;
+                param.from_json(json_obj);
+                QString mesg(param.msg.c_str()); // job path
+
+                handleTransJobStatus(param.id, param.result, mesg);
+                break;
+            }
+            case FRONT_FS_PULL_CB:
+            {
+                break;
+            }
+            case FRONT_FS_ACTION_CB:
+            {
+                break;
+            }
+            case FRONT_NOTIFY_FILE_STATUS:
+            {
+                QString objstr(bridge.json.c_str());
+                handleFileTransStatus(objstr);
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    });
+
+    // start ipc services
+    ipc::FrontendImpl *frontendimp = new ipc::FrontendImpl();
+    frontendimp->setInterface(_frontendIpcService);
+    rpc::Server().add_service(frontendimp)
+                 .start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
+}
+
+void TransferHandle::saveSession(fastring sessionid)
 {
     _sessionid = sessionid;
 }
@@ -170,6 +270,11 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     emit TransferHelper::instance()->transferContent(filepath, progressbar, remain_time);
 }
 
+void TransferHandle::handleMiscMessage(QString jsonmsg)
+{
+    qInfo() << "misc message arrived:" << jsonmsg;
+}
+
 void TransferHandle::tryConnect(QString ip, QString password)
 {
     if (!_backendOK) return;
@@ -238,7 +343,7 @@ bool TransferWoker::pingBackend(const std::string &who)
     _session_id = res.get("msg").as_string();   // save the return session.
 
     //CallResult
-    return res.get("result").as_bool();
+    return res.get("result").as_bool() && !_session_id.empty();
 }
 
 void TransferWoker::setEmptyPassWord()
@@ -285,6 +390,11 @@ void TransferWoker::tryConnect(const std::string &ip, const std::string &passwor
     req.add_member("api", "Backend.tryConnect");   //BackendImpl::tryConnect
     c->call(req, res);
     c->close();
+}
+
+fastring TransferWoker::getSessionId()
+{
+    return _session_id;
 }
 
 void TransferWoker::sendFiles(int reqid, QStringList filepaths)

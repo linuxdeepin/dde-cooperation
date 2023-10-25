@@ -26,12 +26,12 @@ struct UserLoginResult {
 
 struct LoginConfirm {
     fastring user_name;
-    int32 session_id;
+    fastring session_id;
     fastring host_ip;
 
     void from_json(const co::Json& _x_) {
         user_name = _x_.get("user_name").as_c_str();
-        session_id = (int32)_x_.get("session_id").as_int64();
+        session_id = _x_.get("session_id").as_c_str();
         host_ip = _x_.get("host_ip").as_c_str();
     }
 

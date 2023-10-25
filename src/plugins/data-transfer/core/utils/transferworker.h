@@ -26,15 +26,18 @@ public:
     void sendFiles(QStringList paths);
 
 public slots:
-    void saveSession(QString sessionid);
+    void saveSession(fastring sessionid);
     void handleConnectStatus(int result, QString msg);
     void handleTransJobStatus(int id, int result, QString path);
     void handleFileTransStatus(QString statusstr);
+    void handleMiscMessage(QString jsonmsg);
 
 private:
+    void localIPCStart();
+
     FrontendService *_frontendIpcService = nullptr;
     bool _backendOK = false;
-    QString _sessionid = "";
+    fastring _sessionid = "";
     // <jobid, jobpath>
     QMap<int, QString> _job_maps;
     int _request_job_id;
@@ -43,6 +46,8 @@ private:
     file_stats_s _file_stats;
     // <file_id, last_current_size> 统计正在传输的文件量<文件id，上次已传输量>
     QMap<int, int64_t> _file_ids;
+
+    bool _this_destruct = false;
 };
 
 class TransferWoker
@@ -56,6 +61,7 @@ public:
     QString getConnectPassWord();
     void sendFiles(int reqid, QStringList filepaths);
     void tryConnect(const std::string &ip, const std::string &password);
+    fastring getSessionId();
 
     static TransferWoker *instance()
     {

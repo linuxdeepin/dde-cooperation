@@ -21,19 +21,7 @@ Session::Session(QString name, QString session, int port, QObject *parent)
 
     _pingOK = false;
     go([this]() {
-        fastring version(UNI_IPC_PROTO);
-        fastring ses(_sessionid.toStdString());
-        co::pool_guard<rpc::Client> c(_client_pool);
-        co::Json req, res;
-        //ping {GenericResult}
-        req = {
-            { "session", ses },
-            { "version", version },
-        };
-        req.add_member("api", "Frontend.ping");
-        c->call(req, res);
-
-        _pingOK = (res.get("result").as_int32() > 0);
+        alive();
     });
 }
 
@@ -45,6 +33,24 @@ Session::~Session()
 
 bool Session::valid()
 {
+    return _pingOK;
+}
+
+bool Session::alive()
+{
+    fastring version(UNI_IPC_PROTO);
+    fastring ses(_sessionid.toStdString());
+    co::pool_guard<rpc::Client> c(_client_pool);
+    co::Json req, res;
+    //ping {result, msg}
+    req = {
+        { "session", ses },
+        { "version", version },
+    };
+    req.add_member("api", "Frontend.ping");
+    c->call(req, res);
+
+    _pingOK = res.get("result").as_bool() && !res.get("msg").empty();
     return _pingOK;
 }
 
