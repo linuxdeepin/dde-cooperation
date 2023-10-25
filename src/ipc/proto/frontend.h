@@ -16,8 +16,6 @@ class Frontend : public rpc::Service {
         _methods["Frontend.ping"] = std::bind(&Frontend::ping, this, _1, _2);
         _methods["Frontend.cbPeerInfo"] = std::bind(&Frontend::cbPeerInfo, this, _1, _2);
         _methods["Frontend.cbConnect"] = std::bind(&Frontend::cbConnect, this, _1, _2);
-        _methods["Frontend.cbTargetSpace"] = std::bind(&Frontend::cbTargetSpace, this, _1, _2);
-        _methods["Frontend.cbApplist"] = std::bind(&Frontend::cbApplist, this, _1, _2);
         _methods["Frontend.cbMiscMessage"] = std::bind(&Frontend::cbMiscMessage, this, _1, _2);
         _methods["Frontend.cbTransStatus"] = std::bind(&Frontend::cbTransStatus, this, _1, _2);
         _methods["Frontend.cbFsPull"] = std::bind(&Frontend::cbFsPull, this, _1, _2);
@@ -40,10 +38,6 @@ class Frontend : public rpc::Service {
     virtual void cbPeerInfo(co::Json& req, co::Json& res) = 0;
 
     virtual void cbConnect(co::Json& req, co::Json& res) = 0;
-
-    virtual void cbTargetSpace(co::Json& req, co::Json& res) = 0;
-
-    virtual void cbApplist(co::Json& req, co::Json& res) = 0;
 
     virtual void cbMiscMessage(co::Json& req, co::Json& res) = 0;
 
@@ -183,49 +177,6 @@ struct FileStatus {
         _x_.add_member("total", total);
         _x_.add_member("current", current);
         _x_.add_member("second", second);
-        return _x_;
-    }
-};
-
-struct SpaceSize {
-    fastring dir;
-    uint64 size;
-
-    void from_json(const co::Json& _x_) {
-        dir = _x_.get("dir").as_c_str();
-        size = (uint64)_x_.get("size").as_int64();
-    }
-
-    co::Json as_json() const {
-        co::Json _x_;
-        _x_.add_member("dir", dir);
-        _x_.add_member("size", size);
-        return _x_;
-    }
-};
-
-struct AppList {
-    fastring displayname;
-    int32 run_type;
-    fastring pkgname;
-    fastring version;
-    fastring vonder;
-
-    void from_json(const co::Json& _x_) {
-        displayname = _x_.get("displayname").as_c_str();
-        run_type = (int32)_x_.get("run_type").as_int64();
-        pkgname = _x_.get("pkgname").as_c_str();
-        version = _x_.get("version").as_c_str();
-        vonder = _x_.get("vonder").as_c_str();
-    }
-
-    co::Json as_json() const {
-        co::Json _x_;
-        _x_.add_member("displayname", displayname);
-        _x_.add_member("run_type", run_type);
-        _x_.add_member("pkgname", pkgname);
-        _x_.add_member("version", version);
-        _x_.add_member("vonder", vonder);
         return _x_;
     }
 };

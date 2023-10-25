@@ -15,6 +15,11 @@
 
 #include <QSettings>
 
+#define KEY_HOSTUUID "hostuuid"
+#define KEY_NICKNAME "nickname"
+#define KEY_MODE "privacymode"
+#define KEY_AUTHPIN "authpin"
+
 class DaemonConfig
 {
 public:
@@ -32,6 +37,27 @@ public:
     bool needConfirm()
     {
         return false;
+    }
+
+    // 所有值都设置为string类型
+    void setAppConfig(fastring appname, fastring key, fastring value)
+    {
+        QString groupname(appname.c_str());
+        _fileConfig->beginGroup(groupname);
+        _fileConfig->setValue(key.c_str(), value.c_str());
+        _fileConfig->endGroup();
+    }
+
+    // 所有值都返回为string类型，外部再转换
+    fastring getAppConfig(fastring appname, fastring key)
+    {
+        QString groupname(appname.c_str());
+        fastring value = "";
+        _fileConfig->beginGroup(groupname);
+        value = _fileConfig->value(key.c_str(), "").toString().toStdString();
+        _fileConfig->endGroup();
+
+        return value;
     }
 
     void initPin()
@@ -89,12 +115,12 @@ public:
         _fileConfig->setValue(KEY_MODE, mode);
     }
 
-    void saveRemoteSession(uint64 session)
+    void saveRemoteSession(fastring session)
     {
         _remote_sessionId = session;
     }
 
-    uint64 getRemoteSession()
+    fastring getRemoteSession()
     {
         return _remote_sessionId;
     }
@@ -137,7 +163,7 @@ public:
 
 private:
     fastring _pinCode;
-    uint64 _remote_sessionId;
+    fastring _remote_sessionId;
     fastring _authedToken;
     fastring _storageDir;
     fastring _targetName;

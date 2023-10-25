@@ -11,34 +11,33 @@
 
 using namespace ipc;
 
-// must change the version if the IPC API changed.
-#define BACKEND_PROTO_VERSION UNI_IPC_PROTO
-
 BackendService::BackendService(QObject *parent)
     : QObject(parent)
 {
+    // 发送请求，长度为10，300ms超时
+    _bridge_chan = new co::chan<BridgeJsonData>(10, 300);
+    // 读取结果，长度为1，100ms超时
+    _bridge_result = new co::chan<BridgeJsonData>(1, 100);
 }
 
 BackendService::~BackendService()
 {
+    if (_bridge_chan) {
+        _bridge_chan->close();
+    }
+    if (_bridge_result) {
+        _bridge_result->close();
+    }
 }
 
-fastring BackendService::handlePing(const char *who, const char *version, int cbport)
+co::chan<BridgeJsonData>* BackendService::bridgeChan()
 {
-    fastring s = "";
-    fastring my_ver(BACKEND_PROTO_VERSION);
-    if (my_ver.compare(version) != 0) {
-        DLOG << version << " =version not match= " << my_ver;
-        return s;
-    }
-    QString iam(who);
-    s = co::randstr(who, 8); // 长度为8的16进制字符串
-    QString session(s.c_str());
-    qInfo() << "gen session: " << iam << " >> " << session;
+    return _bridge_chan;
+}
 
-    emit sigSaveSession(iam, session, cbport);
-
-    return s;
+co::chan<BridgeJsonData>* BackendService::bridgeResult()
+{
+    return _bridge_result;
 }
 
 fastring BackendService::getSettingPin() const
@@ -56,40 +55,64 @@ void BackendService::setSettingPin(fastring password)
     }
 }
 
-
-void BackendService::handleConnect(const char *session, const char *ip, const char *password)
+fastring BackendService::getOneAppConfig(fastring &app, fastring &key) const
 {
-    QString ses_id(session);
-    QString target_ip(ip);
-    QString user_password(password);
-    emit sigConnect(ses_id, target_ip, user_password);
+    return DaemonConfig::instance()->getAppConfig(app, key);
 }
 
-void BackendService::handleSendFiles(QString session, int jobid, QStringList &paths, bool sub, QString savedir)
+void BackendService::setOneAppConfig(fastring &app, fastring &key, fastring &value)
 {
-    emit sigSendFiles(session, jobid, paths, sub, savedir);
+    DaemonConfig::instance()->setAppConfig(app, key, value);
 }
 
 void BackendImpl::ping(co::Json &req, co::Json &res)
 {
-    PingBackParam param;
-    param.from_json(req);
+    BridgeJsonData bridge;
+    bridge.type = PING;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
-    fastring session = _interface->handlePing(param.who.c_str(), param.version.c_str(), param.cb_port);
+    // wait for result
+    BridgeJsonData result;
+    _interface->bridgeResult()->operator>>(result);
+    bool ok = _interface->bridgeResult()->done();
+
     res = {
-        { "result", session.empty() ? false : true },
-        { "msg", session }
+        { "result", ok },
+        { "msg", result.json }
     };
 }
 
 void BackendImpl::getDiscovery(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = BACK_GET_DISCOVERY;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // wait for result:{ PeerList }
+    BridgeJsonData result;
+    _interface->bridgeResult()->operator>>(result);
+    bool ok = _interface->bridgeResult()->done();
+
+    res = {
+        { "result", ok },
+        { "msg", result.json }
+    };
 }
 
 void BackendImpl::getPeerInfo(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = BACK_GET_PEER;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
 }
 
 void BackendImpl::getPassword(co::Json &req, co::Json &res)
@@ -113,80 +136,167 @@ void BackendImpl::setPassword(co::Json &req, co::Json &res)
 
 void BackendImpl::tryConnect(co::Json &req, co::Json &res)
 {
-    ConnectParam param;
-    param.from_json(req);
-    fastring session = param.session;
-    fastring ip = param.host;
-    fastring pass = param.password;
-    _interface->handleConnect(session.c_str(), ip.c_str(), pass.c_str());
+    BridgeJsonData bridge;
+    bridge.type = BACK_TRY_CONNECT;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
     res = {
-        { "result", true},
-        { "msg", ""}
+        { "result", true },
+        { "msg", "" }
     };
 }
 
-void BackendImpl::tryTargetSpace(co::Json &req, co::Json &res)
+void BackendImpl::setAppConfig(co::Json &req, co::Json &res)
 {
+    fastring app = req.get("appname").as_string();
+    fastring key = req.get("key").as_string();
+    fastring value = req.get("value").as_string();
+    _interface->setOneAppConfig(app, key, value);
 
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
 }
 
-void BackendImpl::tryApplist(co::Json &req, co::Json &res)
+void BackendImpl::getAppConfig(co::Json &req, co::Json &res)
 {
+    fastring app = req.get("appname").as_string();
+    fastring key = req.get("key").as_string();
+    fastring value = _interface->getOneAppConfig(app, key);
 
+    res = {
+        { "result", true },
+        { "msg", value }
+    };
 }
 
 void BackendImpl::miscMessage(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = MISC_MSG;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
 }
 
 void BackendImpl::tryTransFiles(co::Json &req, co::Json &res)
-{
-    TransFilesParam param;
-    param.from_json(req);
+{   
+    BridgeJsonData bridge;
+    bridge.type = BACK_TRY_TRANS_FILES;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
-    QString session = QString(param.session.c_str());
-    QString savedir = QString(param.savedir.c_str());
-    QStringList paths;
-    for (uint32 i = 0; i < param.paths.size(); i++) {
-        paths << param.paths[i].c_str();
-    }
-
-    qInfo() << "paths: " << paths;
-    _interface->handleSendFiles(session, param.id, paths, param.sub, savedir);
-
+    // do not need to wait for result
     res = {
-        { "result", true},
-        { "msg", ""}
+        { "result", true },
+        { "msg", "" }
     };
 }
 
 void BackendImpl::resumeTransJob(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = BACK_RESUME_JOB;
+    bridge.json = req.str(); //TransJobParam
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // wait for result:{ CallResult }
+    BridgeJsonData result;
+    _interface->bridgeResult()->operator>>(result);
+    bool ok = _interface->bridgeResult()->done();
+    co::Json call;
+    if (call.parse_from(result.json)) {
+        bool callok = call.get("result").as_bool();
+        res.add_member("result", ok && callok);
+        res.add_member("msg", call.get("msg").as_string());
+    } else {
+        res.add_member("result", false);
+        res.add_member("msg", "");
+    }
 }
 
 void BackendImpl::cancelTransJob(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = BACK_CANCEL_JOB;
+    bridge.json = req.str(); //TransJobParam
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // wait for result:{ CallResult }
+    BridgeJsonData result;
+    _interface->bridgeResult()->operator>>(result);
+    bool ok = _interface->bridgeResult()->done();
+    co::Json call;
+    if (call.parse_from(result.json)) {
+        bool callok = call.get("result").as_bool();
+        res.add_member("result", ok && callok);
+        res.add_member("msg", call.get("msg").as_string());
+    } else {
+        res.add_member("result", false);
+        res.add_member("msg", "");
+    }
 }
 
 void BackendImpl::fsCreate(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = BACK_FS_CREATE;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
 }
 
 void BackendImpl::fsDelete(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = BACK_FS_DELETE;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
 }
 
 void BackendImpl::fsRename(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = BACK_FS_RENAME;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
 }
 
 void BackendImpl::fsPull(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = BACK_FS_PULL;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
 }

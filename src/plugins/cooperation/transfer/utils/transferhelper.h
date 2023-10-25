@@ -41,13 +41,19 @@ protected Q_SLOTS:
     void onConnectStatusChanged(int result, const QString &msg);
     void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onFileTransStatusChanged(const QString &status);
+    void onMiscMessage(QString jsonmsg);
 
 private:
     explicit TransferHelper(QObject *parent = nullptr);
+    ~TransferHelper();
+
+    void localIPCStart();
 
     bool handlePingBacked();
     void handleSendFiles(const QStringList &fileList);
     void handleTryConnect(const QString &ip);
+    void handleSetConfig(const QString &key, const QString &value);
+    QString handleGetConfig(const QString &key);
 
 private:
     FrontendService *frontendIpcSer { nullptr };
@@ -55,6 +61,7 @@ private:
 
     TransferStatus status { Idle };
     bool backendOk { false };
+    bool thisDestruct { false };
 
     QString sessionId;
     QStringList readyToSendFiles;

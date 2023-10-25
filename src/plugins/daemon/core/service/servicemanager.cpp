@@ -5,6 +5,7 @@
 #include "servicemanager.h"
 #include "rpc/remoteservice.h"
 #include "ipc/proto/chan.h"
+#include "ipc/proto/comstruct.h"
 #include "ipc/backendservice.h"
 #include "common/constant.h"
 #include "comshare.h"
@@ -18,32 +19,23 @@
 #include <functional>
 #include <QSettings>
 
-co::chan<IncomeData> _income_chan(10);
+co::chan<IncomeData> _income_chan(10, 300);
 co::chan<OutData> _outgo_chan(10, 10);
 
 ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
     flag::set_value("rpc_log", "false");
     _rpcServiceBinder = new RemoteServiceBinder(this);
-    _backendIpcService = new BackendService(this);
-
-    connect(_backendIpcService, &BackendService::sigSaveSession, this, &ServiceManager::saveSession, Qt::QueuedConnection);
-    connect(_backendIpcService, &BackendService::sigConnect, this, &ServiceManager::notifyConnect, Qt::QueuedConnection);
-    connect(_backendIpcService, &BackendService::sigSendFiles, this, &ServiceManager::newTransSendJob, Qt::QueuedConnection);
-
-    connect(_rpcServiceBinder, &RemoteServiceBinder::loginResult, this, &ServiceManager::handleLoginResult, Qt::QueuedConnection);
-
-    // start ipc services
-    ipc::BackendImpl *backendimp = new ipc::BackendImpl();
-    backendimp->setInterface(_backendIpcService);
-    rpc::Server().add_service(backendimp)
-                 .start("0.0.0.0", UNI_IPC_BACKEND_PORT, "/backend", "", "");
 
     _transjob_sends.clear();
     _transjob_recvs.clear();
     _transjob_break.clear();
 
     _sessions.clear();
+    _this_destruct = false;
+
+    // init and start backend IPC
+    localIPCStart();
 
     // init the pin code: no setting then refresh as random
     DaemonConfig::instance()->initPin();
@@ -56,11 +48,12 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     }
 
     // temp disable discovery service.
-    //asyncDiscovery();
+    asyncDiscovery();
 }
 
 ServiceManager::~ServiceManager()
 {
+    _this_destruct = true;
     if (_rpcServiceBinder) {
         _rpcServiceBinder->deleteLater();
     }
@@ -81,9 +74,13 @@ void ServiceManager::startRemoteServer()
         Cert::instance()->removeFile(crt);
     }
     go([this]() {
-        while(true) {
+        while(!_this_destruct) {
             IncomeData indata;
             _income_chan >> indata;
+            if (!_income_chan.done()) {
+                // timeout, next read
+                continue;
+            }
 //            LOG << "ServiceManager get chan value: " << indata.type << " json:" << indata.json;
             co::Json json_obj = json::parse(indata.json);
             if (json_obj.is_null()) {
@@ -135,6 +132,149 @@ void ServiceManager::startRemoteServer()
             }
         }
     });
+}
+
+void ServiceManager::localIPCStart()
+{
+    if (_backendIpcService) return;
+
+    _backendIpcService = new BackendService(this);
+
+    connect(_rpcServiceBinder, &RemoteServiceBinder::loginResult, this, &ServiceManager::handleLoginResult, Qt::QueuedConnection);
+
+    go([this]() {
+        while(!_this_destruct) {
+            BridgeJsonData bridge;
+            _backendIpcService->bridgeChan()->operator>>(bridge); //300ms超时
+            if (!_backendIpcService->bridgeChan()->done()) {
+                // timeout, next read
+                continue;
+            }
+
+//            LOG << "ServiceManager get bridge json: " << bridge.type << " json:" << bridge.json;
+            co::Json json_obj = json::parse(bridge.json);
+            if (json_obj.is_null()) {
+                ELOG << "parse error from: " << bridge.json;
+                continue;
+            }
+            switch (bridge.type) {
+            case PING:
+            {
+                //check session or gen new one
+                ipc::PingBackParam param;
+                param.from_json(json_obj);
+
+                fastring session = "";
+                const char *appname = param.who.c_str();
+                fastring my_ver(BACKEND_PROTO_VERSION);
+                if (my_ver.compare(param.version) != 0) {
+                    DLOG << param.version << " =version not match= " << my_ver;
+                } else {
+                    QString name = QString(appname);
+                    Session *s = sessionByName(name);
+                    if (s) {
+                        session = s->getSession().toStdString();
+                    } else {
+                        // gen new one
+                        session = co::randstr(appname, 8); // 长度为8的16进制字符串
+                        QString sesid(session.c_str());
+                        saveSession(name, sesid, param.cb_port);
+                    }
+                }
+
+                BridgeJsonData res;
+                res.type = PING;
+                res.json = session;
+
+                _backendIpcService->bridgeResult()->operator<<(res);
+                break;
+            }
+            case MISC_MSG:
+            {
+                MiscJsonCall call;
+                call.from_json(json_obj);
+                sendMiscMessage(call.app, call.json);
+                break;
+            }
+            case BACK_TRY_CONNECT:
+            {
+                ipc::ConnectParam param;
+                param.from_json(json_obj);
+
+                QString session(param.session.c_str());
+                QString ip(param.host.c_str());
+                QString pass(param.password.c_str());
+                notifyConnect(session, ip, pass);
+                break;
+            }
+            case BACK_TRY_TRANS_FILES:
+            {
+                ipc::TransFilesParam param;
+                param.from_json(json_obj);
+
+                QString session = QString(param.session.c_str());
+                QString savedir = QString(param.savedir.c_str());
+                QStringList paths;
+                for (uint32 i = 0; i < param.paths.size(); i++) {
+                    paths << param.paths[i].c_str();
+                }
+
+                qInfo() << "paths: " << paths;
+                newTransSendJob(session, param.id, paths, param.sub, savedir);
+                break;
+            }
+            case BACK_RESUME_JOB:
+            case BACK_CANCEL_JOB:
+            {
+                bool ok = doJobAction(bridge.type, json_obj);
+                co::Json resjson = {
+                    { "result", ok },
+                    { "msg", json_obj.str() }
+                };
+
+                BridgeJsonData res;
+                res.type = bridge.type;
+                res.json = resjson.str();
+
+                _backendIpcService->bridgeResult()->operator<<(res);
+                break;
+            }
+            case BACK_GET_DISCOVERY:
+            {
+                break;
+            }
+            case BACK_GET_PEER:
+            {
+                break;
+            }
+            case BACK_FS_CREATE:
+            {
+                break;
+            }
+            case BACK_FS_DELETE:
+            {
+                break;
+            }
+            case BACK_FS_RENAME:
+            {
+                break;
+            }
+            case BACK_FS_PULL:
+            {
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    });
+
+
+    // start ipc services
+    ipc::BackendImpl *backendimp = new ipc::BackendImpl();
+    backendimp->setInterface(_backendIpcService);
+    rpc::Server().add_service(backendimp)
+                 .start("0.0.0.0", UNI_IPC_BACKEND_PORT, "/backend", "", "");
 }
 
 bool ServiceManager::handleRemoteRequestJob(co::Json &info)
@@ -395,6 +535,83 @@ void ServiceManager::notifyConnect(QString session, QString ip, QString password
     }
 }
 
+bool ServiceManager::doJobAction(uint32_t action, co::Json &jsonobj)
+{
+    ipc::TransJobParam param;
+    param.from_json(jsonobj);
+
+    QString session(param.session.c_str());
+    int jobid = param.job_id;
+    bool remote = param.is_remote;
+    Session *s = sessionById(session);
+    if (!s || s->hasJob(jobid) < 0) {
+        DLOG << "not find session by id:" << session.toStdString();
+        return false;
+    }
+
+    if (BACK_CANCEL_JOB == action) {
+        if (remote) {
+            //receive job cancel and notify remote send cancel
+            TransferJob *job = _transjob_recvs.value(jobid);
+            if (nullptr != job) {
+                job->cancel();
+                _transjob_recvs.remove(jobid);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            //send job cancel.
+            TransferJob *job = _transjob_sends.value(jobid);
+            if (nullptr != job) {
+                job->cancel();
+                _transjob_sends.remove(jobid);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    } else if (BACK_RESUME_JOB == action) {
+
+    }
+    return true;
+}
+
+void ServiceManager::sendMiscMessage(fastring &appname, fastring &message)
+{
+    go([this, appname, message]() {
+        QString res = _rpcServiceBinder->doMisc(appname.c_str(), message.c_str());
+        JsonMessage rpc_res;
+        if (!res.isEmpty() && rpc_res.ParseFromString(res.toStdString())) {
+            // handle result.
+            fastring app = rpc_res.app();
+            fastring json = rpc_res.json();
+            forwardJsonMisc(app, json);
+        } else {
+            DLOG << "misc message return by async.";
+        }
+    });
+}
+
+void ServiceManager::forwardJsonMisc(fastring &appname, fastring &message)
+{
+    QString app(appname.c_str());
+    Session *s = sessionByName(app);
+    if (s && s->valid()) {
+        go ([s, message]() {
+            co::pool_guard<rpc::Client> c(s->clientPool());
+            co::Json req, res;
+            //cbMiscMessage {any json format}
+            if (req.parse_from(message)) {
+                req.add_member("api", "Frontend.cbMiscMessage");
+                c->call(req, res);
+            } else {
+                ELOG << "forwardJsonMisc NOT correct json:"<< message;
+            }
+        });
+    }
+}
+
 void ServiceManager::handleLoginResult(bool result, QString session)
 {
     qInfo() << session << " LoginResult: " << result;
@@ -473,13 +690,13 @@ void ServiceManager::handleJobTransStatus(QString appname, int jobid, int status
 
 void ServiceManager::handleNodeChanged(bool found, QString info)
 {
-    //qInfo() << info << " node found: " << found;
+//    qInfo() << info << " node found: " << found << " session.size=" << _sessions.size();
 
     // notify to all frontend sessions
-    for (size_t i = 0; i < _sessions.size(); ++i) {
-        Session *s = _sessions[i];
-        if (s->valid()) {
-            go ([s, found, info]() {
+    go ([this, found, info]() {
+        for (size_t i = 0; i < _sessions.size(); ++i) {
+            Session *s = _sessions[i];
+            if (s->alive()) {
                 // fastring session_id(s->getSession().toStdString());
                 fastring nodeinfo(info.toStdString());
                 co::pool_guard<rpc::Client> c(s->clientPool());
@@ -493,7 +710,10 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
 
                 req.add_member("api", "Frontend.cbPeerInfo");
                 c->call(req, res);
-            });
+            } else {
+                // the frontend is offline
+                _sessions.remove(i);
+            }
         }
-    }
+    });
 }

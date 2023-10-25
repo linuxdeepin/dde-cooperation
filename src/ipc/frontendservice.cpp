@@ -11,126 +11,107 @@
 
 using namespace ipc;
 
-// must change the version if the IPC API changed.
-#define FRONTEND_PROTO_VERSION UNI_IPC_PROTO
-
 FrontendService::FrontendService(QObject *parent)
     : QObject(parent)
 {
+    // 发送请求，长度为10，300ms超时
+    _bridge_chan = new co::chan<BridgeJsonData>(10, 300);
+    // 读取结果，长度为1，100ms超时
+    _bridge_result = new co::chan<BridgeJsonData>(1, 100);
 }
 
 FrontendService::~FrontendService()
 {
+    if (_bridge_chan) {
+        _bridge_chan->close();
+    }
+    if (_bridge_result) {
+        _bridge_result->close();
+    }
 }
 
-void FrontendService::handlePing(QString sessionid)
+co::chan<BridgeJsonData>* FrontendService::bridgeChan()
 {
-    emit sigSession(sessionid);
+    return _bridge_chan;
 }
 
-void FrontendService::handleConnectstatus(int result, QString msg)
+co::chan<BridgeJsonData>* FrontendService::bridgeResult()
 {
-    emit sigConnectStatus(result, msg);
-}
-
-void FrontendService::handleTransJobstatus(int id, int result, QString path)
-{
-    emit sigTransJobtatus(id, result, path);
-}
-
-void FrontendService::handleFileTransstatus(QString statusstr)
-{
-    emit sigFileTransStatus(statusstr);
-}
-
-void FrontendService::handlePeerChanges(bool find, fastring peerinfo)
-{
-    QString info(peerinfo.c_str());
-    qInfo() << "handlePeerChanges: " << info << " find=" << find;
-    emit sigPeerChanged(find, info);
-
-    // example to parse string to PeerInfo object
-//    PeerInfo peerobj;
-//    co::Json peerJson;
-//    peerJson.parse_from(info.toStdString());
-//    peerobj.from_json(peerJson);
-
-//    qInfo() << " peer : " << peerobj.as_json().str().c_str();
+    return _bridge_result;
 }
 
 
 void FrontendImpl::ping(co::Json &req, co::Json &res)
 {
-    PingFrontParam param;
-    param.from_json(req);
+    BridgeJsonData bridge;
+    bridge.type = PING;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
-    bool result = false;
-    fastring s = "";
-    fastring my_ver(FRONTEND_PROTO_VERSION);
-    if (my_ver.compare(param.version) == 0) {
-        result = true;
-    } else {
-        DLOG << param.version << " =version not match= " << my_ver;
-    }
+    // wait for result
+    BridgeJsonData result;
+    _interface->bridgeResult()->operator>>(result);
+    bool ok = _interface->bridgeResult()->done();
 
-    fastring session = param.session;
     res = {
-        { "result", result },
-        { "msg", session }
+        { "result", ok },
+        { "msg", result.json }
     };
-
-    _interface->handlePing(QString(session.c_str()));
 }
 
 void FrontendImpl::cbPeerInfo(co::Json &req, co::Json &res)
 {
-    GenericResult param;
-    param.from_json(req);
+    BridgeJsonData bridge;
+    bridge.type = FRONT_PEER_CB;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // do not need to wait for result
     res = {
         { "result", true },
         { "msg", "ok" }
     };
-
-    _interface->handlePeerChanges(param.result > 0, param.msg);
 }
 
 void FrontendImpl::cbConnect(co::Json &req, co::Json &res)
 {
-    GenericResult param;
-    param.from_json(req);
-    QString mesg(param.msg.c_str());
-    _interface->handleConnectstatus(param.result, mesg);
+    BridgeJsonData bridge;
+    bridge.type = FRONT_CONNECT_CB;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
     res = {
-        { "result", true},
-        { "msg", ""}
+        { "result", true },
+        { "msg", "" }
     };
-}
-
-void FrontendImpl::cbTargetSpace(co::Json &req, co::Json &res)
-{
-
-}
-
-void FrontendImpl::cbApplist(co::Json &req, co::Json &res)
-{
-
 }
 
 void FrontendImpl::cbMiscMessage(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    bridge.type = MISC_MSG;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
 }
 
 void FrontendImpl::cbTransStatus(co::Json &req, co::Json &res)
 {
-    GenericResult param;
-    param.from_json(req);
-    QString mesg(param.msg.c_str()); // job path
-    _interface->handleTransJobstatus(param.id, param.result, mesg);
+    BridgeJsonData bridge;
+    bridge.type = FRONT_TRANS_STATUS_CB;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
     res = {
-        { "result", true},
-        { "msg", ""}
+        { "result", true },
+        { "msg", "" }
     };
 }
 
@@ -146,10 +127,14 @@ void FrontendImpl::cbFsAction(co::Json &req, co::Json &res)
 
 void FrontendImpl::notifyFileStatus(co::Json &req, co::Json &res)
 {
-    QString objstr(req.str().c_str());
-    _interface->handleFileTransstatus(objstr);
+    BridgeJsonData bridge;
+    bridge.type = FRONT_NOTIFY_FILE_STATUS;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
     res = {
-        { "result", true},
-        { "msg", ""}
+        { "result", true },
+        { "msg", "" }
     };
 }

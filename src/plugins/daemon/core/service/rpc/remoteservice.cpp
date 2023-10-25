@@ -47,7 +47,7 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
                 LoginConfirm confirm;
                 confirm.user_name = request->my_name();
                 confirm.session_id = request->session_id();
-//                confirm.host_ip = ?
+                //                confirm.host_ip = ?
 
                 in.type = IN_LOGIN_CONFIRM;
                 in.json = confirm.as_json().str();
@@ -65,7 +65,7 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
             }
         } else {
             fastring pass = Util::decodeBase64(pwd.c_str());
-//            LOG << "pass= " << pass << " getPin=" << DaemonConfig::instance()->getPin();
+            //            LOG << "pass= " << pass << " getPin=" << DaemonConfig::instance()->getPin();
             authOK = DaemonConfig::instance()->getPin().compare(pass) == 0;
         }
 
@@ -132,8 +132,8 @@ void RemoteServiceImpl::query_peerinfo(::google::protobuf::RpcController *contro
 }
 
 void RemoteServiceImpl::misc(::google::protobuf::RpcController *controller,
-                             const ::Misc *request,
-                             ::Misc *response,
+                             const ::JsonMessage *request,
+                             ::JsonMessage *response,
                              ::google::protobuf::Closure *done)
 {
     LOG << "req= " << request->ShortDebugString().c_str();
@@ -149,20 +149,6 @@ void RemoteServiceImpl::fsaction(::google::protobuf::RpcController *controller,
                                  const ::FileAction *request,
                                  ::FileResponse *response,
                                  ::google::protobuf::Closure *done)
-{
-    LOG << "req= " << request->ShortDebugString().c_str();
-
-    LOG << "res= " << response->ShortDebugString().c_str();
-
-    if (done) {
-        done->Run();
-    }
-}
-
-void RemoteServiceImpl::fsflow(::google::protobuf::RpcController *controller,
-                               const ::FileResponse *request,
-                               ::FileResponse *response,
-                               ::google::protobuf::Closure *done)
 {
     LOG << "req= " << request->ShortDebugString().c_str();
 
@@ -295,10 +281,10 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
     }
 }
 
-void RemoteServiceImpl::filetrans_update(::google::protobuf::RpcController* controller,
-                     const ::FileTransUpdate* request,
-                     ::FileTransResponse* response,
-                     ::google::protobuf::Closure* done)
+void RemoteServiceImpl::filetrans_update(::google::protobuf::RpcController *controller,
+                                         const ::FileTransUpdate *request,
+                                         ::FileTransResponse *response,
+                                         ::google::protobuf::Closure *done)
 {
     LOG << "req= " << request->ShortDebugString().c_str();
     if (request->has_report()) {
@@ -357,7 +343,7 @@ public:
     zrpc_ns::ZRpcController *control() { return _client->getControler(); }
 
 private:
-    zrpc_ns::ZRpcClient *_client { nullptr };
+    zrpc_ns::ZRpcClient *_client{ nullptr };
 };
 
 RemoteServiceBinder::RemoteServiceBinder(QObject *parent)
@@ -412,16 +398,18 @@ void RemoteServiceBinder::doLogin(const char *username, const char *pincode)
     rpc_req.set_my_name(Util::getHostname());
 
     OptionMessage option;
-    option.set_lock_after_session_end(OptionMessage_BoolOption_NotSet);
+    option.set_feature(FEATURE_NAME_FILETRANS);
+    option.set_enable(true);
+    rpc_req.add_options()->CopyFrom(option);
 
-    rpc_req.set_session_id(hash64(uuid));   // gen from the uuid
+    rpc_req.set_session_id(uuid);   //TODO: gen from the uuid
     rpc_req.set_version(UNIAPI_VERSION);
 
-    stub.login(rpc_controller, &rpc_req, &rpc_res, NULL);
+    stub.login(rpc_controller, &rpc_req, &rpc_res, nullptr);
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
-             << ", error info: " << rpc_controller->ErrorText();
+            << ", error info: " << rpc_controller->ErrorText();
         emit loginResult(false, QString(username));
         return;
     }
@@ -458,7 +446,7 @@ void RemoteServiceBinder::doQuery()
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
-             << ", error info: " << rpc_controller->ErrorText();
+            << ", error info: " << rpc_controller->ErrorText();
         emit queryResult(false, rpc_controller->ErrorText().c_str());
         return;
     }
@@ -468,31 +456,36 @@ void RemoteServiceBinder::doQuery()
     emit queryResult(true, "");
 }
 
-void RemoteServiceBinder::doMisc()
+QString RemoteServiceBinder::doMisc(const char *appname, const char *miscdata)
 {
+    QString res_json("");
     if (nullptr == _executor_p) {
         ELOG << "doLogin ERROR: no executor";
-        return;
+        return res_json;
     }
 
     RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
     zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
 
-    Misc rpc_req;
-    Misc rpc_res;
+    JsonMessage rpc_req;
+    JsonMessage rpc_res;
 
-    stub.misc(rpc_controller, &rpc_req, &rpc_res, NULL);
+    rpc_req.set_app(appname);
+    rpc_req.set_json(miscdata);
+
+    stub.misc(rpc_controller, &rpc_req, &rpc_res, nullptr);
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
-             << ", error info: " << rpc_controller->ErrorText();
-        emit miscResult(false, rpc_controller->ErrorText().c_str());
-        return;
+            << ", error info: " << rpc_controller->ErrorText();
+        return res_json;
     }
 
     DLOG << "response body: " << rpc_res.ShortDebugString();
+    res_json = rpc_res.SerializeAsString().c_str();
 
-    emit miscResult(true, "");
+    // 不需要耗时的可能返回一个json的结果。
+    return res_json;
 }
 
 int RemoteServiceBinder::doTransfileJob(const char *appname, int id, const char *jobpath, bool hidden, bool recursive, bool recv)
@@ -519,7 +512,7 @@ int RemoteServiceBinder::doTransfileJob(const char *appname, int id, const char 
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call filetrans_job, error code: " << rpc_controller->ErrorCode()
-             << ", error info: " << rpc_controller->ErrorText();
+            << ", error info: " << rpc_controller->ErrorText();
         return INVOKE_FAIL;
     }
 
@@ -561,7 +554,7 @@ int RemoteServiceBinder::doSendFileInfo(int jobid, int fileid, const char *subdi
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call filetrans_create, error code: " << rpc_controller->ErrorCode()
-             << ", error info: " << rpc_controller->ErrorText();
+            << ", error info: " << rpc_controller->ErrorText();
         return INVOKE_FAIL;
     }
 
@@ -585,7 +578,7 @@ retry:
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call filetrans_block, error code: " << rpc_controller->ErrorCode()
-             << ", error info: " << rpc_controller->ErrorText();
+            << ", error info: " << rpc_controller->ErrorText();
         if (try_max > 0) {
             try_max--;
             goto retry;
@@ -619,7 +612,7 @@ int RemoteServiceBinder::doUpdateTrans(FileTransUpdate update)
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call filetrans_update, error code: " << rpc_controller->ErrorCode()
-             << ", error info: " << rpc_controller->ErrorText();
+            << ", error info: " << rpc_controller->ErrorText();
         return INVOKE_FAIL;
     }
 

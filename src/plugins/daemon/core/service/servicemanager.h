@@ -33,12 +33,19 @@ public slots:
 
     void newTransSendJob(QString session, int jobId, QStringList paths, bool sub, QString savedir);
     void notifyConnect(QString session, QString ip, QString password);
+
+    bool doJobAction(uint32_t action, co::Json &jsonobj);
+    void sendMiscMessage(fastring &appname, fastring &message);
+    void forwardJsonMisc(fastring &appname, fastring &message);
+
     void handleLoginResult(bool result, QString who);
     void handleFileTransStatus(QString appname, int status, QString fileinfo);
     void handleJobTransStatus(QString appname, int jobid, int status, QString savedir);
     void handleNodeChanged(bool lost, QString info);
 
 private:
+    void localIPCStart();
+
     bool handleRemoteRequestJob(co::Json &info);
     bool handleFSData(co::Json &info, fastring buf);
     bool handleFSInfo(co::Json &info);
@@ -66,6 +73,8 @@ private:
     bool _hasConnected = false;
     fastring _connected_target;
     co::mutex g_m;
+
+    bool _this_destruct = false;
 };
 
 #endif // SERVICEMANAGER_H

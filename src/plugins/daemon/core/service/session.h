@@ -16,6 +16,7 @@ public:
     virtual ~Session();
 
     bool valid();
+    bool alive();
 
     QString getName();
     QString getSession();

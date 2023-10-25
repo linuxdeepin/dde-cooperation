@@ -19,8 +19,8 @@ class Backend : public rpc::Service {
         _methods["Backend.getPassword"] = std::bind(&Backend::getPassword, this, _1, _2);
         _methods["Backend.setPassword"] = std::bind(&Backend::setPassword, this, _1, _2);
         _methods["Backend.tryConnect"] = std::bind(&Backend::tryConnect, this, _1, _2);
-        _methods["Backend.tryTargetSpace"] = std::bind(&Backend::tryTargetSpace, this, _1, _2);
-        _methods["Backend.tryApplist"] = std::bind(&Backend::tryApplist, this, _1, _2);
+        _methods["Backend.setAppConfig"] = std::bind(&Backend::setAppConfig, this, _1, _2);
+        _methods["Backend.getAppConfig"] = std::bind(&Backend::getAppConfig, this, _1, _2);
         _methods["Backend.miscMessage"] = std::bind(&Backend::miscMessage, this, _1, _2);
         _methods["Backend.tryTransFiles"] = std::bind(&Backend::tryTransFiles, this, _1, _2);
         _methods["Backend.resumeTransJob"] = std::bind(&Backend::resumeTransJob, this, _1, _2);
@@ -53,9 +53,9 @@ class Backend : public rpc::Service {
 
     virtual void tryConnect(co::Json& req, co::Json& res) = 0;
 
-    virtual void tryTargetSpace(co::Json& req, co::Json& res) = 0;
+    virtual void setAppConfig(co::Json& req, co::Json& res) = 0;
 
-    virtual void tryApplist(co::Json& req, co::Json& res) = 0;
+    virtual void getAppConfig(co::Json& req, co::Json& res) = 0;
 
     virtual void miscMessage(co::Json& req, co::Json& res) = 0;
 
@@ -147,6 +147,53 @@ struct PeerParam {
         co::Json _x_;
         _x_.add_member("session", session);
         _x_.add_member("host", host);
+        return _x_;
+    }
+};
+
+struct ConfigParam {
+    struct _unamed_s1 {
+        fastring key;
+        fastring value;
+
+        void from_json(const co::Json& _x_) {
+            key = _x_.get("key").as_c_str();
+            value = _x_.get("value").as_c_str();
+        }
+
+        co::Json as_json() const {
+            co::Json _x_;
+            _x_.add_member("key", key);
+            _x_.add_member("value", value);
+            return _x_;
+        }
+    };
+
+    fastring app;
+    co::vector<_unamed_s1> ao;
+
+    void from_json(const co::Json& _x_) {
+        app = _x_.get("app").as_c_str();
+        do {
+            auto& _unamed_v1 = _x_.get("ao");
+            for (uint32 i = 0; i < _unamed_v1.array_size(); ++i) {
+                _unamed_s1 _unamed_v2;
+                _unamed_v2.from_json(_unamed_v1[i]);
+                ao.emplace_back(std::move(_unamed_v2));
+            }
+        } while (0);
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("app", app);
+        do {
+            co::Json _unamed_v1;
+            for (size_t i = 0; i < ao.size(); ++i) {
+                _unamed_v1.push_back(ao[i].as_json());
+            }
+            _x_.add_member("ao", _unamed_v1);
+        } while (0);
         return _x_;
     }
 };

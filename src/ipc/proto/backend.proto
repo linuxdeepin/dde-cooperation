@@ -7,8 +7,8 @@ service Backend {
     getPassword, // return { "password" : "xx"}
     setPassword, // { "password" : "xx"}
     tryConnect,
-    tryTargetSpace, // { "dir" : "x/x"}
-    tryApplist,
+    setAppConfig, // ConfigParam
+    getAppConfig,
     miscMessage, // any message by json format
     tryTransFiles, // return a job id
     resumeTransJob,
@@ -40,6 +40,14 @@ object ConnectParam {
 object PeerParam {
     string session
     string host
+}
+
+object ConfigParam {
+    string app
+    ao [{        // array of config values
+        string key
+        string value
+    }]
 }
 
 // send or receive files, return a job which have added

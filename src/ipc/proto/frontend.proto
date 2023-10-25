@@ -4,8 +4,6 @@ service Frontend {
     ping, // ping frontend and check proto version
     cbPeerInfo, // callback a remote information
     cbConnect, // callback the connect result
-    cbTargetSpace, // callback the target space
-    cbApplist, // {AppList}
     cbMiscMessage, // any message by json format
     cbTransStatus, // callback transfer job status: doing, done, breaked
     cbFsPull, // callback remote FS, FileDirectory
@@ -47,19 +45,4 @@ object FileStatus {
     int64 total
     int64 current
     int32 second
-}
-
-object SpaceSize {
-    // get target availables space size
-    string dir
-    uint64 size
-}
-
-object AppList {
-    // get target portable app list
-    string displayname
-    int32 run_type    // linux or  wine
-    string pkgname  // full package name
-    string version
-    string vonder
 }
