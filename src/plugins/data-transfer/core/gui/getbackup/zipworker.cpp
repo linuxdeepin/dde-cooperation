@@ -10,9 +10,16 @@
 #include <QTextCodec>
 #include <QDir>
 #include <QElapsedTimer>
+#include <QDirIterator>
+
+#include <JlCompress.h>
 
 #pragma execution_character_set("utf-8")
-ZipWork::ZipWork() { }
+ZipWork::ZipWork()
+{
+    QObject::connect(this, &ZipWork::backupFileProcessSingal, TransferHelper::instance(),
+                     &TransferHelper::transferContent);
+}
 
 ZipWork::~ZipWork() { }
 
@@ -102,7 +109,7 @@ void ZipWork::zipFile(const QStringList &sourceFilePath, const QString &zipFileS
 
         // update lastzipfilenum
         lastZipFileNum = currentfileNum;
-        //update lasttime
+        // update lasttime
         lastTime = needMinute;
     });
 
@@ -173,7 +180,8 @@ void ZipWork::getUserDataPackagingFile()
     // Get the number of files to zip
     allFileNum = getAllFileNum(zipFilePathList);
 
-    zipFile(zipFilePathList, zipFileName);
+    // zipFile(zipFilePathList, zipFileName);
+    backupFile(zipFilePathList, zipFileName);
 }
 
 int ZipWork::getPathFileNum(const QString &filePath)
@@ -202,4 +210,123 @@ int ZipWork::getAllFileNum(const QStringList &fileList)
         fileNum += curPathFileNum;
     }
     return fileNum;
+}
+
+bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, QuaZip &zip)
+{
+    //    if (QFileInfo(filePath).isHidden())
+    //        return true;
+    QFile sourceFile(filePath);
+    if (!sourceFile.open(QIODevice::ReadOnly)) {
+        qCritical() << "Error reading source file:" << filePath;
+        return false;
+    }
+
+    QuaZipFile destinationFile(&zip);
+    QString destinationFileName = QDir(relativeTo).relativeFilePath(filePath);
+    qInfo() << destinationFileName;
+
+    QuaZipNewInfo newInfo(destinationFileName, sourceFile.fileName());
+    if (!destinationFile.open(QIODevice::WriteOnly, newInfo)) {
+        qCritical() << "Error writing to ZIP file for:" << filePath;
+        return false;
+    }
+
+    destinationFile.write(sourceFile.readAll());
+    destinationFile.close();
+    sourceFile.close();
+
+    sendBackupFileProcess(filePath);
+    return true;
+}
+
+bool ZipWork::addFolderToZip(const QString &sourceFolder, const QString &relativeTo, QuaZip &zip)
+{
+    QDir directory(sourceFolder);
+    QFileInfoList entries = directory.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+
+    for (QFileInfo entry : entries) {
+        if (entry.isDir()) {
+            if (!addFolderToZip(entry.absoluteFilePath(), relativeTo, zip)) {
+                return false;
+            }
+        } else {
+            if (!addFileToZip(entry.absoluteFilePath(), relativeTo, zip)) {
+                return false;
+            }
+        }
+    }
+
+    // If the current folder is empty, then create an empty directory
+    if (entries.isEmpty()) {
+        QuaZipFile dirZipFile(&zip);
+        QString dirFileName = QDir(relativeTo).relativeFilePath(sourceFolder) + "/";
+        QuaZipNewInfo newInfo(dirFileName);
+        dirZipFile.open(QIODevice::WriteOnly, newInfo);
+        dirZipFile.close();
+    }
+
+    return true;
+}
+
+bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZipFile)
+{
+    QuaZip zip(destinationZipFile);
+    zip.setFileNameCodec("UTF-8");
+    if (!zip.open(QuaZip::mdCreate)) {
+        qCritical("Error creating the ZIP file.");
+        return false;
+    }
+
+    for (QString entry : entries) {
+        QFileInfo fileInfo(entry);
+        if (fileInfo.isDir()) {
+            QDir parent =  QDir(entry);
+            parent.cdUp();
+            if (!addFolderToZip(entry, QDir(parent).absolutePath(), zip)) {
+                return false;
+            }
+        } else if (fileInfo.isFile()) {
+            if (!addFileToZip(entry, fileInfo.absolutePath(), zip)) {
+                return false;
+            }
+        }
+    }
+
+    zip.close();
+
+    if (zip.getZipError() != UNZ_OK) {
+        qCritical() << "Error while compressing. Error code:" << zip.getZipError();
+        return false;
+    }
+
+    // backup file done
+    emit backupFileProcessSingal(QString("压缩完成!"), 100, 0);
+    return true;
+}
+
+void ZipWork::sendBackupFileProcess(const QString &filePath)
+{
+    zipFileNum++;
+    int progress = (zipFileNum * 100) / allFileNum;
+
+    if (progress <= 0)
+        progress = 0;
+    if (progress >= 100)
+        progress = 98;
+
+    int needtime = 0;
+    if (!timer.isValid()) {
+        timer.start();
+    } else {
+        // If the timer is started, the elapsed time is calculated and the timer is restarted
+        qint64 elapsed = timer.restart();
+        qint64 elapsedSeconds = elapsed * (allFileNum - zipFileNum) / 1000;
+        needtime = static_cast<int>(elapsedSeconds);
+    }
+    if (needtime > lastTime)
+        needtime = lastTime;
+    if (needtime < 1)
+        needtime = 1;
+    emit backupFileProcessSingal(filePath, progress, needtime);
 }

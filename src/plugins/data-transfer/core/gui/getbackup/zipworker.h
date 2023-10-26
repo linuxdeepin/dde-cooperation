@@ -4,6 +4,7 @@
 #include <QThread>
 
 class QElapsedTimer;
+class QuaZip;
 class ZipWork : public QThread
 {
     Q_OBJECT
@@ -22,6 +23,13 @@ private:
     int getPathFileNum(const QString &filePath);
     int getAllFileNum(const QStringList &fileList);
 
+    bool addFileToZip(const QString &filePath, const QString &relativeTo, QuaZip &zip );
+    bool addFolderToZip(const QString &sourceFolder, const QString &relativeTo, QuaZip &zip);
+    bool backupFile(const QStringList &sourceFilePath,const QString &zipFileSave);
+
+    void sendBackupFileProcess(const QString &filePath);
+signals:
+    void backupFileProcessSingal(const QString &content, int progressbar, int estimatedtime);
 private:
     QElapsedTimer timer;
     int allFileNum{ 0 };

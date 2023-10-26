@@ -93,6 +93,11 @@ include_directories(${COOST_DIR}/include)
 set(ZRPC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/zrpc")
 include_directories(${ZRPC_DIR}/include)
 
+if (CMAKE_SYSTEM MATCHES "Windows")
+    set(QUAZIP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip")
+    include_directories(${QUAZIP_DIR}/quazip)
+endif()
+
 # build 3rd party libraries first
 add_subdirectory(3rdparty)
 
