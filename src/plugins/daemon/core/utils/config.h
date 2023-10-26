@@ -11,6 +11,7 @@
 #include "co/rand.h"
 #include "co/os.h"
 #include "co/log.h"
+#include "co/path.h"
 #include "utils.h"
 
 #include <QSettings>
@@ -146,19 +147,9 @@ public:
         if (_targetName.empty()) {
             _storageDir = home;
         } else {
-            _storageDir = home + "/" + _targetName;
+            _storageDir = path::join(home, _targetName);
         }
         return _storageDir;
-    }
-
-    const int getStatus()
-    {
-        return status;
-    }
-
-    void setStatus(int s)
-    {
-        status = s;
     }
 
 private:
@@ -167,7 +158,6 @@ private:
     fastring _authedToken;
     fastring _storageDir;
     fastring _targetName;
-    int status = 0;
 
     QSettings *_fileConfig;
 };
