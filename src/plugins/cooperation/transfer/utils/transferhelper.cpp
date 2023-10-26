@@ -32,6 +32,15 @@ TransferHelper::TransferHelper(QObject *parent)
 TransferHelper::~TransferHelper()
 {
     thisDestruct = true;
+    go([this] {
+        co::Json myinfo = {
+            { "myname", "aaaaaa" },
+            { "server", "bbbbbb" },
+            { "config", "cccccc" },
+        };
+        QString info(myinfo.str().c_str());
+        registerMe(true, info);
+    });
 }
 
 void TransferHelper::localIPCStart()
@@ -149,6 +158,15 @@ void TransferHelper::init()
 
     go([this] {
         backendOk = handlePingBacked();
+
+        co::sleep(3000);
+        co::Json myinfo = {
+            { "myname", "aaaaaa" },
+            { "server", "bbbbbb" },
+            { "config", "cccccc" },
+        };
+        QString info(myinfo.str().c_str());
+        registerMe(false, info);
     });
 }
 
@@ -418,4 +436,27 @@ QString TransferHelper::handleGetConfig(const QString &key)
     QString value = res.get("msg").as_string().c_str();
 
     return value;
+}
+
+void TransferHelper::registerMe(bool unreg, const QString &info)
+{
+    co::pool_guard<rpc::Client> c(coPool.get());
+    co::Json req, res;
+
+    QString appName = QCoreApplication::applicationName();
+
+    req = {
+        //AppPeerInfo
+        { "appinfo", {
+              { "appname", appName.toStdString() },
+              { "json", info.toStdString() }, //一定是一个自定义的json格式
+            }
+        }
+    };
+    if (unreg) {
+        req.add_member("api", "Backend.unregisterDiscovery");
+    } else {
+        req.add_member("api", "Backend.registerDiscovery");
+    }
+    c->call(req, res);
 }

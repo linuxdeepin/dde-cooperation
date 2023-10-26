@@ -63,6 +63,7 @@ private:
     void handleSetConfig(const QString &key, const QString &value);
     QString handleGetConfig(const QString &key);
     void handleCancelTransfer();
+    void registerMe(bool unreg, const QString &info);
 
 private:
     FrontendService *frontendIpcSer { nullptr };

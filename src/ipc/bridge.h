@@ -30,6 +30,8 @@ typedef enum req_type_t {
     BACK_FS_DELETE = 211,
     BACK_FS_RENAME = 212,
     BACK_FS_PULL = 213,
+    BACK_DISC_REGISTER = 214,
+    BACK_DISC_UNREGISTER = 215,
 } ReqType;
 
 typedef enum res_type_t {

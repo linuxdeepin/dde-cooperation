@@ -29,6 +29,8 @@ class Backend : public rpc::Service {
         _methods["Backend.fsDelete"] = std::bind(&Backend::fsDelete, this, _1, _2);
         _methods["Backend.fsRename"] = std::bind(&Backend::fsRename, this, _1, _2);
         _methods["Backend.fsPull"] = std::bind(&Backend::fsPull, this, _1, _2);
+        _methods["Backend.registerDiscovery"] = std::bind(&Backend::registerDiscovery, this, _1, _2);
+        _methods["Backend.unregisterDiscovery"] = std::bind(&Backend::unregisterDiscovery, this, _1, _2);
     }
 
     virtual ~Backend() {}
@@ -72,6 +74,10 @@ class Backend : public rpc::Service {
     virtual void fsRename(co::Json& req, co::Json& res) = 0;
 
     virtual void fsPull(co::Json& req, co::Json& res) = 0;
+
+    virtual void registerDiscovery(co::Json& req, co::Json& res) = 0;
+
+    virtual void unregisterDiscovery(co::Json& req, co::Json& res) = 0;
 
   private:
     co::map<const char*, Fun> _methods;

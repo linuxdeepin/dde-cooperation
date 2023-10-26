@@ -17,6 +17,8 @@ service Backend {
     fsDelete, // delete files
     fsRename, // rename file or directory
     fsPull, // pull remote file or directory
+    registerDiscovery, // register own node json into discovery service
+    unregisterDiscovery, // unregister from discovery service
 }
 
 // return {CallResult} msg is session id string

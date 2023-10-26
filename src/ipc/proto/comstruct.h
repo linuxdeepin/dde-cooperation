@@ -42,16 +42,63 @@ struct NodePeerInfo {
     }
 };
 
-struct NodePeerList {
+struct AppPeerInfo {
+    fastring appname;
+    fastring json;
+
+    void from_json(const co::Json& _x_) {
+        appname = _x_.get("appname").as_c_str();
+        json = _x_.get("json").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("appname", appname);
+        _x_.add_member("json", json);
+        return _x_;
+    }
+};
+
+struct NodeInfo {
+    NodePeerInfo os;
+    co::vector<AppPeerInfo> apps;
+
+    void from_json(const co::Json& _x_) {
+        os.from_json(_x_.get("os"));
+        do {
+            auto& _unamed_v1 = _x_.get("apps");
+            for (uint32 i = 0; i < _unamed_v1.array_size(); ++i) {
+                AppPeerInfo _unamed_v2;
+                _unamed_v2.from_json(_unamed_v1[i]);
+                apps.emplace_back(std::move(_unamed_v2));
+            }
+        } while (0);
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("os", os.as_json());
+        do {
+            co::Json _unamed_v1;
+            for (size_t i = 0; i < apps.size(); ++i) {
+                _unamed_v1.push_back(apps[i].as_json());
+            }
+            _x_.add_member("apps", _unamed_v1);
+        } while (0);
+        return _x_;
+    }
+};
+
+struct NodeList {
     int32 code;
-    co::vector<NodePeerInfo> peers;
+    co::vector<NodeInfo> peers;
 
     void from_json(const co::Json& _x_) {
         code = (int32)_x_.get("code").as_int64();
         do {
             auto& _unamed_v1 = _x_.get("peers");
             for (uint32 i = 0; i < _unamed_v1.array_size(); ++i) {
-                NodePeerInfo _unamed_v2;
+                NodeInfo _unamed_v2;
                 _unamed_v2.from_json(_unamed_v1[i]);
                 peers.emplace_back(std::move(_unamed_v2));
             }
