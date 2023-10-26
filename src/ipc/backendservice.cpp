@@ -300,3 +300,31 @@ void BackendImpl::fsPull(co::Json &req, co::Json &res)
         { "msg", "" }
     };
 }
+
+void BackendImpl::registerDiscovery(co::Json& req, co::Json& res)
+{
+    BridgeJsonData bridge;
+    bridge.type = BACK_DISC_REGISTER;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
+}
+
+void BackendImpl::unregisterDiscovery(co::Json& req, co::Json& res)
+{
+    BridgeJsonData bridge;
+    bridge.type = BACK_DISC_UNREGISTER;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
+}

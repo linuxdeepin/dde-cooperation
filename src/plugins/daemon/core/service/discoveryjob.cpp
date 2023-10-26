@@ -47,14 +47,38 @@ void DiscoveryJob::discovererRun()
 
             for(auto& service : services) {
                 //DLOG << "discovered: " << service;
+
                 co::Json node;
                 node.parse_from(service.info);
-                fastring uid = node.get("uuid").as_string();
+                co::Json osjson = node.get("os");
+                if (osjson.is_null() || !osjson.has_member("uuid")) {
+                    //DLOG << "found error format: " << service;
+                    continue;
+                }
+
+                fastring uid = osjson.get("uuid").as_string();
 
                 auto it = _dis_node_maps.find(uid);
                 if (it != _dis_node_maps.end()) {
                     // has been recorded, markd it exist
                     it->second.second = true;
+                    if (it->second.first.compare(service.info) != 0) {
+                        co::Json oldnode;
+                        oldnode.parse_from(it->second.first);
+                        co::Json oldapps = oldnode.get("apps");
+                        co::Json curapps = node.get("apps");
+
+                        if (!oldapps.is_null() && curapps.is_null()) {
+                            //node has been unregister or losted.
+                            emit sigNodeChanged(false, QString(it->second.first.c_str()));
+                            _dis_node_maps.erase(it);
+                        } else {
+                            //node info has been updated, force update now.
+                            _dis_node_maps.erase(it);
+                            emit sigNodeChanged(true, QString(service.info.c_str()));
+                            _dis_node_maps.insert(uid, std::make_pair(service.info, true));
+                        }
+                    }
                 } else {
                     //new node discovery.
                     //DLOG << "new peer found: " << node.str();
@@ -93,9 +117,23 @@ void DiscoveryJob::stopAnnouncer()
     ((searchlight::Announcer*)_announcer_p)->exit();
 }
 
-void DiscoveryJob::updateAnnouncNote(const fastring info)
+void DiscoveryJob::updateAnnouncBase(const fastring info)
 {
-    ((searchlight::Announcer*)_announcer_p)->update(info);
+    ((searchlight::Announcer*)_announcer_p)->updateBase(info);
+}
+
+void DiscoveryJob::updateAnnouncApp(bool remove, const fastring info)
+{
+    if (remove) {
+        ((searchlight::Announcer*)_announcer_p)->removeApp(info);
+    } else {
+        ((searchlight::Announcer*)_announcer_p)->appendApp(info);
+    }
+}
+
+void DiscoveryJob::removeAppbyName(const fastring name)
+{
+    ((searchlight::Announcer*)_announcer_p)->removeAppbyName(name);
 }
 
 co::list<fastring> DiscoveryJob::getNodes()

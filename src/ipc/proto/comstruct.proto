@@ -12,10 +12,21 @@ object NodePeerInfo {
     int32 mode_type // privacy mode type
 }
 
-object NodePeerList {
+object AppPeerInfo {
+    // app define peer info
+    string appname
+    string json // customize json
+}
+
+object NodeInfo {
+    NodePeerInfo os
+    [AppPeerInfo] apps
+}
+
+object NodeList {
     // peer info list
     int32 code
-    [NodePeerInfo] peers
+    [NodeInfo] peers
 }
 
 object MiscJsonCall {

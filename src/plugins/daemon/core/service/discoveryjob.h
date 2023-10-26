@@ -17,7 +17,9 @@ public:
     void stopDiscoverer();
     void stopAnnouncer();
 
-    void updateAnnouncNote(const fastring info);
+    void updateAnnouncBase(const fastring info);
+    void updateAnnouncApp(bool remove, const fastring info);
+    void removeAppbyName(const fastring name);
 
     co::list<fastring> getNodes();
 
@@ -36,7 +38,6 @@ private:
     void *_discoverer_p;
     void *_announcer_p;
 
-    fastring _my_node_uuid;
     //<uuid, <peerinfo, exist>>
     co::lru_map<fastring, std::pair<fastring, bool>> _dis_node_maps;
 };

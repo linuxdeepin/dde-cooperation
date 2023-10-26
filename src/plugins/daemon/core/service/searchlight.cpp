@@ -177,9 +177,9 @@ Announcer::Announcer(const fastring& service_name,
           )
     : _service_name(service_name)
     , _service_port(service_port)
-    , _service_info(info)
+    , _base_info(info)
 {
-
+    _app_infos.clear();
 }
 
 Announcer::~Announcer()
@@ -187,9 +187,44 @@ Announcer::~Announcer()
     _stop = true;
 }
 
-void Announcer::update(const fastring &info)
+void Announcer::updateBase(const fastring &info)
 {
-    _service_info = info;
+    _base_info = info;
+}
+
+void Announcer::appendApp(const fastring &info)
+{
+    int idx = sameApp(info);
+    if (idx >= 0) {
+        //remove old one
+        _app_infos.remove(idx);
+    }
+    _app_infos.push_back(info);
+}
+
+void Announcer::removeApp(const fastring &info)
+{
+    int idx = sameApp(info);
+    if (idx >= 0) {
+        //remove find one
+        _app_infos.remove(idx);
+    }
+}
+
+void Announcer::removeAppbyName(const fastring &name)
+{
+    for (size_t i = 0; i < _app_infos.size(); ++i) {
+        co::Json oajson;
+        if (!oajson.parse_from(_app_infos[i])) {
+            ELOG << "remove incorrect app node format:" << _app_infos[i];
+            _app_infos.remove(i);
+            continue;
+        }
+        fastring appname = oajson.get("appname").as_string();
+        if (appname.compare(name) == 0) {
+            _app_infos.remove(i);
+        }
+    }
 }
 
 void Announcer::start()
@@ -228,9 +263,23 @@ void Announcer::start()
     LOG << "announcer server start";
     // 发送数据包 int sendto(sock_t fd, const void* buf, int n, const void* dst_addr, int addrlen, int ms=-1);
     while (!_stop) {
+        co::Json baseJson;
+        baseJson.parse_from(_base_info);
+        //NodeInfo
+        co::Json nodeinfo;
+        nodeinfo.add_member("os", baseJson);
+        co::Json appinfos;
+        for (size_t i = 0; i < _app_infos.size(); ++i) {
+            co::Json appjson;
+            if (appjson.parse_from(_app_infos[i])) {
+                appinfos.push_back(appjson);
+            }
+        }
+        nodeinfo.add_member("apps", appinfos);
+
         // update the last info
         node.remove("info");
-        node.add_member("info", _service_info);
+        node.add_member("info", nodeinfo);
         fastring message = node.str();
 
         //DLOG << "UDP send: " << message;
@@ -257,6 +306,29 @@ bool Announcer::started() {
 void Announcer::exit()
 {
     _stop = true;
+}
+
+int Announcer::sameApp(const fastring &info)
+{
+    co::Json appjson;
+    if (!appjson.parse_from(info)) {
+        ELOG << "incorrect app node info:" << info;
+        return -1;
+    }
+    fastring appname = appjson.get("appname").as_string();
+    for (size_t i = 0; i < _app_infos.size(); ++i) {
+        co::Json oajson;
+        if (!oajson.parse_from(_app_infos[i])) {
+            ELOG << "remove incorrect app node format:" << _app_infos[i];
+            _app_infos.remove(i);
+            continue;
+        }
+        fastring name = oajson.get("appname").as_string();
+        if (name.compare(appname) == 0) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 } // searchlight
