@@ -200,7 +200,7 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
 #endif
 
     QString info =
-            QString("正在传输<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
+            QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
     processTextBrowser->append(info);
     progressLabel->setProgress(progressbar);
     fileLabel->setText(info);

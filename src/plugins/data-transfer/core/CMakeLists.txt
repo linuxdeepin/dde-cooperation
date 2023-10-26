@@ -19,8 +19,12 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/connect/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferhepler.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferhepler.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferworker.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferworker.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/optionsmanager.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/optionsmanager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
@@ -33,6 +37,8 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/select/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/getbackup/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/getbackup/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     )
    find_package(Qt5 COMPONENTS Sql REQUIRED)
 elseif (CMAKE_SYSTEM MATCHES "Linux")
@@ -41,6 +47,8 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/backupload/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/backupload/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/utils/settinghepler.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/utils/settinghepler.cpp"
     )
     find_package(Dtk COMPONENTS Widget REQUIRED)
     find_package(PkgConfig REQUIRED)

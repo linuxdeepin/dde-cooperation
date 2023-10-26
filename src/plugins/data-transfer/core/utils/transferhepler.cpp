@@ -1,4 +1,5 @@
 ﻿#include "optionsmanager.h"
+
 #include "transferhepler.h"
 
 #include <QDateTime>
@@ -25,9 +26,7 @@
 #ifdef WIN32
 #    include <gui/getbackup/drapwindowsdata.h>
 #else
-#    include <QDBusMessage>
-#    include <QDBusConnection>
-#    include <QDBusInterface>
+#    include "settinghepler.h"
 #endif
 
 #pragma execution_character_set("utf-8")
@@ -35,6 +34,7 @@ TransferHelper::TransferHelper()
     : QObject()
 {
     initOnlineState();
+    SettingHelper::instance();
 }
 
 TransferHelper::~TransferHelper() {}
@@ -227,7 +227,7 @@ QStringList TransferHelper::getTransferFilePath()
 
 bool TransferHelper::checkSize(const QString &filepath)
 {
-    QJsonObject jsonObj = ParseJson(filepath);
+    QJsonObject jsonObj = SettingHelper::ParseJson(filepath);
     if (jsonObj.isEmpty())
         return false;
     auto size = jsonObj["user_data"].toInt();
@@ -240,123 +240,15 @@ bool TransferHelper::checkSize(const QString &filepath)
     return true;
 }
 
+void TransferHelper::setting(const QString &filepath)
+{
+    SettingHelper::instance()->handleDataConfiguration(filepath);
+}
+
 int TransferHelper::getRemainSize()
 {
     QStorageInfo storage("/data");
     auto remainSize = storage.bytesAvailable() / 1024 / 1024 / 1024;
     return static_cast<int>(remainSize);
 }
-
-QJsonObject TransferHelper::ParseJson(const QString &filepath)
-{
-    QJsonObject jsonObj;
-    QFile file(filepath);
-    qInfo() << "Parsing the configuration file for transmission" << file.fileName();
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "could not open datajson file";
-        return jsonObj;
-    }
-    QByteArray jsonData = file.readAll();
-    file.close();
-
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
-    if (jsonDoc.isNull()) {
-        qWarning() << "Parsing JSON data failed";
-        return jsonObj;
-    }
-    jsonObj = jsonDoc.object();
-
-    return jsonObj;
-}
-
-bool TransferHelper::handleDataConfiguration(const QString &filepath)
-{
-    bool ret = true;
-
-    QJsonObject jsonObj = ParseJson(filepath + "/" + "transfer.json");
-    if (jsonObj.isEmpty())
-        return false;
-
-    // Configure desktop wallpaper
-    QString image = filepath + "/" + jsonObj["wallpapers"].toString();
-    if (!jsonObj["wallpapers"].isNull())
-        ret &= setWallpaper(image);
-
-    //Configure file
-    ret &= setFile(jsonObj, filepath);
-
-    //setBrowserBookMark
-    ret &= setBrowserBookMark(jsonObj["browerbookmark"].toString());
-
-    //installApps
-    ret &= jsonObj["app"].isNull();
-
-    return ret;
-}
-
-bool TransferHelper::setWallpaper(const QString &filepath)
-{
-    qInfo() << "Setting picture as wallpaper" << filepath;
-    //服务
-    QString service = "com.deepin.daemon.Appearance";
-    QString path = "/com/deepin/daemon/Appearance";
-    QString interfaceName = "com.deepin.daemon.Appearance";
-
-    // dbus连接
-    QDBusInterface interface(service, path, interfaceName);
-
-    //调用方法
-    QString func = "SetMonitorBackground";
-    QString screenName = QGuiApplication::screens().first()->name();
-    QVariant monitorName = QVariant::fromValue(screenName);
-    QVariant imageFile = QVariant::fromValue(filepath);
-
-    // 发送DBus消息并等待回复
-    QDBusMessage reply = interface.call(func, monitorName, imageFile);
-    if (reply.type() == QDBusMessage::ReplyMessage) {
-        qDebug() << "SetMonitorBackground method called successfully";
-        return true;
-    } else {
-        qDebug() << "Failed to call SetMonitorBackground method";
-        return false;
-    }
-}
-
-bool TransferHelper::setBrowserBookMark(const QString &filepath)
-{
-    if (filepath.isEmpty())
-        return true;
-    else {
-        emit failure("浏览器书签", "书签", "暂不支持");
-        return false;
-    }
-}
-
-bool TransferHelper::installApps(const QStringList &applist)
-{
-    if (applist.isEmpty())
-        return true;
-    else {
-        emit failure("应用安装", "应用", "暂不支持");
-        return false;
-    }
-}
-
-bool TransferHelper::setFile(QJsonObject jsonObj, QString filepath)
-{
-    QJsonValue userFileValue = jsonObj["user_file"];
-    if (userFileValue.isArray()) {
-        const QJsonArray &userFileArray = userFileValue.toArray();
-        for (const auto &value : userFileArray) {
-            QString filename = value.toString();
-            QString targetFile = QDir::homePath() + "/" + filename;
-            QString file = filepath + filename.mid(filename.indexOf('/'));
-            bool success = QFile::rename(file, targetFile);
-            qInfo() << file << success;
-        }
-    }
-    qInfo() << jsonObj["user_file"].toString();
-    return true;
-}
-
 #endif
