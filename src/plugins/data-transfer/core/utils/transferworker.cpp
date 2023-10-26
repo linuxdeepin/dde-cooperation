@@ -182,8 +182,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 #ifdef WIN32
         emit TransferHelper::instance()->transferSucceed(true);
 #else
-        ret = TransferHelper::instance()->handleDataConfiguration(path);
-        emit TransferHelper::instance()->transferSucceed(ret);
+        TransferHelper::instance()->setting(path);
 #endif
         break;
     default:
@@ -267,7 +266,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     //    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
     //    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
-    emit TransferHelper::instance()->transferContent(filepath, progressbar, remain_time);
+    emit TransferHelper::instance()->transferContent("正在传输" + filepath, progressbar, remain_time);
 }
 
 void TransferHandle::handleMiscMessage(QString jsonmsg)

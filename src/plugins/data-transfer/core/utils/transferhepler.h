@@ -5,7 +5,7 @@
 
 #include <QMap>
 #include <QObject>
-
+#include <QDBusMessage>
 #include <QUrl>
 
 class TransferHelper : public QObject
@@ -34,12 +34,7 @@ public:
 public:
     int getRemainSize();
     bool checkSize(const QString &filepath);
-    QJsonObject ParseJson(const QString &filepath);
-    bool handleDataConfiguration(const QString &filepath);
-    bool setWallpaper(const QString &filepath);
-    bool setBrowserBookMark(const QString &filepath);
-    bool installApps(const QStringList &applist);
-    bool setFile(QJsonObject jsonObj, QString filepath);
+    void setting(const QString &filepath);
 #endif
 
 Q_SIGNALS:

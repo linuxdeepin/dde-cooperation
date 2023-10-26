@@ -326,6 +326,7 @@ QString UploadFileFrame::getZipFilePath() const
 void UploadFileFrame::uploadFile()
 {
     zipFilePath = QFileDialog::getOpenFileName(nullptr, "选择zip文件", "", "ZIP 文件 (*.zip)");
+    qInfo() << "set zipFilePath =" + zipFilePath;
     if (!zipFilePath.isEmpty())
         emit updateUI(uploadStatus::valid);
 }
@@ -353,12 +354,14 @@ void UploadFileFrame::dropEvent(QDropEvent *event)
     const QList<QUrl> &urls = event->mimeData()->urls();
     if (urls.size() != 1)
         return;
-    QFileInfo info(urls.first().url());
+    QUrl url = urls.first();
+    QFileInfo info(url.url());
     if (info.suffix() != "zip") {
         emit updateUI(uploadStatus::formaterror);
         return;
     } else {
-        zipFilePath = info.filePath();
+        zipFilePath = url.path();
+        qInfo() << "set zipFilePath =" + zipFilePath;
         if (!zipFilePath.isEmpty())
             emit updateUI(uploadStatus::valid);
     }
