@@ -88,7 +88,16 @@ public:
     ~Announcer();
 
     // update the announce info
-    void update(const fastring &info);
+    void updateBase(const fastring &info);
+
+    // append app's info
+    void appendApp(const fastring &info);
+
+    // remove app's info
+    void removeApp(const fastring &info);
+
+    // remove app's info by name
+    void removeAppbyName(const fastring &name);
 
     // start announce
     void start();
@@ -99,12 +108,16 @@ public:
     void exit();
 
 private:
+    int sameApp(const fastring &info);
+
+private:
     bool _stop = true;
 
     const fastring _service_name;
     const uint16_t _service_port;
 
-    fastring _service_info;
+    fastring _base_info;
+    co::vector<fastring> _app_infos;
 
     DISALLOW_COPY_AND_ASSIGN(Announcer);
 };

@@ -80,6 +80,10 @@ public:
 
     virtual void fsPull(co::Json& req, co::Json& res) override;
 
+    virtual void registerDiscovery(co::Json& req, co::Json& res) override;
+
+    virtual void unregisterDiscovery(co::Json& req, co::Json& res) override;
+
 private:
     BackendService *_interface;
 };

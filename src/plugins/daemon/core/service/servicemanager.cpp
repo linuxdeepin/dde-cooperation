@@ -262,6 +262,16 @@ void ServiceManager::localIPCStart()
             {
                 break;
             }
+            case BACK_DISC_REGISTER:
+            {
+                handleNodeRegister(false, json_obj.get("appinfo").as_string());
+                break;
+            }
+            case BACK_DISC_UNREGISTER:
+            {
+                handleNodeRegister(true, json_obj.get("appinfo").as_string());
+                break;
+            }
             default:
                 break;
             }
@@ -465,8 +475,8 @@ void ServiceManager::asyncDiscovery()
         DiscoveryJob::instance()->discovererRun();
     });
     go ([this]() {
-        fastring peerinfo = genPeerInfo();
-        DiscoveryJob::instance()->announcerRun(peerinfo);
+        fastring baseinfo = genPeerInfo();
+        DiscoveryJob::instance()->announcerRun(baseinfo);
     });
 }
 
@@ -712,7 +722,16 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
             } else {
                 // the frontend is offline
                 _sessions.remove(i);
+
+                //remove the frontend app register info
+                fastring name = s->getName().toStdString();
+                DiscoveryJob::instance()->removeAppbyName(name);
             }
         }
     });
+}
+
+void ServiceManager::handleNodeRegister(bool unreg, fastring info)
+{
+    DiscoveryJob::instance()->updateAnnouncApp(unreg, info);
 }

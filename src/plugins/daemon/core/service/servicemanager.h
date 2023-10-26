@@ -43,6 +43,8 @@ public slots:
     void handleJobTransStatus(QString appname, int jobid, int status, QString savedir);
     void handleNodeChanged(bool lost, QString info);
 
+    void handleNodeRegister(bool unreg, fastring info);
+
 private:
     void localIPCStart();
 
