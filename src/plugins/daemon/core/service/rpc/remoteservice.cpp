@@ -109,7 +109,6 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
         _income_chan << in;
     }
 
-    DaemonConfig::instance()->setStatus(connected);
     LOG << "res= " << response->ShortDebugString().c_str();
 
     if (done) {

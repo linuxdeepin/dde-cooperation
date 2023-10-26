@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
 #endif
 
     QCoreApplication app(argc, argv);
+    app.setOrganizationName("deepin");
 
     if (deepin_cross::BaseUtils::isWayland()) {
         // do something

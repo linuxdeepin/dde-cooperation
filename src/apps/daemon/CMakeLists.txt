@@ -38,5 +38,8 @@ install(TARGETS ${PROJ_NAME} DESTINATION bin)
 
 # systemd service
 install(FILES service/${PROJ_NAME}.service
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/system)
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user)
 
+# xdg-autostart
+install(FILES service/${PROJ_NAME}.desktop
+DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/xdg/autostart)

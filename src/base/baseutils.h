@@ -4,6 +4,7 @@
 
 #ifndef BASEUTILS_H
 #define BASEUTILS_H
+#include <QString>
 
 namespace deepin_cross {
 class BaseUtils
@@ -18,6 +19,8 @@ public:
         kOther
     };
     static OS_TYPE osType();
+
+    static QString logDir();
 };
 }
 

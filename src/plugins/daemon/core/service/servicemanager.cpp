@@ -24,7 +24,6 @@ co::chan<OutData> _outgo_chan(10, 10);
 
 ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
-    flag::set_value("rpc_log", "false");
     _rpcServiceBinder = new RemoteServiceBinder(this);
 
     _transjob_sends.clear();

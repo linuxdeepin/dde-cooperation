@@ -9,11 +9,21 @@
 #include <QUrl>
 
 #include "service/servicemanager.h"
+#include "base/baseutils.h"
 
 using namespace daemon_core;
 
 void daemonCorePlugin::initialize()
 {
+    flag::set_value("rpc_log", "false"); //rpc日志关闭
+
+#ifdef QT_DEBUG
+    flag::set_value("cout", "true"); //终端日志输出
+#else
+    fastring logdir = deepin_cross::BaseUtils::logDir().toStdString();
+    qInfo() << "set logdir: " << logdir.c_str();
+    flag::set_value("log_dir", logdir); //日志保存目录
+#endif
 }
 
 bool daemonCorePlugin::start()
