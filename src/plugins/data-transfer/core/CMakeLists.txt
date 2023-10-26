@@ -88,8 +88,18 @@ endif()
 if (CMAKE_SYSTEM MATCHES "Windows")
     target_link_libraries(${PROJECT_NAME}
         Qt5::Sql
+        ${QUAZIP_LIB_TARGET_NAME}
     )
 endif()
+
+
+add_library(quazipd SHARED IMPORTED)
+set_target_properties(quazipd PROPERTIES
+
+   IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/quazipd.lib
+)
+
+
 #install library file
 install(TARGETS
     ${PROJECT_NAME}

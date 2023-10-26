@@ -24,3 +24,13 @@ set(BUILD_SHARED_LIBS ON CACHE BOOL "build shared lib")
 add_subdirectory(coost)
 
 add_subdirectory(zrpc)
+
+
+if (CMAKE_SYSTEM MATCHES "Windows")
+    # 从QtZlib获取到的zlib头文件
+    file(GLOB ZLIB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/zlib-header/*)
+    # 复制所有文件到目标目录
+    file(COPY ${ZLIB_HEADERS}
+      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/quazip/quazip/)
+    add_subdirectory(quazip)
+endif()

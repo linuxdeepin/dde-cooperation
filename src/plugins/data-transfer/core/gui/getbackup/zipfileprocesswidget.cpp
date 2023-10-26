@@ -45,7 +45,12 @@ void zipFileProcessWidget::changeFileLabel(const QString &path)
 
 void zipFileProcessWidget::changeTimeLabel(const int &time)
 {
-    timeLabel->setText(QString("预计迁移时间还剩 %1分钟").arg(QString::number(time)));
+    if (time > 60) {
+        int textTime = time / 60;
+        timeLabel->setText(QString("预计迁移时间还剩 %1分钟").arg(QString::number(textTime)));
+    }else{
+         timeLabel->setText(QString("预计迁移时间还剩 %1秒").arg(QString::number(time)));
+    }
 }
 
 void zipFileProcessWidget::changeProgressBarLabel(const int &processbar)
