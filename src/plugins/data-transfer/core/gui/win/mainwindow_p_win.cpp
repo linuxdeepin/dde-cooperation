@@ -223,7 +223,6 @@ void MainWindowPrivate::initTitleBar()
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);
 
     titleLayout->addWidget(mainLabel);
-    // titleLayout->addWidget(helpButton, Qt::AlignHCenter);
     titleLayout->addWidget(minButton, Qt::AlignHCenter);
     titleLayout->addWidget(closeButton, Qt::AlignHCenter);
     titleLayout->setContentsMargins(8, 0, 0, 0);

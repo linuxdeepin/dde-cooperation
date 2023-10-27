@@ -69,8 +69,6 @@ void ConfigSelectWidget::initUI()
                                    "text-align: center;"
                                    "}");
     QObject::connect(determineButton, &QToolButton::clicked, this, &ConfigSelectWidget::nextPage);
-    QObject::connect(determineButton, &QToolButton::clicked, this,
-                     [this]() { emit isOk(SelectItemName::CONFIG, true); });
 
     cancelButton = new QToolButton(this);
     cancelButton->setText("取消");
@@ -90,8 +88,6 @@ void ConfigSelectWidget::initUI()
                                 ";}");
 
     QObject::connect(cancelButton, &QToolButton::clicked, this, &ConfigSelectWidget::backPage);
-    QObject::connect(cancelButton, &QToolButton::clicked, this,
-                     [this]() { emit isOk(SelectItemName::CONFIG, false); });
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(cancelButton);
@@ -213,6 +209,37 @@ void ConfigSelectWidget::sendOptions()
 
     qInfo() << "select config :" << config;
     OptionsManager::instance()->addUserOption(Options::kConfig, config);
+
+    emit isOk(SelectItemName::CONFIG);
+}
+
+void ConfigSelectWidget::delOptions()
+{
+    // Clear All config Selections
+    QAbstractItemModel *model = browserView->model();
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex index = model->index(row, 0);
+        QVariant checkboxData = model->data(index, Qt::CheckStateRole);
+        Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
+        if (checkState == Qt::Checked) {
+            model->setData(index, Qt::Unchecked, Qt::CheckStateRole);
+        }
+    }
+
+    model = configView->model();
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex index = model->index(row, 0);
+        QVariant checkboxData = model->data(index, Qt::CheckStateRole);
+        Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
+        if (checkState == Qt::Checked) {
+            model->setData(index, Qt::Unchecked, Qt::CheckStateRole);
+        }
+    }
+    OptionsManager::instance()->addUserOption(Options::kBrowserBookmarks, QStringList());
+    OptionsManager::instance()->addUserOption(Options::kConfig, QStringList());
+
+    // Deselect
+    emit isOk(SelectItemName::CONFIG);
 }
 
 void ConfigSelectWidget::changeText()
@@ -241,27 +268,9 @@ void ConfigSelectWidget::nextPage()
 }
 void ConfigSelectWidget::backPage()
 {
-    // Clear All config Selections
-    QAbstractItemModel *model = browserView->model();
-    for (int row = 0; row < model->rowCount(); ++row) {
-        QModelIndex index = model->index(row, 0);
-        QVariant checkboxData = model->data(index, Qt::CheckStateRole);
-        Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
-        if (checkState == Qt::Checked) {
-            model->setData(index, Qt::Unchecked, Qt::CheckStateRole);
-        }
-    }
-    model = configView->model();
-    for (int row = 0; row < model->rowCount(); ++row) {
-        QModelIndex index = model->index(row, 0);
-        QVariant checkboxData = model->data(index, Qt::CheckStateRole);
-        Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
-        if (checkState == Qt::Checked) {
-            model->setData(index, Qt::Unchecked, Qt::CheckStateRole);
-        }
-    }
-    OptionsManager::instance()->addUserOption(Options::kBrowserBookmarks, QStringList());
-    OptionsManager::instance()->addUserOption(Options::kConfig, QStringList());
+    // delete Options
+    delOptions();
+
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::selectmainwidget);
