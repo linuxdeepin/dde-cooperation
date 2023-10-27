@@ -55,13 +55,13 @@ void TransferHelper::initOnlineState()
 #ifdef WIN32
         pingProcess.start("ping",
                           QStringList() << "-n"
-                                        << "1"
-                                        << "www.baidu.com");
+                          << "1"
+                          << "www.baidu.com");
 #else
         pingProcess.start("ping",
                           QStringList() << "-c"
-                                        << "1"
-                                        << "www.baidu.com");
+                          << "1"
+                          << "www.baidu.com");
 #endif
         pingProcess.waitForFinished(500);
         if (pingProcess.exitCode() == 0 && online != true) {
@@ -129,7 +129,7 @@ QMap<QString, QString> TransferHelper::getAppList()
 {
     QMap<QString, QString> appList;
     QMap<QString, QString> appNameList =
-            DrapWindowsData::instance()->RecommendedInstallationAppList();
+        DrapWindowsData::instance()->RecommendedInstallationAppList();
 
     for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++) {
         appList[iterator.key()] = QString(":/icon/AppIcons/%1.svg").arg(iterator.value());

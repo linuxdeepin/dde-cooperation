@@ -314,6 +314,7 @@ QString DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
         qWarning() << "Failed to save JSON file.";
         return QString();
     }
+
 }
 
 QString DrapWindowsData::getUserName()
