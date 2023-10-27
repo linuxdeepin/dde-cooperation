@@ -2,13 +2,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "singleton/singleapplication.h"
+#include "singleapplication.h"
 #include "base/baseutils.h"
 #include "config.h"
 
 #include <dde-cooperation-framework/dpf.h>
 
 #include <QDir>
+#include <QIcon>
 
 static constexpr char kPluginInterface[] { "org.deepin.plugin.datatransfer" };
 static constexpr char kPluginCore[] { "data-transfer-core" };
@@ -73,6 +74,18 @@ int main(int argc, char *argv[])
 #endif
 
     deepin_cross::SingleApplication app(argc, argv);
+#ifndef Win32
+    app.setOrganizationName("deepin");
+    app.loadTranslator();
+    app.setApplicationDisplayName(app.translate("Application", "数据迁移工具"));
+    app.setApplicationVersion("1.0.0.0");
+    QIcon icon(":/icons/icon.svg");
+    app.setProductIcon(icon);
+    app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" );
+    app.setApplicationDescription(app.translate("Application", "UOS迁移工具,一键将您的文件，个人数据和应用数据迁移到UOS，助您无缝更换系统。"));
+    app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
+
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {
         qInfo() << "single application is already running.";
