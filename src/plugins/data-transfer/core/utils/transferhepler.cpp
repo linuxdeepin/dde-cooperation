@@ -30,9 +30,13 @@
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper() : QObject()
+TransferHelper::TransferHelper()
+    : QObject()
 {
     initOnlineState();
+#ifndef WIN32
+    SettingHelper::instance();
+#endif
 }
 
 TransferHelper::~TransferHelper() { }
@@ -52,13 +56,13 @@ void TransferHelper::initOnlineState()
 #ifdef WIN32
         pingProcess.start("ping",
                           QStringList() << "-n"
-                                        << "1"
-                                        << "www.baidu.com");
+                          << "1"
+                          << "www.baidu.com");
 #else
         pingProcess.start("ping",
                           QStringList() << "-c"
-                                        << "1"
-                                        << "www.baidu.com");
+                          << "1"
+                          << "www.baidu.com");
 #endif
         pingProcess.waitForFinished(500);
         if (pingProcess.exitCode() == 0 && online != true) {
@@ -126,7 +130,7 @@ QMap<QString, QString> TransferHelper::getAppList()
 {
     QMap<QString, QString> appList;
     QMap<QString, QString> appNameList =
-            DrapWindowsData::instance()->RecommendedInstallationAppList();
+        DrapWindowsData::instance()->RecommendedInstallationAppList();
 
     for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++) {
         appList[iterator.key()] = QString(":/icon/AppIcons/%1.svg").arg(iterator.value());
@@ -227,8 +231,8 @@ bool TransferHelper::checkSize(const QString &filepath)
     auto size = jsonObj["user_data"].toInt();
     qInfo() << "jsonObj[ user_data ].toInt();" << size;
     int remainSize = getRemainSize();
-    if (size < remainSize) {
-        // emit outOfStorage(size);
+    if (size > remainSize) {
+        emit outOfStorage(size);
         return false;
     }
     return true;

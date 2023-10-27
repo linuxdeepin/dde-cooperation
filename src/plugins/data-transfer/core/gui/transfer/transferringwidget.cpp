@@ -72,10 +72,9 @@ void TransferringWidget::initUI()
     font.setPointSize(7);
     timeLabel->setFont(timefont);
 
-    QString file = "";
-    fileLabel = new QLabel(
-            QString("正在传输<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1s</font>").arg(file), this);
+    fileLabel = new QLabel(this);
     fileLabel->setAlignment(Qt::AlignCenter);
+    timeLabel->setText(QString("计算中"));
 
     QString display = "<a href=\"https://\" style=\"text-decoration:none;\">显示进程</a>";
     displayLabel = new QLabel(display, this);
@@ -196,7 +195,7 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
     }
 #else
     if (content.contains("transfer.json"))
-            TransferHelper::instance()->checkSize(content);
+        TransferHelper::instance()->checkSize(content);
 #endif
 
     QString info =
@@ -205,18 +204,22 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
     progressLabel->setProgress(progressbar);
     fileLabel->setText(info);
 
+    timeLabel->setText(QString("计算中"));
     if (estimatedtime == 0) {
         timeLabel->setText("迁移完成");
         fileLabel->setText("迁移完成");
-        processTextBrowser->append("迁移完成");
         titileLabel->setText("迁移完成!!!");
-    } else if (estimatedtime > 0) {
+    }
+    if (estimatedtime > 0) {
         if (estimatedtime > 60)
             timeLabel->setText(QString("预计迁移时间还剩 %1分钟").arg(estimatedtime / 60));
         else
             timeLabel->setText(QString("预计迁移时间还剩 %1秒").arg(estimatedtime));
-    } else {
-        timeLabel->setText(QString("计算中"));
+    }
+    if (estimatedtime == -2) {
+        timeLabel->setText(QString("安装中"));
+        fileLabel->setText("安装中");
+        titileLabel->setText("安装中!!!");
     }
 }
 
