@@ -20,6 +20,7 @@
 #include <gui/connect/choosewidget.h>
 #include <gui/mainwindow_p.h>
 #include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
 
 #pragma execution_character_set("utf-8")
 
@@ -205,7 +206,7 @@ void CreateBackupFileWidget::initUI()
     determineButton->setEnabled(false);
     QObject::connect(determineButton, &QToolButton::clicked, this, [this]() {
         nextPage();
-        ZipWork *worker = new ZipWork();
+        ZipWork *worker = new ZipWork(this);
         worker->start();
     });
 
@@ -245,7 +246,7 @@ void CreateBackupFileWidget::initUI()
                      });
 
     QObject::connect(UserSelectFileSize::instance(), &UserSelectFileSize::updateUserFileSelectSize,
-                     this, &CreateBackupFileWidget::updateBackupFileSize);
+                     this, &CreateBackupFileWidget::updateuserSelectFileSize);
 }
 
 void CreateBackupFileWidget::initDiskListView()
@@ -328,7 +329,36 @@ void CreateBackupFileWidget::backPage()
     }
 }
 
-void CreateBackupFileWidget::updateBackupFileSize(const QString &sizeStr)
+void CreateBackupFileWidget::updateuserSelectFileSize(const QString &sizeStr)
 {
-    backupFileSizeLabel->setText(QString("大小:  %1").arg(sizeStr));
+    userSelectFileSize = fromQstringToByte(sizeStr);
+}
+
+void CreateBackupFileWidget::updaeBackupFileSize()
+{
+    TransferHelper::instance()->getTransferFilePath();
+    QStringList userDataInfoJsonPath =
+            OptionsManager::instance()->getUserOption(Options::KUserDataInfoJsonPath);
+    QStringList wallpaperPath = OptionsManager::instance()->getUserOption(Options::KWallpaperPath);
+    QStringList bookmarkJsonPath = OptionsManager::instance()->getUserOption(Options::KBookmarksJsonPath);
+    quint64 userDataInfoJsonSize = 0;
+    quint64 wallpaperSize = 0;
+    quint64 bookmarkJsonSize = 0;
+    if (!userDataInfoJsonPath.isEmpty()) {
+        userDataInfoJsonSize =QFileInfo(userDataInfoJsonPath[0]).size();
+    }
+    if (!wallpaperPath.isEmpty()) {
+        wallpaperSize = QFileInfo(wallpaperPath[0]).size();
+    }
+    if(!bookmarkJsonPath.isEmpty())
+    {
+        bookmarkJsonSize =  QFileInfo(bookmarkJsonPath[0]).size();
+    }
+    qInfo() << "wallpaperPath:" << wallpaperPath;
+    qInfo() << "userDataInfoJsonPath:" << userDataInfoJsonPath;
+    qInfo() << "filesize:" << userSelectFileSize;
+    qInfo() << "userDataInfoJsonSize:" << userDataInfoJsonSize;
+    qInfo() << "wallpaperSize:" << wallpaperSize;
+    quint64 allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize+bookmarkJsonSize;
+    backupFileSizeLabel->setText(QString("大小:  %1").arg(fromByteToQstring(allSize)));
 }

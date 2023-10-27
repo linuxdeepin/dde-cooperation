@@ -30,8 +30,7 @@
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper()
-    : QObject()
+TransferHelper::TransferHelper() : QObject()
 {
     initOnlineState();
 #ifndef WIN32
@@ -39,7 +38,7 @@ TransferHelper::TransferHelper()
 #endif
 }
 
-TransferHelper::~TransferHelper() {}
+TransferHelper::~TransferHelper() { }
 
 TransferHelper *TransferHelper::instance()
 {
@@ -95,7 +94,7 @@ void TransferHelper::tryConnect(const QString &ip, const QString &password)
     transferhandle.tryConnect(ip, password);
 }
 
-void TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &save)
+QString TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &save)
 {
     QString savePath = save;
     QJsonDocument jsonDoc(jsonData);
@@ -111,8 +110,10 @@ void TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &sav
         file.write(jsonDoc.toJson());
         file.close();
         qDebug() << "JSON data exported to transfer.json";
+        return savePath;
     } else {
         qDebug() << "Failed to open file for writing.";
+        return QString();
     }
 }
 
@@ -164,33 +165,36 @@ QStringList TransferHelper::getTransferFilePath()
     for (auto file : filePathList) {
         transferFilePathList.append(file);
     }
-    //add app
+    // add app
     QJsonArray appArray;
     for (auto app : appList) {
         appArray.append(app);
     }
     QString tempSavePath = QCoreApplication::applicationDirPath();
 
-    //add bookmarks
+    // add bookmarks
     QString bookmarksName;
     if (!browserList.isEmpty()) {
         QSet<QString> browserName(browserList.begin(), browserList.end());
         DrapWindowsData::instance()->getBrowserBookmarkInfo(browserName);
-        DrapWindowsData::instance()->getBrowserBookmarkJSON(QString("."));
-        transferFilePathList.append(tempSavePath + QString("/bookmarks.json"));
-        bookmarksName = "bookmarks.json";
+        QString bookmarksPath = DrapWindowsData::instance()->getBrowserBookmarkJSON(tempSavePath);
+        transferFilePathList.append(bookmarksPath);
+        bookmarksName = QFileInfo(bookmarksPath).fileName();
+        OptionsManager::instance()->addUserOption(Options::KBookmarksJsonPath, { bookmarksPath });
     }
 
-    //add wallpaper
+    // add wallpaper
     QString wallpaperName;
     if (!configList.isEmpty()) {
         QString wallparerPath = DrapWindowsData::instance()->getDesktopWallpaperPath();
         QFileInfo fileInfo(wallparerPath);
         wallpaperName = fileInfo.fileName();
-        transferFilePathList.append(QString(fileInfo.path() + "/" + wallpaperName));
+        transferFilePathList.append(wallparerPath);
+        OptionsManager::instance()->addUserOption(Options::KWallpaperPath, { wallparerPath });
     }
 
-    //add file
+
+    // add file
     QJsonArray fileArray;
     for (QString file : filePathList) {
         qInfo() << QDir::homePath();
@@ -214,13 +218,12 @@ QStringList TransferHelper::getTransferFilePath()
     if (!wallpaperName.isEmpty())
         jsonObject["wallpapers"] = wallpaperName;
     if (!bookmarksName.isEmpty())
-        jsonObject["borwserbookmark"] = bookmarksName;
+        jsonObject["browserbookmark"] = bookmarksName;
 
-    //add transfer.json
-    QString qjsonPath("/transfer.json");
-    getJsonfile(jsonObject, QString(tempSavePath));
-    transferFilePathList.prepend(tempSavePath + qjsonPath);
-
+    // add transfer.json
+    QString jsonfilePath = getJsonfile(jsonObject, QString(tempSavePath));
+    transferFilePathList.prepend(jsonfilePath);
+    OptionsManager::instance()->addUserOption(Options::KUserDataInfoJsonPath, { jsonfilePath });
     return transferFilePathList;
 }
 #else

@@ -32,7 +32,7 @@ public:
     QSet<QString> getBrowserList();
     void getBrowserBookmarkHtml(QString &htmlPath = QString());
     void getBrowserBookmarkInfo(const QSet<QString> &Browsername);
-    void getBrowserBookmarkJSON(QString &jsonPath = QString());
+    QString getBrowserBookmarkJSON(QString &jsonPath = QString());
 
     QString getUserName();
     QString getIP();

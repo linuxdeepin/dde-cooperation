@@ -27,7 +27,7 @@ public:
 
     void tryConnect(const QString &ip, const QString &password);
 
-    void getJsonfile(const QJsonObject &jsonData, const QString &save);
+    QString getJsonfile(const QJsonObject &jsonData, const QString &save);
 
 #ifdef WIN32
     QMap<QString, QString> getAppList();
