@@ -49,6 +49,8 @@ public:
 private:
     void initUi();
 
+signals:
+    void updateBackupFileSize();
 public slots:
     void nextPage();
     void backPage();

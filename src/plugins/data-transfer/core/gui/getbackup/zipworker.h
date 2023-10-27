@@ -9,7 +9,7 @@ class ZipWork : public QThread
 {
     Q_OBJECT
 public:
-    ZipWork();
+    ZipWork(QObject *parent = nullptr);
     ~ZipWork() override;
 
     void run() override;
