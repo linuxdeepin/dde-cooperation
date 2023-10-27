@@ -25,22 +25,34 @@ SelectMainWidget::SelectMainWidget(QWidget *parent) : QFrame(parent)
 
 SelectMainWidget::~SelectMainWidget() { }
 
-void SelectMainWidget::changeSelectframeState(const SelectItemName &name, const bool &ok)
+void SelectMainWidget::changeSelectframeState(const SelectItemName &name)
 {
     if (name == SelectItemName::APP) {
-        appItem->isOk = ok;
-        appItem->update();
         QStringList list = OptionsManager::instance()->getUserOption(Options::kApp);
+        if (list.isEmpty()) {
+            appItem->isOk = false;
+        } else {
+            appItem->isOk = true;
+        }
+
         appItem->updateSelectSize(QString::number(list.size()));
     } else if (name == SelectItemName::FILES) {
-        fileItem->isOk = ok;
-        fileItem->update();
+        if(OptionsManager::instance()->getUserOption(Options::kFile).isEmpty())
+        {
+            fileItem->isOk = false;
+        }else{
+            fileItem->isOk = true;
+        }
     } else if (name == SelectItemName::CONFIG) {
-        configItem->isOk = ok;
-        configItem->update();
         QStringList ConfigList = OptionsManager::instance()->getUserOption(Options::kConfig);
         QStringList BrowserList =
                 OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
+        if(ConfigList.isEmpty()&&BrowserList.isEmpty())
+        {
+            configItem->isOk =false;
+        }else{
+            configItem->isOk =true;
+        }
         configItem->updateSelectSize(QString::number(ConfigList.size() + BrowserList.size()));
     }
 }
@@ -142,7 +154,6 @@ void SelectMainWidget::initUi()
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addSpacing(40);
-    //   mainLayout->setSpacing(0);
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(45);
     mainLayout->addLayout(modeLayout);
@@ -152,13 +163,13 @@ void SelectMainWidget::initUi()
 }
 void SelectMainWidget::nextPage()
 {
-    //If the selected file is being calculated ,return
+    // If the selected file is being calculated ,return
     if (!UserSelectFileSize::instance()->done()) {
         return;
     }
     QStringList sizelist;
     sizelist.push_back(QString::number(
-        static_cast<qint64>(UserSelectFileSize::instance()->getAllSelectSize())));
+            static_cast<qint64>(UserSelectFileSize::instance()->getAllSelectSize())));
     OptionsManager::instance()->addUserOption(Options::KSelectFileSize, sizelist);
     qInfo() << "user select file size:"
             << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];

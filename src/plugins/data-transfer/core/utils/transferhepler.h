@@ -5,7 +5,11 @@
 
 #include <QMap>
 #include <QObject>
+
+#ifndef WIN32
 #include <QDBusMessage>
+#endif
+
 #include <QUrl>
 
 class TransferHelper : public QObject
@@ -53,10 +57,10 @@ Q_SIGNALS:
     // network
     void onlineStateChanged(bool online);
 
-    //outOfStorage
+    // outOfStorage
     void outOfStorage(int size);
 
-    //display config failure
+    // display config failure
     void failure(QString name, QString type, QString reason);
 
 private:

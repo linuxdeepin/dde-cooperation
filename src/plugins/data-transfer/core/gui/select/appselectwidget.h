@@ -25,13 +25,13 @@ public slots:
     void backPage();
 
 signals:
-    void isOk(const SelectItemName &name, const bool &ok);
+    void isOk(const SelectItemName &name);
 
 private:
     void initUI();
     void initSelectFrame();
     void sendOptions();
-
+    void delOptions();
 private:
     QFrame *selectFrame{ nullptr };
     SelectListView *appView{ nullptr };

@@ -23,14 +23,14 @@ public slots:
     void nextPage();
     void backPage();
 signals:
-    void isOk(const SelectItemName &name, const bool &ok);
+    void isOk(const SelectItemName &name);
 
 private:
     void initUI();
     void initSelectBrowerBookMarkFrame();
     void initSelectConfigFrame();
     void sendOptions();
-
+    void delOptions();
 private:
     QFrame *selectBrowerBookMarkFrame{ nullptr };
     QFrame *selectConfigFrame{ nullptr };

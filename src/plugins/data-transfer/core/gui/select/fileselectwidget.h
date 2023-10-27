@@ -74,11 +74,12 @@ public slots:
     void updateFileViewSize(quint64 fileSize, const QString &path);
 
 signals:
-    void isOk(const SelectItemName &name, const bool &ok);
+    void isOk(const SelectItemName &name);
 
 private:
     void initUI();
     void sendOptions();
+    void delOptions();
     SelectListView *initFileView(const QString &path, const QModelIndex &siderbarIndex);
     void createFilesizeListen(QListView *listView);
 

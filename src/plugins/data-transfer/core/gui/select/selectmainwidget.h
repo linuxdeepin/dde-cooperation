@@ -43,7 +43,7 @@ class SelectMainWidget : public QFrame
 public:
     SelectMainWidget(QWidget *parent = nullptr);
     ~SelectMainWidget();
-    void changeSelectframeState(const SelectItemName &name,const bool &ok);
+    void changeSelectframeState(const SelectItemName &name);
 
     void changeText();
 private:

@@ -67,8 +67,6 @@ void AppSelectWidget::initUI()
                                    "text-align: center;"
                                    "}");
     QObject::connect(determineButton, &QToolButton::clicked, this, &AppSelectWidget::nextPage);
-    QObject::connect(determineButton, &QToolButton::clicked, this,
-                     [this]() { emit isOk(SelectItemName::APP, true); });
 
     cancelButton = new QToolButton(this);
     cancelButton->setText("取消");
@@ -88,8 +86,6 @@ void AppSelectWidget::initUI()
                                 ";}");
 
     QObject::connect(cancelButton, &QToolButton::clicked, this, &AppSelectWidget::backPage);
-    QObject::connect(cancelButton, &QToolButton::clicked, this,
-                     [this]() { emit isOk(SelectItemName::APP, false); });
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(cancelButton);
@@ -129,9 +125,8 @@ void AppSelectWidget::initSelectFrame()
     selectFrame->setLayout(selectframeLayout);
 
     appView = new SelectListView(this);
-    QStandardItemModel *model =qobject_cast<QStandardItemModel *>(appView->model());
+    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(appView->model());
     appView->setItemDelegate(new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
-
 
     QMap<QString, QString> appList = TransferHelper::instance()->getAppList();
     for (auto iterator = appList.begin(); iterator != appList.end(); iterator++) {
@@ -146,7 +141,8 @@ void AppSelectWidget::initSelectFrame()
     selectframeLayout->addWidget(titlebar);
     selectframeLayout->addWidget(appView);
 
-    QObject::connect(titlebar,&ItemTitlebar::selectAll,appView,&SelectListView::selectorDelAllItem);
+    QObject::connect(titlebar, &ItemTitlebar::selectAll, appView,
+                     &SelectListView::selectorDelAllItem);
 }
 
 void AppSelectWidget::changeText()
@@ -174,6 +170,26 @@ void AppSelectWidget::sendOptions()
 
     qInfo() << "select app :" << appName;
     OptionsManager::instance()->addUserOption(Options::kApp, appName);
+
+    emit isOk(SelectItemName::APP);
+}
+
+void AppSelectWidget::delOptions()
+{
+    // Clear All App Selections
+    QAbstractItemModel *model = appView->model();
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex index = model->index(row, 0);
+        QVariant checkboxData = model->data(index, Qt::CheckStateRole);
+        Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
+        if (checkState == Qt::Checked) {
+            model->setData(index, Qt::Unchecked, Qt::CheckStateRole);
+        }
+    }
+    OptionsManager::instance()->addUserOption(Options::kApp, QStringList());
+
+    // Deselect
+    emit isOk(SelectItemName::APP);
 }
 
 void AppSelectWidget::nextPage()
@@ -192,17 +208,9 @@ void AppSelectWidget::nextPage()
 }
 void AppSelectWidget::backPage()
 {
-    //Clear All App Selections
-    QAbstractItemModel *model = appView->model();
-    for (int row = 0; row < model->rowCount(); ++row) {
-        QModelIndex index = model->index(row, 0);
-        QVariant checkboxData = model->data(index, Qt::CheckStateRole);
-        Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
-        if (checkState == Qt::Checked) {
-            model->setData(index,Qt::Unchecked,Qt::CheckStateRole);
-        }
-    }
-    OptionsManager::instance()->addUserOption(Options::kApp, QStringList());
+    // delete Options
+    delOptions();
+
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::selectmainwidget);

@@ -107,8 +107,6 @@ void FileSelectWidget::initUI()
                                    "text-align: center;"
                                    "}");
     QObject::connect(determineButton, &QToolButton::clicked, this, &FileSelectWidget::nextPage);
-    QObject::connect(determineButton, &QToolButton::clicked, this,
-                     [this]() { emit isOk(SelectItemName::FILES, true); });
 
     QToolButton *cancelButton = new QToolButton(this);
     cancelButton->setText("取消");
@@ -127,8 +125,6 @@ void FileSelectWidget::initUI()
                                 "text-align: center;"
                                 ";}");
     QObject::connect(cancelButton, &QToolButton::clicked, this, &FileSelectWidget::backPage);
-    QObject::connect(cancelButton, &QToolButton::clicked, this,
-                     [this]() { emit isOk(SelectItemName::FILES, false); });
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(cancelButton);
@@ -251,6 +247,8 @@ void FileSelectWidget::nextPage()
     // send useroptions
     sendOptions();
 
+    emit isOk(SelectItemName::FILES);
+
     // nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
@@ -263,14 +261,8 @@ void FileSelectWidget::nextPage()
 
 void FileSelectWidget::backPage()
 {
-    //Clear All File Selections
-    QStringList filelist = UserSelectFileSize::instance()->getSelectFilesList();
-    QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
-    for (QString filePath : filelist)
-    {
-        QStandardItem *item = (*filemap)[filePath].fileItem;
-        item->setCheckState(Qt::Unchecked);
-    }
+    // delete Options
+    delOptions();
 
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
@@ -286,6 +278,19 @@ void FileSelectWidget::sendOptions()
     QStringList selectFileLsit = UserSelectFileSize::instance()->getSelectFilesList();
     OptionsManager::instance()->addUserOption(Options::kFile, selectFileLsit);
     qInfo() << "select file:" << selectFileLsit;
+}
+
+void FileSelectWidget::delOptions()
+{
+    // Clear All File Selections
+    QStringList filelist = UserSelectFileSize::instance()->getSelectFilesList();
+    QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
+    for (QString filePath : filelist) {
+        QStandardItem *item = (*filemap)[filePath].fileItem;
+        item->setCheckState(Qt::Unchecked);
+    }
+
+    emit isOk(SelectItemName::FILES);
 }
 
 SelectListView *FileSelectWidget::initFileView(const QString &path,
