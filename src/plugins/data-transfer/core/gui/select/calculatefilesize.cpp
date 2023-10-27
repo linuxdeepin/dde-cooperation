@@ -8,7 +8,7 @@
 #include <QTimer>
 #include <QThread>
 #include <QDebug>
-
+#include <QCoreApplication>
 QString fromByteToQstring(quint64 bytes)
 {
     float tempresult = static_cast<float>(bytes);
@@ -71,8 +71,17 @@ void CalculateFileSizeTask::run()
                               Q_ARG(quint64, fileSize), Q_ARG(QString, filePath));
 }
 
+void CalculateFileSizeTask::abortTask()
+{
+    abort = true;
+}
+
 qlonglong CalculateFileSizeTask::calculate(const QString &path)
 {
+    if (abort) {
+        return 0;
+    }
+
     QDir directory(path);
     directory.setFilter(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
     QFileInfoList fileList = directory.entryInfoList();
@@ -80,7 +89,6 @@ qlonglong CalculateFileSizeTask::calculate(const QString &path)
     for (const QFileInfo &fileInfo : fileList) {
         if (fileInfo.isDir()) {
             tempSize += calculate(fileInfo.absoluteFilePath());
-
         } else {
             tempSize += fileInfo.size();
         }
@@ -95,16 +103,16 @@ CalculateFileSizeThreadPool *CalculateFileSizeThreadPool::instance()
     return &ins;
 }
 
-CalculateFileSizeThreadPool::~CalculateFileSizeThreadPool()
-{
-    delete threadPool;
-    delete fileMap;
-}
+CalculateFileSizeThreadPool::~CalculateFileSizeThreadPool() { }
 
 CalculateFileSizeThreadPool::CalculateFileSizeThreadPool()
 {
     threadPool = new QThreadPool();
     fileMap = new QMap<QString, FileInfo>();
+
+    // connect main thread exit signal
+    QObject::connect(qApp, &QCoreApplication::aboutToQuit, this,
+                     &CalculateFileSizeThreadPool::exitPool, Qt::DirectConnection);
 }
 
 void CalculateFileSizeThreadPool::work(const QList<QString> &list)
@@ -116,6 +124,7 @@ void CalculateFileSizeThreadPool::work(const QList<QString> &list)
             continue;
         } else if (fileInfo.isDir()) {
             CalculateFileSizeTask *task = new CalculateFileSizeTask(this, path);
+            workList.push_back(task);
             threadPool->start(task);
         } else {
             qWarning() << "Path is neither a file nor a directory:" << path;
@@ -146,4 +155,16 @@ void CalculateFileSizeThreadPool::sendFileSizeSlots(quint64 fileSize, const QStr
     (*fileMap)[path].isCalculate = true;
 
     emit sendFileSizeSignal(fileSize, path);
+}
+
+void CalculateFileSizeThreadPool::exitPool()
+{
+    threadPool->clear();
+    for (CalculateFileSizeTask *task : workList) {
+        task->abortTask();
+    }
+    threadPool->waitForDone();
+    qInfo() << "calculate file size exit.";
+    delete threadPool;
+    delete fileMap;
 }

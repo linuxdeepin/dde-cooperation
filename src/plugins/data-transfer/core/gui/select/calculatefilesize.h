@@ -29,11 +29,13 @@ public:
     CalculateFileSizeTask(QObject *pool, const QString &path);
     ~CalculateFileSizeTask() override;
     void run() override;
+    void abortTask();
 private:
     qlonglong calculate(const QString &path);
     QString filePath;
     qlonglong fileSize{ 0 };
     QObject * calculatePool {nullptr};
+    bool abort {false};
 };
 
 class CalculateFileSizeThreadPool : public QObject
@@ -50,12 +52,14 @@ public:
     QMap<QString, FileInfo> *getFileMap();
 public slots:
     void sendFileSizeSlots(quint64 fileSize,const QString &path);
+    void exitPool();
 signals:
     void sendFileSizeSignal(quint64 fileSize,const QString &path);
 
 private:
     CalculateFileSizeThreadPool();
     QThreadPool *threadPool;
+    QList<CalculateFileSizeTask*> workList;
 public:
     QMap<QString, FileInfo> *fileMap;
 };

@@ -2,14 +2,15 @@
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
 #include "../type_defines.h"
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QStackedWidget>
 #include <QToolButton>
 #include <QDebug>
 #include <QLabel>
-#include <QApplication>
 #include <QDesktopServices>
+
 #pragma execution_character_set("utf-8")
 
 ZipFileProcessResultWidget::ZipFileProcessResultWidget(QWidget *parent) : QFrame(parent)
@@ -43,8 +44,8 @@ void ZipFileProcessResultWidget::initUI()
                               "letter-spacing: 3px;"
                               "text-align: center;"
                               "}");
-    exitButton->setEnabled(false);
-    QObject::connect(exitButton, &QToolButton::clicked, qApp, & QApplication::quit);
+
+    QObject::connect(exitButton, &QToolButton::clicked, this,&ZipFileProcessResultWidget::exit);
 
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
@@ -65,7 +66,7 @@ void ZipFileProcessResultWidget::initUI()
     QObject::connect(backButton, &QToolButton::clicked, this,
                      &ZipFileProcessResultWidget::backPage);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
     buttonLayout->addSpacing(15);
     buttonLayout->addWidget(exitButton);

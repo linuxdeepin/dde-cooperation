@@ -36,7 +36,9 @@
 #include <QPaintEvent>
 #include <QCoreApplication>
 #include <QApplication>
-
+#include <QDebug>
+#include <QThreadPool>
+#include <QTimer>
 using namespace data_transfer_core;
 
 void MainWindowPrivate::initWindow()
@@ -63,6 +65,8 @@ void MainWindowPrivate::initWindow()
     initTitleBar();
     layout->setSpacing(0);
     layout->addLayout(windowsCentralWidget);
+
+
 }
 
 void MainWindowPrivate::initWidgets()
@@ -86,13 +90,13 @@ void MainWindowPrivate::initWidgets()
     CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
     SelectMainWidget *selectmainwidget = new SelectMainWidget(q);
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
-    stackedWidget->insertWidget(PageName::licensewidget,licensewidget);
+    stackedWidget->insertWidget(PageName::licensewidget, licensewidget);
     stackedWidget->insertWidget(PageName::choosewidget, choosewidget);
     stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
     stackedWidget->insertWidget(PageName::readywidget, readywidget);
     stackedWidget->insertWidget(PageName::selectmainwidget, selectmainwidget);
     stackedWidget->insertWidget(PageName::transferringwidget, transferringwidget);
-    stackedWidget->insertWidget(PageName::successtranswidget,successwidget);
+    stackedWidget->insertWidget(PageName::successtranswidget, successwidget);
     stackedWidget->insertWidget(PageName::filewselectidget, filewselectidget);
     stackedWidget->insertWidget(PageName::configselectwidget, configselectwidget);
     stackedWidget->insertWidget(PageName::appselectwidget, appselectwidget);
@@ -121,9 +125,11 @@ void MainWindowPrivate::initWidgets()
     QObject::connect(configselectwidget, &ConfigSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
 
-
+    // add backup file exit button
+    QObject::connect(zipfileprocessresultwidget, &ZipFileProcessResultWidget::exit, q, [this]() {
+        qApp->quit();
+    });
 }
-
 void MainWindowPrivate::paintEvent(QPaintEvent *event)
 {
     QPainter painter(q);
@@ -210,15 +216,14 @@ void MainWindowPrivate::initTitleBar()
     mainLabel->setPixmap(QPixmap(":/icon/icon.svg"));
 
     QObject::connect(closeButton, &QToolButton::clicked, q, [this]() {
-        // this->q->MainWindow::close();
-        QApplication::quit();
+        qApp->quit();
     });
     QObject::connect(minButton, &QToolButton::clicked, q, &MainWindow::showMinimized);
 
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);
 
     titleLayout->addWidget(mainLabel);
-    titleLayout->addWidget(helpButton, Qt::AlignHCenter);
+    // titleLayout->addWidget(helpButton, Qt::AlignHCenter);
     titleLayout->addWidget(minButton, Qt::AlignHCenter);
     titleLayout->addWidget(closeButton, Qt::AlignHCenter);
     titleLayout->setContentsMargins(8, 0, 0, 0);
