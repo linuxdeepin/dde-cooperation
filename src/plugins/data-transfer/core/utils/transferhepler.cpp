@@ -34,6 +34,9 @@ TransferHelper::TransferHelper()
     : QObject()
 {
     initOnlineState();
+#ifndef WIN32
+    SettingHelper::instance();
+#endif
 }
 
 TransferHelper::~TransferHelper() {}
@@ -187,12 +190,10 @@ QStringList TransferHelper::getTransferFilePath()
         transferFilePathList.append(QString(fileInfo.path() + "/" + wallpaperName));
     }
 
-
-
     //add file
     QJsonArray fileArray;
     for (QString file : filePathList) {
-        qInfo()<<QDir::homePath();
+        qInfo() << QDir::homePath();
         if (file.contains(QDir::homePath())) {
             file.replace(QDir::homePath(), "");
         } else {
@@ -232,8 +233,8 @@ bool TransferHelper::checkSize(const QString &filepath)
     auto size = jsonObj["user_data"].toInt();
     qInfo() << "jsonObj[ user_data ].toInt();" << size;
     int remainSize = getRemainSize();
-    if (size < remainSize) {
-        //emit outOfStorage(size);
+    if (size > remainSize) {
+        emit outOfStorage(size);
         return false;
     }
     return true;
