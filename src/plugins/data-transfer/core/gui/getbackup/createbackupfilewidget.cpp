@@ -16,6 +16,7 @@
 #include <QStandardItemModel>
 #include <QStorageInfo>
 
+#include <QStandardPaths>
 #include <gui/connect/choosewidget.h>
 #include <gui/mainwindow_p.h>
 #include <utils/optionsmanager.h>
@@ -38,7 +39,14 @@ void CreateBackupFileWidget::sendOptions()
         QVariant checkboxData = model->data(index, Qt::CheckStateRole);
         Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
         if (checkState == Qt::Checked) {
-            savePath << model->data(index, Qt::WhatsThisRole).toString();
+            QString selectDecive = model->data(index, Qt::WhatsThisRole).toString();
+            QString documentsPath =
+                    QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+            if (selectDecive == QDir(documentsPath).rootPath()) {
+                savePath << documentsPath;
+            } else {
+                savePath << selectDecive;
+            }
             break;
         }
     }
@@ -74,7 +82,7 @@ void CreateBackupFileWidget::initUI()
                                  "font-style: normal;"
                                  "letter-spacing: 0px;"
                                  "text-align: left;");
-    QHBoxLayout *fileNameLayout = new QHBoxLayout(this);
+    QHBoxLayout *fileNameLayout = new QHBoxLayout();
     fileNameLayout->addSpacing(140);
     fileNameLayout->addWidget(fileNameLabel);
     fileNameLayout->setAlignment(Qt::AlignBottom);
@@ -185,7 +193,7 @@ void CreateBackupFileWidget::initUI()
 
     initDiskListView();
 
-    QHBoxLayout *diskListViewLayout = new QHBoxLayout(this);
+    QHBoxLayout *diskListViewLayout = new QHBoxLayout();
     diskListViewLayout->setAlignment(Qt::AlignTop);
     diskListViewLayout->addSpacing(140);
     diskListViewLayout->addWidget(diskListView);
@@ -207,7 +215,7 @@ void CreateBackupFileWidget::initUI()
     cancelButton->setStyleSheet("background-color: lightgray;");
     QObject::connect(cancelButton, &QToolButton::clicked, this, &CreateBackupFileWidget::backPage);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(cancelButton);
     buttonLayout->addSpacing(15);
     buttonLayout->addWidget(determineButton);
@@ -215,7 +223,7 @@ void CreateBackupFileWidget::initUI()
 
     IndexLabel *indelabel = new IndexLabel(2, this);
     indelabel->setAlignment(Qt::AlignCenter);
-    QHBoxLayout *indexLayout = new QHBoxLayout(this);
+    QHBoxLayout *indexLayout = new QHBoxLayout();
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addSpacing(30);
@@ -236,7 +244,8 @@ void CreateBackupFileWidget::initUI()
                          }
                      });
 
-    QObject::connect(UserSelectFileSize::instance(),&UserSelectFileSize::updateUserFileSelectSize,this,&CreateBackupFileWidget::updateBackupFileSize);
+    QObject::connect(UserSelectFileSize::instance(), &UserSelectFileSize::updateUserFileSelectSize,
+                     this, &CreateBackupFileWidget::updateBackupFileSize);
 }
 
 void CreateBackupFileWidget::initDiskListView()
@@ -251,27 +260,31 @@ void CreateBackupFileWidget::initDiskListView()
                                 "padding-left: 10px; padding-right: 10px; padding-top: 10px; }");
 
     diskListView->setItemDelegate(saveDelegate);
-    diskListView->setFixedSize(460, 179); // 设置列表视图的位置和大小
+    diskListView->setFixedSize(460, 179);
 
     diskListView->setModel(model);
     diskListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     diskListView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     diskListView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
+    QList<QStorageInfo> devices = QStorageInfo::mountedVolumes();
     // add file data
-    for (const QStorageInfo &drive : drives) {
-        QString rootPath = drive.rootPath();
-        QString displayName =
-                (drive.name().isEmpty() ? "本地磁盘" : drive.name()) + "(" + rootPath.at(0) + ":)";
+    for (const QStorageInfo &device : devices) {
+        // Exclude read-only devices
+        if (device.isReadOnly())
+            continue;
+        QString rootPath = device.rootPath();
+        QString displayName = (device.name().isEmpty() ? "本地磁盘" : device.name()) + "("
+                + rootPath.at(0) + ":)";
+
         QStandardItem *item = new QStandardItem();
         item->setData(displayName, Qt::DisplayRole);
         item->setData(rootPath, Qt::WhatsThisRole);
         item->setData(QString("%1/%2可用")
-                              .arg(fromByteToQstring(drive.bytesAvailable()))
-                              .arg(fromByteToQstring(drive.bytesTotal())),
+                              .arg(fromByteToQstring(device.bytesAvailable()))
+                              .arg(fromByteToQstring(device.bytesTotal())),
                       Qt::ToolTipRole);
-        if (drive.name().isEmpty()) {
+        if (device.name().isEmpty()) {
             item->setIcon(QIcon(":/icon/drive-harddisk-32px.svg"));
         } else {
             item->setIcon(QIcon(":/icon/drive-harddisk-usb-32px.svg"));
@@ -290,7 +303,6 @@ void CreateBackupFileWidget::initDiskListView()
         }
     });
 }
-
 
 void CreateBackupFileWidget::nextPage()
 {

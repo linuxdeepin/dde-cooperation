@@ -58,7 +58,7 @@ void SuccessWidget::initUI()
                                       "background-color:rgba(0, 0, 0,0.08);}");
     processTextBrowser->append("迁移完成！！！");
 
-    QHBoxLayout *textBrowerlayout = new QHBoxLayout(this);
+    QHBoxLayout *textBrowerlayout = new QHBoxLayout();
     textBrowerlayout->setAlignment(Qt::AlignCenter);
     textBrowerlayout->addWidget(processTextBrowser);
 
