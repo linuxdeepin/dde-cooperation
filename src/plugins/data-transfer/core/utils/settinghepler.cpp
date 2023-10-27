@@ -115,7 +115,13 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
     if (!dir.exists())
         dir.mkpath(".");
 
-    QString targetfile = targetDir + QFileInfo(filepath).fileName();
+    QFileInfo info(filepath);
+    if (info.suffix() != "json") {
+        emit TransferHelper::instance()->failure("浏览器书签", "书签", "格式错误");
+        return false;
+    }
+
+    QString targetfile = targetDir + info.fileName();
     qInfo() << "Set browser bookmarks" << filepath << targetfile;
 
     bool success = moveFile(filepath, targetfile);

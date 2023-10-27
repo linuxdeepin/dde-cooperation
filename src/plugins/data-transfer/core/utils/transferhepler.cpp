@@ -193,7 +193,6 @@ QStringList TransferHelper::getTransferFilePath()
         OptionsManager::instance()->addUserOption(Options::KWallpaperPath, { wallparerPath });
     }
 
-
     // add file
     QJsonArray fileArray;
     for (QString file : filePathList) {

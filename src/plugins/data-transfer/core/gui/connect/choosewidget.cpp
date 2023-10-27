@@ -115,6 +115,7 @@ void ChooseWidget::initUI()
                     tipiconlabel->setVisible(true);
                     tiptextlabel->setVisible(true);
                     winItem->setEnable(false);
+                    winItem->checked = false;
                 }
             });
 
@@ -213,6 +214,10 @@ void ModeItem::setEnable(bool able)
         palette.setColor(QPalette::WindowText, Qt::gray);
         setPalette(palette);
     }
+    else{
+        palette.setColor(QPalette::WindowText, QColor("#414D68"));
+       setPalette(palette);
+    }
 }
 
 void ModeItem::mousePressEvent(QMouseEvent *event)
@@ -229,22 +234,26 @@ void ModeItem::paintEvent(QPaintEvent *event)
 {
     QPainter paint(this);
     paint.setRenderHint(QPainter::Antialiasing);
-    paint.setPen(QPen(QColor(65, 77, 104, 255), 1));
-    paint.drawEllipse(12, 12, 16, 16);
+
     if (checked) {
+        paint.setPen(Qt::NoPen);
+
         paint.setBrush(QColor(0, 129, 255, 255));
         paint.drawEllipse(12, 12, 16, 16);
 
         paint.setBrush(QColor(255, 255, 255, 255));
         paint.drawEllipse(16, 16, 8, 8);
+    } else {
+        paint.setPen(QPen(QColor(65, 77, 104, 255), 1));
+        paint.drawEllipse(12, 12, 16, 16);
     }
-
 
     QFont font("SourceHanSansSC-Medium");
     font.setPixelSize(14);
     font.setWeight(QFont::Medium);
     font.setStyleName("Normal");
     paint.setFont(font);
+
     paint.setPen(QColor(65, 77, 104,255));
     paint.setRenderHint(QPainter::TextAntialiasing);
     paint.setRenderHint(QPainter::Antialiasing);

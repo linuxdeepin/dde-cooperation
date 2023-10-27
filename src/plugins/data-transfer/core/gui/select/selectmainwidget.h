@@ -6,6 +6,7 @@
 class QLabel;
 class SidebarWidget;
 class QToolButton;
+class IndexLabel;
 enum SelectItemName { FILES, APP, CONFIG };
 class SelectItem : public QFrame
 {
@@ -27,6 +28,7 @@ private:
 public:
     SelectItemName name;
     bool isOk{ false };
+
 private:
     QFrame *editFrame{ nullptr };
     QLabel *sizeLabel{ nullptr };
@@ -46,6 +48,7 @@ public:
     void changeSelectframeState(const SelectItemName &name);
 
     void changeText();
+
 private:
     void initUi();
 
@@ -57,11 +60,13 @@ public slots:
     void selectPage();
 
 private:
-    SelectItem *fileItem;
-    SelectItem *appItem;
-    SelectItem *configItem;
-    QLabel *titileLabel;
-    QToolButton *nextButton;
+    SelectItem *fileItem{ nullptr };
+    SelectItem *appItem{ nullptr };
+    SelectItem *configItem{ nullptr };
+    QLabel *titileLabel{ nullptr };
+    QToolButton *nextButton{ nullptr };
+    IndexLabel *LocalIndelabel{ nullptr };
+    IndexLabel *InternetIndelabel{ nullptr };
 };
 
 #endif // SELECTMAINWIDGET_H
