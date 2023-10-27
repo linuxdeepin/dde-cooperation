@@ -17,6 +17,7 @@
 SettingHelper::SettingHelper()
     : QObject()
 {
+    initAppList();
 }
 
 SettingHelper::~SettingHelper() {}
@@ -110,12 +111,12 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
         return true;
     qInfo() << "Set browser bookmarks" << filepath;
     QString targetDir = QDir::homePath() + "/.config/browser/Default/book/";
-    QString targetFile = targetDir + filepath.section('/', -1);
     QDir dir(targetDir);
     if (!dir.exists())
         dir.mkpath(".");
-    bool success = QFile::rename(filepath, targetFile);
-    qInfo() << "Set browser bookmarks" << targetFile << success;
+
+    bool success = moveFile(filepath, targetDir);
+    qInfo() << "Set browser bookmarks" << targetDir << success;
     if (!success) {
         emit TransferHelper::instance()->failure("浏览器书签", "书签", "设置失败");
         return false;
@@ -127,7 +128,14 @@ bool SettingHelper::installApps(const QString &app)
 {
     if (app.isEmpty())
         return true;
-    qInfo() << "Installing " << app;
+
+    QString &package = applist[app];
+    if (package.isEmpty()) {
+        emit TransferHelper::instance()->failure(app, "应用", "暂不支持");
+        return false;
+    }
+
+    qInfo() << "Installing " << app << package;
 
     QString service = "com.deepin.lastore";
     QString path = "/com/deepin/lastore";
@@ -137,11 +145,11 @@ bool SettingHelper::installApps(const QString &app)
 
     QString func = "InstallPackage";
 
-    QDBusMessage reply = interface.call(func, QString(), app);
+    QDBusMessage reply = interface.call(func, QString(), package);
 
     if (reply.type() != QDBusMessage::ReplyMessage) {
         qWarning() << "Installing " << app << "false" << reply.errorMessage();
-        emit TransferHelper::instance()->failure("应用安装", "应用", "暂不支持");
+        emit TransferHelper::instance()->failure(app, "应用", "暂不支持");
         return false;
     }
 
@@ -153,6 +161,8 @@ bool SettingHelper::installApps(const QString &app)
     if (!success)
         qWarning() << "Failed to connect to signal";
 
+    emit TransferHelper::instance()->transferContent("正在安装" + app, 100, -2);
+
     addTaskcounter(1);
     return true;
 }
@@ -162,7 +172,6 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
     if (message.arguments().count() != 3)
         return;
     QVariantMap changedProps = qdbus_cast<QVariantMap>(message.arguments().at(1).value<QDBusArgument>());
-    qInfo() << changedProps;
     foreach (const QString &key, changedProps.keys()) {
         QVariant value = changedProps.value(key);
         QDBusInterface interface("com.deepin.lastore",
@@ -173,11 +182,16 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
         QString package;
         if (!packages.isEmpty())
             package = packages.first();
-        QString content = package + "  Key:" + key + "   Value:" + value.toString();
+        QString content = applist.key(package) + "  Key:" + key + "   Value:" + value.toString();
         qInfo() << content;
-        emit TransferHelper::instance()->transferContent("正在安装" + content, 99, 1);
+        emit TransferHelper::instance()->transferContent("正在安装" + content, 100, -2);
         if (key == "Status" && value == "succeed")
             addTaskcounter(-1);
+        if (key == "Status" && value == "failed") {
+            addTaskcounter(-1);
+            isall = false;
+            emit TransferHelper::instance()->failure(package, "应用", "暂不支持");
+        }
     }
 }
 
@@ -185,6 +199,7 @@ void SettingHelper::addTaskcounter(int value)
 {
     taskcounter += value;
     if (taskcounter == 0) {
+        emit TransferHelper::instance()->transferContent("迁移完成", 100, -1);
         emit TransferHelper::instance()->transferSucceed(isall);
     }
 }
@@ -204,4 +219,34 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
     }
     qInfo() << jsonObj["user_file"].toString();
     return true;
+}
+
+bool SettingHelper::moveFile(const QString &src, QString &dst)
+{
+    QFileInfo srcFileInfo(src);
+    QString dstFilePath = dst + "/" + srcFileInfo.fileName();
+    if (QFile::exists(dstFilePath)) {
+        int i = 1;
+        QString baseName = srcFileInfo.baseName();
+        QString suffix = srcFileInfo.completeSuffix();
+        while (QFile::exists(dstFilePath)) {
+            dstFilePath = dst + "/" + baseName + "(" + QString::number(i) + ")" + "." + suffix;
+            i++;
+        }
+    }
+    if (QFile::rename(src, dstFilePath)) {
+        return true;
+    }
+    return false;
+}
+
+void SettingHelper::initAppList()
+{
+    QJsonObject jsonObj = ParseJson(":/fileResource/apps.json");
+    if (jsonObj.isEmpty())
+        return;
+    for (const QString &app : jsonObj.keys()) {
+        applist[app] = jsonObj.value(app).toObject().value("packageName").toString();
+    }
+    qInfo() << "SettingHelper::initAppList() finished";
 }
