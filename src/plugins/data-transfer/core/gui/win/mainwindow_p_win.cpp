@@ -65,8 +65,6 @@ void MainWindowPrivate::initWindow()
     initTitleBar();
     layout->setSpacing(0);
     layout->addLayout(windowsCentralWidget);
-
-
 }
 
 void MainWindowPrivate::initWidgets()
@@ -88,6 +86,7 @@ void MainWindowPrivate::initWidgets()
     zipFileProcessWidget *zipfileprocesswidget = new zipFileProcessWidget(q);
     ZipFileProcessResultWidget *zipfileprocessresultwidget = new ZipFileProcessResultWidget(q);
     CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
+
     SelectMainWidget *selectmainwidget = new SelectMainWidget(q);
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
     stackedWidget->insertWidget(PageName::licensewidget, licensewidget);
@@ -102,11 +101,11 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::appselectwidget, appselectwidget);
     stackedWidget->insertWidget(PageName::errorwidget, errorwidget);
     stackedWidget->insertWidget(PageName::createbackupfilewidget, createbackupfilewidget);
-    stackedWidget->insertWidget(PageName::networkdisconnectionwidget, networkdisconnectionwidget);
+    stackedWidget->insertWidget(PageName::networkdisconnectwidget, networkdisconnectionwidget);
     stackedWidget->insertWidget(PageName::zipfileprocesswidget, zipfileprocesswidget);
     stackedWidget->insertWidget(PageName::zipfileprocessresultwidget, zipfileprocessresultwidget);
 
-    stackedWidget->setCurrentIndex(PageName::choosewidget);
+    stackedWidget->setCurrentIndex(PageName::startwidget);
 
     windowsCentralWidgetContent->setContentsMargins(8, 8, 8, 8);
     windowsCentralWidgetContent->addWidget(stackedWidget);
@@ -125,10 +124,26 @@ void MainWindowPrivate::initWidgets()
     QObject::connect(configselectwidget, &ConfigSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
 
+    QObject::connect(selectmainwidget,&SelectMainWidget::updateBackupFileSize,createbackupfilewidget,&CreateBackupFileWidget::updaeBackupFileSize);
     // add backup file exit button
     QObject::connect(zipfileprocessresultwidget, &ZipFileProcessResultWidget::exit, q, [this]() {
-        qApp->quit();
+        QCoreApplication::quit();
+//        qApp->quit();
     });
+
+    QObject:connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
+            [stackedWidget, errorwidget](bool online) {
+                if (online)
+                    return;
+                int index = stackedWidget->currentIndex();
+                //only these need jump to networkdisconnectwidget
+                if (index >= PageName::promptwidget && index <= PageName::appselectwidget )
+                    stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
+                if (index == PageName::transferringwidget) {
+                    stackedWidget->setCurrentIndex(PageName::errorwidget);
+                    errorwidget->setErrorType(ErrorType::networkError);
+                }
+            });
 }
 void MainWindowPrivate::paintEvent(QPaintEvent *event)
 {
@@ -216,7 +231,8 @@ void MainWindowPrivate::initTitleBar()
     mainLabel->setPixmap(QPixmap(":/icon/icon.svg"));
 
     QObject::connect(closeButton, &QToolButton::clicked, q, [this]() {
-        qApp->quit();
+        //qApp->quit();
+                QCoreApplication::quit();
     });
     QObject::connect(minButton, &QToolButton::clicked, q, &MainWindow::showMinimized);
 

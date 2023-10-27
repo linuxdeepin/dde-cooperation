@@ -5,6 +5,7 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <QDebug>
+#include "../type_defines.h"
 #include <gui/connect/choosewidget.h>
 
 #pragma execution_character_set("utf-8")
@@ -76,7 +77,7 @@ void NetworkDisconnectionWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+        stackedWidget->setCurrentIndex(PageName::choosewidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
@@ -87,7 +88,7 @@ void NetworkDisconnectionWidget::retryPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+        stackedWidget->setCurrentIndex(PageName::choosewidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";

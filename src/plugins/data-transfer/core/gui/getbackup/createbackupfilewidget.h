@@ -21,8 +21,11 @@ private:
 public slots:
     void nextPage();
     void backPage();
-    void updateBackupFileSize(const QString &sizeStr);
+    void updateuserSelectFileSize(const QString &sizeStr);
+    void updaeBackupFileSize();
 private:
+    quint64 userSelectFileSize{0};
+
     QString backupFileName{ "" };
 
     QLabel *backupFileSizeLabel{nullptr};

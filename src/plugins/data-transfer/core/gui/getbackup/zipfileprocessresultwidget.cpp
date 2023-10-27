@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QDesktopServices>
+#include <QApplication>
 
 #pragma execution_character_set("utf-8")
 
@@ -45,8 +46,8 @@ void ZipFileProcessResultWidget::initUI()
                               "text-align: center;"
                               "}");
 
-    QObject::connect(exitButton, &QToolButton::clicked, this,&ZipFileProcessResultWidget::exit);
-
+    // QObject::connect(exitButton, &QToolButton::clicked, this,&ZipFileProcessResultWidget::exit);
+    QObject::connect(exitButton, &QToolButton::clicked, this, []() { QCoreApplication::quit(); });
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
     backButton->setFixedSize(120, 35);
@@ -73,7 +74,6 @@ void ZipFileProcessResultWidget::initUI()
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
     mainLayout->addLayout(buttonLayout);
-
 
     QObject::connect(TransferHelper::instance(), &TransferHelper::transferContent, this,
                      &ZipFileProcessResultWidget::upWidgetToFailed);
@@ -106,10 +106,10 @@ void ZipFileProcessResultWidget::successed()
     this->layout()->addWidget(displayLabel);
 }
 
-void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int progressbar, int estimatedtime)
+void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int progressbar,
+                                                  int estimatedtime)
 {
-    if(progressbar!=-1)
-    {
+    if (progressbar != -1) {
         return;
     }
     displayLabel->setVisible(false);
@@ -117,25 +117,25 @@ void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int pr
     tipLabel1->setText("备份失败");
     tipLabel2->setText(content);
     exitButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                "border: 1px solid rgba(0,0,0, 0.03);"
-                                "opacity: 1;"
-                                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                                "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                                "font-family: \"SourceHanSansSC-Medium\";"
-                                "font-size: 14px;"
-                                "font-weight: 500;"
-                                "color: rgba(65,77,104,1);"
-                                "font-style: normal;"
-                                "letter-spacing: 3px;"
-                                "text-align: center;"
-                                "}");
+                              "border: 1px solid rgba(0,0,0, 0.03);"
+                              "opacity: 1;"
+                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                              "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                              "font-family: \"SourceHanSansSC-Medium\";"
+                              "font-size: 14px;"
+                              "font-weight: 500;"
+                              "color: rgba(65,77,104,1);"
+                              "font-style: normal;"
+                              "letter-spacing: 3px;"
+                              "text-align: center;"
+                              "}");
 }
 
 void ZipFileProcessResultWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::choosewidget);
+        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
@@ -147,4 +147,3 @@ void ZipFileProcessResultWidget::informationPage()
     QString folderPath = OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath)[0];
     QDesktopServices::openUrl(QUrl::fromLocalFile(folderPath));
 }
-
