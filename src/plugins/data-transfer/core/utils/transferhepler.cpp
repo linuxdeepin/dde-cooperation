@@ -34,7 +34,6 @@ TransferHelper::TransferHelper()
     : QObject()
 {
     initOnlineState();
-    SettingHelper::instance();
 }
 
 TransferHelper::~TransferHelper() {}

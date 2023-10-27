@@ -37,8 +37,6 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/select/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/getbackup/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/getbackup/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     )
    find_package(Qt5 COMPONENTS Sql REQUIRED)
 elseif (CMAKE_SYSTEM MATCHES "Linux")

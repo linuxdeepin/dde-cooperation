@@ -133,6 +133,7 @@ void MainWindowPrivate::initWidgets()
                 transferringwidget->themeChanged(theme);
                 successtranswidget->themeChanged(theme);
             });
+    emit DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::instance()->themeType());
 
     q->centralWidget()->layout()->addWidget(stackedWidget);
 }
