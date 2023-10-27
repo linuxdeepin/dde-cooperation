@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 #endif
 
     deepin_cross::SingleApplication app(argc, argv);
-#ifndef Win32
+#ifndef WIN32
     app.setOrganizationName("deepin");
     app.loadTranslator();
     app.setApplicationDisplayName(app.translate("Application", "数据迁移工具"));
