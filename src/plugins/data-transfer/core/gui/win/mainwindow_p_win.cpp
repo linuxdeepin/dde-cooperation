@@ -1,4 +1,4 @@
-﻿#include "../mainwindow.h"
+#include "../mainwindow.h"
 #include "../mainwindow_p.h"
 #include "../connect/readywidget.h"
 #include "../connect/choosewidget.h"
