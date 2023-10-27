@@ -15,12 +15,12 @@
 #include <JlCompress.h>
 
 #pragma execution_character_set("utf-8")
-ZipWork::ZipWork()
+ZipWork::ZipWork(QObject *parent) : QThread(parent)
 {
+    qInfo()<<"zipwork start.";
     // connect backup file process
     QObject::connect(this, &ZipWork::backupFileProcessSingal, TransferHelper::instance(),
                      &TransferHelper::transferContent);
-
     // connect the main thread exit signal
     QObject::connect(qApp, &QCoreApplication::aboutToQuit, this,
                      &ZipWork::abortingBackupFileProcess);
@@ -31,11 +31,13 @@ ZipWork::~ZipWork() { }
 void ZipWork::run()
 {
     getUserDataPackagingFile();
+    qInfo() << "backup11 file exit.";
 }
 
 void ZipWork::getUserDataPackagingFile()
 {
     QStringList zipFilePathList = TransferHelper::instance()->getTransferFilePath();
+
     QStringList zipFileSavePath =
             OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath);
     QStringList zipFileNameList =
@@ -57,6 +59,8 @@ void ZipWork::getUserDataPackagingFile()
 
 int ZipWork::getPathFileNum(const QString &filePath)
 {
+    if(QFileInfo(filePath).isFile())
+        return 1;
     int fileCount = 0;
     QDir dir(filePath);
     QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs);
@@ -121,7 +125,6 @@ bool ZipWork::addFolderToZip(const QString &sourceFolder, const QString &relativ
     QFileInfoList entries = directory.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
 
     for (QFileInfo entry : entries) {
-
         if (entry.isDir()) {
             if (!addFolderToZip(entry.absoluteFilePath(), relativeTo, zip, timer)) {
                 return false;
@@ -216,7 +219,7 @@ void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &time
 void ZipWork::abortingBackupFileProcess()
 {
     abort = true;
-    quit();
-    wait();
-    qInfo()<<"backup file exit.";
+    //  quit();
+   // wait();
+    qInfo() << "backup file exit.";
 }

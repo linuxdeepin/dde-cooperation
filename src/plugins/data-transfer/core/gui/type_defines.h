@@ -24,7 +24,7 @@ enum PageName {
     appselectwidget ,
     errorwidget ,
     createbackupfilewidget ,
-    networkdisconnectionwidget ,
+    networkdisconnectwidget ,
     zipfileprocesswidget,
     zipfileprocessresultwidget
 };

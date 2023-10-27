@@ -244,7 +244,7 @@ void DrapWindowsData::getBrowserBookmarkInfo(const QSet<QString> &Browsername)
     }
 }
 
-void DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
+QString DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
 {
     if (jsonPath.isEmpty()) {
         jsonPath = QString::fromLocal8Bit(".");
@@ -297,17 +297,20 @@ void DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
     rootObject["version"] = 1;
 
     QJsonDocument doc(rootObject);
-    QString jsonfilePaht = jsonPath + "/bookmarks.json";
-    QFile file(jsonfilePaht);
+    QString jsonfilePath = jsonPath + "/bookmarks.json";
+    QFile file(jsonfilePath);
     if (file.open(QFile::WriteOnly | QFile::Text)) {
         QTextStream stream(&file);
         stream.setCodec("UTF-8");
         stream << doc.toJson();
         file.close();
         qDebug() << "JSON file saved successfully.";
+        return jsonfilePath;
     } else {
         qWarning() << "Failed to save JSON file.";
+        return QString();
     }
+
 }
 
 QString DrapWindowsData::getUserName()

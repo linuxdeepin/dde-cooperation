@@ -167,6 +167,7 @@ void SelectMainWidget::nextPage()
     if (!UserSelectFileSize::instance()->done()) {
         return;
     }
+
     QStringList sizelist;
     sizelist.push_back(QString::number(
             static_cast<qint64>(UserSelectFileSize::instance()->getAllSelectSize())));
@@ -178,6 +179,7 @@ void SelectMainWidget::nextPage()
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
         next = PageName::createbackupfilewidget;
+        emit updateBackupFileSize();
     } else if (method == TransferMethod::kNetworkTransmission) {
         next = PageName::transferringwidget;
 
