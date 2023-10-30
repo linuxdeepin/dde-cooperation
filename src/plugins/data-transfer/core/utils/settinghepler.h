@@ -17,7 +17,7 @@ public:
     static SettingHelper *instance();
 
     static QJsonObject ParseJson(const QString &filepath);
-    static bool moveFile(const QString &src, QString &st);
+    static bool moveFile(const QString &src, QString &dst);
 
 public:
     bool handleDataConfiguration(const QString &filepath);
