@@ -1,4 +1,4 @@
-﻿#include "../mainwindow.h"
+#include "../mainwindow.h"
 #include "../mainwindow_p.h"
 #include "../connect/readywidget.h"
 #include "../connect/choosewidget.h"
@@ -124,14 +124,18 @@ void MainWindowPrivate::initWidgets()
     QObject::connect(configselectwidget, &ConfigSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
 
-    QObject::connect(selectmainwidget,&SelectMainWidget::updateBackupFileSize,createbackupfilewidget,&CreateBackupFileWidget::updaeBackupFileSize);
+
+    QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
+                     createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
     // add backup file exit button
     QObject::connect(zipfileprocessresultwidget, &ZipFileProcessResultWidget::exit, q, [this]() {
         QCoreApplication::quit();
-//        qApp->quit();
+        //        qApp->quit();
     });
 
-    QObject:connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
+QObject:
+    connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
+
             [stackedWidget, errorwidget](bool online) {
                 if (online)
                     return;

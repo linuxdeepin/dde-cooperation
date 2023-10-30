@@ -66,7 +66,8 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     isall &= setFile(jsonObj, filepath);
 
     //setBrowserBookMark
-    isall &= setBrowserBookMark(filepath + "/" + jsonObj["browerbookmark"].toString());
+    if (!jsonObj["browserbookmark"].toString().isEmpty())
+        isall &= setBrowserBookMark(filepath + "/" + jsonObj["browserbookmark"].toString());
 
     //installApps
     QJsonValue userFileValue = jsonObj["app"];
@@ -109,14 +110,16 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
 {
     if (filepath.isEmpty())
         return true;
-    qInfo() << "Set browser bookmarks" << filepath;
     QString targetDir = QDir::homePath() + "/.config/browser/Default/book/";
     QDir dir(targetDir);
     if (!dir.exists())
         dir.mkpath(".");
 
-    bool success = moveFile(filepath, targetDir);
-    qInfo() << "Set browser bookmarks" << targetDir << success;
+    QString targetfile = targetDir + QFileInfo(filepath).fileName();
+    qInfo() << "Set browser bookmarks" << filepath << targetfile;
+
+    bool success = moveFile(filepath, targetfile);
+    qInfo() << "Set browser bookmarks" << targetfile << success;
     if (!success) {
         emit TransferHelper::instance()->failure("浏览器书签", "书签", "设置失败");
         return false;
@@ -143,6 +146,18 @@ bool SettingHelper::installApps(const QString &app)
 
     QDBusInterface interface(service, path, interfaceName, QDBusConnection::systemBus());
 
+    //Check if installed
+    QString existfunc = "PackageExists";
+    QDBusMessage existReply = interface.call(existfunc, package);
+    if (existReply.type() == QDBusMessage::ReplyMessage) {
+        bool isExist = existReply.arguments().at(0).toBool();
+        if (isExist) {
+            qWarning() << app << "is installed";
+            return true;
+        }
+    }
+
+    //installed
     QString func = "InstallPackage";
 
     QDBusMessage reply = interface.call(func, QString(), package);
@@ -175,9 +190,9 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
     foreach (const QString &key, changedProps.keys()) {
         QVariant value = changedProps.value(key);
         QDBusInterface interface("com.deepin.lastore",
-                                 message.path(),
-                                 "com.deepin.lastore.Job",
-                                 QDBusConnection::systemBus());
+                                     message.path(),
+                                     "com.deepin.lastore.Job",
+                                     QDBusConnection::systemBus());
         auto packages = interface.property("Packages").toStringList();
         QString package;
         if (!packages.isEmpty())
@@ -213,8 +228,7 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
             QString filename = value.toString();
             QString targetFile = QDir::homePath() + "/" + filename;
             QString file = filepath + filename.mid(filename.indexOf('/'));
-            bool success = QFile::rename(file, targetFile);
-            qInfo() << file << success;
+            moveFile(file, targetFile);
         }
     }
     qInfo() << jsonObj["user_file"].toString();
@@ -224,19 +238,24 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
 bool SettingHelper::moveFile(const QString &src, QString &dst)
 {
     QFileInfo srcFileInfo(src);
-    QString dstFilePath = dst + "/" + srcFileInfo.fileName();
-    if (QFile::exists(dstFilePath)) {
+    QString dstDir = QFileInfo(dst).path();
+    qInfo() << dstDir;
+    if (QFile::exists(dst)) {
         int i = 1;
         QString baseName = srcFileInfo.baseName();
         QString suffix = srcFileInfo.completeSuffix();
-        while (QFile::exists(dstFilePath)) {
-            dstFilePath = dst + "/" + baseName + "(" + QString::number(i) + ")" + "." + suffix;
+        if (!suffix.isEmpty())
+            suffix = "." + suffix;
+        while (QFile::exists(dst)) {
+            dst = dstDir + "/" + baseName + "(" + QString::number(i) + ")" + suffix;
             i++;
         }
     }
-    if (QFile::rename(src, dstFilePath)) {
+    QFile f(src);
+    if (f.rename(dst))
         return true;
-    }
+
+    qWarning() << f.errorString();
     return false;
 }
 

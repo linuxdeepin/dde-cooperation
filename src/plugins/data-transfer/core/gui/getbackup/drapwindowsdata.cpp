@@ -18,28 +18,29 @@
 #include <QHostInfo>
 #include <QApplication>
 #include <QDir>
+#include <QPixmap>
 
 #define MAXNAME 256
 
 namespace Registry {
-inline constexpr char BrowerRegistryPath[]{ "SOFTWARE\\Clients\\StartMenuInternet" };
-inline constexpr char ApplianceRegistryPath1[]{
+inline constexpr char BrowerRegistryPath[] { "SOFTWARE\\Clients\\StartMenuInternet" };
+inline constexpr char ApplianceRegistryPath1[] {
     "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
 };
-inline constexpr char ApplianceRegistryPath2[]{
+inline constexpr char ApplianceRegistryPath2[] {
     "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
 };
-inline constexpr char DesktopwallpaperRegistryPath[]{ "Control Panel\\Desktop" };
+inline constexpr char DesktopwallpaperRegistryPath[] { "Control Panel\\Desktop" };
 } // namespace Registry
 
 namespace BrowerPath {
-inline constexpr char MicrosoftEdgeBookMark[]{
+inline constexpr char MicrosoftEdgeBookMark[] {
     "\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Bookmarks"
 };
-inline constexpr char GoogleChromeBookMark[]{
+inline constexpr char GoogleChromeBookMark[] {
     "\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Bookmarks"
 };
-inline constexpr char MozillaFirefoxBookMark[]{ "\\AppData\\Roaming\\Mozilla\\Firefox" };
+inline constexpr char MozillaFirefoxBookMark[] { "\\AppData\\Roaming\\Mozilla\\Firefox" };
 } // namespace BrowerPath
 
 DrapWindowsData::DrapWindowsData() { }
@@ -67,24 +68,24 @@ void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
     QStringList bookmarkItems;
     for (const QPair<QString, QString> &bookmark : browserBookmarkList) {
         QString bookmarkItem =
-                QString("<a href=\"%1\">%2</a>").arg(bookmark.second).arg(bookmark.first);
+            QString("<a href=\"%1\">%2</a>").arg(bookmark.second).arg(bookmark.first);
         bookmarkItems.append(bookmarkItem);
     }
 
     QString htmlTemplate = QString::fromLocal8Bit(
-            "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n"
-            "<!-- This is an automatically generated file. It will be read and overwritten."
-            "DO NOT EDIT! -->\n"
-            "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n"
-            "<TITLE>Bookmarks</TITLE>\n"
-            "<H1>Bookmarks</H1>\n"
-            "<DL><p>\n"
-            "<DT><H3 ADD_DATE=\"1688527902\" LAST_MODIFIED=\"1693460686\" "
-            "PERSONAL_TOOLBAR_FOLDER=\"true\">书签栏</H3>\n"
-            "<DL><p>\n"
-            "<urlAndtile>\n"
-            "</DL><p>\n"
-            "</DL><p>\n");
+                               "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n"
+                               "<!-- This is an automatically generated file. It will be read and overwritten."
+                               "DO NOT EDIT! -->\n"
+                               "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n"
+                               "<TITLE>Bookmarks</TITLE>\n"
+                               "<H1>Bookmarks</H1>\n"
+                               "<DL><p>\n"
+                               "<DT><H3 ADD_DATE=\"1688527902\" LAST_MODIFIED=\"1693460686\" "
+                               "PERSONAL_TOOLBAR_FOLDER=\"true\">书签栏</H3>\n"
+                               "<DL><p>\n"
+                               "<urlAndtile>\n"
+                               "</DL><p>\n"
+                               "</DL><p>\n");
 
     QString bookmarkList = bookmarkItems.join("\n");
     QString htmlContent = htmlTemplate.replace("<urlAndtile>", bookmarkList);
@@ -112,7 +113,10 @@ QSet<QString> DrapWindowsData::getApplianceList()
 QString DrapWindowsData::getDesktopWallpaperPath()
 {
     if (desktopWallpaperPath.isEmpty()) {
-        getDesktopWallpaperPathInfo();
+        getDesktopWallpaperPathRegistInfo();
+    }
+    if (desktopWallpaperPath.isEmpty()) {
+        getDesktopWallpaperPathAbsolutePathInfo();
     }
     return desktopWallpaperPath;
 }
@@ -402,7 +406,7 @@ void DrapWindowsData::getBrowserListInfo()
         DWORD subKeyNameSize = sizeof(subKeyName);
 
         while (RegEnumKeyEx(hKey, index, subKeyName, &subKeyNameSize, NULL, NULL, NULL, NULL)
-               != ERROR_NO_MORE_ITEMS) {
+                != ERROR_NO_MORE_ITEMS) {
             QString strBuffer(subKeyName);
             QString strMidReg;
             strMidReg = (QString)lpSubKey + ("\\") + strBuffer;
@@ -416,7 +420,7 @@ void DrapWindowsData::getBrowserListInfo()
             LPCSTR strMidReglpcstr = byteArray.constData();
 
             LSTATUS status =
-                    RegOpenKeyEx(HKEY_LOCAL_MACHINE, strMidReglpcstr, 0, KEY_READ, &hkRKey);
+                RegOpenKeyEx(HKEY_LOCAL_MACHINE, strMidReglpcstr, 0, KEY_READ, &hkRKey);
             if (status == ERROR_SUCCESS) {
                 status = RegQueryValueEx(hkRKey, NULL, NULL, &valueType, (LPBYTE)browerNameBuffer,
                                          &bufferSize);
@@ -443,28 +447,40 @@ void DrapWindowsData::getBrowserListInfo()
     }
 }
 
-void DrapWindowsData::getDesktopWallpaperPathInfo()
+void DrapWindowsData::getDesktopWallpaperPathRegistInfo()
 {
-    HKEY hKey;
-    LSTATUS status;
-    status = RegOpenKeyEx(HKEY_CURRENT_USER, _T(Registry::DesktopwallpaperRegistryPath), 0,
-                          KEY_READ, &hKey);
-    if (status == ERROR_SUCCESS) {
-        char wallpaperPath[MAX_PATH];
-        DWORD wallpaperPathSize = sizeof(wallpaperPath);
-        LSTATUS queryStatus;
-
-        queryStatus = RegQueryValueEx(hKey, "Wallpaper", NULL, NULL, (LPBYTE)(wallpaperPath),
-                                      &wallpaperPathSize);
-        if (queryStatus == ERROR_SUCCESS) {
-            desktopWallpaperPath = QString::fromLocal8Bit(wallpaperPath);
+    WCHAR wallpaperPath[MAX_PATH];
+    if (SystemParametersInfo(SPI_GETDESKWALLPAPER, MAX_PATH, wallpaperPath, 0)) {
+        QString wallpaperPathStr = QString::fromWCharArray(wallpaperPath);
+        QFileInfo fileInfo(wallpaperPathStr);
+        if (fileInfo.exists()) {
+            qDebug() << "Current wallpaper path: " << wallpaperPathStr;
+            desktopWallpaperPath = wallpaperPathStr;
         } else {
-            qDebug() << "Failed to read wallpaper path from registry. Error code: " << queryStatus;
+            qDebug() << "Wallpaper file does not exist.";
         }
-        RegCloseKey(hKey);
     } else {
-        qDebug() << "Failed to open registry HKEY_CURRENT_USER\\"
-                 << Registry::DesktopwallpaperRegistryPath << " Error code: " << status;
+        qDebug() << "Failed to retrieve wallpaper path.";
+    }
+}
+
+void DrapWindowsData::getDesktopWallpaperPathAbsolutePathInfo()
+{
+    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString wallpaperFilePath =
+        appDataPath + "/AppData/Roaming/Microsoft/Windows/Themes/TranscodedWallpaper";
+    QPixmap wallpaperPixmap(wallpaperFilePath);
+    if (!wallpaperPixmap.isNull()) {
+        QImage wallpaperImage = wallpaperPixmap.toImage();
+        QString wallpaperPathStr = QCoreApplication::applicationDirPath() + "/ConvertedWallpaper.png";
+        if (wallpaperImage.save(wallpaperPathStr, "PNG")) {
+            qDebug() << "TranscodedWallpaper converted and saved as PNG to: " << wallpaperPathStr;
+            desktopWallpaperPath = wallpaperPathStr;
+        } else {
+            qDebug() << "Failed to save the converted wallpaper.";
+        }
+    } else {
+        qDebug() << "Failed to load TranscodedWallpaper as QPixmap.";
     }
 }
 
@@ -478,7 +494,7 @@ void DrapWindowsData::applianceFromRegistry(const HKEY &RootKey, const LPCTSTR &
         DWORD subKeyNameSize = sizeof(subKeyName);
         DWORD i = 0;
         while (RegEnumKeyEx(hKey, i, subKeyName, &subKeyNameSize, NULL, NULL, NULL, NULL)
-               == ERROR_SUCCESS) {
+                == ERROR_SUCCESS) {
             HKEY subKey;
             if (RegOpenKeyEx(hKey, subKeyName, 0, KEY_READ, &subKey) == ERROR_SUCCESS) {
                 if (!isControlPanelProgram(subKey)) {
@@ -487,7 +503,7 @@ void DrapWindowsData::applianceFromRegistry(const HKEY &RootKey, const LPCTSTR &
 
                     if (RegQueryValueEx(subKey, "DisplayName", NULL, NULL, (LPBYTE)displayName,
                                         &displayNameSize)
-                        == ERROR_SUCCESS) {
+                            == ERROR_SUCCESS) {
                         QString name = QString::fromLocal8Bit(displayName);
                         if (applianceList.find(name) == applianceList.end()) {
                             applianceList.insert(name);
@@ -513,7 +529,7 @@ bool DrapWindowsData::isControlPanelProgram(const HKEY &subKey)
 
     if (RegQueryValueEx(subKey, "SystemComponent", NULL, NULL, (LPBYTE)systemComponent,
                         &systemComponentSize)
-        == ERROR_SUCCESS) {
+            == ERROR_SUCCESS) {
         if (systemComponentSize > 0 && systemComponent[0] != '\0') {
             return true;
         }
@@ -523,7 +539,7 @@ bool DrapWindowsData::isControlPanelProgram(const HKEY &subKey)
 
     if (RegQueryValueEx(subKey, "ParentKeyName", NULL, NULL, (LPBYTE)parentKeyName,
                         &parentKeyNameSize)
-        == ERROR_SUCCESS) {
+            == ERROR_SUCCESS) {
         if (parentKeyNameSize > 0 && parentKeyName[0] != '\0') {
             return true;
         }
@@ -551,11 +567,11 @@ void DrapWindowsData::browserBookmarkJsonNode(QJsonObject node)
 void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &titleAndUrl)
 {
     auto find = std::find_if(browserBookmarkList.begin(), browserBookmarkList.end(),
-                             [&titleAndUrl](const QPair<QString, QString> &mem) {
-                                 if (mem.second == titleAndUrl.second) {
-                                     return true;
-                                 }
-                             });
+    [&titleAndUrl](const QPair<QString, QString> &mem) {
+        if (mem.second == titleAndUrl.second) {
+            return true;
+        }
+    });
     if (find == browserBookmarkList.end()) {
         browserBookmarkList.insert(titleAndUrl);
         qDebug() << titleAndUrl.first << ": " << titleAndUrl.second;
