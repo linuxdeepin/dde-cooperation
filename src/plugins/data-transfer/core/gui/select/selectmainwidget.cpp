@@ -37,21 +37,19 @@ void SelectMainWidget::changeSelectframeState(const SelectItemName &name)
 
         appItem->updateSelectSize(QString::number(list.size()));
     } else if (name == SelectItemName::FILES) {
-        if(OptionsManager::instance()->getUserOption(Options::kFile).isEmpty())
-        {
+        if (OptionsManager::instance()->getUserOption(Options::kFile).isEmpty()) {
             fileItem->isOk = false;
-        }else{
+        } else {
             fileItem->isOk = true;
         }
     } else if (name == SelectItemName::CONFIG) {
         QStringList ConfigList = OptionsManager::instance()->getUserOption(Options::kConfig);
         QStringList BrowserList =
                 OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
-        if(ConfigList.isEmpty()&&BrowserList.isEmpty())
-        {
-            configItem->isOk =false;
-        }else{
-            configItem->isOk =true;
+        if (ConfigList.isEmpty() && BrowserList.isEmpty()) {
+            configItem->isOk = false;
+        } else {
+            configItem->isOk = true;
         }
         configItem->updateSelectSize(QString::number(ConfigList.size() + BrowserList.size()));
     }
@@ -63,9 +61,11 @@ void SelectMainWidget::changeText()
     if (method == TransferMethod::kLocalExport) {
         titileLabel->setText(LocalText);
         nextButton->setText(BtnLocalText);
+        InternetIndelabel->setVisible(false);
     } else if (method == TransferMethod::kNetworkTransmission) {
         titileLabel->setText(InternetText);
         nextButton->setText(BtnInternetText);
+        LocalIndelabel->setVisible(false);
     }
 }
 
@@ -147,11 +147,14 @@ void SelectMainWidget::initUi()
     buttonLayout->addWidget(nextButton);
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
-    IndexLabel *indelabel = new IndexLabel(2, this);
-    indelabel->setAlignment(Qt::AlignCenter);
+    LocalIndelabel = new IndexLabel(1, this);
+    LocalIndelabel->setAlignment(Qt::AlignCenter);
+    InternetIndelabel = new IndexLabel(2, this);
+    InternetIndelabel->setAlignment(Qt::AlignCenter);
 
     QHBoxLayout *indexLayout = new QHBoxLayout();
-    indexLayout->addWidget(indelabel, Qt::AlignCenter);
+    indexLayout->addWidget(LocalIndelabel, Qt::AlignCenter);
+    indexLayout->addWidget(InternetIndelabel, Qt::AlignCenter);
 
     mainLayout->addSpacing(40);
     mainLayout->addWidget(titileLabel);
@@ -182,7 +185,6 @@ void SelectMainWidget::nextPage()
         emit updateBackupFileSize();
     } else if (method == TransferMethod::kNetworkTransmission) {
         next = PageName::transferringwidget;
-
         // transfer
         TransferHelper::instance()->startTransfer();
     }

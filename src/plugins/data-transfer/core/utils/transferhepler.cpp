@@ -194,14 +194,9 @@ QStringList TransferHelper::getTransferFilePath()
     QJsonArray fileArray;
     for (QString file : filePathList) {
         qInfo() << QDir::homePath();
-        if (file.contains(QDir::homePath())) {
-            file.replace(QDir::homePath(), "");
-        } else {
-            int found = file.indexOf(":/");
-            if (found != -1) {
-                file = file.mid(found + 2);
-            }
-        }
+        if (file.contains(QDir::homePath()))
+            file.replace(QDir::homePath() + "/", "");
+        qInfo() << "json file paht:" << file;
         fileArray.append(file);
     }
 

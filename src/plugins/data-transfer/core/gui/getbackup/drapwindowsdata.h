@@ -48,7 +48,8 @@ private:
 
     void getApplianceListInfo();
     void getBrowserListInfo();
-    void getDesktopWallpaperPathInfo();
+    void getDesktopWallpaperPathRegistInfo();
+    void getDesktopWallpaperPathAbsolutePathInfo();
 
     void applianceFromRegistry(const HKEY &RootKey, const LPCTSTR &lpSubKey);
     bool isControlPanelProgram(const HKEY &subKey);
