@@ -213,10 +213,13 @@ void ModeItem::setEnable(bool able)
     if (!able) {
         palette.setColor(QPalette::WindowText, Qt::gray);
         setPalette(palette);
+<<<<<<< HEAD
     }
     else{
         palette.setColor(QPalette::WindowText, QColor("#414D68"));
        setPalette(palette);
+=======
+>>>>>>> feat: [ui] update choose widget
     }
 }
 
@@ -234,24 +237,40 @@ void ModeItem::paintEvent(QPaintEvent *event)
 {
     QPainter paint(this);
     paint.setRenderHint(QPainter::Antialiasing);
+<<<<<<< HEAD
     if (checked) {
         paint.setPen(Qt::NoPen);
+=======
+    paint.setPen(QPen(QColor(65, 77, 104, 255), 1));
+    paint.drawEllipse(12, 12, 16, 16);
+    if (checked) {
+>>>>>>> feat: [ui] update choose widget
         paint.setBrush(QColor(0, 129, 255, 255));
         paint.drawEllipse(12, 12, 16, 16);
 
         paint.setBrush(QColor(255, 255, 255, 255));
         paint.drawEllipse(16, 16, 8, 8);
+<<<<<<< HEAD
     } else {
         paint.setPen(QPen(QColor(65, 77, 104, 255), 1));
         paint.drawEllipse(12, 12, 16, 16);
     }
 
+=======
+    }
+
+
+>>>>>>> feat: [ui] update choose widget
     QFont font("SourceHanSansSC-Medium");
     font.setPixelSize(14);
     font.setWeight(QFont::Medium);
     font.setStyleName("Normal");
     paint.setFont(font);
+<<<<<<< HEAD
     paint.setPen(QColor(65, 77, 104, 255));
+=======
+    paint.setPen(QColor(65, 77, 104,255));
+>>>>>>> feat: [ui] update choose widget
     paint.setRenderHint(QPainter::TextAntialiasing);
     paint.setRenderHint(QPainter::Antialiasing);
     paint.setRenderHint(QPainter::SmoothPixmapTransform);

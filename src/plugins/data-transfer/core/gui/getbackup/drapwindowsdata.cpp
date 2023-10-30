@@ -1,4 +1,4 @@
-﻿#include "drapwindowsdata.h"
+#include "drapwindowsdata.h"
 #include <tchar.h>
 #include <QDebug>
 #include <QFile>
