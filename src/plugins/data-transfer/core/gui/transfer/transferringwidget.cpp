@@ -190,16 +190,17 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
 {
 #ifdef WIN32
     if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
-        == TransferMethod::kLocalExport) {
+            == TransferMethod::kLocalExport) {
         return;
     }
 #else
+    QString file = content;
     if (content.contains("transfer.json"))
-        TransferHelper::instance()->checkSize(content);
+        TransferHelper::instance()->checkSize(file.replace("正在传输",""));
 #endif
 
     QString info =
-            QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
+        QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
     processTextBrowser->append(info);
     progressLabel->setProgress(progressbar);
     fileLabel->setText(info);
