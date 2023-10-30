@@ -6,6 +6,8 @@
 
 #include <QDebug>
 
+using namespace cooperation_core;
+
 SortFilterWorker::SortFilterWorker(QObject *parent)
     : QObject(parent)
 {
@@ -16,50 +18,71 @@ void SortFilterWorker::stop()
     isStoped = true;
 }
 
-void SortFilterWorker::sortDevice(const DeviceInfo &info)
+void SortFilterWorker::addDevice(const QList<DeviceInfo> &infoList)
 {
     if (isStoped)
         return;
 
-    int index = 0;
-    switch (info.state) {
-    case ConnectState::kConnected:
-        index = findLast(ConnectState::kConnected) + 1;
-        break;
-    case ConnectState::kConnectable: {
-        int i = findLast(ConnectState::kConnectable);
-        if (i != -1) {
-            index = i + 1;
+    for (const auto &info : infoList) {
+        if (allDeviceList.contains(info))
+            continue;
+
+        int index = 0;
+        switch (info.state) {
+        case ConnectState::kConnected:
+            index = findLast(ConnectState::kConnected) + 1;
+            break;
+        case ConnectState::kConnectable: {
+            int i = findLast(ConnectState::kConnectable);
+            if (i != -1) {
+                index = i + 1;
+                break;
+            }
+
+            i = findFirst(ConnectState::kOffline);
+            if (i != -1) {
+                index = i;
+                break;
+            }
+
+            index = allDeviceList.size();
+        } break;
+        case ConnectState::kOffline:
+            index = allDeviceList.size();
             break;
         }
 
-        i = findFirst(ConnectState::kOffline);
-        if (i != -1) {
-            index = i;
-            break;
-        }
+        if (isStoped)
+            return;
 
-        index = allDeviceList.size();
-    } break;
-    case ConnectState::kOffline:
-        index = allDeviceList.size();
-        break;
+        allDeviceList.insert(index, info);
+        visibleDeviceList.insert(index, info);
+        Q_EMIT sortFilterResult(index, info);
     }
+}
 
-    if (isStoped)
-        return;
+void SortFilterWorker::removeDevice(const QList<DeviceInfo> &infoList)
+{
+    for (const auto &info : infoList) {
+        if (!visibleDeviceList.contains(info))
+            continue;
 
-    allDeviceList.insert(index, info);
-    Q_EMIT sortFilterResult(index, info);
+        int index = visibleDeviceList.indexOf(info);
+        allDeviceList.removeOne(info);
+        visibleDeviceList.removeOne(info);
+        Q_EMIT deviceRemoved(index);
+    }
 }
 
 void SortFilterWorker::filterDevice(const QString &filter)
 {
+    visibleDeviceList.clear();
     int index = -1;
     for (const auto &dev : allDeviceList) {
         if (dev.deviceName.contains(filter, Qt::CaseInsensitive)
             || dev.ipStr.contains(filter, Qt::CaseInsensitive)) {
             ++index;
+            visibleDeviceList.append(dev);
             Q_EMIT sortFilterResult(index, dev);
         }
     }

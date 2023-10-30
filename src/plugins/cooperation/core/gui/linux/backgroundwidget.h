@@ -10,7 +10,7 @@
 
 #include <QFrame>
 
-namespace cooperation_workspace {
+namespace cooperation_core {
 
 class BackgroundWidget : public QFrame
 {
@@ -33,6 +33,6 @@ protected:
     DTK_WIDGET_NAMESPACE::DFrame *bgGroup { nullptr };
 };
 
-}   // namespace cooperation_workspace
+}   // namespace cooperation_core
 
 #endif   // BACKGROUNDWIDGET_H

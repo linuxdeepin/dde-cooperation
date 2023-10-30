@@ -4,6 +4,7 @@
 
 #include "settingdialog.h"
 #include "settingdialog_p.h"
+#include "global_defines.h"
 #include "config/configmanager.h"
 
 #include <QPainter>
@@ -83,7 +84,7 @@ void SettingDialogPrivate::createBasicWidget()
     findCB->setFixedWidth(280);
     connect(findCB, qOverload<int>(&QComboBox::currentIndexChanged), this, &SettingDialogPrivate::onFindComboBoxValueChanged);
     SettingItem *findItem = new SettingItem(q);
-    findItem->setItemInfo(tr("Discoverable"), findCB);
+    findItem->setItemInfo(tr(AppSettings::kDiscoveryModeKey), findCB);
 
     QLabel *tipLabel = new QLabel(tr("Discover and connect with you through the \"Cooperation\" app"), q);
     auto margins = tipLabel->contentsMargins();
@@ -115,7 +116,10 @@ void SettingDialogPrivate::createDeviceShareWidget()
     SettingItem *deviceShareItem = new SettingItem(q);
     deviceShareItem->setItemInfo(tr("Device share"), devShareSwitchBtn);
 
-    QLabel *tipLabel = new QLabel(tr("Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc"), q);
+    QLabel *tipLabel = new QLabel(tr("Allows peripherals that have been established "
+                                     "to collaborate across devices to control this "
+                                     "device, including keyboard, mouse, trackpad, etc"),
+                                  q);
     auto margins = tipLabel->contentsMargins();
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
@@ -180,38 +184,38 @@ void SettingDialogPrivate::createClipboardShareWidget()
 
 void SettingDialogPrivate::onFindComboBoxValueChanged(int index)
 {
-    ConfigManager::instance()->setAppAttribute("GenericAttribute", "Discoverable", index);
+    ConfigManager::instance()->setAppAttribute(AppSettings::kGenericGroup, AppSettings::kDiscoveryModeKey, index);
 }
 
 void SettingDialogPrivate::onConnectComboBoxValueChanged(int index)
 {
-    ConfigManager::instance()->setAppAttribute("GenericAttribute", "ConnectionDirection", index);
+    ConfigManager::instance()->setAppAttribute(AppSettings::kGenericGroup, AppSettings::kLinkDirectionKey, index);
 }
 
 void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 {
-    ConfigManager::instance()->setAppAttribute("GenericAttribute", "Transfer", index);
+    ConfigManager::instance()->setAppAttribute(AppSettings::kGenericGroup, AppSettings::kTransferModeKey, index);
 }
 
 void SettingDialogPrivate::onNameEditingFinished()
 {
-    ConfigManager::instance()->setAppAttribute("GenericAttribute", "DeviceName", nameEdit->text());
+    ConfigManager::instance()->setAppAttribute(AppSettings::kGenericGroup, AppSettings::kDeviceNameKey, nameEdit->text());
 }
 
 void SettingDialogPrivate::onDeviceShareButtonClicked(bool clicked)
 {
-    ConfigManager::instance()->setAppAttribute("GenericAttribute", "DeviceShare", clicked);
+    ConfigManager::instance()->setAppAttribute(AppSettings::kGenericGroup, AppSettings::kPeripheralShareKey, clicked);
     connectItem->setVisible(clicked);
 }
 
 void SettingDialogPrivate::onClipboardShareButtonClicked(bool clicked)
 {
-    ConfigManager::instance()->setAppAttribute("GenericAttribute", "ClipboardShare", clicked);
+    ConfigManager::instance()->setAppAttribute(AppSettings::kGenericGroup, AppSettings::kClipboardShareKey, clicked);
 }
 
 void SettingDialogPrivate::onFileChoosed(const QString &path)
 {
-    ConfigManager::instance()->setAppAttribute("GenericAttribute", "StoragePath", path);
+    ConfigManager::instance()->setAppAttribute(AppSettings::kGenericGroup, AppSettings::kStoragePathKey, path);
 }
 
 SettingDialog::SettingDialog(QWidget *parent)
@@ -250,25 +254,25 @@ void SettingDialog::showEvent(QShowEvent *event)
 
 void SettingDialog::loadConfig()
 {
-    auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "Discoverable");
+    auto value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kDiscoveryModeKey);
     d->findCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
-    d->nameEdit->setText(value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section("/", -1));
+    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kDeviceNameKey);
+    d->nameEdit->setText(value.isValid() ? value.toString() : QStandardPaths::displayName(QStandardPaths::HomeLocation));
 
-    value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceShare");
+    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kPeripheralShareKey);
     d->devShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : false);
 
-    value = ConfigManager::instance()->appAttribute("GenericAttribute", "ConnectionDirection");
+    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kLinkDirectionKey);
     d->connectCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
     d->connectItem->setVisible(d->devShareSwitchBtn->isChecked());
 
-    value = ConfigManager::instance()->appAttribute("GenericAttribute", "Transfer");
+    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kTransferModeKey);
     d->transferCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute("GenericAttribute", "StoragePath");
+    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kStoragePathKey);
     d->chooserEdit->setText(value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
 
-    value = ConfigManager::instance()->appAttribute("GenericAttribute", "ClipboardShare");
+    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kClipboardShareKey);
     d->clipShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : false);
 }

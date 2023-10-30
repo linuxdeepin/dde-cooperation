@@ -9,7 +9,7 @@
 #include <QHBoxLayout>
 #include <QAbstractButton>
 
-namespace cooperation_workspace {
+namespace cooperation_core {
 
 class ButtonBoxWidget : public QWidget
 {
@@ -36,6 +36,6 @@ private:
     QHBoxLayout *mainLayout { nullptr };
 };
 
-}   // namespace cooperation_workspace
+}   // namespace cooperation_core
 
 #endif   // BUTTONBOXWIDGET_H

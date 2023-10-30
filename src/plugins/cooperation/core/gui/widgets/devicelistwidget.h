@@ -11,7 +11,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 
-namespace cooperation_workspace {
+namespace cooperation_core {
 
 class DeviceListWidget : public QScrollArea
 {
@@ -38,6 +38,6 @@ private:
     QList<DeviceItem::Operation> operationList;
 };
 
-}   // namespace cooperation_workspace
+}   // namespace cooperation_core
 
 #endif   // DEVICELISTWIDGET_H

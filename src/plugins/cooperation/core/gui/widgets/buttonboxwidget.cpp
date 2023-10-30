@@ -8,7 +8,7 @@
 #include <DFloatingButton>
 
 DWIDGET_USE_NAMESPACE
-using namespace cooperation_workspace;
+using namespace cooperation_core;
 
 ButtonBoxWidget::ButtonBoxWidget(QWidget *parent)
     : QWidget(parent),

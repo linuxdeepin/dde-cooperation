@@ -8,11 +8,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.h"
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.cpp"
+    "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.h"
+    "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
     "${CMAKE_SOURCE_DIR}/src/config/*.h"
     "${CMAKE_SOURCE_DIR}/src/config/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cooperationcoreplugin.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/cooperationcoreplugin.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/gui/type_defines.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/global_defines.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/dialogs/*.h"
@@ -23,6 +25,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
@@ -69,6 +73,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
+    co
 )
 
 # 平台相关的库，添加到这里
@@ -87,5 +92,5 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DEEPIN_DATA_TRANS_PLUGIN_DIR}
+    ${DEEPIN_COOPERATION_PLUGIN_DIR}
 )

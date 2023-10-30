@@ -19,7 +19,7 @@ public:
     static CooperationCoreEventReceiver *instance();
 
 public Q_SLOTS:
-    void handleRegisterWorkspace(QVariant param);
+    void handleRegisterOperation(const QVariantMap &map);
 
 private:
     explicit CooperationCoreEventReceiver(QObject *parent = nullptr);

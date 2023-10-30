@@ -4,7 +4,7 @@
 
 #include "../mainwindow.h"
 #include "../mainwindow_p.h"
-#include "events/cooperationcoreeventsender.h"
+#include "maincontroller/maincontroller.h"
 
 #include <DTitlebar>
 #include <DIconButton>
@@ -20,6 +20,9 @@ void MainWindowPrivate::initWindow()
     q->setObjectName("MainWindow");
     q->setFixedSize(500, 630);
     q->setWindowIcon(QIcon::fromTheme("collaboration"));
+
+    workspaceWidget = new WorkspaceWidget(q);
+    q->setCentralWidget(workspaceWidget);
 }
 
 void MainWindowPrivate::initTitleBar()
@@ -29,14 +32,14 @@ void MainWindowPrivate::initTitleBar()
     refreshBtn->setIcon(QIcon::fromTheme("refresh"));
     refreshBtn->setToolTip(tr("Re-scan for devices"));
     titleBar->addWidget(refreshBtn, Qt::AlignLeft);
-    connect(refreshBtn, &DIconButton::clicked, CooperationCoreEventSender::instance(), &CooperationCoreEventSender::sendRequestRefresh);
+    connect(refreshBtn, &DIconButton::clicked, q, [] { MainController::instance()->start(); });
 
-    if (qAppName() != "dde-cooperation") {
+    if (qApp->property("onlyTransfer").toBool()) {
         titleBar->setMenuVisible(false);
         auto margins = titleBar->contentsMargins();
         margins.setLeft(10);
         titleBar->setContentsMargins(margins);
-        q->setWindowFlags(q->windowFlags() &~ Qt::WindowMinimizeButtonHint);
+        q->setWindowFlags(q->windowFlags() & ~Qt::WindowMinimizeButtonHint);
         return;
     }
 

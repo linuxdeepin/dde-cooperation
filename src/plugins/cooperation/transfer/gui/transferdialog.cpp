@@ -119,6 +119,9 @@ void TransferDialog::switchResultPage(bool success, const QString &msg)
 
 void TransferDialog::switchProgressPage(const QString &title)
 {
+    if (stackedLayout->currentIndex() == 2)
+        return;
+
     spinner->stop();
     stackedLayout->setCurrentIndex(2);
 

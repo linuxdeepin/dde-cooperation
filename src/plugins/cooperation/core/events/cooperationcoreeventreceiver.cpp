@@ -5,11 +5,6 @@
 #include "cooperationcoreeventreceiver.h"
 #include "utils/cooperationutil.h"
 
-#include <QVariant>
-
-using CreateWorkspaceWidgetCallback = std::function<QWidget *()>;
-Q_DECLARE_METATYPE(CreateWorkspaceWidgetCallback);
-
 using namespace cooperation_core;
 
 CooperationCoreEventReceiver::CooperationCoreEventReceiver(QObject *parent)
@@ -23,15 +18,7 @@ CooperationCoreEventReceiver *CooperationCoreEventReceiver::instance()
     return &ins;
 }
 
-void CooperationCoreEventReceiver::handleRegisterWorkspace(QVariant param)
+void CooperationCoreEventReceiver::handleRegisterOperation(const QVariantMap &map)
 {
-    auto func = param.value<CreateWorkspaceWidgetCallback>();
-    if (!func)
-        return;
-
-    auto widget = func();
-    if (widget && !widget->parent())
-        widget->setParent(CooperationUtil::instance()->mainWindow());
-
-    CooperationUtil::instance()->registWorkspace(widget);
+    CooperationUtil::instance()->registerDeviceOperation(map);
 }

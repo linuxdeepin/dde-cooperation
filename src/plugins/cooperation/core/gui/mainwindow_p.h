@@ -5,6 +5,8 @@
 #ifndef MAINWINDOW_P_H
 #define MAINWINDOW_P_H
 
+#include "widgets/workspacewidget.h"
+
 #include <QObject>
 
 namespace cooperation_core {
@@ -19,12 +21,14 @@ public:
 
     void initWindow();
     void initTitleBar();
+    void initConnect();
     void moveCenter();
 
     void handleSettingMenuTriggered(int action);
 
 public:
     MainWindow *q { nullptr };
+    WorkspaceWidget *workspaceWidget { nullptr };
 };
 
 }   // namespace cooperation_core

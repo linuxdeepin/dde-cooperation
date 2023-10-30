@@ -9,7 +9,7 @@
 #include <QVBoxLayout>
 #include <QPainter>
 
-using namespace cooperation_workspace;
+using namespace cooperation_core;
 
 StateLabel::StateLabel(QWidget *parent)
     : QLabel(parent)

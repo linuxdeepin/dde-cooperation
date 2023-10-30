@@ -16,11 +16,9 @@ class CooperaionCorePlugin : public DPF_NAMESPACE::Plugin
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.cooperation" FILE "cooperationcoreplugin.json")
 
     DPF_EVENT_NAMESPACE(cooperation_core)
-    // signal events
-    DPF_EVENT_REG_SIGNAL(signal_Request_Refresh)
 
     // slot events
-    DPF_EVENT_REG_SLOT(slot_Register_Workspace)
+    DPF_EVENT_REG_SLOT(slot_Register_Operation)
 
 public:
     virtual void initialize() override;

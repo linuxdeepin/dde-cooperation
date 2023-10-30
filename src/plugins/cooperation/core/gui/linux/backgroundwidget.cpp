@@ -6,7 +6,7 @@
 
 #include <DStyle>
 
-using namespace cooperation_workspace;
+using namespace cooperation_core;
 DWIDGET_USE_NAMESPACE
 
 BackgroundWidget::BackgroundWidget(QWidget *parent)

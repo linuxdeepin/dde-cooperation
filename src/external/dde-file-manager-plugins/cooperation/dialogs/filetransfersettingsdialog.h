@@ -20,6 +20,8 @@ class FileChooserEdit : public QWidget
 public:
     explicit FileChooserEdit(QWidget *parent = nullptr);
 
+    void setText(const QString &text);
+
 Q_SIGNALS:
     void fileChoosed(const QString &fileName);
 
@@ -69,9 +71,13 @@ public Q_SLOTS:
     void onFileChoosered(const QString &fileName);
     void onComBoxValueChanged(int index);
 
+protected:
+    void showEvent(QShowEvent *e) override;
+
 private:
     void initUI();
     void initConnect();
+    void loadConfig();
     // indexPos: 0-first, 1-last, 2-mid
     void addItem(const QString &text, QWidget *widget, int indexPos);
 

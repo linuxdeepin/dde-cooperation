@@ -16,7 +16,7 @@ DGUI_USE_NAMESPACE
 #include <QIcon>
 #include <QLabel>
 
-using namespace cooperation_workspace;
+using namespace cooperation_core;
 
 LookingForDeviceWidget::LookingForDeviceWidget(QWidget *parent)
     : QWidget(parent)
