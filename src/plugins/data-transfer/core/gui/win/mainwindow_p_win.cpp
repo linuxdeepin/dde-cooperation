@@ -124,20 +124,22 @@ void MainWindowPrivate::initWidgets()
     QObject::connect(configselectwidget, &ConfigSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
 
-    QObject::connect(selectmainwidget,&SelectMainWidget::updateBackupFileSize,createbackupfilewidget,&CreateBackupFileWidget::updaeBackupFileSize);
+    QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
+                     createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
     // add backup file exit button
     QObject::connect(zipfileprocessresultwidget, &ZipFileProcessResultWidget::exit, q, [this]() {
         QCoreApplication::quit();
-//        qApp->quit();
+        //        qApp->quit();
     });
 
-    QObject:connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
+QObject:
+    connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
             [stackedWidget, errorwidget](bool online) {
                 if (online)
                     return;
                 int index = stackedWidget->currentIndex();
-                //only these need jump to networkdisconnectwidget
-                if (index >= PageName::promptwidget && index <= PageName::appselectwidget )
+                // only these need jump to networkdisconnectwidget
+                if (index >= PageName::promptwidget && index <= PageName::appselectwidget)
                     stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
                 if (index == PageName::transferringwidget) {
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
@@ -231,8 +233,8 @@ void MainWindowPrivate::initTitleBar()
     mainLabel->setPixmap(QPixmap(":/icon/icon.svg"));
 
     QObject::connect(closeButton, &QToolButton::clicked, q, [this]() {
-        //qApp->quit();
-                QCoreApplication::quit();
+        // qApp->quit();
+        QCoreApplication::quit();
     });
     QObject::connect(minButton, &QToolButton::clicked, q, &MainWindow::showMinimized);
 

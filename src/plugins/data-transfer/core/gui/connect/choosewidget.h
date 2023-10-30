@@ -43,20 +43,23 @@ public:
 
     void setEnable(bool able);
 
+signals:
+    void clicked(bool checked);
 protected:
     virtual void mousePressEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
-    bool enable = true;
-    QCheckBox *checkBox { nullptr };
-    QLabel *iconLabel { nullptr };
+    bool enable{ true };
+    bool checked{ false };
+    QLabel *iconLabel{ nullptr };
+    QString itemText;
 };
 
 class IndexLabel : public QLabel
 {
 public:
-    IndexLabel(int index, QWidget *parent = nullptr)
-        : QLabel(parent), index(index)
+    IndexLabel(int index, QWidget *parent = nullptr) : QLabel(parent), index(index)
     {
         setFixedSize(50, 10);
     }

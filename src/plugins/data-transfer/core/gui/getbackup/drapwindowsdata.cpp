@@ -18,6 +18,7 @@
 #include <QHostInfo>
 #include <QApplication>
 #include <QDir>
+#include <QPixmap>
 
 #define MAXNAME 256
 
@@ -112,7 +113,10 @@ QSet<QString> DrapWindowsData::getApplianceList()
 QString DrapWindowsData::getDesktopWallpaperPath()
 {
     if (desktopWallpaperPath.isEmpty()) {
-        getDesktopWallpaperPathInfo();
+        getDesktopWallpaperPathRegistInfo();
+    }
+    if (desktopWallpaperPath.isEmpty()) {
+        getDesktopWallpaperPathAbsolutePathInfo();
     }
     return desktopWallpaperPath;
 }
@@ -310,7 +314,6 @@ QString DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
         qWarning() << "Failed to save JSON file.";
         return QString();
     }
-
 }
 
 QString DrapWindowsData::getUserName()
@@ -443,28 +446,63 @@ void DrapWindowsData::getBrowserListInfo()
     }
 }
 
-void DrapWindowsData::getDesktopWallpaperPathInfo()
+void DrapWindowsData::getDesktopWallpaperPathRegistInfo()
 {
-    HKEY hKey;
-    LSTATUS status;
-    status = RegOpenKeyEx(HKEY_CURRENT_USER, _T(Registry::DesktopwallpaperRegistryPath), 0,
-                          KEY_READ, &hKey);
-    if (status == ERROR_SUCCESS) {
-        char wallpaperPath[MAX_PATH];
-        DWORD wallpaperPathSize = sizeof(wallpaperPath);
-        LSTATUS queryStatus;
+    //    HKEY hKey;
+    //    LSTATUS status;
+    //    status = RegOpenKeyEx(HKEY_CURRENT_USER, _T(Registry::DesktopwallpaperRegistryPath), 0,
+    //                          KEY_READ, &hKey);
+    //    if (status == ERROR_SUCCESS) {
+    //        char wallpaperPath[MAX_PATH];
+    //        DWORD wallpaperPathSize = sizeof(wallpaperPath);
+    //        LSTATUS queryStatus;
 
-        queryStatus = RegQueryValueEx(hKey, "Wallpaper", NULL, NULL, (LPBYTE)(wallpaperPath),
-                                      &wallpaperPathSize);
-        if (queryStatus == ERROR_SUCCESS) {
-            desktopWallpaperPath = QString::fromLocal8Bit(wallpaperPath);
+    //        queryStatus = RegQueryValueEx(hKey, "Wallpaper", NULL, NULL, (LPBYTE)(wallpaperPath),
+    //                                      &wallpaperPathSize);
+    //        if (queryStatus == ERROR_SUCCESS) {
+    //            desktopWallpaperPath = QString::fromLocal8Bit(wallpaperPath);
+    //        } else {
+    //            qDebug() << "Failed to read wallpaper path from registry. Error code: " <<
+    //            queryStatus;
+    //        }
+    //        RegCloseKey(hKey);
+    //    } else {
+    //        qDebug() << "Failed to open registry HKEY_CURRENT_USER\\"
+    //                 << Registry::DesktopwallpaperRegistryPath << " Error code: " << status;
+    //    }
+
+    WCHAR wallpaperPath[MAX_PATH];
+    if (SystemParametersInfo(SPI_GETDESKWALLPAPER, MAX_PATH, wallpaperPath, 0)) {
+        QString wallpaperPathStr = QString::fromWCharArray(wallpaperPath);
+        QFileInfo fileInfo(wallpaperPathStr);
+        if (fileInfo.exists()) {
+            qDebug() << "Current wallpaper path: " << wallpaperPathStr;
+            desktopWallpaperPath = wallpaperPathStr;
         } else {
-            qDebug() << "Failed to read wallpaper path from registry. Error code: " << queryStatus;
+            qDebug() << "Wallpaper file does not exist.";
         }
-        RegCloseKey(hKey);
     } else {
-        qDebug() << "Failed to open registry HKEY_CURRENT_USER\\"
-                 << Registry::DesktopwallpaperRegistryPath << " Error code: " << status;
+        qDebug() << "Failed to retrieve wallpaper path.";
+    }
+}
+
+void DrapWindowsData::getDesktopWallpaperPathAbsolutePathInfo()
+{
+    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString wallpaperFilePath =
+            appDataPath + "/AppData/Roaming/Microsoft/Windows/Themes/TranscodedWallpaper";
+    QPixmap wallpaperPixmap(wallpaperFilePath);
+    if (!wallpaperPixmap.isNull()) {
+        QImage wallpaperImage = wallpaperPixmap.toImage();
+        QString wallpaperPathStr = QCoreApplication::applicationDirPath()+"/ConvertedWallpaper.png";
+        if (wallpaperImage.save(wallpaperPathStr, "PNG")) {
+            qDebug() << "TranscodedWallpaper converted and saved as PNG to: " << wallpaperPathStr;
+            desktopWallpaperPath = wallpaperPathStr;
+        } else {
+            qDebug() << "Failed to save the converted wallpaper.";
+        }
+    } else {
+        qDebug() << "Failed to load TranscodedWallpaper as QPixmap.";
     }
 }
 
