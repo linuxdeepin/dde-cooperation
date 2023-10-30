@@ -5,7 +5,7 @@
 #ifndef FILECHOOSEREDIT_H
 #define FILECHOOSEREDIT_H
 
-#include "gui/type_defines.h"
+#include "global_defines.h"
 
 #include <QWidget>
 #include <QLabel>

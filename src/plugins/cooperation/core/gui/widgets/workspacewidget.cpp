@@ -4,10 +4,10 @@
 
 #include "workspacewidget.h"
 #include "workspacewidget_p.h"
-#include "widgets/cooperationstatewidget.h"
-#include "widgets/devicelistwidget.h"
+#include "cooperationstatewidget.h"
+#include "devicelistwidget.h"
 
-using namespace cooperation_workspace;
+using namespace cooperation_core;
 
 WorkspaceWidgetPrivate::WorkspaceWidgetPrivate(WorkspaceWidget *qq)
     : q(qq),
@@ -51,11 +51,13 @@ void WorkspaceWidgetPrivate::initUI()
 void WorkspaceWidgetPrivate::initConnect()
 {
     connect(searchEdit, &CooperationSearchEdit::textChanged, this, &WorkspaceWidgetPrivate::onSearchValueChanged);
-    connect(this, &WorkspaceWidgetPrivate::deviceAdded, sortFilterWorker.data(), &SortFilterWorker::sortDevice, Qt::QueuedConnection);
+    connect(this, &WorkspaceWidgetPrivate::devicesAdded, sortFilterWorker.data(), &SortFilterWorker::addDevice, Qt::QueuedConnection);
+    connect(this, &WorkspaceWidgetPrivate::devicesRemoved, sortFilterWorker.data(), &SortFilterWorker::removeDevice, Qt::QueuedConnection);
     connect(this, &WorkspaceWidgetPrivate::filterDevice, sortFilterWorker.data(), &SortFilterWorker::filterDevice, Qt::QueuedConnection);
     connect(this, &WorkspaceWidgetPrivate::clearDevice, sortFilterWorker.data(), &SortFilterWorker::clear, Qt::QueuedConnection);
     connect(sortFilterWorker.data(), &SortFilterWorker::sortFilterResult, this, &WorkspaceWidgetPrivate::onSortFilterResult, Qt::QueuedConnection);
     connect(sortFilterWorker.data(), &SortFilterWorker::filterFinished, this, &WorkspaceWidgetPrivate::onFilterFinished, Qt::QueuedConnection);
+    connect(sortFilterWorker.data(), &SortFilterWorker::deviceRemoved, this, &WorkspaceWidgetPrivate::onDeviceRemoved, Qt::QueuedConnection);
 }
 
 void WorkspaceWidgetPrivate::onSearchValueChanged(const QString &text)
@@ -82,6 +84,13 @@ void WorkspaceWidgetPrivate::onFilterFinished()
     }
 }
 
+void WorkspaceWidgetPrivate::onDeviceRemoved(int index)
+{
+    dlWidget->removeItem(index);
+    if (dlWidget->itemCount() == 0)
+        stackedLayout->setCurrentWidget(nrWidget);
+}
+
 WorkspaceWidget::WorkspaceWidget(QWidget *parent)
     : QWidget(parent),
       d(new WorkspaceWidgetPrivate(this))
@@ -92,13 +101,21 @@ WorkspaceWidget::WorkspaceWidget(QWidget *parent)
 
 void WorkspaceWidget::switchWidget(PageName page)
 {
+    if (d->currentPage == page)
+        return;
+
     d->currentPage = page;
     d->stackedLayout->setCurrentIndex(page);
 }
 
-void WorkspaceWidget::addDeviceInfo(const DeviceInfo &info)
+void WorkspaceWidget::addDeviceInfos(const QList<DeviceInfo> &infoList)
 {
-    Q_EMIT d->deviceAdded(info);
+    Q_EMIT d->devicesAdded(infoList);
+}
+
+void WorkspaceWidget::removeDeviceInfos(const QList<DeviceInfo> &infoList)
+{
+    Q_EMIT d->devicesRemoved(infoList);
 }
 
 void WorkspaceWidget::addDeviceOperation(const QVariantMap &map)

@@ -10,7 +10,7 @@
 #include <QWidget>
 #include <QScopedPointer>
 
-namespace cooperation_workspace {
+namespace cooperation_core {
 
 class WorkspaceWidgetPrivate;
 class WorkspaceWidget : public QWidget
@@ -27,7 +27,8 @@ public:
     explicit WorkspaceWidget(QWidget *parent = nullptr);
 
     void switchWidget(PageName page);
-    void addDeviceInfo(const DeviceInfo &info);
+    void addDeviceInfos(const QList<DeviceInfo> &infoList);
+    void removeDeviceInfos(const QList<DeviceInfo> &infoList);
     void addDeviceOperation(const QVariantMap &map);
 
     void clear();
@@ -36,6 +37,6 @@ private:
     QScopedPointer<WorkspaceWidgetPrivate> d;
 };
 
-}   // namespace cooperation_workspace
+}   // namespace cooperation_core
 
 #endif   // WORKSPACEWIDGET_H

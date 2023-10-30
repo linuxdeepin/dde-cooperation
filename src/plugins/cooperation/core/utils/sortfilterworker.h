@@ -9,6 +9,8 @@
 
 #include <QObject>
 
+namespace cooperation_core {
+
 class SortFilterWorker : public QObject
 {
     Q_OBJECT
@@ -18,12 +20,14 @@ public:
     void stop();
 
 public Q_SLOTS:
-    void sortDevice(const DeviceInfo &info);
+    void addDevice(const QList<DeviceInfo> &infoList);
+    void removeDevice(const QList<DeviceInfo> &infoList);
     void filterDevice(const QString &filter);
     void clear();
 
 Q_SIGNALS:
     void sortFilterResult(int index, const DeviceInfo &info);
+    void deviceRemoved(int index);
     void filterFinished();
 
 private:
@@ -31,8 +35,11 @@ private:
     int findLast(ConnectState state);
 
 private:
+    QList<DeviceInfo> visibleDeviceList;
     QList<DeviceInfo> allDeviceList;
     std::atomic_bool isStoped { false };
 };
+
+}   // namespace cooperation_core
 
 #endif   // SORTFILTERWORKER_H

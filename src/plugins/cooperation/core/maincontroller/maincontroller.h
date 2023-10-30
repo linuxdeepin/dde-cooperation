@@ -5,40 +5,48 @@
 #ifndef MAINCONTROLLER_H
 #define MAINCONTROLLER_H
 
+#include "global_defines.h"
+
 #include <QObject>
 #include <QTimer>
+#include <QFutureWatcher>
 
-namespace cooperation_workspace {
+namespace cooperation_core {
 
-class WorkspaceWidget;
 class MainController : public QObject
 {
     Q_OBJECT
 public:
     static MainController *instance();
 
-    QWidget *workspaceWidget();
     void start();
     void stop();
+    void regist();
+    void unregist();
 
-    void registerDeviceOperation(const QVariantMap &map);
+Q_SIGNALS:
+    void onlineStateChanged(bool isOnline);
+    void startDiscoveryDevice();
+    void deviceOnline(const QList<DeviceInfo> &infoList);
+    void deviceOffline(const QList<DeviceInfo> &infoList);
+    void discoveryFinished();
 
 private Q_SLOTS:
-    void onlineStateChanged();
     void checkNetworkState();
+    void updateDeviceStatus(const QString &ip, const QString &info, bool isOnline);
 
 private:
     explicit MainController(QObject *parent = nullptr);
     void initConnect();
+    void handleDiscoveryDevice();
 
 private:
-    WorkspaceWidget *w { nullptr };
     QTimer *networkMonitorTimer { nullptr };
 
-    bool isRuning = false;
+    QFutureWatcher<void> futureWatcher;
     bool isOnline = true;
 };
 
-}   // namespace cooperation_workspace
+}   // namespace cooperation_core
 
 #endif   // MAINCONTROLLER_H

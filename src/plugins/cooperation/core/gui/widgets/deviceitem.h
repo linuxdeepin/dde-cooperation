@@ -14,7 +14,7 @@
 #include <QLabel>
 #include <QIcon>
 
-namespace cooperation_workspace {
+namespace cooperation_core {
 
 class ButtonBoxWidget;
 class StateLabel : public QLabel
@@ -88,9 +88,9 @@ private:
     QMap<int, Operation> indexOperaMap;
 };
 
-}   // namespace cooperation_workspace
+}   // namespace cooperation_core
 
-Q_DECLARE_METATYPE(cooperation_workspace::DeviceItem::ButtonStateCallback)
-Q_DECLARE_METATYPE(cooperation_workspace::DeviceItem::ClickedCallback)
+Q_DECLARE_METATYPE(cooperation_core::DeviceItem::ButtonStateCallback)
+Q_DECLARE_METATYPE(cooperation_core::DeviceItem::ClickedCallback)
 
 #endif   // DEVICEITEM_H

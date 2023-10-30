@@ -5,7 +5,7 @@
 #ifndef SETTINGDIALOG_P_H
 #define SETTINGDIALOG_P_H
 
-#include "gui/type_defines.h"
+#include "global_defines.h"
 #include "gui/widgets/filechooseredit.h"
 #include "gui/widgets/settingitem.h"
 

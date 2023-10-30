@@ -9,18 +9,10 @@
 #include "workspacewidget.h"
 #include "utils/sortfilterworker.h"
 
-#ifdef WIN32
-#    include <QMainWindow>
-// TODO:
-#else
-#include <DSearchEdit>
-typedef DTK_WIDGET_NAMESPACE::DSearchEdit CooperationSearchEdit;
-#endif
-
 #include <QStackedLayout>
 #include <QThread>
 
-namespace cooperation_workspace {
+namespace cooperation_core {
 
 class WorkspaceWidget;
 class LookingForDeviceWidget;
@@ -41,9 +33,11 @@ public Q_SLOTS:
     void onSearchValueChanged(const QString &text);
     void onSortFilterResult(int index, const DeviceInfo &info);
     void onFilterFinished();
+    void onDeviceRemoved(int index);
 
 Q_SIGNALS:
-    void deviceAdded(const DeviceInfo &info);
+    void devicesAdded(const QList<DeviceInfo> &infoList);
+    void devicesRemoved(const QList<DeviceInfo> &infoList);
     void filterDevice(const QString &str);
     void clearDevice();
 
@@ -61,6 +55,6 @@ public:
     QSharedPointer<QThread> workThread { nullptr };
 };
 
-}   // namespace cooperation_workspace {
+}   // namespace cooperation_core {
 
 #endif   // WORKSPACE_P_H

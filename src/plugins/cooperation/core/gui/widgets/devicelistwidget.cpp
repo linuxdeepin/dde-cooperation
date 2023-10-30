@@ -4,7 +4,7 @@
 
 #include "devicelistwidget.h"
 
-using namespace cooperation_workspace;
+using namespace cooperation_core;
 
 DeviceListWidget::DeviceListWidget(QWidget *parent)
     : QScrollArea(parent)

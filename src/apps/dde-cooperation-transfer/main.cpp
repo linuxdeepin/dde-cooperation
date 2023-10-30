@@ -69,6 +69,8 @@ int main(int argc, char *argv[])
 
     SingleApplication app(argc, argv);
     app.setOrganizationName("deepin");
+    app.setApplicationName("dde-cooperation");
+    app.setProperty("onlyTransfer", true);
 
     bool isSingleInstance = app.setSingleInstance(app.applicationName());
     if (!isSingleInstance) {

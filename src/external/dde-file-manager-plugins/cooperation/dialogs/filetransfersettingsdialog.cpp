@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filetransfersettingsdialog.h"
+#include "config/configmanager.h"
 
 #include <DStyle>
 #include <DGuiApplicationHelper>
@@ -20,6 +21,16 @@ FileChooserEdit::FileChooserEdit(QWidget *parent)
     : QWidget(parent)
 {
     initUI();
+}
+
+void FileChooserEdit::setText(const QString &text)
+{
+    QFontMetrics fontMetrices(pathLabel->font());
+    QString showName = fontMetrices.elidedText(text, Qt::ElideRight, pathLabel->width() - 16);
+    if (showName != text)
+        pathLabel->setToolTip(text);
+
+    pathLabel->setText(showName);
 }
 
 void FileChooserEdit::initUI()
@@ -65,12 +76,7 @@ void FileChooserEdit::onButtonClicked()
     if (dirPath.isEmpty())
         return;
 
-    QFontMetrics fontMetrices(pathLabel->font());
-    QString showName = fontMetrices.elidedText(dirPath, Qt::ElideRight, pathLabel->width() - 16);
-    if (showName != dirPath)
-        pathLabel->setToolTip(dirPath);
-
-    pathLabel->setText(showName);
+    setText(dirPath);
     emit fileChoosed(dirPath);
 }
 
@@ -170,6 +176,15 @@ void FileTransferSettingsDialog::initConnect()
     connect(fileChooserEdit, &FileChooserEdit::fileChoosed, this, &FileTransferSettingsDialog::onFileChoosered);
 }
 
+void FileTransferSettingsDialog::loadConfig()
+{
+    auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "TransferMode");
+    comBox->setCurrentIndex(value.isValid() ? value.toInt() : 0);
+
+    value = ConfigManager::instance()->appAttribute("GenericAttribute", "StoragePath");
+    fileChooserEdit->setText(value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+}
+
 void FileTransferSettingsDialog::addItem(const QString &text, QWidget *widget, int indexPos)
 {
     BackgroundWidget *bgWidget = new BackgroundWidget(this);
@@ -198,10 +213,16 @@ void FileTransferSettingsDialog::addItem(const QString &text, QWidget *widget, i
 
 void FileTransferSettingsDialog::onFileChoosered(const QString &fileName)
 {
-    // TODO
+    ConfigManager::instance()->setAppAttribute("GenericAttribute", "StoragePath", fileName);
 }
 
 void FileTransferSettingsDialog::onComBoxValueChanged(int index)
 {
-    // TODO
+    ConfigManager::instance()->setAppAttribute("GenericAttribute", "TransferMode", index);
+}
+
+void FileTransferSettingsDialog::showEvent(QShowEvent *e)
+{
+    loadConfig();
+    DDialog::showEvent(e);
 }

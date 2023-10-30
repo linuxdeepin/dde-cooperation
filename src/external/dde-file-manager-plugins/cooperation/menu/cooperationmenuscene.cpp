@@ -8,6 +8,7 @@
 #include <dfm-base/dfm_menu_defines.h>
 
 #include <QUrl>
+#include <QProcess>
 
 inline constexpr char kFileTransfer[] { "file-transfer" };
 
@@ -44,6 +45,9 @@ bool CooperationMenuScene::initialize(const QVariantHash &params)
 {
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+
+    if (d->selectFiles.isEmpty() || !d->selectFiles.first().isLocalFile())
+        return false;
 
     auto subScenes = subscene();
     setSubscene(subScenes);
@@ -88,7 +92,15 @@ bool CooperationMenuScene::triggered(QAction *action)
         return AbstractMenuScene::triggered(action);
 
     if (actionId == kFileTransfer) {
-        // TODO
+        QStringList fileList;
+        for (auto &url : d->selectFiles)
+            fileList << url.toLocalFile();
+
+        QStringList arguments;
+        arguments << "-s"
+                  << fileList;
+
+        return QProcess::startDetached("dde-cooperation-transfer", arguments);
     }
 
     return true;

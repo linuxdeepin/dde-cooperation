@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include "mainwindow_p.h"
 #include "dialogs/settingdialog.h"
+#include "maincontroller/maincontroller.h"
 
 #include <QScreen>
 #include <QApplication>
@@ -18,6 +19,13 @@ MainWindowPrivate::MainWindowPrivate(MainWindow *qq)
 
 MainWindowPrivate::~MainWindowPrivate()
 {
+}
+
+void MainWindowPrivate::initConnect()
+{
+    connect(MainController::instance(), &MainController::startDiscoveryDevice, q, &MainWindow::onLookingForDevices);
+    connect(MainController::instance(), &MainController::onlineStateChanged, q, &MainWindow::onlineStateChanged);
+    connect(MainController::instance(), &MainController::deviceOnline, q, &MainWindow::onDevicesFound);
 }
 
 void MainWindowPrivate::moveCenter()
@@ -71,9 +79,35 @@ MainWindow::MainWindow(QWidget *parent)
 {
     d->initWindow();
     d->initTitleBar();
+    d->initConnect();
     d->moveCenter();
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::onlineStateChanged(bool isOnline)
+{
+    if (!isOnline) {
+        d->workspaceWidget->clear();
+        d->workspaceWidget->switchWidget(WorkspaceWidget::kNoNetworkWidget);
+    }
+}
+
+void MainWindow::onLookingForDevices()
+{
+    d->workspaceWidget->clear();
+    d->workspaceWidget->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
+}
+
+void MainWindow::onDevicesFound(const QList<DeviceInfo> &infoList)
+{
+    d->workspaceWidget->switchWidget(WorkspaceWidget::kDeviceListWidget);
+    d->workspaceWidget->addDeviceInfos(infoList);
+}
+
+void MainWindow::onRegistOperations(const QVariantMap &map)
+{
+    d->workspaceWidget->addDeviceOperation(map);
 }

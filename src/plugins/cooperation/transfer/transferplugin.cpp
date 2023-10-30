@@ -7,6 +7,8 @@
 #include "utils/transferhelper.h"
 #include "base/baseutils.h"
 
+#include <co/co.h>
+
 using ButtonStateCallback = std::function<bool(const QVariantMap &)>;
 using ClickedCallback = std::function<void(const QVariantMap &)>;
 Q_DECLARE_METATYPE(ButtonStateCallback)
@@ -32,7 +34,7 @@ bool TransferPlugin::start()
     ClickedCallback clickedCb = TransferHelper::buttonClicked;
     ButtonStateCallback visibleCb = TransferHelper::buttonVisible;
     ButtonStateCallback clickableCb = TransferHelper::buttonClickable;
-    QVariantMap historyInfo { { "id", kHistoryId },
+    QVariantMap historyInfo { { "id", kHistoryButtonId },
                               { "description", QObject::tr("View transfer history") },
                               { "icon-name", "history" },
                               { "location", 2 },
@@ -41,7 +43,7 @@ bool TransferPlugin::start()
                               { "visible-callback", QVariant::fromValue(visibleCb) },
                               { "clickable-callback", QVariant::fromValue(clickableCb) } };
 
-    QVariantMap transferInfo { { "id", kTransferId },
+    QVariantMap transferInfo { { "id", kTransferButtonId },
                                { "description", QObject::tr("Send files") },
                                { "icon-name", "send" },
                                { "location", 3 },
@@ -50,8 +52,8 @@ bool TransferPlugin::start()
                                { "visible-callback", QVariant::fromValue(visibleCb) },
                                { "clickable-callback", QVariant::fromValue(clickableCb) } };
 
-    dpfSlotChannel->push("cooperation_workspace", "slot_Register_Operation", historyInfo);
-    dpfSlotChannel->push("cooperation_workspace", "slot_Register_Operation", transferInfo);
+    dpfSlotChannel->push("cooperation_core", "slot_Register_Operation", historyInfo);
+    dpfSlotChannel->push("cooperation_core", "slot_Register_Operation", transferInfo);
 
     TransferHelper::instance()->init();
 

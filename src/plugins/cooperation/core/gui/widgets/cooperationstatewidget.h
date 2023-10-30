@@ -7,7 +7,7 @@
 
 #include <QWidget>
 
-namespace cooperation_workspace {
+namespace cooperation_core {
 
 class LookingForDeviceWidget : public QWidget
 {
@@ -42,6 +42,6 @@ private:
     void initUI();
 };
 
-}   // namespace cooperation_workspace
+}   // namespace cooperation_core
 
 #endif   // COOPERATIONSTATEWIDGET_H

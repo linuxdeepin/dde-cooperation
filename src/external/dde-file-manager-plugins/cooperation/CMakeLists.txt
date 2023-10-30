@@ -7,6 +7,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.h"
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.cpp"
+    "${CMAKE_SOURCE_DIR}/src/config/*.h"
+    "${CMAKE_SOURCE_DIR}/src/config/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
@@ -25,12 +27,12 @@ add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
-
 target_include_directories(${PROJECT_NAME}
     PUBLIC
     ${CMAKE_SOURCE_DIR}/src/
 )
+
+set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 # 公共依赖库，添加到这里
 target_link_libraries(${PROJECT_NAME}
@@ -48,5 +50,5 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DEEPIN_DATA_TRANS_PLUGIN_DIR}
+    ${DFM_PLUGIN_FILEMANAGER_EDGE_DIR}
 )

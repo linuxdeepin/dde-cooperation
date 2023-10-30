@@ -5,7 +5,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "type_defines.h"
+#include "global_defines.h"
 
 #include <QScopedPointer>
 
@@ -18,6 +18,12 @@ class MainWindow : public CooperationMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+public Q_SLOTS:
+    void onlineStateChanged(bool isOnline);
+    void onLookingForDevices();
+    void onDevicesFound(const QList<DeviceInfo> &infoList);
+    void onRegistOperations(const QVariantMap &map);
 
 private:
     QScopedPointer<MainWindowPrivate> d;

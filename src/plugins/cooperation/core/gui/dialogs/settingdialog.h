@@ -5,7 +5,7 @@
 #ifndef SETTINGDIALOG_H
 #define SETTINGDIALOG_H
 
-#include "gui/type_defines.h"
+#include "global_defines.h"
 
 namespace cooperation_core {
 
