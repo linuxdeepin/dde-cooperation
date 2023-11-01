@@ -44,6 +44,7 @@ public slots:
     void handleNodeChanged(bool lost, QString info);
 
     void handleNodeRegister(bool unreg, fastring info);
+    void handleGetAllNodes();
 
 private:
     void localIPCStart();
@@ -54,8 +55,8 @@ private:
     bool handleCancelJob(co::Json &info);
     bool handleTransReport(co::Json &info);
 
-    Session* sessionById(QString &id);
-    Session* sessionByName(QString &name);
+    QSharedPointer<Session> sessionById(QString &id);
+    QSharedPointer<Session> sessionByName(const QString &name);
     fastring genPeerInfo();
 
     void asyncDiscovery();
@@ -70,7 +71,7 @@ private:
     QMap<int, TransferJob *> _transjob_break;
 
     // record the frontend session
-    co::vector<Session*> _sessions;
+    std::vector<QSharedPointer<Session>> _sessions;
 
     bool _hasConnected = false;
     fastring _connected_target;
