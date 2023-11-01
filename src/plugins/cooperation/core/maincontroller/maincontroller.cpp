@@ -22,41 +22,35 @@ MainController::MainController(QObject *parent)
     initConnect();
 }
 
+MainController::~MainController()
+{
+    if (future.isRunning()) {
+        stop();
+        future.waitForFinished();
+    }
+}
+
 void MainController::initConnect()
 {
     connect(networkMonitorTimer, &QTimer::timeout, this, &MainController::checkNetworkState);
     connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &MainController::regist);
-    connect(&futureWatcher, &QFutureWatcherBase::finished, this, &MainController::discoveryFinished);
 }
 
 void MainController::handleDiscoveryDevice()
 {
-    QTimer::singleShot(1000, this, [this] {
-        if (!isOnline) {
-            networkMonitorTimer->stop();
-            return;
-        }
+    if (!isOnline) {
+        networkMonitorTimer->stop();
+        return;
+    }
 
-        CooperationUtil::instance()->onlineDeviceInfo();
+    const auto &infoList = CooperationUtil::instance()->onlineDeviceInfo();
+    if (infoList.isEmpty()) {
+        Q_EMIT discoveryFinished(false);
+        return;
+    }
 
-        DeviceInfo info { "设备测试名称", "10.8.11.193", ConnectState::kConnectable };
-        DeviceInfo info11 { "sdf", "10.8.11.193", ConnectState::kConnected };
-        DeviceInfo info22 { "xxxx", "192.168.122.30", ConnectState::kConnectable };
-        DeviceInfo info33 { "cvbc", "192.168.122.30", ConnectState::kOffline };
-        DeviceInfo info1 { "设备测试名称1", "10.2.3.3", ConnectState::kConnected };
-        DeviceInfo info2 { "设备测试名称2", "10.2.3.31", ConnectState::kOffline };
-        QList<DeviceInfo> infoList;
-        for (int i = 0; i < 20; ++i) {
-            infoList.append(info);
-            infoList.append(info1);
-            infoList.append(info2);
-            infoList.append(info11);
-            infoList.append(info33);
-            infoList.append(info22);
-        }
-
-        Q_EMIT deviceOnline(infoList);
-    });
+    Q_EMIT deviceOnline(infoList);
+    Q_EMIT discoveryFinished(!infoList.isEmpty());
 }
 
 void MainController::checkNetworkState()
@@ -85,22 +79,25 @@ void MainController::checkNetworkState()
     }
 }
 
-void MainController::updateDeviceStatus(const QString &ip, const QString &info, bool isOnline)
+void MainController::updateDeviceList(const QString &ip, const QString &info, bool isOnline)
 {
-    QJsonParseError error;
-    auto doc = QJsonDocument::fromJson(info.toLocal8Bit(), &error);
-    if (error.error != QJsonParseError::NoError)
-        return;
+    if (isOnline) {
+        QJsonParseError error;
+        auto doc = QJsonDocument::fromJson(info.toLocal8Bit(), &error);
+        if (error.error != QJsonParseError::NoError)
+            return;
 
-    QVariantMap map = doc.toVariant().toMap();
-    DeviceInfo devInfo { map.value("DeviceName").toString(),
-                         ip,
-                         ConnectState::kConnectable };
+        auto map = doc.toVariant().toMap();
+        if (!map.contains("DeviceName"))
+            return;
 
-    if (isOnline)
+        DeviceInfo devInfo { map.value("DeviceName").toString(),
+                             ip,
+                             ConnectState::kConnectable };
         Q_EMIT deviceOnline({ devInfo });
-    else
-        Q_EMIT deviceOffline({ devInfo });
+    } else {
+        Q_EMIT deviceOffline(ip);
+    }
 }
 
 MainController *MainController::instance()
@@ -111,18 +108,21 @@ MainController *MainController::instance()
 
 void MainController::start()
 {
-    if (futureWatcher.isRunning())
+    if (future.isRunning())
         return;
 
     isOnline = true;
     networkMonitorTimer->start();
 
     Q_EMIT startDiscoveryDevice();
-    futureWatcher.setFuture(QtConcurrent::run(this, &MainController::handleDiscoveryDevice));
+    QTimer::singleShot(1000, this, [this] {
+        future = QtConcurrent::run(this, &MainController::handleDiscoveryDevice);
+    });
 }
 
 void MainController::stop()
 {
+    isStoped = true;
 }
 
 void MainController::regist()
@@ -132,7 +132,10 @@ void MainController::regist()
     info.insert(AppSettings::kDiscoveryModeKey, value.isValid() ? value.toInt() : 0);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kDeviceNameKey);
-    info.insert(AppSettings::kDeviceNameKey, value.isValid() ? value.toString() : QStandardPaths::displayName(QStandardPaths::HomeLocation));
+    info.insert(AppSettings::kDeviceNameKey,
+                value.isValid()
+                        ? value.toString()
+                        : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1));
 
     value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kPeripheralShareKey);
     info.insert(AppSettings::kPeripheralShareKey, value.isValid() ? value.toBool() : false);
@@ -155,4 +158,5 @@ void MainController::regist()
 
 void MainController::unregist()
 {
+    CooperationUtil::instance()->unregistAppInfo();
 }

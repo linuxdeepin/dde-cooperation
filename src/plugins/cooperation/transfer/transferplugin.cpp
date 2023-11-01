@@ -6,6 +6,7 @@
 #include "global_defines.h"
 #include "utils/transferhelper.h"
 #include "base/baseutils.h"
+#include "config/configmanager.h"
 
 #include <co/co.h>
 
@@ -18,6 +19,13 @@ using namespace cooperation_transfer;
 
 void TransferPlugin::initialize()
 {
+    if (qApp->property("onlyTransfer").toBool()) {
+        auto appName = qApp->applicationName();
+        qApp->setApplicationName("dde-cooperation");
+        ConfigManager::instance();
+        qApp->setApplicationName(appName);
+    }
+
     flag::set_value("rpc_log", "false"); //rpc日志关闭
 
 #ifdef QT_DEBUG

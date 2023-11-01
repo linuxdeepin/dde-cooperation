@@ -4,6 +4,8 @@
 
 #include "devicelistwidget.h"
 
+#include <QScrollBar>
+
 using namespace cooperation_core;
 
 DeviceListWidget::DeviceListWidget(QWidget *parent)
@@ -14,6 +16,8 @@ DeviceListWidget::DeviceListWidget(QWidget *parent)
 
 void DeviceListWidget::initUI()
 {
+    horizontalScrollBar()->setDisabled(true);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QWidget *mainWidget = new QWidget(this);
 
     mainLayout = new QVBoxLayout;

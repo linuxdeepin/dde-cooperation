@@ -23,9 +23,11 @@ void SortFilterWorker::addDevice(const QList<DeviceInfo> &infoList)
     if (isStoped)
         return;
 
-    for (const auto &info : infoList) {
-        if (allDeviceList.contains(info))
+    for (auto &info : infoList) {
+        if (allDeviceList.contains(info)) {
+            updateDevice(info);
             continue;
+        }
 
         int index = 0;
         switch (info.state) {
@@ -61,16 +63,16 @@ void SortFilterWorker::addDevice(const QList<DeviceInfo> &infoList)
     }
 }
 
-void SortFilterWorker::removeDevice(const QList<DeviceInfo> &infoList)
+void SortFilterWorker::removeDevice(const QString &ip)
 {
-    for (const auto &info : infoList) {
-        if (!visibleDeviceList.contains(info))
+    for (int i = 0; i < visibleDeviceList.size(); ++i) {
+        if (visibleDeviceList[i].ipStr != ip)
             continue;
 
-        int index = visibleDeviceList.indexOf(info);
-        allDeviceList.removeOne(info);
-        visibleDeviceList.removeOne(info);
-        Q_EMIT deviceRemoved(index);
+        allDeviceList.removeOne(visibleDeviceList[i]);
+        visibleDeviceList.removeAt(i);
+        Q_EMIT deviceRemoved(i);
+        break;
     }
 }
 
@@ -127,4 +129,21 @@ int SortFilterWorker::findLast(ConnectState state)
         return -1;
 
     return index;
+}
+
+void SortFilterWorker::updateDevice(const DeviceInfo &info)
+{
+    // 更新
+    int index = allDeviceList.indexOf(info);
+    if (allDeviceList[index].deviceName != info.deviceName
+        || allDeviceList[index].state != info.state) {
+        allDeviceList.replace(allDeviceList.indexOf(info), info);
+    }
+
+    if (!visibleDeviceList.contains(info))
+        return;
+
+    index = visibleDeviceList.indexOf(info);
+    visibleDeviceList.replace(visibleDeviceList.indexOf(info), info);
+    Q_EMIT deviceReplaced(index, info);
 }

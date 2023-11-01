@@ -86,6 +86,7 @@ private:
     ButtonBoxWidget *btnBoxWidget { nullptr };
 
     QMap<int, Operation> indexOperaMap;
+    QString devName;
 };
 
 }   // namespace cooperation_core

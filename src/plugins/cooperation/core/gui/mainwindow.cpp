@@ -25,7 +25,9 @@ void MainWindowPrivate::initConnect()
 {
     connect(MainController::instance(), &MainController::startDiscoveryDevice, q, &MainWindow::onLookingForDevices);
     connect(MainController::instance(), &MainController::onlineStateChanged, q, &MainWindow::onlineStateChanged);
-    connect(MainController::instance(), &MainController::deviceOnline, q, &MainWindow::onDevicesFound);
+    connect(MainController::instance(), &MainController::deviceOnline, q, &MainWindow::addDevice);
+    connect(MainController::instance(), &MainController::deviceOffline, q, &MainWindow::removeDevice);
+    connect(MainController::instance(), &MainController::discoveryFinished, q, &MainWindow::onDiscoveryFinished);
 }
 
 void MainWindowPrivate::moveCenter()
@@ -101,10 +103,21 @@ void MainWindow::onLookingForDevices()
     d->workspaceWidget->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
 }
 
-void MainWindow::onDevicesFound(const QList<DeviceInfo> &infoList)
+void MainWindow::onDiscoveryFinished(bool hasFound)
+{
+    if (!hasFound)
+        d->workspaceWidget->switchWidget(WorkspaceWidget::kNoResultWidget);
+}
+
+void MainWindow::addDevice(const QList<DeviceInfo> &infoList)
 {
     d->workspaceWidget->switchWidget(WorkspaceWidget::kDeviceListWidget);
     d->workspaceWidget->addDeviceInfos(infoList);
+}
+
+void MainWindow::removeDevice(const QString &ip)
+{
+    d->workspaceWidget->removeDeviceInfos(ip);
 }
 
 void MainWindow::onRegistOperations(const QVariantMap &map)

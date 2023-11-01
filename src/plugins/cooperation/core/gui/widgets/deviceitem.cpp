@@ -109,12 +109,19 @@ void DeviceItem::setLabelFont(QLabel *label, int pointSize, int weight)
 
 void DeviceItem::setDeviceName(const QString &name)
 {
-    nameLabel->setText(name);
+    devName = name;
+    QFontMetrics fm(nameLabel->font());
+    int width = 390 - (btnBoxWidget->isVisible() ? btnBoxWidget->width() : 0);
+    auto showName = fm.elidedText(name, Qt::ElideMiddle, width);
+
+    nameLabel->setText(showName);
+    if (showName != devName)
+        nameLabel->setToolTip(devName);
 }
 
 QString DeviceItem::deviceName() const
 {
-    return nameLabel->text();
+    return devName;
 }
 
 void DeviceItem::setIPText(const QString &ipStr)
@@ -222,12 +229,14 @@ void DeviceItem::enterEvent(QEvent *event)
 {
     updateOperations();
     btnBoxWidget->setVisible(true);
+    setDeviceName(devName);
     BackgroundWidget::enterEvent(event);
 }
 
 void DeviceItem::leaveEvent(QEvent *event)
 {
     btnBoxWidget->setVisible(false);
+    setDeviceName(devName);
     BackgroundWidget::leaveEvent(event);
 }
 
@@ -235,8 +244,10 @@ void DeviceItem::showEvent(QShowEvent *event)
 {
     if (hasFocus()) {
         updateOperations();
+        setDeviceName(devName);
     } else {
         btnBoxWidget->setVisible(false);
+        setDeviceName(devName);
     }
 
     BackgroundWidget::showEvent(event);

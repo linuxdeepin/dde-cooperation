@@ -26,9 +26,10 @@ public:
 
     explicit WorkspaceWidget(QWidget *parent = nullptr);
 
+    int itemCount();
     void switchWidget(PageName page);
     void addDeviceInfos(const QList<DeviceInfo> &infoList);
-    void removeDeviceInfos(const QList<DeviceInfo> &infoList);
+    void removeDeviceInfos(const QString &ip);
     void addDeviceOperation(const QVariantMap &map);
 
     void clear();
