@@ -12,13 +12,18 @@
 DiscoveryJob::DiscoveryJob(QObject *parent)
     : QObject(parent)
 {
-    _dis_node_maps.clear();
+    {
+        QWriteLocker lk(&_dis_lock);
+        _dis_node_maps.clear();
+    }
 }
 
 DiscoveryJob::~DiscoveryJob()
 {
-    _dis_node_maps.clear();
-
+    {
+        QWriteLocker lk(&_dis_lock);
+        _dis_node_maps.clear();
+    }
     // free discoverer pointer
     if (_discoverer_p) {
         auto p = (searchlight::Discoverer*)_discoverer_p;
@@ -40,6 +45,7 @@ void DiscoveryJob::discovererRun()
         "ulink_service",
         [this](const searchlight::Discoverer::services& services)
         {
+            QWriteLocker lk(&_dis_lock);
             // loop and set may not exist
             for (auto it = _dis_node_maps.begin(); it != _dis_node_maps.end(); ++it) {
                 it->second.second = false;
@@ -139,6 +145,7 @@ void DiscoveryJob::removeAppbyName(const fastring name)
 co::list<fastring> DiscoveryJob::getNodes()
 {
     co::list<fastring> notes;
+    QReadLocker lk(&_dis_lock);
     for (auto it = _dis_node_maps.begin(); it != _dis_node_maps.end(); ++it) {
         notes.push_back(it->second.first);
     }

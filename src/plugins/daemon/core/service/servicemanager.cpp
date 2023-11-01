@@ -623,7 +623,6 @@ void ServiceManager::forwardJsonMisc(fastring &appname, fastring &message)
 
 void ServiceManager::handleLoginResult(bool result, QString session)
 {
-    qInfo() << session << " LoginResult: " << result;
     fastring session_name(session.toStdString());
 
     // find the session by session id
@@ -699,8 +698,6 @@ void ServiceManager::handleJobTransStatus(QString appname, int jobid, int status
 
 void ServiceManager::handleNodeChanged(bool found, QString info)
 {
-//    qInfo() << info << " node found: " << found << " session.size=" << _sessions.size();
-
     // notify to all frontend sessions
     go ([this, found, info]() {
         for (size_t i = 0; i < _sessions.size(); ++i) {
@@ -716,7 +713,6 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
                     { "result", found ? 1 : 0 },
                     { "msg", nodeinfo },
                 };
-
                 req.add_member("api", "Frontend.cbPeerInfo");
                 c->call(req, res);
             } else {
