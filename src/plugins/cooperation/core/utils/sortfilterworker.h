@@ -21,18 +21,20 @@ public:
 
 public Q_SLOTS:
     void addDevice(const QList<DeviceInfo> &infoList);
-    void removeDevice(const QList<DeviceInfo> &infoList);
+    void removeDevice(const QString &ip);
     void filterDevice(const QString &filter);
     void clear();
 
 Q_SIGNALS:
     void sortFilterResult(int index, const DeviceInfo &info);
     void deviceRemoved(int index);
+    void deviceReplaced(int index, const DeviceInfo &info);
     void filterFinished();
 
 private:
     int findFirst(ConnectState state);
     int findLast(ConnectState state);
+    void updateDevice(const DeviceInfo &info);
 
 private:
     QList<DeviceInfo> visibleDeviceList;

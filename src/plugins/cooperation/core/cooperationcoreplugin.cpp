@@ -7,13 +7,23 @@
 #include "events/cooperationcoreeventreceiver.h"
 #include "utils/cooperationutil.h"
 #include "maincontroller/maincontroller.h"
+#include "config/configmanager.h"
 
 #include <QDebug>
+#include <QApplication>
 
 using namespace cooperation_core;
 
 void CooperaionCorePlugin::initialize()
 {
+    if (qApp->property("onlyTransfer").toBool()) {
+        auto appName = qApp->applicationName();
+        qApp->setApplicationName(kMainAppName);
+        ConfigManager::instance();
+        qApp->setApplicationName(appName);
+    }
+
+    CooperationUtil::instance();
     bindEvents();
 }
 

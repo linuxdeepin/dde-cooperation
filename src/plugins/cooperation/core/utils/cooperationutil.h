@@ -24,7 +24,7 @@ public:
 
     void registAppInfo(const QString &infoJson);
     void unregistAppInfo();
-    QString onlineDeviceInfo();
+    QList<DeviceInfo> onlineDeviceInfo();
 
 private:
     explicit CooperationUtil(QObject *parent = nullptr);

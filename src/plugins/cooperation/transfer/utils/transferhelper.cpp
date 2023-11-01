@@ -170,7 +170,9 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
     }
 
     auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
-    QString deviceName = value.isValid() ? value.toString() : QStandardPaths::displayName(QStandardPaths::HomeLocation);
+    QString deviceName = value.isValid()
+            ? value.toString()
+            : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
 
     //TransFilesParam
     req = {
@@ -321,6 +323,8 @@ void TransferHelper::init()
     go([this] {
         co::sleep(3000);
         d->backendOk = d->handlePingBacked();
+        qInfo() << "The result of ping backend is " << d->backendOk;
+
         d->initConfig();
     });
 }

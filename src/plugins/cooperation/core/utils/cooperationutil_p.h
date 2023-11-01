@@ -5,6 +5,8 @@
 #ifndef COOPERATIONUTIL_P_H
 #define COOPERATIONUTIL_P_H
 
+#include "global_defines.h"
+
 #include <co/rpc.h>
 #include <co/co.h>
 
@@ -20,9 +22,11 @@ class CooperationUtilPrivate : public QObject
     Q_OBJECT
 public:
     explicit CooperationUtilPrivate(CooperationUtil *qq);
+    ~CooperationUtilPrivate();
 
-    bool pingBacked();
+    bool pingBackend();
     void localIPCStart();
+    QList<DeviceInfo> parseDeviceInfo(const co::Json &obj);
 
 public:
     CooperationUtil *q { nullptr };

@@ -39,6 +39,8 @@ inline const char kStoragePathKey[] { "StoragePath" };
 inline const char kClipboardShareKey[] { "ClipboardShare" };
 }
 
+inline const char kMainAppName[] { "dde-cooperation" };
+
 // Setting menu action list
 enum MenuAction {
     kSettings,

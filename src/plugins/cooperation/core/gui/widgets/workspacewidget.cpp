@@ -58,6 +58,7 @@ void WorkspaceWidgetPrivate::initConnect()
     connect(sortFilterWorker.data(), &SortFilterWorker::sortFilterResult, this, &WorkspaceWidgetPrivate::onSortFilterResult, Qt::QueuedConnection);
     connect(sortFilterWorker.data(), &SortFilterWorker::filterFinished, this, &WorkspaceWidgetPrivate::onFilterFinished, Qt::QueuedConnection);
     connect(sortFilterWorker.data(), &SortFilterWorker::deviceRemoved, this, &WorkspaceWidgetPrivate::onDeviceRemoved, Qt::QueuedConnection);
+    connect(sortFilterWorker.data(), &SortFilterWorker::deviceReplaced, this, &WorkspaceWidgetPrivate::onDeviceReplaced, Qt::QueuedConnection);
 }
 
 void WorkspaceWidgetPrivate::onSearchValueChanged(const QString &text)
@@ -91,12 +92,23 @@ void WorkspaceWidgetPrivate::onDeviceRemoved(int index)
         stackedLayout->setCurrentWidget(nrWidget);
 }
 
+void WorkspaceWidgetPrivate::onDeviceReplaced(int index, const DeviceInfo &info)
+{
+    dlWidget->removeItem(index);
+    dlWidget->insertItem(index, info);
+}
+
 WorkspaceWidget::WorkspaceWidget(QWidget *parent)
     : QWidget(parent),
       d(new WorkspaceWidgetPrivate(this))
 {
     d->initUI();
     d->initConnect();
+}
+
+int WorkspaceWidget::itemCount()
+{
+    return d->dlWidget->itemCount();
 }
 
 void WorkspaceWidget::switchWidget(PageName page)
@@ -113,9 +125,9 @@ void WorkspaceWidget::addDeviceInfos(const QList<DeviceInfo> &infoList)
     Q_EMIT d->devicesAdded(infoList);
 }
 
-void WorkspaceWidget::removeDeviceInfos(const QList<DeviceInfo> &infoList)
+void WorkspaceWidget::removeDeviceInfos(const QString &ip)
 {
-    Q_EMIT d->devicesRemoved(infoList);
+    Q_EMIT d->devicesRemoved(ip);
 }
 
 void WorkspaceWidget::addDeviceOperation(const QVariantMap &map)

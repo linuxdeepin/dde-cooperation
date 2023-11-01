@@ -22,7 +22,9 @@ public:
 public Q_SLOTS:
     void onlineStateChanged(bool isOnline);
     void onLookingForDevices();
-    void onDevicesFound(const QList<DeviceInfo> &infoList);
+    void onDiscoveryFinished(bool hasFound);
+    void addDevice(const QList<DeviceInfo> &infoList);
+    void removeDevice(const QString &ip);
     void onRegistOperations(const QVariantMap &map);
 
 private:

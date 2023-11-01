@@ -9,6 +9,7 @@
 
 #include <QPainter>
 #include <QEvent>
+#include <QDir>
 #include <QStandardPaths>
 
 using namespace cooperation_core;
@@ -258,7 +259,9 @@ void SettingDialog::loadConfig()
     d->findCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kDeviceNameKey);
-    d->nameEdit->setText(value.isValid() ? value.toString() : QStandardPaths::displayName(QStandardPaths::HomeLocation));
+    d->nameEdit->setText(value.isValid()
+                                 ? value.toString()
+                                 : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1));
 
     value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kPeripheralShareKey);
     d->devShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : false);

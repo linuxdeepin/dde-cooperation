@@ -69,7 +69,6 @@ int main(int argc, char *argv[])
 
     SingleApplication app(argc, argv);
     app.setOrganizationName("deepin");
-    app.setApplicationName("dde-cooperation");
     app.setProperty("onlyTransfer", true);
 
     bool isSingleInstance = app.setSingleInstance(app.applicationName());
@@ -91,6 +90,7 @@ int main(int argc, char *argv[])
     CommandParser::instance().process();
     CommandParser::instance().processCommand();
     int ret = app.exec();
+    DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
     app.closeServer();
     return ret;

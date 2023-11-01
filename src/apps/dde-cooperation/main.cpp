@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
     }
 
     int ret = app.exec();
+    DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
     app.closeServer();
     return ret;

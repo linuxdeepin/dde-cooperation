@@ -34,10 +34,11 @@ public Q_SLOTS:
     void onSortFilterResult(int index, const DeviceInfo &info);
     void onFilterFinished();
     void onDeviceRemoved(int index);
+    void onDeviceReplaced(int index, const DeviceInfo &info);
 
 Q_SIGNALS:
     void devicesAdded(const QList<DeviceInfo> &infoList);
-    void devicesRemoved(const QList<DeviceInfo> &infoList);
+    void devicesRemoved(const QString &ip);
     void filterDevice(const QString &str);
     void clearDevice();
 

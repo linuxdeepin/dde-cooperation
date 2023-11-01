@@ -11,6 +11,8 @@
 #include "ipc/frontendservice.h"
 #include "ipc/proto/comstruct.h"
 
+#include <QJsonDocument>
+
 using namespace cooperation_core;
 
 CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
@@ -20,11 +22,16 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
     rpcClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false));
 
     go([this] {
-        backendOk = pingBacked();
+        backendOk = pingBackend();
+        qInfo() << "The result of ping backend is " << backendOk;
     });
 }
 
-bool CooperationUtilPrivate::pingBacked()
+CooperationUtilPrivate::~CooperationUtilPrivate()
+{
+}
+
+bool CooperationUtilPrivate::pingBackend()
 {
     co::Json req, res;
     bool onlyTransfer = qApp->property("onlyTransfer").toBool();
@@ -93,23 +100,25 @@ void CooperationUtilPrivate::localIPCStart()
 
                 qInfo() << param.result << " peer : " << param.msg.c_str();
 
-                co::Json cj;
-                if (!cj.parse_from(param.msg))
-                    break;
+                co::Json obj = json::parse(param.msg);
+                NodeInfo nodeInfo;
+                nodeInfo.from_json(obj);
+                for (const auto &appInfo : nodeInfo.apps) {
+                    // 上线，非跨端应用无需处理
+                    if (param.result && appInfo.appname.compare(kMainAppName) != 0)
+                        continue;
 
-                QString appInfo = cj.get("apps").as_c_str();
-                if (appInfo.isEmpty())
-                    break;
+                    // 下线，跨端应用未下线
+                    if (!param.result && appInfo.appname.compare(kMainAppName) == 0)
+                        continue;
 
-                auto osInfo = cj.get("os");
-                QString ip = osInfo.get("ipv4").as_c_str();
-
-                q->metaObject()->invokeMethod(MainController::instance(),
-                                              "updateDeviceStatus",
-                                              Qt::QueuedConnection,
-                                              Q_ARG(QString, ip),
-                                              Q_ARG(QString, appInfo),
-                                              Q_ARG(bool, param.result));
+                    q->metaObject()->invokeMethod(MainController::instance(),
+                                                  "updateDeviceList",
+                                                  Qt::QueuedConnection,
+                                                  Q_ARG(QString, QString(nodeInfo.os.ipv4.c_str())),
+                                                  Q_ARG(QString, QString(appInfo.json.c_str())),
+                                                  Q_ARG(bool, param.result));
+                }
             } break;
             default:
                 break;
@@ -123,6 +132,41 @@ void CooperationUtilPrivate::localIPCStart()
 
     bool onlyTransfer = qApp->property("onlyTransfer").toBool();
     rpc::Server().add_service(frontendimp).start("0.0.0.0", onlyTransfer ? UNI_IPC_FRONTEND_TRANSFER_PORT : UNI_IPC_FRONTEND_COOPERATION_PORT, "/frontend", "", "");
+}
+
+QList<DeviceInfo> CooperationUtilPrivate::parseDeviceInfo(const co::Json &obj)
+{
+    NodeList nodeList;
+    nodeList.from_json(obj);
+
+    QList<DeviceInfo> devInfoList;
+    for (const auto &node : nodeList.peers) {
+        DeviceInfo devInfo;
+        devInfo.state = ConnectState::kConnectable;
+        devInfo.ipStr = node.os.ipv4.c_str();
+
+        for (const auto &app : node.apps) {
+            if (app.appname != kMainAppName)
+                continue;
+
+            QJsonParseError error;
+            auto doc = QJsonDocument::fromJson(app.json.c_str(), &error);
+            if (error.error != QJsonParseError::NoError)
+                continue;
+
+            auto map = doc.toVariant().toMap();
+            if (!map.contains(AppSettings::kDeviceNameKey))
+                continue;
+
+            devInfo.deviceName = map.value(AppSettings::kDeviceNameKey).toString();
+            break;
+        }
+
+        if (!devInfo.deviceName.isEmpty())
+            devInfoList << devInfo;
+    }
+
+    return devInfoList;
 }
 
 CooperationUtil::CooperationUtil(QObject *parent)
@@ -205,16 +249,16 @@ void CooperationUtil::unregistAppInfo()
     });
 }
 
-QString CooperationUtil::onlineDeviceInfo()
+QList<DeviceInfo> CooperationUtil::onlineDeviceInfo()
 {
     if (!d->backendOk)
         return {};
 
     co::wait_group g_wg;
     g_wg.add(1);
-    QString info;
+    QList<DeviceInfo> infoList;
 
-    go([this, &info, &g_wg] {
+    go([this, &infoList, &g_wg] {
         co::Json req, res;
 
         req.add_member("api", "Backend.getDiscovery");
@@ -225,12 +269,15 @@ QString CooperationUtil::onlineDeviceInfo()
         if (!ok) {
             qWarning() << "discovery devices failed!";
         } else {
-            info = res.get("msg").str().c_str();
+            qInfo() << "all device: " << res.get("msg").as_c_str();
+            co::Json obj;
+            obj.parse_from(res.get("msg").as_string());
+            infoList = d->parseDeviceInfo(obj);
         }
 
         g_wg.done();
     });
     g_wg.wait();
 
-    return info;
+    return infoList;
 }

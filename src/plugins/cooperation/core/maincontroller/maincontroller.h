@@ -9,7 +9,7 @@
 
 #include <QObject>
 #include <QTimer>
-#include <QFutureWatcher>
+#include <QFuture>
 
 namespace cooperation_core {
 
@@ -28,23 +28,26 @@ Q_SIGNALS:
     void onlineStateChanged(bool isOnline);
     void startDiscoveryDevice();
     void deviceOnline(const QList<DeviceInfo> &infoList);
-    void deviceOffline(const QList<DeviceInfo> &infoList);
-    void discoveryFinished();
+    void deviceOffline(const QString &ip);
+    void discoveryFinished(bool hasFound);
 
 private Q_SLOTS:
     void checkNetworkState();
-    void updateDeviceStatus(const QString &ip, const QString &info, bool isOnline);
+    void updateDeviceList(const QString &ip, const QString &info, bool isOnline);
 
 private:
     explicit MainController(QObject *parent = nullptr);
+    ~MainController();
+
     void initConnect();
     void handleDiscoveryDevice();
 
 private:
     QTimer *networkMonitorTimer { nullptr };
 
-    QFutureWatcher<void> futureWatcher;
-    bool isOnline = true;
+    QFuture<void> future;
+    bool isOnline { true };
+    bool isStoped { false };
 };
 
 }   // namespace cooperation_core
