@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <QReadWriteLock>
 #include <co/time.h>
 #include <co/stl.h>
 #include <memory>
@@ -73,6 +74,7 @@ private:
     const fastring _listen_for_service;
     const on_services_changed_t _on_services_changed;
 
+    QReadWriteLock _discovered_lock;
     services _discovered_services;
 
     DISALLOW_COPY_AND_ASSIGN(Discoverer);

@@ -6,6 +6,7 @@
 #define DISCOVERYJOB_H
 
 #include <QObject>
+#include <QReadWriteLock>
 #include <co/stl.h>
 
 class DiscoveryJob : public QObject
@@ -39,6 +40,7 @@ private:
     void *_announcer_p;
 
     //<uuid, <peerinfo, exist>>
+    QReadWriteLock _dis_lock;
     co::lru_map<fastring, std::pair<fastring, bool>> _dis_node_maps;
 };
 

@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <QDebug>
 #include "searchlight.h"
 #include "co/co/sock.h"
 #include "co/json.h"
@@ -23,13 +24,19 @@ Discoverer::Discoverer(const fastring& listen_for_service,
     : _listen_for_service(listen_for_service)
     , _on_services_changed(on_services_changed)
 {
-    _discovered_services.clear();
+    {
+        QWriteLocker lk(&_discovered_lock);
+        _discovered_services.clear();
+    }
 }
 
 Discoverer::~Discoverer()
 {
     _stop = true;
-    _discovered_services.clear();
+    {
+        QWriteLocker lk(&_discovered_lock);
+        _discovered_services.clear();
+    }
 }
 
 void Discoverer::start()
@@ -80,6 +87,7 @@ void Discoverer::start()
     UNIGO([this](){
         while (!_stop) {
             sleep::ms(1000); //co::sleep(1000);
+            QWriteLocker lk(&_discovered_lock);
             if (remove_idle_services()) {
                 // callback discovery changed
                 _on_services_changed(_discovered_services);
@@ -145,6 +153,7 @@ void Discoverer::handle_message(const fastring& message, const fastring& sender_
         };
 
     if (name == _listen_for_service) {
+        QWriteLocker lk(&_discovered_lock);
         _discovered_services.erase(discovered_service);
         _discovered_services.insert(discovered_service);
 
@@ -286,7 +295,6 @@ void Announcer::start()
         fastring message = node.str();
 
         //DLOG << "UDP send: " << message;
-
         int send_len = co::sendto(sockfd, message.data(), message.size(), &dest_addr, len);
         if (send_len < 0) {
             ELOG << "Failed to send data";
