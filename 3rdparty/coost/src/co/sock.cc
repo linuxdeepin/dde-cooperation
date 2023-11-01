@@ -2,6 +2,7 @@
 
 #include "close.h"
 #include "sched.h"
+#include "context/arch.h"
 
 namespace co {
 
@@ -12,6 +13,12 @@ void set_nonblock(sock_t fd) {
 void set_cloexec(sock_t fd) {
     __sys_api(fcntl)(fd, F_SETFD, __sys_api(fcntl)(fd, F_GETFD) | FD_CLOEXEC);
 }
+
+#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+void set_non_blocking(int fd, int x) {
+    __sys_api(ioctl)(fd, FIONBIO, (char*)&x);
+}
+#endif
 
 #ifdef SOCK_NONBLOCK
 sock_t socket(int domain, int type, int protocol) {
@@ -31,6 +38,7 @@ sock_t socket(int domain, int type, int protocol) {
 
 int close(sock_t fd, int ms) {
     if (fd < 0) return 0;
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
     const auto sched = xx::gSched;
     if (sched) {
         sched->del_io_event(fd);
@@ -38,13 +46,18 @@ int close(sock_t fd, int ms) {
     } else {
         co::get_sock_ctx(fd).del_event();
     }
+#else
+    co::get_sock_ctx(fd).del_event();
+#endif
     return _close_nocancel(fd);
 }
 
 int shutdown(sock_t fd, char c) {
     if (fd < 0) return 0;
-    const auto sched = xx::gSched;
     int how;
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+    const auto sched = xx::gSched;
+    
     if (sched) {
         switch (c) {
           case 'r':
@@ -61,6 +74,7 @@ int shutdown(sock_t fd, char c) {
         } 
 
     } else {
+
         switch (c) {
           case 'r':
             co::get_sock_ctx(fd).del_ev_read();
@@ -73,9 +87,23 @@ int shutdown(sock_t fd, char c) {
           default:
             co::get_sock_ctx(fd).del_event();
             how = SHUT_RDWR;
-        } 
+        }
     }
-
+#else
+    switch (c) {
+      case 'r':
+        co::get_sock_ctx(fd).del_ev_read();
+        how = SHUT_RD;
+        break;
+      case 'w':
+        co::get_sock_ctx(fd).del_ev_write();
+        how = SHUT_WR;
+        break;
+      default:
+        co::get_sock_ctx(fd).del_event();
+        how = SHUT_RDWR;
+    }
+#endif
     return __sys_api(shutdown)(fd, how);
 }
 
@@ -88,8 +116,12 @@ int listen(sock_t fd, int backlog) {
 }
 
 sock_t accept(sock_t fd, void* addr, int* addrlen) {
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
+#else
+    set_non_blocking(fd, 0);
+#endif
 
     io_event ev(fd, ev_read);
     do {
@@ -114,8 +146,12 @@ sock_t accept(sock_t fd, void* addr, int* addrlen) {
 }
 
 int connect(sock_t fd, const void* addr, int addrlen, int ms) {
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
+#else
+    set_non_blocking(fd, 0);
+#endif
 
     do {
         int r = __sys_api(connect)(fd, (const sockaddr*)addr, (socklen_t)addrlen);
@@ -139,8 +175,12 @@ int connect(sock_t fd, const void* addr, int addrlen, int ms) {
 }
 
 int recv(sock_t fd, void* buf, int n, int ms) {
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
+#else
+    set_non_blocking(fd, 0);
+#endif
 
     io_event ev(fd, ev_read);
     do {
@@ -158,6 +198,9 @@ int recv(sock_t fd, void* buf, int n, int ms) {
 int recvn(sock_t fd, void* buf, int n, int ms) {
     char* p = (char*) buf;
     int remain = n;
+#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+    set_non_blocking(fd, 0);
+#endif
     io_event ev(fd, ev_read);
     do {
         int r = (int) __sys_api(recv)(fd, p, remain, 0);
@@ -178,9 +221,12 @@ int recvn(sock_t fd, void* buf, int n, int ms) {
 }
 
 int recvfrom(sock_t fd, void* buf, int n, void* addr, int* addrlen, int ms) {
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
-
+#else
+    set_non_blocking(fd, 0);
+#endif
     io_event ev(fd, ev_read);
     do {
         int r = (int) __sys_api(recvfrom)(fd, buf, n, 0, (sockaddr*)addr, (socklen_t*)addrlen);
@@ -195,8 +241,12 @@ int recvfrom(sock_t fd, void* buf, int n, void* addr, int* addrlen, int ms) {
 }
 
 int send(sock_t fd, const void* buf, int n, int ms) {
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
+#else
+    set_non_blocking(fd, 0);
+#endif
 
     const char* p = (const char*) buf;
     int remain = n;
@@ -220,9 +270,12 @@ int send(sock_t fd, const void* buf, int n, int ms) {
 }
 
 int sendto(sock_t fd, const void* buf, int n, const void* addr, int addrlen, int ms) {
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
-
+#else
+    set_non_blocking(fd, 0);
+#endif
     const char* p = (const char*) buf;
     int remain = n;
     io_event ev(fd, ev_write);

@@ -61,6 +61,9 @@ ServiceManager::~ServiceManager()
     }
 
     _sessions.reset();
+
+    DiscoveryJob::instance()->stopAnnouncer();
+    DiscoveryJob::instance()->stopDiscoverer();
 }
 
 void ServiceManager::startRemoteServer()
@@ -72,7 +75,7 @@ void ServiceManager::startRemoteServer()
         Cert::instance()->removeFile(key);
         Cert::instance()->removeFile(crt);
     }
-    go([this]() {
+    UNIGO([this]() {
         while(!_this_destruct) {
             IncomeData indata;
             _income_chan >> indata;
@@ -102,7 +105,7 @@ void ServiceManager::startRemoteServer()
             }
             case IN_TRANSJOB:
             {
-                go(std::bind(&ServiceManager::handleRemoteRequestJob, this, json_obj));
+                UNIGO(std::bind(&ServiceManager::handleRemoteRequestJob, this, std::placeholders::_1), json_obj.str());
                 break;
             }
             case FS_DATA:
@@ -141,7 +144,7 @@ void ServiceManager::localIPCStart()
 
     connect(_rpcServiceBinder, &RemoteServiceBinder::loginResult, this, &ServiceManager::handleLoginResult, Qt::QueuedConnection);
 
-    go([this]() {
+    UNIGO([this]() {
         while(!_this_destruct) {
             BridgeJsonData bridge;
             _backendIpcService->bridgeChan()->operator>>(bridge); //300ms超时
@@ -286,8 +289,12 @@ void ServiceManager::localIPCStart()
                  .start("0.0.0.0", UNI_IPC_BACKEND_PORT, "/backend", "", "");
 }
 
-bool ServiceManager::handleRemoteRequestJob(co::Json &info)
+bool ServiceManager::handleRemoteRequestJob(fastring json)
 {
+    co::Json info;
+    if (!info.parse_from(json)) {
+        return false;
+    }
     FSJob fsjob;
     fsjob.from_json(info);
     int32 jobId = fsjob.job_id;
@@ -312,7 +319,7 @@ bool ServiceManager::handleRemoteRequestJob(co::Json &info)
         _transjob_sends.insert(jobId, job);
     }
     g_m.unlock();
-    go([this, job]() {
+    UNIGO([this, job]() {
         // start job one by one
         co::mutex_guard g(g_m);
         // DLOG << ".........start job: sched: " << co::sched_id() << " co: " << co::coroutine_id();
@@ -471,10 +478,10 @@ fastring ServiceManager::genPeerInfo()
 void ServiceManager::asyncDiscovery()
 {
     connect(DiscoveryJob::instance(), &DiscoveryJob::sigNodeChanged, this, &ServiceManager::handleNodeChanged, Qt::QueuedConnection);
-    go ([]() {
+    UNIGO([]() {
         DiscoveryJob::instance()->discovererRun();
     });
-    go ([this]() {
+    UNIGO([this]() {
         fastring baseinfo = genPeerInfo();
         DiscoveryJob::instance()->announcerRun(baseinfo);
     });
@@ -514,7 +521,7 @@ void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList p
         { "write", false }
     };
 
-    go(std::bind(&ServiceManager::handleRemoteRequestJob, this, jobjson));
+    UNIGO(std::bind(&ServiceManager::handleRemoteRequestJob, this, std::placeholders::_1), jobjson.str());
     s->addJob(id); // record this job into session
 }
 
@@ -537,7 +544,7 @@ void ServiceManager::notifyConnect(QString session, QString ip, QString password
         fastring pincode = password.toStdString();
         _connected_target = target_ip;
 
-        go([this, target_ip, user, pincode]() {
+        UNIGO([this, target_ip, user, pincode]() {
             _rpcServiceBinder->createExecutor(target_ip.c_str(), UNI_RPC_PORT_BASE);
             _rpcServiceBinder->doLogin(user.c_str(), pincode.c_str());
         });
@@ -588,7 +595,7 @@ bool ServiceManager::doJobAction(uint32_t action, co::Json &jsonobj)
 
 void ServiceManager::sendMiscMessage(fastring &appname, fastring &message)
 {
-    go([this, appname, message]() {
+    UNIGO([this, appname, message]() {
         QString res = _rpcServiceBinder->doMisc(appname.c_str(), message.c_str());
         JsonMessage rpc_res;
         if (!res.isEmpty() && rpc_res.ParseFromString(res.toStdString())) {
@@ -607,13 +614,12 @@ void ServiceManager::forwardJsonMisc(fastring &appname, fastring &message)
     QString app(appname.c_str());
     Session *s = sessionByName(app);
     if (s && s->valid()) {
-        go ([s, message]() {
-            co::pool_guard<rpc::Client> c(s->clientPool());
+        UNIGO([s, message]() {
             co::Json req, res;
             //cbMiscMessage {any json format}
             if (req.parse_from(message)) {
                 req.add_member("api", "Frontend.cbMiscMessage");
-                c->call(req, res);
+                s->client()->call(req, res);
             } else {
                 ELOG << "forwardJsonMisc NOT correct json:"<< message;
             }
@@ -629,8 +635,7 @@ void ServiceManager::handleLoginResult(bool result, QString session)
     // find the session by session id
     Session *s = sessionByName(session);
     if (s && s->valid()) {
-        go ([s, result, session_name]() {
-            co::pool_guard<rpc::Client> c(s->clientPool());
+        UNIGO([s, result, session_name]() {
             co::Json req, res;
             //cbConnect {GenericResult}
             req = {
@@ -639,7 +644,7 @@ void ServiceManager::handleLoginResult(bool result, QString session)
                 { "msg", session_name },
             };
             req.add_member("api", "Frontend.cbConnect");
-            c->call(req, res);
+            s->client()->call(req, res);
         });
     } else {
         DLOG << "Donot find login seesion: " << session_name;
@@ -651,13 +656,12 @@ void ServiceManager::handleFileTransStatus(QString appname, int status, QString 
     Session *s = sessionByName(appname);
     if (s && s->valid()) {
         //DLOG << "notify file trans status to:" << s->getName().toStdString();
-        go ([s, status, fileinfo]() {
+        UNIGO([s, status, fileinfo]() {
             co::Json infojson;
             infojson.parse_from(fileinfo.toStdString());
             FileInfo filejob;
             filejob.from_json(infojson);
 
-            co::pool_guard<rpc::Client> c(s->clientPool());
             co::Json req, res;
             //notifyFileStatus {FileStatus}
             req = {
@@ -671,7 +675,7 @@ void ServiceManager::handleFileTransStatus(QString appname, int status, QString 
             };
 
             req.add_member("api", "Frontend.notifyFileStatus");
-            c->call(req, res);
+            s->client()->call(req, res);
         });
     }
 }
@@ -681,8 +685,7 @@ void ServiceManager::handleJobTransStatus(QString appname, int jobid, int status
     Session *s = sessionByName(appname);
     if (s && s->valid()) {
         //DLOG << "notify file trans status to:" << s->getName().toStdString();
-        go ([s, jobid, status, savedir]() {
-            co::pool_guard<rpc::Client> c(s->clientPool());
+        UNIGO([s, jobid, status, savedir]() {
             co::Json req, res;
             //cbTransStatus {GenericResult}
             req = {
@@ -692,7 +695,7 @@ void ServiceManager::handleJobTransStatus(QString appname, int jobid, int status
             };
 
             req.add_member("api", "Frontend.cbTransStatus");
-            c->call(req, res);
+            s->client()->call(req, res);
         });
     }
 }
@@ -702,13 +705,12 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
 //    qInfo() << info << " node found: " << found << " session.size=" << _sessions.size();
 
     // notify to all frontend sessions
-    go ([this, found, info]() {
+    UNIGO([this, found, info]() {
         for (size_t i = 0; i < _sessions.size(); ++i) {
             Session *s = _sessions[i];
             if (s->alive()) {
                 // fastring session_id(s->getSession().toStdString());
                 fastring nodeinfo(info.toStdString());
-                co::pool_guard<rpc::Client> c(s->clientPool());
                 co::Json req, res;
                 //cbPeerInfo {GenericResult}
                 req = {
@@ -718,7 +720,7 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
                 };
 
                 req.add_member("api", "Frontend.cbPeerInfo");
-                c->call(req, res);
+                s->client()->call(req, res);
             } else {
                 // the frontend is offline
                 _sessions.remove(i);

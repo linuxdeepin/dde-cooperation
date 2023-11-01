@@ -1,15 +1,19 @@
 #include "hook.h"
 #include "sched.h"
+#include "co/context/arch.h"
 
 namespace co {
 
 #ifndef _WIN32
 
 io_event::~io_event() {
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
     if (_added) xx::gSched->del_io_event(_fd, _ev);
+#endif
 }
 
 bool io_event::wait(uint32 ms) {
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
     auto sched = xx::gSched;
     if (!_added) {
         _added = sched->add_io_event(_fd, _ev);
@@ -26,6 +30,9 @@ bool io_event::wait(uint32 ms) {
         sched->yield();
         return true;
     }
+#else
+    return false;
+#endif
 }
 
 #else

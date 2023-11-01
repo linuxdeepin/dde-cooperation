@@ -53,6 +53,17 @@
       defined(__mips__)
   #define ARCH_MIPS
 
+#elif defined(loongarch) || \
+      defined(_loongarch) || \
+      defined(_loongarch64) || \
+      defined(__loongarch__)
+  #define ARCH_LOONGARCH
+
+#elif defined(sw64) || \
+      defined(_sw64) || \
+      defined(__sw64__)
+  #define ARCH_SW
+
 #else
   #error unknown arch
 #endif
@@ -115,6 +126,7 @@
     defined(__PPC64__) || \
     defined(__ppc64__) || \
     defined(__powerpc64__) || \
+    defined(__loongarch64) || \
     defined(_M_X64) || \
     defined(_M_AMD64) || \
     defined(_M_IA64) || \

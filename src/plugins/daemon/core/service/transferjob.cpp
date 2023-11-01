@@ -105,7 +105,7 @@ fastring TransferJob::getAppName()
 void TransferJob::cancel()
 {
     if (_writejob) {
-        go ([this] {
+        UNIGO([this] {
             FileTransJobCancel *cancel = new FileTransJobCancel();
             FileTransUpdate update;
 
@@ -202,7 +202,7 @@ void TransferJob::readFileBlock(const char *filepath, int fileid, const fastring
     if (nullptr == filepath || fileid < 0) {
         return;
     }
-    go ([this, filepath, fileid, subname]() {
+    UNIGO([this, filepath, fileid, subname]() {
         size_t block_size = BLOCK_SIZE;
         int64 file_size = fs::fsize(filepath);
         int64 read_size = 0;
@@ -267,7 +267,7 @@ void TransferJob::readFileBlock(const char *filepath, int fileid, const fastring
 void TransferJob::handleBlockQueque()
 {
     // 定时获取状态并通知，检测是否结束
-    go ([this]() {
+    UNIGO([this]() {
         bool exit = false;
         bool next_exit = false;
         int _max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
@@ -376,7 +376,7 @@ void TransferJob::handleBlockQueque()
 
 void TransferJob::handleUpdate(FileTransRe result, const char *path, const char *emsg)
 {
-    go ([this, result, path, emsg] {
+    UNIGO([this, result, path, emsg] {
         FileTransJobReport *report = new FileTransJobReport();
         FileTransUpdate update;
 

@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <co/co.h>
+#include <co/rpc.h>
 
 class Session : public QObject
 {
@@ -23,7 +24,7 @@ public:
     void addJob(int jobid);
     bool removeJob(int jobid);
     int hasJob(int jobid);
-    co::pool* clientPool();
+    rpc::Client* client();
 
 signals:
 
@@ -35,8 +36,9 @@ private:
     int _cb_port = 0;
     co::vector<int> _jobs;
 
-    co::pool *_client_pool = nullptr;
+    std::shared_ptr<rpc::Client> coClient { nullptr };
 
+    bool _initPing = false;
     bool _pingOK = false;
 };
 

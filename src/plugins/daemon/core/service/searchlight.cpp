@@ -8,6 +8,7 @@
 #include "co/time.h"
 #include "co/co.h"
 #include "co/log.h"
+#include "common/constant.h"
 
 DEF_int32(max_idle, 3000, "max_idle");
 DEF_string(udp_ip, "0.0.0.0", "udp_ip");
@@ -76,7 +77,7 @@ void Discoverer::start()
 
     _timer.restart();
     // 定时更新发现设备
-    go([this](){
+    UNIGO([this](){
         while (!_stop) {
             sleep::ms(1000); //co::sleep(1000);
             if (remove_idle_services()) {
@@ -92,8 +93,10 @@ void Discoverer::start()
         memset(buffer, 0, sizeof(buffer));
         int recv_len = co::recvfrom(sockfd, buffer, sizeof(buffer), &cli, &len);
         if (recv_len < 0) {
-            LOG << "discoverer server recvfrom error: " << co::strerror();
-            break;
+//            LOG << "discoverer server recvfrom error: " << co::strerror();
+            co::sleep(100);
+            continue;
+//            break;
         }
 
         fastring msg(buffer, recv_len);
