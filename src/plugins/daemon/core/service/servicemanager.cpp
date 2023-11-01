@@ -129,6 +129,11 @@ void ServiceManager::startRemoteServer()
                 handleTransReport(json_obj);
                 break;
             }
+            case TRANS_APPLY:
+            {
+                handleRemoteApplyTransFile(json_obj);
+                break;
+            }
             default:
                 break;
             }
@@ -276,6 +281,13 @@ void ServiceManager::localIPCStart()
                 handleNodeRegister(true, json_obj.get("appinfo").as_string());
                 break;
             }
+            case BACK_APPLY_TRANS_FILES:
+            {
+                ApplyTransFiles param;
+                param.from_json(json_obj);
+                sendApplyTransFiles(param.appName.data(), param.type, param.machineName.data());
+                break;
+            }
             default:
                 break;
             }
@@ -300,12 +312,13 @@ bool ServiceManager::handleRemoteRequestJob(fastring json)
     fsjob.from_json(info);
     int32 jobId = fsjob.job_id;
     fastring savedir = fsjob.save;
+    fastring appName = fsjob.who;
     if (savedir.empty() && fsjob.write) {
         // 如果未指定保存相对路径，则默认保存到$home/hostname
         savedir = DaemonConfig::instance()->getStorageDir();
     }
 
-    TransferJob *job = new TransferJob();
+    TransferJob *job = new TransferJob(appName.data());
     job->initRpc(_connected_target, UNI_RPC_PORT_BASE);
     job->initJob(fsjob.who, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
     connect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus, Qt::QueuedConnection);
@@ -433,6 +446,31 @@ bool ServiceManager::handleTransReport(co::Json &info)
     return true;
 }
 
+bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
+{
+    ApplyTransFiles obj;
+    obj.from_json(info);
+    auto appName = obj.appName;
+    int32 type = obj.type;
+    fastring machineName = obj.machineName;
+    auto s = sessionByName(appName.data());
+    if (s && s->alive()) {
+        UNIGO([s, type, machineName]() {
+            co::Json infojson;
+            co::Json req, res;
+            //notifyFileStatus {FileStatus}
+            req = {
+                { "type", type},
+                { "machineName",  machineName},
+            };
+
+            req.add_member("api", "Frontend.applyTransFiles");
+            s->client()->call(req, res);
+        });
+    }
+    return true;
+}
+
 QSharedPointer<Session> ServiceManager::sessionById(QString &id)
 {
     // find the session by id
@@ -545,9 +583,9 @@ void ServiceManager::notifyConnect(QString session, QString ip, QString password
         fastring pincode = password.toStdString();
         _connected_target = target_ip;
 
-        UNIGO([this, target_ip, user, pincode]() {
-            _rpcServiceBinder->createExecutor(target_ip.c_str(), UNI_RPC_PORT_BASE);
-            _rpcServiceBinder->doLogin(user.c_str(), pincode.c_str());
+        UNIGO([this, session, target_ip, user, pincode]() {
+            _rpcServiceBinder->createExecutor(session, target_ip.c_str(), UNI_RPC_PORT_BASE);
+            _rpcServiceBinder->doLogin(session, user.c_str(), pincode.c_str());
         });
     }
 }
@@ -752,4 +790,17 @@ void ServiceManager::handleGetAllNodes()
     res.json = nodeInfos.as_json().str();
 
     _backendIpcService->bridgeResult()->operator<<(res);
+}
+
+void ServiceManager::sendApplyTransFiles(const QString &appName, const int32 type, const QString &machineName)
+{
+    if (_rpcServiceBinder == nullptr)
+        return;
+    UNIGO([this, appName, type, machineName]() {
+        ApplyTransFilesRequest req;
+        req.set_appname(appName.toStdString());
+        req.set_machinename(machineName.toStdString());
+        req.set_type(type);
+        _rpcServiceBinder->doSendApplyTransFiles(req);
+    });
 }

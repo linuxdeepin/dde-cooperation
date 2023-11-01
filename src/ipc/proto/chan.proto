@@ -64,3 +64,9 @@ object FSReport {
     int32 result //请求结果
     string error //原因
 }
+
+object ApplyTransFiles {
+  string machineName // 机器名称
+  string appName // 应用名称
+  int32 type // 0是申请，1同意申请，2,是拒绝申请
+}

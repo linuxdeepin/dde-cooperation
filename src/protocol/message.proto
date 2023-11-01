@@ -170,6 +170,16 @@ message FileTransUpdate {
   }
 }
 
+message ApplyTransFilesRequest {
+  string machineName = 1; // 机器名称
+  string appName = 2; // 应用名称
+  int32 type = 3; // 0是申请，1同意申请，2,是拒绝申请
+}
+
+message ApplyTransFilesResponse {
+  bool result = 1;
+}
+
 // file actions end
 
 service RemoteService {
@@ -188,4 +198,6 @@ service RemoteService {
   rpc filetrans_block(FileTransBlock) returns (FileTransResponse);
 
   rpc filetrans_update(FileTransUpdate) returns (FileTransResponse);
+
+  rpc apply_trans_files(ApplyTransFilesRequest) returns (ApplyTransFilesResponse);
 }

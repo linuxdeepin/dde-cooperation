@@ -13,7 +13,6 @@
 #include "co/json.h"
 #include "co/mem.h"
 #include "co/fs.h"
-#include "zrpc.h"
 
 #include "common/constant.h"
 #include "version.h"
@@ -327,23 +326,23 @@ void RemoteServiceImpl::filetrans_update(::google::protobuf::RpcController *cont
     }
 }
 
-class ZRpcClientExecutor
+void RemoteServiceImpl::apply_trans_files(google::protobuf::RpcController *controller, const ApplyTransFilesRequest *request, ApplyTransFilesResponse *response, google::protobuf::Closure *done)
 {
-public:
-    ZRpcClientExecutor(const char *targetip, uint16_t port)
-    {
-        _client = new zrpc_ns::ZRpcClient(targetip, port, true);
+    LOG << "req= " << request->ShortDebugString().c_str();
+    IncomeData in;
+    co::Json info {
+        {"machineName", request->machinename()},
+        {"appName", request->appname()},
+        {"type", request->type()}
+    };
+    in.type = TRANS_APPLY;
+    in.json = info.str();
+    _income_chan << in;
+
+    if (done) {
+        done->Run();
     }
-
-    ~ZRpcClientExecutor() = default;
-
-    zrpc_ns::ZRpcChannel *chan() { return _client->getChannel(); }
-
-    zrpc_ns::ZRpcController *control() { return _client->getControler(); }
-
-private:
-    zrpc_ns::ZRpcClient *_client{ nullptr };
-};
+}
 
 RemoteServiceBinder::RemoteServiceBinder(QObject *parent)
     : QObject(parent)
@@ -370,20 +369,37 @@ void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpat
     }
 }
 
-void RemoteServiceBinder::createExecutor(const char *targetip, uint16_t port)
+void RemoteServiceBinder::createExecutor(const QString &appname, const char *targetip, uint16_t port)
 {
-    _executor_p = co::make<ZRpcClientExecutor>(targetip, port);
+    QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
+    {
+        QReadLocker lk(&_executor_lock);
+        if (_executor_ps.contains(appname))
+            return;
+        for (const auto &executor : _executor_ps) {
+            if (targetip == executor->targetIP()) {
+                _executor_p = executor;
+                break;
+            }
+        }
+    }
+
+    if (_executor_p.isNull())
+        _executor_p = QSharedPointer<ZRpcClientExecutor>(new ZRpcClientExecutor(targetip, port));
+    QWriteLocker lk(&_executor_lock);
+    _executor_ps.insert(appname, _executor_p);
 }
 
-void RemoteServiceBinder::doLogin(const char *username, const char *pincode)
+void RemoteServiceBinder::doLogin(const QString &appname, const char *username, const char *pincode)
 {
-    if (nullptr == _executor_p) {
+    auto _executor_p = executor(appname);
+    if (_executor_p.isNull()) {
         ELOG << "doLogin ERROR: no executor";
         return;
     }
 
-    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
-    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
+    RemoteService_Stub stub(_executor_p->chan());
+    zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
 
     LoginRequest rpc_req;
     LoginResponse rpc_res;
@@ -428,20 +444,21 @@ void RemoteServiceBinder::doLogin(const char *username, const char *pincode)
     emit loginResult(false, QString(username));
 }
 
-void RemoteServiceBinder::doQuery()
+void RemoteServiceBinder::doQuery(const QString &appname)
 {
-    if (nullptr == _executor_p) {
-        ELOG << "doLogin ERROR: no executor";
+    auto _executor_p = executor(appname);
+    if (_executor_p.isNull()) {
+        ELOG << "doQuery ERROR: no executor";
         return;
     }
 
-    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
-    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
+    RemoteService_Stub stub(_executor_p->chan());
+    zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
 
     PeerInfo rpc_req;
     PeerInfo rpc_res;
 
-    stub.query_peerinfo(rpc_controller, &rpc_req, &rpc_res, NULL);
+    stub.query_peerinfo(rpc_controller, &rpc_req, &rpc_res, nullptr);
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
@@ -458,13 +475,14 @@ void RemoteServiceBinder::doQuery()
 QString RemoteServiceBinder::doMisc(const char *appname, const char *miscdata)
 {
     QString res_json("");
-    if (nullptr == _executor_p) {
-        ELOG << "doLogin ERROR: no executor";
+    auto _executor_p = executor(appname);
+    if (_executor_p.isNull()) {
+        ELOG << "doMisc ERROR: no executor";
         return res_json;
     }
 
-    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
-    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
+    RemoteService_Stub stub(_executor_p->chan());
+    zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
 
     JsonMessage rpc_req;
     JsonMessage rpc_res;
@@ -489,13 +507,15 @@ QString RemoteServiceBinder::doMisc(const char *appname, const char *miscdata)
 
 int RemoteServiceBinder::doTransfileJob(const char *appname, int id, const char *jobpath, bool hidden, bool recursive, bool recv)
 {
-    if (nullptr == _executor_p || nullptr == jobpath) {
+    QString res_json("");
+    auto _executor_p = executor(appname);
+    if (_executor_p.isNull()) {
         ELOG << "doTransfileJob ERROR: no executor";
         return PARAM_ERROR;
     }
 
-    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
-    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
+    RemoteService_Stub stub(_executor_p->chan());
+    zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
 
     FileTransJob req_job;
     FileTransResponse res_job;
@@ -523,15 +543,16 @@ int RemoteServiceBinder::doTransfileJob(const char *appname, int id, const char 
     return INVOKE_FAIL;
 }
 
-int RemoteServiceBinder::doSendFileInfo(int jobid, int fileid, const char *subdir, const char *filepath)
+int RemoteServiceBinder::doSendFileInfo(const QString &appname, int jobid, int fileid, const char *subdir, const char *filepath)
 {
-    if (nullptr == _executor_p || nullptr == filepath) {
+    auto _executor_p = executor(appname);
+    if (_executor_p.isNull()) {
         ELOG << "doSendFileInfo ERROR: no executor";
         return PARAM_ERROR;
     }
 
-    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
-    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
+    RemoteService_Stub stub(_executor_p->chan());
+    zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
 
     // Step1: create file
     FileTransCreate req_create;
@@ -560,15 +581,16 @@ int RemoteServiceBinder::doSendFileInfo(int jobid, int fileid, const char *subdi
     return INVOKE_DONE;
 }
 
-int RemoteServiceBinder::doSendFileBlock(FileTransBlock fileblock)
+int RemoteServiceBinder::doSendFileBlock(const QString &appname, FileTransBlock fileblock)
 {
-    if (nullptr == _executor_p) {
+    auto _executor_p = executor(appname);
+    if (_executor_p.isNull()) {
         ELOG << "doSendFileBlock ERROR: no executor";
         return PARAM_ERROR;
     }
 
-    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
-    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
+    RemoteService_Stub stub(_executor_p->chan());
+    zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
 
     FileTransResponse res_block;
     int try_max = 3;
@@ -596,15 +618,16 @@ retry:
     return INVOKE_DONE;
 }
 
-int RemoteServiceBinder::doUpdateTrans(FileTransUpdate update)
+int RemoteServiceBinder::doUpdateTrans(const QString &appname, FileTransUpdate update)
 {
-    if (nullptr == _executor_p) {
+    auto _executor_p = executor(appname);
+    if (_executor_p.isNull()) {
         ELOG << "doUpdateTrans ERROR: no executor";
         return PARAM_ERROR;
     }
 
-    RemoteService_Stub stub(((ZRpcClientExecutor *)_executor_p)->chan());
-    zrpc_ns::ZRpcController *rpc_controller = ((ZRpcClientExecutor *)_executor_p)->control();
+    RemoteService_Stub stub(_executor_p->chan());
+    zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
 
     FileTransResponse res;
     stub.filetrans_update(rpc_controller, &update, &res, nullptr);
@@ -622,4 +645,30 @@ int RemoteServiceBinder::doUpdateTrans(FileTransUpdate update)
     }
 
     return INVOKE_DONE;
+}
+
+void RemoteServiceBinder::doSendApplyTransFiles(ApplyTransFilesRequest applyInfo)
+{
+    auto _executor_p = executor(applyInfo.appname().data());
+    if (_executor_p.isNull()) {
+        ELOG << "doSendApplyTransFiles ERROR: no executor";
+        return;
+    }
+
+    RemoteService_Stub stub(_executor_p->chan());
+    zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
+    ApplyTransFilesResponse res;
+    stub.apply_trans_files(rpc_controller, &applyInfo, &res, nullptr);
+
+    if (rpc_controller->ErrorCode() != 0) {
+        ELOG << "Failed to call filetrans_update, error code: " << rpc_controller->ErrorCode()
+            << ", error info: " << rpc_controller->ErrorText();
+        return;
+    }
+}
+
+QSharedPointer<ZRpcClientExecutor> RemoteServiceBinder::executor(const QString &appname)
+{
+    QReadLocker lk(&_executor_lock);
+    return _executor_ps.value(appname);
 }

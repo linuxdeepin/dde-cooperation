@@ -138,3 +138,17 @@ void FrontendImpl::notifyFileStatus(co::Json &req, co::Json &res)
         { "msg", "" }
     };
 }
+
+void FrontendImpl::applyTransFiles(co::Json &req, co::Json &res)
+{
+    BridgeJsonData bridge;
+    bridge.type = FRONT_APPLY_TRANS_FILE;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
+}

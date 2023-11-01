@@ -45,6 +45,7 @@ public slots:
 
     void handleNodeRegister(bool unreg, fastring info);
     void handleGetAllNodes();
+    void sendApplyTransFiles(const QString &appName, const int32 type, const QString &machineName);
 
 private:
     void localIPCStart();
@@ -54,6 +55,7 @@ private:
     bool handleFSInfo(co::Json &info);
     bool handleCancelJob(co::Json &info);
     bool handleTransReport(co::Json &info);
+    bool handleRemoteApplyTransFile(co::Json &info);
 
     QSharedPointer<Session> sessionById(QString &id);
     QSharedPointer<Session> sessionByName(const QString &name);

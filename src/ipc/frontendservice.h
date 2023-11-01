@@ -58,6 +58,8 @@ public:
 
     virtual void notifyFileStatus(co::Json& req, co::Json& res) override;
 
+    virtual void applyTransFiles(co::Json& req, co::Json& res) override;
+
 private:
     FrontendService *_interface;
 };

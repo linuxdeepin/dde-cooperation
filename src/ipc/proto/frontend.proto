@@ -9,6 +9,7 @@ service Frontend {
     cbFsPull, // callback remote FS, FileDirectory
     cbFsAction, // callback result for remote FS action: create, delete, rename
     notifyFileStatus, // notify file status
+    applyTransFiles, // callback remote apply or apply a reply
 }
 
 // return {GenericResult}

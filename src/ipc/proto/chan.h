@@ -214,3 +214,23 @@ struct FSReport {
     }
 };
 
+struct ApplyTransFiles {
+    fastring machineName;
+    fastring appName;
+    int32 type;
+
+    void from_json(const co::Json& _x_) {
+        machineName = _x_.get("machineName").as_c_str();
+        appName = _x_.get("appName").as_c_str();
+        type = (int32)_x_.get("type").as_int64();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("machineName", machineName);
+        _x_.add_member("appName", appName);
+        _x_.add_member("type", type);
+        return _x_;
+    }
+};
+

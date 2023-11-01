@@ -21,6 +21,7 @@ class Frontend : public rpc::Service {
         _methods["Frontend.cbFsPull"] = std::bind(&Frontend::cbFsPull, this, _1, _2);
         _methods["Frontend.cbFsAction"] = std::bind(&Frontend::cbFsAction, this, _1, _2);
         _methods["Frontend.notifyFileStatus"] = std::bind(&Frontend::notifyFileStatus, this, _1, _2);
+        _methods["Frontend.applyTransFiles"] = std::bind(&Frontend::applyTransFiles, this, _1, _2);
     }
 
     virtual ~Frontend() {}
@@ -48,6 +49,8 @@ class Frontend : public rpc::Service {
     virtual void cbFsAction(co::Json& req, co::Json& res) = 0;
 
     virtual void notifyFileStatus(co::Json& req, co::Json& res) = 0;
+
+    virtual void applyTransFiles(co::Json& req, co::Json& res) = 0;
 
   private:
     co::map<const char*, Fun> _methods;

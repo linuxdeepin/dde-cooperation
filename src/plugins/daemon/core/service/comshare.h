@@ -20,6 +20,7 @@ typedef enum income_type_t {
     FS_INFO = 1006,
     FS_REPORT = 1007,
     TRANS_CANCEL = 1008,
+    TRANS_APPLY = 1009,
 } IncomeType;
 
 typedef enum outgo_type_t {

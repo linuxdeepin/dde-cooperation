@@ -6,8 +6,11 @@
 #define REMOTE_SERVICE_H
 
 #include <QObject>
+#include <QReadWriteLock>
+#include <QMap>
 
 #include "message.pb.h"
+#include "zrpc.h"
 
 class RemoteServiceImpl : public RemoteService
 {
@@ -54,8 +57,32 @@ public:
                                   const ::FileTransUpdate *request,
                                   ::FileTransResponse *response,
                                   ::google::protobuf::Closure *done);
+    virtual void apply_trans_files(::google::protobuf::RpcController* controller,
+                                   const ::ApplyTransFilesRequest* request,
+                                   ::ApplyTransFilesResponse* response,
+                                   ::google::protobuf::Closure* done);
 
 private:
+};
+
+class ZRpcClientExecutor
+{
+public:
+    ZRpcClientExecutor(const char *targetip, uint16_t port)
+    {
+        _client = new zrpc_ns::ZRpcClient(targetip, port, true);
+    }
+
+    ~ZRpcClientExecutor() = default;
+
+    zrpc_ns::ZRpcChannel *chan() { return _client->getChannel(); }
+
+    zrpc_ns::ZRpcController *control() { return _client->getControler(); }
+
+    QString targetIP() { return _client->getControler()->LocalAddr()->getIP(); }
+
+private:
+    zrpc_ns::ZRpcClient *_client{ nullptr };
 };
 
 class RemoteServiceBinder : public QObject
@@ -67,11 +94,11 @@ public:
 
     void startRpcListen(const char *keypath, const char *crtpath);
 
-    void createExecutor(const char *targetip, uint16_t port);
+    void createExecutor(const QString &appname, const char *targetip, uint16_t port);
 
-    void doLogin(const char *username, const char *pincode);
+    void doLogin(const QString &appname, const char *username, const char *pincode);
 
-    void doQuery();
+    void doQuery(const QString &appname);
 
     //发到哪一个前端的自定义信息
     QString doMisc(const char *appname, const char *miscdata);
@@ -80,13 +107,16 @@ public:
     int doTransfileJob(const char *appname, int id, const char *jobpath, bool hidden, bool recursive, bool recv);
 
     // 发送文件数据信息。
-    int doSendFileInfo(int jobid, int fileid, const char *subdir, const char *filepath);
+    int doSendFileInfo(const QString &appname, int jobid, int fileid, const char *subdir, const char *filepath);
 
     // 发送文件数据块。
-    int doSendFileBlock(FileTransBlock fileblock);
+    int doSendFileBlock(const QString &appname, FileTransBlock fileblock);
 
     // 发送文件传输报告。
-    int doUpdateTrans(FileTransUpdate update);
+    int doUpdateTrans(const QString &appname, FileTransUpdate update);
+
+    // 发送文件传输请求
+    void doSendApplyTransFiles(ApplyTransFilesRequest applyInfo);
 
 signals:
     void loginResult(bool result, QString who);
@@ -100,7 +130,12 @@ signals:
 public slots:
 
 private:
-    void *_executor_p{ nullptr };
+    QSharedPointer<ZRpcClientExecutor> executor(const QString &appname);
+
+private:
+    QReadWriteLock _executor_lock;
+    QMap<QString, QSharedPointer<ZRpcClientExecutor>>_executor_ps;
+
 };
 
 #endif   // REMOTE_SERVICE_H

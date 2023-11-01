@@ -11,7 +11,9 @@
 #include "fsadapter.h"
 #include "utils/config.h"
 
-TransferJob::TransferJob(QObject *parent) : QObject(parent)
+TransferJob::TransferJob(const QString appname, QObject *parent)
+    : QObject(parent)
+    , appName(appname)
 {
     _block_queue.clear();
     _file_info_maps.clear();
@@ -21,7 +23,7 @@ void TransferJob::initRpc(fastring target, uint16 port)
 {
     if (nullptr == _rpcBinder) {
         _rpcBinder = new RemoteServiceBinder(this);
-        _rpcBinder->createExecutor(target.c_str(), port);
+        _rpcBinder->createExecutor(appName, target.c_str(), port);
     }
 }
 
@@ -113,7 +115,7 @@ void TransferJob::cancel()
             cancel->set_path(_path.c_str());
 
             update.set_allocated_cancel(cancel);
-            int res = _rpcBinder->doUpdateTrans(update);
+            int res = _rpcBinder->doUpdateTrans(this->appName, update);
             if (res <= 0) {
                 ELOG << "update failed: " << _path << " result=" << result;
             }
@@ -162,7 +164,7 @@ fastring TransferJob::getSubdir(const char *path, const char *root)
 void TransferJob::scanPath(const char *root, const char *path, int id)
 {
     fastring subdir = getSubdir(path, root);
-    int res = _rpcBinder->doSendFileInfo(_jobid, id, subdir.c_str(), path);
+    int res = _rpcBinder->doSendFileInfo(appName, _jobid, id, subdir.c_str(), path);
     if (res <= 0) {
         ELOG << "error file info : " << path;
         return;
@@ -344,7 +346,7 @@ void TransferJob::handleBlockQueque()
             file_block.set_compressed(comp);
 //            DLOG << "(" << job_id << ") send block " << block.filename << " size: " << len;
 
-            int send = _rpcBinder->doSendFileBlock(file_block);
+            int send = _rpcBinder->doSendFileBlock(appName, file_block);
             if (send <= 0) {
                 ELOG << "rpc disconnect, break : " << name;
                 exception = true;
@@ -386,7 +388,7 @@ void TransferJob::handleUpdate(FileTransRe result, const char *path, const char 
         report->set_error(emsg);
 
         update.set_allocated_report(report);
-        int res = _rpcBinder->doUpdateTrans(update);
+        int res = _rpcBinder->doUpdateTrans(appName, update);
         if (res <= 0) {
             ELOG << "update failed: " << _path << " result=" << result;
         }
