@@ -328,3 +328,17 @@ void BackendImpl::unregisterDiscovery(co::Json& req, co::Json& res)
         { "msg", "" }
     };
 }
+
+void BackendImpl::applyTransFiles(co::Json &req, co::Json &res)
+{
+    BridgeJsonData bridge;
+    bridge.type = BACK_APPLY_TRANS_FILES;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
+}

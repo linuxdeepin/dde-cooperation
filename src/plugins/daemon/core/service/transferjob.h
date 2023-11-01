@@ -16,7 +16,7 @@ class TransferJob : public QObject
     Q_OBJECT
 
 public:
-    explicit TransferJob(QObject *parent = nullptr);
+    explicit TransferJob(const QString appname, QObject *parent = nullptr);
     void initRpc(fastring target, uint16 port);
     void initJob(fastring appname, int id, fastring path, bool sub, fastring savedir, bool write);
 
@@ -76,6 +76,7 @@ private:
     co::map<int32, FileInfo> _file_info_maps;
 
     int _empty_max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
+    QString appName;
 };
 
 #endif // TRANSFERJOB_H

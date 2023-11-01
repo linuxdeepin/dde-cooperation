@@ -16,6 +16,7 @@ typedef enum req_type_t {
     FRONT_FS_PULL_CB = 103,
     FRONT_FS_ACTION_CB = 104,
     FRONT_NOTIFY_FILE_STATUS = 105,
+    FRONT_APPLY_TRANS_FILE = 106,
     BACK_GET_DISCOVERY = 200,
     BACK_GET_PEER = 201,
     BACK_GET_PASSWORD = 202,
@@ -32,6 +33,7 @@ typedef enum req_type_t {
     BACK_FS_PULL = 213,
     BACK_DISC_REGISTER = 214,
     BACK_DISC_UNREGISTER = 215,
+    BACK_APPLY_TRANS_FILES = 216,
 } ReqType;
 
 typedef enum res_type_t {

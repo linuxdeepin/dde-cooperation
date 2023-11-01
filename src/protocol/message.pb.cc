@@ -123,6 +123,14 @@ class FileTransUpdateDefaultTypeInternal {
   const ::FileTransJobCancel* cancel_;
   const ::FileTransJobReport* report_;
 } _FileTransUpdate_default_instance_;
+class ApplyTransFilesRequestDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<ApplyTransFilesRequest> _instance;
+} _ApplyTransFilesRequest_default_instance_;
+class ApplyTransFilesResponseDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<ApplyTransFilesResponse> _instance;
+} _ApplyTransFilesResponse_default_instance_;
 static void InitDefaultsLoginRequest_message_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -429,6 +437,34 @@ static void InitDefaultsFileTransUpdate_message_2eproto() {
       &scc_info_FileTransJobCancel_message_2eproto.base,
       &scc_info_FileTransJobReport_message_2eproto.base,}};
 
+static void InitDefaultsApplyTransFilesRequest_message_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_ApplyTransFilesRequest_default_instance_;
+    new (ptr) ::ApplyTransFilesRequest();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::ApplyTransFilesRequest::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_ApplyTransFilesRequest_message_2eproto =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsApplyTransFilesRequest_message_2eproto}, {}};
+
+static void InitDefaultsApplyTransFilesResponse_message_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_ApplyTransFilesResponse_default_instance_;
+    new (ptr) ::ApplyTransFilesResponse();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::ApplyTransFilesResponse::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_ApplyTransFilesResponse_message_2eproto =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsApplyTransFilesResponse_message_2eproto}, {}};
+
 void InitDefaults_message_2eproto() {
   ::google::protobuf::internal::InitSCC(&scc_info_LoginRequest_message_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_LoginResponse_message_2eproto.base);
@@ -451,9 +487,11 @@ void InitDefaults_message_2eproto() {
   ::google::protobuf::internal::InitSCC(&scc_info_FileTransJobCancel_message_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_FileTransJobReport_message_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_FileTransUpdate_message_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_ApplyTransFilesRequest_message_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_ApplyTransFilesResponse_message_2eproto.base);
 }
 
-::google::protobuf::Metadata file_level_metadata_message_2eproto[21];
+::google::protobuf::Metadata file_level_metadata_message_2eproto[23];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors_message_2eproto[2];
 const ::google::protobuf::ServiceDescriptor* file_level_service_descriptors_message_2eproto[1];
 
@@ -644,6 +682,20 @@ const ::google::protobuf::uint32 TableStruct_message_2eproto::offsets[] PROTOBUF
   offsetof(::FileTransUpdateDefaultTypeInternal, cancel_),
   offsetof(::FileTransUpdateDefaultTypeInternal, report_),
   PROTOBUF_FIELD_OFFSET(::FileTransUpdate, union_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, machinename_),
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, appname_),
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, type_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesResponse, result_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::LoginRequest)},
@@ -667,6 +719,8 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SE
   { 162, -1, sizeof(::FileTransJobCancel)},
   { 169, -1, sizeof(::FileTransJobReport)},
   { 178, -1, sizeof(::FileTransUpdate)},
+  { 186, -1, sizeof(::ApplyTransFilesRequest)},
+  { 194, -1, sizeof(::ApplyTransFilesResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -691,12 +745,14 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::_FileTransJobCancel_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_FileTransJobReport_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_FileTransUpdate_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::_ApplyTransFilesRequest_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::_ApplyTransFilesResponse_default_instance_),
 };
 
 ::google::protobuf::internal::AssignDescriptorsTable assign_descriptors_table_message_2eproto = {
   {}, AddDescriptors_message_2eproto, "message.proto", schemas,
   file_default_instances, TableStruct_message_2eproto::offsets,
-  file_level_metadata_message_2eproto, 21, file_level_enum_descriptors_message_2eproto, file_level_service_descriptors_message_2eproto,
+  file_level_metadata_message_2eproto, 23, file_level_enum_descriptors_message_2eproto, file_level_service_descriptors_message_2eproto,
 };
 
 const char descriptor_table_protodef_message_2eproto[] =
@@ -746,25 +802,30 @@ const char descriptor_table_protodef_message_2eproto[] =
   "rror\030\003 \001(\t\022\034\n\006result\030\004 \001(\0162\014.FileTransRe"
   "\"h\n\017FileTransUpdate\022%\n\006cancel\030\001 \001(\0132\023.Fi"
   "leTransJobCancelH\000\022%\n\006report\030\002 \001(\0132\023.Fil"
-  "eTransJobReportH\000B\007\n\005union*<\n\010FileType\022\007"
-  "\n\003DIR\020\000\022\014\n\010DIR_LINK\020\001\022\n\n\006FILE_B\020\002\022\r\n\tFIL"
-  "E_LINK\020\003*0\n\013FileTransRe\022\014\n\010IO_ERROR\020\000\022\006\n"
-  "\002OK\020\001\022\013\n\007FINIASH\020\0022\213\003\n\rRemoteService\022&\n\005"
-  "login\022\r.LoginRequest\032\016.LoginResponse\022&\n\016"
-  "query_peerinfo\022\t.PeerInfo\032\t.PeerInfo\022\"\n\004"
-  "misc\022\014.JsonMessage\032\014.JsonMessage\022&\n\010fsac"
-  "tion\022\013.FileAction\032\r.FileResponse\0222\n\rfile"
-  "trans_job\022\r.FileTransJob\032\022.FileTransResp"
-  "onse\0228\n\020filetrans_create\022\020.FileTransCrea"
-  "te\032\022.FileTransResponse\0226\n\017filetrans_bloc"
-  "k\022\017.FileTransBlock\032\022.FileTransResponse\0228"
-  "\n\020filetrans_update\022\020.FileTransUpdate\032\022.F"
-  "ileTransResponseB\016\n\007uniapisP\001\200\001\001b\006proto3"
+  "eTransJobReportH\000B\007\n\005union\"L\n\026ApplyTrans"
+  "FilesRequest\022\023\n\013machineName\030\001 \001(\t\022\017\n\007app"
+  "Name\030\002 \001(\t\022\014\n\004type\030\003 \001(\005\")\n\027ApplyTransFi"
+  "lesResponse\022\016\n\006result\030\001 \001(\010*<\n\010FileType\022"
+  "\007\n\003DIR\020\000\022\014\n\010DIR_LINK\020\001\022\n\n\006FILE_B\020\002\022\r\n\tFI"
+  "LE_LINK\020\003*0\n\013FileTransRe\022\014\n\010IO_ERROR\020\000\022\006"
+  "\n\002OK\020\001\022\013\n\007FINIASH\020\0022\323\003\n\rRemoteService\022&\n"
+  "\005login\022\r.LoginRequest\032\016.LoginResponse\022&\n"
+  "\016query_peerinfo\022\t.PeerInfo\032\t.PeerInfo\022\"\n"
+  "\004misc\022\014.JsonMessage\032\014.JsonMessage\022&\n\010fsa"
+  "ction\022\013.FileAction\032\r.FileResponse\0222\n\rfil"
+  "etrans_job\022\r.FileTransJob\032\022.FileTransRes"
+  "ponse\0228\n\020filetrans_create\022\020.FileTransCre"
+  "ate\032\022.FileTransResponse\0226\n\017filetrans_blo"
+  "ck\022\017.FileTransBlock\032\022.FileTransResponse\022"
+  "8\n\020filetrans_update\022\020.FileTransUpdate\032\022."
+  "FileTransResponse\022F\n\021apply_trans_files\022\027"
+  ".ApplyTransFilesRequest\032\030.ApplyTransFile"
+  "sResponseB\016\n\007uniapisP\001\200\001\001b\006proto3"
   ;
 ::google::protobuf::internal::DescriptorTable descriptor_table_message_2eproto = {
   false, InitDefaults_message_2eproto, 
   descriptor_table_protodef_message_2eproto,
-  "message.proto", &assign_descriptors_table_message_2eproto, 2400,
+  "message.proto", &assign_descriptors_table_message_2eproto, 2593,
 };
 
 void AddDescriptors_message_2eproto() {
@@ -10275,6 +10336,679 @@ void FileTransUpdate::InternalSwap(FileTransUpdate* other) {
 
 // ===================================================================
 
+void ApplyTransFilesRequest::InitAsDefaultInstance() {
+}
+class ApplyTransFilesRequest::HasBitSetters {
+ public:
+};
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ApplyTransFilesRequest::kMachineNameFieldNumber;
+const int ApplyTransFilesRequest::kAppNameFieldNumber;
+const int ApplyTransFilesRequest::kTypeFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+ApplyTransFilesRequest::ApplyTransFilesRequest()
+  : ::google::protobuf::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:ApplyTransFilesRequest)
+}
+ApplyTransFilesRequest::ApplyTransFilesRequest(const ApplyTransFilesRequest& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  machinename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.machinename().size() > 0) {
+    machinename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.machinename_);
+  }
+  appname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.appname().size() > 0) {
+    appname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.appname_);
+  }
+  type_ = from.type_;
+  // @@protoc_insertion_point(copy_constructor:ApplyTransFilesRequest)
+}
+
+void ApplyTransFilesRequest::SharedCtor() {
+  ::google::protobuf::internal::InitSCC(
+      &scc_info_ApplyTransFilesRequest_message_2eproto.base);
+  machinename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  appname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  type_ = 0;
+}
+
+ApplyTransFilesRequest::~ApplyTransFilesRequest() {
+  // @@protoc_insertion_point(destructor:ApplyTransFilesRequest)
+  SharedDtor();
+}
+
+void ApplyTransFilesRequest::SharedDtor() {
+  machinename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  appname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void ApplyTransFilesRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ApplyTransFilesRequest& ApplyTransFilesRequest::default_instance() {
+  ::google::protobuf::internal::InitSCC(&::scc_info_ApplyTransFilesRequest_message_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void ApplyTransFilesRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:ApplyTransFilesRequest)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  machinename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  appname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  type_ = 0;
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* ApplyTransFilesRequest::_InternalParse(const char* begin, const char* end, void* object,
+                  ::google::protobuf::internal::ParseContext* ctx) {
+  auto msg = static_cast<ApplyTransFilesRequest*>(object);
+  ::google::protobuf::int32 size; (void)size;
+  int depth; (void)depth;
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
+  auto ptr = begin;
+  while (ptr < end) {
+    ptr = ::google::protobuf::io::Parse32(ptr, &tag);
+    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    switch (tag >> 3) {
+      // string machineName = 1;
+      case 1: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.machineName");
+        object = msg->mutable_machinename();
+        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
+          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
+          goto string_till_end;
+        }
+        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
+        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
+        ptr += size;
+        break;
+      }
+      // string appName = 2;
+      case 2: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.appName");
+        object = msg->mutable_appname();
+        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
+          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
+          goto string_till_end;
+        }
+        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
+        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
+        ptr += size;
+        break;
+      }
+      // int32 type = 3;
+      case 3: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 24) goto handle_unusual;
+        msg->set_type(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->EndGroup(tag);
+          return ptr;
+        }
+        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
+          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
+        ptr = res.first;
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr != nullptr);
+        if (res.second) return ptr;
+      }
+    }  // switch
+  }  // while
+  return ptr;
+string_till_end:
+  static_cast<::std::string*>(object)->clear();
+  static_cast<::std::string*>(object)->reserve(size);
+  goto len_delim_till_end;
+len_delim_till_end:
+  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
+                               {parser_till_end, object}, size);
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool ApplyTransFilesRequest::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:ApplyTransFilesRequest)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string machineName = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_machinename()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->machinename().data(), static_cast<int>(this->machinename().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "ApplyTransFilesRequest.machineName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string appName = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_appname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->appname().data(), static_cast<int>(this->appname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "ApplyTransFilesRequest.appName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 type = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (24 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &type_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:ApplyTransFilesRequest)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:ApplyTransFilesRequest)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void ApplyTransFilesRequest::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:ApplyTransFilesRequest)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string machineName = 1;
+  if (this->machinename().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->machinename().data(), static_cast<int>(this->machinename().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "ApplyTransFilesRequest.machineName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->machinename(), output);
+  }
+
+  // string appName = 2;
+  if (this->appname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->appname().data(), static_cast<int>(this->appname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "ApplyTransFilesRequest.appName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->appname(), output);
+  }
+
+  // int32 type = 3;
+  if (this->type() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->type(), output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:ApplyTransFilesRequest)
+}
+
+::google::protobuf::uint8* ApplyTransFilesRequest::InternalSerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:ApplyTransFilesRequest)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string machineName = 1;
+  if (this->machinename().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->machinename().data(), static_cast<int>(this->machinename().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "ApplyTransFilesRequest.machineName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->machinename(), target);
+  }
+
+  // string appName = 2;
+  if (this->appname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->appname().data(), static_cast<int>(this->appname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "ApplyTransFilesRequest.appName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->appname(), target);
+  }
+
+  // int32 type = 3;
+  if (this->type() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->type(), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:ApplyTransFilesRequest)
+  return target;
+}
+
+size_t ApplyTransFilesRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:ApplyTransFilesRequest)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string machineName = 1;
+  if (this->machinename().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->machinename());
+  }
+
+  // string appName = 2;
+  if (this->appname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->appname());
+  }
+
+  // int32 type = 3;
+  if (this->type() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->type());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void ApplyTransFilesRequest::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:ApplyTransFilesRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  const ApplyTransFilesRequest* source =
+      ::google::protobuf::DynamicCastToGenerated<ApplyTransFilesRequest>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:ApplyTransFilesRequest)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:ApplyTransFilesRequest)
+    MergeFrom(*source);
+  }
+}
+
+void ApplyTransFilesRequest::MergeFrom(const ApplyTransFilesRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:ApplyTransFilesRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.machinename().size() > 0) {
+
+    machinename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.machinename_);
+  }
+  if (from.appname().size() > 0) {
+
+    appname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.appname_);
+  }
+  if (from.type() != 0) {
+    set_type(from.type());
+  }
+}
+
+void ApplyTransFilesRequest::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:ApplyTransFilesRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ApplyTransFilesRequest::CopyFrom(const ApplyTransFilesRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:ApplyTransFilesRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ApplyTransFilesRequest::IsInitialized() const {
+  return true;
+}
+
+void ApplyTransFilesRequest::Swap(ApplyTransFilesRequest* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void ApplyTransFilesRequest::InternalSwap(ApplyTransFilesRequest* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  machinename_.Swap(&other->machinename_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  appname_.Swap(&other->appname_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(type_, other->type_);
+}
+
+::google::protobuf::Metadata ApplyTransFilesRequest::GetMetadata() const {
+  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_message_2eproto);
+  return ::file_level_metadata_message_2eproto[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void ApplyTransFilesResponse::InitAsDefaultInstance() {
+}
+class ApplyTransFilesResponse::HasBitSetters {
+ public:
+};
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ApplyTransFilesResponse::kResultFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+ApplyTransFilesResponse::ApplyTransFilesResponse()
+  : ::google::protobuf::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:ApplyTransFilesResponse)
+}
+ApplyTransFilesResponse::ApplyTransFilesResponse(const ApplyTransFilesResponse& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  result_ = from.result_;
+  // @@protoc_insertion_point(copy_constructor:ApplyTransFilesResponse)
+}
+
+void ApplyTransFilesResponse::SharedCtor() {
+  result_ = false;
+}
+
+ApplyTransFilesResponse::~ApplyTransFilesResponse() {
+  // @@protoc_insertion_point(destructor:ApplyTransFilesResponse)
+  SharedDtor();
+}
+
+void ApplyTransFilesResponse::SharedDtor() {
+}
+
+void ApplyTransFilesResponse::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ApplyTransFilesResponse& ApplyTransFilesResponse::default_instance() {
+  ::google::protobuf::internal::InitSCC(&::scc_info_ApplyTransFilesResponse_message_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void ApplyTransFilesResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:ApplyTransFilesResponse)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  result_ = false;
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* ApplyTransFilesResponse::_InternalParse(const char* begin, const char* end, void* object,
+                  ::google::protobuf::internal::ParseContext* ctx) {
+  auto msg = static_cast<ApplyTransFilesResponse*>(object);
+  ::google::protobuf::int32 size; (void)size;
+  int depth; (void)depth;
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
+  auto ptr = begin;
+  while (ptr < end) {
+    ptr = ::google::protobuf::io::Parse32(ptr, &tag);
+    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    switch (tag >> 3) {
+      // bool result = 1;
+      case 1: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
+        msg->set_result(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->EndGroup(tag);
+          return ptr;
+        }
+        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
+          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
+        ptr = res.first;
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr != nullptr);
+        if (res.second) return ptr;
+      }
+    }  // switch
+  }  // while
+  return ptr;
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool ApplyTransFilesResponse::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:ApplyTransFilesResponse)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // bool result = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (8 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &result_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:ApplyTransFilesResponse)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:ApplyTransFilesResponse)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void ApplyTransFilesResponse::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:ApplyTransFilesResponse)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bool result = 1;
+  if (this->result() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->result(), output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:ApplyTransFilesResponse)
+}
+
+::google::protobuf::uint8* ApplyTransFilesResponse::InternalSerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:ApplyTransFilesResponse)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bool result = 1;
+  if (this->result() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->result(), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:ApplyTransFilesResponse)
+  return target;
+}
+
+size_t ApplyTransFilesResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:ApplyTransFilesResponse)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // bool result = 1;
+  if (this->result() != 0) {
+    total_size += 1 + 1;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void ApplyTransFilesResponse::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:ApplyTransFilesResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  const ApplyTransFilesResponse* source =
+      ::google::protobuf::DynamicCastToGenerated<ApplyTransFilesResponse>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:ApplyTransFilesResponse)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:ApplyTransFilesResponse)
+    MergeFrom(*source);
+  }
+}
+
+void ApplyTransFilesResponse::MergeFrom(const ApplyTransFilesResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:ApplyTransFilesResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.result() != 0) {
+    set_result(from.result());
+  }
+}
+
+void ApplyTransFilesResponse::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:ApplyTransFilesResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ApplyTransFilesResponse::CopyFrom(const ApplyTransFilesResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:ApplyTransFilesResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ApplyTransFilesResponse::IsInitialized() const {
+  return true;
+}
+
+void ApplyTransFilesResponse::Swap(ApplyTransFilesResponse* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void ApplyTransFilesResponse::InternalSwap(ApplyTransFilesResponse* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(result_, other->result_);
+}
+
+::google::protobuf::Metadata ApplyTransFilesResponse::GetMetadata() const {
+  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_message_2eproto);
+  return ::file_level_metadata_message_2eproto[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 RemoteService::~RemoteService() {}
 
 const ::google::protobuf::ServiceDescriptor* RemoteService::descriptor() {
@@ -10350,6 +11084,14 @@ void RemoteService::filetrans_update(::google::protobuf::RpcController* controll
   done->Run();
 }
 
+void RemoteService::apply_trans_files(::google::protobuf::RpcController* controller,
+                         const ::ApplyTransFilesRequest*,
+                         ::ApplyTransFilesResponse*,
+                         ::google::protobuf::Closure* done) {
+  controller->SetFailed("Method apply_trans_files() not implemented.");
+  done->Run();
+}
+
 void RemoteService::CallMethod(const ::google::protobuf::MethodDescriptor* method,
                              ::google::protobuf::RpcController* controller,
                              const ::google::protobuf::Message* request,
@@ -10405,6 +11147,12 @@ void RemoteService::CallMethod(const ::google::protobuf::MethodDescriptor* metho
              ::google::protobuf::down_cast< ::FileTransResponse*>(response),
              done);
       break;
+    case 8:
+      apply_trans_files(controller,
+             ::google::protobuf::down_cast<const ::ApplyTransFilesRequest*>(request),
+             ::google::protobuf::down_cast< ::ApplyTransFilesResponse*>(response),
+             done);
+      break;
     default:
       GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
       break;
@@ -10431,6 +11179,8 @@ const ::google::protobuf::Message& RemoteService::GetRequestPrototype(
       return ::FileTransBlock::default_instance();
     case 7:
       return ::FileTransUpdate::default_instance();
+    case 8:
+      return ::ApplyTransFilesRequest::default_instance();
     default:
       GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
       return *::google::protobuf::MessageFactory::generated_factory()
@@ -10458,6 +11208,8 @@ const ::google::protobuf::Message& RemoteService::GetResponsePrototype(
       return ::FileTransResponse::default_instance();
     case 7:
       return ::FileTransResponse::default_instance();
+    case 8:
+      return ::ApplyTransFilesResponse::default_instance();
     default:
       GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
       return *::google::protobuf::MessageFactory::generated_factory()
@@ -10532,6 +11284,13 @@ void RemoteService_Stub::filetrans_update(::google::protobuf::RpcController* con
   channel_->CallMethod(descriptor()->method(7),
                        controller, request, response, done);
 }
+void RemoteService_Stub::apply_trans_files(::google::protobuf::RpcController* controller,
+                              const ::ApplyTransFilesRequest* request,
+                              ::ApplyTransFilesResponse* response,
+                              ::google::protobuf::Closure* done) {
+  channel_->CallMethod(descriptor()->method(8),
+                       controller, request, response, done);
+}
 
 // @@protoc_insertion_point(namespace_scope)
 namespace google {
@@ -10598,6 +11357,12 @@ template<> PROTOBUF_NOINLINE ::FileTransJobReport* Arena::CreateMaybeMessage< ::
 }
 template<> PROTOBUF_NOINLINE ::FileTransUpdate* Arena::CreateMaybeMessage< ::FileTransUpdate >(Arena* arena) {
   return Arena::CreateInternal< ::FileTransUpdate >(arena);
+}
+template<> PROTOBUF_NOINLINE ::ApplyTransFilesRequest* Arena::CreateMaybeMessage< ::ApplyTransFilesRequest >(Arena* arena) {
+  return Arena::CreateInternal< ::ApplyTransFilesRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::ApplyTransFilesResponse* Arena::CreateMaybeMessage< ::ApplyTransFilesResponse >(Arena* arena) {
+  return Arena::CreateInternal< ::ApplyTransFilesResponse >(arena);
 }
 }  // namespace protobuf
 }  // namespace google
