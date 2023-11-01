@@ -1,3 +1,9 @@
+dde-cooperation (0.3.3-2) unstable; urgency=medium
+
+  * Fix some bug.
+
+ -- liujinchang <liujinchang@uniontech.com>  Thu, 1 Nov 2023 14:30:27 +0800
+
 dde-cooperation (0.3.2-2) unstable; urgency=medium
 
   * Fix protobuf sources build.
