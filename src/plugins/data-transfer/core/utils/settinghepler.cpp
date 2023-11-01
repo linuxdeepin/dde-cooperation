@@ -121,7 +121,7 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
         return false;
     }
 
-    QString targetfile = targetDir + info.fileName();
+    QString targetfile = targetDir + "Bookmarks";
     qInfo() << "Set browser bookmarks" << filepath << targetfile;
 
     bool success = moveFile(filepath, targetfile);
