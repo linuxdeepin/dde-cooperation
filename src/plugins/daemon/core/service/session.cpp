@@ -12,27 +12,29 @@ Session::Session(QString name, QString session, int port, QObject *parent)
     , _sessionid(session)
     , _cb_port(port)
 {
-    _client_pool = new co::Pool(
-        [this]() { return (void*) new rpc::Client("127.0.0.1", _cb_port, false); },
-        [](void* p) { delete (rpc::Client*) p; }
-    );
+    // initialize the proto client
+    coClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", _cb_port, false));
 
     _jobs.clear();
 
     _pingOK = false;
-    go([this]() {
-        alive();
-    });
+    _initPing = false;
 }
 
 Session::~Session()
 {
     _jobs.reset();
-    delete _client_pool;
+    coClient->close();
 }
 
 bool Session::valid()
 {
+    if (!_initPing) {
+        std::thread coThread([this]() {
+            alive();
+        });
+        coThread.join();
+    }
     return _pingOK;
 }
 
@@ -40,7 +42,7 @@ bool Session::alive()
 {
     fastring version(UNI_IPC_PROTO);
     fastring ses(_sessionid.toStdString());
-    co::pool_guard<rpc::Client> c(_client_pool);
+
     co::Json req, res;
     //ping {result, msg}
     req = {
@@ -48,9 +50,10 @@ bool Session::alive()
         { "version", version },
     };
     req.add_member("api", "Frontend.ping");
-    c->call(req, res);
+    client()->call(req, res);
 
     _pingOK = res.get("result").as_bool() && !res.get("msg").empty();
+    _initPing = true;
     return _pingOK;
 }
 
@@ -89,7 +92,7 @@ int Session::hasJob(int jobid)
     return -1;
 }
 
-co::pool* Session::clientPool()
+rpc::Client* Session::client()
 {
-    return _client_pool;
+    return coClient.get();
 }

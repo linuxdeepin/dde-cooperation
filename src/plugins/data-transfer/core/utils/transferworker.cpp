@@ -27,7 +27,7 @@ TransferHandle::TransferHandle()
     _job_maps.clear();
     _file_ids.clear();
 
-    go([this, appName]() {
+    UNIGO([this, appName]() {
         _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
         if (_backendOK) {
             saveSession(TransferWoker::instance()->getSessionId());
@@ -46,7 +46,7 @@ void TransferHandle::localIPCStart()
 
     _frontendIpcService = new FrontendService(this);
 
-    go([this]() {
+    UNIGO([this]() {
         while(!_this_destruct) {
             BridgeJsonData bridge;
             _frontendIpcService->bridgeChan()->operator>>(bridge); //300ms超时
@@ -161,7 +161,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 {
     auto it = _job_maps.find(id);
     qInfo() << "handleTransJobStatus " << result << " saved:" << path;
-    bool ret = true;
+
     switch (result) {
     case JOB_TRANS_FAILED:
         // remove job from maps
@@ -278,7 +278,7 @@ void TransferHandle::tryConnect(QString ip, QString password)
 {
     if (!_backendOK) return;
 
-    go([ip, password]() {
+    UNIGO([ip, password]() {
         TransferWoker::instance()->tryConnect(ip.toStdString(), password.toStdString());
     });
 }
@@ -290,7 +290,7 @@ QString TransferHandle::getConnectPassWord()
     co::wait_group g_wg;
     g_wg.add(1);
     QString password;
-    go([&password, g_wg]() {
+    UNIGO([&password, g_wg]() {
         TransferWoker::instance()->setEmptyPassWord();
         password = TransferWoker::instance()->getConnectPassWord();
         g_wg.done();
@@ -306,7 +306,7 @@ void TransferHandle::sendFiles(QStringList paths)
     //清空上次任务的所有文件统计
     _file_ids.clear();
     int current_id = _request_job_id;
-    go([paths, current_id]() {
+    UNIGO([paths, current_id]() {
         TransferWoker::instance()->sendFiles(current_id, paths);
     });
     current_id++;
@@ -314,19 +314,17 @@ void TransferHandle::sendFiles(QStringList paths)
 
 TransferWoker::TransferWoker()
 {
-    _gPool = new co::Pool(
-            []() { return (void *)new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false); },
-            [](void *p) { delete (rpc::Client *)p; });
+    // initialize the proto client
+    coClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false));
 }
 
 TransferWoker::~TransferWoker()
 {
-    delete _gPool;
+    coClient->close();
 }
 
 bool TransferWoker::pingBackend(const std::string &who)
 {
-    co::pool_guard<rpc::Client> c(_gPool);
     co::Json req, res;
     //PingBackParam
     req = {
@@ -337,8 +335,7 @@ bool TransferWoker::pingBackend(const std::string &who)
 
     req.add_member("api", "Backend.ping");   //BackendImpl::ping
 
-    c->call(req, res);
-    c->close();
+    coClient->call(req, res);
     _session_id = res.get("msg").as_string();   // save the return session.
 
     //CallResult
@@ -348,7 +345,6 @@ bool TransferWoker::pingBackend(const std::string &who)
 void TransferWoker::setEmptyPassWord()
 {
     // set empty password, it will refresh password by random
-    co::pool_guard<rpc::Client> c(_gPool);
     co::Json req, res;
     req = {
         { "password", "" },
@@ -356,26 +352,22 @@ void TransferWoker::setEmptyPassWord()
 
     req.add_member("api", "Backend.setPassword");   //BackendImpl::setPassword
 
-    c->call(req, res);
-    c->close();
+    coClient->call(req, res);
 }
 
 QString TransferWoker::getConnectPassWord()
 {
-    co::pool_guard<rpc::Client> c(_gPool);
     co::Json req, res;
 
     req.add_member("api", "Backend.getPassword");   //BackendImpl::getPassword
 
-    c->call(req, res);
-    c->close();
+    coClient->call(req, res);
 
     return res.get("password").as_string().c_str();
 }
 
 void TransferWoker::tryConnect(const std::string &ip, const std::string &password)
 {
-    co::pool_guard<rpc::Client> c(_gPool);
     co::Json req, res;
     fastring target_ip(ip);
     fastring pin_code(password);
@@ -387,8 +379,7 @@ void TransferWoker::tryConnect(const std::string &ip, const std::string &passwor
         { "password", pin_code },
     };
     req.add_member("api", "Backend.tryConnect");   //BackendImpl::tryConnect
-    c->call(req, res);
-    c->close();
+    coClient->call(req, res);
 }
 
 fastring TransferWoker::getSessionId()
@@ -398,7 +389,6 @@ fastring TransferWoker::getSessionId()
 
 void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 {
-    co::pool_guard<rpc::Client> c(_gPool);
     co::Json req, res, paths;
 
     for (QString path : filepaths) {
@@ -416,6 +406,5 @@ void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 
     req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
 
-    c->call(req, res);
-    c->close();
+    coClient->call(req, res);
 }

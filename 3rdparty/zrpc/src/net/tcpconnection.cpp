@@ -147,7 +147,7 @@ void TcpConnection::input()
 
         // DLOG << "m_read_buffer size=" << m_read_buffer->getBufferVector().size()
         //      << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
-        size_t rt = read_hook(&(m_read_buffer->m_buffer[write_index]), read_count);
+        int rt = read_hook(&(m_read_buffer->m_buffer[write_index]), read_count);
         if (rt > 0) {
             m_read_buffer->recycleWrite(rt);
         }

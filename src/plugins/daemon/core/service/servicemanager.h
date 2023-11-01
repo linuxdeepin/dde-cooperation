@@ -48,7 +48,7 @@ public slots:
 private:
     void localIPCStart();
 
-    bool handleRemoteRequestJob(co::Json &info);
+    bool handleRemoteRequestJob(fastring json);
     bool handleFSData(co::Json &info, fastring buf);
     bool handleFSInfo(co::Json &info);
     bool handleCancelJob(co::Json &info);

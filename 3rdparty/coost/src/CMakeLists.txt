@@ -9,7 +9,7 @@ if(MSVC)
     endif()
     set_property(SOURCE ${ASM_FILES} PROPERTY LANGUAGE ASM_MASM)
 else()
-    set(ASM_FILES co/context/context.S)
+    set(ASM_FILES co/context/context.S co/context/context.cc)
 endif()
 list(APPEND CO_SRC_FILES ${ASM_FILES})
 

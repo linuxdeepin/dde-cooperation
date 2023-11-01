@@ -72,7 +72,7 @@ public:
 private:
     TransferWoker();
 
-    co::pool *_gPool = nullptr;
+    std::shared_ptr<rpc::Client> coClient { nullptr };
     fastring _session_id = "";
 };
 

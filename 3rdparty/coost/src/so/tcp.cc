@@ -7,6 +7,7 @@
 #include "co/str.h"
 #include "co/time.h"
 #include "co/defer.h"
+#include "co/context/arch.h"
 
 DEF_int32(ssl_handshake_timeout, 3000, ">>#2 ssl handshake timeout in ms");
 
@@ -244,15 +245,17 @@ void ServerImpl::start(const char* ip, int port, const char* key, const char* ca
         CHECK_EQ(r, 1) << "ssl check private key error: " << ssl::strerror();
 
         _on_sock = std::bind(&ServerImpl::on_ssl_connection, this, std::placeholders::_1);
-        this->ref();
-        atomic_store(&_started, true, mo_relaxed);
-        go(&ServerImpl::loop, this);
     } else {
         _on_sock = std::bind(&ServerImpl::on_tcp_connection, this, std::placeholders::_1);
-        this->ref();
-        atomic_store(&_started, true, mo_relaxed);
-        go(&ServerImpl::loop, this);
     }
+    this->ref();
+    atomic_store(&_started, true, mo_relaxed);
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+    go(&ServerImpl::loop, this);
+#else
+    std::thread listenThread(&ServerImpl::loop, this);
+    listenThread.detach();
+#endif
 }
 
 void ServerImpl::exit() {
@@ -261,7 +264,11 @@ void ServerImpl::exit() {
 
     if (status == 0) {
         sleep::ms(1);
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
         if (status != 2) go(&ServerImpl::stop, this);
+#else
+        if (status != 2) stop();
+#endif
     }
 
     while (_status != 2) sleep::ms(1);
@@ -325,7 +332,11 @@ void ServerImpl::loop() {
         DLOG << "server " << _ip << ':' << _port
              << " accept connection: " << co::addr2str(&_addr, _addrlen)
              << ", connfd: " << _connfd << ", conn num: " << n;
+#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
         go(&_on_sock, _connfd);
+#else
+        _on_sock(_connfd);
+#endif
     }
 
     LOG << "server stopped: " << _ip << ':' << _port;
