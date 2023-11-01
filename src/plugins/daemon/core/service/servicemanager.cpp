@@ -60,7 +60,7 @@ ServiceManager::~ServiceManager()
         _backendIpcService->deleteLater();
     }
 
-    _sessions.reset();
+    _sessions.clear();
 
     DiscoveryJob::instance()->stopAnnouncer();
     DiscoveryJob::instance()->stopDiscoverer();
@@ -173,7 +173,7 @@ void ServiceManager::localIPCStart()
                     DLOG << param.version << " =version not match= " << my_ver;
                 } else {
                     QString name = QString(appname);
-                    Session *s = sessionByName(name);
+                    auto s = sessionByName(name);
                     if (s) {
                         session = s->getSession().toStdString();
                     } else {
@@ -243,6 +243,7 @@ void ServiceManager::localIPCStart()
             }
             case BACK_GET_DISCOVERY:
             {
+                handleGetAllNodes();
                 break;
             }
             case BACK_GET_PEER:
@@ -375,7 +376,7 @@ bool ServiceManager::handleCancelJob(co::Json &info)
         job->stop();
         _transjob_recvs.remove(jobId);
         QString name(job->getAppName().c_str());
-        Session *s = sessionByName(name);
+        auto s = sessionByName(name);
         if (s && s->valid()) {
             DLOG << "notify cancel success:" << s->getName().toStdString();
             return true;
@@ -414,7 +415,7 @@ bool ServiceManager::handleTransReport(co::Json &info)
             job->waitFinish();
             _transjob_recvs.remove(jobId);
             QString name(job->getAppName().c_str());
-            Session *s = sessionByName(name);
+            auto s = sessionByName(name);
             if (s && s->valid()) {
                 DLOG << "notify job finish success:" << s->getName().toStdString();
                 return true;
@@ -432,11 +433,11 @@ bool ServiceManager::handleTransReport(co::Json &info)
     return true;
 }
 
-Session* ServiceManager::sessionById(QString &id)
+QSharedPointer<Session> ServiceManager::sessionById(QString &id)
 {
     // find the session by id
     for (size_t i = 0; i < _sessions.size(); ++i) {
-        Session *s = _sessions[i];
+        auto s = _sessions[i];
         if (s->getSession().compare(id) == 0) {
             return s;
         }
@@ -444,11 +445,11 @@ Session* ServiceManager::sessionById(QString &id)
     return nullptr;
 }
 
-Session* ServiceManager::sessionByName(QString &name)
+QSharedPointer<Session> ServiceManager::sessionByName(const QString &name)
 {
     // find the session by name
     for (size_t i = 0; i < _sessions.size(); ++i) {
-        Session *s = _sessions[i];
+        auto s = _sessions[i];
         if (s->getName().compare(name) == 0) {
             return s;
         }
@@ -489,13 +490,13 @@ void ServiceManager::asyncDiscovery()
 
 void ServiceManager::saveSession(QString who, QString session, int cbport)
 {
-    Session *s = new Session(who, session, cbport);
+    QSharedPointer<Session> s(new Session(who, session, cbport));
     _sessions.push_back(s);
 }
 
 void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList paths, bool sub, QString savedir)
 {
-    Session *s = sessionById(session);
+    auto s = sessionById(session);
     if (!s || !s->valid()) {
         DLOG << "this session is invalid." << session.toStdString();
         return;
@@ -527,7 +528,7 @@ void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList p
 
 void ServiceManager::notifyConnect(QString session, QString ip, QString password)
 {
-    Session *s = sessionByName(session);
+    auto s = sessionByName(session);
     if (!s || !s->valid()) {
         DLOG << "this session is invalid." << session.toStdString();
         return;
@@ -559,7 +560,7 @@ bool ServiceManager::doJobAction(uint32_t action, co::Json &jsonobj)
     QString session(param.session.c_str());
     int jobid = param.job_id;
     bool remote = param.is_remote;
-    Session *s = sessionById(session);
+    auto s = sessionById(session);
     if (!s || s->hasJob(jobid) < 0) {
         DLOG << "not find session by id:" << session.toStdString();
         return false;
@@ -612,7 +613,7 @@ void ServiceManager::sendMiscMessage(fastring &appname, fastring &message)
 void ServiceManager::forwardJsonMisc(fastring &appname, fastring &message)
 {
     QString app(appname.c_str());
-    Session *s = sessionByName(app);
+    auto s = sessionByName(app);
     if (s && s->valid()) {
         UNIGO([s, message]() {
             co::Json req, res;
@@ -632,7 +633,7 @@ void ServiceManager::handleLoginResult(bool result, QString session)
     fastring session_name(session.toStdString());
 
     // find the session by session id
-    Session *s = sessionByName(session);
+    auto s = sessionByName(session);
     if (s && s->valid()) {
         UNIGO([s, result, session_name]() {
             co::Json req, res;
@@ -652,7 +653,7 @@ void ServiceManager::handleLoginResult(bool result, QString session)
 
 void ServiceManager::handleFileTransStatus(QString appname, int status, QString fileinfo)
 {
-    Session *s = sessionByName(appname);
+    auto s = sessionByName(appname);
     if (s && s->valid()) {
         //DLOG << "notify file trans status to:" << s->getName().toStdString();
         UNIGO([s, status, fileinfo]() {
@@ -681,7 +682,7 @@ void ServiceManager::handleFileTransStatus(QString appname, int status, QString 
 
 void ServiceManager::handleJobTransStatus(QString appname, int jobid, int status, QString savedir)
 {
-    Session *s = sessionByName(appname);
+    QSharedPointer<Session> s = sessionByName(appname);
     if (s && s->valid()) {
         //DLOG << "notify file trans status to:" << s->getName().toStdString();
         UNIGO([s, jobid, status, savedir]() {
@@ -703,8 +704,8 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
 {
     // notify to all frontend sessions
     UNIGO([this, found, info]() {
-        for (size_t i = 0; i < _sessions.size(); ++i) {
-            Session *s = _sessions[i];
+        for (auto i = _sessions.begin(); i != _sessions.end();) {
+            QSharedPointer<Session> s = *i;
             if (s->alive()) {
                 // fastring session_id(s->getSession().toStdString());
                 fastring nodeinfo(info.toStdString());
@@ -717,9 +718,10 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
                 };
                 req.add_member("api", "Frontend.cbPeerInfo");
                 s->client()->call(req, res);
+                ++i;
             } else {
                 // the frontend is offline
-                _sessions.remove(i);
+                i = _sessions.erase(i);
 
                 //remove the frontend app register info
                 fastring name = s->getName().toStdString();
@@ -732,4 +734,22 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
 void ServiceManager::handleNodeRegister(bool unreg, fastring info)
 {
     DiscoveryJob::instance()->updateAnnouncApp(unreg, info);
+}
+
+void ServiceManager::handleGetAllNodes()
+{
+    auto nodes = DiscoveryJob::instance()->getNodes();
+    NodeList nodeInfos;
+    for (const auto &node : nodes) {
+        co::Json nodejs;
+        nodejs.parse_from(node);
+        NodeInfo info;
+        info.from_json(nodejs);
+        nodeInfos.peers.push_back(info);
+    }
+    BridgeJsonData res;
+    res.type = BACK_GET_DISCOVERY;
+    res.json = nodeInfos.as_json().str();
+
+    _backendIpcService->bridgeResult()->operator<<(res);
 }
