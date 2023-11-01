@@ -30,10 +30,21 @@ Session::~Session()
 bool Session::valid()
 {
     if (!_initPing) {
+// thread lamada crash on windows
+#ifdef WIN32
+        co::wait_group wg;
+        wg.add(1);
+        UNIGO([this, wg]() {
+           alive();
+           wg.done();
+        });
+        wg.wait();
+#else
         std::thread coThread([this]() {
             alive();
         });
         coThread.join();
+#endif
     }
     return _pingOK;
 }
