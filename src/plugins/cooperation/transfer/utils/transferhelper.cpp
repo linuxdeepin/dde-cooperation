@@ -70,7 +70,7 @@ void TransferHelperPrivate::localIPCStart()
 
     frontendIpcSer = new FrontendService(this);
 
-    go([this]() {
+    UNIGO([this]() {
         while (!thisDestruct) {
             BridgeJsonData bridge;
             frontendIpcSer->bridgeChan()->operator>>(bridge);   //300ms超时
@@ -131,10 +131,24 @@ void TransferHelperPrivate::localIPCStart()
                 metaObject()->invokeMethod(q, "onFileTransStatusChanged", Qt::QueuedConnection, Q_ARG(QString, objstr));
             } break;
             case FRONT_APPLY_TRANS_FILE: {
-                qInfo() << "======" << json_obj.as_c_str();
                 ApplyTransFiles transferInfo;
                 transferInfo.from_json(json_obj);
 
+                if (!qApp->property("onlyTransfer").toBool()) {
+                    switch (transferInfo.type) {
+                    case 0:
+                        metaObject()->invokeMethod(this, "waitForConfirm", Qt::QueuedConnection, Q_ARG(QString, QString(transferInfo.machineName.c_str())));
+                        break;
+                    case 1:
+                        metaObject()->invokeMethod(this, "accepted", Qt::QueuedConnection);
+                        break;
+                    case 2:
+                        metaObject()->invokeMethod(this, "rejected", Qt::QueuedConnection);
+                        break;
+                    default:
+                        break;
+                    }
+                }
             } break;
             default:
                 break;
@@ -200,7 +214,7 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
     rpcClient->call(req, res);
 }
 
-void TransferHelperPrivate::handleApplyTransFiles()
+void TransferHelperPrivate::handleApplyTransFiles(int type)
 {
     co::Json res;
     // 获取设备名称
@@ -212,7 +226,7 @@ void TransferHelperPrivate::handleApplyTransFiles()
 
     ApplyTransFiles transInfo;
     transInfo.session = onlyTransfer ? TransferSessionName : CooperationSessionName;
-    transInfo.type = 0;
+    transInfo.type = type;
     transInfo.tarSession = CooperationSessionName;
     transInfo.machineName = deviceName.toStdString();
 
@@ -263,7 +277,7 @@ void TransferHelperPrivate::waitForConfirm(const QString &name)
 {
     switch (currentMode) {
     case ReceiveMode: {
-        QStringList actions { kNotifyRefuseAction, tr("Refuse"), kNotifyAcceptAction, tr("Accept") };
+        QStringList actions { kNotifyRejectAction, tr("Reject"), kNotifyAcceptAction, tr("Accept") };
         QString msg(tr("Received transfer request from \"%1\""));
         QFontMetrics fm(qApp->font());
         QString ret = fm.elidedText(name, Qt::ElideMiddle, 200);
@@ -272,7 +286,7 @@ void TransferHelperPrivate::waitForConfirm(const QString &name)
     } break;
     case SendMode:
         transferDialog->switchWaitConfirmPage();
-        transferDialog->exec();
+        transferDialog->open();
         break;
     }
 }
@@ -305,18 +319,38 @@ uint TransferHelperPrivate::notifyMessage(uint replacesId, const QString &body, 
 
 void TransferHelperPrivate::onActionTriggered(uint replacesId, const QString &action)
 {
-    qInfo() << "========" << replacesId << action;
     if (replacesId != recvNotifyId)
         return;
 
     if (action == kNotifyCancelAction) {
         q->cancelTransfer();
-    } else if (action == kNotifyRefuseAction) {
-
+    } else if (action == kNotifyRejectAction) {
+        status = Idle;
+        UNIGO([this] {
+            handleApplyTransFiles(2);
+        });
     } else if (action == kNotifyAcceptAction) {
-
+        status = Transfering;
+        UNIGO([this] {
+            handleApplyTransFiles(1);
+        });
     } else if (action == kNotifyViewAction) {
     }
+}
+
+void TransferHelperPrivate::accepted()
+{
+    status = Transfering;
+    updateProgress(1, tr("calculating"));
+    UNIGO([this] {
+        handleSendFiles(readyToSendFiles);;
+    });
+}
+
+void TransferHelperPrivate::rejected()
+{
+    status = Idle;
+    transferResult(false, tr("The other party rejects your request"));
 }
 
 void TransferHelperPrivate::handleSetConfig(const QString &key, const QString &value)
@@ -365,7 +399,7 @@ void TransferHelper::init()
 
     d->rpcClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false));
 
-    go([this] {
+    UNIGO([this] {
         co::sleep(3000);
         d->backendOk = d->handlePingBacked();
         qInfo() << "The result of ping backend is " << d->backendOk;
@@ -390,7 +424,7 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
     d->currentMode = TransferHelperPrivate::SendMode;
     d->status = Connecting;
     d->canTransfer = true;
-    go([ip, this] {
+    UNIGO([ip, this] {
         d->handleTryConnect(ip);
     });
 
@@ -404,6 +438,7 @@ TransferStatus TransferHelper::transferStatus()
 
 void TransferHelper::buttonClicked(const QVariantMap &info)
 {
+    qInfo() << "button clicked: " << info;
     auto id = info.value("id").toString();
     auto ip = info.value("ip").toString();
     auto devName = info.value("device").toString();
@@ -454,12 +489,9 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg)
             return;
         }
 
-        //        d->updateProgress(1, tr("calculating"));
-
-        go([this] {
+        UNIGO([this] {
             d->status = Confirming;
-            d->handleApplyTransFiles();
-            //            d->handleSendFiles(d->readyToSendFiles);
+            d->handleApplyTransFiles(0);
         });
     } else {
         d->status = Idle;
@@ -533,7 +565,7 @@ void TransferHelper::cancelTransfer()
     d->currentMode = TransferHelperPrivate::ReceiveMode;
     d->canTransfer = false;
     if (d->status == Transfering) {
-        go([this] {
+        UNIGO([this] {
             d->handleCancelTransfer();
         });
     }

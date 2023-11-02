@@ -39,3 +39,4 @@ target_link_libraries(${PROJ_NAME}
   deepin_cross::framework
 )
 
+install(TARGETS ${PROJ_NAME} DESTINATION bin)

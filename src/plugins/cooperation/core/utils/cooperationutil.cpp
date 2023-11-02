@@ -21,7 +21,7 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
     localIPCStart();
     rpcClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false));
 
-    go([this] {
+    UNIGO([this] {
         backendOk = pingBackend();
         qInfo() << "The result of ping backend is " << backendOk;
     });
@@ -60,7 +60,7 @@ void CooperationUtilPrivate::localIPCStart()
 
     frontendIpcSer = new FrontendService(this);
 
-    go([this]() {
+    UNIGO([this]() {
         while (!thisDestruct) {
             BridgeJsonData bridge;
             frontendIpcSer->bridgeChan()->operator>>(bridge);   //300ms超时
@@ -210,7 +210,7 @@ void CooperationUtil::registAppInfo(const QString &infoJson)
     if (!d->backendOk)
         return;
 
-    go([this, infoJson] {
+    UNIGO([this, infoJson] {
         co::Json req, res;
 
         QString appName = qApp->applicationName();
@@ -233,7 +233,7 @@ void CooperationUtil::unregistAppInfo()
     if (!d->backendOk)
         return;
 
-    go([this] {
+    UNIGO([this] {
         co::Json req, res;
         QString appName = qApp->applicationName();
 
@@ -258,7 +258,7 @@ QList<DeviceInfo> CooperationUtil::onlineDeviceInfo()
     g_wg.add(1);
     QList<DeviceInfo> infoList;
 
-    go([this, &infoList, &g_wg] {
+    UNIGO([this, &infoList, &g_wg] {
         co::Json req, res;
 
         req.add_member("api", "Backend.getDiscovery");

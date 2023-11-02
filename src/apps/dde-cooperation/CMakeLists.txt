@@ -18,15 +18,22 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Network Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Network Widgets)
+if (CMAKE_SYSTEM MATCHES "Linux")
+    find_package(Dtk COMPONENTS Widget REQUIRED)
+endif()
+
+qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJ_NAME}
         MANUAL_FINALIZATION
         ${CPP_SRC}
+        ${RESOURCE_FILES}
     )
 else()
     add_executable(${PROJ_NAME}
         ${CPP_SRC}
+        ${RESOURCE_FILES}
     )
 endif()
 
@@ -39,3 +46,14 @@ target_link_libraries(${PROJ_NAME}
   deepin_cross::framework
 )
 
+if (CMAKE_SYSTEM MATCHES "Linux")
+    target_link_libraries(${PROJ_NAME}
+        PRIVATE
+        ${DtkWidget_LIBRARIES}
+    )
+endif()
+
+install(TARGETS ${PROJ_NAME} DESTINATION bin)
+
+# translation
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/translations/dde-cooperaion DESTINATION share/${PROJECT_NAME} FILES_MATCHING PATTERN "*.qm")

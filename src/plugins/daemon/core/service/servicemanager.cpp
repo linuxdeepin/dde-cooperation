@@ -470,7 +470,6 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
             req = obj.as_json();
             req.add_member("api", "Frontend.applyTransFiles");
             s->client()->call(req, res);
-            handleBackApplyTransFiles(obj.as_json());
         });
     }
 

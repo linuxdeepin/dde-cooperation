@@ -53,7 +53,7 @@ void CooperationPlugin::addCooperationSettingItem()
         { "key", kCooperationSettingTransfer },
         { "name", QObject::tr("File transfer settings") },
         { "type", "pushbutton" },
-        { "default", QObject::tr("Settings") }
+        { "default", QObject::tr("Settings", "button") }
     };
 
     QString key = QString("%1.%2").arg(kCooperationSettingGroup, kCooperationSettingTransfer);

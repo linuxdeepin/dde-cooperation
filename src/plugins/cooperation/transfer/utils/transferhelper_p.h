@@ -34,20 +34,22 @@ public:
     void localIPCStart();
     bool handlePingBacked();
     void handleSendFiles(const QStringList &fileList);
-    void handleApplyTransFiles();
+    void handleApplyTransFiles(int type);
     void handleTryConnect(const QString &ip);
     void handleSetConfig(const QString &key, const QString &value);
     QString handleGetConfig(const QString &key);
     void handleCancelTransfer();
 
     void transferResult(bool result, const QString &msg);
-    void waitForConfirm(const QString &name);
     void updateProgress(int value, const QString &remainTime);
     uint notifyMessage(uint replacesId, const QString &body,
                        const QStringList &actions, int expireTimeout);
 
 public Q_SLOTS:
+    void waitForConfirm(const QString &name);
     void onActionTriggered(uint replacesId, const QString &action);
+    void accepted();
+    void rejected();
 
 private:
     TransferHelper *q;

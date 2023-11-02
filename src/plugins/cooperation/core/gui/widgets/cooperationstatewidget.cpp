@@ -105,7 +105,7 @@ void NoResultWidget::initUI()
 
     QLabel *contentLable2 = new QLabel(tr("2.On the same LAN as the device"), this);
     contentLable2->setWordWrap(true);
-    QLabel *contentLable3 = new QLabel(tr("3.xx xxv xx ff"), this);
+    QLabel *contentLable3 = new QLabel(tr("3.Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\""), this);
     contentLable3->setWordWrap(true);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;

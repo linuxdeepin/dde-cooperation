@@ -113,7 +113,7 @@ void TransferDialog::switchResultPage(bool success, const QString &msg)
         iconLabel->setPixmap(icon.pixmap(48, 48));
     }
     msgLabel->setText(msg);
-    okBtn->setText(tr("Ok"));
+    okBtn->setText(tr("Ok", "button"));
     okBtn->setVisible(true);
 }
 
@@ -127,7 +127,7 @@ void TransferDialog::switchProgressPage(const QString &title)
 
     progressBar->setValue(1);
     titleLabel->setText(title);
-    okBtn->setText(tr("Cancel"));
+    okBtn->setText(tr("Cancel", "button"));
     okBtn->setVisible(true);
 }
 
