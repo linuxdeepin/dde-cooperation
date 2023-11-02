@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/deepin/builtin/icons/collaboration_32px.svg</file>
+    </qresource>
+</RCC>

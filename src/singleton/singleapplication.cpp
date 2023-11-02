@@ -12,7 +12,7 @@
 using namespace deepin_cross;
 
 SingleApplication::SingleApplication(int &argc, char **argv, int)
-    : QApplication(argc, argv), localServer(new QLocalServer(this))
+    : CrossApplication(argc, argv), localServer(new QLocalServer(this))
 {
     setOrganizationName("deepin");
     initConnect();

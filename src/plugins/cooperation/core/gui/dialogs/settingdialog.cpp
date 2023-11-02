@@ -74,7 +74,7 @@ void SettingDialogPrivate::initWindow()
 
 void SettingDialogPrivate::createBasicWidget()
 {
-    QLabel *basicLable = new QLabel(tr("Basic"), q);
+    QLabel *basicLable = new QLabel(tr("Basic Settings"), q);
     QFont font = basicLable->font();
     font.setPointSize(16);
     font.setWeight(QFont::Medium);
@@ -85,7 +85,7 @@ void SettingDialogPrivate::createBasicWidget()
     findCB->setFixedWidth(280);
     connect(findCB, qOverload<int>(&QComboBox::currentIndexChanged), this, &SettingDialogPrivate::onFindComboBoxValueChanged);
     SettingItem *findItem = new SettingItem(q);
-    findItem->setItemInfo(tr(AppSettings::kDiscoveryModeKey), findCB);
+    findItem->setItemInfo(tr("Discovery mode"), findCB);
 
     QLabel *tipLabel = new QLabel(tr("Discover and connect with you through the \"Cooperation\" app"), q);
     auto margins = tipLabel->contentsMargins();

@@ -5,14 +5,20 @@
 #ifndef SINGLEAPPLICATION_H
 #define SINGLEAPPLICATION_H
 
+#ifdef WIN32
 #include <QApplication>
+typedef QApplication CrossApplication;
+#else
+#include <DApplication>
+typedef DTK_WIDGET_NAMESPACE::DApplication CrossApplication;
+#endif
 
 QT_BEGIN_NAMESPACE
 class QLocalServer;
 QT_END_NAMESPACE
 
 namespace deepin_cross {
-class SingleApplication : public QApplication
+class SingleApplication : public CrossApplication
 {
     Q_OBJECT
 public:

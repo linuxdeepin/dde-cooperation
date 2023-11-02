@@ -2,14 +2,14 @@
 #define TYPE_DEFINES_H
 
 #ifdef WIN32
-#    include <QMainWindow>
+#include <QMainWindow>
 typedef QMainWindow CooperationMainWindow;
 #else
-#    include <DMainWindow>
-#    include <DAbstractDialog>
-#    include <DSwitchButton>
-#    include <DSuggestButton>
-#    include <DSearchEdit>
+#include <DMainWindow>
+#include <DAbstractDialog>
+#include <DSwitchButton>
+#include <DSuggestButton>
+#include <DSearchEdit>
 typedef DTK_WIDGET_NAMESPACE::DMainWindow CooperationMainWindow;
 typedef DTK_WIDGET_NAMESPACE::DAbstractDialog CooperationDialog;
 typedef DTK_WIDGET_NAMESPACE::DSwitchButton CooperationSwitchButton;

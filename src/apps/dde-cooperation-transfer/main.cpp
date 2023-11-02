@@ -71,6 +71,14 @@ int main(int argc, char *argv[])
     app.setOrganizationName("deepin");
     app.setProperty("onlyTransfer", true);
 
+    {
+        // 加载翻译
+        auto appName = app.applicationName();
+        app.setApplicationName("dde-cooperation");
+        app.loadTranslator();
+        app.setApplicationName(appName);
+    }
+
     bool isSingleInstance = app.setSingleInstance(app.applicationName());
     if (!isSingleInstance) {
         qInfo() << "new client";

@@ -9,6 +9,7 @@
 #include <dde-cooperation-framework/dpf.h>
 
 #include <QDir>
+#include <QIcon>
 
 static constexpr char kPluginInterface[] { "org.deepin.plugin.cooperation" };
 static constexpr char kPluginCore[] { "cooperation-core" };
@@ -68,6 +69,18 @@ int main(int argc, char *argv[])
 
     deepin_cross::SingleApplication app(argc, argv);
     app.setOrganizationName("deepin");
+
+#ifdef linux
+    app.loadTranslator();
+    app.setApplicationDisplayName(app.translate("Application", "Cooperation"));
+    app.setApplicationVersion("1.0");
+    app.setProductIcon(QIcon::fromTheme("collaboration"));
+    app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/");
+    app.setApplicationDescription(app.translate("Application", "Cooperation is a powerful cross-terminal "
+                                                               "office tool that helps you deliver files, "
+                                                               "share keys and mice, and share clipboards "
+                                                               "between different devices."));
+#endif
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {

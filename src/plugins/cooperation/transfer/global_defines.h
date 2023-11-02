@@ -15,7 +15,7 @@ inline constexpr char kStoragePathKey[] { "StoragePath" };
 inline constexpr char kTransferModeKey[] { "TransferMode" };
 
 inline constexpr char kNotifyCancelAction[] { "cancel-transfer-action" };
-inline constexpr char kNotifyRefuseAction[] { "refuse-action" };
+inline constexpr char kNotifyRejectAction[] { "reject-action" };
 inline constexpr char kNotifyAcceptAction[] { "accept-action" };
 inline constexpr char kNotifyViewAction[] { "view-action" };
 

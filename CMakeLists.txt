@@ -72,6 +72,12 @@ set(USE_PROTOBUF_FILES ON)
 # Disable the coroutine in coost.
 add_definitions(-D DISABLE_GO)
 
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    # generate qm
+    execute_process(COMMAND bash "translate_generation.sh"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
+endif()
+
 if (NOT USE_PROTOBUF_FILES)
 	# define and use the local 3rdparty protobuf library
 	if (WIN32)
