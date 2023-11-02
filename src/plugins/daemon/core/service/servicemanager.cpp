@@ -227,7 +227,7 @@ void ServiceManager::localIPCStart()
                 }
 
                 qInfo() << "paths: " << paths;
-                newTransSendJob(session, param.targetSession.data(), param.id, paths, param.sub, savedir);
+                newTransSendJob(session, param.targetSession.c_str(), param.id, paths, param.sub, savedir);
                 break;
             }
             case BACK_RESUME_JOB:
@@ -283,9 +283,7 @@ void ServiceManager::localIPCStart()
             }
             case BACK_APPLY_TRANS_FILES:
             {
-                ApplyTransFiles param;
-                param.from_json(json_obj);
-                sendApplyTransFiles(param.session.data(), param.tarSession.data(), param.type, param.machineName.data());
+                handleBackApplyTransFiles(json_obj);
                 break;
             }
             default:
@@ -320,8 +318,8 @@ bool ServiceManager::handleRemoteRequestJob(fastring json)
     }
     tarAppname = tarAppname.empty() ? appName : appName;
     TransferJob *job = new TransferJob();
-    job->initRpc(_connected_target, UNI_RPC_PORT_BASE);
     job->initJob(fsjob.who, tarAppname, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
+    job->initRpc(_connected_target, UNI_RPC_PORT_BASE);
     connect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus, Qt::QueuedConnection);
     connect(job, &TransferJob::notifyJobResult, this, &ServiceManager::handleJobTransStatus, Qt::QueuedConnection);
 
@@ -455,8 +453,14 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
     obj.tarSession = obj.session;
     obj.session = tmp;
     auto session = obj.session;
-    auto s = sessionByName(session.data());
-    qInfo() << "json == " << info.str().data();
+    auto s = sessionByName(session.c_str());
+    // 保存申请的通讯job
+    QSharedPointer<CommunicationJob> _applyjob(new CommunicationJob);
+    _applyjob->initRpc(obj.session, obj.selfIp.c_str(), static_cast<uint16_t>(obj.selfPort));
+    _applyjob->initJob(obj.session, obj.tarSession);
+    _applyjobs.insert(session.c_str(), _applyjob);
+
+    qInfo() << "json == " << info.str().c_str();
     if (s && s->alive()) {
         UNIGO([this, s, obj]() {
             co::Json infojson;
@@ -464,10 +468,9 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
 
             //notifyFileStatus {FileStatus}
             req = obj.as_json();
-
             req.add_member("api", "Frontend.applyTransFiles");
             s->client()->call(req, res);
-            sendApplyTransFiles(obj.session.data(), obj.tarSession.data(), obj.type,  obj.machineName.data());
+            handleBackApplyTransFiles(obj.as_json());
         });
     }
 
@@ -767,6 +770,7 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
 
                 //remove the frontend app register info
                 fastring name = s->getName().toStdString();
+                _applyjobs.remove(name.c_str());
                 DiscoveryJob::instance()->removeAppbyName(name);
             }
         }
@@ -775,6 +779,16 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
 
 void ServiceManager::handleNodeRegister(bool unreg, fastring info)
 {
+    if (unreg) {
+        co::Json appjson;
+        if (appjson.parse_from(info)) {
+            ELOG << "incorrect app node info:" << info;
+            return;
+        }
+        fastring appname = appjson.get("appname").as_string();
+        _applyjobs.remove(appname.c_str());
+    }
+
     DiscoveryJob::instance()->updateAnnouncApp(unreg, info);
 }
 
@@ -796,16 +810,24 @@ void ServiceManager::handleGetAllNodes()
     _backendIpcService->bridgeResult()->operator<<(res);
 }
 
-void ServiceManager::sendApplyTransFiles(const QString &session, const QString &targetSession, const int32 type, const QString &machineName)
+void ServiceManager::handleBackApplyTransFiles(const co::Json &param)
 {
-    if (_rpcServiceBinder == nullptr)
-        return;
-    UNIGO([this, session, targetSession, type, machineName]() {
-        ApplyTransFilesRequest req;
-        req.set_session(session.toStdString());
-        req.set_tarsession(targetSession.toStdString());
-        req.set_machinename(machineName.toStdString());
-        req.set_type(type);
-        _rpcServiceBinder->doSendApplyTransFiles(req);
+    ApplyTransFiles info;
+    info.from_json(param);
+    auto _applyjob = _applyjobs.take(info.session.c_str());
+    info.selfIp = Util::getFirstIp();
+    info.selfPort = UNI_RPC_PORT_BASE;
+    if (_applyjob.isNull()){
+        if (info.type != 0) {
+            ELOG << "handleBackApplyTransFiles ERROR: no job " << param;
+            return;
+        }
+        // 自己申请
+        _applyjob.reset(new CommunicationJob);
+        _applyjob->initRpc(info.session, _connected_target.c_str(), UNI_RPC_PORT_BASE);
+        _applyjob->initJob(info.session, info.tarSession);
+    }
+    UNIGO([_applyjob, info]() {
+        _applyjob->sendMsg(COMM_APPLY_TRANS, info);
     });
 }

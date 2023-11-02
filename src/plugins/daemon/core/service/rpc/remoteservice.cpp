@@ -338,6 +338,8 @@ void RemoteServiceImpl::apply_trans_files(google::protobuf::RpcController *contr
     info.session = request->session();
     info.tarSession = request->tarsession();
     info.machineName = request->machinename();
+    info.selfIp = request->selfip();
+    info.selfPort = request->selfport();
     in.type = TRANS_APPLY;
     in.json = info.as_json().str();
     _income_chan << in;
@@ -381,6 +383,7 @@ void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpat
 
 void RemoteServiceBinder::createExecutor(const QString &appname, const char *targetip, uint16_t port)
 {
+    qInfo() << appname;
     QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
     {
         QReadLocker lk(&_executor_lock);
@@ -657,9 +660,9 @@ int RemoteServiceBinder::doUpdateTrans(const QString &appname, FileTransUpdate u
     return INVOKE_DONE;
 }
 
-void RemoteServiceBinder::doSendApplyTransFiles(ApplyTransFilesRequest applyInfo)
+void RemoteServiceBinder::doSendApplyTransFiles(const ApplyTransFiles &info)
 {
-    auto _executor_p = executor(applyInfo.session().data());
+    auto _executor_p = executor(info.session.c_str());
     if (_executor_p.isNull()) {
         ELOG << "doSendApplyTransFiles ERROR: no executor";
         return;
@@ -668,14 +671,26 @@ void RemoteServiceBinder::doSendApplyTransFiles(ApplyTransFilesRequest applyInfo
     RemoteService_Stub stub(_executor_p->chan());
     zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
     ApplyTransFilesResponse res;
-    qInfo() << "send message = +++" << applyInfo.session().data() << applyInfo.session().data() << applyInfo.machinename().data() << applyInfo.type();
-    stub.apply_trans_files(rpc_controller, &applyInfo, &res, nullptr);
+    ApplyTransFilesRequest req;
+    req.set_session(info.session.c_str());
+    req.set_tarsession(info.tarSession.c_str());
+    req.set_machinename(info.machineName.c_str());
+    req.set_type(info.type);
+    req.set_selfip(info.selfIp.c_str());
+    req.set_selfport(info.selfPort);
+    stub.apply_trans_files(rpc_controller, &req, &res, nullptr);
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call filetrans_update, error code: " << rpc_controller->ErrorCode()
             << ", error info: " << rpc_controller->ErrorText();
         return;
     }
+}
+
+void RemoteServiceBinder::clearExecutor(const QString &appname)
+{
+    QWriteLocker lk(&_executor_lock);
+    _executor_ps.remove(appname);
 }
 
 QSharedPointer<ZRpcClientExecutor> RemoteServiceBinder::executor(const QString &appname)

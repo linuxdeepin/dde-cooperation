@@ -7,7 +7,8 @@
 
 #include <QObject>
 #include <QMap>
-#include <service/transferjob.h>
+#include <service/job/transferjob.h>
+#include <service/job/communicationjob.h>
 #include "co/co.h"
 #include "co/json.h"
 
@@ -45,7 +46,7 @@ public slots:
 
     void handleNodeRegister(bool unreg, fastring info);
     void handleGetAllNodes();
-    void sendApplyTransFiles(const QString &session, const QString &targetSession, const int32 type, const QString &machineName);
+    void handleBackApplyTransFiles(const co::Json &param);
 
 private:
     void localIPCStart();
@@ -65,6 +66,7 @@ private:
 private:
     RemoteServiceBinder *_rpcServiceBinder = nullptr;
     BackendService *_backendIpcService = nullptr;
+    QMap<QString, QSharedPointer<CommunicationJob>> _applyjobs;
 
     QMap<int, TransferJob *> _transjob_sends;
     QMap<int, TransferJob *> _transjob_recvs;

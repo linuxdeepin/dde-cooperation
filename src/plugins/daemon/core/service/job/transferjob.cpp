@@ -8,7 +8,7 @@
 #include "co/path.h"
 #include "co/co.h"
 #include "common/constant.h"
-#include "fsadapter.h"
+#include "service/fsadapter.h"
 #include "utils/config.h"
 
 TransferJob::TransferJob(QObject *parent)
@@ -22,7 +22,7 @@ void TransferJob::initRpc(fastring target, uint16 port)
 {
     if (nullptr == _rpcBinder) {
         _rpcBinder = new RemoteServiceBinder(this);
-        _rpcBinder->createExecutor(_tar_app_name.data(), target.c_str(), port);
+        _rpcBinder->createExecutor(_tar_app_name.c_str(), target.c_str(), port);
     }
 }
 
@@ -115,7 +115,7 @@ void TransferJob::cancel()
             cancel->set_path(_path.c_str());
 
             update.set_allocated_cancel(cancel);
-            int res = _rpcBinder->doUpdateTrans(_tar_app_name.data(), update);
+            int res = _rpcBinder->doUpdateTrans(_tar_app_name.c_str(), update);
             if (res <= 0) {
                 ELOG << "update failed: " << _path << " result=" << result;
             }
@@ -164,7 +164,7 @@ fastring TransferJob::getSubdir(const char *path, const char *root)
 void TransferJob::scanPath(const char *root, const char *path, int id)
 {
     fastring subdir = getSubdir(path, root);
-    int res = _rpcBinder->doSendFileInfo(_tar_app_name.data(), _jobid, id, subdir.c_str(), path);
+    int res = _rpcBinder->doSendFileInfo(_tar_app_name.c_str(), _jobid, id, subdir.c_str(), path);
     if (res <= 0) {
         ELOG << "error file info : " << path;
         return;
@@ -329,7 +329,7 @@ void TransferJob::handleBlockQueque()
         if (_writejob) {
             int64 offset = blk_id * BLOCK_SIZE;
 //            ELOG << "file : " << name << " write : " << len;
-            bool good = FSAdapter::writeBlock(name.c_str(), offset, buffer.data(), len);
+            bool good = FSAdapter::writeBlock(name.c_str(), offset, buffer.c_str(), len);
             if (!good) {
                 ELOG << "file : " << name << " write BLOCK error";
                 exception = true;
@@ -342,11 +342,11 @@ void TransferJob::handleBlockQueque()
             file_block.set_file_id(file_id);
             file_block.set_filename(block.filename.c_str());
             file_block.set_blk_id(blk_id);
-            file_block.set_data(buffer.data(), len);
+            file_block.set_data(buffer.c_str(), len);
             file_block.set_compressed(comp);
 //            DLOG << "(" << job_id << ") send block " << block.filename << " size: " << len;
 
-            int send = _rpcBinder->doSendFileBlock(_tar_app_name.data(), file_block);
+            int send = _rpcBinder->doSendFileBlock(_tar_app_name.c_str(), file_block);
             if (send <= 0) {
                 ELOG << "rpc disconnect, break : " << name;
                 exception = true;
@@ -388,7 +388,7 @@ void TransferJob::handleUpdate(FileTransRe result, const char *path, const char 
         report->set_error(emsg);
 
         update.set_allocated_report(report);
-        int res = _rpcBinder->doUpdateTrans(_tar_app_name.data(), update);
+        int res = _rpcBinder->doUpdateTrans(_tar_app_name.c_str(), update);
         if (res <= 0) {
             ELOG << "update failed: " << _path << " result=" << result;
         }
