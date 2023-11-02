@@ -209,6 +209,7 @@ struct ConfigParam {
 
 struct TransFilesParam {
     fastring session;
+    fastring targetSession;
     int32 id;
     co::vector<fastring> paths;
     bool sub;
@@ -216,6 +217,7 @@ struct TransFilesParam {
 
     void from_json(const co::Json& _x_) {
         session = _x_.get("session").as_c_str();
+        targetSession = _x_.get("targetSession").as_c_str();
         id = (int32)_x_.get("id").as_int64();
         do {
             auto& _unamed_v1 = _x_.get("paths");
@@ -230,6 +232,7 @@ struct TransFilesParam {
     co::Json as_json() const {
         co::Json _x_;
         _x_.add_member("session", session);
+        _x_.add_member("targetSession", targetSession);
         _x_.add_member("id", id);
         do {
             co::Json _unamed_v1;

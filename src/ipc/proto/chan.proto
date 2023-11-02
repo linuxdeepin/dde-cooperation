@@ -67,6 +67,7 @@ object FSReport {
 
 object ApplyTransFiles {
   string machineName // 机器名称
-  string appName // 应用名称
+  string session // 应用名称
+  string tarSession // 目标应用名称
   int32 type // 0是申请，1同意申请，2,是拒绝申请
 }

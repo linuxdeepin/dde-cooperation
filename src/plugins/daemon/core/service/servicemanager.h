@@ -31,7 +31,7 @@ signals:
 public slots:
     void saveSession(QString who, QString session, int cbport);
 
-    void newTransSendJob(QString session, int jobId, QStringList paths, bool sub, QString savedir);
+    void newTransSendJob(QString session, const QString targetSession, int jobId, QStringList paths, bool sub, QString savedir);
     void notifyConnect(QString session, QString ip, QString password);
 
     bool doJobAction(uint32_t action, co::Json &jsonobj);
@@ -45,7 +45,7 @@ public slots:
 
     void handleNodeRegister(bool unreg, fastring info);
     void handleGetAllNodes();
-    void sendApplyTransFiles(const QString &appName, const int32 type, const QString &machineName);
+    void sendApplyTransFiles(const QString &session, const QString &targetSession, const int32 type, const QString &machineName);
 
 private:
     void localIPCStart();
