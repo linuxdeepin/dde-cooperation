@@ -27,6 +27,7 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
                               ::LoginResponse *response,
                               ::google::protobuf::Closure *done)
 {
+    Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
 
     std::string version = request->version();
@@ -123,6 +124,7 @@ void RemoteServiceImpl::query_peerinfo(::google::protobuf::RpcController *contro
                                        ::PeerInfo *response,
                                        ::google::protobuf::Closure *done)
 {
+    Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
 
     LOG << "res= " << response->ShortDebugString().c_str();
@@ -137,6 +139,7 @@ void RemoteServiceImpl::misc(::google::protobuf::RpcController *controller,
                              ::JsonMessage *response,
                              ::google::protobuf::Closure *done)
 {
+    Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
 
     LOG << "res= " << response->ShortDebugString().c_str();
@@ -151,6 +154,7 @@ void RemoteServiceImpl::fsaction(::google::protobuf::RpcController *controller,
                                  ::FileResponse *response,
                                  ::google::protobuf::Closure *done)
 {
+    Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
 
     LOG << "res= " << response->ShortDebugString().c_str();
@@ -165,6 +169,7 @@ void RemoteServiceImpl::filetrans_job(::google::protobuf::RpcController *control
                                       ::FileTransResponse *response,
                                       ::google::protobuf::Closure *done)
 {
+    Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
     int32 job_id = request->job_id();
     IncomeData in;
@@ -198,6 +203,7 @@ void RemoteServiceImpl::filetrans_create(::google::protobuf::RpcController *cont
                                          ::FileTransResponse *response,
                                          ::google::protobuf::Closure *done)
 {
+    Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
     int32 fileid = request->file_id();
 
@@ -244,6 +250,7 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
                                         ::FileTransResponse *response,
                                         ::google::protobuf::Closure *done)
 {
+    Q_UNUSED(controller);
     // LOG << "req= " << request->ShortDebugString().c_str();
 
     int32 job_id = request->job_id();
@@ -287,6 +294,7 @@ void RemoteServiceImpl::filetrans_update(::google::protobuf::RpcController *cont
                                          ::FileTransResponse *response,
                                          ::google::protobuf::Closure *done)
 {
+    Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
     if (request->has_report()) {
         FileTransJobReport report = request->report();
@@ -331,24 +339,13 @@ void RemoteServiceImpl::filetrans_update(::google::protobuf::RpcController *cont
 
 void RemoteServiceImpl::apply_trans_files(google::protobuf::RpcController *controller, const ApplyTransFilesRequest *request, ApplyTransFilesResponse *response, google::protobuf::Closure *done)
 {
+    Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
     IncomeData in;
-    ApplyTransFiles info;
-    info.type = request->type();
-    info.session = request->session();
-    info.tarSession = request->tarsession();
-    info.machineName = request->machinename();
-    info.selfIp = request->selfip();
-    info.selfPort = request->selfport();
     in.type = TRANS_APPLY;
-    in.json = info.as_json().str();
+    in.json = request->msg();
     _income_chan << in;
-
-    OutData out;
-    _outgo_chan >> out;
-    qInfo() << " apply_trans_files ========= ";
     response->set_result(OK);
-
     LOG << "res= " << response->ShortDebugString().c_str();
 
     if (done) {
@@ -381,13 +378,13 @@ void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpat
     }
 }
 
-void RemoteServiceBinder::createExecutor(const QString &appname, const char *targetip, uint16_t port)
+void RemoteServiceBinder::createExecutor(const QString &session, const char *targetip, uint16_t port)
 {
-    qInfo() << appname;
+    qInfo() << session;
     QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
     {
         QReadLocker lk(&_executor_lock);
-        if (_executor_ps.contains(appname))
+        if (_executor_ps.contains(session))
             return;
         for (const auto &executor : _executor_ps) {
             if (targetip == executor->targetIP()) {
@@ -400,12 +397,12 @@ void RemoteServiceBinder::createExecutor(const QString &appname, const char *tar
     if (_executor_p.isNull())
         _executor_p = QSharedPointer<ZRpcClientExecutor>(new ZRpcClientExecutor(targetip, port));
     QWriteLocker lk(&_executor_lock);
-    _executor_ps.insert(appname, _executor_p);
+    _executor_ps.insert(session, _executor_p);
 }
 
-void RemoteServiceBinder::doLogin(const QString &appname, const char *username, const char *pincode)
+void RemoteServiceBinder::doLogin(const QString &session, const char *username, const char *pincode)
 {
-    auto _executor_p = executor(appname);
+    auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doLogin ERROR: no executor";
         return;
@@ -457,9 +454,9 @@ void RemoteServiceBinder::doLogin(const QString &appname, const char *username, 
     emit loginResult(false, QString(username));
 }
 
-void RemoteServiceBinder::doQuery(const QString &appname)
+void RemoteServiceBinder::doQuery(const QString &session)
 {
-    auto _executor_p = executor(appname);
+    auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doQuery ERROR: no executor";
         return;
@@ -485,10 +482,10 @@ void RemoteServiceBinder::doQuery(const QString &appname)
     emit queryResult(true, "");
 }
 
-QString RemoteServiceBinder::doMisc(const char *appname, const char *miscdata)
+QString RemoteServiceBinder::doMisc(const char *session, const char *miscdata)
 {
     QString res_json("");
-    auto _executor_p = executor(appname);
+    auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doMisc ERROR: no executor";
         return res_json;
@@ -500,7 +497,7 @@ QString RemoteServiceBinder::doMisc(const char *appname, const char *miscdata)
     JsonMessage rpc_req;
     JsonMessage rpc_res;
 
-    rpc_req.set_app(appname);
+    rpc_req.set_app(session);
     rpc_req.set_json(miscdata);
 
     stub.misc(rpc_controller, &rpc_req, &rpc_res, nullptr);
@@ -518,10 +515,10 @@ QString RemoteServiceBinder::doMisc(const char *appname, const char *miscdata)
     return res_json;
 }
 
-int RemoteServiceBinder::doTransfileJob(const char *appname, int id, const char *jobpath, bool hidden, bool recursive, bool recv)
+int RemoteServiceBinder::doTransfileJob(const char *session, int id, const char *jobpath, bool hidden, bool recursive, bool recv)
 {
     QString res_json("");
-    auto _executor_p = executor(appname);
+    auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doTransfileJob ERROR: no executor";
         return PARAM_ERROR;
@@ -538,7 +535,7 @@ int RemoteServiceBinder::doTransfileJob(const char *appname, int id, const char 
     req_job.set_include_hidden(hidden);
     req_job.set_recursive(recursive);
     req_job.set_push(!recv);
-    req_job.set_app_who(appname);
+    req_job.set_app_who(session);
 
     stub.filetrans_job(rpc_controller, &req_job, &res_job, nullptr);
 
@@ -556,9 +553,9 @@ int RemoteServiceBinder::doTransfileJob(const char *appname, int id, const char 
     return INVOKE_FAIL;
 }
 
-int RemoteServiceBinder::doSendFileInfo(const QString &appname, int jobid, int fileid, const char *subdir, const char *filepath)
+int RemoteServiceBinder::doSendFileInfo(const QString &session, int jobid, int fileid, const char *subdir, const char *filepath)
 {
-    auto _executor_p = executor(appname);
+    auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doSendFileInfo ERROR: no executor";
         return PARAM_ERROR;
@@ -594,9 +591,9 @@ int RemoteServiceBinder::doSendFileInfo(const QString &appname, int jobid, int f
     return INVOKE_DONE;
 }
 
-int RemoteServiceBinder::doSendFileBlock(const QString &appname, FileTransBlock fileblock)
+int RemoteServiceBinder::doSendFileBlock(const QString &session, FileTransBlock fileblock)
 {
-    auto _executor_p = executor(appname);
+    auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doSendFileBlock ERROR: no executor";
         return PARAM_ERROR;
@@ -631,9 +628,9 @@ retry:
     return INVOKE_DONE;
 }
 
-int RemoteServiceBinder::doUpdateTrans(const QString &appname, FileTransUpdate update)
+int RemoteServiceBinder::doUpdateTrans(const QString &session, FileTransUpdate update)
 {
-    auto _executor_p = executor(appname);
+    auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doUpdateTrans ERROR: no executor";
         return PARAM_ERROR;
@@ -660,9 +657,9 @@ int RemoteServiceBinder::doUpdateTrans(const QString &appname, FileTransUpdate u
     return INVOKE_DONE;
 }
 
-void RemoteServiceBinder::doSendApplyTransFiles(const ApplyTransFiles &info)
+void RemoteServiceBinder::doSendApplyTransFiles(const QString &session, const QString &info)
 {
-    auto _executor_p = executor(info.session.c_str());
+    auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doSendApplyTransFiles ERROR: no executor";
         return;
@@ -672,14 +669,8 @@ void RemoteServiceBinder::doSendApplyTransFiles(const ApplyTransFiles &info)
     zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
     ApplyTransFilesResponse res;
     ApplyTransFilesRequest req;
-    req.set_session(info.session.c_str());
-    req.set_tarsession(info.tarSession.c_str());
-    req.set_machinename(info.machineName.c_str());
-    req.set_type(info.type);
-    req.set_selfip(info.selfIp.c_str());
-    req.set_selfport(info.selfPort);
+    req.set_msg(info.toStdString());
     stub.apply_trans_files(rpc_controller, &req, &res, nullptr);
-
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call filetrans_update, error code: " << rpc_controller->ErrorCode()
             << ", error info: " << rpc_controller->ErrorText();

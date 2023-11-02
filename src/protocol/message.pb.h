@@ -3419,85 +3419,26 @@ class ApplyTransFilesRequest final :
 
   // accessors -------------------------------------------------------
 
-  // string machineName = 2;
-  void clear_machinename();
-  static const int kMachineNameFieldNumber = 2;
-  const ::std::string& machinename() const;
-  void set_machinename(const ::std::string& value);
+  // string msg = 1;
+  void clear_msg();
+  static const int kMsgFieldNumber = 1;
+  const ::std::string& msg() const;
+  void set_msg(const ::std::string& value);
   #if LANG_CXX11
-  void set_machinename(::std::string&& value);
+  void set_msg(::std::string&& value);
   #endif
-  void set_machinename(const char* value);
-  void set_machinename(const char* value, size_t size);
-  ::std::string* mutable_machinename();
-  ::std::string* release_machinename();
-  void set_allocated_machinename(::std::string* machinename);
-
-  // string session = 3;
-  void clear_session();
-  static const int kSessionFieldNumber = 3;
-  const ::std::string& session() const;
-  void set_session(const ::std::string& value);
-  #if LANG_CXX11
-  void set_session(::std::string&& value);
-  #endif
-  void set_session(const char* value);
-  void set_session(const char* value, size_t size);
-  ::std::string* mutable_session();
-  ::std::string* release_session();
-  void set_allocated_session(::std::string* session);
-
-  // string tarSession = 4;
-  void clear_tarsession();
-  static const int kTarSessionFieldNumber = 4;
-  const ::std::string& tarsession() const;
-  void set_tarsession(const ::std::string& value);
-  #if LANG_CXX11
-  void set_tarsession(::std::string&& value);
-  #endif
-  void set_tarsession(const char* value);
-  void set_tarsession(const char* value, size_t size);
-  ::std::string* mutable_tarsession();
-  ::std::string* release_tarsession();
-  void set_allocated_tarsession(::std::string* tarsession);
-
-  // string selfIp = 5;
-  void clear_selfip();
-  static const int kSelfIpFieldNumber = 5;
-  const ::std::string& selfip() const;
-  void set_selfip(const ::std::string& value);
-  #if LANG_CXX11
-  void set_selfip(::std::string&& value);
-  #endif
-  void set_selfip(const char* value);
-  void set_selfip(const char* value, size_t size);
-  ::std::string* mutable_selfip();
-  ::std::string* release_selfip();
-  void set_allocated_selfip(::std::string* selfip);
-
-  // int32 type = 1;
-  void clear_type();
-  static const int kTypeFieldNumber = 1;
-  ::google::protobuf::int32 type() const;
-  void set_type(::google::protobuf::int32 value);
-
-  // int32 selfPort = 6;
-  void clear_selfport();
-  static const int kSelfPortFieldNumber = 6;
-  ::google::protobuf::int32 selfport() const;
-  void set_selfport(::google::protobuf::int32 value);
+  void set_msg(const char* value);
+  void set_msg(const char* value, size_t size);
+  ::std::string* mutable_msg();
+  ::std::string* release_msg();
+  void set_allocated_msg(::std::string* msg);
 
   // @@protoc_insertion_point(class_scope:ApplyTransFilesRequest)
  private:
   class HasBitSetters;
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr machinename_;
-  ::google::protobuf::internal::ArenaStringPtr session_;
-  ::google::protobuf::internal::ArenaStringPtr tarsession_;
-  ::google::protobuf::internal::ArenaStringPtr selfip_;
-  ::google::protobuf::int32 type_;
-  ::google::protobuf::int32 selfport_;
+  ::google::protobuf::internal::ArenaStringPtr msg_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_message_2eproto;
 };
@@ -6530,244 +6471,57 @@ inline FileTransUpdate::UnionCase FileTransUpdate::union_case() const {
 
 // ApplyTransFilesRequest
 
-// int32 type = 1;
-inline void ApplyTransFilesRequest::clear_type() {
-  type_ = 0;
+// string msg = 1;
+inline void ApplyTransFilesRequest::clear_msg() {
+  msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::google::protobuf::int32 ApplyTransFilesRequest::type() const {
-  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.type)
-  return type_;
+inline const ::std::string& ApplyTransFilesRequest::msg() const {
+  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.msg)
+  return msg_.GetNoArena();
 }
-inline void ApplyTransFilesRequest::set_type(::google::protobuf::int32 value) {
+inline void ApplyTransFilesRequest::set_msg(const ::std::string& value) {
   
-  type_ = value;
-  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.type)
-}
-
-// string machineName = 2;
-inline void ApplyTransFilesRequest::clear_machinename() {
-  machinename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& ApplyTransFilesRequest::machinename() const {
-  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.machineName)
-  return machinename_.GetNoArena();
-}
-inline void ApplyTransFilesRequest::set_machinename(const ::std::string& value) {
-  
-  machinename_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.machineName)
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.msg)
 }
 #if LANG_CXX11
-inline void ApplyTransFilesRequest::set_machinename(::std::string&& value) {
+inline void ApplyTransFilesRequest::set_msg(::std::string&& value) {
   
-  machinename_.SetNoArena(
+  msg_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:ApplyTransFilesRequest.machineName)
+  // @@protoc_insertion_point(field_set_rvalue:ApplyTransFilesRequest.msg)
 }
 #endif
-inline void ApplyTransFilesRequest::set_machinename(const char* value) {
+inline void ApplyTransFilesRequest::set_msg(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
-  machinename_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:ApplyTransFilesRequest.machineName)
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ApplyTransFilesRequest.msg)
 }
-inline void ApplyTransFilesRequest::set_machinename(const char* value, size_t size) {
+inline void ApplyTransFilesRequest::set_msg(const char* value, size_t size) {
   
-  machinename_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:ApplyTransFilesRequest.machineName)
+  // @@protoc_insertion_point(field_set_pointer:ApplyTransFilesRequest.msg)
 }
-inline ::std::string* ApplyTransFilesRequest::mutable_machinename() {
+inline ::std::string* ApplyTransFilesRequest::mutable_msg() {
   
-  // @@protoc_insertion_point(field_mutable:ApplyTransFilesRequest.machineName)
-  return machinename_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:ApplyTransFilesRequest.msg)
+  return msg_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* ApplyTransFilesRequest::release_machinename() {
-  // @@protoc_insertion_point(field_release:ApplyTransFilesRequest.machineName)
+inline ::std::string* ApplyTransFilesRequest::release_msg() {
+  // @@protoc_insertion_point(field_release:ApplyTransFilesRequest.msg)
   
-  return machinename_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return msg_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void ApplyTransFilesRequest::set_allocated_machinename(::std::string* machinename) {
-  if (machinename != nullptr) {
+inline void ApplyTransFilesRequest::set_allocated_msg(::std::string* msg) {
+  if (msg != nullptr) {
     
   } else {
     
   }
-  machinename_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), machinename);
-  // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.machineName)
-}
-
-// string session = 3;
-inline void ApplyTransFilesRequest::clear_session() {
-  session_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& ApplyTransFilesRequest::session() const {
-  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.session)
-  return session_.GetNoArena();
-}
-inline void ApplyTransFilesRequest::set_session(const ::std::string& value) {
-  
-  session_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.session)
-}
-#if LANG_CXX11
-inline void ApplyTransFilesRequest::set_session(::std::string&& value) {
-  
-  session_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:ApplyTransFilesRequest.session)
-}
-#endif
-inline void ApplyTransFilesRequest::set_session(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  session_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:ApplyTransFilesRequest.session)
-}
-inline void ApplyTransFilesRequest::set_session(const char* value, size_t size) {
-  
-  session_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:ApplyTransFilesRequest.session)
-}
-inline ::std::string* ApplyTransFilesRequest::mutable_session() {
-  
-  // @@protoc_insertion_point(field_mutable:ApplyTransFilesRequest.session)
-  return session_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* ApplyTransFilesRequest::release_session() {
-  // @@protoc_insertion_point(field_release:ApplyTransFilesRequest.session)
-  
-  return session_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void ApplyTransFilesRequest::set_allocated_session(::std::string* session) {
-  if (session != nullptr) {
-    
-  } else {
-    
-  }
-  session_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), session);
-  // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.session)
-}
-
-// string tarSession = 4;
-inline void ApplyTransFilesRequest::clear_tarsession() {
-  tarsession_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& ApplyTransFilesRequest::tarsession() const {
-  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.tarSession)
-  return tarsession_.GetNoArena();
-}
-inline void ApplyTransFilesRequest::set_tarsession(const ::std::string& value) {
-  
-  tarsession_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.tarSession)
-}
-#if LANG_CXX11
-inline void ApplyTransFilesRequest::set_tarsession(::std::string&& value) {
-  
-  tarsession_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:ApplyTransFilesRequest.tarSession)
-}
-#endif
-inline void ApplyTransFilesRequest::set_tarsession(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  tarsession_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:ApplyTransFilesRequest.tarSession)
-}
-inline void ApplyTransFilesRequest::set_tarsession(const char* value, size_t size) {
-  
-  tarsession_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:ApplyTransFilesRequest.tarSession)
-}
-inline ::std::string* ApplyTransFilesRequest::mutable_tarsession() {
-  
-  // @@protoc_insertion_point(field_mutable:ApplyTransFilesRequest.tarSession)
-  return tarsession_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* ApplyTransFilesRequest::release_tarsession() {
-  // @@protoc_insertion_point(field_release:ApplyTransFilesRequest.tarSession)
-  
-  return tarsession_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void ApplyTransFilesRequest::set_allocated_tarsession(::std::string* tarsession) {
-  if (tarsession != nullptr) {
-    
-  } else {
-    
-  }
-  tarsession_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tarsession);
-  // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.tarSession)
-}
-
-// string selfIp = 5;
-inline void ApplyTransFilesRequest::clear_selfip() {
-  selfip_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& ApplyTransFilesRequest::selfip() const {
-  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.selfIp)
-  return selfip_.GetNoArena();
-}
-inline void ApplyTransFilesRequest::set_selfip(const ::std::string& value) {
-  
-  selfip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.selfIp)
-}
-#if LANG_CXX11
-inline void ApplyTransFilesRequest::set_selfip(::std::string&& value) {
-  
-  selfip_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:ApplyTransFilesRequest.selfIp)
-}
-#endif
-inline void ApplyTransFilesRequest::set_selfip(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  selfip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:ApplyTransFilesRequest.selfIp)
-}
-inline void ApplyTransFilesRequest::set_selfip(const char* value, size_t size) {
-  
-  selfip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:ApplyTransFilesRequest.selfIp)
-}
-inline ::std::string* ApplyTransFilesRequest::mutable_selfip() {
-  
-  // @@protoc_insertion_point(field_mutable:ApplyTransFilesRequest.selfIp)
-  return selfip_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* ApplyTransFilesRequest::release_selfip() {
-  // @@protoc_insertion_point(field_release:ApplyTransFilesRequest.selfIp)
-  
-  return selfip_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void ApplyTransFilesRequest::set_allocated_selfip(::std::string* selfip) {
-  if (selfip != nullptr) {
-    
-  } else {
-    
-  }
-  selfip_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), selfip);
-  // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.selfIp)
-}
-
-// int32 selfPort = 6;
-inline void ApplyTransFilesRequest::clear_selfport() {
-  selfport_ = 0;
-}
-inline ::google::protobuf::int32 ApplyTransFilesRequest::selfport() const {
-  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.selfPort)
-  return selfport_;
-}
-inline void ApplyTransFilesRequest::set_selfport(::google::protobuf::int32 value) {
-  
-  selfport_ = value;
-  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.selfPort)
+  msg_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), msg);
+  // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.msg)
 }
 
 // -------------------------------------------------------------------

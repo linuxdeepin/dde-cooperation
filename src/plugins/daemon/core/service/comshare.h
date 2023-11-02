@@ -40,6 +40,12 @@ typedef enum communication_type_t {
     COMM_APPLY_TRANS = 0, // 发送 发送文件请求和回复
 } CommunicationType;
 
+typedef enum apply_trans_type_t {
+    APPLY_TRANS_APPLY = 0, // 请求传输文件
+    APPLY_TRANS_CONFIRM = 1, // 接受文件传输
+    APPLY_TRANS_REFUSED = 2, // 拒绝文件传输
+} ApplyTransType;
+
 struct OutData {
     OutgoType type;
     fastring json; // json数据结构实例

@@ -687,12 +687,7 @@ const ::google::protobuf::uint32 TableStruct_message_2eproto::offsets[] PROTOBUF
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, type_),
-  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, machinename_),
-  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, session_),
-  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, tarsession_),
-  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, selfip_),
-  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, selfport_),
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, msg_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::ApplyTransFilesResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -723,7 +718,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SE
   { 169, -1, sizeof(::FileTransJobReport)},
   { 178, -1, sizeof(::FileTransUpdate)},
   { 186, -1, sizeof(::ApplyTransFilesRequest)},
-  { 197, -1, sizeof(::ApplyTransFilesResponse)},
+  { 192, -1, sizeof(::ApplyTransFilesResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -805,32 +800,29 @@ const char descriptor_table_protodef_message_2eproto[] =
   "rror\030\003 \001(\t\022\034\n\006result\030\004 \001(\0162\014.FileTransRe"
   "\"h\n\017FileTransUpdate\022%\n\006cancel\030\001 \001(\0132\023.Fi"
   "leTransJobCancelH\000\022%\n\006report\030\002 \001(\0132\023.Fil"
-  "eTransJobReportH\000B\007\n\005union\"\202\001\n\026ApplyTran"
-  "sFilesRequest\022\014\n\004type\030\001 \001(\005\022\023\n\013machineNa"
-  "me\030\002 \001(\t\022\017\n\007session\030\003 \001(\t\022\022\n\ntarSession\030"
-  "\004 \001(\t\022\016\n\006selfIp\030\005 \001(\t\022\020\n\010selfPort\030\006 \001(\005\""
-  ")\n\027ApplyTransFilesResponse\022\016\n\006result\030\001 \001"
-  "(\010*<\n\010FileType\022\007\n\003DIR\020\000\022\014\n\010DIR_LINK\020\001\022\n\n"
-  "\006FILE_B\020\002\022\r\n\tFILE_LINK\020\003*0\n\013FileTransRe\022"
-  "\014\n\010IO_ERROR\020\000\022\006\n\002OK\020\001\022\013\n\007FINIASH\020\0022\323\003\n\rR"
-  "emoteService\022&\n\005login\022\r.LoginRequest\032\016.L"
-  "oginResponse\022&\n\016query_peerinfo\022\t.PeerInf"
-  "o\032\t.PeerInfo\022\"\n\004misc\022\014.JsonMessage\032\014.Jso"
-  "nMessage\022&\n\010fsaction\022\013.FileAction\032\r.File"
-  "Response\0222\n\rfiletrans_job\022\r.FileTransJob"
-  "\032\022.FileTransResponse\0228\n\020filetrans_create"
-  "\022\020.FileTransCreate\032\022.FileTransResponse\0226"
-  "\n\017filetrans_block\022\017.FileTransBlock\032\022.Fil"
-  "eTransResponse\0228\n\020filetrans_update\022\020.Fil"
-  "eTransUpdate\032\022.FileTransResponse\022F\n\021appl"
-  "y_trans_files\022\027.ApplyTransFilesRequest\032\030"
-  ".ApplyTransFilesResponseB\016\n\007uniapisP\001\200\001\001"
-  "b\006proto3"
+  "eTransJobReportH\000B\007\n\005union\"%\n\026ApplyTrans"
+  "FilesRequest\022\013\n\003msg\030\001 \001(\t\")\n\027ApplyTransF"
+  "ilesResponse\022\016\n\006result\030\001 \001(\010*<\n\010FileType"
+  "\022\007\n\003DIR\020\000\022\014\n\010DIR_LINK\020\001\022\n\n\006FILE_B\020\002\022\r\n\tF"
+  "ILE_LINK\020\003*0\n\013FileTransRe\022\014\n\010IO_ERROR\020\000\022"
+  "\006\n\002OK\020\001\022\013\n\007FINIASH\020\0022\323\003\n\rRemoteService\022&"
+  "\n\005login\022\r.LoginRequest\032\016.LoginResponse\022&"
+  "\n\016query_peerinfo\022\t.PeerInfo\032\t.PeerInfo\022\""
+  "\n\004misc\022\014.JsonMessage\032\014.JsonMessage\022&\n\010fs"
+  "action\022\013.FileAction\032\r.FileResponse\0222\n\rfi"
+  "letrans_job\022\r.FileTransJob\032\022.FileTransRe"
+  "sponse\0228\n\020filetrans_create\022\020.FileTransCr"
+  "eate\032\022.FileTransResponse\0226\n\017filetrans_bl"
+  "ock\022\017.FileTransBlock\032\022.FileTransResponse"
+  "\0228\n\020filetrans_update\022\020.FileTransUpdate\032\022"
+  ".FileTransResponse\022F\n\021apply_trans_files\022"
+  "\027.ApplyTransFilesRequest\032\030.ApplyTransFil"
+  "esResponseB\016\n\007uniapisP\001\200\001\001b\006proto3"
   ;
 ::google::protobuf::internal::DescriptorTable descriptor_table_message_2eproto = {
   false, InitDefaults_message_2eproto, 
   descriptor_table_protodef_message_2eproto,
-  "message.proto", &assign_descriptors_table_message_2eproto, 2648,
+  "message.proto", &assign_descriptors_table_message_2eproto, 2554,
 };
 
 void AddDescriptors_message_2eproto() {
@@ -10348,12 +10340,7 @@ class ApplyTransFilesRequest::HasBitSetters {
 };
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ApplyTransFilesRequest::kTypeFieldNumber;
-const int ApplyTransFilesRequest::kMachineNameFieldNumber;
-const int ApplyTransFilesRequest::kSessionFieldNumber;
-const int ApplyTransFilesRequest::kTarSessionFieldNumber;
-const int ApplyTransFilesRequest::kSelfIpFieldNumber;
-const int ApplyTransFilesRequest::kSelfPortFieldNumber;
+const int ApplyTransFilesRequest::kMsgFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ApplyTransFilesRequest::ApplyTransFilesRequest()
@@ -10365,38 +10352,17 @@ ApplyTransFilesRequest::ApplyTransFilesRequest(const ApplyTransFilesRequest& fro
   : ::google::protobuf::Message(),
       _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  machinename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.machinename().size() > 0) {
-    machinename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.machinename_);
+  msg_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.msg().size() > 0) {
+    msg_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.msg_);
   }
-  session_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.session().size() > 0) {
-    session_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.session_);
-  }
-  tarsession_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.tarsession().size() > 0) {
-    tarsession_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tarsession_);
-  }
-  selfip_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.selfip().size() > 0) {
-    selfip_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.selfip_);
-  }
-  ::memcpy(&type_, &from.type_,
-    static_cast<size_t>(reinterpret_cast<char*>(&selfport_) -
-    reinterpret_cast<char*>(&type_)) + sizeof(selfport_));
   // @@protoc_insertion_point(copy_constructor:ApplyTransFilesRequest)
 }
 
 void ApplyTransFilesRequest::SharedCtor() {
   ::google::protobuf::internal::InitSCC(
       &scc_info_ApplyTransFilesRequest_message_2eproto.base);
-  machinename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  session_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  tarsession_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  selfip_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&type_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&selfport_) -
-      reinterpret_cast<char*>(&type_)) + sizeof(selfport_));
+  msg_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 ApplyTransFilesRequest::~ApplyTransFilesRequest() {
@@ -10405,10 +10371,7 @@ ApplyTransFilesRequest::~ApplyTransFilesRequest() {
 }
 
 void ApplyTransFilesRequest::SharedDtor() {
-  machinename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  session_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  tarsession_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  selfip_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  msg_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void ApplyTransFilesRequest::SetCachedSize(int size) const {
@@ -10426,13 +10389,7 @@ void ApplyTransFilesRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  machinename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  session_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  tarsession_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  selfip_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&type_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&selfport_) -
-      reinterpret_cast<char*>(&type_)) + sizeof(selfport_));
+  msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   _internal_metadata_.Clear();
 }
 
@@ -10449,20 +10406,13 @@ const char* ApplyTransFilesRequest::_InternalParse(const char* begin, const char
     ptr = ::google::protobuf::io::Parse32(ptr, &tag);
     GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
     switch (tag >> 3) {
-      // int32 type = 1;
+      // string msg = 1;
       case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
-        msg->set_type(::google::protobuf::internal::ReadVarint(&ptr));
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        break;
-      }
-      // string machineName = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
+        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
         ptr = ::google::protobuf::io::ReadSize(ptr, &size);
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.machineName");
-        object = msg->mutable_machinename();
+        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.msg");
+        object = msg->mutable_msg();
         if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
           parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
           goto string_till_end;
@@ -10470,61 +10420,6 @@ const char* ApplyTransFilesRequest::_InternalParse(const char* begin, const char
         GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
         ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
         ptr += size;
-        break;
-      }
-      // string session = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 26) goto handle_unusual;
-        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.session");
-        object = msg->mutable_session();
-        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
-          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
-          goto string_till_end;
-        }
-        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
-        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
-        ptr += size;
-        break;
-      }
-      // string tarSession = 4;
-      case 4: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 34) goto handle_unusual;
-        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.tarSession");
-        object = msg->mutable_tarsession();
-        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
-          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
-          goto string_till_end;
-        }
-        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
-        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
-        ptr += size;
-        break;
-      }
-      // string selfIp = 5;
-      case 5: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 42) goto handle_unusual;
-        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.selfIp");
-        object = msg->mutable_selfip();
-        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
-          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
-          goto string_till_end;
-        }
-        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
-        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
-        ptr += size;
-        break;
-      }
-      // int32 selfPort = 6;
-      case 6: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 48) goto handle_unusual;
-        msg->set_selfport(::google::protobuf::internal::ReadVarint(&ptr));
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
         break;
       }
       default: {
@@ -10561,86 +10456,15 @@ bool ApplyTransFilesRequest::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // int32 type = 1;
+      // string msg = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (8 & 0xFF)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &type_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string machineName = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_machinename()));
+                input, this->mutable_msg()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->machinename().data(), static_cast<int>(this->machinename().length()),
+            this->msg().data(), static_cast<int>(this->msg().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "ApplyTransFilesRequest.machineName"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string session = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (26 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_session()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->session().data(), static_cast<int>(this->session().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "ApplyTransFilesRequest.session"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string tarSession = 4;
-      case 4: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (34 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_tarsession()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->tarsession().data(), static_cast<int>(this->tarsession().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "ApplyTransFilesRequest.tarSession"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // string selfIp = 5;
-      case 5: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (42 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_selfip()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->selfip().data(), static_cast<int>(this->selfip().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "ApplyTransFilesRequest.selfIp"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // int32 selfPort = 6;
-      case 6: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (48 & 0xFF)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &selfport_)));
+            "ApplyTransFilesRequest.msg"));
         } else {
           goto handle_unusual;
         }
@@ -10674,54 +10498,14 @@ void ApplyTransFilesRequest::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 type = 1;
-  if (this->type() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->type(), output);
-  }
-
-  // string machineName = 2;
-  if (this->machinename().size() > 0) {
+  // string msg = 1;
+  if (this->msg().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->machinename().data(), static_cast<int>(this->machinename().length()),
+      this->msg().data(), static_cast<int>(this->msg().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.machineName");
+      "ApplyTransFilesRequest.msg");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->machinename(), output);
-  }
-
-  // string session = 3;
-  if (this->session().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->session().data(), static_cast<int>(this->session().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.session");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->session(), output);
-  }
-
-  // string tarSession = 4;
-  if (this->tarsession().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tarsession().data(), static_cast<int>(this->tarsession().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.tarSession");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->tarsession(), output);
-  }
-
-  // string selfIp = 5;
-  if (this->selfip().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->selfip().data(), static_cast<int>(this->selfip().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.selfIp");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->selfip(), output);
-  }
-
-  // int32 selfPort = 6;
-  if (this->selfport() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(6, this->selfport(), output);
+      1, this->msg(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -10737,58 +10521,15 @@ void ApplyTransFilesRequest::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 type = 1;
-  if (this->type() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->type(), target);
-  }
-
-  // string machineName = 2;
-  if (this->machinename().size() > 0) {
+  // string msg = 1;
+  if (this->msg().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->machinename().data(), static_cast<int>(this->machinename().length()),
+      this->msg().data(), static_cast<int>(this->msg().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.machineName");
+      "ApplyTransFilesRequest.msg");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->machinename(), target);
-  }
-
-  // string session = 3;
-  if (this->session().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->session().data(), static_cast<int>(this->session().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.session");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->session(), target);
-  }
-
-  // string tarSession = 4;
-  if (this->tarsession().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tarsession().data(), static_cast<int>(this->tarsession().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.tarSession");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->tarsession(), target);
-  }
-
-  // string selfIp = 5;
-  if (this->selfip().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->selfip().data(), static_cast<int>(this->selfip().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.selfIp");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->selfip(), target);
-  }
-
-  // int32 selfPort = 6;
-  if (this->selfport() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(6, this->selfport(), target);
+        1, this->msg(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -10812,46 +10553,11 @@ size_t ApplyTransFilesRequest::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string machineName = 2;
-  if (this->machinename().size() > 0) {
+  // string msg = 1;
+  if (this->msg().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->machinename());
-  }
-
-  // string session = 3;
-  if (this->session().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->session());
-  }
-
-  // string tarSession = 4;
-  if (this->tarsession().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->tarsession());
-  }
-
-  // string selfIp = 5;
-  if (this->selfip().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->selfip());
-  }
-
-  // int32 type = 1;
-  if (this->type() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->type());
-  }
-
-  // int32 selfPort = 6;
-  if (this->selfport() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->selfport());
+        this->msg());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -10881,27 +10587,9 @@ void ApplyTransFilesRequest::MergeFrom(const ApplyTransFilesRequest& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.machinename().size() > 0) {
+  if (from.msg().size() > 0) {
 
-    machinename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.machinename_);
-  }
-  if (from.session().size() > 0) {
-
-    session_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.session_);
-  }
-  if (from.tarsession().size() > 0) {
-
-    tarsession_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tarsession_);
-  }
-  if (from.selfip().size() > 0) {
-
-    selfip_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.selfip_);
-  }
-  if (from.type() != 0) {
-    set_type(from.type());
-  }
-  if (from.selfport() != 0) {
-    set_selfport(from.selfport());
+    msg_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.msg_);
   }
 }
 
@@ -10930,16 +10618,8 @@ void ApplyTransFilesRequest::Swap(ApplyTransFilesRequest* other) {
 void ApplyTransFilesRequest::InternalSwap(ApplyTransFilesRequest* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  machinename_.Swap(&other->machinename_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  msg_.Swap(&other->msg_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
-  session_.Swap(&other->session_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  tarsession_.Swap(&other->tarsession_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  selfip_.Swap(&other->selfip_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-    GetArenaNoVirtual());
-  swap(type_, other->type_);
-  swap(selfport_, other->selfport_);
 }
 
 ::google::protobuf::Metadata ApplyTransFilesRequest::GetMetadata() const {

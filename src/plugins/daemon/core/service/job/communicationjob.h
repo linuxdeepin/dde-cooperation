@@ -18,11 +18,12 @@ class CommunicationJob : public QObject
 
 public:
     explicit CommunicationJob(QObject *parent = nullptr);
+    ~CommunicationJob() override;
     void initRpc(fastring appname, fastring target, uint16 port);
     void initJob(fastring appname, fastring targetappname);
 
     fastring getAppName();
-    bool sendMsg(CommunicationType type, const ApplyTransFiles &info);
+    bool sendMsg(CommunicationType type, const QString &info);
 private:
     bool _inited = false;
     fastring _app_name; // 前端应用名
