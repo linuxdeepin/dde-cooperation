@@ -16,6 +16,14 @@ CommunicationJob::CommunicationJob(QObject *parent)
 {
 }
 
+CommunicationJob::~CommunicationJob()
+{
+    if (_rpcBinder) {
+        _rpcBinder->deleteLater();
+        _rpcBinder = nullptr;
+    }
+}
+
 void CommunicationJob::initRpc(fastring appname, fastring target, uint16 port)
 {
     if (nullptr == _rpcBinder) {
@@ -36,14 +44,14 @@ fastring CommunicationJob::getAppName()
     return _app_name;
 }
 
-bool CommunicationJob::sendMsg(CommunicationType type, const ApplyTransFiles &info)
+bool CommunicationJob::sendMsg(CommunicationType type, const QString &info)
 {
     if (_rpcBinder == nullptr) {
-        ELOG << "sendMsg ERROR: no executor, type " << type << info.as_json();
+        ELOG << "sendMsg ERROR: no executor, type " << type << info.toStdString();
         return false;
     }
 
-    _rpcBinder->doSendApplyTransFiles(info);
+    _rpcBinder->doSendApplyTransFiles(_app_name.c_str(), info);
 
     return true;
 }

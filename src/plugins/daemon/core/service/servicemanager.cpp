@@ -454,15 +454,16 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
     obj.session = tmp;
     auto session = obj.session;
     auto s = sessionByName(session.c_str());
-    // 保存申请的通讯job
-    QSharedPointer<CommunicationJob> _applyjob(new CommunicationJob);
-    _applyjob->initRpc(obj.session, obj.selfIp.c_str(), static_cast<uint16_t>(obj.selfPort));
-    _applyjob->initJob(obj.session, obj.tarSession);
-    _applyjobs.insert(session.c_str(), _applyjob);
 
-    qInfo() << "json == " << info.str().c_str();
     if (s && s->alive()) {
-        UNIGO([this, s, obj]() {
+        if (obj.type == ApplyTransType::APPLY_TRANS_APPLY) {
+            // 保存申请的通讯job
+            QSharedPointer<CommunicationJob> _applyjob(new CommunicationJob);
+            _applyjob->initRpc(obj.session, obj.selfIp.c_str(), static_cast<uint16_t>(obj.selfPort));
+            _applyjob->initJob(obj.session, obj.tarSession);
+            _applyjobs.insert(session.c_str(), _applyjob);
+        }
+        UNIGO([s, obj]() {
             co::Json infojson;
             co::Json req, res;
 
@@ -817,7 +818,7 @@ void ServiceManager::handleBackApplyTransFiles(const co::Json &param)
     info.selfIp = Util::getFirstIp();
     info.selfPort = UNI_RPC_PORT_BASE;
     if (_applyjob.isNull()){
-        if (info.type != 0) {
+        if (info.type != ApplyTransType::APPLY_TRANS_APPLY) {
             ELOG << "handleBackApplyTransFiles ERROR: no job " << param;
             return;
         }
@@ -827,6 +828,6 @@ void ServiceManager::handleBackApplyTransFiles(const co::Json &param)
         _applyjob->initJob(info.session, info.tarSession);
     }
     UNIGO([_applyjob, info]() {
-        _applyjob->sendMsg(COMM_APPLY_TRANS, info);
+        _applyjob->sendMsg(COMM_APPLY_TRANS, info.as_json().str().c_str());
     });
 }

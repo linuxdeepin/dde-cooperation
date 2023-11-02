@@ -101,29 +101,29 @@ public:
 
     void startRpcListen(const char *keypath, const char *crtpath);
 
-    void createExecutor(const QString &appname, const char *targetip, uint16_t port);
+    void createExecutor(const QString &session, const char *targetip, uint16_t port);
 
-    void doLogin(const QString &appname, const char *username, const char *pincode);
+    void doLogin(const QString &session, const char *username, const char *pincode);
 
-    void doQuery(const QString &appname);
+    void doQuery(const QString &session);
 
     //发到哪一个前端的自定义信息
-    QString doMisc(const char *appname, const char *miscdata);
+    QString doMisc(const char *session, const char *miscdata);
 
     // 通知远端准备执行作业：接收或发送。
-    int doTransfileJob(const char *appname, int id, const char *jobpath, bool hidden, bool recursive, bool recv);
+    int doTransfileJob(const char *session, int id, const char *jobpath, bool hidden, bool recursive, bool recv);
 
     // 发送文件数据信息。
-    int doSendFileInfo(const QString &appname, int jobid, int fileid, const char *subdir, const char *filepath);
+    int doSendFileInfo(const QString &session, int jobid, int fileid, const char *subdir, const char *filepath);
 
     // 发送文件数据块。
-    int doSendFileBlock(const QString &appname, FileTransBlock fileblock);
+    int doSendFileBlock(const QString &session, FileTransBlock fileblock);
 
     // 发送文件传输报告。
-    int doUpdateTrans(const QString &appname, FileTransUpdate update);
+    int doUpdateTrans(const QString &session, FileTransUpdate update);
 
     // 发送文件传输请求
-    void doSendApplyTransFiles(const ApplyTransFiles &info);
+    void doSendApplyTransFiles(const QString &session, const QString &info);
 
     void clearExecutor(const QString &appname);
 
