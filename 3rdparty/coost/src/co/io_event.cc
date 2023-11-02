@@ -7,13 +7,13 @@ namespace co {
 #ifndef _WIN32
 
 io_event::~io_event() {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     if (_added) xx::gSched->del_io_event(_fd, _ev);
 #endif
 }
 
 bool io_event::wait(uint32 ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     auto sched = xx::gSched;
     if (!_added) {
         _added = sched->add_io_event(_fd, _ev);

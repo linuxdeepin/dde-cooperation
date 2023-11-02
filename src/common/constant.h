@@ -131,12 +131,8 @@ typedef enum rpc_result_t {
     INVOKE_DONE = 1,
 } RpcResult;
 
-#if defined(__sw_64__) || defined(__loongarch__)
-  #define NON_COROUTINE
-#endif
-
 // use thread replace the coroutine
-#if defined(NON_COROUTINE)
+#if defined(DISABLE_GO)
     #define UNIGO(...) \
         do { \
             std::thread coThread(__VA_ARGS__); \

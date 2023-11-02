@@ -250,7 +250,7 @@ void ServerImpl::start(const char* ip, int port, const char* key, const char* ca
     }
     this->ref();
     atomic_store(&_started, true, mo_relaxed);
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     go(&ServerImpl::loop, this);
 #else
     std::thread listenThread(&ServerImpl::loop, this);
@@ -264,7 +264,7 @@ void ServerImpl::exit() {
 
     if (status == 0) {
         sleep::ms(1);
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
         if (status != 2) go(&ServerImpl::stop, this);
 #else
         if (status != 2) stop();
@@ -332,7 +332,7 @@ void ServerImpl::loop() {
         DLOG << "server " << _ip << ':' << _port
              << " accept connection: " << co::addr2str(&_addr, _addrlen)
              << ", connfd: " << _connfd << ", conn num: " << n;
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
         go(&_on_sock, _connfd);
 #else
         _on_sock(_connfd);
