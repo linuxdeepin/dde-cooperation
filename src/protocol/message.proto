@@ -175,6 +175,8 @@ message ApplyTransFilesRequest {
   string machineName = 2; // 机器名称
   string session = 3; // 应用名称
   string tarSession = 4; // 应用名称
+  string selfIp = 5; // 自己的IP地址
+  int32 selfPort = 6; // 自己的端口
 }
 
 message ApplyTransFilesResponse {

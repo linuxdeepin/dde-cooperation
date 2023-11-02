@@ -36,6 +36,10 @@ struct IncomeData {
     fastring buf; // 二进制数据
 };
 
+typedef enum communication_type_t {
+    COMM_APPLY_TRANS = 0, // 发送 发送文件请求和回复
+} CommunicationType;
+
 struct OutData {
     OutgoType type;
     fastring json; // json数据结构实例

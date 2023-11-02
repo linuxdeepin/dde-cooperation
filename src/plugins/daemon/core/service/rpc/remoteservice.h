@@ -11,6 +11,7 @@
 
 #include "message.pb.h"
 #include "zrpc.h"
+#include <ipc/proto/chan.h>
 
 class RemoteServiceImpl : public RemoteService
 {
@@ -69,6 +70,8 @@ class ZRpcClientExecutor
 {
 public:
     ZRpcClientExecutor(const char *targetip, uint16_t port)
+        : ip(targetip)
+        , port(port)
     {
         _client = new zrpc_ns::ZRpcClient(targetip, port, true);
     }
@@ -79,10 +82,14 @@ public:
 
     zrpc_ns::ZRpcController *control() { return _client->getControler(); }
 
-    QString targetIP() { return _client->getControler()->LocalAddr()->getIP(); }
+    QString targetIP() { return ip; }
+
+    int targetPort() { return port; }
 
 private:
     zrpc_ns::ZRpcClient *_client{ nullptr };
+    QString ip;
+    uint16_t port;
 };
 
 class RemoteServiceBinder : public QObject
@@ -116,7 +123,9 @@ public:
     int doUpdateTrans(const QString &appname, FileTransUpdate update);
 
     // 发送文件传输请求
-    void doSendApplyTransFiles(ApplyTransFilesRequest applyInfo);
+    void doSendApplyTransFiles(const ApplyTransFiles &info);
+
+    void clearExecutor(const QString &appname);
 
 signals:
     void loginResult(bool result, QString who);
@@ -134,8 +143,7 @@ private:
 
 private:
     QReadWriteLock _executor_lock;
-    QMap<QString, QSharedPointer<ZRpcClientExecutor>>_executor_ps;
-
+    QMap<QString, QSharedPointer<ZRpcClientExecutor>> _executor_ps;
 };
 
 #endif   // REMOTE_SERVICE_H

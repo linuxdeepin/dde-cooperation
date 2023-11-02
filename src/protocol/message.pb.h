@@ -3461,11 +3461,31 @@ class ApplyTransFilesRequest final :
   ::std::string* release_tarsession();
   void set_allocated_tarsession(::std::string* tarsession);
 
+  // string selfIp = 5;
+  void clear_selfip();
+  static const int kSelfIpFieldNumber = 5;
+  const ::std::string& selfip() const;
+  void set_selfip(const ::std::string& value);
+  #if LANG_CXX11
+  void set_selfip(::std::string&& value);
+  #endif
+  void set_selfip(const char* value);
+  void set_selfip(const char* value, size_t size);
+  ::std::string* mutable_selfip();
+  ::std::string* release_selfip();
+  void set_allocated_selfip(::std::string* selfip);
+
   // int32 type = 1;
   void clear_type();
   static const int kTypeFieldNumber = 1;
   ::google::protobuf::int32 type() const;
   void set_type(::google::protobuf::int32 value);
+
+  // int32 selfPort = 6;
+  void clear_selfport();
+  static const int kSelfPortFieldNumber = 6;
+  ::google::protobuf::int32 selfport() const;
+  void set_selfport(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:ApplyTransFilesRequest)
  private:
@@ -3475,7 +3495,9 @@ class ApplyTransFilesRequest final :
   ::google::protobuf::internal::ArenaStringPtr machinename_;
   ::google::protobuf::internal::ArenaStringPtr session_;
   ::google::protobuf::internal::ArenaStringPtr tarsession_;
+  ::google::protobuf::internal::ArenaStringPtr selfip_;
   ::google::protobuf::int32 type_;
+  ::google::protobuf::int32 selfport_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_message_2eproto;
 };
@@ -6679,6 +6701,73 @@ inline void ApplyTransFilesRequest::set_allocated_tarsession(::std::string* tars
   }
   tarsession_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tarsession);
   // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.tarSession)
+}
+
+// string selfIp = 5;
+inline void ApplyTransFilesRequest::clear_selfip() {
+  selfip_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ApplyTransFilesRequest::selfip() const {
+  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.selfIp)
+  return selfip_.GetNoArena();
+}
+inline void ApplyTransFilesRequest::set_selfip(const ::std::string& value) {
+  
+  selfip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.selfIp)
+}
+#if LANG_CXX11
+inline void ApplyTransFilesRequest::set_selfip(::std::string&& value) {
+  
+  selfip_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ApplyTransFilesRequest.selfIp)
+}
+#endif
+inline void ApplyTransFilesRequest::set_selfip(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  selfip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ApplyTransFilesRequest.selfIp)
+}
+inline void ApplyTransFilesRequest::set_selfip(const char* value, size_t size) {
+  
+  selfip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ApplyTransFilesRequest.selfIp)
+}
+inline ::std::string* ApplyTransFilesRequest::mutable_selfip() {
+  
+  // @@protoc_insertion_point(field_mutable:ApplyTransFilesRequest.selfIp)
+  return selfip_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ApplyTransFilesRequest::release_selfip() {
+  // @@protoc_insertion_point(field_release:ApplyTransFilesRequest.selfIp)
+  
+  return selfip_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ApplyTransFilesRequest::set_allocated_selfip(::std::string* selfip) {
+  if (selfip != nullptr) {
+    
+  } else {
+    
+  }
+  selfip_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), selfip);
+  // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.selfIp)
+}
+
+// int32 selfPort = 6;
+inline void ApplyTransFilesRequest::clear_selfport() {
+  selfport_ = 0;
+}
+inline ::google::protobuf::int32 ApplyTransFilesRequest::selfport() const {
+  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.selfPort)
+  return selfport_;
+}
+inline void ApplyTransFilesRequest::set_selfport(::google::protobuf::int32 value) {
+  
+  selfport_ = value;
+  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.selfPort)
 }
 
 // -------------------------------------------------------------------
