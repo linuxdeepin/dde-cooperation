@@ -3419,9 +3419,9 @@ class ApplyTransFilesRequest final :
 
   // accessors -------------------------------------------------------
 
-  // string machineName = 1;
+  // string machineName = 2;
   void clear_machinename();
-  static const int kMachineNameFieldNumber = 1;
+  static const int kMachineNameFieldNumber = 2;
   const ::std::string& machinename() const;
   void set_machinename(const ::std::string& value);
   #if LANG_CXX11
@@ -3433,23 +3433,37 @@ class ApplyTransFilesRequest final :
   ::std::string* release_machinename();
   void set_allocated_machinename(::std::string* machinename);
 
-  // string appName = 2;
-  void clear_appname();
-  static const int kAppNameFieldNumber = 2;
-  const ::std::string& appname() const;
-  void set_appname(const ::std::string& value);
+  // string session = 3;
+  void clear_session();
+  static const int kSessionFieldNumber = 3;
+  const ::std::string& session() const;
+  void set_session(const ::std::string& value);
   #if LANG_CXX11
-  void set_appname(::std::string&& value);
+  void set_session(::std::string&& value);
   #endif
-  void set_appname(const char* value);
-  void set_appname(const char* value, size_t size);
-  ::std::string* mutable_appname();
-  ::std::string* release_appname();
-  void set_allocated_appname(::std::string* appname);
+  void set_session(const char* value);
+  void set_session(const char* value, size_t size);
+  ::std::string* mutable_session();
+  ::std::string* release_session();
+  void set_allocated_session(::std::string* session);
 
-  // int32 type = 3;
+  // string tarSession = 4;
+  void clear_tarsession();
+  static const int kTarSessionFieldNumber = 4;
+  const ::std::string& tarsession() const;
+  void set_tarsession(const ::std::string& value);
+  #if LANG_CXX11
+  void set_tarsession(::std::string&& value);
+  #endif
+  void set_tarsession(const char* value);
+  void set_tarsession(const char* value, size_t size);
+  ::std::string* mutable_tarsession();
+  ::std::string* release_tarsession();
+  void set_allocated_tarsession(::std::string* tarsession);
+
+  // int32 type = 1;
   void clear_type();
-  static const int kTypeFieldNumber = 3;
+  static const int kTypeFieldNumber = 1;
   ::google::protobuf::int32 type() const;
   void set_type(::google::protobuf::int32 value);
 
@@ -3459,7 +3473,8 @@ class ApplyTransFilesRequest final :
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr machinename_;
-  ::google::protobuf::internal::ArenaStringPtr appname_;
+  ::google::protobuf::internal::ArenaStringPtr session_;
+  ::google::protobuf::internal::ArenaStringPtr tarsession_;
   ::google::protobuf::int32 type_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_message_2eproto;
@@ -6493,7 +6508,21 @@ inline FileTransUpdate::UnionCase FileTransUpdate::union_case() const {
 
 // ApplyTransFilesRequest
 
-// string machineName = 1;
+// int32 type = 1;
+inline void ApplyTransFilesRequest::clear_type() {
+  type_ = 0;
+}
+inline ::google::protobuf::int32 ApplyTransFilesRequest::type() const {
+  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.type)
+  return type_;
+}
+inline void ApplyTransFilesRequest::set_type(::google::protobuf::int32 value) {
+  
+  type_ = value;
+  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.type)
+}
+
+// string machineName = 2;
 inline void ApplyTransFilesRequest::clear_machinename() {
   machinename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -6546,71 +6575,110 @@ inline void ApplyTransFilesRequest::set_allocated_machinename(::std::string* mac
   // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.machineName)
 }
 
-// string appName = 2;
-inline void ApplyTransFilesRequest::clear_appname() {
-  appname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string session = 3;
+inline void ApplyTransFilesRequest::clear_session() {
+  session_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& ApplyTransFilesRequest::appname() const {
-  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.appName)
-  return appname_.GetNoArena();
+inline const ::std::string& ApplyTransFilesRequest::session() const {
+  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.session)
+  return session_.GetNoArena();
 }
-inline void ApplyTransFilesRequest::set_appname(const ::std::string& value) {
+inline void ApplyTransFilesRequest::set_session(const ::std::string& value) {
   
-  appname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.appName)
+  session_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.session)
 }
 #if LANG_CXX11
-inline void ApplyTransFilesRequest::set_appname(::std::string&& value) {
+inline void ApplyTransFilesRequest::set_session(::std::string&& value) {
   
-  appname_.SetNoArena(
+  session_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:ApplyTransFilesRequest.appName)
+  // @@protoc_insertion_point(field_set_rvalue:ApplyTransFilesRequest.session)
 }
 #endif
-inline void ApplyTransFilesRequest::set_appname(const char* value) {
+inline void ApplyTransFilesRequest::set_session(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
-  appname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:ApplyTransFilesRequest.appName)
+  session_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ApplyTransFilesRequest.session)
 }
-inline void ApplyTransFilesRequest::set_appname(const char* value, size_t size) {
+inline void ApplyTransFilesRequest::set_session(const char* value, size_t size) {
   
-  appname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  session_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:ApplyTransFilesRequest.appName)
+  // @@protoc_insertion_point(field_set_pointer:ApplyTransFilesRequest.session)
 }
-inline ::std::string* ApplyTransFilesRequest::mutable_appname() {
+inline ::std::string* ApplyTransFilesRequest::mutable_session() {
   
-  // @@protoc_insertion_point(field_mutable:ApplyTransFilesRequest.appName)
-  return appname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:ApplyTransFilesRequest.session)
+  return session_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* ApplyTransFilesRequest::release_appname() {
-  // @@protoc_insertion_point(field_release:ApplyTransFilesRequest.appName)
+inline ::std::string* ApplyTransFilesRequest::release_session() {
+  // @@protoc_insertion_point(field_release:ApplyTransFilesRequest.session)
   
-  return appname_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return session_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void ApplyTransFilesRequest::set_allocated_appname(::std::string* appname) {
-  if (appname != nullptr) {
+inline void ApplyTransFilesRequest::set_allocated_session(::std::string* session) {
+  if (session != nullptr) {
     
   } else {
     
   }
-  appname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), appname);
-  // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.appName)
+  session_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), session);
+  // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.session)
 }
 
-// int32 type = 3;
-inline void ApplyTransFilesRequest::clear_type() {
-  type_ = 0;
+// string tarSession = 4;
+inline void ApplyTransFilesRequest::clear_tarsession() {
+  tarsession_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::google::protobuf::int32 ApplyTransFilesRequest::type() const {
-  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.type)
-  return type_;
+inline const ::std::string& ApplyTransFilesRequest::tarsession() const {
+  // @@protoc_insertion_point(field_get:ApplyTransFilesRequest.tarSession)
+  return tarsession_.GetNoArena();
 }
-inline void ApplyTransFilesRequest::set_type(::google::protobuf::int32 value) {
+inline void ApplyTransFilesRequest::set_tarsession(const ::std::string& value) {
   
-  type_ = value;
-  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.type)
+  tarsession_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:ApplyTransFilesRequest.tarSession)
+}
+#if LANG_CXX11
+inline void ApplyTransFilesRequest::set_tarsession(::std::string&& value) {
+  
+  tarsession_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ApplyTransFilesRequest.tarSession)
+}
+#endif
+inline void ApplyTransFilesRequest::set_tarsession(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  tarsession_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ApplyTransFilesRequest.tarSession)
+}
+inline void ApplyTransFilesRequest::set_tarsession(const char* value, size_t size) {
+  
+  tarsession_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ApplyTransFilesRequest.tarSession)
+}
+inline ::std::string* ApplyTransFilesRequest::mutable_tarsession() {
+  
+  // @@protoc_insertion_point(field_mutable:ApplyTransFilesRequest.tarSession)
+  return tarsession_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ApplyTransFilesRequest::release_tarsession() {
+  // @@protoc_insertion_point(field_release:ApplyTransFilesRequest.tarSession)
+  
+  return tarsession_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ApplyTransFilesRequest::set_allocated_tarsession(::std::string* tarsession) {
+  if (tarsession != nullptr) {
+    
+  } else {
+    
+  }
+  tarsession_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tarsession);
+  // @@protoc_insertion_point(field_set_allocated:ApplyTransFilesRequest.tarSession)
 }
 
 // -------------------------------------------------------------------

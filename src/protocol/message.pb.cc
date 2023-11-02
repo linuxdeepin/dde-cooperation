@@ -687,9 +687,10 @@ const ::google::protobuf::uint32 TableStruct_message_2eproto::offsets[] PROTOBUF
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, machinename_),
-  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, appname_),
   PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, type_),
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, machinename_),
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, session_),
+  PROTOBUF_FIELD_OFFSET(::ApplyTransFilesRequest, tarsession_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::ApplyTransFilesResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -720,7 +721,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SE
   { 169, -1, sizeof(::FileTransJobReport)},
   { 178, -1, sizeof(::FileTransUpdate)},
   { 186, -1, sizeof(::ApplyTransFilesRequest)},
-  { 194, -1, sizeof(::ApplyTransFilesResponse)},
+  { 195, -1, sizeof(::ApplyTransFilesResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -802,30 +803,31 @@ const char descriptor_table_protodef_message_2eproto[] =
   "rror\030\003 \001(\t\022\034\n\006result\030\004 \001(\0162\014.FileTransRe"
   "\"h\n\017FileTransUpdate\022%\n\006cancel\030\001 \001(\0132\023.Fi"
   "leTransJobCancelH\000\022%\n\006report\030\002 \001(\0132\023.Fil"
-  "eTransJobReportH\000B\007\n\005union\"L\n\026ApplyTrans"
-  "FilesRequest\022\023\n\013machineName\030\001 \001(\t\022\017\n\007app"
-  "Name\030\002 \001(\t\022\014\n\004type\030\003 \001(\005\")\n\027ApplyTransFi"
-  "lesResponse\022\016\n\006result\030\001 \001(\010*<\n\010FileType\022"
-  "\007\n\003DIR\020\000\022\014\n\010DIR_LINK\020\001\022\n\n\006FILE_B\020\002\022\r\n\tFI"
-  "LE_LINK\020\003*0\n\013FileTransRe\022\014\n\010IO_ERROR\020\000\022\006"
-  "\n\002OK\020\001\022\013\n\007FINIASH\020\0022\323\003\n\rRemoteService\022&\n"
-  "\005login\022\r.LoginRequest\032\016.LoginResponse\022&\n"
-  "\016query_peerinfo\022\t.PeerInfo\032\t.PeerInfo\022\"\n"
-  "\004misc\022\014.JsonMessage\032\014.JsonMessage\022&\n\010fsa"
-  "ction\022\013.FileAction\032\r.FileResponse\0222\n\rfil"
-  "etrans_job\022\r.FileTransJob\032\022.FileTransRes"
-  "ponse\0228\n\020filetrans_create\022\020.FileTransCre"
-  "ate\032\022.FileTransResponse\0226\n\017filetrans_blo"
-  "ck\022\017.FileTransBlock\032\022.FileTransResponse\022"
-  "8\n\020filetrans_update\022\020.FileTransUpdate\032\022."
-  "FileTransResponse\022F\n\021apply_trans_files\022\027"
-  ".ApplyTransFilesRequest\032\030.ApplyTransFile"
-  "sResponseB\016\n\007uniapisP\001\200\001\001b\006proto3"
+  "eTransJobReportH\000B\007\n\005union\"`\n\026ApplyTrans"
+  "FilesRequest\022\014\n\004type\030\001 \001(\005\022\023\n\013machineNam"
+  "e\030\002 \001(\t\022\017\n\007session\030\003 \001(\t\022\022\n\ntarSession\030\004"
+  " \001(\t\")\n\027ApplyTransFilesResponse\022\016\n\006resul"
+  "t\030\001 \001(\010*<\n\010FileType\022\007\n\003DIR\020\000\022\014\n\010DIR_LINK"
+  "\020\001\022\n\n\006FILE_B\020\002\022\r\n\tFILE_LINK\020\003*0\n\013FileTra"
+  "nsRe\022\014\n\010IO_ERROR\020\000\022\006\n\002OK\020\001\022\013\n\007FINIASH\020\0022"
+  "\323\003\n\rRemoteService\022&\n\005login\022\r.LoginReques"
+  "t\032\016.LoginResponse\022&\n\016query_peerinfo\022\t.Pe"
+  "erInfo\032\t.PeerInfo\022\"\n\004misc\022\014.JsonMessage\032"
+  "\014.JsonMessage\022&\n\010fsaction\022\013.FileAction\032\r"
+  ".FileResponse\0222\n\rfiletrans_job\022\r.FileTra"
+  "nsJob\032\022.FileTransResponse\0228\n\020filetrans_c"
+  "reate\022\020.FileTransCreate\032\022.FileTransRespo"
+  "nse\0226\n\017filetrans_block\022\017.FileTransBlock\032"
+  "\022.FileTransResponse\0228\n\020filetrans_update\022"
+  "\020.FileTransUpdate\032\022.FileTransResponse\022F\n"
+  "\021apply_trans_files\022\027.ApplyTransFilesRequ"
+  "est\032\030.ApplyTransFilesResponseB\016\n\007uniapis"
+  "P\001\200\001\001b\006proto3"
   ;
 ::google::protobuf::internal::DescriptorTable descriptor_table_message_2eproto = {
   false, InitDefaults_message_2eproto, 
   descriptor_table_protodef_message_2eproto,
-  "message.proto", &assign_descriptors_table_message_2eproto, 2593,
+  "message.proto", &assign_descriptors_table_message_2eproto, 2613,
 };
 
 void AddDescriptors_message_2eproto() {
@@ -10343,9 +10345,10 @@ class ApplyTransFilesRequest::HasBitSetters {
 };
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int ApplyTransFilesRequest::kMachineNameFieldNumber;
-const int ApplyTransFilesRequest::kAppNameFieldNumber;
 const int ApplyTransFilesRequest::kTypeFieldNumber;
+const int ApplyTransFilesRequest::kMachineNameFieldNumber;
+const int ApplyTransFilesRequest::kSessionFieldNumber;
+const int ApplyTransFilesRequest::kTarSessionFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ApplyTransFilesRequest::ApplyTransFilesRequest()
@@ -10361,9 +10364,13 @@ ApplyTransFilesRequest::ApplyTransFilesRequest(const ApplyTransFilesRequest& fro
   if (from.machinename().size() > 0) {
     machinename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.machinename_);
   }
-  appname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.appname().size() > 0) {
-    appname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.appname_);
+  session_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.session().size() > 0) {
+    session_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.session_);
+  }
+  tarsession_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.tarsession().size() > 0) {
+    tarsession_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tarsession_);
   }
   type_ = from.type_;
   // @@protoc_insertion_point(copy_constructor:ApplyTransFilesRequest)
@@ -10373,7 +10380,8 @@ void ApplyTransFilesRequest::SharedCtor() {
   ::google::protobuf::internal::InitSCC(
       &scc_info_ApplyTransFilesRequest_message_2eproto.base);
   machinename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  appname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  session_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tarsession_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   type_ = 0;
 }
 
@@ -10384,7 +10392,8 @@ ApplyTransFilesRequest::~ApplyTransFilesRequest() {
 
 void ApplyTransFilesRequest::SharedDtor() {
   machinename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  appname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  session_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tarsession_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void ApplyTransFilesRequest::SetCachedSize(int size) const {
@@ -10403,7 +10412,8 @@ void ApplyTransFilesRequest::Clear() {
   (void) cached_has_bits;
 
   machinename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  appname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  session_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tarsession_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   type_ = 0;
   _internal_metadata_.Clear();
 }
@@ -10421,9 +10431,16 @@ const char* ApplyTransFilesRequest::_InternalParse(const char* begin, const char
     ptr = ::google::protobuf::io::Parse32(ptr, &tag);
     GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
     switch (tag >> 3) {
-      // string machineName = 1;
+      // int32 type = 1;
       case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
+        if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
+        msg->set_type(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // string machineName = 2;
+      case 2: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
         ptr = ::google::protobuf::io::ReadSize(ptr, &size);
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
         ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.machineName");
@@ -10437,13 +10454,13 @@ const char* ApplyTransFilesRequest::_InternalParse(const char* begin, const char
         ptr += size;
         break;
       }
-      // string appName = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 18) goto handle_unusual;
+      // string session = 3;
+      case 3: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 26) goto handle_unusual;
         ptr = ::google::protobuf::io::ReadSize(ptr, &size);
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.appName");
-        object = msg->mutable_appname();
+        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.session");
+        object = msg->mutable_session();
         if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
           parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
           goto string_till_end;
@@ -10453,11 +10470,20 @@ const char* ApplyTransFilesRequest::_InternalParse(const char* begin, const char
         ptr += size;
         break;
       }
-      // int32 type = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 24) goto handle_unusual;
-        msg->set_type(::google::protobuf::internal::ReadVarint(&ptr));
+      // string tarSession = 4;
+      case 4: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 34) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        ctx->extra_parse_data().SetFieldName("ApplyTransFilesRequest.tarSession");
+        object = msg->mutable_tarsession();
+        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
+          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
+          goto string_till_end;
+        }
+        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
+        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
+        ptr += size;
         break;
       }
       default: {
@@ -10494,9 +10520,22 @@ bool ApplyTransFilesRequest::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string machineName = 1;
+      // int32 type = 1;
       case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (8 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &type_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string machineName = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_machinename()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -10509,28 +10548,30 @@ bool ApplyTransFilesRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // string appName = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (18 & 0xFF)) {
+      // string session = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (26 & 0xFF)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_appname()));
+                input, this->mutable_session()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->appname().data(), static_cast<int>(this->appname().length()),
+            this->session().data(), static_cast<int>(this->session().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "ApplyTransFilesRequest.appName"));
+            "ApplyTransFilesRequest.session"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // int32 type = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (24 & 0xFF)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &type_)));
+      // string tarSession = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (34 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_tarsession()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->tarsession().data(), static_cast<int>(this->tarsession().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "ApplyTransFilesRequest.tarSession"));
         } else {
           goto handle_unusual;
         }
@@ -10564,29 +10605,39 @@ void ApplyTransFilesRequest::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string machineName = 1;
+  // int32 type = 1;
+  if (this->type() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->type(), output);
+  }
+
+  // string machineName = 2;
   if (this->machinename().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->machinename().data(), static_cast<int>(this->machinename().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "ApplyTransFilesRequest.machineName");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->machinename(), output);
+      2, this->machinename(), output);
   }
 
-  // string appName = 2;
-  if (this->appname().size() > 0) {
+  // string session = 3;
+  if (this->session().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->appname().data(), static_cast<int>(this->appname().length()),
+      this->session().data(), static_cast<int>(this->session().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.appName");
+      "ApplyTransFilesRequest.session");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->appname(), output);
+      3, this->session(), output);
   }
 
-  // int32 type = 3;
-  if (this->type() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->type(), output);
+  // string tarSession = 4;
+  if (this->tarsession().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tarsession().data(), static_cast<int>(this->tarsession().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "ApplyTransFilesRequest.tarSession");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->tarsession(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -10602,7 +10653,12 @@ void ApplyTransFilesRequest::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string machineName = 1;
+  // int32 type = 1;
+  if (this->type() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->type(), target);
+  }
+
+  // string machineName = 2;
   if (this->machinename().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->machinename().data(), static_cast<int>(this->machinename().length()),
@@ -10610,23 +10666,29 @@ void ApplyTransFilesRequest::SerializeWithCachedSizes(
       "ApplyTransFilesRequest.machineName");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->machinename(), target);
+        2, this->machinename(), target);
   }
 
-  // string appName = 2;
-  if (this->appname().size() > 0) {
+  // string session = 3;
+  if (this->session().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->appname().data(), static_cast<int>(this->appname().length()),
+      this->session().data(), static_cast<int>(this->session().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "ApplyTransFilesRequest.appName");
+      "ApplyTransFilesRequest.session");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->appname(), target);
+        3, this->session(), target);
   }
 
-  // int32 type = 3;
-  if (this->type() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->type(), target);
+  // string tarSession = 4;
+  if (this->tarsession().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tarsession().data(), static_cast<int>(this->tarsession().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "ApplyTransFilesRequest.tarSession");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->tarsession(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -10650,21 +10712,28 @@ size_t ApplyTransFilesRequest::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string machineName = 1;
+  // string machineName = 2;
   if (this->machinename().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->machinename());
   }
 
-  // string appName = 2;
-  if (this->appname().size() > 0) {
+  // string session = 3;
+  if (this->session().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->appname());
+        this->session());
   }
 
-  // int32 type = 3;
+  // string tarSession = 4;
+  if (this->tarsession().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->tarsession());
+  }
+
+  // int32 type = 1;
   if (this->type() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -10702,9 +10771,13 @@ void ApplyTransFilesRequest::MergeFrom(const ApplyTransFilesRequest& from) {
 
     machinename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.machinename_);
   }
-  if (from.appname().size() > 0) {
+  if (from.session().size() > 0) {
 
-    appname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.appname_);
+    session_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.session_);
+  }
+  if (from.tarsession().size() > 0) {
+
+    tarsession_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tarsession_);
   }
   if (from.type() != 0) {
     set_type(from.type());
@@ -10738,7 +10811,9 @@ void ApplyTransFilesRequest::InternalSwap(ApplyTransFilesRequest* other) {
   _internal_metadata_.Swap(&other->_internal_metadata_);
   machinename_.Swap(&other->machinename_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
-  appname_.Swap(&other->appname_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  session_.Swap(&other->session_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  tarsession_.Swap(&other->tarsession_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   swap(type_, other->type_);
 }

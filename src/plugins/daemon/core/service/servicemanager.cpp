@@ -227,7 +227,7 @@ void ServiceManager::localIPCStart()
                 }
 
                 qInfo() << "paths: " << paths;
-                newTransSendJob(session, param.id, paths, param.sub, savedir);
+                newTransSendJob(session, param.targetSession.data(), param.id, paths, param.sub, savedir);
                 break;
             }
             case BACK_RESUME_JOB:
@@ -285,7 +285,7 @@ void ServiceManager::localIPCStart()
             {
                 ApplyTransFiles param;
                 param.from_json(json_obj);
-                sendApplyTransFiles(param.appName.data(), param.type, param.machineName.data());
+                sendApplyTransFiles(param.session.data(), param.tarSession.data(), param.type, param.machineName.data());
                 break;
             }
             default:
@@ -313,14 +313,15 @@ bool ServiceManager::handleRemoteRequestJob(fastring json)
     int32 jobId = fsjob.job_id;
     fastring savedir = fsjob.save;
     fastring appName = fsjob.who;
+    fastring tarAppname = info.get("targetwho").as_c_str();
     if (savedir.empty() && fsjob.write) {
         // 如果未指定保存相对路径，则默认保存到$home/hostname
         savedir = DaemonConfig::instance()->getStorageDir();
     }
-
-    TransferJob *job = new TransferJob(appName.data());
+    tarAppname = tarAppname.empty() ? appName : appName;
+    TransferJob *job = new TransferJob();
     job->initRpc(_connected_target, UNI_RPC_PORT_BASE);
-    job->initJob(fsjob.who, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
+    job->initJob(fsjob.who, tarAppname, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
     connect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus, Qt::QueuedConnection);
     connect(job, &TransferJob::notifyJobResult, this, &ServiceManager::handleJobTransStatus, Qt::QueuedConnection);
 
@@ -450,24 +451,26 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
 {
     ApplyTransFiles obj;
     obj.from_json(info);
-    auto appName = obj.appName;
-    int32 type = obj.type;
-    fastring machineName = obj.machineName;
-    auto s = sessionByName(appName.data());
+    auto tmp = obj.tarSession;
+    obj.tarSession = obj.session;
+    obj.session = tmp;
+    auto session = obj.session;
+    auto s = sessionByName(session.data());
+    qInfo() << "json == " << info.str().data();
     if (s && s->alive()) {
-        UNIGO([s, type, machineName]() {
+        UNIGO([this, s, obj]() {
             co::Json infojson;
             co::Json req, res;
+
             //notifyFileStatus {FileStatus}
-            req = {
-                { "type", type},
-                { "machineName",  machineName},
-            };
+            req = obj.as_json();
 
             req.add_member("api", "Frontend.applyTransFiles");
             s->client()->call(req, res);
+            sendApplyTransFiles(obj.session.data(), obj.tarSession.data(), obj.type,  obj.machineName.data());
         });
     }
+
     return true;
 }
 
@@ -532,7 +535,7 @@ void ServiceManager::saveSession(QString who, QString session, int cbport)
     _sessions.push_back(s);
 }
 
-void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList paths, bool sub, QString savedir)
+void ServiceManager::newTransSendJob(QString session, const QString targetSession, int32 jobId, QStringList paths, bool sub, QString savedir)
 {
     auto s = sessionById(session);
     if (!s || !s->valid()) {
@@ -552,6 +555,7 @@ void ServiceManager::newTransSendJob(QString session, int32 jobId, QStringList p
     //FSJob
     co::Json jobjson = {
         { "who", who },
+        { "targetwho", targetSession.toStdString() },
         { "job_id", id },
         { "path", pathjson.str() },
         { "save", savepath },
@@ -792,13 +796,14 @@ void ServiceManager::handleGetAllNodes()
     _backendIpcService->bridgeResult()->operator<<(res);
 }
 
-void ServiceManager::sendApplyTransFiles(const QString &appName, const int32 type, const QString &machineName)
+void ServiceManager::sendApplyTransFiles(const QString &session, const QString &targetSession, const int32 type, const QString &machineName)
 {
     if (_rpcServiceBinder == nullptr)
         return;
-    UNIGO([this, appName, type, machineName]() {
+    UNIGO([this, session, targetSession, type, machineName]() {
         ApplyTransFilesRequest req;
-        req.set_appname(appName.toStdString());
+        req.set_session(session.toStdString());
+        req.set_tarsession(targetSession.toStdString());
         req.set_machinename(machineName.toStdString());
         req.set_type(type);
         _rpcServiceBinder->doSendApplyTransFiles(req);

@@ -106,6 +106,9 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
         in.type = IN_LOGIN_RESULT;
         in.json = result.as_json().str();
         _income_chan << in;
+
+        OutData out;
+        _outgo_chan >> out;
     }
 
     LOG << "res= " << response->ShortDebugString().c_str();
@@ -330,14 +333,21 @@ void RemoteServiceImpl::apply_trans_files(google::protobuf::RpcController *contr
 {
     LOG << "req= " << request->ShortDebugString().c_str();
     IncomeData in;
-    co::Json info {
-        {"machineName", request->machinename()},
-        {"appName", request->appname()},
-        {"type", request->type()}
-    };
+    ApplyTransFiles info;
+    info.type = request->type();
+    info.session = request->session();
+    info.tarSession = request->tarsession();
+    info.machineName = request->machinename();
     in.type = TRANS_APPLY;
-    in.json = info.str();
+    in.json = info.as_json().str();
     _income_chan << in;
+
+    OutData out;
+    _outgo_chan >> out;
+    qInfo() << " apply_trans_files ========= ";
+    response->set_result(OK);
+
+    LOG << "res= " << response->ShortDebugString().c_str();
 
     if (done) {
         done->Run();
@@ -649,7 +659,7 @@ int RemoteServiceBinder::doUpdateTrans(const QString &appname, FileTransUpdate u
 
 void RemoteServiceBinder::doSendApplyTransFiles(ApplyTransFilesRequest applyInfo)
 {
-    auto _executor_p = executor(applyInfo.appname().data());
+    auto _executor_p = executor(applyInfo.session().data());
     if (_executor_p.isNull()) {
         ELOG << "doSendApplyTransFiles ERROR: no executor";
         return;
@@ -658,6 +668,7 @@ void RemoteServiceBinder::doSendApplyTransFiles(ApplyTransFilesRequest applyInfo
     RemoteService_Stub stub(_executor_p->chan());
     zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
     ApplyTransFilesResponse res;
+    qInfo() << "send message = +++" << applyInfo.session().data() << applyInfo.session().data() << applyInfo.machinename().data() << applyInfo.type();
     stub.apply_trans_files(rpc_controller, &applyInfo, &res, nullptr);
 
     if (rpc_controller->ErrorCode() != 0) {

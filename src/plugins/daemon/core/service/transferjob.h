@@ -16,9 +16,9 @@ class TransferJob : public QObject
     Q_OBJECT
 
 public:
-    explicit TransferJob(const QString appname, QObject *parent = nullptr);
+    explicit TransferJob(QObject *parent = nullptr);
     void initRpc(fastring target, uint16 port);
-    void initJob(fastring appname, int id, fastring path, bool sub, fastring savedir, bool write);
+    void initJob(fastring appname, fastring targetappname, int id, fastring path, bool sub, fastring savedir, bool write);
 
     void start();
     void stop();
@@ -65,18 +65,17 @@ private:
 
     bool _sub;
     bool _writejob;
+    int _empty_max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
     fastring _app_name; // //前端应用名
     fastring _path; // 目录或文件路径
     fastring _savedir; // 写作业，文件保存的目录
+    fastring _tar_app_name; // 发送到目标的应用名称
 
     RemoteServiceBinder *_rpcBinder = nullptr;
 
     co::mutex _queque_mutex;
     co::deque<FSDataBlock> _block_queue;
     co::map<int32, FileInfo> _file_info_maps;
-
-    int _empty_max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
-    QString appName;
 };
 
 #endif // TRANSFERJOB_H

@@ -171,9 +171,10 @@ message FileTransUpdate {
 }
 
 message ApplyTransFilesRequest {
-  string machineName = 1; // 机器名称
-  string appName = 2; // 应用名称
-  int32 type = 3; // 0是申请，1同意申请，2,是拒绝申请
+  int32 type = 1; // 0是申请，1同意申请，2,是拒绝申请
+  string machineName = 2; // 机器名称
+  string session = 3; // 应用名称
+  string tarSession = 4; // 应用名称
 }
 
 message ApplyTransFilesResponse {
