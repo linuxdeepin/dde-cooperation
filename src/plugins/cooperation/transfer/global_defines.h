@@ -14,14 +14,17 @@ inline constexpr char kTransferButtonId[] { "transfer-id" };
 inline constexpr char kStoragePathKey[] { "StoragePath" };
 inline constexpr char kTransferModeKey[] { "TransferMode" };
 
-inline constexpr char kNotifyCancelAction[] { "cancel-action" };
+inline constexpr char kNotifyCancelAction[] { "cancel-transfer-action" };
 inline constexpr char kNotifyRefuseAction[] { "refuse-action" };
 inline constexpr char kNotifyAcceptAction[] { "accept-action" };
 inline constexpr char kNotifyViewAction[] { "view-action" };
 
+inline const char kMainAppName[] { "dde-cooperation" };
+
 enum TransferStatus {
     Idle,
     Connecting,
+    Confirming,
     Transfering
 };
 

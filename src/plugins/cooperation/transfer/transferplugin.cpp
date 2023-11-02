@@ -21,7 +21,7 @@ void TransferPlugin::initialize()
 {
     if (qApp->property("onlyTransfer").toBool()) {
         auto appName = qApp->applicationName();
-        qApp->setApplicationName("dde-cooperation");
+        qApp->setApplicationName(kMainAppName);
         ConfigManager::instance();
         qApp->setApplicationName(appName);
     }
