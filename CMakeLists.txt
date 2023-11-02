@@ -69,6 +69,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 # The protoc tool not for all platforms, so use the generate out sources.
 set(USE_PROTOBUF_FILES ON)
 
+# Disable the coroutine in coost.
+add_definitions(-D DISABLE_GO)
+
 if (NOT USE_PROTOBUF_FILES)
 	# define and use the local 3rdparty protobuf library
 	if (WIN32)

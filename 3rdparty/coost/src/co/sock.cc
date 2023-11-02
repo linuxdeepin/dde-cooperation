@@ -14,7 +14,7 @@ void set_cloexec(sock_t fd) {
     __sys_api(fcntl)(fd, F_SETFD, __sys_api(fcntl)(fd, F_GETFD) | FD_CLOEXEC);
 }
 
-#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+#if defined(DISABLE_GO)
 void set_non_blocking(int fd, int x) {
     __sys_api(ioctl)(fd, FIONBIO, (char*)&x);
 }
@@ -38,7 +38,7 @@ sock_t socket(int domain, int type, int protocol) {
 
 int close(sock_t fd, int ms) {
     if (fd < 0) return 0;
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     const auto sched = xx::gSched;
     if (sched) {
         sched->del_io_event(fd);
@@ -55,7 +55,7 @@ int close(sock_t fd, int ms) {
 int shutdown(sock_t fd, char c) {
     if (fd < 0) return 0;
     int how;
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     const auto sched = xx::gSched;
     
     if (sched) {
@@ -116,7 +116,7 @@ int listen(sock_t fd, int backlog) {
 }
 
 sock_t accept(sock_t fd, void* addr, int* addrlen) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
 #else
@@ -146,7 +146,7 @@ sock_t accept(sock_t fd, void* addr, int* addrlen) {
 }
 
 int connect(sock_t fd, const void* addr, int addrlen, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
 #else
@@ -175,7 +175,7 @@ int connect(sock_t fd, const void* addr, int addrlen, int ms) {
 }
 
 int recv(sock_t fd, void* buf, int n, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
 #else
@@ -198,7 +198,7 @@ int recv(sock_t fd, void* buf, int n, int ms) {
 int recvn(sock_t fd, void* buf, int n, int ms) {
     char* p = (char*) buf;
     int remain = n;
-#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+#if defined(DISABLE_GO)
     set_non_blocking(fd, 0);
 #endif
     io_event ev(fd, ev_read);
@@ -221,7 +221,7 @@ int recvn(sock_t fd, void* buf, int n, int ms) {
 }
 
 int recvfrom(sock_t fd, void* buf, int n, void* addr, int* addrlen, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
 #else
@@ -241,7 +241,7 @@ int recvfrom(sock_t fd, void* buf, int n, void* addr, int* addrlen, int ms) {
 }
 
 int send(sock_t fd, const void* buf, int n, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
 #else
@@ -270,7 +270,7 @@ int send(sock_t fd, const void* buf, int n, int ms) {
 }
 
 int sendto(sock_t fd, const void* buf, int n, const void* addr, int addrlen, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     const auto sched = xx::gSched;
     CHECK(sched) << "must be called in coroutine..";
 #else

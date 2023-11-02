@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 
+#if !defined(DISABLE_GO)
 #if defined(ARCH_X86)
   #include "prefix_x86_64.S"
   #include "context_x86.S"
@@ -19,6 +20,7 @@ extern "C" {
 #elif defined(ARCH_MIPS)
   #include "prefix_mips.S"
   #include "context_mips.S"
+#endif
 #endif
 
 #ifdef __cplusplus

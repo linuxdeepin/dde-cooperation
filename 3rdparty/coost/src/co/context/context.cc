@@ -33,7 +33,7 @@ extern "C" {
 /* //////////////////////////////////////////////////////////////////////////////////////
  * implementation
  */
-#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+#if defined(DISABLE_GO)
 tb_context_t tb_context_make(char* stackdata, size_t stacksize, tb_context_func_t func)
 {
     CHECK(false) << "corutine 'go' NOT supported, use 'UNIGO' instead";

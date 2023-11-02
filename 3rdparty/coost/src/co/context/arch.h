@@ -68,6 +68,11 @@
   #error unknown arch
 #endif
 
+// disable the coroutine for unsupported archs
+#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+  #define DISABLE_GO
+#endif
+
 // ARM version
 #ifdef ARCH_ARM
   #if defined(__ARM64_ARCH_8__)

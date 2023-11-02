@@ -17,7 +17,7 @@ static int errcb(const char* p, size_t n, void* u) {
     return 0;
 }
 
-#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+#if defined(DISABLE_GO)
 void set_non_blocking(int fd, int x) {
     __sys_api(ioctl)(fd, FIONBIO, (char*)&x);
 }
@@ -86,7 +86,7 @@ int check_private_key(const C* c) {
 }
 
 int shutdown(S* s, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     CHECK(co::sched()) << "must be called in coroutine..";
 #endif
     int r, e;
@@ -123,14 +123,14 @@ int shutdown(S* s, int ms) {
 }
 
 int accept(S* s, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     CHECK(co::sched()) << "must be called in coroutine..";
 #endif
     int r, e;
     int fd = SSL_get_fd((SSL*)s);
     if (fd < 0) return -1;
 
-#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+#if defined(DISABLE_GO)
     set_non_blocking(fd, 0);
 #endif
 
@@ -158,14 +158,14 @@ int accept(S* s, int ms) {
 }
 
 int connect(S* s, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     CHECK(co::sched()) << "must be called in coroutine..";
 #endif
     int r, e;
     int fd = SSL_get_fd((SSL*)s);
     if (fd < 0) return -1;
 
-#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+#if defined(DISABLE_GO)
     set_non_blocking(fd, 0);
 #endif
 
@@ -193,14 +193,14 @@ int connect(S* s, int ms) {
 }
 
 int recv(S* s, void* buf, int n, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     CHECK(co::sched()) << "must be called in coroutine..";
 #endif
     int r, e;
     int fd = SSL_get_fd((SSL*)s);
     if (fd < 0) return -1;
 
-#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+#if defined(DISABLE_GO)
     set_non_blocking(fd, 0);
 #endif
 
@@ -228,14 +228,14 @@ int recv(S* s, void* buf, int n, int ms) {
 }
 
 int recvn(S* s, void* buf, int n, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     CHECK(co::sched()) << "must be called in coroutine..";
 #endif
     int r, e;
     int fd = SSL_get_fd((SSL*)s);
     if (fd < 0) return -1;
 
-#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+#if defined(DISABLE_GO)
     set_non_blocking(fd, 0);
 #endif
 
@@ -271,14 +271,14 @@ int recvn(S* s, void* buf, int n, int ms) {
 }
 
 int send(S* s, const void* buf, int n, int ms) {
-#if !defined(ARCH_LOONGARCH) && !defined(ARCH_SW)
+#if !defined(DISABLE_GO)
     CHECK(co::sched()) << "must be called in coroutine..";
 #endif
     int r, e;
     int fd = SSL_get_fd((SSL*)s);
     if (fd < 0) return -1;
 
-#if defined(ARCH_LOONGARCH) || defined(ARCH_SW)
+#if defined(DISABLE_GO)
     set_non_blocking(fd, 0);
 #endif
 
