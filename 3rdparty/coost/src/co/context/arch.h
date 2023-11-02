@@ -59,9 +59,9 @@
       defined(__loongarch__)
   #define ARCH_LOONGARCH
 
-#elif defined(sw64) || \
-      defined(_sw64) || \
-      defined(__sw64__)
+#elif defined(sw_64) || \
+      defined(_sw_64) || \
+      defined(__sw_64__)
   #define ARCH_SW
 
 #else
