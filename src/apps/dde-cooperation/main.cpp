@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 #ifdef linux
     app.loadTranslator();
     app.setApplicationDisplayName(app.translate("Application", "Cooperation"));
-    app.setApplicationVersion("1.0");
+    app.setApplicationVersion("1.0.0");
     app.setProductIcon(QIcon::fromTheme("collaboration"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/");
     app.setApplicationDescription(app.translate("Application", "Cooperation is a powerful cross-terminal "

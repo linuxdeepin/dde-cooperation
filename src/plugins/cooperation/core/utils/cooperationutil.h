@@ -24,7 +24,10 @@ public:
 
     void registAppInfo(const QString &infoJson);
     void unregistAppInfo();
-    QList<DeviceInfo> onlineDeviceInfo();
+    void asyncDiscoveryDevice();
+
+Q_SIGNALS:
+    void discoveryFinished(const QList<DeviceInfo> &infoList);
 
 private:
     explicit CooperationUtil(QObject *parent = nullptr);

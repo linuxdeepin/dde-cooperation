@@ -1,5 +1,3 @@
-usr/bin/cooperation-daemon
-usr/lib/*/*.so*
-usr/lib/*/dde-cooperation/plugins/daemon/*.so*
-usr/lib/systemd/user/
-etc/xdg/autostart
+usr/bin/dde-cooperation
+usr/lib/*/dde-cooperation/plugins/cooperation/*.so*
+usr/share/dde-cooperation/translations/*.qm
