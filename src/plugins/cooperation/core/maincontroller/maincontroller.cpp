@@ -24,33 +24,13 @@ MainController::MainController(QObject *parent)
 
 MainController::~MainController()
 {
-    if (future.isRunning()) {
-        stop();
-        future.waitForFinished();
-    }
 }
 
 void MainController::initConnect()
 {
     connect(networkMonitorTimer, &QTimer::timeout, this, &MainController::checkNetworkState);
     connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &MainController::regist);
-}
-
-void MainController::handleDiscoveryDevice()
-{
-    if (!isOnline) {
-        networkMonitorTimer->stop();
-        return;
-    }
-
-    const auto &infoList = CooperationUtil::instance()->onlineDeviceInfo();
-    if (infoList.isEmpty()) {
-        Q_EMIT discoveryFinished(false);
-        return;
-    }
-
-    Q_EMIT deviceOnline(infoList);
-    Q_EMIT discoveryFinished(!infoList.isEmpty());
+    connect(CooperationUtil::instance(), &CooperationUtil::discoveryFinished, this, &MainController::onDiscoveryFinished, Qt::QueuedConnection);
 }
 
 void MainController::checkNetworkState()
@@ -100,6 +80,19 @@ void MainController::updateDeviceList(const QString &ip, const QString &info, bo
     }
 }
 
+void MainController::onDiscoveryFinished(const QList<DeviceInfo> &infoList)
+{
+    if (infoList.isEmpty()) {
+        Q_EMIT discoveryFinished(false);
+        isRunning = false;
+        return;
+    }
+
+    Q_EMIT deviceOnline(infoList);
+    Q_EMIT discoveryFinished(!infoList.isEmpty());
+    isRunning = false;
+}
+
 MainController *MainController::instance()
 {
     static MainController ins;
@@ -108,21 +101,21 @@ MainController *MainController::instance()
 
 void MainController::start()
 {
-    if (future.isRunning())
+    if (isRunning)
         return;
 
     isOnline = true;
     networkMonitorTimer->start();
 
     Q_EMIT startDiscoveryDevice();
-    QTimer::singleShot(1000, this, [this] {
-        future = QtConcurrent::run(this, &MainController::handleDiscoveryDevice);
-    });
+    isRunning = true;
+
+    // 延迟1s，为了展示发现界面
+    QTimer::singleShot(1000, this, [] { CooperationUtil::instance()->asyncDiscoveryDevice(); });
 }
 
 void MainController::stop()
 {
-    isStoped = true;
 }
 
 void MainController::regist()

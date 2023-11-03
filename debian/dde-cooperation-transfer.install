@@ -1,0 +1,4 @@
+usr/bin/dde-cooperation-transfer
+usr/lib/*/dde-cooperation/plugins/cooperation/libcooperation-core.so
+usr/lib/*/dde-cooperation/plugins/cooperation/libcooperation-transfer.so
+usr/lib/*/dde-file-manager/plugins/filemanager-edge/libdfmplugin-cooperation.so

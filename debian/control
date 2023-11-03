@@ -13,6 +13,7 @@ Build-Depends:
  libssl-dev,
  libzip-dev,
  uuid-dev,
+ dde-file-manager-dev,
 Standards-Version: 4.1.3
 Section: utils
 Homepage: http://www.deepin.org
@@ -25,7 +26,7 @@ Depends: dde-cooperation (= ${binary:Version}), ${misc:Depends}
 Description: Dev package for deepin cooperation project
  Dev package for deepin cooperation project
 
-Package: dde-cooperation
+Package: dde-cooperation-daemon
 Architecture: any
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -34,6 +35,18 @@ Description: Deepin cooperation backend
 
 Package: deepin-data-transfer
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-daemon
 Description: deepin data transfer frontend
  Deepin Desktop Environment (DDE) - data transfer frontend.
+
+Package: dde-cooperation
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-daemon
+Description: deepin cooperation frontend
+ Deepin Desktop Environment (DDE) - cooperation frontend.
+
+Package: dde-cooperation-transfer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-daemon
+Description: deepin file transfer frontend
+ Deepin Desktop Environment (DDE) - file transfer frontend.

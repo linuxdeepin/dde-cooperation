@@ -34,20 +34,19 @@ Q_SIGNALS:
 private Q_SLOTS:
     void checkNetworkState();
     void updateDeviceList(const QString &ip, const QString &info, bool isOnline);
+    void onDiscoveryFinished(const QList<DeviceInfo> &infoList);
 
 private:
     explicit MainController(QObject *parent = nullptr);
     ~MainController();
 
     void initConnect();
-    void handleDiscoveryDevice();
 
 private:
     QTimer *networkMonitorTimer { nullptr };
 
-    QFuture<void> future;
+    bool isRunning { false };
     bool isOnline { true };
-    bool isStoped { false };
 };
 
 }   // namespace cooperation_core

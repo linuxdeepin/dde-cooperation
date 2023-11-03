@@ -214,15 +214,11 @@ void CooperationUtil::registAppInfo(const QString &infoJson)
         co::Json req, res;
 
         QString appName = qApp->applicationName();
-        req = {
-            //AppPeerInfo
-            { "appinfo",
-              {
-                      { "appname", appName.toStdString() },
-                      { "json", infoJson.toStdString() }   //一定是一个自定义的json格式
-              } }
-        };
+        AppPeerInfo peerInfo;
+        peerInfo.appname = appName.toStdString();
+        peerInfo.json = infoJson.toStdString();
 
+        req = peerInfo.as_json();
         req.add_member("api", "Backend.registerDiscovery");
         d->rpcClient->call(req, res);
     });
@@ -237,28 +233,21 @@ void CooperationUtil::unregistAppInfo()
         co::Json req, res;
         QString appName = qApp->applicationName();
 
-        req = {
-            //AppPeerInfo
-            { "appinfo",
-              { { "appname", appName.toStdString() },
-                { "json", "" } } }
-        };
+        AppPeerInfo peerInfo;
+        peerInfo.appname = appName.toStdString();
 
+        req = peerInfo.as_json();
         req.add_member("api", "Backend.unregisterDiscovery");
         d->rpcClient->call(req, res);
     });
 }
 
-QList<DeviceInfo> CooperationUtil::onlineDeviceInfo()
+void CooperationUtil::asyncDiscoveryDevice()
 {
     if (!d->backendOk)
-        return {};
+        return;
 
-    co::wait_group g_wg;
-    g_wg.add(1);
-    QList<DeviceInfo> infoList;
-
-    UNIGO([this, &infoList, &g_wg] {
+    UNIGO([this] {
         co::Json req, res;
 
         req.add_member("api", "Backend.getDiscovery");
@@ -272,12 +261,8 @@ QList<DeviceInfo> CooperationUtil::onlineDeviceInfo()
             qInfo() << "all device: " << res.get("msg").as_c_str();
             co::Json obj;
             obj.parse_from(res.get("msg").as_string());
-            infoList = d->parseDeviceInfo(obj);
+            QList<DeviceInfo> infoList = d->parseDeviceInfo(obj);
+            Q_EMIT discoveryFinished(infoList);
         }
-
-        g_wg.done();
     });
-    g_wg.wait();
-
-    return infoList;
 }
