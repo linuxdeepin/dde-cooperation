@@ -82,12 +82,15 @@ class ServerImpl {
 
     void process(json::Json& req, json::Json& res);
 
+    void setCallback(const ClientCallBack &callback);
+
   private:
     tcp::Server _tcp_serv;
     bool _started;
     bool _stopped;
     co::hash_map<const char*, std::shared_ptr<Service>> _services;
     co::hash_map<const char*, Service::Fun> _methods;
+    ClientCallBack callback = nullptr;
     fastring _url;
 };
 
@@ -103,8 +106,9 @@ Server::~Server() {
     }
 }
 
-Server& Server::add_service(const std::shared_ptr<Service>& s) {
+Server& Server::add_service(const std::shared_ptr<Service>& s, const ClientCallBack &callback) {
     ((ServerImpl*)_p)->add_service(s);
+    ((ServerImpl*)_p)->setCallback(callback);
     return *this;
 }
 
@@ -114,6 +118,11 @@ void Server::start(const char* ip, int port, const char* url, const char* key, c
 
 void Server::exit() {
     ((ServerImpl*)_p)->exit();
+}
+
+void Server::setCallback(ClientCallBack callback)
+{
+    ((ServerImpl*)_p)->setCallback(callback);
 }
 
 void ServerImpl::process(json::Json& req, json::Json& res) {
@@ -128,6 +137,11 @@ void ServerImpl::process(json::Json& req, json::Json& res) {
     } else {
         res.add_member("error", "bad req: no string filed 'api'");
     }
+}
+
+void ServerImpl::setCallback(const ClientCallBack &callback)
+{
+    this->callback = callback;
 }
 
 using http::http_req_t;
@@ -349,6 +363,9 @@ void ServerImpl::on_connection(tcp::Connection conn) {
 
   recv_zero_err:
     LOG << "rpc client close the connection, connfd: " << conn.socket();
+    if (this->callback) {
+        callback(0, _tcp_serv.addressIP(), _tcp_serv.addressPort());
+    }
     conn.close();
     goto end;
   idle_err:

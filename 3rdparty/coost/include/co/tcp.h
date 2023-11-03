@@ -1,6 +1,7 @@
 #pragma once
 
 #include "def.h"
+#include "fastring.h"
 #include <functional>
 
 namespace tcp {
@@ -138,9 +139,12 @@ class __coapi Server final {
      */
     void exit();
 
+    fastring addressIP() const;
+
+    uint16 addressPort() const;
+
   private:
     void* _p;
-
     DISALLOW_COPY_AND_ASSIGN(Server);
 };
 

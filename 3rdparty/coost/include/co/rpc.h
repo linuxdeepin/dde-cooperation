@@ -5,6 +5,8 @@
 #include <memory>
 #include <functional>
 
+using ClientCallBack = std::function<void(int, const fastring &, const uint16)>;
+
 namespace rpc {
 
 class Service {
@@ -27,13 +29,13 @@ class __coapi Server {
      * add a service 
      *   - Multiple services can be added. 
      */
-    Server& add_service(const std::shared_ptr<Service>& s);
+    Server& add_service(const std::shared_ptr<Service>& s,const ClientCallBack &callback);
 
     /**
      * add a service, @s MUST be created with operator new.
      */
-    Server& add_service(Service* s) {
-        return this->add_service(std::shared_ptr<Service>(s));
+    Server& add_service(Service* s, const ClientCallBack &callback = nullptr) {
+        return this->add_service(std::shared_ptr<Service>(s), callback);
     }
 
     /**
@@ -56,6 +58,8 @@ class __coapi Server {
      *     previously established connections.
      */
     void exit();
+
+    void setCallback(ClientCallBack callback);
 
   private:
     void* _p;

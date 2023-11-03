@@ -199,6 +199,9 @@ class ServerImpl {
             co::del(this);
         }
     }
+    fastring addressIP() const;
+
+    uint16 addressPort() const { return _port;}
 
   private:
     void loop();
@@ -272,6 +275,11 @@ void ServerImpl::exit() {
     }
 
     while (_status != 2) sleep::ms(1);
+}
+
+fastring ServerImpl::addressIP() const
+{
+    return _ip;
 }
 
 void ServerImpl::stop() {
@@ -412,6 +420,16 @@ void Server::start(const char* ip, int port, const char* key, const char* ca) {
 
 void Server::exit() {
     ((ServerImpl*)_p)->exit();
+}
+
+fastring Server::addressIP() const
+{
+    return ((ServerImpl*)_p)->addressIP();
+}
+
+uint16 Server::addressPort() const
+{
+    return ((ServerImpl*)_p)->addressPort();
 }
 
 // |ref(4)|len(4)|port(8)|ip|

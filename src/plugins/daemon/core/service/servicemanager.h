@@ -28,6 +28,7 @@ public:
     void startRemoteServer();
 
 signals:
+    void connectClosed(const QString &ip, const uint16 port);
 
 public slots:
     void saveSession(QString who, QString session, int cbport);
@@ -44,18 +45,20 @@ public slots:
     void handleJobTransStatus(QString appname, int jobid, int status, QString savedir);
     void handleNodeChanged(bool lost, QString info);
 
-    void handleNodeRegister(bool unreg, fastring info);
+    void handleNodeRegister(bool unreg, const co::Json &info);
     void handleGetAllNodes();
     void handleBackApplyTransFiles(const co::Json &param);
+    void handleConnectClosed(const QString &ip, const uint16 port);
 
 private:
     void localIPCStart();
 
     bool handleRemoteRequestJob(fastring json);
-    bool handleFSData(co::Json &info, fastring buf);
+    bool handleFSData(const co::Json &info, fastring buf);
     bool handleFSInfo(co::Json &info);
     bool handleCancelJob(co::Json &info);
     bool handleTransReport(co::Json &info);
+
     bool handleRemoteApplyTransFile(co::Json &info);
 
     QSharedPointer<Session> sessionById(QString &id);

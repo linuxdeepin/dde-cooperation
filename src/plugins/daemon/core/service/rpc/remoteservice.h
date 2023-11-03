@@ -84,7 +84,7 @@ public:
 
     QString targetIP() { return ip; }
 
-    int targetPort() { return port; }
+    uint16_t targetPort() { return port; }
 
 private:
     zrpc_ns::ZRpcClient *_client{ nullptr };

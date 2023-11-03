@@ -273,12 +273,12 @@ void ServiceManager::localIPCStart()
             }
             case BACK_DISC_REGISTER:
             {
-                handleNodeRegister(false, json_obj.get("appinfo").as_string());
+                handleNodeRegister(false, json_obj);
                 break;
             }
             case BACK_DISC_UNREGISTER:
             {
-                handleNodeRegister(true, json_obj.get("appinfo").as_string());
+                handleNodeRegister(true, json_obj);
                 break;
             }
             case BACK_APPLY_TRANS_FILES:
@@ -292,12 +292,16 @@ void ServiceManager::localIPCStart()
         }
     });
 
-
+    connect(this, &ServiceManager::connectClosed, this, &ServiceManager::handleConnectClosed, Qt::QueuedConnection);
     // start ipc services
     ipc::BackendImpl *backendimp = new ipc::BackendImpl();
     backendimp->setInterface(_backendIpcService);
-    rpc::Server().add_service(backendimp)
-                 .start("0.0.0.0", UNI_IPC_BACKEND_PORT, "/backend", "", "");
+    rpc::Server().add_service(backendimp, [this](int type, const fastring &ip, const uint16 port){
+        ELOG << ip << " : "<< port << "===========" << type;
+        if (type == 0)
+            emit this->connectClosed(ip.c_str(), port);
+    }).start("0.0.0.0", UNI_IPC_BACKEND_PORT, "/backend", "", "");
+
 }
 
 bool ServiceManager::handleRemoteRequestJob(fastring json)
@@ -342,12 +346,12 @@ bool ServiceManager::handleRemoteRequestJob(fastring json)
     return true;
 }
 
-bool ServiceManager::handleFSData(co::Json &info, fastring buf)
+bool ServiceManager::handleFSData(const co::Json &info, fastring buf)
 {
     FSDataBlock datablock;
-    datablock.from_json(info);
-    datablock.data = buf;
-    int32 jobId = datablock.job_id;
+   datablock.from_json(info);
+   datablock.data = buf;
+   int32 jobId = datablock.job_id;
 
     TransferJob *job = _transjob_recvs.value(jobId);
     if (nullptr != job) {
@@ -471,6 +475,7 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
             req = obj.as_json();
             req.add_member("api", "Frontend.applyTransFiles");
             s->client()->call(req, res);
+            s->client()->close();
         });
     }
 
@@ -666,6 +671,7 @@ void ServiceManager::forwardJsonMisc(fastring &appname, fastring &message)
             if (req.parse_from(message)) {
                 req.add_member("api", "Frontend.cbMiscMessage");
                 s->client()->call(req, res);
+                s->client()->close();
             } else {
                 ELOG << "forwardJsonMisc NOT correct json:"<< message;
             }
@@ -690,6 +696,7 @@ void ServiceManager::handleLoginResult(bool result, QString session)
             };
             req.add_member("api", "Frontend.cbConnect");
             s->client()->call(req, res);
+            s->client()->close();
         });
     } else {
         DLOG << "Donot find login seesion: " << session_name;
@@ -741,6 +748,7 @@ void ServiceManager::handleJobTransStatus(QString appname, int jobid, int status
 
             req.add_member("api", "Frontend.cbTransStatus");
             s->client()->call(req, res);
+            s->client()->close();
         });
     }
 }
@@ -763,6 +771,7 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
                 };
                 req.add_member("api", "Frontend.cbPeerInfo");
                 s->client()->call(req, res);
+                s->client()->close();
                 ++i;
             } else {
                 // the frontend is offline
@@ -777,19 +786,15 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
     });
 }
 
-void ServiceManager::handleNodeRegister(bool unreg, fastring info)
+void ServiceManager::handleNodeRegister(bool unreg, const co::Json &info)
 {
+    AppPeerInfo appPeer;
+    appPeer.from_json(info);
     if (unreg) {
-        co::Json appjson;
-        if (appjson.parse_from(info)) {
-            ELOG << "incorrect app node info:" << info;
-            return;
-        }
-        fastring appname = appjson.get("appname").as_string();
+        fastring appname = appPeer.appname;
         _applyjobs.remove(appname.c_str());
     }
-
-    DiscoveryJob::instance()->updateAnnouncApp(unreg, info);
+    DiscoveryJob::instance()->updateAnnouncApp(unreg, info.as_string());
 }
 
 void ServiceManager::handleGetAllNodes()
@@ -830,4 +835,27 @@ void ServiceManager::handleBackApplyTransFiles(const co::Json &param)
     UNIGO([_applyjob, info]() {
         _applyjob->sendMsg(COMM_APPLY_TRANS, info.as_json().str().c_str());
     });
+}
+
+void ServiceManager::handleConnectClosed(const QString &ip, const uint16 port)
+{
+    Q_UNUSED(port);
+    if (port == UNI_IPC_BACKEND_PORT
+            || ip == Util::getFirstIp().c_str()
+            || ip == "0.0.0.0") {
+        for (auto i = _sessions.begin(); i != _sessions.end();) {
+            QSharedPointer<Session> s = *i;
+            if (!s->alive()) {
+                // the frontend is offline
+                i = _sessions.erase(i);
+
+                //remove the frontend app register info
+                fastring name = s->getName().toStdString();
+                _applyjobs.remove(name.c_str());
+                DiscoveryJob::instance()->removeAppbyName(name);
+            } else {
+                ++i;
+            }
+        }
+    }
 }
