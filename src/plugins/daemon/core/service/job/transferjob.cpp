@@ -42,7 +42,6 @@ void TransferJob::start()
 {
     _stoped = false;
     _finished = false;
-
     if (_writejob) {
         DLOG << "start write job: " << _savedir;
         handleJobStatus(JOB_TRANS_DOING);
@@ -60,12 +59,12 @@ void TransferJob::start()
         pathJson.parse_from(_path);
         DLOG << "read job start path: " << pathJson;
         for (uint32 i = 0; i < pathJson.array_size(); i++) {
-            const char *jobpath = pathJson[i].as_string().c_str();
+            const char *jobpath = pathJson[i].as_c_str();
             std::pair<fastring, fastring> pairs = path::split(fastring(jobpath));
             const char *rootpath = pairs.first.c_str();
-
-            scanPath(rootpath, jobpath, _jobid);
+            scanPath(rootpath, jobpath, fileid);
         }
+        DLOG << "read job init end " << _file_info_maps.size();
     }
 
     // 开始循环处理数据块
@@ -150,48 +149,43 @@ fastring TransferJob::getSubdir(const char *path, const char *root)
     fastring indir = "";
     std::pair<fastring, fastring> pairs = path::split(fastring(path));
     fastring filedir = pairs.first;
-
-    if (fs::isdir(path)) {
-        indir = filedir.size() > strlen(root) ? filedir.remove_prefix(root) : "";
-    } else {
-        indir = str::trim(filedir, root, 'l');
-    }
-
+    indir = filedir.size() > strlen(root) ? filedir.remove_prefix(root) : "";
     fastring subdir = path::join(indir.c_str(), "");
     return subdir;
 }
 
 void TransferJob::scanPath(const char *root, const char *path, int id)
 {
+    fileid++;
     fastring subdir = getSubdir(path, root);
-    int res = _rpcBinder->doSendFileInfo(_tar_app_name.c_str(), _jobid, id, subdir.c_str(), path);
+    int res =
+            _rpcBinder->doSendFileInfo(_tar_app_name.c_str(), _jobid, fileid, subdir.c_str(), path);
     if (res <= 0) {
         ELOG << "error file info : " << path;
         return;
     }
     if (fs::isdir(path)) {
-        readPath(path, id, root);
+        readPath(path, fileid, root);
     } else {
-        readFile(path, id, subdir.c_str());
+        readFile(path, fileid, subdir.c_str());
     }
 }
 
 void TransferJob::readPath(const char *path, int id, const char *root)
 {
-    int file_id = id;  
     fastring dirpath = path::join(path, "");
     fs::dir d(dirpath);
     auto v = d.all(); // 读取所有子项
     for (const fastring &file : v) {
-        file_id++;
         fastring file_path = path::join(d.path(), file.c_str());
-        scanPath(root, file_path.c_str(), file_id);
+        scanPath(root, file_path.c_str(), fileid);
     }
 }
 
 bool TransferJob::readFile(const char *filepath, int fileid, const char *subdir)
 {
     std::pair<fastring, fastring> pairs = path::split(fastring(filepath));
+
     fastring filename = pairs.second;
 
     fastring subname = path::join(subdir, filename.c_str());
@@ -201,30 +195,32 @@ bool TransferJob::readFile(const char *filepath, int fileid, const char *subdir)
 
 void TransferJob::readFileBlock(const char *filepath, int fileid, const fastring subname)
 {
-    if (nullptr == filepath || fileid < 0) {
+    if (nullptr == filepath || fileid < 0 || !fs::exists(filepath)) {
+        ELOG << "readFileBlock file is invaild" << filepath;
         return;
     }
-    UNIGO([this, filepath, fileid, subname]() {
-        size_t block_size = BLOCK_SIZE;
-        int64 file_size = fs::fsize(filepath);
+
+    size_t block_size = BLOCK_SIZE;
+    int64 file_size = fs::fsize(filepath);
+
+    if (file_size <= 0) {
+        // error file or 0B file.
+        return;
+    }
+    // record the file info
+    {
+        FileInfo info;
+        info.file_id = fileid;
+        info.name = subname;
+        info.total_size = file_size;
+        info.current_size = 0;
+        info.time_spended = -1;
+        _file_info_maps.insert(std::make_pair(fileid, info));
+//        LOG << "======this file (" << subname << "fileid" << fileid << ") start   _file_info_maps";
+    }
+    UNIGO([this, filepath, fileid, subname, file_size, block_size]() {
         int64 read_size = 0;
         uint32 block_id = 0;
-
-        if (file_size <= 0) {
-            // error file or 0B file.
-            return;
-        }
-
-        // record the file info
-        {
-            FileInfo info;
-            info.file_id = fileid;
-            info.name = subname;
-            info.total_size = file_size;
-            info.current_size = 0;
-            info.time_spended = -1;
-            _file_info_maps.insert(std::make_pair(fileid, info));
-        }
 
         fs::file fd(filepath, 'r');
         if (!fd) {
@@ -232,9 +228,8 @@ void TransferJob::readFileBlock(const char *filepath, int fileid, const fastring
             return;
         }
 
-         LOG << "======this file (" << subname <<") size=" << file_size;
         size_t block_len = block_size * sizeof(char);
-        char* buf = reinterpret_cast<char*>(malloc(block_len));
+        char *buf = reinterpret_cast<char *>(malloc(block_len));
         do {
             memset(buf, 0, block_len);
             size_t resize = fd.read(buf, block_size);
@@ -258,7 +253,6 @@ void TransferJob::readFileBlock(const char *filepath, int fileid, const fastring
 
             read_size += resize;
             block_id++;
-
         } while (read_size < file_size);
 
         free(buf);
@@ -301,8 +295,8 @@ void TransferJob::handleBlockQueque()
                     _waitfinish = true;
                 }
             } else {
-                //reset timeout
-                _empty_max_count = 5;
+                // reset timeout
+                _max_count = 5;
             }
         } while (!exit);
 
@@ -401,7 +395,6 @@ bool TransferJob::syncHandleStatus()
     for (auto& pair : _file_info_maps) {
         if (pair.second.time_spended >= 0) {
             pair.second.time_spended += 1;
-
             bool end = pair.second.current_size >= pair.second.total_size;
             handleTransStatus(end ? FILE_TRANS_END : FILE_TRANS_SPEED, pair.second);
             if (end) {
@@ -412,9 +405,8 @@ bool TransferJob::syncHandleStatus()
                     // handleUpdate(OK, block.filename.c_str(), "");
                 }
             }
-       }
+        }
     }
-
     return _file_info_maps.empty();
 }
 
