@@ -474,8 +474,7 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
             //notifyFileStatus {FileStatus}
             req = obj.as_json();
             req.add_member("api", "Frontend.applyTransFiles");
-            s->client()->call(req, res);
-            s->client()->close();
+            s->call(req, res);
         });
     }
 
@@ -670,8 +669,7 @@ void ServiceManager::forwardJsonMisc(fastring &appname, fastring &message)
             //cbMiscMessage {any json format}
             if (req.parse_from(message)) {
                 req.add_member("api", "Frontend.cbMiscMessage");
-                s->client()->call(req, res);
-                s->client()->close();
+                s->call(req, res);
             } else {
                 ELOG << "forwardJsonMisc NOT correct json:"<< message;
             }
@@ -695,8 +693,7 @@ void ServiceManager::handleLoginResult(bool result, QString session)
                 { "msg", session_name },
             };
             req.add_member("api", "Frontend.cbConnect");
-            s->client()->call(req, res);
-            s->client()->close();
+            s->call(req, res);
         });
     } else {
         DLOG << "Donot find login seesion: " << session_name;
@@ -727,7 +724,7 @@ void ServiceManager::handleFileTransStatus(QString appname, int status, QString 
             };
 
             req.add_member("api", "Frontend.notifyFileStatus");
-            s->client()->call(req, res);
+            s->call(req, res);
         });
     }
 }
@@ -747,8 +744,7 @@ void ServiceManager::handleJobTransStatus(QString appname, int jobid, int status
             };
 
             req.add_member("api", "Frontend.cbTransStatus");
-            s->client()->call(req, res);
-            s->client()->close();
+            s->call(req, res);
         });
     }
 }
@@ -770,8 +766,7 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
                     { "msg", nodeinfo },
                 };
                 req.add_member("api", "Frontend.cbPeerInfo");
-                s->client()->call(req, res);
-                s->client()->close();
+                s->call(req, res);
                 ++i;
             } else {
                 // the frontend is offline

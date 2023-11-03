@@ -12,9 +12,6 @@ Session::Session(QString name, QString session, int port, QObject *parent)
     , _sessionid(session)
     , _cb_port(port)
 {
-    // initialize the proto client
-    coClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", _cb_port, false));
-
     _jobs.clear();
 
     _pingOK = false;
@@ -54,7 +51,7 @@ bool Session::alive()
         { "version", version },
     };
     req.add_member("api", "Frontend.ping");
-    client()->call(req, res);
+    call(req, res);
 
     _pingOK = res.get("result").as_bool() && !res.get("msg").empty();
     _initPing = true;
@@ -100,3 +97,11 @@ rpc::Client* Session::client()
 {
     return coClient.get();
 }
+
+void Session::call(const json::Json &req, json::Json &res)
+{
+    coClient.reset( new rpc::Client("127.0.0.1", _cb_port, false));
+    coClient->call(req,res);
+    coClient->close();
+}
+
