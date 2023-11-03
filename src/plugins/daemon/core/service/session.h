@@ -25,6 +25,7 @@ public:
     bool removeJob(int jobid);
     int hasJob(int jobid);
     rpc::Client* client();
+    void call(const json::Json& req, json::Json& res);
 
 signals:
 
