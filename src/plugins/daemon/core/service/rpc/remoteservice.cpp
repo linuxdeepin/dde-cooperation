@@ -252,7 +252,6 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
 {
     Q_UNUSED(controller);
     // LOG << "req= " << request->ShortDebugString().c_str();
-
     int32 job_id = request->job_id();
     int32 file_id = request->file_id();
     uint32 blk_id = request->blk_id();
@@ -280,7 +279,6 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
 
     response->set_id(file_id);
     response->set_name(name.c_str());
-    response->set_result(_income_chan.done() ? OK : IO_ERROR);
 
     // LOG << "res= " << response->ShortDebugString().c_str();
 
@@ -380,24 +378,23 @@ void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpat
 
 void RemoteServiceBinder::createExecutor(const QString &session, const char *targetip, uint16_t port)
 {
-    qInfo() << session;
     QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
     {
         QReadLocker lk(&_executor_lock);
-        if (_executor_ps.contains(session))
-            return;
         for (const auto &executor : _executor_ps) {
-            if (targetip == executor->targetIP()) {
+            if (targetip == executor->targetIP() && !executor->control()->Failed()) {
                 _executor_p = executor;
                 break;
             }
         }
     }
 
-    if (_executor_p.isNull())
+    if (_executor_p.isNull()) {
+        QWriteLocker lk(&_executor_lock);
+        _executor_ps.remove(session);
         _executor_p = QSharedPointer<ZRpcClientExecutor>(new ZRpcClientExecutor(targetip, port));
-    QWriteLocker lk(&_executor_lock);
-    _executor_ps.insert(session, _executor_p);
+        _executor_ps.insert(session, _executor_p);
+    }
 }
 
 void RemoteServiceBinder::doLogin(const QString &session, const char *username, const char *pincode)
@@ -600,12 +597,12 @@ int RemoteServiceBinder::doSendFileBlock(const QString &session, FileTransBlock 
     }
 
     RemoteService_Stub stub(_executor_p->chan());
-    zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
+        zrpc_ns::ZRpcController *rpc_controller = _executor_p->control();
 
-    FileTransResponse res_block;
-    int try_max = 3;
-retry:
-    stub.filetrans_block(rpc_controller, &fileblock, &res_block, nullptr);
+        FileTransResponse res_block;
+        int try_max = 3;
+    retry:
+        stub.filetrans_block(rpc_controller, &fileblock, &res_block, nullptr);
 
     if (rpc_controller->ErrorCode() != 0) {
         ELOG << "Failed to call filetrans_block, error code: " << rpc_controller->ErrorCode()
@@ -686,6 +683,12 @@ void RemoteServiceBinder::clearExecutor(const QString &appname)
 
 QSharedPointer<ZRpcClientExecutor> RemoteServiceBinder::executor(const QString &appname)
 {
-    QReadLocker lk(&_executor_lock);
+    QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
+    {
+        QReadLocker lk(&_executor_lock);
+        _executor_p = _executor_ps.value(appname);
+    }
+    if (_executor_p->control()->Failed())
+        createExecutor(appname, _executor_p->targetIP().toStdString().c_str(), _executor_p->targetPort());
     return _executor_ps.value(appname);
 }

@@ -122,6 +122,7 @@ struct FSDataBlock {
     fastring filename;
     uint32 blk_id;
     bool compressed;
+    uint32 data_size;
     fastring data;
 
     void from_json(const co::Json& _x_) {
@@ -130,6 +131,7 @@ struct FSDataBlock {
         filename = _x_.get("filename").as_c_str();
         blk_id = (uint32)_x_.get("blk_id").as_int64();
         compressed = _x_.get("compressed").as_bool();
+        data_size = (uint32)_x_.get("data_size").as_int64();
         data = _x_.get("data").as_c_str();
     }
 
@@ -140,6 +142,7 @@ struct FSDataBlock {
         _x_.add_member("filename", filename);
         _x_.add_member("blk_id", blk_id);
         _x_.add_member("compressed", compressed);
+        _x_.add_member("data_size", data_size);
         _x_.add_member("data", data);
         return _x_;
     }
@@ -210,35 +213,6 @@ struct FSReport {
         _x_.add_member("path", path);
         _x_.add_member("result", result);
         _x_.add_member("error", error);
-        return _x_;
-    }
-};
-
-struct ApplyTransFiles {
-    fastring machineName;
-    fastring session;
-    fastring tarSession;
-    int32 type;
-    fastring selfIp;
-    int32 selfPort;
-
-    void from_json(const co::Json& _x_) {
-        machineName = _x_.get("machineName").as_c_str();
-        session = _x_.get("session").as_c_str();
-        tarSession = _x_.get("tarSession").as_c_str();
-        type = (int32)_x_.get("type").as_int64();
-        selfIp = _x_.get("selfIp").as_c_str();
-        selfPort = (int32)_x_.get("selfPort").as_int64();
-    }
-
-    co::Json as_json() const {
-        co::Json _x_;
-        _x_.add_member("machineName", machineName);
-        _x_.add_member("session", session);
-        _x_.add_member("tarSession", tarSession);
-        _x_.add_member("type", type);
-        _x_.add_member("selfIp", selfIp);
-        _x_.add_member("selfPort", selfPort);
         return _x_;
     }
 };

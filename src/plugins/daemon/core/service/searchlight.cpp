@@ -294,7 +294,7 @@ void Announcer::start()
         node.add_member("info", nodeinfo);
         fastring message = node.str();
 
-        //DLOG << "UDP send: " << message;
+//        DLOG << "UDP send: === " << message;
         int send_len = co::sendto(sockfd, message.c_str(), message.size(), &dest_addr, len);
         if (send_len < 0) {
             ELOG << "Failed to send data";
