@@ -5,6 +5,11 @@ project(uniapi)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
+if(WIN32)
+    # undef min for WIN32 build, but not effect
+    remove_definitions(-D min)
+endif()
+
 # do not find, check system installed protobuf package
 if(USE_PROTOBUF_FILES)
     # 生成转换proto文件: update_proto.sh

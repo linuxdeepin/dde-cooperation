@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -58,6 +58,7 @@ private:
 
 private:
     int _jobid;
+    int fileid = 0;
     bool _inited = false;
     bool _stoped = true;
     bool _finished = false;
@@ -65,7 +66,6 @@ private:
 
     bool _sub;
     bool _writejob;
-    int _empty_max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
     fastring _app_name; // //前端应用名
     fastring _path; // 目录或文件路径
     fastring _savedir; // 写作业，文件保存的目录

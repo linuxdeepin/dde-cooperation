@@ -69,8 +69,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 # The protoc tool not for all platforms, so use the generate out sources.
 set(USE_PROTOBUF_FILES ON)
 
-# Disable the coroutine in coost.
-add_definitions(-D DISABLE_GO)
+if (NOT WIN32)
+    # Disable the coroutine in coost.
+    add_definitions(-D DISABLE_GO)
+endif()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     # generate qm

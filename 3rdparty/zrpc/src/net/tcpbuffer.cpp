@@ -37,7 +37,8 @@ int TcpBuffer::writeIndex() const {
 void TcpBuffer::resizeBuffer(int size) {
     std::vector<char> tmp(size);
     int c = std::min(size, readAble());
-    memcpy(&tmp[0], &m_buffer[m_read_index], c);
+    if(m_buffer.size() > m_read_index)
+        memcpy(&tmp[0], &m_buffer[m_read_index], c);
 
     m_buffer.swap(tmp);
     m_read_index = 0;
