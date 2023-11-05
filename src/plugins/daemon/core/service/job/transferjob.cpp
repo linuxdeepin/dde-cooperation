@@ -57,10 +57,10 @@ void TransferJob::start()
         pathJson.parse_from(_path);
         DLOG << "read job start path: " << pathJson;
         for (uint32 i = 0; i < pathJson.array_size(); i++) {
-            const char *jobpath = pathJson[i].as_c_str();
-            std::pair<fastring, fastring> pairs = path::split(fastring(jobpath));
-            const char *rootpath = pairs.first.c_str();
-            scanPath(rootpath, jobpath, fileid);
+            fastring jobpath = pathJson[i].as_string();
+            std::pair<fastring, fastring> pairs = path::split(jobpath);
+            fastring rootpath = pairs.first.c_str();
+            scanPath(rootpath, jobpath);
         }
         DLOG << "read job init end " << _file_info_maps.size();
     }
@@ -152,35 +152,35 @@ fastring TransferJob::getSubdir(const char *path, const char *root)
     return subdir;
 }
 
-void TransferJob::scanPath(const char *root, const char *path, int id)
+void TransferJob::scanPath(fastring root, fastring path)
 {
-    fileid++;
-    fastring subdir = getSubdir(path, root);
+    _fileid++;
+    fastring subdir = getSubdir(path.c_str(), root.c_str());
     int res =
-            _rpcBinder->doSendFileInfo(_tar_app_name.c_str(), _jobid, fileid, subdir.c_str(), path);
+            _rpcBinder->doSendFileInfo(_tar_app_name.c_str(), _jobid, _fileid, subdir.c_str(), path.c_str());
     if (res <= 0) {
         ELOG << "error file info : " << path;
         return;
     }
-    if (fs::isdir(path)) {
-        readPath(path, fileid, root);
+    if (fs::isdir(path.c_str())) {
+        readPath(path, root);
     } else {
-        readFile(path, fileid, subdir.c_str());
+        readFile(path, _fileid, subdir.c_str());
     }
 }
 
-void TransferJob::readPath(const char *path, int id, const char *root)
+void TransferJob::readPath(fastring path, fastring root)
 {
     fastring dirpath = path::join(path, "");
     fs::dir d(dirpath);
     auto v = d.all(); // 读取所有子项
     for (const fastring &file : v) {
         fastring file_path = path::join(d.path(), file.c_str());
-        scanPath(root, file_path.c_str(), fileid);
+        scanPath(root, file_path);
     }
 }
 
-bool TransferJob::readFile(const char *filepath, int fileid, const char *subdir)
+bool TransferJob::readFile(fastring filepath, int fileid, fastring subdir)
 {
     std::pair<fastring, fastring> pairs = path::split(fastring(filepath));
 
@@ -191,9 +191,9 @@ bool TransferJob::readFile(const char *filepath, int fileid, const char *subdir)
     return true;
 }
 
-void TransferJob::readFileBlock(const char *filepath, int fileid, const fastring subname)
+void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring subname)
 {
-    if (nullptr == filepath || fileid < 0 || !fs::exists(filepath)) {
+    if (filepath.empty() || fileid < 0 || !fs::exists(filepath)) {
         ELOG << "readFileBlock file is invaild" << filepath;
         return;
     }
