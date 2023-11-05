@@ -15,9 +15,9 @@
 class RemoteServiceBinder;
 class TransferJob;
 class BackendService;
-class Session;
 class DiscoveryJob;
 class QSettings;
+class Session;
 class ServiceManager : public QObject
 {
     Q_OBJECT
@@ -29,6 +29,8 @@ public:
 
 signals:
     void connectClosed(const QString &ip, const uint16 port);
+    // 使用这个信号必须是不需要等待客户端返回值的。
+    void sendToClient(const QString session, const QString &req);
 
 public slots:
     void saveSession(QString who, QString session, int cbport);
@@ -49,6 +51,8 @@ public slots:
     void handleGetAllNodes();
     void handleBackApplyTransFiles(const co::Json &param);
     void handleConnectClosed(const QString &ip, const uint16 port);
+    // 必须主线程处理向客户端发送
+    void handleSendToClient(const QString session, const QString req);
 
 private:
     void localIPCStart();
@@ -78,7 +82,7 @@ private:
     QMap<int, TransferJob *> _transjob_break;
 
     // record the frontend session
-    std::vector<QSharedPointer<Session>> _sessions;
+    QList<QSharedPointer<Session>> _sessions;
 
     bool _hasConnected = false;
     fastring _connected_target;

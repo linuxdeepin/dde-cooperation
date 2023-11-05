@@ -18,12 +18,15 @@
 
 #include <functional>
 #include <QSettings>
+#include <QCoreApplication>
+#include <QThread>
 
 co::chan<IncomeData> _income_chan(10, 300);
 co::chan<OutData> _outgo_chan(10, 10);
 
 ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
+    qRegisterMetaType<QSharedPointer<Session>>();
     _rpcServiceBinder = new RemoteServiceBinder(this);
 
     _transjob_sends.clear();
@@ -148,7 +151,7 @@ void ServiceManager::localIPCStart()
     _backendIpcService = new BackendService(this);
 
     connect(_rpcServiceBinder, &RemoteServiceBinder::loginResult, this, &ServiceManager::handleLoginResult, Qt::QueuedConnection);
-
+    connect(this, &ServiceManager::sendToClient, this, &ServiceManager::handleSendToClient, Qt::QueuedConnection);
     UNIGO([this]() {
         while(!_this_destruct) {
             BridgeJsonData bridge;
@@ -457,26 +460,23 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
     obj.tarSession = obj.session;
     obj.session = tmp;
     auto session = obj.session;
-    auto s = sessionByName(session.c_str());
-
-    if (s && s->alive()) {
-        if (obj.type == ApplyTransType::APPLY_TRANS_APPLY) {
-            // 保存申请的通讯job
-            QSharedPointer<CommunicationJob> _applyjob(new CommunicationJob);
-            _applyjob->initRpc(obj.session, obj.selfIp.c_str(), static_cast<uint16_t>(obj.selfPort));
-            _applyjob->initJob(obj.session, obj.tarSession);
-            _applyjobs.insert(session.c_str(), _applyjob);
-        }
-        UNIGO([s, obj]() {
-            co::Json infojson;
-            co::Json req, res;
-
-            //notifyFileStatus {FileStatus}
-            req = obj.as_json();
-            req.add_member("api", "Frontend.applyTransFiles");
-            s->call(req, res);
-        });
+    if (obj.type == ApplyTransType::APPLY_TRANS_APPLY) {
+        // 保存申请的通讯job
+        QSharedPointer<CommunicationJob> _applyjob(new CommunicationJob);
+        _applyjob->initRpc(obj.session, obj.selfIp.c_str(), static_cast<uint16_t>(obj.selfPort));
+        _applyjob->initJob(obj.session, obj.tarSession);
+        _applyjobs.insert(session.c_str(), _applyjob);
     }
+    UNIGO([this, session, obj]() {
+        co::Json infojson;
+        co::Json req;
+
+        //notifyFileStatus {FileStatus}
+        req = obj.as_json();
+        req.add_member("api", "Frontend.applyTransFiles");
+        emit sendToClient(session.c_str(), req.str().c_str());
+    });
+
 
     return true;
 }
@@ -662,123 +662,108 @@ void ServiceManager::sendMiscMessage(fastring &appname, fastring &message)
 void ServiceManager::forwardJsonMisc(fastring &appname, fastring &message)
 {
     QString app(appname.c_str());
-    auto s = sessionByName(app);
-    if (s && s->valid()) {
-        UNIGO([s, message]() {
-            co::Json req, res;
-            //cbMiscMessage {any json format}
-            if (req.parse_from(message)) {
-                req.add_member("api", "Frontend.cbMiscMessage");
-                s->call(req, res);
-            } else {
-                ELOG << "forwardJsonMisc NOT correct json:"<< message;
-            }
-        });
-    }
+
+    UNIGO([this, app, message]() {
+        co::Json req;
+        //cbMiscMessage {any json format}
+        if (req.parse_from(message)) {
+            req.add_member("api", "Frontend.cbMiscMessage");
+            emit sendToClient(app, req.str().c_str());
+        } else {
+            ELOG << "forwardJsonMisc NOT correct json:"<< message;
+        }
+    });
+
 }
 
 void ServiceManager::handleLoginResult(bool result, QString session)
 {
     fastring session_name(session.toStdString());
-
-    // find the session by session id
-    auto s = sessionByName(session);
-    if (s && s->valid()) {
-        UNIGO([s, result, session_name]() {
-            co::Json req, res;
-            //cbConnect {GenericResult}
-            req = {
-                { "id", 0 },
-                { "result", result ? 1 : 0 },
-                { "msg", session_name },
-            };
-            req.add_member("api", "Frontend.cbConnect");
-            s->call(req, res);
-        });
-    } else {
-        DLOG << "Donot find login seesion: " << session_name;
-    }
+    UNIGO([this, result, session_name]() {
+        co::Json req;
+        //cbConnect {GenericResult}
+        req = {
+            { "id", 0 },
+            { "result", result ? 1 : 0 },
+            { "msg", session_name },
+        };
+        req.add_member("api", "Frontend.cbConnect");
+        emit sendToClient(session_name.c_str(), req.str().c_str());
+    });
 }
 
 void ServiceManager::handleFileTransStatus(QString appname, int status, QString fileinfo)
 {
-    auto s = sessionByName(appname);
-    if (s && s->valid()) {
-        //DLOG << "notify file trans status to:" << s->getName().toStdString();
-        UNIGO([s, status, fileinfo]() {
-            co::Json infojson;
-            infojson.parse_from(fileinfo.toStdString());
-            FileInfo filejob;
-            filejob.from_json(infojson);
+    //DLOG << "notify file trans status to:" << s->getName().toStdString();
+    UNIGO([this, appname, status, fileinfo]() {
+        co::Json infojson;
+        infojson.parse_from(fileinfo.toStdString());
+        FileInfo filejob;
+        filejob.from_json(infojson);
 
-            co::Json req, res;
-            //notifyFileStatus {FileStatus}
-            req = {
-                { "job_id", filejob.job_id },
-                { "file_id", filejob.file_id },
-                { "name", filejob.name },
-                { "status", status },
-                { "total", filejob.total_size },
-                { "current", filejob.current_size },
-                { "second", filejob.time_spended },
-            };
+        co::Json req, res;
+        //notifyFileStatus {FileStatus}
+        req = {
+            { "job_id", filejob.job_id },
+            { "file_id", filejob.file_id },
+            { "name", filejob.name },
+            { "status", status },
+            { "total", filejob.total_size },
+            { "current", filejob.current_size },
+            { "second", filejob.time_spended },
+        };
 
-            req.add_member("api", "Frontend.notifyFileStatus");
-            s->call(req, res);
-        });
-    }
+        req.add_member("api", "Frontend.notifyFileStatus");
+        emit sendToClient(appname, req.str().c_str());
+    });
 }
 
 void ServiceManager::handleJobTransStatus(QString appname, int jobid, int status, QString savedir)
 {
-    QSharedPointer<Session> s = sessionByName(appname);
-    if (s && s->valid()) {
-        //DLOG << "notify file trans status to:" << s->getName().toStdString();
-        UNIGO([s, jobid, status, savedir]() {
-            co::Json req, res;
-            //cbTransStatus {GenericResult}
-            req = {
-                { "id", jobid },
-                { "result", status },
-                { "msg", savedir.toStdString() },
-            };
+    //DLOG << "notify file trans status to:" << s->getName().toStdString();
+    UNIGO([this, appname, jobid, status, savedir]() {
+        co::Json req;
+        //cbTransStatus {GenericResult}
+        req = {
+            { "id", jobid },
+            { "result", status },
+            { "msg", savedir.toStdString() },
+        };
 
-            req.add_member("api", "Frontend.cbTransStatus");
-            s->call(req, res);
-        });
-    }
+        req.add_member("api", "Frontend.cbTransStatus");
+        emit sendToClient(appname, req.str().c_str());
+    });
 }
 
 void ServiceManager::handleNodeChanged(bool found, QString info)
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
     // notify to all frontend sessions
-    UNIGO([this, found, info]() {
-        for (auto i = _sessions.begin(); i != _sessions.end();) {
-            QSharedPointer<Session> s = *i;
-            if (s->alive()) {
-                // fastring session_id(s->getSession().toStdString());
-                fastring nodeinfo(info.toStdString());
-                co::Json req, res;
-                //cbPeerInfo {GenericResult}
-                req = {
-                    { "id", 0 },
-                    { "result", found ? 1 : 0 },
-                    { "msg", nodeinfo },
-                };
-                req.add_member("api", "Frontend.cbPeerInfo");
-                s->call(req, res);
-                ++i;
-            } else {
-                // the frontend is offline
-                i = _sessions.erase(i);
+    for (auto i = _sessions.begin(); i != _sessions.end();) {
+        QSharedPointer<Session> s = *i;
+        if (s->alive()) {
+            // fastring session_id(s->getSession().toStdString());
+            fastring nodeinfo(info.toStdString());
+            co::Json req, res;
+            //cbPeerInfo {GenericResult}
+            req = {
+                { "id", 0 },
+                { "result", found ? 1 : 0 },
+                { "msg", nodeinfo },
+            };
+            req.add_member("api", "Frontend.cbPeerInfo");
+            s->call(req, res);
+            ++i;
+        } else {
+            // the frontend is offline
+            i = _sessions.erase(i);
 
-                //remove the frontend app register info
-                fastring name = s->getName().toStdString();
-                _applyjobs.remove(name.c_str());
-                DiscoveryJob::instance()->removeAppbyName(name);
-            }
+            //remove the frontend app register info
+            fastring name = s->getName().toStdString();
+            _applyjobs.remove(name.c_str());
+            DiscoveryJob::instance()->removeAppbyName(name);
         }
-    });
+    }
 }
 
 void ServiceManager::handleNodeRegister(bool unreg, const co::Json &info)
@@ -853,4 +838,30 @@ void ServiceManager::handleConnectClosed(const QString &ip, const uint16 port)
             }
         }
     }
+}
+
+void ServiceManager::handleSendToClient(const QString session, const QString req)
+{
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    auto s = sessionByName(session);
+    if (s.isNull()) {
+        ELOG << "session is null ptr, send failed!!!!!";
+        return;
+    }
+    if (!s->alive()) {
+        // 执行客户端下线
+        // the frontend is offline
+        _sessions.removeOne(s);
+
+        //remove the frontend app register info
+        fastring name = s->getName().toStdString();
+        _applyjobs.remove(name.c_str());
+        DiscoveryJob::instance()->removeAppbyName(name);
+        ELOG << "client is down ip name = " << s->getName().toStdString() << s->getSession().toStdString();
+        return;
+    }
+    DLOG << "handleSendToClient  : " << session.toStdString() << req.toStdString();
+    co::Json reqj, res;
+    reqj.parse_from(req.toStdString());
+    s->call(reqj, res);
 }
