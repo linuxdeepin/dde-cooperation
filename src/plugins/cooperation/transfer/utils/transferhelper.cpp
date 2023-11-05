@@ -134,22 +134,21 @@ void TransferHelperPrivate::localIPCStart()
             case FRONT_APPLY_TRANS_FILE: {
                 ApplyTransFiles transferInfo;
                 transferInfo.from_json(json_obj);
-                LOG << "=========" << json_obj;
+                LOG << "apply transfer info: " << json_obj;
 
-                if (!qApp->property("onlyTransfer").toBool()) {
-                    switch (transferInfo.type) {
-                    case ApplyTransType::APPLY_TRANS_APPLY:
+                switch (transferInfo.type) {
+                case ApplyTransType::APPLY_TRANS_APPLY:
+                    if (!qApp->property("onlyTransfer").toBool())
                         metaObject()->invokeMethod(this, "waitForConfirm", Qt::QueuedConnection, Q_ARG(QString, QString(transferInfo.machineName.c_str())));
-                        break;
-                    case ApplyTransType::APPLY_TRANS_CONFIRM:
-                        metaObject()->invokeMethod(this, "accepted", Qt::QueuedConnection);
-                        break;
-                    case ApplyTransType::APPLY_TRANS_REFUSED:
-                        metaObject()->invokeMethod(this, "rejected", Qt::QueuedConnection);
-                        break;
-                    default:
-                        break;
-                    }
+                    break;
+                case ApplyTransType::APPLY_TRANS_CONFIRM:
+                    metaObject()->invokeMethod(this, "accepted", Qt::QueuedConnection);
+                    break;
+                case ApplyTransType::APPLY_TRANS_REFUSED:
+                    metaObject()->invokeMethod(this, "rejected", Qt::QueuedConnection);
+                    break;
+                default:
+                    break;
                 }
             } break;
             default:
@@ -337,12 +336,12 @@ void TransferHelperPrivate::onActionTriggered(uint replacesId, const QString &ac
     } else if (action == kNotifyRejectAction) {
         status = Idle;
         UNIGO([this] {
-            handleApplyTransFiles(2);
+            handleApplyTransFiles(ApplyTransType::APPLY_TRANS_REFUSED);
         });
     } else if (action == kNotifyAcceptAction) {
         status = Transfering;
         UNIGO([this] {
-            handleApplyTransFiles(1);
+            handleApplyTransFiles(ApplyTransType::APPLY_TRANS_CONFIRM);
         });
     } else if (action == kNotifyViewAction) {
     }
