@@ -11,10 +11,11 @@ class FrontendService;
 class TransferHandle : public QObject
 {
     Q_OBJECT
-    struct file_stats_s {
-        int64_t all_total_size; // 总量
-        int64_t all_current_size; // 当前已接收量
-        int32_t max_time_sec;  // 最大已用时间
+    struct file_stats_s
+    {
+        int64_t all_total_size;   // 总量
+        int64_t all_current_size;   // 当前已接收量
+        int32_t max_time_sec;   // 最大已用时间
     };
 
 public:
@@ -25,6 +26,7 @@ public:
     QString getConnectPassWord();
     void sendFiles(QStringList paths);
 
+    static void logHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 public slots:
     void saveSession(fastring sessionid);
     void handleConnectStatus(int result, QString msg);

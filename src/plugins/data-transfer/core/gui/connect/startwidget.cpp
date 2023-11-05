@@ -46,34 +46,11 @@ void StartWidget::initUI()
     font.setWeight(QFont::Thin);
     textLabel2->setFont(font);
 
-    QLabel *label = new QLabel(this);
-    font.setPointSize(9);
-    label->setFont(font);
-    label->setText("我已阅读并同意<a href=\"https://\" style=\"text-decoration:none;\">《UOS迁移工具》</a>");
-    connect(label, &QLabel::linkActivated, this, &StartWidget::nextPage);
-
-    checkBox = new QCheckBox(this);
-    QHBoxLayout *checkLayout = new QHBoxLayout();
-
-    checkLayout->addStretch();
-    checkLayout->addWidget(checkBox);
-    checkLayout->addWidget(label);
-    checkLayout->addSpacing(240);
-    checkLayout->setMargin(10);
-    checkLayout->setAlignment(Qt::AlignBottom);
-
     nextButton = new QToolButton(this);
     nextButton->setText("下一步");
     nextButton->setFixedSize(250, 36);
     nextButton->setStyleSheet("background-color: lightgray;");
-    nextButton->setEnabled(false);
     connect(nextButton, &QToolButton::clicked, this, &StartWidget::nextPage);
-    connect(checkBox, &QCheckBox::stateChanged, this, [this](int state) {
-        if (state == Qt::Checked)
-            nextButton->setEnabled(true);
-        else
-            nextButton->setEnabled(false);
-    });
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(nextButton, Qt::AlignCenter);
@@ -83,7 +60,6 @@ void StartWidget::initUI()
     mainLayout->addWidget(textLabel1);
     mainLayout->addWidget(textLabel2);
     mainLayout->addSpacing(60);
-    mainLayout->addLayout(checkLayout);
     mainLayout->addLayout(buttonLayout);
 }
 
@@ -91,8 +67,7 @@ void StartWidget::nextPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        int page = checkBox->checkState() == Qt::Checked ? PageName::choosewidget : PageName::licensewidget;
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + page);
+        stackedWidget->setCurrentIndex(PageName::choosewidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }

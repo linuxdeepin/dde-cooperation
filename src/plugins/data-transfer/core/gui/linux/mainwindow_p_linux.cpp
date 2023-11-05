@@ -10,7 +10,6 @@
 
 #include <gui/connect/choosewidget.h>
 #include <gui/connect/connectwidget.h>
-#include <gui/connect/licensewidget.h>
 #include <gui/connect/networkdisconnectionwidget.h>
 #include <gui/connect/promptwidget.h>
 #include <gui/connect/startwidget.h>
@@ -54,7 +53,6 @@ void MainWindowPrivate::initWidgets()
     QStackedWidget *stackedWidget = new QStackedWidget(q);
 
     StartWidget *startwidget = new StartWidget(q);
-    LicenseWidget *licensewidget = new LicenseWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
     NetworkDisconnectionWidget *networkdisconnectwidget = new NetworkDisconnectionWidget(q);
     UploadFileWidget *uploadwidget = new UploadFileWidget(q);
@@ -67,7 +65,6 @@ void MainWindowPrivate::initWidgets()
     ResultDisplayWidget *resultwidget = new ResultDisplayWidget(q);
 
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
-    stackedWidget->insertWidget(PageName::licensewidget, licensewidget);
     stackedWidget->insertWidget(PageName::choosewidget, choosewidget);
 
     stackedWidget->insertWidget(PageName::uploadwidget, uploadwidget);
@@ -83,7 +80,10 @@ void MainWindowPrivate::initWidgets()
 
     stackedWidget->setCurrentIndex(0);
 
-    connect(stackedWidget, &QStackedWidget::currentChanged, this, &MainWindowPrivate::handleCurrentChanged);
+    connect(stackedWidget, &QStackedWidget::currentChanged, this, [transferringwidget](int index) {
+        if (index == PageName::choosewidget)
+            transferringwidget->clear();
+    });
     connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [stackedWidget] {
         stackedWidget->setCurrentIndex(PageName::waitgwidget);
     });
@@ -118,9 +118,8 @@ void MainWindowPrivate::initWidgets()
 
     //Adapt Theme Colors
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this,
-            [startwidget, licensewidget, errorwidget, resultwidget, choosewidget, uploadwidget, networkdisconnectwidget, connectwidget, promptwidget, waitgwidget, transferringwidget, successtranswidget](DGuiApplicationHelper::ColorType themeType) {
+            [startwidget, errorwidget, resultwidget, choosewidget, uploadwidget, networkdisconnectwidget, connectwidget, promptwidget, waitgwidget, transferringwidget, successtranswidget](DGuiApplicationHelper::ColorType themeType) {
                 int theme = themeType == DGuiApplicationHelper::LightType ? 1 : 0;
-                licensewidget->themeChanged(theme);
                 errorwidget->themeChanged(theme);
                 resultwidget->themeChanged(theme);
                 startwidget->themeChanged(theme);
@@ -136,8 +135,4 @@ void MainWindowPrivate::initWidgets()
     emit DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::instance()->themeType());
 
     q->centralWidget()->layout()->addWidget(stackedWidget);
-}
-
-void MainWindowPrivate::handleCurrentChanged(int index)
-{
 }
