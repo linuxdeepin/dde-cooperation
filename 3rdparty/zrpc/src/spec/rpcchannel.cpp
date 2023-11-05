@@ -18,15 +18,10 @@
 #include "utils.h"
 
 namespace zrpc_ns {
+
+TcpClient::ptr m_client = nullptr;
 ZRpcChannel::ZRpcChannel(NetAddress::ptr addr)
     : m_addr(addr) {
-}
-
-ZRpcChannel::~ZRpcChannel()
-{
-    if (m_client) {
-        m_client->stop();
-    }
 }
 
 void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
