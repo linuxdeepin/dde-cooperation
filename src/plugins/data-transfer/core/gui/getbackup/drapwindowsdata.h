@@ -3,17 +3,17 @@
 
 #include <QSet>
 #include <QString>
-#include <windows.h>
-#pragma execution_chatacter_set("utf_8")
+#include <Windows.h>
 class QJsonObject;
 
 namespace BrowserName {
 inline constexpr char MicrosoftEdge[]{ "Microsoft Edge" };
 inline constexpr char GoogleChrome[]{ "Google Chrome" };
 inline constexpr char MozillaFirefox[]{ "Mozilla Firefox" };
-} // namespace BrowerName
+} // namespace BrowserName
 
-struct UosApp{
+struct UosApp
+{
     QString UosName;
     QString windowsName;
     QStringList feature;
@@ -37,8 +37,8 @@ public:
     QString getUserName();
     QString getIP();
 
-    void  getLinuxApplist(QList<UosApp>& list);
-    QMap<QString,QString> RecommendedInstallationAppList();
+    void getLinuxApplist(QList<UosApp> &list);
+    QMap<QString, QString> RecommendedInstallationAppList();
 
 private:
     DrapWindowsData();

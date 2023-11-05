@@ -19,14 +19,14 @@ public:
 private:
     void initUI();
     void initDiskListView();
-
+    void updateDevice(const QStorageInfo &device, const bool &isAdd);
 public slots:
     void nextPage();
     void backPage();
     void updateuserSelectFileSize(const QString &sizeStr);
     void updaeBackupFileSize();
     void getUpdateDeviceSingla();
-    void updateDevice(const QStorageInfo &device, const bool &isAdd);
+
 private:
     quint64 userSelectFileSize{ 0 };
 

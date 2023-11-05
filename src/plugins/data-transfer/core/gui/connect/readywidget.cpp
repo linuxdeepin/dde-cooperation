@@ -37,7 +37,7 @@ void ReadyWidget::initUI()
                              "font-size: 24px;"
                              "font-weight: 700;"
                              "font-style: normal;"
-                             "letter-spacing: 0px;text-align: left;");
+                             "text-align: left;");
     mainLabel->setAlignment(Qt::AlignTop | Qt::AlignCenter);
 
     QLabel *ipLabel = new QLabel("IP地址", this);
@@ -113,7 +113,6 @@ void ReadyWidget::initUI()
                               "font-weight: 500;"
                               "color: rgba(65,77,104,1);"
                               "font-style: normal;"
-                              "letter-spacing: 3px;"
                               "text-align: center;"
                               ";}");
     connect(backButton, &QToolButton::clicked, this, &ReadyWidget::backPage);
@@ -139,8 +138,7 @@ void ReadyWidget::initUI()
                               "font-size: 14px;"
                               "font-weight: 500;"
                               "color: rgba(255,255,255,1);"
-                              "font-style: normal;"
-                              "letter-spacing: 3px;"
+                              "font-style: normal;"  
                               "text-align: center;"
                               "}");
     connect(nextButton, &QToolButton::clicked, this, &ReadyWidget::tryConnect);

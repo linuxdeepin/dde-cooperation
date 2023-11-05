@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <math.h>
+#include <QMutex>
 QString fromByteToQstring(quint64 bytes)
 {
     float tempresult = static_cast<float>(bytes);
@@ -110,7 +111,7 @@ CalculateFileSizeThreadPool::CalculateFileSizeThreadPool()
 {
     threadPool = new QThreadPool();
     fileMap = new QMap<QString, FileInfo>();
-
+    threadPool->setMaxThreadCount(4);
     // connect main thread exit signal
     QObject::connect(qApp, &QCoreApplication::aboutToQuit, this,
                      &CalculateFileSizeThreadPool::exitPool, Qt::DirectConnection);
@@ -118,7 +119,6 @@ CalculateFileSizeThreadPool::CalculateFileSizeThreadPool()
 
 void CalculateFileSizeThreadPool::work(const QList<QString> &list)
 {
-    threadPool->setMaxThreadCount(4);
     for (const QString &path : list) {
         QFileInfo fileInfo(path);
         if (fileInfo.isFile()) {
@@ -151,11 +151,17 @@ QMap<QString, FileInfo> *CalculateFileSizeThreadPool::getFileMap()
 
 void CalculateFileSizeThreadPool::sendFileSizeSlots(quint64 fileSize, const QString &path)
 {
+    if (!fileMap->contains(path))
+        return;
 
     (*fileMap)[path].size = fileSize;
     (*fileMap)[path].isCalculate = true;
-
     emit sendFileSizeSignal(fileSize, path);
+}
+
+void CalculateFileSizeThreadPool::addFileSlots(const QList<QString> &list)
+{
+    work(list);
 }
 
 void CalculateFileSizeThreadPool::exitPool()
@@ -168,4 +174,16 @@ void CalculateFileSizeThreadPool::exitPool()
     qInfo() << "calculate file size exit.";
     delete threadPool;
     delete fileMap;
+}
+
+void CalculateFileSizeThreadPool::delDevice(const QModelIndex &index)
+{
+    QMap<QString, FileInfo>::iterator it = fileMap->begin();
+    while (it != fileMap->end()) {
+        if (it.value().siderIndex == index) {
+            it = fileMap->erase(it);
+        } else {
+            ++it;
+        }
+    }
 }

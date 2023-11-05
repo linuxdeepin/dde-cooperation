@@ -43,7 +43,7 @@ void UserSelectFileSize::addPendingFiles(const QString &path)
 void UserSelectFileSize::delPendingFiles(const QString &path)
 {
     if (pendingFiles.contains(path))
-        pendingFiles.removeAll(path);
+        pendingFiles.removeOne(path);
 }
 
 void UserSelectFileSize::addSelectFiles(const QString &path)
@@ -55,7 +55,7 @@ void UserSelectFileSize::addSelectFiles(const QString &path)
 void UserSelectFileSize::delSelectFiles(const QString &path)
 {
     if (selectFiles.contains(path))
-        selectFiles.removeAll(path);
+        selectFiles.removeOne(path);
 }
 
 void UserSelectFileSize::addUserSelectFileSize(quint64 filesize)
@@ -69,7 +69,6 @@ void UserSelectFileSize::delUserSelectFileSize(quint64 filesize)
     userSelectFileSize -= filesize;
     sendFileSize();
 }
-
 
 quint64 UserSelectFileSize::getAllSelectSize()
 {
@@ -85,7 +84,24 @@ void UserSelectFileSize::updatependingFileSize(const quint64 &size, const QStrin
 {
     if (pendingFiles.contains(path)) {
         userSelectFileSize += size;
-        pendingFiles.removeAll(path);
+        pendingFiles.removeOne(path);
         sendFileSize();
     }
+}
+
+void UserSelectFileSize::delDevice(const QModelIndex &index)
+{
+    QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
+    QStringList::iterator it = selectFiles.begin();
+    while (it != selectFiles.end()) {
+        if (filemap->value(*it).siderIndex == index) {
+            if (filemap->value(*it).isCalculate) {
+                userSelectFileSize -= filemap->value(*it).size;
+            }
+            it = selectFiles.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    sendFileSize();
 }

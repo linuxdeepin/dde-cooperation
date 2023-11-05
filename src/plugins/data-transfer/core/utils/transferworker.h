@@ -1,4 +1,4 @@
-#ifndef TRANSFERWORKER_H
+﻿#ifndef TRANSFERWORKER_H
 #define TRANSFERWORKER_H
 
 #include <QObject>

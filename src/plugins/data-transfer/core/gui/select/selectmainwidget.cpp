@@ -113,7 +113,6 @@ void SelectMainWidget::initUi()
                               "font-weight: 500;"
                               "color: rgba(65,77,104,1);"
                               "font-style: normal;"
-                              "letter-spacing: 3px;"
                               "text-align: center;"
                               ";}");
     QObject::connect(backButton, &QToolButton::clicked, this, &SelectMainWidget::backPage);
@@ -135,7 +134,6 @@ void SelectMainWidget::initUi()
                               "font-weight: 500;"
                               "color: rgba(255,255,255,1);"
                               "font-style: normal;"
-                              "letter-spacing: 3px;"
                               "text-align: center;"
                               "}");
 
@@ -347,7 +345,6 @@ void SelectItem::initEditFrame()
                              "font-size: 14px;"
                              "font-weight: 500;"
                              "font-style: normal;"
-                             "letter-spacing: 5px;"
                              "text-align: center;");
     textLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 

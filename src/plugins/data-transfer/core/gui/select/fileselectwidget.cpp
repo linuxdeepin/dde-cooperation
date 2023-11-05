@@ -4,6 +4,7 @@
 #include "calculatefilesize.h"
 #include "userselectfilesize.h"
 #include "../type_defines.h"
+#include "../win/devicelistener.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -24,6 +25,8 @@
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
 #include <gui/mainwindow_p.h>
+
+#define CPATH QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).rootPath();
 
 #pragma execution_character_set("utf-8")
 
@@ -50,8 +53,10 @@ static inline constexpr char LocalText[]{ "请选择要备份的文件" };
 FileSelectWidget::FileSelectWidget(SidebarWidget *siderbarWidget, QWidget *parent)
     : sidebar(siderbarWidget), QFrame(parent)
 {
-    sidebarSizeList = sidebar->getSidebarSizeList();
     initUI();
+
+    QObject::connect(sidebar, &SidebarWidget::updateFileview, this,
+                     &FileSelectWidget::updateFileViewData);
 }
 
 FileSelectWidget::~FileSelectWidget() { }
@@ -105,7 +110,6 @@ void FileSelectWidget::initUI()
                                    "font-weight: 500;"
                                    "color: rgba(255,255,255,1);"
                                    "font-style: normal;"
-                                   "letter-spacing: 3px;"
                                    "text-align: center;"
                                    "}");
     QObject::connect(determineButton, &QToolButton::clicked, this, &FileSelectWidget::nextPage);
@@ -123,7 +127,6 @@ void FileSelectWidget::initUI()
                                 "font-weight: 500;"
                                 "color: rgba(65,77,104,1);"
                                 "font-style: normal;"
-                                "letter-spacing: 3px;"
                                 "text-align: center;"
                                 ";}");
     QObject::connect(cancelButton, &QToolButton::clicked, this, &FileSelectWidget::backPage);
@@ -149,15 +152,8 @@ void FileSelectWidget::initUI()
                      &FileSelectWidget::selectOrDelAllItem);
 }
 
-void FileSelectWidget::startCalcluateFileSize()
+void FileSelectWidget::startCalcluateFileSize(QList<QString> fileList)
 {
-    QList<QString> fileList;
-    QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
-    for (auto iterator = filemap->begin(); iterator != filemap->end(); ++iterator) {
-        if (!iterator.value().isCalculate) {
-            fileList.push_back(iterator.key());
-        }
-    }
     CalculateFileSizeThreadPool::instance()->work(fileList);
 
     // update fileview file size
@@ -180,16 +176,15 @@ void FileSelectWidget::initFileView()
     for (int row = 0; row < siderbarModel->rowCount(); ++row) {
         QModelIndex siderItemIndex = siderbarModel->index(row, 0);
         QString path = siderbarModel->data(siderItemIndex, Qt::UserRole).toString();
-        (*sidebarSizeList)[siderItemIndex] = 0;
-        SelectListView *view = initFileView(path, siderItemIndex);
+        SelectListView *view = addFileViewData(path, siderItemIndex);
         sidebarFileViewList[siderItemIndex] = view;
         stackedWidget->insertWidget(row, view);
     }
+
     // init sidebar user directory size
     sidebar->initSiderDataAndUi();
 
     stackedWidget->setCurrentIndex(0);
-    startCalcluateFileSize();
 }
 
 void FileSelectWidget::changeFileView(const QModelIndex &index)
@@ -206,9 +201,30 @@ void FileSelectWidget::selectOrDelAllItem()
 void FileSelectWidget::updateFileViewSize(quint64 fileSize, const QString &path)
 {
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
-    if (filemap->contains(path)) {
-        QStandardItem *item = (*filemap)[path].fileItem;
-        item->setData(fromByteToQstring(fileSize), Qt::ToolTipRole);
+    QStandardItem *item = (*filemap)[path].fileItem;
+    item->setData(fromByteToQstring(fileSize), Qt::ToolTipRole);
+}
+
+void FileSelectWidget::updateFileViewData(const QModelIndex &siderIndex, const bool &isAdd)
+{
+    // del fileview
+    if (!isAdd) {
+        SelectListView *view = qobject_cast<SelectListView *>(sidebarFileViewList[siderIndex]);
+        stackedWidget->setCurrentIndex(0);
+        stackedWidget->removeWidget(view);
+        sidebarFileViewList.remove(siderIndex);
+        delete view;
+        qInfo() << "del device";
+
+    } else {
+        // add fileview
+        QStandardItemModel *siderbarModel = qobject_cast<QStandardItemModel *>(sidebar->model());
+        QString path = siderbarModel->data(siderIndex, Qt::UserRole).toString();
+        qInfo() << "updateFileViewData add ...." << siderIndex;
+        SelectListView *view = addFileViewData(path, siderIndex);
+        sidebarFileViewList[siderIndex] = view;
+        stackedWidget->addWidget(view);
+        qInfo() << "add device";
     }
 }
 
@@ -295,8 +311,8 @@ void FileSelectWidget::delOptions()
     emit isOk(SelectItemName::FILES);
 }
 
-SelectListView *FileSelectWidget::initFileView(const QString &path,
-                                               const QModelIndex &siderbarIndex)
+SelectListView *FileSelectWidget::addFileViewData(const QString &path,
+                                                  const QModelIndex &siderbarIndex)
 {
     QDir directory(path);
     // del . and ..
@@ -313,6 +329,8 @@ SelectListView *FileSelectWidget::initFileView(const QString &path,
     fileView->setItemDelegate(delegate);
     fileView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     fileView->setSelectionMode(QAbstractItemView::NoSelection);
+
+    QList<QString> needCalculateFileList;
     for (int i = 0; i < fileinfos.count(); i++) {
         if (!fileinfos[i].isDir())
             continue;
@@ -334,11 +352,11 @@ SelectListView *FileSelectWidget::initFileView(const QString &path,
         fileInfo.fileItem = item;
         fileInfo.siderIndex = siderbarIndex;
         (*filemap)[fileinfos[i].filePath()] = fileInfo;
+
+        needCalculateFileList.push_back(fileinfos[i].filePath());
     }
     for (int i = 0; i < fileinfos.count(); i++) {
-        if (!fileinfos[i].isFile())
-            continue;
-        if (fileinfos[i].isSymLink())
+        if (!fileinfos[i].isFile() || fileinfos[i].isSymLink())
             continue;
         QStandardItem *item = new QStandardItem();
         item->setData(fileinfos[i].fileName(), Qt::DisplayRole);
@@ -358,6 +376,9 @@ SelectListView *FileSelectWidget::initFileView(const QString &path,
         fileInfo.siderIndex = siderbarIndex;
         (*filemap)[fileinfos[i].filePath()] = fileInfo;
     }
+
+    // calculate filelist
+    startCalcluateFileSize(needCalculateFileList);
 
     QObject::connect(model, &QStandardItemModel::itemChanged, this,
                      &FileSelectWidget::updateFileSelectList);
@@ -383,12 +404,16 @@ SidebarWidget::SidebarWidget(QWidget *parent) : QListView(parent)
     QObject::connect(CalculateFileSizeThreadPool::instance(),
                      &CalculateFileSizeThreadPool::sendFileSizeSignal, this,
                      &SidebarWidget::updateSiderbarFileSize);
+
+    QObject::connect(DeviceListener::instance(), &DeviceListener::updateDevice, this,
+                     &SidebarWidget::getUpdateDeviceSingla);
 }
 
 SidebarWidget::~SidebarWidget() { }
 
 void SidebarWidget::updateUserSelectFileSizeUi()
 {
+    allSizeStr = fromByteToQstring(allSize);
     QString text = QString("%1/%2").arg(selectSizeStr).arg(allSizeStr);
     userSelectFileSize->setText(text);
 }
@@ -414,23 +439,138 @@ void SidebarWidget::updateSelectSizeUi(const QString &sizeStr)
 {
     selectSizeStr = sizeStr;
     updateUserSelectFileSizeUi();
-
     // update process
     updatePorcessLabel();
 }
 
-void SidebarWidget::updateAllSizeUi()
+void SidebarWidget::updateAllSizeUi(const quint64 &size, const bool &isAdd)
 {
-    allSizeStr = fromByteToQstring(allSize);
+    if (isAdd) {
+        allSize += size;
+    } else {
+        allSize -= size;
+    }
     updateUserSelectFileSizeUi();
 }
 
 void SidebarWidget::updateSiderbarFileSize(quint64 fileSize, const QString &path)
 {
+    QString rootPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString cPath = QDir(rootPath).rootPath();
+
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
-    if (filemap->contains(path)) {
-        QModelIndex index = (*filemap)[path].siderIndex;
-        updateSiderDataAndUi(index, fileSize);
+
+    if (!path.contains(cPath)) {
+        //    qInfo() << path << "is not c" << QFileInfo(path).absolutePath() << " " << cPath;
+        return;
+    }
+
+    QModelIndex index = (*filemap)[path].siderIndex;
+    updateSiderDataAndUi(index, fileSize);
+
+    // add allsize
+    updateAllSizeUi(fileSize, true);
+}
+
+void SidebarWidget::getUpdateDeviceSingla()
+{
+    QString rootPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString cPath = QDir(rootPath).rootPath();
+
+    QList<QStorageInfo> devices = QStorageInfo::mountedVolumes();
+
+    for (const QStorageInfo &device : devices) {
+        if (device.isReadOnly() || !device.isReady()) {
+            devices.removeOne(device);
+            continue;
+        }
+        QString rootPath = device.rootPath();
+
+        // delete C://
+        if (rootPath.contains(cPath)) {
+            devices.removeOne(device);
+            continue;
+        }
+
+        if (deviceList.contains(device)) {
+            deviceList.removeOne(device);
+            continue;
+        }
+        // add device
+        updateDevice(device, true);
+    }
+
+    for (const QStorageInfo &device : deviceList) {
+        // del device
+        updateDevice(device, false);
+    }
+    deviceList = devices;
+}
+
+void SidebarWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
+{
+    QString rootPath = device.rootPath();
+
+    if (isAdd) {
+        // add ui
+        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
+        QStandardItem *item = new QStandardItem();
+        item->setCheckable(true);
+        item->setCheckState(Qt::Unchecked);
+        QString displayName = (device.name().isEmpty() ? "本地磁盘" : device.name()) + "("
+                + rootPath.at(0) + ":)";
+        item->setData(displayName, Qt::DisplayRole);
+        item->setData(rootPath, Qt::UserRole);
+        quint64 size = device.bytesTotal() - device.bytesAvailable();
+        item->setData(fromByteToQstring(size), Qt::ToolTipRole);
+        model->appendRow(item);
+        qInfo() << " model->appendRow:" << rootPath << "model.size:" << model->rowCount();
+
+        // update fileview
+        int row = model->rowCount() - 1;
+        QModelIndex index = model->index(row, 0);
+
+        // add device in sidebar
+        sidebarSizeList[index] = size;
+
+        updateAllSizeUi(size, true);
+        // update ui
+        qInfo() << "updateDevice add updatePorcessLabel";
+        updatePorcessLabel();
+
+        emit updateFileview(index, true);
+    } else {
+        // del ui
+        QString rootPath = device.rootPath();
+        qInfo() << "del rootPath" << rootPath;
+        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
+        for (int row = 0; row < model->rowCount(); ++row) {
+            QModelIndex itemIndex = model->index(row, 0);
+
+            if (rootPath == model->data(itemIndex, Qt::UserRole)) {
+
+                quint64 size = device.bytesTotal() - device.bytesAvailable();
+                // update fileview
+                QModelIndex index = model->index(row, 0);
+
+                UserSelectFileSize::instance()->delDevice(index);
+
+                // del device in sidebar
+                sidebarSizeList.remove(index);
+
+                updateAllSizeUi(size, false);
+                // update ui
+                updatePorcessLabel();
+
+                qInfo() << " model->removeRow:" << rootPath << "model.size:" << model->rowCount();
+                model->removeRow(itemIndex.row());
+
+                emit updateFileview(index, false);
+
+                // del file info from filemap
+                CalculateFileSizeThreadPool::instance()->delDevice(index);
+            }
+        }
     }
 }
 
@@ -462,28 +602,8 @@ void SidebarWidget::initData()
         item->setData(iterator.value(), Qt::UserRole);
         model->appendRow(item);
     }
-    // Storage dir
-    QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
 
-    for (const QStorageInfo &drive : drives) {
-        QStandardItem *item = new QStandardItem();
-        item->setCheckable(true);
-        item->setCheckState(Qt::Unchecked);
-        QString rootPath = drive.rootPath();
-        // delete C://
-        if (rootPath.contains("C:")) {
-            continue;
-        }
-        QString displayName =
-                (drive.name().isEmpty() ? "本地磁盘" : drive.name()) + "(" + rootPath.at(0) + ":)";
-
-        item->setData(displayName, Qt::DisplayRole);
-        item->setData(rootPath, Qt::UserRole);
-        item->setData(fromByteToQstring(drive.bytesTotal() - drive.bytesAvailable()),
-                      Qt::ToolTipRole);
-        model->appendRow(item);
-    }
-
+    qInfo() << "sider model init size:" << model->rowCount();
     QObject::connect(this, &QListView::clicked, [this, model](const QModelIndex &index) {
         for (int row = 0; row < model->rowCount(); ++row) {
             QModelIndex itemIndex = model->index(row, 0);
@@ -503,7 +623,6 @@ void SidebarWidget::initUi()
                                       "font-size: 12px;"
                                       "font-weight: 400;"
                                       "font-style: normal;"
-                                      "letter-spacing: 0px;"
                                       "text-align: left;}");
     userSelectFileSize->setText("0/0B");
     userSelectFileSize->setGeometry(70, 460, 100, 17);
@@ -514,25 +633,30 @@ void SidebarWidget::initUi()
 
 void SidebarWidget::initSiderbarSize()
 {
+    QString rootPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString cPath = QDir(rootPath).rootPath();
+
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
     for (auto iterator = filemap->begin(); iterator != filemap->end(); ++iterator) {
         if (iterator.value().isCalculate) {
+            if (!QDir(iterator.key()).rootPath().contains(cPath))
+                continue;
             sidebarSizeList[iterator.value().siderIndex] += iterator.value().size;
-            // add allsize
-            allSize += iterator.value().size;
         }
     }
 }
 
 void SidebarWidget::initSiderbarUi()
 {
+    quint64 tempSize = 0;
     QStandardItemModel *siderbarModel = qobject_cast<QStandardItemModel *>(this->model());
     for (auto iterator = sidebarSizeList.begin(); iterator != sidebarSizeList.end(); ++iterator) {
         siderbarModel->setData(iterator.key(), fromByteToQstring(iterator.value()),
                                Qt::ToolTipRole);
+        tempSize += iterator.value();
     }
     // update allsize ui
-    updateAllSizeUi();
+    updateAllSizeUi(tempSize, true);
 }
 
 void SidebarWidget::updateSiderbarUi(QModelIndex index)
@@ -540,24 +664,19 @@ void SidebarWidget::updateSiderbarUi(QModelIndex index)
     QString sizeStr = fromByteToQstring(sidebarSizeList[index]);
     QStandardItemModel *siderbarModel = qobject_cast<QStandardItemModel *>(this->model());
     siderbarModel->setData(index, sizeStr, Qt::ToolTipRole);
-
-    // update allsize ui
-    updateAllSizeUi();
 }
 
 void SidebarWidget::updatePorcessLabel()
 {
     quint64 selectSize = fromQstringToByte(selectSizeStr);
-    quint64 allSize = fromQstringToByte(allSizeStr);
     double percentage = (static_cast<double>(selectSize) / allSize) * 100.0;
     int percentageAsInt = qBound(0, static_cast<int>(percentage), 100);
-
+    //    qInfo() << "setProgress:" << percentageAsInt << "selectSize" << selectSize
+    //            << "allSize:" << allSize;
     processLabel->setProgress(percentageAsInt);
 }
 
 void SidebarWidget::updateSiderbarSize(QModelIndex index, quint64 size)
 {
     sidebarSizeList[index] += size;
-    // add allsize
-    allSize += size;
 }

@@ -8,15 +8,15 @@
 
 class QListView;
 class QThreadPool;
-class QModelIndex;
 class QTimer;
 class QStandardItem;
+class QMutex;
 struct FileInfo
 {
     quint64 size;
     bool isSelect;
     bool isCalculate;
-    QStandardItem* fileItem;
+    QStandardItem *fileItem;
     QModelIndex siderIndex;
 };
 
@@ -30,12 +30,13 @@ public:
     ~CalculateFileSizeTask() override;
     void run() override;
     void abortTask();
+
 private:
     qlonglong calculate(const QString &path);
     QString filePath;
     qlonglong fileSize{ 0 };
-    QObject * calculatePool {nullptr};
-    bool abort {false};
+    QObject *calculatePool{ nullptr };
+    bool abort{ false };
 };
 
 class CalculateFileSizeThreadPool : public QObject
@@ -48,21 +49,24 @@ public:
 
     void addFileMap(const QString &path, const FileInfo &fileinfo);
     void delFileMap(const QString &path);
-
+    void delDevice(const QModelIndex &index);
     QMap<QString, FileInfo> *getFileMap();
+
 public slots:
-    void sendFileSizeSlots(quint64 fileSize,const QString &path);
+    void sendFileSizeSlots(quint64 fileSize, const QString &path);
+    void addFileSlots(const QList<QString> &list);
     void exitPool();
+
 signals:
-    void sendFileSizeSignal(quint64 fileSize,const QString &path);
+    void sendFileSizeSignal(quint64 fileSize, const QString &path);
 
 private:
     CalculateFileSizeThreadPool();
     QThreadPool *threadPool;
-    QList<CalculateFileSizeTask*> workList;
+    QList<CalculateFileSizeTask *> workList;
+
 public:
     QMap<QString, FileInfo> *fileMap;
 };
-
 
 #endif // CALCULATEFILESIZE_H

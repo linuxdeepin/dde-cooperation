@@ -60,7 +60,6 @@ void ItemTitlebar::initUI()
                   "font-size: 14px;"
                   "font-weight: 500;"
                   "font-style: normal;"
-                  "letter-spacing: 0px;"
                   "text-align: left;}"
                   ".myqframe{"
                   "border: none;"

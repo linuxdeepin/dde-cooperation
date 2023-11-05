@@ -42,7 +42,6 @@ void ZipFileProcessResultWidget::initUI()
                               "font-weight: 500;"
                               "color: rgba(65,77,104,1);"
                               "font-style: normal;"
-                              "letter-spacing: 3px;"
                               "text-align: center;"
                               "}");
 
@@ -60,7 +59,6 @@ void ZipFileProcessResultWidget::initUI()
                               "font-weight: 500;"
                               "color: rgba(65,77,104,1);"
                               "font-style: normal;"
-                              "letter-spacing: 3px;"
                               "text-align: center;"
                               "}");
     QObject::connect(backButton, &QToolButton::clicked, this,
@@ -125,7 +123,6 @@ void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int pr
                               "font-weight: 500;"
                               "color: rgba(65,77,104,1);"
                               "font-style: normal;"
-                              "letter-spacing: 3px;"
                               "text-align: center;"
                               "}");
 }
