@@ -348,10 +348,10 @@ bool ServiceManager::handleRemoteRequestJob(fastring json)
 
 bool ServiceManager::handleFSData(const co::Json &info, fastring buf)
 {
-    FSDataBlock datablock;
-   datablock.from_json(info);
-   datablock.data = buf;
-   int32 jobId = datablock.job_id;
+   QSharedPointer<FSDataBlock> datablock(new FSDataBlock);
+   datablock->from_json(info);
+   datablock->data = buf;
+   int32 jobId = datablock->job_id;
 
     TransferJob *job = _transjob_recvs.value(jobId);
     if (nullptr != job) {
@@ -817,16 +817,16 @@ void ServiceManager::handleBackApplyTransFiles(const co::Json &param)
     auto _applyjob = _applyjobs.take(info.session.c_str());
     info.selfIp = Util::getFirstIp();
     info.selfPort = UNI_RPC_PORT_BASE;
-
-    if (info.type != ApplyTransType::APPLY_TRANS_APPLY) {
-        ELOG << "handleBackApplyTransFiles ERROR: no job " << param;
-        return;
+    if (_applyjob.isNull()){
+        if (info.type != ApplyTransType::APPLY_TRANS_APPLY) {
+            ELOG << "handleBackApplyTransFiles ERROR: no job " << param;
+            return;
+        }
+        // 自己申请
+        _applyjob.reset(new CommunicationJob);
+        _applyjob->initRpc(info.session, _connected_target.c_str(), UNI_RPC_PORT_BASE);
+        _applyjob->initJob(info.session, info.tarSession);
     }
-    // 自己申请
-    _applyjob.reset(new CommunicationJob);
-    _applyjob->initRpc(info.session, _connected_target.c_str(), UNI_RPC_PORT_BASE);
-    _applyjob->initJob(info.session, info.tarSession);
-
     UNIGO([_applyjob, info]() {
         _applyjob->sendMsg(COMM_APPLY_TRANS, info.as_json().str().c_str());
     });
