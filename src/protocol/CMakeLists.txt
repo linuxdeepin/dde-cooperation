@@ -7,7 +7,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
 if(WIN32)
     # undef min for WIN32 build, but not effect
-    remove_definitions(-D min)
+    # FIXME：定义之后，minGW 编译报找不到_WIN32_WINNT文件，注释掉
+#    remove_definitions(-D min)
 endif()
 
 # do not find, check system installed protobuf package

@@ -30,9 +30,9 @@ public:
     QVector<QPair<QString, QString>> getBrowserBookmarkPaths();
     QSet<QPair<QString, QString>> getBrowserBookmarkList();
     QSet<QString> getBrowserList();
-    void getBrowserBookmarkHtml(QString &htmlPath = QString());
+    void getBrowserBookmarkHtml(QString &htmlPath);
     void getBrowserBookmarkInfo(const QSet<QString> &Browsername);
-    QString getBrowserBookmarkJSON(QString &jsonPath = QString());
+    QString getBrowserBookmarkJSON(QString &jsonPath);
 
     QString getUserName();
     QString getIP();

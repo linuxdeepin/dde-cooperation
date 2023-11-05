@@ -96,9 +96,9 @@ bool PluginManagerPrivate::readPlugins()
 
 #ifdef QT_DEBUG
     qDebug() << "Start traversing the meta information of all plugins: ";
-    for (auto read : readQueue) {
-        qDebug() << read;
-    }
+   for (auto read : readQueue) {
+       qDebug() << read.data();
+   }
     qDebug() << "End traversal of meta information for all plugins!";
 #endif
 

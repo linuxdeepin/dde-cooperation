@@ -9,6 +9,7 @@
 #include <QThread>
 #include <QDebug>
 #include <QCoreApplication>
+#include <math.h>
 QString fromByteToQstring(quint64 bytes)
 {
     float tempresult = static_cast<float>(bytes);

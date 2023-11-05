@@ -29,6 +29,9 @@ static bool loadPlugins()
     pluginsDirs << QDir::currentPath() + "/plugins/daemon";
     pluginsDirs << QDir::currentPath() + "/plugins/daemon/core";
 #endif
+#if defined(WIN32)
+    pluginsDirs << QDir::currentPath();
+#endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
     // TODO(zhangs): use config

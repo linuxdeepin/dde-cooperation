@@ -27,10 +27,19 @@ add_subdirectory(zrpc)
 
 
 if (CMAKE_SYSTEM MATCHES "Windows")
-    # 从QtZlib获取到的zlib头文件
-    file(GLOB ZLIB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/zlib-header/*)
-    # 复制所有文件到目标目录
-    file(COPY ${ZLIB_HEADERS}
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/quazip/quazip/)
+    if (MINGW)
+        # minGW 编译运行依赖的openssl和mingw库
+        file(GLOB RUN_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/mingw-runlibs/*)
+        # 复制所有文件到目标目录
+        file(COPY ${RUN_DEPENDS}
+          DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
+        message("   >>> copy mingw runtime depends files:  ${RUN_DEPENDS}")
+    else()
+        # 从QtZlib获取到的zlib头文件
+        file(GLOB ZLIB_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/zlib-header/*)
+        # 复制所有文件到目标目录
+        file(COPY ${ZLIB_HEADERS}
+          DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/quazip/quazip/)
+    endif()
     add_subdirectory(quazip)
 endif()

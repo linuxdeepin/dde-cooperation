@@ -17,6 +17,11 @@ if (NOT WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type")
 endif()
 
+if(MINGW)
+    # windows7 minGW support
+    add_definitions(-D _WIN32_WINNT=0x0601)
+endif()
+
 #安全加固
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all")
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
@@ -69,7 +74,16 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 # The protoc tool not for all platforms, so use the generate out sources.
 set(USE_PROTOBUF_FILES ON)
 
-if (NOT WIN32)
+if (WIN32)
+    set(DEPLOY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output/${CMAKE_BUILD_TYPE}")
+    message("   >>> DEPLOY_OUTPUT_DIRECTORY  ${DEPLOY_OUTPUT_DIRECTORY}")
+
+    # windows runtime output defined
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
+#    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
+#    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
+
+else()
     # Disable the coroutine in coost.
     add_definitions(-D DISABLE_GO)
 endif()

@@ -11,7 +11,7 @@
 #include "co/log.h"
 #include "common/constant.h"
 
-DEF_int32(max_idle, 3000, "max_idle");
+//DEF_int32(max_idle, 3000, "max_idle");
 DEF_string(udp_ip, "0.0.0.0", "udp_ip");
 DEF_int32(udp_port, 30001, "udp_port");
 DEF_string(mcast_ip, "239.255.0.1", "mcast_ip");
@@ -166,7 +166,7 @@ void Discoverer::handle_message(const fastring& message, const fastring& sender_
 
 bool Discoverer::remove_idle_services()
 {
-    auto dead_line = _timer.ms() - FLG_max_idle;
+    auto dead_line = _timer.ms() - 3000;//FLG_max_idle;
     bool removed = false;
 
     for (services::const_iterator i = _discovered_services.begin(); i != _discovered_services.end();)

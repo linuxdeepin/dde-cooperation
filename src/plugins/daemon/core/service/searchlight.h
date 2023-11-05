@@ -12,7 +12,13 @@
 
 namespace searchlight {
 
-class __coapi Discoverer {
+#ifdef _WIN32
+  #define __disapi __declspec(dllexport)
+#else
+  #define __disapi __attribute__((visibility("default")))
+#endif
+
+class __disapi Discoverer {
 
 public:
     /*!
@@ -81,7 +87,7 @@ private:
 };
 
 
-class __coapi Announcer {
+class __disapi Announcer {
 public:
     Announcer(const fastring& service_name, // the name of the announced service
               const uint16_t service_port, // the port where the service listens on

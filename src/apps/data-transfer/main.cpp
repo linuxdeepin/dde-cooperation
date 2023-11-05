@@ -36,6 +36,9 @@ static bool loadPlugins()
     pluginsDirs << QDir::currentPath() + "/plugins/data-transfer";
     pluginsDirs << QDir::currentPath() + "/plugins/data-transfer/core";
 #endif
+#if defined(WIN32)
+    pluginsDirs << QDir::currentPath();
+#endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
     // TODO(zhangs): use config
