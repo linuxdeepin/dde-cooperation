@@ -26,9 +26,10 @@ CommunicationJob::~CommunicationJob()
 
 void CommunicationJob::initRpc(fastring appname, fastring target, uint16 port)
 {
+    _targetIP = target;
+    _port = port;
     if (nullptr == _rpcBinder) {
         _rpcBinder = new RemoteServiceBinder(this);
-        _rpcBinder->createExecutor(appname.c_str(), target.c_str(), port);
     }
 }
 
@@ -51,6 +52,7 @@ bool CommunicationJob::sendMsg(CommunicationType type, const QString &info)
         return false;
     }
 
+    _rpcBinder->createExecutor(_app_name.c_str(), _targetIP.c_str(), _port);
     _rpcBinder->doSendApplyTransFiles(_app_name.c_str(), info);
 
     return true;

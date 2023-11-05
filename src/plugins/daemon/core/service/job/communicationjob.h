@@ -26,6 +26,8 @@ public:
     bool sendMsg(CommunicationType type, const QString &info);
 private:
     bool _inited = false;
+    uint16 _port = 0;
+    fastring _targetIP;
     fastring _app_name; // 前端应用名
     fastring _tar_app_name; // 发送到目标的应用名称
 

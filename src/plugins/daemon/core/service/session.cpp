@@ -14,6 +14,7 @@ Session::Session(QString name, QString session, int port, QObject *parent)
 {
     _jobs.clear();
 
+    coClient.reset( new rpc::Client("127.0.0.1", _cb_port, false));
     _pingOK = false;
     _initPing = false;
 }
