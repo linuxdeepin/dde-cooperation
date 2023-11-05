@@ -161,7 +161,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     if (!zip.open(QuaZip::mdCreate)) {
         qCritical("Error creating the ZIP file.");
         // backup file false
-        emit backupFileProcessSingal(QString("创建压缩文件失败,尝试更换文件名称！"), -1, -1);
+        emit backupFileProcessSingal(QString("创建压缩文件失败,检查文件是否已经被打开！"), -1, -1);
         return false;
     }
 
