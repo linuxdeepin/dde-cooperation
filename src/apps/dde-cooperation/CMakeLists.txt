@@ -56,4 +56,5 @@ endif()
 install(TARGETS ${PROJ_NAME} DESTINATION bin)
 
 # translation
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/translations/dde-cooperaion DESTINATION share/${PROJECT_NAME} FILES_MATCHING PATTERN "*.qm")
+FILE(GLOB QM_FILES ${CMAKE_SOURCE_DIR}/translations/dde-cooperation/*.qm)
+install(FILES ${QM_FILES} DESTINATION share/${PROJ_NAME}/translations)
