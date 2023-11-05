@@ -23,6 +23,7 @@
 
 #define MAXNAME 256
 
+#pragma execution_chatacter_set("utf_8")
 namespace Registry {
 inline constexpr char BrowerRegistryPath[]{ "SOFTWARE\\Clients\\StartMenuInternet" };
 inline constexpr char ApplianceRegistryPath1[]{
@@ -473,8 +474,7 @@ void DrapWindowsData::getDesktopWallpaperPathAbsolutePathInfo()
     QPixmap wallpaperPixmap(wallpaperFilePath);
     if (!wallpaperPixmap.isNull()) {
         QImage wallpaperImage = wallpaperPixmap.toImage();
-        QString wallpaperPathStr =
-                QCoreApplication::applicationDirPath() + "/ConvertedWallpaper.png";
+        QString wallpaperPathStr = QDir::tempPath() + "/ConvertedWallpaper.png";
         if (wallpaperImage.save(wallpaperPathStr, "PNG")) {
             qDebug() << "TranscodedWallpaper converted and saved as PNG to: " << wallpaperPathStr;
             desktopWallpaperPath = wallpaperPathStr;
@@ -577,7 +577,7 @@ void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &t
                              });
     if (find == browserBookmarkList.end()) {
         browserBookmarkList.insert(titleAndUrl);
-       // qDebug() << titleAndUrl.first << ": " << titleAndUrl.second;
+        // qDebug() << titleAndUrl.first << ": " << titleAndUrl.second;
     }
 }
 

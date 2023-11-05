@@ -25,13 +25,16 @@ public:
     void clearAllFileSelect();
     quint64 getAllSelectSize();
     QStringList getSelectFilesList();
+    void delDevice(const QModelIndex &index);
 signals:
     void updateUserFileSelectSize(const QString &size);
 public slots:
-    void updatependingFileSize(const quint64 &size,const QString &path);
+    void updatependingFileSize(const quint64 &size, const QString &path);
+
 private:
     UserSelectFileSize();
     void sendFileSize();
+
 private:
     QStringList pendingFiles;
 

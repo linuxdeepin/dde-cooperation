@@ -65,7 +65,6 @@ void ConfigSelectWidget::initUI()
                                    "font-weight: 500;"
                                    "color: rgba(255,255,255,1);"
                                    "font-style: normal;"
-                                   "letter-spacing: 3px;"
                                    "text-align: center;"
                                    "}");
     QObject::connect(determineButton, &QToolButton::clicked, this, &ConfigSelectWidget::nextPage);
@@ -83,7 +82,6 @@ void ConfigSelectWidget::initUI()
                                 "font-weight: 500;"
                                 "color: rgba(65,77,104,1);"
                                 "font-style: normal;"
-                                "letter-spacing: 3px;"
                                 "text-align: center;"
                                 ";}");
 

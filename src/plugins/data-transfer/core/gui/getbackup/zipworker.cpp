@@ -53,6 +53,13 @@ void ZipWork::getUserDataPackagingFile()
     }
     qInfo() << "backup file save path:" << zipFileName;
 
+    QFile  file(zipFileName);
+    if (file.exists() && file.remove()) {
+        qDebug() <<zipFileName <<" exists, and removed!" ;
+    } else {
+        qDebug() << zipFileName <<" exists, and can not removed!" ;
+    }
+
     // Get the number of files to zip
     allFileNum = getAllFileNum(zipFilePathList);
     backupFile(zipFilePathList, zipFileName);

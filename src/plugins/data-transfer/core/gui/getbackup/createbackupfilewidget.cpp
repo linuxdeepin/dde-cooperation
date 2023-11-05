@@ -4,6 +4,7 @@
 #include "./zipworker.h"
 #include "../select/userselectfilesize.h"
 #include "../select/calculatefilesize.h"
+#include "../win/devicelistener.h"
 #include <QColor>
 #include <QDebug>
 #include <QLabel>
@@ -27,6 +28,8 @@
 CreateBackupFileWidget::CreateBackupFileWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
+    QObject::connect(DeviceListener::instance(), &DeviceListener::updateDevice, this,
+                     &CreateBackupFileWidget::getUpdateDeviceSingla);
 }
 
 CreateBackupFileWidget::~CreateBackupFileWidget() { }
@@ -81,7 +84,6 @@ void CreateBackupFileWidget::initUI()
                                  "font-family: \"SourceHanSansSC-Bold\";"
                                  "font-size: 16px;font-weight: 700;"
                                  "font-style: normal;"
-                                 "letter-spacing: 0px;"
                                  "text-align: left;");
     QHBoxLayout *fileNameLayout = new QHBoxLayout();
     fileNameLayout->addSpacing(140);
@@ -104,7 +106,6 @@ void CreateBackupFileWidget::initUI()
                                        "font-family: \"SourceHanSansSC-Medium\";"
                                        "font-size: 14px;font-weight: 500;"
                                        "font-style: normal;"
-                                       "letter-spacing: 0px;"
                                        "text-align: left;");
 
     fileNameInput = new QLineEdit(fileName);
@@ -118,7 +119,6 @@ void CreateBackupFileWidget::initUI()
                                  "font-size: 12px;"
                                  "font-weight: 400;"
                                  "font-style: normal;"
-                                 "letter-spacing: 0px;"
                                  "text-align: left;"
                                  "background-image: url(\":/icon/edit.svg\");"
                                  "background-repeat: no-repeat;"
@@ -151,7 +151,6 @@ void CreateBackupFileWidget::initUI()
                                        "font-family: \"SourceHanSansSC-Medium\";"
                                        "font-size: 14px;font-weight: 500;"
                                        "font-style: normal;"
-                                       "letter-spacing: 0px;"
                                        "text-align: left;");
     QHBoxLayout *fileNameInputLabel2Layout = new QHBoxLayout();
     fileNameInputLabel2Layout->addSpacing(20);
@@ -174,7 +173,6 @@ void CreateBackupFileWidget::initUI()
                                   "font-size: 16px;"
                                   "font-weight: 700;"
                                   "font-style: normal;"
-                                  "letter-spacing: 0px;"
                                   "text-align: left;");
 
     QLabel *savePathLabel2 = new QLabel("(选择备份磁盘)", this);
@@ -184,7 +182,6 @@ void CreateBackupFileWidget::initUI()
                                   "font-size: 12px; "
                                   "font-weight: 400; "
                                   "font-style: normal; "
-                                  "letter-spacing: 0px; "
                                   "text-align: left; ");
     QHBoxLayout *savePathLayout = new QHBoxLayout();
     savePathLayout->setAlignment(Qt::AlignTop);
@@ -268,33 +265,6 @@ void CreateBackupFileWidget::initDiskListView()
     diskListView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     diskListView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    QList<QStorageInfo> devices = QStorageInfo::mountedVolumes();
-    // add file data
-    for (const QStorageInfo &device : devices) {
-        // Exclude read-only devices
-        if (device.isReadOnly())
-            continue;
-        QString rootPath = device.rootPath();
-        QString displayName = (device.name().isEmpty() ? "本地磁盘" : device.name()) + "("
-                + rootPath.at(0) + ":)";
-
-        QStandardItem *item = new QStandardItem();
-        item->setData(displayName, Qt::DisplayRole);
-        item->setData(rootPath, Qt::WhatsThisRole);
-        item->setData(QString("%1/%2可用")
-                              .arg(fromByteToQstring(device.bytesAvailable()))
-                              .arg(fromByteToQstring(device.bytesTotal())),
-                      Qt::ToolTipRole);
-        if (device.name().isEmpty()) {
-            item->setIcon(QIcon(":/icon/drive-harddisk-32px.svg"));
-        } else {
-            item->setIcon(QIcon(":/icon/drive-harddisk-usb-32px.svg"));
-        }
-
-        item->setCheckable(true);
-
-        model->appendRow(item);
-    }
     QObject::connect(diskListView, &QListView::clicked, [this, model](const QModelIndex &index) {
         for (int row = 0; row < model->rowCount(); ++row) {
             QModelIndex itemIndex = model->index(row, 0);
@@ -340,25 +310,88 @@ void CreateBackupFileWidget::updaeBackupFileSize()
     QStringList userDataInfoJsonPath =
             OptionsManager::instance()->getUserOption(Options::KUserDataInfoJsonPath);
     QStringList wallpaperPath = OptionsManager::instance()->getUserOption(Options::KWallpaperPath);
-    QStringList bookmarkJsonPath = OptionsManager::instance()->getUserOption(Options::KBookmarksJsonPath);
+    QStringList bookmarkJsonPath =
+            OptionsManager::instance()->getUserOption(Options::KBookmarksJsonPath);
     quint64 userDataInfoJsonSize = 0;
     quint64 wallpaperSize = 0;
     quint64 bookmarkJsonSize = 0;
     if (!userDataInfoJsonPath.isEmpty()) {
-        userDataInfoJsonSize =QFileInfo(userDataInfoJsonPath[0]).size();
+        userDataInfoJsonSize = QFileInfo(userDataInfoJsonPath[0]).size();
     }
     if (!wallpaperPath.isEmpty()) {
         wallpaperSize = QFileInfo(wallpaperPath[0]).size();
     }
-    if(!bookmarkJsonPath.isEmpty())
-    {
-        bookmarkJsonSize =  QFileInfo(bookmarkJsonPath[0]).size();
+    if (!bookmarkJsonPath.isEmpty()) {
+        bookmarkJsonSize = QFileInfo(bookmarkJsonPath[0]).size();
     }
     qInfo() << "wallpaperPath:" << wallpaperPath;
     qInfo() << "userDataInfoJsonPath:" << userDataInfoJsonPath;
     qInfo() << "filesize:" << userSelectFileSize;
     qInfo() << "userDataInfoJsonSize:" << userDataInfoJsonSize;
     qInfo() << "wallpaperSize:" << wallpaperSize;
-    quint64 allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize+bookmarkJsonSize;
+    quint64 allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize + bookmarkJsonSize;
     backupFileSizeLabel->setText(QString("大小:  %1").arg(fromByteToQstring(allSize)));
+}
+
+void CreateBackupFileWidget::getUpdateDeviceSingla()
+{
+    QString rootPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString cPath = QDir(rootPath).rootPath();
+
+    QList<QStorageInfo> devices = QStorageInfo::mountedVolumes();
+
+    for (const QStorageInfo &device : devices) {
+        // Exclude read-only devices
+        if (device.isReadOnly() || !device.isReady()) {
+            devices.removeOne(device);
+            continue;
+        }
+        QString rootPath = device.rootPath();
+        if (deviceList.contains(device)) {
+            deviceList.removeOne(device);
+            continue;
+        }
+        // add device
+        updateDevice(device, true);
+    }
+
+    for (const QStorageInfo &device : deviceList) {
+        // del device
+        updateDevice(device, false);
+    }
+    deviceList = devices;
+}
+void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
+{
+    if (isAdd) {
+        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
+        QString rootPath = device.rootPath();
+        QString displayName =
+                (device.name().isEmpty() ? "本地磁盘" : device.name()) + "(" + rootPath.at(0) + ":)";
+
+        QStandardItem *item = new QStandardItem();
+        item->setData(displayName, Qt::DisplayRole);
+        item->setData(rootPath, Qt::WhatsThisRole);
+        item->setData(QString("%1/%2可用")
+                              .arg(fromByteToQstring(device.bytesAvailable()))
+                              .arg(fromByteToQstring(device.bytesTotal())),
+                      Qt::ToolTipRole);
+        if (device.name().isEmpty()) {
+            item->setIcon(QIcon(":/icon/drive-harddisk-32px.svg"));
+        } else {
+            item->setIcon(QIcon(":/icon/drive-harddisk-usb-32px.svg"));
+        }
+
+        item->setCheckable(true);
+        model->appendRow(item);
+    } else {
+        QString rootPath = device.rootPath();
+        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
+        for (int row = 0; row < model->rowCount(); ++row) {
+            QModelIndex itemIndex = model->index(row, 0);
+            if (rootPath == model->data(itemIndex, Qt::WhatsThisRole)) {
+                model->removeRow(itemIndex.row());
+            }
+        }
+    }
 }

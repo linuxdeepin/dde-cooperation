@@ -12,6 +12,7 @@ class QHBoxLayout;
 class QStackedWidget;
 class SelectListView;
 class ProgressBarLabel;
+class QStorageInfo;
 class SidebarWidget : public QListView
 {
     Q_OBJECT
@@ -24,10 +25,12 @@ public:
 
     void initSiderDataAndUi();
     void updateSiderDataAndUi(QModelIndex index, quint64 size);
+
+   void updateAllSizeUi(const quint64 &size, const bool &isAdd);
 public slots:
     void updateSelectSizeUi(const QString &sizeStr);
-    void updateAllSizeUi();
     void updateSiderbarFileSize(quint64 fileSize, const QString &path);
+    void getUpdateDeviceSingla();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -35,18 +38,26 @@ protected:
 private:
     void initData();
     void initUi();
+    void updateDevice(const QStorageInfo &device, const bool &isAdd);
 
     void initSiderbarSize();
     void initSiderbarUi();
+
     void updateSiderbarSize(QModelIndex index, quint64 size);
     void updateSiderbarUi(QModelIndex index);
 
     void updatePorcessLabel();
 
+    void updateAllSize();
+signals:
+    void updateFileview(const QModelIndex &siderIndex, const bool &isAdd);
+
 private:
     QMap<QModelIndex, quint64> sidebarSizeList;
     QLabel *userSelectFileSize{ nullptr };
     ProgressBarLabel *processLabel{ nullptr };
+
+    QList<QStorageInfo> deviceList;
 
     QString selectSizeStr{ "0B" };
     QString allSizeStr{ "0B" };
@@ -60,7 +71,7 @@ class FileSelectWidget : public QFrame
 public:
     FileSelectWidget(SidebarWidget *siderbarWidget, QWidget *parent = nullptr);
     ~FileSelectWidget();
-    void initFileView();
+
     void changeText();
 
 public slots:
@@ -72,25 +83,25 @@ public slots:
     void updateFileSelectList(QStandardItem *item);
     void updateFileViewSize(quint64 fileSize, const QString &path);
 
+    void updateFileViewData(const QModelIndex &siderIndex, const bool &isAdd);
 signals:
     void isOk(const SelectItemName &name);
 
 private:
     void initUI();
+    void initFileView();
     void sendOptions();
     void delOptions();
-    SelectListView *initFileView(const QString &path, const QModelIndex &siderbarIndex);
+    SelectListView *addFileViewData(const QString &path, const QModelIndex &siderbarIndex);
     void createFilesizeListen(QListView *listView);
 
-    void startCalcluateFileSize();
+    void startCalcluateFileSize(QList<QString> fileList);
 
 private:
     SidebarWidget *sidebar{ nullptr };
     QMap<QModelIndex, QListView *> sidebarFileViewList;
-    QMap<QModelIndex, quint64> *sidebarSizeList;
     QStackedWidget *stackedWidget{ nullptr };
     QLabel *titileLabel{ nullptr };
 };
-
 
 #endif

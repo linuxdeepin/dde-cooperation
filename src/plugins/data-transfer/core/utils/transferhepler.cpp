@@ -30,8 +30,7 @@
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper()
-    : QObject()
+TransferHelper::TransferHelper() : QObject()
 {
     initOnlineState();
 #ifndef WIN32
@@ -39,7 +38,7 @@ TransferHelper::TransferHelper()
 #endif
 }
 
-TransferHelper::~TransferHelper() {}
+TransferHelper::~TransferHelper() { }
 
 TransferHelper *TransferHelper::instance()
 {
@@ -176,8 +175,8 @@ QStringList TransferHelper::getTransferFilePath()
     for (auto app : appList) {
         appArray.append(app);
     }
-    QString tempSavePath = QDir::tempPath();
 
+    QString tempSavePath = QDir::tempPath();
     // add bookmarks
     QString bookmarksName;
     if (!browserList.isEmpty()) {
@@ -223,6 +222,7 @@ QStringList TransferHelper::getTransferFilePath()
     QString jsonfilePath = getJsonfile(jsonObject, QString(tempSavePath));
     transferFilePathList.prepend(jsonfilePath);
     OptionsManager::instance()->addUserOption(Options::KUserDataInfoJsonPath, { jsonfilePath });
+    qInfo() << "transfer.json save path:" << tempSavePath;
     return transferFilePathList;
 }
 #else
@@ -247,7 +247,7 @@ bool TransferHelper::checkSize(const QString &filepath)
 
 void TransferHelper::recordTranferJob(const QString &filepath)
 {
-    //1.copy transferjson to temp
+    // 1.copy transferjson to temp
     QFile jsonfile(filepath);
     QFileInfo info(jsonfile);
     QString tempPath(info.path() + "/transfer-temp.json");
@@ -255,7 +255,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
         qWarning() << "Failed to copy file";
 
     connect(this, &TransferHelper::interruption, this, [this, filepath, tempPath]() {
-        //2.write unfinished files to tempjson file
+        // 2.write unfinished files to tempjson file
         QJsonObject jsonObj = SettingHelper::ParseJson(filepath);
 
         QJsonArray userFileArray = jsonObj["user_file"].toArray();
@@ -265,13 +265,13 @@ void TransferHelper::recordTranferJob(const QString &filepath)
             QString file = fileValue.toString();
             QString filename = file.mid(file.indexOf('/'));
 
-            //skip finished files
+            // skip finished files
             if (finshedFiles.contains(filename)) {
                 continue;
             }
             updatedFileList.append(file);
         }
-        //3.save unfinished filelist for retransmission
+        // 3.save unfinished filelist for retransmission
         jsonObj["user_file"] = updatedFileList;
         QJsonDocument jsonDoc;
         jsonDoc.setObject(jsonObj);
