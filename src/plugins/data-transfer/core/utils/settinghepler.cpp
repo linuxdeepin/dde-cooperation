@@ -78,6 +78,7 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
         }
     }
     addTaskcounter(-1);
+    QFile::remove(filepath + "/" + "transfer.json");
     return isall;
 }
 

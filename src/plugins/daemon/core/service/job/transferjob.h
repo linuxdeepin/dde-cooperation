@@ -45,10 +45,10 @@ public slots:
 
 private:
     fastring getSubdir(const char *path, const char *root);
-    void scanPath(const char *root, const char *path, int id);
-    void readPath(const char *path, int id, const char *root);
-    bool readFile(const char *filepath, int fileid, const char *subdir);
-    void readFileBlock(const char *filepath, int fileid, const fastring subname);
+    void scanPath(fastring root, fastring path);
+    void readPath(fastring path, fastring root);
+    bool readFile(fastring filepath, int fileid, fastring subdir);
+    void readFileBlock(fastring filepath, int fileid, const fastring subname);
 
     void handleBlockQueque();
 
@@ -60,7 +60,7 @@ private:
 
 private:
     int _jobid;
-    int fileid = 0;
+    int _fileid = 0;
     bool _inited = false;
     bool _stoped = true;
     bool _finished = false;

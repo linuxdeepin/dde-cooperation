@@ -29,13 +29,7 @@ bool Session::valid()
 {
     if (!_initPing) {
         // thread lamada crash on windows, use corroutine
-        co::wait_group wg;
-        wg.add(1);
-        UNIGO([this, wg]() {
-           alive();
-           wg.done();
-        });
-        wg.wait();
+        alive();
     }
     return _pingOK;
 }
@@ -102,7 +96,17 @@ rpc::Client* Session::client()
 void Session::call(const json::Json &req, json::Json &res)
 {
     coClient.reset( new rpc::Client("127.0.0.1", _cb_port, false));
-    coClient->call(req,res);
+#if defined(WIN32)
+    co::wait_group wg;
+    wg.add(1);
+    UNIGO([this, &req, &res, wg]() {
+        coClient->call(req, res);
+        wg.done();
+    });
+    wg.wait();
+#else
+    coClient->call(req, res);
+#endif
     coClient->close();
 }
 
