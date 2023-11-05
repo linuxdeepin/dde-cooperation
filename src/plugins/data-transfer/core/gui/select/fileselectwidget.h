@@ -27,7 +27,6 @@ public:
 public slots:
     void updateSelectSizeUi(const QString &sizeStr);
     void updateAllSizeUi();
-
     void updateSiderbarFileSize(quint64 fileSize, const QString &path);
 
 protected:
@@ -93,13 +92,5 @@ private:
     QLabel *titileLabel{ nullptr };
 };
 
-namespace Directory {
-inline constexpr char kMovie[]{ "视频" };
-inline constexpr char kPicture[]{ "图片" };
-inline constexpr char kMusic[]{ "音乐" };
-inline constexpr char kDocuments[]{ "文档" };
-inline constexpr char kDownload[]{ "下载" };
-inline constexpr char kDesktop[]{ "桌面" };
-} // namespace Directory
 
 #endif

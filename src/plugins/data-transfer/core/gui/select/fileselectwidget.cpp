@@ -27,21 +27,23 @@
 
 #pragma execution_character_set("utf-8")
 
-const QList<QString> directories = {
-    QString::fromLocal8Bit(Directory::kMovie),
-    QStandardPaths::writableLocation(QStandardPaths::MoviesLocation),
-    QString::fromLocal8Bit(Directory::kPicture),
-    QStandardPaths::writableLocation(QStandardPaths::PicturesLocation),
-    QString::fromLocal8Bit(Directory::kDocuments),
-    QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-    QString::fromLocal8Bit(Directory::kDownload),
-    QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
-    QString::fromLocal8Bit(Directory::kMusic),
-    QStandardPaths::writableLocation(QStandardPaths::MusicLocation),
-    QString::fromLocal8Bit(Directory::kDesktop),
-    QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)
-};
+namespace Directory {
+inline constexpr char kMovie[]{ "视频" };
+inline constexpr char kPicture[]{ "图片" };
+inline constexpr char kMusic[]{ "音乐" };
+inline constexpr char kDocuments[]{ "文档" };
+inline constexpr char kDownload[]{ "下载" };
+inline constexpr char kDesktop[]{ "桌面" };
+} // namespace Directory
 
+const QMap<QString, QString> userPath{
+    { Directory::kMovie, QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) },
+    { Directory::kPicture, QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) },
+    { Directory::kDocuments, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) },
+    { Directory::kDownload, QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) },
+    { Directory::kMusic, QStandardPaths::writableLocation(QStandardPaths::MusicLocation) },
+    { Directory::kDesktop, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) }
+};
 static inline constexpr char InternetText[]{ "请选择要同步的文件" };
 static inline constexpr char LocalText[]{ "请选择要备份的文件" };
 
@@ -247,8 +249,6 @@ void FileSelectWidget::nextPage()
     // send useroptions
     sendOptions();
 
-    emit isOk(SelectItemName::FILES);
-
     // nextpage
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
@@ -278,6 +278,8 @@ void FileSelectWidget::sendOptions()
     QStringList selectFileLsit = UserSelectFileSize::instance()->getSelectFilesList();
     OptionsManager::instance()->addUserOption(Options::kFile, selectFileLsit);
     qInfo() << "select file:" << selectFileLsit;
+
+    emit isOk(SelectItemName::FILES);
 }
 
 void FileSelectWidget::delOptions()
@@ -289,14 +291,17 @@ void FileSelectWidget::delOptions()
         QStandardItem *item = (*filemap)[filePath].fileItem;
         item->setCheckState(Qt::Unchecked);
     }
-
+    OptionsManager::instance()->addUserOption(Options::kFile, QStringList());
     emit isOk(SelectItemName::FILES);
 }
 
 SelectListView *FileSelectWidget::initFileView(const QString &path,
                                                const QModelIndex &siderbarIndex)
 {
-    QFileInfoList fileinfos = QDir(path).entryInfoList();
+    QDir directory(path);
+    // del . and ..
+    directory.setFilter(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+    QFileInfoList fileinfos = directory.entryInfoList();
 
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
     ItemDelegate *delegate = new ItemDelegate(99, 250, 379, 100, 50, QPoint(65, 6), QPoint(10, 9));
@@ -309,13 +314,8 @@ SelectListView *FileSelectWidget::initFileView(const QString &path,
     fileView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     fileView->setSelectionMode(QAbstractItemView::NoSelection);
     for (int i = 0; i < fileinfos.count(); i++) {
-        // del . and ..
-        if (fileinfos[i].fileName() == "." || fileinfos[i].fileName() == "..") {
-            continue;
-        }
         if (!fileinfos[i].isDir())
             continue;
-        // del Users
         if (fileinfos[i].fileName() == "Users")
             continue;
         QStandardItem *item = new QStandardItem();
@@ -336,11 +336,9 @@ SelectListView *FileSelectWidget::initFileView(const QString &path,
         (*filemap)[fileinfos[i].filePath()] = fileInfo;
     }
     for (int i = 0; i < fileinfos.count(); i++) {
-        // del . and ..
-        if (fileinfos[i].fileName() == "." || fileinfos[i].fileName() == "..") {
+        if (!fileinfos[i].isFile())
             continue;
-        }
-        if (fileinfos[i].isDir())
+        if (fileinfos[i].isSymLink())
             continue;
         QStandardItem *item = new QStandardItem();
         item->setData(fileinfos[i].fileName(), Qt::DisplayRole);
@@ -456,17 +454,14 @@ void SidebarWidget::initData()
     setModel(model);
 
     // user dir
-    int row = 0;
-    for (int i = 0; i < 6; i++) {
+    for (auto iterator = userPath.begin(); iterator != userPath.end(); ++iterator) {
         QStandardItem *item = new QStandardItem();
         item->setCheckable(true);
         item->setCheckState(Qt::Unchecked);
-        item->setData(directories[row], Qt::DisplayRole);
-        item->setData(directories[row + 1], Qt::UserRole);
+        item->setData(iterator.key(), Qt::DisplayRole);
+        item->setData(iterator.value(), Qt::UserRole);
         model->appendRow(item);
-        row += 2;
     }
-
     // Storage dir
     QList<QStorageInfo> drives = QStorageInfo::mountedVolumes();
 

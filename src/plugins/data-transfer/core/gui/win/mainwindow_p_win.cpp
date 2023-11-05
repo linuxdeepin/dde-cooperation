@@ -70,7 +70,6 @@ void MainWindowPrivate::initWindow()
 void MainWindowPrivate::initWidgets()
 {
     StartWidget *startwidget = new StartWidget(q);
-    LicenseWidget *licensewidget = new LicenseWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
     TransferringWidget *transferringwidget = new TransferringWidget(q);
     ReadyWidget *readywidget = new ReadyWidget(q);
@@ -89,7 +88,6 @@ void MainWindowPrivate::initWidgets()
 
     SelectMainWidget *selectmainwidget = new SelectMainWidget(q);
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
-    stackedWidget->insertWidget(PageName::licensewidget, licensewidget);
     stackedWidget->insertWidget(PageName::choosewidget, choosewidget);
     stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
     stackedWidget->insertWidget(PageName::readywidget, readywidget);
@@ -126,22 +124,11 @@ void MainWindowPrivate::initWidgets()
 
     QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
                      createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
-    // add backup file exit button
-    QObject::connect(zipfileprocessresultwidget, &ZipFileProcessResultWidget::exit, q, [this]() {
-        QCoreApplication::quit();
-        //        qApp->quit();
-    });
 
     QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
                      createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
-    // add backup file exit button
-    QObject::connect(zipfileprocessresultwidget, &ZipFileProcessResultWidget::exit, q, [this]() {
-        QCoreApplication::quit();
-        //        qApp->quit();
-    });
 
-
-QObject:connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
+    QObject:connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
             [stackedWidget, errorwidget](bool online) {
                 if (online)
                     return;
