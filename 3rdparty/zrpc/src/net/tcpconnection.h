@@ -22,7 +22,7 @@ class TcpServer;
 class TcpClient;
 
 // the max socket buffer len
-#define PERPKG_MAX_LEN 16*1024
+#define PERPKG_MAX_LEN 16 * 1024
 
 enum TcpConnectionState {
     NotConnected = 1,   // can do io
@@ -76,7 +76,7 @@ public:
 public:
     void MainServerLoopCorFunc();
 
-    void input();
+    bool input();
 
     void execute();
 
