@@ -15,7 +15,7 @@
 #define COOPERATION_SETTING_GROUP "10_advance.03_cooperation"
 inline constexpr char kCooperationSettingGroup[] { COOPERATION_SETTING_GROUP };
 inline constexpr char kCooperationSettingTransfer[] { "00_file_transfer" };
-inline constexpr char kParentScene[] { "FileOperatorMenu" };
+inline constexpr char kParentScene[] { "SendToMenu" };
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmbase;

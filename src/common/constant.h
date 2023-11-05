@@ -38,6 +38,11 @@
 
 const int LOGIN_CONFIRM_TIMEOUT = 30000; // 5 minutes
 
+typedef enum apply_trans_type_t {
+    APPLY_TRANS_APPLY = 0, // 请求传输文件
+    APPLY_TRANS_CONFIRM = 1, // 接受文件传输
+    APPLY_TRANS_REFUSED = 2, // 拒绝文件传输
+} ApplyTransType;
 
 typedef enum whoami_t {
     ServiceDeamon = 0,

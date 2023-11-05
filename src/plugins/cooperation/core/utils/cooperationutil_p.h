@@ -33,7 +33,6 @@ public:
     MainWindow *window { nullptr };
 
     FrontendService *frontendIpcSer { nullptr };
-    std::shared_ptr<rpc::Client> rpcClient { nullptr };
     QString sessionId;
     bool backendOk { false };
     bool thisDestruct { false };
