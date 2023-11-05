@@ -11,13 +11,13 @@
 // #include "co/tcp.h"
 
 namespace zrpc_ns {
-class TcpClient;
+
 class ZRPC_API ZRpcChannel : public google::protobuf::RpcChannel {
 
 public:
     typedef std::shared_ptr<ZRpcChannel> ptr;
     ZRpcChannel(NetAddress::ptr addr);
-    ~ZRpcChannel();
+    ~ZRpcChannel() = default;
 
     void CallMethod(const google::protobuf::MethodDescriptor *method,
                     google::protobuf::RpcController *controller,
@@ -27,7 +27,6 @@ public:
 
 private:
     NetAddress::ptr m_addr;
-    std::shared_ptr<TcpClient> m_client = nullptr;
 };
 
 } // namespace zrpc

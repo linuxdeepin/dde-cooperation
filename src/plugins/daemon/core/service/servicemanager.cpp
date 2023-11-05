@@ -812,6 +812,7 @@ void ServiceManager::handleBackApplyTransFiles(const co::Json &param)
         _applyjob->initRpc(info.session, _connected_target.c_str(), UNI_RPC_PORT_BASE);
         _applyjob->initJob(info.session, info.tarSession);
     }
+    info.tarSession = _applyjob->getTarAppName();
     UNIGO([_applyjob, info]() {
         _applyjob->sendMsg(COMM_APPLY_TRANS, info.as_json().str().c_str());
     });

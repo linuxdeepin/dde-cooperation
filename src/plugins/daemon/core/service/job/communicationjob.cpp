@@ -45,13 +45,17 @@ fastring CommunicationJob::getAppName()
     return _app_name;
 }
 
+fastring CommunicationJob::getTarAppName() const
+{
+    return _tar_app_name;
+}
+
 bool CommunicationJob::sendMsg(CommunicationType type, const QString &info)
 {
     if (_rpcBinder == nullptr) {
         ELOG << "sendMsg ERROR: no executor, type " << type << info.toStdString();
         return false;
     }
-    LOG << type << info.toStdString() << _targetIP << _port;
     _rpcBinder->createExecutor(_app_name.c_str(), _targetIP.c_str(), _port);
     _rpcBinder->doSendApplyTransFiles(_app_name.c_str(), info);
 

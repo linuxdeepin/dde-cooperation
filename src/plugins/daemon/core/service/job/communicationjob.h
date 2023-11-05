@@ -23,6 +23,7 @@ public:
     void initJob(fastring appname, fastring targetappname);
 
     fastring getAppName();
+    fastring getTarAppName() const;
     bool sendMsg(CommunicationType type, const QString &info);
 private:
     bool _inited = false;
