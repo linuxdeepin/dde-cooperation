@@ -17,7 +17,7 @@
 #pragma execution_character_set("utf-8")
 ZipWork::ZipWork(QObject *parent) : QThread(parent)
 {
-    qInfo()<<"zipwork start.";
+    qInfo() << "zipwork start.";
     // connect backup file process
     QObject::connect(this, &ZipWork::backupFileProcessSingal, TransferHelper::instance(),
                      &TransferHelper::transferContent);
@@ -48,7 +48,8 @@ void ZipWork::getUserDataPackagingFile()
         zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName() + "_"
                 + DrapWindowsData::instance()->getIP() + "_uos.zip";
     } else {
-        zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] + ".zip";
+        zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName() + "_"
+                + DrapWindowsData::instance()->getIP() + "_" + zipFileNameList[0] + ".zip";
     }
     qInfo() << "backup file save path:" << zipFileName;
 
@@ -59,7 +60,7 @@ void ZipWork::getUserDataPackagingFile()
 
 int ZipWork::getPathFileNum(const QString &filePath)
 {
-    if(QFileInfo(filePath).isFile())
+    if (QFileInfo(filePath).isFile())
         return 1;
     int fileCount = 0;
     QDir dir(filePath);
@@ -98,6 +99,8 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
     QFile sourceFile(filePath);
     if (!sourceFile.open(QIODevice::ReadOnly)) {
         qCritical() << "Error reading source file:" << filePath;
+        // backup file false
+        emit backupFileProcessSingal(QString("压缩源文件有误:%1").arg(filePath), -1, -1);
         return false;
     }
 
@@ -107,13 +110,14 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
     QuaZipNewInfo newInfo(destinationFileName, sourceFile.fileName());
     if (!destinationFile.open(QIODevice::WriteOnly, newInfo)) {
         qCritical() << "Error writing to ZIP file for:" << filePath;
+        // backup file false
+        emit backupFileProcessSingal(QString("压缩文件写入错误:%1").arg(filePath), -1, -1);
         return false;
     }
 
     destinationFile.write(sourceFile.readAll());
     destinationFile.close();
     sourceFile.close();
-
     sendBackupFileProcess(filePath, timer);
     return true;
 }
@@ -156,6 +160,8 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     zip.setFileNameCodec("UTF-8");
     if (!zip.open(QuaZip::mdCreate)) {
         qCritical("Error creating the ZIP file.");
+        // backup file false
+        emit backupFileProcessSingal(QString("创建压缩文件失败,尝试更换文件名称！"), -1, -1);
         return false;
     }
 
@@ -179,11 +185,14 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
 
     if (zip.getZipError() != UNZ_OK) {
         qCritical() << "Error while compressing. Error code:" << zip.getZipError();
+        // backup file false
+        emit backupFileProcessSingal(QString("文件压缩失败,错误代码：%1").arg(zip.getZipError()),
+                                     -1, -1);
         return false;
     }
 
-    // backup file done
-    emit backupFileProcessSingal(QString("压缩完成!"), 100, 0);
+    // backup file true
+    emit backupFileProcessSingal(QString("文件完成！"), 100, 0);
     return true;
 }
 
@@ -220,6 +229,6 @@ void ZipWork::abortingBackupFileProcess()
 {
     abort = true;
     //  quit();
-   // wait();
+    // wait();
     qInfo() << "backup file exit.";
 }

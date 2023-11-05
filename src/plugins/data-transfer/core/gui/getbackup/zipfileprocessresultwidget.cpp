@@ -46,8 +46,7 @@ void ZipFileProcessResultWidget::initUI()
                               "text-align: center;"
                               "}");
 
-    // QObject::connect(exitButton, &QToolButton::clicked, this,&ZipFileProcessResultWidget::exit);
-    QObject::connect(exitButton, &QToolButton::clicked, this, []() { QCoreApplication::quit(); });
+    QObject::connect(exitButton, &QToolButton::clicked, qApp, &QApplication::quit);
     QToolButton *backButton = new QToolButton(this);
     backButton->setText("返回");
     backButton->setFixedSize(120, 35);

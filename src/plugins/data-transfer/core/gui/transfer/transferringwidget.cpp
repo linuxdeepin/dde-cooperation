@@ -61,7 +61,7 @@ void TransferringWidget::initUI()
 
     progressLabel = new ProgressBarLabel(this);
     progressLabel->setAlignment(Qt::AlignCenter);
-    progressLabel->setProgress(50);
+    progressLabel->setProgress(0);
 
     QHBoxLayout *progressLayout = new QHBoxLayout();
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
@@ -197,7 +197,6 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
     if (content.contains("transfer.json"))
         TransferHelper::instance()->checkSize(content);
 #endif
-
     QString info =
             QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
     processTextBrowser->append(info);

@@ -14,6 +14,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 
+#pragma execution_character_set("utf-8")
 TransferHandle::TransferHandle()
     : QObject()
 {

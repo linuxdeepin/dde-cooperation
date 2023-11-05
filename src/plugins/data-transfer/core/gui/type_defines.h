@@ -12,8 +12,7 @@ typedef DTK_WIDGET_NAMESPACE::DMainWindow CrossMainWindow;
 #ifdef WIN32
 enum PageName {
     startwidget = 0,
-    licensewidget,
-    choosewidget,
+    choosewidget ,
     promptwidget,
     readywidget,
     selectmainwidget,
