@@ -22,6 +22,7 @@ public slots:
     void changeProgressLabel(const int &ratio);
     void updateProcess(const QString &content, int progressbar, int estimatedtime);
     void themeChanged(int theme);
+    void clear();
 
 private:
     void initUI();

@@ -211,6 +211,7 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
         titileLabel->setText("迁移完成!!!");
     }
     if (estimatedtime > 0) {
+        titileLabel->setText("正在迁移…");
         if (estimatedtime > 60)
             timeLabel->setText(QString("预计迁移时间还剩 %1分钟").arg(estimatedtime / 60));
         else
@@ -234,4 +235,9 @@ void TransferringWidget::themeChanged(int theme)
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
         iconLabel->setMovie(darkiconmovie);
     }
+}
+
+void TransferringWidget::clear()
+{
+    processTextBrowser->clear();
 }

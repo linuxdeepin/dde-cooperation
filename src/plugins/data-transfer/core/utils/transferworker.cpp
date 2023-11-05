@@ -33,11 +33,32 @@ TransferHandle::TransferHandle()
             saveSession(TransferWoker::instance()->getSessionId());
         }
     });
+
+    //log
+    qInstallMessageHandler(logHandler);
 }
 
 TransferHandle::~TransferHandle()
 {
     _this_destruct = true;
+}
+
+void TransferHandle::logHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    switch (type) {
+    case QtDebugMsg:
+        DLOG << msg.toStdString();
+        break;
+    case QtInfoMsg:
+        LOG << msg.toStdString();
+        break;
+    case QtWarningMsg:
+        WLOG << msg.toStdString();
+        break;
+    default:
+        DLOG << msg.toStdString();
+        break;
+    }
 }
 
 void TransferHandle::localIPCStart()
@@ -47,23 +68,22 @@ void TransferHandle::localIPCStart()
     _frontendIpcService = new FrontendService(this);
 
     UNIGO([this]() {
-        while(!_this_destruct) {
+        while (!_this_destruct) {
             BridgeJsonData bridge;
-            _frontendIpcService->bridgeChan()->operator>>(bridge); //300ms超时
+            _frontendIpcService->bridgeChan()->operator>>(bridge);   //300ms超时
             if (!_frontendIpcService->bridgeChan()->done()) {
                 // timeout, next read
                 continue;
             }
 
-//            LOG << "TransferHandle get bridge json: " << bridge.type << " json:" << bridge.json;
+            //            LOG << "TransferHandle get bridge json: " << bridge.type << " json:" << bridge.json;
             co::Json json_obj = json::parse(bridge.json);
             if (json_obj.is_null()) {
                 ELOG << "parse error from: " << bridge.json;
                 continue;
             }
             switch (bridge.type) {
-            case PING:
-            {
+            case PING: {
                 ipc::PingFrontParam param;
                 param.from_json(json_obj);
 
@@ -77,19 +97,17 @@ void TransferHandle::localIPCStart()
 
                 BridgeJsonData res;
                 res.type = PING;
-                res.json = result ? param.session : ""; // 成功则返回session，否则为空
+                res.json = result ? param.session : "";   // 成功则返回session，否则为空
 
                 _frontendIpcService->bridgeResult()->operator<<(res);
                 break;
             }
-            case MISC_MSG:
-            {
+            case MISC_MSG: {
                 QString json(bridge.json.c_str());
                 handleMiscMessage(json);
                 break;
             }
-            case FRONT_PEER_CB:
-            {
+            case FRONT_PEER_CB: {
                 ipc::GenericResult param;
                 param.from_json(json_obj);
                 // example to parse string to NodePeerInfo object
@@ -100,33 +118,28 @@ void TransferHandle::localIPCStart()
 
                 break;
             }
-            case FRONT_CONNECT_CB:
-            {
+            case FRONT_CONNECT_CB: {
                 ipc::GenericResult param;
                 param.from_json(json_obj);
                 QString mesg(param.msg.c_str());
                 handleConnectStatus(param.result, mesg);
                 break;
             }
-            case FRONT_TRANS_STATUS_CB:
-            {
+            case FRONT_TRANS_STATUS_CB: {
                 ipc::GenericResult param;
                 param.from_json(json_obj);
-                QString mesg(param.msg.c_str()); // job path
+                QString mesg(param.msg.c_str());   // job path
 
                 handleTransJobStatus(param.id, param.result, mesg);
                 break;
             }
-            case FRONT_FS_PULL_CB:
-            {
+            case FRONT_FS_PULL_CB: {
                 break;
             }
-            case FRONT_FS_ACTION_CB:
-            {
+            case FRONT_FS_ACTION_CB: {
                 break;
             }
-            case FRONT_NOTIFY_FILE_STATUS:
-            {
+            case FRONT_NOTIFY_FILE_STATUS: {
                 QString objstr(bridge.json.c_str());
                 handleFileTransStatus(objstr);
                 break;
@@ -140,8 +153,7 @@ void TransferHandle::localIPCStart()
     // start ipc services
     ipc::FrontendImpl *frontendimp = new ipc::FrontendImpl();
     frontendimp->setInterface(_frontendIpcService);
-    rpc::Server().add_service(frontendimp)
-                 .start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
+    rpc::Server().add_service(frontendimp).start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
 }
 
 void TransferHandle::saveSession(fastring sessionid)

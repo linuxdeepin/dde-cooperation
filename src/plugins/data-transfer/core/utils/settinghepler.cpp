@@ -121,13 +121,13 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
         return false;
     }
 
-    QString targetfile = targetDir + "Bookmarks";
+    QString targetfile = targetDir + info.fileName();
     qInfo() << "Set browser bookmarks" << filepath << targetfile;
 
     bool success = moveFile(filepath, targetfile);
     qInfo() << "Set browser bookmarks" << targetfile << success;
     if (!success) {
-        emit TransferHelper::instance()->failure("浏览器书签", "书签", "设置失败");
+        emit TransferHelper::instance()->failure("浏览器书签", "书签", "设置失败，可手动导入配置");
         return false;
     }
     return true;
@@ -140,7 +140,7 @@ bool SettingHelper::installApps(const QString &app)
 
     QString &package = applist[app];
     if (package.isEmpty()) {
-        emit TransferHelper::instance()->failure(app, "应用", "暂不支持");
+        emit TransferHelper::instance()->failure(app, "应用", app + "安装失败，请进入应用商店安装");
         return false;
     }
 
@@ -170,7 +170,7 @@ bool SettingHelper::installApps(const QString &app)
 
     if (reply.type() != QDBusMessage::ReplyMessage) {
         qWarning() << "Installing " << app << "false" << reply.errorMessage();
-        emit TransferHelper::instance()->failure(app, "应用", "暂不支持");
+        emit TransferHelper::instance()->failure(app, "应用", app + "安装失败，请进入应用商店安装");
         return false;
     }
 
@@ -196,13 +196,14 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
     foreach (const QString &key, changedProps.keys()) {
         QVariant value = changedProps.value(key);
         QDBusInterface interface("com.deepin.lastore",
-                                     message.path(),
-                                     "com.deepin.lastore.Job",
-                                     QDBusConnection::systemBus());
+                                 message.path(),
+                                 "com.deepin.lastore.Job",
+                                 QDBusConnection::systemBus());
         auto packages = interface.property("Packages").toStringList();
         QString package;
         if (!packages.isEmpty())
             package = packages.first();
+        QString app = applist.key(package);
         QString content = applist.key(package) + "  Key:" + key + "   Value:" + value.toString();
         qInfo() << content;
         emit TransferHelper::instance()->transferContent("正在安装" + content, 100, -2);
@@ -211,7 +212,7 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
         if (key == "Status" && value == "failed") {
             addTaskcounter(-1);
             isall = false;
-            emit TransferHelper::instance()->failure(package, "应用", "暂不支持");
+            emit TransferHelper::instance()->failure(package, "应用", app + "安装失败，请进入应用商店安装");
         }
     }
 }
