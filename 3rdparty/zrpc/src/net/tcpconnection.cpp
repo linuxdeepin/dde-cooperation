@@ -113,7 +113,12 @@ void TcpConnection::MainServerLoopCorFunc()
 {
 
     while (!m_stop) {
-        input();
+        bool isfull = input();
+        if (!isfull) {
+            // the data package not full, cause crash if still parse it.
+            m_read_buffer->clearBuffer();
+            continue;
+        }
 
         execute();
 
@@ -122,11 +127,11 @@ void TcpConnection::MainServerLoopCorFunc()
     LOG << "this connection has already end loop";
 }
 
-void TcpConnection::input()
+bool TcpConnection::input()
 {
     TcpConnectionState state = getState();
     if (state == Closed || state == NotConnected) {
-        return;
+        return false;
     }
 
     bool read_all = false;
@@ -152,17 +157,15 @@ void TcpConnection::input()
             m_read_buffer->recycleWrite(rt);
         }
 
-
-
         // DLOG << "m_read_buffer size=" << m_read_buffer->getBufferVector().size()
         //      << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
 
         count += rt;
         if (rt <= 0) {
             DLOG << "rt <= 0 >>> " << rt;
-//             ELOG << "read empty while occur read event, because of peer close, sys error="
-//                  << strerror(errno) << ", now to clear tcp connection";
-//            // this cor can destroy
+            //             ELOG << "read empty while occur read event, because of peer close, sys error="
+            //                  << strerror(errno) << ", now to clear tcp connection";
+            //            // this cor can destroy
             close_flag = true;
             break;
         } else {
@@ -179,12 +182,12 @@ void TcpConnection::input()
     if (close_flag) {
         clearClient();
         DLOG << "peer closed";
-        return;
     }
 
     if (!read_all) {
         ELOG << "not read all data in socket buffer, but end! recv [" << count << "]";
     }
+    return read_all;
 }
 
 void TcpConnection::execute()
