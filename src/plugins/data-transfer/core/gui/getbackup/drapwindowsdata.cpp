@@ -573,10 +573,11 @@ void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &t
                                  if (mem.second == titleAndUrl.second) {
                                      return true;
                                  }
+                                 return false;
                              });
     if (find == browserBookmarkList.end()) {
         browserBookmarkList.insert(titleAndUrl);
-        qDebug() << titleAndUrl.first << ": " << titleAndUrl.second;
+       // qDebug() << titleAndUrl.first << ": " << titleAndUrl.second;
     }
 }
 

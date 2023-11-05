@@ -170,7 +170,7 @@ QStringList TransferHelper::getTransferFilePath()
     for (auto app : appList) {
         appArray.append(app);
     }
-    QString tempSavePath = QCoreApplication::applicationDirPath();
+    QString tempSavePath = QDir::tempPath();
 
     // add bookmarks
     QString bookmarksName;
