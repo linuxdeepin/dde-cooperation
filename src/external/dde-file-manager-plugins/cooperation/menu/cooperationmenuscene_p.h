@@ -15,9 +15,6 @@ class CooperationMenuScenePrivate
 public:
     explicit CooperationMenuScenePrivate(CooperationMenuScene *qq);
 
-    void createAction(QMenu *menu, const QString &actName, bool isSubAct = false, bool checkable = false);
-    void updateMenu(QMenu *menu);
-
 public:
     CooperationMenuScene *q;
 

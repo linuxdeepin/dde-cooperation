@@ -30,9 +30,9 @@ enum TransferStatus {
 
 struct TransferInfo
 {
-    int64_t totalSize;   // 总量
-    int64_t transferSize;   // 当前传输量
-    int32_t maxTimeSec;   // 耗时
+    int64_t totalSize = 0;   // 总量
+    int64_t transferSize = 0;   // 当前传输量
+    int32_t maxTimeSec = 0;   // 耗时
 };
 
 enum TransferSettings

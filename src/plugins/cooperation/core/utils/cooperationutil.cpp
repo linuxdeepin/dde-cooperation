@@ -10,6 +10,7 @@
 #include "common/constant.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/comstruct.h"
+#include "ipc/proto/backend.h"
 
 #include <QJsonDocument>
 
@@ -19,7 +20,6 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
     : q(qq)
 {
     localIPCStart();
-    rpcClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false));
 
     UNIGO([this] {
         backendOk = pingBackend();
@@ -33,21 +33,23 @@ CooperationUtilPrivate::~CooperationUtilPrivate()
 
 bool CooperationUtilPrivate::pingBackend()
 {
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
     co::Json req, res;
     bool onlyTransfer = qApp->property("onlyTransfer").toBool();
     int port = onlyTransfer
             ? UNI_IPC_FRONTEND_TRANSFER_PORT
             : UNI_IPC_FRONTEND_COOPERATION_PORT;
-    //PingBackParam
-    req = {
-        { "who", qApp->applicationName().toStdString() },
-        { "version", UNI_IPC_PROTO },
-        { "cb_port", port },
-    };
 
+    ipc::PingBackParam backParam;
+    backParam.who = qApp->applicationName().toStdString();
+    backParam.version = fastring(UNI_IPC_PROTO);
+    backParam.cb_port = port;
+
+    req = backParam.as_json();
     req.add_member("api", "Backend.ping");   //BackendImpl::ping
 
-    rpcClient->call(req, res);
+    rpcClient.call(req, res);
+    rpcClient.close();
     sessionId = res.get("msg").as_string().c_str();   // save the return session.
 
     //CallResult
@@ -71,7 +73,7 @@ void CooperationUtilPrivate::localIPCStart()
 
             co::Json json_obj = json::parse(bridge.json);
             if (json_obj.is_null()) {
-                qWarning() << "parse error from: " << bridge.json.c_str();
+                WLOG << "parse error from: " << bridge.json.c_str();
                 continue;
             }
 
@@ -85,7 +87,7 @@ void CooperationUtilPrivate::localIPCStart()
                 if (my_ver.compare(param.version) == 0 && param.session.compare(sessionId.toStdString()) == 0) {
                     result = true;
                 } else {
-                    qWarning() << param.version.c_str() << " =version not match= " << my_ver.c_str();
+                    WLOG << param.version.c_str() << " =version not match= " << my_ver.c_str();
                 }
 
                 BridgeJsonData res;
@@ -98,7 +100,7 @@ void CooperationUtilPrivate::localIPCStart()
                 ipc::GenericResult param;
                 param.from_json(json_obj);
 
-                qInfo() << param.result << " peer : " << param.msg.c_str();
+                LOG << param.result << " peer : " << param.msg.c_str();
 
                 co::Json obj = json::parse(param.msg);
                 NodeInfo nodeInfo;
@@ -210,7 +212,8 @@ void CooperationUtil::registAppInfo(const QString &infoJson)
     if (!d->backendOk)
         return;
 
-    UNIGO([this, infoJson] {
+    UNIGO([infoJson] {
+        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
         co::Json req, res;
 
         QString appName = qApp->applicationName();
@@ -220,7 +223,8 @@ void CooperationUtil::registAppInfo(const QString &infoJson)
 
         req = peerInfo.as_json();
         req.add_member("api", "Backend.registerDiscovery");
-        d->rpcClient->call(req, res);
+        rpcClient.call(req, res);
+        rpcClient.close();
     });
 }
 
@@ -229,7 +233,8 @@ void CooperationUtil::unregistAppInfo()
     if (!d->backendOk)
         return;
 
-    UNIGO([this] {
+    UNIGO([] {
+        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
         co::Json req, res;
         QString appName = qApp->applicationName();
 
@@ -238,7 +243,8 @@ void CooperationUtil::unregistAppInfo()
 
         req = peerInfo.as_json();
         req.add_member("api", "Backend.unregisterDiscovery");
-        d->rpcClient->call(req, res);
+        rpcClient.call(req, res);
+        rpcClient.close();
     });
 }
 
@@ -248,12 +254,14 @@ void CooperationUtil::asyncDiscoveryDevice()
         return;
 
     UNIGO([this] {
+        qInfo() << "start discovery device";
+        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
         co::Json req, res;
-
         req.add_member("api", "Backend.getDiscovery");
-        d->rpcClient->call(req, res);
-        d->rpcClient->close();
+        rpcClient.call(req, res);
+        rpcClient.close();
 
+        QList<DeviceInfo> infoList;
         bool ok = res.get("result").as_bool();
         if (!ok) {
             qWarning() << "discovery devices failed!";
@@ -261,8 +269,9 @@ void CooperationUtil::asyncDiscoveryDevice()
             qInfo() << "all device: " << res.get("msg").as_c_str();
             co::Json obj;
             obj.parse_from(res.get("msg").as_string());
-            QList<DeviceInfo> infoList = d->parseDeviceInfo(obj);
-            Q_EMIT discoveryFinished(infoList);
+            infoList = d->parseDeviceInfo(obj);
         }
+
+        Q_EMIT discoveryFinished(infoList);
     });
 }

@@ -11,6 +11,7 @@
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/chan.h"
+#include "ipc/proto/backend.h"
 
 #include <QDBusInterface>
 #include <QDBusReply>
@@ -45,7 +46,7 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
                                    QDBusConnection::sessionBus(), q);
 
     connect(transferDialog, &TransferDialog::cancel, q, &TransferHelper::cancelTransfer);
-    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, q, &TransferHelper::onConfigChanged);
+    //    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, q, &TransferHelper::onConfigChanged);
     QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
                                           this, SLOT(onActionTriggered(uint, const QString &)));
 }
@@ -133,16 +134,17 @@ void TransferHelperPrivate::localIPCStart()
             case FRONT_APPLY_TRANS_FILE: {
                 ApplyTransFiles transferInfo;
                 transferInfo.from_json(json_obj);
+                LOG << "=========" << json_obj;
 
                 if (!qApp->property("onlyTransfer").toBool()) {
                     switch (transferInfo.type) {
-                    case 0:
+                    case ApplyTransType::APPLY_TRANS_APPLY:
                         metaObject()->invokeMethod(this, "waitForConfirm", Qt::QueuedConnection, Q_ARG(QString, QString(transferInfo.machineName.c_str())));
                         break;
-                    case 1:
+                    case ApplyTransType::APPLY_TRANS_CONFIRM:
                         metaObject()->invokeMethod(this, "accepted", Qt::QueuedConnection);
                         break;
-                    case 2:
+                    case ApplyTransType::APPLY_TRANS_REFUSED:
                         metaObject()->invokeMethod(this, "rejected", Qt::QueuedConnection);
                         break;
                     default:
@@ -167,19 +169,20 @@ void TransferHelperPrivate::localIPCStart()
 
 bool TransferHelperPrivate::handlePingBacked()
 {
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
     co::Json req, res;
     bool onlyTransfer = qApp->property("onlyTransfer").toBool();
 
-    //PingBackParam
-    req = {
-        { "who", onlyTransfer ? TransferSessionName : CooperationSessionName },
-        { "version", UNI_IPC_PROTO },
-        { "cb_port", onlyTransfer ? TransferPort : CooperationPort },
-    };
+    ipc::PingBackParam backParam;
+    backParam.who = onlyTransfer ? TransferSessionName : CooperationSessionName;
+    backParam.version = fastring(UNI_IPC_PROTO);
+    backParam.cb_port = onlyTransfer ? TransferPort : CooperationPort;
 
+    req = backParam.as_json();
     req.add_member("api", "Backend.ping");   //BackendImpl::ping
 
-    rpcClient->call(req, res);
+    rpcClient.call(req, res);
+    rpcClient.close();
     sessionId = res.get("msg").as_string().c_str();   // save the return session.
 
     //CallResult
@@ -189,10 +192,12 @@ bool TransferHelperPrivate::handlePingBacked()
 void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
 {
     qInfo() << "send files: " << fileList;
-    co::Json req, res, paths;
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
+    co::Json req, res;
 
+    co::vector<fastring> fileVector;
     for (QString path : fileList) {
-        paths.push_back(path.toStdString());
+        fileVector.push_back(path.toStdString());
     }
 
     auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
@@ -200,22 +205,23 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
             ? value.toString()
             : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
 
-    //TransFilesParam
-    req = {
-        { "session", sessionId.toStdString() },
-        { "id", TransferJobStartId },
-        { "paths", paths },
-        { "sub", true },
-        { "savedir", deviceName.toStdString() },
-    };
+    ipc::TransFilesParam transParam;
+    transParam.session = sessionId.toStdString();
+    transParam.id = TransferJobStartId;
+    transParam.paths = fileVector;
+    transParam.sub = true;
+    transParam.savedir = deviceName.toStdString();
 
+    req = transParam.as_json();
     req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
 
-    rpcClient->call(req, res);
+    rpcClient.call(req, res);
+    rpcClient.close();
 }
 
 void TransferHelperPrivate::handleApplyTransFiles(int type)
 {
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
     co::Json res;
     // 获取设备名称
     auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
@@ -232,24 +238,28 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
 
     co::Json req = transInfo.as_json();
     req.add_member("api", "Backend.applyTransFiles");
-    rpcClient->call(req, res);
+    rpcClient.call(req, res);
+    rpcClient.close();
 }
 
 void TransferHelperPrivate::handleTryConnect(const QString &ip)
 {
     qInfo() << "connect to " << ip;
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
     co::Json req, res;
     fastring targetIp(ip.toStdString());
     fastring pinCode("");
     bool onlyTransfer = qApp->property("onlyTransfer").toBool();
 
-    req = {
-        { "session", onlyTransfer ? TransferSessionName : CooperationSessionName },
-        { "host", targetIp },
-        { "password", pinCode },
-    };
+    ipc::ConnectParam conParam;
+    conParam.session = onlyTransfer ? TransferSessionName : CooperationSessionName;
+    conParam.host = targetIp;
+    conParam.password = pinCode;
+
+    req = conParam.as_json();
     req.add_member("api", "Backend.tryConnect");
-    rpcClient->call(req, res);
+    rpcClient.call(req, res);
+    rpcClient.close();
 }
 
 void TransferHelperPrivate::handleCancelTransfer()
@@ -343,7 +353,7 @@ void TransferHelperPrivate::accepted()
     status = Transfering;
     updateProgress(1, tr("calculating"));
     UNIGO([this] {
-        handleSendFiles(readyToSendFiles);;
+        handleSendFiles(readyToSendFiles);
     });
 }
 
@@ -355,6 +365,7 @@ void TransferHelperPrivate::rejected()
 
 void TransferHelperPrivate::handleSetConfig(const QString &key, const QString &value)
 {
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
     co::Json req, res;
 
     req = {
@@ -363,11 +374,13 @@ void TransferHelperPrivate::handleSetConfig(const QString &key, const QString &v
         { "value", value.toStdString() },
     };
     req.add_member("api", "Backend.setAppConfig");
-    rpcClient->call(req, res);
+    rpcClient.call(req, res);
+    rpcClient.close();
 }
 
 QString TransferHelperPrivate::handleGetConfig(const QString &key)
 {
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
     co::Json req, res;
 
     req = {
@@ -375,7 +388,8 @@ QString TransferHelperPrivate::handleGetConfig(const QString &key)
         { "key", key.toStdString() },
     };
     req.add_member("api", "Backend.getAppConfig");
-    rpcClient->call(req, res);
+    rpcClient.call(req, res);
+    rpcClient.close();
 
     QString value = res.get("msg").as_string().c_str();
     return value;
@@ -397,10 +411,8 @@ void TransferHelper::init()
 {
     d->localIPCStart();
 
-    d->rpcClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false));
-
     UNIGO([this] {
-        co::sleep(3000);
+        co::sleep(500);
         d->backendOk = d->handlePingBacked();
         qInfo() << "The result of ping backend is " << d->backendOk;
 
@@ -516,6 +528,7 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
 
 void TransferHelper::onFileTransStatusChanged(const QString &status)
 {
+    qInfo() << __FUNCTION__ << __LINE__ << status;
     co::Json statusJson;
     statusJson.parse_from(status.toStdString());
     ipc::FileStatus param;
@@ -543,6 +556,7 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
     // 计算传输进度与剩余时间
     double value = static_cast<double>(d->transferInfo.transferSize) / d->transferInfo.totalSize;
     int progressValue = static_cast<int>(value * 100);
+    qInfo() << "#######" << d->transferInfo.transferSize << d->transferInfo.totalSize << progressValue;
     if (progressValue <= 0) {
         return;
     } else if (progressValue >= 100) {

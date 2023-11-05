@@ -72,9 +72,21 @@ bool CooperationMenuScene::create(QMenu *parent)
         return false;
 
     if (!d->isEmptyArea) {
-        auto act = parent->addAction(d->predicateName.value(kFileTransfer));
-        d->predicateAction[kFileTransfer] = act;
-        act->setProperty(ActionPropertyKey::kActionID, kFileTransfer);
+        auto actions = parent->actions();
+        for (auto act : actions) {
+            if (act->isSeparator())
+                continue;
+
+            auto actId = act->property(ActionPropertyKey::kActionID).toString();
+            if (actId == "send-to") {
+                auto subMenu = act->menu();
+                if (subMenu) {
+                    auto act = subMenu->addAction(d->predicateName.value(kFileTransfer));
+                    d->predicateAction[kFileTransfer] = act;
+                    act->setProperty(ActionPropertyKey::kActionID, kFileTransfer);
+                }
+            }
+        }
     }
 
     return AbstractMenuScene::create(parent);

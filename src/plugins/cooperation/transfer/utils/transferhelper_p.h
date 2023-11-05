@@ -54,7 +54,6 @@ public Q_SLOTS:
 private:
     TransferHelper *q;
     FrontendService *frontendIpcSer { nullptr };
-    std::shared_ptr<rpc::Client> rpcClient { nullptr };
 
     QMap<int, int64_t> fileIds;   // <file_id, last_current_size> 统计正在传输的文件量<文件id，上次已传输量>
     QString sessionId;
