@@ -76,16 +76,17 @@ void DiscoveryJob::discovererRun()
 
                         if (!oldapps.is_null() && curapps.is_null()) {
                             //node has been unregister or losted.
-                            emit sigNodeChanged(false, QString(it->second.first.c_str()));
+                            // DLOG << "peer losted: " << it->second.first << " ---- " << node.as_c_str() << "####" << service.info;
+                            emit sigNodeChanged(false, QString(service.info.c_str()));
                             _dis_node_maps.erase(it);
-                        } else {
+                        } else if (!curapps.is_null()){
                             //node info has been updated, force update now.
                             _dis_node_maps.erase(it);
                             emit sigNodeChanged(true, QString(service.info.c_str()));
                             _dis_node_maps.insert(uid, std::make_pair(service.info, true));
                         }
                     }
-                } else {
+                } else  if (!node.get("apps").is_null()){
                     //new node discovery.
                     //DLOG << "new peer found: " << node.str();
                     emit sigNodeChanged(true, QString(service.info.c_str()));
