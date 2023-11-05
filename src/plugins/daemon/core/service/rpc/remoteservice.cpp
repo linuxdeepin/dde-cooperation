@@ -257,6 +257,7 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
     uint32 blk_id = request->blk_id();
     fastring name = request->filename();
     std::string buffer = request->data();
+    LOG << "req=  filetrans_block == " << name << file_id << job_id;
     bool comp = request->compressed();
 
     IncomeData in;
@@ -279,6 +280,7 @@ void RemoteServiceImpl::filetrans_block(::google::protobuf::RpcController *contr
 
     response->set_id(file_id);
     response->set_name(name.c_str());
+    response->set_result(_income_chan.done() ? OK : IO_ERROR);
 
     // LOG << "res= " << response->ShortDebugString().c_str();
 
