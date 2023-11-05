@@ -8,6 +8,7 @@ Build-Depends:
  libdtkgui-dev,
  libdtkcore-dev,
  libdtkcore5-bin,
+ qttools5-dev-tools,
  cmake,
  qtbase5-dev,
  libssl-dev,
