@@ -77,8 +77,10 @@ public:
     }
 
     ~ZRpcClientExecutor() {
-        if (_client)
+        if (_client) {
+            _client->getControler()->Reset();
             delete _client;
+        }
     }
 
     zrpc_ns::ZRpcChannel *chan() { return _client->getChannel(); }
