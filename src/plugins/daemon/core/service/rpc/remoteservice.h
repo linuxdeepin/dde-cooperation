@@ -76,7 +76,10 @@ public:
         _client = new zrpc_ns::ZRpcClient(targetip, port, true);
     }
 
-    ~ZRpcClientExecutor() = default;
+    ~ZRpcClientExecutor() {
+        if (_client)
+            delete _client;
+    }
 
     zrpc_ns::ZRpcChannel *chan() { return _client->getChannel(); }
 

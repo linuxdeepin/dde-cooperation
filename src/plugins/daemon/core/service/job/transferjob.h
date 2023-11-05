@@ -6,6 +6,7 @@
 #define TRANSFERJOB_H
 
 #include <QObject>
+#include <QQueue>
 #include <service/rpc/remoteservice.h>
 #include <ipc/proto/chan.h>
 #include "co/co.h"
@@ -30,7 +31,7 @@ public:
 
     void cancel();
 
-    void pushQueque(FSDataBlock &block);
+    void pushQueque(const QSharedPointer<FSDataBlock> block);
     void insertFileInfo(FileInfo &info);
 
 signals:
@@ -55,6 +56,7 @@ private:
     bool syncHandleStatus();
     void handleJobStatus(int status);
     void handleTransStatus(int status, FileInfo &info);
+    QSharedPointer<FSDataBlock> popQueue();
 
 private:
     int _jobid;
@@ -74,7 +76,7 @@ private:
     RemoteServiceBinder *_rpcBinder = nullptr;
 
     co::mutex _queque_mutex;
-    co::deque<FSDataBlock> _block_queue;
+    QQueue<QSharedPointer<FSDataBlock>> _block_queue;
     co::map<int32, FileInfo> _file_info_maps;
 };
 

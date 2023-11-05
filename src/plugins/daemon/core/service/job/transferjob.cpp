@@ -14,8 +14,6 @@
 TransferJob::TransferJob(QObject *parent)
     : QObject(parent)
 {
-    _block_queue.clear();
-    _file_info_maps.clear();
 }
 
 void TransferJob::initRpc(fastring target, uint16 port)
@@ -124,10 +122,10 @@ void TransferJob::cancel()
     }
 }
 
-void TransferJob::pushQueque(FSDataBlock &block)
+void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
 {
     co::mutex_guard g(_queque_mutex);
-    _block_queue.push_back(block);
+    _block_queue.enqueue(block);
 }
 
 void TransferJob::insertFileInfo(FileInfo &info)
@@ -238,16 +236,16 @@ void TransferJob::readFileBlock(const char *filepath, int fileid, const fastring
                 break;
             }
 
-            FSDataBlock block;
+            QSharedPointer<FSDataBlock> block(new FSDataBlock);
 
-            block.job_id = _jobid;
-            block.file_id = fileid;
-            block.filename = subname;
-            block.blk_id = block_id;
-            block.compressed = false;
+            block->job_id = _jobid;
+            block->file_id = fileid;
+            block->filename = subname;
+            block->blk_id = block_id;
+            block->compressed = false;
             // copy binrary data
             fastring bufdata(buf, resize);
-            block.data = bufdata;
+            block->data = bufdata;
 
             pushQueque(block);
 
@@ -305,24 +303,23 @@ void TransferJob::handleBlockQueque()
 
     bool exception = false;
     while (!_stoped) {
-        if (_block_queue.empty()) {
+        auto block = popQueue();
+        if (block.isNull()) {
             co::sleep(10);
             continue;
         }
-        co::mutex_guard g(_queque_mutex);
-        FSDataBlock block = _block_queue.front();
 
-        int32 job_id = block.job_id;
-        int32 file_id = block.file_id;
-        uint64 blk_id = block.blk_id;
-        fastring name = path::join(DaemonConfig::instance()->getStorageDir(), block.filename);
-        fastring buffer = block.data;
+        int32 job_id = block->job_id;
+        int32 file_id = block->file_id;
+        uint64 blk_id = block->blk_id;
+        fastring name = path::join(DaemonConfig::instance()->getStorageDir(), block->filename);
+        fastring buffer = block->data;
         size_t len = buffer.size();
-        bool comp = block.compressed;
+        bool comp = block->compressed;
 
         if (_writejob) {
-            int64 offset = blk_id * BLOCK_SIZE;
-//            ELOG << "file : " << name << " write : " << len;
+            int64 offset = static_cast<int64>(blk_id * BLOCK_SIZE);
+            // ELOG << "file : " << name << " write : " << len;
             bool good = FSAdapter::writeBlock(name.c_str(), offset, buffer.c_str(), len);
             if (!good) {
                 ELOG << "file : " << name << " write BLOCK error";
@@ -334,11 +331,11 @@ void TransferJob::handleBlockQueque()
             FileTransBlock file_block;
             file_block.set_job_id(job_id);
             file_block.set_file_id(file_id);
-            file_block.set_filename(block.filename.c_str());
-            file_block.set_blk_id(blk_id);
+            file_block.set_filename(block->filename.c_str());
+            file_block.set_blk_id(static_cast<uint>(blk_id));
             file_block.set_data(buffer.c_str(), len);
             file_block.set_compressed(comp);
-//            DLOG << "(" << job_id << ") send block " << block.filename << " size: " << len;
+            // DLOG << "(" << job_id << ") send block " << block->filename << " size: " << len;
 
             int send = _rpcBinder->doSendFileBlock(_tar_app_name.c_str(), file_block);
             if (send <= 0) {
@@ -347,7 +344,6 @@ void TransferJob::handleBlockQueque()
                 break;
             }
         }
-        _block_queue.pop_front();
 
         if (!exception) {
             // update the file info
@@ -430,4 +426,12 @@ void TransferJob::handleTransStatus(int status, FileInfo &info)
 
     // FileInfo > FileStatus in handle func
     emit notifyFileTransStatus(appname, status, fileinfo);
+}
+
+QSharedPointer<FSDataBlock> TransferJob::popQueue()
+{
+    co::mutex_guard g(_queque_mutex);
+    if (_block_queue.empty())
+        return nullptr;
+    return _block_queue.dequeue();
 }
