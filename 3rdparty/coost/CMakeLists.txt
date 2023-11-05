@@ -12,7 +12,12 @@ else()
     enable_language(C CXX ASM)
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+if(WIN32)
+    # windows output defined
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
+else()
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+endif()
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)

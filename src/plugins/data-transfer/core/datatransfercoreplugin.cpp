@@ -18,7 +18,7 @@ void DataTransferCorePlugin::initialize()
 {
     flag::set_value("rpc_log", "false"); //rpc日志关闭
 
-#ifdef QT_DEBUG
+#if defined(QT_DEBUG) || defined(WIN32)
     flag::set_value("cout", "true"); //终端日志输出
 #else
     fastring logdir = deepin_cross::BaseUtils::logDir().toStdString();

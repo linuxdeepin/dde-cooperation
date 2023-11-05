@@ -101,6 +101,13 @@ if(WIN32)
             WIN32_LEAN_AND_MEAN
             _WINSOCK_DEPRECATED_NO_WARNINGS
     )
+    if (MINGW)
+        target_compile_definitions(co
+            PRIVATE
+            __MINGW_USE_VC2005_COMPAT=1
+        )
+        target_link_libraries(co PUBLIC ws2_32)
+    endif()
     target_link_libraries(co PUBLIC ws2_32)
 else()
     #include(CheckIncludeFiles)
