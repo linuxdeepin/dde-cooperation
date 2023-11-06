@@ -2,3 +2,4 @@
 /.vscode/
 meson.build.user
 CMakeLists.txt.user
+*.qm

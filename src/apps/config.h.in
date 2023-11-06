@@ -35,4 +35,10 @@
 #    warning "cmake unseting definition DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR"
 #endif
 
+#ifndef APP_VERSION
+#    define APP_VERSION "${APP_VERSION}"
+#elif
+#    warning "cmake unseting definition APP_VERSION"
+#endif
+
 #endif   // CONFIG_H_IN

@@ -14,7 +14,7 @@ void SettingDialogPrivate::initTitleBar()
 {
     DTitlebar *titleBar = new DTitlebar(q);
     titleBar->setMenuVisible(false);
-    titleBar->setIcon(QIcon::fromTheme("collaboration"));
+    titleBar->setIcon(QIcon::fromTheme("dde-cooperation"));
 
     mainLayout->insertWidget(0, titleBar);
 }

@@ -25,7 +25,7 @@ static bool loadPlugins()
     pluginsDirs.push_back(pluginsDir + "/cooperation/core");
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
-    pluginsDirs << QString(DEEPIN_DATA_TRANS_PLUGIN_DIR);
+    pluginsDirs << QString(DEEPIN_COOPERATION_PLUGIN_DIR);
     pluginsDirs << QDir::currentPath() + "/plugins";
     pluginsDirs << QDir::currentPath() + "/plugins/cooperation";
     pluginsDirs << QDir::currentPath() + "/plugins/cooperation/core";
@@ -73,8 +73,8 @@ int main(int argc, char *argv[])
 #ifdef linux
     app.loadTranslator();
     app.setApplicationDisplayName(app.translate("Application", "Cooperation"));
-    app.setApplicationVersion("1.0.0");
-    app.setProductIcon(QIcon::fromTheme("collaboration"));
+    app.setApplicationVersion(APP_VERSION);
+    app.setProductIcon(QIcon(":/icons/dde-cooperation.svg"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/");
     app.setApplicationDescription(app.translate("Application", "Cooperation is a powerful cross-terminal "
                                                                "office tool that helps you deliver files, "

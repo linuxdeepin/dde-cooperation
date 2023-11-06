@@ -19,7 +19,7 @@ void MainWindowPrivate::initWindow()
 {
     q->setObjectName("MainWindow");
     q->setFixedSize(500, 630);
-    q->setWindowIcon(QIcon::fromTheme("collaboration"));
+    q->setWindowIcon(QIcon::fromTheme("dde-cooperation"));
 
     workspaceWidget = new WorkspaceWidget(q);
     q->setCentralWidget(workspaceWidget);
@@ -43,7 +43,7 @@ void MainWindowPrivate::initTitleBar()
         return;
     }
 
-    titleBar->setIcon(QIcon::fromTheme("collaboration"));
+    titleBar->setIcon(QIcon::fromTheme("dde-cooperation"));
     auto menu = titleBar->menu();
     QAction *action = new QAction(tr("Settings"), menu);
     action->setData(MenuAction::kSettings);

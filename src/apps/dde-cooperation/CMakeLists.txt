@@ -58,3 +58,10 @@ install(TARGETS ${PROJ_NAME} DESTINATION bin)
 # translation
 FILE(GLOB QM_FILES ${CMAKE_SOURCE_DIR}/translations/dde-cooperation/*.qm)
 install(FILES ${QM_FILES} DESTINATION share/${PROJ_NAME}/translations)
+
+# icons
+FILE(GLOB ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/*.svg)
+install(FILES ${ICON_FILES} DESTINATION share/icons/hicolor/scalable/apps)
+
+# desktop
+install(FILES dde-cooperation.desktop DESTINATION share/applications)
