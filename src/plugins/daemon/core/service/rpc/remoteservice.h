@@ -128,7 +128,7 @@ public:
     int doUpdateTrans(const QString &session, FileTransUpdate update);
 
     // 发送文件传输请求
-    void doSendApplyTransFiles(const QString &session, const QString &info);
+    int doSendApplyTransFiles(const QString &session, const QString &info);
 
     void clearExecutor(const QString &appname);
 

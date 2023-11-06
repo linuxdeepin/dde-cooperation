@@ -56,8 +56,12 @@ bool CommunicationJob::sendMsg(CommunicationType type, const QString &info)
         ELOG << "sendMsg ERROR: no executor, type " << type << info.toStdString();
         return false;
     }
-    _rpcBinder->createExecutor(_app_name.c_str(), _targetIP.c_str(), _port);
-    _rpcBinder->doSendApplyTransFiles(_app_name.c_str(), info);
+    int result = INVOKE_OK, retryCount = 0;
+    do {
+        _rpcBinder->createExecutor(_app_name.c_str(), _targetIP.c_str(), _port);
+        result = _rpcBinder->doSendApplyTransFiles(_app_name.c_str(), info);
+    } while (result == INVOKE_FAIL && retryCount++ < 2);
+
 
     return true;
 }

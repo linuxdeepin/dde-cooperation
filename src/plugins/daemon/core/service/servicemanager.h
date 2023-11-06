@@ -70,6 +70,7 @@ private:
     fastring genPeerInfo();
 
     void asyncDiscovery();
+    void handleClientReply(const QString &session, const QString &apiName, const co::Json &res);
 private:
     RemoteServiceBinder *_rpcServiceBinder = nullptr;
     BackendService *_backendIpcService = nullptr;
