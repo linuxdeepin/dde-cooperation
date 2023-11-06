@@ -537,6 +537,12 @@ void ServiceManager::asyncDiscovery()
     });
 }
 
+void ServiceManager::handleClientReply(const QString &session, const QString &apiName, const co::Json &res)
+{
+    DLOG << "Client reply, session " << session.toStdString() << ", api name = " << apiName.toStdString()
+         << "\n data = " << res;
+}
+
 void ServiceManager::saveSession(QString who, QString session, int cbport)
 {
     QSharedPointer<Session> s(new Session(who, session, cbport));
@@ -862,8 +868,10 @@ void ServiceManager::handleSendToClient(const QString session, const QString req
         ELOG << "client is down ip name = " << s->getName().toStdString() << s->getSession().toStdString();
         return;
     }
-    DLOG << "handleSendToClient  : " << session.toStdString() << req.toStdString();
+    DLOG << "Send To Client  : session = " << session.toStdString()
+         << "\n req : " << req.toStdString();
     co::Json reqj, res;
     reqj.parse_from(req.toStdString());
     s->call(reqj, res);
+    handleClientReply(session, reqj.get("api").str().c_str(), res);
 }

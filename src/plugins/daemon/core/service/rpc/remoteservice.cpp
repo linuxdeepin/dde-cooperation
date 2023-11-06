@@ -656,12 +656,12 @@ int RemoteServiceBinder::doUpdateTrans(const QString &session, FileTransUpdate u
     return INVOKE_DONE;
 }
 
-void RemoteServiceBinder::doSendApplyTransFiles(const QString &session, const QString &info)
+int RemoteServiceBinder::doSendApplyTransFiles(const QString &session, const QString &info)
 {
     auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doSendApplyTransFiles ERROR: no executor";
-        return;
+        return PARAM_ERROR;
     }
 
     RemoteService_Stub stub(_executor_p->chan());
@@ -669,12 +669,20 @@ void RemoteServiceBinder::doSendApplyTransFiles(const QString &session, const QS
     ApplyTransFilesResponse res;
     ApplyTransFilesRequest req;
     req.set_msg(info.toStdString());
+    DLOG << "send to remote server apply_trans_files : ip = " << _executor_p->targetIP().toStdString()
+         << " , port = " << _executor_p->targetPort() << " , session = " << session.toStdString()
+         << "\n data = " << info.toStdString();
     stub.apply_trans_files(rpc_controller, &req, &res, nullptr);
     if (rpc_controller->ErrorCode() != 0) {
-        ELOG << "Failed to call filetrans_update, error code: " << rpc_controller->ErrorCode()
+        ELOG << "Failed to call apply_trans_files, error code: " << rpc_controller->ErrorCode()
             << ", error info: " << rpc_controller->ErrorText();
-        return;
+        return INVOKE_FAIL;
     }
+    DLOG << "received remote server apply_trans_files reply : ip = " << _executor_p->targetIP().toStdString()
+         << " , port = " << _executor_p->targetPort() << " , session = " << session.toStdString()
+         << "\n data = " << res.result();
+
+    return INVOKE_OK;
 }
 
 void RemoteServiceBinder::clearExecutor(const QString &appname)
@@ -690,7 +698,7 @@ QSharedPointer<ZRpcClientExecutor> RemoteServiceBinder::executor(const QString &
         QReadLocker lk(&_executor_lock);
         _executor_p = _executor_ps.value(appname);
     }
-    if (_executor_p->control()->Failed())
+    if (_executor_p && _executor_p->control()->Failed())
         createExecutor(appname, _executor_p->targetIP().toStdString().c_str(), _executor_p->targetPort());
     return _executor_ps.value(appname);
 }
