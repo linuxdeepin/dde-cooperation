@@ -217,3 +217,17 @@ struct FSReport {
     }
 };
 
+struct SendStatus {
+    int32 status;
+
+    void from_json(const co::Json& _x_) {
+        status = (int32)_x_.get("status").as_int64();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("status", status);
+        return _x_;
+    }
+};
+

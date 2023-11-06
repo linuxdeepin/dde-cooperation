@@ -24,7 +24,7 @@ public:
 
     fastring getAppName();
     fastring getTarAppName() const;
-    bool sendMsg(CommunicationType type, const QString &info);
+    int sendMsg(CommunicationType type, const QString &info);
 private:
     bool _inited = false;
     uint16 _port = 0;

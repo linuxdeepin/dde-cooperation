@@ -15,9 +15,9 @@ BackendService::BackendService(QObject *parent)
     : QObject(parent)
 {
     // 发送请求，长度为10，300ms超时
-    _bridge_chan = new co::chan<BridgeJsonData>(10, 300);
+    _bridge_chan = new co::chan<BridgeJsonData>(10, 800);
     // 读取结果，长度为1，100ms超时
-    _bridge_result = new co::chan<BridgeJsonData>(1, 100);
+    _bridge_result = new co::chan<BridgeJsonData>(1, 400);
 }
 
 BackendService::~BackendService()

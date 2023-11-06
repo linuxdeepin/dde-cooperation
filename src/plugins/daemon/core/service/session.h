@@ -13,7 +13,7 @@ class Session : public QObject
 {
     Q_OBJECT
 public:
-    explicit Session(QString name, QString session, int port, QObject *parent = nullptr);
+    explicit Session(QString name, QString session, uint16 port, QObject *parent = nullptr);
     virtual ~Session();
 
     bool valid();
@@ -26,6 +26,7 @@ public:
     int hasJob(int jobid);
     rpc::Client* client();
     void call(const json::Json& req, json::Json& res);
+    uint16 port() const;
 
 signals:
 
@@ -34,7 +35,7 @@ public slots:
 private:
     QString _name;
     QString _sessionid;
-    int _cb_port = 0;
+    uint16 _cb_port = 0;
     co::vector<int> _jobs;
 
     std::shared_ptr<rpc::Client> coClient { nullptr };

@@ -65,3 +65,7 @@ object FSReport {
     int32 result //请求结果
     string error //原因
 }
+
+object SendStatus {
+    int32 status // 0 发送成功，-1发送失败，-2参数错误
+}
