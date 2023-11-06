@@ -12,7 +12,7 @@ namespace dfmplugin_cooperation {
 class CooperationPlugin : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "cooperationplugin.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "cooperationplugin.json")
 
     DPF_EVENT_NAMESPACE(dfmplugin_cooperation)
 
