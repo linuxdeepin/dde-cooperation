@@ -25,7 +25,7 @@ static bool loadPlugins()
     pluginsDirs.push_back(pluginsDir + "/cooperation/core");
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
-    pluginsDirs << QString(DEEPIN_DATA_TRANS_PLUGIN_DIR);
+    pluginsDirs << QString(DEEPIN_COOPERATION_PLUGIN_DIR);
     pluginsDirs << QDir::currentPath() + "/plugins";
     pluginsDirs << QDir::currentPath() + "/plugins/cooperation";
     pluginsDirs << QDir::currentPath() + "/plugins/cooperation/core";

@@ -15,7 +15,7 @@ TransferDialog::TransferDialog(QWidget *parent)
 void TransferDialog::initUI()
 {
     setFixedSize(380, 234);
-    setIcon(QIcon::fromTheme("collaboration"));
+    setIcon(QIcon::fromTheme("dde-cooperation"));
     setTitle(tr("File Transfer"));
     setContentsMargins(0, 0, 0, 0);
 

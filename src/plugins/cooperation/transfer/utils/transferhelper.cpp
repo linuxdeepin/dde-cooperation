@@ -320,7 +320,7 @@ void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
 uint TransferHelperPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
 {
     QDBusReply<uint> reply = notifyIfc->call("Notify", kMainAppName, replacesId,
-                                             tr("collaboration"), tr("file transfer"), body,
+                                             tr("dde-cooperation"), tr("file transfer"), body,
                                              actions, QVariantMap(), expireTimeout);
 
     return reply.isValid() ? reply.value() : replacesId;

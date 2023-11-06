@@ -56,6 +56,11 @@ if(NOT DEFINED DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR)
     set(DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/plugins)
 endif()
 
+# If do't define version number, specify the version number
+if(NOT DEFINED APP_VERSION)
+    set(APP_VERSION "1.0.0" CACHE STRING "define project version")
+endif()
+
 message("   >>> LIB_INSTALL_DIR  ${LIB_INSTALL_DIR}")
 message("   >>> DDE_COOPERATION_PLUGIN_ROOT_DIR  ${DDE_COOPERATION_PLUGIN_ROOT_DIR}")
 message("   >>> DEEPIN_DATA_TRANS_PLUGIN_DIR  ${DEEPIN_DATA_TRANS_PLUGIN_DIR}")

@@ -1,0 +1,21 @@
+[Desktop Entry]
+Categories=Network;RemoteControl;
+Comment=Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.
+Exec=/usr/bin/dde-cooperation
+GenericName=Cooperation
+Icon=dde-cooperation
+Name=Deepin Cooperation
+Type=Application
+StartupNotify=false
+Terminal=false
+X-Deepin-DEComponent=true
+X-Deepin-Vendor=deepin
+
+
+Comment[zh_CN]=跨端协同是一款强大的跨终端办公工具，可帮助您在不同设备之间实现文件投送、共享键鼠、共享剪贴板。
+
+
+GenericName[zh_CN]=跨端协同
+
+
+Name[zh_CN]=深度跨端协同

@@ -14,8 +14,8 @@
         <file>icons/deepin/builtin/texts/history_18px.svg</file>
         <file>icons/deepin/builtin/texts/refresh_14px.svg</file>
         <file>icons/deepin/builtin/texts/send_18px.svg</file>
-        <file>icons/deepin/builtin/icons/collaboration_32px.svg</file>
         <file>icons/deepin/builtin/texts/display_left_24px.svg</file>
         <file>icons/deepin/builtin/texts/display_right_24px.svg</file>
+        <file>icons/deepin/builtin/icons/dde-cooperation_128px.svg</file>
     </qresource>
 </RCC>
