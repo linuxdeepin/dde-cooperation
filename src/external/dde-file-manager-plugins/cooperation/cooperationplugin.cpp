@@ -15,7 +15,7 @@
 #define COOPERATION_SETTING_GROUP "10_advance.03_cooperation"
 inline constexpr char kCooperationSettingGroup[] { COOPERATION_SETTING_GROUP };
 inline constexpr char kCooperationSettingTransfer[] { "00_file_transfer" };
-inline constexpr char kParentScene[] { "SendToMenu" };
+inline constexpr char kParentScene[] { "ShareMenu" };
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmbase;
@@ -31,16 +31,17 @@ void CooperationPlugin::initialize()
 
 bool CooperationPlugin::start()
 {
-    {
-        // 加载翻译和跨端配置
-        auto appName = qApp->applicationName();
-        qApp->setApplicationName("dde-cooperation");
-        ConfigManager::instance();
-        qApp->loadTranslator();
-        qApp->setApplicationName(appName);
-    }
+    // 加载翻译和跨端配置
+    auto appName = qApp->applicationName();
+    qApp->setApplicationName("dde-cooperation");
+    ConfigManager::instance();
+    qApp->loadTranslator();
+    qApp->setApplicationName(appName);
 
-    addCooperationSettingItem();
+    // 添加文管设置
+    if (appName == "dde-file-manager")
+        addCooperationSettingItem();
+
     return true;
 }
 
