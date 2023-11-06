@@ -34,6 +34,10 @@ signals:
     void sigNodeChanged(bool found, QString info);
 
 private:
+    void compareOldAndNew(const fastring &uid, const QString &cur,
+                          const co::lru_map<fastring, std::pair<fastring, bool>>::iterator &it);
+
+private:
     explicit DiscoveryJob(QObject *parent = nullptr);
     virtual ~DiscoveryJob();
     void *_discoverer_p;

@@ -20,6 +20,7 @@
 #include <QSettings>
 #include <QCoreApplication>
 #include <QThread>
+#include <QTimer>
 
 co::chan<IncomeData> _income_chan(10, 300);
 co::chan<OutData> _outgo_chan(10, 10);
@@ -52,6 +53,22 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     // temp disable discovery service.
     asyncDiscovery();
 #endif
+    QTimer::singleShot(2000, this, [this]{
+        QList<uint16> ports{UNI_IPC_FRONTEND_PORT, UNI_IPC_FRONTEND_COOPERATION_PORT,
+                    UNI_IPC_FRONTEND_TRANSFER_PORT};
+        for (const auto &session : _sessions) {
+            ports.removeOne(session->port());
+        }
+        for (const auto &port : ports) {
+            Session s("test", "test", port);
+            if (s.alive()) {
+                co::Json req, res;
+                //cbPeerInfo {GenericResult}
+                req.add_member("api", "Frontend.cbNeedPing");
+                s.call(req, res);
+            }
+        }
+    });
 }
 
 ServiceManager::~ServiceManager()
@@ -485,7 +502,7 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
 QSharedPointer<Session> ServiceManager::sessionById(QString &id)
 {
     // find the session by id
-    for (size_t i = 0; i < _sessions.size(); ++i) {
+    for (int i = 0; i < _sessions.size(); ++i) {
         auto s = _sessions[i];
         if (s->getSession().compare(id) == 0) {
             return s;
@@ -497,7 +514,7 @@ QSharedPointer<Session> ServiceManager::sessionById(QString &id)
 QSharedPointer<Session> ServiceManager::sessionByName(const QString &name)
 {
     // find the session by name
-    for (size_t i = 0; i < _sessions.size(); ++i) {
+    for (int i = 0; i < _sessions.size(); ++i) {
         auto s = _sessions[i];
         if (s->getName().compare(name) == 0) {
             return s;
@@ -537,15 +554,9 @@ void ServiceManager::asyncDiscovery()
     });
 }
 
-void ServiceManager::handleClientReply(const QString &session, const QString &apiName, const co::Json &res)
-{
-    DLOG << "Client reply, session " << session.toStdString() << ", api name = " << apiName.toStdString()
-         << "\n data = " << res;
-}
-
 void ServiceManager::saveSession(QString who, QString session, int cbport)
 {
-    QSharedPointer<Session> s(new Session(who, session, cbport));
+    QSharedPointer<Session> s(new Session(who, session, static_cast<uint16>(cbport)));
     _sessions.push_back(s);
 }
 
@@ -758,6 +769,7 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
                 { "result", found ? 1 : 0 },
                 { "msg", nodeinfo },
             };
+
             req.add_member("api", "Frontend.cbPeerInfo");
             s->call(req, res);
             ++i;
@@ -820,8 +832,13 @@ void ServiceManager::handleBackApplyTransFiles(const co::Json &param)
         _applyjob->initJob(info.session, info.tarSession);
     }
     info.tarSession = _applyjob->getTarAppName();
-    UNIGO([_applyjob, info]() {
-        _applyjob->sendMsg(COMM_APPLY_TRANS, info.as_json().str().c_str());
+    UNIGO([this, _applyjob, info]() {
+        auto result = _applyjob->sendMsg(COMM_APPLY_TRANS, info.as_json().str().c_str());
+        SendStatus st;
+        st.status = result;
+        auto req = st.as_json();
+        req.add_member("api", "Frontend.notifySendApplyStatus");
+        emit sendToClient(info.session.c_str(), req.str().c_str());
     });
 }
 
@@ -868,10 +885,7 @@ void ServiceManager::handleSendToClient(const QString session, const QString req
         ELOG << "client is down ip name = " << s->getName().toStdString() << s->getSession().toStdString();
         return;
     }
-    DLOG << "Send To Client  : session = " << session.toStdString()
-         << "\n req : " << req.toStdString();
     co::Json reqj, res;
     reqj.parse_from(req.toStdString());
     s->call(reqj, res);
-    handleClientReply(session, reqj.get("api").str().c_str(), res);
 }

@@ -4,6 +4,7 @@
 
 #include "discoveryjob.h"
 #include "searchlight.h"
+#include "ipc/proto/comstruct.h"
 
 #include "common/constant.h"
 #include "co/log.h"
@@ -53,7 +54,6 @@ void DiscoveryJob::discovererRun()
 
             for(auto& service : services) {
                 //DLOG << "discovered: " << service;
-
                 co::Json node;
                 node.parse_from(service.info);
                 co::Json osjson = node.get("os");
@@ -68,25 +68,9 @@ void DiscoveryJob::discovererRun()
                 if (it != _dis_node_maps.end()) {
                     // has been recorded, markd it exist
                     it->second.second = true;
-                    if (it->second.first.compare(service.info) != 0) {
-                        co::Json oldnode;
-                        oldnode.parse_from(it->second.first);
-                        co::Json oldapps = oldnode.get("apps");
-                        co::Json curapps = node.get("apps");
-
-                        if (!oldapps.is_null() && curapps.is_null()) {
-                            //node has been unregister or losted.
-                            // DLOG << "peer losted: " << it->second.first << " ---- " << node.as_c_str() << "####" << service.info;
-                            emit sigNodeChanged(false, QString(service.info.c_str()));
-                            _dis_node_maps.erase(it);
-                        } else if (!curapps.is_null()){
-                            //node info has been updated, force update now.
-                            _dis_node_maps.erase(it);
-                            emit sigNodeChanged(true, QString(service.info.c_str()));
-                            _dis_node_maps.insert(uid, std::make_pair(service.info, true));
-                        }
-                    }
-                } else  if (!node.get("apps").is_null()){
+                    if (it->second.first.compare(service.info) != 0)
+                        compareOldAndNew(uid, service.info.c_str(), it);
+                } else {
                     //new node discovery.
                     //DLOG << "new peer found: " << node.str();
                     emit sigNodeChanged(true, QString(service.info.c_str()));
@@ -151,4 +135,58 @@ co::list<fastring> DiscoveryJob::getNodes()
         notes.push_back(it->second.first);
     }
     return notes;
+}
+
+void DiscoveryJob::compareOldAndNew(const fastring &uid, const QString &cur,
+                                    const co::lru_map<fastring, std::pair<fastring, bool>>::iterator &it)
+{
+    co::Json oldnode, curnode;
+    oldnode.parse_from(it->second.first);
+    curnode.parse_from(cur.toStdString());
+    NodeInfo oldInfo, curInfo;
+    oldInfo.from_json(oldnode);
+    curInfo.from_json(curnode);
+
+    if (!oldInfo.apps.empty() && curInfo.apps.empty()) {
+        //node has been unregister or losted.
+        emit sigNodeChanged(false, cur);
+        _dis_node_maps.erase(it);
+    } else if (oldInfo.apps.empty() && !curInfo.apps.empty()){
+        //node info has been updated, force update now.
+        _dis_node_maps.erase(it);
+        emit sigNodeChanged(true, cur);
+        _dis_node_maps.insert(uid, std::make_pair(cur.toStdString(), true));
+    } else if (!oldInfo.apps.empty() && !curInfo.apps.empty()) {
+        QStringList oldname, curname;
+        for (const auto &app : curInfo.apps) {
+            curname << app.appname.c_str();
+        }
+        bool up = false, down = false;
+        for (const auto &app : oldInfo.apps) {
+            oldname << app.appname.c_str();
+            // 新的不包含老的，下线
+            if (!curname.contains(app.appname.c_str()))
+                down = true;
+        }
+        if (down) {
+            //node has been unregister or losted.
+            emit sigNodeChanged(false, cur);
+            _dis_node_maps.erase(it);
+        }
+
+        for (const auto &app : curname) {
+            // 老的不包含新的，上线
+            if (!oldname.contains(app)) {
+                up = true;
+                break;
+            }
+        }
+
+        if (up) {
+            //node info has been updated, force update now.
+            _dis_node_maps.erase(it);
+            emit sigNodeChanged(true, cur);
+            _dis_node_maps.insert(uid, std::make_pair(cur.toStdString(), true));
+        }
+    }
 }

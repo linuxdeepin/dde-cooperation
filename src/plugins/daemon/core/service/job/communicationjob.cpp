@@ -50,11 +50,11 @@ fastring CommunicationJob::getTarAppName() const
     return _tar_app_name;
 }
 
-bool CommunicationJob::sendMsg(CommunicationType type, const QString &info)
+int CommunicationJob::sendMsg(CommunicationType type, const QString &info)
 {
     if (_rpcBinder == nullptr) {
         ELOG << "sendMsg ERROR: no executor, type " << type << info.toStdString();
-        return false;
+        return PARAM_ERROR;
     }
     int result = INVOKE_OK, retryCount = 0;
     do {
@@ -63,5 +63,5 @@ bool CommunicationJob::sendMsg(CommunicationType type, const QString &info)
     } while (result == INVOKE_FAIL && retryCount++ < 2);
 
 
-    return true;
+    return result;
 }

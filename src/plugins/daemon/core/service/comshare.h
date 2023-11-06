@@ -9,6 +9,8 @@
 #include <co/co.h>
 #include <co/json.h>
 
+#include <QList>
+
 typedef enum income_type_t {
     IN_LOGIN_RESULT= 100,
     IN_LOGIN_CONFIRM = 1000,
@@ -48,6 +50,9 @@ struct OutData {
 extern co::chan<IncomeData> _income_chan;
 extern co::chan<OutData> _outgo_chan;
 
+const static QList<uint16> clientPorts{
+    7790, 7791
+};
 
 class comshare
 {

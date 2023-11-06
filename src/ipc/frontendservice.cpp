@@ -152,3 +152,31 @@ void FrontendImpl::applyTransFiles(co::Json &req, co::Json &res)
         { "msg", "" }
     };
 }
+
+void FrontendImpl::notifySendApplyStatus(co::Json &req, co::Json &res)
+{
+    BridgeJsonData bridge;
+    bridge.type = FRONT_SEND_APPLY_STATUS;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
+}
+
+void FrontendImpl::cbNeedPing(co::Json &req, co::Json &res)
+{
+    BridgeJsonData bridge;
+    bridge.type = FRONT_NEED_PING_CLIENT;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
+}

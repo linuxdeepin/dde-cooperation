@@ -19,7 +19,7 @@ service Backend {
     fsPull, // pull remote file or directory
     registerDiscovery, // register own node json into discovery service
     unregisterDiscovery, // unregister from discovery service
-    applyTransFiles, //
+    applyTransFiles, // apply trans files to target remote server
 }
 
 // return {CallResult} msg is session id string
