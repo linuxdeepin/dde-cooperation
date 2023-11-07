@@ -9,7 +9,6 @@
 #include "maincontroller/maincontroller.h"
 #include "config/configmanager.h"
 
-#include <QDebug>
 #include <QApplication>
 
 using namespace cooperation_core;

@@ -30,6 +30,8 @@ public:
     ~TransferHelperPrivate();
 
     void initConfig();
+    QWidget *mainWindow();
+    TransferDialog *transDialog();
 
     void localIPCStart();
     bool handlePingBacked();
@@ -60,7 +62,6 @@ private:
     QStringList readyToSendFiles;
     QString sendToWho;
 
-    bool canTransfer { false };
     bool backendOk { false };
     bool thisDestruct { false };
 
@@ -69,7 +70,7 @@ private:
     TransferDialog *transferDialog { nullptr };
     QDBusInterface *notifyIfc { nullptr };
     uint recvNotifyId { 0 };
-    TransferMode currentMode { ReceiveMode };
+    TransferMode currentMode { SendMode };
 };
 
 }   // namespace cooperation_transfer
