@@ -218,15 +218,21 @@ struct FSReport {
 };
 
 struct SendStatus {
+    int32 type;
     int32 status;
+    fastring msg;
 
     void from_json(const co::Json& _x_) {
+        type = (int32)_x_.get("type").as_int64();
         status = (int32)_x_.get("status").as_int64();
+        msg = _x_.get("msg").as_c_str();
     }
 
     co::Json as_json() const {
         co::Json _x_;
+        _x_.add_member("type", type);
         _x_.add_member("status", status);
+        _x_.add_member("msg", msg);
         return _x_;
     }
 };

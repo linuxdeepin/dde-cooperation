@@ -104,7 +104,8 @@ public:
     explicit RemoteServiceBinder(QObject *parent = nullptr);
     ~RemoteServiceBinder();
 
-    void startRpcListen(const char *keypath, const char *crtpath);
+    void startRpcListen(const char *keypath, const char *crtpath,
+                        const std::function<void(int, const fastring &, const uint16)> &call = nullptr);
 
     void createExecutor(const QString &session, const char *targetip, uint16_t port);
 
@@ -132,6 +133,8 @@ public:
 
     void clearExecutor(const QString &appname);
 
+    void remoteIP(const QString &session, QString *ip, uint16 *port);
+
 signals:
     void loginResult(bool result, QString who);
     void queryResult(bool result, QString msg);
@@ -147,8 +150,7 @@ private:
     QSharedPointer<ZRpcClientExecutor> executor(const QString &appname);
 
 private:
-    QReadWriteLock _executor_lock;
-    QMap<QString, QSharedPointer<ZRpcClientExecutor>> _executor_ps;
+    std::function<void(int, const fastring &, const uint16)> callback{ nullptr };
 };
 
 #endif   // REMOTE_SERVICE_H

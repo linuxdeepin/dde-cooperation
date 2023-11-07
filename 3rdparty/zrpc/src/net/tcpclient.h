@@ -60,6 +60,7 @@ private:
     AbstractCodeC::ptr m_codec{nullptr};
 
     bool m_connect_succ{false};
+    CallBackFunc callback { nullptr };
 };
 
 } // namespace zrpc_ns

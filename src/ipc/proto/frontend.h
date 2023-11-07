@@ -22,8 +22,8 @@ class Frontend : public rpc::Service {
         _methods["Frontend.cbFsAction"] = std::bind(&Frontend::cbFsAction, this, _1, _2);
         _methods["Frontend.notifyFileStatus"] = std::bind(&Frontend::notifyFileStatus, this, _1, _2);
         _methods["Frontend.applyTransFiles"] = std::bind(&Frontend::applyTransFiles, this, _1, _2);
-        _methods["Frontend.notifySendApplyStatus"] = std::bind(&Frontend::notifySendApplyStatus, this, _1, _2);
-        _methods["Frontend.cbNeedPing"] = std::bind(&Frontend::cbNeedPing, this, _1, _2);
+        _methods["Frontend.notifySendStatus"] = std::bind(&Frontend::notifySendStatus, this, _1, _2);
+        _methods["Frontend.backendServerOnline"] = std::bind(&Frontend::backendServerOnline, this, _1, _2);
     }
 
     virtual ~Frontend() {}
@@ -54,9 +54,9 @@ class Frontend : public rpc::Service {
 
     virtual void applyTransFiles(co::Json& req, co::Json& res) = 0;
 
-    virtual void notifySendApplyStatus(co::Json& req, co::Json& res) = 0;
+    virtual void notifySendStatus(co::Json& req, co::Json& res) = 0;
 
-    virtual void cbNeedPing(co::Json& req, co::Json& res) = 0;
+    virtual void backendServerOnline(co::Json& req, co::Json& res) = 0;
 
   private:
     co::map<const char*, Fun> _methods;
