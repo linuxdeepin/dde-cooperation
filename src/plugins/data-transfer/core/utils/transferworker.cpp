@@ -28,12 +28,10 @@ TransferHandle::TransferHandle()
     _job_maps.clear();
     _file_ids.clear();
 
-    UNIGO([this, appName]() {
-        _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
-        if (_backendOK) {
-            saveSession(TransferWoker::instance()->getSessionId());
-        }
-    });
+    _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
+    if (_backendOK) {
+        saveSession(TransferWoker::instance()->getSessionId());
+    }
 
     //log
     qInstallMessageHandler(logHandler);
@@ -291,24 +289,16 @@ void TransferHandle::tryConnect(QString ip, QString password)
 {
     if (!_backendOK) return;
 
-    UNIGO([ip, password]() {
-        TransferWoker::instance()->tryConnect(ip.toStdString(), password.toStdString());
-    });
+    TransferWoker::instance()->tryConnect(ip.toStdString(), password.toStdString());
 }
 
 QString TransferHandle::getConnectPassWord()
 {
     if (!_backendOK) return "";
 
-    co::wait_group g_wg;
-    g_wg.add(1);
     QString password;
-    UNIGO([&password, g_wg]() {
-        TransferWoker::instance()->setEmptyPassWord();
-        password = TransferWoker::instance()->getConnectPassWord();
-        g_wg.done();
-    });
-    g_wg.wait();
+    TransferWoker::instance()->setEmptyPassWord();
+    password = TransferWoker::instance()->getConnectPassWord();
     return password;
 }
 
@@ -319,9 +309,7 @@ void TransferHandle::sendFiles(QStringList paths)
     //清空上次任务的所有文件统计
     _file_ids.clear();
     int current_id = _request_job_id;
-    UNIGO([paths, current_id]() {
-        TransferWoker::instance()->sendFiles(current_id, paths);
-    });
+    TransferWoker::instance()->sendFiles(current_id, paths);
     current_id++;
 }
 
@@ -348,7 +336,7 @@ bool TransferWoker::pingBackend(const std::string &who)
 
     req.add_member("api", "Backend.ping");   //BackendImpl::ping
 
-    coClient->call(req, res);
+    call(req, res);
     _session_id = res.get("msg").as_string();   // save the return session.
 
     //CallResult
@@ -365,7 +353,7 @@ void TransferWoker::setEmptyPassWord()
 
     req.add_member("api", "Backend.setPassword");   //BackendImpl::setPassword
 
-    coClient->call(req, res);
+    call(req, res);
 }
 
 QString TransferWoker::getConnectPassWord()
@@ -374,7 +362,7 @@ QString TransferWoker::getConnectPassWord()
 
     req.add_member("api", "Backend.getPassword");   //BackendImpl::getPassword
 
-    coClient->call(req, res);
+    call(req, res);
 
     return res.get("password").as_string().c_str();
 }
@@ -392,7 +380,7 @@ void TransferWoker::tryConnect(const std::string &ip, const std::string &passwor
         { "password", pin_code },
     };
     req.add_member("api", "Backend.tryConnect");   //BackendImpl::tryConnect
-    coClient->call(req, res);
+    call(req, res);
 }
 
 fastring TransferWoker::getSessionId()
@@ -419,5 +407,22 @@ void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 
     req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
 
+    call(req, res);
+}
+
+void TransferWoker::call(const json::Json &req, json::Json &res)
+{
+    coClient.reset(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false));
+#if defined(WIN32)
+    co::wait_group wg;
+    wg.add(1);
+    UNIGO([this, &req, &res, wg]() {
+        coClient->call(req, res);
+        wg.done();
+    });
+    wg.wait();
+#else
     coClient->call(req, res);
+#endif
+    coClient->close();
 }
