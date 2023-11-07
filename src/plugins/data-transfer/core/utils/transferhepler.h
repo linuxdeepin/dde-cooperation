@@ -7,7 +7,7 @@
 #include <QObject>
 
 #ifndef WIN32
-#include <QDBusMessage>
+#    include <QDBusMessage>
 #endif
 
 #include <QUrl>
@@ -39,6 +39,13 @@ public:
     int getRemainSize();
     bool checkSize(const QString &filepath);
     void setting(const QString &filepath);
+    void recordTranferJob(const QString &filepath);
+    bool isUnfinishedJob(const QString &user);
+    void addFinshedFiles(const QString &filepath);
+    bool cancelTransferJob();
+
+private:
+    QStringList finshedFiles;
 #endif
 
 Q_SIGNALS:
@@ -52,7 +59,7 @@ Q_SIGNALS:
     // Used to control the current operation content, progress, and estimated completion time
     // during transmission or decompression process
     // progressbar use percentage and the time unit is seconds
-    void transferContent(const QString &content, int progressbar, int estimatedtime);
+    void transferContent(const QString &tpye, const QString &content, int progressbar, int estimatedtime);
 
     // network
     void onlineStateChanged(bool online);
@@ -62,6 +69,9 @@ Q_SIGNALS:
 
     // display config failure
     void failure(QString name, QString type, QString reason);
+
+    //Transmission interruption
+    void interruption();
 
 private:
     void initOnlineState();

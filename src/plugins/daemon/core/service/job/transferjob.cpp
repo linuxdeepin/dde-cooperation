@@ -40,6 +40,7 @@ void TransferJob::start()
 {
     _stoped = false;
     _finished = false;
+    _jobCanceled = false;
     if (_writejob) {
         DLOG << "start write job: " << _savedir;
         handleJobStatus(JOB_TRANS_DOING);
@@ -103,27 +104,33 @@ fastring TransferJob::getAppName()
 
 void TransferJob::cancel()
 {
+    _file_info_maps.clear();
+    _jobCanceled = true;
     if (_writejob) {
-        UNIGO([this] {
-            FileTransJobCancel *cancel = new FileTransJobCancel();
-            FileTransUpdate update;
+        // FIXME: the receive can not send rpc
+        //        UNIGO([this] {
+        //            FileTransJobCancel *cancel = new FileTransJobCancel();
+        //            FileTransUpdate update;
 
-            cancel->set_job_id(_jobid);
-            cancel->set_path(_path.c_str());
+        //            cancel->set_job_id(_jobid);
+        //            cancel->set_path(_path.c_str());
 
-            update.set_allocated_cancel(cancel);
-            int res = _rpcBinder->doUpdateTrans(_tar_app_name.c_str(), update);
-            if (res <= 0) {
-                ELOG << "update failed: " << _path << " result=" << result;
-            }
-        });
-    } else {
-        this->stop();
+        //            update.set_allocated_cancel(cancel);
+        //            int res = _rpcBinder->doUpdateTrans(_tar_app_name.c_str(), update);
+        //            if (res <= 0) {
+        //                ELOG << "update failed: " << _path << " result=" << result;
+        //            }
+        //        });
     }
+    this->stop();
 }
 
 void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
 {
+    if (_jobCanceled) {
+        DLOG << "This job has mark cancel, stop handle data.";
+        return;
+    }
     co::mutex_guard g(_queque_mutex);
     _block_queue.enqueue(block);
 }
@@ -133,7 +140,7 @@ void TransferJob::insertFileInfo(FileInfo &info)
     int fileid = info.file_id;
     auto it = _file_info_maps.find(fileid);
     if (it == _file_info_maps.end()) {
-        DLOG << "insertFileInfo new file INFO: " << fileid;
+        DLOG << "insertFileInfo new file INFO: " << fileid << info.name;
         // skip 0B file
         if (info.total_size > 0) {
             _file_info_maps.insert(std::make_pair(fileid, info));
@@ -173,7 +180,7 @@ void TransferJob::readPath(fastring path, fastring root)
 {
     fastring dirpath = path::join(path, "");
     fs::dir d(dirpath);
-    auto v = d.all(); // 读取所有子项
+    auto v = d.all();   // 读取所有子项
     for (const fastring &file : v) {
         fastring file_path = path::join(d.path(), file.c_str());
         scanPath(root, file_path);
@@ -214,7 +221,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         info.current_size = 0;
         info.time_spended = -1;
         _file_info_maps.insert(std::make_pair(fileid, info));
-//        LOG << "======this file (" << subname << "fileid" << fileid << ") start   _file_info_maps";
+        //        LOG << "======this file (" << subname << "fileid" << fileid << ") start   _file_info_maps";
     }
     UNIGO([this, filepath, fileid, subname, file_size, block_size]() {
         int64 read_size = 0;
@@ -264,10 +271,11 @@ void TransferJob::handleBlockQueque()
     UNIGO([this]() {
         bool exit = false;
         bool next_exit = false;
-        int _max_count = 5; // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
+        int _max_count = 5;   // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
         do {
-            co::sleep(1000); // 每秒检测发送一次状态
-            bool empty = this->syncHandleStatus(); //检测一次
+            exit = !_jobCanceled;
+            co::sleep(1000);   // 每秒检测发送一次状态
+            bool empty = this->syncHandleStatus();   //检测一次
             if (empty) {
                 if (_waitfinish) {
                     if (next_exit) {
@@ -275,7 +283,7 @@ void TransferJob::handleBlockQueque()
                         handleJobStatus(JOB_TRANS_FINISHED);
                         break;
                     } else {
-                        next_exit = true; //标记等待下一次状态检测退出
+                        next_exit = true;   //标记等待下一次状态检测退出
                         continue;
                     }
                 }
@@ -388,7 +396,8 @@ void TransferJob::handleUpdate(FileTransRe result, const char *path, const char 
 bool TransferJob::syncHandleStatus()
 {
     // update the file info
-    for (auto& pair : _file_info_maps) {
+    for (auto &pair : _file_info_maps) {
+        //DLOG << "syncHandleStatus()" << pair.second.name;
         if (pair.second.time_spended >= 0) {
             pair.second.time_spended += 1;
             bool end = pair.second.current_size >= pair.second.total_size;

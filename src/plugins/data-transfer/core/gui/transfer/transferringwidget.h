@@ -20,7 +20,7 @@ public slots:
     void informationPage();
     void changeTimeLabel(const QString &time);
     void changeProgressLabel(const int &ratio);
-    void updateProcess(const QString &content, int progressbar, int estimatedtime);
+    void updateProcess(const QString &tpye, const QString &content, int progressbar, int estimatedtime);
     void themeChanged(int theme);
     void clear();
 

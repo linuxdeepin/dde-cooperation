@@ -65,13 +65,14 @@ private:
     bool _stoped = true;
     bool _finished = false;
     bool _waitfinish = false;
+    bool _jobCanceled = false;
 
     bool _sub;
     bool _writejob;
-    fastring _app_name; // //前端应用名
-    fastring _path; // 目录或文件路径
-    fastring _savedir; // 写作业，文件保存的目录
-    fastring _tar_app_name; // 发送到目标的应用名称
+    fastring _app_name;   // //前端应用名
+    fastring _path;   // 目录或文件路径
+    fastring _savedir;   // 写作业，文件保存的目录
+    fastring _tar_app_name;   // 发送到目标的应用名称
 
     RemoteServiceBinder *_rpcBinder = nullptr;
 
@@ -80,4 +81,4 @@ private:
     co::map<int32, FileInfo> _file_info_maps;
 };
 
-#endif // TRANSFERJOB_H
+#endif   // TRANSFERJOB_H

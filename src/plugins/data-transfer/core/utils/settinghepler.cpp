@@ -47,6 +47,9 @@ QJsonObject SettingHelper::ParseJson(const QString &filepath)
     }
     jsonObj = jsonDoc.object();
 
+    if (jsonObj.isEmpty())
+        qWarning() << "this job none file";
+
     return jsonObj;
 }
 
@@ -54,8 +57,13 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
 {
     addTaskcounter(1);
     QJsonObject jsonObj = ParseJson(filepath + "/" + "transfer.json");
-    if (jsonObj.isEmpty())
+    if (jsonObj.isEmpty()) {
+        addTaskcounter(-1);
+        isall = false;
+        qWarning() << "transfer.json is invaild";
+        emit TransferHelper::instance()->failure("配置文件", "文件", "配置文件错误或丢失");
         return false;
+    }
 
     // Configure desktop wallpaper
     QString image = filepath + "/" + jsonObj["wallpapers"].toString();
@@ -183,7 +191,7 @@ bool SettingHelper::installApps(const QString &app)
     if (!success)
         qWarning() << "Failed to connect to signal";
 
-    emit TransferHelper::instance()->transferContent("正在安装" + app, 100, -2);
+    emit TransferHelper::instance()->transferContent("正在安装", app, 100, -2);
 
     addTaskcounter(1);
     return true;
@@ -207,7 +215,7 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
         QString app = applist.key(package);
         QString content = applist.key(package) + "  Key:" + key + "   Value:" + value.toString();
         qInfo() << content;
-        emit TransferHelper::instance()->transferContent("正在安装" + content, 100, -2);
+        emit TransferHelper::instance()->transferContent("正在安装", content, 100, -2);
         if (key == "Status" && value == "succeed")
             addTaskcounter(-1);
         if (key == "Status" && value == "failed") {
@@ -222,7 +230,7 @@ void SettingHelper::addTaskcounter(int value)
 {
     taskcounter += value;
     if (taskcounter == 0) {
-        emit TransferHelper::instance()->transferContent("迁移完成", 100, -1);
+        emit TransferHelper::instance()->transferContent("", "迁移完成", 100, -1);
         emit TransferHelper::instance()->transferSucceed(isall);
     }
 }
