@@ -29,6 +29,8 @@ public:
 
     QString getJsonfile(const QJsonObject &jsonData, const QString &save);
 
+    bool cancelTransferJob();
+
 #ifdef WIN32
     QMap<QString, QString> getAppList();
     QMap<QString, QString> getBrowserList();
@@ -42,7 +44,6 @@ public:
     void recordTranferJob(const QString &filepath);
     bool isUnfinishedJob(const QString &user);
     void addFinshedFiles(const QString &filepath);
-    bool cancelTransferJob();
 
 private:
     QStringList finshedFiles;
@@ -60,6 +61,9 @@ Q_SIGNALS:
     // during transmission or decompression process
     // progressbar use percentage and the time unit is seconds
     void transferContent(const QString &tpye, const QString &content, int progressbar, int estimatedtime);
+
+    // zip progressbar use percentage and the time unit is seconds
+    void zipTransferContent(const QString &content, int progressbar, int estimatedtime);
 
     // network
     void onlineStateChanged(bool online);

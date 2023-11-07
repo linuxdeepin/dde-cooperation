@@ -273,7 +273,7 @@ void TransferJob::handleBlockQueque()
         bool next_exit = false;
         int _max_count = 5;   // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
         do {
-            exit = !_jobCanceled;
+            exit = _jobCanceled;
             co::sleep(1000);   // 每秒检测发送一次状态
             bool empty = this->syncHandleStatus();   //检测一次
             if (empty) {
