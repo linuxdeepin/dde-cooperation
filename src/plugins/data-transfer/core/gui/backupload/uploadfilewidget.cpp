@@ -137,7 +137,7 @@ bool UploadFileWidget::checkBackupFile(const QString &filePath)
     // Verify size
     QFileInfo info(filePath);
     qInfo() << "<<info.size();" << info.size();
-    int size = static_cast<int>(info.size() / 1024 / 1024 / 1024 + 1);
+    int size = static_cast<int>(info.size() / 1024 / 1024 / 1024 + 5);
     if (size > TransferHelper::instance()->getRemainSize()) {
         tipLabel->setVisible(true);
         tipLabel->setText(QString("<font size=12px color='#FF5736' >UOS空间不足，请至少预留 %1G 空间后重试</font>").arg(size));
