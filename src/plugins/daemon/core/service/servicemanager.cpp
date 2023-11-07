@@ -126,7 +126,8 @@ void ServiceManager::startRemoteServer()
             }
             case IN_TRANSJOB:
             {
-                UNIGO(std::bind(&ServiceManager::handleRemoteRequestJob, this, std::placeholders::_1), json_obj.str());
+                handleRemoteRequestJob(json_obj.str());
+                //UNIGO(std::bind(&ServiceManager::handleRemoteRequestJob, this, std::placeholders::_1), json_obj.str());
                 break;
             }
             case FS_DATA:
@@ -589,8 +590,9 @@ void ServiceManager::newTransSendJob(QString session, const QString targetSessio
         { "write", false }
     };
 
-    UNIGO(std::bind(&ServiceManager::handleRemoteRequestJob, this, std::placeholders::_1), jobjson.str());
-    s->addJob(id); // record this job into session
+    s->addJob(id);   // record this job into session
+    handleRemoteRequestJob(jobjson.str());
+    //    UNIGO(std::bind(&ServiceManager::handleRemoteRequestJob, this, std::placeholders::_1), jobjson.str());
 }
 
 void ServiceManager::notifyConnect(QString session, QString ip, QString password)
@@ -627,11 +629,6 @@ bool ServiceManager::doJobAction(uint32_t action, co::Json &jsonobj)
     QString session(param.session.c_str());
     int jobid = param.job_id;
     bool remote = param.is_remote;
-    auto s = sessionById(session);
-    if (!s || s->hasJob(jobid) < 0) {
-        DLOG << "not find session by id:" << session.toStdString();
-        return false;
-    }
 
     if (BACK_CANCEL_JOB == action) {
         if (remote) {

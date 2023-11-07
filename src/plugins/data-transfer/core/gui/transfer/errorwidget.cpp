@@ -136,7 +136,7 @@ void ErrorWidget::retryPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
-        stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
+        stackedWidget->setCurrentIndex(PageName::choosewidget);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";

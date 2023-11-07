@@ -186,7 +186,7 @@ void TransferringWidget::changeProgressLabel(const int &ratio)
     progressLabel->setProgress(ratio);
 }
 
-void TransferringWidget::updateProcess(const QString &content, int progressbar, int estimatedtime)
+void TransferringWidget::updateProcess(const QString &tpye, const QString &content, int progressbar, int estimatedtime)
 {
 #ifdef WIN32
     if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
@@ -194,11 +194,10 @@ void TransferringWidget::updateProcess(const QString &content, int progressbar, 
         return;
     }
 #else
-    if (content.contains("transfer.json"))
+    if (content.contains("transfer.json") && tpye == "正在传输")
         TransferHelper::instance()->checkSize(content);
 #endif
-    QString info =
-            QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(content);
+    QString info = QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(tpye + content);
     processTextBrowser->append(info);
     progressLabel->setProgress(progressbar);
     fileLabel->setText(info);

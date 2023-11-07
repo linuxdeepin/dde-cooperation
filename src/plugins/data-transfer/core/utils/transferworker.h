@@ -27,6 +27,7 @@ public:
     void sendFiles(QStringList paths);
 
     static void logHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+    bool cancelTransferJob();
 public slots:
     void saveSession(fastring sessionid);
     void handleConnectStatus(int result, QString msg);
@@ -59,6 +60,7 @@ public:
     ~TransferWoker();
 
     bool pingBackend(const std::string &who);
+    bool cancelTransferJob(int jobid);
     void setEmptyPassWord();
     QString getConnectPassWord();
     void sendFiles(int reqid, QStringList filepaths);

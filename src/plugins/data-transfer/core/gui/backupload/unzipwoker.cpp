@@ -86,7 +86,7 @@ bool UnzipWorker::extract()
             double value = static_cast<double>(currentTotal) / count;
             int progressbar = static_cast<int>(value * 100) - 1;
             int estimatedtime = (count - currentTotal) / speed / 2 + 1;
-            emit TransferHelper::instance()->transferContent("正在解压" + outputText, progressbar, estimatedtime);
+            emit TransferHelper::instance()->transferContent("正在解压", outputText, progressbar, estimatedtime);
             qInfo() << value << outputText;
         }
     }

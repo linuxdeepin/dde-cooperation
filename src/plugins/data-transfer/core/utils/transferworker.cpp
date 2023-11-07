@@ -165,6 +165,10 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
     qInfo() << "connect status: " << result << " msg:" << msg;
     if (result > 0) {
         emit TransferHelper::instance()->connectSucceed();
+
+        //#ifndef WIN32
+        //        TransferHelper::instance()->isUnfinishedJob(msg);
+        //#endif
     }
 }
 
@@ -250,6 +254,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         _file_ids.remove(param.file_id);
 
         qInfo() << "file receive END: " << filepath;
+        //TransferHelper::instance()->addFinshedFiles(filepath);
         break;
     }
     default:
@@ -277,7 +282,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     //    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
     //    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
-    emit TransferHelper::instance()->transferContent("正在传输" + filepath, progressbar, remain_time);
+    emit TransferHelper::instance()->transferContent("正在传输", filepath, progressbar, remain_time);
 }
 
 void TransferHandle::handleMiscMessage(QString jsonmsg)
@@ -300,6 +305,22 @@ QString TransferHandle::getConnectPassWord()
     TransferWoker::instance()->setEmptyPassWord();
     password = TransferWoker::instance()->getConnectPassWord();
     return password;
+}
+
+bool TransferHandle::cancelTransferJob()
+{
+    if (!_backendOK) return false;
+
+    co::wait_group g_wg;
+    g_wg.add(1);
+    bool ok;
+    int jobid = _job_maps.firstKey();
+    UNIGO([&ok, g_wg, jobid]() {
+        ok = TransferWoker::instance()->cancelTransferJob(jobid);
+        g_wg.done();
+    });
+    g_wg.wait();
+    return ok;
 }
 
 void TransferHandle::sendFiles(QStringList paths)
@@ -365,6 +386,21 @@ QString TransferWoker::getConnectPassWord()
     call(req, res);
 
     return res.get("password").as_string().c_str();
+}
+
+bool TransferWoker::cancelTransferJob(int jobid)
+{
+    co::Json req, res;
+
+    req = {
+        { "session", _session_id },
+        { "job_id", jobid },
+        { "is_remote", true }
+    };
+    req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
+    coClient->call(req, res);
+    qInfo() << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
+    return res.get("result").as_bool();
 }
 
 void TransferWoker::tryConnect(const std::string &ip, const std::string &password)

@@ -30,7 +30,8 @@
 #endif
 
 #pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper() : QObject()
+TransferHelper::TransferHelper()
+    : QObject()
 {
     initOnlineState();
 #ifndef WIN32
@@ -38,7 +39,7 @@ TransferHelper::TransferHelper() : QObject()
 #endif
 }
 
-TransferHelper::~TransferHelper() { }
+TransferHelper::~TransferHelper() {}
 
 TransferHelper *TransferHelper::instance()
 {
@@ -55,8 +56,8 @@ void TransferHelper::initOnlineState()
 #ifdef WIN32
         pingProcess.start("ping",
                           QStringList() << "-n"
-                          << "1"
-                          << "www.baidu.com");
+                                        << "1"
+                                        << "www.baidu.com");
 #else
         pingProcess.start("ping",
                           QStringList() << "-c"
@@ -87,6 +88,11 @@ bool TransferHelper::getOnlineState() const
 QString TransferHelper::getConnectPassword()
 {
     return transferhandle.getConnectPassWord();
+}
+
+bool TransferHelper::cancelTransferJob()
+{
+    return transferhandle.cancelTransferJob();
 }
 
 void TransferHelper::tryConnect(const QString &ip, const QString &password)
@@ -129,7 +135,7 @@ QMap<QString, QString> TransferHelper::getAppList()
 {
     QMap<QString, QString> appList;
     QMap<QString, QString> appNameList =
-        DrapWindowsData::instance()->RecommendedInstallationAppList();
+            DrapWindowsData::instance()->RecommendedInstallationAppList();
 
     for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++) {
         appList[iterator.key()] = QString(":/icon/AppIcons/%1.svg").arg(iterator.value());
@@ -226,14 +232,88 @@ bool TransferHelper::checkSize(const QString &filepath)
     QJsonObject jsonObj = SettingHelper::ParseJson(filepath);
     if (jsonObj.isEmpty())
         return false;
-    auto size = jsonObj["user_data"].toInt();
-    qInfo() << "jsonObj[ user_data ].toInt();" << size;
+    auto sizestr = jsonObj["user_data"].toString();
+    auto size = QVariant(sizestr).toLongLong() / 1024 / 1024 / 1024;
+    qInfo() << sizestr << "   jsonObj[ user_data ];" << size;
     int remainSize = getRemainSize();
     if (size > remainSize) {
+        qInfo() << "outOfStorage" << size;
         emit outOfStorage(size);
+        cancelTransferJob();
         return false;
     }
     return true;
+}
+
+void TransferHelper::recordTranferJob(const QString &filepath)
+{
+    //1.copy transferjson to temp
+    QFile jsonfile(filepath);
+    QFileInfo info(jsonfile);
+    QString tempPath(info.path() + "/transfer-temp.json");
+    if (!jsonfile.copy(tempPath))
+        qWarning() << "Failed to copy file";
+
+    connect(this, &TransferHelper::interruption, this, [this, filepath, tempPath]() {
+        //2.write unfinished files to tempjson file
+        QJsonObject jsonObj = SettingHelper::ParseJson(filepath);
+
+        QJsonArray userFileArray = jsonObj["user_file"].toArray();
+        QJsonArray updatedFileList;
+
+        foreach (const QJsonValue &fileValue, userFileArray) {
+            QString file = fileValue.toString();
+            QString filename = file.mid(file.indexOf('/'));
+
+            //skip finished files
+            if (finshedFiles.contains(filename)) {
+                continue;
+            }
+            updatedFileList.append(file);
+        }
+        //3.save unfinished filelist for retransmission
+        jsonObj["user_file"] = updatedFileList;
+        QJsonDocument jsonDoc;
+        jsonDoc.setObject(jsonObj);
+        QFile tempfile(tempPath);
+        if (!tempfile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+            qWarning() << "Failed to open JSON file for writing";
+        tempfile.write(jsonDoc.toJson());
+        tempfile.close();
+    });
+
+    connect(this, &TransferHelper::transferSucceed, this, [this, tempPath](bool isall) {
+        Q_UNUSED(isall)
+        finshedFiles.clear();
+        QFile tempfile(tempPath);
+        tempfile.remove(tempPath);
+    });
+}
+
+bool TransferHelper::isUnfinishedJob(const QString &user)
+{
+    QFile f(QDir::homePath() + "/" + user + "/transfer-temp.json");
+    if (!f.exists())
+        return false;
+    qInfo() << user + "has UnfinishedJob";
+
+    QJsonObject jsonObj = SettingHelper::ParseJson(f.fileName());
+    QJsonArray fileArray = jsonObj["user_file"].toArray();
+
+    QStringList unfinishedFiles;
+    foreach (const QJsonValue &fileValue, fileArray) {
+        QString file = fileValue.toString();
+        unfinishedFiles.append(file);
+    }
+    qInfo() << "unfinishedFiles" << unfinishedFiles;
+    return true;
+}
+
+void TransferHelper::addFinshedFiles(const QString &filepath)
+{
+    if (filepath.contains("transfer.json"))
+        TransferHelper::instance()->recordTranferJob(filepath);
+    finshedFiles.append(filepath);
 }
 
 void TransferHelper::setting(const QString &filepath)
@@ -245,6 +325,7 @@ int TransferHelper::getRemainSize()
 {
     QStorageInfo storage("/data");
     auto remainSize = storage.bytesAvailable() / 1024 / 1024 / 1024;
-    return static_cast<int>(remainSize);
+    //多预留2g空间
+    return static_cast<int>(remainSize) + 5;
 }
 #endif
