@@ -153,10 +153,11 @@ void FrontendImpl::applyTransFiles(co::Json &req, co::Json &res)
     };
 }
 
-void FrontendImpl::notifySendApplyStatus(co::Json &req, co::Json &res)
+void FrontendImpl::notifySendStatus(co::Json &req, co::Json &res)
 {
     BridgeJsonData bridge;
-    bridge.type = FRONT_SEND_APPLY_STATUS;
+    bridge.type = FRONT_SEND_STATUS;
+    // 使用结构体 SendStatus
     bridge.json = req.str();
     _interface->bridgeChan()->operator<<(bridge);
 
@@ -167,10 +168,10 @@ void FrontendImpl::notifySendApplyStatus(co::Json &req, co::Json &res)
     };
 }
 
-void FrontendImpl::cbNeedPing(co::Json &req, co::Json &res)
+void FrontendImpl::backendServerOnline(co::Json &req, co::Json &res)
 {
     BridgeJsonData bridge;
-    bridge.type = FRONT_NEED_PING_CLIENT;
+    bridge.type = FRONT_SERVER_ONLINE;
     bridge.json = req.str();
     _interface->bridgeChan()->operator<<(bridge);
 

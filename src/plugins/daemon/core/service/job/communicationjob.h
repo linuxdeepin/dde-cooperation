@@ -19,20 +19,19 @@ class CommunicationJob : public QObject
 public:
     explicit CommunicationJob(QObject *parent = nullptr);
     ~CommunicationJob() override;
-    void initRpc(fastring appname, fastring target, uint16 port);
+    void initRpc(fastring target, uint16 port);
     void initJob(fastring appname, fastring targetappname);
 
     fastring getAppName();
     fastring getTarAppName() const;
-    int sendMsg(CommunicationType type, const QString &info);
+    fastring targetIP() const { return _targetIP;}
+    uint16 targetPort() const { return _port;}
 private:
     bool _inited = false;
     uint16 _port = 0;
     fastring _targetIP;
     fastring _app_name; // 前端应用名
     fastring _tar_app_name; // 发送到目标的应用名称
-
-    RemoteServiceBinder *_rpcBinder = nullptr;
 };
 
 #endif // COMMUNICATIONJOB_H

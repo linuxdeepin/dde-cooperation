@@ -86,9 +86,10 @@ void CooperationUtilPrivate::localIPCStart()
                 bool result = false;
                 fastring my_ver(FRONTEND_PROTO_VERSION);
                 // test ping 服务测试用
-                if (my_ver.compare(param.version) == 0
-                    && (param.session.compare(sessionId.toStdString()) == 0
-                        || param.session.compare("test") == 0)) {
+
+                if (my_ver.compare(param.version) == 0 &&
+                        (param.session.compare(sessionId.toStdString()) == 0 ||
+                         param.session.compare("backendServerOnline") == 0 )) {
                     result = true;
                 } else {
                     WLOG << param.version.c_str() << " =version not match= " << my_ver.c_str();

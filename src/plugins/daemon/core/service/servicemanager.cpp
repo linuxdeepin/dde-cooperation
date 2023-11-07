@@ -60,15 +60,18 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
             ports.removeOne(session->port());
         }
         for (const auto &port : ports) {
-            Session s("test", "test", port);
+            Session s("backendServerOnline", "backendServerOnline", port);
             if (s.alive()) {
                 co::Json req, res;
                 //cbPeerInfo {GenericResult}
-                req.add_member("api", "Frontend.cbNeedPing");
+                req.add_member("api", "Frontend.backendServerOnline");
                 s.call(req, res);
             }
         }
     });
+
+    _ping_remote.setInterval(1000);
+    connect(&_ping_remote, &QTimer::timeout, this, &ServiceManager::handlePingRemote);
 }
 
 ServiceManager::~ServiceManager()
@@ -92,7 +95,19 @@ void ServiceManager::startRemoteServer()
     if (_rpcServiceBinder) {
         fastring key = Cert::instance()->writeKey();
         fastring crt = Cert::instance()->writeCrt();
-        _rpcServiceBinder->startRpcListen(key.c_str(), crt.c_str());
+        _rpcServiceBinder->startRpcListen(key.c_str(), crt.c_str(),
+                                          [this](const int type, const fastring &ip, const uint16 port){
+            if (type == 0) {
+                SendStatus st;
+                st.type = REMOTE_CLIENT_OFFLINE;
+                st.msg = co::Json({{"ip", ip}, {"port", port}}).str();
+                co::Json req = st.as_json();
+                req.add_member("api", "Frontend.notifySendStatus");
+                for (const auto &session : _sessions) {
+                    emit sendToClient(session->getName(), req.str().c_str());
+                }
+            }
+        });
         Cert::instance()->removeFile(key);
         Cert::instance()->removeFile(crt);
     }
@@ -233,6 +248,7 @@ void ServiceManager::localIPCStart()
                 QString session(param.session.c_str());
                 QString ip(param.host.c_str());
                 QString pass(param.password.c_str());
+                LOG << " rcv client connet " << ip.toStdString() << session.toStdString();
                 notifyConnect(session, ip, pass);
                 break;
             }
@@ -240,15 +256,18 @@ void ServiceManager::localIPCStart()
             {
                 ipc::TransFilesParam param;
                 param.from_json(json_obj);
-
                 QString session = QString(param.session.c_str());
                 QString savedir = QString(param.savedir.c_str());
+                {
+                    QWriteLocker lk(&lock);
+                    auto s = sessionById(session);
+                    _ping_sessions.removeOne(s->getName());
+                }
                 QStringList paths;
                 for (uint32 i = 0; i < param.paths.size(); i++) {
                     paths << param.paths[i].c_str();
                 }
 
-                qInfo() << "paths: " << paths;
                 newTransSendJob(session, param.targetSession.c_str(), param.id, paths, param.sub, savedir);
                 break;
             }
@@ -314,16 +333,20 @@ void ServiceManager::localIPCStart()
         }
     });
 
-    connect(this, &ServiceManager::connectClosed, this, &ServiceManager::handleConnectClosed, Qt::QueuedConnection);
+    connect(this, &ServiceManager::connectClosed, this, [this](const QString ip, const uint16 port){
+        // 不延时，还是可以ping通，资源还没有回收
+        QTimer::singleShot(1000, this, [this, ip, port]{
+            this->handleConnectClosed(ip, port);
+        });
+    }, Qt::QueuedConnection);
     // start ipc services
     ipc::BackendImpl *backendimp = new ipc::BackendImpl();
     backendimp->setInterface(_backendIpcService);
     rpc::Server().add_service(backendimp, [this](int type, const fastring &ip, const uint16 port){
-        ELOG << ip << " : "<< port << "===========" << type;
+        ELOG << " client close == " << ip << " : "<< port << "===========" << type;
         if (type == 0)
-            emit this->connectClosed(ip.c_str(), port);
+            emit this->connectClosed(QString(ip.c_str()), port);
     }).start("0.0.0.0", UNI_IPC_BACKEND_PORT, "/backend", "", "");
-
 }
 
 bool ServiceManager::handleRemoteRequestJob(fastring json)
@@ -481,8 +504,9 @@ bool ServiceManager::handleRemoteApplyTransFile(co::Json &info)
     auto session = obj.session;
     if (obj.type == ApplyTransType::APPLY_TRANS_APPLY) {
         // 保存申请的通讯job
+        _applyjobs.remove(session.c_str());
         QSharedPointer<CommunicationJob> _applyjob(new CommunicationJob);
-        _applyjob->initRpc(obj.session, obj.selfIp.c_str(), static_cast<uint16_t>(obj.selfPort));
+        _applyjob->initRpc(obj.selfIp.c_str(), static_cast<uint16_t>(obj.selfPort));
         _applyjob->initJob(obj.session, obj.tarSession);
         _applyjobs.insert(session.c_str(), _applyjob);
     }
@@ -541,6 +565,21 @@ fastring ServiceManager::genPeerInfo()
     };
 
     return info.str();
+}
+
+int ServiceManager::sendApplyTransFile(const QSharedPointer<CommunicationJob> &job, const QString &info)
+{
+    if (_rpcServiceBinder == nullptr) {
+        ELOG << "sendMsg ERROR: no executor, type " << info.toStdString();
+        return PARAM_ERROR;
+    }
+    int result = INVOKE_OK, retryCount = 0;
+    do {
+        _rpcServiceBinder->createExecutor(job->getAppName().c_str(), job->targetIP().c_str(), job->targetPort());
+        result = _rpcServiceBinder->doSendApplyTransFiles(job->getAppName().c_str(), info);
+    } while (result == INVOKE_FAIL && retryCount++ < 2);
+
+    return result;
 }
 
 void ServiceManager::asyncDiscovery()
@@ -694,6 +733,14 @@ void ServiceManager::forwardJsonMisc(fastring &appname, fastring &message)
 void ServiceManager::handleLoginResult(bool result, QString session)
 {
     fastring session_name(session.toStdString());
+    if (result) {
+        if (!_ping_remote.isActive() && qApp->thread()  ==  QThread::currentThread()) {
+            QWriteLocker lk(&lock);
+            if (!_ping_sessions.contains(session))
+                _ping_sessions.append(session);
+            _ping_remote.start();
+        }
+    }
     UNIGO([this, result, session_name]() {
         co::Json req;
         //cbConnect {GenericResult}
@@ -771,6 +818,10 @@ void ServiceManager::handleNodeChanged(bool found, QString info)
             s->call(req, res);
             ++i;
         } else {
+            {
+                QWriteLocker lk(&lock);
+                _ping_sessions.removeOne((*i)->getName());
+            }
             // the frontend is offline
             i = _sessions.erase(i);
 
@@ -789,6 +840,10 @@ void ServiceManager::handleNodeRegister(bool unreg, const co::Json &info)
     if (unreg) {
         fastring appname = appPeer.appname;
         _applyjobs.remove(appname.c_str());
+        {
+            QWriteLocker lk(&lock);
+            _ping_sessions.removeOne(appname.c_str());
+        }
     }
     DiscoveryJob::instance()->updateAnnouncApp(unreg, info.as_string());
 }
@@ -815,31 +870,38 @@ void ServiceManager::handleBackApplyTransFiles(const co::Json &param)
 {
     ApplyTransFiles info;
     info.from_json(param);
-    auto _applyjob = _applyjobs.take(info.session.c_str());
-    info.selfIp = Util::getFirstIp();
-    info.selfPort = UNI_RPC_PORT_BASE;
-    if (_applyjob.isNull()){
-        if (info.type != ApplyTransType::APPLY_TRANS_APPLY) {
+    QSharedPointer<CommunicationJob> _applyjob{ nullptr };
+    // 我发给远程的
+    if (info.type == APPLY_TRANS_APPLY) {
+        // 自己申请
+        _applyjob.reset(new CommunicationJob);
+        _applyjob->initRpc(_connected_target.c_str(), UNI_RPC_PORT_BASE);
+        _applyjob->initJob(info.session, info.tarSession);
+        info.selfIp = Util::getFirstIp();
+        info.selfPort = UNI_RPC_PORT_BASE;
+    } else { // 我回复远端的
+        _applyjob = _applyjobs.take(info.session.c_str());
+        if (_applyjob.isNull()) {
             ELOG << "handleBackApplyTransFiles ERROR: no job " << param;
             return;
         }
-        // 自己申请
-        _applyjob.reset(new CommunicationJob);
-        _applyjob->initRpc(info.session, _connected_target.c_str(), UNI_RPC_PORT_BASE);
-        _applyjob->initJob(info.session, info.tarSession);
+        QWriteLocker lk(&lock);
+        _ping_sessions.removeOne(info.session.c_str());
     }
+
     info.tarSession = _applyjob->getTarAppName();
     UNIGO([this, _applyjob, info]() {
-        auto result = _applyjob->sendMsg(COMM_APPLY_TRANS, info.as_json().str().c_str());
+        auto result = sendApplyTransFile(_applyjob, info.as_json().str().c_str());
         SendStatus st;
+        st.type = APPLY_TRANS_FILE;
         st.status = result;
         auto req = st.as_json();
-        req.add_member("api", "Frontend.notifySendApplyStatus");
+        req.add_member("api", "Frontend.notifySendStatus");
         emit sendToClient(info.session.c_str(), req.str().c_str());
     });
 }
 
-void ServiceManager::handleConnectClosed(const QString &ip, const uint16 port)
+void ServiceManager::handleConnectClosed(const QString ip, const uint16 port)
 {
     Q_UNUSED(port);
     if (port == UNI_IPC_BACKEND_PORT
@@ -848,6 +910,10 @@ void ServiceManager::handleConnectClosed(const QString &ip, const uint16 port)
         for (auto i = _sessions.begin(); i != _sessions.end();) {
             QSharedPointer<Session> s = *i;
             if (!s->alive()) {
+                {
+                    QWriteLocker lk(&lock);
+                    _ping_sessions.removeOne(s->getName());
+                }
                 // the frontend is offline
                 i = _sessions.erase(i);
 
@@ -872,6 +938,10 @@ void ServiceManager::handleSendToClient(const QString session, const QString req
     }
     if (!s->alive()) {
         // 执行客户端下线
+        {
+            QWriteLocker lk(&lock);
+            _ping_sessions.removeOne(s->getName());
+        }
         // the frontend is offline
         _sessions.removeOne(s);
 
@@ -885,4 +955,46 @@ void ServiceManager::handleSendToClient(const QString session, const QString req
     co::Json reqj, res;
     reqj.parse_from(req.toStdString());
     s->call(reqj, res);
+}
+
+void ServiceManager::handlePingRemote()
+{
+    UNIGO([this]() {
+        if (!_rpcServiceBinder)
+            return;
+        QStringList tmp, removed;
+        {
+            QReadLocker lk(&lock);
+            tmp = _ping_sessions;
+        }
+        for (const auto &session : tmp) {
+            QString res = _rpcServiceBinder->doMisc(session.toStdString().c_str(), "remote_ping");
+            if ( res.isEmpty()) {
+                DLOG << "remote server no reply ping !!!!! " << session.toStdString();
+                SendStatus st;
+                st.type = REMOTE_CLIENT_OFFLINE;
+                auto s = sessionByName(session);
+                if (s.isNull())
+                    continue;
+                QString ip;
+                uint16 port;
+                _rpcServiceBinder->remoteIP(session, &ip, &port);
+                st.msg = co::Json({{"ip", ip.toStdString()}, {"port", port}}).str();
+                co::Json req = st.as_json();
+                req.add_member("api", "Frontend.notifySendStatus");
+                emit sendToClient(session, req.str().c_str());
+                removed.append(session);
+            }
+        }
+
+        {
+            QWriteLocker lk(&lock);
+            for (const auto &s : removed)
+                _ping_sessions.removeOne(s);
+            tmp = _ping_sessions;
+        }
+        if (tmp.isEmpty())
+            _ping_remote.stop();
+    });
+
 }

@@ -35,6 +35,11 @@ TcpClient::~TcpClient() {
 
 bool TcpClient::tryConnect() {
     if (!this->connected() && !this->connect()) {
+        if (callback) {
+            fastring ip = m_peer_addr ? m_peer_addr->getIP() : "";
+            uint16 port = m_peer_addr ? m_peer_addr->getPort() : 0;
+            callback(1, ip, port); // 1 超时
+        }
         return false;
     } else {
         return true;

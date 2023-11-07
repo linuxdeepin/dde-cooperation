@@ -507,6 +507,7 @@ const ::google::protobuf::uint32 TableStruct_message_2eproto::offsets[] PROTOBUF
   PROTOBUF_FIELD_OFFSET(::LoginRequest, my_name_),
   PROTOBUF_FIELD_OFFSET(::LoginRequest, session_id_),
   PROTOBUF_FIELD_OFFSET(::LoginRequest, version_),
+  PROTOBUF_FIELD_OFFSET(::LoginRequest, ip_),
   PROTOBUF_FIELD_OFFSET(::LoginRequest, options_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::LoginResponse, _internal_metadata_),
@@ -697,28 +698,28 @@ const ::google::protobuf::uint32 TableStruct_message_2eproto::offsets[] PROTOBUF
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::LoginRequest)},
-  { 12, -1, sizeof(::LoginResponse)},
-  { 21, -1, sizeof(::JsonMessage)},
-  { 28, -1, sizeof(::PeerInfo)},
-  { 38, -1, sizeof(::OptionMessage)},
-  { 45, -1, sizeof(::FileEntry)},
-  { 55, -1, sizeof(::FileDirectory)},
-  { 63, -1, sizeof(::ActionResult)},
-  { 71, -1, sizeof(::ReadDirFiles)},
-  { 80, -1, sizeof(::FileRemove)},
-  { 90, -1, sizeof(::FileRename)},
-  { 97, -1, sizeof(::FileCreate)},
-  { 105, -1, sizeof(::FileAction)},
-  { 115, -1, sizeof(::FileResponse)},
-  { 123, -1, sizeof(::FileTransResponse)},
-  { 131, -1, sizeof(::FileTransJob)},
-  { 142, -1, sizeof(::FileTransCreate)},
-  { 151, -1, sizeof(::FileTransBlock)},
-  { 162, -1, sizeof(::FileTransJobCancel)},
-  { 169, -1, sizeof(::FileTransJobReport)},
-  { 178, -1, sizeof(::FileTransUpdate)},
-  { 186, -1, sizeof(::ApplyTransFilesRequest)},
-  { 192, -1, sizeof(::ApplyTransFilesResponse)},
+  { 13, -1, sizeof(::LoginResponse)},
+  { 22, -1, sizeof(::JsonMessage)},
+  { 29, -1, sizeof(::PeerInfo)},
+  { 39, -1, sizeof(::OptionMessage)},
+  { 46, -1, sizeof(::FileEntry)},
+  { 56, -1, sizeof(::FileDirectory)},
+  { 64, -1, sizeof(::ActionResult)},
+  { 72, -1, sizeof(::ReadDirFiles)},
+  { 81, -1, sizeof(::FileRemove)},
+  { 91, -1, sizeof(::FileRename)},
+  { 98, -1, sizeof(::FileCreate)},
+  { 106, -1, sizeof(::FileAction)},
+  { 116, -1, sizeof(::FileResponse)},
+  { 124, -1, sizeof(::FileTransResponse)},
+  { 132, -1, sizeof(::FileTransJob)},
+  { 143, -1, sizeof(::FileTransCreate)},
+  { 152, -1, sizeof(::FileTransBlock)},
+  { 163, -1, sizeof(::FileTransJobCancel)},
+  { 170, -1, sizeof(::FileTransJobReport)},
+  { 179, -1, sizeof(::FileTransUpdate)},
+  { 187, -1, sizeof(::ApplyTransFilesRequest)},
+  { 193, -1, sizeof(::ApplyTransFilesResponse)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -754,75 +755,76 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
 };
 
 const char descriptor_table_protodef_message_2eproto[] =
-  "\n\rmessage.proto\"\221\001\n\014LoginRequest\022\014\n\004name"
+  "\n\rmessage.proto\"\235\001\n\014LoginRequest\022\014\n\004name"
   "\030\001 \001(\t\022\014\n\004auth\030\002 \001(\014\022\016\n\006my_uid\030\004 \001(\t\022\017\n\007"
   "my_name\030\005 \001(\t\022\022\n\nsession_id\030\006 \001(\t\022\017\n\007ver"
-  "sion\030\007 \001(\t\022\037\n\007options\030\010 \003(\0132\016.OptionMess"
-  "age\"X\n\rLoginResponse\022\017\n\005error\030\001 \001(\tH\000\022\036\n"
-  "\tpeer_info\030\002 \001(\0132\t.PeerInfoH\000\022\r\n\005token\030\003"
-  " \001(\014B\007\n\005union\"(\n\013JsonMessage\022\013\n\003app\030\001 \001("
-  "\t\022\014\n\004json\030\002 \001(\t\"g\n\010PeerInfo\022\020\n\010username\030"
-  "\001 \001(\t\022\020\n\010hostname\030\002 \001(\t\022\020\n\010platform\030\003 \001("
-  "\t\022\017\n\007version\030\004 \001(\t\022\024\n\014privacy_mode\030\005 \001(\010"
-  "\"0\n\rOptionMessage\022\017\n\007feature\030\001 \001(\t\022\016\n\006en"
-  "able\030\002 \001(\010\"g\n\tFileEntry\022\027\n\004type\030\001 \001(\0162\t."
-  "FileType\022\014\n\004name\030\002 \001(\t\022\016\n\006hidden\030\003 \001(\010\022\014"
-  "\n\004size\030\004 \001(\003\022\025\n\rmodified_time\030\005 \001(\003\"F\n\rF"
-  "ileDirectory\022\n\n\002id\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\022\033"
-  "\n\007entries\030\003 \003(\0132\n.FileEntry\"8\n\014ActionRes"
-  "ult\022\n\n\002id\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\022\016\n\006result\030"
-  "\003 \001(\010\"S\n\014ReadDirFiles\022\n\n\002id\030\001 \001(\005\022\014\n\004pat"
-  "h\030\002 \001(\t\022\026\n\016include_hidden\030\003 \001(\010\022\021\n\trecur"
-  "sive\030\004 \001(\010\"X\n\nFileRemove\022\n\n\002id\030\001 \001(\005\022\014\n\004"
-  "path\030\002 \001(\t\022\023\n\trecursive\030\003 \001(\010H\000\022\022\n\010file_"
-  "num\030\004 \001(\rH\000B\007\n\005union\"&\n\nFileRename\022\n\n\002id"
-  "\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\"6\n\nFileCreate\022\n\n\002id"
-  "\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\022\016\n\006is_dir\030\003 \001(\010\"\227\001\n"
-  "\nFileAction\022#\n\nread_files\030\001 \001(\0132\r.ReadDi"
-  "rFilesH\000\022\035\n\006create\030\002 \001(\0132\013.FileCreateH\000\022"
-  "\035\n\006remove\030\003 \001(\0132\013.FileRemoveH\000\022\035\n\006rename"
-  "\030\004 \001(\0132\013.FileRenameH\000B\007\n\005union\"W\n\014FileRe"
-  "sponse\022\035\n\003dir\030\001 \001(\0132\016.FileDirectoryH\000\022\037\n"
-  "\006result\030\002 \001(\0132\r.ActionResultH\000B\007\n\005union\""
-  "K\n\021FileTransResponse\022\n\n\002id\030\001 \001(\005\022\014\n\004name"
-  "\030\002 \001(\t\022\034\n\006result\030\003 \001(\0162\014.FileTransRe\"v\n\014"
-  "FileTransJob\022\016\n\006job_id\030\001 \001(\005\022\014\n\004path\030\002 \001"
-  "(\t\022\026\n\016include_hidden\030\003 \001(\010\022\021\n\trecursive\030"
-  "\004 \001(\010\022\014\n\004push\030\005 \001(\010\022\017\n\007app_who\030\006 \001(\t\"^\n\017"
-  "FileTransCreate\022\016\n\006job_id\030\001 \001(\005\022\017\n\007file_"
-  "id\030\002 \001(\005\022\017\n\007sub_dir\030\003 \001(\t\022\031\n\005entry\030\004 \001(\013"
-  "2\n.FileEntry\"u\n\016FileTransBlock\022\016\n\006job_id"
-  "\030\001 \001(\005\022\017\n\007file_id\030\002 \001(\005\022\020\n\010filename\030\003 \001("
-  "\t\022\016\n\006blk_id\030\004 \001(\r\022\014\n\004data\030\005 \001(\014\022\022\n\ncompr"
-  "essed\030\006 \001(\010\"2\n\022FileTransJobCancel\022\016\n\006job"
-  "_id\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\"_\n\022FileTransJobR"
-  "eport\022\016\n\006job_id\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\022\r\n\005e"
-  "rror\030\003 \001(\t\022\034\n\006result\030\004 \001(\0162\014.FileTransRe"
-  "\"h\n\017FileTransUpdate\022%\n\006cancel\030\001 \001(\0132\023.Fi"
-  "leTransJobCancelH\000\022%\n\006report\030\002 \001(\0132\023.Fil"
-  "eTransJobReportH\000B\007\n\005union\"%\n\026ApplyTrans"
-  "FilesRequest\022\013\n\003msg\030\001 \001(\t\")\n\027ApplyTransF"
-  "ilesResponse\022\016\n\006result\030\001 \001(\010*<\n\010FileType"
-  "\022\007\n\003DIR\020\000\022\014\n\010DIR_LINK\020\001\022\n\n\006FILE_B\020\002\022\r\n\tF"
-  "ILE_LINK\020\003*0\n\013FileTransRe\022\014\n\010IO_ERROR\020\000\022"
-  "\006\n\002OK\020\001\022\013\n\007FINIASH\020\0022\323\003\n\rRemoteService\022&"
-  "\n\005login\022\r.LoginRequest\032\016.LoginResponse\022&"
-  "\n\016query_peerinfo\022\t.PeerInfo\032\t.PeerInfo\022\""
-  "\n\004misc\022\014.JsonMessage\032\014.JsonMessage\022&\n\010fs"
-  "action\022\013.FileAction\032\r.FileResponse\0222\n\rfi"
-  "letrans_job\022\r.FileTransJob\032\022.FileTransRe"
-  "sponse\0228\n\020filetrans_create\022\020.FileTransCr"
-  "eate\032\022.FileTransResponse\0226\n\017filetrans_bl"
-  "ock\022\017.FileTransBlock\032\022.FileTransResponse"
-  "\0228\n\020filetrans_update\022\020.FileTransUpdate\032\022"
-  ".FileTransResponse\022F\n\021apply_trans_files\022"
-  "\027.ApplyTransFilesRequest\032\030.ApplyTransFil"
-  "esResponseB\016\n\007uniapisP\001\200\001\001b\006proto3"
+  "sion\030\007 \001(\t\022\n\n\002ip\030\010 \001(\t\022\037\n\007options\030\t \003(\0132"
+  "\016.OptionMessage\"X\n\rLoginResponse\022\017\n\005erro"
+  "r\030\001 \001(\tH\000\022\036\n\tpeer_info\030\002 \001(\0132\t.PeerInfoH"
+  "\000\022\r\n\005token\030\003 \001(\014B\007\n\005union\"(\n\013JsonMessage"
+  "\022\013\n\003app\030\001 \001(\t\022\014\n\004json\030\002 \001(\t\"g\n\010PeerInfo\022"
+  "\020\n\010username\030\001 \001(\t\022\020\n\010hostname\030\002 \001(\t\022\020\n\010p"
+  "latform\030\003 \001(\t\022\017\n\007version\030\004 \001(\t\022\024\n\014privac"
+  "y_mode\030\005 \001(\010\"0\n\rOptionMessage\022\017\n\007feature"
+  "\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\"g\n\tFileEntry\022\027\n\004t"
+  "ype\030\001 \001(\0162\t.FileType\022\014\n\004name\030\002 \001(\t\022\016\n\006hi"
+  "dden\030\003 \001(\010\022\014\n\004size\030\004 \001(\003\022\025\n\rmodified_tim"
+  "e\030\005 \001(\003\"F\n\rFileDirectory\022\n\n\002id\030\001 \001(\005\022\014\n\004"
+  "path\030\002 \001(\t\022\033\n\007entries\030\003 \003(\0132\n.FileEntry\""
+  "8\n\014ActionResult\022\n\n\002id\030\001 \001(\005\022\014\n\004path\030\002 \001("
+  "\t\022\016\n\006result\030\003 \001(\010\"S\n\014ReadDirFiles\022\n\n\002id\030"
+  "\001 \001(\005\022\014\n\004path\030\002 \001(\t\022\026\n\016include_hidden\030\003 "
+  "\001(\010\022\021\n\trecursive\030\004 \001(\010\"X\n\nFileRemove\022\n\n\002"
+  "id\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\022\023\n\trecursive\030\003 \001("
+  "\010H\000\022\022\n\010file_num\030\004 \001(\rH\000B\007\n\005union\"&\n\nFile"
+  "Rename\022\n\n\002id\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\"6\n\nFile"
+  "Create\022\n\n\002id\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\022\016\n\006is_d"
+  "ir\030\003 \001(\010\"\227\001\n\nFileAction\022#\n\nread_files\030\001 "
+  "\001(\0132\r.ReadDirFilesH\000\022\035\n\006create\030\002 \001(\0132\013.F"
+  "ileCreateH\000\022\035\n\006remove\030\003 \001(\0132\013.FileRemove"
+  "H\000\022\035\n\006rename\030\004 \001(\0132\013.FileRenameH\000B\007\n\005uni"
+  "on\"W\n\014FileResponse\022\035\n\003dir\030\001 \001(\0132\016.FileDi"
+  "rectoryH\000\022\037\n\006result\030\002 \001(\0132\r.ActionResult"
+  "H\000B\007\n\005union\"K\n\021FileTransResponse\022\n\n\002id\030\001"
+  " \001(\005\022\014\n\004name\030\002 \001(\t\022\034\n\006result\030\003 \001(\0162\014.Fil"
+  "eTransRe\"v\n\014FileTransJob\022\016\n\006job_id\030\001 \001(\005"
+  "\022\014\n\004path\030\002 \001(\t\022\026\n\016include_hidden\030\003 \001(\010\022\021"
+  "\n\trecursive\030\004 \001(\010\022\014\n\004push\030\005 \001(\010\022\017\n\007app_w"
+  "ho\030\006 \001(\t\"^\n\017FileTransCreate\022\016\n\006job_id\030\001 "
+  "\001(\005\022\017\n\007file_id\030\002 \001(\005\022\017\n\007sub_dir\030\003 \001(\t\022\031\n"
+  "\005entry\030\004 \001(\0132\n.FileEntry\"u\n\016FileTransBlo"
+  "ck\022\016\n\006job_id\030\001 \001(\005\022\017\n\007file_id\030\002 \001(\005\022\020\n\010f"
+  "ilename\030\003 \001(\t\022\016\n\006blk_id\030\004 \001(\r\022\014\n\004data\030\005 "
+  "\001(\014\022\022\n\ncompressed\030\006 \001(\010\"2\n\022FileTransJobC"
+  "ancel\022\016\n\006job_id\030\001 \001(\005\022\014\n\004path\030\002 \001(\t\"_\n\022F"
+  "ileTransJobReport\022\016\n\006job_id\030\001 \001(\005\022\014\n\004pat"
+  "h\030\002 \001(\t\022\r\n\005error\030\003 \001(\t\022\034\n\006result\030\004 \001(\0162\014"
+  ".FileTransRe\"h\n\017FileTransUpdate\022%\n\006cance"
+  "l\030\001 \001(\0132\023.FileTransJobCancelH\000\022%\n\006report"
+  "\030\002 \001(\0132\023.FileTransJobReportH\000B\007\n\005union\"%"
+  "\n\026ApplyTransFilesRequest\022\013\n\003msg\030\001 \001(\t\")\n"
+  "\027ApplyTransFilesResponse\022\016\n\006result\030\001 \001(\010"
+  "*<\n\010FileType\022\007\n\003DIR\020\000\022\014\n\010DIR_LINK\020\001\022\n\n\006F"
+  "ILE_B\020\002\022\r\n\tFILE_LINK\020\003*0\n\013FileTransRe\022\014\n"
+  "\010IO_ERROR\020\000\022\006\n\002OK\020\001\022\013\n\007FINIASH\020\0022\323\003\n\rRem"
+  "oteService\022&\n\005login\022\r.LoginRequest\032\016.Log"
+  "inResponse\022&\n\016query_peerinfo\022\t.PeerInfo\032"
+  "\t.PeerInfo\022\"\n\004misc\022\014.JsonMessage\032\014.JsonM"
+  "essage\022&\n\010fsaction\022\013.FileAction\032\r.FileRe"
+  "sponse\0222\n\rfiletrans_job\022\r.FileTransJob\032\022"
+  ".FileTransResponse\0228\n\020filetrans_create\022\020"
+  ".FileTransCreate\032\022.FileTransResponse\0226\n\017"
+  "filetrans_block\022\017.FileTransBlock\032\022.FileT"
+  "ransResponse\0228\n\020filetrans_update\022\020.FileT"
+  "ransUpdate\032\022.FileTransResponse\022F\n\021apply_"
+  "trans_files\022\027.ApplyTransFilesRequest\032\030.A"
+  "pplyTransFilesResponseB\016\n\007uniapisP\001\200\001\001b\006"
+  "proto3"
   ;
 ::google::protobuf::internal::DescriptorTable descriptor_table_message_2eproto = {
   false, InitDefaults_message_2eproto, 
   descriptor_table_protodef_message_2eproto,
-  "message.proto", &assign_descriptors_table_message_2eproto, 2554,
+  "message.proto", &assign_descriptors_table_message_2eproto, 2566,
 };
 
 void AddDescriptors_message_2eproto() {
@@ -881,6 +883,7 @@ const int LoginRequest::kMyUidFieldNumber;
 const int LoginRequest::kMyNameFieldNumber;
 const int LoginRequest::kSessionIdFieldNumber;
 const int LoginRequest::kVersionFieldNumber;
+const int LoginRequest::kIpFieldNumber;
 const int LoginRequest::kOptionsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -918,6 +921,10 @@ LoginRequest::LoginRequest(const LoginRequest& from)
   if (from.version().size() > 0) {
     version_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.version_);
   }
+  ip_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.ip().size() > 0) {
+    ip_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.ip_);
+  }
   // @@protoc_insertion_point(copy_constructor:LoginRequest)
 }
 
@@ -930,6 +937,7 @@ void LoginRequest::SharedCtor() {
   my_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   session_id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   version_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ip_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 LoginRequest::~LoginRequest() {
@@ -944,6 +952,7 @@ void LoginRequest::SharedDtor() {
   my_name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   session_id_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   version_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ip_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void LoginRequest::SetCachedSize(int size) const {
@@ -968,6 +977,7 @@ void LoginRequest::Clear() {
   my_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   session_id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   version_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ip_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   _internal_metadata_.Clear();
 }
 
@@ -1079,9 +1089,25 @@ const char* LoginRequest::_InternalParse(const char* begin, const char* end, voi
         ptr += size;
         break;
       }
-      // repeated .OptionMessage options = 8;
+      // string ip = 8;
       case 8: {
         if (static_cast<::google::protobuf::uint8>(tag) != 66) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        ctx->extra_parse_data().SetFieldName("LoginRequest.ip");
+        object = msg->mutable_ip();
+        if (size > end - ptr + ::google::protobuf::internal::ParseContext::kSlopBytes) {
+          parser_till_end = ::google::protobuf::internal::GreedyStringParserUTF8;
+          goto string_till_end;
+        }
+        GOOGLE_PROTOBUF_PARSER_ASSERT(::google::protobuf::internal::StringCheckUTF8(ptr, size, ctx));
+        ::google::protobuf::internal::InlineGreedyStringParser(object, ptr, size, ctx);
+        ptr += size;
+        break;
+      }
+      // repeated .OptionMessage options = 9;
+      case 9: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 74) goto handle_unusual;
         do {
           ptr = ::google::protobuf::io::ReadSize(ptr, &size);
           GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
@@ -1092,7 +1118,7 @@ const char* LoginRequest::_InternalParse(const char* begin, const char* end, voi
           GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
               {parser_till_end, object}, ptr - size, ptr));
           if (ptr >= end) break;
-        } while ((::google::protobuf::io::UnalignedLoad<::google::protobuf::uint64>(ptr) & 255) == 66 && (ptr += 1));
+        } while ((::google::protobuf::io::UnalignedLoad<::google::protobuf::uint64>(ptr) & 255) == 74 && (ptr += 1));
         break;
       }
       default: {
@@ -1215,9 +1241,24 @@ bool LoginRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .OptionMessage options = 8;
+      // string ip = 8;
       case 8: {
         if (static_cast< ::google::protobuf::uint8>(tag) == (66 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_ip()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->ip().data(), static_cast<int>(this->ip().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "LoginRequest.ip"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .OptionMessage options = 9;
+      case 9: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (74 & 0xFF)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                 input, add_options()));
         } else {
@@ -1309,11 +1350,21 @@ void LoginRequest::SerializeWithCachedSizes(
       7, this->version(), output);
   }
 
-  // repeated .OptionMessage options = 8;
+  // string ip = 8;
+  if (this->ip().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->ip().data(), static_cast<int>(this->ip().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "LoginRequest.ip");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      8, this->ip(), output);
+  }
+
+  // repeated .OptionMessage options = 9;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->options_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      8,
+      9,
       this->options(static_cast<int>(i)),
       output);
   }
@@ -1393,12 +1444,23 @@ void LoginRequest::SerializeWithCachedSizes(
         7, this->version(), target);
   }
 
-  // repeated .OptionMessage options = 8;
+  // string ip = 8;
+  if (this->ip().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->ip().data(), static_cast<int>(this->ip().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "LoginRequest.ip");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        8, this->ip(), target);
+  }
+
+  // repeated .OptionMessage options = 9;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->options_size()); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        8, this->options(static_cast<int>(i)), target);
+        9, this->options(static_cast<int>(i)), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1422,7 +1484,7 @@ size_t LoginRequest::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .OptionMessage options = 8;
+  // repeated .OptionMessage options = 9;
   {
     unsigned int count = static_cast<unsigned int>(this->options_size());
     total_size += 1UL * count;
@@ -1473,6 +1535,13 @@ size_t LoginRequest::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->version());
+  }
+
+  // string ip = 8;
+  if (this->ip().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->ip());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -1527,6 +1596,10 @@ void LoginRequest::MergeFrom(const LoginRequest& from) {
 
     version_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.version_);
   }
+  if (from.ip().size() > 0) {
+
+    ip_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.ip_);
+  }
 }
 
 void LoginRequest::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1566,6 +1639,8 @@ void LoginRequest::InternalSwap(LoginRequest* other) {
   session_id_.Swap(&other->session_id_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   version_.Swap(&other->version_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  ip_.Swap(&other->ip_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
 }
 

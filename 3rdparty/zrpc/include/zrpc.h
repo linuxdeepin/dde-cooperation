@@ -43,6 +43,8 @@ public:
 
     bool start();
 
+    void setCallBackFunc(const std::function<void(int, const fastring &, const uint16)> &call);
+
 private:
     bool doregister(std::shared_ptr<google::protobuf::Service> service);
 

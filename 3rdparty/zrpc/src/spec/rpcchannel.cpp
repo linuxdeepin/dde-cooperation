@@ -37,7 +37,7 @@ void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
         return;
     }
 
-    if (m_client.get() == nullptr) {
+    if (m_client.get() == nullptr) {        
         m_client = std::make_shared<TcpClient>(m_addr);
     }
 

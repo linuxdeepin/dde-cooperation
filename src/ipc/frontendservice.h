@@ -60,9 +60,9 @@ public:
 
     virtual void applyTransFiles(co::Json& req, co::Json& res) override;
 
-    virtual void notifySendApplyStatus(co::Json& req, co::Json& res) override;
+    virtual void notifySendStatus(co::Json& req, co::Json& res) override;
 
-    virtual void cbNeedPing(co::Json& req, co::Json& res) override;
+    virtual void backendServerOnline(co::Json& req, co::Json& res) override;
 
 private:
     FrontendService *_interface;
