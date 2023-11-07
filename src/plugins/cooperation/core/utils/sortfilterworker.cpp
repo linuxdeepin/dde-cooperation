@@ -4,8 +4,6 @@
 
 #include "sortfilterworker.h"
 
-#include <QDebug>
-
 using namespace cooperation_core;
 
 SortFilterWorker::SortFilterWorker(QObject *parent)

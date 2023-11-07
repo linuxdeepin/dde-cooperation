@@ -23,7 +23,7 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
 
     UNIGO([this] {
         backendOk = pingBackend();
-        qInfo() << "The result of ping backend is " << backendOk;
+        LOG << "The result of ping backend is " << backendOk;
     });
 }
 
@@ -85,9 +85,9 @@ void CooperationUtilPrivate::localIPCStart()
                 bool result = false;
                 fastring my_ver(FRONTEND_PROTO_VERSION);
                 // test ping 服务测试用
-                if (my_ver.compare(param.version) == 0 &&
-                        (param.session.compare(sessionId.toStdString()) == 0 ||
-                         param.session.compare("test") == 0 )) {
+                if (my_ver.compare(param.version) == 0
+                    && (param.session.compare(sessionId.toStdString()) == 0
+                        || param.session.compare("test") == 0)) {
                     result = true;
                 } else {
                     WLOG << param.version.c_str() << " =version not match= " << my_ver.c_str();
@@ -212,8 +212,10 @@ void CooperationUtil::registerDeviceOperation(const QVariantMap &map)
 
 void CooperationUtil::registAppInfo(const QString &infoJson)
 {
-    if (!d->backendOk)
+    if (!d->backendOk) {
+        LOG << "The ping backend is false";
         return;
+    }
 
     UNIGO([infoJson] {
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
@@ -233,8 +235,10 @@ void CooperationUtil::registAppInfo(const QString &infoJson)
 
 void CooperationUtil::unregistAppInfo()
 {
-    if (!d->backendOk)
+    if (!d->backendOk) {
+        LOG << "The ping backend is false";
         return;
+    }
 
     UNIGO([] {
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
@@ -253,11 +257,14 @@ void CooperationUtil::unregistAppInfo()
 
 void CooperationUtil::asyncDiscoveryDevice()
 {
-    if (!d->backendOk)
+    if (!d->backendOk) {
+        LOG << "The ping backend is false";
+        Q_EMIT discoveryFinished({});
         return;
+    }
 
     UNIGO([this] {
-        qInfo() << "start discovery device";
+        LOG << "start discovery device";
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
         co::Json req, res;
         req.add_member("api", "Backend.getDiscovery");
@@ -267,9 +274,9 @@ void CooperationUtil::asyncDiscoveryDevice()
         QList<DeviceInfo> infoList;
         bool ok = res.get("result").as_bool();
         if (!ok) {
-            qWarning() << "discovery devices failed!";
+            WLOG << "discovery devices failed!";
         } else {
-            qInfo() << "all device: " << res.get("msg").as_c_str();
+            LOG << "all device: " << res.get("msg");
             co::Json obj;
             obj.parse_from(res.get("msg").as_string());
             infoList = d->parseDeviceInfo(obj);

@@ -20,7 +20,6 @@
 #include <QStandardPaths>
 #include <QTime>
 #include <QTimer>
-#include <QDebug>
 
 // 后端会通过应用名创建session，core已经使用历史applicationName，这里重新定义session name
 inline constexpr char TransferSessionName[] { "file-transfer" };
@@ -39,13 +38,11 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
     : QObject(qq),
       q(qq)
 {
-    transferDialog = new TransferDialog();
     notifyIfc = new QDBusInterface(NotifyServerName,
                                    NotifyServerPath,
                                    NotifyServerIfce,
                                    QDBusConnection::sessionBus(), q);
 
-    connect(transferDialog, &TransferDialog::cancel, q, &TransferHelper::cancelTransfer);
     //    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, q, &TransferHelper::onConfigChanged);
     QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
                                           this, SLOT(onActionTriggered(uint, const QString &)));
@@ -53,7 +50,8 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
 
 TransferHelperPrivate::~TransferHelperPrivate()
 {
-    delete transferDialog;
+    if (transferDialog && !transferDialog->parent())
+        delete transferDialog;
 }
 
 void TransferHelperPrivate::initConfig()
@@ -63,6 +61,26 @@ void TransferHelperPrivate::initConfig()
 
     //    auto settings = ConfigManager::instance()->appAttribute("GenericAttribute", kTransferModeKey);
     //    handleSetConfig(kTransferModeKey, settings.isValid() ? QString::number(settings.toInt()) : "0");
+}
+
+QWidget *TransferHelperPrivate::mainWindow()
+{
+    for (auto w : qApp->topLevelWidgets()) {
+        if (w->objectName() == "MainWindow")
+            return w;
+    }
+
+    return nullptr;
+}
+
+TransferDialog *TransferHelperPrivate::transDialog()
+{
+    if (!transferDialog) {
+        transferDialog = new TransferDialog(mainWindow());
+        connect(transferDialog, &TransferDialog::cancel, q, &TransferHelper::cancelTransfer);
+    }
+
+    return transferDialog;
 }
 
 void TransferHelperPrivate::localIPCStart()
@@ -138,8 +156,10 @@ void TransferHelperPrivate::localIPCStart()
 
                 switch (transferInfo.type) {
                 case ApplyTransType::APPLY_TRANS_APPLY:
-                    if (!qApp->property("onlyTransfer").toBool())
+                    if (!qApp->property("onlyTransfer").toBool()) {
+                        currentMode = ReceiveMode;
                         metaObject()->invokeMethod(this, "waitForConfirm", Qt::QueuedConnection, Q_ARG(QString, QString(transferInfo.machineName.c_str())));
+                    }
                     break;
                 case ApplyTransType::APPLY_TRANS_CONFIRM:
                     metaObject()->invokeMethod(this, "accepted", Qt::QueuedConnection);
@@ -243,7 +263,7 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
 
 void TransferHelperPrivate::handleTryConnect(const QString &ip)
 {
-    qInfo() << "connect to " << ip;
+    LOG << "connect to " << ip.toStdString();
     rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
     co::Json req, res;
     fastring targetIp(ip.toStdString());
@@ -277,7 +297,7 @@ void TransferHelperPrivate::transferResult(bool result, const QString &msg)
         recvNotifyId = notifyMessage(recvNotifyId, msg, actions, 30 * 1000);
     } break;
     case SendMode:
-        transferDialog->switchResultPage(result, msg);
+        transDialog()->switchResultPage(result, msg);
         break;
     }
 }
@@ -294,8 +314,8 @@ void TransferHelperPrivate::waitForConfirm(const QString &name)
         recvNotifyId = notifyMessage(recvNotifyId, msg.arg(ret), actions, 30 * 1000);
     } break;
     case SendMode:
-        transferDialog->switchWaitConfirmPage();
-        transferDialog->open();
+        transDialog()->switchWaitConfirmPage();
+        transDialog()->show();
         break;
     }
 }
@@ -311,8 +331,8 @@ void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
     } break;
     case SendMode:
         QString title = tr("Sending files to \"%1\"").arg(sendToWho);
-        transferDialog->switchProgressPage(title);
-        transferDialog->updateProgress(value, remainTime);
+        transDialog()->switchProgressPage(title);
+        transDialog()->updateProgress(value, remainTime);
         break;
     }
 }
@@ -413,7 +433,7 @@ void TransferHelper::init()
     UNIGO([this] {
         co::sleep(500);
         d->backendOk = d->handlePingBacked();
-        qInfo() << "The result of ping backend is " << d->backendOk;
+        LOG << "The result of ping backend is " << d->backendOk;
 
         d->initConfig();
     });
@@ -434,7 +454,6 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
 
     d->currentMode = TransferHelperPrivate::SendMode;
     d->status = Connecting;
-    d->canTransfer = true;
     UNIGO([ip, this] {
         d->handleTryConnect(ip);
     });
@@ -449,10 +468,13 @@ TransferStatus TransferHelper::transferStatus()
 
 void TransferHelper::buttonClicked(const QVariantMap &info)
 {
-    qInfo() << "button clicked: " << info;
     auto id = info.value("id").toString();
     auto ip = info.value("ip").toString();
     auto devName = info.value("device").toString();
+
+    LOG << "button clicked, button id: " << id.toStdString()
+        << "ip: " << ip.toStdString()
+        << "device name: " << devName.toStdString();
 
     if (id == kTransferButtonId) {
         QStringList selectedFiles = qApp->property("sendFiles").toStringList();
@@ -493,13 +515,8 @@ bool TransferHelper::buttonClickable(const QVariantMap &info)
 
 void TransferHelper::onConnectStatusChanged(int result, const QString &msg)
 {
-    qInfo() << "connect status: " << result << " msg:" << msg;
+    LOG << "connect status: " << result << " msg:" << msg.toStdString();
     if (result > 0) {
-        if (!d->canTransfer) {
-            d->status = Idle;
-            return;
-        }
-
         UNIGO([this] {
             d->status = Confirming;
             d->handleApplyTransFiles(0);
@@ -512,7 +529,7 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg)
 
 void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &msg)
 {
-    qInfo() << id << result << msg;
+    LOG << "id: " << id << " result: " << result << " msg: " << msg.toStdString();
     switch (result) {
     case JOB_TRANS_FAILED:
         break;
@@ -527,7 +544,7 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
 
 void TransferHelper::onFileTransStatusChanged(const QString &status)
 {
-    qInfo() << __FUNCTION__ << __LINE__ << status;
+    LOG << "file transfer info: " << status.toStdString();
     co::Json statusJson;
     statusJson.parse_from(status.toStdString());
     ipc::FileStatus param;
@@ -555,7 +572,6 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
     // 计算传输进度与剩余时间
     double value = static_cast<double>(d->transferInfo.transferSize) / d->transferInfo.totalSize;
     int progressValue = static_cast<int>(value * 100);
-    qInfo() << "#######" << d->transferInfo.transferSize << d->transferInfo.totalSize << progressValue;
     if (progressValue <= 0) {
         return;
     } else if (progressValue >= 100) {
@@ -575,8 +591,6 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
 
 void TransferHelper::cancelTransfer()
 {
-    d->currentMode = TransferHelperPrivate::ReceiveMode;
-    d->canTransfer = false;
     if (d->status == Transfering) {
         UNIGO([this] {
             d->handleCancelTransfer();
