@@ -233,7 +233,7 @@ bool TransferHelper::checkSize(const QString &filepath)
     if (jsonObj.isEmpty())
         return false;
     auto sizestr = jsonObj["user_data"].toString();
-    auto size = QVariant(sizestr).toLongLong() / 1024 / 1024 / 1024;
+    auto size = QVariant(sizestr).toLongLong() / 1024 / 1024 / 1024 + 5;
     qInfo() << sizestr << "   jsonObj[ user_data ];" << size;
     int remainSize = getRemainSize();
     if (size > remainSize) {
@@ -325,7 +325,6 @@ int TransferHelper::getRemainSize()
 {
     QStorageInfo storage("/data");
     auto remainSize = storage.bytesAvailable() / 1024 / 1024 / 1024;
-    //多预留2g空间
-    return static_cast<int>(remainSize) + 5;
+    return static_cast<int>(remainSize);
 }
 #endif
