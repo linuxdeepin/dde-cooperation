@@ -70,6 +70,11 @@ bool TcpServer::registerService(std::shared_ptr<google::protobuf::Service> servi
     return true;
 }
 
+void TcpServer::setCallBackFunc(const CallBackFunc &callback)
+{
+    this->callback = callback;
+}
+
 TcpConnection::ptr TcpServer::addClient(tcp::Connection *conntion) {
     int fd = conntion->socket();
     auto it = m_clients.find(fd);
@@ -78,6 +83,8 @@ TcpConnection::ptr TcpServer::addClient(tcp::Connection *conntion) {
         // set new Tcpconnection
         DLOG << "fd " << fd << " have exist, reset it";
         it->second = std::make_shared<TcpConnection>(this, conntion, 1024, getPeerAddr());
+        if (callback)
+            it->second->setCallBack(callback);
         return it->second;
 
     } else {
@@ -86,6 +93,8 @@ TcpConnection::ptr TcpServer::addClient(tcp::Connection *conntion) {
                                                                   conntion,
                                                                   1024,
                                                                   getPeerAddr());
+        if (callback)
+            conn->setCallBack(callback);
         m_clients.insert(std::make_pair(fd, conn));
         return conn;
     }

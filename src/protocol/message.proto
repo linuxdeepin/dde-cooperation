@@ -12,7 +12,8 @@ message LoginRequest {
   string my_name = 5;
   string session_id = 6;
   string version = 7;
-  repeated OptionMessage options = 8;
+  string ip = 8;
+  repeated OptionMessage options = 9;
 }
 
 message LoginResponse {

@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QTimer>
 #include <service/job/transferjob.h>
 #include <service/job/communicationjob.h>
 #include "co/co.h"
@@ -28,7 +29,7 @@ public:
     void startRemoteServer();
 
 signals:
-    void connectClosed(const QString &ip, const uint16 port);
+    void connectClosed(const QString ip, const uint16 port);
     // 使用这个信号必须是不需要等待客户端返回值的。
     void sendToClient(const QString session, const QString &req);
 
@@ -50,9 +51,10 @@ public slots:
     void handleNodeRegister(bool unreg, const co::Json &info);
     void handleGetAllNodes();
     void handleBackApplyTransFiles(const co::Json &param);
-    void handleConnectClosed(const QString &ip, const uint16 port);
+    void handleConnectClosed(const QString ip, const uint16 port);
     // 必须主线程处理向客户端发送
     void handleSendToClient(const QString session, const QString req);
+    void handlePingRemote();
 
 private:
     void localIPCStart();
@@ -68,6 +70,7 @@ private:
     QSharedPointer<Session> sessionById(QString &id);
     QSharedPointer<Session> sessionByName(const QString &name);
     fastring genPeerInfo();
+    int sendApplyTransFile(const QSharedPointer<CommunicationJob> &job, const QString &info);
 
     void asyncDiscovery();
 private:
@@ -89,6 +92,9 @@ private:
     co::mutex g_m;
 
     bool _this_destruct = false;
+    QTimer _ping_remote;
+    QStringList _ping_sessions;
+    QReadWriteLock lock;
 };
 
 #endif // SERVICEMANAGER_H

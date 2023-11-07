@@ -135,6 +135,10 @@ typedef enum rpc_result_t {
     INVOKE_OK = 0,
     INVOKE_DONE = 1,
 } RpcResult;
+typedef enum rpc_send_status {
+    APPLY_TRANS_FILE = 0,
+    REMOTE_CLIENT_OFFLINE = 1, // tcp远端的tcpclient下线（服务调用方下线）
+} RpcSendStatus;
 
 // use thread replace the coroutine
 #if defined(DISABLE_GO)

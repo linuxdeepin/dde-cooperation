@@ -10,8 +10,8 @@ service Frontend {
     cbFsAction, // callback result for remote FS action: create, delete, rename
     notifyFileStatus, // notify file status
     applyTransFiles, // callback remote apply or apply a reply
-    notifySendApplyStatus, // notify client send appy trans files status
-    cbNeedPing, // server start ping client, and client is online, notify client ping server
+    notifySendStatus, // notify client send appy trans files status
+    backendServerOnline, // server start ping client, and client is online, notify client ping server
 }
 
 // return {GenericResult}

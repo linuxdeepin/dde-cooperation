@@ -20,6 +20,8 @@ void TransferJob::initRpc(fastring target, uint16 port)
 {
     if (nullptr == _rpcBinder) {
         _rpcBinder = new RemoteServiceBinder(this);
+        _tar_ip = target;
+        _tar_port = port;
         _rpcBinder->createExecutor(_tar_app_name.c_str(), target.c_str(), port);
     }
 }
@@ -167,6 +169,8 @@ void TransferJob::scanPath(fastring root, fastring path)
             _rpcBinder->doSendFileInfo(_tar_app_name.c_str(), _jobid, _fileid, subdir.c_str(), path.c_str());
     if (res <= 0) {
         ELOG << "error file info : " << path;
+        _stoped = true;
+        handleJobStatus(JOB_TRANS_FAILED);
         return;
     }
     if (fs::isdir(path.c_str())) {
@@ -367,6 +371,7 @@ void TransferJob::handleBlockQueque()
     };
     if (exception) {
         DLOG << "trans job exception hanpend: " << _jobid;
+        _stoped = true;
         handleJobStatus(JOB_TRANS_FAILED);
     } else {
         LOG << "trans job finished: " << _jobid;
@@ -388,6 +393,8 @@ void TransferJob::handleUpdate(FileTransRe result, const char *path, const char 
         update.set_allocated_report(report);
         int res = _rpcBinder->doUpdateTrans(_tar_app_name.c_str(), update);
         if (res <= 0) {
+            _stoped = true;
+            handleJobStatus(JOB_TRANS_FAILED);
             ELOG << "update failed: " << _path << " result=" << result;
         }
     });

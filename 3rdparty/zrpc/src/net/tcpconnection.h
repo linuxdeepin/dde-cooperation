@@ -16,6 +16,7 @@
 #include "specodec.h"
 #include "netaddress.h"
 
+using CallBackFunc = std::function<void(int, const fastring &, const uint16)>;
 namespace zrpc_ns {
 
 class TcpServer;
@@ -47,6 +48,8 @@ public:
                   int buff_size,
                   NetAddress::ptr peer_addr);
 
+    void setCallBack(const CallBackFunc &call);
+
     void setUpClient();
 
     ~TcpConnection();
@@ -73,6 +76,8 @@ public:
 
     bool getResPackageData(const std::string &msg_req, SpecDataStruct::pb_ptr &pb_struct);
 
+    fastring getRemoteIp();
+
 public:
     void MainServerLoopCorFunc();
 
@@ -87,7 +92,6 @@ public:
 private:
     int64 read_hook(char *buf, size_t len);
     int64 write_hook(const void *buf, size_t count);
-
     void clearClient();
 
 private:
@@ -111,6 +115,10 @@ private:
     bool m_stop { false };
 
     std::map<std::string, std::shared_ptr<SpecDataStruct>> m_reply_datas;
+
+    fastring remoteIP;
+
+    CallBackFunc callback { nullptr };
 };
 
 }   // namespace zrpc_ns

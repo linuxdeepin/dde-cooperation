@@ -41,6 +41,9 @@ signals:
     // 传输文件状态
     void notifyFileTransStatus(QString appname, int status, QString fileinfo);
 
+    // 远程的服务器断开
+    void notifyRemoteSeverClose(QString ip, uint16 port);
+
 public slots:
 
 private:
@@ -69,10 +72,13 @@ private:
 
     bool _sub;
     bool _writejob;
-    fastring _app_name;   // //前端应用名
-    fastring _path;   // 目录或文件路径
-    fastring _savedir;   // 写作业，文件保存的目录
-    fastring _tar_app_name;   // 发送到目标的应用名称
+
+    uint16 _tar_port;
+    fastring _app_name; // //前端应用名
+    fastring _path; // 目录或文件路径
+    fastring _savedir; // 写作业，文件保存的目录
+    fastring _tar_app_name; // 发送到目标的应用名称
+    fastring _tar_ip;
 
     RemoteServiceBinder *_rpcBinder = nullptr;
 

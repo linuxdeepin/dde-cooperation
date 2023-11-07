@@ -88,7 +88,9 @@ void TransferHandle::localIPCStart()
 
                 bool result = false;
                 fastring my_ver(FRONTEND_PROTO_VERSION);
-                if (my_ver.compare(param.version) == 0 && param.session.compare(_sessionid) == 0) {
+                if (my_ver.compare(param.version) == 0 &&
+                        (param.session.compare(_sessionid) == 0 ||
+                         param.session.compare("backendServerOnline") == 0 )) {
                     result = true;
                 } else {
                     DLOG << param.version << " =version not match= " << my_ver;

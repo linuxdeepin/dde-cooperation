@@ -22,6 +22,9 @@
 #include "../comshare.h"
 #include "../fsadapter.h"
 
+static QReadWriteLock _executor_lock;
+static QMap<QString, QSharedPointer<ZRpcClientExecutor>> _executor_ps;
+
 void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
                               const ::LoginRequest *request,
                               ::LoginResponse *response,
@@ -29,7 +32,6 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
 {
     Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
-
     std::string version = request->version();
     if (version.compare(UNIAPI_VERSION) != 0) {
         // Notification not match version
@@ -107,9 +109,6 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
         in.type = IN_LOGIN_RESULT;
         in.json = result.as_json().str();
         _income_chan << in;
-
-        OutData out;
-        _outgo_chan >> out;
     }
 
     LOG << "res= " << response->ShortDebugString().c_str();
@@ -141,7 +140,10 @@ void RemoteServiceImpl::misc(::google::protobuf::RpcController *controller,
 {
     Q_UNUSED(controller);
     LOG << "req= " << request->ShortDebugString().c_str();
-
+    if (request->json().compare("remote_ping") == 0) {
+        response->set_json(request->json());
+        response->set_app(request->app());
+    }
     LOG << "res= " << response->ShortDebugString().c_str();
 
     if (done) {
@@ -362,14 +364,20 @@ RemoteServiceBinder::~RemoteServiceBinder()
 {
 }
 
-void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpath)
+void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpath,
+                                         const std::function<void(int, const fastring &, const uint16)> &call)
 {
+
     char key[1024];
     char crt[1024];
     strcpy(key, keypath);
     strcpy(crt, crtpath);
     zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(UNI_RPC_PORT_BASE, key, crt);
     server->registerService<RemoteServiceImpl>();
+    if (call) {
+        callback = call;
+        server->setCallBackFunc(callback);
+    }
 
     LOG << "RPC server run...";
     // run in other co is OK
@@ -428,6 +436,7 @@ void RemoteServiceBinder::doLogin(const QString &session, const char *username, 
 
     rpc_req.set_session_id(uuid);   //TODO: gen from the uuid
     rpc_req.set_version(UNIAPI_VERSION);
+    rpc_req.set_ip(Util::getFirstIp());
 
     stub.login(rpc_controller, &rpc_req, &rpc_res, nullptr);
 
@@ -438,7 +447,6 @@ void RemoteServiceBinder::doLogin(const QString &session, const char *username, 
         return;
     }
 
-    DLOG << "response body: " << rpc_res.ShortDebugString();
     fastring token = rpc_res.token();
 
     if (rpc_res.has_peer_info() && !token.empty()) {
@@ -446,10 +454,8 @@ void RemoteServiceBinder::doLogin(const QString &session, const char *username, 
         PeerInfo target_info = rpc_res.peer_info();
         // login successful
         DaemonConfig::instance()->saveAuthed(token);
-
         return emit loginResult(true, QString(username));
     }
-
     emit loginResult(false, QString(username));
 }
 
@@ -507,7 +513,6 @@ QString RemoteServiceBinder::doMisc(const char *session, const char *miscdata)
         return res_json;
     }
 
-    DLOG << "response body: " << rpc_res.ShortDebugString();
     res_json = rpc_res.SerializeAsString().c_str();
 
     // 不需要耗时的可能返回一个json的结果。
@@ -660,7 +665,7 @@ int RemoteServiceBinder::doSendApplyTransFiles(const QString &session, const QSt
 {
     auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
-        ELOG << "doSendApplyTransFiles ERROR: no executor";
+        ELOG << "doSendApplyTransFiles ERROR: no executor" << session.toStdString();
         return PARAM_ERROR;
     }
 
@@ -689,6 +694,20 @@ void RemoteServiceBinder::clearExecutor(const QString &appname)
 {
     QWriteLocker lk(&_executor_lock);
     _executor_ps.remove(appname);
+}
+
+void RemoteServiceBinder::remoteIP(const QString &session, QString *ip, uint16 *port)
+{
+    QReadLocker lk(&_executor_lock);
+    auto _exector = _executor_ps.value(session);
+    if (_exector.isNull()) {
+        ELOG << "current session = " << session.toStdString() << " has no  executor!!";
+        return;
+    }
+    if (ip)
+        *ip = _exector->targetIP();
+    if (port)
+        *port = _exector->targetPort();
 }
 
 QSharedPointer<ZRpcClientExecutor> RemoteServiceBinder::executor(const QString &appname)

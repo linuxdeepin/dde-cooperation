@@ -34,6 +34,8 @@ public:
 
     bool registerService(std::shared_ptr<google::protobuf::Service> service);
 
+    void setCallBackFunc(const CallBackFunc &callback);
+
 public:
     AbstractDispatcher::ptr getDispatcher();
 
@@ -63,6 +65,8 @@ private:
     AbstractCodeC::ptr m_codec;
 
     std::map<int, std::shared_ptr<TcpConnection>> m_clients;
+
+    CallBackFunc callback { nullptr };
 };
 
 } // namespace zrpc_ns

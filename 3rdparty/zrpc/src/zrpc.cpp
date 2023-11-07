@@ -65,4 +65,9 @@ bool ZRpcServer::start() {
     return ((ZRpcServerImpl *)_p)->start();
 }
 
+void ZRpcServer::setCallBackFunc(const std::function<void (int, const fastring &, const uint16)> &call)
+{
+    ((ZRpcServerImpl *)_p)->getServer()->setCallBackFunc(call);
+}
+
 } // namespace zrpc_ns

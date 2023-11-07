@@ -111,7 +111,9 @@ void TransferHelperPrivate::localIPCStart()
 
                 bool result = false;
                 fastring my_ver(FRONTEND_PROTO_VERSION);
-                if (my_ver.compare(param.version) == 0 && param.session.compare(sessionId.toStdString()) == 0) {
+                if (my_ver.compare(param.version) == 0
+                        && (param.session.compare(sessionId.toStdString()) == 0 ||
+                            param.session.compare("backendServerOnline") == 0 )) {
                     result = true;
                 } else {
                     qWarning() << param.version.c_str() << " =version not match= " << my_ver.c_str();

@@ -25,6 +25,7 @@ TcpConnection::TcpConnection(TcpServer *tcp_svr,
     m_codec = m_tcp_svr->getCodec();
     initBuffer(buff_size);
     m_state = Connected;
+    remoteIP = getRemoteIp();
     DLOG << "succ create tcp connection[" << m_state << "]";
 }
 
@@ -41,8 +42,14 @@ TcpConnection::TcpConnection(TcpClient *tcp_cli,
     m_codec = m_tcp_cli->getCodeC();
 
     initBuffer(buff_size);
+    remoteIP = getRemoteIp();
 
     DLOG << "succ create tcp connection[NotConnected]";
+}
+
+void TcpConnection::setCallBack(const CallBackFunc &call)
+{
+    callback = call;
 }
 
 void TcpConnection::initServer()
@@ -181,7 +188,12 @@ bool TcpConnection::input()
     }
     if (close_flag) {
         clearClient();
-        DLOG << "peer closed";
+        if (callback) {
+            uint16 port = m_tcp_svr ? m_tcp_svr->getLocalAddr()->getPort() : 0;
+            port = port == 0 && m_tcp_cli ? m_tcp_cli->getLocalAddr()->getPort() : 0;
+            callback(0, remoteIP, port);
+        }
+        DLOG << "peer closed " << " remote ip ===== " << remoteIP;
     }
 
     if (!read_all) {
@@ -307,6 +319,21 @@ bool TcpConnection::getResPackageData(const std::string &msg_req,
     }
     // DLOG << msg_req << "|reply data not exist";
     return false;
+}
+
+fastring TcpConnection::getRemoteIp()
+{
+    if (m_connection_type == ServerConnection) {
+        int sockfd = m_serv_conn->socket();
+        struct sockaddr_in addr;
+        socklen_t addr_len = sizeof(addr);
+        getpeername(sockfd, (struct sockaddr*)&addr, &addr_len);
+        std::string remote_ip = inet_ntoa(addr.sin_addr);
+        // 使用remote_ip进行后续操作
+        return remote_ip;
+    } else {
+        return  m_tcp_cli->getPeerAddr()->getIP();
+    }
 }
 
 AbstractCodeC::ptr TcpConnection::getCodec() const

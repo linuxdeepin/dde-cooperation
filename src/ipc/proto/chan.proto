@@ -67,5 +67,7 @@ object FSReport {
 }
 
 object SendStatus {
+    int32 type // 服务器发送都对方服务器的类型
     int32 status // 0 发送成功，-1发送失败，-2参数错误
+    string msg
 }
