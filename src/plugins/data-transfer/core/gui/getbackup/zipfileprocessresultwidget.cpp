@@ -74,7 +74,7 @@ void ZipFileProcessResultWidget::initUI()
 
     mainLayout->addLayout(buttonLayout);
 
-    QObject::connect(TransferHelper::instance(), &TransferHelper::transferContent, this,
+    QObject::connect(TransferHelper::instance(), &TransferHelper::zipTransferContent, this,
                      &ZipFileProcessResultWidget::upWidgetToFailed);
 }
 

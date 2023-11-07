@@ -6,7 +6,6 @@
 #include "../connect/promptwidget.h"
 #include "../connect/startwidget.h"
 #include "../connect/networkdisconnectionwidget.h"
-#include "../connect/licensewidget.h"
 
 #include "../select/appselectwidget.h"
 #include "../select/selectmainwidget.h"

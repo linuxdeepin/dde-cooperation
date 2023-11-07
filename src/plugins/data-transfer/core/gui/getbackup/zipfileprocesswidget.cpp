@@ -121,7 +121,7 @@ void zipFileProcessWidget::initUI()
     mainLayout->addSpacing(20);
     mainLayout->addLayout(indexLayout);
 
-    QObject::connect(TransferHelper::instance(), &TransferHelper::transferContent, this,
+    QObject::connect(TransferHelper::instance(), &TransferHelper::zipTransferContent, this,
                      &zipFileProcessWidget::updateProcess);
 }
 

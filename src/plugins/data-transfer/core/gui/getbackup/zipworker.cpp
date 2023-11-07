@@ -20,7 +20,7 @@ ZipWork::ZipWork(QObject *parent) : QThread(parent)
     qInfo() << "zipwork start.";
     // connect backup file process
     QObject::connect(this, &ZipWork::backupFileProcessSingal, TransferHelper::instance(),
-                     &TransferHelper::transferContent);
+                     &TransferHelper::zipTransferContent);
     // connect the main thread exit signal
     QObject::connect(qApp, &QCoreApplication::aboutToQuit, this,
                      &ZipWork::abortingBackupFileProcess);
