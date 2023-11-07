@@ -1,0 +1,21 @@
+[Desktop Entry]
+Categories=Network;RemoteControl;
+Comment=Data transfer is a powerful tool that helps you transfer your files, settings from windows to linux.
+Exec=/usr/bin/deepin-data-transfer
+GenericName=Data Transfer
+Icon=deepin-data-transfer
+Name=Deepin Data Transfer
+Type=Application
+StartupNotify=false
+Terminal=false
+X-Deepin-DEComponent=true
+X-Deepin-Vendor=deepin
+
+
+Comment[zh_CN]=数据迁移是一款强大的工具，可帮助您将windows的文件、设置等迁移到Linux系统。
+
+
+GenericName[zh_CN]=数据迁移
+
+
+Name[zh_CN]=深度数据迁移

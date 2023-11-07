@@ -54,3 +54,17 @@ endif()
 
 install(TARGETS ${PROJ_NAME} DESTINATION bin)
 
+if (WIN32)
+    # icon, start and inno setup script file
+    file(GLOB SETUPS ${CMAKE_CURRENT_SOURCE_DIR}/setup/win/*)
+    file(COPY ${SETUPS}
+      DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
+else()
+    # icons
+    FILE(GLOB ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/setup/linux/*.svg)
+    install(FILES ${ICON_FILES} DESTINATION share/icons/hicolor/scalable/apps)
+
+    # desktop
+    install(FILES setup/linux/deepin-data-transfer.desktop DESTINATION share/applications)
+endif()
+

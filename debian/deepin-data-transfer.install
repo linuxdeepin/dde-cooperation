@@ -1,2 +1,4 @@
 usr/bin/deepin-data-transfer
 usr/lib/*/dde-cooperation/plugins/data-transfer/*.so*
+usr/share/icons/hicolor/scalable/apps/deepin-data-transfer.svg
+usr/share/applications/deepin-data-transfer.desktop

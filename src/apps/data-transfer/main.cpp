@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     app.setOrganizationName("deepin");
     app.loadTranslator();
     app.setApplicationDisplayName(app.translate("Application", "数据迁移工具"));
-    app.setApplicationVersion("1.0.0.0");
+    app.setApplicationVersion(APP_VERSION);
     QIcon icon(":/icons/icon.svg");
     app.setProductIcon(icon);
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" );

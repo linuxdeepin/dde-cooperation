@@ -65,6 +65,8 @@ public:
     void tryConnect(const std::string &ip, const std::string &password);
     fastring getSessionId();
 
+    void call(const json::Json& req, json::Json& res);
+
     static TransferWoker *instance()
     {
         static TransferWoker ins;
