@@ -61,7 +61,7 @@
       "value": 60,
       "serial": 0,
       "flags":["global"],
-      "name":"timout interval",
+      "name":"timeout interval",
       "name[zh_CN]":"超时时间间隔",
       "description[zh_CN]":"协同请求发出后，对方无响应则请求方60s超时；接受方确认弹框60s未操作则超时",
       "description":"request cooperation timeout interval",
