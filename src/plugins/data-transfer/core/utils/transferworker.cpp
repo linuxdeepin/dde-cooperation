@@ -339,7 +339,7 @@ void TransferHandle::sendFiles(QStringList paths)
 TransferWoker::TransferWoker()
 {
     // initialize the proto client
-    coClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false));
+    coClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_DATA_TRAN_PORT, false));
 }
 
 TransferWoker::~TransferWoker()
@@ -450,7 +450,7 @@ void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 
 void TransferWoker::call(const json::Json &req, json::Json &res)
 {
-    coClient.reset(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_PORT, false));
+    coClient.reset(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_DATA_TRAN_PORT, false));
 #if defined(WIN32)
     co::wait_group wg;
     wg.add(1);

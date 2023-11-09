@@ -7,11 +7,13 @@
 struct UserLoginResult {
     fastring appname;
     fastring uuid;
+    fastring ip;
     bool result;
 
     void from_json(const co::Json& _x_) {
         appname = _x_.get("appname").as_c_str();
         uuid = _x_.get("uuid").as_c_str();
+        ip = _x_.get("ip").as_c_str();
         result = _x_.get("result").as_bool();
     }
 
@@ -19,6 +21,7 @@ struct UserLoginResult {
         co::Json _x_;
         _x_.add_member("appname", appname);
         _x_.add_member("uuid", uuid);
+        _x_.add_member("ip", ip);
         _x_.add_member("result", result);
         return _x_;
     }
@@ -233,6 +236,23 @@ struct SendStatus {
         _x_.add_member("type", type);
         _x_.add_member("status", status);
         _x_.add_member("msg", msg);
+        return _x_;
+    }
+};
+
+struct LoginResultStruct {
+    bool result;
+    fastring appName;
+
+    void from_json(const co::Json& _x_) {
+        result = _x_.get("result").as_bool();
+        appName = _x_.get("appName").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("result", result);
+        _x_.add_member("appName", appName);
         return _x_;
     }
 };

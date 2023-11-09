@@ -94,7 +94,7 @@ TransferDialog *TransferHelperPrivate::transDialog()
 void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
 {
     qInfo() << "send files: " << fileList;
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
     co::Json req, res;
 
     co::vector<fastring> fileVector;
@@ -123,7 +123,7 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
 
 void TransferHelperPrivate::handleApplyTransFiles(int type)
 {
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
     co::Json res;
     // 获取设备名称
     auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
@@ -146,7 +146,7 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
 void TransferHelperPrivate::handleTryConnect(const QString &ip)
 {
     LOG << "connect to " << ip.toStdString();
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
     co::Json req, res;
     fastring targetIp(ip.toStdString());
     fastring pinCode("");

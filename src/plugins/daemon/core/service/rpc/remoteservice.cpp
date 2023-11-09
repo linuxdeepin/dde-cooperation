@@ -104,6 +104,7 @@ void RemoteServiceImpl::login(::google::protobuf::RpcController *controller,
         UserLoginResult result;
         result.appname = request->name();
         result.uuid = request->my_uid();
+        result.ip = request->ip();
         result.result = authOK;
 
         in.type = IN_LOGIN_RESULT;
@@ -407,12 +408,12 @@ void RemoteServiceBinder::createExecutor(const QString &session, const char *tar
     }
 }
 
-void RemoteServiceBinder::doLogin(const QString &session, const char *username, const char *pincode)
+co::Json RemoteServiceBinder::doLogin(const QString &session, const char *username, const char *pincode)
 {
     auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
         ELOG << "doLogin ERROR: no executor";
-        return;
+        return co::Json({{"result", false},{"appName", session.toStdString()}});
     }
 
     RemoteService_Stub stub(_executor_p->chan());
@@ -444,7 +445,7 @@ void RemoteServiceBinder::doLogin(const QString &session, const char *username, 
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
             << ", error info: " << rpc_controller->ErrorText();
         emit loginResult(false, QString(username));
-        return;
+        return co::Json({{"result", false},{"appName", session.toStdString()}});
     }
 
     fastring token = rpc_res.token();
@@ -454,9 +455,11 @@ void RemoteServiceBinder::doLogin(const QString &session, const char *username, 
         PeerInfo target_info = rpc_res.peer_info();
         // login successful
         DaemonConfig::instance()->saveAuthed(token);
-        return emit loginResult(true, QString(username));
+        emit loginResult(true, QString(username));
+        return co::Json({{"result", true},{"appName", session.toStdString()}});
     }
     emit loginResult(false, QString(username));
+    return co::Json({{"result", false},{"appName", session.toStdString()}});
 }
 
 void RemoteServiceBinder::doQuery(const QString &session)
@@ -665,7 +668,7 @@ int RemoteServiceBinder::doSendApplyTransFiles(const QString &session, const QSt
 {
     auto _executor_p = executor(session);
     if (_executor_p.isNull()) {
-        ELOG << "doSendApplyTransFiles ERROR: no executor" << session.toStdString();
+        ELOG << "doSendApplyTransFiles ERROR: no executor  " << session.toStdString();
         return PARAM_ERROR;
     }
 
@@ -720,4 +723,39 @@ QSharedPointer<ZRpcClientExecutor> RemoteServiceBinder::executor(const QString &
     if (_executor_p && _executor_p->control()->Failed())
         createExecutor(appname, _executor_p->targetIP().toStdString().c_str(), _executor_p->targetPort());
     return _executor_ps.value(appname);
+}
+
+RemoteServiceSender::RemoteServiceSender(const QString &appname, const QString &ip,
+                                         const uint16 port, QObject *parent)
+    : RemoteServiceBinder(parent)
+    , _app_name(appname)
+    , _target_ip(ip)
+    , _target_port(port)
+{
+
+}
+
+RemoteServiceSender::~RemoteServiceSender()
+{
+
+}
+
+void RemoteServiceSender::setIpInfo(const QString &ip, const uint16 port)
+{
+    if (ip == _target_ip && port == _target_port)
+        return;
+
+    _target_ip = ip;
+    _target_port = port;
+    RemoteServiceBinder::createExecutor(_app_name, _target_ip.toStdString().c_str(), port);
+}
+
+void RemoteServiceSender::setTargetAppName(const QString &targetApp)
+{
+    _tar_app_name = targetApp;
+}
+
+void RemoteServiceSender::createExecutor()
+{
+    RemoteServiceBinder::createExecutor(_app_name, _target_ip.toStdString().c_str(), _target_port);
 }
