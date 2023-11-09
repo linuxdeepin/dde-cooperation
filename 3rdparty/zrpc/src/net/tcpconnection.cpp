@@ -328,9 +328,16 @@ fastring TcpConnection::getRemoteIp()
         struct sockaddr_in addr;
         socklen_t addr_len = sizeof(addr);
         getpeername(sockfd, (struct sockaddr*)&addr, &addr_len);
-        std::string remote_ip = inet_ntoa(addr.sin_addr);
+        std::string remote_ip_t;
+#if !defined(WIN32)
+        remote_ip_t = inet_ntoa(addr.sin_addr);
+#else
+        char remote_ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(addr.sin_addr), remote_ip, INET_ADDRSTRLEN);
+        remote_ip_t = remote_ip;
+#endif
         // 使用remote_ip进行后续操作
-        return remote_ip;
+        return remote_ip_t;
     } else {
         return  m_tcp_cli->getPeerAddr()->getIP();
     }

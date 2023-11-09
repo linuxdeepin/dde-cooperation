@@ -9,7 +9,10 @@
 #include "co/co.h"
 #include "common/constant.h"
 #include "service/fsadapter.h"
+#include "service/rpc/sendrpcservice.h"
 #include "utils/config.h"
+
+#include <QPointer>
 
 TransferJob::TransferJob(QObject *parent)
     : QObject(parent)
@@ -18,12 +21,8 @@ TransferJob::TransferJob(QObject *parent)
 
 void TransferJob::initRpc(fastring target, uint16 port)
 {
-    if (nullptr == _rpcBinder) {
-        _rpcBinder = new RemoteServiceBinder(this);
-        _tar_ip = target;
-        _tar_port = port;
-        _rpcBinder->createExecutor(_tar_app_name.c_str(), target.c_str(), port);
-    }
+    _tar_ip = target;
+    _tar_port = port;
 }
 
 void TransferJob::initJob(fastring appname, fastring targetappname, int id, fastring path, bool sub, fastring savedir, bool write)
@@ -49,12 +48,7 @@ void TransferJob::start()
     } else {
         //并行读取文件数据
         DLOG << "doTransfileJob path to save:" << _savedir;
-        int res = _rpcBinder->doTransfileJob(_app_name.c_str(), _jobid, _savedir.c_str(), false, _sub, _writejob);
-        if (res < 0) {
-            ELOG << "binder doTransfileJob failed: " << res << " jobpath: " << _path;
-            _stoped = true;
-            handleJobStatus(JOB_TRANS_FAILED);
-        }
+        SendRpcService::instance()->doTransfileJob(_app_name.c_str(), _jobid, _savedir.c_str(), false, _sub, _writejob);
 
         co::Json pathJson;
         pathJson.parse_from(_path);
@@ -165,14 +159,9 @@ void TransferJob::scanPath(fastring root, fastring path)
 {
     _fileid++;
     fastring subdir = getSubdir(path.c_str(), root.c_str());
-    int res =
-            _rpcBinder->doSendFileInfo(_tar_app_name.c_str(), _jobid, _fileid, subdir.c_str(), path.c_str());
-    if (res <= 0) {
-        ELOG << "error file info : " << path;
-        _stoped = true;
-        handleJobStatus(JOB_TRANS_FAILED);
+    SendRpcService::instance()->doSendFileInfo(_tar_app_name.c_str(), _jobid, _fileid, subdir.c_str(), path.c_str());
+    if (_stoped)
         return;
-    }
     if (fs::isdir(path.c_str())) {
         readPath(path, root);
     } else {
@@ -182,6 +171,9 @@ void TransferJob::scanPath(fastring root, fastring path)
 
 void TransferJob::readPath(fastring path, fastring root)
 {
+    if (_stoped)
+        return;
+
     fastring dirpath = path::join(path, "");
     fs::dir d(dirpath);
     auto v = d.all();   // 读取所有子项
@@ -193,6 +185,9 @@ void TransferJob::readPath(fastring path, fastring root)
 
 bool TransferJob::readFile(fastring filepath, int fileid, fastring subdir)
 {
+    if (_stoped)
+        return false;
+
     std::pair<fastring, fastring> pairs = path::split(fastring(filepath));
 
     fastring filename = pairs.second;
@@ -208,6 +203,9 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         ELOG << "readFileBlock file is invaild" << filepath;
         return;
     }
+
+    if (_stoped)
+        return;
 
     size_t block_size = BLOCK_SIZE;
     int64 file_size = fs::fsize(filepath);
@@ -227,7 +225,8 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         _file_info_maps.insert(std::make_pair(fileid, info));
         //        LOG << "======this file (" << subname << "fileid" << fileid << ") start   _file_info_maps";
     }
-    UNIGO([this, filepath, fileid, subname, file_size, block_size]() {
+    QPointer<TransferJob> self = this;
+    UNIGO([self, filepath, fileid, subname, file_size, block_size]() {
         int64 read_size = 0;
         uint32 block_id = 0;
 
@@ -240,6 +239,12 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         size_t block_len = block_size * sizeof(char);
         char *buf = reinterpret_cast<char *>(malloc(block_len));
         do {
+            // 最多300个数据块
+            if (self && self->queueCount() > 300)
+                QThread::msleep(20);
+            if (self.isNull() || self->_stoped)
+                break;
+
             memset(buf, 0, block_len);
             size_t resize = fd.read(buf, block_size);
             if (resize <= 0) {
@@ -248,8 +253,8 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
             }
 
             QSharedPointer<FSDataBlock> block(new FSDataBlock);
-
-            block->job_id = _jobid;
+            if (self)
+                block->job_id = self->_jobid;
             block->file_id = fileid;
             block->filename = subname;
             block->blk_id = block_id;
@@ -257,8 +262,8 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
             // copy binrary data
             fastring bufdata(buf, resize);
             block->data = bufdata;
-
-            pushQueque(block);
+            if (self)
+                self->pushQueque(block);
 
             read_size += resize;
             block_id++;
@@ -324,7 +329,7 @@ void TransferJob::handleBlockQueque()
         int32 job_id = block->job_id;
         int32 file_id = block->file_id;
         uint64 blk_id = block->blk_id;
-        fastring name = path::join(DaemonConfig::instance()->getStorageDir(), block->filename);
+        fastring name = path::join(DaemonConfig::instance()->getStorageDir(_app_name), block->filename);
         fastring buffer = block->data;
         size_t len = buffer.size();
         bool comp = block->compressed;
@@ -349,12 +354,7 @@ void TransferJob::handleBlockQueque()
             file_block.set_compressed(comp);
             // DLOG << "(" << job_id << ") send block " << block->filename << " size: " << len;
 
-            int send = _rpcBinder->doSendFileBlock(_tar_app_name.c_str(), file_block);
-            if (send <= 0) {
-                ELOG << "rpc disconnect, break : " << name;
-                exception = true;
-                break;
-            }
+            SendRpcService::instance()->doSendFileBlock(_tar_app_name.c_str(), file_block);
         }
 
         if (!exception) {
@@ -391,12 +391,7 @@ void TransferJob::handleUpdate(FileTransRe result, const char *path, const char 
         report->set_error(emsg);
 
         update.set_allocated_report(report);
-        int res = _rpcBinder->doUpdateTrans(_tar_app_name.c_str(), update);
-        if (res <= 0) {
-            _stoped = true;
-            handleJobStatus(JOB_TRANS_FAILED);
-            ELOG << "update failed: " << _path << " result=" << result;
-        }
+        SendRpcService::instance()->doUpdateTrans(_tar_app_name.c_str(),_jobid, update);
     });
 }
 
@@ -434,7 +429,7 @@ void TransferJob::handleTransStatus(int status, FileInfo &info)
 {
     co::Json filejson = info.as_json();
     //update the file relative to abs path
-    fastring savedpath = path::join(DaemonConfig::instance()->getStorageDir(), info.name);
+    fastring savedpath = path::join(DaemonConfig::instance()->getStorageDir(_app_name), info.name);
     filejson.remove("name");
     filejson.add_member("name", savedpath);
     QString appname(_app_name.c_str());
@@ -450,4 +445,10 @@ QSharedPointer<FSDataBlock> TransferJob::popQueue()
     if (_block_queue.empty())
         return nullptr;
     return _block_queue.dequeue();
+}
+
+int TransferJob::queueCount() const
+{
+    co::mutex_guard g(_queque_mutex);
+    return _block_queue.count();
 }

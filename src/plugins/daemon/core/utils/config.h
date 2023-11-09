@@ -152,6 +152,14 @@ public:
         return _storageDir;
     }
 
+    const fastring getStorageDir(const fastring &appName)
+    {
+        fastring home = getAppConfig(appName, "storagedir");
+        if (home.empty())
+            home = getStorageDir();
+        return home;
+    }
+
 private:
     fastring _pinCode;
     fastring _remote_sessionId;

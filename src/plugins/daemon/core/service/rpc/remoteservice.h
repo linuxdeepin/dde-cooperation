@@ -109,7 +109,7 @@ public:
 
     void createExecutor(const QString &session, const char *targetip, uint16_t port);
 
-    void doLogin(const QString &session, const char *username, const char *pincode);
+    co::Json doLogin(const QString &session, const char *username, const char *pincode);
 
     void doQuery(const QString &session);
 
@@ -151,6 +151,25 @@ private:
 
 private:
     std::function<void(int, const fastring &, const uint16)> callback{ nullptr };
+};
+
+class RemoteServiceSender : public RemoteServiceBinder {
+    Q_OBJECT
+public:
+    explicit RemoteServiceSender(const QString &appname, const QString &ip, const uint16 port, QObject *parent = nullptr);
+    ~RemoteServiceSender();
+
+    void setIpInfo(const QString &ip, const uint16 port);
+    void setTargetAppName(const QString &targetApp);
+    QString remoteIP() const { return _target_ip; }
+    uint16 remotePort() const {return _target_port; }
+    void createExecutor();
+
+private:
+    QString _tar_app_name;
+    QString _app_name;
+    QString _target_ip;
+    uint16 _target_port;
 };
 
 #endif   // REMOTE_SERVICE_H

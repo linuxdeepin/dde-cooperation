@@ -60,6 +60,7 @@ private:
     void handleJobStatus(int status);
     void handleTransStatus(int status, FileInfo &info);
     QSharedPointer<FSDataBlock> popQueue();
+    int queueCount() const;
 
 private:
     int _jobid;
@@ -79,8 +80,6 @@ private:
     fastring _savedir; // 写作业，文件保存的目录
     fastring _tar_app_name; // 发送到目标的应用名称
     fastring _tar_ip;
-
-    RemoteServiceBinder *_rpcBinder = nullptr;
 
     co::mutex _queque_mutex;
     QQueue<QSharedPointer<FSDataBlock>> _block_queue;
