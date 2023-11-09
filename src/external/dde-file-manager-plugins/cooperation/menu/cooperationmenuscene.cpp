@@ -82,7 +82,7 @@ bool CooperationMenuScene::create(QMenu *parent)
                 auto subMenu = act->menu();
                 if (subMenu) {
                     auto transAct = subMenu->addAction(d->predicateName.value(kFileTransfer));
-                    d->predicateAction[kFileTransfer] = act;
+                    d->predicateAction[kFileTransfer] = transAct;
                     transAct->setProperty(ActionPropertyKey::kActionID, kFileTransfer);
 
                     if (!act->isVisible())
