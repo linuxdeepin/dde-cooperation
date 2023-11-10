@@ -6,6 +6,7 @@
 #include "cooperationutil_p.h"
 #include "gui/mainwindow.h"
 #include "maincontroller/maincontroller.h"
+#include "transfer/transferhelper.h"
 
 #include "common/constant.h"
 #include "ipc/frontendservice.h"
@@ -125,6 +126,63 @@ void CooperationUtilPrivate::localIPCStart()
                                                   Q_ARG(bool, param.result));
                 }
             } break;
+            case FRONT_CONNECT_CB: {
+                ipc::GenericResult param;
+                param.from_json(json_obj);
+                QString msg(param.msg.c_str());
+
+                q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
+                                              Qt::QueuedConnection,
+                                              Q_ARG(int, param.result),
+                                              Q_ARG(QString, msg));
+            } break;
+            case FRONT_TRANS_STATUS_CB: {
+                ipc::GenericResult param;
+                param.from_json(json_obj);
+                QString msg(param.msg.c_str());   // job path
+
+                q->metaObject()->invokeMethod(TransferHelper::instance(), "onTransJobStatusChanged",
+                                              Qt::QueuedConnection,
+                                              Q_ARG(int, param.id),
+                                              Q_ARG(int, param.result),
+                                              Q_ARG(QString, msg));
+            } break;
+            case FRONT_NOTIFY_FILE_STATUS: {
+                QString objstr(bridge.json.c_str());
+                q->metaObject()->invokeMethod(TransferHelper::instance(),
+                                              "onFileTransStatusChanged",
+                                              Qt::QueuedConnection,
+                                              Q_ARG(QString, objstr));
+            } break;
+            case FRONT_APPLY_TRANS_FILE: {
+                ApplyTransFiles transferInfo;
+                transferInfo.from_json(json_obj);
+                LOG << "apply transfer info: " << json_obj;
+
+                switch (transferInfo.type) {
+                case ApplyTransType::APPLY_TRANS_APPLY:
+                    if (!qApp->property("onlyTransfer").toBool()) {
+                        TransferHelper::instance()->setTransMode(TransferHelper::ReceiveMode);
+                        q->metaObject()->invokeMethod(TransferHelper::instance(),
+                                                      "waitForConfirm",
+                                                      Qt::QueuedConnection,
+                                                      Q_ARG(QString, QString(transferInfo.machineName.c_str())));
+                    }
+                    break;
+                case ApplyTransType::APPLY_TRANS_CONFIRM:
+                    q->metaObject()->invokeMethod(TransferHelper::instance(),
+                                                  "accepted",
+                                                  Qt::QueuedConnection);
+                    break;
+                case ApplyTransType::APPLY_TRANS_REFUSED:
+                    q->metaObject()->invokeMethod(TransferHelper::instance(),
+                                                  "rejected",
+                                                  Qt::QueuedConnection);
+                    break;
+                default:
+                    break;
+                }
+            } break;
             default:
                 break;
             }
@@ -139,17 +197,14 @@ void CooperationUtilPrivate::localIPCStart()
     rpc::Server().add_service(frontendimp).start("0.0.0.0", onlyTransfer ? UNI_IPC_FRONTEND_TRANSFER_PORT : UNI_IPC_FRONTEND_COOPERATION_PORT, "/frontend", "", "");
 }
 
-QList<DeviceInfo> CooperationUtilPrivate::parseDeviceInfo(const co::Json &obj)
+QList<DeviceInfoPointer> CooperationUtilPrivate::parseDeviceInfo(const co::Json &obj)
 {
     NodeList nodeList;
     nodeList.from_json(obj);
 
-    QList<DeviceInfo> devInfoList;
+    QList<DeviceInfoPointer> devInfoList;
     for (const auto &node : nodeList.peers) {
-        DeviceInfo devInfo;
-        devInfo.state = ConnectState::kConnectable;
-        devInfo.ipStr = node.os.ipv4.c_str();
-
+        DeviceInfoPointer devInfo { nullptr };
         for (const auto &app : node.apps) {
             if (app.appname != kMainAppName)
                 continue;
@@ -160,14 +215,15 @@ QList<DeviceInfo> CooperationUtilPrivate::parseDeviceInfo(const co::Json &obj)
                 continue;
 
             auto map = doc.toVariant().toMap();
-            if (!map.contains(AppSettings::kDeviceNameKey))
+            if (!map.contains(AppSettings::DeviceNameKey))
                 continue;
 
-            devInfo.deviceName = map.value(AppSettings::kDeviceNameKey).toString();
+            map.insert("IPAddress", node.os.ipv4.c_str());
+            devInfo = DeviceInfo::fromVariantMap(map);
             break;
         }
 
-        if (!devInfo.deviceName.isEmpty())
+        if (devInfo && devInfo->isValid() && devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone)
             devInfoList << devInfo;
     }
 
@@ -197,6 +253,11 @@ QWidget *CooperationUtil::mainWindow()
         d->window = new MainWindow;
 
     return d->window;
+}
+
+QString CooperationUtil::sessionId() const
+{
+    return d->sessionId;
 }
 
 void CooperationUtil::destroyMainWindow()
@@ -271,7 +332,7 @@ void CooperationUtil::asyncDiscoveryDevice()
         rpcClient.call(req, res);
         rpcClient.close();
 
-        QList<DeviceInfo> infoList;
+        QList<DeviceInfoPointer> infoList;
         bool ok = res.get("result").as_bool();
         if (!ok) {
             WLOG << "discovery devices failed!";

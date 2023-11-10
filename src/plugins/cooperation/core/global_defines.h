@@ -10,11 +10,19 @@ typedef QMainWindow CooperationMainWindow;
 #include <DSwitchButton>
 #include <DSuggestButton>
 #include <DSearchEdit>
+#include <DDialog>
+#include <DSpinner>
+#include <DIconButton>
+#include <DFloatingButton>
+typedef DTK_WIDGET_NAMESPACE::DDialog CooperationDialog;
+typedef DTK_WIDGET_NAMESPACE::DSpinner CooperationSpinner;
 typedef DTK_WIDGET_NAMESPACE::DMainWindow CooperationMainWindow;
-typedef DTK_WIDGET_NAMESPACE::DAbstractDialog CooperationDialog;
+typedef DTK_WIDGET_NAMESPACE::DAbstractDialog CooperationAbstractDialog;
 typedef DTK_WIDGET_NAMESPACE::DSwitchButton CooperationSwitchButton;
 typedef DTK_WIDGET_NAMESPACE::DSuggestButton CooperationSuggestButton;
 typedef DTK_WIDGET_NAMESPACE::DSearchEdit CooperationSearchEdit;
+typedef DTK_WIDGET_NAMESPACE::DIconButton CooperationIconButton;
+typedef DTK_WIDGET_NAMESPACE::DFloatingButton CooperationFloatingEdit;
 #endif
 
 namespace OperationKey {
@@ -29,14 +37,14 @@ inline constexpr char kClickableCallback[] { "clickable-callback" };
 }
 
 namespace AppSettings {
-inline const char kGenericGroup[] { "GenericAttribute" };
-inline const char kDeviceNameKey[] { "DeviceName" };
-inline const char kDiscoveryModeKey[] { "DiscoveryMode" };
-inline const char kPeripheralShareKey[] { "PeripheralShare" };
-inline const char kLinkDirectionKey[] { "LinkDirection" };
-inline const char kTransferModeKey[] { "TransferMode" };
-inline const char kStoragePathKey[] { "StoragePath" };
-inline const char kClipboardShareKey[] { "ClipboardShare" };
+inline const char GenericGroup[] { "GenericAttribute" };
+inline const char DeviceNameKey[] { "DeviceName" };
+inline const char DiscoveryModeKey[] { "DiscoveryMode" };
+inline const char PeripheralShareKey[] { "PeripheralShare" };
+inline const char LinkDirectionKey[] { "LinkDirection" };
+inline const char TransferModeKey[] { "TransferMode" };
+inline const char StoragePathKey[] { "StoragePath" };
+inline const char ClipboardShareKey[] { "ClipboardShare" };
 }
 
 inline const char kMainAppName[] { "dde-cooperation" };
@@ -46,25 +54,5 @@ enum MenuAction {
     kSettings,
     kDownloadWindowClient
 };
-
-enum ConnectState {
-    kConnected,
-    kConnectable,
-    kOffline
-};
-
-struct DeviceInfo
-{
-    QString deviceName;
-    QString ipStr;
-    ConnectState state;
-
-    bool operator==(const DeviceInfo &info)
-    {
-        return this->ipStr == info.ipStr;
-    }
-};
-
-Q_DECLARE_METATYPE(DeviceInfo)
 
 #endif   // TYPE_DEFINES_H

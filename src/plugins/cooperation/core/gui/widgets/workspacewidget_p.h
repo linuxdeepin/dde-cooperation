@@ -31,13 +31,13 @@ public:
 
 public Q_SLOTS:
     void onSearchValueChanged(const QString &text);
-    void onSortFilterResult(int index, const DeviceInfo &info);
+    void onSortFilterResult(int index, const DeviceInfoPointer info);
     void onFilterFinished();
     void onDeviceRemoved(int index);
-    void onDeviceReplaced(int index, const DeviceInfo &info);
+    void onDeviceReplaced(int index, const DeviceInfoPointer info);
 
 Q_SIGNALS:
-    void devicesAdded(const QList<DeviceInfo> &infoList);
+    void devicesAdded(const QList<DeviceInfoPointer> &infoList);
     void devicesRemoved(const QString &ip);
     void filterDevice(const QString &str);
     void clearDevice();

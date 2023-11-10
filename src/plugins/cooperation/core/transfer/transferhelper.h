@@ -6,10 +6,9 @@
 #define TRANSFERHELPER_H
 
 #include "global_defines.h"
+#include "info/deviceinfo.h"
 
-#include <QVariantMap>
-
-namespace cooperation_transfer {
+namespace cooperation_core {
 
 class TransferHelperPrivate;
 class TransferHelper : public QObject
@@ -17,22 +16,38 @@ class TransferHelper : public QObject
     Q_OBJECT
 
 public:
+    enum TransferStatus {
+        Idle,
+        Confirming,
+        Connecting,
+        Transfering
+    };
+
+    enum TransferMode {
+        SendMode,
+        ReceiveMode
+    };
+
     static TransferHelper *instance();
 
-    void init();
+    void regist();
+    void setTransMode(TransferMode mode);
     void sendFiles(const QString &ip, const QString &devName, const QStringList &fileList);
     TransferStatus transferStatus();
 
-    static void buttonClicked(const QVariantMap &info);
-    static bool buttonVisible(const QVariantMap &info);
-    static bool buttonClickable(const QVariantMap &info);
+    static void buttonClicked(const QString &id, const DeviceInfoPointer info);
+    static bool buttonVisible(const QString &id, const DeviceInfoPointer info);
+    static bool buttonClickable(const QString &id, const DeviceInfoPointer info);
 
 public Q_SLOTS:
     void onConnectStatusChanged(int result, const QString &msg);
     void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onFileTransStatusChanged(const QString &status);
+    void waitForConfirm(const QString &name);
+    void onActionTriggered(uint replacesId, const QString &action);
+    void accepted();
+    void rejected();
     void cancelTransfer();
-    void onConfigChanged(const QString &group, const QString &key, const QVariant &value);
 
 private:
     explicit TransferHelper(QObject *parent = nullptr);
@@ -42,6 +57,6 @@ private:
     QSharedPointer<TransferHelperPrivate> d { nullptr };
 };
 
-}   // namespace cooperation_transfer
+}   // namespace cooperation_core
 
 #endif   // TRANSFERHELPER_H

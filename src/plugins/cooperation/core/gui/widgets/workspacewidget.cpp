@@ -68,7 +68,7 @@ void WorkspaceWidgetPrivate::onSearchValueChanged(const QString &text)
     Q_EMIT filterDevice(text);
 }
 
-void WorkspaceWidgetPrivate::onSortFilterResult(int index, const DeviceInfo &info)
+void WorkspaceWidgetPrivate::onSortFilterResult(int index, const DeviceInfoPointer info)
 {
     dlWidget->insertItem(index, info);
 }
@@ -92,7 +92,7 @@ void WorkspaceWidgetPrivate::onDeviceRemoved(int index)
         stackedLayout->setCurrentWidget(nrWidget);
 }
 
-void WorkspaceWidgetPrivate::onDeviceReplaced(int index, const DeviceInfo &info)
+void WorkspaceWidgetPrivate::onDeviceReplaced(int index, const DeviceInfoPointer info)
 {
     dlWidget->removeItem(index);
     dlWidget->insertItem(index, info);
@@ -120,7 +120,7 @@ void WorkspaceWidget::switchWidget(PageName page)
     d->stackedLayout->setCurrentIndex(page);
 }
 
-void WorkspaceWidget::addDeviceInfos(const QList<DeviceInfo> &infoList)
+void WorkspaceWidget::addDeviceInfos(const QList<DeviceInfoPointer> &infoList)
 {
     Q_EMIT d->devicesAdded(infoList);
 }

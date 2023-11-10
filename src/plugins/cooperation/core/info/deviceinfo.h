@@ -1,0 +1,93 @@
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef DEVICEINFO_H
+#define DEVICEINFO_H
+
+#include <QMetaType>
+#include <QSharedPointer>
+
+namespace cooperation_core {
+class DeviceInfo;
+}
+typedef QSharedPointer<cooperation_core::DeviceInfo> DeviceInfoPointer;
+
+namespace cooperation_core {
+
+class DeviceInfoPrivate;
+class DeviceInfo
+{
+public:
+    enum ConnectStatus {
+        Connected,
+        Connectable,
+        Offline
+    };
+
+    enum class DiscoveryMode {
+        Everyone,
+        NotAllow
+    };
+
+    enum class TransMode {
+        Everyone,
+        OnlyConnected,
+        NotAllow
+    };
+
+    enum class LinkMode {
+        RightMode,
+        LeftMode
+    };
+
+    explicit DeviceInfo();
+    explicit DeviceInfo(const QString &ip, const QString &name);
+    virtual ~DeviceInfo();
+
+    bool isValid();
+
+    void setIpAddress(const QString &ip);
+    QString ipAddress() const;
+
+    void setConnectStatus(ConnectStatus status);
+    ConnectStatus connectStatus() const;
+
+    void setDeviceName(const QString &name);
+    QString deviceName() const;
+
+    void setTransMode(TransMode mode);
+    TransMode transMode() const;
+
+    void setDiscoveryMode(DiscoveryMode mode);
+    DiscoveryMode discoveryMode() const;
+
+    void setLinkMode(LinkMode mode);
+    LinkMode linkMode() const;
+
+    void setPeripheralShared(bool b);
+    bool peripheralShared() const;
+
+    void setClipboardShared(bool b);
+    bool clipboardShared() const;
+
+    QVariantMap toVariantMap();
+    static DeviceInfoPointer fromVariantMap(const QVariantMap &map);
+
+    virtual DeviceInfo &operator=(const DeviceInfo &info);
+    virtual bool operator==(const DeviceInfo &info) const;
+    virtual bool operator!=(const DeviceInfo &info) const;
+
+private:
+    QSharedPointer<DeviceInfoPrivate> d { nullptr };
+};
+
+using DeviceDiscoveryMode = DeviceInfo::DiscoveryMode;
+using DeviceTransMode = DeviceInfo::TransMode;
+using DeviceLinkMode = DeviceInfo::LinkMode;
+
+}   // namespace cooperation_core
+
+Q_DECLARE_METATYPE(DeviceInfoPointer);
+
+#endif   // DEVICEINFO_H

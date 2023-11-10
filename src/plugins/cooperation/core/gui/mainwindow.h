@@ -6,6 +6,7 @@
 #define MAINWINDOW_H
 
 #include "global_defines.h"
+#include "info/deviceinfo.h"
 
 #include <QScopedPointer>
 
@@ -23,7 +24,7 @@ public Q_SLOTS:
     void onlineStateChanged(bool isOnline);
     void onLookingForDevices();
     void onDiscoveryFinished(bool hasFound);
-    void addDevice(const QList<DeviceInfo> &infoList);
+    void addDevice(const QList<DeviceInfoPointer> &infoList);
     void removeDevice(const QString &ip);
     void onRegistOperations(const QVariantMap &map);
 

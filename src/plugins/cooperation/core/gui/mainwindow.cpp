@@ -109,7 +109,7 @@ void MainWindow::onDiscoveryFinished(bool hasFound)
         d->workspaceWidget->switchWidget(WorkspaceWidget::kNoResultWidget);
 }
 
-void MainWindow::addDevice(const QList<DeviceInfo> &infoList)
+void MainWindow::addDevice(const QList<DeviceInfoPointer> &infoList)
 {
     d->workspaceWidget->switchWidget(WorkspaceWidget::kDeviceListWidget);
     d->workspaceWidget->addDeviceInfos(infoList);

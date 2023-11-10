@@ -19,8 +19,8 @@ class DeviceListWidget : public QScrollArea
 public:
     explicit DeviceListWidget(QWidget *parent = nullptr);
 
-    void appendItem(const DeviceInfo &info);
-    void insertItem(int index, const DeviceInfo &info);
+    void appendItem(const DeviceInfoPointer info);
+    void insertItem(int index, const DeviceInfoPointer info);
     void removeItem(int index);
     void moveItem(int srcIndex, int toIndex);
     int indexOf(const QString &ipStr);

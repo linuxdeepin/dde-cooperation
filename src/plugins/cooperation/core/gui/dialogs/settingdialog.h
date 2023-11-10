@@ -10,7 +10,7 @@
 namespace cooperation_core {
 
 class SettingDialogPrivate;
-class SettingDialog : public CooperationDialog
+class SettingDialog : public CooperationAbstractDialog
 {
     Q_OBJECT
 

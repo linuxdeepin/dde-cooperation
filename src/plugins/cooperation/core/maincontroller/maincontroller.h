@@ -6,6 +6,7 @@
 #define MAINCONTROLLER_H
 
 #include "global_defines.h"
+#include "info/deviceinfo.h"
 
 #include <QObject>
 #include <QTimer>
@@ -27,14 +28,14 @@ public:
 Q_SIGNALS:
     void onlineStateChanged(bool isOnline);
     void startDiscoveryDevice();
-    void deviceOnline(const QList<DeviceInfo> &infoList);
+    void deviceOnline(const QList<DeviceInfoPointer> &infoList);
     void deviceOffline(const QString &ip);
     void discoveryFinished(bool hasFound);
 
 private Q_SLOTS:
     void checkNetworkState();
     void updateDeviceList(const QString &ip, const QString &info, bool isOnline);
-    void onDiscoveryFinished(const QList<DeviceInfo> &infoList);
+    void onDiscoveryFinished(const QList<DeviceInfoPointer> &infoList);
 
 private:
     explicit MainController(QObject *parent = nullptr);

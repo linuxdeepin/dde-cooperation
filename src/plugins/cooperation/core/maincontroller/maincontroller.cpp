@@ -71,16 +71,16 @@ void MainController::updateDeviceList(const QString &ip, const QString &info, bo
         if (!map.contains("DeviceName"))
             return;
 
-        DeviceInfo devInfo { map.value("DeviceName").toString(),
-                             ip,
-                             ConnectState::kConnectable };
+        map.insert("IPAddress", ip);
+
+        auto devInfo = DeviceInfo::fromVariantMap(map);
         Q_EMIT deviceOnline({ devInfo });
     } else {
         Q_EMIT deviceOffline(ip);
     }
 }
 
-void MainController::onDiscoveryFinished(const QList<DeviceInfo> &infoList)
+void MainController::onDiscoveryFinished(const QList<DeviceInfoPointer> &infoList)
 {
     if (infoList.isEmpty()) {
         Q_EMIT discoveryFinished(false);
@@ -121,29 +121,29 @@ void MainController::stop()
 void MainController::regist()
 {
     QVariantMap info;
-    auto value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kDiscoveryModeKey);
-    info.insert(AppSettings::kDiscoveryModeKey, value.isValid() ? value.toInt() : 0);
+    auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
+    info.insert(AppSettings::DiscoveryModeKey, value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kDeviceNameKey);
-    info.insert(AppSettings::kDeviceNameKey,
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
+    info.insert(AppSettings::DeviceNameKey,
                 value.isValid()
                         ? value.toString()
                         : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1));
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kPeripheralShareKey);
-    info.insert(AppSettings::kPeripheralShareKey, value.isValid() ? value.toBool() : false);
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
+    info.insert(AppSettings::PeripheralShareKey, value.isValid() ? value.toBool() : false);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kLinkDirectionKey);
-    info.insert(AppSettings::kLinkDirectionKey, value.isValid() ? value.toInt() : 0);
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
+    info.insert(AppSettings::LinkDirectionKey, value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kTransferModeKey);
-    info.insert(AppSettings::kTransferModeKey, value.isValid() ? value.toInt() : 0);
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
+    info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kStoragePathKey);
-    info.insert(AppSettings::kStoragePathKey, value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
+    info.insert(AppSettings::StoragePathKey, value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::kGenericGroup, AppSettings::kClipboardShareKey);
-    info.insert(AppSettings::kClipboardShareKey, value.isValid() ? value.toBool() : false);
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
+    info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : false);
 
     auto doc = QJsonDocument::fromVariant(info);
     CooperationUtil::instance()->registAppInfo(doc.toJson());

@@ -6,6 +6,7 @@
 #define SORTFILTERWORKER_H
 
 #include "global_defines.h"
+#include "info/deviceinfo.h"
 
 #include <QObject>
 
@@ -20,25 +21,27 @@ public:
     void stop();
 
 public Q_SLOTS:
-    void addDevice(const QList<DeviceInfo> &infoList);
+    void addDevice(const QList<DeviceInfoPointer> &infoList);
     void removeDevice(const QString &ip);
     void filterDevice(const QString &filter);
     void clear();
 
 Q_SIGNALS:
-    void sortFilterResult(int index, const DeviceInfo &info);
+    void sortFilterResult(int index, const DeviceInfoPointer info);
     void deviceRemoved(int index);
-    void deviceReplaced(int index, const DeviceInfo &info);
+    void deviceReplaced(int index, const DeviceInfoPointer info);
     void filterFinished();
 
 private:
-    int findFirst(ConnectState state);
-    int findLast(ConnectState state);
-    void updateDevice(const DeviceInfo &info);
+    int findFirst(DeviceInfo::ConnectStatus state);
+    int findLast(DeviceInfo::ConnectStatus state);
+    void updateDevice(const DeviceInfoPointer info);
+    bool contains(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);
+    int indexOf(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);
 
 private:
-    QList<DeviceInfo> visibleDeviceList;
-    QList<DeviceInfo> allDeviceList;
+    QList<DeviceInfoPointer> visibleDeviceList;
+    QList<DeviceInfoPointer> allDeviceList;
     std::atomic_bool isStoped { false };
 };
 

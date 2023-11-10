@@ -12,7 +12,7 @@
 #include <QLabel>
 #include <QProgressBar>
 
-namespace cooperation_transfer {
+namespace cooperation_core {
 
 class TransferDialog : public CooperationDialog
 {
@@ -52,6 +52,6 @@ private:
     QProgressBar *progressBar { nullptr };
 };
 
-}   // namespace cooperation_transfer
+}   // namespace cooperation_core
 
 #endif   // TRANSFERDIALOG_H

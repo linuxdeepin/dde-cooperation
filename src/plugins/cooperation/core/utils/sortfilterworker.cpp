@@ -16,30 +16,30 @@ void SortFilterWorker::stop()
     isStoped = true;
 }
 
-void SortFilterWorker::addDevice(const QList<DeviceInfo> &infoList)
+void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
 {
     if (isStoped)
         return;
 
     for (auto &info : infoList) {
-        if (allDeviceList.contains(info)) {
+        if (contains(allDeviceList, info)) {
             updateDevice(info);
             continue;
         }
 
         int index = 0;
-        switch (info.state) {
-        case ConnectState::kConnected:
-            index = findLast(ConnectState::kConnected) + 1;
+        switch (info->connectStatus()) {
+        case DeviceInfo::Connected:
+            index = findLast(DeviceInfo::Connected) + 1;
             break;
-        case ConnectState::kConnectable: {
-            int i = findLast(ConnectState::kConnectable);
+        case DeviceInfo::Connectable: {
+            int i = findLast(DeviceInfo::Connectable);
             if (i != -1) {
                 index = i + 1;
                 break;
             }
 
-            i = findFirst(ConnectState::kOffline);
+            i = findFirst(DeviceInfo::Offline);
             if (i != -1) {
                 index = i;
                 break;
@@ -47,7 +47,7 @@ void SortFilterWorker::addDevice(const QList<DeviceInfo> &infoList)
 
             index = allDeviceList.size();
         } break;
-        case ConnectState::kOffline:
+        case DeviceInfo::Offline:
             index = allDeviceList.size();
             break;
         }
@@ -64,7 +64,7 @@ void SortFilterWorker::addDevice(const QList<DeviceInfo> &infoList)
 void SortFilterWorker::removeDevice(const QString &ip)
 {
     for (int i = 0; i < visibleDeviceList.size(); ++i) {
-        if (visibleDeviceList[i].ipStr != ip)
+        if (visibleDeviceList[i]->ipAddress() != ip)
             continue;
 
         allDeviceList.removeOne(visibleDeviceList[i]);
@@ -79,8 +79,8 @@ void SortFilterWorker::filterDevice(const QString &filter)
     visibleDeviceList.clear();
     int index = -1;
     for (const auto &dev : allDeviceList) {
-        if (dev.deviceName.contains(filter, Qt::CaseInsensitive)
-            || dev.ipStr.contains(filter, Qt::CaseInsensitive)) {
+        if (dev->deviceName().contains(filter, Qt::CaseInsensitive)
+            || dev->ipAddress().contains(filter, Qt::CaseInsensitive)) {
             ++index;
             visibleDeviceList.append(dev);
             Q_EMIT sortFilterResult(index, dev);
@@ -95,15 +95,15 @@ void SortFilterWorker::clear()
     allDeviceList.clear();
 }
 
-int SortFilterWorker::findFirst(ConnectState state)
+int SortFilterWorker::findFirst(DeviceInfo::ConnectStatus state)
 {
     int index = -1;
     auto iter = std::find_if(allDeviceList.cbegin(), allDeviceList.cend(),
-                             [&](const DeviceInfo &info) {
+                             [&](const DeviceInfoPointer info) {
                                  if (isStoped)
                                      return true;
                                  index++;
-                                 return info.state == state;
+                                 return info->connectStatus() == state;
                              });
 
     if (iter == allDeviceList.cend())
@@ -112,15 +112,15 @@ int SortFilterWorker::findFirst(ConnectState state)
     return index;
 }
 
-int SortFilterWorker::findLast(ConnectState state)
+int SortFilterWorker::findLast(DeviceInfo::ConnectStatus state)
 {
     int index = allDeviceList.size();
     auto iter = std::find_if(allDeviceList.crbegin(), allDeviceList.crend(),
-                             [&](const DeviceInfo &info) {
+                             [&](const DeviceInfoPointer info) {
                                  if (isStoped)
                                      return true;
                                  index--;
-                                 return info.state == state;
+                                 return info->connectStatus() == state;
                              });
 
     if (iter == allDeviceList.crend())
@@ -129,19 +129,47 @@ int SortFilterWorker::findLast(ConnectState state)
     return index;
 }
 
-void SortFilterWorker::updateDevice(const DeviceInfo &info)
+void SortFilterWorker::updateDevice(const DeviceInfoPointer info)
 {
     // 更新
-    int index = allDeviceList.indexOf(info);
-    if (allDeviceList[index].deviceName != info.deviceName
-        || allDeviceList[index].state != info.state) {
-        allDeviceList.replace(allDeviceList.indexOf(info), info);
+    int index = indexOf(allDeviceList, info);
+    if (allDeviceList[index]->discoveryMode() == DeviceInfo::DiscoveryMode::NotAllow)
+        return removeDevice(allDeviceList[index]->ipAddress());
+
+    if (allDeviceList[index]->deviceName() != info->deviceName()
+        || allDeviceList[index]->connectStatus() != info->connectStatus()) {
+        allDeviceList.replace(index, info);
     }
 
-    if (!visibleDeviceList.contains(info))
+    if (!contains(visibleDeviceList, info))
         return;
 
-    index = visibleDeviceList.indexOf(info);
-    visibleDeviceList.replace(visibleDeviceList.indexOf(info), info);
+    index = indexOf(visibleDeviceList, info);
+    visibleDeviceList.replace(index, info);
     Q_EMIT deviceReplaced(index, info);
+}
+
+bool SortFilterWorker::contains(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info)
+{
+    auto iter = std::find_if(list.begin(), list.end(),
+                             [&info](const DeviceInfoPointer it) {
+                                 return it->ipAddress() == info->ipAddress();
+                             });
+
+    return iter != list.end();
+}
+
+int SortFilterWorker::indexOf(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info)
+{
+    int index = -1;
+    auto iter = std::find_if(list.begin(), list.end(),
+                             [&](const DeviceInfoPointer it) {
+                                 index++;
+                                 return it->ipAddress() == info->ipAddress();
+                             });
+
+    if (iter == list.end())
+        return -1;
+
+    return index;
 }
