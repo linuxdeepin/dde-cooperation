@@ -31,17 +31,15 @@ void DeviceListWidget::initUI()
     setFrameShape(NoFrame);
 }
 
-void DeviceListWidget::appendItem(const DeviceInfo &info)
+void DeviceListWidget::appendItem(const DeviceInfoPointer info)
 {
     insertItem(mainLayout->count(), info);
 }
 
-void DeviceListWidget::insertItem(int index, const DeviceInfo &info)
+void DeviceListWidget::insertItem(int index, const DeviceInfoPointer info)
 {
     DeviceItem *item = new DeviceItem(this);
-    item->setDeviceName(info.deviceName);
-    item->setIPText(info.ipStr);
-    item->setDeviceState(info.state);
+    item->setDeviceInfo(info);
     item->setOperations(operationList);
 
     mainLayout->insertWidget(index, item);
@@ -80,7 +78,7 @@ int DeviceListWidget::indexOf(const QString &ipStr)
         if (!w)
             continue;
 
-        if (w->ipText() == ipStr)
+        if (w->deviceInfo()->ipAddress() == ipStr)
             return i;
     }
 

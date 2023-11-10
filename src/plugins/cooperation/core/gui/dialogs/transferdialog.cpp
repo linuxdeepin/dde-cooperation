@@ -4,7 +4,7 @@
 
 #include "transferdialog.h"
 
-using namespace cooperation_transfer;
+using namespace cooperation_core;
 
 TransferDialog::TransferDialog(QWidget *parent)
     : CooperationDialog(parent)
@@ -143,5 +143,5 @@ void TransferDialog::updateProgress(int value, const QString &remainTime)
 void TransferDialog::closeEvent(QCloseEvent *event)
 {
     Q_EMIT cancel();
-    CooperationDialog::closeEvent(event);
+    CooperationAbstractDialog::closeEvent(event);
 }

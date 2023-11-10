@@ -6,6 +6,7 @@
 #define WORKSPACEWIDGET_H
 
 #include "global_defines.h"
+#include "info/deviceinfo.h"
 
 #include <QWidget>
 #include <QScopedPointer>
@@ -28,7 +29,7 @@ public:
 
     int itemCount();
     void switchWidget(PageName page);
-    void addDeviceInfos(const QList<DeviceInfo> &infoList);
+    void addDeviceInfos(const QList<DeviceInfoPointer> &infoList);
     void removeDeviceInfos(const QString &ip);
     void addDeviceOperation(const QVariantMap &map);
 

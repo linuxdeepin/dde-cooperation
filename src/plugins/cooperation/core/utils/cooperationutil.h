@@ -6,6 +6,7 @@
 #define COOPERATIONUTIL_H
 
 #include "global_defines.h"
+#include "info/deviceinfo.h"
 
 #include <QWidget>
 
@@ -19,6 +20,7 @@ public:
     static CooperationUtil *instance();
 
     QWidget *mainWindow();
+    QString sessionId() const;
     void destroyMainWindow();
     void registerDeviceOperation(const QVariantMap &map);
 
@@ -27,7 +29,7 @@ public:
     void asyncDiscoveryDevice();
 
 Q_SIGNALS:
-    void discoveryFinished(const QList<DeviceInfo> &infoList);
+    void discoveryFinished(const QList<DeviceInfoPointer> &infoList);
 
 private:
     explicit CooperationUtil(QObject *parent = nullptr);

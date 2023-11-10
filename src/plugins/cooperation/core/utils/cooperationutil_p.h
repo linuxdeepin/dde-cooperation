@@ -6,6 +6,7 @@
 #define COOPERATIONUTIL_P_H
 
 #include "global_defines.h"
+#include "info/deviceinfo.h"
 
 #include <co/rpc.h>
 #include <co/co.h>
@@ -26,7 +27,7 @@ public:
 
     bool pingBackend();
     void localIPCStart();
-    QList<DeviceInfo> parseDeviceInfo(const co::Json &obj);
+    QList<DeviceInfoPointer> parseDeviceInfo(const co::Json &obj);
 
 public:
     CooperationUtil *q { nullptr };

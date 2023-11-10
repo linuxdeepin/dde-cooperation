@@ -6,6 +6,7 @@
 #define DEVICEITEM_H
 
 #include "global_defines.h"
+#include "info/deviceinfo.h"
 #ifdef WIN32
 #else
 #    include "gui/linux/backgroundwidget.h"
@@ -23,22 +24,22 @@ class StateLabel : public QLabel
 public:
     explicit StateLabel(QWidget *parent = nullptr);
 
-    void setState(ConnectState state) { st = state; }
-    ConnectState state() const { return st; }
+    void setState(DeviceInfo::ConnectStatus state) { st = state; }
+    DeviceInfo::ConnectStatus state() const { return st; }
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    ConnectState st;
+    DeviceInfo::ConnectStatus st;
 };
 
 class DeviceItem : public BackgroundWidget
 {
     Q_OBJECT
 public:
-    using ButtonStateCallback = std::function<bool(const QVariantMap &)>;
-    using ClickedCallback = std::function<void(const QVariantMap &)>;
+    using ButtonStateCallback = std::function<bool(const QString &, const DeviceInfoPointer)>;
+    using ClickedCallback = std::function<void(const QString &, const DeviceInfoPointer)>;
     struct Operation
     {
         QString id;
@@ -53,14 +54,8 @@ public:
 
     explicit DeviceItem(QWidget *parent = nullptr);
 
-    void setDeviceName(const QString &name);
-    QString deviceName() const;
-
-    void setIPText(const QString &ipStr);
-    QString ipText() const;
-
-    void setDeviceState(ConnectState state);
-    ConnectState deviceState() const;
+    void setDeviceInfo(const DeviceInfoPointer info);
+    DeviceInfoPointer deviceInfo() const;
 
     void setOperations(const QList<Operation> &operations);
     void updateOperations();
@@ -77,6 +72,8 @@ private:
     void initUI();
     void initConnect();
     void setLabelFont(QLabel *label, int pointSize, int weight);
+    void setDeviceName(const QString &name);
+    void setDeviceStatus(DeviceInfo::ConnectStatus status);
 
 private:
     QLabel *iconLabel { nullptr };
@@ -86,7 +83,7 @@ private:
     ButtonBoxWidget *btnBoxWidget { nullptr };
 
     QMap<int, Operation> indexOperaMap;
-    QString devName;
+    DeviceInfoPointer devInfo;
 };
 
 }   // namespace cooperation_core

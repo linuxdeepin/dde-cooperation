@@ -27,15 +27,15 @@ void StateLabel::paintEvent(QPaintEvent *event)
     QColor brushColor;
     QColor textColor;
     switch (st) {
-    case kConnected:
+    case DeviceInfo::Connected:
         brushColor.setRgb(241, 255, 243);
         textColor.setRgb(51, 202, 78);
         break;
-    case kConnectable:
+    case DeviceInfo::Connectable:
         brushColor.setRgb(56, 127, 247, 22);
         textColor.setRgb(0, 130, 250);
         break;
-    case kOffline:
+    case DeviceInfo::Offline:
         brushColor.setRgb(0, 0, 0, 25);
         textColor.setRgb(0, 0, 0, 128);
         break;
@@ -53,6 +53,21 @@ DeviceItem::DeviceItem(QWidget *parent)
 {
     initUI();
     initConnect();
+}
+
+void DeviceItem::setDeviceInfo(const DeviceInfoPointer info)
+{
+    devInfo = info;
+    setDeviceName(info->deviceName());
+    setDeviceStatus(info->connectStatus());
+    ipLabel->setText(info->ipAddress());
+
+    update();
+}
+
+DeviceInfoPointer DeviceItem::deviceInfo() const
+{
+    return devInfo;
 }
 
 void DeviceItem::initUI()
@@ -109,46 +124,30 @@ void DeviceItem::setLabelFont(QLabel *label, int pointSize, int weight)
 
 void DeviceItem::setDeviceName(const QString &name)
 {
-    devName = name;
     QFontMetrics fm(nameLabel->font());
     int width = 390 - (btnBoxWidget->isVisible() ? btnBoxWidget->width() : 0);
     auto showName = fm.elidedText(name, Qt::ElideMiddle, width);
 
     nameLabel->setText(showName);
-    if (showName != devName)
-        nameLabel->setToolTip(devName);
+    if (showName != name)
+        nameLabel->setToolTip(name);
 }
 
-QString DeviceItem::deviceName() const
+void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
 {
-    return devName;
-}
-
-void DeviceItem::setIPText(const QString &ipStr)
-{
-    ipLabel->setText(ipStr);
-}
-
-QString DeviceItem::ipText() const
-{
-    return ipLabel->text();
-}
-
-void DeviceItem::setDeviceState(ConnectState state)
-{
-    stateLabel->setState(state);
-    switch (state) {
-    case kConnected: {
+    stateLabel->setState(status);
+    switch (status) {
+    case DeviceInfo::Connected: {
         QIcon icon = QIcon::fromTheme("computer_connected");
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connected"));
     } break;
-    case kConnectable: {
+    case DeviceInfo::Connectable: {
         QIcon icon = QIcon::fromTheme("computer_can_connect");
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connectable"));
     } break;
-    case kOffline: {
+    case DeviceInfo::Offline: {
         QIcon icon = QIcon::fromTheme("computer_off_line");
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("offline"));
@@ -156,16 +155,8 @@ void DeviceItem::setDeviceState(ConnectState state)
     }
 }
 
-ConnectState DeviceItem::deviceState() const
-{
-    return stateLabel->state();
-}
-
 void DeviceItem::setOperations(const QList<Operation> &operations)
 {
-    btnBoxWidget->clear();
-    indexOperaMap.clear();
-
     auto tmpOperaList = operations;
     tmpOperaList << indexOperaMap.values();
 
@@ -186,24 +177,18 @@ void DeviceItem::setOperations(const QList<Operation> &operations)
 
 void DeviceItem::updateOperations()
 {
-    QVariantMap map;
-    map.insert("device", nameLabel->text());
-    map.insert("ip", ipLabel->text());
-    map.insert("state", stateLabel->state());
-
     auto iter = indexOperaMap.begin();
     for (; iter != indexOperaMap.end(); ++iter) {
         if (!iter.value().visibleCb)
             continue;
 
-        map.insert("id", iter.value().id);
-        bool visible = iter.value().visibleCb(map);
+        bool visible = iter.value().visibleCb(iter.value().id, devInfo);
         btnBoxWidget->setButtonVisible(iter.key(), visible);
 
         if (!iter.value().clickableCb)
             continue;
 
-        bool clickable = iter.value().clickableCb(map);
+        bool clickable = iter.value().clickableCb(iter.value().id, devInfo);
         btnBoxWidget->setButtonClickable(iter.key(), clickable);
     }
 }
@@ -213,14 +198,8 @@ void DeviceItem::onButtonClicked(int index)
     if (!indexOperaMap.contains(index))
         return;
 
-    QVariantMap map;
-    map.insert("device", nameLabel->text());
-    map.insert("ip", ipLabel->text());
-    map.insert("state", stateLabel->state());
-    map.insert("id", indexOperaMap[index].id);
-
     if (indexOperaMap[index].clickedCb)
-        indexOperaMap[index].clickedCb(map);
+        indexOperaMap[index].clickedCb(indexOperaMap[index].id, devInfo);
 
     updateOperations();
 }
@@ -229,14 +208,14 @@ void DeviceItem::enterEvent(QEvent *event)
 {
     updateOperations();
     btnBoxWidget->setVisible(true);
-    setDeviceName(devName);
+    setDeviceName(devInfo->deviceName());
     BackgroundWidget::enterEvent(event);
 }
 
 void DeviceItem::leaveEvent(QEvent *event)
 {
     btnBoxWidget->setVisible(false);
-    setDeviceName(devName);
+    setDeviceName(devInfo->deviceName());
     BackgroundWidget::leaveEvent(event);
 }
 
@@ -244,10 +223,8 @@ void DeviceItem::showEvent(QShowEvent *event)
 {
     if (hasFocus()) {
         updateOperations();
-        setDeviceName(devName);
     } else {
         btnBoxWidget->setVisible(false);
-        setDeviceName(devName);
     }
 
     BackgroundWidget::showEvent(event);
