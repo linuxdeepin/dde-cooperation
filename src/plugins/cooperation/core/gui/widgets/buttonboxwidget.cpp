@@ -14,7 +14,8 @@ ButtonBoxWidget::ButtonBoxWidget(QWidget *parent)
     : QWidget(parent),
       mainLayout(new QHBoxLayout)
 {
-    mainLayout->setContentsMargins(0, 0, 10, 0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setMargin(0);
     mainLayout->setSpacing(5);
     setLayout(mainLayout);
 }

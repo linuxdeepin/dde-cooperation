@@ -5,6 +5,7 @@
 #include "maincontroller.h"
 #include "utils/cooperationutil.h"
 #include "config/configmanager.h"
+#include "common/constant.h"
 
 #include <QNetworkInterface>
 #include <QStandardPaths>
@@ -29,7 +30,7 @@ MainController::~MainController()
 void MainController::initConnect()
 {
     connect(networkMonitorTimer, &QTimer::timeout, this, &MainController::checkNetworkState);
-    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &MainController::regist);
+    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &MainController::onAppAttributeChanged);
     connect(CooperationUtil::instance(), &CooperationUtil::discoveryFinished, this, &MainController::onDiscoveryFinished, Qt::QueuedConnection);
 }
 
@@ -93,6 +94,17 @@ void MainController::onDiscoveryFinished(const QList<DeviceInfoPointer> &infoLis
     isRunning = false;
 }
 
+void MainController::onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value)
+{
+    if (group != AppSettings::GenericGroup)
+        return;
+
+    if (key == AppSettings::StoragePathKey)
+        CooperationUtil::instance()->setAppConfig(KEY_APP_STORAGE_DIR, value.toString());
+
+    regist();
+}
+
 MainController *MainController::instance()
 {
     static MainController ins;
@@ -140,7 +152,10 @@ void MainController::regist()
     info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
-    info.insert(AppSettings::StoragePathKey, value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+    auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    info.insert(AppSettings::StoragePathKey, storagePath);
+    static std::once_flag flag;
+    std::call_once(flag, [&storagePath] { CooperationUtil::instance()->setAppConfig(KEY_APP_STORAGE_DIR, storagePath); });
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
     info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : false);

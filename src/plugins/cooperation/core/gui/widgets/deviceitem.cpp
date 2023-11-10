@@ -72,7 +72,7 @@ DeviceInfoPointer DeviceItem::deviceInfo() const
 
 void DeviceItem::initUI()
 {
-    setFixedHeight(90);
+    setFixedSize(460, 90);
     setBackground(8, kNoType);
 
     iconLabel = new QLabel(this);
@@ -101,7 +101,7 @@ void DeviceItem::initUI()
     btnBoxWidget = new ButtonBoxWidget(this);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
-    mainLayout->setContentsMargins(10, 0, 0, 0);
+    mainLayout->setContentsMargins(10, 0, 10, 0);
     mainLayout->addWidget(iconLabel, 0, Qt::AlignLeft);
     mainLayout->addLayout(vLayout, 0);
     mainLayout->addWidget(btnBoxWidget, 1, Qt::AlignRight);
@@ -125,7 +125,7 @@ void DeviceItem::setLabelFont(QLabel *label, int pointSize, int weight)
 void DeviceItem::setDeviceName(const QString &name)
 {
     QFontMetrics fm(nameLabel->font());
-    int width = 390 - (btnBoxWidget->isVisible() ? btnBoxWidget->width() : 0);
+    int width = 385 - (btnBoxWidget->isVisible() ? btnBoxWidget->width() : 0);
     auto showName = fm.elidedText(name, Qt::ElideMiddle, width);
 
     nameLabel->setText(showName);
