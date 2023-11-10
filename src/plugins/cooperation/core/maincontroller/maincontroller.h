@@ -36,6 +36,7 @@ private Q_SLOTS:
     void checkNetworkState();
     void updateDeviceList(const QString &ip, const QString &info, bool isOnline);
     void onDiscoveryFinished(const QList<DeviceInfoPointer> &infoList);
+    void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 
 private:
     explicit MainController(QObject *parent = nullptr);

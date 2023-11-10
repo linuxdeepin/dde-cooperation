@@ -273,6 +273,7 @@ void CooperationUtil::registerDeviceOperation(const QVariantMap &map)
 
 void CooperationUtil::registAppInfo(const QString &infoJson)
 {
+    LOG << "regist app info: " << infoJson.toStdString();
     if (!d->backendOk) {
         LOG << "The ping backend is false";
         return;
@@ -344,5 +345,28 @@ void CooperationUtil::asyncDiscoveryDevice()
         }
 
         Q_EMIT discoveryFinished(infoList);
+    });
+}
+
+void CooperationUtil::setAppConfig(const QString &key, const QString &value)
+{
+    if (!d->backendOk) {
+        LOG << "The ping backend is false";
+        return;
+    }
+
+    UNIGO([=] {
+        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
+        co::Json req, res;
+
+        req = {
+            { "appname", kMainAppName },
+            { "key", key.toStdString() },
+            { "value", value.toStdString() }
+        };
+        req.add_member("api", "Backend.setAppConfig");
+
+        rpcClient.call(req, res);
+        rpcClient.close();
     });
 }

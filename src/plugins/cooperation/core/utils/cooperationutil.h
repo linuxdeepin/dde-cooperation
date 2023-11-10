@@ -27,6 +27,7 @@ public:
     void registAppInfo(const QString &infoJson);
     void unregistAppInfo();
     void asyncDiscoveryDevice();
+    void setAppConfig(const QString &key, const QString &value);
 
 Q_SIGNALS:
     void discoveryFinished(const QList<DeviceInfoPointer> &infoList);
