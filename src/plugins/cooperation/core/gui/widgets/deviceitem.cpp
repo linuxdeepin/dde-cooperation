@@ -73,7 +73,7 @@ DeviceInfoPointer DeviceItem::deviceInfo() const
 void DeviceItem::initUI()
 {
     setFixedSize(460, 90);
-    setBackground(8, kNoType);
+    setBackground(8, NoType, TopAndBottom);
 
     iconLabel = new QLabel(this);
     nameLabel = new QLabel(this);
