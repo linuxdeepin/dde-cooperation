@@ -12,6 +12,7 @@
 
 #include <QUrl>
 
+class WinApp;
 class TransferHelper : public QObject
 {
     Q_OBJECT
@@ -32,7 +33,7 @@ public:
     bool cancelTransferJob();
 
 #ifdef WIN32
-    QMap<QString, QString> getAppList();
+    QMap<QString, QString> getAppList(QMap<QString, QString> &noRecommedApplist);
     QMap<QString, QString> getBrowserList();
     QStringList getTransferFilePath();
     void startTransfer();
@@ -61,7 +62,8 @@ Q_SIGNALS:
     // Used to control the current operation content, progress, and estimated completion time
     // during transmission or decompression process
     // progressbar use percentage and the time unit is seconds
-    void transferContent(const QString &tpye, const QString &content, int progressbar, int estimatedtime);
+    void transferContent(const QString &tpye, const QString &content, int progressbar,
+                         int estimatedtime);
 
     // zip progressbar use percentage and the time unit is seconds
     void zipTransferContent(const QString &content, int progressbar, int estimatedtime);
@@ -75,7 +77,7 @@ Q_SIGNALS:
     // display config failure
     void failure(QString name, QString type, QString reason);
 
-    //Transmission interruption
+    // Transmission interruption
     void interruption();
 
 private:

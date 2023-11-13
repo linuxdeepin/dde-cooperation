@@ -1,5 +1,6 @@
 ﻿#include "appselectwidget.h"
 #include "../type_defines.h"
+#include "../getbackup/drapwindowsdata.h"
 #include "item.h"
 #include <QHBoxLayout>
 #include <QLabel>
@@ -126,8 +127,9 @@ void AppSelectWidget::initSelectFrame()
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(appView->model());
     appView->setItemDelegate(new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
 
-    QMap<QString, QString> appList = TransferHelper::instance()->getAppList();
-    for (auto iterator = appList.begin(); iterator != appList.end(); iterator++) {
+    QMap<QString, QString> noRecommendList;
+    QMap<QString, QString> appList = TransferHelper::instance()->getAppList(noRecommendList);
+    for (auto iterator = appList.begin(); iterator != appList.end(); ++iterator) {
         QStandardItem *item = new QStandardItem();
         item->setData(iterator.key(), Qt::DisplayRole);
         item->setData("是", Qt::ToolTipRole);
@@ -136,6 +138,22 @@ void AppSelectWidget::initSelectFrame()
         model->appendRow(item);
     }
 
+    for (auto iterator = noRecommendList.begin(); iterator != noRecommendList.end(); ++iterator) {
+        QStandardItem *item = new QStandardItem();
+        item->setData(iterator.key(), Qt::DisplayRole);
+        item->setData("否", Qt::ToolTipRole);
+        item->setData(true,Qt::BackgroundRole);
+        QPixmap pix = DrapWindowsData::instance()->getAppIcon(iterator.value());
+        if (pix == QPixmap()) {
+            item->setIcon(QIcon(":/icon/fileicon.svg"));
+        } else {
+            item->setIcon(QIcon(pix));
+        }
+
+        item->setCheckable(false);
+
+        model->appendRow(item);
+    }
     selectframeLayout->addWidget(titlebar);
     selectframeLayout->addWidget(appView);
 

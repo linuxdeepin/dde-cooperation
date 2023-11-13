@@ -208,7 +208,7 @@ void SidebarWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
         quint64 size = device.bytesTotal() - device.bytesAvailable();
         item->setData(fromByteToQstring(size), Qt::ToolTipRole);
         model->appendRow(item);
-        qInfo() << " model->appendRow:" << rootPath << "model.size:" << model->rowCount();
+        //  qInfo() << " model->appendRow:" << rootPath << "model.size:" << model->rowCount();
 
         // add device in sidebar
         DiskInfo siderbarDiskInfo;
@@ -297,7 +297,7 @@ void SidebarWidget::initData()
     }
 
     qInfo() << "sider model init size:" << model->rowCount();
-    QObject::connect(this, &QListView::clicked,this,&SidebarWidget::onClick);
+    QObject::connect(this, &QListView::clicked, this, &SidebarWidget::onClick);
 }
 
 void SidebarWidget::initUi()

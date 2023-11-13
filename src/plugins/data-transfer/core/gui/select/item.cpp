@@ -122,7 +122,6 @@ ItemDelegate::ItemDelegate(const qreal &filenameTextLeftMargin_, const qreal &fi
 void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                          const QModelIndex &index) const
 {
-
     // draw back
     paintBackground(painter, option, index);
 
@@ -147,6 +146,11 @@ void ItemDelegate::paintIcon(QPainter *painter, const QStyleOptionViewItem &opti
                              const QModelIndex &index) const
 {
     painter->save();
+
+    if (index.data(Qt::BackgroundRole).toBool() == true) {
+        painter->setOpacity(opacity);
+    }
+    painter->setRenderHint(QPainter::Antialiasing);
     QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
     if (!icon.isNull()) {
         QPoint pos = option.rect.topLeft();
@@ -163,16 +167,19 @@ void ItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem
 {
     painter->save();
 
-    QColor evencolor(0, 0, 0, 30);
-
     painter->setPen(Qt::NoPen);
 
+    if (index.data(Qt::BackgroundRole).toBool() == true) {
+        painter->setOpacity(opacity);
+    }
+    QColor evencolor = QColor(0, 0, 0, 30);
     QPoint topleft = option.rect.topLeft();
     QRect positon(backgroundColorLeftMargin, topleft.y(), 440, 36);
     if (index.row() % 2 != 0) {
         painter->setBrush(evencolor);
         painter->drawRoundedRect(positon, 10, 10);
     }
+
     painter->restore();
 }
 
@@ -181,10 +188,13 @@ void ItemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &opti
 {
     painter->save();
 
+    if (index.data(Qt::BackgroundRole).toBool() == true) {
+        painter->setOpacity(opacity);
+    }
     QRect filenameTextPos = option.rect.adjusted(filenameTextLeftMargin, 0, 0, 0);
 
     QFont filenameTextFont;
-    filenameTextFont.setPixelSize(12);
+    filenameTextFont.setPixelSize(14);
     QString filenameText = index.data(Qt::DisplayRole).toString();
     QFontMetrics filenameMetrics(filenameTextFont);
     filenameText = filenameMetrics.elidedText(filenameText, Qt::ElideRight, filenameTextMaxLen);
@@ -192,7 +202,7 @@ void ItemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &opti
 
     QRect remarkTextPos = option.rect.adjusted(remarkTextLeftMargin, 0, 0, 0);
     QFont remarkTextFont;
-    remarkTextFont.setPixelSize(12);
+    remarkTextFont.setPixelSize(14);
     QString remarkText = index.data(Qt::ToolTipRole).toString();
     QFontMetrics remarkMetrics(remarkTextFont);
     remarkTextFont = remarkMetrics.elidedText(filenameText, Qt::ElideRight, remarkTextMaxLen);
@@ -205,12 +215,13 @@ void ItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionViewItem &
                                  const QModelIndex &index) const
 {
     painter->save();
+
+    if (index.data(Qt::BackgroundRole).toBool() == true) {
+        painter->setOpacity(opacity);
+    }
     painter->setRenderHint(QPainter::Antialiasing);
     QPoint pos = option.rect.topLeft() + checkBoxPos;
-    QRect checkBoxRect = QRect(pos.x()+2, pos.y(), 18, 18);
-
-    //    QItemDelegate::drawCheck(painter, option, checkBoxRect,
-    //                             index.data(Qt::CheckStateRole).value<Qt::CheckState>());
+    QRect checkBoxRect = QRect(pos.x() + 2, pos.y(), 18, 18);
 
     painter->setPen(QColor(0, 0, 0, 255));
     painter->drawRoundedRect(checkBoxRect, 4, 4);
@@ -662,6 +673,8 @@ void SelectListView::selectorDelAllItem()
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
     for (int row = 0; row < model->rowCount(); ++row) {
         QModelIndex itemIndex = model->index(row, 0);
+        if (itemIndex.data(Qt::BackgroundRole).toBool() == true)
+            continue;
         Qt::CheckState state =
                 itemIndex.data(Qt::CheckStateRole) == Qt::Checked ? Qt::Unchecked : Qt::Checked;
         model->setData(itemIndex, state, Qt::CheckStateRole);

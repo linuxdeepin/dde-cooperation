@@ -20,17 +20,23 @@
 #include <QDir>
 #include <QPixmap>
 #include <QNetworkInterface>
+#include <QSettings>
+#include <ShlObj.h>
+#include <QtWin>
 
 #define MAXNAME 256
 
-#pragma execution_chatacter_set("utf_8")
+//#pragma execution_chatacter_set("utf_8")
 namespace Registry {
 inline constexpr char BrowerRegistryPath[]{ "SOFTWARE\\Clients\\StartMenuInternet" };
 inline constexpr char ApplianceRegistryPath1[]{
-    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
+    "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
 };
 inline constexpr char ApplianceRegistryPath2[]{
-    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
+    "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
+};
+inline constexpr char ApplianceRegistryPath3[]{
+    "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
 };
 inline constexpr char DesktopwallpaperRegistryPath[]{ "Control Panel\\Desktop" };
 } // namespace Registry
@@ -54,7 +60,7 @@ DrapWindowsData *DrapWindowsData::instance()
 }
 
 DrapWindowsData::~DrapWindowsData() { }
-QSet<QString> DrapWindowsData::getBrowserList()
+QStringList DrapWindowsData::getBrowserList()
 {
     if (browserList.isEmpty())
         getBrowserListInfo();
@@ -105,10 +111,14 @@ void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
     }
 }
 
-QSet<QString> DrapWindowsData::getApplianceList()
+QList<WinApp> DrapWindowsData::getApplianceList()
 {
     if (applianceList.isEmpty())
         getApplianceListInfo();
+
+    for (auto value : applianceList)
+        qInfo() << "app name:" << value.name;
+    qInfo() << "applianceList.size:" << applianceList.size();
     return applianceList;
 }
 
@@ -168,12 +178,12 @@ void DrapWindowsData::readMicrosoftEdgeAndGoogleChromeBookmark(const QString &js
     }
 }
 
-QVector<QPair<QString, QString>> DrapWindowsData::getBrowserBookmarkPaths()
+QList<QPair<QString, QString>> DrapWindowsData::getBrowserBookmarkPaths()
 {
     return browserBookmarkPath;
 }
 
-QSet<QPair<QString, QString>> DrapWindowsData::getBrowserBookmarkList()
+QList<QPair<QString, QString>> DrapWindowsData::getBrowserBookmarkList()
 {
     return browserBookmarkList;
 }
@@ -186,19 +196,19 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
 
     QString appData = std::getenv("USERPROFILE");
 
-    if (browserList.find(BrowserName::MicrosoftEdge) != browserList.end()) {
+    if (browserList.contains(BrowserName::MicrosoftEdge)) {
         QString path = appData + BrowerPath::MicrosoftEdgeBookMark;
         auto bookMark = QPair<QString, QString>(BrowserName::MicrosoftEdge, path);
         browserBookmarkPath.push_back(bookMark);
     }
 
-    if (browserList.find(BrowserName::GoogleChrome) != browserList.end()) {
+    if (browserList.contains(BrowserName::GoogleChrome)) {
         QString path = appData + BrowerPath::GoogleChromeBookMark;
         auto bookMark = QPair<QString, QString>(BrowserName::GoogleChrome, path);
         browserBookmarkPath.push_back(bookMark);
     }
 
-    if (browserList.find(BrowserName::MozillaFirefox) != browserList.end()) {
+    if (browserList.contains(BrowserName::MozillaFirefox)) {
         QString path = appData + BrowerPath::MozillaFirefoxBookMark;
         QString installIni = path + QString("\\installs.ini");
         QFile file(installIni);
@@ -390,9 +400,14 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 
 void DrapWindowsData::getApplianceListInfo()
 {
-    applianceFromRegistry(HKEY_LOCAL_MACHINE, _T(Registry::ApplianceRegistryPath1));
-    applianceFromRegistry(HKEY_LOCAL_MACHINE, _T(Registry::ApplianceRegistryPath2));
-    applianceFromRegistry(HKEY_CURRENT_USER, _T(Registry::ApplianceRegistryPath1));
+    QSettings settings1(Registry::ApplianceRegistryPath1, QSettings::NativeFormat);
+    applianceFromSetting(settings1);
+
+    QSettings settings2(Registry::ApplianceRegistryPath2, QSettings::NativeFormat);
+    applianceFromSetting(settings2);
+
+    QSettings settings3(Registry::ApplianceRegistryPath3, QSettings::NativeFormat);
+    applianceFromSetting(settings3);
 }
 
 void DrapWindowsData::getBrowserListInfo()
@@ -429,8 +444,8 @@ void DrapWindowsData::getBrowserListInfo()
                 if (status == ERROR_SUCCESS) {
                     QString name = QString::fromLocal8Bit(browerNameBuffer);
 
-                    if ((!name.isEmpty()) && (browserList.find(name) == browserList.end())) {
-                        browserList.insert(name);
+                    if ((!name.isEmpty()) && (!browserList.contains(name))) {
+                        browserList.push_back(name);
                     }
                 } else {
                     qDebug() << "Failed to read brower name on registry. error code:" << status;
@@ -486,67 +501,44 @@ void DrapWindowsData::getDesktopWallpaperPathAbsolutePathInfo()
     }
 }
 
-void DrapWindowsData::applianceFromRegistry(const HKEY &RootKey, const LPCTSTR &lpSubKey)
+void DrapWindowsData::applianceFromSetting(QSettings &settings, QString registryPath)
 {
-    HKEY hKey;
-    LSTATUS status;
-    status = RegOpenKeyEx(RootKey, lpSubKey, 0, KEY_READ, &hKey);
-    if (status == ERROR_SUCCESS) {
-        char subKeyName[MAXNAME];
-        DWORD subKeyNameSize = sizeof(subKeyName);
-        DWORD i = 0;
-        while (RegEnumKeyEx(hKey, i, subKeyName, &subKeyNameSize, NULL, NULL, NULL, NULL)
-               == ERROR_SUCCESS) {
-            HKEY subKey;
-            if (RegOpenKeyEx(hKey, subKeyName, 0, KEY_READ, &subKey) == ERROR_SUCCESS) {
-                if (!isControlPanelProgram(subKey)) {
-                    char displayName[MAXNAME];
-                    DWORD displayNameSize = sizeof(displayName);
+    settings.beginGroup(registryPath);
 
-                    if (RegQueryValueEx(subKey, "DisplayName", NULL, NULL, (LPBYTE)displayName,
-                                        &displayNameSize)
-                        == ERROR_SUCCESS) {
-                        QString name = QString::fromLocal8Bit(displayName);
-                        if (applianceList.find(name) == applianceList.end()) {
-                            applianceList.insert(name);
-                        }
-                    }
+    QStringList appKeys = settings.childGroups();
+    for (const QString &appKey : appKeys) {
+        settings.beginGroup(appKey);
+
+        QString displayName = settings.value("DisplayName").toString();
+        QString installLocation = settings.value("InstallLocation").toString();
+        QString displayIcon = settings.value("DisplayIcon").toString();
+        bool isSystemComponent = settings.value("SystemComponent").toBool();
+        if (!isSystemComponent) {
+            if (!installLocation.isEmpty()) {
+
+//                qDebug() << "Display Name: " << displayName;
+//                qDebug() << "installLocation : " << installLocation;
+//                qDebug() << "icon Location: " << displayIcon;
+
+//                qDebug() << " ";
+
+                WinApp app;
+                app.name = displayName;
+                app.iconPath = displayIcon;
+                for (auto iteraotr = applianceList.begin(); iteraotr != applianceList.end();
+                     ++iteraotr) {
+                    if (iteraotr->name == displayName)
+                        break;
                 }
-                RegCloseKey(subKey);
+
+                applianceList.push_back(app);
             }
-            i++;
-            subKeyNameSize = sizeof(subKeyName);
         }
-        RegCloseKey(hKey);
-    } else {
-        qDebug() << "Failed to open registry get applianceinfo:" << lpSubKey
-                 << " Error code: " << status;
-    }
-}
 
-bool DrapWindowsData::isControlPanelProgram(const HKEY &subKey)
-{
-    char systemComponent[MAXNAME];
-    DWORD systemComponentSize = sizeof(systemComponent);
-
-    if (RegQueryValueEx(subKey, "SystemComponent", NULL, NULL, (LPBYTE)systemComponent,
-                        &systemComponentSize)
-        == ERROR_SUCCESS) {
-        if (systemComponentSize > 0 && systemComponent[0] != '\0') {
-            return true;
-        }
+        settings.endGroup();
     }
-    char parentKeyName[MAXNAME];
-    DWORD parentKeyNameSize = sizeof(parentKeyName);
 
-    if (RegQueryValueEx(subKey, "ParentKeyName", NULL, NULL, (LPBYTE)parentKeyName,
-                        &parentKeyNameSize)
-        == ERROR_SUCCESS) {
-        if (parentKeyNameSize > 0 && parentKeyName[0] != '\0') {
-            return true;
-        }
-    }
-    return false;
+    settings.endGroup();
 }
 
 void DrapWindowsData::browserBookmarkJsonNode(QJsonObject node)
@@ -576,9 +568,24 @@ void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &t
                                  return false;
                              });
     if (find == browserBookmarkList.end()) {
-        browserBookmarkList.insert(titleAndUrl);
+        browserBookmarkList.push_back(titleAndUrl);
         // qDebug() << titleAndUrl.first << ": " << titleAndUrl.second;
     }
+}
+
+QPixmap DrapWindowsData::getAppIcon(const QString &path)
+{
+    if(path.isEmpty())
+        return QPixmap();
+    HICON hIcon;
+    QString tempStr = path;
+    if (ExtractIconExW(tempStr.toStdWString().c_str(), 0, NULL, &hIcon, 1) <= 0) {
+        return QPixmap();
+    }
+
+    // 将 HICON 转换为 QPixmap
+    QPixmap pixmap = QtWin::fromHICON(hIcon).scaled(20, 20);
+    return pixmap;
 }
 
 bool DrapWindowsData::containsAnyString(const QString &haystack, const QStringList &needles)
@@ -591,10 +598,13 @@ bool DrapWindowsData::containsAnyString(const QString &haystack, const QStringLi
     return true;
 }
 
-QMap<QString, QString> DrapWindowsData::RecommendedInstallationAppList()
+QMap<QString, QString>
+DrapWindowsData::RecommendedInstallationAppList(QMap<QString, QString> &notRecommendedList)
 {
-    QStringList dataStructure;
-    QSet<QString> applist = getApplianceList();
+    notRecommendedList.clear();
+
+    QList<WinApp> dataStructure;
+    QList<WinApp> applist = getApplianceList();
     for (auto value : applist) {
         dataStructure.push_back(value);
     }
@@ -603,19 +613,24 @@ QMap<QString, QString> DrapWindowsData::RecommendedInstallationAppList()
     getLinuxApplist(MatchFielddata);
 
     QMap<QString, QString> resultAPP;
-    for (QString &valueA : dataStructure) {
+    for (auto iterator = dataStructure.begin(); iterator != dataStructure.end();) {
         bool result;
-        int i = 0;
+        QString winApp = (*iterator).name;
         for (UosApp &uosValue : MatchFielddata) {
             QStringList valueB = uosValue.feature;
-            result = containsAnyString(valueA, valueB);
+            result = containsAnyString(winApp, valueB);
             if (result) {
                 resultAPP[uosValue.windowsName] = uosValue.UosName;
+                iterator = dataStructure.erase(iterator);
                 break;
             }
-            i++;
+        }
+        if (!result) {
+            ++iterator;
         }
     }
-
+    for (auto &value : dataStructure) {
+        notRecommendedList[value.name] = value.iconPath;
+    }
     return resultAPP;
 }

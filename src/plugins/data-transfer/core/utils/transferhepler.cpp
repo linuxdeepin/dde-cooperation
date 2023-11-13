@@ -130,13 +130,14 @@ void TransferHelper::startTransfer()
     transferhandle.sendFiles(paths);
 }
 
-QMap<QString, QString> TransferHelper::getAppList()
+QMap<QString, QString> TransferHelper::getAppList(QMap<QString, QString> &noRecommedApplist)
 {
     QMap<QString, QString> appList;
     QMap<QString, QString> appNameList =
-            DrapWindowsData::instance()->RecommendedInstallationAppList();
+            DrapWindowsData::instance()->RecommendedInstallationAppList(noRecommedApplist);
 
-    for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++) {
+    for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++)
+    {
         appList[iterator.key()] = QString(":/icon/AppIcons/%1.svg").arg(iterator.value());
     }
 
@@ -146,7 +147,7 @@ QMap<QString, QString> TransferHelper::getAppList()
 QMap<QString, QString> TransferHelper::getBrowserList()
 {
     QMap<QString, QString> browserList;
-    QSet<QString> borwserNameList = DrapWindowsData::instance()->getBrowserList();
+    QStringList borwserNameList = DrapWindowsData::instance()->getBrowserList();
     for (QString name : borwserNameList) {
         if (name == BrowserName::GoogleChrome) {
             browserList[name] = ":/icon/AppIcons/cn.google.chrome.svg";

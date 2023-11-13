@@ -16,12 +16,14 @@ class SelectAllButton : public QFrame
 public:
     SelectAllButton(QWidget *parent = nullptr);
     ~SelectAllButton();
+
 protected:
     void paintEvent(QPaintEvent *event) override;
 
-    void mousePressEvent(QMouseEvent *event)override;
+    void mousePressEvent(QMouseEvent *event) override;
 signals:
     void selectAll();
+
 private:
     QRectF iconPosSize{ 2, 2, 16, 16 };
     qreal iconRadius{ 3 };
@@ -68,7 +70,6 @@ private:
 
     SelectAllButton *selectAllButton{ nullptr };
 };
-
 
 class ItemDelegate : public QItemDelegate
 {
@@ -121,6 +122,7 @@ private:
 
     QPoint iconPos{ 65, 6 };
     QPoint checkBoxPos{ 10, 9 };
+    float opacity{ 0.6 };
 };
 
 class SaveItemDelegate : public QItemDelegate
@@ -187,7 +189,7 @@ public:
     ~SelectListView();
 
 private:
-    bool isSelectAll{false};
+    bool isSelectAll{ false };
 public slots:
     void selectorDelAllItem();
 };

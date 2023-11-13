@@ -1,4 +1,4 @@
-{
+﻿{
     "360安全卫士": {
         "feature": [
             "360安全卫士"
@@ -86,15 +86,13 @@
     },
     "QQ浏览器": {
         "feature": [
-            "QQ",
-            "浏览器"
+            "QQ浏览器"
         ],
         "packageName": "com.qq.browser"
     },
     "QQ音乐": {
         "feature": [
-            "QQ",
-            "音乐"
+            "QQ音乐"
         ],
         "packageName": "com.qq.music"
     },
