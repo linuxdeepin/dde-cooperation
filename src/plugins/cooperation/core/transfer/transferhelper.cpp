@@ -401,12 +401,13 @@ void TransferHelper::waitForConfirm(const QString &name)
 {
     switch (d->currentMode) {
     case ReceiveMode: {
+        d->recvNotifyId = 0;
         QStringList actions { NotifyRejectAction, tr("Reject"), NotifyAcceptAction, tr("Accept") };
         QString msg(tr("Received transfer request from \"%1\""));
         QFontMetrics fm(qApp->font());
         QString ret = fm.elidedText(name, Qt::ElideMiddle, 200);
 
-        d->recvNotifyId = d->notifyMessage(d->recvNotifyId, msg.arg(ret), actions, 30 * 1000);
+        d->recvNotifyId = d->notifyMessage(d->recvNotifyId, msg.arg(ret), actions, 10 * 1000);
     } break;
     case SendMode:
         d->transDialog()->switchWaitConfirmPage();
