@@ -45,6 +45,7 @@ public:
 
 signals:
     void clicked(bool checked);
+
 protected:
     virtual void mousePressEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;

@@ -3,7 +3,8 @@
 #include <QApplication>
 #include <QLabel>
 #include <QPainterPath>
-
+#include <QDebug>
+#include <QtSvg/QSvgRenderer>
 ItemTitlebar::ItemTitlebar(const QString &label1_, const QString &label2_,
                            const qreal &label1LeftMargin_, const qreal &label2LeftMargin_,
                            const QRectF &iconPosSize_, const qreal &iconRadius_, QWidget *parent)
@@ -204,11 +205,21 @@ void ItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionViewItem &
                                  const QModelIndex &index) const
 {
     painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
     QPoint pos = option.rect.topLeft() + checkBoxPos;
-    QRect checkBoxRect = QRect(pos.x(), pos.y(), 18, 18);
+    QRect checkBoxRect = QRect(pos.x()+2, pos.y(), 18, 18);
 
-    QItemDelegate::drawCheck(painter, option, checkBoxRect,
-                             index.data(Qt::CheckStateRole).value<Qt::CheckState>());
+    //    QItemDelegate::drawCheck(painter, option, checkBoxRect,
+    //                             index.data(Qt::CheckStateRole).value<Qt::CheckState>());
+
+    painter->setPen(QColor(0, 0, 0, 255));
+    painter->drawRoundedRect(checkBoxRect, 4, 4);
+
+    if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
+        QRect iconRect(checkBoxRect.left() + 3, checkBoxRect.top() + 3, 13, 11);
+        QSvgRenderer render(QString(":/icon/check_black.svg"));
+        render.render(painter, iconRect);
+    }
     painter->restore();
 }
 
@@ -468,7 +479,6 @@ void SidebarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 {
     paintBackground(painter, option, index);
     paintText(painter, option, index);
-
     paintCheckbox(painter, option, index);
 }
 
@@ -515,19 +525,30 @@ void SidebarItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionVie
 {
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
-    painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
 
     QColor color;
     if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
-        color = Qt::white;
+        color = QColor(255, 255, 255, 255);
     } else {
-        color = Qt::black;
+        color = QColor(0, 0, 0, 255);
     }
+
     painter->setPen(color);
     QPoint pos = option.rect.topLeft() + QPoint(9, 7);
     QRect checkBoxRect = QRect(pos.x(), pos.y(), 18, 18);
     painter->drawRoundedRect(checkBoxRect, 4, 4);
 
+    if (index.data(Qt::StatusTipRole).value<int>() == 2) {
+        QRect iconRect(checkBoxRect.left() + 3, checkBoxRect.top() + 3, 13, 11);
+        QSvgRenderer render(QString(":/icon/check_black.svg"));
+        render.render(painter, iconRect);
+    } else if (index.data(Qt::StatusTipRole).value<int>() == 1) {
+        int y = checkBoxRect.top() + 9;
+        int x1 = checkBoxRect.left() + 4;
+        int x2 = checkBoxRect.left() + 14;
+        painter->setPen(QPen(QColor(0, 0, 0, 255), 2));
+        painter->drawLine(x1, y, x2, y);
+    }
     painter->restore();
 }
 void SidebarItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option,
@@ -538,11 +559,12 @@ void SidebarItemDelegate::paintBackground(QPainter *painter, const QStyleOptionV
     painter->setPen(Qt::NoPen);
     if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
         painter->setBrush(QColor(0, 129, 255, 255));
-        painter->drawRoundedRect(positon, 8, 8);
+
     } else {
         painter->setBrush(QColor(0, 0, 0, 12));
-        painter->drawRoundedRect(positon, 8, 8);
     }
+
+    painter->drawRoundedRect(positon, 8, 8);
     painter->restore();
 }
 bool SidebarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
@@ -561,38 +583,33 @@ bool SidebarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     QVariant value = index.data(Qt::CheckStateRole);
     if (!value.isValid())
         return false;
-
-    // make sure that we have the right event type
     if ((event->type() == QEvent::MouseButtonRelease)
         || (event->type() == QEvent::MouseButtonDblClick)
         || (event->type() == QEvent::MouseButtonPress)) {
-
         QRect checkBoxRect = option.rect;
-        QRect emptyRect;
-        doLayout(option, &checkBoxRect, &emptyRect, &emptyRect, false);
-        QMouseEvent *me = static_cast<QMouseEvent *>(event);
-        if (me->button() != Qt::LeftButton || !checkBoxRect.contains(me->pos()))
+        QPoint pos = option.rect.topLeft() + QPoint(9, 7);
+        QRect stateCheckBoxRect = QRect(pos.x(), pos.y(), 18, 18);
+
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() != Qt::LeftButton || !checkBoxRect.contains(mouseEvent->pos()))
             return false;
 
         // eat the double click events inside the check rect
         if ((event->type() == QEvent::MouseButtonPress)
-            || (event->type() == QEvent::MouseButtonDblClick))
+            || (event->type() == QEvent::MouseButtonDblClick)) {
             return true;
+        }
 
-    } else if (event->type() == QEvent::KeyPress) {
-        if (static_cast<QKeyEvent *>(event)->key() != Qt::Key_Space
-            && static_cast<QKeyEvent *>(event)->key() != Qt::Key_Select)
-            return false;
-    } else {
-        return false;
+        if (stateCheckBoxRect.contains(mouseEvent->pos()))
+            model->setData(index, true, Qt::WhatsThisRole);
+
+        if (checkBoxRect.contains(mouseEvent->pos())) {
+            model->setData(index, Qt::Checked, Qt::CheckStateRole);
+            return true;
+        }
     }
 
-    Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt());
-    if (flags & Qt::ItemIsUserTristate)
-        state = ((Qt::CheckState)((state + 1) % 3));
-    else
-        state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
-    return model->setData(index, state, Qt::CheckStateRole);
+    return false;
 }
 
 SelectAllButton::SelectAllButton(QWidget *parent) : QFrame(parent)
@@ -645,7 +662,8 @@ void SelectListView::selectorDelAllItem()
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
     for (int row = 0; row < model->rowCount(); ++row) {
         QModelIndex itemIndex = model->index(row, 0);
-        Qt::CheckState state =itemIndex.data(Qt::CheckStateRole) == Qt::Checked ? Qt::Unchecked : Qt::Checked;
+        Qt::CheckState state =
+                itemIndex.data(Qt::CheckStateRole) == Qt::Checked ? Qt::Unchecked : Qt::Checked;
         model->setData(itemIndex, state, Qt::CheckStateRole);
     }
 }

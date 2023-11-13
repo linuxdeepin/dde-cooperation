@@ -18,6 +18,7 @@
 #include <QTextBrowser>
 #include <QToolTip>
 #include <QImage>
+#include <QMessageBox>
 
 #pragma execution_character_set("utf-8")
 
@@ -73,7 +74,7 @@ void ChooseWidget::initUI()
     tipiconlabel->setVisible(false);
     tiptextlabel->setVisible(false);
 
-    QHBoxLayout *tiplayout = new QHBoxLayout(this);
+    QHBoxLayout *tiplayout = new QHBoxLayout();
     tiplayout->addWidget(tipiconlabel);
     tiplayout->addSpacing(5);
     tiplayout->addWidget(tiptextlabel);
@@ -213,10 +214,9 @@ void ModeItem::setEnable(bool able)
     if (!able) {
         palette.setColor(QPalette::WindowText, Qt::gray);
         setPalette(palette);
-    }
-    else{
+    } else {
         palette.setColor(QPalette::WindowText, QColor("#414D68"));
-       setPalette(palette);
+        setPalette(palette);
     }
 }
 
@@ -254,7 +254,7 @@ void ModeItem::paintEvent(QPaintEvent *event)
     font.setStyleName("Normal");
     paint.setFont(font);
 
-    paint.setPen(QColor(65, 77, 104,255));
+    paint.setPen(QColor(65, 77, 104, 255));
     paint.setRenderHint(QPainter::TextAntialiasing);
     paint.setRenderHint(QPainter::Antialiasing);
     paint.setRenderHint(QPainter::SmoothPixmapTransform);

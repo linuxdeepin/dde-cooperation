@@ -200,8 +200,8 @@ QStringList TransferHelper::getTransferFilePath()
 
     // add file
     QJsonArray fileArray;
+    qInfo() << "home_path:" << QDir::homePath();
     for (QString file : filePathList) {
-        qInfo() << QDir::homePath();
         if (file.contains(QDir::homePath()))
             file.replace(QDir::homePath() + "/", "");
         fileArray.append(file);

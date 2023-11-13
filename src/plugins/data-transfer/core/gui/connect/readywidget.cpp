@@ -185,6 +185,7 @@ void ReadyWidget::tryConnect()
 
 void ReadyWidget::nextPage()
 {
+
     tiptextlabel->setVisible(false);
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {

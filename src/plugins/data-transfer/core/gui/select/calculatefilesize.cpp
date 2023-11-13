@@ -176,11 +176,11 @@ void CalculateFileSizeThreadPool::exitPool()
     delete fileMap;
 }
 
-void CalculateFileSizeThreadPool::delDevice(const QModelIndex &index)
+void CalculateFileSizeThreadPool::delDevice(const QStandardItem *siderbarItem)
 {
     QMap<QString, FileInfo>::iterator it = fileMap->begin();
     while (it != fileMap->end()) {
-        if (it.value().siderIndex == index) {
+        if (it.value().siderbarItem == siderbarItem) {
             it = fileMap->erase(it);
         } else {
             ++it;

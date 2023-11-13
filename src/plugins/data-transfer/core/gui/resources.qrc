@@ -114,5 +114,6 @@
         <file>icon/AppIcons/uos-remote-assistance.svg</file>
         <file>icon/success half-96.svg</file>
         <file>fileResource/apps.json</file>
+        <file>icon/check_black.svg</file>
     </qresource>
 </RCC>

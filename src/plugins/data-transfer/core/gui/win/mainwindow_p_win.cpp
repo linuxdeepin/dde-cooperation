@@ -7,6 +7,7 @@
 #include "../connect/startwidget.h"
 #include "../connect/networkdisconnectionwidget.h"
 
+#include "../select/siderbarwidget.h"
 #include "../select/appselectwidget.h"
 #include "../select/selectmainwidget.h"
 #include "../select/configselectwidget.h"
@@ -46,21 +47,21 @@ void MainWindowPrivate::initWindow()
     q->setAttribute(Qt::WA_TranslucentBackground);
     q->setFixedSize(740, 552);
     QWidget *centerWidget = new QWidget(q);
-    QVBoxLayout *layout = new QVBoxLayout(centerWidget);
+    QVBoxLayout *layout = new QVBoxLayout();
     centerWidget->setLayout(layout);
     layout->setContentsMargins(0, 0, 0, 0);
 
     q->setCentralWidget(centerWidget);
-    windowsCentralWidgetSidebar = new QHBoxLayout(centerWidget);
-    windowsCentralWidgetContent = new QHBoxLayout(centerWidget);
-    windowsCentralWidget = new QHBoxLayout(centerWidget);
+    windowsCentralWidgetSidebar = new QHBoxLayout();
+    windowsCentralWidgetContent = new QHBoxLayout();
+    windowsCentralWidget = new QHBoxLayout();
 
     windowsCentralWidget->addLayout(windowsCentralWidgetSidebar);
     windowsCentralWidget->addLayout(windowsCentralWidgetContent);
 
     q->setWindowIcon(QIcon(":/icon/icon.svg"));
 
-    initSideBar();
+     initSideBar();
     initTitleBar();
     layout->setSpacing(0);
     layout->addLayout(windowsCentralWidget);
@@ -75,17 +76,18 @@ void MainWindowPrivate::initWidgets()
     PromptWidget *promptwidget = new PromptWidget(q);
     SuccessWidget *successwidget = new SuccessWidget(q);
     FileSelectWidget *filewselectidget =
-            new FileSelectWidget(qobject_cast<SidebarWidget *>(sidebar->widget()), q);
+           new FileSelectWidget(qobject_cast<SidebarWidget *>(sidebar->widget()), q);
     ConfigSelectWidget *configselectwidget = new ConfigSelectWidget(q);
     AppSelectWidget *appselectwidget = new AppSelectWidget(q);
     ErrorWidget *errorwidget = new ErrorWidget(q);
-    QStackedWidget *stackedWidget = new QStackedWidget(q);
+
     NetworkDisconnectionWidget *networkdisconnectionwidget = new NetworkDisconnectionWidget(q);
     zipFileProcessWidget *zipfileprocesswidget = new zipFileProcessWidget(q);
     ZipFileProcessResultWidget *zipfileprocessresultwidget = new ZipFileProcessResultWidget(q);
     CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
-
     SelectMainWidget *selectmainwidget = new SelectMainWidget(q);
+
+    QStackedWidget *stackedWidget = new QStackedWidget(q);
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
     stackedWidget->insertWidget(PageName::choosewidget, choosewidget);
     stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
@@ -116,8 +118,8 @@ void MainWindowPrivate::initWidgets()
 
     QObject::connect(appselectwidget, &AppSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
-    QObject::connect(filewselectidget, &FileSelectWidget::isOk, selectmainwidget,
-                     &SelectMainWidget::changeSelectframeState);
+    //    QObject::connect(filewselectidget, &FileSelectWidget::isOk, selectmainwidget,
+    //                     &SelectMainWidget::changeSelectframeState);
     QObject::connect(configselectwidget, &ConfigSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
 
@@ -127,7 +129,8 @@ void MainWindowPrivate::initWidgets()
     QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
                      createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
 
-    QObject:connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
+QObject:
+    connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
             [stackedWidget, errorwidget](bool online) {
                 if (online)
                     return;
@@ -226,9 +229,7 @@ void MainWindowPrivate::initTitleBar()
                              "}");
     mainLabel->setPixmap(QPixmap(":/icon/icon.svg"));
 
-    QObject::connect(closeButton, &QToolButton::clicked, q, [this]() {
-        QCoreApplication::quit();
-    });
+    QObject::connect(closeButton, &QToolButton::clicked, q, [this]() { QCoreApplication::quit(); });
     QObject::connect(minButton, &QToolButton::clicked, q, &MainWindow::showMinimized);
 
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);

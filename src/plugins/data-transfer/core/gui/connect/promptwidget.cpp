@@ -95,6 +95,7 @@ void PromptWidget::nextPage()
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
+
 }
 
 void PromptWidget::backPage()

@@ -324,11 +324,7 @@ void CreateBackupFileWidget::updaeBackupFileSize()
     if (!bookmarkJsonPath.isEmpty()) {
         bookmarkJsonSize = QFileInfo(bookmarkJsonPath[0]).size();
     }
-    qInfo() << "wallpaperPath:" << wallpaperPath;
-    qInfo() << "userDataInfoJsonPath:" << userDataInfoJsonPath;
-    qInfo() << "filesize:" << userSelectFileSize;
-    qInfo() << "userDataInfoJsonSize:" << userDataInfoJsonSize;
-    qInfo() << "wallpaperSize:" << wallpaperSize;
+
     quint64 allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize + bookmarkJsonSize;
     backupFileSizeLabel->setText(QString("大小:  %1").arg(fromByteToQstring(allSize)));
 }

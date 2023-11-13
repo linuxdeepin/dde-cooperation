@@ -26,6 +26,7 @@ private:
     QRectF iconPosSize{ 2, 2, 16, 16 };
     qreal iconRadius{ 3 };
 };
+
 class ItemTitlebar : public QFrame
 {
     Q_OBJECT

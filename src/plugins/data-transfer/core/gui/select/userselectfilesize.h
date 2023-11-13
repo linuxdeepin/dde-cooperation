@@ -6,6 +6,7 @@
 class QString;
 class QListView;
 class QModelIndex;
+class QStandardItem;
 class UserSelectFileSize : public QObject
 {
     Q_OBJECT
@@ -25,11 +26,14 @@ public:
     void clearAllFileSelect();
     quint64 getAllSelectSize();
     QStringList getSelectFilesList();
-    void delDevice(const QModelIndex &index);
+
+    void delDevice(QStandardItem *siderbarItem);
 signals:
     void updateUserFileSelectSize(const QString &size);
+    void updateUserFileSelectNum(const QString &path, const bool &isAdd);
 public slots:
     void updatependingFileSize(const quint64 &size, const QString &path);
+    void updateFileSelectList(QStandardItem *item);
 
 private:
     UserSelectFileSize();
