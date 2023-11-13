@@ -22,6 +22,22 @@ SendRpcWork::~SendRpcWork()
 
 SendRpcWork::SendRpcWork(QObject *parent) : QObject (parent)
 {
+    initConnect();
+}
+
+void SendRpcWork::initConnect()
+{
+    connect(this, &SendRpcWork::workDoLogin, this, &SendRpcWork::handleDoLogin, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::workDoQuery, this, &SendRpcWork::handleDoQuery, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::workDoMisc, this, &SendRpcWork::handleDoMisc, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::workDoTransfileJob, this, &SendRpcWork::handleDoTransfileJob, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::workDoSendFileInfo, this, &SendRpcWork::handleDoSendFileInfo, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::workDoSendFileBlock, this, &SendRpcWork::handleDoSendFileBlock, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::workDoUpdateTrans, this, &SendRpcWork::handleDoUpdateTrans, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::workDoSendApplyTransFiles, this, &SendRpcWork::handleDoSendApplyTransFiles, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::workCreateRpcSender, this, &SendRpcWork::handleCreateRpcSender, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::workSetTargetAppName, this, &SendRpcWork::handleSetTargetAppName, Qt::QueuedConnection);
+    connect(this, &SendRpcWork::ping, this, &SendRpcWork::handlePing, Qt::QueuedConnection);
 }
 
 void SendRpcWork::handleDoLogin(const QString appName, const QString targetIp, const quint16 port, const QString username, const QString pincode)
@@ -32,7 +48,7 @@ void SendRpcWork::handleDoLogin(const QString appName, const QString targetIp, c
     LoginResultStruct ru;
     ru.from_json(result);
     if (ru.result) {
-        handleAddPing(appName);
+        SendRpcService::instance()->addPing(appName);
     }
     co::Json req;
     //cbConnect {GenericResult}
@@ -172,19 +188,6 @@ void SendRpcWork::handleSetTargetAppName(const QString appName, const QString ta
     sender->setTargetAppName(targetAppName);
 }
 
-void SendRpcWork::handleAddPing(const QString appName)
-{
-    if (_ping_appname.contains(appName))
-        return;
-    _ping_appname.append(appName);
-    emit startPingTimer();
-}
-
-void SendRpcWork::handleRemovePing(const QString appName)
-{
-    _ping_appname.removeOne(appName);
-}
-
 void SendRpcWork::handlePing()
 {
     for (auto appName = _ping_appname.begin();  appName != _ping_appname.end();) {
@@ -210,56 +213,54 @@ void SendRpcWork::handlePing()
 
 QSharedPointer<RemoteServiceSender> SendRpcWork::createRpcSender(const QString &appName, const QString &targetip, uint16_t port)
 {
-    auto sender = _remotes.value(appName);
-    if (sender.isNull()) {
-        sender.reset(new RemoteServiceSender(appName, targetip, port));
-        _remotes.insert(appName, sender);
-        return sender;
-    }
-
-    return sender;
+    _remote.reset(new RemoteServiceSender(appName, targetip, port));
+    return _remote;
 }
 
 QSharedPointer<RemoteServiceSender> SendRpcWork::rpcSender(const QString &appName)
 {
-    if (_remotes.contains(appName))
-        return _remotes.value(appName);
+    if (!_remote.isNull())
+        return _remote;
 
     ELOG << "has not remote sender, appname = " << appName.toStdString();
     return nullptr;
 }
 
+QString SendRpcWork::targetIp() const
+{
+    if (_remote)
+        return _remote->remoteIP();
+    ELOG << "targetIp do not create RemoteServiceSender !!!!!!";
+    return "";
+}
+
+quint16 SendRpcWork::targetPort() const
+{
+    if (_remote)
+        return _remote->remotePort();
+    ELOG << "targetPort do not create RemoteServiceSender !!!!!!";
+    return 0;
+}
+
 SendRpcService::SendRpcService(QObject *parent)
     : QObject(parent)
 {
-    _ping_timer.setInterval(1000);
-    connect(&_ping_timer, &QTimer::timeout, this, &SendRpcService::handleTimeOut);
+
     initConnet();
+}
+
+QSharedPointer<SendRpcService::ThreadInfo> SendRpcService::getWork(const QString &appName)
+{
+    QReadLocker lk(&_lock);
+    return  _worksMap.value(appName);
 }
 
 void SendRpcService::initConnet()
 {
-    if (_work.isNull())
-        _work.reset(new SendRpcWork);
-    _work->moveToThread(&_thread);
-    connect(this, &SendRpcService::workDoLogin, _work.data(), &SendRpcWork::handleDoLogin, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workDoQuery, _work.data(), &SendRpcWork::handleDoQuery, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workDoMisc, _work.data(), &SendRpcWork::handleDoMisc, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workDoTransfileJob, _work.data(), &SendRpcWork::handleDoTransfileJob, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workDoSendFileInfo, _work.data(), &SendRpcWork::handleDoSendFileInfo, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workDoSendFileBlock, _work.data(), &SendRpcWork::handleDoSendFileBlock, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workDoUpdateTrans, _work.data(), &SendRpcWork::handleDoUpdateTrans, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workDoSendApplyTransFiles, _work.data(), &SendRpcWork::handleDoSendApplyTransFiles, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workCreateRpcSender, _work.data(), &SendRpcWork::handleCreateRpcSender, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workSetTargetAppName, _work.data(), &SendRpcWork::handleSetTargetAppName, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workRemovePing, _work.data(), &SendRpcWork::handleRemovePing, Qt::QueuedConnection);
-    connect(this, &SendRpcService::workAddPing, _work.data(), &SendRpcWork::handleAddPing, Qt::QueuedConnection);
-    connect(this, &SendRpcService::ping, _work.data(), &SendRpcWork::handlePing, Qt::QueuedConnection);
-
-    connect(_work.data(), &SendRpcWork::startPingTimer, this, &SendRpcService::handleStartTimer, Qt::QueuedConnection);
-    connect(_work.data(), &SendRpcWork::stopPingTimer, this, &SendRpcService::handleStopTimer, Qt::QueuedConnection);
-
-    _thread.start();
+    connect(this, &SendRpcService::createSenderWork, this, &SendRpcService::createRpcSenderWork, Qt::QueuedConnection);
+    connect(&_ping_timer, &QTimer::timeout, this, &SendRpcService::handleTimeOut);
+    connect(this, &SendRpcService::startPingTimer, this, &SendRpcService::handleStartTimer, Qt::QueuedConnection);
+    connect(this, &SendRpcService::stopPingTimer, this, &SendRpcService::handleStopTimer, Qt::QueuedConnection);
 }
 
 SendRpcService::~SendRpcService()
@@ -270,6 +271,23 @@ SendRpcService *SendRpcService::instance()
 {
     static SendRpcService service;
     return &service;
+}
+
+void SendRpcService::removePing(const QString &appName)
+{
+    QWriteLocker lk(&_ping_lock);
+    _ping_appname.removeOne(appName);
+    if (_ping_appname.isEmpty())
+        emit stopPingTimer();
+}
+
+void SendRpcService::addPing(const QString &appName)
+{
+    QWriteLocker lk(&_ping_lock);
+    if (!_ping_appname.contains(appName))
+        _ping_appname.append(appName);
+    if (!_ping_timer.isActive())
+        emit startPingTimer();
 }
 
 void SendRpcService::handleStartTimer()
@@ -283,4 +301,40 @@ void SendRpcService::handleStopTimer()
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     _ping_timer.stop();
+}
+
+void SendRpcService::handleTimeOut()
+{
+    QReadLocker lk(&_lock);
+    QList<QString> ips;
+    for (const auto &w : _worksMap.keys()) {
+        if (_ping_appname.contains(w) && !ips.contains(w)) {
+            ips.append(w);
+            emit _worksMap.value(w)->_work.ping();
+        }
+    }
+}
+
+void SendRpcService::createRpcSenderWork(const QString appName, const QString targetip, quint16 port)
+{
+    QSharedPointer<ThreadInfo> work{nullptr};
+
+    {
+        QWriteLocker lk(&_lock);
+        QList<QSharedPointer<ThreadInfo>> works;
+        for (const auto &w : _works) {
+            if (w->_work.targetIp() == targetip && w->_work.targetPort() == port) {
+                _worksMap.remove(appName);
+                _worksMap.insert(appName, w);
+                return;
+            }
+        }
+        _worksMap.remove(appName);
+        work.reset(new ThreadInfo);
+        _worksMap.insert(appName, work);
+    }
+    work->_work.createRpcSender(appName, targetip, port);
+    work->_work.moveToThread(&work->_thread);
+    work->_thread.start();
+
 }

@@ -265,7 +265,9 @@ void HandleIpcService::handleGetAllNodes(const QSharedPointer<BackendService> _b
 void HandleIpcService::handleBackApplyTransFiles(co::Json param)
 {
      // 远程发送
-    SendRpcService::instance()->doSendApplyTransFiles(param);
+    ApplyTransFiles info;
+    info.from_json(param);
+    SendRpcService::instance()->doSendApplyTransFiles(info.session.c_str(), param);
     // todo, servicemanager收到信号处理
 }
 
