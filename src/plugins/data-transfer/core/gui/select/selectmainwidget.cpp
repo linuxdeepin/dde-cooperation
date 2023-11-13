@@ -283,6 +283,7 @@ void SelectItem::updateSelectSize(QString num)
 }
 void SelectItem::mousePressEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event);
     emit changePage();
 }
 

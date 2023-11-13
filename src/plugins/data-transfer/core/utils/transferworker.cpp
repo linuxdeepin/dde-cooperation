@@ -169,6 +169,8 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
         //#ifndef WIN32
         //        TransferHelper::instance()->isUnfinishedJob(msg);
         //#endif
+    } else {
+        emit TransferHelper::instance()->connectFailed();
     }
 }
 

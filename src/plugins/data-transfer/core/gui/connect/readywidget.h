@@ -16,7 +16,7 @@ public slots:
     void nextPage();
     void backPage();
     void onLineTextChange();
-
+    void connectFailed();
 private:
     void initUI();
     void tryConnect();
@@ -25,6 +25,8 @@ private:
     QLineEdit *captchaInput{ nullptr };
     QToolButton *nextButton{ nullptr };
     QLabel *tiptextlabel{ nullptr };
+
+    QTimer *timer{ nullptr };
 };
 
 #endif // READYWIDGET_H

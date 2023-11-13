@@ -9,6 +9,7 @@
 #include <QTextBrowser>
 #include <QLineEdit>
 #include <QRegularExpressionValidator>
+#include <QTimer>
 
 #include <gui/connect/choosewidget.h>
 
@@ -26,6 +27,11 @@ ReadyWidget::~ReadyWidget() { }
 void ReadyWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
+
+    // init timer
+    timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setInterval(2000);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
@@ -118,7 +124,7 @@ void ReadyWidget::initUI()
     connect(backButton, &QToolButton::clicked, this, &ReadyWidget::backPage);
 
     tiptextlabel = new QLabel(this);
-    tiptextlabel->setText("<font size='4' color='#FF5736' >密码或IP错误！请重新输入。</font>");
+    tiptextlabel->setText("<font size='3' color='#000000'>连接中...</font>");
     tiptextlabel->setVisible(false);
     tiptextlabel->setAlignment(Qt::AlignCenter);
 
@@ -174,13 +180,21 @@ void ReadyWidget::initUI()
     QObject::connect(captchaInput, &QLineEdit::textChanged, this, &ReadyWidget::onLineTextChange);
     QObject::connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this,
                      &ReadyWidget::nextPage);
+    QObject::connect(TransferHelper::instance(), &TransferHelper::connectFailed, this,
+                     &ReadyWidget::connectFailed);
+
+    // Connect the timer's timeout signal to hiding the label
+    QObject::connect(timer, &QTimer::timeout, [&]() {
+        tiptextlabel->setText("<font size='3' color='#000000'>连接中...</font>");
+        tiptextlabel->setVisible(false);
+    });
 }
 
 void ReadyWidget::tryConnect()
 {
+    tiptextlabel->setVisible(true);
     qInfo() << ipInput->text() << " " << captchaInput->text();
     TransferHelper::instance()->tryConnect(ipInput->text(), captchaInput->text());
-    tiptextlabel->setVisible(true);
 }
 
 void ReadyWidget::nextPage()
@@ -227,4 +241,10 @@ void ReadyWidget::onLineTextChange()
     }
 
     nextButton->setEnabled(true);
+}
+
+void ReadyWidget::connectFailed()
+{
+    tiptextlabel->setText("<font size='3' color='#FF5736'>密码或IP错误！请重新输入。</font>");
+    timer->start();
 }

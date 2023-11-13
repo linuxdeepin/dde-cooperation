@@ -52,6 +52,7 @@ private:
 Q_SIGNALS:
     // transfer state
     void connectSucceed();
+    void connectFailed();
     void transferring();
 
     // isall mean Have all files been transferred and configured successfully
