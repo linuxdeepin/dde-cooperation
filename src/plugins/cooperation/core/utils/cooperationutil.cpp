@@ -14,6 +14,7 @@
 #include "ipc/proto/backend.h"
 
 #include <QJsonDocument>
+#include <QDebug>
 
 using namespace cooperation_core;
 
@@ -339,7 +340,7 @@ void CooperationUtil::asyncDiscoveryDevice()
         if (!ok) {
             WLOG << "discovery devices failed!";
         } else {
-            LOG << "all device: " << res.get("msg");
+            DLOG << "all device: " << res.get("msg");
             co::Json obj;
             obj.parse_from(res.get("msg").as_string());
             infoList = d->parseDeviceInfo(obj);

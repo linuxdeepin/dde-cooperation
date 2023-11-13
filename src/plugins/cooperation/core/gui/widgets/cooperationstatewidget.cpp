@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cooperationstatewidget.h"
+#include "backgroundwidget.h"
 #ifdef WIN32
 #else
-#include "gui/linux/backgroundwidget.h"
 
 #include <DGuiApplicationHelper>
 
@@ -90,7 +90,7 @@ void NoResultWidget::initUI()
     QLabel *tipsLabel = new QLabel(tr("No device found"), this);
 
     BackgroundWidget *contentBackgroundWidget = new BackgroundWidget(this);
-    contentBackgroundWidget->setBackground(17, BackgroundWidget::kItemBackground);
+    contentBackgroundWidget->setBackground(17, BackgroundWidget::ItemBackground, BackgroundWidget::TopAndBottom);
     QString leadintText = tr("1.Enable cross-end collaborative applications. Applications on the UOS "
                              "can be downloaded from the App Store, and applications on the Windows "
                              "side can be downloaded from: ");

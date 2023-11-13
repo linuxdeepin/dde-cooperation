@@ -7,10 +7,7 @@
 
 #include "global_defines.h"
 #include "info/deviceinfo.h"
-#ifdef WIN32
-#else
-#    include "gui/linux/backgroundwidget.h"
-#endif
+#include "backgroundwidget.h"
 
 #include <QLabel>
 #include <QIcon>

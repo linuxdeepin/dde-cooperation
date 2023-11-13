@@ -1,2 +1,2 @@
 usr/bin/dde-cooperation-transfer
-usr/lib/*/dde-file-manager/plugins/filemanager-edge/libdfmplugin-cooperation.so
+usr/lib/*/dde-file-manager/plugins/common-edge/libdfmplugin-cooperation.so
