@@ -8,7 +8,9 @@
 #include "maincontroller/maincontroller.h"
 
 #include <QScreen>
+#include <QUrl>
 #include <QApplication>
+#include <QDesktopServices>
 
 using namespace cooperation_core;
 
@@ -71,6 +73,7 @@ void MainWindowPrivate::handleSettingMenuTriggered(int action)
         });
     } break;
     case MenuAction::kDownloadWindowClient:
+        QDesktopServices::openUrl(QUrl("https://www.deepin.org/index/assistant"));
         break;
     }
 }
