@@ -35,6 +35,7 @@ inline constexpr char NotifyServerIfce[] { "org.freedesktop.Notifications" };
 inline constexpr char NotifyCancelAction[] { "cancel-transfer-action" };
 inline constexpr char NotifyRejectAction[] { "reject-action" };
 inline constexpr char NotifyAcceptAction[] { "accept-action" };
+inline constexpr char NotifyCloseAction[] { "close-action" };
 inline constexpr char NotifyViewAction[] { "view-action" };
 
 inline constexpr char HistoryButtonId[] { "history-button" };
@@ -107,12 +108,13 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
             ? value.toString()
             : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
 
+    QString saveDir = (deviceName + "(%1)").arg(targetIp);
     ipc::TransFilesParam transParam;
     transParam.session = CooperationUtil::instance()->sessionId().toStdString();
     transParam.id = TransferJobStartId;
     transParam.paths = fileVector;
     transParam.sub = true;
-    transParam.savedir = deviceName.toStdString();
+    transParam.savedir = saveDir.toStdString();
 
     req = transParam.as_json();
     req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
@@ -175,7 +177,7 @@ void TransferHelperPrivate::transferResult(bool result, const QString &msg)
         if (result)
             actions << NotifyViewAction << tr("View");
 
-        recvNotifyId = notifyMessage(recvNotifyId, msg, actions, 30 * 1000);
+        recvNotifyId = notifyMessage(recvNotifyId, msg, actions, 3 * 1000);
     } break;
     case TransferHelper::SendMode:
         transDialog()->switchResultPage(result, msg);
@@ -203,7 +205,7 @@ void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
 uint TransferHelperPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
 {
     QDBusReply<uint> reply = notifyIfc->call("Notify", kMainAppName, replacesId,
-                                             tr("dde-cooperation"), tr("file transfer"), body,
+                                             "dde-cooperation", tr("Cooperation"), body,
                                              actions, QVariantMap(), expireTimeout);
 
     return reply.isValid() ? reply.value() : replacesId;
@@ -260,6 +262,7 @@ void TransferHelper::setTransMode(TransferHelper::TransferMode mode)
 void TransferHelper::sendFiles(const QString &ip, const QString &devName, const QStringList &fileList)
 {
     d->sendToWho = devName;
+    d->targetIp = ip;
     d->readyToSendFiles = fileList;
     if (fileList.isEmpty())
         return;
@@ -402,8 +405,10 @@ void TransferHelper::waitForConfirm(const QString &name)
     switch (d->currentMode) {
     case ReceiveMode: {
         d->recvNotifyId = 0;
-        QStringList actions { NotifyRejectAction, tr("Reject"), NotifyAcceptAction, tr("Accept") };
-        QString msg(tr("Received transfer request from \"%1\""));
+        QStringList actions { NotifyRejectAction, tr("Reject"),
+                              NotifyAcceptAction, tr("Accept"),
+                              NotifyCloseAction, tr("Close") };
+        QString msg(tr("\"%1\" send some files to you"));
         QFontMetrics fm(qApp->font());
         QString ret = fm.elidedText(name, Qt::ElideMiddle, 200);
 
@@ -433,6 +438,8 @@ void TransferHelper::onActionTriggered(uint replacesId, const QString &action)
         UNIGO([this] {
             d->handleApplyTransFiles(ApplyTransType::APPLY_TRANS_CONFIRM);
         });
+    } else if (action == NotifyCloseAction) {
+        d->notifyIfc->call("CloseNotification", d->recvNotifyId);
     } else if (action == NotifyViewAction) {
         // TODO:
     }

@@ -4,17 +4,12 @@
 
 #include "cooperationstatewidget.h"
 #include "backgroundwidget.h"
-#ifdef WIN32
-#else
-
-#include <DGuiApplicationHelper>
-
-DGUI_USE_NAMESPACE
-#endif
 
 #include <QVBoxLayout>
 #include <QIcon>
 #include <QLabel>
+#include <QUrl>
+#include <QDesktopServices>
 
 using namespace cooperation_core;
 
@@ -77,7 +72,7 @@ NoResultWidget::NoResultWidget(QWidget *parent)
 
 void NoResultWidget::onLinkActivated(const QString &link)
 {
-    DGuiApplicationHelper::openUrl(link);
+    QDesktopServices::openUrl(QUrl(link));
 }
 
 void NoResultWidget::initUI()
