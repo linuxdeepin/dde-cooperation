@@ -1,0 +1,92 @@
+// package chan
+object SendResult {
+    uint32 protocolType // 发送协议的type
+    int32 errorType // 错误类型
+    string data // 结果数据 如果错误类型 < 0 就是错误的原因
+}
+
+object UserLoginInfo {
+    string name // 用户名称
+    string auth // 鉴权
+    string my_uid // uid
+    string my_name // 自己的名称 hostname
+    string session_id // 自己的sessionid
+    string selfappName // 自己的appname
+    string appName // 目标的appname
+    string version // 版本
+    string ip // 自己的ip
+}
+
+object PeerInfo {
+  string username // 用户名称
+  string hostname // 主机名称
+  string platform // 平台
+  string version // 版本
+  bool privacy_mode
+}
+
+object UserLoginResultInfo {
+    PeerInfo peer // 主机信息
+    string token // 登陆成功就是token,失败就是error msg
+    string appName // 目标的appName
+    bool result
+}
+
+// normal json format message for external
+object MiscInfo {
+  string appName // 目标的appName
+  string json // 消息
+}
+
+object FileTransJob {
+  int32 job_id // job id
+  string path     //文件目录路径
+  bool include_hidden //是否包含着.开头隐藏文件
+  bool recursive //是否迭代包含着子目录
+  bool push // push or pull
+  string app_who     //是哪个前端应用创建的传输任务
+  string targetAppname // 接收端是那个应用接受传输
+}
+
+object FileEntry {
+  int32 filetype // 文件类型FileType
+  string name // 名称
+  bool hidden // 是否隐藏
+  int64 size // 大小
+  int64 modified_time // 修改时间
+  string appName // 谁发送的
+  string rcvappName // 谁接收的
+}
+
+object FileTransCreate {
+  int32 job_id
+  int32 file_id
+  string sub_dir // 创建的子目录
+  FileEntry entry  // 文件信息
+}
+
+object FileTransResponse {
+  int32 id  // 创建作业任务的jobid或单个文件的id
+  string name //目录或文件名
+  int32 result // 请求结果FileTransRe
+}
+
+object FileTransBlock {
+  int32 job_id // job id
+  int32 file_id //
+  string filename // 相对于TransJob中path的相对路径
+  uint32 blk_id // 拷贝的块id
+  bool compressed //
+}
+
+object FileTransJobCancel {
+  int32 job_id
+  string path    //文件目录路径
+}
+
+object FileTransJobReport {
+  int32 job_id
+  string path    //文件目录路径
+  string error
+  int32 result //结果FileTransRe
+}

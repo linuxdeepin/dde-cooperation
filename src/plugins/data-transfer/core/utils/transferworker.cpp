@@ -82,7 +82,7 @@ void TransferHandle::localIPCStart()
                 continue;
             }
             switch (bridge.type) {
-            case PING: {
+            case IPC_PING: {
                 ipc::PingFrontParam param;
                 param.from_json(json_obj);
 
@@ -97,7 +97,7 @@ void TransferHandle::localIPCStart()
                 }
 
                 BridgeJsonData res;
-                res.type = PING;
+                res.type = IPC_PING;
                 res.json = result ? param.session : "";   // 成功则返回session，否则为空
 
                 _frontendIpcService->bridgeResult()->operator<<(res);

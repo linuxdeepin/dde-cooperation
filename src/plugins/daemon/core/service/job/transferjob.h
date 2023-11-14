@@ -9,6 +9,7 @@
 #include <QQueue>
 #include <service/rpc/remoteservice.h>
 #include <ipc/proto/chan.h>
+#include "common/constant.h"
 #include "co/co.h"
 #include "co/time.h"
 

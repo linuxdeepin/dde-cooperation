@@ -44,7 +44,7 @@ co::chan<BridgeJsonData>* FrontendService::bridgeResult()
 void FrontendImpl::ping(co::Json &req, co::Json &res)
 {
     BridgeJsonData bridge;
-    bridge.type = PING;
+    bridge.type = IPC_PING;
     bridge.json = req.str();
     _interface->bridgeChan()->operator<<(bridge);
 

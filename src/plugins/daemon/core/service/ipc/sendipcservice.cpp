@@ -79,9 +79,15 @@ void SendIpcWork::handleSendToClient(const QString appName, const QString req)
         ELOG << "no session to send, appname = " << appName.toStdString() << "  ,  req = " << req.toStdString();
         return;
     }
+#if defined(WIN32)
+    UNIGO([s, req]() {
+#endif
     co::Json reqj, res;
     reqj.parse_from(req.toStdString());
     s->call(reqj, res);
+#if defined(WIN32)
+    });
+#endif
 }
 
 void SendIpcWork::handleAddJob(const QString appName, const int jobID)

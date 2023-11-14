@@ -8,7 +8,7 @@
 #include <QObject>
 
 #include "co/fs.h"
-#include "message.pb.h"
+#include "common/comonstruct.h"
 
 //namespace deamon_core {
 

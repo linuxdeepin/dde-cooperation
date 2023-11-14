@@ -6,14 +6,16 @@
 #define SERVICEMANAGER_H
 
 #include <QObject>
+#include <QSharedPointer>
 
 #include "co/co.h"
 #include "co/json.h"
 
-class RemoteServiceBinder;
+class RemoteServiceSender;
 class DiscoveryJob;
 class HandleIpcService;
 class HandleRpcService;
+class HandleSendResultService;
 class ServiceManager : public QObject
 {
     Q_OBJECT
@@ -30,6 +32,7 @@ private:
 private:
     HandleIpcService *_ipcService { nullptr };
     HandleRpcService *_rpcService { nullptr };
+    QSharedPointer<HandleSendResultService> _logic;
 };
 
 #endif // SERVICEMANAGER_H

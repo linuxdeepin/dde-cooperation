@@ -10,6 +10,7 @@
 #include <QSharedPointer>
 
 #include <service/job/transferjob.h>
+#include "common/comonstruct.h"
 #include "co/co.h"
 
 class JobManager : public QObject
@@ -22,10 +23,10 @@ public:
 public slots:
     bool handleRemoteRequestJob(QString json);
     bool doJobAction(uint32_t action, const co::Json &jsonobj);
-    bool handleFSData(const co::Json &info, fastring buf);
+    bool handleFSData(const co::Json &info, fastring buf, FileTransResponse *reply);
     bool handleFSInfo(co::Json &info);
-    bool handleCancelJob(co::Json &info);
-    bool handleTransReport(co::Json &info);
+    bool handleCancelJob(co::Json &info, FileTransResponse *reply);
+    bool handleTransReport(co::Json &info, FileTransResponse *reply);
 
     void handleFileTransStatus(QString appname, int status, QString fileinfo);
     void handleJobTransStatus(QString appname, int jobid, int status, QString savedir);

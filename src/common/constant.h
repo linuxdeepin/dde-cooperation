@@ -132,6 +132,7 @@ typedef enum flow_type_t {
 } FSFlowType;
 
 typedef enum rpc_result_t {
+    HAVE_NO_EXECTOR = -3,
     PARAM_ERROR = -2,
     INVOKE_FAIL = -1,
     INVOKE_OK = 0,
@@ -141,6 +142,19 @@ typedef enum rpc_send_status {
     APPLY_TRANS_FILE = 0,
     REMOTE_CLIENT_OFFLINE = 1, // tcp远端的tcpclient下线（服务调用方下线）
 } RpcSendStatus;
+
+enum FileType {
+  DIR = 0,
+  DIR_LINK = 1,
+  FILE_B = 2,
+  FILE_LINK =3,
+};
+
+enum FileTransRe {
+  IO_ERROR = 0, // 出现读写错误
+  OK = 1,  //无错误
+  FINIASH = 2, // 完成
+};
 
 // use thread replace the coroutine
 #if defined(DISABLE_GO)

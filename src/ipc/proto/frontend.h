@@ -142,11 +142,13 @@ struct GenericResult {
     int32 id;
     int32 result;
     fastring msg;
+    bool isself;
 
     void from_json(const co::Json& _x_) {
         id = (int32)_x_.get("id").as_int64();
         result = (int32)_x_.get("result").as_int64();
         msg = _x_.get("msg").as_c_str();
+        isself = _x_.get("isself").as_bool();
     }
 
     co::Json as_json() const {
@@ -154,6 +156,7 @@ struct GenericResult {
         _x_.add_member("id", id);
         _x_.add_member("result", result);
         _x_.add_member("msg", msg);
+        _x_.add_member("isself", isself);
         return _x_;
     }
 };
