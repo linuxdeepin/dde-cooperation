@@ -370,9 +370,9 @@ void SidebarWidget::updateSelectFileNumState(QStandardItem *siderbarItem)
     } else {
         state = 2;
     }
-    qInfo() << "root path:" << sidebarDiskList[siderbarItem].rootPath
-            << " current :" << sidebarDiskList[siderbarItem].curSelectFileNum << "state" << state
-            << sidebarDiskList[siderbarItem].allFileNum;
+    // qInfo() << "root path:" << sidebarDiskList[siderbarItem].rootPath
+    //        << " current :" << sidebarDiskList[siderbarItem].curSelectFileNum << "state" << state
+    //       << sidebarDiskList[siderbarItem].allFileNum;
     int curState = siderbarItem->data(Qt::StatusTipRole).toInt();
     if (curState == state)
         return;

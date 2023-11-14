@@ -34,7 +34,6 @@ void SelectMainWidget::changeSelectframeState(const SelectItemName &name)
         } else {
             appItem->isOk = true;
         }
-
         appItem->updateSelectSize(QString::number(list.size()));
     } else if (name == SelectItemName::FILES) {
         if (OptionsManager::instance()->getUserOption(Options::kFile).isEmpty()) {
@@ -88,8 +87,7 @@ void SelectMainWidget::initUi()
                      fileItem, &SelectItem::updateSelectSize);
 
     appItem = new SelectItem("应用", QIcon(":/icon/app.svg"), SelectItemName::APP, this);
-    configItem =
-            new SelectItem("配置", QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
+    configItem =new SelectItem("配置", QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
 
     QHBoxLayout *modeLayout = new QHBoxLayout();
 

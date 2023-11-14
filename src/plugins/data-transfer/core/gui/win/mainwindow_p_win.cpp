@@ -61,7 +61,7 @@ void MainWindowPrivate::initWindow()
 
     q->setWindowIcon(QIcon(":/icon/icon.svg"));
 
-     initSideBar();
+    initSideBar();
     initTitleBar();
     layout->setSpacing(0);
     layout->addLayout(windowsCentralWidget);
@@ -76,7 +76,7 @@ void MainWindowPrivate::initWidgets()
     PromptWidget *promptwidget = new PromptWidget(q);
     SuccessWidget *successwidget = new SuccessWidget(q);
     FileSelectWidget *filewselectidget =
-           new FileSelectWidget(qobject_cast<SidebarWidget *>(sidebar->widget()), q);
+            new FileSelectWidget(qobject_cast<SidebarWidget *>(sidebar->widget()), q);
     ConfigSelectWidget *configselectwidget = new ConfigSelectWidget(q);
     AppSelectWidget *appselectwidget = new AppSelectWidget(q);
     ErrorWidget *errorwidget = new ErrorWidget(q);
@@ -118,13 +118,10 @@ void MainWindowPrivate::initWidgets()
 
     QObject::connect(appselectwidget, &AppSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
-    //    QObject::connect(filewselectidget, &FileSelectWidget::isOk, selectmainwidget,
-    //                     &SelectMainWidget::changeSelectframeState);
+    QObject::connect(filewselectidget, &FileSelectWidget::isOk, selectmainwidget,
+                     &SelectMainWidget::changeSelectframeState);
     QObject::connect(configselectwidget, &ConfigSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
-
-    QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
-                     createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
 
     QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
                      createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
@@ -184,6 +181,7 @@ void MainWindowPrivate::mouseMoveEvent(QMouseEvent *event)
 
 void MainWindowPrivate::mouseReleaseEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event)
     leftButtonPressed = false;
 }
 

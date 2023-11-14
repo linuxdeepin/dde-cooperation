@@ -5,7 +5,7 @@
 #include "../select/userselectfilesize.h"
 #include "../select/calculatefilesize.h"
 #include "../win/devicelistener.h"
-#include <QColor>
+
 #include <QDebug>
 #include <QLabel>
 #include <QVBoxLayout>
@@ -13,7 +13,7 @@
 #include <QLineEdit>
 #include <QStackedWidget>
 #include <QListView>
-#include <QFileSystemModel>
+
 #include <QStandardItemModel>
 #include <QStorageInfo>
 
@@ -43,7 +43,7 @@ void CreateBackupFileWidget::sendOptions()
         QVariant checkboxData = model->data(index, Qt::CheckStateRole);
         Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
         if (checkState == Qt::Checked) {
-            QString selectDecive = model->data(index, Qt::WhatsThisRole).toString();
+            QString selectDecive = model->data(index, Qt::UserRole).toString();
             QString documentsPath =
                     QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
             if (selectDecive == QDir(documentsPath).rootPath()) {
@@ -196,11 +196,17 @@ void CreateBackupFileWidget::initUI()
     diskListViewLayout->addSpacing(140);
     diskListViewLayout->addWidget(diskListView);
 
-    QToolButton *determineButton = new QToolButton(this);
+    promptLabel = new QLabel(this);
+    promptLabel->setText(QString("<font size='3' color='#FF5736'>%1</font>")
+                                 .arg("当前磁盘空间不足，建议使用外置硬盘或清楚磁盘空间"));
+    promptLabel->setAlignment(Qt::AlignCenter);
+    promptLabel->setVisible(false);
+
+    determineButton = new QToolButton(this);
     determineButton->setText("开始备份");
     determineButton->setFixedSize(120, 35);
-    determineButton->setStyleSheet("background-color: lightgray;");
-    determineButton->setEnabled(false);
+    setDetermineButtonEnable(false);
+
     QObject::connect(determineButton, &QToolButton::clicked, this, [this]() {
         nextPage();
         ZipWork *worker = new ZipWork(this);
@@ -210,7 +216,18 @@ void CreateBackupFileWidget::initUI()
     QToolButton *cancelButton = new QToolButton(this);
     cancelButton->setText("取消");
     cancelButton->setFixedSize(120, 35);
-    cancelButton->setStyleSheet("background-color: lightgray;");
+    cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                "border: 1px solid rgba(0,0,0, 0.03);"
+                                "opacity: 1;"
+                                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                                "font-family: \"SourceHanSansSC-Medium\";"
+                                "font-size: 14px;"
+                                "font-weight: 500;"
+                                "color: rgba(65,77,104,1);"
+                                "font-style: normal;"
+                                "text-align: center;"
+                                ";}");
     QObject::connect(cancelButton, &QToolButton::clicked, this, &CreateBackupFileWidget::backPage);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
@@ -226,21 +243,23 @@ void CreateBackupFileWidget::initUI()
 
     mainLayout->addSpacing(30);
     mainLayout->addWidget(titileLabel);
+    mainLayout->addSpacing(20);
     mainLayout->addLayout(fileNameLayout);
     mainLayout->addLayout(layout1);
+    mainLayout->addSpacing(20);
     mainLayout->addLayout(savePathLayout);
     mainLayout->addLayout(diskListViewLayout);
     mainLayout->addSpacing(30);
+    mainLayout->addWidget(promptLabel);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addLayout(indexLayout);
-    QObject::connect(diskListView, &QListView::clicked, this,
-                     [determineButton](const QModelIndex &index) {
-                         if (index.data(Qt::CheckStateRole) == Qt::Unchecked) {
-                             determineButton->setEnabled(false);
-                         } else {
-                             determineButton->setEnabled(true);
-                         }
-                     });
+    QObject::connect(diskListView, &QListView::clicked, this, [this](const QModelIndex &index) {
+        if (index.data(Qt::CheckStateRole) == Qt::Unchecked) {
+            setDetermineButtonEnable(false);
+        } else {
+            setDetermineButtonEnable(true);
+        }
+    });
 
     QObject::connect(UserSelectFileSize::instance(), &UserSelectFileSize::updateUserFileSelectSize,
                      this, &CreateBackupFileWidget::updateuserSelectFileSize);
@@ -273,6 +292,62 @@ void CreateBackupFileWidget::initDiskListView()
             }
         }
     });
+}
+
+void CreateBackupFileWidget::checkDisk()
+{
+
+    bool isValid = false;
+    for (auto iterator = diskCapacity.begin(); iterator != diskCapacity.end(); ++iterator) {
+        QStandardItem *item = iterator.key();
+        quint64 size = iterator.value();
+        if (size < allSize) {
+            item->setCheckable(false);
+            item->setData(true, Qt::BackgroundRole);
+        } else {
+            isValid = true;
+            item->setCheckable(true);
+            item->setData(false, Qt::BackgroundRole);
+        }
+        //  qInfo() << "allsize:" << allSize << " size:" << size;
+    }
+    if (!isValid)
+        promptLabel->setVisible(true);
+    else
+        promptLabel->setVisible(false);
+}
+
+void CreateBackupFileWidget::setDetermineButtonEnable(bool enable)
+{
+    if (enable) {
+        determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                       "border: 1px solid rgba(0,0,0, 0.03);"
+                                       "opacity: 1;"
+                                       "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                       "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                                       "font-family: \"SourceHanSansSC-Medium\";"
+                                       "font-size: 14px;"
+                                       "font-weight: 500;"
+                                       "color: rgba(65,77,104,1);"
+                                       "font-style: normal;"
+                                       "text-align: center;"
+                                       ";}");
+        determineButton->setEnabled(true);
+    } else {
+        determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                       "border: 1px solid rgba(0,0,0, 0.03);"
+                                       "opacity: 1;"
+                                       "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                       "rgba(230, 230, 230, 0.6), stop:1 rgba(227, 227, 227, 0.6));"
+                                       "font-family: \"SourceHanSansSC-Medium\";"
+                                       "font-size: 14px;"
+                                       "font-weight: 500;"
+                                       "color: rgba(65,77,104,0.6);"
+                                       "font-style: normal;"
+                                       "text-align: center;"
+                                       ";}");
+        determineButton->setEnabled(false);
+    }
 }
 
 void CreateBackupFileWidget::nextPage()
@@ -325,8 +400,10 @@ void CreateBackupFileWidget::updaeBackupFileSize()
         bookmarkJsonSize = QFileInfo(bookmarkJsonPath[0]).size();
     }
 
-    quint64 allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize + bookmarkJsonSize;
+    allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize + bookmarkJsonSize;
     backupFileSizeLabel->setText(QString("大小:  %1").arg(fromByteToQstring(allSize)));
+
+    checkDisk();
 }
 
 void CreateBackupFileWidget::getUpdateDeviceSingla()
@@ -356,18 +433,21 @@ void CreateBackupFileWidget::getUpdateDeviceSingla()
         updateDevice(device, false);
     }
     deviceList = devices;
+
+    checkDisk();
 }
+
 void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
 {
     if (isAdd) {
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
         QString rootPath = device.rootPath();
-        QString displayName =
-                (device.name().isEmpty() ? "本地磁盘" : device.name()) + "(" + rootPath.at(0) + ":)";
+        QString displayName = (device.name().isEmpty() ? "本地磁盘" : device.name()) + "("
+                + rootPath.at(0) + ":)";
 
         QStandardItem *item = new QStandardItem();
         item->setData(displayName, Qt::DisplayRole);
-        item->setData(rootPath, Qt::WhatsThisRole);
+        item->setData(rootPath, Qt::UserRole);
         item->setData(QString("%1/%2可用")
                               .arg(fromByteToQstring(device.bytesAvailable()))
                               .arg(fromByteToQstring(device.bytesTotal())),
@@ -377,7 +457,7 @@ void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool
         } else {
             item->setIcon(QIcon(":/icon/drive-harddisk-usb-32px.svg"));
         }
-
+        diskCapacity[item] = device.bytesAvailable();
         item->setCheckable(true);
         model->appendRow(item);
     } else {
@@ -385,8 +465,15 @@ void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
         for (int row = 0; row < model->rowCount(); ++row) {
             QModelIndex itemIndex = model->index(row, 0);
-            if (rootPath == model->data(itemIndex, Qt::WhatsThisRole)) {
+            if (rootPath == model->data(itemIndex, Qt::UserRole)) {
                 model->removeRow(itemIndex.row());
+            }
+        }
+        for (auto iterator = diskCapacity.begin(); iterator != diskCapacity.end(); ++iterator) {
+            QString path = iterator.key()->data(Qt::UserRole).toString();
+            if (path == rootPath) {
+                diskCapacity.erase(iterator);
+                break;
             }
         }
     }

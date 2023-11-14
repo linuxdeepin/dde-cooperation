@@ -20,7 +20,7 @@ public slots:
 private:
     void initUI();
     void tryConnect();
-
+    void setnextButEnable(bool enabel);
     QLineEdit *ipInput{ nullptr };
     QLineEdit *captchaInput{ nullptr };
     QToolButton *nextButton{ nullptr };

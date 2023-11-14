@@ -2,7 +2,7 @@
 #include <utils/transferhepler.h>
 
 #include "zipworker.h"
-#include "drapwindowsdata.h"
+#include "../win/drapwindowsdata.h"
 
 #include <QProcess>
 #include <QDebug>
@@ -38,31 +38,9 @@ void ZipWork::getUserDataPackagingFile()
 {
     QStringList zipFilePathList = TransferHelper::instance()->getTransferFilePath();
 
-    QStringList zipFileSavePath =
-            OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath);
-    QStringList zipFileNameList =
-            OptionsManager::instance()->getUserOption(Options::kBackupFileName);
-
-    QString zipFileName;
-    if (zipFileNameList[0] == "") {
-        zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName() + "_"
-                + DrapWindowsData::instance()->getIP() + "_uos.zip";
-    } else {
-        zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName() + "_"
-                + DrapWindowsData::instance()->getIP() + "_" + zipFileNameList[0] + ".zip";
-    }
-    qInfo() << "backup file save path:" << zipFileName;
-
-    QFile  file(zipFileName);
-    if (file.exists() && file.remove()) {
-        qDebug() <<zipFileName <<" exists, and removed!" ;
-    } else {
-        qDebug() << zipFileName <<" exists, and can not removed!" ;
-    }
-
     // Get the number of files to zip
     allFileNum = getAllFileNum(zipFilePathList);
-    backupFile(zipFilePathList, zipFileName);
+    backupFile(zipFilePathList, getBackupFilName());
 }
 
 int ZipWork::getPathFileNum(const QString &filePath)
@@ -168,7 +146,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     if (!zip.open(QuaZip::mdCreate)) {
         qCritical("Error creating the ZIP file.");
         // backup file false
-        emit backupFileProcessSingal(QString("创建压缩文件失败,检查文件是否已经被打开！"), -1, -1);
+        emit backupFileProcessSingal(QString("创建压缩文件失败,检查文件%1是否已经被打开！").arg(destinationZipFile), -1, -1);
         return false;
     }
 
@@ -230,6 +208,34 @@ void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &time
     if (num > maxNum)
         num = 0;
     emit backupFileProcessSingal(filePath, progress, needTime);
+}
+
+QString ZipWork::getBackupFilName()
+{
+    QStringList zipFileSavePath = OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath);
+    QStringList zipFileNameList = OptionsManager::instance()->getUserOption(Options::kBackupFileName);
+
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    QString formattedDateTime = currentDateTime.toString("yyyyMMddhhmm");
+
+    QString zipFileName;
+
+    if (zipFileNameList[0] == "") {
+        zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName() + "_"
+                + DrapWindowsData::instance()->getIP() +"_" +formattedDateTime+".zip";
+    } else {
+        zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] +".zip";
+    }
+    qInfo() << "backup file save path:" << zipFileName;
+
+    QFile  file(zipFileName);
+    if (file.exists() && file.remove()) {
+        qDebug() <<zipFileName <<" exists, and removed!" ;
+    } else {
+        qDebug() << zipFileName <<" exists, and can not removed!" ;
+    }
+
+    return zipFileName;
 }
 
 void ZipWork::abortingBackupFileProcess()

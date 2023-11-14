@@ -221,6 +221,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         info.current_size = 0;
         info.time_spended = -1;
         _file_info_maps.insert(std::make_pair(fileid, info));
+        handleTransStatus(FILE_TRANS_IDLE, info);
         //        LOG << "======this file (" << subname << "fileid" << fileid << ") start   _file_info_maps";
     }
     UNIGO([this, filepath, fileid, subname, file_size, block_size]() {

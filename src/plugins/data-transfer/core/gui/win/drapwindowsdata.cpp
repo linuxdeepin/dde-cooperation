@@ -26,7 +26,7 @@
 
 #define MAXNAME 256
 
-//#pragma execution_chatacter_set("utf_8")
+#pragma execution_chatacter_set("utf_8")
 namespace Registry {
 inline constexpr char BrowerRegistryPath[]{ "SOFTWARE\\Clients\\StartMenuInternet" };
 inline constexpr char ApplianceRegistryPath1[]{
@@ -162,7 +162,7 @@ void DrapWindowsData::readMicrosoftEdgeAndGoogleChromeBookmark(const QString &js
 {
     QFile file(jsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Failed to open file";
+        qDebug() << "Failed to open file :" << jsonPath;
         return;
     }
 
@@ -508,20 +508,12 @@ void DrapWindowsData::applianceFromSetting(QSettings &settings, QString registry
     QStringList appKeys = settings.childGroups();
     for (const QString &appKey : appKeys) {
         settings.beginGroup(appKey);
-
         QString displayName = settings.value("DisplayName").toString();
         QString installLocation = settings.value("InstallLocation").toString();
         QString displayIcon = settings.value("DisplayIcon").toString();
         bool isSystemComponent = settings.value("SystemComponent").toBool();
         if (!isSystemComponent) {
             if (!installLocation.isEmpty()) {
-
-//                qDebug() << "Display Name: " << displayName;
-//                qDebug() << "installLocation : " << installLocation;
-//                qDebug() << "icon Location: " << displayIcon;
-
-//                qDebug() << " ";
-
                 WinApp app;
                 app.name = displayName;
                 app.iconPath = displayIcon;
@@ -530,14 +522,11 @@ void DrapWindowsData::applianceFromSetting(QSettings &settings, QString registry
                     if (iteraotr->name == displayName)
                         break;
                 }
-
                 applianceList.push_back(app);
             }
         }
-
         settings.endGroup();
     }
-
     settings.endGroup();
 }
 
@@ -575,17 +564,23 @@ void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &t
 
 QPixmap DrapWindowsData::getAppIcon(const QString &path)
 {
-    if(path.isEmpty())
+    if (path.isEmpty())
         return QPixmap();
     HICON hIcon;
     QString tempStr = path;
     if (ExtractIconExW(tempStr.toStdWString().c_str(), 0, NULL, &hIcon, 1) <= 0) {
         return QPixmap();
     }
+    if (hIcon == 0) {
+        DestroyIcon(hIcon);
+        return QPixmap();
+    }
 
-    // 将 HICON 转换为 QPixmap
-    QPixmap pixmap = QtWin::fromHICON(hIcon).scaled(20, 20);
-    return pixmap;
+    QPixmap pixmap = QtWin::fromHICON(hIcon);
+    DestroyIcon(hIcon);
+    if (pixmap.isNull())
+        return pixmap;
+    return pixmap.scaled(20, 20);
 }
 
 bool DrapWindowsData::containsAnyString(const QString &haystack, const QStringList &needles)

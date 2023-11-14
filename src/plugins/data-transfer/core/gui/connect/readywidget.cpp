@@ -124,6 +124,7 @@ void ReadyWidget::initUI()
     connect(backButton, &QToolButton::clicked, this, &ReadyWidget::backPage);
 
     tiptextlabel = new QLabel(this);
+
     tiptextlabel->setText("<font size='3' color='#000000'>连接中...</font>");
     tiptextlabel->setVisible(false);
     tiptextlabel->setAlignment(Qt::AlignCenter);
@@ -135,18 +136,7 @@ void ReadyWidget::initUI()
     nextButton->setPalette(palette);
     nextButton->setText("确定");
     nextButton->setFixedSize(120, 35);
-    nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                              "border: 1px solid rgba(0,0,0, 0.03);"
-                              "opacity: 1;"
-                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                              "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
-                              "font-family: \"SourceHanSansSC-Medium\";"
-                              "font-size: 14px;"
-                              "font-weight: 500;"
-                              "color: rgba(255,255,255,1);"
-                              "font-style: normal;"  
-                              "text-align: center;"
-                              "}");
+    setnextButEnable(false);
     connect(nextButton, &QToolButton::clicked, this, &ReadyWidget::tryConnect);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
@@ -187,20 +177,55 @@ void ReadyWidget::initUI()
     QObject::connect(timer, &QTimer::timeout, [&]() {
         tiptextlabel->setText("<font size='3' color='#000000'>连接中...</font>");
         tiptextlabel->setVisible(false);
+        setnextButEnable(true);
     });
 }
 
 void ReadyWidget::tryConnect()
 {
     tiptextlabel->setVisible(true);
+    setnextButEnable(false);
+
     qInfo() << ipInput->text() << " " << captchaInput->text();
     TransferHelper::instance()->tryConnect(ipInput->text(), captchaInput->text());
 }
 
+void ReadyWidget::setnextButEnable(bool enabel)
+{
+    if (enabel) {
+        nextButton->setEnabled(true);
+        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "border: 1px solid rgba(0,0,0, 0.03);"
+                                  "opacity: 1;"
+                                  "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                  "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
+                                  "font-family: \"SourceHanSansSC-Medium\";"
+                                  "font-size: 14px;"
+                                  "font-weight: 500;"
+                                  "color: rgba(255,255,255,1);"
+                                  "font-style: normal;"
+                                  "text-align: center;"
+                                  "}");
+    } else {
+        nextButton->setEnabled(false);
+        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "border: 1px solid rgba(0,0,0, 0.03);"
+                                  "opacity: 1;"
+                                  "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                  "rgba(37, 183, 255, 0.6), stop:1 rgba(0, 152, 255, 0.6));"
+                                  "font-family: \"SourceHanSansSC-Medium\";"
+                                  "font-size: 14px;"
+                                  "font-weight: 500;"
+                                  "color: rgba(255,255,255,0.6);"
+                                  "font-style: normal;"
+                                  "text-align: center;"
+                                  "}");
+    }
+}
+
 void ReadyWidget::nextPage()
 {
-
-    tiptextlabel->setVisible(false);
+    // tiptextlabel->setVisible(false);
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
@@ -228,7 +253,7 @@ void ReadyWidget::onLineTextChange()
     QRegularExpressionMatch ipMatch = ipRegex.match(ipInput->text());
 
     if (!ipMatch.hasMatch()) {
-        nextButton->setEnabled(false);
+        setnextButEnable(false);
         return;
     }
 
@@ -236,11 +261,11 @@ void ReadyWidget::onLineTextChange()
     QRegularExpressionMatch captchaMatch = captchaRegex.match(captchaInput->text());
 
     if (!captchaMatch.hasMatch()) {
-        nextButton->setEnabled(false);
+        setnextButEnable(false);
         return;
     }
 
-    nextButton->setEnabled(true);
+    setnextButEnable(true);
 }
 
 void ReadyWidget::connectFailed()

@@ -24,12 +24,12 @@
 #include <QJsonArray>
 
 #ifdef WIN32
-#    include <gui/getbackup/drapwindowsdata.h>
+#include <gui/win/drapwindowsdata.h>
 #else
 #    include "settinghepler.h"
 #endif
 
-#pragma execution_character_set("utf-8")
+//#pragma execution_character_set("utf-8")
 TransferHelper::TransferHelper() : QObject()
 {
     initOnlineState();

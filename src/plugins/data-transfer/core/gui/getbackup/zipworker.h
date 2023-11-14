@@ -27,6 +27,8 @@ private:
     bool backupFile(const QStringList &sourceFilePath, const QString &zipFileSave);
 
     void sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer);
+
+    QString getBackupFilName();
 signals:
     void backupFileProcessSingal(const QString &content, int progressbar, int estimatedtime);
 public slots:

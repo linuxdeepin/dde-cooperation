@@ -1,6 +1,6 @@
 ﻿#include "appselectwidget.h"
 #include "../type_defines.h"
-#include "../getbackup/drapwindowsdata.h"
+#include "../win/drapwindowsdata.h"
 #include "item.h"
 #include <QHBoxLayout>
 #include <QLabel>
@@ -144,7 +144,7 @@ void AppSelectWidget::initSelectFrame()
         item->setData("否", Qt::ToolTipRole);
         item->setData(true,Qt::BackgroundRole);
         QPixmap pix = DrapWindowsData::instance()->getAppIcon(iterator.value());
-        if (pix == QPixmap()) {
+        if (pix.isNull()) {
             item->setIcon(QIcon(":/icon/fileicon.svg"));
         } else {
             item->setIcon(QIcon(pix));
