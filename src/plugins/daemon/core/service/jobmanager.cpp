@@ -22,27 +22,31 @@ JobManager::~JobManager()
 
 }
 
+bool JobManager::handleCreateFile(const int jobId, const QString &fileName, const bool isDir)
+{
+    auto job = _transjob_recvs.value(jobId);
+    if (job.isNull())
+        return false;
+    return job->createFile(fileName, isDir);
+}
+
 bool JobManager::handleRemoteRequestJob(QString json)
 {
     co::Json info;
     if (!info.parse_from(json.toStdString())) {
         return false;
     }
-    FSJob fsjob;
+    FileTransJob fsjob;
     fsjob.from_json(info);
     int32 jobId = fsjob.job_id;
-    fastring savedir = fsjob.save;
-    fastring appName = fsjob.who;
-    fastring tarAppname = info.get("targetwho").as_c_str();
+    fastring savedir = fsjob.save_path;
+    fastring appName = fsjob.app_who;
+    fastring tarAppname = fsjob.targetAppname;
     SendRpcService::instance()->removePing(appName.c_str());
-    if (savedir.empty() && fsjob.write) {
-        // 如果未指定保存相对路径，则默认保存到$home/hostname
-        savedir = DaemonConfig::instance()->getStorageDir(appName);
-    }
     tarAppname = tarAppname.empty() ? appName : appName;
     SendRpcService::instance()->removePing(tarAppname.c_str());
     QSharedPointer<TransferJob> job(new TransferJob());
-    job->initJob(fsjob.who, tarAppname, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
+    job->initJob(fsjob.app_who, tarAppname, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
     job->initRpc(_connected_target, UNI_RPC_PORT_BASE);
     connect(job.data(), &TransferJob::notifyFileTransStatus, this, &JobManager::handleFileTransStatus, Qt::QueuedConnection);
     connect(job.data(), &TransferJob::notifyJobResult, this, &JobManager::handleJobTransStatus, Qt::QueuedConnection);
@@ -56,12 +60,14 @@ bool JobManager::handleRemoteRequestJob(QString json)
         _transjob_sends.insert(jobId, job);
     }
     g_m.unlock();
+
     UNIGO([this, job]() {
         // start job one by one
         co::mutex_guard g(g_m);
         // DLOG << ".........start job: sched: " << co::sched_id() << " co: " << co::coroutine_id();
         job->start();
     });
+
 
     return true;
 }

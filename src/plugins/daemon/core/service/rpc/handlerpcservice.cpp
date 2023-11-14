@@ -87,10 +87,7 @@ void HandleRpcService::startRemoteServer()
             }
             case IN_TRANSJOB:
             {
-                auto res = JobManager::instance()->handleRemoteRequestJob(json_obj.str().c_str());
-                OutData data;
-                data.type = OUT_TRANSJOB;
-                data.json = co::Json({"result", res}).str();
+                self->handleTransJob(json_obj);
                 break;
             }
             case FS_DATA:
@@ -117,6 +114,8 @@ void HandleRpcService::startRemoteServer()
             }
             case TRANS_APPLY:
             {
+                OutData data;
+                _outgo_chan << data;
                 self->handleRemoteApplyTransFile(json_obj);
                 break;
             }
@@ -296,7 +295,7 @@ void HandleRpcService::handleRemoteFileInfo(co::Json &info)
         JobManager::instance()->handleFSInfo(tm);
     }
 
-    bool exist = FSAdapter::newFile(filename.c_str(), type == DIR);
+    bool exist = JobManager::instance()->handleCreateFile(res.job_id, filename.c_str(), type == DIR);
 
     FileTransResponse reply;
     OutData data;
@@ -338,5 +337,15 @@ void HandleRpcService::handleRemoteJobCancel(co::Json &info)
     out.json = reply.as_json().str();
     JobManager::instance()->handleCancelJob(info, &reply);
     _outgo_chan << out;
+}
+
+void HandleRpcService::handleTransJob(co::Json &info)
+{
+    auto res = JobManager::instance()->handleRemoteRequestJob(info.str().c_str());
+    OutData data;
+    data.type = OUT_TRANSJOB;
+    data.json = co::Json({"result", res}).str();
+    _outgo_chan << data;
+    _outgo_chan << data;
 }
 

@@ -29,6 +29,7 @@ public:
     void handleRemoteFileBlock(co::Json &info, fastring data);
     void handleRemoteReport(co::Json &info);
     void handleRemoteJobCancel(co::Json &info);
+    void handleTransJob(co::Json &info);
 
 signals:
     void remoteRequestJob(const QString info);

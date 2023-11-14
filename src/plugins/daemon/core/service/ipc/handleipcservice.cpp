@@ -188,12 +188,8 @@ QString HandleIpcService::handlePing(const co::Json &msg)
         return QString();
     }
     QString appName = param.who.c_str();
-    QString sesid = _sessionIDs.value(param.who.c_str());
-    if (!sesid.isEmpty())
-        return sesid;
-
     // gen new one
-    sesid = co::randstr(appName.toStdString().c_str(), 8).c_str(); // 长度为8的16进制字符串
+    QString sesid = co::randstr(appName.toStdString().c_str(), 8).c_str(); // 长度为8的16进制字符串
     _sessionIDs.insert(appName, sesid);
     // 创建新的sessionid
     SendIpcService::instance()->handleSaveSession(appName, sesid, static_cast<uint16>(param.cb_port));
@@ -217,20 +213,18 @@ void HandleIpcService::newTransSendJob(QString session, const QString targetSess
         fastring filepath = path.toStdString();
         pathjson.push_back(filepath);
     }
-    //FSJob
-    co::Json jobjson = {
-        { "who", who },
-        { "targetwho", targetSession.toStdString() },
-        { "job_id", id },
-        { "path", pathjson.str() },
-        { "save", savepath },
-        { "hidden", false },
-        { "sub", sub },
-        { "write", false }
-    };
+    FileTransJob job;
+    job.app_who = who;
+    job.targetAppname = targetSession.toStdString();
+    job.job_id = id;
+    job.save_path = savepath;
+    job.include_hidden = false;
+    job.sub = sub;
+    job.write = false;
+    job.path = pathjson.str();
 
     SendIpcService::instance()->handleAddJob(s, jobId);
-    JobManager::instance()->handleRemoteRequestJob(jobjson.str().c_str());
+    JobManager::instance()->handleRemoteRequestJob(job.as_json().str().c_str());
 }
 
 void HandleIpcService::handleNodeRegister(bool unreg, const co::Json &info)

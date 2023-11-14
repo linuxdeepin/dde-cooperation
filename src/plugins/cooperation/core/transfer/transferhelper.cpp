@@ -54,7 +54,7 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
 
     //    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, q, &TransferHelper::onConfigChanged);
     QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
-                                          this, SLOT(onActionTriggered(uint, const QString &)));
+                                          q, SLOT(onActionTriggered(uint, const QString &)));
 }
 
 TransferHelperPrivate::~TransferHelperPrivate()

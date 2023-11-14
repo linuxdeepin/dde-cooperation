@@ -37,6 +37,30 @@ void TransferJob::initJob(fastring appname, fastring targetappname, int id, fast
     _savedir = savedir;
     _writejob = write;
     _inited = true;
+    if (_writejob) {
+        fastring fullpath = path::join(
+                    DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+        FSAdapter::newFileByFullPath(fullpath.c_str(), true);
+    } else {
+        FileTransJob req_job;
+        req_job.job_id = _jobid;
+        req_job.save_path = _savedir.c_str();
+        req_job.include_hidden = false;
+        req_job.path = _path;
+        req_job.sub = _sub;
+        req_job.write = (!_writejob);
+        req_job.app_who = _tar_app_name;
+        req_job.targetAppname = _app_name;
+        SendRpcService::instance()->doSendProtoMsg(IN_TRANSJOB, _app_name.c_str(),
+                                                   req_job.as_json().str().c_str());
+    }
+}
+
+bool TransferJob::createFile(const QString &filename, const bool isDir)
+{
+    fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+    fastring fullpath = path::join(path, filename.toStdString().c_str());
+    return FSAdapter::newFileByFullPath(fullpath.c_str(), isDir);
 }
 
 void TransferJob::start()
@@ -50,16 +74,6 @@ void TransferJob::start()
     } else {
         //并行读取文件数据
         DLOG << "doTransfileJob path to save:" << _savedir;
-        FileTransJob req_job;
-        req_job.job_id = _jobid;
-        req_job.path = _savedir.c_str();
-        req_job.include_hidden = false;
-        req_job.recursive = _sub;
-        req_job.push = (!_writejob);
-        req_job.app_who = _app_name;
-        req_job.targetAppname = _tar_app_name;
-        SendRpcService::instance()->doSendProtoMsg(IN_TRANSJOB, _app_name.c_str(), req_job.as_json().str().c_str());
-
         co::Json pathJson;
         pathJson.parse_from(_path);
         DLOG << "read job start path: " << pathJson;
@@ -173,8 +187,16 @@ void TransferJob::scanPath(fastring root, fastring path)
     info.job_id = _jobid;
     info.file_id = _fileid;
     info.sub_dir = subdir.c_str();
+    FileEntry *entry = new FileEntry();
+    if (FSAdapter::getFileEntry(path.c_str(), &entry) < 0) {
+        ELOG << "get file entry error !!!!";
+        cancel();
+        return;
+    }
+    info.entry = *entry;
     info.entry.appName = _app_name;
     info.entry.rcvappName = _tar_app_name;
+
     SendRpcService::instance()->doSendProtoMsg(FS_INFO, _app_name.c_str(), info.as_json().str().c_str());
     if (_stoped)
         return;
@@ -345,7 +367,8 @@ void TransferJob::handleBlockQueque()
         int32 job_id = block->job_id;
         int32 file_id = block->file_id;
         uint64 blk_id = block->blk_id;
-        fastring name = path::join(DaemonConfig::instance()->getStorageDir(_app_name), block->filename);
+        fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+        fastring name = path::join(path, block->filename);
         fastring buffer = block->data;
         size_t len = buffer.size();
         bool comp = block->compressed;

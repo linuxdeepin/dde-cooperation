@@ -131,18 +131,20 @@ struct MiscInfo {
 struct FileTransJob {
     int32 job_id;
     fastring path;
+    fastring save_path;
     bool include_hidden;
-    bool recursive;
-    bool push;
+    bool sub;
+    bool write;
     fastring app_who;
     fastring targetAppname;
 
     void from_json(const co::Json& _x_) {
         job_id = (int32)_x_.get("job_id").as_int64();
         path = _x_.get("path").as_c_str();
+        save_path = _x_.get("save_path").as_c_str();
         include_hidden = _x_.get("include_hidden").as_bool();
-        recursive = _x_.get("recursive").as_bool();
-        push = _x_.get("push").as_bool();
+        sub = _x_.get("sub").as_bool();
+        write = _x_.get("write").as_bool();
         app_who = _x_.get("app_who").as_c_str();
         targetAppname = _x_.get("targetAppname").as_c_str();
     }
@@ -151,9 +153,10 @@ struct FileTransJob {
         co::Json _x_;
         _x_.add_member("job_id", job_id);
         _x_.add_member("path", path);
+        _x_.add_member("save_path", save_path);
         _x_.add_member("include_hidden", include_hidden);
-        _x_.add_member("recursive", recursive);
-        _x_.add_member("push", push);
+        _x_.add_member("sub", sub);
+        _x_.add_member("write", write);
         _x_.add_member("app_who", app_who);
         _x_.add_member("targetAppname", targetAppname);
         return _x_;
