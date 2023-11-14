@@ -21,6 +21,7 @@ public:
     explicit TransferJob(QObject *parent = nullptr);
     void initRpc(fastring target, uint16 port);
     void initJob(fastring appname, fastring targetappname, int id, fastring path, bool sub, fastring savedir, bool write);
+    bool createFile(const QString &filename, const bool isDir);
 
     void start();
     void stop();

@@ -87,38 +87,6 @@ struct FSResult {
     }
 };
 
-struct FSJob {
-    fastring who;
-    int32 job_id;
-    fastring path;
-    fastring save;
-    bool hidden;
-    bool sub;
-    bool write;
-
-    void from_json(const co::Json& _x_) {
-        who = _x_.get("who").as_c_str();
-        job_id = (int32)_x_.get("job_id").as_int64();
-        path = _x_.get("path").as_c_str();
-        save = _x_.get("save").as_c_str();
-        hidden = _x_.get("hidden").as_bool();
-        sub = _x_.get("sub").as_bool();
-        write = _x_.get("write").as_bool();
-    }
-
-    co::Json as_json() const {
-        co::Json _x_;
-        _x_.add_member("who", who);
-        _x_.add_member("job_id", job_id);
-        _x_.add_member("path", path);
-        _x_.add_member("save", save);
-        _x_.add_member("hidden", hidden);
-        _x_.add_member("sub", sub);
-        _x_.add_member("write", write);
-        return _x_;
-    }
-};
-
 struct FSDataBlock {
     int32 job_id;
     int32 file_id;

@@ -45,9 +45,26 @@ int FSAdapter::getFileEntry(const char *path, FileEntry **entry)
     return 0;
 }
 
-bool FSAdapter::newFile(const char *name, bool isdir)
+bool FSAdapter::newFile(const char *path, bool isdir)
 {
-    fastring fullpath = path::join(DaemonConfig::instance()->getStorageDir(), name);
+    fastring fullpath = path::join(DaemonConfig::instance()->getStorageDir(), path);
+    if (isdir) {
+        fs::mkdir(fullpath, true);
+    } else {
+        fastring parent = path::dir(fullpath);
+        fs::mkdir(parent, true); // 创建文件保存的根/子目录
+        if (!fs::exists(fullpath)) {
+            fs::file fx(fullpath, 'm');
+            fx.close();
+        }
+    }
+//    LOG << "new file -> fullpath: " << fullpath;
+
+    return fs::exists(fullpath);
+}
+
+bool FSAdapter::newFileByFullPath(const char *fullpath, bool isdir)
+{
     if (isdir) {
         fs::mkdir(fullpath, true);
     } else {

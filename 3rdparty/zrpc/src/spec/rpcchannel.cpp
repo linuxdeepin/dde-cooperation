@@ -24,6 +24,11 @@ ZRpcChannel::ZRpcChannel(NetAddress::ptr addr)
     : m_addr(addr) {
 }
 
+ZRpcChannel::~ZRpcChannel()
+{
+    m_client = nullptr;
+}
+
 void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
                              google::protobuf::RpcController *controller,
                              const google::protobuf::Message *request,

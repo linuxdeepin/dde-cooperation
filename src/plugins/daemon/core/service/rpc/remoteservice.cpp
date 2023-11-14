@@ -31,7 +31,7 @@ void RemoteServiceImpl::proto_msg(google::protobuf::RpcController *controller,
                                   google::protobuf::Closure *done)
 {
     Q_UNUSED(controller);
-    LOG << " req= " << request->ShortDebugString().c_str();
+    LOG << " req= type = " << request->type() << " msg  =  " << request->msg();
     IncomeData in;
     in.type = static_cast<IncomeType>(request->type());
     in.json = request->msg();
@@ -86,7 +86,8 @@ SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString 
     ProtoData req, rpc_res;
     req.set_type(type);
     req.set_msg(msg.toStdString());
-    req.set_data(data);
+    fastring dt(data.toStdString().c_str(), static_cast<size_t>(data.size()));
+    req.set_data(dt.c_str(), dt.size());
     int retryCount = 0;
 
 retryed:

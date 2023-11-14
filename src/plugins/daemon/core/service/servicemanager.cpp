@@ -42,6 +42,7 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     // init sender
     SendIpcService::instance();
     SendRpcService::instance();
+    JobManager::instance();
     connect(SendRpcService::instance(), &SendRpcService::sendToRpcResult,
             _logic.data(), &HandleSendResultService::handleSendResultMsg, Qt::QueuedConnection);
 }

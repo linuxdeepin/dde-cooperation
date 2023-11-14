@@ -40,10 +40,11 @@ object MiscInfo {
 
 object FileTransJob {
   int32 job_id // job id
-  string path     //文件目录路径
+  string path // 文件路径
+  string save_path //文件保存路径
   bool include_hidden //是否包含着.开头隐藏文件
-  bool recursive //是否迭代包含着子目录
-  bool push // push or pull
+  bool sub //是否迭代包含着子目录
+  bool write // push or pull
   string app_who     //是哪个前端应用创建的传输任务
   string targetAppname // 接收端是那个应用接受传输
 }

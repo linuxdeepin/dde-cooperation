@@ -26,16 +26,6 @@ object FSResult {
     string reason //原因
 }
 
-object FSJob {
-    string who     //前端应用名
-    int32 job_id
-    string path     //文件目录路径
-    string save     //Homedir下指定文件保存路径
-    bool hidden //是否包含着.开头隐藏文件
-    bool sub //是否迭代包含着子目录
-    bool write // write(receive) or read(send) task
-}
-
 object FSDataBlock {
     int32 job_id
     int32 file_id
