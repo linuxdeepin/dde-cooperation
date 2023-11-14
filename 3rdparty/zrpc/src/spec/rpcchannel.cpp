@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -22,6 +22,11 @@ namespace zrpc_ns {
 TcpClient::ptr m_client = nullptr;
 ZRpcChannel::ZRpcChannel(NetAddress::ptr addr)
     : m_addr(addr) {
+}
+
+ZRpcChannel::~ZRpcChannel()
+{
+    m_client = nullptr;
 }
 
 void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,

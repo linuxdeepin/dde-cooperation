@@ -17,7 +17,7 @@ class ZRPC_API ZRpcChannel : public google::protobuf::RpcChannel {
 public:
     typedef std::shared_ptr<ZRpcChannel> ptr;
     ZRpcChannel(NetAddress::ptr addr);
-    ~ZRpcChannel() = default;
+    ~ZRpcChannel();
 
     void CallMethod(const google::protobuf::MethodDescriptor *method,
                     google::protobuf::RpcController *controller,
