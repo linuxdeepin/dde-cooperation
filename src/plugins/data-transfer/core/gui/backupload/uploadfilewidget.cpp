@@ -128,7 +128,7 @@ void UploadFileWidget::initUI()
 bool UploadFileWidget::checkBackupFile(const QString &filePath)
 {
     //Verify effectiveness
-    if (UnzipWorker::getNumFiles(filePath) == 0) {
+    if (!UnzipWorker::isValid(filePath)) {
         tipLabel->setText("<font size=12px color='#FF5736' >文件错误，无法迁移，请更换备份文件</font>");
         tipLabel->setVisible(true);
         return false;
@@ -136,8 +136,8 @@ bool UploadFileWidget::checkBackupFile(const QString &filePath)
 
     // Verify size
     QFileInfo info(filePath);
-    qInfo() << "<<info.size();" << info.size();
-    int size = static_cast<int>(info.size() / 1024 / 1024 / 1024 + 5);
+    qInfo() << "checkBackupFile .size();" << info.size();
+    int size = static_cast<int>(info.size() / 1024 / 1024 / 1024) * 2;
     if (size > TransferHelper::instance()->getRemainSize()) {
         tipLabel->setVisible(true);
         tipLabel->setText(QString("<font size=12px color='#FF5736' >UOS空间不足，请至少预留 %1G 空间后重试</font>").arg(size));

@@ -153,7 +153,7 @@ void ConnectWidget::initConnectLayout()
     tipLabel->setFont(tipfont);
 
     QTimer *timer = new QTimer();
-    connect(timer, &QTimer::timeout, [tipLabel, passwordLabel, nullLabel, timer, this]() {
+    connect(timer, &QTimer::timeout, [refreshLabel, tipLabel, passwordLabel, nullLabel, timer, this]() {
         if (remainingTime > 0) {
             remainingTime--;
             QString tip = QString("密码有效时间还剩<font color='#6199CA'>%1s</font>，请尽快输入连接密码").arg(QString::number(remainingTime));
@@ -164,6 +164,7 @@ void ConnectWidget::initConnectLayout()
             nullLabel->setVisible(true);
             WarnningLabel->setVisible(true);
             timer->stop();
+            emit refreshLabel->linkActivated(" ");
         }
     });
     timer->start(1000);

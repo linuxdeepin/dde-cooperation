@@ -109,9 +109,9 @@ void ResultDisplayWidget::initListTitle()
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addSpacing(90);
     layout->addWidget(text1);
-    layout->addSpacing(200);
+    layout->addSpacing(170);
     layout->addWidget(text2);
-    layout->addSpacing(100);
+    layout->addSpacing(75);
     layout->addWidget(text3);
     layout->setAlignment(Qt::AlignLeft);
 
@@ -157,11 +157,23 @@ void ResultDisplayWidget::themeChanged(int theme)
 void ResultDisplayWidget::addFailure(QString name, QString type, QString reason)
 {
     auto model = qobject_cast<QStandardItemModel *>(listview->model());
+
+    if(type == "clear"){
+       model->clear();
+       return;
+    }
+
     QStandardItem *item = new QStandardItem();
     item->setData(name, Qt::DisplayRole);
     item->setData(type, Qt::ToolTipRole);
     item->setData(reason, Qt::UserRole);
     model->appendRow(item);
+}
+
+void ResultDisplayWidget::clear()
+{
+    auto model = qobject_cast<QStandardItemModel *>(listview->model());
+    model->clear();
 }
 
 itemDelegate::itemDelegate()
@@ -199,12 +211,12 @@ void itemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &opti
     QString fileText = index.data(Qt::DisplayRole).toString();
     painter->drawText(namePos, Qt::AlignLeft | Qt::AlignVCenter, fileText);
 
-    QRect tpyePos = option.rect.adjusted(220, 0, 0, 0);
+    QRect tpyePos = option.rect.adjusted(210, 0, 0, 0);
     QString tpyeText = index.data(Qt::ToolTipRole).toString();
     painter->drawText(tpyePos, Qt::AlignLeft | Qt::AlignVCenter, tpyeText);
 
     painter->setPen(QColor("#FF5736"));
-    QRect reasonPos = option.rect.adjusted(370, 0, 0, 0);
+    QRect reasonPos = option.rect.adjusted(320, 0, 0, 0);
     QString reasonText = index.data(Qt::UserRole).toString();
     painter->drawText(reasonPos, Qt::AlignLeft | Qt::AlignVCenter, reasonText);
 

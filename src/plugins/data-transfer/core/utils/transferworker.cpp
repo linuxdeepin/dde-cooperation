@@ -34,6 +34,7 @@ TransferHandle::TransferHandle()
     }
 
     //log
+    //handleConnectStatus(1,"66");
     qInstallMessageHandler(logHandler);
 }
 
@@ -165,8 +166,9 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
     qInfo() << "connect status: " << result << " msg:" << msg;
     if (result > 0) {
         emit TransferHelper::instance()->connectSucceed();
-
         //#ifndef WIN32
+        //json::Json message, unfinishFiles;
+        //sendMessage(unfinishFiles);
         //        TransferHelper::instance()->isUnfinishedJob(msg);
         //#endif
     } else {
@@ -336,6 +338,13 @@ void TransferHandle::sendFiles(QStringList paths)
     current_id++;
 }
 
+void TransferHandle::sendMessage(json::Json &message)
+{
+    if (!_backendOK) return;
+
+    TransferWoker::instance()->sendMessage(message);
+}
+
 TransferWoker::TransferWoker()
 {
     // initialize the proto client
@@ -445,6 +454,19 @@ void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 
     req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
 
+    call(req, res);
+}
+
+void TransferWoker::sendMessage(json::Json &message)
+{
+    co::Json req, res;
+
+    //TransFilesParam
+    req.add_member("app", _session_id);
+    req.add_member("json", message);
+    req.add_member("api", "Backend.miscMessage");   //BackendImpl::tryTransFiles
+
+    qInfo() << "sendMessage" << req.str().c_str();
     call(req, res);
 }
 
