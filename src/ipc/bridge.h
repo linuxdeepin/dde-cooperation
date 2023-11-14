@@ -8,7 +8,7 @@
 #include <co/fastring.h>
 
 typedef enum req_type_t {
-    PING = 10,
+    IPC_PING = 10,
     MISC_MSG = 11,
     FRONT_PEER_CB = 100,
     FRONT_CONNECT_CB = 101,

@@ -68,7 +68,7 @@ void BackendService::setOneAppConfig(fastring &app, fastring &key, fastring &val
 void BackendImpl::ping(co::Json &req, co::Json &res)
 {
     BridgeJsonData bridge;
-    bridge.type = PING;
+    bridge.type = IPC_PING;
     bridge.json = req.str();
     _interface->bridgeChan()->operator<<(bridge);
 

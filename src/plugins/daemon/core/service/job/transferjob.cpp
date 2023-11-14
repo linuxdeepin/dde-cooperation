@@ -8,9 +8,11 @@
 #include "co/path.h"
 #include "co/co.h"
 #include "common/constant.h"
+#include "common/comonstruct.h"
 #include "service/fsadapter.h"
 #include "service/rpc/sendrpcservice.h"
 #include "utils/config.h"
+#include "service/comshare.h"
 
 #include <QPointer>
 
@@ -48,7 +50,15 @@ void TransferJob::start()
     } else {
         //并行读取文件数据
         DLOG << "doTransfileJob path to save:" << _savedir;
-        SendRpcService::instance()->doTransfileJob(_app_name.c_str(), _jobid, _savedir.c_str(), false, _sub, _writejob);
+        FileTransJob req_job;
+        req_job.job_id = _jobid;
+        req_job.path = _savedir.c_str();
+        req_job.include_hidden = false;
+        req_job.recursive = _sub;
+        req_job.push = (!_writejob);
+        req_job.app_who = _app_name;
+        req_job.targetAppname = _tar_app_name;
+        SendRpcService::instance()->doSendProtoMsg(IN_TRANSJOB, _app_name.c_str(), req_job.as_json().str().c_str());
 
         co::Json pathJson;
         pathJson.parse_from(_path);
@@ -159,7 +169,13 @@ void TransferJob::scanPath(fastring root, fastring path)
 {
     _fileid++;
     fastring subdir = getSubdir(path.c_str(), root.c_str());
-    SendRpcService::instance()->doSendFileInfo(_tar_app_name.c_str(), _jobid, _fileid, subdir.c_str(), path.c_str());
+    FileTransCreate info;
+    info.job_id = _jobid;
+    info.file_id = _fileid;
+    info.sub_dir = subdir.c_str();
+    info.entry.appName = _app_name;
+    info.entry.rcvappName = _tar_app_name;
+    SendRpcService::instance()->doSendProtoMsg(FS_INFO, _app_name.c_str(), info.as_json().str().c_str());
     if (_stoped)
         return;
     if (fs::isdir(path.c_str())) {
@@ -346,15 +362,15 @@ void TransferJob::handleBlockQueque()
             }
         } else {
             FileTransBlock file_block;
-            file_block.set_job_id(job_id);
-            file_block.set_file_id(file_id);
-            file_block.set_filename(block->filename.c_str());
-            file_block.set_blk_id(static_cast<uint>(blk_id));
-            file_block.set_data(buffer.c_str(), len);
-            file_block.set_compressed(comp);
+            file_block.job_id = (job_id);
+            file_block.file_id = (file_id);
+            file_block.filename = (block->filename.c_str());
+            file_block.blk_id = (static_cast<uint>(blk_id));
+            file_block.compressed = (comp);
+            QByteArray data(buffer.c_str(), static_cast<int>(len));
             // DLOG << "(" << job_id << ") send block " << block->filename << " size: " << len;
-
-            SendRpcService::instance()->doSendFileBlock(_tar_app_name.c_str(), file_block);
+            SendRpcService::instance()->doSendProtoMsg(FS_DATA, _app_name.c_str(),
+                                                       file_block.as_json().str().c_str(), data);
         }
 
         if (!exception) {
@@ -382,16 +398,14 @@ void TransferJob::handleBlockQueque()
 void TransferJob::handleUpdate(FileTransRe result, const char *path, const char *emsg)
 {
     UNIGO([this, result, path, emsg] {
-        FileTransJobReport *report = new FileTransJobReport();
-        FileTransUpdate update;
+        FileTransJobReport report;
 
-        report->set_job_id(_jobid);
-        report->set_path(path);
-        report->set_result(result);
-        report->set_error(emsg);
-
-        update.set_allocated_report(report);
-        SendRpcService::instance()->doUpdateTrans(_tar_app_name.c_str(),_jobid, update);
+        report.job_id = (_jobid);
+        report.path = (path);
+        report.result = (result);
+        report.error = (emsg);
+        SendRpcService::instance()->doSendProtoMsg(FS_REPORT, _app_name.c_str(),
+                                                   report.as_json().str().c_str());
     });
 }
 

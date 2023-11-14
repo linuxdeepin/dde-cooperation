@@ -26,21 +26,21 @@ int FSAdapter::getFileEntry(const char *path, FileEntry **entry)
     }
 
     if (fs::isdir(path)) {
-        temp->set_type(FileType::DIR);
+        temp->filetype = (FileType::DIR);
     } else {
-        temp->set_type(FileType::FILE_B);
+        temp->filetype = (FileType::FILE_B);
     }
 
     fastring name = Util::parseFileName(path);
-    temp->set_name(name.c_str());
+    temp->name = (name.c_str());
     if (name.starts_with('.')) {
-        temp->set_hidden(true);
+        temp->hidden = (true);
     } else {
-        temp->set_hidden(false);
+        temp->hidden = (false);
     }
 
-    temp->set_size(fs::fsize(path));
-    temp->set_modified_time(fs::mtime(path));
+    temp->size = (fs::fsize(path));
+    temp->modified_time = (fs::mtime(path));
 
     return 0;
 }

@@ -7,10 +7,14 @@
 #include "sendrpcservice.h"
 #include "service/rpc/remoteservice.h"
 #include "common/constant.h"
+#include "common/comonstruct.h"
 #include "service/comshare.h"
 #include "service/discoveryjob.h"
 #include "ipc/proto/comstruct.h"
 #include "service/jobmanager.h"
+#include "protocol/version.h"
+#include "utils/config.h"
+#include "service/fsadapter.h"
 
 #include "utils/cert.h"
 
@@ -67,49 +71,67 @@ void HandleRpcService::startRemoteServer()
                 continue;
             }
             switch (indata.type) {
+            case IN_LOGIN_INFO:
+            {
+                self->handleRemoteLogin(json_obj);
+                break;
+            }
             case IN_LOGIN_CONFIRM:
             {
                 //TODO: notify user confirm login
                 break;
             }
-            case IN_LOGIN_RESULT:
+            case IN_LOGIN_RESULT:// 服务器端回复登陆结果
             {
-                UserLoginResult result;
-                result.from_json(json_obj);
-                QString appname(result.appname.c_str());
-                self->handleRpcLoginResult(result.result, appname, result.ip.c_str());
                 break;
             }
             case IN_TRANSJOB:
             {
-
-                JobManager::instance()->handleRemoteRequestJob(json_obj.str().c_str());
+                auto res = JobManager::instance()->handleRemoteRequestJob(json_obj.str().c_str());
+                OutData data;
+                data.type = OUT_TRANSJOB;
+                data.json = co::Json({"result", res}).str();
                 break;
             }
             case FS_DATA:
             {
                 // must update the binrary data into struct object.
-                JobManager::instance()->handleFSData(json_obj, indata.buf);
+                self->handleRemoteFileBlock(json_obj, indata.buf);
                 break;
             }
             case FS_INFO:
             {
-                JobManager::instance()->handleFSInfo(json_obj);
+                self->handleRemoteFileInfo(json_obj);
+
                 break;
             }
             case TRANS_CANCEL:
             {
-                JobManager::instance()->handleCancelJob(json_obj);
+                self->handleRemoteJobCancel(json_obj);
                 break;
             }
             case FS_REPORT:
             {
-                JobManager::instance()->handleTransReport(json_obj);
+                self->handleRemoteReport(json_obj);
                 break;
             }
             case TRANS_APPLY:
             {
                 self->handleRemoteApplyTransFile(json_obj);
+                break;
+            }
+            case MISC:
+            {
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteDisc(json_obj);
+                break;
+            }
+            case RPC_PING:
+            {
+                OutData data;
+                data.json = "remote_ping";
+                _outgo_chan << data;
                 break;
             }
             default:
@@ -119,7 +141,7 @@ void HandleRpcService::startRemoteServer()
     });
 }
 
-void HandleRpcService::handleRpcLoginResult(bool result, const QString &appName, const QString &ip)
+void HandleRpcService::handleRpcLogin(bool result, const QString &appName, const QString &ip)
 {
     // todo拿到客户端ip，进行消息通讯
     if (result) {
@@ -133,6 +155,7 @@ void HandleRpcService::handleRpcLoginResult(bool result, const QString &appName,
             { "id", 0 },
             { "result", result ? 1 : 0 },
             { "msg", appName.toStdString() },
+            { "isself", false},
         };
         req.add_member("api", "Frontend.cbConnect");
         SendIpcService::instance()->handleSendToClient(appName, req.str().c_str());
@@ -165,5 +188,155 @@ bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
 
 
     return true;
+}
+
+bool HandleRpcService::handleRemoteLogin(co::Json &info)
+{
+    UserLoginInfo lo;
+    lo.from_json(info);
+    UserLoginResultInfo lores;
+
+    std::string version = lo.version.c_str();
+    if (version.compare(UNIAPI_VERSION) != 0) {
+        // Notification not match version
+        lores.result = false;
+        lores.token = "Invalid version";
+    } else {
+        bool authOK = false;
+
+        fastring pwd = lo.auth;
+        if (pwd.empty()) {
+            // TODO: 无认证，用户确认
+            if (DaemonConfig::instance()->needConfirm()) {
+                // 目前还没有处理
+            } else {
+                authOK = true;
+            }
+        } else {
+            fastring pass = Util::decodeBase64(pwd.c_str());
+            //            LOG << "pass= " << pass << " getPin=" << DaemonConfig::instance()->getPin();
+            authOK = DaemonConfig::instance()->getPin().compare(pass) == 0;
+        }
+
+        if (!authOK) {
+            lores.result = false;
+            lores.token = "Invalid auth code";
+        } else {
+            DaemonConfig::instance()->saveRemoteSession(lo.session_id);
+
+            //TODO: generate auth token
+            fastring auth_token = "thatsgood";
+            DaemonConfig::instance()->setTargetName(lo.my_name.c_str());   // save the login name
+            fastring plattsr;
+            if (WINDOWS == Util::getOSType()) {
+                plattsr = "Windows";
+            } else {
+                //TODO: other OS
+                plattsr = "UOS";
+            }
+
+            lores.peer.version = version;
+            lores.peer.hostname = Util::getHostname();
+            lores.peer.platform = plattsr.c_str();
+            lores.peer.username = Util::getUsername();
+            lores.token = auth_token;
+            lores.appName = lo.selfappName;
+        }
+
+        UserLoginResult result;
+        result.appname = lo.appName;
+        result.uuid = lo.my_uid;
+        result.ip = lo.ip;
+        result.result = authOK;
+        QString appname(result.appname.c_str());
+        handleRpcLogin(result.result, appname, result.ip.c_str());
+    }
+    OutData data;
+    data.type = OUT_LOGIN;
+    data.json = lores.as_json().str();
+    _outgo_chan << data;
+
+    return true;
+}
+
+void HandleRpcService::handleRemoteDisc(co::Json &info)
+{
+    MiscInfo mis;
+    mis.from_json(info);
+    co::Json msg{"msg", mis.json};
+    msg.add_member("api", "Frontend::cbMiscMessage");
+    SendIpcService::instance()->sendToClient(mis.appName.c_str(), msg.str().c_str());
+}
+
+void HandleRpcService::handleRemoteFileInfo(co::Json &info)
+{
+    FileTransCreate res;
+    res.from_json(info);
+    int32 fileid = res.file_id;
+
+    FileEntry entry = res.entry;
+
+    FileType type = static_cast<FileType>(entry.filetype);
+    fastring filename;
+    if (res.sub_dir.empty()) {
+        filename = entry.name;
+    } else {
+        filename = res.sub_dir + "/" + entry.name;
+    }
+
+    if (type == FILE_B) {
+        FileInfo info;
+        info.job_id = res.job_id;
+        info.file_id = fileid;
+        info.name = filename;
+        info.total_size = entry.size;
+        info.current_size = 0;
+        info.time_spended = -1;
+        co::Json tm = info.as_json();
+        JobManager::instance()->handleFSInfo(tm);
+    }
+
+    bool exist = FSAdapter::newFile(filename.c_str(), type == DIR);
+
+    FileTransResponse reply;
+    OutData data;
+
+    reply.id = fileid;
+    reply.name = (filename.c_str());
+    reply.result = (exist ? OK : IO_ERROR);
+    data.json = reply.as_json().str();
+    _outgo_chan << data;
+
+}
+
+void HandleRpcService::handleRemoteFileBlock(co::Json &info, fastring data)
+{
+    FileTransResponse reply;
+    auto res = JobManager::instance()->handleFSData(info, data, &reply);
+
+    OutData out;
+    reply.result = (res ? OK : IO_ERROR);
+    out.json = reply.as_json().str();
+    _outgo_chan << out;
+}
+
+void HandleRpcService::handleRemoteReport(co::Json &info)
+{
+    FileTransResponse reply;
+    reply.result = OK;
+    OutData out;
+    out.json = reply.as_json().str();
+    JobManager::instance()->handleTransReport(info, &reply);
+    _outgo_chan << out;
+}
+
+void HandleRpcService::handleRemoteJobCancel(co::Json &info)
+{
+    FileTransResponse reply;
+    reply.result = OK;
+    OutData out;
+    out.json = reply.as_json().str();
+    JobManager::instance()->handleCancelJob(info, &reply);
+    _outgo_chan << out;
 }
 

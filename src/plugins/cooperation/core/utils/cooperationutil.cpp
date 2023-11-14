@@ -80,7 +80,7 @@ void CooperationUtilPrivate::localIPCStart()
             }
 
             switch (bridge.type) {
-            case PING: {
+            case IPC_PING: {
                 ipc::PingFrontParam param;
                 param.from_json(json_obj);
 
@@ -97,7 +97,7 @@ void CooperationUtilPrivate::localIPCStart()
                 }
 
                 BridgeJsonData res;
-                res.type = PING;
+                res.type = IPC_PING;
                 res.json = result ? param.session : "";   // 成功则返回session，否则为空
 
                 frontendIpcSer->bridgeResult()->operator<<(res);
@@ -136,7 +136,8 @@ void CooperationUtilPrivate::localIPCStart()
                 q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
                                               Qt::QueuedConnection,
                                               Q_ARG(int, param.result),
-                                              Q_ARG(QString, msg));
+                                              Q_ARG(QString, msg),
+                                              Q_ARG(bool, param.isself));
             } break;
             case FRONT_TRANS_STATUS_CB: {
                 ipc::GenericResult param;

@@ -40,7 +40,7 @@ public:
     static bool buttonClickable(const QString &id, const DeviceInfoPointer info);
 
 public Q_SLOTS:
-    void onConnectStatusChanged(int result, const QString &msg);
+    void onConnectStatusChanged(int result, const QString &msg, const bool isself);
     void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onFileTransStatusChanged(const QString &status);
     void waitForConfirm(const QString &name);

@@ -9,10 +9,12 @@
 #include "ipc/proto/comstruct.h"
 #include "ipc/backendservice.h"
 #include "common/constant.h"
+#include "common/comonstruct.h"
 #include "service/comshare.h"
 #include "service/discoveryjob.h"
 #include "utils/config.h"
 #include "service/jobmanager.h"
+#include "protocol/version.h"
 
 #include <QPointer>
 
@@ -78,10 +80,10 @@ void HandleIpcService::createIpcBackend(const quint16 port)
 void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend, const uint type, co::Json &msg)
 {
     switch (type) {
-    case PING:
+    case IPC_PING:
     {
         BridgeJsonData res;
-        res.type = PING;
+        res.type = IPC_PING;
         res.json = handlePing(msg).toStdString();
 
         backend->bridgeResult()->operator<<(res);
@@ -91,7 +93,7 @@ void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend
     {
         MiscJsonCall call;
         call.from_json(msg);
-        SendRpcService::instance()->doMisc(call.app.c_str(), call.json.c_str());
+        SendRpcService::instance()->doSendProtoMsg(MISC, call.app.c_str(), call.json.c_str());
         break;
     }
     case BACK_TRY_CONNECT:
@@ -267,8 +269,9 @@ void HandleIpcService::handleBackApplyTransFiles(co::Json param)
      // 远程发送
     ApplyTransFiles info;
     info.from_json(param);
-    SendRpcService::instance()->doSendApplyTransFiles(info.session.c_str(), param);
-    // todo, servicemanager收到信号处理
+    info.selfIp = Util::getFirstIp();
+    info.selfPort = UNI_RPC_PORT_BASE;
+    SendRpcService::instance()->doSendProtoMsg(TRANS_APPLY,info.session.c_str(), info.as_json().str().c_str());
 }
 
 void HandleIpcService::handleConnectClosed(const quint16 port)
@@ -287,19 +290,24 @@ void HandleIpcService::handleTryConnect(co::Json json)
         QString session(param.session.c_str());
         QString ip(param.host.c_str());
         QString pass(param.password.c_str());
-        LOG << " rcv client connet  " << ip.toStdString() << session.toStdString();
-        SendRpcService::instance()->doLogin(session, ip, UNI_RPC_PORT_BASE, session, param.password.c_str());
-        // todo, servicemanager收到信号处理
-//        LoginResultStruct ru;
-//        ru.from_json(result);
-//        co::Json req;
-//        //cbConnect {GenericResult}
-//        req = {
-//            { "id", 0 },
-//            { "result", ru.result ? 1 : 0 },
-//            { "msg", ru.appName },
-//        };
-//        req.add_member("api", "Frontend.cbConnect");
-//        SendIpcService::instance()->handleSendToClient(ru.appName.c_str(), req.str().c_str());
+        UserLoginInfo login;
+
+        // 使用base64加密auth
+        login.name = param.session;
+        login.auth = param.password;
+
+        std::string uuid = Util::genUUID();
+        login.my_uid = uuid;
+        login.my_name = Util::getHostname();
+        login.selfappName = param.session;
+        login.appName = param.session;
+
+        login.session_id = uuid;
+        login.version = UNIAPI_VERSION;
+        login.ip = Util::getFirstIp();
+        LOG << " rcv client connet to " << ip.toStdString() << session.toStdString();
+        // 创建远程发送的work
+        SendRpcService::instance()->createRpcSender(param.session.c_str(), ip, UNI_RPC_PORT_BASE);
+        SendRpcService::instance()->doSendProtoMsg(IN_LOGIN_INFO, session, login.as_json().str().c_str());
     });
 }

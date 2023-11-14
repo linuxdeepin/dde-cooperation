@@ -38,6 +38,7 @@ object GenericResult {
     int32 id
     int32 result
     string msg
+    bool isself
 }
 
 object FileStatus {

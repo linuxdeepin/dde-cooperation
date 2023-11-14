@@ -324,10 +324,12 @@ bool TransferHelper::buttonClickable(const QString &id, const DeviceInfoPointer 
     return true;
 }
 
-void TransferHelper::onConnectStatusChanged(int result, const QString &msg)
+void TransferHelper::onConnectStatusChanged(int result, const QString &msg, const bool isself)
 {
     LOG << "connect status: " << result << " msg:" << msg.toStdString();
     if (result > 0) {
+        if (!isself)
+            return;
         UNIGO([this] {
             d->status = Confirming;
             d->handleApplyTransFiles(0);

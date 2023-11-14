@@ -103,21 +103,25 @@ bool JobManager::doJobAction(uint32_t action, const co::Json &jsonobj)
     return true;
 }
 
-bool JobManager::handleFSData(const co::Json &info, fastring buf)
-{
+bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransResponse *reply)
+{ 
     QSharedPointer<FSDataBlock> datablock(new FSDataBlock);
     datablock->from_json(info);
     datablock->data = buf;
     int32 jobId = datablock->job_id;
 
-     auto job = _transjob_recvs.value(jobId);
-     if (!job.isNull()) {
-         job->pushQueque(datablock);
-     } else {
-         return false;
-     }
+    if (reply) {
+        reply->id = datablock->file_id;
+        reply->name = datablock->filename;
+    }
+    auto job = _transjob_recvs.value(jobId);
+    if (!job.isNull()) {
+     job->pushQueque(datablock);
+    } else {
+     return false;
+    }
 
-     return true;
+    return true;
 }
 
 bool JobManager::handleFSInfo(co::Json &info)
@@ -136,11 +140,16 @@ bool JobManager::handleFSInfo(co::Json &info)
     return true;
 }
 
-bool JobManager::handleCancelJob(co::Json &info)
+bool JobManager::handleCancelJob(co::Json &info, FileTransResponse *reply)
 {
     FSJobCancel obj;
     obj.from_json(info);
     int32 jobId = obj.job_id;
+    if (reply) {
+        reply->id = jobId;
+        reply->name = obj.path;
+    }
+
 
     auto job = _transjob_recvs.value(jobId);
     if (!job.isNull()) {
@@ -155,12 +164,16 @@ bool JobManager::handleCancelJob(co::Json &info)
     }
 }
 
-bool JobManager::handleTransReport(co::Json &info)
+bool JobManager::handleTransReport(co::Json &info, FileTransResponse *reply)
 {
     FSReport obj;
     obj.from_json(info);
     int32 jobId = obj.job_id;
     fastring path = obj.path;
+    if (reply) {
+        reply->id = jobId;
+        reply->name = path;
+    }
 
     switch (obj.result) {
     case IO_ERROR:
