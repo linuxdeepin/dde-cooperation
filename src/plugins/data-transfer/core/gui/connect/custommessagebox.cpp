@@ -4,6 +4,8 @@
 #include <QToolButton>
 #include <QPainter>
 #include <QtSvg/QSvgRenderer>
+#include <QPainterPath>
+
 CustomMessageBox::CustomMessageBox(const QString &mainTitle, const QString &subTitle,
                                    QWidget *parent)
     : QDialog(parent), message1(mainTitle), message2(subTitle)

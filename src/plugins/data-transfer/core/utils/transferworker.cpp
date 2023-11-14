@@ -152,7 +152,17 @@ void TransferHandle::localIPCStart()
     // start ipc services
     ipc::FrontendImpl *frontendimp = new ipc::FrontendImpl();
     frontendimp->setInterface(_frontendIpcService);
-    rpc::Server().add_service(frontendimp).start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
+    _rpcServer = new rpc::Server();
+    _rpcServer->add_service(frontendimp);
+    _rpcServer->start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
+
+    connect(qApp, &QCoreApplication::aboutToQuit, [this]()
+    {
+        DLOG << "App exit, exit ipc server";
+        if (_rpcServer) {
+            _rpcServer->exit();
+        }
+    });
 }
 
 void TransferHandle::saveSession(fastring sessionid)

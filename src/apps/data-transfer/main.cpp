@@ -107,5 +107,10 @@ int main(int argc, char *argv[])
     int ret = app.exec();
 
     app.closeServer();
+
+#ifdef WIN32
+    // FIXME: windows上使用socket，即使线程资源全释放，进程也无法正常退出
+    abort();
+#endif
     return ret;
 }

@@ -51,6 +51,7 @@ private:
     QMap<int, int64_t> _file_ids;
 
     bool _this_destruct = false;
+    rpc::Server *_rpcServer = nullptr;
 };
 
 class TransferWoker
