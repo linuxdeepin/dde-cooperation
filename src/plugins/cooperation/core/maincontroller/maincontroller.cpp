@@ -75,6 +75,11 @@ void MainController::updateDeviceList(const QString &ip, const QString &info, bo
         map.insert("IPAddress", ip);
 
         auto devInfo = DeviceInfo::fromVariantMap(map);
+        // 不允许被发现，作为下线处理
+        if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::NotAllow) {
+            Q_EMIT deviceOffline(ip);
+            return;
+        }
         Q_EMIT deviceOnline({ devInfo });
     } else {
         Q_EMIT deviceOffline(ip);
