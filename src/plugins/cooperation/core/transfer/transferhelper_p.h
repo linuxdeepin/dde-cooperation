@@ -27,12 +27,18 @@ public:
         int64_t totalSize = 0;   // 总量
         int64_t transferSize = 0;   // 当前传输量
         int32_t maxTimeSec = 0;   // 耗时
+
+        void clear()
+        {
+            totalSize = 0;
+            transferSize = 0;
+            maxTimeSec = 0;
+        }
     };
 
     explicit TransferHelperPrivate(TransferHelper *qq);
     ~TransferHelperPrivate();
 
-    void initConfig();
     QWidget *mainWindow();
     TransferDialog *transDialog();
 
@@ -44,7 +50,7 @@ public:
     void transferResult(bool result, const QString &msg);
     void updateProgress(int value, const QString &remainTime);
     uint notifyMessage(uint replacesId, const QString &body,
-                       const QStringList &actions, int expireTimeout);    
+                       const QStringList &actions, int expireTimeout);
 
 private:
     TransferHelper *q;
