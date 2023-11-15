@@ -116,23 +116,36 @@ retryed:
 
 void RemoteServiceSender::createExecutor(const QString &session, const char *targetip, uint16_t port)
 {
+    ELOG << session.toStdString() << " ----------- = ip " << targetip << "  port =  " << port;
     QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
     {
+        _executor_p = executor(session);
+        if (_executor_p) {
+            if (_executor_p->targetIP() != targetip) {
+                QWriteLocker lk(&_executor_lock);
+                _executor_ps.remove(session);
+            } else {
+                return;
+            }
+        }
+
         QReadLocker lk(&_executor_lock);
         for (const auto &executor : _executor_ps) {
-            if (targetip == executor->targetIP() && !executor->control()->Failed()) {
+            if (targetip == executor->targetIP()) {
                 _executor_p = executor;
+                if (_executor_ps.key(executor) == session)
+                    return;
                 break;
             }
         }
     }
 
     if (_executor_p.isNull()) {
-        QWriteLocker lk(&_executor_lock);
-        _executor_ps.remove(session);
         _executor_p = QSharedPointer<ZRpcClientExecutor>(new ZRpcClientExecutor(targetip, port));
-        _executor_ps.insert(session, _executor_p);
     }
+    QWriteLocker lk(&_executor_lock);
+    _executor_ps.remove(session);
+    _executor_ps.insert(session, _executor_p);
 }
 
 void RemoteServiceSender::clearExecutor(const QString &appname)
@@ -157,13 +170,7 @@ void RemoteServiceSender::remoteIP(const QString &session, QString *ip, uint16 *
 
 QSharedPointer<ZRpcClientExecutor> RemoteServiceSender::executor(const QString &appname)
 {
-    QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
-    {
-        QReadLocker lk(&_executor_lock);
-        _executor_p = _executor_ps.value(appname);
-    }
-    if (_executor_p && _executor_p->control()->Failed())
-        createExecutor(appname, _executor_p->targetIP().toStdString().c_str(), _executor_p->targetPort());
+    QReadLocker lk(&_executor_lock);
     return _executor_ps.value(appname);
 }
 

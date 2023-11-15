@@ -62,8 +62,7 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
     SendResult res;
     if (!sender.isNull()) {
         // 创建exector
-        if (type == IN_LOGIN_INFO)
-            sender->createExecutor();
+        sender->createExecutor();
         if (type == TRANS_APPLY) {
             co::Json param;
             param.parse_from(msg.toStdString());
