@@ -398,6 +398,7 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
 void TransferHelper::waitForConfirm(const QString &name)
 {
     d->transferInfo.clear();
+    d->fileIds.clear();
     switch (d->currentMode) {
     case ReceiveMode: {
         d->recvNotifyId = 0;
