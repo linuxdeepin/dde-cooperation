@@ -64,7 +64,23 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
         // 创建exector
         if (type == IN_LOGIN_INFO)
             sender->createExecutor();
-        res = sender->doSendProtoMsg(type, msg, data);
+        if (type == TRANS_APPLY) {
+            co::Json param;
+            param.parse_from(msg.toStdString());
+            ApplyTransFiles info;
+            info.from_json(param);
+            if (info.type != APPLY_TRANS_APPLY) {
+                info.session = appName.toStdString();
+
+                QString tar = sender->targetAppname();
+                info.tarSession = tar.isEmpty() ?
+                            appName.toStdString() : tar.toStdString();
+            }
+            res = sender->doSendProtoMsg(type, info.as_json().str().c_str(), data);
+        } else {
+            res = sender->doSendProtoMsg(type, msg, data);
+        }
+
     } else {
         SendResult res;
         res.protocolType = type;

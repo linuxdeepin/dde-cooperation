@@ -73,6 +73,7 @@ public:
     void remoteIP(const QString &session, QString *ip, uint16 *port);
     void setIpInfo(const QString &ip, const uint16 port);
     void setTargetAppName(const QString &targetApp);
+    QString targetAppname() const { return  _tar_app_name;}
     QString remoteIP() const { return _target_ip; }
     uint16 remotePort() const {return _target_port; }
     void createExecutor();

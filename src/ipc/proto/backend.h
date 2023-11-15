@@ -124,19 +124,22 @@ struct CallResult {
 };
 
 struct ConnectParam {
-    fastring session;
+    fastring targetAppname;
+    fastring appName;
     fastring host;
     fastring password;
 
     void from_json(const co::Json& _x_) {
-        session = _x_.get("session").as_c_str();
+        targetAppname = _x_.get("targetAppname").as_c_str();
+        appName = _x_.get("appName").as_c_str();
         host = _x_.get("host").as_c_str();
         password = _x_.get("password").as_c_str();
     }
 
     co::Json as_json() const {
         co::Json _x_;
-        _x_.add_member("session", session);
+        _x_.add_member("targetAppname", targetAppname);
+        _x_.add_member("appName", appName);
         _x_.add_member("host", host);
         _x_.add_member("password", password);
         return _x_;

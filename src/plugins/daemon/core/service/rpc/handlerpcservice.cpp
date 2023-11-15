@@ -140,11 +140,13 @@ void HandleRpcService::startRemoteServer()
     });
 }
 
-void HandleRpcService::handleRpcLogin(bool result, const QString &appName, const QString &ip)
+void HandleRpcService::handleRpcLogin(bool result, const QString &targetAppname,
+                                      const QString &appName, const QString &ip)
 {
     // todo拿到客户端ip，进行消息通讯
     if (result) {
         SendRpcService::instance()->createRpcSender(appName, ip, UNI_RPC_PORT_BASE);
+        SendRpcService::instance()->setTargetAppName(appName, targetAppname);
     }
 
     UNIGO([result, appName]() {
@@ -169,12 +171,13 @@ bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
     obj.tarSession = obj.session;
     obj.session = tmp;
     auto session = obj.session;
-    if (obj.type == ApplyTransType::APPLY_TRANS_APPLY) {
-        // 创建远程的rpcsender 如果有就直接
-        SendRpcService::instance()->createRpcSender(session.c_str(), obj.selfIp.c_str(),
-                                                    static_cast<uint16>(obj.selfPort));
-        SendRpcService::instance()->setTargetAppName(session.c_str(), obj.tarSession.c_str());
-    }
+//    if (obj.type == ApplyTransType::APPLY_TRANS_APPLY) {
+//        // 创建远程的rpcsender 如果有就直接
+//        ELOG << session << "=== " << obj.as_json();
+////        SendRpcService::instance()->createRpcSender(session.c_str(), obj.selfIp.c_str(),
+////                                                    static_cast<uint16>(obj.selfPort));
+//        SendRpcService::instance()->setTargetAppName(session.c_str(), obj.tarSession.c_str());
+//    }
     UNIGO([session, obj]() {
         co::Json infojson;
         co::Json req;
@@ -248,7 +251,7 @@ bool HandleRpcService::handleRemoteLogin(co::Json &info)
         result.ip = lo.ip;
         result.result = authOK;
         QString appname(result.appname.c_str());
-        handleRpcLogin(result.result, appname, result.ip.c_str());
+        handleRpcLogin(result.result, lo.selfappName.c_str(), appname, result.ip.c_str());
     }
     OutData data;
     data.type = OUT_LOGIN;

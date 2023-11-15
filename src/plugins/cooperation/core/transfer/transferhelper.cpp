@@ -145,9 +145,10 @@ void TransferHelperPrivate::handleTryConnect(const QString &ip)
     fastring pinCode("");
 
     ipc::ConnectParam conParam;
-    conParam.session = qApp->applicationName().toStdString();
+    conParam.appName = qApp->applicationName().toStdString();
     conParam.host = targetIp;
     conParam.password = pinCode;
+    conParam.targetAppname = kMainAppName;
 
     req = conParam.as_json();
     req.add_member("api", "Backend.tryConnect");
