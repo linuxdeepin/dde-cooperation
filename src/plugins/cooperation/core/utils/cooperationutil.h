@@ -29,6 +29,8 @@ public:
     void asyncDiscoveryDevice();
     void setAppConfig(const QString &key, const QString &value);
 
+    static QString localIPAddress();
+
 Q_SIGNALS:
     void discoveryFinished(const QList<DeviceInfoPointer> &infoList);
 

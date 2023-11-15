@@ -99,7 +99,7 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
             ? value.toString()
             : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
 
-    QString saveDir = (deviceName + "(%1)").arg(targetIp);
+    QString saveDir = (deviceName + "(%1)").arg(CooperationUtil::localIPAddress());
     ipc::TransFilesParam transParam;
     transParam.session = CooperationUtil::instance()->sessionId().toStdString();
     transParam.targetSession = kMainAppName;
@@ -255,7 +255,6 @@ void TransferHelper::setTransMode(TransferHelper::TransferMode mode)
 void TransferHelper::sendFiles(const QString &ip, const QString &devName, const QStringList &fileList)
 {
     d->sendToWho = devName;
-    d->targetIp = ip;
     d->readyToSendFiles = fileList;
     if (fileList.isEmpty())
         return;
