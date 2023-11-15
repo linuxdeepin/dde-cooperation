@@ -171,13 +171,6 @@ bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
     obj.tarSession = obj.session;
     obj.session = tmp;
     auto session = obj.session;
-//    if (obj.type == ApplyTransType::APPLY_TRANS_APPLY) {
-//        // 创建远程的rpcsender 如果有就直接
-//        ELOG << session << "=== " << obj.as_json();
-////        SendRpcService::instance()->createRpcSender(session.c_str(), obj.selfIp.c_str(),
-////                                                    static_cast<uint16>(obj.selfPort));
-//        SendRpcService::instance()->setTargetAppName(session.c_str(), obj.tarSession.c_str());
-//    }
     UNIGO([session, obj]() {
         co::Json infojson;
         co::Json req;
@@ -348,7 +341,6 @@ void HandleRpcService::handleTransJob(co::Json &info)
     OutData data;
     data.type = OUT_TRANSJOB;
     data.json = co::Json({"result", res}).str();
-    _outgo_chan << data;
     _outgo_chan << data;
 }
 

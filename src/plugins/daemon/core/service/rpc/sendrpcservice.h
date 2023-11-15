@@ -99,7 +99,7 @@ public:
 
     void createRpcSender(const QString &appName,
                          const QString &targetip, quint16 port) {
-        emit createSenderWork(appName, targetip, port);
+        createRpcSenderWork(appName, targetip, port);
     }
 
 

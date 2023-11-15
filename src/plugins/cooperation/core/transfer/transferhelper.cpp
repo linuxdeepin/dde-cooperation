@@ -102,6 +102,7 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
     QString saveDir = (deviceName + "(%1)").arg(targetIp);
     ipc::TransFilesParam transParam;
     transParam.session = CooperationUtil::instance()->sessionId().toStdString();
+    transParam.targetSession = kMainAppName;
     transParam.id = TransferJobStartId;
     transParam.paths = fileVector;
     transParam.sub = true;
