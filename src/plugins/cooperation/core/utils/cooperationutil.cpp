@@ -14,6 +14,7 @@
 #include "ipc/proto/backend.h"
 
 #include <QJsonDocument>
+#include <QNetworkInterface>
 #include <QDebug>
 
 using namespace cooperation_core;
@@ -88,9 +89,7 @@ void CooperationUtilPrivate::localIPCStart()
                 fastring my_ver(FRONTEND_PROTO_VERSION);
                 // test ping 服务测试用
 
-                if (my_ver.compare(param.version) == 0 &&
-                        (param.session.compare(sessionId.toStdString()) == 0 ||
-                         param.session.compare("backendServerOnline") == 0 )) {
+                if (my_ver.compare(param.version) == 0 && (param.session.compare(sessionId.toStdString()) == 0 || param.session.compare("backendServerOnline") == 0)) {
                     result = true;
                 } else {
                     WLOG << param.version.c_str() << " =version not match= " << my_ver.c_str();
@@ -372,4 +371,31 @@ void CooperationUtil::setAppConfig(const QString &key, const QString &value)
         rpcClient.call(req, res);
         rpcClient.close();
     });
+}
+
+QString CooperationUtil::localIPAddress()
+{
+    QString ip;
+    // QNetworkInterface 类提供了一个主机 IP 地址和网络接口的列表
+    foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces()) {
+        // 每个网络接口包含 0 个或多个 IP 地址
+        QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
+        if (netInterface.name().startsWith("virbr") || netInterface.name().startsWith("vmnet")
+            || netInterface.name().startsWith("docker")) {
+            // 跳过桥接，虚拟机和docker的网络接口
+            DLOG << "netInterface name:" << netInterface.name().toStdString();
+            continue;
+        }
+
+        // 遍历每一个 IP 地址
+        foreach (QNetworkAddressEntry entry, entryList) {
+            if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol && entry.ip() != QHostAddress::LocalHost) {
+                //IP地址
+                ip = entry.ip().toString();
+                DLOG << "IP Address:" << ip.toStdString();
+                return ip;
+            }
+        }
+    }
+    return ip;
 }

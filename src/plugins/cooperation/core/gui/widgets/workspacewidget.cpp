@@ -81,7 +81,7 @@ void WorkspaceWidgetPrivate::onFilterFinished()
             return;
         }
 
-        stackedLayout->setCurrentWidget(nrWidget);
+        q->switchWidget(WorkspaceWidget::kNoResultWidget);
     }
 }
 
@@ -89,7 +89,7 @@ void WorkspaceWidgetPrivate::onDeviceRemoved(int index)
 {
     dlWidget->removeItem(index);
     if (dlWidget->itemCount() == 0)
-        stackedLayout->setCurrentWidget(nrWidget);
+        q->switchWidget(WorkspaceWidget::kNoResultWidget);
 }
 
 void WorkspaceWidgetPrivate::onDeviceReplaced(int index, const DeviceInfoPointer info)

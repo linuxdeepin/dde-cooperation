@@ -58,7 +58,6 @@ private:
     QMap<int, int64_t> fileIds;   // <file_id, last_current_size> 统计正在传输的文件量<文件id，上次已传输量>
     QStringList readyToSendFiles;
     QString sendToWho;
-    QString targetIp;
 
     TransferHelper::TransferStatus status { TransferHelper::Idle };
     TransferInfo transferInfo;
