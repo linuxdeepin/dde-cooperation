@@ -43,7 +43,7 @@ bool JobManager::handleRemoteRequestJob(QString json)
     fastring appName = fsjob.app_who;
     fastring tarAppname = fsjob.targetAppname;
     SendRpcService::instance()->removePing(appName.c_str());
-    tarAppname = tarAppname.empty() ? appName : appName;
+    tarAppname = tarAppname.empty() ? appName : tarAppname;
     SendRpcService::instance()->removePing(tarAppname.c_str());
     QSharedPointer<TransferJob> job(new TransferJob());
     job->initJob(fsjob.app_who, tarAppname, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
