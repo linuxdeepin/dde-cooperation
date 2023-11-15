@@ -10,6 +10,8 @@
 #include "co/log.h"
 #include "co/json.h"
 
+#include <QMap>
+
 DiscoveryJob::DiscoveryJob(QObject *parent)
     : QObject(parent)
 {
@@ -157,16 +159,20 @@ void DiscoveryJob::compareOldAndNew(const fastring &uid, const QString &cur,
         emit sigNodeChanged(true, cur);
         _dis_node_maps.insert(uid, std::make_pair(cur.toStdString(), true));
     } else if (!oldInfo.apps.empty() && !curInfo.apps.empty()) {
-        QStringList oldname, curname;
+        QMap<QString, fastring> oldname, curname;
         for (const auto &app : curInfo.apps) {
-            curname << app.appname.c_str();
+            curname.insert(app.appname.c_str(), app.json);
         }
         bool up = false, down = false;
         for (const auto &app : oldInfo.apps) {
-            oldname << app.appname.c_str();
+            oldname.insert(app.appname.c_str(), app.json);
             // 新的不包含老的，下线
-            if (!curname.contains(app.appname.c_str()))
+            if (!curname.contains(app.appname.c_str())) {
                 down = true;
+            } else { // 对比内容是否相当
+                if (curname.value(app.appname.c_str()).compare(app.json) != 0)
+                    up = true;
+            }
         }
         if (down) {
             //node has been unregister or losted.
@@ -174,7 +180,7 @@ void DiscoveryJob::compareOldAndNew(const fastring &uid, const QString &cur,
             _dis_node_maps.erase(it);
         }
 
-        for (const auto &app : curname) {
+        for (const auto &app : curname.keys()) {
             // 老的不包含新的，上线
             if (!oldname.contains(app)) {
                 up = true;

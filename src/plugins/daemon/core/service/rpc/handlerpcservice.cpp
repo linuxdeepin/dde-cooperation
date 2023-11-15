@@ -236,6 +236,7 @@ bool HandleRpcService::handleRemoteLogin(co::Json &info)
             lores.peer.username = Util::getUsername();
             lores.token = auth_token;
             lores.appName = lo.selfappName;
+            lores.result = authOK;
         }
 
         UserLoginResult result;
