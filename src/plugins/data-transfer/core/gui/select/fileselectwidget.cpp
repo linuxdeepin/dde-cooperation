@@ -299,6 +299,21 @@ void FileSelectWidget::changeText()
     }
 }
 
+void FileSelectWidget::clear()
+{
+    int pageCount = stackedWidget->count();
+    for (int i = 0; i < pageCount; ++i) {
+        qInfo()<<"clear";
+        SelectListView *currentPage = qobject_cast<SelectListView *>(stackedWidget->widget(i));
+
+        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(currentPage->model());
+        for (int row = 0; row < model->rowCount(); ++row) {
+            QModelIndex itemIndex = model->index(row, 0);
+            model->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
+        }
+    }
+}
+
 void FileSelectWidget::updateFileSelectList(QStandardItem *item)
 {
     QString path = item->data(Qt::UserRole).toString();

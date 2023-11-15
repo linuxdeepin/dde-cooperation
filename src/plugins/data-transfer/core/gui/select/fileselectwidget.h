@@ -20,7 +20,7 @@ public:
     ~FileSelectWidget();
 
     void changeText();
-
+    void clear();
 public slots:
     void nextPage();
     void backPage();
@@ -32,6 +32,7 @@ public slots:
 
     void updateFileViewData(QStandardItem *siderbarItem, const bool &isAdd);
     void selectOrDelAllItemFromSiderbar(QStandardItem *siderbarItem);
+
 signals:
     void isOk(const SelectItemName &name);
 

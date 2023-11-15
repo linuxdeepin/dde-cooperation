@@ -35,3 +35,8 @@ void OptionsManager::addUserOption(const QString &option, const QStringList &val
         userOptions.remove(option);
     userOptions[option] = value;
 }
+
+void OptionsManager::clear()
+{
+    userOptions.clear();
+}

@@ -48,7 +48,7 @@ public:
     void changeSelectframeState(const SelectItemName &name);
 
     void changeText();
-
+    void clear();
 private:
     void initUi();
 

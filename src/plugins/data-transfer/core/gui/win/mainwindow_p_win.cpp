@@ -21,6 +21,7 @@
 #include "../getbackup/zipfileprocesswidget.h"
 #include "../getbackup/zipfileprocessresultwidget.h"
 #include "utils/transferhepler.h"
+#include "utils/optionsmanager.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -130,6 +131,10 @@ QObject:
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
             [stackedWidget, errorwidget](bool online) {
                 if (online)
+                    return;
+                if(OptionsManager::instance()->getUserOption(Options::kTransferMethod).isEmpty())
+                    return;
+                if(OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]==TransferMethod::kLocalExport)
                     return;
                 int index = stackedWidget->currentIndex();
                 // only these need jump to networkdisconnectwidget

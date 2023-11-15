@@ -24,7 +24,7 @@ private:
     void initUI();
     void sendOptions();
     void changeAllWidgtText();
-
+    void clearAllWidget();
 private:
     QString transferMethod;
     QToolButton *nextButton = nullptr;

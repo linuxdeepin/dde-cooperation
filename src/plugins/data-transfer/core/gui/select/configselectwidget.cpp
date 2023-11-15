@@ -250,6 +250,21 @@ void ConfigSelectWidget::changeText()
     }
 }
 
+void ConfigSelectWidget::clear()
+{
+    QStandardItemModel *browsermodel = qobject_cast<QStandardItemModel *>(browserView->model());
+    for (int row = 0; row < browsermodel->rowCount(); ++row) {
+        QModelIndex itemIndex = browsermodel->index(row, 0);
+        browsermodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
+    }
+
+    QStandardItemModel *configmodel = qobject_cast<QStandardItemModel *>(configView->model());
+    for (int row = 0; row < configmodel->rowCount(); ++row) {
+        QModelIndex itemIndex = configmodel->index(row, 0);
+        configmodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
+    }
+}
+
 void ConfigSelectWidget::nextPage()
 {
     // send useroptions

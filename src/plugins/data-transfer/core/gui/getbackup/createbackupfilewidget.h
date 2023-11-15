@@ -18,7 +18,7 @@ public:
     ~CreateBackupFileWidget();
 
     void sendOptions();
-
+    void clear();
 private:
     void initUI();
     void initDiskListView();

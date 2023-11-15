@@ -4,6 +4,7 @@
 #include "../select/configselectwidget.h"
 #include "../select/fileselectwidget.h"
 #include "../select/appselectwidget.h"
+#include "../getbackup/createbackupfilewidget.h"
 
 #include "../type_defines.h"
 
@@ -161,6 +162,7 @@ void ChooseWidget::sendOptions()
 
 void ChooseWidget::nextPage()
 {
+    clearAllWidget();
     sendOptions();
     changeAllWidgtText();
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
@@ -278,5 +280,28 @@ void ChooseWidget::changeAllWidgtText()
     widgetConfig->changeText();
     widgetApp->changeText();
     widgetFile->changeText();
+#endif
+}
+
+void ChooseWidget::clearAllWidget()
+{
+#ifdef _WIN32
+    OptionsManager::instance()->clear();
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    SelectMainWidget *widgetMainselect =
+            qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
+    ConfigSelectWidget *widgetConfig =
+            qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
+    AppSelectWidget *widgetApp =
+            qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
+    FileSelectWidget *widgetFile =
+            qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
+    CreateBackupFileWidget *widgetbackupFile =
+            qobject_cast<CreateBackupFileWidget *>(stackedWidget->widget(PageName::createbackupfilewidget));
+    widgetFile->clear();
+    widgetConfig->clear();
+    widgetApp->clear();
+    widgetMainselect->clear();
+    widgetbackupFile->clear();
 #endif
 }

@@ -19,6 +19,7 @@ public:
     ConfigSelectWidget(QWidget *parent = nullptr);
     ~ConfigSelectWidget();
     void changeText();
+    void clear();
 public slots:
     void nextPage();
     void backPage();

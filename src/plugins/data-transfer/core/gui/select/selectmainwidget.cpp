@@ -68,6 +68,13 @@ void SelectMainWidget::changeText()
     }
 }
 
+void SelectMainWidget::clear()
+{
+    changeSelectframeState(SelectItemName::FILES);
+    changeSelectframeState(SelectItemName::CONFIG);
+    changeSelectframeState(SelectItemName::APP);
+}
+
 void SelectMainWidget::initUi()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
@@ -87,7 +94,8 @@ void SelectMainWidget::initUi()
                      fileItem, &SelectItem::updateSelectSize);
 
     appItem = new SelectItem("应用", QIcon(":/icon/app.svg"), SelectItemName::APP, this);
-    configItem =new SelectItem("配置", QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
+    configItem =
+            new SelectItem("配置", QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
 
     QHBoxLayout *modeLayout = new QHBoxLayout();
 

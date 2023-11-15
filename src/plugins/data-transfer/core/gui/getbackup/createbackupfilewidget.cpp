@@ -63,6 +63,16 @@ void CreateBackupFileWidget::sendOptions()
     qInfo() << "backup file name:" << saveName;
 }
 
+void CreateBackupFileWidget::clear()
+{
+    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex itemIndex = model->index(row, 0);
+        model->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
+    }
+    fileNameInput->clear();
+}
+
 void CreateBackupFileWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
@@ -365,6 +375,8 @@ void CreateBackupFileWidget::nextPage()
 }
 void CreateBackupFileWidget::backPage()
 {
+    clear();
+
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::selectmainwidget);

@@ -20,6 +20,7 @@ public:
     AppSelectWidget(QWidget *parent = nullptr);
     ~AppSelectWidget();
     void changeText();
+    void clear();
 public slots:
     void nextPage();
     void backPage();

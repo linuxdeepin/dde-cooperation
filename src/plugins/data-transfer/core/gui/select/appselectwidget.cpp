@@ -171,6 +171,15 @@ void AppSelectWidget::changeText()
     }
 }
 
+void AppSelectWidget::clear()
+{
+    QStandardItemModel *configmodel = qobject_cast<QStandardItemModel *>(appView->model());
+    for (int row = 0; row < configmodel->rowCount(); ++row) {
+        QModelIndex itemIndex = configmodel->index(row, 0);
+        configmodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
+    }
+}
+
 void AppSelectWidget::sendOptions()
 {
     QStringList appName;
