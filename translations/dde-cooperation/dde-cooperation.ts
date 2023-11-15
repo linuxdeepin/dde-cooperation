@@ -59,7 +59,7 @@
 <context>
     <name>cooperation_core::LookingForDeviceWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="34"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="29"/>
         <source>Looking for devices</source>
         <translation type="unfinished"></translation>
     </message>
@@ -85,7 +85,7 @@
 <context>
     <name>cooperation_core::NoNetworkWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="59"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="54"/>
         <source>Please connect to the network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -93,22 +93,22 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="90"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="85"/>
         <source>No device found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="94"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="89"/>
         <source>1.Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="106"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="101"/>
         <source>2.On the same LAN as the device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="108"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="103"/>
         <source>3.Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -231,42 +231,42 @@
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="337"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="339"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="393"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="395"/>
         <source>File sent successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="408"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="410"/>
         <source>Reject</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="409"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="411"/>
         <source>Accept</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="410"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="412"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="411"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="413"/>
         <source>&quot;%1&quot; send some files to you</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="451"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="453"/>
         <source>calculating</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="460"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="462"/>
         <source>The other party rejects your request</source>
         <translation type="unfinished"></translation>
     </message>
@@ -295,7 +295,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="208"/>
-        <source>Cooperation</source>
+        <source>File transfer</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -63,15 +63,6 @@ TransferHelperPrivate::~TransferHelperPrivate()
         delete transferDialog;
 }
 
-void TransferHelperPrivate::initConfig()
-{
-    //    auto storagePath = ConfigManager::instance()->appAttribute("GenericAttribute", kStoragePathKey);
-    //    handleSetConfig(KEY_APP_STORAGE_DIR, storagePath.isValid() ? storagePath.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
-
-    //    auto settings = ConfigManager::instance()->appAttribute("GenericAttribute", kTransferModeKey);
-    //    handleSetConfig(kTransferModeKey, settings.isValid() ? QString::number(settings.toInt()) : "0");
-}
-
 QWidget *TransferHelperPrivate::mainWindow()
 {
     for (auto w : qApp->topLevelWidgets()) {
@@ -205,7 +196,7 @@ void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
 uint TransferHelperPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
 {
     QDBusReply<uint> reply = notifyIfc->call("Notify", kMainAppName, replacesId,
-                                             "dde-cooperation", tr("Cooperation"), body,
+                                             "dde-cooperation", tr("File transfer"), body,
                                              actions, QVariantMap(), expireTimeout);
 
     return reply.isValid() ? reply.value() : replacesId;
@@ -404,6 +395,7 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
 
 void TransferHelper::waitForConfirm(const QString &name)
 {
+    d->transferInfo.clear();
     switch (d->currentMode) {
     case ReceiveMode: {
         d->recvNotifyId = 0;
