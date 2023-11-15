@@ -21,7 +21,8 @@ public:
 
     void startRemoteServer();
 
-    void handleRpcLogin(bool result, const QString &appName, const QString &ip);
+    void handleRpcLogin(bool result,const QString &targetAppname,
+                        const QString &appName, const QString &ip);
     bool handleRemoteApplyTransFile(co::Json &info);
     bool handleRemoteLogin(co::Json &info);
     void handleRemoteDisc(co::Json &info);

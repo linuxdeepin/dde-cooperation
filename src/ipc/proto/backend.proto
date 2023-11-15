@@ -35,7 +35,8 @@ object CallResult {
 }
 
 object ConnectParam {
-    string session
+    string targetAppname
+    string appName
     string host
     string password
 }

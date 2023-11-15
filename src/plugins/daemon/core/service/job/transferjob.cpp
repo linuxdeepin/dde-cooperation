@@ -384,6 +384,7 @@ void TransferJob::handleBlockQueque()
                 // handleUpdate(IO_ERROR, block.filename.c_str(), "failed to write", binder);
             }
         } else {
+            co::sleep(15);
             FileTransBlock file_block;
             file_block.job_id = (job_id);
             file_block.file_id = (file_id);

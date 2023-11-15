@@ -281,27 +281,29 @@ void HandleIpcService::handleTryConnect(co::Json json)
     UNIGO([json]() {
         ipc::ConnectParam param;
         param.from_json(json);
-        QString session(param.session.c_str());
+        QString appName(param.appName.c_str());
         QString ip(param.host.c_str());
         QString pass(param.password.c_str());
+        QString targetAppname = param.targetAppname.empty() ? appName : param.targetAppname.c_str();
         UserLoginInfo login;
 
         // 使用base64加密auth
-        login.name = param.session;
+        login.name = param.appName;
         login.auth = param.password;
 
         std::string uuid = Util::genUUID();
         login.my_uid = uuid;
         login.my_name = Util::getHostname();
-        login.selfappName = param.session;
-        login.appName = param.session;
+        login.selfappName = param.appName;
+        login.appName = targetAppname.toStdString();
 
         login.session_id = uuid;
         login.version = UNIAPI_VERSION;
         login.ip = Util::getFirstIp();
-        LOG << " rcv client connet to " << ip.toStdString() << session.toStdString();
+        LOG << " rcv client connet to " << ip.toStdString() << appName.toStdString();
         // 创建远程发送的work
-        SendRpcService::instance()->createRpcSender(param.session.c_str(), ip, UNI_RPC_PORT_BASE);
-        SendRpcService::instance()->doSendProtoMsg(IN_LOGIN_INFO, session, login.as_json().str().c_str());
+        SendRpcService::instance()->createRpcSender(param.appName.c_str(), ip, UNI_RPC_PORT_BASE);
+        SendRpcService::instance()->setTargetAppName(appName, targetAppname);
+        SendRpcService::instance()->doSendProtoMsg(IN_LOGIN_INFO, appName, login.as_json().str().c_str());
     });
 }
