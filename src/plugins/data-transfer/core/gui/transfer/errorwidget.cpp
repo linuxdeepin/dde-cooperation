@@ -9,12 +9,10 @@
 #include <QDebug>
 #include <gui/connect/choosewidget.h>
 
-#pragma execution_character_set("utf-8")
-
-inline constexpr char internetError[] { "网络异常" };
-inline constexpr char transferError[] { "传输中断" };
-inline constexpr char internetErrorPrompt[] { "网络断开,传输失败,请连接网络后重试" };
-inline constexpr char transferErrorPrompt[] { "UOS空间不足,请清除至少%1G后重试" };
+inline constexpr char internetError[] { "Network Error" };
+inline constexpr char transferError[] { "Transfer interrupted" };
+inline constexpr char internetErrorPrompt[] { "he network disconnected, transfer failed, please connect the network and try again" };
+inline constexpr char transferErrorPrompt[] { "Insufficient space in UOS, please clear at least %1 GB and try again" };
 ErrorWidget::ErrorWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -47,7 +45,7 @@ void ErrorWidget::initUI()
     errorLabel->setPixmap(errorPixmap);
     errorLabel->setGeometry(420, 180, errorPixmap.width(), errorPixmap.height());
 
-    QString titleStr = internetError;
+    QString titleStr = tr(internetError);
     titleLabel = new QLabel(titleStr, this);
     titleLabel->setFixedHeight(50);
     QFont font;
@@ -64,25 +62,25 @@ void ErrorWidget::initUI()
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
     QLabel *timeLabel = new QLabel(this);
-    timeLabel->setText(QString("预计迁移时间还剩 - -"));
+    timeLabel->setText(QString("%1 - -").arg(tr("Transfer will be completed in")));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     QFont timefont;
     font.setPointSize(5);
     timeLabel->setFont(timefont);
 
     promptLabel = new QLabel(this);
-    promptLabel->setText("<font size='2' color='#FF5736'>网络断开,传输失败,请连接网络后重试</font>");
+    promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(tr("Try again")));
     promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
     QToolButton *backButton = new QToolButton(this);
-    backButton->setText("返回");
+    backButton->setText(tr("Back"));
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet("background-color: lightgray;");
     QObject::connect(backButton, &QToolButton::clicked, this, &ErrorWidget::backPage);
 
     QToolButton *retryButton = new QToolButton(this);
 
-    retryButton->setText("重试");
+    retryButton->setText(tr("Try again"));
     retryButton->setStyleSheet("background-color: #0098FF;");
     QPalette palette = retryButton->palette();
     palette.setColor(QPalette::ButtonText, Qt::white);
@@ -157,10 +155,10 @@ void ErrorWidget::setErrorType(ErrorType type, int size)
 {
     if (type == ErrorType::networkError) {
         titleLabel->setText(internetError);
-        promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(internetErrorPrompt));
+        promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(tr(internetErrorPrompt)));
     } else {
-        titleLabel->setText(transferError);
-        QString prompt = QString(transferErrorPrompt).arg(size);
+        titleLabel->setText(tr(transferError));
+        QString prompt = QString(tr(transferErrorPrompt)).arg(size);
         promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(prompt));
     }
 }

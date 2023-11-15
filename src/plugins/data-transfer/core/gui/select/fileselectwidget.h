@@ -53,6 +53,10 @@ private:
 
     QStackedWidget *stackedWidget{ nullptr };
     QLabel *titileLabel{ nullptr };
+
+    QString InternetText{ tr("Select the file to transfer") };
+    QString LocalText{ tr("Please select the files to back up") };
+
 };
 
 #endif

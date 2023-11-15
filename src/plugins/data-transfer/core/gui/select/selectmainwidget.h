@@ -49,6 +49,7 @@ public:
 
     void changeText();
     void clear();
+
 private:
     void initUi();
 
@@ -67,6 +68,11 @@ private:
     QToolButton *nextButton{ nullptr };
     IndexLabel *LocalIndelabel{ nullptr };
     IndexLabel *InternetIndelabel{ nullptr };
+
+    QString InternetText{ tr("Select data to transfer") };
+    QString LocalText{ tr("Please select the content to back up") };
+    QString BtnInternetText{ tr("Start transfer") };
+    QString BtnLocalText{ tr("Next") };
 };
 
 #endif // SELECTMAINWIDGET_H

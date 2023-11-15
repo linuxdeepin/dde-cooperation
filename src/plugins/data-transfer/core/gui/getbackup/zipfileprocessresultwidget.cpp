@@ -12,8 +12,6 @@
 #include <QDesktopServices>
 #include <QApplication>
 
-#pragma execution_character_set("utf-8")
-
 ZipFileProcessResultWidget::ZipFileProcessResultWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
@@ -30,7 +28,7 @@ void ZipFileProcessResultWidget::initUI()
 
     successed();
     exitButton = new QToolButton(this);
-    exitButton->setText("退出");
+    exitButton->setText(tr("Exit"));
     exitButton->setFixedSize(120, 35);
     exitButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                               "border: 1px solid rgba(0,0,0, 0.03);"
@@ -47,7 +45,7 @@ void ZipFileProcessResultWidget::initUI()
 
     QObject::connect(exitButton, &QToolButton::clicked, qApp, &QApplication::quit);
     QToolButton *backButton = new QToolButton(this);
-    backButton->setText("返回");
+    backButton->setText(tr("Back"));
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                               "border: 1px solid rgba(0,0,0, 0.03);"
@@ -82,12 +80,12 @@ void ZipFileProcessResultWidget::successed()
     icon->setPixmap(QIcon(":/icon/success-128.svg").pixmap(128, 128));
     icon->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    tipLabel1 = new QLabel("备份成功", this);
+    tipLabel1 = new QLabel(tr("Back up succeed"), this);
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    tipLabel2 = new QLabel("恭喜您，信息备份成功", this);
+    tipLabel2 = new QLabel(tr("Congratulations, Your Information has been Successfully Backed Up."), this);
     tipLabel2->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QString display = "<a href=\"https://\" style=\"text-decoration:none;\">前往查看</a>";
+    QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Go to View"));
     displayLabel = new QLabel(display, this);
     displayLabel->setAlignment(Qt::AlignCenter);
     QObject::connect(displayLabel, &QLabel::linkActivated, this,
@@ -106,12 +104,13 @@ void ZipFileProcessResultWidget::successed()
 void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int progressbar,
                                                   int estimatedtime)
 {
+    Q_UNUSED(estimatedtime)
     if (progressbar != -1) {
         return;
     }
     displayLabel->setVisible(false);
     icon->setPixmap(QIcon(":/icon/fail.svg").pixmap(128, 128));
-    tipLabel1->setText("备份失败");
+    tipLabel1->setText(tr("Back up failed"));
     tipLabel2->setText(content);
     exitButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                               "border: 1px solid rgba(0,0,0, 0.03);"

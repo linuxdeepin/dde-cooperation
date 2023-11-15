@@ -9,21 +9,15 @@
 #include <QApplication>
 #include <QStandardItemModel>
 #include <QPainter>
-
 #include <gui/mainwindow_p.h>
-
 #include <utils/transferhepler.h>
-#pragma execution_character_set("utf-8")
 
-ResultDisplayWidget::ResultDisplayWidget(QWidget *parent)
-    : QFrame(parent)
+ResultDisplayWidget::ResultDisplayWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
 }
 
-ResultDisplayWidget::~ResultDisplayWidget()
-{
-}
+ResultDisplayWidget::~ResultDisplayWidget() { }
 
 void ResultDisplayWidget::initUI()
 {
@@ -39,7 +33,7 @@ void ResultDisplayWidget::initUI()
     iconLabel->setPixmap(QIcon(":/icon/success half-96.svg").pixmap(73, 73));
     iconLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 
-    QLabel *titileLabel = new QLabel("部分迁移完成", this);
+    QLabel *titileLabel = new QLabel(tr("Transfer completed partially"), this);
     titileLabel->setStyleSheet("color: black;"
                                "font-size: 24px;"
                                "font-weight: 700;");
@@ -55,8 +49,8 @@ void ResultDisplayWidget::initUI()
     tipiconlabel->setPixmap(QIcon(":/icon/dialog-warning.svg").pixmap(14, 14));
 
     QLabel *tiptextlabel = new QLabel(this);
-    tiptextlabel->setText("<font size=12px color='gray' >部分信息迁移失败，请手动迁移。</font>");
 
+    tiptextlabel->setText(QString("<font size=12px color='gray' >%1</font>").arg(tr("Partial data transfer failed, please manual transfer later")));
     QHBoxLayout *tiplayout = new QHBoxLayout(this);
     tiplayout->addSpacing(95);
     tiplayout->addWidget(tipiconlabel);
@@ -67,7 +61,7 @@ void ResultDisplayWidget::initUI()
     listlayout->addWidget(listview);
 
     QToolButton *backButton = new QToolButton(this);
-    backButton->setText("返回");
+    backButton->setText(tr("Back"));
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet("background-color: lightgray;");
     connect(backButton, &QToolButton::clicked, this, &ResultDisplayWidget::nextPage);
@@ -76,7 +70,7 @@ void ResultDisplayWidget::initUI()
     QPalette palette = nextButton->palette();
     palette.setColor(QPalette::ButtonText, Qt::white);
     nextButton->setPalette(palette);
-    nextButton->setText("退出");
+    nextButton->setText(tr("Exit"));
     nextButton->setFixedSize(120, 35);
     nextButton->setStyleSheet("background-color: #0098FF;");
     connect(nextButton, &QToolButton::clicked, qApp, &QApplication::quit);
@@ -97,14 +91,15 @@ void ResultDisplayWidget::initUI()
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(5);
 
-    connect(TransferHelper::instance(), &TransferHelper::failure, this, &ResultDisplayWidget::addFailure);
+    connect(TransferHelper::instance(), &TransferHelper::failure, this,
+            &ResultDisplayWidget::addFailure);
 }
 
 void ResultDisplayWidget::initListTitle()
 {
-    QLabel *text1 = new QLabel("内容", this);
-    QLabel *text2 = new QLabel("类别", this);
-    QLabel *text3 = new QLabel("失败原因", this);
+    QLabel *text1 = new QLabel(tr("Content"), this);
+    QLabel *text2 = new QLabel(tr("Category"), this);
+    QLabel *text3 = new QLabel(tr("Failure reason"), this);
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addSpacing(90);
@@ -137,18 +132,19 @@ void ResultDisplayWidget::nextPage()
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::choosewidget);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+                      "nullptr";
     }
 }
 
 void ResultDisplayWidget::themeChanged(int theme)
 {
-    //light
+    // light
     if (theme == 1) {
         listTitle->setStyleSheet("background-color: white; border-radius: 10px;");
         setStyleSheet("background-color: white; border-radius: 10px;");
     } else {
-        //dark
+        // dark
         listTitle->setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
@@ -158,9 +154,9 @@ void ResultDisplayWidget::addFailure(QString name, QString type, QString reason)
 {
     auto model = qobject_cast<QStandardItemModel *>(listview->model());
 
-    if(type == "clear"){
-       model->clear();
-       return;
+    if (type == "clear") {
+        model->clear();
+        return;
     }
 
     QStandardItem *item = new QStandardItem();
@@ -176,29 +172,26 @@ void ResultDisplayWidget::clear()
     model->clear();
 }
 
-itemDelegate::itemDelegate()
-{
-}
+itemDelegate::itemDelegate() { }
 
-itemDelegate::~itemDelegate()
-{
-}
+itemDelegate::~itemDelegate() { }
 
-void itemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void itemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const
 {
     paintBackground(painter, option, index);
     paintText(painter, option, index);
 }
 
-QSize itemDelegate::sizeHint(const QStyleOptionViewItem &option,
-                             const QModelIndex &index) const
+QSize itemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option);
     Q_UNUSED(index);
     return QSize(180, 36);
 }
 
-void itemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void itemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &option,
+                             const QModelIndex &index) const
 {
     painter->save();
 
@@ -223,7 +216,8 @@ void itemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &opti
     painter->restore();
 }
 
-void itemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void itemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option,
+                                   const QModelIndex &index) const
 {
     painter->save();
     QRect positon(option.rect);

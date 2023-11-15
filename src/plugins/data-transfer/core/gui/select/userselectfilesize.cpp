@@ -6,7 +6,6 @@
 #include <QListView>
 #include <QStandardItemModel>
 
-#pragma execution_character_set("utf-8")
 UserSelectFileSize::UserSelectFileSize()
 {
     // Update the size of the selected files to be computed.
@@ -20,7 +19,7 @@ void UserSelectFileSize::sendFileSize()
     if (pendingFiles.isEmpty()) {
         emit updateUserFileSelectSize(fromByteToQstring(userSelectFileSize));
     } else {
-        emit updateUserFileSelectSize(QString("计算中"));
+        emit updateUserFileSelectSize(QString(tr("Calculating")));
     }
 }
 

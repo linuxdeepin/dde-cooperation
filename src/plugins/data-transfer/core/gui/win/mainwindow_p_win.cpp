@@ -40,6 +40,7 @@
 #include <QDebug>
 #include <QThreadPool>
 #include <QTimer>
+
 using namespace data_transfer_core;
 
 void MainWindowPrivate::initWindow()
@@ -232,7 +233,7 @@ void MainWindowPrivate::initTitleBar()
                              "}");
     mainLabel->setPixmap(QPixmap(":/icon/icon.svg"));
 
-    QObject::connect(closeButton, &QToolButton::clicked, q, [this]() { QCoreApplication::quit(); });
+    QObject::connect(closeButton, &QToolButton::clicked, q, []() { QCoreApplication::quit(); });
     QObject::connect(minButton, &QToolButton::clicked, q, &MainWindow::showMinimized);
 
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);

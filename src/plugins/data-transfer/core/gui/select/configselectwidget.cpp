@@ -1,4 +1,4 @@
-﻿#include "configselectwidget.h"
+#include "configselectwidget.h"
 #include "appselectwidget.h"
 #include "item.h"
 #include "../type_defines.h"
@@ -15,10 +15,7 @@
 #include <utils/transferhepler.h>
 #include <gui/mainwindow_p.h>
 
-#pragma execution_character_set("utf-8")
 
-static inline constexpr char InternetText[]{ "请选择要同步的配置" };
-static inline constexpr char LocalText[]{ "请选择要备份的配置" };
 
 ConfigSelectWidget::ConfigSelectWidget(QWidget *parent) : QFrame(parent)
 {
@@ -45,7 +42,7 @@ void ConfigSelectWidget::initUI()
     initSelectBrowerBookMarkFrame();
     initSelectConfigFrame();
 
-    QLabel *tipLabel1 = new QLabel("已扫描系统中的已安装应用，请选择需要迁移的应用", this);
+    QLabel *tipLabel1 = new QLabel(tr("Check transfer configuration will automatically apply to UOS."), this);
     tipLabel1->setFixedHeight(12);
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     font.setPointSize(10);
@@ -53,7 +50,7 @@ void ConfigSelectWidget::initUI()
     tipLabel1->setFont(font);
 
     determineButton = new QToolButton(this);
-    determineButton->setText("确定");
+    determineButton->setText(tr("Confirm"));
     determineButton->setFixedSize(120, 35);
     determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                    "border: 1px solid rgba(0,0,0, 0.03);"
@@ -70,7 +67,7 @@ void ConfigSelectWidget::initUI()
     QObject::connect(determineButton, &QToolButton::clicked, this, &ConfigSelectWidget::nextPage);
 
     cancelButton = new QToolButton(this);
-    cancelButton->setText("取消");
+    cancelButton->setText(tr("Cancel"));
     cancelButton->setFixedSize(120, 35);
     cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                 "border: 1px solid rgba(0,0,0, 0.03);"
@@ -110,7 +107,7 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
     ItemTitlebar *titlebar =
-            new ItemTitlebar("浏览器书签", "迁移建议", 50, 360, QRectF(10, 12, 16, 16), 3, this);
+            new ItemTitlebar(tr("Browser bookmarks"),  tr("Recommendation"), 50, 360, QRectF(10, 12, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
     selectBrowerBookMarkFrame = new QFrame(this);
     selectBrowerBookMarkFrame->setFixedSize(500, 190);
@@ -131,7 +128,7 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
     for (auto iterator = browserList.begin(); iterator != browserList.end(); iterator++) {
         QStandardItem *item = new QStandardItem();
         item->setData(iterator.key(), Qt::DisplayRole);
-        item->setData("是", Qt::ToolTipRole);
+        item->setData(tr("Transferable"), Qt::ToolTipRole);
         item->setIcon(QIcon(iterator.value()));
         item->setCheckable(true);
         model->appendRow(item);
@@ -147,7 +144,7 @@ void ConfigSelectWidget::initSelectConfigFrame()
 {
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     ItemTitlebar *titlebar =
-            new ItemTitlebar("个人配置", "迁移建议", 50, 360, QRectF(10, 12, 16, 16), 3, this);
+            new ItemTitlebar(tr("Personal Settings"), tr("Recommendation"), 50, 360, QRectF(10, 12, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
 
     selectConfigFrame = new QFrame(this);
@@ -167,8 +164,8 @@ void ConfigSelectWidget::initSelectConfigFrame()
             new ItemDelegate(55, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
 
     QStandardItem *item = new QStandardItem();
-    item->setData("自定义桌面", Qt::DisplayRole);
-    item->setData("是", Qt::ToolTipRole);
+    item->setData(tr("Customized Wallpaper"), Qt::DisplayRole);
+    item->setData(tr("Transferable"), Qt::ToolTipRole);
     item->setCheckable(true);
     model->appendRow(item);
 
@@ -249,6 +246,7 @@ void ConfigSelectWidget::changeText()
         titileLabel->setText(InternetText);
     }
 }
+
 
 void ConfigSelectWidget::clear()
 {

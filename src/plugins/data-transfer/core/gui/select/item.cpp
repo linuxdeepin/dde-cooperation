@@ -1,4 +1,4 @@
-﻿#include "item.h"
+#include "item.h"
 
 #include <QApplication>
 #include <QLabel>
@@ -517,7 +517,7 @@ void SidebarItemDelegate::paintText(QPainter *painter, const QStyleOptionViewIte
     filenameTextFont.setPixelSize(12);
     QString filenameText = index.data(Qt::DisplayRole).toString();
     QFontMetrics filenameMetrics(filenameTextFont);
-    filenameText = filenameMetrics.elidedText(filenameText, Qt::ElideRight, 150);
+    filenameText = filenameMetrics.elidedText(filenameText, Qt::ElideRight, 100);
     painter->drawText(filenameTextPos, Qt::AlignLeft | Qt::AlignVCenter, filenameText);
 
     QRect remarkTextPos = option.rect.adjusted(148, -2, 0, 0);
@@ -525,7 +525,7 @@ void SidebarItemDelegate::paintText(QPainter *painter, const QStyleOptionViewIte
     remarkTextFont.setPixelSize(12);
     QString remarkText = index.data(Qt::ToolTipRole).toString();
     QFontMetrics remarkMetrics(remarkTextFont);
-    remarkTextFont = remarkMetrics.elidedText(filenameText, Qt::ElideRight, 20);
+    remarkTextFont = remarkMetrics.elidedText(remarkText, Qt::ElideRight, 50);
     painter->drawText(remarkTextPos, Qt::AlignLeft | Qt::AlignVCenter, remarkText);
 
     painter->restore();

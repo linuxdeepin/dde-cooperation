@@ -1,4 +1,4 @@
-﻿#include "calculatefilesize.h"
+#include "calculatefilesize.h"
 #include <QThreadPool>
 #include <QListView>
 #include <QStandardItemModel>

@@ -14,7 +14,6 @@
 #include <QCoreApplication>
 #include <JlCompress.h>
 
-#pragma execution_character_set("utf-8")
 ZipWork::ZipWork(QObject *parent) : QThread(parent)
 {
     qInfo() << "zipwork start.";
@@ -85,7 +84,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
     if (!sourceFile.open(QIODevice::ReadOnly)) {
         qCritical() << "Error reading source file:" << filePath;
         // backup file false
-        emit backupFileProcessSingal(QString("压缩源文件有误:%1").arg(filePath), -1, -1);
+        emit backupFileProcessSingal(QString(tr("Error in compressing source files :%1")).arg(filePath), -1, -1);
         return false;
     }
 
@@ -96,7 +95,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
     if (!destinationFile.open(QIODevice::WriteOnly, newInfo)) {
         qCritical() << "Error writing to ZIP file for:" << filePath;
         // backup file false
-        emit backupFileProcessSingal(QString("压缩文件写入错误:%1").arg(filePath), -1, -1);
+        emit backupFileProcessSingal(QString(tr("Error writing compressed file :%1")).arg(filePath), -1, -1);
         return false;
     }
 
@@ -146,7 +145,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     if (!zip.open(QuaZip::mdCreate)) {
         qCritical("Error creating the ZIP file.");
         // backup file false
-        emit backupFileProcessSingal(QString("创建压缩文件失败,检查文件%1是否已经被打开！").arg(destinationZipFile), -1, -1);
+        emit backupFileProcessSingal(QString(tr("Failed to create compressed file, check if file %1 is already open!")).arg(destinationZipFile), -1, -1);
         return false;
     }
 
@@ -171,13 +170,13 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     if (zip.getZipError() != UNZ_OK) {
         qCritical() << "Error while compressing. Error code:" << zip.getZipError();
         // backup file false
-        emit backupFileProcessSingal(QString("文件压缩失败,错误代码：%1").arg(zip.getZipError()),
+        emit backupFileProcessSingal(QString("File compression failed, error code:%1").arg(zip.getZipError()),
                                      -1, -1);
         return false;
     }
 
     // backup file true
-    emit backupFileProcessSingal(QString("文件完成！"), 100, 0);
+    emit backupFileProcessSingal(QString(tr("Back up file done")), 100, 0);
     return true;
 }
 

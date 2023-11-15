@@ -35,7 +35,7 @@ TransferHandle::TransferHandle()
 
     //log
     //handleConnectStatus(1,"66");
-    qInstallMessageHandler(logHandler);
+   // qInstallMessageHandler(logHandler);
 }
 
 TransferHandle::~TransferHandle()
@@ -296,7 +296,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     //    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
     //    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
-    emit TransferHelper::instance()->transferContent("正在传输", filepath, progressbar, remain_time);
+    emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
 }
 
 void TransferHandle::handleMiscMessage(QString jsonmsg)

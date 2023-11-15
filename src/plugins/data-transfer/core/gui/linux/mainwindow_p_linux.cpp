@@ -30,7 +30,7 @@ using namespace data_transfer_core;
 
 void MainWindowPrivate::initWindow()
 {
-    q->setWindowTitle("数据迁移");
+    q->setWindowTitle(tr("UOS data transfer"));
     q->setFixedSize(740, 552);
     q->setWindowIcon(QIcon(":/icon/icon.svg"));
 

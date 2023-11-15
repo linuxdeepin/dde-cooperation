@@ -1,4 +1,4 @@
-﻿#include "siderbarwidget.h"
+#include "siderbarwidget.h"
 #include "fileselectwidget.h"
 #include "item.h"
 #include "calculatefilesize.h"
@@ -13,11 +13,6 @@
 #include <QDir>
 
 #include <utils/optionsmanager.h>
-
-#pragma execution_character_set("utf-8")
-
-static inline constexpr char InternetText[]{ "请选择要同步的文件" };
-static inline constexpr char LocalText[]{ "请选择要备份的文件" };
 
 FileSelectWidget::FileSelectWidget(SidebarWidget *siderbarWidget, QWidget *parent)
     : QFrame(parent), sidebar(siderbarWidget)
@@ -44,7 +39,7 @@ void FileSelectWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
 
-    titileLabel = new QLabel(LocalText, this);
+    titileLabel = new QLabel(tr(LocalText), this);
     titileLabel->setFixedHeight(30);
     QFont font;
     font.setPointSize(16);
@@ -54,7 +49,7 @@ void FileSelectWidget::initUI()
 
     QHBoxLayout *headerLayout = new QHBoxLayout();
     ItemTitlebar *titlebar =
-            new ItemTitlebar("文件名", "大小", 50, 360, QRectF(10, 12, 16, 16), 3, this);
+            new ItemTitlebar(tr("Name"), tr("Size"), 50, 360, QRectF(10, 12, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
     headerLayout->addWidget(titlebar);
 
@@ -63,7 +58,10 @@ void FileSelectWidget::initUI()
     initFileView();
     fileviewLayout->addWidget(stackedWidget);
 
-    QLabel *tipLabel1 = new QLabel("传输完成的数据，将被存放在用户的 home 目录下", this);
+    QLabel *tipLabel1 = new QLabel(
+            tr("When transfer completed, the data will be placed in the user's home directory"),
+            this);
+    tipLabel1->setWordWrap(true);
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     tipLabel1->setFixedHeight(30);
     font.setPointSize(10);
@@ -71,10 +69,7 @@ void FileSelectWidget::initUI()
     tipLabel1->setFont(font);
 
     QToolButton *determineButton = new QToolButton(this);
-    QPalette palette = determineButton->palette();
-    palette.setColor(QPalette::ButtonText, Qt::white);
-    determineButton->setPalette(palette);
-    determineButton->setText("确定");
+    determineButton->setText(tr("Confirm"));
     determineButton->setFixedSize(120, 35);
     determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                    "border: 1px solid rgba(0,0,0, 0.03);"
@@ -91,7 +86,7 @@ void FileSelectWidget::initUI()
     QObject::connect(determineButton, &QToolButton::clicked, this, &FileSelectWidget::nextPage);
 
     QToolButton *cancelButton = new QToolButton(this);
-    cancelButton->setText("取消");
+    cancelButton->setText(tr("Cancel"));
     cancelButton->setFixedSize(120, 35);
     cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                 "border: 1px solid rgba(0,0,0, 0.03);"
@@ -224,6 +219,7 @@ SelectListView *FileSelectWidget::addFileViewData(const QString &path, QStandard
     fileView->setItemDelegate(delegate);
     fileView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     fileView->setSelectionMode(QAbstractItemView::NoSelection);
+    fileView->setVerticalScrollMode(QListView::ScrollPerPixel);
 
     int diskFileNUM = 0;
     QList<QString> needCalculateFileList;
@@ -293,9 +289,9 @@ void FileSelectWidget::changeText()
 {
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
-        titileLabel->setText(LocalText);
+        titileLabel->setText(tr(LocalText));
     } else if (method == TransferMethod::kNetworkTransmission) {
-        titileLabel->setText(InternetText);
+        titileLabel->setText(tr(InternetText));
     }
 }
 
@@ -303,9 +299,7 @@ void FileSelectWidget::clear()
 {
     int pageCount = stackedWidget->count();
     for (int i = 0; i < pageCount; ++i) {
-        qInfo()<<"clear";
         SelectListView *currentPage = qobject_cast<SelectListView *>(stackedWidget->widget(i));
-
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(currentPage->model());
         for (int row = 0; row < model->rowCount(); ++row) {
             QModelIndex itemIndex = model->index(row, 0);

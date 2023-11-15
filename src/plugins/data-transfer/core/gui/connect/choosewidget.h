@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <QPainter>
 #include <QToolButton>
-
+#include "../type_defines.h"
 class ModeItem;
 class ChooseWidget : public QFrame
 {
@@ -25,24 +25,35 @@ private:
     void sendOptions();
     void changeAllWidgtText();
     void clearAllWidget();
+
 private:
     QString transferMethod;
     QToolButton *nextButton = nullptr;
     int nextpage;
+    ModeItem *winItem{nullptr};
+    ModeItem *packageItem{nullptr};
+    QString internetMethodName{ tr("From Windows PC") };
+#ifdef WIN32
+    QString localFileMethodName { tr("Export to local directory") };
+    int selecPage1 = PageName::promptwidget;
+    int selecPage2 = PageName::selectmainwidget;
+#else
+    QString localFileMethodName { tr("Import from backup files") };
+    int selecPage1{ PageName::promptwidget };
+    int selecPage2{ PageName::uploadwidget };
+#endif
 };
 
 class ModeItem : public QFrame
 {
     Q_OBJECT
-
     friend ChooseWidget;
-
 public:
     ModeItem(QString text, QIcon icon, QWidget *parent = nullptr);
     ~ModeItem() override;
 
     void setEnable(bool able);
-
+    void themeChanged(int theme);
 signals:
     void clicked(bool checked);
 
@@ -55,6 +66,7 @@ private:
     bool checked{ false };
     QLabel *iconLabel{ nullptr };
     QString itemText;
+    bool drak{false};
 };
 
 class IndexLabel : public QLabel

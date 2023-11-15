@@ -24,6 +24,14 @@ ReadyWidget::ReadyWidget(QWidget *parent) : QFrame(parent)
 
 ReadyWidget::~ReadyWidget() { }
 
+void ReadyWidget::clear()
+{
+    ipInput->clear();
+    captchaInput->clear();
+    tiptextlabel->setVisible(false);
+    setnextButEnable(false);
+}
+
 void ReadyWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
@@ -36,7 +44,7 @@ void ReadyWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
 
-    QLabel *mainLabel = new QLabel("准备连接", this);
+    QLabel *mainLabel = new QLabel(tr("Ready to connect"), this);
     mainLabel->setStyleSheet("opacity: 1;"
                              "color: rgba(0,26,46,1);"
                              "font-family: \"SourceHanSansSC-Bold\";"
@@ -46,14 +54,14 @@ void ReadyWidget::initUI()
                              "text-align: left;");
     mainLabel->setAlignment(Qt::AlignTop | Qt::AlignCenter);
 
-    QLabel *ipLabel = new QLabel("IP地址", this);
+    QLabel *ipLabel = new QLabel(tr("IP"), this);
     QHBoxLayout *ipLayout = new QHBoxLayout(this);
     ipLayout->addSpacing(200);
     ipLayout->addWidget(ipLabel);
     ipLayout->setAlignment(Qt::AlignBottom);
 
     ipInput = new QLineEdit(this);
-    ipInput->setPlaceholderText("请输入您想要连接的电脑IP地址");
+    ipInput->setPlaceholderText(tr("Please input the IP of UOS"));
     ipInput->setStyleSheet("border-radius: 8px;"
                            "opacity: 1;"
                            "padding-left: 10px;"
@@ -74,13 +82,13 @@ void ReadyWidget::initUI()
     editLayout1->addSpacing(200);
     editLayout1->addWidget(ipInput);
 
-    QLabel *cue = new QLabel("您可以通过在另一台电脑上的迁移助手查看IP地址", this);
+    QLabel *cue = new QLabel(tr("Please open data transfer on UOS, and get the IP"), this);
     QHBoxLayout *cueLayout = new QHBoxLayout(this);
     cueLayout->addSpacing(200);
     cueLayout->addWidget(cue);
     cueLayout->setAlignment(Qt::AlignTop);
 
-    QLabel *Captcha = new QLabel("验证码：", this);
+    QLabel *Captcha = new QLabel(tr("Connect code"), this);
     QHBoxLayout *captchaLayout = new QHBoxLayout(this);
     captchaLayout->addSpacing(200);
     captchaLayout->addWidget(Captcha);
@@ -90,7 +98,7 @@ void ReadyWidget::initUI()
     QRegularExpressionValidator *captchaValidator =
             new QRegularExpressionValidator(QRegularExpression("^\\d{6}$"));
     captchaInput->setValidator(captchaValidator);
-    captchaInput->setPlaceholderText("请输入PC上显示的验证码");
+    captchaInput->setPlaceholderText(tr("Please input the connect code on UOS"));
     captchaInput->setStyleSheet("border-radius: 8px;"
                                 "opacity: 1;"
                                 "padding-left: 10px;"
@@ -107,7 +115,7 @@ void ReadyWidget::initUI()
     editLayout2->addWidget(captchaInput);
 
     QToolButton *backButton = new QToolButton(this);
-    backButton->setText("返回");
+    backButton->setText(tr("Back"));
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                               "border: 1px solid rgba(0,0,0, 0.03);"
@@ -134,7 +142,7 @@ void ReadyWidget::initUI()
     palette.setColor(QPalette::ButtonText, Qt::white);
     nextButton->setEnabled(false);
     nextButton->setPalette(palette);
-    nextButton->setText("确定");
+    nextButton->setText(tr("Connect"));
     nextButton->setFixedSize(120, 35);
     setnextButEnable(false);
     connect(nextButton, &QToolButton::clicked, this, &ReadyWidget::tryConnect);
@@ -233,6 +241,8 @@ void ReadyWidget::nextPage()
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
+
+    clear();
 }
 
 void ReadyWidget::backPage()
@@ -244,6 +254,8 @@ void ReadyWidget::backPage()
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
+
+    clear();
 }
 
 void ReadyWidget::onLineTextChange()
@@ -270,6 +282,6 @@ void ReadyWidget::onLineTextChange()
 
 void ReadyWidget::connectFailed()
 {
-    tiptextlabel->setText("<font size='3' color='#FF5736'>密码或IP错误！请重新输入。</font>");
+    tiptextlabel->setText(QString("<font size='3' color='#FF5736'>%1</font>").arg(tr("The user is busy, failed to connect.")));
     timer->start();
 }

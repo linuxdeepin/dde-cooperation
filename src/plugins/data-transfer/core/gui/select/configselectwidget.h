@@ -32,6 +32,7 @@ private:
     void initSelectConfigFrame();
     void sendOptions();
     void delOptions();
+
 private:
     QFrame *selectBrowerBookMarkFrame{ nullptr };
     QFrame *selectConfigFrame{ nullptr };
@@ -44,6 +45,9 @@ private:
     QToolButton *cancelButton{ nullptr };
 
     QLabel *titileLabel{ nullptr };
+
+    QString InternetText{ tr("Select the configuration to transfer") };
+    QString LocalText{ tr("Please select the configurations to back up") };
 };
 
 #endif

@@ -12,12 +12,8 @@
 #include <gui/mainwindow_p.h>
 #include <utils/transferhepler.h>
 #include <utils/optionsmanager.h>
-#pragma execution_character_set("utf-8")
 
-static inline constexpr char InternetText[]{ "请选择要传输的内容" };
-static inline constexpr char LocalText[]{ "请选择要备份的内容" };
-static inline constexpr char BtnInternetText[]{ "开始传输" };
-static inline constexpr char BtnLocalText[]{ "下一步" };
+
 SelectMainWidget::SelectMainWidget(QWidget *parent) : QFrame(parent)
 {
     initUi();
@@ -89,13 +85,13 @@ void SelectMainWidget::initUi()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    fileItem = new SelectItem("文件", QIcon(":/icon/file.svg"), SelectItemName::FILES, this);
+    fileItem = new SelectItem(tr("File"), QIcon(":/icon/file.svg"), SelectItemName::FILES, this);
     QObject::connect(UserSelectFileSize::instance(), &UserSelectFileSize::updateUserFileSelectSize,
                      fileItem, &SelectItem::updateSelectSize);
 
-    appItem = new SelectItem("应用", QIcon(":/icon/app.svg"), SelectItemName::APP, this);
+    appItem = new SelectItem(tr("App"), QIcon(":/icon/app.svg"), SelectItemName::APP, this);
     configItem =
-            new SelectItem("配置", QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
+            new SelectItem(tr("Config"), QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
 
     QHBoxLayout *modeLayout = new QHBoxLayout();
 
@@ -107,7 +103,7 @@ void SelectMainWidget::initUi()
     modeLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QToolButton *backButton = new QToolButton(this);
-    backButton->setText("返回");
+    backButton->setText(tr("Back"));
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                               "border: 1px solid rgba(0,0,0, 0.03);"
@@ -257,7 +253,7 @@ SelectItem::SelectItem(QString text, QIcon icon, SelectItemName itemName, QWidge
     iconLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
 
     sizeLabel = new QLabel(this);
-    sizeLabel->setText("已选:0");
+    sizeLabel->setText(tr("Selected:0"));
     sizeLabel->setAlignment(Qt::AlignCenter);
     sizeLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
 
@@ -278,11 +274,11 @@ SelectItem::~SelectItem() { }
 void SelectItem::updateSelectSize(QString num)
 {
     if (name == SelectItemName::APP) {
-        sizeLabel->setText(QString("已选:%1").arg(num));
+        sizeLabel->setText(QString(tr("Selected:%1")).arg(num));
     } else if (name == SelectItemName::FILES) {
-        sizeLabel->setText(QString("已选:%1").arg(num));
+        sizeLabel->setText(QString(tr("Selected:%1")).arg(num));
     } else if (name == SelectItemName::CONFIG) {
-        sizeLabel->setText(QString("已选:%1项").arg(num));
+        sizeLabel->setText(QString(tr("Selected:%1")).arg(num));
     } else {
         qDebug() << "selectItemName is error!";
     }
@@ -345,7 +341,7 @@ void SelectItem::initEditFrame()
     iconLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
 
     QLabel *textLabel = new QLabel(editFrame);
-    textLabel->setText("编辑");
+    textLabel->setText(tr("Edit"));
     textLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);"
                              "font-family: \"SourceHanSansSC-Medium\";"
                              "color:white;"

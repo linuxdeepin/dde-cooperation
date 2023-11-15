@@ -26,7 +26,6 @@
 
 #define MAXNAME 256
 
-#pragma execution_chatacter_set("utf_8")
 namespace Registry {
 inline constexpr char BrowerRegistryPath[]{ "SOFTWARE\\Clients\\StartMenuInternet" };
 inline constexpr char ApplianceRegistryPath1[]{
@@ -512,18 +511,16 @@ void DrapWindowsData::applianceFromSetting(QSettings &settings, QString registry
         QString installLocation = settings.value("InstallLocation").toString();
         QString displayIcon = settings.value("DisplayIcon").toString();
         bool isSystemComponent = settings.value("SystemComponent").toBool();
-        if (!isSystemComponent) {
-            if (!installLocation.isEmpty()) {
-                WinApp app;
-                app.name = displayName;
-                app.iconPath = displayIcon;
-                for (auto iteraotr = applianceList.begin(); iteraotr != applianceList.end();
-                     ++iteraotr) {
-                    if (iteraotr->name == displayName)
-                        break;
-                }
-                applianceList.push_back(app);
+        if (!isSystemComponent && !installLocation.isEmpty() && !displayName.isEmpty()) {
+            WinApp app;
+            app.name = displayName;
+            app.iconPath = displayIcon;
+            for (auto iteraotr = applianceList.begin(); iteraotr != applianceList.end();
+                 ++iteraotr) {
+                if (iteraotr->name == displayName)
+                    break;
             }
+            applianceList.push_back(app);
         }
         settings.endGroup();
     }

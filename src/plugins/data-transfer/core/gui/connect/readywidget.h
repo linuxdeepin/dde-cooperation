@@ -8,9 +8,11 @@ class QToolButton;
 class QLabel;
 class ReadyWidget : public QFrame
 {
+    Q_OBJECT
 public:
     ReadyWidget(QWidget *parent = nullptr);
     ~ReadyWidget();
+    void clear();
 
 public slots:
     void nextPage();

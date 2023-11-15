@@ -74,5 +74,7 @@ private:
     QString selectSizeStr{ "0B" };
     QString allSizeStr{ "0B" };
     quint64 allSize{ 0 };
+
+    QMap<QString, QString> UserPath;
 };
 #endif // SIDERBARWIDGET_H

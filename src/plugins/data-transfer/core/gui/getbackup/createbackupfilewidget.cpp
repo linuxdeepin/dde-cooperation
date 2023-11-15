@@ -1,4 +1,4 @@
-﻿#include "createbackupfilewidget.h"
+#include "createbackupfilewidget.h"
 #include "../select/item.h"
 #include "../type_defines.h"
 #include "./zipworker.h"
@@ -22,8 +22,6 @@
 #include <gui/mainwindow_p.h>
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
-
-#pragma execution_character_set("utf-8")
 
 CreateBackupFileWidget::CreateBackupFileWidget(QWidget *parent) : QFrame(parent)
 {
@@ -80,7 +78,7 @@ void CreateBackupFileWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
 
-    QLabel *titileLabel = new QLabel("创建备份文件", this);
+    QLabel *titileLabel = new QLabel(tr("Create data backup"), this);
     titileLabel->setFixedHeight(30);
     QFont font;
     font.setPointSize(16);
@@ -88,7 +86,7 @@ void CreateBackupFileWidget::initUI()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *fileNameLabel = new QLabel("文件信息", this);
+    QLabel *fileNameLabel = new QLabel(tr("File information"), this);
     fileNameLabel->setStyleSheet("opacity: 1;"
                                  "color: rgba(0,26,46,1);"
                                  "font-family: \"SourceHanSansSC-Bold\";"
@@ -108,7 +106,7 @@ void CreateBackupFileWidget::initUI()
                             "opacity: 1;"
                             "background-color: rgba(0,0,0, 0.08);");
 
-    QLabel *fileNameInputLabel1 = new QLabel(QString("文件名:"), fileName);
+    QLabel *fileNameInputLabel1 = new QLabel(QString(tr("Name")), fileName);
     fileNameInputLabel1->setFixedWidth(56);
     fileNameInputLabel1->setStyleSheet("opacity: 1;"
                                        "background-color: rgba(0,0,0,0);"
@@ -120,7 +118,7 @@ void CreateBackupFileWidget::initUI()
 
     fileNameInput = new QLineEdit(fileName);
     fileNameInput->setFixedWidth(211);
-    fileNameInput->setPlaceholderText("默认文件名");
+    fileNameInput->setPlaceholderText(tr("Default File Name"));
     fileNameInput->setStyleSheet("QLineEdit {"
                                  "opacity: 1;"
                                  "background-color: rgba(0,0,0,0.01);"
@@ -175,7 +173,7 @@ void CreateBackupFileWidget::initUI()
     layout1->addSpacing(140);
     layout1->setAlignment(Qt::AlignTop);
 
-    QLabel *savePathLabel1 = new QLabel("保存位置", this);
+    QLabel *savePathLabel1 = new QLabel(tr("Location"), this);
     savePathLabel1->setFixedWidth(65);
     savePathLabel1->setStyleSheet("opacity: 1;"
                                   "color: rgba(0,26,46,1);"
@@ -185,7 +183,7 @@ void CreateBackupFileWidget::initUI()
                                   "font-style: normal;"
                                   "text-align: left;");
 
-    QLabel *savePathLabel2 = new QLabel("(选择备份磁盘)", this);
+    QLabel *savePathLabel2 = new QLabel(tr("(Select Backup Disk)"), this);
     savePathLabel2->setStyleSheet("opacity: 1;"
                                   "color: rgba(82,106,127,1);"
                                   "font-family: \"SourceHanSansSC-Normal\";"
@@ -207,13 +205,15 @@ void CreateBackupFileWidget::initUI()
     diskListViewLayout->addWidget(diskListView);
 
     promptLabel = new QLabel(this);
-    promptLabel->setText(QString("<font size='3' color='#FF5736'>%1</font>")
-                                 .arg("当前磁盘空间不足，建议使用外置硬盘或清楚磁盘空间"));
+
+    promptLabel->setText(
+            QString("<font size='3' color='#FF5736'>%1</font>")
+                    .arg(tr("Insufficient space in the selected disk, please clean the space")));
     promptLabel->setAlignment(Qt::AlignCenter);
     promptLabel->setVisible(false);
 
     determineButton = new QToolButton(this);
-    determineButton->setText("开始备份");
+    determineButton->setText(tr("Backup"));
     determineButton->setFixedSize(120, 35);
     setDetermineButtonEnable(false);
 
@@ -224,7 +224,7 @@ void CreateBackupFileWidget::initUI()
     });
 
     QToolButton *cancelButton = new QToolButton(this);
-    cancelButton->setText("取消");
+    cancelButton->setText(tr("Cancel"));
     cancelButton->setFixedSize(120, 35);
     cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                 "border: 1px solid rgba(0,0,0, 0.03);"
@@ -319,7 +319,6 @@ void CreateBackupFileWidget::checkDisk()
             item->setCheckable(true);
             item->setData(false, Qt::BackgroundRole);
         }
-        //  qInfo() << "allsize:" << allSize << " size:" << size;
     }
     if (!isValid)
         promptLabel->setVisible(true);
@@ -413,7 +412,7 @@ void CreateBackupFileWidget::updaeBackupFileSize()
     }
 
     allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize + bookmarkJsonSize;
-    backupFileSizeLabel->setText(QString("大小:  %1").arg(fromByteToQstring(allSize)));
+    backupFileSizeLabel->setText(QString(tr("Size:%1")).arg(fromByteToQstring(allSize)));
 
     checkDisk();
 }
@@ -454,13 +453,13 @@ void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool
     if (isAdd) {
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
         QString rootPath = device.rootPath();
-        QString displayName = (device.name().isEmpty() ? "本地磁盘" : device.name()) + "("
+        QString displayName = (device.name().isEmpty() ? tr("local disk") : device.name()) + "("
                 + rootPath.at(0) + ":)";
 
         QStandardItem *item = new QStandardItem();
         item->setData(displayName, Qt::DisplayRole);
         item->setData(rootPath, Qt::UserRole);
-        item->setData(QString("%1/%2可用")
+        item->setData(tr("%1/%2 available")
                               .arg(fromByteToQstring(device.bytesAvailable()))
                               .arg(fromByteToQstring(device.bytesTotal())),
                       Qt::ToolTipRole);

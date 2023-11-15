@@ -13,18 +13,22 @@
 
 #include <gui/transfer/transferringwidget.h>
 
+
 SidebarWidget::SidebarWidget(QWidget *parent) : QListView(parent)
 {
-    UserPath[tr("Videos")] = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
-    UserPath[tr("Pictures")] = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
-    UserPath[tr("Documents")] = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    UserPath[tr("Downloads")] = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    UserPath[tr("Music")] = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
-    UserPath[tr("Desktop")] = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-
     initData();
     initUi();
-
+    
+    QMap<QString, QString> UserPath{
+        { tr("Videos"), QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) },
+        { tr("Pictures"), QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) },
+        { tr("Documents"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) },
+        { tr("Downloads"), QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) },
+        { tr("Music"), QStandardPaths::writableLocation(QStandardPaths::MusicLocation) },
+        { tr("Desktop"), QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) }
+    };
+    
+    QMap<QString,QString> map{{tr("11"),QString("str")}};
     // update siderbar file size
     QObject::connect(CalculateFileSizeThreadPool::instance(),
                      &CalculateFileSizeThreadPool::sendFileSizeSignal, this,

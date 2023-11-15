@@ -62,7 +62,7 @@ void CustomMessageBox::initUi()
     setLayout(mainLayout);
 
     QToolButton *cancelButton = new QToolButton(this);
-    cancelButton->setText("重新选择");
+    cancelButton->setText(tr("Reselect"));
     cancelButton->setFixedSize(170, 35);
     cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                 "border: 1px solid rgba(0,0,0, 0.03);"
@@ -77,7 +77,7 @@ void CustomMessageBox::initUi()
                                 "text-align: center;"
                                 ";}");
     QToolButton *continueButton = new QToolButton(this);
-    continueButton->setText("继续传输");
+    continueButton->setText(tr("Continue transmission"));
     continueButton->setFixedSize(170, 35);
     continueButton->setStyleSheet(".QToolButton{"
                                   "border-radius: 8px;"
@@ -140,7 +140,7 @@ void CustomMessageBox::initUi()
 
 bool CustomMessageBox::SelectContinueTransfer()
 {
-    CustomMessageBox messageBox("检测到您与目标设备有未完成的传输项目", "是否继续上次传输？");
+    CustomMessageBox messageBox(tr("The presence of outstanding transfer tasks between you and the target device has been detected."), tr("Do you want to continue with the last transfer?"));
     if (messageBox.exec() == QDialog::Accepted)
         return true;
     else

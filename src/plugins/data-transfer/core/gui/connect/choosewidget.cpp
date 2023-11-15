@@ -5,8 +5,7 @@
 #include "../select/fileselectwidget.h"
 #include "../select/appselectwidget.h"
 #include "../getbackup/createbackupfilewidget.h"
-
-#include "../type_defines.h"
+#include "../transfer/transferringwidget.h"
 
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
@@ -21,19 +20,6 @@
 #include <QImage>
 #include <QMessageBox>
 
-#pragma execution_character_set("utf-8")
-
-inline constexpr char internetMethodName[]{ "从windows PC" };
-#ifdef WIN32
-inline constexpr char localFileMethodName[]{ "本地导出备份" };
-inline constexpr int selecPage1 = PageName::promptwidget;
-inline constexpr int selecPage2 = PageName::selectmainwidget;
-#else
-inline constexpr char localFileMethodName[]{ "从备份文件导入" };
-inline constexpr int selecPage1 = PageName::promptwidget;
-inline constexpr int selecPage2 = PageName::uploadwidget;
-#endif
-
 ChooseWidget::ChooseWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
@@ -43,21 +29,21 @@ ChooseWidget::~ChooseWidget() { }
 
 void ChooseWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".ChooseWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
 
-    QLabel *textLabel1 = new QLabel("选择信息迁移方式", this);
+    QLabel *textLabel1 = new QLabel(tr("Export to local directory"), this);
     QFont font;
     font.setPointSize(16);
     font.setWeight(QFont::DemiBold);
     textLabel1->setFont(font);
     textLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    ModeItem *winItem = new ModeItem(internetMethodName, QIcon(":/icon/select1.png"), this);
-    ModeItem *packageItem = new ModeItem(localFileMethodName, QIcon(":/icon/select2.png"), this);
+    winItem = new ModeItem(internetMethodName, QIcon(":/icon/select1.png"), this);
+    packageItem = new ModeItem(localFileMethodName, QIcon(":/icon/select2.png"), this);
 
     QHBoxLayout *modeLayout = new QHBoxLayout();
     modeLayout->addWidget(winItem, Qt::AlignTop);
@@ -69,8 +55,8 @@ void ChooseWidget::initUI()
     tipiconlabel->setPixmap(QIcon(":/icon/warning.svg").pixmap(14, 14));
 
     QLabel *tiptextlabel = new QLabel(this);
-    tiptextlabel->setText("<font size=13px color='#FF5736' "
-                          ">无法连接服务器！请检查网络连接或者选择本地迁移。</font>");
+    QString prompt = tr("Unable to connect to the network， please check your network connection or select export to local directory.");
+    tiptextlabel->setText(QString("<font size=13px color='#FF5736'>%1</font>").arg(prompt));
 
     tipiconlabel->setVisible(false);
     tiptextlabel->setVisible(false);
@@ -82,9 +68,8 @@ void ChooseWidget::initUI()
     tiplayout->setAlignment(Qt::AlignCenter);
 
     nextButton = new QToolButton(this);
-    nextButton->setText("下一步");
+    nextButton->setText(tr("Next"));
     nextButton->setFixedSize(250, 35);
-    nextButton->setStyleSheet("background-color: lightgray;");
     nextButton->setEnabled(false);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
@@ -108,21 +93,21 @@ void ChooseWidget::initUI()
     mainLayout->addLayout(indexLayout);
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
-            [winItem, tipiconlabel, tiptextlabel](bool online) {
-                if (online) {
-                    tipiconlabel->setVisible(false);
-                    tiptextlabel->setVisible(false);
-                    winItem->setEnable(true);
-                } else {
-                    tipiconlabel->setVisible(true);
-                    tiptextlabel->setVisible(true);
-                    winItem->setEnable(false);
-                    winItem->checked = false;
-                }
-            });
+    [this, tipiconlabel, tiptextlabel](bool online) {
+        if (online) {
+            tipiconlabel->setVisible(false);
+            tiptextlabel->setVisible(false);
+            winItem->setEnable(true);
+        } else {
+            tipiconlabel->setVisible(true);
+            tiptextlabel->setVisible(true);
+            winItem->setEnable(false);
+            winItem->checked = false;
+        }
+    });
 
     connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
-    connect(winItem, &ModeItem::clicked, [this, packageItem](int state) {
+    connect(winItem, &ModeItem::clicked, [this ](int state) {
         if (state == true) {
             if (packageItem->checked == true) {
                 packageItem->checked = false;
@@ -135,7 +120,7 @@ void ChooseWidget::initUI()
             nextButton->setEnabled(false);
         }
     });
-    connect(packageItem, &ModeItem::clicked, this, [this, winItem](int state) {
+    connect(packageItem, &ModeItem::clicked, this, [this](int state) {
         if (state == true) {
             if (winItem->checked == true) {
                 winItem->checked = false;
@@ -171,7 +156,7 @@ void ChooseWidget::nextPage()
         stackedWidget->setCurrentIndex(nextpage);
     } else {
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
+                   "nullptr";
     }
 }
 
@@ -179,13 +164,21 @@ void ChooseWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet("background-color: white; border-radius: 10px;");
-        nextButton->setStyleSheet("background-color: lightgray;");
+        setStyleSheet(".ChooseWidget{ background-color: white; border-radius: 10px;}");
+        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "background-color: lightgray;"
+                                  "}");
+
     } else {
         // dark
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
-        nextButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.08);");
+        setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
+        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "opacity: 1;"
+                                  "background-color: rgba(255,255,255, 0.1);"
+                                  "}");
     }
+    winItem->themeChanged(theme);
+    packageItem->themeChanged(theme);
 }
 
 ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : itemText(text), QFrame(parent)
@@ -198,7 +191,7 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : itemText(text), 
 
     iconLabel = new QLabel(this);
     iconLabel->setPixmap(icon.pixmap(150, 120));
-    iconLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
+    iconLabel->setStyleSheet(".QLabel{background-color: rgba(0, 0, 0, 0);}");
     iconLabel->setAlignment(Qt::AlignCenter);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -219,6 +212,27 @@ void ModeItem::setEnable(bool able)
     } else {
         palette.setColor(QPalette::WindowText, QColor("#414D68"));
         setPalette(palette);
+    }
+}
+
+void ModeItem::themeChanged(int theme)
+{
+    // light
+    if (theme == 1) {
+        setStyleSheet(".ModeItem{"
+                      "border-radius: 8px; "
+                      "opacity: 1;"
+                      "background-color: rgba(0, 0, 0, 0.03);"
+                      "}");
+        drak = false;
+    } else {
+        // dark
+        setStyleSheet(".ModeItem{"
+                      "border-radius: 8px;"
+                      "opacity: 1;"
+                      "background-color: rgba(255,255,255, 0.1);"
+                      "}");
+        drak = true;
     }
 }
 
@@ -255,12 +269,10 @@ void ModeItem::paintEvent(QPaintEvent *event)
     font.setWeight(QFont::Medium);
     font.setStyleName("Normal");
     paint.setFont(font);
-
-    paint.setPen(QColor(65, 77, 104, 255));
-    paint.setRenderHint(QPainter::TextAntialiasing);
-    paint.setRenderHint(QPainter::Antialiasing);
-    paint.setRenderHint(QPainter::SmoothPixmapTransform);
-
+    if (drak)
+        paint.setPen(QColor(192, 198, 212, 255));
+    else
+        paint.setPen(QColor(65, 77, 104, 255));
     paint.drawText(36, 24, itemText);
 }
 
@@ -269,13 +281,13 @@ void ChooseWidget::changeAllWidgtText()
 #ifdef _WIN32
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     SelectMainWidget *widgetMainselect =
-            qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
+        qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
     ConfigSelectWidget *widgetConfig =
-            qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
+        qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
     AppSelectWidget *widgetApp =
-            qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
+        qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
     FileSelectWidget *widgetFile =
-            qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
+        qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
     widgetMainselect->changeText();
     widgetConfig->changeText();
     widgetApp->changeText();
@@ -289,19 +301,21 @@ void ChooseWidget::clearAllWidget()
     OptionsManager::instance()->clear();
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     SelectMainWidget *widgetMainselect =
-            qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
+        qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
     ConfigSelectWidget *widgetConfig =
-            qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
+        qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
     AppSelectWidget *widgetApp =
-            qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
+        qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
     FileSelectWidget *widgetFile =
-            qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
+        qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
     CreateBackupFileWidget *widgetbackupFile =
-            qobject_cast<CreateBackupFileWidget *>(stackedWidget->widget(PageName::createbackupfilewidget));
+        qobject_cast<CreateBackupFileWidget *>(stackedWidget->widget(PageName::createbackupfilewidget));
+    TransferringWidget *widgetTransfer =   qobject_cast<TransferringWidget *>(stackedWidget->widget(PageName::transferringwidget));
     widgetFile->clear();
     widgetConfig->clear();
     widgetApp->clear();
     widgetMainselect->clear();
     widgetbackupFile->clear();
+    widgetTransfer->clear();
 #endif
 }
