@@ -43,3 +43,7 @@ if (CMAKE_SYSTEM MATCHES "Windows")
     endif()
     add_subdirectory(quazip)
 endif()
+
+message("   >> include barrier...")
+# barrier v2.4.0 release, upstream: https://github.com/debauchee/barrier
+# add_subdirectory(barrier)
