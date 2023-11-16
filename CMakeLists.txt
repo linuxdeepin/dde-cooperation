@@ -93,7 +93,14 @@ else()
     add_definitions(-D DISABLE_GO)
 endif()
 
+# 如果未设置CMAKE_BUILD_TYPE，则将其设置为Release
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
+endif()
+
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    # 设置环境变量
+    set(ENV{QT_SELECT} "5")
     # generate qm
     execute_process(COMMAND bash "translate_generation.sh"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)

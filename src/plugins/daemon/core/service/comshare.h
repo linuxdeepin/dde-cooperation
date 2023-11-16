@@ -57,6 +57,11 @@ const static QList<uint16> clientPorts{
     7790, 7791
 };
 
+typedef enum barrier_type_t {
+    Server = 555,
+    Client = 666
+} BarrierType;
+
 class comshare
 {
 public:

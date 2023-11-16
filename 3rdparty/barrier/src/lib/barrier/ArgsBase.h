@@ -51,6 +51,6 @@ public:
     bool                m_shouldExit;
     String                m_barrierAddress;
     bool                m_enableCrypto;
-    barrier::fs::path m_profileDirectory;
-    barrier::fs::path m_pluginDirectory;
+    fastring m_profileDirectory;
+    fastring m_pluginDirectory;
 };

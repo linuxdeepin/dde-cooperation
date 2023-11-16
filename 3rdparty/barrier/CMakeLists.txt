@@ -19,8 +19,8 @@ cmake_minimum_required (VERSION 3.4)
 project (barrier C CXX)
 
 option (BARRIER_BUILD_GUI "Build the GUI" ON)
-option (BARRIER_BUILD_INSTALLER "Build the installer" ON)
-option (BARRIER_BUILD_TESTS "Build the tests" ON)
+option (BARRIER_BUILD_INSTALLER "Build the installer" OFF)
+option (BARRIER_BUILD_TESTS "Build the tests" OFF)
 option (BARRIER_USE_EXTERNAL_GTEST "Use external installation of Google Test framework" OFF)
 
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)

@@ -118,6 +118,17 @@ public:
         return winInfoFilePath;
     }
 
+    static QString barrierConfig()
+    {
+        QDir winInfoPath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+        if (!winInfoPath.exists()) {
+            winInfoPath.mkpath(winInfoPath.absolutePath());
+        }
+
+        QString winInfoFilePath(winInfoPath.filePath("cooperation-barrier.conf"));
+        return winInfoFilePath;
+    }
+
     static std::string genUUID()
     {
         QString hostid = QUuid::createUuid().toString(QUuid::Id128);

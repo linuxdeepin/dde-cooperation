@@ -21,20 +21,22 @@
 #include <cstdio>
 #include <iosfwd>
 #include <ios>
-#include <ghc/fs_fwd.hpp>
+// #include <ghc/fs_fwd.hpp>
+#include <co/fs.h>
+#include <co/path.h>
 
 namespace barrier {
 
-namespace fs = ghc::filesystem;
+// namespace fs = ghc::filesystem;
 
-void open_utf8_path(std::ifstream& stream, const fs::path& path,
+void open_utf8_path(std::ifstream& stream, const fastring& path,
                     std::ios_base::openmode mode = std::ios_base::in);
-void open_utf8_path(std::ofstream& stream, const fs::path& path,
+void open_utf8_path(std::ofstream& stream, const fastring& path,
                     std::ios_base::openmode mode = std::ios_base::out);
-void open_utf8_path(std::fstream& stream, const fs::path& path,
+void open_utf8_path(std::fstream& stream, const fastring& path,
                     std::ios_base::openmode mode = std::ios_base::in | std::ios_base::out);
 
-std::FILE* fopen_utf8_path(const fs::path& path, const std::string& mode);
+std::FILE* fopen_utf8_path(const fastring& path, const std::string& mode);
 
 } // namespace barrier
 
