@@ -24,44 +24,30 @@ public:
     void stop() {_stoped = true;}
 
 Q_SIGNALS:
-    void startPingTimer();
-    void stopPingTimer();
-
-    void workCreateRpcSender(const QString appName,
-                         const QString targetip, quint16 port);
-    void workSetTargetAppName(const QString appName, const QString targetAppName);
-    void workRemovePing(const QString appName);
-    void workDoSendProtoMsg(const uint32 type, const QString AppName,
-                            const QString msg, const QByteArray data);
-
-    void ping();
-
     void sendToRpcResult(const QString appName, const QString msg);
 
 private:
     explicit SendRpcWork( QObject *parent = nullptr);
-    void initConnect();
 
 private slots:
     void handleCreateRpcSender(const QString appName,
-                         const QString targetip, quint16 port);
+                               const QString targetip, quint16 port);
     void handleSetTargetAppName(const QString appName, const QString targetAppName);
     void handleDoSendProtoMsg(const uint32 type, const QString appName,
                               const QString msg, const QByteArray data);
 
-    void handlePing();
+    void handlePing(const QStringList apps);
 
 private:
     QSharedPointer<RemoteServiceSender> createRpcSender(const QString &appName,
                                                         const QString &targetip, uint16_t port);
     QSharedPointer<RemoteServiceSender> rpcSender(const QString &appName);
-    QString targetIp() const;
-    quint16 targetPort() const;
 
 private:
-    QSharedPointer<RemoteServiceSender> _remote;
-    QTimer _ping_timer;
-    QStringList _ping_appname;
+    // <ip, remote>
+    QMap<QString, QSharedPointer<RemoteServiceSender>> _remotes;
+    // <appName, ip>
+    QMap<QString, QString> _app_ips;
     std::atomic_bool _stoped{false};
 };
 
@@ -71,27 +57,22 @@ class SendRpcService : public QObject
 Q_SIGNALS:
     void startPingTimer();
     void stopPingTimer();
-    void createSenderWork(const QString appName,
-                          const QString targetip, quint16 port);
     void sendToRpcResult(const QString appName, const QString msg);
-public:
-    struct ThreadInfo{
-        SendRpcWork _work;
-        QThread _thread;
-        ~ThreadInfo() {
-            _work.stop();
-            _thread.quit();
-            _thread.wait(3000);
-        }
-    };
+
+    void workCreateRpcSender(const QString appName,
+                             const QString targetip, quint16 port);
+    void workSetTargetAppName(const QString appName, const QString targetAppName);
+    void workRemovePing(const QString appName);
+    void workDoSendProtoMsg(const uint32 type, const QString AppName,
+                            const QString msg, const QByteArray data);
+
+    void ping(const QStringList apps);
 
 public slots:
     void handleStartTimer();
     void handleStopTimer();
     void handleTimeOut();
-
-    void createRpcSenderWork(const QString appName,
-                             const QString targetip, quint16 port);
+    void handleAboutQuit();
 
 public:
     ~SendRpcService() override;
@@ -99,20 +80,16 @@ public:
 
     void createRpcSender(const QString &appName,
                          const QString &targetip, quint16 port) {
-        createRpcSenderWork(appName, targetip, port);
+        emit workCreateRpcSender(appName, targetip, port);
     }
 
 
     void setTargetAppName(const QString &appName, const QString &targetAppName) {
-        auto work = getWork(appName);
-        if (work)
-            emit work->_work.workSetTargetAppName(appName, targetAppName);
+        emit workSetTargetAppName(appName, targetAppName);
     }
     void doSendProtoMsg(const uint32 type, const QString &appName,
                         const QString &msg, const QByteArray &data = QByteArray()) {
-        auto work = getWork(appName);
-        if (work)
-            emit work->_work.workDoSendProtoMsg(type, appName, msg, data);
+        emit workDoSendProtoMsg(type, appName, msg, data);
     }
 
     void removePing(const QString &appName);
@@ -121,14 +98,12 @@ public:
 
 private:
     explicit SendRpcService( QObject *parent = nullptr);
-    QSharedPointer<ThreadInfo> getWork(const QString &appName);
 
     void initConnet();
 
 private:
-    QReadWriteLock _lock;
-    QMap<QString, QSharedPointer<ThreadInfo>> _worksMap;
-    QList<QSharedPointer<ThreadInfo>> _works;
+    SendRpcWork _work;
+    QThread _thread;
     QReadWriteLock _ping_lock;
     QStringList _ping_appname;
     QTimer _ping_timer;

@@ -24,6 +24,7 @@
 #include "../fsadapter.h"
 
 static QReadWriteLock _executor_lock;
+// <ip, executor>
 static QMap<QString, QSharedPointer<ZRpcClientExecutor>> _executor_ps;
 
 void RemoteServiceImpl::proto_msg(google::protobuf::RpcController *controller,
@@ -66,11 +67,7 @@ RemoteServiceSender::~RemoteServiceSender()
 SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data)
 {
     ELOG << "send to remote = " << type << " = " << msg.toStdString();
-    auto _executor_p = executor(_app_name);
-    if (_executor_p.isNull() && !_target_ip.isEmpty() && _target_port == UNI_RPC_PORT_BASE) {
-        createExecutor(_app_name, _target_ip.toStdString().c_str(), _target_port);
-        _executor_p = executor(_app_name);
-    }
+    auto _executor_p = createExecutor();
     SendResult res;
     res.protocolType = type;
     if (_executor_p.isNull()) {
@@ -114,40 +111,6 @@ retryed:
     return res;
 }
 
-void RemoteServiceSender::createExecutor(const QString &session, const char *targetip, uint16_t port)
-{
-    ELOG << session.toStdString() << " ----------- = ip " << targetip << "  port =  " << port;
-    QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
-    {
-        _executor_p = executor(session);
-        if (_executor_p) {
-            if (_executor_p->targetIP() != targetip) {
-                QWriteLocker lk(&_executor_lock);
-                _executor_ps.remove(session);
-            } else {
-                return;
-            }
-        }
-
-        QReadLocker lk(&_executor_lock);
-        for (const auto &executor : _executor_ps) {
-            if (targetip == executor->targetIP()) {
-                _executor_p = executor;
-                if (_executor_ps.key(executor) == session)
-                    return;
-                break;
-            }
-        }
-    }
-
-    if (_executor_p.isNull()) {
-        _executor_p = QSharedPointer<ZRpcClientExecutor>(new ZRpcClientExecutor(targetip, port));
-    }
-    QWriteLocker lk(&_executor_lock);
-    _executor_ps.remove(session);
-    _executor_ps.insert(session, _executor_p);
-}
-
 void RemoteServiceSender::clearExecutor(const QString &appname)
 {
     QWriteLocker lk(&_executor_lock);
@@ -168,12 +131,6 @@ void RemoteServiceSender::remoteIP(const QString &session, QString *ip, uint16 *
         *port = _exector->targetPort();
 }
 
-QSharedPointer<ZRpcClientExecutor> RemoteServiceSender::executor(const QString &appname)
-{
-    QReadLocker lk(&_executor_lock);
-    return _executor_ps.value(appname);
-}
-
 void RemoteServiceSender::setIpInfo(const QString &ip, const uint16 port)
 {
     if (ip == _target_ip && port == _target_port)
@@ -181,7 +138,6 @@ void RemoteServiceSender::setIpInfo(const QString &ip, const uint16 port)
 
     _target_ip = ip;
     _target_port = port;
-    createExecutor(_app_name, _target_ip.toStdString().c_str(), port);
 }
 
 void RemoteServiceSender::setTargetAppName(const QString &targetApp)
@@ -189,9 +145,22 @@ void RemoteServiceSender::setTargetAppName(const QString &targetApp)
     _tar_app_name = targetApp;
 }
 
-void RemoteServiceSender::createExecutor()
+QSharedPointer<ZRpcClientExecutor> RemoteServiceSender::createExecutor()
 {
-    createExecutor(_app_name, _target_ip.toStdString().c_str(), _target_port);
+    ELOG << "app name : " << _app_name.toStdString() << ", = ip "
+         << _target_ip.toStdString() << " : port =  " << _target_port;
+    QWriteLocker lk(&_executor_lock);
+    if (_target_ip.isEmpty()) {
+        ELOG << "Invalide IP address, _target_ip is empty!!!!";
+        return nullptr;
+    }
+    auto _exec = _executor_ps.value(_target_ip);
+    if (!_exec.isNull())
+        return _exec;
+    _exec.reset(new ZRpcClientExecutor(_target_ip.toStdString().c_str(),
+                                       _target_port));
+    _executor_ps.insert(_target_ip, _exec);
+    return _exec;
 }
 
 RemoteServiceBinder::RemoteServiceBinder(QObject *parent) : QObject (parent)

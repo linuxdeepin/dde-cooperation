@@ -68,7 +68,6 @@ public:
     ~RemoteServiceSender();
 
     SendResult doSendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data);
-    void createExecutor(const QString &session, const char *targetip, uint16_t port);
     void clearExecutor(const QString &appname);
     void remoteIP(const QString &session, QString *ip, uint16 *port);
     void setIpInfo(const QString &ip, const uint16 port);
@@ -76,10 +75,7 @@ public:
     QString targetAppname() const { return  _tar_app_name;}
     QString remoteIP() const { return _target_ip; }
     uint16 remotePort() const {return _target_port; }
-    void createExecutor();
-
-private:
-    QSharedPointer<ZRpcClientExecutor> executor(const QString &appname);
+    QSharedPointer<ZRpcClientExecutor> createExecutor();
 
 private:
     QString _tar_app_name;
