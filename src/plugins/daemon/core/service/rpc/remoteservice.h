@@ -30,11 +30,11 @@ public:
 class ZRpcClientExecutor
 {
 public:
-    ZRpcClientExecutor(const char *targetip, uint16_t port)
+    ZRpcClientExecutor(const char *targetip, uint16_t port, const bool isLong)
         : ip(targetip)
         , port(port)
     {
-        _client = new zrpc_ns::ZRpcClient(targetip, port, true);
+        _client = new zrpc_ns::ZRpcClient(targetip, port, true, isLong);
     }
 
     ~ZRpcClientExecutor() {
@@ -64,11 +64,14 @@ class RemoteServiceSender : public QObject
     Q_OBJECT
 public:
     explicit RemoteServiceSender(const QString &appname,
-                                 const QString &ip, const uint16 port, QObject *parent = nullptr);
+                                 const QString &ip,
+                                 const uint16 port,
+                                 const bool isTrans,
+                                 QObject *parent = nullptr);
     ~RemoteServiceSender();
 
     SendResult doSendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data);
-    void clearExecutor(const QString &appname);
+    void clearExecutor();
     void remoteIP(const QString &session, QString *ip, uint16 *port);
     void setIpInfo(const QString &ip, const uint16 port);
     void setTargetAppName(const QString &targetApp);
@@ -76,12 +79,15 @@ public:
     QString remoteIP() const { return _target_ip; }
     uint16 remotePort() const {return _target_port; }
     QSharedPointer<ZRpcClientExecutor> createExecutor();
+    QSharedPointer<ZRpcClientExecutor> createTransExecutor();
+    void clearLongExecutor();
 
 private:
     QString _tar_app_name;
     QString _app_name;
     QString _target_ip;
     uint16 _target_port;
+    bool isTrans { false };
 };
 
 class RemoteServiceBinder : public QObject {
@@ -89,7 +95,7 @@ class RemoteServiceBinder : public QObject {
 public:
     explicit RemoteServiceBinder(QObject *parent = nullptr);
     ~RemoteServiceBinder() override = default;
-    void startRpcListen(const char *keypath, const char *crtpath,
+    void startRpcListen(const char *keypath, const char *crtpath, const quint16 port,
                         const std::function<void(int, const fastring &, const uint16)> &call = nullptr);
 private:
     std::function<void(int, const fastring &, const uint16)> callback{ nullptr };

@@ -24,8 +24,11 @@
 #include "../fsadapter.h"
 
 static QReadWriteLock _executor_lock;
+static QReadWriteLock _executor_long_lock;
 // <ip, executor>
 static QMap<QString, QSharedPointer<ZRpcClientExecutor>> _executor_ps;
+// 一个ip只能有一个文件传输发送者,并且使用完成后必须清理
+static QMap<QString, QSharedPointer<ZRpcClientExecutor>> _executor_long_ps;
 
 void RemoteServiceImpl::proto_msg(google::protobuf::RpcController *controller,
                                   const ProtoData *request, ProtoData *response,
@@ -52,22 +55,31 @@ void RemoteServiceImpl::proto_msg(google::protobuf::RpcController *controller,
     }
 }
 
-RemoteServiceSender::RemoteServiceSender(const QString &appname, const QString &ip, const uint16 port, QObject *parent)
+RemoteServiceSender::RemoteServiceSender(const QString &appname, const QString &ip, const uint16 port, const bool isTrans, QObject *parent)
     : QObject(parent)
     , _app_name(appname)
     , _target_ip(ip)
     , _target_port(port)
+    , isTrans(isTrans)
 {
 }
 
 RemoteServiceSender::~RemoteServiceSender()
 {
+    if (isTrans)
+        clearLongExecutor();
 }
 
 SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data)
 {
-    ELOG << "send to remote = " << type << " = " << msg.toStdString();
-    auto _executor_p = createExecutor();
+    ELOG << "send to remote = " << type << " = " << msg.toStdString() << "\n ip = "
+         << _target_ip.toStdString() << " : port = " << _target_port;
+    QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
+    if (!isTrans) {
+        _executor_p = createExecutor();
+    } else {
+        _executor_p = createTransExecutor();
+    }
     SendResult res;
     res.protocolType = type;
     if (_executor_p.isNull()) {
@@ -101,7 +113,8 @@ retryed:
         res.data = "Failed to call server, error code: "
                 + QString::number(rpc_controller->ErrorCode()).toStdString()
                 + ", error info: " + rpc_controller->ErrorText();
-
+        clearExecutor();
+        clearLongExecutor();
         return res;
     }
 
@@ -111,10 +124,10 @@ retryed:
     return res;
 }
 
-void RemoteServiceSender::clearExecutor(const QString &appname)
+void RemoteServiceSender::clearExecutor()
 {
     QWriteLocker lk(&_executor_lock);
-    _executor_ps.remove(appname);
+    _executor_ps.remove(_target_ip);
 }
 
 void RemoteServiceSender::remoteIP(const QString &session, QString *ip, uint16 *port)
@@ -158,9 +171,33 @@ QSharedPointer<ZRpcClientExecutor> RemoteServiceSender::createExecutor()
     if (!_exec.isNull())
         return _exec;
     _exec.reset(new ZRpcClientExecutor(_target_ip.toStdString().c_str(),
-                                       _target_port));
+                                       _target_port, false));
     _executor_ps.insert(_target_ip, _exec);
     return _exec;
+}
+
+QSharedPointer<ZRpcClientExecutor> RemoteServiceSender::createTransExecutor()
+{
+    ELOG << "createTransExecutor app name : " << _app_name.toStdString() << ", = ip "
+         << _target_ip.toStdString() << " : port =  " << _target_port;
+    QWriteLocker lk(&_executor_long_lock);
+    if (_target_ip.isEmpty()) {
+        ELOG << "Invalide IP address, _target_ip is empty!!!!";
+        return nullptr;
+    }
+    auto _exec = _executor_long_ps.value(_target_ip);
+    if (!_exec.isNull())
+        return _exec;
+    _exec.reset(new ZRpcClientExecutor(_target_ip.toStdString().c_str(),
+                                       _target_port, true));
+    _executor_long_ps.insert(_target_ip, _exec);
+    return _exec;
+}
+
+void RemoteServiceSender::clearLongExecutor()
+{
+    QWriteLocker lk(&_executor_long_lock);
+    _executor_long_ps.remove(_target_ip);
 }
 
 RemoteServiceBinder::RemoteServiceBinder(QObject *parent) : QObject (parent)
@@ -168,14 +205,14 @@ RemoteServiceBinder::RemoteServiceBinder(QObject *parent) : QObject (parent)
 
 }
 
-void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpath,
+void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpath, const quint16 port,
                                          const std::function<void (int, const fastring &, const uint16)> &call)
 {
     char key[1024];
     char crt[1024];
     strcpy(key, keypath);
     strcpy(crt, crtpath);
-    zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(UNI_RPC_PORT_BASE, key, crt);
+    zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(port, key, crt);
     server->registerService<RemoteServiceImpl>();
     if (call) {
         callback = call;

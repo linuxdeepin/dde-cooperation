@@ -137,6 +137,7 @@ struct FileTransJob {
     bool write;
     fastring app_who;
     fastring targetAppname;
+    fastring ip;
 
     void from_json(const co::Json& _x_) {
         job_id = (int32)_x_.get("job_id").as_int64();
@@ -147,6 +148,7 @@ struct FileTransJob {
         write = _x_.get("write").as_bool();
         app_who = _x_.get("app_who").as_c_str();
         targetAppname = _x_.get("targetAppname").as_c_str();
+        ip = _x_.get("ip").as_c_str();
     }
 
     co::Json as_json() const {
@@ -159,6 +161,7 @@ struct FileTransJob {
         _x_.add_member("write", write);
         _x_.add_member("app_who", app_who);
         _x_.add_member("targetAppname", targetAppname);
+        _x_.add_member("ip", ip);
         return _x_;
     }
 };

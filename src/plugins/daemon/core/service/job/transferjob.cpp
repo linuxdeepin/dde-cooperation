@@ -11,6 +11,7 @@
 #include "common/comonstruct.h"
 #include "service/fsadapter.h"
 #include "service/rpc/sendrpcservice.h"
+#include "service/ipc/sendipcservice.h"
 #include "utils/config.h"
 #include "service/comshare.h"
 
@@ -21,12 +22,58 @@ TransferJob::TransferJob(QObject *parent)
 {
 }
 
-void TransferJob::initRpc(fastring target, uint16 port)
+TransferJob::~TransferJob()
+{
+
+}
+
+bool TransferJob::initRpc(fastring target, uint16 port)
 {
     _tar_ip = target;
     _tar_port = port;
+    // ip是空，并且是发送那就出现错误了
+    if (target.empty() && !_writejob) {
+        ELOG << "TransferJob initRpc ip is empty and is push job!! app = " << _app_name;
+        return false;
+    }
+    _remote.reset(new RemoteServiceSender(_app_name.c_str(), _tar_ip.c_str(), _tar_port, true));
+    if (!_writejob) {
+        FileTransJob req_job;
+        req_job.job_id = _jobid;
+        req_job.save_path = _savedir.c_str();
+        req_job.include_hidden = false;
+        req_job.path = _path;
+        req_job.sub = _sub;
+        req_job.write = (!_writejob);
+        req_job.app_who = _tar_app_name;
+        req_job.targetAppname = _app_name;
+        // 必须等待对方回复了才执行后面的流程
+#if defined(WIN32)
+        co::wait_group wg;
+        wg.add(1);
+        UNIGO([this, req_job](){
+#endif
+        auto res = _remote->doSendProtoMsg(IN_TRANSJOB, req_job.as_json().str().c_str(), QByteArray());
+        if (res.errorType < INVOKE_OK) {
+            SendStatus st;
+            st.type = res.errorType;
+            st.msg = res.as_json().str();
+            co::Json req = st.as_json();
+            req.add_member("api", "Frontend.notifySendStatus");
+            SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+            this->_init_success = false;
+            return false;
+        }
+#if defined(WIN32)
+            wg.done();
+        });
+        wg.wait();
+#endif
+    }
+    return true;
 }
 
+// 先调用initrpc, 在调用initjob
 void TransferJob::initJob(fastring appname, fastring targetappname, int id, fastring path, bool sub, fastring savedir, bool write)
 {
     _app_name = appname;
@@ -41,18 +88,6 @@ void TransferJob::initJob(fastring appname, fastring targetappname, int id, fast
         fastring fullpath = path::join(
                     DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
         FSAdapter::newFileByFullPath(fullpath.c_str(), true);
-    } else {
-        FileTransJob req_job;
-        req_job.job_id = _jobid;
-        req_job.save_path = _savedir.c_str();
-        req_job.include_hidden = false;
-        req_job.path = _path;
-        req_job.sub = _sub;
-        req_job.write = (!_writejob);
-        req_job.app_who = _tar_app_name;
-        req_job.targetAppname = _app_name;
-        SendRpcService::instance()->doSendProtoMsg(IN_TRANSJOB, _app_name.c_str(),
-                                                   req_job.as_json().str().c_str());
     }
 }
 
@@ -88,6 +123,10 @@ void TransferJob::start()
 
     // 开始循环处理数据块
     handleBlockQueque();
+
+    // 自己完成了
+    co::sleep(100);
+    emit notifyJobFinished(_jobid);
 }
 
 void TransferJob::stop()
@@ -196,8 +235,26 @@ void TransferJob::scanPath(fastring root, fastring path)
     info.entry = *entry;
     info.entry.appName = _app_name;
     info.entry.rcvappName = _tar_app_name;
-
-    SendRpcService::instance()->doSendProtoMsg(FS_INFO, _app_name.c_str(), info.as_json().str().c_str());
+#if defined(WIN32)
+    co::wait_group wg;
+    wg.add(1);
+    UNIGO([this, info](){
+#endif
+    auto res = _remote->doSendProtoMsg(FS_INFO, info.as_json().str().c_str(), QByteArray());
+    if (res.errorType < INVOKE_OK) {
+        SendStatus st;
+        st.type = res.errorType;
+        st.msg = res.as_json().str();
+        co::Json req = st.as_json();
+        req.add_member("api", "Frontend.notifySendStatus");
+        SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+        cancel();
+    }
+#if defined(WIN32)
+        wg.done();
+    });
+    wg.wait();
+#endif
     if (_stoped)
         return;
     if (fs::isdir(path.c_str())) {
@@ -279,7 +336,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         do {
             // 最多300个数据块
             if (self && self->queueCount() > 300)
-                QThread::msleep(20);
+                co::sleep(10);
             if (self.isNull() || self->_stoped)
                 break;
 
@@ -393,8 +450,26 @@ void TransferJob::handleBlockQueque()
             file_block.compressed = (comp);
             QByteArray data(buffer.c_str(), static_cast<int>(len));
             // DLOG << "(" << job_id << ") send block " << block->filename << " size: " << len;
-            SendRpcService::instance()->doSendProtoMsg(FS_DATA, _app_name.c_str(),
-                                                       file_block.as_json().str().c_str(), data);
+#if defined(WIN32)
+            co::wait_group wg;
+            wg.add(1);
+            UNIGO([this, info](){
+#endif
+            auto res = _remote->doSendProtoMsg(FS_DATA, file_block.as_json().str().c_str(), data);
+            if (res.errorType < INVOKE_OK) {
+                SendStatus st;
+                st.type = res.errorType;
+                st.msg = res.as_json().str();
+                co::Json req = st.as_json();
+                req.add_member("api", "Frontend.notifySendStatus");
+                SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+                cancel();
+            }
+#if defined(WIN32)
+            wg.done();
+        });
+        wg.wait();
+#endif
         }
 
         if (!exception) {
@@ -421,16 +496,23 @@ void TransferJob::handleBlockQueque()
 
 void TransferJob::handleUpdate(FileTransRe result, const char *path, const char *emsg)
 {
+#if defined(WIN32)
+    co::wait_group wg;
+    wg.add(1);
     UNIGO([this, result, path, emsg] {
+#endif
         FileTransJobReport report;
-
         report.job_id = (_jobid);
         report.path = (path);
         report.result = (result);
         report.error = (emsg);
-        SendRpcService::instance()->doSendProtoMsg(FS_REPORT, _app_name.c_str(),
-                                                   report.as_json().str().c_str());
+        auto res = _remote->doSendProtoMsg(FS_REPORT,
+                                           report.as_json().str().c_str(), QByteArray());
+#if defined(WIN32)
+        wg.done();
     });
+    wg.wait();
+#endif
 }
 
 bool TransferJob::syncHandleStatus()

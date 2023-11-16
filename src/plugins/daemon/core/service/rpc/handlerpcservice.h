@@ -32,11 +32,15 @@ public:
     void handleRemoteJobCancel(co::Json &info);
     void handleTransJob(co::Json &info);
 
+private:
+    void startRemoteServer(const quint16 port);
+
 signals:
     void remoteRequestJob(const QString info);
 
 private:
     QSharedPointer<RemoteServiceBinder> _rpc{ nullptr };
+    QSharedPointer<RemoteServiceBinder> _rpc_trans{ nullptr };
     // port backend
     QMap<QString, QString> _sessionIDs;
 };

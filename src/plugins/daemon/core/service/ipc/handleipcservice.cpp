@@ -222,6 +222,10 @@ void HandleIpcService::newTransSendJob(QString session, const QString targetSess
     job.sub = sub;
     job.write = false;
     job.path = pathjson.str();
+    job.ip = _ips.value(who.c_str()).toStdString();
+    if (job.ip.empty()) {
+        ELOG << "create trans file job to remote ip is empty, appName = " << who;
+    }
 
     SendIpcService::instance()->handleAddJob(s, jobId);
     JobManager::instance()->handleRemoteRequestJob(job.as_json().str().c_str());
@@ -278,11 +282,13 @@ void HandleIpcService::handleConnectClosed(const quint16 port)
 
 void HandleIpcService::handleTryConnect(co::Json json)
 {
-    UNIGO([json]() {
-        ipc::ConnectParam param;
-        param.from_json(json);
-        QString appName(param.appName.c_str());
-        QString ip(param.host.c_str());
+    ipc::ConnectParam param;
+    param.from_json(json);
+    QString appName(param.appName.c_str());
+    QString ip(param.host.c_str());
+    _ips.remove(appName);
+    _ips.insert(appName, ip);
+    UNIGO([param, appName, ip]() {
         QString pass(param.password.c_str());
         QString targetAppname = param.targetAppname.empty() ? appName : param.targetAppname.c_str();
         UserLoginInfo login;

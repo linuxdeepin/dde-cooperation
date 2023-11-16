@@ -7,19 +7,22 @@
 
 #include <QObject>
 #include <QQueue>
+#include <QSharedPointer>
 #include <service/rpc/remoteservice.h>
 #include <ipc/proto/chan.h>
 #include "common/constant.h"
 #include "co/co.h"
 #include "co/time.h"
 
+class RemoteServiceSender;
 class TransferJob : public QObject
 {
     Q_OBJECT
 
 public:
     explicit TransferJob(QObject *parent = nullptr);
-    void initRpc(fastring target, uint16 port);
+    ~TransferJob() override;
+    bool initRpc(fastring target, uint16 port);
     void initJob(fastring appname, fastring targetappname, int id, fastring path, bool sub, fastring savedir, bool write);
     bool createFile(const QString &filename, const bool isDir);
 
@@ -35,6 +38,7 @@ public:
 
     void pushQueque(const QSharedPointer<FSDataBlock> block);
     void insertFileInfo(FileInfo &info);
+    bool initSuccess() const { return _init_success; }
 
 signals:
     // 传输作业结果通知：文件（目录），结果，保存路径
@@ -45,6 +49,9 @@ signals:
 
     // 远程的服务器断开
     void notifyRemoteSeverClose(QString ip, uint16 port);
+
+    // 文件传输完成 移除job
+    void notifyJobFinished(const int jodid);
 
 public slots:
 
@@ -75,6 +82,7 @@ private:
 
     bool _sub;
     bool _writejob;
+    bool _init_success { true };
 
     uint16 _tar_port;
     fastring _app_name; // //前端应用名
@@ -86,6 +94,7 @@ private:
     co::mutex _queque_mutex;
     QQueue<QSharedPointer<FSDataBlock>> _block_queue;
     co::map<int32, FileInfo> _file_info_maps;
+    QSharedPointer<RemoteServiceSender> _remote;
 };
 
 #endif   // TRANSFERJOB_H

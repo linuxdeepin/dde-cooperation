@@ -19,14 +19,17 @@
 
 namespace zrpc_ns {
 
-//TcpClient::ptr m_client = nullptr;
-ZRpcChannel::ZRpcChannel(NetAddress::ptr addr)
-    : m_addr(addr) {
+TcpClient::ptr m_clientlong = nullptr;
+ZRpcChannel::ZRpcChannel(NetAddress::ptr addr, const bool isLong)
+    : m_addr(addr)
+    , isLongConnect (isLong)
+{
 }
 
 ZRpcChannel::~ZRpcChannel()
 {
-//    m_client = nullptr;
+    if (m_clientlong && isLongConnect)
+        m_clientlong = nullptr;
 }
 
 void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
@@ -41,7 +44,10 @@ void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
         ELOG << "call failed. falid to dynamic cast ZRpcController";
         return;
     }
-    TcpClient::ptr m_client = nullptr;
+    if (isLongConnect && m_clientlong == nullptr)
+        m_clientlong = std::make_shared<TcpClient>(m_addr);
+
+    TcpClient::ptr m_client = isLongConnect ? m_clientlong : nullptr;
     if (m_client.get() == nullptr) {        
         m_client = std::make_shared<TcpClient>(m_addr);
     }

@@ -40,6 +40,8 @@ private:
     // port backend
     QMap<uint16, QSharedPointer<BackendService>> _backendIpcServices;
     QMap<QString, QString> _sessionIDs;
+    // <appName, ip>
+    QMap<QString, QString> _ips;
 };
 
 #endif // HANDLEIPDSERVICE_H
