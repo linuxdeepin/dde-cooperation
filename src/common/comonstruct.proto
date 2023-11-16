@@ -47,6 +47,7 @@ object FileTransJob {
   bool write // push or pull
   string app_who     //是哪个前端应用创建的传输任务
   string targetAppname // 接收端是那个应用接受传输
+  string ip
 }
 
 object FileEntry {

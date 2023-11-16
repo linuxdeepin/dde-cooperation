@@ -9,9 +9,9 @@
 
 namespace zrpc_ns {
 
-ZRpcClient::ZRpcClient(const char *ip, uint16 port, bool ssl) {
+ZRpcClient::ZRpcClient(const char *ip, uint16 port, bool ssl, const bool isLong) {
     zrpc_ns::NetAddress::ptr addr = std::make_shared<zrpc_ns::NetAddress>(ip, port, ssl);
-    m_channel = std::make_shared<ZRpcChannel>(addr);
+    m_channel = std::make_shared<ZRpcChannel>(addr, isLong);
 
     m_controller = std::make_shared<ZRpcController>();
     // default timeout is 5 seconds

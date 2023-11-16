@@ -47,9 +47,13 @@ bool JobManager::handleRemoteRequestJob(QString json)
     SendRpcService::instance()->removePing(tarAppname.c_str());
     QSharedPointer<TransferJob> job(new TransferJob());
     job->initJob(fsjob.app_who, tarAppname, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
-    job->initRpc(_connected_target, UNI_RPC_PORT_BASE);
+    if (!job->initRpc(fsjob.ip.empty() ? _connected_target : fsjob.ip, UNI_RPC_PORT_TRANS) || !job->initSuccess()) {
+        ELOG << "init job rpc error !! json = " << fsjob.as_json();
+        return false;
+    }
     connect(job.data(), &TransferJob::notifyFileTransStatus, this, &JobManager::handleFileTransStatus, Qt::QueuedConnection);
     connect(job.data(), &TransferJob::notifyJobResult, this, &JobManager::handleJobTransStatus, Qt::QueuedConnection);
+    connect(job.data(), &TransferJob::notifyJobFinished, this, &JobManager::handleRemoveJob, Qt::QueuedConnection);
 
     g_m.lock();
     if (fsjob.write) {
@@ -256,6 +260,12 @@ void JobManager::handleJobTransStatus(QString appname, int jobid, int status, QS
         req.add_member("api", "Frontend.cbTransStatus");
         SendIpcService::instance()->handleSendToClient(appname, req.str().c_str());
     });
+}
+
+void JobManager::handleRemoveJob(const int jobid)
+{
+    _transjob_recvs.remove(jobid);
+    _transjob_sends.remove(jobid);
 }
 
 

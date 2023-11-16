@@ -16,7 +16,7 @@ class ZRPC_API ZRpcChannel : public google::protobuf::RpcChannel {
 
 public:
     typedef std::shared_ptr<ZRpcChannel> ptr;
-    ZRpcChannel(NetAddress::ptr addr);
+    ZRpcChannel(NetAddress::ptr addr, const bool isLong);
     ~ZRpcChannel() override;
 
     void CallMethod(const google::protobuf::MethodDescriptor *method,
@@ -27,6 +27,7 @@ public:
 
 private:
     NetAddress::ptr m_addr;
+    bool isLongConnect { false };
 };
 
 } // namespace zrpc

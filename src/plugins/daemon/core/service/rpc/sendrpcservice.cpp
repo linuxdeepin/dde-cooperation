@@ -127,7 +127,7 @@ QSharedPointer<RemoteServiceSender> SendRpcWork::createRpcSender(const QString &
     auto ip = _app_ips.value(appName);
     _app_ips.remove(appName);
     _app_ips.insert(appName, targetip);
-    QSharedPointer<RemoteServiceSender> remote(new RemoteServiceSender(appName, targetip, port));
+    QSharedPointer<RemoteServiceSender> remote(new RemoteServiceSender(appName, targetip, port, false));
     _remotes.insert(targetip, remote);
 
     if (!ip.isEmpty() && _app_ips.keys(ip).isEmpty())
@@ -147,7 +147,7 @@ QSharedPointer<RemoteServiceSender> SendRpcWork::rpcSender(const QString &appNam
     // 获取 remote
     auto remote = _remotes.value(ip);
     if (remote.isNull()) {
-        remote.reset(new RemoteServiceSender(appName, ip, UNI_RPC_PORT_BASE));
+        remote.reset(new RemoteServiceSender(appName, ip, UNI_RPC_PORT_BASE, false));
         _remotes.insert(ip, remote);
     }
     return remote;

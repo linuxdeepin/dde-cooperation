@@ -17,7 +17,7 @@ namespace zrpc_ns {
 class ZRPC_API ZRpcClient {
 
 public:
-    ZRpcClient(const char *ip, uint16 port, bool ssl = true);
+    ZRpcClient(const char *ip, uint16 port, bool ssl = true, const bool isLong = false);
 
     void setTimeout(uint32 timeout);
 

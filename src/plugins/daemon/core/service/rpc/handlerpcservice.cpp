@@ -27,6 +27,7 @@ HandleRpcService::HandleRpcService(QObject *parent)
     : QObject(parent)
 {
     _rpc.reset(new RemoteServiceBinder);
+    _rpc_trans.reset(new RemoteServiceBinder);
 }
 
 HandleRpcService::~HandleRpcService()
@@ -35,109 +36,8 @@ HandleRpcService::~HandleRpcService()
 
 void HandleRpcService::startRemoteServer()
 {
-    if (_rpc.isNull())
-        return;
-
-    fastring key = Cert::instance()->writeKey();
-    fastring crt = Cert::instance()->writeCrt();
-    _rpc->startRpcListen(key.c_str(), crt.c_str(),
-                         [](const int type, const fastring &ip, const uint16 port){
-        if (type == 0) {
-            SendStatus st;
-            st.type = REMOTE_CLIENT_OFFLINE;
-            st.msg = co::Json({{"ip", ip}, {"port", port}}).str();
-            co::Json req = st.as_json();
-            req.add_member("api", "Frontend.notifySendStatus");
-            SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
-        }
-    });
-    Cert::instance()->removeFile(key);
-    Cert::instance()->removeFile(crt);
-
-    QPointer<HandleRpcService> self = this;
-    UNIGO([self]() {
-        // 这里已经是线程或者协程
-        while (!self.isNull()) {
-            IncomeData indata;
-            _income_chan >> indata;
-            if (!_income_chan.done()) {
-                // timeout, next read
-                continue;
-            }
-            // LOG << "ServiceManager get chan value: " << indata.type << " json:" << indata.json;
-            co::Json json_obj = json::parse(indata.json);
-            if (json_obj.is_null()) {
-                ELOG << "parse error from: " << indata.json;
-                continue;
-            }
-            switch (indata.type) {
-            case IN_LOGIN_INFO:
-            {
-                self->handleRemoteLogin(json_obj);
-                break;
-            }
-            case IN_LOGIN_CONFIRM:
-            {
-                //TODO: notify user confirm login
-                break;
-            }
-            case IN_LOGIN_RESULT:// 服务器端回复登陆结果
-            {
-                break;
-            }
-            case IN_TRANSJOB:
-            {
-                self->handleTransJob(json_obj);
-                break;
-            }
-            case FS_DATA:
-            {
-                // must update the binrary data into struct object.
-                self->handleRemoteFileBlock(json_obj, indata.buf);
-                break;
-            }
-            case FS_INFO:
-            {
-                self->handleRemoteFileInfo(json_obj);
-
-                break;
-            }
-            case TRANS_CANCEL:
-            {
-                self->handleRemoteJobCancel(json_obj);
-                break;
-            }
-            case FS_REPORT:
-            {
-                self->handleRemoteReport(json_obj);
-                break;
-            }
-            case TRANS_APPLY:
-            {
-                OutData data;
-                _outgo_chan << data;
-                self->handleRemoteApplyTransFile(json_obj);
-                break;
-            }
-            case MISC:
-            {
-                OutData data;
-                _outgo_chan << data;
-                self->handleRemoteDisc(json_obj);
-                break;
-            }
-            case RPC_PING:
-            {
-                OutData data;
-                data.json = "remote_ping";
-                _outgo_chan << data;
-                break;
-            }
-            default:
-                break;
-            }
-        }
-    });
+    startRemoteServer(UNI_RPC_PORT_BASE);
+    startRemoteServer(UNI_RPC_PORT_TRANS);
 }
 
 void HandleRpcService::handleRpcLogin(bool result, const QString &targetAppname,
@@ -343,5 +243,118 @@ void HandleRpcService::handleTransJob(co::Json &info)
     data.type = OUT_TRANSJOB;
     data.json = co::Json({"result", res}).str();
     _outgo_chan << data;
+}
+
+void HandleRpcService::startRemoteServer(const quint16 port)
+{
+    if (_rpc.isNull() && port != UNI_RPC_PORT_TRANS)
+        return;
+    if (_rpc_trans.isNull() && port == UNI_RPC_PORT_TRANS)
+        return;
+    auto rpc = port != UNI_RPC_PORT_TRANS ? _rpc : _rpc_trans;
+    fastring key = Cert::instance()->writeKey();
+    fastring crt = Cert::instance()->writeCrt();
+    auto callback = [](const int type, const fastring &ip, const uint16 port){
+        if (type == 0) {
+            SendStatus st;
+            st.type = REMOTE_CLIENT_OFFLINE;
+            st.msg = co::Json({{"ip", ip}, {"port", port}}).str();
+            co::Json req = st.as_json();
+            req.add_member("api", "Frontend.notifySendStatus");
+            SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+        }
+    };
+    if (port == UNI_RPC_PORT_TRANS) {
+        rpc->startRpcListen(key.c_str(), crt.c_str(), port, callback);
+    } else {
+        rpc->startRpcListen(key.c_str(), crt.c_str(), port);
+    }
+    Cert::instance()->removeFile(key);
+    Cert::instance()->removeFile(crt);
+
+    QPointer<HandleRpcService> self = this;
+    UNIGO([self]() {
+        // 这里已经是线程或者协程
+        while (!self.isNull()) {
+            IncomeData indata;
+            _income_chan >> indata;
+            if (!_income_chan.done()) {
+                // timeout, next read
+                continue;
+            }
+            // LOG << "ServiceManager get chan value: " << indata.type << " json:" << indata.json;
+            co::Json json_obj = json::parse(indata.json);
+            if (json_obj.is_null()) {
+                ELOG << "parse error from: " << indata.json;
+                continue;
+            }
+            switch (indata.type) {
+            case IN_LOGIN_INFO:
+            {
+                self->handleRemoteLogin(json_obj);
+                break;
+            }
+            case IN_LOGIN_CONFIRM:
+            {
+                //TODO: notify user confirm login
+                break;
+            }
+            case IN_LOGIN_RESULT:// 服务器端回复登陆结果
+            {
+                break;
+            }
+            case IN_TRANSJOB:
+            {
+                self->handleTransJob(json_obj);
+                break;
+            }
+            case FS_DATA:
+            {
+                // must update the binrary data into struct object.
+                self->handleRemoteFileBlock(json_obj, indata.buf);
+                break;
+            }
+            case FS_INFO:
+            {
+                self->handleRemoteFileInfo(json_obj);
+
+                break;
+            }
+            case TRANS_CANCEL:
+            {
+                self->handleRemoteJobCancel(json_obj);
+                break;
+            }
+            case FS_REPORT:
+            {
+                self->handleRemoteReport(json_obj);
+                break;
+            }
+            case TRANS_APPLY:
+            {
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteApplyTransFile(json_obj);
+                break;
+            }
+            case MISC:
+            {
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteDisc(json_obj);
+                break;
+            }
+            case RPC_PING:
+            {
+                OutData data;
+                data.json = "remote_ping";
+                _outgo_chan << data;
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    });
 }
 
