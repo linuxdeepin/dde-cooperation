@@ -330,7 +330,7 @@ SecureSocket::initSsl(bool server)
     initContext(server);
 }
 
-bool SecureSocket::load_certificates(const barrier::fs::path& path)
+bool SecureSocket::load_certificates(const fastring& path)
 {
     std::lock_guard<std::mutex> ssl_lock{ssl_mutex_};
 
@@ -339,28 +339,28 @@ bool SecureSocket::load_certificates(const barrier::fs::path& path)
         return false;
     }
     else {
-        if (!barrier::fs::is_regular_file(path)) {
-            showError("ssl certificate doesn't exist: " + path.u8string());
+        if (fs::isdir(path)) {
+//            showError("ssl certificate doesn't exist: " + path.c_str());
             return false;
         }
     }
 
     int r = 0;
-    r = SSL_CTX_use_certificate_file(m_ssl->m_context, path.u8string().c_str(), SSL_FILETYPE_PEM);
+    r = SSL_CTX_use_certificate_file(m_ssl->m_context, path.c_str(), SSL_FILETYPE_PEM);
     if (r <= 0) {
-        showError("could not use ssl certificate: " + path.u8string());
+//        showError("could not use ssl certificate: " + path.u8string());
         return false;
     }
 
-    r = SSL_CTX_use_PrivateKey_file(m_ssl->m_context, path.u8string().c_str(), SSL_FILETYPE_PEM);
+    r = SSL_CTX_use_PrivateKey_file(m_ssl->m_context, path.c_str(), SSL_FILETYPE_PEM);
     if (r <= 0) {
-        showError("could not use ssl private key: " + path.u8string());
+//        showError("could not use ssl private key: " + path.u8string());
         return false;
     }
 
     r = SSL_CTX_check_private_key(m_ssl->m_context);
     if (!r) {
-        showError("could not verify ssl private key: " + path.u8string());
+//        showError("could not verify ssl private key: " + path.u8string());
         return false;
     }
 
@@ -699,7 +699,7 @@ SecureSocket::disconnect()
     sendEvent(getEvents()->forIStream().inputShutdown());
 }
 
-bool SecureSocket::verify_cert_fingerprint(const barrier::fs::path& fingerprint_db_path)
+bool SecureSocket::verify_cert_fingerprint(const fastring& fingerprint_db_path)
 {
     // ssl_mutex_ is assumed to be acquired
 
@@ -722,17 +722,17 @@ bool SecureSocket::verify_cert_fingerprint(const barrier::fs::path& fingerprint_
          barrier::format_ssl_fingerprint(fingerprint_sha256.data).c_str()));
 
     // Provide debug hint as to what file is being used to verify fingerprint trust
-    LOG((CLOG_NOTE "fingerprint_db_path: %s", fingerprint_db_path.u8string().c_str()));
+    LOG((CLOG_NOTE "fingerprint_db_path: %s", fingerprint_db_path.c_str()));
 
     barrier::FingerprintDatabase db;
     db.read(fingerprint_db_path);
 
     if (!db.fingerprints().empty()) {
         LOG((CLOG_NOTE "Read %d fingerprints from: %s", db.fingerprints().size(),
-             fingerprint_db_path.u8string().c_str()));
+             fingerprint_db_path.c_str()));
     } else {
         LOG((CLOG_NOTE "Could not read fingerprints from: %s",
-             fingerprint_db_path.u8string().c_str()));
+             fingerprint_db_path.c_str()));
     }
 
     if (db.is_trusted(fingerprint_sha256)) {

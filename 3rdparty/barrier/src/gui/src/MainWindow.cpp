@@ -449,9 +449,9 @@ void MainWindow::checkFingerprint(const QString& line)
             ? barrier::DataDirectories::trusted_servers_ssl_fingerprints_path()
             : barrier::DataDirectories::trusted_clients_ssl_fingerprints_path();
 
-    auto db_dir = db_path.parent_path();
-    if (!barrier::fs::exists(db_dir)) {
-        barrier::fs::create_directories(db_dir);
+    auto db_dir = path::dir(db_path);
+    if (!fs::exists(db_dir)) {
+        fs::mkdir(db_dir, true);
     }
 
     // We compare only SHA256 fingerprints, but show both SHA1 and SHA256 so that the users can
@@ -1023,7 +1023,7 @@ void MainWindow::updateSSLFingerprint()
     }
 
     auto local_path = barrier::DataDirectories::local_ssl_fingerprints_path();
-    if (!barrier::fs::exists(local_path)) {
+    if (!fs::exists(local_path)) {
         return;
     }
 

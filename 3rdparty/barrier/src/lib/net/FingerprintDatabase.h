@@ -28,8 +28,8 @@ namespace barrier {
 
 class FingerprintDatabase {
 public:
-    void read(const fs::path& path);
-    void write(const fs::path& path);
+    void read(const fastring& path);
+    void write(const fastring& path);
 
     void read_stream(std::istream& stream);
     void write_stream(std::ostream& stream);

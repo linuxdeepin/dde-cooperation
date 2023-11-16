@@ -58,7 +58,7 @@ public:
     EJobResult            doRead() override;
     EJobResult            doWrite() override;
     void                initSsl(bool server);
-    bool load_certificates(const barrier::fs::path& path);
+    bool load_certificates(const fastring& path);
 
 private:
     // SSL
@@ -75,7 +75,7 @@ private:
     void                disconnect();
 
     // may only be called with ssl_mutex_ acquired
-    bool verify_cert_fingerprint(const barrier::fs::path& fingerprint_db_path);
+    bool verify_cert_fingerprint(const fastring& fingerprint_db_path);
 
     MultiplexerJobStatus serviceConnect(ISocketMultiplexerJob*, bool, bool, bool);
     MultiplexerJobStatus serviceAccept(ISocketMultiplexerJob*, bool, bool, bool);

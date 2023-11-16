@@ -35,6 +35,11 @@ public:
         return &ins;
     }
 
+    QSettings* settings()
+    {
+        return _fileConfig;
+    }
+
     bool needConfirm()
     {
         return false;
