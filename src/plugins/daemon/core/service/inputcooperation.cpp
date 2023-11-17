@@ -32,6 +32,11 @@ InputCooperation::InputCooperation(QObject *parent) : QObject(parent)
 //    _cooConfig.saveSettings();
 }
 
+InputCooperation::~InputCooperation()
+{
+
+}
+
 void InputCooperation::setBarrierType(BarrierType type)
 {
     _brrierType = type;

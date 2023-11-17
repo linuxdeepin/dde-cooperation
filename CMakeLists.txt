@@ -95,8 +95,9 @@ endif()
 
 # 如果未设置CMAKE_BUILD_TYPE，则将其设置为Release
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
-endif()
+    message("Cmake build type is not defined!")
+    # set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
+else()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     # 设置环境变量
@@ -104,6 +105,8 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     # generate qm
     execute_process(COMMAND bash "translate_generation.sh"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
+endif()
+
 endif()
 
 if (NOT USE_PROTOBUF_FILES)

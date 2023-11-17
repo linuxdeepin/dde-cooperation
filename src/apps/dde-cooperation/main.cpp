@@ -30,6 +30,9 @@ static bool loadPlugins()
     pluginsDirs << QDir::currentPath() + "/plugins/cooperation";
     pluginsDirs << QDir::currentPath() + "/plugins/cooperation/core";
 #endif
+#if defined(WIN32)
+    pluginsDirs << QCoreApplication::applicationDirPath();
+#endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
     // TODO(zhangs): use config
