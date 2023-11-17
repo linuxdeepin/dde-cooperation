@@ -31,13 +31,12 @@ static bool loadPlugins()
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
     pluginsDirs << QString(DEEPIN_DATA_TRANS_PLUGIN_DIR);
-    pluginsDirs << QDir::currentPath() + "/../../plugins";
     pluginsDirs << QDir::currentPath() + "/plugins";
     pluginsDirs << QDir::currentPath() + "/plugins/data-transfer";
     pluginsDirs << QDir::currentPath() + "/plugins/data-transfer/core";
 #endif
 #if defined(WIN32)
-    pluginsDirs << QDir::currentPath();
+    pluginsDirs << QCoreApplication::applicationDirPath();
 #endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;

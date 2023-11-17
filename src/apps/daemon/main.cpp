@@ -24,13 +24,12 @@ static bool loadPlugins()
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
     pluginsDirs << QString(DEEPIN_DAEMON_PLUGIN_DIR);
-    pluginsDirs << QDir::currentPath() + "/../../plugins";
     pluginsDirs << QDir::currentPath() + "/plugins";
     pluginsDirs << QDir::currentPath() + "/plugins/daemon";
     pluginsDirs << QDir::currentPath() + "/plugins/daemon/core";
 #endif
 #if defined(WIN32)
-    pluginsDirs << QDir::currentPath();
+    pluginsDirs << QCoreApplication::applicationDirPath();
 #endif
 
     qInfo() << "Using plugins dir:" << pluginsDirs;
