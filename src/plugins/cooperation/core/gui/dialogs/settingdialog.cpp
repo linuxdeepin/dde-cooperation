@@ -93,9 +93,10 @@ void SettingDialogPrivate::createBasicWidget()
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
 
-    nameEdit = new QLineEdit(q);
+    nameEdit = new CooperationLineEdit(q);
     nameEdit->setFixedWidth(280);
-    connect(nameEdit, &QLineEdit::editingFinished, this, &SettingDialogPrivate::onNameEditingFinished);
+    connect(nameEdit, &CooperationLineEdit::editingFinished, this, &SettingDialogPrivate::onNameEditingFinished);
+    connect(nameEdit, &CooperationLineEdit::textChanged, this, &SettingDialogPrivate::onNameChanged);
     SettingItem *nameItem = new SettingItem(q);
     nameItem->setItemInfo(tr("Device name"), nameEdit);
 
@@ -200,7 +201,22 @@ void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 
 void SettingDialogPrivate::onNameEditingFinished()
 {
+    int length = nameEdit->text().length();
+    if (length < 1 || length > 63) {
+        nameEdit->setAlert(true);
+        nameEdit->showAlertMessage(tr("The device name must contain 1 to 63 characters"));
+        return;
+    }
+
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey, nameEdit->text());
+}
+
+void SettingDialogPrivate::onNameChanged(const QString &text)
+{
+    Q_UNUSED(text);
+
+    if (nameEdit->isAlert())
+        nameEdit->setAlert(false);
 }
 
 void SettingDialogPrivate::onDeviceShareButtonClicked(bool clicked)

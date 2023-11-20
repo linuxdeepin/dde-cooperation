@@ -50,6 +50,7 @@ public:
     };
 
     explicit DeviceItem(QWidget *parent = nullptr);
+    ~DeviceItem() override;
 
     void setDeviceInfo(const DeviceInfoPointer info);
     DeviceInfoPointer deviceInfo() const;

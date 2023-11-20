@@ -146,7 +146,7 @@ void SortFilterWorker::updateDevice(const DeviceInfoPointer info)
 
     index = indexOf(visibleDeviceList, info);
     visibleDeviceList.replace(index, info);
-    Q_EMIT deviceReplaced(index, info);
+    Q_EMIT deviceUpdated(index, info);
 }
 
 bool SortFilterWorker::contains(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info)

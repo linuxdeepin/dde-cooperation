@@ -29,7 +29,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void sortFilterResult(int index, const DeviceInfoPointer info);
     void deviceRemoved(int index);
-    void deviceReplaced(int index, const DeviceInfoPointer info);
+    void deviceUpdated(int index, const DeviceInfoPointer info);
     void filterFinished();
 
 private:

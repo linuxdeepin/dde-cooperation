@@ -35,6 +35,7 @@ public Q_SLOTS:
     void onConnectComboBoxValueChanged(int index);
     void onTransferComboBoxValueChanged(int index);
     void onNameEditingFinished();
+    void onNameChanged(const QString &text);
     void onDeviceShareButtonClicked(bool clicked);
     void onClipboardShareButtonClicked(bool clicked);
     void onFileChoosed(const QString &path);
@@ -54,7 +55,7 @@ private:
     QComboBox *findCB { nullptr };
     QComboBox *connectCB { nullptr };
     QComboBox *transferCB { nullptr };
-    QLineEdit *nameEdit { nullptr };
+    CooperationLineEdit *nameEdit { nullptr };
     CooperationSwitchButton *devShareSwitchBtn { nullptr };
     CooperationSwitchButton *clipShareSwitchBtn { nullptr };
     FileChooserEdit *chooserEdit { nullptr };

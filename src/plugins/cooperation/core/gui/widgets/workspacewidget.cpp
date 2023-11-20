@@ -58,11 +58,12 @@ void WorkspaceWidgetPrivate::initConnect()
     connect(sortFilterWorker.data(), &SortFilterWorker::sortFilterResult, this, &WorkspaceWidgetPrivate::onSortFilterResult, Qt::QueuedConnection);
     connect(sortFilterWorker.data(), &SortFilterWorker::filterFinished, this, &WorkspaceWidgetPrivate::onFilterFinished, Qt::QueuedConnection);
     connect(sortFilterWorker.data(), &SortFilterWorker::deviceRemoved, this, &WorkspaceWidgetPrivate::onDeviceRemoved, Qt::QueuedConnection);
-    connect(sortFilterWorker.data(), &SortFilterWorker::deviceReplaced, this, &WorkspaceWidgetPrivate::onDeviceReplaced, Qt::QueuedConnection);
+    connect(sortFilterWorker.data(), &SortFilterWorker::deviceUpdated, this, &WorkspaceWidgetPrivate::onDeviceUpdated, Qt::QueuedConnection);
 }
 
 void WorkspaceWidgetPrivate::onSearchValueChanged(const QString &text)
 {
+    currentPage = WorkspaceWidget::kDeviceListWidget;
     stackedLayout->setCurrentWidget(dlWidget);
     dlWidget->clear();
     Q_EMIT filterDevice(text);
@@ -92,10 +93,9 @@ void WorkspaceWidgetPrivate::onDeviceRemoved(int index)
         q->switchWidget(WorkspaceWidget::kNoResultWidget);
 }
 
-void WorkspaceWidgetPrivate::onDeviceReplaced(int index, const DeviceInfoPointer info)
+void WorkspaceWidgetPrivate::onDeviceUpdated(int index, const DeviceInfoPointer info)
 {
-    dlWidget->removeItem(index);
-    dlWidget->insertItem(index, info);
+    dlWidget->updateItem(index, info);
 }
 
 WorkspaceWidget::WorkspaceWidget(QWidget *parent)

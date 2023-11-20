@@ -65,6 +65,8 @@ private:
     QDBusInterface *notifyIfc { nullptr };
     uint recvNotifyId { 0 };
     TransferHelper::TransferMode currentMode { TransferHelper::SendMode };
+
+    QString recvFilesSavePath;
 };
 
 }   // namespace cooperation_core
