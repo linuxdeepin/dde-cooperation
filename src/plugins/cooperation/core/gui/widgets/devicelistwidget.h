@@ -21,6 +21,7 @@ public:
 
     void appendItem(const DeviceInfoPointer info);
     void insertItem(int index, const DeviceInfoPointer info);
+    void updateItem(int index, const DeviceInfoPointer info);
     void removeItem(int index);
     void moveItem(int srcIndex, int toIndex);
     int indexOf(const QString &ipStr);

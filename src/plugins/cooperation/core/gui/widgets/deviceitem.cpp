@@ -55,6 +55,10 @@ DeviceItem::DeviceItem(QWidget *parent)
     initConnect();
 }
 
+DeviceItem::~DeviceItem()
+{
+}
+
 void DeviceItem::setDeviceInfo(const DeviceInfoPointer info)
 {
     devInfo = info;

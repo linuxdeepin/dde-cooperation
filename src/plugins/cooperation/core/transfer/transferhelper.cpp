@@ -6,6 +6,7 @@
 #include "transferhelper_p.h"
 #include "config/configmanager.h"
 #include "utils/cooperationutil.h"
+#include "utils/historymanager.h"
 
 #include "common/constant.h"
 #include "ipc/frontendservice.h"
@@ -14,6 +15,7 @@
 #include "ipc/proto/chan.h"
 #include "ipc/proto/backend.h"
 
+#include <QDesktopServices>
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QApplication>
@@ -41,6 +43,9 @@ inline constexpr char NotifyViewAction[] { "view-action" };
 inline constexpr char HistoryButtonId[] { "history-button" };
 inline constexpr char TransferButtonId[] { "transfer-button" };
 
+using TransHistoryInfo = QMap<QString, QString>;
+Q_GLOBAL_STATIC(TransHistoryInfo, transHistory)
+
 using namespace cooperation_core;
 
 TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
@@ -52,9 +57,9 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
                                    NotifyServerIfce,
                                    QDBusConnection::sessionBus(), q);
 
-    //    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, q, &TransferHelper::onConfigChanged);
     QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
                                           q, SLOT(onActionTriggered(uint, const QString &)));
+    *transHistory = HistoryManager::instance()->getTransHistory();
 }
 
 TransferHelperPrivate::~TransferHelperPrivate()
@@ -276,8 +281,8 @@ TransferHelper::TransferStatus TransferHelper::transferStatus()
 void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
     LOG << "button clicked, button id: " << id.toStdString()
-        << "ip: " << info->ipAddress().toStdString()
-        << "device name: " << info->deviceName().toStdString();
+        << " ip: " << info->ipAddress().toStdString()
+        << " device name: " << info->deviceName().toStdString();
 
     if (id == TransferButtonId) {
         QStringList selectedFiles = qApp->property("sendFiles").toStringList();
@@ -289,18 +294,24 @@ void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer in
 
         TransferHelper::instance()->sendFiles(info->ipAddress(), info->deviceName(), selectedFiles);
     } else if (id == HistoryButtonId) {
-        // TODO:
+        if (!transHistory->contains(info->ipAddress()))
+            return;
+
+        QDesktopServices::openUrl(QUrl::fromLocalFile(transHistory->value(info->ipAddress())));
     }
 }
 
 bool TransferHelper::buttonVisible(const QString &id, const DeviceInfoPointer info)
 {
-    // TODO: history
-    if (/*qApp->property("onlyTransfer").toBool() && */ id == HistoryButtonId)
-        return false;
-
     if (id == TransferButtonId) {
         return (info->connectStatus() != DeviceInfo::Offline && info->transMode() == DeviceInfo::TransMode::Everyone);
+    }
+
+    if (id == HistoryButtonId) {
+        if (qApp->property("onlyTransfer").toBool())
+            return false;
+
+        return transHistory->contains(info->ipAddress());
     }
 
     return true;
@@ -340,8 +351,24 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
         break;
     case JOB_TRANS_DOING:
         break;
-    case JOB_TRANS_FINISHED:
-        break;
+    case JOB_TRANS_FINISHED: {
+        if (d->currentMode == SendMode)
+            break;
+
+        // msg: deviceName(ip)
+        // 获取存储路径和ip
+        int startPos = msg.lastIndexOf("(");
+        int endPos = msg.lastIndexOf(")");
+        if (startPos != -1 && endPos != -1) {
+            auto ip = msg.mid(startPos + 1, endPos - startPos - 1);
+            auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
+            auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+            d->recvFilesSavePath = storagePath + QDir::separator() + msg;
+
+            transHistory->insert(ip, d->recvFilesSavePath);
+            HistoryManager::instance()->writeIntoTransHistory(ip, d->recvFilesSavePath);
+        }
+    } break;
     default:
         break;
     }
@@ -398,6 +425,7 @@ void TransferHelper::waitForConfirm(const QString &name)
 {
     d->transferInfo.clear();
     d->fileIds.clear();
+    d->recvFilesSavePath.clear();
     switch (d->currentMode) {
     case ReceiveMode: {
         d->recvNotifyId = 0;
@@ -437,7 +465,10 @@ void TransferHelper::onActionTriggered(uint replacesId, const QString &action)
     } else if (action == NotifyCloseAction) {
         d->notifyIfc->call("CloseNotification", d->recvNotifyId);
     } else if (action == NotifyViewAction) {
-        // TODO:
+        if (d->recvFilesSavePath.isEmpty())
+            QDesktopServices::openUrl(QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)));
+
+        QDesktopServices::openUrl(QUrl::fromLocalFile(d->recvFilesSavePath));
     }
 }
 

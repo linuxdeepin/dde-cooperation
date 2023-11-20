@@ -4,6 +4,8 @@
 
 #include "devicelistwidget.h"
 
+#include "co/co.h"
+
 #include <QScrollBar>
 
 using namespace cooperation_core;
@@ -45,6 +47,18 @@ void DeviceListWidget::insertItem(int index, const DeviceInfoPointer info)
     mainLayout->insertWidget(index, item);
 }
 
+void DeviceListWidget::updateItem(int index, const DeviceInfoPointer info)
+{
+    QLayoutItem *item = mainLayout->itemAt(index);
+    DeviceItem *devItem = qobject_cast<DeviceItem *>(item->widget());
+    if (!devItem) {
+        LOG << "Can not find this item, index: " << index << " ip address: " << info->ipAddress().toStdString();
+        return;
+    }
+
+    devItem->setDeviceInfo(info);
+}
+
 void DeviceListWidget::removeItem(int index)
 {
     QLayoutItem *item = mainLayout->takeAt(index);
@@ -62,18 +76,19 @@ void DeviceListWidget::moveItem(int srcIndex, int toIndex)
     if (srcIndex == toIndex)
         return;
 
-    QLayoutItem *item = mainLayout->takeAt(srcIndex);
+    QLayoutItem *item = mainLayout->itemAt(srcIndex);
     if (!item)
         return;
 
     mainLayout->insertItem(toIndex, item);
+    removeItem(srcIndex);
 }
 
 int DeviceListWidget::indexOf(const QString &ipStr)
 {
     const int count = mainLayout->count();
     for (int i = 0; i != count; ++i) {
-        QLayoutItem *item = mainLayout->takeAt(i);
+        QLayoutItem *item = mainLayout->itemAt(i);
         DeviceItem *w = qobject_cast<DeviceItem *>(item->widget());
         if (!w)
             continue;
