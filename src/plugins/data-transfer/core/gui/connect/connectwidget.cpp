@@ -61,7 +61,7 @@ void ConnectWidget::initUI()
     QPalette palette;
     QColor color;
     color.setNamedColor("#FF5736");
-    palette.setColor(QPalette::WindowText, color);   // 设置文本颜色为红色
+    palette.setColor(QPalette::WindowText, color);
     WarnningLabel->setPalette(palette);
     WarnningLabel->setMargin(5);
     WarnningLabel->setVisible(false);
@@ -98,7 +98,7 @@ void ConnectWidget::initConnectLayout()
 
     QVBoxLayout *ipVLayout = new QVBoxLayout();
     QLabel *iconLabel = new QLabel(this);
-    QLabel *nameLabel = new QLabel(QHostInfo::localHostName() + "的电脑", this);
+    QLabel *nameLabel = new QLabel(QHostInfo::localHostName() + tr("computer"), this);
     QLabel *ipLabel = new QLabel(this);
 
     iconLabel->setPixmap(QIcon(":/icon/computer.svg").pixmap(96, 96));
@@ -224,14 +224,20 @@ void ConnectWidget::backPage()
 
 void ConnectWidget::themeChanged(int theme)
 {
-    //light
+    // light
     if (theme == 1) {
-        setStyleSheet("background-color: white; border-radius: 10px;");
-        backButton->setStyleSheet("background-color: #E3E3E3;");
+        setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
+        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "background-color: lightgray;"
+                                  "}");
+
     } else {
-        //dark
-        backButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.08);");
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        // dark
+        setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
+        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "opacity: 1;"
+                                  "background-color: rgba(255,255,255, 0.1);"
+                                  "}");
     }
 }
 #endif

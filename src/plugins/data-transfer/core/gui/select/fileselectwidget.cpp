@@ -1,4 +1,4 @@
-#include "siderbarwidget.h"
+﻿#include "siderbarwidget.h"
 #include "fileselectwidget.h"
 #include "item.h"
 #include "calculatefilesize.h"
@@ -39,7 +39,7 @@ void FileSelectWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
 
-    titileLabel = new QLabel(tr(LocalText), this);
+    titileLabel = new QLabel(LocalText, this);
     titileLabel->setFixedHeight(30);
     QFont font;
     font.setPointSize(16);
@@ -289,9 +289,9 @@ void FileSelectWidget::changeText()
 {
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
-        titileLabel->setText(tr(LocalText));
+        titileLabel->setText(LocalText);
     } else if (method == TransferMethod::kNetworkTransmission) {
-        titileLabel->setText(tr(InternetText));
+        titileLabel->setText(InternetText);
     }
 }
 

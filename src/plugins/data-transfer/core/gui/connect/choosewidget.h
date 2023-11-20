@@ -66,7 +66,7 @@ private:
     bool checked{ false };
     QLabel *iconLabel{ nullptr };
     QString itemText;
-    bool drak{false};
+    bool dark{false};
 };
 
 class IndexLabel : public QLabel

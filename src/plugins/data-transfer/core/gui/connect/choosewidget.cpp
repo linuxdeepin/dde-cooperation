@@ -71,7 +71,9 @@ void ChooseWidget::initUI()
     nextButton->setText(tr("Next"));
     nextButton->setFixedSize(250, 35);
     nextButton->setEnabled(false);
-
+    nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                              "background-color: lightgray;"
+                              "}");
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(nextButton, Qt::AlignCenter);
 
@@ -97,13 +99,12 @@ void ChooseWidget::initUI()
         if (online) {
             tipiconlabel->setVisible(false);
             tiptextlabel->setVisible(false);
-            winItem->setEnable(true);
         } else {
             tipiconlabel->setVisible(true);
             tiptextlabel->setVisible(true);
-            winItem->setEnable(false);
             winItem->checked = false;
         }
+        winItem->setEnable(online);
     });
 
     connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
@@ -164,7 +165,7 @@ void ChooseWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet(".ChooseWidget{ background-color: white; border-radius: 10px;}");
+        setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
         nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                   "background-color: lightgray;"
                                   "}");
@@ -186,7 +187,7 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : itemText(text), 
     setStyleSheet(".ModeItem{"
                   "border-radius: 8px;"
                   "opacity: 1;"
-                  "background-color: rgba(0,0,0, 0.08);}");
+                  "background-color: rgba(0,0,0, 0.1);}");
     setFixedSize(268, 222);
 
     iconLabel = new QLabel(this);
@@ -205,14 +206,7 @@ ModeItem::~ModeItem() { }
 void ModeItem::setEnable(bool able)
 {
     enable = able;
-    QPalette palette;
-    if (!able) {
-        palette.setColor(QPalette::WindowText, Qt::gray);
-        setPalette(palette);
-    } else {
-        palette.setColor(QPalette::WindowText, QColor("#414D68"));
-        setPalette(palette);
-    }
+    update();
 }
 
 void ModeItem::themeChanged(int theme)
@@ -224,7 +218,7 @@ void ModeItem::themeChanged(int theme)
                       "opacity: 1;"
                       "background-color: rgba(0, 0, 0, 0.03);"
                       "}");
-        drak = false;
+        dark = false;
     } else {
         // dark
         setStyleSheet(".ModeItem{"
@@ -232,7 +226,7 @@ void ModeItem::themeChanged(int theme)
                       "opacity: 1;"
                       "background-color: rgba(255,255,255, 0.1);"
                       "}");
-        drak = true;
+        dark = true;
     }
 }
 
@@ -250,26 +244,24 @@ void ModeItem::paintEvent(QPaintEvent *event)
 {
     QPainter paint(this);
     paint.setRenderHint(QPainter::Antialiasing);
-
+    if (!enable)
+        paint.setOpacity(0.6);
+    else
+        paint.setOpacity(1);
     if (checked) {
-        paint.setPen(Qt::NoPen);
-
-        paint.setBrush(QColor(0, 129, 255, 255));
+        paint.setPen(QPen(QColor(0, 129, 255, 255), 5));
         paint.drawEllipse(12, 12, 16, 16);
-
-        paint.setBrush(QColor(255, 255, 255, 255));
-        paint.drawEllipse(16, 16, 8, 8);
     } else {
         paint.setPen(QPen(QColor(65, 77, 104, 255), 1));
         paint.drawEllipse(12, 12, 16, 16);
     }
-
     QFont font("SourceHanSansSC-Medium");
     font.setPixelSize(14);
     font.setWeight(QFont::Medium);
     font.setStyleName("Normal");
     paint.setFont(font);
-    if (drak)
+
+    if (dark)
         paint.setPen(QColor(192, 198, 212, 255));
     else
         paint.setPen(QColor(65, 77, 104, 255));
