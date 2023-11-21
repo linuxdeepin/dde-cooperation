@@ -267,19 +267,22 @@ struct FileTransBlock {
     }
 };
 
-struct FileTransJobCancel {
+struct FileTransJobAction {
     int32 job_id;
-    fastring path;
+    fastring appname;
+    uint32 type;
 
     void from_json(const co::Json& _x_) {
         job_id = (int32)_x_.get("job_id").as_int64();
-        path = _x_.get("path").as_c_str();
+        appname = _x_.get("appname").as_c_str();
+        type = (uint32)_x_.get("type").as_int64();
     }
 
     co::Json as_json() const {
         co::Json _x_;
         _x_.add_member("job_id", job_id);
-        _x_.add_member("path", path);
+        _x_.add_member("appname", appname);
+        _x_.add_member("type", type);
         return _x_;
     }
 };

@@ -20,11 +20,12 @@
 TransferJob::TransferJob(QObject *parent)
     : QObject(parent)
 {
+    _status = NONE;
 }
 
 TransferJob::~TransferJob()
 {
-
+    _status = STOPED;
 }
 
 bool TransferJob::initRpc(fastring target, uint16 port)
@@ -83,7 +84,7 @@ void TransferJob::initJob(fastring appname, fastring targetappname, int id, fast
     _sub = sub;
     _savedir = savedir;
     _writejob = write;
-    _inited = true;
+    _status = INIT;
     if (_writejob) {
         fastring fullpath = path::join(
                     DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
@@ -100,9 +101,7 @@ bool TransferJob::createFile(const QString &filename, const bool isDir)
 
 void TransferJob::start()
 {
-    _stoped = false;
-    _finished = false;
-    _jobCanceled = false;
+    atomic_store(&_status, STARTED);
     if (_writejob) {
         DLOG << "start write job: " << _savedir;
         handleJobStatus(JOB_TRANS_DOING);
@@ -132,23 +131,23 @@ void TransferJob::start()
 void TransferJob::stop()
 {
     DLOG << "(" << _jobid << ") stop now!";
-    _stoped = true;
+    atomic_store(&_status, STOPED);
 }
 
 void TransferJob::waitFinish()
 {
     DLOG << "(" << _jobid << ") wait write finish!";
-    _waitfinish = true;
+    atomic_store(&_status, WAIT_DONE);
 }
 
-bool TransferJob::finished()
+bool TransferJob::ended()
 {
-    return _finished;
+    return unlikely(_status == STOPED);
 }
 
 bool TransferJob::isRunning()
 {
-    return !_stoped;
+    return unlikely(_status == STARTED);
 }
 
 bool TransferJob::isWriteJob()
@@ -161,32 +160,20 @@ fastring TransferJob::getAppName()
     return _app_name;
 }
 
-void TransferJob::cancel()
+void TransferJob::cancel(bool notify)
 {
     _file_info_maps.clear();
-    _jobCanceled = true;
-    if (_writejob) {
-        // FIXME: the receive can not send rpc
-        //        UNIGO([this] {
-        //            FileTransJobCancel *cancel = new FileTransJobCancel();
-        //            FileTransUpdate update;
-
-        //            cancel->set_job_id(_jobid);
-        //            cancel->set_path(_path.c_str());
-
-        //            update.set_allocated_cancel(cancel);
-        //            int res = _rpcBinder->doUpdateTrans(_tar_app_name.c_str(), update);
-        //            if (res <= 0) {
-        //                ELOG << "update failed: " << _path << " result=" << result;
-        //            }
-        //        });
+    if (notify) {
+        atomic_cas(&_status, STARTED, CANCELING); // 如果运行，则赋值取消
+    } else {
+        handleJobStatus(JOB_TRANS_CANCELED); // 通知前端应用作业已取消
+        atomic_store(&_status, STOPED);
     }
-    this->stop();
 }
 
 void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
 {
-    if (_jobCanceled) {
+    if (_status == CANCELING) {
         DLOG << "This job has mark cancel, stop handle data.";
         return;
     }
@@ -255,7 +242,7 @@ void TransferJob::scanPath(fastring root, fastring path)
     });
     wg.wait();
 #endif
-    if (_stoped)
+    if (_status >= STOPED)
         return;
     if (fs::isdir(path.c_str())) {
         readPath(path, root);
@@ -266,7 +253,7 @@ void TransferJob::scanPath(fastring root, fastring path)
 
 void TransferJob::readPath(fastring path, fastring root)
 {
-    if (_stoped)
+    if (_status >= STOPED)
         return;
 
     fastring dirpath = path::join(path, "");
@@ -280,7 +267,7 @@ void TransferJob::readPath(fastring path, fastring root)
 
 bool TransferJob::readFile(fastring filepath, int fileid, fastring subdir)
 {
-    if (_stoped)
+    if (_status >= STOPED)
         return false;
 
     std::pair<fastring, fastring> pairs = path::split(fastring(filepath));
@@ -299,7 +286,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         return;
     }
 
-    if (_stoped)
+    if (_status >= STOPED)
         return;
 
     size_t block_size = BLOCK_SIZE;
@@ -312,12 +299,14 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
     // record the file info
     {
         FileInfo info;
+        info.job_id = _jobid;
         info.file_id = fileid;
         info.name = subname;
         info.total_size = file_size;
         info.current_size = 0;
         info.time_spended = -1;
-        _file_info_maps.insert(std::make_pair(fileid, info));
+
+        insertFileInfo(info);
         //        LOG << "======this file (" << subname << "fileid" << fileid << ") start   _file_info_maps";
     }
     QPointer<TransferJob> self = this;
@@ -337,7 +326,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
             // 最多300个数据块
             if (self && self->queueCount() > 300)
                 co::sleep(10);
-            if (self.isNull() || self->_stoped)
+            if (self.isNull() || self->_status >= STOPED)
                 break;
 
             memset(buf, 0, block_len);
@@ -371,54 +360,70 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
 
 void TransferJob::handleBlockQueque()
 {
+    atomic_store(&_queue_empty_times, 0);
     // 定时获取状态并通知，检测是否结束
-    UNIGO([this]() {
+    QPointer<TransferJob> self = this;
+    UNIGO([self]() {
         bool exit = false;
         bool next_exit = false;
-        int _max_count = 5;   // 接收文件最长时间 x秒，认为异常（网络断开或对端退出）
         do {
-            exit = _jobCanceled;
             co::sleep(1000);   // 每秒检测发送一次状态
-            bool empty = this->syncHandleStatus();   //检测一次
+            if (self.isNull()) {
+                DLOG << "job has been distructed, break!";
+                break;
+            }
+            exit = (self->_status == CANCELING) || (self->_status >= STOPED);
+            if (exit) {
+                DLOG << "job has stop, break!";
+                break;
+            }
+
+            bool empty = self->syncHandleStatus();   //检测一次所有文件是否完成
             if (empty) {
-                if (_waitfinish) {
+                // 文件信息已全部为空，可能结束，也可能还有文件没有开始
+                if (self->_status == WAIT_DONE) {
+                    // 对端发送结束，等待完成
                     if (next_exit) {
                         // 已经被标记等待结束，这里定时更新，说明一定时间内无数据，直接结束
-                        handleJobStatus(JOB_TRANS_FINISHED);
+                        self->handleJobStatus(JOB_TRANS_FINISHED);
                         break;
                     } else {
                         next_exit = true;   //标记等待下一次状态检测退出
                         continue;
                     }
-                }
-                if (_writejob) {
-                    // 写作业，计算等待时间
-                    _max_count--;
-                    if (_max_count < 0) {
-                        DLOG << " wait block data timeout NOW!";
-                        handleJobStatus(JOB_TRANS_FINISHED);
-                        exit = true;
-                    }
-                } else {
+                } else if (!self->_writejob) {
                     DLOG << "all file finished, send job finish.";
-                    handleUpdate(FINIASH, _path.c_str(), "");
-                    _waitfinish = true;
+                    // 通知对端文件已发完，并等待下一循环退出
+                    self->handleUpdate(FINIASH, self->_path.c_str(), "");
+                    atomic_store(&(self->_status), WAIT_DONE);
                 }
-            } else {
-                // reset timeout
-                _max_count = 5;
+            }
+
+            if (self->_queue_empty_times > 500) {
+                // 每10ms增1，连续5000ms无数据
+                DLOG << " wait block data timeout NOW!";
+                self->handleJobStatus(JOB_TRANS_FINISHED);
+                break;
             }
         } while (!exit);
 
-        this->stop();
+        if (!self.isNull() && self->_status != STOPED)
+            self->stop();
     });
 
     bool exception = false;
-    while (!_stoped) {
+    while (_status != STOPED) {
+        if (_status == CANCELING) {
+            break;
+        }
         auto block = popQueue();
         if (block.isNull()) {
+            atomic_inc(&_queue_empty_times);
             co::sleep(10);
             continue;
+        } else {
+            // reset
+            atomic_store(&_queue_empty_times, 0);
         }
 
         int32 job_id = block->job_id;
@@ -486,12 +491,11 @@ void TransferJob::handleBlockQueque()
     };
     if (exception) {
         DLOG << "trans job exception hanpend: " << _jobid;
-        _stoped = true;
         handleJobStatus(JOB_TRANS_FAILED);
-    } else {
-        LOG << "trans job finished: " << _jobid;
-        _finished = true;
     }
+
+    LOG << "trans job end: " << _jobid;
+    atomic_store(&_status, STOPED);
 }
 
 void TransferJob::handleUpdate(FileTransRe result, const char *path, const char *emsg)
@@ -517,15 +521,19 @@ void TransferJob::handleUpdate(FileTransRe result, const char *path, const char 
 
 bool TransferJob::syncHandleStatus()
 {
+    QPointer<TransferJob> self = this;
     // update the file info
     for (auto &pair : _file_info_maps) {
+        if (self.isNull())
+            return true;
+
         //DLOG << "syncHandleStatus()" << pair.second.name;
         if (pair.second.time_spended >= 0) {
             pair.second.time_spended += 1;
             bool end = pair.second.current_size >= pair.second.total_size;
             handleTransStatus(end ? FILE_TRANS_END : FILE_TRANS_SPEED, pair.second);
             if (end) {
-                DLOG << "should notify file finish: " << pair.second.name;
+                DLOG << "should notify file finish: " << pair.second.name << " jobid=" << pair.second.job_id;
                 _file_info_maps.erase(pair.first);
                 if (!_writejob) {
                     //TODO: check sum

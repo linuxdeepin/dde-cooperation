@@ -118,7 +118,7 @@ void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend
     case BACK_RESUME_JOB:
     case BACK_CANCEL_JOB:
     {
-        bool ok = JobManager::instance()->doJobAction(type, msg);
+        bool ok = handleJobActions(type, msg);
         co::Json resjson = {
             { "result", ok },
             { "msg", msg.str() }
@@ -295,7 +295,7 @@ void HandleIpcService::handleTryConnect(co::Json json)
 
         // 使用base64加密auth
         login.name = param.appName;
-        login.auth = param.password;
+        login.auth = Util::encodeBase64(param.password.c_str());
 
         std::string uuid = Util::genUUID();
         login.my_uid = uuid;
@@ -312,4 +312,31 @@ void HandleIpcService::handleTryConnect(co::Json json)
         SendRpcService::instance()->setTargetAppName(appName, targetAppname);
         SendRpcService::instance()->doSendProtoMsg(IN_LOGIN_INFO, appName, login.as_json().str().c_str());
     });
+}
+
+bool HandleIpcService::handleJobActions(const uint type, co::Json &msg)
+{
+    ipc::TransJobParam param;
+    param.from_json(msg);
+    int jobid = param.job_id;
+    uint action_type;
+    QString appName(param.appname.c_str());
+    if (BACK_RESUME_JOB == type) {
+        action_type = TRANS_RESUME;
+    } else if (BACK_CANCEL_JOB == type) {
+        action_type = TRANS_CANCEL;
+    } else {
+        action_type = TRANS_PAUSE;
+        DLOG << "unsupport job action: PAUSE.";
+    }
+
+    FileTransJobAction action;
+    action.job_id = (jobid);
+    action.appname = (param.appname);
+    action.type = (type);
+
+    //LOG << " send job action to " << appName.toStdString() <<  " type: " << action_type;
+    SendRpcService::instance()->doSendProtoMsg(action_type, appName, action.as_json().str().c_str(), QByteArray());
+
+    return JobManager::instance()->doJobAction(type, jobid);
 }

@@ -68,7 +68,7 @@ object TransFilesParam {
 object TransJobParam {
     string session
     int32 job_id
-    bool is_remote  // remote: write_jobs; local: read_jobs
+    string appname
 }
 
 object FsCreateParam {

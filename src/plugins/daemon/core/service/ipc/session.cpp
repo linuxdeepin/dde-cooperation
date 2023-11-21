@@ -95,7 +95,7 @@ rpc::Client* Session::client()
 void Session::call(const json::Json &req, json::Json &res)
 {
     if (!req.str().contains("Frontend.ping"))
-        DLOG << "Send To Client  : session = " << _name.toStdString() << ", port = " << _cb_port
+        DLOG_IF(TEST_LOGOUT) << "Send To Client  : session = " << _name.toStdString() << ", port = " << _cb_port
              << " \n req : " << req;
     coClient.reset( new rpc::Client("127.0.0.1", _cb_port, false));
 #if defined(WIN32)
@@ -112,7 +112,7 @@ void Session::call(const json::Json &req, json::Json &res)
     if (req.get("api").str().contains("Frontend.ping")) {
         _pingOK = res.get("result").as_bool() && !res.get("msg").empty();
     } else {
-        DLOG << "Client reply : session = " << _name.toStdString() << ", api name = "
+        DLOG_IF(TEST_LOGOUT) << "Client reply : session = " << _name.toStdString() << ", api name = "
              << req.get("api").str().c_str()
              << " \n res : " << res;
     }

@@ -19,7 +19,7 @@ class TransferJob : public QObject
 {
     Q_OBJECT
 
-public:
+public:   
     explicit TransferJob(QObject *parent = nullptr);
     ~TransferJob() override;
     bool initRpc(fastring target, uint16 port);
@@ -29,12 +29,12 @@ public:
     void start();
     void stop();
     void waitFinish();
-    bool finished();
+    bool ended();
     bool isRunning();
     bool isWriteJob();
     fastring getAppName();
 
-    void cancel();
+    void cancel(bool notify = false);
 
     void pushQueque(const QSharedPointer<FSDataBlock> block);
     void insertFileInfo(FileInfo &info);
@@ -74,11 +74,8 @@ private:
 private:
     int _jobid;
     int _fileid = 0;
-    bool _inited = false;
-    bool _stoped = true;
-    bool _finished = false;
-    bool _waitfinish = false;
-    bool _jobCanceled = false;
+    int _status = NONE;
+    int _queue_empty_times = 0;
 
     bool _sub;
     bool _writejob;

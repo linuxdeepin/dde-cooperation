@@ -26,6 +26,8 @@ typedef enum income_type_t {
     TRANS_APPLY = 1009,
     MISC = 1010,
     RPC_PING = 1011,
+    TRANS_PAUSE = 1012,
+    TRANS_RESUME = 1013,
 } IncomeType;
 
 typedef enum outgo_type_t {
