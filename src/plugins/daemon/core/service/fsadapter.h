@@ -8,7 +8,7 @@
 #include <QObject>
 
 #include "co/fs.h"
-#include "common/comonstruct.h"
+#include "common/commonstruct.h"
 
 //namespace deamon_core {
 

@@ -31,6 +31,9 @@ public:
     void handleRemoteReport(co::Json &info);
     void handleRemoteJobCancel(co::Json &info);
     void handleTransJob(co::Json &info);
+    void handleRemoteShareConnect(co::Json &info);
+    void handleRemoteShareConnectReply(co::Json &info);
+    void handleRemoteShareStart(co::Json &info);
 
 private:
     void startRemoteServer(const quint16 port);

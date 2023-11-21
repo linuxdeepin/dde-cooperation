@@ -5,11 +5,12 @@
 #include "handleipcservice.h"
 #include "sendipcservice.h"
 #include "service/rpc/sendrpcservice.h"
+#include "service/share/sharecooperationservice.h"
 #include "ipc/proto/chan.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/backendservice.h"
 #include "common/constant.h"
-#include "common/comonstruct.h"
+#include "common/commonstruct.h"
 #include "service/comshare.h"
 #include "service/discoveryjob.h"
 #include "utils/config.h"
@@ -171,6 +172,26 @@ void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend
         handleBackApplyTransFiles(msg);
         break;
     }
+    case BACK_SHARE_CONNECT:
+    {
+        // 发送连接请求到被控制端
+        handleShareConnect(msg);
+        break;
+    }
+    case BACK_SHARE_CONNECT_REPLY:
+    {
+        // 回复控制端接受控制还是拒绝控制
+        handleShareConnectReply(msg);
+        break;
+    }
+    case BACK_SHARE_START:
+    {
+        // 客户端发送配置文件到后端
+        // 后端启动键鼠共享
+        // 发送ip信息到被控制端告诉被控制端启动连接
+        handleShareStart(msg);
+        break;
+    }
     default:
         break;
     }
@@ -269,7 +290,7 @@ void HandleIpcService::handleBackApplyTransFiles(co::Json param)
     info.from_json(param);
     info.selfIp = Util::getFirstIp();
     info.selfPort = UNI_RPC_PORT_BASE;
-    SendRpcService::instance()->doSendProtoMsg(TRANS_APPLY,info.session.c_str(), info.as_json().str().c_str());
+    SendRpcService::instance()->doSendProtoMsg(TRANS_APPLY,info.appname.c_str(), info.as_json().str().c_str());
 }
 
 void HandleIpcService::handleConnectClosed(const quint16 port)
@@ -288,30 +309,30 @@ void HandleIpcService::handleTryConnect(co::Json json)
     QString ip(param.host.c_str());
     _ips.remove(appName);
     _ips.insert(appName, ip);
-    UNIGO([param, appName, ip]() {
-        QString pass(param.password.c_str());
-        QString targetAppname = param.targetAppname.empty() ? appName : param.targetAppname.c_str();
-        UserLoginInfo login;
 
-        // 使用base64加密auth
-        login.name = param.appName;
-        login.auth = Util::encodeBase64(param.password.c_str());
+    QString pass(param.password.c_str());
+    QString targetAppname = param.targetAppname.empty() ? appName : param.targetAppname.c_str();
+    UserLoginInfo login;
 
-        std::string uuid = Util::genUUID();
-        login.my_uid = uuid;
-        login.my_name = Util::getHostname();
-        login.selfappName = param.appName;
-        login.appName = targetAppname.toStdString();
+    // 使用base64加密auth
+    login.name = param.appName;
+    login.auth = Util::encodeBase64(param.password.c_str());
 
-        login.session_id = uuid;
-        login.version = UNIAPI_VERSION;
-        login.ip = Util::getFirstIp();
-        LOG << " rcv client connet to " << ip.toStdString() << appName.toStdString();
-        // 创建远程发送的work
-        SendRpcService::instance()->createRpcSender(param.appName.c_str(), ip, UNI_RPC_PORT_BASE);
-        SendRpcService::instance()->setTargetAppName(appName, targetAppname);
-        SendRpcService::instance()->doSendProtoMsg(IN_LOGIN_INFO, appName, login.as_json().str().c_str());
-    });
+    std::string uuid = Util::genUUID();
+    login.my_uid = uuid;
+    login.my_name = Util::getHostname();
+    login.selfappName = param.appName;
+    login.appName = targetAppname.toStdString();
+
+    login.session_id = uuid;
+    login.version = UNIAPI_VERSION;
+    login.ip = Util::getFirstIp();
+    LOG << " rcv client connet to " << ip.toStdString() << appName.toStdString();
+    // 创建远程发送的work
+    SendRpcService::instance()->createRpcSender(param.appName.c_str(), ip, UNI_RPC_PORT_BASE);
+    SendRpcService::instance()->setTargetAppName(appName, targetAppname);
+    SendRpcService::instance()->doSendProtoMsg(IN_LOGIN_INFO, appName, login.as_json().str().c_str());
+
 }
 
 bool HandleIpcService::handleJobActions(const uint type, co::Json &msg)
@@ -339,4 +360,47 @@ bool HandleIpcService::handleJobActions(const uint type, co::Json &msg)
     SendRpcService::instance()->doSendProtoMsg(action_type, appName, action.as_json().str().c_str(), QByteArray());
 
     return JobManager::instance()->doJobAction(type, jobid);
+}
+
+void HandleIpcService::handleShareStart(co::Json json)
+{
+    ShareStart st;
+    st.from_json(json);
+
+    // 读取相应的配置配置Barrier
+    ShareCooperationService::instance()->setBarrierType(BarrierType::Server);
+    // 自己启动
+    ShareCooperationService::instance()->startBarrier();
+    // 通知远端启动客户端连接到这里的batter服务器
+    // 发送本机ip过去
+    st.ip = Util::getFirstIp();
+    SendRpcService::instance()->doSendProtoMsg(SHARE_START, st.appName.c_str(),
+                                               st.as_json().str().c_str());
+}
+
+void HandleIpcService::handleShareConnect(co::Json json)
+{
+    ShareConnectApply param;
+    param.from_json(json);
+    QString appName(param.appName.c_str());
+    QString targetIp(param.tarIp.c_str());
+    _ips.remove(appName);
+    _ips.insert(appName, targetIp);
+    QString targetAppname = param.tarAppname.empty() ? appName : param.tarAppname.c_str();
+
+    param.ip = Util::getFirstIp();
+    LOG << " rcv client connet to " << targetIp.toStdString() << appName.toStdString();
+    // 创建远程发送的work
+    SendRpcService::instance()->createRpcSender(appName, targetIp, UNI_RPC_PORT_BASE);
+    // 发送给被控制端请求共享连接
+    SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT, appName, param.as_json().str().c_str());
+}
+
+void HandleIpcService::handleShareConnectReply(co::Json json)
+{
+    ShareConnectReply reply;
+    reply.from_json(json);
+    // 回复控制端连接结果
+    SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT_RES,
+                                               reply.appName.c_str(), json.str().c_str());
 }

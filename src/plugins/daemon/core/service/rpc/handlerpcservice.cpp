@@ -6,11 +6,13 @@
 #include "service/ipc/sendipcservice.h"
 #include "sendrpcservice.h"
 #include "service/rpc/remoteservice.h"
+#include "service/share/sharecooperationservice.h"
 #include "common/constant.h"
-#include "common/comonstruct.h"
+#include "common/commonstruct.h"
 #include "service/comshare.h"
 #include "service/discoveryjob.h"
 #include "ipc/proto/comstruct.h"
+#include "ipc/bridge.h"
 #include "service/jobmanager.h"
 #include "protocol/version.h"
 #include "utils/config.h"
@@ -65,10 +67,11 @@ bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
 {
     ApplyTransFiles obj;
     obj.from_json(info);
-    auto tmp = obj.tarSession;
-    obj.tarSession = obj.session;
-    obj.session = tmp;
-    auto session = obj.session;
+
+    auto tmp = obj.tarAppname;
+    obj.tarAppname = obj.appname;
+    obj.appname = tmp;
+    auto session = obj.appname;
 
     co::Json infojson;
     co::Json req;
@@ -243,6 +246,48 @@ void HandleRpcService::handleTransJob(co::Json &info)
     _outgo_chan << data;
 }
 
+void HandleRpcService::handleRemoteShareConnect(co::Json &info)
+{
+    ShareConnectApply lo;
+    lo.from_json(info);
+
+    // 这是收到的appname是对方的appname
+    SendRpcService::instance()->createRpcSender(lo.tarAppname.c_str(), lo.ip.c_str(),
+                                                UNI_RPC_PORT_BASE);
+    SendRpcService::instance()->setTargetAppName(lo.tarAppname.c_str(),
+                                                 lo.appName.c_str());
+    ShareEvents event;
+    event.eventType = FRONT_SHARE_APPLY_CONNECT;
+    event.data = lo.data;
+    co::Json req = event.as_json();
+    req.add_member("api", "Frontend.shareEvents");
+    SendIpcService::instance()->handleSendToClient(lo.tarAppname.c_str(), req.str().c_str());
+
+}
+
+void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
+{
+    ShareConnectReply reply;
+    reply.from_json(info);
+
+    ShareEvents event;
+    event.eventType = FRONT_SHARE_APPLY_CONNECT_REPLY;
+    event.data = info.str();
+    co::Json req = event.as_json();
+    req.add_member("api", "Frontend.shareEvents");
+    SendIpcService::instance()->handleSendToClient(reply.tarAppname.c_str(), req.str().c_str());
+}
+
+void HandleRpcService::handleRemoteShareStart(co::Json &info)
+{
+    ShareStart st;
+    st.from_json(info);
+    // 获取其中的ip进行Barrier的client配置
+    ShareCooperationService::instance()->setBarrierType(BarrierType::Client);
+    // 启动Barrier
+    ShareCooperationService::instance()->startBarrier();
+}
+
 void HandleRpcService::startRemoteServer(const quint16 port)
 {
     if (_rpc.isNull() && port != UNI_RPC_PORT_TRANS)
@@ -349,8 +394,35 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 _outgo_chan << data;
                 break;
             }
-            default:
+            case APPLY_SHARE_CONNECT:
+            {
+                // 被控制方收到共享连接申请
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteShareConnect(json_obj);
                 break;
+            }
+            case APPLY_SHARE_CONNECT_RES:
+            {
+                // 控制方收到被控制方申请共享连接的回复
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteShareConnectReply(json_obj);
+                break;
+            }
+            case SHARE_START:
+            {
+                // 被控制方收到控制方的开始共享
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteShareStart(json_obj);
+                break;
+            }
+            default:{
+                OutData data;
+                _outgo_chan << data;
+                break;
+            }
             }
         }
     });

@@ -9,6 +9,7 @@
 #include "service/ipc/sendipcservice.h"
 #include "service/rpc/sendrpcservice.h"
 #include "service/rpc/handlesendresultservice.h"
+#include "service/share/sharecooperationservice.h"
 #include "jobmanager.h"
 
 #include "utils/config.h"
@@ -43,6 +44,7 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     SendIpcService::instance();
     SendRpcService::instance();
     JobManager::instance();
+    ShareCooperationService::instance();
     connect(SendRpcService::instance(), &SendRpcService::sendToRpcResult,
             _logic.data(), &HandleSendResultService::handleSendResultMsg, Qt::QueuedConnection);
 }

@@ -10,7 +10,7 @@
 #include <QSharedPointer>
 
 #include <service/job/transferjob.h>
-#include "common/comonstruct.h"
+#include "common/commonstruct.h"
 #include "co/co.h"
 
 class JobManager : public QObject

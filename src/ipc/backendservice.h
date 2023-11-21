@@ -42,7 +42,7 @@ class BackendImpl : public Backend
 {
 public:
     BackendImpl() = default;
-    virtual ~BackendImpl() = default;
+    virtual ~BackendImpl() override = default;
 
     void setInterface(BackendService *interface) {
         _interface = interface;
@@ -85,6 +85,8 @@ public:
     virtual void unregisterDiscovery(co::Json& req, co::Json& res) override;
 
     virtual void applyTransFiles(co::Json& req, co::Json& res) override;
+
+    virtual void shareEvents(co::Json& req, co::Json& res) override;
 
 private:
     BackendService *_interface;

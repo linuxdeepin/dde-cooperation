@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "inputcooperation.h"
-#include "comshare.h"
+#include "sharecooperationservice.h"
+#include "service/comshare.h"
 #include <utils/config.h>
 #include <utils/cooconfig.h>
 
@@ -12,7 +12,7 @@
 
 #include <utils/utils.h>
 
-InputCooperation::InputCooperation(QObject *parent) : QObject(parent)
+ShareCooperationService::ShareCooperationService(QObject *parent) : QObject(parent)
 {
     _expectedRunning = false;
     _brrierType = BarrierType::Server; // default start as server.
@@ -32,28 +32,34 @@ InputCooperation::InputCooperation(QObject *parent) : QObject(parent)
 //    _cooConfig.saveSettings();
 }
 
-InputCooperation::~InputCooperation()
+ShareCooperationService::~ShareCooperationService()
 {
 
 }
 
-void InputCooperation::setBarrierType(BarrierType type)
+ShareCooperationService *ShareCooperationService::instance()
+{
+    static ShareCooperationService in;
+    return &in;
+}
+
+void ShareCooperationService::setBarrierType(BarrierType type)
 {
     _brrierType = type;
 }
 
-BarrierType InputCooperation::barrierType() const
+BarrierType ShareCooperationService::barrierType() const
 {
     return _brrierType;
 }
 
-void InputCooperation::restartBarrier()
+void ShareCooperationService::restartBarrier()
 {
     stopBarrier();
     startBarrier();
 }
 
-bool InputCooperation::startBarrier()
+bool ShareCooperationService::startBarrier()
 {
     LOG << "starting process";
     _expectedRunning = true;
@@ -118,7 +124,7 @@ bool InputCooperation::startBarrier()
 }
 
 const char ShutdownCh = 'S';
-void InputCooperation::stopBarrier()
+void ShareCooperationService::stopBarrier()
 {
     LOG << "stopping process";
     _expectedRunning = false;
@@ -139,7 +145,7 @@ void InputCooperation::stopBarrier()
     setBarrierProcess(nullptr);
 }
 
-bool InputCooperation::clientArgs(QStringList& args, QString& app)
+bool ShareCooperationService::clientArgs(QStringList& args, QString& app)
 {
     app = appPath(cooConfig().barriercName());
 
@@ -166,7 +172,7 @@ bool InputCooperation::clientArgs(QStringList& args, QString& app)
 }
 
 
-bool InputCooperation::serverArgs(QStringList& args, QString& app)
+bool ShareCooperationService::serverArgs(QStringList& args, QString& app)
 {
     app = appPath(cooConfig().barriersName());
 
@@ -200,12 +206,12 @@ bool InputCooperation::serverArgs(QStringList& args, QString& app)
     return true;
 }
 
-QString InputCooperation::configFilename()
+QString ShareCooperationService::configFilename()
 {
     return Util::barrierConfig();
 }
 
-QString InputCooperation::getScreenName()
+QString ShareCooperationService::getScreenName()
 {
     if (cooConfig().screenName() == "") {
         return QHostInfo::localHostName();
@@ -215,7 +221,7 @@ QString InputCooperation::getScreenName()
     }
 }
 
-QString InputCooperation::address()
+QString ShareCooperationService::address()
 {
     QString address = cooConfig().networkInterface();
     if (!address.isEmpty())
@@ -223,12 +229,12 @@ QString InputCooperation::address()
     return address + ":" + QString::number(cooConfig().port());
 }
 
-QString InputCooperation::appPath(const QString& name)
+QString ShareCooperationService::appPath(const QString& name)
 {
     return cooConfig().barrierProgramDir() + name;
 }
 
-void InputCooperation::barrierFinished(int exitCode, QProcess::ExitStatus)
+void ShareCooperationService::barrierFinished(int exitCode, QProcess::ExitStatus)
 {
     if (exitCode == 0) {
         LOG << "process exited normally";
@@ -243,7 +249,7 @@ void InputCooperation::barrierFinished(int exitCode, QProcess::ExitStatus)
     }
 }
 
-void InputCooperation::appendLogRaw(const QString& text, bool error)
+void ShareCooperationService::appendLogRaw(const QString& text, bool error)
 {
     for (QString line : text.split(QRegExp("\r|\n|\r\n"))) {
         if (!line.isEmpty()) {
@@ -256,7 +262,7 @@ void InputCooperation::appendLogRaw(const QString& text, bool error)
     }
 }
 
-void InputCooperation::logOutput()
+void ShareCooperationService::logOutput()
 {
     if (_pBarrier)
     {
@@ -264,7 +270,7 @@ void InputCooperation::logOutput()
     }
 }
 
-void InputCooperation::logError()
+void ShareCooperationService::logError()
 {
     if (_pBarrier)
     {

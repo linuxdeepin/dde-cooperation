@@ -19,6 +19,8 @@ typedef enum req_type_t {
     FRONT_APPLY_TRANS_FILE = 106,
     FRONT_SEND_STATUS = 107,
     FRONT_SERVER_ONLINE = 108,
+    FRONT_SHARE_APPLY_CONNECT = 109, // 后端通知被控制方收到连接申请
+    FRONT_SHARE_APPLY_CONNECT_REPLY = 110, // 后端通知控制方收到连接申请的结果
     BACK_GET_DISCOVERY = 200,
     BACK_GET_PEER = 201,
     BACK_GET_PASSWORD = 202,
@@ -36,6 +38,9 @@ typedef enum req_type_t {
     BACK_DISC_REGISTER = 214,
     BACK_DISC_UNREGISTER = 215,
     BACK_APPLY_TRANS_FILES = 216,
+    BACK_SHARE_CONNECT = 217, // 控制方告诉后端连接被控制方
+    BACK_SHARE_START = 218, // 控制方告诉后端被控制方开始共享
+    BACK_SHARE_CONNECT_REPLY = 219, // 被控制方告诉后端连接被控制方的回复
 } ReqType;
 
 typedef enum res_type_t {

@@ -15,7 +15,7 @@
 #include "co/fs.h"
 
 #include "common/constant.h"
-#include "common/comonstruct.h"
+#include "common/commonstruct.h"
 #include "version.h"
 #include "utils/utils.h"
 #include "utils/config.h"

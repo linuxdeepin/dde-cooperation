@@ -20,6 +20,7 @@ service Backend {
     registerDiscovery, // register own node json into discovery service
     unregisterDiscovery, // unregister from discovery service
     applyTransFiles, // apply trans files to target remote server
+    shareEvents, // share mouse and other evets
 }
 
 // return {CallResult} msg is session id string
