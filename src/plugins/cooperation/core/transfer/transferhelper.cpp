@@ -34,11 +34,11 @@ inline constexpr char NotifyServerName[] { "org.freedesktop.Notifications" };
 inline constexpr char NotifyServerPath[] { "/org/freedesktop/Notifications" };
 inline constexpr char NotifyServerIfce[] { "org.freedesktop.Notifications" };
 
-inline constexpr char NotifyCancelAction[] { "cancel-transfer-action" };
-inline constexpr char NotifyRejectAction[] { "reject-action" };
-inline constexpr char NotifyAcceptAction[] { "accept-action" };
-inline constexpr char NotifyCloseAction[] { "close-action" };
-inline constexpr char NotifyViewAction[] { "view-action" };
+inline constexpr char NotifyCancelAction[] { "cancel" };
+inline constexpr char NotifyRejectAction[] { "reject" };
+inline constexpr char NotifyAcceptAction[] { "accept" };
+inline constexpr char NotifyCloseAction[] { "close" };
+inline constexpr char NotifyViewAction[] { "view" };
 
 inline constexpr char HistoryButtonId[] { "history-button" };
 inline constexpr char TransferButtonId[] { "transfer-button" };
@@ -187,6 +187,7 @@ void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
 {
     switch (currentMode) {
     case TransferHelper::ReceiveMode: {
+        // 在通知中心中，如果通知内容包含“%”且actions中存在“cancel”，则不会在通知中心显示
         QStringList actions { NotifyCancelAction, tr("Cancel") };
         QString msg(tr("File receiving %1% | Remaining time %2").arg(QString::number(value), remainTime));
 
@@ -202,11 +203,26 @@ void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
 
 uint TransferHelperPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
 {
+    QVariantMap hitMap;
+    if (status.loadAcquire() == TransferHelper::Transfering) {
+        // dde-session-ui 5.7.2.2 版本后，支持设置该属性使消息不进通知中心
+        hitMap.insert("x-deepin-ShowInNotifyCenter", false);
+    }
+
     QDBusReply<uint> reply = notifyIfc->call("Notify", kMainAppName, replacesId,
                                              "dde-cooperation", tr("File transfer"), body,
-                                             actions, QVariantMap(), expireTimeout);
+                                             actions, hitMap, expireTimeout);
 
     return reply.isValid() ? reply.value() : replacesId;
+}
+
+void TransferHelperPrivate::onVerifyTimeout()
+{
+    isTransTimeout = true;
+    if (currentMode == TransferHelper::ReceiveMode || status.loadAcquire() != TransferHelper::Confirming)
+        return;
+
+    transDialog()->switchResultPage(false, tr("The other party did not receive, the files failed to send"));
 }
 
 TransferHelper::TransferHelper(QObject *parent)
@@ -264,8 +280,12 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
     if (fileList.isEmpty())
         return;
 
+    if (!d->status.testAndSetRelease(TransferHelper::Idle, TransferHelper::Connecting)) {
+        d->status.storeRelease(TransferHelper::Idle);
+        return;
+    }
+
     d->currentMode = SendMode;
-    d->status = TransferHelper::Connecting;
     UNIGO([ip, this] {
         d->handleTryConnect(ip);
     });
@@ -275,7 +295,7 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
 
 TransferHelper::TransferStatus TransferHelper::transferStatus()
 {
-    return d->status;
+    return static_cast<TransferStatus>(d->status.loadAcquire());
 }
 
 void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
@@ -311,7 +331,7 @@ bool TransferHelper::buttonVisible(const QString &id, const DeviceInfoPointer in
         if (qApp->property("onlyTransfer").toBool())
             return false;
 
-        return transHistory->contains(info->ipAddress());
+        return transHistory->contains(info->ipAddress()) && QFile::exists(transHistory->value(info->ipAddress()));
     }
 
     return true;
@@ -334,11 +354,11 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
         if (!isself)
             return;
         UNIGO([this] {
-            d->status = Confirming;
+            d->status.storeRelease(Confirming);
             d->handleApplyTransFiles(0);
         });
     } else {
-        d->status = Idle;
+        d->status.storeRelease(Idle);
         d->transferResult(false, tr("Connect to \"%1\" failed").arg(d->sendToWho));
     }
 }
@@ -410,7 +430,7 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
         d->updateProgress(100, "00:00:00");
 
         QTimer::singleShot(1000, this, [this] {
-            d->status = Idle;
+            d->status.storeRelease(Idle);
             d->transferResult(true, tr("File sent successfully"));
         });
     } else {
@@ -423,9 +443,13 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
 
 void TransferHelper::waitForConfirm(const QString &name)
 {
+    d->isTransTimeout = false;
     d->transferInfo.clear();
     d->fileIds.clear();
     d->recvFilesSavePath.clear();
+
+    // 超时处理
+    QTimer::singleShot(10 * 1000, d.data(), &TransferHelperPrivate::onVerifyTimeout);
     switch (d->currentMode) {
     case ReceiveMode: {
         d->recvNotifyId = 0;
@@ -453,12 +477,15 @@ void TransferHelper::onActionTriggered(uint replacesId, const QString &action)
     if (action == NotifyCancelAction) {
         cancelTransfer();
     } else if (action == NotifyRejectAction) {
-        d->status = Idle;
+        d->status.storeRelease(Idle);
         UNIGO([this] {
             d->handleApplyTransFiles(ApplyTransType::APPLY_TRANS_REFUSED);
         });
     } else if (action == NotifyAcceptAction) {
-        d->status = Transfering;
+        if (d->isTransTimeout)
+            return;
+
+        d->status.storeRelease(Transfering);
         UNIGO([this] {
             d->handleApplyTransFiles(ApplyTransType::APPLY_TRANS_CONFIRM);
         });
@@ -474,7 +501,11 @@ void TransferHelper::onActionTriggered(uint replacesId, const QString &action)
 
 void TransferHelper::accepted()
 {
-    d->status = Transfering;
+    if (!d->status.testAndSetRelease(Confirming, Transfering)) {
+        d->status.storeRelease(Idle);
+        return;
+    }
+
     d->updateProgress(1, tr("calculating"));
     UNIGO([this] {
         d->handleSendFiles(d->readyToSendFiles);
@@ -483,17 +514,17 @@ void TransferHelper::accepted()
 
 void TransferHelper::rejected()
 {
-    d->status = Idle;
+    d->status.storeRelease(Idle);
     d->transferResult(false, tr("The other party rejects your request"));
 }
 
 void TransferHelper::cancelTransfer()
 {
-    if (d->status == Transfering) {
+    if (d->status.loadAcquire() == Transfering) {
         UNIGO([this] {
             d->handleCancelTransfer();
         });
     }
 
-    d->status = Idle;
+    d->status.storeRelease(Idle);
 }

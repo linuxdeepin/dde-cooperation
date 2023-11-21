@@ -65,6 +65,7 @@ void TransferDialog::createResultPage()
     iconLabel = new QLabel(this);
     msgLabel = new QLabel(this);
     msgLabel->setAlignment(Qt::AlignHCenter);
+    msgLabel->setWordWrap(true);
 
     vLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
     vLayout->addWidget(msgLabel, 0, Qt::AlignHCenter);

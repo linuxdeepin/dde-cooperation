@@ -11,6 +11,8 @@
 #include <co/rpc.h>
 #include <co/co.h>
 
+#include <QTimer>
+
 class QDBusInterface;
 class FrontendService;
 namespace cooperation_core {
@@ -52,6 +54,9 @@ public:
     uint notifyMessage(uint replacesId, const QString &body,
                        const QStringList &actions, int expireTimeout);
 
+public Q_SLOTS:
+    void onVerifyTimeout();
+
 private:
     TransferHelper *q;
 
@@ -59,13 +64,15 @@ private:
     QStringList readyToSendFiles;
     QString sendToWho;
 
-    TransferHelper::TransferStatus status { TransferHelper::Idle };
+    QAtomicInt status { TransferHelper::Idle };
+//    TransferHelper::TransferStatus status { TransferHelper::Idle };
     TransferInfo transferInfo;
     TransferDialog *transferDialog { nullptr };
     QDBusInterface *notifyIfc { nullptr };
     uint recvNotifyId { 0 };
     TransferHelper::TransferMode currentMode { TransferHelper::SendMode };
 
+    bool isTransTimeout = false;
     QString recvFilesSavePath;
 };
 
