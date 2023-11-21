@@ -1,22 +1,30 @@
 ﻿#ifndef DRAPWINDOWSDATA_H
 #define DRAPWINDOWSDATA_H
 
-#include <QSet>
+#include <QList>
 #include <QString>
 #include <Windows.h>
+
+class QSettings;
 class QJsonObject;
+class QPixmap;
 
 namespace BrowserName {
 inline constexpr char MicrosoftEdge[]{ "Microsoft Edge" };
 inline constexpr char GoogleChrome[]{ "Google Chrome" };
 inline constexpr char MozillaFirefox[]{ "Mozilla Firefox" };
-} // namespace BrowserName
+}; // namespace BrowserName
 
 struct UosApp
 {
     QString UosName;
     QString windowsName;
     QStringList feature;
+};
+struct WinApp
+{
+    QString name;
+    QString iconPath;
 };
 class DrapWindowsData
 {
@@ -25,11 +33,12 @@ public:
 
     static DrapWindowsData *instance();
 
-    QSet<QString> getApplianceList();
+    QList<WinApp> getApplianceList();
     QString getDesktopWallpaperPath();
-    QVector<QPair<QString, QString>> getBrowserBookmarkPaths();
-    QSet<QPair<QString, QString>> getBrowserBookmarkList();
-    QSet<QString> getBrowserList();
+    QList<QPair<QString, QString>> getBrowserBookmarkPaths();
+    QList<QPair<QString, QString>> getBrowserBookmarkList();
+
+    QStringList getBrowserList();
     void getBrowserBookmarkHtml(QString &htmlPath);
     void getBrowserBookmarkInfo(const QSet<QString> &Browsername);
     QString getBrowserBookmarkJSON(QString &jsonPath);
@@ -38,8 +47,10 @@ public:
     QString getIP();
 
     void getLinuxApplist(QList<UosApp> &list);
-    QMap<QString, QString> RecommendedInstallationAppList();
+    QMap<QString, QString>
+    RecommendedInstallationAppList(QMap<QString, QString> &notRecommendedList);
 
+    QPixmap getAppIcon(const QString &path);
 private:
     DrapWindowsData();
 
@@ -51,19 +62,18 @@ private:
     void getDesktopWallpaperPathRegistInfo();
     void getDesktopWallpaperPathAbsolutePathInfo();
 
-    void applianceFromRegistry(const HKEY &RootKey, const LPCTSTR &lpSubKey);
-    bool isControlPanelProgram(const HKEY &subKey);
+    void applianceFromSetting(QSettings &settings, QString registryPath = QString());
 
     void readFirefoxBookmarks(const QString &dbPath);
     void readMicrosoftEdgeAndGoogleChromeBookmark(const QString &jsonPath);
     void browserBookmarkJsonNode(QJsonObject node);
     void insertBrowserBookmarkList(const QPair<QString, QString> &titleAndUrl);
 
-    QSet<QString> applianceList;
-    QSet<QString> browserList;
+    QList<WinApp> applianceList;
+    QStringList browserList;
     QString desktopWallpaperPath;
-    QVector<QPair<QString, QString>> browserBookmarkPath;
-    QSet<QPair<QString, QString>> browserBookmarkList;
+    QList<QPair<QString, QString>> browserBookmarkPath;
+    QList<QPair<QString, QString>> browserBookmarkList;
 };
 
 #endif // DRAPWINDOWSDATA_H

@@ -1,11 +1,11 @@
-﻿#include "createbackupfilewidget.h"
+#include "createbackupfilewidget.h"
 #include "../select/item.h"
 #include "../type_defines.h"
 #include "./zipworker.h"
 #include "../select/userselectfilesize.h"
 #include "../select/calculatefilesize.h"
 #include "../win/devicelistener.h"
-#include <QColor>
+
 #include <QDebug>
 #include <QLabel>
 #include <QVBoxLayout>
@@ -13,7 +13,7 @@
 #include <QLineEdit>
 #include <QStackedWidget>
 #include <QListView>
-#include <QFileSystemModel>
+
 #include <QStandardItemModel>
 #include <QStorageInfo>
 
@@ -22,8 +22,6 @@
 #include <gui/mainwindow_p.h>
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
-
-#pragma execution_character_set("utf-8")
 
 CreateBackupFileWidget::CreateBackupFileWidget(QWidget *parent) : QFrame(parent)
 {
@@ -43,7 +41,7 @@ void CreateBackupFileWidget::sendOptions()
         QVariant checkboxData = model->data(index, Qt::CheckStateRole);
         Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
         if (checkState == Qt::Checked) {
-            QString selectDecive = model->data(index, Qt::WhatsThisRole).toString();
+            QString selectDecive = model->data(index, Qt::UserRole).toString();
             QString documentsPath =
                     QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
             if (selectDecive == QDir(documentsPath).rootPath()) {
@@ -63,6 +61,16 @@ void CreateBackupFileWidget::sendOptions()
     qInfo() << "backup file name:" << saveName;
 }
 
+void CreateBackupFileWidget::clear()
+{
+    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex itemIndex = model->index(row, 0);
+        model->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
+    }
+    fileNameInput->clear();
+}
+
 void CreateBackupFileWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
@@ -70,7 +78,7 @@ void CreateBackupFileWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
 
-    QLabel *titileLabel = new QLabel("创建备份文件", this);
+    QLabel *titileLabel = new QLabel(tr("Create data backup"), this);
     titileLabel->setFixedHeight(30);
     QFont font;
     font.setPointSize(16);
@@ -78,7 +86,7 @@ void CreateBackupFileWidget::initUI()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *fileNameLabel = new QLabel("文件信息", this);
+    QLabel *fileNameLabel = new QLabel(tr("File information"), this);
     fileNameLabel->setStyleSheet("opacity: 1;"
                                  "color: rgba(0,26,46,1);"
                                  "font-family: \"SourceHanSansSC-Bold\";"
@@ -98,7 +106,7 @@ void CreateBackupFileWidget::initUI()
                             "opacity: 1;"
                             "background-color: rgba(0,0,0, 0.08);");
 
-    QLabel *fileNameInputLabel1 = new QLabel(QString("文件名:"), fileName);
+    QLabel *fileNameInputLabel1 = new QLabel(QString(tr("Name")), fileName);
     fileNameInputLabel1->setFixedWidth(56);
     fileNameInputLabel1->setStyleSheet("opacity: 1;"
                                        "background-color: rgba(0,0,0,0);"
@@ -110,7 +118,7 @@ void CreateBackupFileWidget::initUI()
 
     fileNameInput = new QLineEdit(fileName);
     fileNameInput->setFixedWidth(211);
-    fileNameInput->setPlaceholderText("默认文件名");
+    fileNameInput->setPlaceholderText(tr("Default File Name"));
     fileNameInput->setStyleSheet("QLineEdit {"
                                  "opacity: 1;"
                                  "background-color: rgba(0,0,0,0.01);"
@@ -165,7 +173,7 @@ void CreateBackupFileWidget::initUI()
     layout1->addSpacing(140);
     layout1->setAlignment(Qt::AlignTop);
 
-    QLabel *savePathLabel1 = new QLabel("保存位置", this);
+    QLabel *savePathLabel1 = new QLabel(tr("Location"), this);
     savePathLabel1->setFixedWidth(65);
     savePathLabel1->setStyleSheet("opacity: 1;"
                                   "color: rgba(0,26,46,1);"
@@ -175,7 +183,7 @@ void CreateBackupFileWidget::initUI()
                                   "font-style: normal;"
                                   "text-align: left;");
 
-    QLabel *savePathLabel2 = new QLabel("(选择备份磁盘)", this);
+    QLabel *savePathLabel2 = new QLabel(tr("(Select Backup Disk)"), this);
     savePathLabel2->setStyleSheet("opacity: 1;"
                                   "color: rgba(82,106,127,1);"
                                   "font-family: \"SourceHanSansSC-Normal\";"
@@ -196,11 +204,19 @@ void CreateBackupFileWidget::initUI()
     diskListViewLayout->addSpacing(140);
     diskListViewLayout->addWidget(diskListView);
 
-    QToolButton *determineButton = new QToolButton(this);
-    determineButton->setText("开始备份");
+    promptLabel = new QLabel(this);
+
+    promptLabel->setText(
+            QString("<font size='3' color='#FF5736'>%1</font>")
+                    .arg(tr("Insufficient space in the selected disk, please clean the space")));
+    promptLabel->setAlignment(Qt::AlignCenter);
+    promptLabel->setVisible(false);
+
+    determineButton = new QToolButton(this);
+    determineButton->setText(tr("Backup"));
     determineButton->setFixedSize(120, 35);
-    determineButton->setStyleSheet("background-color: lightgray;");
-    determineButton->setEnabled(false);
+    setDetermineButtonEnable(false);
+
     QObject::connect(determineButton, &QToolButton::clicked, this, [this]() {
         nextPage();
         ZipWork *worker = new ZipWork(this);
@@ -208,9 +224,20 @@ void CreateBackupFileWidget::initUI()
     });
 
     QToolButton *cancelButton = new QToolButton(this);
-    cancelButton->setText("取消");
+    cancelButton->setText(tr("Cancel"));
     cancelButton->setFixedSize(120, 35);
-    cancelButton->setStyleSheet("background-color: lightgray;");
+    cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                "border: 1px solid rgba(0,0,0, 0.03);"
+                                "opacity: 1;"
+                                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                                "font-family: \"SourceHanSansSC-Medium\";"
+                                "font-size: 14px;"
+                                "font-weight: 500;"
+                                "color: rgba(65,77,104,1);"
+                                "font-style: normal;"
+                                "text-align: center;"
+                                ";}");
     QObject::connect(cancelButton, &QToolButton::clicked, this, &CreateBackupFileWidget::backPage);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
@@ -226,21 +253,23 @@ void CreateBackupFileWidget::initUI()
 
     mainLayout->addSpacing(30);
     mainLayout->addWidget(titileLabel);
+    mainLayout->addSpacing(20);
     mainLayout->addLayout(fileNameLayout);
     mainLayout->addLayout(layout1);
+    mainLayout->addSpacing(20);
     mainLayout->addLayout(savePathLayout);
     mainLayout->addLayout(diskListViewLayout);
     mainLayout->addSpacing(30);
+    mainLayout->addWidget(promptLabel);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addLayout(indexLayout);
-    QObject::connect(diskListView, &QListView::clicked, this,
-                     [determineButton](const QModelIndex &index) {
-                         if (index.data(Qt::CheckStateRole) == Qt::Unchecked) {
-                             determineButton->setEnabled(false);
-                         } else {
-                             determineButton->setEnabled(true);
-                         }
-                     });
+    QObject::connect(diskListView, &QListView::clicked, this, [this](const QModelIndex &index) {
+        if (index.data(Qt::CheckStateRole) == Qt::Unchecked) {
+            setDetermineButtonEnable(false);
+        } else {
+            setDetermineButtonEnable(true);
+        }
+    });
 
     QObject::connect(UserSelectFileSize::instance(), &UserSelectFileSize::updateUserFileSelectSize,
                      this, &CreateBackupFileWidget::updateuserSelectFileSize);
@@ -275,6 +304,61 @@ void CreateBackupFileWidget::initDiskListView()
     });
 }
 
+void CreateBackupFileWidget::checkDisk()
+{
+
+    bool isValid = false;
+    for (auto iterator = diskCapacity.begin(); iterator != diskCapacity.end(); ++iterator) {
+        QStandardItem *item = iterator.key();
+        quint64 size = iterator.value();
+        if (size < allSize) {
+            item->setCheckable(false);
+            item->setData(true, Qt::BackgroundRole);
+        } else {
+            isValid = true;
+            item->setCheckable(true);
+            item->setData(false, Qt::BackgroundRole);
+        }
+    }
+    if (!isValid)
+        promptLabel->setVisible(true);
+    else
+        promptLabel->setVisible(false);
+}
+
+void CreateBackupFileWidget::setDetermineButtonEnable(bool enable)
+{
+    if (enable) {
+        determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                       "border: 1px solid rgba(0,0,0, 0.03);"
+                                       "opacity: 1;"
+                                       "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                       "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                                       "font-family: \"SourceHanSansSC-Medium\";"
+                                       "font-size: 14px;"
+                                       "font-weight: 500;"
+                                       "color: rgba(65,77,104,1);"
+                                       "font-style: normal;"
+                                       "text-align: center;"
+                                       ";}");
+        determineButton->setEnabled(true);
+    } else {
+        determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                       "border: 1px solid rgba(0,0,0, 0.03);"
+                                       "opacity: 1;"
+                                       "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                       "rgba(230, 230, 230, 0.6), stop:1 rgba(227, 227, 227, 0.6));"
+                                       "font-family: \"SourceHanSansSC-Medium\";"
+                                       "font-size: 14px;"
+                                       "font-weight: 500;"
+                                       "color: rgba(65,77,104,0.6);"
+                                       "font-style: normal;"
+                                       "text-align: center;"
+                                       ";}");
+        determineButton->setEnabled(false);
+    }
+}
+
 void CreateBackupFileWidget::nextPage()
 {
     // send useroptions
@@ -290,6 +374,8 @@ void CreateBackupFileWidget::nextPage()
 }
 void CreateBackupFileWidget::backPage()
 {
+    clear();
+
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::selectmainwidget);
@@ -324,13 +410,11 @@ void CreateBackupFileWidget::updaeBackupFileSize()
     if (!bookmarkJsonPath.isEmpty()) {
         bookmarkJsonSize = QFileInfo(bookmarkJsonPath[0]).size();
     }
-    qInfo() << "wallpaperPath:" << wallpaperPath;
-    qInfo() << "userDataInfoJsonPath:" << userDataInfoJsonPath;
-    qInfo() << "filesize:" << userSelectFileSize;
-    qInfo() << "userDataInfoJsonSize:" << userDataInfoJsonSize;
-    qInfo() << "wallpaperSize:" << wallpaperSize;
-    quint64 allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize + bookmarkJsonSize;
-    backupFileSizeLabel->setText(QString("大小:  %1").arg(fromByteToQstring(allSize)));
+
+    allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize + bookmarkJsonSize;
+    backupFileSizeLabel->setText(QString(tr("Size:%1")).arg(fromByteToQstring(allSize)));
+
+    checkDisk();
 }
 
 void CreateBackupFileWidget::getUpdateDeviceSingla()
@@ -360,19 +444,22 @@ void CreateBackupFileWidget::getUpdateDeviceSingla()
         updateDevice(device, false);
     }
     deviceList = devices;
+
+    checkDisk();
 }
+
 void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
 {
     if (isAdd) {
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
         QString rootPath = device.rootPath();
-        QString displayName =
-                (device.name().isEmpty() ? "本地磁盘" : device.name()) + "(" + rootPath.at(0) + ":)";
+        QString displayName = (device.name().isEmpty() ? tr("local disk") : device.name()) + "("
+                + rootPath.at(0) + ":)";
 
         QStandardItem *item = new QStandardItem();
         item->setData(displayName, Qt::DisplayRole);
-        item->setData(rootPath, Qt::WhatsThisRole);
-        item->setData(QString("%1/%2可用")
+        item->setData(rootPath, Qt::UserRole);
+        item->setData(tr("%1/%2 available")
                               .arg(fromByteToQstring(device.bytesAvailable()))
                               .arg(fromByteToQstring(device.bytesTotal())),
                       Qt::ToolTipRole);
@@ -381,7 +468,7 @@ void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool
         } else {
             item->setIcon(QIcon(":/icon/drive-harddisk-usb-32px.svg"));
         }
-
+        diskCapacity[item] = device.bytesAvailable();
         item->setCheckable(true);
         model->appendRow(item);
     } else {
@@ -389,8 +476,15 @@ void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
         for (int row = 0; row < model->rowCount(); ++row) {
             QModelIndex itemIndex = model->index(row, 0);
-            if (rootPath == model->data(itemIndex, Qt::WhatsThisRole)) {
+            if (rootPath == model->data(itemIndex, Qt::UserRole)) {
                 model->removeRow(itemIndex.row());
+            }
+        }
+        for (auto iterator = diskCapacity.begin(); iterator != diskCapacity.end(); ++iterator) {
+            QString path = iterator.key()->data(Qt::UserRole).toString();
+            if (path == rootPath) {
+                diskCapacity.erase(iterator);
+                break;
             }
         }
     }

@@ -24,7 +24,7 @@ private:
     void initUI();
 
 private:
-    QToolButton *nextButton { nullptr };
+    QToolButton *backButton { nullptr };
     QLabel *tipLabel { nullptr };
 };
 

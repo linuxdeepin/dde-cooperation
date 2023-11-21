@@ -19,7 +19,7 @@ public:
 
     void setUserOptions(const QMap<QString, QStringList> &value);
     void addUserOption(const QString &option, const QStringList &value);
-
+    void clear();
 private:
     QMap<QString, QStringList> userOptions;
 };

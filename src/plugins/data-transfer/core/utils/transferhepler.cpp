@@ -24,12 +24,12 @@
 #include <QJsonArray>
 
 #ifdef WIN32
-#    include <gui/getbackup/drapwindowsdata.h>
+#include <gui/win/drapwindowsdata.h>
 #else
 #    include "settinghepler.h"
 #endif
 
-#pragma execution_character_set("utf-8")
+//#pragma execution_character_set("utf-8")
 TransferHelper::TransferHelper() : QObject()
 {
     initOnlineState();
@@ -130,13 +130,14 @@ void TransferHelper::startTransfer()
     transferhandle.sendFiles(paths);
 }
 
-QMap<QString, QString> TransferHelper::getAppList()
+QMap<QString, QString> TransferHelper::getAppList(QMap<QString, QString> &noRecommedApplist)
 {
     QMap<QString, QString> appList;
     QMap<QString, QString> appNameList =
-            DrapWindowsData::instance()->RecommendedInstallationAppList();
+            DrapWindowsData::instance()->RecommendedInstallationAppList(noRecommedApplist);
 
-    for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++) {
+    for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++)
+    {
         appList[iterator.key()] = QString(":/icon/AppIcons/%1.svg").arg(iterator.value());
     }
 
@@ -146,7 +147,7 @@ QMap<QString, QString> TransferHelper::getAppList()
 QMap<QString, QString> TransferHelper::getBrowserList()
 {
     QMap<QString, QString> browserList;
-    QSet<QString> borwserNameList = DrapWindowsData::instance()->getBrowserList();
+    QStringList borwserNameList = DrapWindowsData::instance()->getBrowserList();
     for (QString name : borwserNameList) {
         if (name == BrowserName::GoogleChrome) {
             browserList[name] = ":/icon/AppIcons/cn.google.chrome.svg";
@@ -200,8 +201,8 @@ QStringList TransferHelper::getTransferFilePath()
 
     // add file
     QJsonArray fileArray;
+    qInfo() << "home_path:" << QDir::homePath();
     for (QString file : filePathList) {
-        qInfo() << QDir::homePath();
         if (file.contains(QDir::homePath()))
             file.replace(QDir::homePath() + "/", "");
         fileArray.append(file);
@@ -233,7 +234,7 @@ bool TransferHelper::checkSize(const QString &filepath)
     if (jsonObj.isEmpty())
         return false;
     auto sizestr = jsonObj["user_data"].toString();
-    auto size = QVariant(sizestr).toLongLong() / 1024 / 1024 / 1024 + 5;
+    auto size = static_cast<int>(QVariant(sizestr).toLongLong() / 1024 / 1024 / 1024) * 2;
     qInfo() << sizestr << "   jsonObj[ user_data ];" << size;
     int remainSize = getRemainSize();
     if (size > remainSize) {
@@ -323,7 +324,7 @@ void TransferHelper::setting(const QString &filepath)
 
 int TransferHelper::getRemainSize()
 {
-    QStorageInfo storage("/data");
+    QStorageInfo storage("/home");
     auto remainSize = storage.bytesAvailable() / 1024 / 1024 / 1024;
     return static_cast<int>(remainSize);
 }

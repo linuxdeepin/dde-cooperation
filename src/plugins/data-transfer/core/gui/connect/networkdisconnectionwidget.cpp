@@ -8,8 +8,6 @@
 #include "../type_defines.h"
 #include <gui/connect/choosewidget.h>
 
-#pragma execution_character_set("utf-8")
-
 NetworkDisconnectionWidget::NetworkDisconnectionWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -34,18 +32,18 @@ void NetworkDisconnectionWidget::initUI()
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     QLabel *promptLabel = new QLabel(this);
-    promptLabel->setText("网络已断开,请检查您的网络");
+    promptLabel->setText(tr("The network has been disconnected. Please check your network"));
     promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
     QToolButton *backButton = new QToolButton(this);
-    backButton->setText("返回");
+    backButton->setText(tr("Back"));
     backButton->setStyleSheet("background-color: #E3E3E3;");
     backButton->setFixedSize(120, 35);
     QObject::connect(backButton, &QToolButton::clicked, this, &NetworkDisconnectionWidget::backPage);
 
     QToolButton *retryButton = new QToolButton(this);
 
-    retryButton->setText("重试");
+    retryButton->setText(tr("Try again"));
     retryButton->setStyleSheet("background-color: #E3E3E3;");
     retryButton->setFixedSize(120, 35);
 

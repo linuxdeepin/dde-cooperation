@@ -10,6 +10,7 @@
 
 #include <QDir>
 #include <QIcon>
+#include <QTranslator>
 
 static constexpr char kPluginInterface[] { "org.deepin.plugin.datatransfer" };
 static constexpr char kPluginCore[] { "data-transfer-core" };
@@ -79,14 +80,22 @@ int main(int argc, char *argv[])
 #ifndef WIN32
     app.setOrganizationName("deepin");
     app.loadTranslator();
-    app.setApplicationDisplayName(app.translate("Application", "数据迁移工具"));
+    app.setApplicationName("deepin-data-transfer");
+    app.setApplicationDisplayName(app.translate("Application", "UOS data transfer"));
     app.setApplicationVersion(APP_VERSION);
     QIcon icon(":/icons/icon.svg");
     app.setProductIcon(icon);
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" );
-    app.setApplicationDescription(app.translate("Application", "UOS迁移工具,一键将您的文件，个人数据和应用数据迁移到UOS，助您无缝更换系统。"));
+    app.setApplicationDescription(app.translate("Application", "UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+#else
+    QTranslator translator;
+    if(translator.load("./translations/deepin-data-transfer_zh_CN.qm"))
+    {
+        app.installTranslator(&translator);
+    }
 #endif
+
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {
@@ -106,5 +115,10 @@ int main(int argc, char *argv[])
     int ret = app.exec();
 
     app.closeServer();
+
+#ifdef WIN32
+    // FIXME: windows上使用socket，即使线程资源全释放，进程也无法正常退出
+    abort();
+#endif
     return ret;
 }

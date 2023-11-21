@@ -19,6 +19,9 @@ UnzipWorker::UnzipWorker(QString filepath)
 {
     QFileInfo fileInfo(filepath);
     targetDir = fileInfo.path() + "/" + fileInfo.baseName();
+    while (QFile::exists(targetDir)) {
+        targetDir = targetDir + "tmp";
+    }
     count = getNumFiles(filepath);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]() {
@@ -41,6 +44,9 @@ void UnzipWorker::run()
 
     //configuration
     TransferHelper::instance()->setting(targetDir);
+
+    //remove temp dir
+    QDir(targetDir).removeRecursively();
 }
 
 int UnzipWorker::getNumFiles(QString filepath)
@@ -57,6 +63,31 @@ int UnzipWorker::getNumFiles(QString filepath)
     } else {
         qInfo() << "Unable to open ZIP file";
         return 0;
+    }
+}
+
+bool UnzipWorker::isValid(QString filepath)
+{
+    const char *zipFilePath = filepath.toLocal8Bit().constData();
+    struct zip *z = zip_open(zipFilePath, 0, nullptr);
+
+    if (z) {
+        int num_files = zip_get_num_files(z);
+        qInfo() << "Number of files in ZIP file:" << num_files;
+
+        for (int i = 0; i < num_files; i++) {
+            struct zip_stat st;
+            zip_stat_init(&st);
+            zip_stat_index(z, static_cast<zip_uint64_t>(i), 0, &st);
+            const char *jsonfile = "transfer.json";
+            if (strcmp(st.name, jsonfile) == 0)
+                return true;
+        }
+        zip_close(z);
+        return false;
+    } else {
+        qInfo() << "Unable to open ZIP file";
+        return false;
     }
 }
 
@@ -86,7 +117,7 @@ bool UnzipWorker::extract()
             double value = static_cast<double>(currentTotal) / count;
             int progressbar = static_cast<int>(value * 100) - 1;
             int estimatedtime = (count - currentTotal) / speed / 2 + 1;
-            emit TransferHelper::instance()->transferContent("正在解压", outputText, progressbar, estimatedtime);
+            emit TransferHelper::instance()->transferContent(tr("Decompressing"), outputText, progressbar, estimatedtime);
             qInfo() << value << outputText;
         }
     }

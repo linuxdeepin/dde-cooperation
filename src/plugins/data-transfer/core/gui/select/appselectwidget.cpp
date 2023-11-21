@@ -1,5 +1,6 @@
 ﻿#include "appselectwidget.h"
 #include "../type_defines.h"
+#include "../win/drapwindowsdata.h"
 #include "item.h"
 #include <QHBoxLayout>
 #include <QLabel>
@@ -15,10 +16,6 @@
 #include <utils/transferhepler.h>
 #include <gui/mainwindow_p.h>
 
-#pragma execution_character_set("utf-8")
-
-static inline constexpr char InternetText[]{ "请选择要同步的应用" };
-static inline constexpr char LocalText[]{ "请选择要备份的应用" };
 AppSelectWidget::AppSelectWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
@@ -43,15 +40,19 @@ void AppSelectWidget::initUI()
 
     initSelectFrame();
 
-    QLabel *tipLabel1 = new QLabel("已扫描系统中的已安装应用，请选择需要迁移的应用", this);
-    tipLabel1->setFixedHeight(12);
-    tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    QLabel *tipLabel1 = new QLabel(tr("Check transfer application will automatically install the corresponding UOS version of the application."),
+                                   this);
+    tipLabel1->setWordWrap(true);
+    tipLabel1->setFixedHeight(30);
+
+    tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignCenter);
     font.setPointSize(10);
+
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
 
     determineButton = new QToolButton(this);
-    determineButton->setText("确定");
+    determineButton->setText(tr("Confirm"));
     determineButton->setFixedSize(120, 35);
     determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                    "border: 1px solid rgba(0,0,0, 0.03);"
@@ -68,7 +69,7 @@ void AppSelectWidget::initUI()
     QObject::connect(determineButton, &QToolButton::clicked, this, &AppSelectWidget::nextPage);
 
     cancelButton = new QToolButton(this);
-    cancelButton->setText("取消");
+    cancelButton->setText(tr("Cancel"));
     cancelButton->setFixedSize(120, 35);
     cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                 "border: 1px solid rgba(0,0,0, 0.03);"
@@ -93,11 +94,10 @@ void AppSelectWidget::initUI()
 
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     mainLayout->addSpacing(30);
-
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(3);
     mainLayout->addWidget(tipLabel1);
-    mainLayout->addSpacing(25);
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(selectFrame);
 
     mainLayout->addLayout(buttonLayout);
@@ -107,11 +107,12 @@ void AppSelectWidget::initSelectFrame()
 {
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
-    ItemTitlebar *titlebar =
-            new ItemTitlebar("应用名称", "迁移建议", 50, 360, QRectF(10, 12, 16, 16), 3, this);
+    ItemTitlebar *titlebar = new ItemTitlebar(tr("Application"), tr("Recommendation"), 50, 360,
+                                              QRectF(10, 12, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
 
     selectFrame = new QFrame(this);
+
     selectFrame->setFixedSize(500, 318);
     selectFrame->setProperty("class", "myselectframe");
     selectFrame->setStyleSheet(".myselectframe{"
@@ -123,16 +124,35 @@ void AppSelectWidget::initSelectFrame()
     selectFrame->setLayout(selectframeLayout);
 
     appView = new SelectListView(this);
+    appView->setVerticalScrollMode(QListView::ScrollPerPixel);
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(appView->model());
     appView->setItemDelegate(new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
 
-    QMap<QString, QString> appList = TransferHelper::instance()->getAppList();
-    for (auto iterator = appList.begin(); iterator != appList.end(); iterator++) {
+    QMap<QString, QString> noRecommendList;
+    QMap<QString, QString> appList = TransferHelper::instance()->getAppList(noRecommendList);
+    for (auto iterator = appList.begin(); iterator != appList.end(); ++iterator) {
         QStandardItem *item = new QStandardItem();
         item->setData(iterator.key(), Qt::DisplayRole);
-        item->setData("是", Qt::ToolTipRole);
+        item->setData(tr("Transferable"), Qt::ToolTipRole);
         item->setIcon(QIcon(iterator.value()));
         item->setCheckable(true);
+        model->appendRow(item);
+    }
+
+    for (auto iterator = noRecommendList.begin(); iterator != noRecommendList.end(); ++iterator) {
+        QStandardItem *item = new QStandardItem();
+        item->setData(iterator.key(), Qt::DisplayRole);
+        item->setData(tr("Not Suitable"), Qt::ToolTipRole);
+        item->setData(true, Qt::BackgroundRole);
+        QPixmap pix = DrapWindowsData::instance()->getAppIcon(iterator.value());
+        if (pix.isNull()) {
+            item->setIcon(QIcon(":/icon/fileicon.svg"));
+        } else {
+            item->setIcon(QIcon(pix));
+        }
+
+        item->setCheckable(false);
+
         model->appendRow(item);
     }
 
@@ -150,6 +170,15 @@ void AppSelectWidget::changeText()
         titileLabel->setText(LocalText);
     } else if (method == TransferMethod::kNetworkTransmission) {
         titileLabel->setText(InternetText);
+    }
+}
+
+void AppSelectWidget::clear()
+{
+    QStandardItemModel *configmodel = qobject_cast<QStandardItemModel *>(appView->model());
+    for (int row = 0; row < configmodel->rowCount(); ++row) {
+        QModelIndex itemIndex = configmodel->index(row, 0);
+        configmodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
     }
 }
 

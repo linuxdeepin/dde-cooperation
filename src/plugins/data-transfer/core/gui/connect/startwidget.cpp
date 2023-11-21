@@ -9,8 +9,6 @@
 #include <QCheckBox>
 #include <QTextBrowser>
 
-#pragma execution_character_set("utf-8")
-
 StartWidget::StartWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -33,21 +31,21 @@ void StartWidget::initUI()
     iconLabel->setPixmap(QIcon(":/icon/picture-home.png").pixmap(200, 160));
     iconLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
-    QLabel *textLabel1 = new QLabel("UOS迁移工具", this);
+    QLabel *textLabel1 = new QLabel(tr("UOS data transfer"), this);
     QFont font;
     font.setPointSize(16);
     font.setWeight(QFont::DemiBold);
     textLabel1->setFont(font);
     textLabel1->setAlignment(Qt::AlignCenter);
 
-    QLabel *textLabel2 = new QLabel("UOS迁移工具,一键将您的文件，个人数据和应用数据迁移到\nUOS，助您无缝更换系统。", this);
+    QLabel *textLabel2 = new QLabel(tr("UOS transfer tool enables one click migration of your files, personal data, and applications to\nUOS, helping you seamlessly replace your system."), this);
     textLabel2->setAlignment(Qt::AlignTop | Qt::AlignCenter);
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
     textLabel2->setFont(font);
 
     nextButton = new QToolButton(this);
-    nextButton->setText("下一步");
+    nextButton->setText(tr("Next"));
     nextButton->setFixedSize(250, 36);
     nextButton->setStyleSheet("background-color: lightgray;");
     connect(nextButton, &QToolButton::clicked, this, &StartWidget::nextPage);
@@ -81,7 +79,10 @@ void StartWidget::themeChanged(int theme)
         nextButton->setStyleSheet("background-color: lightgray;");
     } else {
         //dark
-        nextButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.08);");
+        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "opacity: 1;"
+                                  "background-color: rgba(255,255,255, 0.1);"
+                                  "}");
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
 }

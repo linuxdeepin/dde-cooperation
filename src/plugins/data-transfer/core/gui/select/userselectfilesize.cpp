@@ -4,16 +4,22 @@
 #include <QDebug>
 #include <QModelIndex>
 #include <QListView>
+#include <QStandardItemModel>
 
-#pragma execution_character_set("utf-8")
-UserSelectFileSize::UserSelectFileSize() { }
+UserSelectFileSize::UserSelectFileSize()
+{
+    // Update the size of the selected files to be computed.
+    QObject::connect(CalculateFileSizeThreadPool::instance(),
+                     &CalculateFileSizeThreadPool::sendFileSizeSignal, this,
+                     &UserSelectFileSize::updatependingFileSize);
+}
 
 void UserSelectFileSize::sendFileSize()
 {
     if (pendingFiles.isEmpty()) {
         emit updateUserFileSelectSize(fromByteToQstring(userSelectFileSize));
     } else {
-        emit updateUserFileSelectSize(QString("计算中"));
+        emit updateUserFileSelectSize(QString(tr("Calculating")));
     }
 }
 
@@ -49,13 +55,14 @@ void UserSelectFileSize::delPendingFiles(const QString &path)
 void UserSelectFileSize::addSelectFiles(const QString &path)
 {
     selectFiles.push_back(path);
-    sendFileSize();
+    emit updateUserFileSelectNum(path, true);
 }
 
 void UserSelectFileSize::delSelectFiles(const QString &path)
 {
     if (selectFiles.contains(path))
         selectFiles.removeOne(path);
+    emit updateUserFileSelectNum(path, false);
 }
 
 void UserSelectFileSize::addUserSelectFileSize(quint64 filesize)
@@ -89,12 +96,12 @@ void UserSelectFileSize::updatependingFileSize(const quint64 &size, const QStrin
     }
 }
 
-void UserSelectFileSize::delDevice(const QModelIndex &index)
+void UserSelectFileSize::delDevice(QStandardItem *siderbarItem)
 {
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
     QStringList::iterator it = selectFiles.begin();
     while (it != selectFiles.end()) {
-        if (filemap->value(*it).siderIndex == index) {
+        if (filemap->value(*it).siderbarItem == siderbarItem) {
             if (filemap->value(*it).isCalculate) {
                 userSelectFileSize -= filemap->value(*it).size;
             }
@@ -104,4 +111,36 @@ void UserSelectFileSize::delDevice(const QModelIndex &index)
         }
     }
     sendFileSize();
+}
+
+void UserSelectFileSize::updateFileSelectList(QStandardItem *item)
+{
+    QString path = item->data(Qt::UserRole).toString();
+    QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
+    if (item->data(Qt::CheckStateRole) == Qt::Unchecked) {
+        if ((*filemap)[path].isSelect == false) {
+            return;
+        }
+        // do not select the file
+        (*filemap)[path].isSelect = false;
+        delSelectFiles(path);
+        if ((*filemap)[path].isCalculate) {
+            quint64 size = (*filemap)[path].size;
+            delUserSelectFileSize(size);
+        } else {
+            delPendingFiles(path);
+        }
+    } else if (item->data(Qt::CheckStateRole) == Qt::Checked) {
+        if ((*filemap)[path].isSelect == true) {
+            return;
+        }
+        (*filemap)[path].isSelect = true;
+        addSelectFiles(path);
+        if ((*filemap)[path].isCalculate) {
+            quint64 size = (*filemap)[path].size;
+            addUserSelectFileSize(size);
+        } else {
+            addPendingFiles(path);
+        }
+    }
 }

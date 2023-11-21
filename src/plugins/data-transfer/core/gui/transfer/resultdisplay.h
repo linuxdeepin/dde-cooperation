@@ -16,6 +16,7 @@ public:
 public slots:
     void themeChanged(int theme);
     void addFailure(QString name, QString type, QString reason);
+    void clear();
 
 private:
     void initUI();

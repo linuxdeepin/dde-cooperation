@@ -20,6 +20,7 @@ public:
     AppSelectWidget(QWidget *parent = nullptr);
     ~AppSelectWidget();
     void changeText();
+    void clear();
 public slots:
     void nextPage();
     void backPage();
@@ -32,6 +33,7 @@ private:
     void initSelectFrame();
     void sendOptions();
     void delOptions();
+
 private:
     QFrame *selectFrame{ nullptr };
     SelectListView *appView{ nullptr };
@@ -40,6 +42,9 @@ private:
     QToolButton *determineButton{ nullptr };
     QToolButton *cancelButton{ nullptr };
     QLabel *titileLabel{ nullptr };
+
+    QString InternetText{ tr("Select apps to transfer") };
+    QString LocalText{ tr("Please select the applications to back up") };
 };
 
 #endif

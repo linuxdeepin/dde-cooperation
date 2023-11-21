@@ -19,6 +19,7 @@ public:
 
     static int getNumFiles(QString filepath);
 
+    static bool isValid(QString filepath);
 private:
     bool setUesrFile(QJsonObject jsonObj);
 

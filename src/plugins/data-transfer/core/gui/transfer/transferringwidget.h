@@ -17,7 +17,7 @@ public:
     ~TransferringWidget();
 
 public slots:
-    void informationPage();
+    void initInformationPage();
     void changeTimeLabel(const QString &time);
     void changeProgressLabel(const int &ratio);
     void updateProcess(const QString &tpye, const QString &content, int progressbar, int estimatedtime);

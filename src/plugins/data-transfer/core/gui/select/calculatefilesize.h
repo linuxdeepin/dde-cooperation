@@ -17,7 +17,7 @@ struct FileInfo
     bool isSelect;
     bool isCalculate;
     QStandardItem *fileItem;
-    QModelIndex siderIndex;
+    QStandardItem *siderbarItem;
 };
 
 QString fromByteToQstring(quint64 bytes);
@@ -49,7 +49,8 @@ public:
 
     void addFileMap(const QString &path, const FileInfo &fileinfo);
     void delFileMap(const QString &path);
-    void delDevice(const QModelIndex &index);
+    void delDevice(const QStandardItem *siderbarItem);
+
     QMap<QString, FileInfo> *getFileMap();
 
 public slots:

@@ -34,7 +34,8 @@ TransferHandle::TransferHandle()
     }
 
     //log
-    qInstallMessageHandler(logHandler);
+    //handleConnectStatus(1,"66");
+   // qInstallMessageHandler(logHandler);
 }
 
 TransferHandle::~TransferHandle()
@@ -154,7 +155,17 @@ void TransferHandle::localIPCStart()
     // start ipc services
     ipc::FrontendImpl *frontendimp = new ipc::FrontendImpl();
     frontendimp->setInterface(_frontendIpcService);
-    rpc::Server().add_service(frontendimp).start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
+    _rpcServer = new rpc::Server();
+    _rpcServer->add_service(frontendimp);
+    _rpcServer->start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
+
+    connect(qApp, &QCoreApplication::aboutToQuit, [this]()
+    {
+        DLOG << "App exit, exit ipc server";
+        if (_rpcServer) {
+            _rpcServer->exit();
+        }
+    });
 }
 
 void TransferHandle::saveSession(fastring sessionid)
@@ -167,10 +178,13 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
     qInfo() << "connect status: " << result << " msg:" << msg;
     if (result > 0) {
         emit TransferHelper::instance()->connectSucceed();
-
         //#ifndef WIN32
+        //json::Json message, unfinishFiles;
+        //sendMessage(unfinishFiles);
         //        TransferHelper::instance()->isUnfinishedJob(msg);
         //#endif
+    } else {
+        emit TransferHelper::instance()->connectFailed();
     }
 }
 
@@ -284,7 +298,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     //    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
     //    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
-    emit TransferHelper::instance()->transferContent("正在传输", filepath, progressbar, remain_time);
+    emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
 }
 
 void TransferHandle::handleMiscMessage(QString jsonmsg)
@@ -334,6 +348,13 @@ void TransferHandle::sendFiles(QStringList paths)
     int current_id = _request_job_id;
     TransferWoker::instance()->sendFiles(current_id, paths);
     current_id++;
+}
+
+void TransferHandle::sendMessage(json::Json &message)
+{
+    if (!_backendOK) return;
+
+    TransferWoker::instance()->sendMessage(message);
 }
 
 TransferWoker::TransferWoker()
@@ -445,6 +466,19 @@ void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 
     req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
 
+    call(req, res);
+}
+
+void TransferWoker::sendMessage(json::Json &message)
+{
+    co::Json req, res;
+
+    //TransFilesParam
+    req.add_member("app", _session_id);
+    req.add_member("json", message);
+    req.add_member("api", "Backend.miscMessage");   //BackendImpl::tryTransFiles
+
+    qInfo() << "sendMessage" << req.str().c_str();
     call(req, res);
 }
 

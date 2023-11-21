@@ -16,16 +16,19 @@ class SelectAllButton : public QFrame
 public:
     SelectAllButton(QWidget *parent = nullptr);
     ~SelectAllButton();
+
 protected:
     void paintEvent(QPaintEvent *event) override;
 
-    void mousePressEvent(QMouseEvent *event)override;
+    void mousePressEvent(QMouseEvent *event) override;
 signals:
     void selectAll();
+
 private:
     QRectF iconPosSize{ 2, 2, 16, 16 };
     qreal iconRadius{ 3 };
 };
+
 class ItemTitlebar : public QFrame
 {
     Q_OBJECT
@@ -67,7 +70,6 @@ private:
 
     SelectAllButton *selectAllButton{ nullptr };
 };
-
 
 class ItemDelegate : public QItemDelegate
 {
@@ -119,7 +121,8 @@ private:
     qreal backgroundColorLeftMargin{ 50 };
 
     QPoint iconPos{ 65, 6 };
-    QPoint checkBoxPos{ 10, 9 };
+    QPoint checkBoxPos{ 12, 9 };
+    float opacity{ 0.6 };
 };
 
 class SaveItemDelegate : public QItemDelegate
@@ -145,7 +148,8 @@ private:
                      const QModelIndex &index) override;
 
 private:
-    qreal remarkTextLeftMargin{ 290 };
+    qreal remarkTextLeftMargin{ 200 };
+    qreal remarkTextRightMargin{ 30 };
     qreal remarkTextMaxLen{ 100 };
 
     qreal filenameTextLeftMargin{ 52 };
@@ -155,6 +159,8 @@ private:
 
     QPoint iconPos{ 14, 10 };
     QPoint checkBoxPos{ 0, 0 };
+
+    float opacity{ 0.6 };
 };
 
 class SidebarItemDelegate : public QItemDelegate
@@ -186,7 +192,7 @@ public:
     ~SelectListView();
 
 private:
-    bool isSelectAll{false};
+    bool isSelectAll{ false };
 public slots:
     void selectorDelAllItem();
 };
