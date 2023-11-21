@@ -9,12 +9,12 @@
 #include "maincontroller/maincontroller.h"
 #include "transfer/transferhelper.h"
 #include "config/configmanager.h"
+#include "singleton/singleapplication.h"
 
 #include <co/flag.h>
 
-#include <QApplication>
-
 using namespace cooperation_core;
+using namespace deepin_cross;
 
 void CooperaionCorePlugin::initialize()
 {
@@ -23,6 +23,8 @@ void CooperaionCorePlugin::initialize()
         qApp->setApplicationName(kMainAppName);
         ConfigManager::instance();
         qApp->setApplicationName(appName);
+    } else {
+        connect(qApp, &SingleApplication::raiseWindow, this, [] { CooperationUtil::instance()->mainWindow()->activateWindow(); });
     }
 
     CooperationUtil::instance();

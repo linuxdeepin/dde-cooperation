@@ -18,6 +18,12 @@ class QLocalServer;
 QT_END_NAMESPACE
 
 namespace deepin_cross {
+
+#if defined(qApp)
+#undef qApp
+#endif
+#define qApp (static_cast<SingleApplication *>(CrossApplication::instance()))
+
 class SingleApplication : public CrossApplication
 {
     Q_OBJECT

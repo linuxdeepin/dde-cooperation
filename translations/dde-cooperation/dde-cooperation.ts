@@ -4,12 +4,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="75"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="78"/>
         <source>Cooperation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="79"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="82"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17,12 +17,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="236"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="250"/>
         <source>View transfer history</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="245"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="259"/>
         <source>Send files</source>
         <translation type="unfinished"></translation>
     </message>
@@ -41,17 +41,17 @@
 <context>
     <name>cooperation_core::DeviceItem</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="143"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="147"/>
         <source>connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="148"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="152"/>
         <source>connectable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="153"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="157"/>
         <source>offline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -158,43 +158,48 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="100"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="101"/>
         <source>Device name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="118"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="119"/>
         <source>Device share</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="120"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="121"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="136"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="137"/>
         <source>Connection direction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="153"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="154"/>
         <source>Allows the following users to send files to me</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="160"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="161"/>
         <source>File save location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="173"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="174"/>
         <source>Share clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="175"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="176"/>
         <source>The clipboard is shared between devices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="207"/>
+        <source>The device name must contain 1 to 63 characters</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -211,19 +216,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="116"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="117"/>
         <source>Ok</source>
         <comment>button</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="130"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="139"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="140"/>
         <source>Remaining time %1 | %2%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -231,42 +236,42 @@
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="339"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="362"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="395"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="434"/>
         <source>File sent successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="410"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="456"/>
         <source>Reject</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="411"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="457"/>
         <source>Accept</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="412"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="458"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="413"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="459"/>
         <source>&quot;%1&quot; send some files to you</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="453"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="509"/>
         <source>calculating</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="462"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="518"/>
         <source>The other party rejects your request</source>
         <translation type="unfinished"></translation>
     </message>
@@ -274,28 +279,33 @@
 <context>
     <name>cooperation_core::TransferHelperPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="178"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="176"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="192"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="191"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="193"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="192"/>
         <source>File receiving %1% | Remaining time %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="198"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="197"/>
         <source>Sending files to &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="208"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="213"/>
         <source>File transfer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="225"/>
+        <source>The other party did not receive, the files failed to send</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
