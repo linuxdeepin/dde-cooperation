@@ -165,6 +165,19 @@ void TransferHelperPrivate::handleTryConnect(const QString &ip)
 void TransferHelperPrivate::handleCancelTransfer()
 {
     // TODO
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
+    co::Json req, res;
+
+    ipc::TransJobParam jobParam;
+    jobParam.session = CooperationUtil::instance()->sessionId().toStdString();
+    jobParam.job_id = TransferJobStartId;
+    jobParam.appname = qApp->applicationName().toStdString();
+
+    req = jobParam.as_json();
+    req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
+    rpcClient.call(req, res);
+    rpcClient.close();
+    qInfo() << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
 }
 
 void TransferHelperPrivate::transferResult(bool result, const QString &msg)
@@ -371,7 +384,8 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
         break;
     case JOB_TRANS_DOING:
         break;
-    case JOB_TRANS_FINISHED: {
+    case JOB_TRANS_FINISHED:
+    {
         if (d->currentMode == SendMode)
             break;
 
@@ -388,7 +402,11 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
             transHistory->insert(ip, d->recvFilesSavePath);
             HistoryManager::instance()->writeIntoTransHistory(ip, d->recvFilesSavePath);
         }
-    } break;
+    }
+        break;
+    case JOB_TRANS_CANCELED:
+        d->transferResult(false, "xxxxxxxxxxx");
+        break;
     default:
         break;
     }
@@ -396,7 +414,7 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
 
 void TransferHelper::onFileTransStatusChanged(const QString &status)
 {
-    LOG << "file transfer info: " << status.toStdString();
+    DLOG_IF(TEST_LOGOUT) << "file transfer info: " << status.toStdString();
     co::Json statusJson;
     statusJson.parse_from(status.toStdString());
     ipc::FileStatus param;

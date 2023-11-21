@@ -23,7 +23,7 @@ public:
 public slots:
     bool handleCreateFile(const int jobId, const QString &fileName, const bool isDir);
     bool handleRemoteRequestJob(QString json);
-    bool doJobAction(uint32_t action, const co::Json &jsonobj);
+    bool doJobAction(const uint action, const int jobid);
     bool handleFSData(const co::Json &info, fastring buf, FileTransResponse *reply);
     bool handleFSInfo(co::Json &info);
     bool handleCancelJob(co::Json &info, FileTransResponse *reply);

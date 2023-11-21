@@ -76,41 +76,26 @@ bool JobManager::handleRemoteRequestJob(QString json)
     return true;
 }
 
-bool JobManager::doJobAction(uint32_t action, const co::Json &jsonobj)
+bool JobManager::doJobAction(const uint action, const int jobid)
 {
-    ipc::TransJobParam param;
-    param.from_json(jsonobj);
-
-    QString session(param.session.c_str());
-    int jobid = param.job_id;
-    bool remote = param.is_remote;
+    bool result = false;
 
     if (BACK_CANCEL_JOB == action) {
-        if (remote) {
-            //receive job cancel and notify remote send cancel
-            auto job = _transjob_recvs.value(jobid);
-            if (!job.isNull()) {
-                job->cancel();
-                _transjob_recvs.remove(jobid);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            //send job cancel.
-            auto job = _transjob_sends.value(jobid);
-            if (!job.isNull()) {
-                job->cancel();
-                _transjob_sends.remove(jobid);
-                return true;
-            } else {
-                return false;
-            }
+        auto rjob = _transjob_recvs.value(jobid);
+        if (!rjob.isNull()) {
+            rjob->cancel(true);
+            result = true;
+        }
+
+        auto sjob = _transjob_sends.value(jobid);
+        if (!sjob.isNull()) {
+            sjob->cancel(true);
+            result = true;
         }
     } else if (BACK_RESUME_JOB == action) {
 
     }
-    return true;
+    return result;
 }
 
 bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransResponse *reply)
@@ -126,9 +111,9 @@ bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransRespo
     }
     auto job = _transjob_recvs.value(jobId);
     if (!job.isNull()) {
-     job->pushQueque(datablock);
+        job->pushQueque(datablock);
     } else {
-     return false;
+        return false;
     }
 
     return true;
@@ -152,26 +137,36 @@ bool JobManager::handleFSInfo(co::Json &info)
 
 bool JobManager::handleCancelJob(co::Json &info, FileTransResponse *reply)
 {
-    FSJobCancel obj;
+    FileTransJobAction obj;
     obj.from_json(info);
     int32 jobId = obj.job_id;
+    bool result = false;
     if (reply) {
         reply->id = jobId;
-        reply->name = obj.path;
+        reply->name = obj.appname;
     }
 
-
-    auto job = _transjob_recvs.value(jobId);
-    if (!job.isNull()) {
+    auto rjob = _transjob_recvs.value(jobId);
+    if (!rjob.isNull()) {
         //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
-        job->stop();
-        _transjob_recvs.remove(jobId);
-        QString name(job->getAppName().c_str());
-        SendIpcService::instance()->handleRemoveJob(job->getAppName().c_str(), jobId);
-        return true;
-    } else {
-        return false;
+        DLOG << "recv > remote canceled this job: " << jobId;
+        rjob->cancel();
+        QString name(rjob->getAppName().c_str());
+        SendIpcService::instance()->handleRemoveJob(rjob->getAppName().c_str(), jobId);
+        result = true;
     }
+
+    auto sjob = _transjob_sends.value(jobId);
+    if (!sjob.isNull()) {
+        //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
+        DLOG << "send > remote canceled this job: " << jobId;
+        sjob->cancel();
+        QString name(sjob->getAppName().c_str());
+        SendIpcService::instance()->handleRemoveJob(sjob->getAppName().c_str(), jobId);
+        result = true;
+    }
+
+    return result;
 }
 
 bool JobManager::handleTransReport(co::Json &info, FileTransResponse *reply)
@@ -247,7 +242,7 @@ void JobManager::handleFileTransStatus(QString appname, int status, QString file
 
 void JobManager::handleJobTransStatus(QString appname, int jobid, int status, QString savedir)
 {
-    //DLOG << "notify file trans status to:" << s->getName().toStdString();
+    //DLOG << "notify file trans status to:" << appname.toStdString() << " jobid=" << jobid;
     UNIGO([appname, jobid, status, savedir]() {
         co::Json req;
         //cbTransStatus {GenericResult}

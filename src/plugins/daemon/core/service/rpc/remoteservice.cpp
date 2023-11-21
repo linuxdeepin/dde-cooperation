@@ -35,7 +35,7 @@ void RemoteServiceImpl::proto_msg(google::protobuf::RpcController *controller,
                                   google::protobuf::Closure *done)
 {
     Q_UNUSED(controller);
-    LOG << " req= type = " << request->type() << " msg  =  " << request->msg();
+    DLOG_IF(TEST_LOGOUT) << " req= type = " << request->type() << " msg  =  " << request->msg();
     IncomeData in;
     in.type = static_cast<IncomeType>(request->type());
     in.json = request->msg();
@@ -48,7 +48,7 @@ void RemoteServiceImpl::proto_msg(google::protobuf::RpcController *controller,
     response->set_type(in.type);
     response->set_msg(out.json.c_str());
 
-    LOG << " res= " << response->ShortDebugString().c_str();
+    DLOG_IF(TEST_LOGOUT) << " res= " << response->ShortDebugString().c_str();
 
     if (done) {
         done->Run();
@@ -72,7 +72,7 @@ RemoteServiceSender::~RemoteServiceSender()
 
 SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data)
 {
-    ELOG << "send to remote = " << type << " = " << msg.toStdString() << "\n ip = "
+    DLOG_IF(TEST_LOGOUT) << "send to remote = " << type << " = " << msg.toStdString() << "\n ip = "
          << _target_ip.toStdString() << " : port = " << _target_port;
     QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
     if (!isTrans) {
@@ -120,7 +120,7 @@ retryed:
 
     res.errorType = INVOKE_OK;
     res.data = rpc_res.msg();
-    DLOG << "response body: " << rpc_res.ShortDebugString() << "\n" << res.as_json();
+    DLOG_IF(TEST_LOGOUT) << "response body: " << rpc_res.ShortDebugString() << "\n" << res.as_json();
     return res;
 }
 
@@ -160,7 +160,7 @@ void RemoteServiceSender::setTargetAppName(const QString &targetApp)
 
 QSharedPointer<ZRpcClientExecutor> RemoteServiceSender::createExecutor()
 {
-    ELOG << "app name : " << _app_name.toStdString() << ", = ip "
+    DLOG_IF(TEST_LOGOUT) << "app name : " << _app_name.toStdString() << ", = ip "
          << _target_ip.toStdString() << " : port =  " << _target_port;
     QWriteLocker lk(&_executor_lock);
     if (_target_ip.isEmpty()) {
@@ -178,7 +178,7 @@ QSharedPointer<ZRpcClientExecutor> RemoteServiceSender::createExecutor()
 
 QSharedPointer<ZRpcClientExecutor> RemoteServiceSender::createTransExecutor()
 {
-    ELOG << "createTransExecutor app name : " << _app_name.toStdString() << ", = ip "
+    DLOG_IF(TEST_LOGOUT) << "createTransExecutor app name : " << _app_name.toStdString() << ", = ip "
          << _target_ip.toStdString() << " : port =  " << _target_port;
     QWriteLocker lk(&_executor_long_lock);
     if (_target_ip.isEmpty()) {

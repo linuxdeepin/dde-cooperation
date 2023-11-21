@@ -221,8 +221,9 @@ void HandleRpcService::handleRemoteReport(co::Json &info)
     FileTransResponse reply;
     reply.result = OK;
     OutData out;
-    out.json = reply.as_json().str();
+
     JobManager::instance()->handleTransReport(info, &reply);
+    out.json = reply.as_json().str();
     _outgo_chan << out;
 }
 
@@ -231,8 +232,9 @@ void HandleRpcService::handleRemoteJobCancel(co::Json &info)
     FileTransResponse reply;
     reply.result = OK;
     OutData out;
-    out.json = reply.as_json().str();
+
     JobManager::instance()->handleCancelJob(info, &reply);
+    out.json = reply.as_json().str();
     _outgo_chan << out;
 }
 

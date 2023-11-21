@@ -253,19 +253,19 @@ struct TransFilesParam {
 struct TransJobParam {
     fastring session;
     int32 job_id;
-    bool is_remote;
+    fastring appname;
 
     void from_json(const co::Json& _x_) {
         session = _x_.get("session").as_c_str();
         job_id = (int32)_x_.get("job_id").as_int64();
-        is_remote = _x_.get("is_remote").as_bool();
+        appname = _x_.get("appname").as_c_str();
     }
 
     co::Json as_json() const {
         co::Json _x_;
         _x_.add_member("session", session);
         _x_.add_member("job_id", job_id);
-        _x_.add_member("is_remote", is_remote);
+        _x_.add_member("appname", appname);
         return _x_;
     }
 };

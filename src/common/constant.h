@@ -5,6 +5,8 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
+#define TEST_LOGOUT false
+
 #define UNI_RPC_PROTO 1.0
 #define UNI_KEY "UOS-COOPERATION"
 #define UNI_RPC_PORT_UDP  51595
@@ -114,15 +116,13 @@ typedef enum fs_type_t {
     JOB_TRANS_FAILED = -1,
     JOB_TRANS_DOING = 11,
     JOB_TRANS_FINISHED = 12,
+    JOB_TRANS_CANCELED = 13,
     TRANS_TYPE_SEND = 101,
     TRANS_TYPE_RECV = 102,
     ACTION_READ = 21,
     ACTION_REMOVE = 22,
     ACTION_CREATE = 23,
     ACTION_RENAME = 24,
-    JOB_RESUME = 31,
-    JOB_CANCEL = 32,
-    JOB_DONE = 33,
 } FSType;
 
 typedef enum flow_type_t {
@@ -139,6 +139,7 @@ typedef enum rpc_result_t {
     INVOKE_OK = 0,
     INVOKE_DONE = 1,
 } RpcResult;
+
 typedef enum rpc_send_status {
     APPLY_TRANS_FILE = 0,
     REMOTE_CLIENT_OFFLINE = 1, // tcp远端的tcpclient下线（服务调用方下线）
@@ -155,6 +156,16 @@ enum FileTransRe {
   IO_ERROR = 0, // 出现读写错误
   OK = 1,  //无错误
   FINIASH = 2, // 完成
+};
+
+enum JobState {
+  NONE = 0, // 无状态
+  INIT = 1, // 初始化
+  STARTED = 2,  //已开始，运行中
+  PAUSE = 3, // 暂停
+  CANCELING = 4, // 取消
+  WAIT_DONE = 5, // 等待完成
+  STOPED = 6, // 停止|结束
 };
 
 // use thread replace the coroutine

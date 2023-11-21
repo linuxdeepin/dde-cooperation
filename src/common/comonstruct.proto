@@ -81,9 +81,10 @@ object FileTransBlock {
   bool compressed //
 }
 
-object FileTransJobCancel {
+object FileTransJobAction {
   int32 job_id
-  string path    //文件目录路径
+  string appname    //前端名称
+  uint32 type //操作类型：cancel; pause; resume
 }
 
 object FileTransJobReport {

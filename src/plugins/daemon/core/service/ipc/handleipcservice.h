@@ -29,10 +29,11 @@ public slots:
     void handleBackApplyTransFiles(co::Json param);
     void handleConnectClosed(const quint16 port);
     void handleTryConnect(co::Json json);
+    bool handleJobActions(const uint type, co::Json &msg);
 private:
     void ipcServiceStart();
     void createIpcBackend(const quint16 port);
-    void handleAllMsg(const QSharedPointer<BackendService> backend,const uint type, co::Json &msg);
+    void handleAllMsg(const QSharedPointer<BackendService> backend, const uint type, co::Json &msg);
 
     QString handlePing(const co::Json &msg);
 
