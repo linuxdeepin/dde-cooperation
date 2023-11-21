@@ -52,7 +52,8 @@ inline constexpr char CacheGroup[] { "Cache" };
 inline constexpr char TransHistoryKey[] { "TransHistory" };
 }
 
-inline const char kMainAppName[] { "dde-cooperation" };
+inline const char MainAppName[] { "dde-cooperation" };
+inline const char RecvModuleName[] {"daemon-cooperation"};
 
 // Setting menu action list
 enum MenuAction {

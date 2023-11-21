@@ -43,6 +43,7 @@ private:
     ~MainController();
 
     void initConnect();
+    void registDeviceInfo();
 
 private:
     QTimer *networkMonitorTimer { nullptr };

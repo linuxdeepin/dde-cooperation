@@ -23,6 +23,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/info/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/transfer/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/transfer/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/share/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/share/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/dialogs/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/dialogs/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/widgets/*.h"

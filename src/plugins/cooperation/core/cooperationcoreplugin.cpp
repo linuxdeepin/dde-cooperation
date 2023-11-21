@@ -8,6 +8,7 @@
 #include "utils/cooperationutil.h"
 #include "maincontroller/maincontroller.h"
 #include "transfer/transferhelper.h"
+#include "share/sharemanager.h"
 #include "config/configmanager.h"
 #include "singleton/singleapplication.h"
 
@@ -20,7 +21,7 @@ void CooperaionCorePlugin::initialize()
 {
     if (qApp->property("onlyTransfer").toBool()) {
         auto appName = qApp->applicationName();
-        qApp->setApplicationName(kMainAppName);
+        qApp->setApplicationName(MainAppName);
         ConfigManager::instance();
         qApp->setApplicationName(appName);
     } else {
@@ -35,8 +36,9 @@ void CooperaionCorePlugin::initialize()
 bool CooperaionCorePlugin::start()
 {
     CooperationUtil::instance()->mainWindow()->show();
-    MainController::instance()->regist();
+//    MainController::instance()->regist();
     TransferHelper::instance()->regist();
+    ShareManager::instance()->regist();
     MainController::instance()->start();
     return true;
 }
@@ -44,7 +46,7 @@ bool CooperaionCorePlugin::start()
 void CooperaionCorePlugin::stop()
 {
     CooperationUtil::instance()->destroyMainWindow();
-    MainController::instance()->unregist();
+//    MainController::instance()->unregist();
     MainController::instance()->stop();
 }
 

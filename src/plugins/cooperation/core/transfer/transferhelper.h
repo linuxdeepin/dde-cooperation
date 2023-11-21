@@ -23,15 +23,9 @@ public:
         Transfering
     };
 
-    enum TransferMode {
-        SendMode,
-        ReceiveMode
-    };
-
     static TransferHelper *instance();
 
     void regist();
-    void setTransMode(TransferMode mode);
     void sendFiles(const QString &ip, const QString &devName, const QStringList &fileList);
     TransferStatus transferStatus();
 
@@ -43,8 +37,7 @@ public Q_SLOTS:
     void onConnectStatusChanged(int result, const QString &msg, const bool isself);
     void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onFileTransStatusChanged(const QString &status);
-    void waitForConfirm(const QString &name);
-    void onActionTriggered(uint replacesId, const QString &action);
+    void waitForConfirm();
     void accepted();
     void rejected();
     void cancelTransfer();

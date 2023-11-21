@@ -30,7 +30,7 @@ MainController::~MainController()
 void MainController::initConnect()
 {
     connect(networkMonitorTimer, &QTimer::timeout, this, &MainController::checkNetworkState);
-    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &MainController::onAppAttributeChanged);
+//    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &MainController::onAppAttributeChanged);
     connect(CooperationUtil::instance(), &CooperationUtil::discoveryFinished, this, &MainController::onDiscoveryFinished, Qt::QueuedConnection);
 }
 
@@ -137,39 +137,38 @@ void MainController::stop()
 
 void MainController::regist()
 {
-    QVariantMap info;
-    auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
-    info.insert(AppSettings::DiscoveryModeKey, value.isValid() ? value.toInt() : 0);
+//    QVariantMap info;
+//    auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
+//    info.insert(AppSettings::DiscoveryModeKey, value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
-    info.insert(AppSettings::DeviceNameKey,
-                value.isValid()
-                        ? value.toString()
-                        : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1));
+//    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
+//    info.insert(AppSettings::DeviceNameKey,
+//                value.isValid()
+//                        ? value.toString()
+//                        : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1));
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
-    info.insert(AppSettings::PeripheralShareKey, value.isValid() ? value.toBool() : false);
+//    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
+//    info.insert(AppSettings::PeripheralShareKey, value.isValid() ? value.toBool() : false);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
-    info.insert(AppSettings::LinkDirectionKey, value.isValid() ? value.toInt() : 0);
+//    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
+//    info.insert(AppSettings::LinkDirectionKey, value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
-    info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
+//    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
+//    info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
-    auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    info.insert(AppSettings::StoragePathKey, storagePath);
-    static std::once_flag flag;
-    std::call_once(flag, [&storagePath] { CooperationUtil::instance()->setAppConfig(KEY_APP_STORAGE_DIR, storagePath); });
+//    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
+//    auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+//    info.insert(AppSettings::StoragePathKey, storagePath);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
-    info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : false);
+//    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
+//    info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : false);
 
-    auto doc = QJsonDocument::fromVariant(info);
-    CooperationUtil::instance()->registAppInfo(doc.toJson());
+//    auto doc = QJsonDocument::fromVariant(info);
+//    CooperationUtil::instance()->registAppInfo(doc.toJson());
 }
 
 void MainController::unregist()
 {
-    CooperationUtil::instance()->unregistAppInfo();
+    // TODO:
+//    CooperationUtil::instance()->unregistAppInfo();
 }
