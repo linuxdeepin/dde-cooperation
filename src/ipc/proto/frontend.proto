@@ -12,6 +12,7 @@ service Frontend {
     applyTransFiles, // callback remote apply or apply a reply
     notifySendStatus, // notify client send appy trans files status
     backendServerOnline, // server start ping client, and client is online, notify client ping server
+    shareEvents, // share events
 }
 
 // return {GenericResult}

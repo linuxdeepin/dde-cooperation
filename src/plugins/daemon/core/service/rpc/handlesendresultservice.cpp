@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "handlesendresultservice.h"
-#include "common/comonstruct.h"
+#include "common/commonstruct.h"
 #include "common/constant.h"
 #include "service/ipc/sendipcservice.h"
 #include "ipc/proto/chan.h"

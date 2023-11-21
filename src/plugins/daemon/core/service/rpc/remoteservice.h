@@ -10,7 +10,7 @@
 #include <QMap>
 
 #include "message.pb.h"
-#include "common/comonstruct.h"
+#include "common/commonstruct.h"
 #include "zrpc.h"
 #include <ipc/proto/chan.h>
 

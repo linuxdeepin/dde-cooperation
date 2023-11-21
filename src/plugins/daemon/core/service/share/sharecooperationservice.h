@@ -2,23 +2,23 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef INPUTCOOPERATION_H
-#define INPUTCOOPERATION_H
+#ifndef SHARECOOPERATIONSERVICE_H
+#define SHARECOOPERATIONSERVICE_H
 
 #include <co/fastring.h>
-#include "comshare.h"
+#include "service/comshare.h"
 
 #include <QObject>
 #include <QProcess>
 #include <QSettings>
 
 class CooConfig;
-class InputCooperation : public QObject
+class ShareCooperationService : public QObject
 {
     Q_OBJECT
 public:
-    explicit InputCooperation(QObject *parent = nullptr);
-    ~InputCooperation();
+    ~ShareCooperationService() override;
+    static ShareCooperationService *instance();
 
     void setBarrierType(BarrierType type);
     BarrierType barrierType() const;
@@ -36,6 +36,8 @@ protected slots:
     void appendLogRaw(const QString& text, bool error);
     void logOutput();
     void logError();
+private:
+    explicit ShareCooperationService(QObject *parent = nullptr);
 
 protected:
     CooConfig& cooConfig() { return *_cooConfig; }
@@ -58,4 +60,4 @@ private:
     bool _expectedRunning = false;
 };
 
-#endif // INPUTCOOPERATION_H
+#endif // SHARECOOPERATIONSERVICE_H

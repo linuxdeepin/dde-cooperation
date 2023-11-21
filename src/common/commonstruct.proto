@@ -93,3 +93,32 @@ object FileTransJobReport {
   string error
   int32 result //结果FileTransRe
 }
+
+object ShareEvents {
+  uint32 eventType // 事件名称
+  string data // 事件数据
+}
+
+object ShareConnectApply {
+  string appName // 自己的app名称
+  string tarAppname // 目标app的名称
+  string ip // 自己的ip
+  string tarIp // 目标的ip
+  string data // 数据
+}
+
+object ShareConnectReply {
+  string appName // 自己的app名称
+  string tarAppname // 目标app的名称
+  string msg // 错误信息
+  int32 reply // 0是拒绝，1是同意
+}
+
+object ShareStart {
+    string appName // 自己的app名称
+    string tarAppname // 目标的app名称
+    string tarDeviceName // 被控制端的名称
+    string ip // 自己的ip
+    int32 left // 0表示右边，0表示左边
+    int32 shareClip // 0表示不共享，1表示共享
+}

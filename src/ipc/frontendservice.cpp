@@ -181,3 +181,8 @@ void FrontendImpl::backendServerOnline(co::Json &req, co::Json &res)
         { "msg", "" }
     };
 }
+
+void FrontendImpl::shareEvents(co::Json &req, co::Json &res)
+{
+
+}

@@ -30,6 +30,9 @@ public slots:
     void handleConnectClosed(const quint16 port);
     void handleTryConnect(co::Json json);
     bool handleJobActions(const uint type, co::Json &msg);
+    void handleShareStart(co::Json json);
+    void handleShareConnect(co::Json json);
+    void handleShareConnectReply(co::Json json);
 private:
     void ipcServiceStart();
     void createIpcBackend(const quint16 port);

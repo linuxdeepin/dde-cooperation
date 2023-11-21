@@ -241,7 +241,7 @@ void CooperationUtil::replyTransRequest(int type)
                 : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
 
         ApplyTransFiles transInfo;
-        transInfo.session = PluginName;
+        transInfo.appname = PluginName;
         transInfo.type = type;
         transInfo.machineName = deviceName.toStdString();
 

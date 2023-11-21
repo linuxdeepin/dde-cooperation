@@ -8,7 +8,7 @@
 #include "co/path.h"
 #include "co/co.h"
 #include "common/constant.h"
-#include "common/comonstruct.h"
+#include "common/commonstruct.h"
 #include "service/fsadapter.h"
 #include "service/rpc/sendrpcservice.h"
 #include "service/ipc/sendipcservice.h"

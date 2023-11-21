@@ -36,7 +36,7 @@ class FrontendImpl : public Frontend
 {
 public:
     FrontendImpl() = default;
-    virtual ~FrontendImpl() = default;
+    virtual ~FrontendImpl() override = default;
 
     void setInterface(FrontendService *interface) {
         _interface = interface;
@@ -63,6 +63,8 @@ public:
     virtual void notifySendStatus(co::Json& req, co::Json& res) override;
 
     virtual void backendServerOnline(co::Json& req, co::Json& res) override;
+
+    virtual void shareEvents(co::Json& req, co::Json& res) override;
 
 private:
     FrontendService *_interface;

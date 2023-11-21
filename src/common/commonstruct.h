@@ -310,3 +310,98 @@ struct FileTransJobReport {
     }
 };
 
+struct ShareEvents {
+    uint32 eventType;
+    fastring data;
+
+    void from_json(const co::Json& _x_) {
+        eventType = (uint32)_x_.get("eventType").as_int64();
+        data = _x_.get("data").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("eventType", eventType);
+        _x_.add_member("data", data);
+        return _x_;
+    }
+};
+
+struct ShareConnectApply {
+    fastring appName;
+    fastring tarAppname;
+    fastring ip;
+    fastring tarIp;
+    fastring data;
+
+    void from_json(const co::Json& _x_) {
+        appName = _x_.get("appName").as_c_str();
+        tarAppname = _x_.get("tarAppname").as_c_str();
+        ip = _x_.get("ip").as_c_str();
+        tarIp = _x_.get("tarIp").as_c_str();
+        data = _x_.get("data").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("appName", appName);
+        _x_.add_member("tarAppname", tarAppname);
+        _x_.add_member("ip", ip);
+        _x_.add_member("tarIp", tarIp);
+        _x_.add_member("data", data);
+        return _x_;
+    }
+};
+
+struct ShareConnectReply {
+    fastring appName;
+    fastring tarAppname;
+    fastring msg;
+    int32 reply;
+
+    void from_json(const co::Json& _x_) {
+        appName = _x_.get("appName").as_c_str();
+        tarAppname = _x_.get("tarAppname").as_c_str();
+        msg = _x_.get("msg").as_c_str();
+        reply = (int32)_x_.get("reply").as_int64();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("appName", appName);
+        _x_.add_member("tarAppname", tarAppname);
+        _x_.add_member("msg", msg);
+        _x_.add_member("reply", reply);
+        return _x_;
+    }
+};
+
+struct ShareStart {
+    fastring appName;
+    fastring tarAppname;
+    fastring tarDeviceName;
+    fastring ip;
+    int32 left;
+    int32 shareClip;
+
+    void from_json(const co::Json& _x_) {
+        appName = _x_.get("appName").as_c_str();
+        tarAppname = _x_.get("tarAppname").as_c_str();
+        tarDeviceName = _x_.get("tarDeviceName").as_c_str();
+        ip = _x_.get("ip").as_c_str();
+        left = (int32)_x_.get("left").as_int64();
+        shareClip = (int32)_x_.get("shareClip").as_int64();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("appName", appName);
+        _x_.add_member("tarAppname", tarAppname);
+        _x_.add_member("tarDeviceName", tarDeviceName);
+        _x_.add_member("ip", ip);
+        _x_.add_member("left", left);
+        _x_.add_member("shareClip", shareClip);
+        return _x_;
+    }
+};
+

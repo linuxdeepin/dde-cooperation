@@ -4,6 +4,7 @@
 
 #include "backendservice.h"
 #include "common/constant.h"
+#include "common/commonstruct.h"
 #include "utils/config.h"
 
 #include "co/co.h"
@@ -341,4 +342,19 @@ void BackendImpl::applyTransFiles(co::Json &req, co::Json &res)
         { "result", true },
         { "msg", "" }
     };
+}
+
+void BackendImpl::shareEvents(co::Json &req, co::Json &res)
+{
+   BridgeJsonData bridge;
+   ShareEvents event;
+   event.from_json(req);
+   bridge.type = event.eventType;
+   bridge.json = event.data;
+   _interface->bridgeChan()->operator<<(bridge);
+   // do not need to wait for result
+   res = {
+       { "result", true },
+       { "msg", "" }
+   };
 }

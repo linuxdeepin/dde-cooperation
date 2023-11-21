@@ -12,7 +12,7 @@
 #include "service/ipc/sendipcservice.h"
 #include "utils/utils.h"
 #include "service/jobmanager.h"
-#include "common/comonstruct.h"
+#include "common/commonstruct.h"
 
 #include <QCoreApplication>
 
@@ -56,12 +56,21 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
             ApplyTransFiles info;
             info.from_json(param);
             if (info.type != APPLY_TRANS_APPLY) {
-                info.session = appName.toStdString();
+                info.appname = appName.toStdString();
 
                 QString tar = sender->targetAppname();
-                info.tarSession = tar.isEmpty() ?
-                            appName.toStdString() : tar.toStdString();
+                info.tarAppname = tar.isEmpty() ?
+                                  appName.toStdString() : tar.toStdString();
             }
+            res = sender->doSendProtoMsg(type, info.as_json().str().c_str(), data);
+        } else if (type == APPLY_SHARE_CONNECT_RES) {
+            co::Json param;
+            param.parse_from(msg.toStdString());
+            ShareConnectReply info;
+            info.from_json(param);
+            QString tar = sender->targetAppname();
+            info.tarAppname = tar.isEmpty() ?
+                              appName.toStdString() : tar.toStdString();
             res = sender->doSendProtoMsg(type, info.as_json().str().c_str(), data);
         } else {
             res = sender->doSendProtoMsg(type, msg, data);

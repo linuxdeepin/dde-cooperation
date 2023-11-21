@@ -115,9 +115,9 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
             : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
 
     ApplyTransFiles transInfo;
-    transInfo.session = qApp->applicationName().toStdString();
+    transInfo.appname = qApp->applicationName().toStdString();
     transInfo.type = type;
-    transInfo.tarSession = RecvModuleName;   // 发送给后端插件
+    transInfo.tarAppname = RecvModuleName; // 发送给后端插件
     transInfo.machineName = deviceName.toStdString();
 
     co::Json req = transInfo.as_json();
