@@ -51,8 +51,6 @@ public:
 
     void transferResult(bool result, const QString &msg);
     void updateProgress(int value, const QString &remainTime);
-    uint notifyMessage(uint replacesId, const QString &body,
-                       const QStringList &actions, int expireTimeout);
 
 public Q_SLOTS:
     void onVerifyTimeout();
@@ -65,12 +63,9 @@ private:
     QString sendToWho;
 
     QAtomicInt status { TransferHelper::Idle };
-//    TransferHelper::TransferStatus status { TransferHelper::Idle };
     TransferInfo transferInfo;
     TransferDialog *transferDialog { nullptr };
-    QDBusInterface *notifyIfc { nullptr };
     uint recvNotifyId { 0 };
-    TransferHelper::TransferMode currentMode { TransferHelper::SendMode };
 
     bool isTransTimeout = false;
     QString recvFilesSavePath;

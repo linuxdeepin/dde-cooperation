@@ -1,5 +1,6 @@
 usr/bin/dde-cooperation
 usr/lib/*/dde-cooperation/plugins/cooperation/*.so*
+usr/lib/*/dde-cooperation/plugins/daemon/libdaemon-cooperation.so
 usr/share/dde-cooperation/translations/*.qm
 usr/share/icons/hicolor/scalable/apps/dde-cooperation.svg
 usr/share/applications/dde-cooperation.desktop

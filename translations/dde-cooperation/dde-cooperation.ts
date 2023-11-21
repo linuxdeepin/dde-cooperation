@@ -17,16 +17,6 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="250"/>
-        <source>View transfer history</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="259"/>
-        <source>Send files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/external/dde-file-manager-plugins/cooperation/cooperationplugin.cpp" line="55"/>
         <source>File transfer settings</source>
         <translation type="unfinished"></translation>
@@ -204,6 +194,19 @@
     </message>
 </context>
 <context>
+    <name>cooperation_core::ShareManager</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/share/sharemanager.cpp" line="35"/>
+        <source>connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/share/sharemanager.cpp" line="43"/>
+        <source>Disconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>cooperation_core::TransferDialog</name>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="19"/>
@@ -236,42 +239,37 @@
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="362"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="209"/>
+        <source>View transfer history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="218"/>
+        <source>Send files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="315"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="434"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="343"/>
+        <source>The other party has canceled the file transfer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="387"/>
         <source>File sent successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="456"/>
-        <source>Reject</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="457"/>
-        <source>Accept</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="458"/>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="459"/>
-        <source>&quot;%1&quot; send some files to you</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="509"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="417"/>
         <source>calculating</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="518"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="426"/>
         <source>The other party rejects your request</source>
         <translation type="unfinished"></translation>
     </message>
@@ -279,33 +277,66 @@
 <context>
     <name>cooperation_core::TransferHelperPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="176"/>
-        <source>View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="191"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="192"/>
-        <source>File receiving %1% | Remaining time %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="197"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="173"/>
         <source>Sending files to &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="213"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="184"/>
+        <source>The other party did not receive, the files failed to send</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>daemon_cooperation::MainController</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="71"/>
         <source>File transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="225"/>
-        <source>The other party did not receive, the files failed to send</source>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="81"/>
+        <source>View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="89"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="92"/>
+        <source>File receiving %1% | Remaining time %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="163"/>
+        <source>Reject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="164"/>
+        <source>Accept</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="165"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="166"/>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="225"/>
+        <source>The other party has canceled the file transfer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="268"/>
+        <source>File sent successfully</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

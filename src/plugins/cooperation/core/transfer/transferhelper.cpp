@@ -30,15 +30,6 @@ Q_DECLARE_METATYPE(ButtonStateCallback)
 Q_DECLARE_METATYPE(ClickedCallback)
 
 inline constexpr int TransferJobStartId = 1000;
-inline constexpr char NotifyServerName[] { "org.freedesktop.Notifications" };
-inline constexpr char NotifyServerPath[] { "/org/freedesktop/Notifications" };
-inline constexpr char NotifyServerIfce[] { "org.freedesktop.Notifications" };
-
-inline constexpr char NotifyCancelAction[] { "cancel" };
-inline constexpr char NotifyRejectAction[] { "reject" };
-inline constexpr char NotifyAcceptAction[] { "accept" };
-inline constexpr char NotifyCloseAction[] { "close" };
-inline constexpr char NotifyViewAction[] { "view" };
 
 inline constexpr char HistoryButtonId[] { "history-button" };
 inline constexpr char TransferButtonId[] { "transfer-button" };
@@ -52,13 +43,6 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
     : QObject(qq),
       q(qq)
 {
-    notifyIfc = new QDBusInterface(NotifyServerName,
-                                   NotifyServerPath,
-                                   NotifyServerIfce,
-                                   QDBusConnection::sessionBus(), q);
-
-    QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
-                                          q, SLOT(onActionTriggered(uint, const QString &)));
     *transHistory = HistoryManager::instance()->getTransHistory();
 }
 
@@ -107,7 +91,7 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
     QString saveDir = (deviceName + "(%1)").arg(CooperationUtil::localIPAddress());
     ipc::TransFilesParam transParam;
     transParam.session = CooperationUtil::instance()->sessionId().toStdString();
-    transParam.targetSession = kMainAppName;
+    transParam.targetSession = RecvModuleName;   // 发送给后端插件
     transParam.id = TransferJobStartId;
     transParam.paths = fileVector;
     transParam.sub = true;
@@ -133,7 +117,7 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
     ApplyTransFiles transInfo;
     transInfo.session = qApp->applicationName().toStdString();
     transInfo.type = type;
-    transInfo.tarSession = kMainAppName;
+    transInfo.tarSession = RecvModuleName;   // 发送给后端插件
     transInfo.machineName = deviceName.toStdString();
 
     co::Json req = transInfo.as_json();
@@ -154,7 +138,7 @@ void TransferHelperPrivate::handleTryConnect(const QString &ip)
     conParam.appName = qApp->applicationName().toStdString();
     conParam.host = targetIp;
     conParam.password = pinCode;
-    conParam.targetAppname = kMainAppName;
+    conParam.targetAppname = RecvModuleName;   // 发送给后端插件
 
     req = conParam.as_json();
     req.add_member("api", "Backend.tryConnect");
@@ -164,7 +148,6 @@ void TransferHelperPrivate::handleTryConnect(const QString &ip)
 
 void TransferHelperPrivate::handleCancelTransfer()
 {
-    // TODO
     rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
     co::Json req, res;
 
@@ -182,57 +165,20 @@ void TransferHelperPrivate::handleCancelTransfer()
 
 void TransferHelperPrivate::transferResult(bool result, const QString &msg)
 {
-    switch (currentMode) {
-    case TransferHelper::ReceiveMode: {
-        QStringList actions;
-        if (result)
-            actions << NotifyViewAction << tr("View");
-
-        recvNotifyId = notifyMessage(recvNotifyId, msg, actions, 3 * 1000);
-    } break;
-    case TransferHelper::SendMode:
-        transDialog()->switchResultPage(result, msg);
-        break;
-    }
+    transDialog()->switchResultPage(result, msg);
 }
 
 void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
 {
-    switch (currentMode) {
-    case TransferHelper::ReceiveMode: {
-        // 在通知中心中，如果通知内容包含“%”且actions中存在“cancel”，则不会在通知中心显示
-        QStringList actions { NotifyCancelAction, tr("Cancel") };
-        QString msg(tr("File receiving %1% | Remaining time %2").arg(QString::number(value), remainTime));
-
-        recvNotifyId = notifyMessage(recvNotifyId, msg, actions, 15 * 1000);
-    } break;
-    case TransferHelper::SendMode:
-        QString title = tr("Sending files to \"%1\"").arg(sendToWho);
-        transDialog()->switchProgressPage(title);
-        transDialog()->updateProgress(value, remainTime);
-        break;
-    }
-}
-
-uint TransferHelperPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
-{
-    QVariantMap hitMap;
-    if (status.loadAcquire() == TransferHelper::Transfering) {
-        // dde-session-ui 5.7.2.2 版本后，支持设置该属性使消息不进通知中心
-        hitMap.insert("x-deepin-ShowInNotifyCenter", false);
-    }
-
-    QDBusReply<uint> reply = notifyIfc->call("Notify", kMainAppName, replacesId,
-                                             "dde-cooperation", tr("File transfer"), body,
-                                             actions, hitMap, expireTimeout);
-
-    return reply.isValid() ? reply.value() : replacesId;
+    QString title = tr("Sending files to \"%1\"").arg(sendToWho);
+    transDialog()->switchProgressPage(title);
+    transDialog()->updateProgress(value, remainTime);
 }
 
 void TransferHelperPrivate::onVerifyTimeout()
 {
     isTransTimeout = true;
-    if (currentMode == TransferHelper::ReceiveMode || status.loadAcquire() != TransferHelper::Confirming)
+    if (status.loadAcquire() != TransferHelper::Confirming)
         return;
 
     transDialog()->switchResultPage(false, tr("The other party did not receive, the files failed to send"));
@@ -260,7 +206,7 @@ void TransferHelper::regist()
     ButtonStateCallback visibleCb = TransferHelper::buttonVisible;
     ButtonStateCallback clickableCb = TransferHelper::buttonClickable;
     QVariantMap historyInfo { { "id", HistoryButtonId },
-                              { "description", QObject::tr("View transfer history") },
+                              { "description", tr("View transfer history") },
                               { "icon-name", "history" },
                               { "location", 2 },
                               { "button-style", 0 },
@@ -269,7 +215,7 @@ void TransferHelper::regist()
                               { "clickable-callback", QVariant::fromValue(clickableCb) } };
 
     QVariantMap transferInfo { { "id", TransferButtonId },
-                               { "description", QObject::tr("Send files") },
+                               { "description", tr("Send files") },
                                { "icon-name", "send" },
                                { "location", 3 },
                                { "button-style", 1 },
@@ -279,11 +225,6 @@ void TransferHelper::regist()
 
     CooperationUtil::instance()->registerDeviceOperation(historyInfo);
     CooperationUtil::instance()->registerDeviceOperation(transferInfo);
-}
-
-void TransferHelper::setTransMode(TransferHelper::TransferMode mode)
-{
-    d->currentMode = mode;
 }
 
 void TransferHelper::sendFiles(const QString &ip, const QString &devName, const QStringList &fileList)
@@ -298,12 +239,11 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
         return;
     }
 
-    d->currentMode = SendMode;
     UNIGO([ip, this] {
         d->handleTryConnect(ip);
     });
 
-    waitForConfirm("");
+    waitForConfirm();
 }
 
 TransferHelper::TransferStatus TransferHelper::transferStatus()
@@ -384,11 +324,7 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
         break;
     case JOB_TRANS_DOING:
         break;
-    case JOB_TRANS_FINISHED:
-    {
-        if (d->currentMode == SendMode)
-            break;
-
+    case JOB_TRANS_FINISHED: {
         // msg: deviceName(ip)
         // 获取存储路径和ip
         int startPos = msg.lastIndexOf("(");
@@ -402,10 +338,9 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
             transHistory->insert(ip, d->recvFilesSavePath);
             HistoryManager::instance()->writeIntoTransHistory(ip, d->recvFilesSavePath);
         }
-    }
-        break;
+    } break;
     case JOB_TRANS_CANCELED:
-        d->transferResult(false, "xxxxxxxxxxx");
+        d->transferResult(false, tr("The other party has canceled the file transfer"));
         break;
     default:
         break;
@@ -459,7 +394,7 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
     }
 }
 
-void TransferHelper::waitForConfirm(const QString &name)
+void TransferHelper::waitForConfirm()
 {
     d->isTransTimeout = false;
     d->transferInfo.clear();
@@ -468,53 +403,8 @@ void TransferHelper::waitForConfirm(const QString &name)
 
     // 超时处理
     QTimer::singleShot(10 * 1000, d.data(), &TransferHelperPrivate::onVerifyTimeout);
-    switch (d->currentMode) {
-    case ReceiveMode: {
-        d->recvNotifyId = 0;
-        QStringList actions { NotifyRejectAction, tr("Reject"),
-                              NotifyAcceptAction, tr("Accept"),
-                              NotifyCloseAction, tr("Close") };
-        QString msg(tr("\"%1\" send some files to you"));
-        QFontMetrics fm(qApp->font());
-        QString ret = fm.elidedText(name, Qt::ElideMiddle, 200);
-
-        d->recvNotifyId = d->notifyMessage(d->recvNotifyId, msg.arg(ret), actions, 10 * 1000);
-    } break;
-    case SendMode:
-        d->transDialog()->switchWaitConfirmPage();
-        d->transDialog()->show();
-        break;
-    }
-}
-
-void TransferHelper::onActionTriggered(uint replacesId, const QString &action)
-{
-    if (replacesId != d->recvNotifyId)
-        return;
-
-    if (action == NotifyCancelAction) {
-        cancelTransfer();
-    } else if (action == NotifyRejectAction) {
-        d->status.storeRelease(Idle);
-        UNIGO([this] {
-            d->handleApplyTransFiles(ApplyTransType::APPLY_TRANS_REFUSED);
-        });
-    } else if (action == NotifyAcceptAction) {
-        if (d->isTransTimeout)
-            return;
-
-        d->status.storeRelease(Transfering);
-        UNIGO([this] {
-            d->handleApplyTransFiles(ApplyTransType::APPLY_TRANS_CONFIRM);
-        });
-    } else if (action == NotifyCloseAction) {
-        d->notifyIfc->call("CloseNotification", d->recvNotifyId);
-    } else if (action == NotifyViewAction) {
-        if (d->recvFilesSavePath.isEmpty())
-            QDesktopServices::openUrl(QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)));
-
-        QDesktopServices::openUrl(QUrl::fromLocalFile(d->recvFilesSavePath));
-    }
+    d->transDialog()->switchWaitConfirmPage();
+    d->transDialog()->show();
 }
 
 void TransferHelper::accepted()

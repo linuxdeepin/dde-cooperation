@@ -1,5 +1,5 @@
 usr/bin/cooperation-daemon
 usr/lib/*/*.so*
-usr/lib/*/dde-cooperation/plugins/daemon/*.so*
+usr/lib/*/dde-cooperation/plugins/daemon/libdaemon-core.so
 usr/lib/systemd/user/
 etc/xdg/autostart
