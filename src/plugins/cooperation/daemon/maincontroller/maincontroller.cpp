@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -109,7 +109,7 @@ void MainController::regist()
     info.insert(AppSettings::DeviceNameKey,
                 value.isValid()
                         ? value.toString()
-                        : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1));
+                        : QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName());
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
     info.insert(AppSettings::PeripheralShareKey, value.isValid() ? value.toBool() : false);

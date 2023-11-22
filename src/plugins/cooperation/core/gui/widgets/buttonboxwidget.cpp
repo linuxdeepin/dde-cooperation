@@ -1,13 +1,15 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "buttonboxwidget.h"
-
+#ifdef linux
 #include <DIconButton>
 #include <DFloatingButton>
 
 DWIDGET_USE_NAMESPACE
+#endif
+
 using namespace cooperation_core;
 
 ButtonBoxWidget::ButtonBoxWidget(QWidget *parent)
@@ -22,14 +24,16 @@ ButtonBoxWidget::ButtonBoxWidget(QWidget *parent)
 
 int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, ButtonStyle style)
 {
-    DIconButton *btn { nullptr };
+    CooperationIconButton *btn { nullptr };
     switch (style) {
     case kNormal:
-        btn = new DIconButton(this);
+        btn = new CooperationIconButton(this);
+#ifdef linux
         btn->setEnabledCircle(true);
+#endif
         break;
     case kHighLight:
-        btn = new DFloatingButton(this);
+        btn = new CooperationFloatingEdit(this);
         break;
     }
 
@@ -37,10 +41,15 @@ int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, Button
     btn->setFixedSize(32, 32);
     btn->setIconSize({ 16, 16 });
     btn->setIcon(icon);
-
+#ifndef linux
+    btn->setStyleSheet(
+        "background-color: #0098FF;;"
+        "border-radius: 16px;"
+        );
+#endif
     int index = mainLayout->count();
     mainLayout->addWidget(btn);
-    connect(btn, &DIconButton::clicked, this, [this, index] {
+    connect(btn, &CooperationIconButton::clicked, this, [this, index] {
         emit this->buttonClicked(index);
     });
 

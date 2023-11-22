@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -127,3 +127,30 @@ void MainWindow::onRegistOperations(const QVariantMap &map)
 {
     d->workspaceWidget->addDeviceOperation(map);
 }
+
+#ifdef WIN32
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    d->paintEvent(event);
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    d->mouseMoveEvent(event);
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    d->mousePressEvent(event);
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    d->mousePressEvent(event);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QApplication::quit();
+}
+#endif

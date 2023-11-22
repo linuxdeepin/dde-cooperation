@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -15,8 +15,6 @@ TransferDialog::TransferDialog(QWidget *parent)
 void TransferDialog::initUI()
 {
     setFixedSize(380, 234);
-    setIcon(QIcon::fromTheme("dde-cooperation"));
-    setTitle(tr("File Transfer"));
     setContentsMargins(0, 0, 0, 0);
 
     QWidget *contentWidget = new QWidget(this);
@@ -29,8 +27,15 @@ void TransferDialog::initUI()
     vLayout->addLayout(stackedLayout);
     vLayout->addWidget(okBtn, 0, Qt::AlignBottom);
 
+#ifdef linux
+    setIcon(QIcon::fromTheme("dde-cooperation"));
+    setTitle(tr("File Transfer"));
     addContent(contentWidget);
-
+#else
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(contentWidget);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+#endif
     createWaitConfirmPage();
     createResultPage();
     createProgressPage();
@@ -97,13 +102,17 @@ void TransferDialog::createProgressPage()
 void TransferDialog::switchWaitConfirmPage()
 {
     stackedLayout->setCurrentIndex(0);
+#ifdef linux
     spinner->start();
+#endif
     okBtn->setVisible(false);
 }
 
 void TransferDialog::switchResultPage(bool success, const QString &msg)
 {
+#ifdef linux
     spinner->stop();
+#endif
     stackedLayout->setCurrentIndex(1);
 
     if (success) {
@@ -123,7 +132,9 @@ void TransferDialog::switchProgressPage(const QString &title)
     if (stackedLayout->currentIndex() == 2)
         return;
 
+#ifdef linux
     spinner->stop();
+#endif
     stackedLayout->setCurrentIndex(2);
 
     progressBar->setValue(1);

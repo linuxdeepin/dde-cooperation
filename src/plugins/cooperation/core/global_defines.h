@@ -1,9 +1,25 @@
-#ifndef TYPE_DEFINES_H
+﻿#ifndef TYPE_DEFINES_H
 #define TYPE_DEFINES_H
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <QMainWindow>
+#include <QApplication>
+#include <QDialog>
+#include <QPushButton>
+#include <QToolButton>
+#include <QLabel>
+#include <QLineEdit>
+#include <QCheckBox>
 typedef QMainWindow CooperationMainWindow;
+typedef QDialog CooperationDialog;
+typedef QPushButton CooperationIconButton;
+typedef QDialog CooperationAbstractDialog;
+typedef QPushButton CooperationSuggestButton;
+typedef QCheckBox CooperationSwitchButton;
+typedef QPushButton CooperationFloatingEdit;
+typedef QLabel CooperationSpinner;
+typedef QLineEdit CooperationSearchEdit;
+typedef QLineEdit CooperationLineEdit;
 #else
 #include <DMainWindow>
 #include <DAbstractDialog>

@@ -32,10 +32,7 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
         hostid = Util::genUUID();
         DaemonConfig::instance()->setUUID(hostid.c_str());
     }
-#if !defined(WIN32)
-    // temp disable discovery service.
     asyncDiscovery();
-#endif
     QTimer::singleShot(2000, this, []{
         SendIpcService::instance()->handlebackendOnline();
     });

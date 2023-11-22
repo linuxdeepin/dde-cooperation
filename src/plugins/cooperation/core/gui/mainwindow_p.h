@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -8,6 +8,8 @@
 #include "widgets/workspacewidget.h"
 
 #include <QObject>
+#include <QPainter>
+#include <QMouseEvent>
 
 namespace cooperation_core {
 
@@ -27,8 +29,16 @@ public:
     void handleSettingMenuTriggered(int action);
 
 public:
+    void paintEvent(QPaintEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+
+public:
     MainWindow *q { nullptr };
     WorkspaceWidget *workspaceWidget { nullptr };
+    bool leftButtonPressed { false };
+    QPoint lastPosition;
 };
 
 }   // namespace cooperation_core

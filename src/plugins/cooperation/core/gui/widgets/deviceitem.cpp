@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,16 @@
 #include <QPainter>
 
 using namespace cooperation_core;
+
+#ifdef linux
+const char *Kcomputer_connected = "computer_connected";
+const char *Kcomputer_can_connect = "computer_can_connect";
+const char *Kcomputer_off_line = "computer_off_line";
+#else
+const char *Kcomputer_connected = ":/icons/deepin/builtin/icons/computer_connected_52px.svg";
+const char *Kcomputer_can_connect = ":/icons/deepin/builtin/icons/computer_can_connect_52px.svg";
+const char *Kcomputer_off_line = ":/icons/deepin/builtin/icons/computer_off_line_52px.svg";
+#endif
 
 StateLabel::StateLabel(QWidget *parent)
     : QLabel(parent)
@@ -142,17 +152,17 @@ void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
     stateLabel->setState(status);
     switch (status) {
     case DeviceInfo::Connected: {
-        QIcon icon = QIcon::fromTheme("computer_connected");
+        QIcon icon = QIcon::fromTheme(Kcomputer_connected);
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connected"));
     } break;
     case DeviceInfo::Connectable: {
-        QIcon icon = QIcon::fromTheme("computer_can_connect");
+        QIcon icon = QIcon::fromTheme(Kcomputer_can_connect);
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connectable"));
     } break;
     case DeviceInfo::Offline: {
-        QIcon icon = QIcon::fromTheme("computer_off_line");
+        QIcon icon = QIcon::fromTheme(Kcomputer_off_line);
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("offline"));
     } break;

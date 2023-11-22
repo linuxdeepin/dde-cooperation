@@ -19,9 +19,9 @@
 #include <QHostInfo>
 #include <QNetworkInterface>
 
-class Util {
+class Util
+{
 public:
-
     static std::string genRandPin()
     {
         int pin_len = 6;
@@ -30,15 +30,12 @@ public:
 
     static std::string genAuthToken(const char *uuid, const char *pin)
     {
-        std::string all = uuid;// + pin;
+        std::string all = uuid; // + pin;
         fastring encodes = base64_encode(all);
         return std::string(encodes.c_str());
     }
 
-    static bool checkToken(const char *token)
-    {
-        return true;
-    }
+    static bool checkToken(const char *token) { return true; }
 
     static std::string decodeBase64(const char *str)
     {
@@ -54,33 +51,15 @@ public:
 
     static std::string getFirstIp()
     {
-        // another way
-        //QList<QHostAddress> address = QNetworkInterface::allAddresses();
-        //qInfo() << "local ip" << address[2].toString();
-
         QString ip;
-        // QNetworkInterface 类提供了一个主机 IP 地址和网络接口的列表
-        foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
-        {
-            // 每个网络接口包含 0 个或多个 IP 地址
-            QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
-            if (netInterface.name().startsWith("virbr") || netInterface.name().startsWith("vmnet")
-                    || netInterface.name().startsWith("docker")) {
-                // 跳过桥接，虚拟机和docker的网络接口
-                qInfo() << "netInterface name:" << netInterface.name();
+        for (auto interface : QNetworkInterface::allInterfaces()) {
+            if (interface.type() != QNetworkInterface::InterfaceType::Ethernet)
                 continue;
-            }
-
-            // 遍历每一个 IP 地址
-            foreach(QNetworkAddressEntry entry, entryList)
-            {
-                if(entry.ip().protocol() == QAbstractSocket::IPv4Protocol && entry.ip() != QHostAddress::LocalHost)
-                {
-                    //IP地址
-                    ip = QString(entry.ip().toString());
-                    qDebug() << "IP Address:" << ip;
-                    return ip.toStdString();
-                }
+            foreach (QNetworkAddressEntry entry, interface.addressEntries()) {
+                if (entry.ip().protocol() != QAbstractSocket::NetworkLayerProtocol::IPv4Protocol)
+                    continue;
+                ip = QString(entry.ip().toString());
+                qDebug() << "IP Address:------" << ip << "------" << interface.type();
             }
         }
         return ip.toStdString();
@@ -138,7 +117,8 @@ public:
     static bool isValidUUID(const std::string &uuid)
     {
         // UUID正则表达式模式
-        std::regex pattern(R"([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})");
+        std::regex pattern(
+                R"([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})");
 
         // 使用正则表达式匹配UUID
         return std::regex_match(uuid, pattern);
@@ -149,10 +129,9 @@ public:
         fastring file_name;
         co::vector<fastring> path_slips = str::split(path, '/');
         file_name = path_slips.pop_back();
-        
+
         return std::string(file_name.c_str());
     }
-
 };
 
 #endif

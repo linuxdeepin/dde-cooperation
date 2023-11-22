@@ -1,10 +1,12 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filechooseredit.h"
 
+#ifdef linux
 #include <DStyle>
+#endif
 
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -24,7 +26,9 @@ void FileChooserEdit::initUI()
     pathLabel->setContentsMargins(8, 8, 8, 8);
 
     fileChooserBtn = new CooperationSuggestButton(this);
-    fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
+#ifdef linux
+fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
+#endif
     fileChooserBtn->setFixedSize(36, 36);
     connect(fileChooserBtn, &QPushButton::clicked, this, &FileChooserEdit::onButtonClicked);
 
