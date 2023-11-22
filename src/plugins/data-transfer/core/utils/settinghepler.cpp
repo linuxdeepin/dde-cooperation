@@ -179,7 +179,7 @@ bool SettingHelper::installApps(const QString &app)
 
     if (reply.type() != QDBusMessage::ReplyMessage) {
         qWarning() << "Installing " << app << "false" << reply.errorMessage();
-        emit TransferHelper::instance()->failure(app, "应用", app + "安装失败，请进入应用商店安装");
+        emit TransferHelper::instance()->failure(app, "应用", "安装失败，请进入应用商店安装");
         return false;
     }
 
@@ -228,7 +228,7 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
 
 void SettingHelper::addTaskcounter(int value)
 {
-    if(taskcounter == 0)
+    if (taskcounter == 0)
         init();
 
     taskcounter += value;
@@ -257,7 +257,7 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
             QString targetFile = QDir::homePath() + "/" + filename;
             QString file = filepath + filename.mid(filename.indexOf('/'));
             auto dir = QFileInfo(targetFile).dir();
-            if(!dir.exists())
+            if (!dir.exists())
                 dir.mkpath(".");
             moveFile(file, targetFile);
         }
