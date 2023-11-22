@@ -127,6 +127,9 @@ bool JobManager::handleFSInfo(co::Json &info)
 
     auto job = _transjob_recvs.value(jobId);
     if (!job.isNull()) {
+        //update the file relative to abs path
+        fastring savedpath = path::join(DaemonConfig::instance()->getStorageDir(job->getAppName()), finfo.name);
+        finfo.name = savedpath;
         job->insertFileInfo(finfo);
     } else {
         return false;

@@ -281,7 +281,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         FileInfo info;
         info.job_id = _jobid;
         info.file_id = fileid;
-        info.name = subname;
+        info.name = filepath;
         info.total_size = file_size;
         info.current_size = 0;
         info.time_spended = -1;
@@ -518,10 +518,6 @@ void TransferJob::handleJobStatus(int status)
 void TransferJob::handleTransStatus(int status, FileInfo &info)
 {
     co::Json filejson = info.as_json();
-    //update the file relative to abs path
-    fastring savedpath = path::join(DaemonConfig::instance()->getStorageDir(_app_name), info.name);
-    filejson.remove("name");
-    filejson.add_member("name", savedpath);
     QString appname(_app_name.c_str());
     QString fileinfo(filejson.str().c_str());
 
