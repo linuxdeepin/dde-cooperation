@@ -58,10 +58,10 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     addTaskcounter(1);
     QJsonObject jsonObj = ParseJson(filepath + "/" + "transfer.json");
     if (jsonObj.isEmpty()) {
-        addTaskcounter(-1);
         isall = false;
         qWarning() << "transfer.json is invaild";
         emit TransferHelper::instance()->failure("配置文件", "文件", "配置文件错误或丢失");
+        addTaskcounter(-1);
         return false;
     }
 

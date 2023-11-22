@@ -49,18 +49,16 @@ void HandleRpcService::handleRpcLogin(bool result, const QString &targetAppname,
         SendRpcService::instance()->setTargetAppName(appName, targetAppname);
     }
 
-    UNIGO([result, appName]() {
-        co::Json req;
-        //cbConnect {GenericResult}
-        req = {
-            { "id", 0 },
-            { "result", result ? 1 : 0 },
-            { "msg", appName.toStdString() },
-            { "isself", false},
-        };
-        req.add_member("api", "Frontend.cbConnect");
-        SendIpcService::instance()->handleSendToClient(appName, req.str().c_str());
-    });
+    co::Json req;
+    //cbConnect {GenericResult}
+    req = {
+        { "id", 0 },
+        { "result", result ? 1 : 0 },
+        { "msg", appName.toStdString() },
+        { "isself", false},
+    };
+    req.add_member("api", "Frontend.cbConnect");
+    SendIpcService::instance()->handleSendToClient(appName, req.str().c_str());
 }
 
 bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
@@ -71,16 +69,14 @@ bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
     obj.tarSession = obj.session;
     obj.session = tmp;
     auto session = obj.session;
-    UNIGO([session, obj]() {
-        co::Json infojson;
-        co::Json req;
 
-        //notifyFileStatus {FileStatus}
-        req = obj.as_json();
-        req.add_member("api", "Frontend.applyTransFiles");
-        SendIpcService::instance()->handleSendToClient(session.c_str(), req.str().c_str());
-    });
+    co::Json infojson;
+    co::Json req;
 
+    //notifyFileStatus {FileStatus}
+    req = obj.as_json();
+    req.add_member("api", "Frontend.applyTransFiles");
+    SendIpcService::instance()->handleSendToClient(session.c_str(), req.str().c_str());
 
     return true;
 }
@@ -161,7 +157,7 @@ void HandleRpcService::handleRemoteDisc(co::Json &info)
     mis.from_json(info);
     co::Json msg{"msg", mis.json};
     msg.add_member("api", "Frontend::cbMiscMessage");
-    SendIpcService::instance()->sendToClient(mis.appName.c_str(), msg.str().c_str());
+    SendIpcService::instance()->handleSendToClient(mis.appName.c_str(), msg.str().c_str());
 }
 
 void HandleRpcService::handleRemoteFileInfo(co::Json &info)

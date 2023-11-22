@@ -14,6 +14,8 @@
 #include <QDebug>
 #include <QCoreApplication>
 
+#include <ipc/proto/backend.h>
+
 #pragma execution_character_set("utf-8")
 TransferHandle::TransferHandle()
     : QObject()
@@ -431,14 +433,16 @@ void TransferWoker::tryConnect(const std::string &ip, const std::string &passwor
     co::Json req, res;
     fastring target_ip(ip);
     fastring pin_code(password);
-    QString appName = QCoreApplication::applicationName();
+    fastring app_name(qApp->applicationName().toStdString());
 
-    req = {
-        { "session", appName.toStdString() },
-        { "host", target_ip },
-        { "password", pin_code },
-    };
-    req.add_member("api", "Backend.tryConnect");   //BackendImpl::tryConnect
+    ipc::ConnectParam conParam;
+    conParam.appName = app_name;
+    conParam.host = target_ip;
+    conParam.password = pin_code;
+    conParam.targetAppname = app_name;
+
+    req = conParam.as_json();
+    req.add_member("api", "Backend.tryConnect");
     call(req, res);
 }
 
@@ -449,21 +453,23 @@ fastring TransferWoker::getSessionId()
 
 void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 {
-    co::Json req, res, paths;
+    co::Json req, res;
 
+    co::vector<fastring> fileVector;
     for (QString path : filepaths) {
-        paths.push_back(path.toStdString());
+        fileVector.push_back(path.toStdString());
     }
+    fastring app_name(qApp->applicationName().toStdString());
 
-    //TransFilesParam
-    req = {
-        { "session", _session_id },
-        { "id", reqid },
-        { "paths", paths },
-        { "sub", true },
-        { "savedir", "" },
-    };
+    ipc::TransFilesParam transParam;
+    transParam.session = _session_id;
+    transParam.targetSession = app_name;
+    transParam.id = reqid;
+    transParam.paths = fileVector;
+    transParam.sub = true;
+    transParam.savedir = "";
 
+    req = transParam.as_json();
     req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
 
     call(req, res);
