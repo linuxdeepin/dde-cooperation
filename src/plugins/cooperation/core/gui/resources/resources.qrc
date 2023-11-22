@@ -19,5 +19,8 @@
         <file>icons/deepin/builtin/icons/dde-cooperation_128px.svg</file>
         <file>icons/deepin/builtin/icons/transfer_fail_128px.svg</file>
         <file>icons/deepin/builtin/icons/transfer_success_128px.svg</file>
+        <file>icons/deepin/builtin/icons/minimise_normal.svg</file>
+        <file>icons/deepin/builtin/icons/close_normal.svg</file>
+        <file>icons/deepin/builtin/icons/menu_normal.svg</file>
     </qresource>
 </RCC>

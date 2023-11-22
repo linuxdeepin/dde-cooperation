@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2020 - 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2020 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,7 +11,7 @@
 
 DPF_BEGIN_NAMESPACE
 
-class Listener final : public QObject
+class DPF_EXPORT Listener final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(Listener)

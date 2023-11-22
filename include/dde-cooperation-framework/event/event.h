@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -32,7 +32,7 @@
 DPF_BEGIN_NAMESPACE
 
 class EventPrivate;
-class Event
+class DPF_EXPORT Event
 {
     Q_DISABLE_COPY(Event)
 

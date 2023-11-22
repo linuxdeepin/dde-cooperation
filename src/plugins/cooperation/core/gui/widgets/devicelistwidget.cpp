@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,6 +7,7 @@
 #include "co/co.h"
 
 #include <QScrollBar>
+#include <QVariantMap>
 
 using namespace cooperation_core;
 
@@ -18,13 +19,14 @@ DeviceListWidget::DeviceListWidget(QWidget *parent)
 
 void DeviceListWidget::initUI()
 {
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     horizontalScrollBar()->setDisabled(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QWidget *mainWidget = new QWidget(this);
 
     mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setAlignment(Qt::AlignTop);
+    mainLayout->setAlignment(Qt::AlignTop | Qt::AlignCenter);
     mainLayout->addSpacing(8);
     mainWidget->setLayout(mainLayout);
 

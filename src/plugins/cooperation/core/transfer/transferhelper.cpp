@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -14,15 +14,18 @@
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/chan.h"
 #include "ipc/proto/backend.h"
-
 #include <QDesktopServices>
-#include <QDBusInterface>
-#include <QDBusReply>
+
 #include <QApplication>
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QTime>
 #include <QTimer>
+
+#ifdef linux
+#include <QDBusInterface>
+#include <QDBusReply>
+#endif
 
 using ButtonStateCallback = std::function<bool(const QString &, const DeviceInfoPointer)>;
 using ClickedCallback = std::function<void(const QString &, const DeviceInfoPointer)>;
@@ -36,6 +39,15 @@ inline constexpr char TransferButtonId[] { "transfer-button" };
 
 using TransHistoryInfo = QMap<QString, QString>;
 Q_GLOBAL_STATIC(TransHistoryInfo, transHistory)
+
+#ifdef linux
+inline constexpr char Khistory[] { "history" };
+inline constexpr char Ksend[] { "send" };
+#else
+inline constexpr char Khistory[] { ":/icons/deepin/builtin/texts/history_18px.svg" };
+inline constexpr char Ksend[] { ":/icons/deepin/builtin/texts/send_18px.svg" };
+#endif
+
 
 using namespace cooperation_core;
 
@@ -170,6 +182,7 @@ void TransferHelperPrivate::transferResult(bool result, const QString &msg)
 
 void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
 {
+
     QString title = tr("Sending files to \"%1\"").arg(sendToWho);
     transDialog()->switchProgressPage(title);
     transDialog()->updateProgress(value, remainTime);
@@ -206,8 +219,8 @@ void TransferHelper::regist()
     ButtonStateCallback visibleCb = TransferHelper::buttonVisible;
     ButtonStateCallback clickableCb = TransferHelper::buttonClickable;
     QVariantMap historyInfo { { "id", HistoryButtonId },
-                              { "description", tr("View transfer history") },
-                              { "icon-name", "history" },
+                              { "description", QObject::tr("View transfer history") },
+                              { "icon-name", Khistory },
                               { "location", 2 },
                               { "button-style", 0 },
                               { "clicked-callback", QVariant::fromValue(clickedCb) },
@@ -215,8 +228,8 @@ void TransferHelper::regist()
                               { "clickable-callback", QVariant::fromValue(clickableCb) } };
 
     QVariantMap transferInfo { { "id", TransferButtonId },
-                               { "description", tr("Send files") },
-                               { "icon-name", "send" },
+                               { "description", QObject::tr("Send files") },
+                               { "icon-name", Ksend },
                                { "location", 3 },
                                { "button-style", 1 },
                                { "clicked-callback", QVariant::fromValue(clickedCb) },

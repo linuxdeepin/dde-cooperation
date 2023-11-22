@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -201,6 +201,7 @@ void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 
 void SettingDialogPrivate::onNameEditingFinished()
 {
+#ifdef linux
     int length = nameEdit->text().length();
     if (length < 1 || length > 63) {
         nameEdit->setAlert(true);
@@ -209,14 +210,16 @@ void SettingDialogPrivate::onNameEditingFinished()
     }
 
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey, nameEdit->text());
+#endif
 }
 
 void SettingDialogPrivate::onNameChanged(const QString &text)
 {
     Q_UNUSED(text);
-
+#ifdef linux
     if (nameEdit->isAlert())
         nameEdit->setAlert(false);
+#endif
 }
 
 void SettingDialogPrivate::onDeviceShareButtonClicked(bool clicked)
@@ -240,7 +243,11 @@ SettingDialog::SettingDialog(QWidget *parent)
       d(new SettingDialogPrivate(this))
 {
     d->initWindow();
+#ifdef linux
     d->initTitleBar();
+#else
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+#endif
 }
 
 SettingDialog::~SettingDialog()

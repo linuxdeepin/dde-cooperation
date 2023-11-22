@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,6 +13,16 @@
 
 using namespace cooperation_core;
 
+#ifdef linux
+const char *Kfind_device = "find_device";
+const char *Kno_network = "no_network";
+const char *Knot_find_device = "not_find_device";
+#else
+const char *Kfind_device = ":/icons/deepin/builtin/light/icons/find_device_277px.svg";
+const char *Kno_network = ":/icons/deepin/builtin/light/icons/no_network_150px.svg";
+const char *Knot_find_device = ":/icons/deepin/builtin/light/icons/not_find_device_150px.svg";
+#endif
+
 LookingForDeviceWidget::LookingForDeviceWidget(QWidget *parent)
     : QWidget(parent)
 {
@@ -23,7 +33,7 @@ void LookingForDeviceWidget::initUI()
 {
     QLabel *iconLabel = new QLabel(this);
     iconLabel->setFixedSize(277, 277);
-    QIcon icon = QIcon::fromTheme("find_device");
+    QIcon icon = QIcon::fromTheme(Kfind_device);
     iconLabel->setPixmap(icon.pixmap(277, 277));
 
     QLabel *tipsLabel = new QLabel(tr("Looking for devices"), this);
@@ -48,7 +58,7 @@ void NoNetworkWidget::initUI()
 {
     QLabel *iconLabel = new QLabel(this);
     iconLabel->setFixedSize(150, 150);
-    QIcon icon = QIcon::fromTheme("no_network");
+    QIcon icon = QIcon::fromTheme(Kno_network);
     iconLabel->setPixmap(icon.pixmap(150, 150));
 
     QLabel *tipsLabel = new QLabel(tr("Please connect to the network"), this);
@@ -79,19 +89,22 @@ void NoResultWidget::initUI()
 {
     QLabel *iconLabel = new QLabel(this);
     iconLabel->setFixedSize(150, 150);
-    QIcon icon = QIcon::fromTheme("not_find_device");
+    QIcon icon = QIcon::fromTheme(Knot_find_device);
     iconLabel->setPixmap(icon.pixmap(150, 150));
 
     QLabel *tipsLabel = new QLabel(tr("No device found"), this);
 
     BackgroundWidget *contentBackgroundWidget = new BackgroundWidget(this);
-    contentBackgroundWidget->setBackground(17, BackgroundWidget::ItemBackground, BackgroundWidget::TopAndBottom);
-    QString leadintText = tr("1.Enable cross-end collaborative applications. Applications on the UOS "
-                             "can be downloaded from the App Store, and applications on the Windows "
-                             "side can be downloaded from: ");
+    contentBackgroundWidget->setBackground(17, BackgroundWidget::ItemBackground,
+                                           BackgroundWidget::TopAndBottom);
+    QString leadintText =
+            tr("1.Enable cross-end collaborative applications. Applications on the UOS "
+               "can be downloaded from the App Store, and applications on the Windows "
+               "side can be downloaded from: ");
     QString hyperlink = "https://www.deepin.org/index/assistant";
 
-    QString websiteLinkTemplate = "<a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
+    QString websiteLinkTemplate =
+            "<a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
     QLabel *contentLable1 = new QLabel(this);
     contentLable1->setWordWrap(true);
@@ -100,7 +113,9 @@ void NoResultWidget::initUI()
 
     QLabel *contentLable2 = new QLabel(tr("2.On the same LAN as the device"), this);
     contentLable2->setWordWrap(true);
-    QLabel *contentLable3 = new QLabel(tr("3.Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\""), this);
+    QLabel *contentLable3 = new QLabel(
+            tr("3.Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\""),
+            this);
     contentLable3->setWordWrap(true);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
