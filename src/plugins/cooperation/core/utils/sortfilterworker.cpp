@@ -30,7 +30,8 @@ void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
         int index = 0;
         switch (info->connectStatus()) {
         case DeviceInfo::Connected:
-            index = findLast(DeviceInfo::Connected) + 1;
+            // 连接中的设备放第一个
+            index = 0;
             break;
         case DeviceInfo::Connectable: {
             int i = findLast(DeviceInfo::Connectable);

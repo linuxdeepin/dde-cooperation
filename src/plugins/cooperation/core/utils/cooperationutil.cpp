@@ -112,11 +112,11 @@ void CooperationUtilPrivate::localIPCStart()
                 nodeInfo.from_json(obj);
                 for (const auto &appInfo : nodeInfo.apps) {
                     // 上线，非跨端应用无需处理
-                    if (param.result && appInfo.appname.compare(MainAppName) != 0)
+                    if (param.result && appInfo.appname.compare(CooperDaemonName) != 0)
                         continue;
 
                     // 下线，跨端应用未下线
-                    if (!param.result && appInfo.appname.compare(MainAppName) == 0)
+                    if (!param.result && appInfo.appname.compare(CooperDaemonName) == 0)
                         continue;
 
                     q->metaObject()->invokeMethod(MainController::instance(),
@@ -176,6 +176,9 @@ void CooperationUtilPrivate::localIPCStart()
                     break;
                 }
             } break;
+            case FRONT_SERVER_ONLINE:
+                pingBackend();
+                break;
             default:
                 break;
             }
@@ -199,7 +202,7 @@ QList<DeviceInfoPointer> CooperationUtilPrivate::parseDeviceInfo(const co::Json 
     for (const auto &node : nodeList.peers) {
         DeviceInfoPointer devInfo { nullptr };
         for (const auto &app : node.apps) {
-            if (app.appname != MainAppName)
+            if (app.appname != CooperDaemonName)
                 continue;
 
             QJsonParseError error;
@@ -353,7 +356,7 @@ void CooperationUtil::setAppConfig(const QString &key, const QString &value)
         co::Json req, res;
 
         req = {
-            { "appname", MainAppName },
+            { "appname", CooperDaemonName },
             { "key", key.toStdString() },
             { "value", value.toStdString() }
         };

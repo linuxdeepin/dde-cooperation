@@ -6,6 +6,8 @@
 #include "utils/cooperationutil.h"
 #include "utils/historymanager.h"
 
+#include <QApplication>
+
 using ButtonStateCallback = std::function<bool(const QString &, const DeviceInfoPointer)>;
 using ClickedCallback = std::function<void(const QString &, const DeviceInfoPointer)>;
 Q_DECLARE_METATYPE(ButtonStateCallback)
@@ -57,6 +59,9 @@ void ShareManager::buttonClicked(const QString &id, const DeviceInfoPointer info
 
 bool ShareManager::buttonVisible(const QString &id, const DeviceInfoPointer info)
 {
+    if (qApp->property("onlyTransfer").toBool())
+        return false;
+
     if (id == ConnectButtonId && info->connectStatus() == DeviceInfo::ConnectStatus::Connectable)
         return true;
 

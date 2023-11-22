@@ -130,6 +130,9 @@ void CooperationUtilPrivate::localIPCStart()
                     break;
                 }
             } break;
+            case FRONT_SERVER_ONLINE:
+                pingBackend();
+                break;
             default:
                 break;
             }
@@ -172,7 +175,7 @@ void CooperationUtil::registAppInfo(const QString &infoJson)
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
         co::Json req, res;
 
-        QString appName = MainAppName;
+        QString appName = PluginName;
         AppPeerInfo peerInfo;
         peerInfo.appname = appName.toStdString();
         peerInfo.json = infoJson.toStdString();
@@ -194,7 +197,7 @@ void CooperationUtil::unregistAppInfo()
     UNIGO([] {
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
         co::Json req, res;
-        QString appName = MainAppName;
+        QString appName = PluginName;
 
         AppPeerInfo peerInfo;
         peerInfo.appname = appName.toStdString();
@@ -218,7 +221,7 @@ void CooperationUtil::setAppConfig(const QString &key, const QString &value)
         co::Json req, res;
 
         req = {
-            { "appname", MainAppName },
+            { "appname", PluginName },
             { "key", key.toStdString() },
             { "value", value.toStdString() }
         };
