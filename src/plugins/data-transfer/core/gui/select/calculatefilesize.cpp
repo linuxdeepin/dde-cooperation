@@ -1,4 +1,4 @@
-﻿#include "calculatefilesize.h"
+#include "calculatefilesize.h"
 #include <QThreadPool>
 #include <QListView>
 #include <QStandardItemModel>
@@ -15,22 +15,22 @@ QString fromByteToQstring(quint64 bytes)
 {
     float tempresult = static_cast<float>(bytes);
     float result = tempresult;
-    if (tempresult < 1024) {
+    if (tempresult < 100.0) {
         return QString("%1B").arg(QString::number(result));
     }
     tempresult = tempresult / 1024;
     result = roundf(tempresult * 10) / 10;
-    if (result < 1024.0) {
+    if (result < 100.0) {
         return QString("%1KB").arg(QString::number(result));
     }
     tempresult = tempresult / 1024;
     result = roundf(tempresult * 10) / 10;
-    if (result < 1024.0) {
+    if (result < 100.0) {
         return QString("%1MB").arg(QString::number(result));
     }
     tempresult = tempresult / 1024;
     result = roundf(tempresult * 10) / 10;
-    if (result < 1024.0) {
+    if (result < 100.0) {
         return QString("%1GB").arg(QString::number(result));
     }
     tempresult = tempresult / 1024;
@@ -176,11 +176,11 @@ void CalculateFileSizeThreadPool::exitPool()
     delete fileMap;
 }
 
-void CalculateFileSizeThreadPool::delDevice(const QModelIndex &index)
+void CalculateFileSizeThreadPool::delDevice(const QStandardItem *siderbarItem)
 {
     QMap<QString, FileInfo>::iterator it = fileMap->begin();
     while (it != fileMap->end()) {
-        if (it.value().siderIndex == index) {
+        if (it.value().siderbarItem == siderbarItem) {
             it = fileMap->erase(it);
         } else {
             ++it;

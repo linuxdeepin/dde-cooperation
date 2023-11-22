@@ -13,7 +13,6 @@
 #include <gui/connect/choosewidget.h>
 #include <utils/transferhepler.h>
 #include <utils/optionsmanager.h>
-#pragma execution_character_set("utf-8")
 
 zipFileProcessWidget::zipFileProcessWidget(QWidget *parent) : QFrame(parent)
 {
@@ -48,9 +47,9 @@ void zipFileProcessWidget::changeTimeLabel(const int &time)
 {
     if (time > 60) {
         int textTime = time / 60;
-        timeLabel->setText(QString("预计迁移时间还剩 %1分钟").arg(QString::number(textTime)));
+        timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes")).arg(QString::number(textTime)));
     } else {
-        timeLabel->setText(QString("预计迁移时间还剩 %1秒").arg(QString::number(time)));
+        timeLabel->setText(QString(tr("Transfer will be completed in %1 secondes")).arg(QString::number(time)));
     }
 }
 
@@ -78,7 +77,7 @@ void zipFileProcessWidget::initUI()
     iconmovie->start();
     iconLabel->setMovie(iconmovie);
 
-    QLabel *titileLabel = new QLabel("正在创建备份文件…", this);
+    QLabel *titileLabel = new QLabel(tr("Creating Backup File..."), this);
     titileLabel->setFixedHeight(50);
     QFont font;
     font.setPointSize(16);
@@ -94,7 +93,7 @@ void zipFileProcessWidget::initUI()
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
     timeLabel = new QLabel(this);
-    timeLabel->setText(QString("预计完成时间还剩 %1分钟").arg(QString::number(0)));
+    timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes")).arg(QString::number(0)));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     QFont timefont;
     font.setPointSize(7);

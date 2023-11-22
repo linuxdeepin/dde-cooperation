@@ -9,6 +9,7 @@
 #include <QTextBrowser>
 #include <QLineEdit>
 #include <QRegularExpressionValidator>
+#include <QTimer>
 
 #include <gui/connect/choosewidget.h>
 
@@ -23,14 +24,27 @@ ReadyWidget::ReadyWidget(QWidget *parent) : QFrame(parent)
 
 ReadyWidget::~ReadyWidget() { }
 
+void ReadyWidget::clear()
+{
+    ipInput->clear();
+    captchaInput->clear();
+    tiptextlabel->setVisible(false);
+    setnextButEnable(false);
+}
+
 void ReadyWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
 
+    // init timer
+    timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setInterval(2000);
+
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
 
-    QLabel *mainLabel = new QLabel("准备连接", this);
+    QLabel *mainLabel = new QLabel(tr("Ready to connect"), this);
     mainLabel->setStyleSheet("opacity: 1;"
                              "color: rgba(0,26,46,1);"
                              "font-family: \"SourceHanSansSC-Bold\";"
@@ -40,14 +54,14 @@ void ReadyWidget::initUI()
                              "text-align: left;");
     mainLabel->setAlignment(Qt::AlignTop | Qt::AlignCenter);
 
-    QLabel *ipLabel = new QLabel("IP地址", this);
+    QLabel *ipLabel = new QLabel(tr("IP"), this);
     QHBoxLayout *ipLayout = new QHBoxLayout(this);
     ipLayout->addSpacing(200);
     ipLayout->addWidget(ipLabel);
     ipLayout->setAlignment(Qt::AlignBottom);
 
     ipInput = new QLineEdit(this);
-    ipInput->setPlaceholderText("请输入您想要连接的电脑IP地址");
+    ipInput->setPlaceholderText(tr("Please input the IP of UOS"));
     ipInput->setStyleSheet("border-radius: 8px;"
                            "opacity: 1;"
                            "padding-left: 10px;"
@@ -68,13 +82,13 @@ void ReadyWidget::initUI()
     editLayout1->addSpacing(200);
     editLayout1->addWidget(ipInput);
 
-    QLabel *cue = new QLabel("您可以通过在另一台电脑上的迁移助手查看IP地址", this);
+    QLabel *cue = new QLabel(tr("Please open data transfer on UOS, and get the IP"), this);
     QHBoxLayout *cueLayout = new QHBoxLayout(this);
     cueLayout->addSpacing(200);
     cueLayout->addWidget(cue);
     cueLayout->setAlignment(Qt::AlignTop);
 
-    QLabel *Captcha = new QLabel("验证码：", this);
+    QLabel *Captcha = new QLabel(tr("Connect code"), this);
     QHBoxLayout *captchaLayout = new QHBoxLayout(this);
     captchaLayout->addSpacing(200);
     captchaLayout->addWidget(Captcha);
@@ -84,7 +98,7 @@ void ReadyWidget::initUI()
     QRegularExpressionValidator *captchaValidator =
             new QRegularExpressionValidator(QRegularExpression("^\\d{6}$"));
     captchaInput->setValidator(captchaValidator);
-    captchaInput->setPlaceholderText("请输入PC上显示的验证码");
+    captchaInput->setPlaceholderText(tr("Please input the connect code on UOS"));
     captchaInput->setStyleSheet("border-radius: 8px;"
                                 "opacity: 1;"
                                 "padding-left: 10px;"
@@ -101,7 +115,7 @@ void ReadyWidget::initUI()
     editLayout2->addWidget(captchaInput);
 
     QToolButton *backButton = new QToolButton(this);
-    backButton->setText("返回");
+    backButton->setText(tr("Back"));
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                               "border: 1px solid rgba(0,0,0, 0.03);"
@@ -118,7 +132,8 @@ void ReadyWidget::initUI()
     connect(backButton, &QToolButton::clicked, this, &ReadyWidget::backPage);
 
     tiptextlabel = new QLabel(this);
-    tiptextlabel->setText("<font size='4' color='#FF5736' >密码或IP错误！请重新输入。</font>");
+
+    tiptextlabel->setText("<font size='3' color='#000000'>连接中...</font>");
     tiptextlabel->setVisible(false);
     tiptextlabel->setAlignment(Qt::AlignCenter);
 
@@ -127,20 +142,9 @@ void ReadyWidget::initUI()
     palette.setColor(QPalette::ButtonText, Qt::white);
     nextButton->setEnabled(false);
     nextButton->setPalette(palette);
-    nextButton->setText("确定");
+    nextButton->setText(tr("Connect"));
     nextButton->setFixedSize(120, 35);
-    nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                              "border: 1px solid rgba(0,0,0, 0.03);"
-                              "opacity: 1;"
-                              "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                              "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
-                              "font-family: \"SourceHanSansSC-Medium\";"
-                              "font-size: 14px;"
-                              "font-weight: 500;"
-                              "color: rgba(255,255,255,1);"
-                              "font-style: normal;"  
-                              "text-align: center;"
-                              "}");
+    setnextButEnable(false);
     connect(nextButton, &QToolButton::clicked, this, &ReadyWidget::tryConnect);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
@@ -174,18 +178,62 @@ void ReadyWidget::initUI()
     QObject::connect(captchaInput, &QLineEdit::textChanged, this, &ReadyWidget::onLineTextChange);
     QObject::connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this,
                      &ReadyWidget::nextPage);
+    QObject::connect(TransferHelper::instance(), &TransferHelper::connectFailed, this,
+                     &ReadyWidget::connectFailed);
+
+    // Connect the timer's timeout signal to hiding the label
+    QObject::connect(timer, &QTimer::timeout, [&]() {
+        tiptextlabel->setText("<font size='3' color='#000000'>连接中...</font>");
+        tiptextlabel->setVisible(false);
+        setnextButEnable(true);
+    });
 }
 
 void ReadyWidget::tryConnect()
 {
+    tiptextlabel->setVisible(true);
+    setnextButEnable(false);
+
     qInfo() << ipInput->text() << " " << captchaInput->text();
     TransferHelper::instance()->tryConnect(ipInput->text(), captchaInput->text());
-    tiptextlabel->setVisible(true);
+}
+
+void ReadyWidget::setnextButEnable(bool enabel)
+{
+    if (enabel) {
+        nextButton->setEnabled(true);
+        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "border: 1px solid rgba(0,0,0, 0.03);"
+                                  "opacity: 1;"
+                                  "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                  "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
+                                  "font-family: \"SourceHanSansSC-Medium\";"
+                                  "font-size: 14px;"
+                                  "font-weight: 500;"
+                                  "color: rgba(255,255,255,1);"
+                                  "font-style: normal;"
+                                  "text-align: center;"
+                                  "}");
+    } else {
+        nextButton->setEnabled(false);
+        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "border: 1px solid rgba(0,0,0, 0.03);"
+                                  "opacity: 1;"
+                                  "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                                  "rgba(37, 183, 255, 0.6), stop:1 rgba(0, 152, 255, 0.6));"
+                                  "font-family: \"SourceHanSansSC-Medium\";"
+                                  "font-size: 14px;"
+                                  "font-weight: 500;"
+                                  "color: rgba(255,255,255,0.6);"
+                                  "font-style: normal;"
+                                  "text-align: center;"
+                                  "}");
+    }
 }
 
 void ReadyWidget::nextPage()
 {
-    tiptextlabel->setVisible(false);
+    // tiptextlabel->setVisible(false);
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
@@ -193,6 +241,8 @@ void ReadyWidget::nextPage()
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
+
+    clear();
 }
 
 void ReadyWidget::backPage()
@@ -204,6 +254,8 @@ void ReadyWidget::backPage()
         qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
+
+    clear();
 }
 
 void ReadyWidget::onLineTextChange()
@@ -213,7 +265,7 @@ void ReadyWidget::onLineTextChange()
     QRegularExpressionMatch ipMatch = ipRegex.match(ipInput->text());
 
     if (!ipMatch.hasMatch()) {
-        nextButton->setEnabled(false);
+        setnextButEnable(false);
         return;
     }
 
@@ -221,9 +273,15 @@ void ReadyWidget::onLineTextChange()
     QRegularExpressionMatch captchaMatch = captchaRegex.match(captchaInput->text());
 
     if (!captchaMatch.hasMatch()) {
-        nextButton->setEnabled(false);
+        setnextButEnable(false);
         return;
     }
 
-    nextButton->setEnabled(true);
+    setnextButEnable(true);
+}
+
+void ReadyWidget::connectFailed()
+{
+    tiptextlabel->setText(QString("<font size='3' color='#FF5736'>%1</font>").arg(tr("The user is busy, failed to connect.")));
+    timer->start();
 }

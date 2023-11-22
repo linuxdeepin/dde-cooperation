@@ -59,7 +59,15 @@ if (WIN32)
     file(GLOB SETUPS ${CMAKE_CURRENT_SOURCE_DIR}/setup/win/*)
     file(COPY ${SETUPS}
       DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
+
+    file(GLOB QM_FILES ${CMAKE_SOURCE_DIR}/translations/data-transfer/*.qm)
+    file(COPY ${QM_FILES}
+      DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/translations)
 else()
+    # translation
+    FILE(GLOB QM_FILES ${CMAKE_SOURCE_DIR}/translations/deepin-data-transfer/*.qm)
+    install(FILES ${QM_FILES} DESTINATION share/${PROJ_NAME}/translations)
+
     # icons
     FILE(GLOB ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/setup/linux/*.svg)
     install(FILES ${ICON_FILES} DESTINATION share/icons/hicolor/scalable/apps)

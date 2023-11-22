@@ -58,10 +58,10 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     addTaskcounter(1);
     QJsonObject jsonObj = ParseJson(filepath + "/" + "transfer.json");
     if (jsonObj.isEmpty()) {
-        addTaskcounter(-1);
         isall = false;
         qWarning() << "transfer.json is invaild";
         emit TransferHelper::instance()->failure("配置文件", "文件", "配置文件错误或丢失");
+        addTaskcounter(-1);
         return false;
     }
 
@@ -149,7 +149,7 @@ bool SettingHelper::installApps(const QString &app)
 
     QString &package = applist[app];
     if (package.isEmpty()) {
-        emit TransferHelper::instance()->failure(app, "应用", app + "安装失败，请进入应用商店安装");
+        emit TransferHelper::instance()->failure(app, "应用", "安装失败，请进入应用商店安装");
         return false;
     }
 
@@ -221,18 +221,30 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
         if (key == "Status" && value == "failed") {
             addTaskcounter(-1);
             isall = false;
-            emit TransferHelper::instance()->failure(package, "应用", app + "安装失败，请进入应用商店安装");
+            emit TransferHelper::instance()->failure(package, "应用", "安装失败，请进入应用商店安装");
         }
     }
 }
 
 void SettingHelper::addTaskcounter(int value)
 {
+    if(taskcounter == 0)
+        init();
+
     taskcounter += value;
+
     if (taskcounter == 0) {
         emit TransferHelper::instance()->transferContent("", "迁移完成", 100, -1);
         emit TransferHelper::instance()->transferSucceed(isall);
     }
+}
+
+void SettingHelper::init()
+{
+    isall = true;
+
+    //clear
+    emit TransferHelper::instance()->failure("", "clear", "");
 }
 
 bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
@@ -244,6 +256,9 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
             QString filename = value.toString();
             QString targetFile = QDir::homePath() + "/" + filename;
             QString file = filepath + filename.mid(filename.indexOf('/'));
+            auto dir = QFileInfo(targetFile).dir();
+            if(!dir.exists())
+                dir.mkpath(".");
             moveFile(file, targetFile);
         }
     }
@@ -255,7 +270,6 @@ bool SettingHelper::moveFile(const QString &src, QString &dst)
 {
     QFileInfo srcFileInfo(src);
     QString dstDir = QFileInfo(dst).path();
-    qInfo() << dstDir;
     if (QFile::exists(dst)) {
         int i = 1;
         QString baseName = srcFileInfo.baseName();
@@ -268,6 +282,7 @@ bool SettingHelper::moveFile(const QString &src, QString &dst)
         }
     }
     QFile f(src);
+    qInfo() << dst;
     if (f.rename(dst))
         return true;
 

@@ -7,9 +7,7 @@
 #include <QToolButton>
 #include <QStackedWidget>
 #include <QApplication>
-
 #include <gui/mainwindow_p.h>
-#pragma execution_character_set("utf-8")
 
 SuccessWidget::SuccessWidget(QWidget *parent)
     : QFrame(parent)
@@ -34,7 +32,7 @@ void SuccessWidget::initUI()
     iconLabel->setPixmap(QIcon(":/icon/success-128.svg").pixmap(73, 73));
     iconLabel->setAlignment(Qt::AlignCenter);
 
-    QLabel *titileLabel = new QLabel("迁移完成", this);
+    QLabel *titileLabel = new QLabel(tr("Transfer completed"), this);
     titileLabel->setFixedHeight(50);
     titileLabel->setStyleSheet("color: black;"
                                "font-size: 24px;"
@@ -56,14 +54,14 @@ void SuccessWidget::initUI()
                                       "color: rgb(82, 106, 127);"
                                       "line-height: 300%;"
                                       "background-color:rgba(0, 0, 0,0.08);}");
-    processTextBrowser->append("迁移完成！！！");
+    processTextBrowser->append(tr("Transfer completed"));
 
     QHBoxLayout *textBrowerlayout = new QHBoxLayout();
     textBrowerlayout->setAlignment(Qt::AlignCenter);
     textBrowerlayout->addWidget(processTextBrowser);
 
     QToolButton *backButton = new QToolButton(this);
-    backButton->setText("返回");
+    backButton->setText(tr("Back"));
     backButton->setFixedSize(120, 35);
     backButton->setStyleSheet("background-color: lightgray;");
     connect(backButton, &QToolButton::clicked, this, &SuccessWidget::nextPage);
@@ -72,7 +70,7 @@ void SuccessWidget::initUI()
     QPalette palette = nextButton->palette();
     palette.setColor(QPalette::ButtonText, Qt::white);
     nextButton->setPalette(palette);
-    nextButton->setText("退出");
+    nextButton->setText(tr("Exit"));
     nextButton->setFixedSize(120, 35);
     nextButton->setStyleSheet("background-color: #0098FF;");
     connect(nextButton, &QToolButton::clicked, qApp, &QApplication::quit);

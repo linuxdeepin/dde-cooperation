@@ -350,6 +350,7 @@ void ServerImpl::loop() {
     LOG << "server stopped: " << _ip << ':' << _port;
     co::close(_fd); _fd = (sock_t)-1;
     atomic_store(&_status, 2);
+    atomic_store(&_started, false);
     this->unref();
 }
 

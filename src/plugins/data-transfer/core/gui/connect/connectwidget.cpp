@@ -14,8 +14,6 @@
 
 #include <utils/transferhepler.h>
 
-#pragma execution_character_set("utf-8")
-
 ConnectWidget::ConnectWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -35,7 +33,7 @@ void ConnectWidget::initUI()
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
 
-    QLabel *titileLabel = new QLabel("准备连接", this);
+    QLabel *titileLabel = new QLabel(tr("Ready to connect"), this);
     titileLabel->setFixedHeight(40);
     QFont font;
     font.setPointSize(16);
@@ -43,7 +41,7 @@ void ConnectWidget::initUI()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tipLabel = new QLabel("请前往Windows，打开迁移工具，输入本机IP和连接密码。", this);
+    QLabel *tipLabel = new QLabel(tr("Please open data transfer on Windows, and imput the IP and connect code"), this);
     tipLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     tipLabel->setFixedHeight(20);
     font.setPointSize(10);
@@ -53,7 +51,7 @@ void ConnectWidget::initUI()
     connectLayout = new QHBoxLayout();
     initConnectLayout();
 
-    WarnningLabel = new QLabel("验证码已过期，请刷新获取新的验证码", this);
+    WarnningLabel = new QLabel(tr("Connect code is expired, please refresh for new code"), this);
     WarnningLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
     WarnningLabel->setFixedHeight(80);
     font.setPointSize(8);
@@ -69,7 +67,7 @@ void ConnectWidget::initUI()
     WarnningLabel->setVisible(false);
 
     backButton = new QToolButton(this);
-    backButton->setText("返回");
+    backButton->setText(tr("Back"));
     backButton->setFixedSize(250, 36);
     backButton->setStyleSheet("background-color: #E3E3E3;");
     connect(backButton, &QToolButton::clicked, this, &ConnectWidget::backPage);
@@ -106,8 +104,8 @@ void ConnectWidget::initConnectLayout()
     iconLabel->setPixmap(QIcon(":/icon/computer.svg").pixmap(96, 96));
 
     ipLabel->setStyleSheet("background-color: rgba(0, 129, 255, 0.2); border-radius: 16;");
-    QString ip = QString("<font size=12px >本机 IP： </font><span style='font-size: 17px; font-weight: 600;'>%1</span>")
-                         .arg(ipaddress);
+    QString ip = QString("<font size=12px >%1： </font><span style='font-size: 17px; font-weight: 600;'>%2</span>")
+                         .arg(tr("Local IP")).arg(ipaddress);
     ipLabel->setText(ip);
     ipLabel->setFixedSize(204, 32);
 
@@ -148,15 +146,15 @@ void ConnectWidget::initConnectLayout()
     tipfont.setPointSize(8);
     refreshLabel->setFont(tipfont);
     refreshLabel->setAlignment(Qt::AlignBottom);
-    refreshLabel->setText("<a href=\"https://\" style=\"text-decoration:none;\">刷新</a>");
+    refreshLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Refresh")));
 
     tipLabel->setFont(tipfont);
 
     QTimer *timer = new QTimer();
-    connect(timer, &QTimer::timeout, [tipLabel, passwordLabel, nullLabel, timer, this]() {
+    connect(timer, &QTimer::timeout, [refreshLabel, tipLabel, passwordLabel, nullLabel, timer, this]() {
         if (remainingTime > 0) {
             remainingTime--;
-            QString tip = QString("密码有效时间还剩<font color='#6199CA'>%1s</font>，请尽快输入连接密码").arg(QString::number(remainingTime));
+            QString tip = QString("%1<font color='#6199CA'>%2s</font>%3").arg(tr("The code will be expired in")).arg(QString::number(remainingTime)).arg(tr("please input connect code as soon as possible"));
             tipLabel->setText(tip);
         } else {
             tipLabel->setVisible(false);
@@ -164,6 +162,7 @@ void ConnectWidget::initConnectLayout()
             nullLabel->setVisible(true);
             WarnningLabel->setVisible(true);
             timer->stop();
+            emit refreshLabel->linkActivated(" ");
         }
     });
     timer->start(1000);

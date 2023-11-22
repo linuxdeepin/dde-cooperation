@@ -9,10 +9,7 @@
 #include <QMovie>
 
 #include <utils/transferhepler.h>
-
 #include <gui/connect/choosewidget.h>
-
-#pragma execution_character_set("utf-8")
 
 WaitTransferWidget::WaitTransferWidget(QWidget *parent)
     : QFrame(parent)
@@ -33,7 +30,7 @@ void WaitTransferWidget::initUI()
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
 
-    QLabel *titileLabel = new QLabel("等待迁移…", this);
+    QLabel *titileLabel = new QLabel(tr("Waiting for transfer..."), this);
     titileLabel->setFixedHeight(50);
     QFont font;
     font.setPointSize(16);
@@ -41,7 +38,7 @@ void WaitTransferWidget::initUI()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tipLabel = new QLabel("请前往windows PC 端选择要传输的内容", this);
+    QLabel *tipLabel = new QLabel(tr("Please select the data to transfer on Windows"), this);
     tipLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
     iconLabel = new QLabel(this);
@@ -59,7 +56,7 @@ void WaitTransferWidget::initUI()
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     backButton = new QToolButton(this);
-    backButton->setText("取消");
+    backButton->setText(tr("Cancel"));
     backButton->setFixedSize(250, 36);
     backButton->setStyleSheet("background-color: lightgray;");
 #ifndef WIN32
@@ -128,11 +125,11 @@ void WaitTransferWidget::cancel()
 {
     DDialog dlg;
     dlg.setIcon(QIcon::fromTheme("dialog-warning"));
-    dlg.addButton("取 消");
-    dlg.addButton("关 闭", true, DDialog::ButtonWarning);
+    dlg.addButton(tr("Cancel"));
+    dlg.addButton(tr("Close"), true, DDialog::ButtonWarning);
 
-    dlg.setTitle("该操作会清空传输进度，您要继续吗");
-    dlg.setMessage("此操作不可恢复");
+    dlg.setTitle(tr("This operation will clear the transmission progress, Do you want to continue."));
+    dlg.setMessage(tr("This operation is not recoverable"));
 
     int code = dlg.exec();
     if (code == 1) {

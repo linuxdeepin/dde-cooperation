@@ -100,7 +100,17 @@ SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString 
     int retryCount = 0;
 
 retryed:
+#if defined(WIN32)
+    co::wait_group wg;
+    wg.add(1);
+    UNIGO([&stub, &rpc_controller, &req, &rpc_res, wg]() {
+#endif
     stub.proto_msg(rpc_controller, &req, &rpc_res, nullptr);
+#if defined(WIN32)
+        wg.done();
+    });
+    wg.wait();
+#endif
 
     if (rpc_controller->ErrorCode() != 0) {
         retryCount++;

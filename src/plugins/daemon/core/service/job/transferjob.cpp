@@ -49,11 +49,6 @@ bool TransferJob::initRpc(fastring target, uint16 port)
         req_job.app_who = _tar_app_name;
         req_job.targetAppname = _app_name;
         // 必须等待对方回复了才执行后面的流程
-#if defined(WIN32)
-        co::wait_group wg;
-        wg.add(1);
-        UNIGO([this, req_job](){
-#endif
         auto res = _remote->doSendProtoMsg(IN_TRANSJOB, req_job.as_json().str().c_str(), QByteArray());
         if (res.errorType < INVOKE_OK) {
             SendStatus st;
@@ -65,11 +60,6 @@ bool TransferJob::initRpc(fastring target, uint16 port)
             this->_init_success = false;
             return false;
         }
-#if defined(WIN32)
-            wg.done();
-        });
-        wg.wait();
-#endif
     }
     return true;
 }
@@ -222,11 +212,6 @@ void TransferJob::scanPath(fastring root, fastring path)
     info.entry = *entry;
     info.entry.appName = _app_name;
     info.entry.rcvappName = _tar_app_name;
-#if defined(WIN32)
-    co::wait_group wg;
-    wg.add(1);
-    UNIGO([this, info](){
-#endif
     auto res = _remote->doSendProtoMsg(FS_INFO, info.as_json().str().c_str(), QByteArray());
     if (res.errorType < INVOKE_OK) {
         SendStatus st;
@@ -237,11 +222,6 @@ void TransferJob::scanPath(fastring root, fastring path)
         SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
         cancel();
     }
-#if defined(WIN32)
-        wg.done();
-    });
-    wg.wait();
-#endif
     if (_status >= STOPED)
         return;
     if (fs::isdir(path.c_str())) {
@@ -301,7 +281,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         FileInfo info;
         info.job_id = _jobid;
         info.file_id = fileid;
-        info.name = subname;
+        info.name = filepath;
         info.total_size = file_size;
         info.current_size = 0;
         info.time_spended = -1;
@@ -455,11 +435,6 @@ void TransferJob::handleBlockQueque()
             file_block.compressed = (comp);
             QByteArray data(buffer.c_str(), static_cast<int>(len));
             // DLOG << "(" << job_id << ") send block " << block->filename << " size: " << len;
-#if defined(WIN32)
-            co::wait_group wg;
-            wg.add(1);
-            UNIGO([this, info](){
-#endif
             auto res = _remote->doSendProtoMsg(FS_DATA, file_block.as_json().str().c_str(), data);
             if (res.errorType < INVOKE_OK) {
                 SendStatus st;
@@ -470,11 +445,6 @@ void TransferJob::handleBlockQueque()
                 SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
                 cancel();
             }
-#if defined(WIN32)
-            wg.done();
-        });
-        wg.wait();
-#endif
         }
 
         if (!exception) {
@@ -500,23 +470,13 @@ void TransferJob::handleBlockQueque()
 
 void TransferJob::handleUpdate(FileTransRe result, const char *path, const char *emsg)
 {
-#if defined(WIN32)
-    co::wait_group wg;
-    wg.add(1);
-    UNIGO([this, result, path, emsg] {
-#endif
-        FileTransJobReport report;
-        report.job_id = (_jobid);
-        report.path = (path);
-        report.result = (result);
-        report.error = (emsg);
-        auto res = _remote->doSendProtoMsg(FS_REPORT,
-                                           report.as_json().str().c_str(), QByteArray());
-#if defined(WIN32)
-        wg.done();
-    });
-    wg.wait();
-#endif
+    FileTransJobReport report;
+    report.job_id = (_jobid);
+    report.path = (path);
+    report.result = (result);
+    report.error = (emsg);
+    auto res = _remote->doSendProtoMsg(FS_REPORT,
+                                        report.as_json().str().c_str(), QByteArray());
 }
 
 bool TransferJob::syncHandleStatus()
@@ -533,7 +493,7 @@ bool TransferJob::syncHandleStatus()
             bool end = pair.second.current_size >= pair.second.total_size;
             handleTransStatus(end ? FILE_TRANS_END : FILE_TRANS_SPEED, pair.second);
             if (end) {
-                DLOG << "should notify file finish: " << pair.second.name << " jobid=" << pair.second.job_id;
+                DLOG_IF(TEST_LOGOUT) << "should notify file finish: " << pair.second.name << " jobid=" << pair.second.job_id;
                 _file_info_maps.erase(pair.first);
                 if (!_writejob) {
                     //TODO: check sum
@@ -548,7 +508,9 @@ bool TransferJob::syncHandleStatus()
 void TransferJob::handleJobStatus(int status)
 {
     QString appname(_app_name.c_str());
-    QString savepath(_savedir.c_str());
+    fastring fullpath = path::join(
+                DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+    QString savepath(fullpath.c_str());
 
     emit notifyJobResult(appname, _jobid, status, savepath);
 }
@@ -556,10 +518,6 @@ void TransferJob::handleJobStatus(int status)
 void TransferJob::handleTransStatus(int status, FileInfo &info)
 {
     co::Json filejson = info.as_json();
-    //update the file relative to abs path
-    fastring savedpath = path::join(DaemonConfig::instance()->getStorageDir(_app_name), info.name);
-    filejson.remove("name");
-    filejson.add_member("name", savedpath);
     QString appname(_app_name.c_str());
     QString fileinfo(filejson.str().c_str());
 

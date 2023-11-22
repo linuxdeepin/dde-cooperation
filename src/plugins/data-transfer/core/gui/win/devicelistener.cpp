@@ -9,7 +9,7 @@ DeviceListener::DeviceListener(QWidget *parent) : QWidget(parent)
 {
     setFixedSize(0, 0);
     updateDevice();
-    qInfo() << "DeviceListener init.........";
+    qInfo() << "DeviceListener init";
 }
 
 DeviceListener::~DeviceListener() { }

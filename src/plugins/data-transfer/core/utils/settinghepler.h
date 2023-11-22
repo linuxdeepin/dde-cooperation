@@ -28,6 +28,7 @@ public:
 
     void addTaskcounter(int value);
 
+    void init();
 public Q_SLOTS:
     void onPropertiesChanged(const QDBusMessage &message);
 

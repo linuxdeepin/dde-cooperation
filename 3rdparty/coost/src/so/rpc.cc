@@ -78,7 +78,10 @@ public:
         _url = url;
         atomic_store(&_started, true, mo_relaxed);
         _tcp_serv.on_connection(&ServerImpl::on_connection, this);
-        _tcp_serv.on_exit([this]() { co::del(this); });
+        _tcp_serv.on_exit([this]() {
+            atomic_store(&_started, false, mo_relaxed);
+            co::del(this);
+        });
         _tcp_serv.start(ip, port, key, ca);
     }
 

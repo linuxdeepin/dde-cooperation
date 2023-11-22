@@ -127,6 +127,9 @@ bool JobManager::handleFSInfo(co::Json &info)
 
     auto job = _transjob_recvs.value(jobId);
     if (!job.isNull()) {
+        //update the file relative to abs path
+        fastring savedpath = path::join(DaemonConfig::instance()->getStorageDir(job->getAppName()), finfo.name);
+        finfo.name = savedpath;
         job->insertFileInfo(finfo);
     } else {
         return false;
@@ -216,45 +219,41 @@ bool JobManager::handleTransReport(co::Json &info, FileTransResponse *reply)
 
 void JobManager::handleFileTransStatus(QString appname, int status, QString fileinfo)
 {
-    //DLOG << "notify file trans status to:" << s->getName().toStdString();
-    UNIGO([appname, status, fileinfo]() {
-        co::Json infojson;
-        infojson.parse_from(fileinfo.toStdString());
-        FileInfo filejob;
-        filejob.from_json(infojson);
+    //DLOG << "notify file trans status to:" << appname.toStdString();
+    co::Json infojson;
+    infojson.parse_from(fileinfo.toStdString());
+    FileInfo filejob;
+    filejob.from_json(infojson);
 
-        co::Json req, res;
-        //notifyFileStatus {FileStatus}
-        req = {
-            { "job_id", filejob.job_id },
-            { "file_id", filejob.file_id },
-            { "name", filejob.name },
-            { "status", status },
-            { "total", filejob.total_size },
-            { "current", filejob.current_size },
-            { "second", filejob.time_spended },
-        };
+    co::Json req, res;
+    //notifyFileStatus {FileStatus}
+    req = {
+        { "job_id", filejob.job_id },
+        { "file_id", filejob.file_id },
+        { "name", filejob.name },
+        { "status", status },
+        { "total", filejob.total_size },
+        { "current", filejob.current_size },
+        { "second", filejob.time_spended },
+    };
 
-        req.add_member("api", "Frontend.notifyFileStatus");
-        SendIpcService::instance()->handleSendToClient(appname, req.str().c_str());
-    });
+    req.add_member("api", "Frontend.notifyFileStatus");
+    SendIpcService::instance()->handleSendToClient(appname, req.str().c_str());
 }
 
 void JobManager::handleJobTransStatus(QString appname, int jobid, int status, QString savedir)
 {
     //DLOG << "notify file trans status to:" << appname.toStdString() << " jobid=" << jobid;
-    UNIGO([appname, jobid, status, savedir]() {
-        co::Json req;
-        //cbTransStatus {GenericResult}
-        req = {
-            { "id", jobid },
-            { "result", status },
-            { "msg", savedir.toStdString() },
-        };
+    co::Json req;
+    //cbTransStatus {GenericResult}
+    req = {
+        { "id", jobid },
+        { "result", status },
+        { "msg", savedir.toStdString() },
+    };
 
-        req.add_member("api", "Frontend.cbTransStatus");
-        SendIpcService::instance()->handleSendToClient(appname, req.str().c_str());
-    });
+    req.add_member("api", "Frontend.cbTransStatus");
+    SendIpcService::instance()->handleSendToClient(appname, req.str().c_str());
 }
 
 void JobManager::handleRemoveJob(const int jobid)

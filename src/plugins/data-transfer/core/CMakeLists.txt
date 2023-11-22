@@ -56,7 +56,12 @@ else()
 endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network )
+
+if (CMAKE_SYSTEM MATCHES "Windows")
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Svg WinExtras)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Svg WinExtras)
+endif()
 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
 
@@ -93,8 +98,10 @@ if (CMAKE_SYSTEM MATCHES "Linux")
 endif()
 if (CMAKE_SYSTEM MATCHES "Windows")
     target_link_libraries(${PROJECT_NAME}
-        Qt5::Sql
         ${QUAZIP_LIB_TARGET_NAME}
+        Qt${QT_VERSION_MAJOR}::Sql
+        Qt${QT_VERSION_MAJOR}::Svg
+        Qt${QT_VERSION_MAJOR}::WinExtras
     )
 endif()
 

@@ -47,9 +47,7 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
     if (_stoped)
         return;
     auto sender = this->rpcSender(appName);
-#if defined(WIN32)
-    UNIGO([sender, type, appName, msg, data](){
-#endif
+
     SendResult res;
     if (!sender.isNull()) {
         if (type == TRANS_APPLY) {
@@ -79,18 +77,13 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
         return;
     // todo 发送信号给其他使用模块
     emit sendToRpcResult(appName, res.as_json().str().c_str());
-#if defined(WIN32)
-    });
-#endif
 }
 
 void SendRpcWork::handlePing(const QStringList apps)
 {
     if (_stoped)
         return;
-#if defined(WIN32)
-    UNIGO([this, apps](){
-#endif
+
     for (const auto &appName : apps) {
         if (_stoped)
             return;
@@ -109,10 +102,6 @@ void SendRpcWork::handlePing(const QStringList apps)
             SendRpcService::instance()->removePing(appName);
         }
     }
-
-#if defined(WIN32)
-    });
-#endif
 }
 
 QSharedPointer<RemoteServiceSender> SendRpcWork::createRpcSender(const QString &appName,

@@ -1,3 +1,16 @@
+dde-cooperation (0.4.0-1) unstable; urgency=medium
+
+  * Integrate new backend with data transfer.
+  * Fix some known issues.
+
+ -- re2zero <yangwu@uniontech.com>  Wed, 22 Nov 2023 03:50:16 +0800
+
+dde-cooperation (0.3.8-1) unstable; urgency=medium
+
+  * fix some known issues.
+
+ -- re2zero <yangwu@uniontech.com>  Tue, 14 Nov 2023 18:00:24 +0800
+
 dde-cooperation (0.3.7-7) unstable; urgency=medium
 
   * v0.3.7 release version.
