@@ -103,7 +103,7 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
     QString saveDir = (deviceName + "(%1)").arg(CooperationUtil::localIPAddress());
     ipc::TransFilesParam transParam;
     transParam.session = CooperationUtil::instance()->sessionId().toStdString();
-    transParam.targetSession = RecvModuleName;   // 发送给后端插件
+    transParam.targetSession = CooperDaemonName;   // 发送给后端插件
     transParam.id = TransferJobStartId;
     transParam.paths = fileVector;
     transParam.sub = true;
@@ -129,7 +129,7 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
     ApplyTransFiles transInfo;
     transInfo.appname = qApp->applicationName().toStdString();
     transInfo.type = type;
-    transInfo.tarAppname = RecvModuleName; // 发送给后端插件
+    transInfo.tarAppname = CooperDaemonName; // 发送给后端插件
     transInfo.machineName = deviceName.toStdString();
 
     co::Json req = transInfo.as_json();
@@ -150,7 +150,7 @@ void TransferHelperPrivate::handleTryConnect(const QString &ip)
     conParam.appName = qApp->applicationName().toStdString();
     conParam.host = targetIp;
     conParam.password = pinCode;
-    conParam.targetAppname = RecvModuleName;   // 发送给后端插件
+    conParam.targetAppname = CooperDaemonName;   // 发送给后端插件
 
     req = conParam.as_json();
     req.add_member("api", "Backend.tryConnect");
