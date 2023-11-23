@@ -13,10 +13,14 @@
 #include <QDirIterator>
 #include <QCoreApplication>
 #include <JlCompress.h>
+#include <QDataStream>
 
+#define BUFFER_SIZE 8*1024
 ZipWork::ZipWork(QObject *parent) : QThread(parent)
 {
     qInfo() << "zipwork start.";
+
+    maxNum = BUFFER_SIZE*10240;
     // connect backup file process
     QObject::connect(this, &ZipWork::backupFileProcessSingal, TransferHelper::instance(),
                      &TransferHelper::zipTransferContent);
@@ -38,7 +42,10 @@ void ZipWork::getUserDataPackagingFile()
     QStringList zipFilePathList = TransferHelper::instance()->getTransferFilePath();
 
     // Get the number of files to zip
-    allFileNum = getAllFileNum(zipFilePathList);
+
+    QString size = OptionsManager::instance()->getUserOption(Options::KBackupFileSize)[0];
+    allFileSize = size.toULongLong();
+    qInfo()<<"bakc up file size:"<<allFileSize;
     backupFile(zipFilePathList, getBackupFilName());
 }
 
@@ -84,25 +91,56 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
     if (!sourceFile.open(QIODevice::ReadOnly)) {
         qCritical() << "Error reading source file:" << filePath;
         // backup file false
-        emit backupFileProcessSingal(QString(tr("Error in compressing source files :%1")).arg(filePath), -1, -1);
+        emit backupFileProcessSingal(
+                QString(tr("Error in compressing source files :%1")).arg(filePath), -1, -1);
         return false;
     }
 
     QuaZipFile destinationFile(&zip);
     QString destinationFileName = QDir(relativeTo).relativeFilePath(filePath);
-
     QuaZipNewInfo newInfo(destinationFileName, sourceFile.fileName());
     if (!destinationFile.open(QIODevice::WriteOnly, newInfo)) {
         qCritical() << "Error writing to ZIP file for:" << filePath;
         // backup file false
-        emit backupFileProcessSingal(QString(tr("Error writing compressed file :%1")).arg(filePath), -1, -1);
+        emit backupFileProcessSingal(QString(tr("Error writing compressed file :%1")).arg(filePath),
+                                     -1, -1);
         return false;
     }
 
-    destinationFile.write(sourceFile.readAll());
+
+    QDataStream in(&sourceFile);
+    char buffer[BUFFER_SIZE] = {0};
+    while (!in.atEnd()) {
+        memset(buffer, 0, BUFFER_SIZE);
+        qint64 bytesRead = in.readRawData(buffer, BUFFER_SIZE);
+        if (bytesRead == -1) {
+            free(buffer);
+            qCritical() << "Error reading from source file:" << filePath;
+            destinationFile.close();
+            sourceFile.close();
+            emit backupFileProcessSingal(QString(tr("Error reading file :%1")).arg(filePath), -1,
+                                         -1);
+            return false;
+        }
+
+        qint64 bytesWritten = destinationFile.write(buffer, bytesRead);
+        if (bytesWritten == -1) {
+            free(buffer);
+            qCritical() << "Error writing to ZIP file for:" << filePath;
+            destinationFile.close();
+            sourceFile.close();
+            emit backupFileProcessSingal(
+                    QString(tr("Error writing compressed file :%1")).arg(filePath), -1, -1);
+            return false;
+        }
+
+        sendBackupFileProcess(filePath, timer,bytesRead);
+
+    }
+    free(buffer);
     destinationFile.close();
     sourceFile.close();
-    sendBackupFileProcess(filePath, timer);
+
     return true;
 }
 
@@ -145,7 +183,10 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     if (!zip.open(QuaZip::mdCreate)) {
         qCritical("Error creating the ZIP file.");
         // backup file false
-        emit backupFileProcessSingal(QString(tr("Failed to create compressed file, check if file %1 is already open!")).arg(destinationZipFile), -1, -1);
+        emit backupFileProcessSingal(
+                QString(tr("Failed to create compressed file, check if file %1 is already open!"))
+                        .arg(destinationZipFile),
+                -1, -1);
         return false;
     }
 
@@ -170,8 +211,8 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     if (zip.getZipError() != UNZ_OK) {
         qCritical() << "Error while compressing. Error code:" << zip.getZipError();
         // backup file false
-        emit backupFileProcessSingal(QString("File compression failed, error code:%1").arg(zip.getZipError()),
-                                     -1, -1);
+        emit backupFileProcessSingal(
+                QString("File compression failed, error code:%1").arg(zip.getZipError()), -1, -1);
         return false;
     }
 
@@ -180,39 +221,52 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     return true;
 }
 
-void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer)
+void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer,int size)
 {
-    zipFileNum++;
-    int progress = (zipFileNum * 100) / allFileNum;
 
-    if (progress <= 0)
-        progress = 0;
-    if (progress >= 100)
-        progress = 98;
-
+    zipFileSize += size;
+     num+=size;
+    double progress = (static_cast<double>(zipFileSize) / static_cast<double>(allFileSize)) * 100;
     if (!timer.isValid()) {
         timer.start();
     } else {
+        quint64 tempTime =0;
+        if(firstFlag)
+        {
+            tempTime = BUFFER_SIZE*50;
+            firstFlag=false;
+        }else{
+            tempTime = maxNum;
+        }
         // If the timer is started, the elapsed time is calculated and the timer is restarted
-        if (num == maxNum) {
+        if (num >= tempTime) {
+
+
             qint64 elapsed = timer.restart();
-            needTime = static_cast<int>(elapsed) / maxNum * (allFileNum - zipFileNum) / 1000;
+            if(allFileSize <=zipFileSize)
+            {
+                needTime = static_cast<int>(elapsed *(0 / num))/1000;
+                // qInfo()<<"needtime:"<<needTime<<"(allFileSize - zipFileSize):"<<0<< "zipFileSize:"<<  zipFileSize<<" num:"<<num<<" elapsed:"<<elapsed;
+            }else{
+                needTime = static_cast<int>(elapsed *((allFileSize - zipFileSize) / num))/1000;
+                 //qInfo()<<"needtime:"<<needTime<<"(allFileSize - zipFileSize)/num:"<<(allFileSize - zipFileSize)/num<<" zipFileSize:"<<    zipFileSize<<" num:"<<num<<" elapsed:"<<elapsed;
+            }
+             num = 0;
         }
     }
-    if (needTime < 5)
-        needTime = 5;
-    if (needTime > 3600)
-        needTime = 3600;
-    num++;
-    if (num > maxNum)
-        num = 0;
-    emit backupFileProcessSingal(filePath, progress, needTime);
+
+   needTime =std::max(std::min(needTime,3600),1);
+   int iprogress =std::max(std::min((int)progress,100),0);
+
+   emit backupFileProcessSingal(filePath, iprogress, needTime);
 }
 
 QString ZipWork::getBackupFilName()
 {
-    QStringList zipFileSavePath = OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath);
-    QStringList zipFileNameList = OptionsManager::instance()->getUserOption(Options::kBackupFileName);
+    QStringList zipFileSavePath =
+            OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath);
+    QStringList zipFileNameList =
+            OptionsManager::instance()->getUserOption(Options::kBackupFileName);
 
     QDateTime currentDateTime = QDateTime::currentDateTime();
     QString formattedDateTime = currentDateTime.toString("yyyyMMddhhmm");
@@ -221,18 +275,11 @@ QString ZipWork::getBackupFilName()
 
     if (zipFileNameList[0] == "") {
         zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName() + "_"
-                + DrapWindowsData::instance()->getIP() +"_" +formattedDateTime+".zip";
+                + DrapWindowsData::instance()->getIP() + "_" + formattedDateTime + ".zip";
     } else {
-        zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] +".zip";
+        zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] + ".zip";
     }
     qInfo() << "backup file save path:" << zipFileName;
-
-    QFile  file(zipFileName);
-    if (file.exists() && file.remove()) {
-        qDebug() <<zipFileName <<" exists, and removed!" ;
-    } else {
-        qDebug() << zipFileName <<" exists, and can not removed!" ;
-    }
 
     return zipFileName;
 }

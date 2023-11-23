@@ -338,24 +338,6 @@ QString DrapWindowsData::getUserName()
     return userName;
 }
 
-QString DrapWindowsData::getIP()
-{
-    QString hostname = QHostInfo::localHostName();
-    QHostInfo hostinfo = QHostInfo::fromName(hostname);
-    QList<QHostAddress> addList = hostinfo.addresses();
-    QList<QString> address;
-    if (!addList.isEmpty())
-        for (int i = 0; i < addList.size(); i++) {
-            QHostAddress aHost = addList.at(i);
-            if (QAbstractSocket::IPv4Protocol == aHost.protocol()) {
-                address.append(aHost.toString());
-            }
-        }
-
-    QString ipaddress = address.count() > 2 ? address[1] : "";
-    return ipaddress;
-}
-
 void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 {
     QFile file(":/fileResource/apps.json");
@@ -395,6 +377,22 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
     }
 
     return;
+}
+
+QString DrapWindowsData::getIP()
+{
+    QString ip;
+    for (auto inter : QNetworkInterface::allInterfaces()) {
+        if (inter.type() != QNetworkInterface::InterfaceType::Ethernet)
+            continue;
+        foreach (QNetworkAddressEntry entry, inter.addressEntries()) {
+            if (entry.ip().protocol() != QAbstractSocket::NetworkLayerProtocol::IPv4Protocol)
+                continue;
+            ip = QString(entry.ip().toString());
+            qDebug() << "IP Address:------" << ip;
+        }
+    }
+    return ip;
 }
 
 void DrapWindowsData::getApplianceListInfo()
