@@ -218,6 +218,9 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
         TransferHelper::instance()->setting(path);
 #endif
         break;
+    case JOB_TRANS_CANCELED:
+        emit TransferHelper::instance()->interruption();
+        break;
     default:
         break;
     }

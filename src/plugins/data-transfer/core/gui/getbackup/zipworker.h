@@ -26,7 +26,7 @@ private:
                         QElapsedTimer &timer);
     bool backupFile(const QStringList &sourceFilePath, const QString &zipFileSave);
 
-    void sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer);
+    void sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer,int size);
 
     QString getBackupFilName();
 signals:
@@ -35,13 +35,14 @@ public slots:
     void abortingBackupFileProcess();
 
 private:
-    int allFileNum{ 0 };
-    int zipFileNum{ 0 };
+    quint64 allFileSize{ 0 };
+    quint64 zipFileSize{ 0 };
     int lastZipFileNum{ 0 };
     int needTime{ 3600 };
     bool abort{ false };
-    int num{ 0 };
-    int maxNum{ 50 };
+    quint64 num{ 0 };
+    quint64 maxNum{ 0 };
     QString zipFile;
+    bool firstFlag {true};
 };
 #endif

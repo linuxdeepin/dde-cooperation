@@ -128,6 +128,8 @@ void MainWindowPrivate::initWidgets()
     QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
                      createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
 
+    QObject::connect(TransferHelper::instance(),&TransferHelper::interruption,transferringwidget,&TransferringWidget::errorWidget);
+
 QObject:
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
             [stackedWidget, errorwidget](bool online) {

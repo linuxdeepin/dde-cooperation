@@ -294,7 +294,7 @@ void CreateBackupFileWidget::initDiskListView()
     diskListView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     diskListView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    QObject::connect(diskListView, &QListView::clicked, [this, model](const QModelIndex &index) {
+    QObject::connect(diskListView, &QListView::clicked, [model](const QModelIndex &index) {
         for (int row = 0; row < model->rowCount(); ++row) {
             QModelIndex itemIndex = model->index(row, 0);
             if (itemIndex != index) {
@@ -412,6 +412,7 @@ void CreateBackupFileWidget::updaeBackupFileSize()
     }
 
     allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize + bookmarkJsonSize;
+    OptionsManager::instance()->addUserOption(Options::KBackupFileSize,QStringList{QString::number(allSize)});
     backupFileSizeLabel->setText(QString(tr("Size:%1")).arg(fromByteToQstring(allSize)));
 
     checkDisk();

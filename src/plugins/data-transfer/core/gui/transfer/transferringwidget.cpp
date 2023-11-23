@@ -1,6 +1,6 @@
 ﻿#include "transferringwidget.h"
 #include "../type_defines.h"
-
+#include "errorwidget.h"
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
@@ -247,4 +247,19 @@ void TransferringWidget::clear()
     progressLabel->setProgress(0);
     timeLabel->setText(tr("Calculationing..."));
     titileLabel->setText(tr("Transferring..."));
+}
+
+void TransferringWidget::errorWidget()
+{
+    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+
+    if (stackedWidget) {
+        ErrorWidget *errorwidget = qobject_cast<ErrorWidget*>(stackedWidget->widget(PageName::errorwidget));
+        errorwidget->setErrorType(ErrorType::outOfStorageError);
+        stackedWidget->setCurrentIndex(PageName::errorwidget);
+        //clear current widget
+        clear();
+    } else {
+        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+    }
 }
