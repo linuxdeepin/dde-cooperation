@@ -22,6 +22,7 @@
 class Util
 {
 public:
+
     static std::string genRandPin()
     {
         int pin_len = 6;
@@ -52,14 +53,34 @@ public:
     static std::string getFirstIp()
     {
         QString ip;
-        for (auto interface : QNetworkInterface::allInterfaces()) {
-            if (interface.type() != QNetworkInterface::InterfaceType::Ethernet)
+        // QNetworkInterface 类提供了一个主机 IP 地址和网络接口的列表
+        foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
+        {
+            if (!netInterface.flags().testFlag(QNetworkInterface::IsRunning)
+                    || (netInterface.type() != QNetworkInterface::Ethernet
+                    && netInterface.type() != QNetworkInterface::Wifi)) {
+                // 跳过非运行时, 非有线，非WiFi接口
                 continue;
-            foreach (QNetworkAddressEntry entry, interface.addressEntries()) {
-                if (entry.ip().protocol() != QAbstractSocket::NetworkLayerProtocol::IPv4Protocol)
-                    continue;
-                ip = QString(entry.ip().toString());
-                qDebug() << "IP Address:------" << ip << "------" << interface.type();
+            }
+
+            if (netInterface.name().startsWith("virbr") || netInterface.name().startsWith("vmnet")
+                    || netInterface.name().startsWith("docker")) {
+                // 跳过桥接，虚拟机和docker的网络接口
+                qInfo() << "netInterface name:" << netInterface.name();
+                continue;
+            }
+
+            // 每个网络接口包含 0 个或多个 IP 地址
+            QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
+            // 遍历每一个 IP 地址
+            foreach(QNetworkAddressEntry entry, entryList)
+            {
+                if(entry.ip().protocol() == QAbstractSocket::IPv4Protocol && entry.ip() != QHostAddress::LocalHost)
+                {
+                    //IP地址
+                    ip = QString(entry.ip().toString());
+                    return ip.toStdString();
+                }
             }
         }
         return ip.toStdString();
