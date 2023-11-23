@@ -115,11 +115,14 @@ public:
     // exit announce
     void exit();
 
+    bool finished() const { return _finished; }
+
 private:
     int sameApp(const fastring &info);
 
 private:
     bool _stop = true;
+    bool _finished = false;
 
     const fastring _service_name;
     const uint16_t _service_port;

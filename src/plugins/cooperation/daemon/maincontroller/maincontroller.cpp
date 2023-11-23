@@ -206,6 +206,8 @@ void MainController::onTransJobStatusChanged(int id, int result, const QString &
     case JOB_TRANS_DOING:
         break;
     case JOB_TRANS_FINISHED: {
+        transferResult(true, tr("File sent successfully"));
+
         // msg: deviceName(ip)
         // 获取存储路径和ip
         int startPos = msg.lastIndexOf("(");
@@ -262,10 +264,6 @@ void MainController::onFileTransStatusChanged(const QString &status)
         return;
     } else if (progressValue >= 100) {
         updateProgress(100, "00:00:00");
-
-        QTimer::singleShot(1000, this, [this] {
-            transferResult(true, tr("File sent successfully"));
-        });
     } else {
         int remainTime = transferInfo.maxTimeSec * 100 / progressValue - transferInfo.maxTimeSec;
         QTime time(0, 0, 0);

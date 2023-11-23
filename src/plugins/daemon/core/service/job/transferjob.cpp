@@ -444,6 +444,7 @@ void TransferJob::handleBlockQueque()
                 req.add_member("api", "Frontend.notifySendStatus");
                 SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
                 cancel();
+                exception = true;
             }
         }
 

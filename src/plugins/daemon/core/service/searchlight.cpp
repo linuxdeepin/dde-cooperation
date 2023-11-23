@@ -296,10 +296,8 @@ void Announcer::start()
 
 //        DLOG << "UDP send: === " << message;
         int send_len = co::sendto(sockfd, message.c_str(), message.size(), &dest_addr, len);
-        if (send_len < 0) {
+        if (send_len < 0)
             ELOG << "Failed to send data";
-            break;
-        }
 
         co::sleep(1000); // announcer every second
     }
@@ -307,6 +305,7 @@ void Announcer::start()
     // 关闭套接字
     co::close(sockfd);
 
+    _finished = true;
     _stop = true;
 }
 
