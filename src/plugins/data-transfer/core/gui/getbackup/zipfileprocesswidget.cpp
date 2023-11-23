@@ -39,7 +39,7 @@ void zipFileProcessWidget::updateProcess(const QString &content, int processbar,
 
 void zipFileProcessWidget::changeFileLabel(const QString &path)
 {
-    QString info = QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;正在打包 %1</font>").arg(path);
+    QString info = QString( QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(tr("Packing  %1").arg(path)));
     fileLabel->setText(info);
 }
 

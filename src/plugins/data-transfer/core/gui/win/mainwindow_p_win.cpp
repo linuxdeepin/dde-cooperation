@@ -130,6 +130,9 @@ void MainWindowPrivate::initWidgets()
 
     QObject::connect(TransferHelper::instance(),&TransferHelper::interruption,transferringwidget,&TransferringWidget::errorWidget);
 
+    QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
+                     createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
+
 QObject:
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
             [stackedWidget, errorwidget](bool online) {
@@ -234,7 +237,6 @@ void MainWindowPrivate::initTitleBar()
                              "border-top-left-radius: 20px;"
                              "}");
     mainLabel->setPixmap(QPixmap(":/icon/icon.svg"));
-
     QObject::connect(closeButton, &QToolButton::clicked, q, []() { QCoreApplication::quit(); });
     QObject::connect(minButton, &QToolButton::clicked, q, &MainWindow::showMinimized);
 

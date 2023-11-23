@@ -560,13 +560,13 @@ void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &t
 QPixmap DrapWindowsData::getAppIcon(const QString &path)
 {
     if (path.isEmpty())
-        return QPixmap();
+       return QPixmap();
     HICON hIcon;
     QString tempStr = path;
     if (ExtractIconExW(tempStr.toStdWString().c_str(), 0, NULL, &hIcon, 1) <= 0) {
         return QPixmap();
     }
-    if (hIcon == 0) {
+   if (hIcon == 0) {
         DestroyIcon(hIcon);
         return QPixmap();
     }

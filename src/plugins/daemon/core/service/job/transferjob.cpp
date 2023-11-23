@@ -287,6 +287,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         info.time_spended = -1;
 
         insertFileInfo(info);
+        handleTransStatus(FILE_TRANS_IDLE, info);
         //        LOG << "======this file (" << subname << "fileid" << fileid << ") start   _file_info_maps";
     }
     QPointer<TransferJob> self = this;

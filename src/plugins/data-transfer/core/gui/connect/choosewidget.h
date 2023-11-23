@@ -25,7 +25,6 @@ private:
     void sendOptions();
     void changeAllWidgtText();
     void clearAllWidget();
-
 private:
     QString transferMethod;
     QToolButton *nextButton = nullptr;
@@ -66,7 +65,7 @@ private:
     bool checked{ false };
     QLabel *iconLabel{ nullptr };
     QString itemText;
-    bool drak{false};
+    bool dark{false};
 };
 
 class IndexLabel : public QLabel

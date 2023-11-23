@@ -9,17 +9,12 @@
 #include <QDebug>
 #include <gui/connect/choosewidget.h>
 
-inline constexpr char internetError[] { "Network Error" };
-inline constexpr char transferError[] { "Transfer interrupted" };
-inline constexpr char internetErrorPrompt[] { "he network disconnected, transfer failed, please connect the network and try again" };
-inline constexpr char transferErrorPrompt[] { "Insufficient space in UOS, please clear at least %1 GB and try again" };
-ErrorWidget::ErrorWidget(QWidget *parent)
-    : QFrame(parent)
+ErrorWidget::ErrorWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
 }
 
-ErrorWidget::~ErrorWidget() {}
+ErrorWidget::~ErrorWidget() { }
 void ErrorWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
@@ -45,7 +40,7 @@ void ErrorWidget::initUI()
     errorLabel->setPixmap(errorPixmap);
     errorLabel->setGeometry(420, 180, errorPixmap.width(), errorPixmap.height());
 
-    QString titleStr = tr(internetError);
+    QString titleStr = internetError;
     titleLabel = new QLabel(titleStr, this);
     titleLabel->setFixedHeight(50);
     QFont font;
@@ -142,11 +137,11 @@ void ErrorWidget::retryPage()
 }
 void ErrorWidget::themeChanged(int theme)
 {
-    //light
+    // light
     if (theme == 1) {
         setStyleSheet("background-color: white; border-radius: 10px;");
     } else {
-        //dark
+        // dark
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
 }
@@ -155,10 +150,15 @@ void ErrorWidget::setErrorType(ErrorType type, int size)
 {
     if (type == ErrorType::networkError) {
         titleLabel->setText(internetError);
-        promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(tr(internetErrorPrompt)));
+        promptLabel->setText(
+                QString("<font size='2' color='#FF5736'>%1</font>").arg(internetErrorPrompt));
     } else {
-        titleLabel->setText(tr(transferError));
-        QString prompt = QString(tr(transferErrorPrompt)).arg(size);
+        titleLabel->setText(transferError);
+        QString prompt;
+        if (size == 0)
+            prompt = QString(transferErrorPromptWin);
+        else
+            prompt = QString(transferErrorPromptUOS).arg(size);
         promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(prompt));
     }
 }
