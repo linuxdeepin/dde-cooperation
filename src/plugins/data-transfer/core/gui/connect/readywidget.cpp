@@ -133,7 +133,7 @@ void ReadyWidget::initUI()
 
     tiptextlabel = new QLabel(this);
 
-    tiptextlabel->setText("<font size='3' color='#000000'>连接中...</font>");
+    tiptextlabel->setText(QString("<font size='3' color='#000000'>%1</font>").arg(tr("connect...")));
     tiptextlabel->setVisible(false);
     tiptextlabel->setAlignment(Qt::AlignCenter);
 
@@ -183,7 +183,7 @@ void ReadyWidget::initUI()
 
     // Connect the timer's timeout signal to hiding the label
     QObject::connect(timer, &QTimer::timeout, [&]() {
-        tiptextlabel->setText("<font size='3' color='#000000'>连接中...</font>");
+        tiptextlabel->setText(QString("<font size='3' color='#000000'>%1</font>").arg(tr("connect...")));
         tiptextlabel->setVisible(false);
         setnextButEnable(true);
     });
@@ -278,6 +278,7 @@ void ReadyWidget::onLineTextChange()
     }
 
     setnextButEnable(true);
+
 }
 
 void ReadyWidget::connectFailed()

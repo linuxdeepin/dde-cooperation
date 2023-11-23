@@ -56,7 +56,7 @@ void PromptWidget::initUI()
     promptLayout->addSpacing(150);
     promptLayout->addLayout(gridLayout);
 
-    QToolButton *backButton = new QToolButton(this);
+    backButton = new QToolButton(this);
     backButton->setText(tr("Back"));
     backButton->setFixedSize(120, 35);
 
@@ -95,8 +95,8 @@ void PromptWidget::initUI()
                               "text-align: center;"
                               "}");
 #else
-    backButton->setStyleSheet("background-color: lightgray;");
-    nextButton->setStyleSheet("background-color: #0098FF;");
+    backButton->setStyleSheet(".QToolButton{background-color: lightgray;border-radius: 8px;}");
+    nextButton->setStyleSheet(".QToolButton{background-color: rgba(0, 125, 255, 1);border-radius: 8px;}");
 #endif
 
     connect(nextButton, &QToolButton::clicked, this, &PromptWidget::nextPage);
@@ -149,9 +149,17 @@ void PromptWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet("background-color: white; border-radius: 10px;");
+        setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
+        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "background-color: lightgray;"
+                                  "}");
+
     } else {
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
         // dark
+        setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
+        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "opacity: 1;"
+                                  "background-color: rgba(255,255,255, 0.1);"
+                                  "}");
     }
 }

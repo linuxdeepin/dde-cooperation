@@ -60,8 +60,7 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     if (jsonObj.isEmpty()) {
         isall = false;
         qWarning() << "transfer.json is invaild";
-        emit TransferHelper::instance()->failure("配置文件", "文件", "配置文件错误或丢失");
-        addTaskcounter(-1);
+        emit TransferHelper::instance()->failure(tr("Profiles"), tr("File"),tr("Wrong or missing profile") );
         return false;
     }
 
@@ -126,7 +125,7 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
 
     QFileInfo info(filepath);
     if (info.suffix() != "json") {
-        emit TransferHelper::instance()->failure("浏览器书签", "书签", "格式错误");
+        emit TransferHelper::instance()->failure(tr("Browser Bookmarks"), tr("Bookmarks"), tr("Format error"));
         return false;
     }
 
@@ -136,7 +135,7 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
     bool success = moveFile(filepath, targetfile);
     qInfo() << "Set browser bookmarks" << targetfile << success;
     if (!success) {
-        emit TransferHelper::instance()->failure("浏览器书签", "书签", "设置失败，可手动导入配置");
+        emit TransferHelper::instance()->failure(tr("Browser Bookmarks"), tr("Bookmarks"),tr("Setup failed, configuration can be imported manually"));
         return false;
     }
     return true;
@@ -149,7 +148,7 @@ bool SettingHelper::installApps(const QString &app)
 
     QString &package = applist[app];
     if (package.isEmpty()) {
-        emit TransferHelper::instance()->failure(app, "应用", "安装失败，请进入应用商店安装");
+        emit TransferHelper::instance()->failure(app, tr("App"), tr("Installation failed, please go to the app store to install"));
         return false;
     }
 
@@ -179,7 +178,7 @@ bool SettingHelper::installApps(const QString &app)
 
     if (reply.type() != QDBusMessage::ReplyMessage) {
         qWarning() << "Installing " << app << "false" << reply.errorMessage();
-        emit TransferHelper::instance()->failure(app, "应用", "安装失败，请进入应用商店安装");
+        emit TransferHelper::instance()->failure(app, tr("App"), app + tr("Installation failed, please go to the app store to install"));
         return false;
     }
 
@@ -191,7 +190,7 @@ bool SettingHelper::installApps(const QString &app)
     if (!success)
         qWarning() << "Failed to connect to signal";
 
-    emit TransferHelper::instance()->transferContent("正在安装", app, 100, -2);
+    emit TransferHelper::instance()->transferContent(tr("Installing..."), app, 100, -2);
 
     addTaskcounter(1);
     return true;
@@ -215,13 +214,13 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
         QString app = applist.key(package);
         QString content = applist.key(package) + "  Key:" + key + "   Value:" + value.toString();
         qInfo() << content;
-        emit TransferHelper::instance()->transferContent("正在安装", content, 100, -2);
+        emit TransferHelper::instance()->transferContent(tr("Installing..."), content, 100, -2);
         if (key == "Status" && value == "succeed")
             addTaskcounter(-1);
         if (key == "Status" && value == "failed") {
             addTaskcounter(-1);
             isall = false;
-            emit TransferHelper::instance()->failure(package, "应用", "安装失败，请进入应用商店安装");
+            emit TransferHelper::instance()->failure(package, tr("App"), tr("Installation failed, please go to the app store to install"));
         }
     }
 }
@@ -234,7 +233,7 @@ void SettingHelper::addTaskcounter(int value)
     taskcounter += value;
 
     if (taskcounter == 0) {
-        emit TransferHelper::instance()->transferContent("", "迁移完成", 100, -1);
+        emit TransferHelper::instance()->transferContent("", tr("Transfer Complete"), 100, -1);
         emit TransferHelper::instance()->transferSucceed(isall);
     }
 }
