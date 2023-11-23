@@ -9,6 +9,7 @@
 #include "common/constant.h"
 #include "co/log.h"
 #include "co/json.h"
+#include "co/co.h"
 
 #include <QMap>
 
@@ -84,7 +85,13 @@ void DiscoveryJob::discovererRun()
             for (auto it = _dis_node_maps.begin(); it != _dis_node_maps.end(); ++it) {
                 if (!it->second.second) {
                     //DLOG << "peer losted: " << it->second.first;
-                    emit sigNodeChanged(false, QString(it->second.first.c_str()));
+                    auto msg = it->second.first;
+                    co::Json node;
+                    node.parse_from(it->second.first);
+                    NodeInfo nodeInfo, curInfo;
+                    nodeInfo.from_json(node);
+                    nodeInfo.apps.clear();
+                    emit sigNodeChanged(false, QString(nodeInfo.as_json().str().c_str()));
                     _dis_node_maps.erase(it);
                 }
             }
@@ -108,6 +115,10 @@ void DiscoveryJob::stopDiscoverer()
 void DiscoveryJob::stopAnnouncer()
 {
     ((searchlight::Announcer*)_announcer_p)->exit();
+    while (!((searchlight::Announcer*)_announcer_p)->finished()) {
+        co::sleep(100);
+    }
+
 }
 
 void DiscoveryJob::updateAnnouncBase(const fastring info)
@@ -190,7 +201,8 @@ void DiscoveryJob::compareOldAndNew(const fastring &uid, const QString &cur,
 
         if (up) {
             //node info has been updated, force update now.
-            _dis_node_maps.erase(it);
+            if (!down)
+                _dis_node_maps.erase(it);
             emit sigNodeChanged(true, cur);
             _dis_node_maps.insert(uid, std::make_pair(cur.toStdString(), true));
         }

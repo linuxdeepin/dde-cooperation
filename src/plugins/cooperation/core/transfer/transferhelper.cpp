@@ -338,19 +338,8 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
     case JOB_TRANS_DOING:
         break;
     case JOB_TRANS_FINISHED: {
-        // msg: deviceName(ip)
-        // 获取存储路径和ip
-        int startPos = msg.lastIndexOf("(");
-        int endPos = msg.lastIndexOf(")");
-        if (startPos != -1 && endPos != -1) {
-            auto ip = msg.mid(startPos + 1, endPos - startPos - 1);
-            auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
-            auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-            d->recvFilesSavePath = storagePath + QDir::separator() + msg;
-
-            transHistory->insert(ip, d->recvFilesSavePath);
-            HistoryManager::instance()->writeIntoTransHistory(ip, d->recvFilesSavePath);
-        }
+        d->status.storeRelease(Idle);
+        d->transferResult(true, tr("File sent successfully"));
     } break;
     case JOB_TRANS_CANCELED:
         d->transferResult(false, tr("The other party has canceled the file transfer"));
@@ -394,11 +383,6 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
         return;
     } else if (progressValue >= 100) {
         d->updateProgress(100, "00:00:00");
-
-        QTimer::singleShot(1000, this, [this] {
-            d->status.storeRelease(Idle);
-            d->transferResult(true, tr("File sent successfully"));
-        });
     } else {
         int remainTime = d->transferInfo.maxTimeSec * 100 / progressValue - d->transferInfo.maxTimeSec;
         QTime time(0, 0, 0);

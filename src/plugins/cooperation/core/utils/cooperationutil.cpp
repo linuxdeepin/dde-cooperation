@@ -110,6 +110,16 @@ void CooperationUtilPrivate::localIPCStart()
                 co::Json obj = json::parse(param.msg);
                 NodeInfo nodeInfo;
                 nodeInfo.from_json(obj);
+                if (nodeInfo.apps.empty() && !param.result) {
+                    q->metaObject()->invokeMethod(MainController::instance(),
+                                                  "updateDeviceList",
+                                                  Qt::QueuedConnection,
+                                                  Q_ARG(QString, QString(nodeInfo.os.ipv4.c_str())),
+                                                  Q_ARG(QString, QString("")),
+                                                  Q_ARG(bool, param.result));
+                    break;
+                }
+
                 for (const auto &appInfo : nodeInfo.apps) {
                     // 上线，非跨端应用无需处理
                     if (param.result && appInfo.appname.compare(CooperDaemonName) != 0)
@@ -178,6 +188,7 @@ void CooperationUtilPrivate::localIPCStart()
             } break;
             case FRONT_SERVER_ONLINE:
                 pingBackend();
+                q->asyncDiscoveryDevice();
                 break;
             default:
                 break;
