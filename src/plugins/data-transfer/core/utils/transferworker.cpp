@@ -332,16 +332,8 @@ bool TransferHandle::cancelTransferJob()
 {
     if (!_backendOK) return false;
 
-    co::wait_group g_wg;
-    g_wg.add(1);
-    bool ok;
     int jobid = _job_maps.firstKey();
-    UNIGO([&ok, g_wg, jobid]() {
-        ok = TransferWoker::instance()->cancelTransferJob(jobid);
-        g_wg.done();
-    });
-    g_wg.wait();
-    return ok;
+    return TransferWoker::instance()->cancelTransferJob(jobid);
 }
 
 void TransferHandle::sendFiles(QStringList paths)
@@ -420,13 +412,14 @@ bool TransferWoker::cancelTransferJob(int jobid)
 {
     co::Json req, res;
 
-    req = {
-        { "session", _session_id },
-        { "job_id", jobid },
-        { "is_remote", true }
-    };
+    ipc::TransJobParam jobParam;
+    jobParam.session = _session_id;
+    jobParam.job_id = jobid;
+    jobParam.appname = qApp->applicationName().toStdString();
+
+    req = jobParam.as_json();
     req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
-    coClient->call(req, res);
+    call(req, res);
     qInfo() << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
     return res.get("result").as_bool();
 }
