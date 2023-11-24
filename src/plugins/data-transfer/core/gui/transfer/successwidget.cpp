@@ -8,16 +8,14 @@
 #include <QStackedWidget>
 #include <QApplication>
 #include <gui/mainwindow_p.h>
+#include <utils/transferhepler.h>
 
-SuccessWidget::SuccessWidget(QWidget *parent)
-    : QFrame(parent)
+SuccessWidget::SuccessWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
 }
 
-SuccessWidget::~SuccessWidget()
-{
-}
+SuccessWidget::~SuccessWidget() { }
 
 void SuccessWidget::initUI()
 {
@@ -91,21 +89,17 @@ void SuccessWidget::initUI()
 
 void SuccessWidget::nextPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::choosewidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
-    }
+    emit TransferHelper::instance()->clearSelectWidget();
+    emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void SuccessWidget::themeChanged(int theme)
 {
-    //light
+    // light
     if (theme == 1) {
         setStyleSheet("background-color: white; border-radius: 10px;");
     } else {
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
-        //dark
+        // dark
     }
 }

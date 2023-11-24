@@ -50,7 +50,7 @@ void MainWindowPrivate::initWindow()
 
 void MainWindowPrivate::initWidgets()
 {
-    QStackedWidget *stackedWidget = new QStackedWidget(q);
+    stackedWidget = new QStackedWidget(q);
 
     StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
@@ -84,20 +84,20 @@ void MainWindowPrivate::initWidgets()
         if (index == PageName::choosewidget)
             transferringwidget->clear();
     });
-    connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [stackedWidget] {
+    connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [this] {
         stackedWidget->setCurrentIndex(PageName::waitgwidget);
     });
 
-    connect(TransferHelper::instance(), &TransferHelper::transferring, this, [stackedWidget] {
+    connect(TransferHelper::instance(), &TransferHelper::transferring, this, [this] {
         stackedWidget->setCurrentIndex(PageName::transferringwidget);
     });
-    connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [stackedWidget](bool isall) {
+    connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [this](bool isall) {
         int nextpage = isall ? PageName::successtranswidget : PageName::resultwidget;
         stackedWidget->setCurrentIndex(nextpage);
     });
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
-            [stackedWidget, errorwidget](bool online) {
+            [this, errorwidget](bool online) {
                 if (online)
                     return;
                 int index = stackedWidget->currentIndex();
@@ -111,7 +111,7 @@ void MainWindowPrivate::initWidgets()
             });
 
     connect(TransferHelper::instance(), &TransferHelper::outOfStorage,
-            [stackedWidget, errorwidget](int size) {
+            [this, errorwidget](int size) {
                 stackedWidget->setCurrentIndex(PageName::errorwidget);
                 errorwidget->setErrorType(ErrorType::outOfStorageError, size);
             });
@@ -134,5 +134,8 @@ void MainWindowPrivate::initWidgets()
             });
     emit DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::instance()->themeType());
 
+    connect(TransferHelper::instance(),&TransferHelper::changeWidget,[this](PageName index){
+        stackedWidget->setCurrentIndex(index);
+    });
     q->centralWidget()->layout()->addWidget(stackedWidget);
 }

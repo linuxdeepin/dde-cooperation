@@ -7,7 +7,7 @@
 #include <QStackedWidget>
 #include <QCheckBox>
 #include <QTextBrowser>
-
+#include <utils/transferhepler.h>
 PromptWidget::PromptWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
@@ -44,7 +44,7 @@ void PromptWidget::initUI()
 
         QLabel *textlabel = new QLabel(prompts[i], this);
         textlabel->setWordWrap(true);
-        textlabel->setFixedSize(500,50);
+        textlabel->setFixedSize(500, 50);
         gridLayout->addWidget(iconlabel, i, 0);
         gridLayout->addWidget(textlabel, i, 1);
         gridLayout->setHorizontalSpacing(10);
@@ -117,32 +117,18 @@ void PromptWidget::initUI()
 
 void PromptWidget::nextPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
 #ifdef _WIN32
-        stackedWidget->setCurrentIndex(PageName::readywidget);
+    emit TransferHelper::instance()->changeWidget(PageName::readywidget);
 #else
-        stackedWidget->setCurrentIndex(PageName::connectwidget);
+    emit TransferHelper::instance()->changeWidget(PageName::connectwidget);
+
 #endif
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+
 }
 
 void PromptWidget::backPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-#ifdef _WIN32
-        stackedWidget->setCurrentIndex(PageName::choosewidget);
-#else
-        stackedWidget->setCurrentIndex(PageName::choosewidget);
-#endif
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void PromptWidget::themeChanged(int theme)

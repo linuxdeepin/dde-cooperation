@@ -15,12 +15,12 @@
 #include <JlCompress.h>
 #include <QDataStream>
 
-#define BUFFER_SIZE 8*1024
+#define BUFFER_SIZE 8 * 1024
 ZipWork::ZipWork(QObject *parent) : QThread(parent)
 {
     qInfo() << "zipwork start.";
 
-    maxNum = BUFFER_SIZE*10240;
+    maxNum = BUFFER_SIZE * 10240;
     // connect backup file process
     QObject::connect(this, &ZipWork::backupFileProcessSingal, TransferHelper::instance(),
                      &TransferHelper::zipTransferContent);
@@ -34,18 +34,17 @@ ZipWork::~ZipWork() { }
 void ZipWork::run()
 {
     getUserDataPackagingFile();
-    qInfo() << "backup11 file exit.";
 }
 
 void ZipWork::getUserDataPackagingFile()
 {
-    QStringList zipFilePathList = TransferHelper::instance()->getTransferFilePath();
+    QStringList zipFilePathList = OptionsManager::instance()->getUserOption(Options::kTransferFileList);
 
     // Get the number of files to zip
 
     QString size = OptionsManager::instance()->getUserOption(Options::KBackupFileSize)[0];
     allFileSize = size.toULongLong();
-    qInfo()<<"bakc up file size:"<<allFileSize;
+    qInfo() << "bakc up file size:" << allFileSize;
     backupFile(zipFilePathList, getBackupFilName());
 }
 
@@ -107,15 +106,14 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
         return false;
     }
 
-
     QDataStream in(&sourceFile);
-    char buffer[BUFFER_SIZE] = {0};
+    char *buffer = reinterpret_cast<char *>(malloc(BUFFER_SIZE));
     while (!in.atEnd()) {
         memset(buffer, 0, BUFFER_SIZE);
         qint64 bytesRead = in.readRawData(buffer, BUFFER_SIZE);
         if (bytesRead == -1) {
             free(buffer);
-            qCritical() << "Error reading from source file:" << filePath;
+            qCritical() << "Error reading from sou rce file:" << filePath;
             destinationFile.close();
             sourceFile.close();
             emit backupFileProcessSingal(QString(tr("Error reading file :%1")).arg(filePath), -1,
@@ -134,8 +132,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
             return false;
         }
 
-        sendBackupFileProcess(filePath, timer,bytesRead);
-
+        sendBackupFileProcess(filePath, timer, bytesRead);
     }
     free(buffer);
     destinationFile.close();
@@ -221,44 +218,47 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     return true;
 }
 
-void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer,int size)
+void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer, int size)
 {
 
     zipFileSize += size;
-     num+=size;
+    num += size;
     double progress = (static_cast<double>(zipFileSize) / static_cast<double>(allFileSize)) * 100;
     if (!timer.isValid()) {
         timer.start();
     } else {
-        quint64 tempTime =0;
-        if(firstFlag)
-        {
-            tempTime = BUFFER_SIZE*50;
-            firstFlag=false;
-        }else{
+        quint64 tempTime = 0;
+        if (firstFlag) {
+            tempTime = BUFFER_SIZE * 5;
+
+        } else {
             tempTime = maxNum;
         }
+        qInfo() << "num:" << num << " tempTime:" << tempTime;
         // If the timer is started, the elapsed time is calculated and the timer is restarted
         if (num >= tempTime) {
-
-
+            firstFlag = false;
             qint64 elapsed = timer.restart();
-            if(allFileSize <=zipFileSize)
-            {
-                needTime = static_cast<int>(elapsed *(0 / num))/1000;
-                // qInfo()<<"needtime:"<<needTime<<"(allFileSize - zipFileSize):"<<0<< "zipFileSize:"<<  zipFileSize<<" num:"<<num<<" elapsed:"<<elapsed;
-            }else{
-                needTime = static_cast<int>(elapsed *((allFileSize - zipFileSize) / num))/1000;
-                 //qInfo()<<"needtime:"<<needTime<<"(allFileSize - zipFileSize)/num:"<<(allFileSize - zipFileSize)/num<<" zipFileSize:"<<    zipFileSize<<" num:"<<num<<" elapsed:"<<elapsed;
+            if (allFileSize <= zipFileSize) {
+                needTime = static_cast<int>(elapsed * (0 / num)) / 1000;
+                qInfo() << "needtime:" << needTime << "(allFileSize - zipFileSize):" << 0
+                        << "zipFileSize:" << zipFileSize << " num:" << num
+                        << " elapsed:" << elapsed;
+            } else {
+                needTime = static_cast<int>(elapsed * ((allFileSize - zipFileSize) / num)) / 1000;
+                qInfo() << "needtime:" << needTime
+                        << "(allFileSize - zipFileSize)/num:" << (allFileSize - zipFileSize) / num
+                        << " zipFileSize:" << zipFileSize << " num:" << num
+                        << "elapsed:" << elapsed;
             }
-             num = 0;
+            num = 0;
         }
     }
 
-   needTime =std::max(std::min(needTime,3600),1);
-   int iprogress =std::max(std::min((int)progress,100),0);
+    needTime = std::max(std::min(needTime, 3600), 1);
+    int iprogress = std::max(std::min((int)progress, 100), 0);
 
-   emit backupFileProcessSingal(filePath, iprogress, needTime);
+    emit backupFileProcessSingal(filePath, iprogress, needTime);
 }
 
 QString ZipWork::getBackupFilName()

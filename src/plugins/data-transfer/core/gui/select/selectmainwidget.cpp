@@ -190,13 +190,7 @@ void SelectMainWidget::nextPage()
     }
 
     // ui
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(next);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(next);
 }
 
 void SelectMainWidget::backPage()
@@ -208,13 +202,7 @@ void SelectMainWidget::backPage()
     } else if (method == TransferMethod::kNetworkTransmission) {
         back = PageName::readywidget;
     }
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(back);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(back);
 }
 
 void SelectMainWidget::selectPage()

@@ -1,4 +1,4 @@
-#include "createbackupfilewidget.h"
+﻿#include "createbackupfilewidget.h"
 #include "../select/item.h"
 #include "../type_defines.h"
 #include "./zipworker.h"
@@ -364,25 +364,12 @@ void CreateBackupFileWidget::nextPage()
     // send useroptions
     sendOptions();
     // nextpage
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::zipfileprocesswidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::zipfileprocesswidget);
 }
 void CreateBackupFileWidget::backPage()
 {
     clear();
-
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }
 
 void CreateBackupFileWidget::updateuserSelectFileSize(const QString &sizeStr)
@@ -392,7 +379,13 @@ void CreateBackupFileWidget::updateuserSelectFileSize(const QString &sizeStr)
 
 void CreateBackupFileWidget::updaeBackupFileSize()
 {
-    TransferHelper::instance()->getTransferFilePath();
+    QStringList filePathList = OptionsManager::instance()->getUserOption(Options::kFile);
+    QStringList appList = OptionsManager::instance()->getUserOption(Options::kApp);
+    QStringList browserList = OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
+    QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
+
+    TransferHelper::instance()->getTransferFilePath(filePathList,appList,browserList,configList);
+
     QStringList userDataInfoJsonPath =
             OptionsManager::instance()->getUserOption(Options::KUserDataInfoJsonPath);
     QStringList wallpaperPath = OptionsManager::instance()->getUserOption(Options::KWallpaperPath);

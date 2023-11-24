@@ -180,6 +180,7 @@ void AppSelectWidget::clear()
         QModelIndex itemIndex = configmodel->index(row, 0);
         configmodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
     }
+      OptionsManager::instance()->addUserOption(Options::kApp,QStringList());
 }
 
 void AppSelectWidget::sendOptions()
@@ -225,24 +226,12 @@ void AppSelectWidget::nextPage()
     sendOptions();
 
     // nextpage
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }
 void AppSelectWidget::backPage()
 {
     // delete Options
     delOptions();
-
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    //backpage
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }

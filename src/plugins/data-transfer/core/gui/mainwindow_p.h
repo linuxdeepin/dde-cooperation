@@ -3,6 +3,7 @@
 
 #include <QStackedLayout>
 #include <QDockWidget>
+#include <QStackedWidget>
 #ifdef WIN32
 class QPaintEvent;
 #endif
@@ -26,23 +27,25 @@ protected:
 
 private slots:
     void handleCurrentChanged(int index);
-
+    void clearWidget();
+    void changeAllWidgtText();
 #ifdef WIN32
 protected:
     void paintEvent(QPaintEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
+
 private:
     void initTitleBar();
     void initSideBar();
 #endif
 
 protected:
-    MainWindow *q { nullptr };
-    QStackedLayout *mainLayout { nullptr };
-    QDockWidget *sidebar { nullptr };
-
+    MainWindow *q{ nullptr };
+    QStackedLayout *mainLayout{ nullptr };
+    QDockWidget *sidebar{ nullptr };
+    QStackedWidget *stackedWidget{ nullptr };
 #ifdef WIN32
 
 protected:
@@ -51,9 +54,9 @@ protected:
     QHBoxLayout *windowsCentralWidgetSidebar{ nullptr };
 
     QPoint lastPosition;
-    bool leftButtonPressed { false };
+    bool leftButtonPressed{ false };
 #endif
 };
 
-}   // namespace data_transfer_core
-#endif   // MAINWINDOW_P_H
+} // namespace data_transfer_core
+#endif // MAINWINDOW_P_H

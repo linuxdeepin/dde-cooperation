@@ -37,6 +37,7 @@ void CustomMessageBox::initUi()
                   "}");
     QLabel *message1Label = new QLabel(message1, this);
     message1Label->setAlignment(Qt::AlignCenter);
+    message1Label->setWordWrap(true);
     message1Label->setGeometry(50, 20, 200, 50);
     message1Label->setStyleSheet(".QLabel{"
                                  "opacity:1;"
@@ -48,6 +49,7 @@ void CustomMessageBox::initUi()
                                  " text-align: center;}");
     QLabel *message2Label = new QLabel(message2, this);
     message2Label->setAlignment(Qt::AlignCenter);
+    message2Label->setWordWrap(true);
     message2Label->setGeometry(50, 20, 200, 50);
     message2Label->setStyleSheet(".QLabel{"
                                  "opacity: 1;"
@@ -77,7 +79,7 @@ void CustomMessageBox::initUi()
                                 "text-align: center;"
                                 ";}");
     QToolButton *continueButton = new QToolButton(this);
-    continueButton->setText(tr("Continue transmission"));
+    continueButton->setText(tr("Continue"));
     continueButton->setFixedSize(170, 35);
     continueButton->setStyleSheet(".QToolButton{"
                                   "border-radius: 8px;"

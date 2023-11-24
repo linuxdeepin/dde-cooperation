@@ -128,13 +128,7 @@ void ResultDisplayWidget::initListView()
 
 void ResultDisplayWidget::nextPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::choosewidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void ResultDisplayWidget::themeChanged(int theme)

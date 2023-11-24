@@ -8,6 +8,7 @@
 #include <QStackedWidget>
 #include <QDebug>
 #include <gui/connect/choosewidget.h>
+#include <utils/transferhepler.h>
 
 ErrorWidget::ErrorWidget(QWidget *parent) : QFrame(parent)
 {
@@ -116,24 +117,14 @@ void ErrorWidget::initUI()
 
 void ErrorWidget::backPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::choosewidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->clearSelectWidget();
+    emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void ErrorWidget::retryPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::choosewidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->clearSelectWidget();
+    emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 void ErrorWidget::themeChanged(int theme)
 {

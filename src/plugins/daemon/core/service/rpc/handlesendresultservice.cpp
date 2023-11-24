@@ -45,19 +45,22 @@ void HandleSendResultService::handleSendResultMsg(const QString appName, const Q
 void HandleSendResultService::handleLogin(const QString &appName, const QString &msg)
 {
     co::Json res_json;
-    if (!res_json.parse_from(msg.toStdString())) {
-        ELOG << "handleLogin parse SendResult error!!!!!!!!";
-        return;
-    }
     UserLoginResultInfo res;
-    res.from_json(res_json);
-    if (res.result) {
-        // TODO: save the target peer info into target's map
-        fastring token = res.token;
-        PeerInfo target_info = res.peer;
-        // login successful
-        DaemonConfig::instance()->saveAuthed(token);
-        SendRpcService::instance()->addPing(res.appName.c_str());
+    if (!res_json.parse_from(msg.toStdString())) {
+        ELOG << "handleLogin parse SendResult error!!!!!!!! msg:" << msg.toStdString();
+        // error by can not connect target IP address.
+        res.result = false;
+        res.appName = appName.toStdString();
+    } else {
+        res.from_json(res_json);
+        if (res.result) {
+            // TODO: save the target peer info into target's map
+            fastring token = res.token;
+            PeerInfo target_info = res.peer;
+            // login successful
+            DaemonConfig::instance()->saveAuthed(token);
+            SendRpcService::instance()->addPing(res.appName.c_str());
+        }
     }
 
     co::Json req;

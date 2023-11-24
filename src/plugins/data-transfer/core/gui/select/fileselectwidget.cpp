@@ -1,18 +1,18 @@
-#include "siderbarwidget.h"
+﻿#include "siderbarwidget.h"
 #include "fileselectwidget.h"
 #include "item.h"
 #include "calculatefilesize.h"
 #include "userselectfilesize.h"
 #include "../type_defines.h"
 
+#include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
 #include <QToolButton>
 #include <QStackedWidget>
 #include <QDir>
-
-#include <utils/optionsmanager.h>
 
 FileSelectWidget::FileSelectWidget(SidebarWidget *siderbarWidget, QWidget *parent)
     : QFrame(parent), sidebar(siderbarWidget)
@@ -306,6 +306,7 @@ void FileSelectWidget::clear()
             model->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
         }
     }
+    OptionsManager::instance()->addUserOption(Options::kFile, QStringList());
 }
 
 void FileSelectWidget::updateFileSelectList(QStandardItem *item)
@@ -346,13 +347,7 @@ void FileSelectWidget::nextPage()
     sendOptions();
 
     // nextpage
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+   emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }
 
 void FileSelectWidget::backPage()
@@ -360,13 +355,7 @@ void FileSelectWidget::backPage()
     // delete Options
     delOptions();
 
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }
 
 void FileSelectWidget::sendOptions()

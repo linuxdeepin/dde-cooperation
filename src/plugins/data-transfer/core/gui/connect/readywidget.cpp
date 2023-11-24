@@ -39,7 +39,7 @@ void ReadyWidget::initUI()
     // init timer
     timer = new QTimer(this);
     timer->setSingleShot(true);
-    timer->setInterval(2000);
+    timer->setInterval(3000);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
@@ -283,6 +283,6 @@ void ReadyWidget::onLineTextChange()
 
 void ReadyWidget::connectFailed()
 {
-    tiptextlabel->setText(QString("<font size='3' color='#FF5736'>%1</font>").arg(tr("The user is busy, failed to connect.")));
+    tiptextlabel->setText(QString("<font size='3' color='#FF5736'>%1</font>").arg(tr("Failed to connect, please check your input")));
     timer->start();
 }

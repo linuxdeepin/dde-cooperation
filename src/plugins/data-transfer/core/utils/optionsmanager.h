@@ -38,6 +38,7 @@ inline constexpr char KUserDataInfoJsonPath[]{ "userDataInfoJsonPath" };
 inline constexpr char KWallpaperPath[]{ "wallpaperPath" };
 inline constexpr char KBookmarksJsonPath[]{ "bookmarksJsonPath" };
 inline constexpr char KBackupFileSize[] {"backupFileSize"};
+inline constexpr char kTransferFileList[]{"transferFileList"};
 } // namespace Options
 
 namespace TransferMethod {

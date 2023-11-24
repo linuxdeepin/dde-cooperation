@@ -90,6 +90,7 @@ private:
 
     co::mutex _queque_mutex;
     QQueue<QSharedPointer<FSDataBlock>> _block_queue;
+    co::mutex _map_mutex;
     co::map<int32, FileInfo> _file_info_maps;
     QSharedPointer<RemoteServiceSender> _remote;
 };

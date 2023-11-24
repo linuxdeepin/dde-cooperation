@@ -83,24 +83,14 @@ void WaitTransferWidget::initUI()
 
 void WaitTransferWidget::nextPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::transferringwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::transferringwidget);
 }
-
 void WaitTransferWidget::backPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
 #ifndef WIN32
-        stackedWidget->setCurrentIndex(PageName::connectwidget);
+    emit TransferHelper::instance()->changeWidget(PageName::connectwidget);
 #endif
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
-    }
+
 }
 
 void WaitTransferWidget::themeChanged(int theme)
