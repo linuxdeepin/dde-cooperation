@@ -87,11 +87,17 @@ void Discoverer::start()
     UNIGO([this](){
         while (!_stop) {
             sleep::ms(1000); //co::sleep(1000);
-            QWriteLocker lk(&_discovered_lock);
-            if (remove_idle_services()) {
-                // callback discovery changed
-                _on_services_changed(_discovered_services);
+            remove_idle_services();
+            // callback discovery changed
+            QList<service> _changed;
+            {
+                QReadLocker lk(&_discovered_lock);
+                _changed = _change_sevices;
+                _change_sevices.clear();
             }
+            if (_changed.isEmpty())
+                continue;
+            _on_services_changed(_changed);
         }
     });
 
@@ -129,7 +135,7 @@ void Discoverer::exit()
 void Discoverer::handle_message(const fastring& message, const fastring& sender_endpoint)
 {
     // 处理接收到的数据
-    //LOG << "server recv " << message << " from " << sender_endpoint;
+//        LOG << "server recv ==== " << message << " from " << sender_endpoint;
     co::Json node;
     if (!node.parse_from(message)) {
         DLOG << "Invalid service, ignore!!!!!";
@@ -137,29 +143,23 @@ void Discoverer::handle_message(const fastring& message, const fastring& sender_
     }
 
     fastring name = node.get("name").as_string();
-    int32 port = node.get("port").as_int32();
     fastring info = node.get("info").as_string();
 
-    fastring endpoint(sender_endpoint);
-    fastring sport = sender_endpoint.substr(sender_endpoint.rfind(':') + 1);
-    endpoint = endpoint.remove_suffix(sport).cat(port);
-
-    auto discovered_service = service
-        {
-            name,
-            endpoint,
-            info,
-            _timer.ms()
-        };
+    QString endpoint(sender_endpoint.c_str());
+    endpoint = endpoint.left(endpoint.indexOf(":"));
 
     if (name == _listen_for_service) {
-        QWriteLocker lk(&_discovered_lock);
-        _discovered_services.erase(discovered_service);
-        _discovered_services.insert(discovered_service);
-
-        remove_idle_services(); // update
-        _on_services_changed(_discovered_services);
+        // 找到最近的时间修改，只发送改变了的
+        handleChanges(endpoint, info, _timer.ms());
     } else {
+        auto discovered_service = service
+            {
+                name,
+                endpoint.toStdString(),
+                info,
+                0,
+                _timer.ms(),
+            };
         DLOG << "ignoring: " << discovered_service;
     }
 }
@@ -169,10 +169,15 @@ bool Discoverer::remove_idle_services()
     auto dead_line = _timer.ms() - 3000;//FLG_max_idle;
     bool removed = false;
 
-    for (services::const_iterator i = _discovered_services.begin(); i != _discovered_services.end();)
+    QWriteLocker lk(&_discovered_lock);
+    for (auto i = _discovered_services.begin(); i != _discovered_services.end();)
     {
-        if (i->last_seen < dead_line) {
+        if (i.value()->last_seen < dead_line) {
+            service t(*(i.value()));
             i = _discovered_services.erase(i);
+            t.flags = 1;
+            _change_sevices.removeOne(t);
+            _change_sevices.append(t);
             removed = true;
         } else {
             ++i;
@@ -180,6 +185,38 @@ bool Discoverer::remove_idle_services()
     }
 
     return removed;
+}
+
+void Discoverer::handleChanges(const QString &endpoint, const fastring &info, const qint64 time)
+{
+    if (endpoint.isEmpty()) {
+        ELOG << " ip is null !!!!! endpoint = " << endpoint.toStdString() << " info = " << info;
+        return;
+    }
+    QWriteLocker lk(&_discovered_lock);
+    auto key = endpoint;
+    auto _ser = _discovered_services.value(key);
+    if (_ser.isNull()) {
+        auto discovered_service = service
+            {
+                _listen_for_service,
+                endpoint.toStdString(),
+                info,
+                0,
+                _timer.ms(),
+            };
+        _discovered_services.insert(endpoint, QSharedPointer<service>(new service(discovered_service)));
+        _change_sevices.append(discovered_service);
+        return;
+    }
+    _ser->last_seen = time;
+    if (_ser->info.compare(info) != 0) {
+        _ser->info = info;
+        service t(*_ser);
+        t.flags = 2;
+        _change_sevices.removeOne(t);
+        _change_sevices.append(t);
+    }
 }
 
 
@@ -294,7 +331,7 @@ void Announcer::start()
         node.add_member("info", nodeinfo);
         fastring message = node.str();
 
-//        DLOG << "UDP send: === " << message;
+        // DLOG << "UDP send: === " << message;
         int send_len = co::sendto(sockfd, message.c_str(), message.size(), &dest_addr, len);
         if (send_len < 0)
             ELOG << "Failed to send data";

@@ -337,9 +337,9 @@ void ServerImpl::loop() {
         }
 
         const uint32 n = this->ref() - 1;
-        DLOG << "server " << _ip << ':' << _port
-             << " accept connection: " << co::addr2str(&_addr, _addrlen)
-             << ", connfd: " << _connfd << ", conn num: " << n;
+//        DLOG << "server " << _ip << ':' << _port
+//             << " accept connection: " << co::addr2str(&_addr, _addrlen)
+//             << ", connfd: " << _connfd << ", conn num: " << n;
 #if !defined(DISABLE_GO)
         go(&_on_sock, _connfd);
 #else

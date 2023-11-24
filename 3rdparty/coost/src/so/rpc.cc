@@ -394,7 +394,7 @@ void ServerImpl::on_connection(tcp::Connection conn)
     }
 
 recv_zero_err:
-    LOG << "rpc client close the connection, connfd: " << conn.socket();
+//    LOG << "rpc client close the connection, connfd: " << conn.socket();
     if (this->callback) {
         callback(0, _tcp_serv.addressIP(), _tcp_serv.addressPort());
     }
