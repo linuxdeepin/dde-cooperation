@@ -48,7 +48,6 @@ inline constexpr char Khistory[] { ":/icons/deepin/builtin/texts/history_18px.sv
 inline constexpr char Ksend[] { ":/icons/deepin/builtin/texts/send_18px.svg" };
 #endif
 
-
 using namespace cooperation_core;
 
 TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
@@ -129,7 +128,7 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
     ApplyTransFiles transInfo;
     transInfo.appname = qApp->applicationName().toStdString();
     transInfo.type = type;
-    transInfo.tarAppname = CooperDaemonName; // 发送给后端插件
+    transInfo.tarAppname = CooperDaemonName;   // 发送给后端插件
     transInfo.machineName = deviceName.toStdString();
 
     co::Json req = transInfo.as_json();
@@ -297,7 +296,14 @@ bool TransferHelper::buttonVisible(const QString &id, const DeviceInfoPointer in
         if (qApp->property("onlyTransfer").toBool())
             return false;
 
-        return transHistory->contains(info->ipAddress()) && QFile::exists(transHistory->value(info->ipAddress()));
+        if (!transHistory->contains(info->ipAddress()))
+            return false;
+
+        bool exists = QFile::exists(transHistory->value(info->ipAddress()));
+        if (!exists)
+            HistoryManager::instance()->removeTransHistory(info->ipAddress());
+
+        return exists;
     }
 
     return true;

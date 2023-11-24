@@ -9,16 +9,22 @@
 
 namespace cooperation_core {
 
-class HistoryManager
+class HistoryManager : public QObject
 {
+    Q_OBJECT
 public:
     static HistoryManager *instance();
 
     QMap<QString, QString> getTransHistory();
     void writeIntoTransHistory(const QString &ip, const QString &savePath);
+    void removeTransHistory(const QString &ip);
+
+Q_SIGNALS:
+    void transHistoryUpdated();
 
 private:
-    explicit HistoryManager();
+    explicit HistoryManager(QObject *parent = nullptr);
+    void onAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 };
 
 }   // namespace cooperation_core

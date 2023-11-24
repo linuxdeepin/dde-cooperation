@@ -9,14 +9,27 @@
 
 using namespace cooperation_core;
 
-HistoryManager::HistoryManager()
+HistoryManager::HistoryManager(QObject *parent)
+    : QObject(parent)
 {
+    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &HistoryManager::onAttributeChanged);
 }
 
 HistoryManager *HistoryManager::instance()
 {
     static HistoryManager ins;
     return &ins;
+}
+
+void HistoryManager::onAttributeChanged(const QString &group, const QString &key, const QVariant &value)
+{
+    Q_UNUSED(value)
+
+    if (group != AppSettings::CacheGroup)
+        return;
+
+    if (key == AppSettings::TransHistoryKey)
+        Q_EMIT transHistoryUpdated();
 }
 
 QMap<QString, QString> HistoryManager::getTransHistory()
@@ -44,6 +57,26 @@ void HistoryManager::writeIntoTransHistory(const QString &ip, const QString &sav
         return;
 
     history.insert(ip, savePath);
+    QVariantList list;
+    auto iter = history.begin();
+    while (iter != history.end()) {
+        QVariantMap map;
+        map.insert("ip", iter.key());
+        map.insert("savePath", iter.value());
+
+        list << map;
+        ++iter;
+    }
+
+    ConfigManager::instance()->setAppAttribute(AppSettings::CacheGroup, AppSettings::TransHistoryKey, list);
+}
+
+void HistoryManager::removeTransHistory(const QString &ip)
+{
+    auto history = getTransHistory();
+    if (history.remove(ip) == 0)
+        return;
+
     QVariantList list;
     auto iter = history.begin();
     while (iter != history.end()) {

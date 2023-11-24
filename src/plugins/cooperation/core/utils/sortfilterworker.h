@@ -32,9 +32,12 @@ Q_SIGNALS:
     void deviceUpdated(int index, const DeviceInfoPointer info);
     void filterFinished();
 
+private Q_SLOTS:
+    void onTransHistoryUpdated();
+
 private:
     int findFirst(DeviceInfo::ConnectStatus state);
-    int findLast(DeviceInfo::ConnectStatus state);
+    int findLast(DeviceInfo::ConnectStatus state, const DeviceInfoPointer info);
     void updateDevice(const DeviceInfoPointer info);
     bool contains(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);
     int indexOf(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);

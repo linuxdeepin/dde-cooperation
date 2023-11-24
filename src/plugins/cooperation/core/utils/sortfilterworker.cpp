@@ -3,12 +3,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "sortfilterworker.h"
+#include "utils/historymanager.h"
+
+using TransHistoryInfo = QMap<QString, QString>;
+Q_GLOBAL_STATIC(TransHistoryInfo, transHistory)
 
 using namespace cooperation_core;
 
 SortFilterWorker::SortFilterWorker(QObject *parent)
     : QObject(parent)
 {
+    onTransHistoryUpdated();
+    connect(HistoryManager::instance(), &HistoryManager::transHistoryUpdated, this, &SortFilterWorker::onTransHistoryUpdated, Qt::QueuedConnection);
 }
 
 void SortFilterWorker::stop()
@@ -16,12 +22,17 @@ void SortFilterWorker::stop()
     isStoped = true;
 }
 
+void SortFilterWorker::onTransHistoryUpdated()
+{
+    *transHistory = HistoryManager::instance()->getTransHistory();
+}
+
 void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
 {
     if (isStoped)
         return;
 
-    for (auto &info : infoList) {
+    for (auto info : infoList) {
         if (contains(allDeviceList, info)) {
             updateDevice(info);
             continue;
@@ -34,17 +45,13 @@ void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
             index = 0;
             break;
         case DeviceInfo::Connectable: {
-            int i = findLast(DeviceInfo::Connectable);
-            if (i != -1) {
-                index = i + 1;
+            index = findLast(DeviceInfo::Connectable, info);
+            if (index != -1)
                 break;
-            }
 
-            i = findFirst(DeviceInfo::Offline);
-            if (i != -1) {
-                index = i;
+            index = findFirst(DeviceInfo::Offline);
+            if (index != -1)
                 break;
-            }
 
             index = allDeviceList.size();
         } break;
@@ -113,21 +120,26 @@ int SortFilterWorker::findFirst(DeviceInfo::ConnectStatus state)
     return index;
 }
 
-int SortFilterWorker::findLast(DeviceInfo::ConnectStatus state)
+int SortFilterWorker::findLast(DeviceInfo::ConnectStatus state, const DeviceInfoPointer info)
 {
-    int index = allDeviceList.size();
-    auto iter = std::find_if(allDeviceList.crbegin(), allDeviceList.crend(),
-                             [&](const DeviceInfoPointer info) {
-                                 if (isStoped)
-                                     return true;
-                                 index--;
-                                 return info->connectStatus() == state;
-                             });
+    bool isRecord = transHistory->contains(info->ipAddress());
+    int startPos = -1;
+    int endPos = -1;
 
-    if (iter == allDeviceList.crend())
-        return -1;
+    for (int i = allDeviceList.size() - 1; i >= 0; --i) {
+        if (allDeviceList[i]->connectStatus() == state) {
+            startPos = (startPos == -1 ? i : startPos);
+            endPos = i;
 
-    return index;
+            if (!isRecord)
+                return startPos + 1;
+
+            if (transHistory->contains(allDeviceList[i]->ipAddress()))
+                return endPos + 1;
+        }
+    }
+
+    return qMin(startPos, endPos);
 }
 
 void SortFilterWorker::updateDevice(const DeviceInfoPointer info)
