@@ -5,6 +5,7 @@
 #include "ipc/frontendservice.h"
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
+#include "ipc/proto/backend.h"
 
 #include <co/rpc.h>
 #include <co/co.h>
@@ -13,8 +14,6 @@
 #include <QTimer>
 #include <QDebug>
 #include <QCoreApplication>
-
-#include <ipc/proto/backend.h>
 
 #pragma execution_character_set("utf-8")
 TransferHandle::TransferHandle()
@@ -107,7 +106,7 @@ void TransferHandle::localIPCStart()
                 break;
             }
             case MISC_MSG: {
-                QString json(bridge.json.c_str());
+                QString json(json_obj.get("msg").as_c_str());
                 handleMiscMessage(json);
                 break;
             }
@@ -118,7 +117,7 @@ void TransferHandle::localIPCStart()
                 NodePeerInfo peerobj;
                 peerobj.from_json(param.msg);
 
-                qInfo() << param.result << " peer : " << param.msg.c_str();
+                //qInfo() << param.result << " peer : " << param.msg.c_str();
 
                 break;
             }
@@ -180,11 +179,15 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
     qInfo() << "connect status: " << result << " msg:" << msg;
     if (result > 0) {
         emit TransferHelper::instance()->connectSucceed();
-        //#ifndef WIN32
-        //json::Json message, unfinishFiles;
-        //sendMessage(unfinishFiles);
-        //        TransferHelper::instance()->isUnfinishedJob(msg);
-        //#endif
+#ifndef WIN32
+        json::Json message;
+        QString unfinishJson;
+        bool unfinish = TransferHelper::instance()->isUnfinishedJob(unfinishJson);
+        if (unfinish) {
+            message.add_member("unfinish_json", unfinishJson.toStdString());
+            sendMessage(message);
+        }
+#endif
     } else {
         emit TransferHelper::instance()->connectFailed();
     }
@@ -275,7 +278,10 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         _file_ids.remove(param.file_id);
 
         qInfo() << "file receive END: " << filepath;
-        //TransferHelper::instance()->addFinshedFiles(filepath);
+#ifndef WIN32
+        TransferHelper::instance()->addFinshedFiles(filepath);
+#endif
+
         break;
     }
     default:
@@ -309,6 +315,18 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
 void TransferHandle::handleMiscMessage(QString jsonmsg)
 {
     qInfo() << "misc message arrived:" << jsonmsg;
+    co::Json miscJson;
+    if (!miscJson.parse_from(jsonmsg.toStdString())) {
+        qDebug() << "error json format string!";
+        return;
+    }
+
+    // 前次迁移未完成信息
+    if (miscJson.has_member("unfinish_json")) {
+        QString undoneJsonstr = miscJson.get("unfinish_json").as_c_str();
+        // 弹出前次迁移未完成对话框
+        emit TransferHelper::instance()->unfinishedJob(undoneJsonstr);
+    }
 }
 
 void TransferHandle::tryConnect(QString ip, QString password)
@@ -474,11 +492,13 @@ void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 void TransferWoker::sendMessage(json::Json &message)
 {
     co::Json req, res;
+    fastring app_name(qApp->applicationName().toStdString());
 
-    //TransFilesParam
-    req.add_member("app", _session_id);
-    req.add_member("json", message);
-    req.add_member("api", "Backend.miscMessage");   //BackendImpl::tryTransFiles
+    MiscJsonCall miscParam;
+    miscParam.app = app_name;
+    miscParam.json = message.str().c_str();
+    req = miscParam.as_json();
+    req.add_member("api", "Backend.miscMessage");   //BackendImpl::miscMessage
 
     qInfo() << "sendMessage" << req.str().c_str();
     call(req, res);

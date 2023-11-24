@@ -156,11 +156,13 @@ bool HandleRpcService::handleRemoteLogin(co::Json &info)
 
 void HandleRpcService::handleRemoteDisc(co::Json &info)
 {
-    MiscInfo mis;
+    DLOG << "handleRemoteDisc: " << info.dbg();
+    MiscJsonCall mis;
     mis.from_json(info);
-    co::Json msg{"msg", mis.json};
-    msg.add_member("api", "Frontend::cbMiscMessage");
-    SendIpcService::instance()->handleSendToClient(mis.appName.c_str(), msg.str().c_str());
+    co::Json msg;
+    msg.add_member("msg", mis.json.c_str());
+    msg.add_member("api", "Frontend.cbMiscMessage");
+    SendIpcService::instance()->handleSendToClient(mis.app.c_str(), msg.str().c_str());
 }
 
 void HandleRpcService::handleRemoteFileInfo(co::Json &info)

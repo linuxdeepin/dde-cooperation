@@ -94,7 +94,7 @@ void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend
     {
         MiscJsonCall call;
         call.from_json(msg);
-        SendRpcService::instance()->doSendProtoMsg(MISC, call.app.c_str(), call.json.c_str());
+        SendRpcService::instance()->doSendProtoMsg(MISC, call.app.c_str(), msg.str().c_str());
         break;
     }
     case BACK_TRY_CONNECT:

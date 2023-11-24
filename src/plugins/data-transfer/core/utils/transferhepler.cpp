@@ -22,6 +22,7 @@
 #include <QNetworkReply>
 #include <QProcess>
 #include <QJsonArray>
+#include <QStandardPaths>
 
 #ifdef WIN32
 #include <gui/win/drapwindowsdata.h>
@@ -77,6 +78,19 @@ void TransferHelper::initOnlineState()
     });
 
     timer->start(1000);
+}
+
+QString TransferHelper::tempCacheDir()
+{
+    QString savePath = QString("%1/%2/%3/")
+                    .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
+                    .arg(qApp->organizationName()).arg(qApp->applicationName()); //~/.cache/deepin/xx
+
+    QDir cacheDir(savePath);
+    if (!cacheDir.exists())
+        QDir().mkpath(savePath);
+
+    return savePath;
 }
 
 bool TransferHelper::getOnlineState() const
@@ -251,7 +265,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
     // 1.copy transferjson to temp
     QFile jsonfile(filepath);
     QFileInfo info(jsonfile);
-    QString tempPath(info.path() + "/transfer-temp.json");
+    QString tempPath(tempCacheDir() + "/transfer-temp.json");
     if (!jsonfile.copy(tempPath))
         qWarning() << "Failed to copy file";
 
@@ -267,7 +281,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
             QString filename = file.mid(file.indexOf('/'));
 
             // skip finished files
-            if (finshedFiles.contains(filename)) {
+            if (finshedFiles.endsWith(filename)) {
                 continue;
             }
             updatedFileList.append(file);
@@ -291,30 +305,29 @@ void TransferHelper::recordTranferJob(const QString &filepath)
     });
 }
 
-bool TransferHelper::isUnfinishedJob(const QString &user)
+bool TransferHelper::isUnfinishedJob(QString &content)
 {
-    QFile f(QDir::homePath() + "/" + user + "/transfer-temp.json");
+    QString transtempPath(tempCacheDir() + "/transfer-temp.json");
+    QFile f(transtempPath);
     if (!f.exists())
         return false;
-    qInfo() << user + "has UnfinishedJob";
-
-    QJsonObject jsonObj = SettingHelper::ParseJson(f.fileName());
-    QJsonArray fileArray = jsonObj["user_file"].toArray();
-
-    QStringList unfinishedFiles;
-    foreach (const QJsonValue &fileValue, fileArray) {
-        QString file = fileValue.toString();
-        unfinishedFiles.append(file);
+    qInfo() << "has UnfinishedJob: " << transtempPath;
+    if (!f.open(QIODevice::ReadOnly)) {
+        qWarning() << "could not open file";
+        return false;
     }
-    qInfo() << "unfinishedFiles" << unfinishedFiles;
+    QByteArray bytes = f.readAll();
+    content = QString(bytes.data());
+    f.close();
+
     return true;
 }
 
 void TransferHelper::addFinshedFiles(const QString &filepath)
 {
-    if (filepath.contains("transfer.json"))
-        TransferHelper::instance()->recordTranferJob(filepath);
     finshedFiles.append(filepath);
+    if (filepath.endsWith("transfer.json"))
+        TransferHelper::instance()->recordTranferJob(filepath);
 }
 
 void TransferHelper::setting(const QString &filepath)
