@@ -5,6 +5,9 @@
 #pragma once
 
 #include <QReadWriteLock>
+#include <QMap>
+#include <QSharedPointer>
+
 #include <co/time.h>
 #include <co/stl.h>
 #include <memory>
@@ -29,6 +32,7 @@ public:
         fastring service_name; // the name of the service
         fastring endpoint; //sockaddr 地址转换成 "ip:port" 形式的字符串
         fastring info; //json 格式的服务节点信息
+        qint8 flags; // 0是服务器上线，1服务器下线，2信息改变
         int64_t last_seen; //last see time
 
         bool operator<(const service& o) const
@@ -49,16 +53,17 @@ public:
         friend fastream& operator<<(fastream& os, const Discoverer::service& service)
         {
             os << service.service_name << " on " << "(" << service.endpoint << "): " <<
-                service.info;
+                service.info << " == flags = " << int(service.flags) <<
+                  " , time = " << service.last_seen;
             return os;
         }
     };
 
     /// a set of discovered services
-    typedef co::set<service> services;
+    typedef QMap<QString, QSharedPointer<searchlight::Discoverer::service>> services;
 
     /// this callback gets called, when ever the set of available services changes
-    typedef std::function<void(const services& services)> on_services_changed_t;
+    typedef std::function<void(const QList<service>& services)> on_services_changed_t;
 
     Discoverer(const fastring& listen_for_service, // the service to watch out for
                const on_services_changed_t on_services_changed // callback discovered services changes
@@ -73,6 +78,7 @@ public:
 private:
     void handle_message(const fastring& message, const fastring& sender_endpoint);
     bool remove_idle_services();
+    void handleChanges(const QString &endpoint, const fastring &info, const qint64 time);
 
     bool _stop = true;
 
@@ -82,6 +88,7 @@ private:
 
     QReadWriteLock _discovered_lock;
     services _discovered_services;
+    QList<service> _change_sevices;
 
     DISALLOW_COPY_AND_ASSIGN(Discoverer);
 };

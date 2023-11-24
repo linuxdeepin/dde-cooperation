@@ -47,16 +47,10 @@ void DiscoveryJob::discovererRun()
 {
     _discoverer_p = co::make<searchlight::Discoverer>(
         "ulink_service",
-        [this](const searchlight::Discoverer::services& services)
+        [this](const QList<searchlight::Discoverer::service> & services)
         {
             QWriteLocker lk(&_dis_lock);
-            // loop and set may not exist
-            for (auto it = _dis_node_maps.begin(); it != _dis_node_maps.end(); ++it) {
-                it->second.second = false;
-            }
-
             for(auto& service : services) {
-                //DLOG << "discovered: " << service;
                 co::Json node;
                 node.parse_from(service.info);
                 co::Json osjson = node.get("os");
@@ -69,18 +63,21 @@ void DiscoveryJob::discovererRun()
 
                 auto it = _dis_node_maps.find(uid);
                 if (it != _dis_node_maps.end()) {
+                    if (service.flags == 1) { // 下线
+                        it->second.second = false;
+                        continue;
+                    }
                     // has been recorded, markd it exist
                     it->second.second = true;
                     if (it->second.first.compare(service.info) != 0)
                         compareOldAndNew(uid, service.info.c_str(), it);
-                } else {
+                } else { // 上线
                     //new node discovery.
                     //DLOG << "new peer found: " << node.str();
                     emit sigNodeChanged(true, QString(service.info.c_str()));
                     _dis_node_maps.insert(uid, std::make_pair(service.info, true));
                 }
             }
-
             // loop and notify all not exist node.
             for (auto it = _dis_node_maps.begin(); it != _dis_node_maps.end(); ++it) {
                 if (!it->second.second) {
