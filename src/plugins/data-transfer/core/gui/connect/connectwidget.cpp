@@ -204,12 +204,7 @@ void ConnectWidget::initConnectLayout()
 
 void ConnectWidget::nextPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::waitgwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::waitgwidget);
 }
 
 void ConnectWidget::backPage()

@@ -7,7 +7,7 @@
 #include <QDebug>
 #include "../type_defines.h"
 #include <gui/connect/choosewidget.h>
-
+#include <utils/transferhepler.h>
 NetworkDisconnectionWidget::NetworkDisconnectionWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -73,24 +73,12 @@ void NetworkDisconnectionWidget::initUI()
 
 void NetworkDisconnectionWidget::backPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::choosewidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void NetworkDisconnectionWidget::retryPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::choosewidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void NetworkDisconnectionWidget::themeChanged(int theme)

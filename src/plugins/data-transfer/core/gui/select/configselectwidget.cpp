@@ -1,4 +1,4 @@
-#include "configselectwidget.h"
+﻿#include "configselectwidget.h"
 #include "appselectwidget.h"
 #include "item.h"
 #include "../type_defines.h"
@@ -14,8 +14,6 @@
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
 #include <gui/mainwindow_p.h>
-
-
 
 ConfigSelectWidget::ConfigSelectWidget(QWidget *parent) : QFrame(parent)
 {
@@ -42,7 +40,8 @@ void ConfigSelectWidget::initUI()
     initSelectBrowerBookMarkFrame();
     initSelectConfigFrame();
 
-    QLabel *tipLabel1 = new QLabel(tr("Check transfer configuration will automatically apply to UOS."), this);
+    QLabel *tipLabel1 =
+            new QLabel(tr("Check transfer configuration will automatically apply to UOS."), this);
     tipLabel1->setFixedHeight(12);
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     font.setPointSize(10);
@@ -106,8 +105,8 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
 {
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
-    ItemTitlebar *titlebar =
-            new ItemTitlebar(tr("Browser bookmarks"),  tr("Recommendation"), 50, 360, QRectF(10, 12, 16, 16), 3, this);
+    ItemTitlebar *titlebar = new ItemTitlebar(tr("Browser bookmarks"), tr("Recommendation"), 50,
+                                              360, QRectF(10, 12, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
     selectBrowerBookMarkFrame = new QFrame(this);
     selectBrowerBookMarkFrame->setFixedSize(500, 190);
@@ -143,8 +142,8 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
 void ConfigSelectWidget::initSelectConfigFrame()
 {
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
-    ItemTitlebar *titlebar =
-            new ItemTitlebar(tr("Personal Settings"), tr("Recommendation"), 50, 360, QRectF(10, 12, 16, 16), 3, this);
+    ItemTitlebar *titlebar = new ItemTitlebar(tr("Personal Settings"), tr("Recommendation"), 50,
+                                              360, QRectF(10, 12, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
 
     selectConfigFrame = new QFrame(this);
@@ -247,7 +246,6 @@ void ConfigSelectWidget::changeText()
     }
 }
 
-
 void ConfigSelectWidget::clear()
 {
     QStandardItemModel *browsermodel = qobject_cast<QStandardItemModel *>(browserView->model());
@@ -261,6 +259,8 @@ void ConfigSelectWidget::clear()
         QModelIndex itemIndex = configmodel->index(row, 0);
         configmodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
     }
+    OptionsManager::instance()->addUserOption(Options::kBrowserBookmarks, QStringList());
+    OptionsManager::instance()->addUserOption(Options::kConfig, QStringList());
 }
 
 void ConfigSelectWidget::nextPage()
@@ -269,24 +269,12 @@ void ConfigSelectWidget::nextPage()
     sendOptions();
 
     // nextpage
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }
 void ConfigSelectWidget::backPage()
 {
     // delete Options
     delOptions();
 
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::selectmainwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }

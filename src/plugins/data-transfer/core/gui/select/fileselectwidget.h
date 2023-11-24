@@ -29,7 +29,6 @@ public slots:
     void selectOrDelAllItem();
     void updateFileSelectList(QStandardItem *item);
     void updateFileViewSize(quint64 fileSize, const QString &path);
-
     void updateFileViewData(QStandardItem *siderbarItem, const bool &isAdd);
     void selectOrDelAllItemFromSiderbar(QStandardItem *siderbarItem);
 
@@ -43,17 +42,13 @@ private:
     void delOptions();
     SelectListView *addFileViewData(const QString &path, QStandardItem *siderbarIndex);
     void createFilesizeListen(QListView *listView);
-
     void startCalcluateFileSize(QList<QString> fileList);
 
 private:
     SidebarWidget *sidebar{ nullptr };
-
     QMap<QStandardItem *, QListView *> sidebarFileViewList;
-
     QStackedWidget *stackedWidget{ nullptr };
     QLabel *titileLabel{ nullptr };
-
     QString InternetText{ tr("Select the file to transfer") };
     QString LocalText{ tr("Please select the files to back up") };
 

@@ -183,16 +183,18 @@ void HandleRpcService::handleRemoteFileInfo(co::Json &info)
         filename = res.sub_dir + "/" + entry.name;
     }
 
+    FileInfo fsinfo;
+    fsinfo.job_id = res.job_id;
+    fsinfo.file_id = fileid;
+    fsinfo.name = filename;
+    fsinfo.total_size = entry.size;
+    fsinfo.current_size = 0;
+    fsinfo.time_spended = -1;
+    co::Json tm = fsinfo.as_json();
     if (type == FILE_B) {
-        FileInfo info;
-        info.job_id = res.job_id;
-        info.file_id = fileid;
-        info.name = filename;
-        info.total_size = entry.size;
-        info.current_size = 0;
-        info.time_spended = -1;
-        co::Json tm = info.as_json();
-        JobManager::instance()->handleFSInfo(tm);
+        JobManager::instance()->handleFSInfo(tm, false);
+    } else if (type == DIR) {
+        JobManager::instance()->handleFSInfo(tm, true);
     }
 
     bool exist = JobManager::instance()->handleCreateFile(res.job_id, filename.c_str(), type == DIR);

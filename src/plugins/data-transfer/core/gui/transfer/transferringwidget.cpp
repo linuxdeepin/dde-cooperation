@@ -199,6 +199,8 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     if (content.contains("transfer.json") && tpye == tr("Transfering"))
         TransferHelper::instance()->checkSize(content);
 #endif
+    if(estimatedtime==-1)
+        return;
     QString info = QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(tpye + content);
     processTextBrowser->append(info);
     progressLabel->setProgress(progressbar);

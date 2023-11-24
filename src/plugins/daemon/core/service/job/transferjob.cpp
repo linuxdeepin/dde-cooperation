@@ -179,6 +179,7 @@ void TransferJob::insertFileInfo(FileInfo &info)
         DLOG << "insertFileInfo new file INFO: " << fileid << info.name;
         // skip 0B file
         if (info.total_size > 0) {
+            co::mutex_guard g(_map_mutex);
             _file_info_maps.insert(std::make_pair(fileid, info));
             handleTransStatus(FILE_TRANS_IDLE, info);
         }
@@ -287,7 +288,6 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         info.time_spended = -1;
 
         insertFileInfo(info);
-        handleTransStatus(FILE_TRANS_IDLE, info);
         //        LOG << "======this file (" << subname << "fileid" << fileid << ") start   _file_info_maps";
     }
     QPointer<TransferJob> self = this;
@@ -496,6 +496,7 @@ bool TransferJob::syncHandleStatus()
             handleTransStatus(end ? FILE_TRANS_END : FILE_TRANS_SPEED, pair.second);
             if (end) {
                 DLOG_IF(TEST_LOGOUT) << "should notify file finish: " << pair.second.name << " jobid=" << pair.second.job_id;
+                co::mutex_guard g(_map_mutex);
                 _file_info_maps.erase(pair.first);
                 if (!_writejob) {
                     //TODO: check sum

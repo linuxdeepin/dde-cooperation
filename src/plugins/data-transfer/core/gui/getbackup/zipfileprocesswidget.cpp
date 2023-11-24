@@ -47,9 +47,9 @@ void zipFileProcessWidget::changeTimeLabel(const int &time)
 {
     if (time > 60) {
         int textTime = time / 60;
-        timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes")).arg(QString::number(textTime)));
+        timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes").arg(QString::number(textTime))));
     } else {
-        timeLabel->setText(QString(tr("Transfer will be completed in %1 secondes")).arg(QString::number(time)));
+        timeLabel->setText(QString(tr("Transfer will be completed in %1 secondes").arg(QString::number(time))));
     }
 }
 
@@ -93,7 +93,7 @@ void zipFileProcessWidget::initUI()
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
     timeLabel = new QLabel(this);
-    timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes")).arg(QString::number(0)));
+    timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes").arg(QString::number(0))));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     QFont timefont;
     font.setPointSize(7);
@@ -126,11 +126,5 @@ void zipFileProcessWidget::initUI()
 
 void zipFileProcessWidget::nextPage()
 {
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(PageName::zipfileprocessresultwidget);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
-    }
+   emit TransferHelper::instance()->changeWidget(PageName::zipfileprocessresultwidget);
 }

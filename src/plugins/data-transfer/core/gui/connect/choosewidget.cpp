@@ -151,17 +151,11 @@ void ChooseWidget::sendOptions()
 
 void ChooseWidget::nextPage()
 {
-    clearAllWidget();
     sendOptions();
-    changeAllWidgtText();
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+    emit TransferHelper::instance()->changeWidgetText();
+    emit TransferHelper::instance()->clearSelectWidget();
 
-    if (stackedWidget) {
-        stackedWidget->setCurrentIndex(nextpage);
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                   "nullptr";
-    }
+    emit TransferHelper::instance()->changeWidget((PageName)nextpage);
 }
 
 void ChooseWidget::themeChanged(int theme)
@@ -268,51 +262,4 @@ void ModeItem::paintEvent(QPaintEvent *event)
     else
         paint.setPen(QColor(65, 77, 104, 255));
     paint.drawText(36, 24, itemText);
-}
-
-void ChooseWidget::changeAllWidgtText()
-{
-#ifdef _WIN32
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    SelectMainWidget *widgetMainselect =
-        qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
-    ConfigSelectWidget *widgetConfig =
-        qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
-    AppSelectWidget *widgetApp =
-        qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
-    FileSelectWidget *widgetFile =
-        qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
-    widgetMainselect->changeText();
-    widgetConfig->changeText();
-    widgetApp->changeText();
-    widgetFile->changeText();
-#endif
-}
-
-void ChooseWidget::clearAllWidget()
-{
-#ifdef _WIN32
-    OptionsManager::instance()->clear();
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-    SelectMainWidget *widgetMainselect =
-
-        qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
-    ConfigSelectWidget *widgetConfig =
-        qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
-    AppSelectWidget *widgetApp =
-        qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
-    FileSelectWidget *widgetFile =
-        qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
-    CreateBackupFileWidget *widgetbackupFile =
-        qobject_cast<CreateBackupFileWidget *>(stackedWidget->widget(PageName::createbackupfilewidget));
-    TransferringWidget *widgetTransfer =   qobject_cast<TransferringWidget *>(stackedWidget->widget(PageName::transferringwidget));
-
-    widgetFile->clear();
-    widgetConfig->clear();
-    widgetApp->clear();
-    widgetMainselect->clear();
-    widgetbackupFile->clear();
-    widgetTransfer->clear();
-
-#endif
 }

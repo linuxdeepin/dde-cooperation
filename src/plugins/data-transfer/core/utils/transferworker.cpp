@@ -125,6 +125,7 @@ void TransferHandle::localIPCStart()
                 ipc::GenericResult param;
                 param.from_json(json_obj);
                 QString mesg(param.msg.c_str());
+                qInfo() << param.result << " FRONT_CONNECT_CB : " << param.msg.c_str();
                 handleConnectStatus(param.result, mesg);
                 break;
             }
@@ -242,11 +243,12 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
 
     switch (param.status) {
     case FILE_TRANS_IDLE: {
-        // 这个文件未被统计
-        _file_stats.all_total_size += param.total;
-        _file_stats.all_current_size += param.current;
-        _file_ids.insert(param.file_id, param.current);
-
+        if (param.total > 0) {
+            // 这个文件未被统计
+            _file_stats.all_total_size += param.total;
+            _file_stats.all_current_size += param.current;
+            _file_ids.insert(param.file_id, param.current);
+        }
         qInfo() << "file receive IDLE: " << filepath;
         break;
     }
@@ -279,7 +281,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
 
         qInfo() << "file receive END: " << filepath;
 #ifndef WIN32
-        TransferHelper::instance()->addFinshedFiles(filepath);
+        TransferHelper::instance()->addFinshedFiles(filepath, param.total);
 #endif
 
         break;
@@ -306,8 +308,8 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
     }
 
-    //    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
-    //    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
+        qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
+        qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
     emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
 }

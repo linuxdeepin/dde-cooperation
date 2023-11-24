@@ -119,7 +119,7 @@ bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransRespo
     return true;
 }
 
-bool JobManager::handleFSInfo(co::Json &info)
+bool JobManager::handleFSInfo(co::Json &info, bool dir)
 {
     FileInfo finfo;
     finfo.from_json(info);
@@ -130,7 +130,14 @@ bool JobManager::handleFSInfo(co::Json &info)
         //update the file relative to abs path
         fastring savedpath = path::join(DaemonConfig::instance()->getStorageDir(job->getAppName()), finfo.name);
         finfo.name = savedpath;
-        job->insertFileInfo(finfo);
+        if (dir) {
+            //notify new directory
+            QString appname(job->getAppName().c_str());
+            QString fileinfo(finfo.as_json().str().c_str());
+            handleFileTransStatus(appname, FILE_TRANS_IDLE, fileinfo);
+        } else {
+            job->insertFileInfo(finfo);
+        }
     } else {
         return false;
     }
