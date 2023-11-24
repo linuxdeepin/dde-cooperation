@@ -43,7 +43,7 @@ public:
     bool checkSize(const QString &filepath);
     void setting(const QString &filepath);
     void recordTranferJob(const QString &filepath);
-    bool isUnfinishedJob(const QString &user);
+    bool isUnfinishedJob(QString &content);
     void addFinshedFiles(const QString &filepath);
 
 private:
@@ -80,8 +80,12 @@ Q_SIGNALS:
     // Transmission interruption
     void interruption();
 
+    // unfinish json content from latest job
+    void unfinishedJob(const QString jsonstr);
+
 private:
     void initOnlineState();
+    QString tempCacheDir();
 
 private:
     TransferHandle transferhandle;
