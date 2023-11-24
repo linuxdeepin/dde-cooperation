@@ -208,15 +208,13 @@ void MainController::onTransJobStatusChanged(int id, int result, const QString &
     case JOB_TRANS_FINISHED: {
         transferResult(true, tr("File sent successfully"));
 
-        // msg: deviceName(ip)
+        // msg: /savePath/deviceName(ip)
         // 获取存储路径和ip
         int startPos = msg.lastIndexOf("(");
         int endPos = msg.lastIndexOf(")");
         if (startPos != -1 && endPos != -1) {
             auto ip = msg.mid(startPos + 1, endPos - startPos - 1);
-            auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
-            auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-            recvFilesSavePath = storagePath + QDir::separator() + msg;
+            recvFilesSavePath = msg;
 
             transHistory->insert(ip, recvFilesSavePath);
             HistoryManager::instance()->writeIntoTransHistory(ip, recvFilesSavePath);
