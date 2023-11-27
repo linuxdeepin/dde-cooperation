@@ -114,11 +114,40 @@ object ShareConnectReply {
   int32 reply // 0是拒绝，1是同意
 }
 
+object ShareStop {
+    string appName // 自己的app名称
+    string tarAppname // 目标的app名称
+}
+
+object ShareServerConfig {
+    string screen_left // 屏幕的左边
+    string screen_right // 屏幕右边
+    bool left_halfDuplexCapsLock //
+    bool left_halfDuplexNumLock //
+    bool left_halfDuplexScrollLock //
+    bool left_xtestIsXineramaUnaware //
+    bool left_preserveFocus //
+    string left_switchCorners //
+    int32 left_switchCornerSize //
+    bool right_halfDuplexCapsLock //
+    bool right_halfDuplexNumLock //
+    bool right_halfDuplexScrollLock //
+    bool right_xtestIsXineramaUnaware //
+    bool right_preserveFocus //
+    string right_switchCorners //
+    int32 right_switchCornerSize //
+    bool relativeMouseMoves
+    bool screenSaverSync
+    bool win32KeepForeground
+    bool clipboardSharing
+    string switchCorners //
+    int32 switchCornerSize //
+}
+
 object ShareStart {
     string appName // 自己的app名称
     string tarAppname // 目标的app名称
-    string tarDeviceName // 被控制端的名称
+    ShareServerConfig config // 服务器配置信息
     string ip // 自己的ip
-    int32 left // 0表示右边，0表示左边
-    int32 shareClip // 0表示不共享，1表示共享
+    int32 port // 端口号
 }

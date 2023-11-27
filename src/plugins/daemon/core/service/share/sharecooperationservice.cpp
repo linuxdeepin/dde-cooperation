@@ -19,6 +19,7 @@ ShareCooperationService::ShareCooperationService(QObject *parent) : QObject(pare
 
     QSettings *settings = DaemonConfig::instance()->settings();
     _cooConfig = new CooConfig(settings);
+    // 初始化配置文件
 
 
 //    _cooConfig.setScreenName(m_pLineEditScreenName->text());
@@ -59,6 +60,57 @@ void ShareCooperationService::restartBarrier()
     startBarrier();
 }
 
+bool ShareCooperationService::setServerConfig(const ShareServerConfig &config)
+{
+    if (BarrierType::Server != _brrierType) {
+        ELOG << "not the brrier server !!!!!!!";
+        return false;
+    }
+    auto path = checkParam(config);
+    if (path.isEmpty())
+        return false;
+    QFile file(path);
+    if (!file.open(QFileDevice::OpenModeFlag::Truncate | QFileDevice::OpenModeFlag::WriteOnly)) {
+        ELOG << "open server config error, path = " << path.toStdString() << ", case : "
+             << file.errorString().toStdString();
+        return false;
+    }
+
+
+    QTextStream outStream(&file);
+
+    // 设置screen
+    setScreen(config, &outStream);
+    // 设置link
+    setScreenLink(config, &outStream);
+    // 设置options
+    setScreenOptions(config, &outStream);
+    outStream.flush();
+    file.flush();
+    file.close();
+
+    return true;
+}
+
+bool ShareCooperationService::setClientTargetIp(const QString &ip, const int &port)
+{
+    if (BarrierType::Server == _brrierType) {
+        ELOG << "not the brrier client !!!!!!!";
+        return false;
+    }
+    if (!_cooConfig) {
+        ELOG << "the _cooConfig is null !!!!!" << " ip = " << ip.toStdString() << ":" << port;
+        return false;
+    }
+    if (ip.isEmpty()) {
+        ELOG << "error param !!!!!" << " ip = " << ip.toStdString() << ":" << port;
+        return false;
+    }
+    _cooConfig->setServerIp(ip);
+    _cooConfig->setPort(port == 0 ? 24800 : port);
+    return true;
+}
+
 bool ShareCooperationService::startBarrier()
 {
     LOG << "starting process";
@@ -93,6 +145,7 @@ bool ShareCooperationService::startBarrier()
 //    args << "--profile-dir" << QString::fromStdString("\"" + barrier::DataDirectories::profile().u8string() + "\"");
 #endif
 
+        LOG << "config file: "  << this->configFilename().toStdString();
     if ((barrierType() == BarrierType::Client && !clientArgs(args, app))
         || (barrierType() == BarrierType::Server && !serverArgs(args, app)))
     {
@@ -171,7 +224,6 @@ bool ShareCooperationService::clientArgs(QStringList& args, QString& app)
     return true;
 }
 
-
 bool ShareCooperationService::serverArgs(QStringList& args, QString& app)
 {
     app = appPath(cooConfig().barriersName());
@@ -204,6 +256,95 @@ bool ShareCooperationService::serverArgs(QStringList& args, QString& app)
     args << "-c" << configFilename << "--address" << address();
 
     return true;
+}
+
+QString ShareCooperationService::checkParam(const ShareServerConfig &config)
+{
+    auto path =  configFilename();
+    if (config.screen_left.empty()) {
+        ELOG << " config's screen left  empty ===== " << config.as_json();
+        return "";
+    }
+
+    if (config.screen_right.empty()) {
+        ELOG << " config's screen right  empty ===== " << config.as_json();
+        return "";
+    }
+
+    if (path.isEmpty()) {
+        ELOG << " config path is empty ===== js = " << config.as_json() << "\n path = " << path.toStdString();
+        return "";
+    }
+
+    return path;
+}
+
+void ShareCooperationService::setScreen(const ShareServerConfig &config, QTextStream *stream)
+{
+    // 设置screen
+    *stream << "section: screens" << endl;
+    *stream << "\t" << config.screen_left.c_str() << ":" << endl;
+    // 设置左边
+    *stream << "\t\t" << "halfDuplexCapsLock = "
+            << (config.left_halfDuplexCapsLock ? "true" : "false") << endl;
+    *stream << "\t\t" << "halfDuplexNumLock = "
+            << (config.left_halfDuplexNumLock ? "true" : "false") << endl;
+    *stream << "\t\t" << "halfDuplexScrollLock = "
+            << (config.left_halfDuplexScrollLock ? "true" : "false") << endl;
+    *stream << "\t\t" << "xtestIsXineramaUnaware = "
+            << (config.left_xtestIsXineramaUnaware ? "true" : "false") << endl;
+    *stream << "\t\t" << "preserveFocus = "
+            << (config.left_preserveFocus ? "true" : "false") << endl;
+    *stream << "\t\t" << "switchCorners = "
+            << (config.left_switchCorners.empty() ? "none" : config.left_switchCorners.c_str()) << endl;
+    *stream << "\t\t" << "switchCornerSize = " << config.left_switchCornerSize << endl;
+    // 设置右边
+    *stream << "\t" << config.screen_right.c_str() << ":" << endl;
+    *stream << "\t\t" << "halfDuplexCapsLock = "
+            << (config.right_halfDuplexCapsLock ? "true" : "false") << endl;
+    *stream << "\t\t" << "halfDuplexNumLock = "
+            << (config.right_halfDuplexNumLock ? "true" : "false") << endl;
+    *stream << "\t\t" << "halfDuplexScrollLock = "
+            << (config.right_halfDuplexScrollLock ? "true" : "false") << endl;
+    *stream << "\t\t" << "xtestIsXineramaUnaware = "
+            << (config.right_xtestIsXineramaUnaware ? "true" : "false") << endl;
+    *stream << "\t\t" << "preserveFocus = "
+            << (config.right_preserveFocus ? "true" : "false") << endl;
+    *stream << "\t\t" << "switchCorners = "
+            << (config.right_switchCorners.empty() ? "none" : config.right_switchCorners.c_str()) << endl;
+    *stream << "\t\t" << "switchCornerSize = " << config.right_switchCornerSize << endl;
+    *stream << "end" << endl << endl;
+
+    *stream << "section: aliases" << endl;
+    *stream << "end" << endl << endl;
+
+}
+
+void ShareCooperationService::setScreenLink(const ShareServerConfig &config, QTextStream *stream)
+{
+    *stream << "section: links" << endl;
+    *stream << "\t" << config.screen_left.c_str() << ":" << endl;
+    *stream << "\t\t" << "right = " << config.screen_right.c_str() << endl;
+    *stream << "\t" << config.screen_right.c_str() << ":" << endl;
+    *stream << "\t\t" << "left = " << config.screen_left.c_str() << endl;
+    *stream << "end" << endl << endl;
+}
+
+void ShareCooperationService::setScreenOptions(const ShareServerConfig &config, QTextStream *stream)
+{
+    *stream  << "section: options" << endl;
+    *stream << "\t" << "relativeMouseMoves = "
+            << (config.relativeMouseMoves ? "true" : "false") << endl;
+    *stream << "\t" << "screenSaverSync = "
+            << (config.screenSaverSync ? "true" : "false") << endl;
+    *stream << "\t" << "win32KeepForeground = "
+            << (config.win32KeepForeground ? "true" : "false") << endl;
+    *stream << "\t" << "clipboardSharing = "
+            << (config.clipboardSharing ? "true" : "false") << endl;
+    *stream << "\t" << "switchCorners = "
+            << (config.switchCorners.empty() ? "none" : config.switchCorners.c_str()) << endl;
+    *stream << "\t" << "switchCornerSize = " << config.switchCornerSize << endl;
+    *stream << "end" << endl << endl;
 }
 
 QString ShareCooperationService::configFilename()

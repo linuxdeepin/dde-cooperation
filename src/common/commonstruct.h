@@ -376,31 +376,122 @@ struct ShareConnectReply {
     }
 };
 
-struct ShareStart {
+struct ShareStop {
     fastring appName;
     fastring tarAppname;
-    fastring tarDeviceName;
-    fastring ip;
-    int32 left;
-    int32 shareClip;
 
     void from_json(const co::Json& _x_) {
         appName = _x_.get("appName").as_c_str();
         tarAppname = _x_.get("tarAppname").as_c_str();
-        tarDeviceName = _x_.get("tarDeviceName").as_c_str();
-        ip = _x_.get("ip").as_c_str();
-        left = (int32)_x_.get("left").as_int64();
-        shareClip = (int32)_x_.get("shareClip").as_int64();
     }
 
     co::Json as_json() const {
         co::Json _x_;
         _x_.add_member("appName", appName);
         _x_.add_member("tarAppname", tarAppname);
-        _x_.add_member("tarDeviceName", tarDeviceName);
+        return _x_;
+    }
+};
+
+struct ShareServerConfig {
+    fastring screen_left{ "" };
+    fastring screen_right{ "" };
+    bool left_halfDuplexCapsLock{ false };
+    bool left_halfDuplexNumLock{ false };
+    bool left_halfDuplexScrollLock{ false };
+    bool left_xtestIsXineramaUnaware{ false };
+    bool left_preserveFocus{ false };
+    fastring left_switchCorners{ "none" };
+    int32 left_switchCornerSize{ 0 };
+    bool right_halfDuplexCapsLock{ false };
+    bool right_halfDuplexNumLock{ false };
+    bool right_halfDuplexScrollLock{ false };
+    bool right_xtestIsXineramaUnaware{ false };
+    bool right_preserveFocus{ false };
+    fastring right_switchCorners{ "none" };
+    int32 right_switchCornerSize{ 0 };
+    bool relativeMouseMoves{ false };
+    bool screenSaverSync{ true };
+    bool win32KeepForeground{ false };
+    bool clipboardSharing{ false };
+    fastring switchCorners{ "none" };
+    int32 switchCornerSize{ 0 };
+
+    void from_json(const co::Json& _x_) {
+        screen_left = _x_.get("screen_left").as_c_str();
+        screen_right = _x_.get("screen_right").as_c_str();
+        left_halfDuplexCapsLock = _x_.get("left_halfDuplexCapsLock").as_bool();
+        left_halfDuplexNumLock = _x_.get("left_halfDuplexNumLock").as_bool();
+        left_halfDuplexScrollLock = _x_.get("left_halfDuplexScrollLock").as_bool();
+        left_xtestIsXineramaUnaware = _x_.get("left_xtestIsXineramaUnaware").as_bool();
+        left_preserveFocus = _x_.get("left_preserveFocus").as_bool();
+        left_switchCorners = _x_.get("left_switchCorners").as_c_str();
+        left_switchCornerSize = (int32)_x_.get("left_switchCornerSize").as_int64();
+        right_halfDuplexCapsLock = _x_.get("right_halfDuplexCapsLock").as_bool();
+        right_halfDuplexNumLock = _x_.get("right_halfDuplexNumLock").as_bool();
+        right_halfDuplexScrollLock = _x_.get("right_halfDuplexScrollLock").as_bool();
+        right_xtestIsXineramaUnaware = _x_.get("right_xtestIsXineramaUnaware").as_bool();
+        right_preserveFocus = _x_.get("right_preserveFocus").as_bool();
+        right_switchCorners = _x_.get("right_switchCorners").as_c_str();
+        right_switchCornerSize = (int32)_x_.get("right_switchCornerSize").as_int64();
+        relativeMouseMoves = _x_.get("relativeMouseMoves").as_bool();
+        screenSaverSync = _x_.get("screenSaverSync").as_bool();
+        win32KeepForeground = _x_.get("win32KeepForeground").as_bool();
+        clipboardSharing = _x_.get("clipboardSharing").as_bool();
+        switchCorners = _x_.get("switchCorners").as_c_str();
+        switchCornerSize = (int32)_x_.get("switchCornerSize").as_int64();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("screen_left", screen_left);
+        _x_.add_member("screen_right", screen_right);
+        _x_.add_member("left_halfDuplexCapsLock", left_halfDuplexCapsLock);
+        _x_.add_member("left_halfDuplexNumLock", left_halfDuplexNumLock);
+        _x_.add_member("left_halfDuplexScrollLock", left_halfDuplexScrollLock);
+        _x_.add_member("left_xtestIsXineramaUnaware", left_xtestIsXineramaUnaware);
+        _x_.add_member("left_preserveFocus", left_preserveFocus);
+        _x_.add_member("left_switchCorners", left_switchCorners);
+        _x_.add_member("left_switchCornerSize", left_switchCornerSize);
+        _x_.add_member("right_halfDuplexCapsLock", right_halfDuplexCapsLock);
+        _x_.add_member("right_halfDuplexNumLock", right_halfDuplexNumLock);
+        _x_.add_member("right_halfDuplexScrollLock", right_halfDuplexScrollLock);
+        _x_.add_member("right_xtestIsXineramaUnaware", right_xtestIsXineramaUnaware);
+        _x_.add_member("right_preserveFocus", right_preserveFocus);
+        _x_.add_member("right_switchCorners", right_switchCorners);
+        _x_.add_member("right_switchCornerSize", right_switchCornerSize);
+        _x_.add_member("relativeMouseMoves", relativeMouseMoves);
+        _x_.add_member("screenSaverSync", screenSaverSync);
+        _x_.add_member("win32KeepForeground", win32KeepForeground);
+        _x_.add_member("clipboardSharing", clipboardSharing);
+        _x_.add_member("switchCorners", switchCorners);
+        _x_.add_member("switchCornerSize", switchCornerSize);
+        return _x_;
+    }
+};
+
+struct ShareStart {
+    fastring appName{""};
+    fastring tarAppname{""};
+    ShareServerConfig config;
+    fastring ip{""};
+    int32 port{ 0 };
+
+    void from_json(const co::Json& _x_) {
+        appName = _x_.get("appName").as_c_str();
+        tarAppname = _x_.get("tarAppname").as_c_str();
+        config.from_json(_x_.get("config"));
+        ip = _x_.get("ip").as_c_str();
+        port = (int32)_x_.get("port").as_int64();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("appName", appName);
+        _x_.add_member("tarAppname", tarAppname);
+        _x_.add_member("config", config.as_json());
         _x_.add_member("ip", ip);
-        _x_.add_member("left", left);
-        _x_.add_member("shareClip", shareClip);
+        _x_.add_member("port", port);
         return _x_;
     }
 };

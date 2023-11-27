@@ -80,6 +80,8 @@ bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
     req = obj.as_json();
     req.add_member("api", "Frontend.applyTransFiles");
     SendIpcService::instance()->handleSendToClient(session.c_str(), req.str().c_str());
+    if (obj.type != APPLY_TRANS_APPLY)
+        SendRpcService::instance()->removePing(session.c_str());
 
     return true;
 }
@@ -286,8 +288,34 @@ void HandleRpcService::handleRemoteShareStart(co::Json &info)
     st.from_json(info);
     // 获取其中的ip进行Barrier的client配置
     ShareCooperationService::instance()->setBarrierType(BarrierType::Client);
-    // 启动Barrier
-    ShareCooperationService::instance()->startBarrier();
+    if (!ShareCooperationService::instance()->setClientTargetIp(st.ip.c_str(), st.port)
+            || !ShareCooperationService::instance()->startBarrier()) {
+        ShareEvents ev;
+        ev.eventType = SHARE_START_RES;
+        ev.data = "init client config error! param = " + info.str();
+        // 通知远程
+        SendRpcService::instance()->doSendProtoMsg(SHARE_START_RES, st.appName.c_str(),
+                                                   ev.data.c_str());
+        auto req = ev.as_json();
+        // 通知前端
+        req.add_member("api", "Frontend.shareEvents");
+        SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
+        return;
+    }
+}
+
+void HandleRpcService::handleRemoteShareStop(co::Json &info)
+{
+    ShareStop st;
+    st.from_json(info);
+    // 停止自己的共享，并告诉前端
+    ShareCooperationService::instance()->stopBarrier();
+    ShareEvents event;
+    event.eventType = FRONT_SHARE_STOP;
+    event.data = info.str();
+    co::Json req = event.as_json();
+    req.add_member("api", "Frontend.shareEvents");
+    SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
 }
 
 void HandleRpcService::startRemoteServer(const quint16 port)
@@ -418,6 +446,14 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 OutData data;
                 _outgo_chan << data;
                 self->handleRemoteShareStart(json_obj);
+                break;
+            }
+            case SHARE_STOP:
+            {
+                // 被控制方收到控制方的开始共享
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteShareStop(json_obj);
                 break;
             }
             default:{
