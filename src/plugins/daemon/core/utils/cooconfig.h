@@ -44,12 +44,13 @@ class CooConfig: public QObject
         bool getAutoConnect();
 
         void saveSettings();
+        void setPort(int i);
+        void setServerIp(const QString& s);
 
 protected:
         QSettings& settings();
         void setScreenName(const QString& s);
-        void setPort(int i);
-        void setServerIp(const QString& s);
+
         void setNetworkInterface(const QString& s);
         void setLogLevel(int i);
         void setLogToFile(bool b);

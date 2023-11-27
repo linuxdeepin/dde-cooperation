@@ -7,10 +7,12 @@
 
 #include <co/fastring.h>
 #include "service/comshare.h"
+#include "common/commonstruct.h"
 
 #include <QObject>
 #include <QProcess>
 #include <QSettings>
+#include <QTextStream>
 
 class CooConfig;
 class ShareCooperationService : public QObject
@@ -24,6 +26,9 @@ public:
     BarrierType barrierType() const;
 
     void restartBarrier();
+
+    bool setServerConfig(const ShareServerConfig &config);
+    bool setClientTargetIp(const QString &ip, const int &port);
 
 signals:
 
@@ -51,11 +56,16 @@ protected:
 
     bool clientArgs(QStringList& args, QString& app);
     bool serverArgs(QStringList& args, QString& app);
+    QString checkParam(const ShareServerConfig &config);
+    void setScreen(const ShareServerConfig &config, QTextStream *stream);
+    void setScreenLink(const ShareServerConfig &config, QTextStream *stream);
+    void setScreenOptions(const ShareServerConfig &config, QTextStream *stream);
 
 private:
     CooConfig* _cooConfig;
     QProcess* _pBarrier;
     BarrierType _brrierType;
+    QString _barrierConfig;
 
     bool _expectedRunning = false;
 };

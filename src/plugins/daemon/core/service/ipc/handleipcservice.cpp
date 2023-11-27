@@ -192,6 +192,11 @@ void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend
         handleShareStart(msg);
         break;
     }
+    case BACK_SHARE_STOP: {
+        // 两端都可以共享，通知远端，在停止自己
+        handleShareStop(msg);
+        break;
+    }
     default:
         break;
     }
@@ -366,14 +371,23 @@ void HandleIpcService::handleShareStart(co::Json json)
 {
     ShareStart st;
     st.from_json(json);
+    st.ip = st.ip.empty() ? Util::getFirstIp() : st.ip;
+    st.port = st.port == 0 ? 24800 : st.port;
 
     // 读取相应的配置配置Barrier
     ShareCooperationService::instance()->setBarrierType(BarrierType::Server);
-    // 自己启动
-    ShareCooperationService::instance()->startBarrier();
+    if (!ShareCooperationService::instance()->setServerConfig(st.config) ||
+            !ShareCooperationService::instance()->startBarrier()) {
+        ShareEvents ev;
+        ev.eventType = SHARE_START_RES;
+        ev.data = "init server error! param = " + json.str();
+        auto req = ev.as_json();
+        // 通知前端
+        req.add_member("api", "Frontend.shareEvents");
+        SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
+        return;
+    }
     // 通知远端启动客户端连接到这里的batter服务器
-    // 发送本机ip过去
-    st.ip = Util::getFirstIp();
     SendRpcService::instance()->doSendProtoMsg(SHARE_START, st.appName.c_str(),
                                                st.as_json().str().c_str());
 }
@@ -389,7 +403,7 @@ void HandleIpcService::handleShareConnect(co::Json json)
     QString targetAppname = param.tarAppname.empty() ? appName : param.tarAppname.c_str();
 
     param.ip = Util::getFirstIp();
-    LOG << " rcv client connet to " << targetIp.toStdString() << appName.toStdString();
+    LOG << " rcv share connet to " << targetIp.toStdString() << appName.toStdString();
     // 创建远程发送的work
     SendRpcService::instance()->createRpcSender(appName, targetIp, UNI_RPC_PORT_BASE);
     // 发送给被控制端请求共享连接
@@ -403,4 +417,15 @@ void HandleIpcService::handleShareConnectReply(co::Json json)
     // 回复控制端连接结果
     SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT_RES,
                                                reply.appName.c_str(), json.str().c_str());
+}
+
+void HandleIpcService::handleShareStop(co::Json json)
+{
+    ShareStop st;
+    st.from_json(json);
+    // 通知远端
+    SendRpcService::instance()->doSendProtoMsg(SHARE_STOP, st.appName.c_str(),
+                                               st.as_json().str().c_str());
+    // 自己停止
+    ShareCooperationService::instance()->stopBarrier();
 }

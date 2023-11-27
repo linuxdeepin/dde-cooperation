@@ -21,6 +21,7 @@ typedef enum req_type_t {
     FRONT_SERVER_ONLINE = 108,
     FRONT_SHARE_APPLY_CONNECT = 109, // 后端通知被控制方收到连接申请
     FRONT_SHARE_APPLY_CONNECT_REPLY = 110, // 后端通知控制方收到连接申请的结果
+    FRONT_SHARE_STOP = 111, // 收到停止事件
     BACK_GET_DISCOVERY = 200,
     BACK_GET_PEER = 201,
     BACK_GET_PASSWORD = 202,
@@ -41,6 +42,7 @@ typedef enum req_type_t {
     BACK_SHARE_CONNECT = 217, // 控制方告诉后端连接被控制方
     BACK_SHARE_START = 218, // 控制方告诉后端被控制方开始共享
     BACK_SHARE_CONNECT_REPLY = 219, // 被控制方告诉后端连接被控制方的回复
+    BACK_SHARE_STOP = 220, // 停止共享，两端都可以
 } ReqType;
 
 typedef enum res_type_t {
