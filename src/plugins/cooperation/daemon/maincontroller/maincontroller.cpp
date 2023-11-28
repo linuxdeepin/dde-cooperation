@@ -36,9 +36,6 @@ inline constexpr char NotifyAcceptAction[] { "accept" };
 inline constexpr char NotifyCloseAction[] { "close" };
 inline constexpr char NotifyViewAction[] { "view" };
 
-using TransHistoryInfo = QMap<QString, QString>;
-Q_GLOBAL_STATIC(TransHistoryInfo, transHistory)
-
 using namespace daemon_cooperation;
 
 MainController::MainController(QObject *parent)
@@ -216,7 +213,6 @@ void MainController::onTransJobStatusChanged(int id, int result, const QString &
             auto ip = msg.mid(startPos + 1, endPos - startPos - 1);
             recvFilesSavePath = msg;
 
-            transHistory->insert(ip, recvFilesSavePath);
             HistoryManager::instance()->writeIntoTransHistory(ip, recvFilesSavePath);
         }
     } break;

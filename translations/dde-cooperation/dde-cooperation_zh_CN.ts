@@ -29,19 +29,65 @@
     </message>
 </context>
 <context>
+    <name>cooperation_core::ConfirmWidget</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationdialog.cpp" line="20"/>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>“%1”向你发送一封文件</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationdialog.cpp" line="27"/>
+        <source>Reject</source>
+        <comment>button</comment>
+        <translation>拒绝</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationdialog.cpp" line="28"/>
+        <source>Accept</source>
+        <comment>button</comment>
+        <translation>接受</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::CooperationProxy</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="109"/>
+        <source>File sent successfully</source>
+        <translation>文件投送成功</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="112"/>
+        <source>The other party has canceled the file transfer</source>
+        <translation>对方已取消文件投送</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="347"/>
+        <source>Receiving files from &quot;%1&quot;</source>
+        <translation>正在接收“%1”投送的文件</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::CooperationTransDialog</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationdialog.cpp" line="171"/>
+        <source>File transfer</source>
+        <translation>文件投送</translation>
+    </message>
+</context>
+<context>
     <name>cooperation_core::DeviceItem</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="147"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="157"/>
         <source>connected</source>
         <translation>协同中</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="152"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="162"/>
         <source>connectable</source>
         <translation>可连</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="157"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="167"/>
         <source>offline</source>
         <translation>离线</translation>
     </message>
@@ -49,7 +95,7 @@
 <context>
     <name>cooperation_core::LookingForDeviceWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="29"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="39"/>
         <source>Looking for devices</source>
         <translation>正在寻找设备</translation>
     </message>
@@ -58,16 +104,19 @@
     <name>cooperation_core::MainWindowPrivate</name>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="33"/>
+        <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="78"/>
         <source>Re-scan for devices</source>
         <translation>重新寻找设备</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="48"/>
+        <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="116"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="52"/>
+        <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="120"/>
         <source>Download Windows client</source>
         <translation>Windows客户端下载</translation>
     </message>
@@ -75,7 +124,7 @@
 <context>
     <name>cooperation_core::NoNetworkWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="54"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="64"/>
         <source>Please connect to the network</source>
         <translation>请连接网络</translation>
     </message>
@@ -83,24 +132,53 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="85"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="95"/>
         <source>No device found</source>
         <translation>未搜寻到任何设备</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="89"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="101"/>
         <source>1.Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation>1.开启跨端协同应用，UOS端应用可在应用商店下载，Windows端下载地址：</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="101"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="114"/>
         <source>2.On the same LAN as the device</source>
         <translation>2.与本设备在同一局域网内</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="103"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="117"/>
         <source>3.Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation>3.设置-基础设置-可被发现-“允许同一局域网下的所有人”</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::ProgressWidget</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationdialog.cpp" line="56"/>
+        <source>Remaining time %1 | %2%</source>
+        <translation>剩余时间 %1 | %2%</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationdialog.cpp" line="70"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>取消</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::ResultWidget</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationdialog.cpp" line="108"/>
+        <source>Ok</source>
+        <comment>button</comment>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationdialog.cpp" line="111"/>
+        <source>View</source>
+        <comment>button</comment>
+        <translation>查看</translation>
     </message>
 </context>
 <context>
@@ -188,7 +266,7 @@
         <translation>在设备间共享剪切板</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="207"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="208"/>
         <source>The device name must contain 1 to 63 characters</source>
         <translation>设备昵称必须介于1-63个字符之内</translation>
     </message>
@@ -196,12 +274,12 @@
 <context>
     <name>cooperation_core::ShareManager</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/share/sharemanager.cpp" line="35"/>
+        <location filename="../../src/plugins/cooperation/core/share/sharemanager.cpp" line="37"/>
         <source>connect</source>
         <translation>连接</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/share/sharemanager.cpp" line="43"/>
+        <location filename="../../src/plugins/cooperation/core/share/sharemanager.cpp" line="45"/>
         <source>Disconnect</source>
         <translation>断开</translation>
     </message>
@@ -209,29 +287,29 @@
 <context>
     <name>cooperation_core::TransferDialog</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="19"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="32"/>
         <source>File Transfer</source>
         <translation>文件投送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="50"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="55"/>
         <source>Wait for confirmation...</source>
         <translation>等待对方确认...</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="117"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="126"/>
         <source>Ok</source>
         <comment>button</comment>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="131"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="142"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="140"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="151"/>
         <source>Remaining time %1 | %2%</source>
         <translation>剩余时间 %1 | %2%</translation>
     </message>
@@ -239,37 +317,37 @@
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="209"/>
-        <source>View transfer history</source>
-        <translation>查看文件投送记录</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="218"/>
-        <source>Send files</source>
-        <translation>发送文件</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="315"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="337"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation>连接到“%1”失败</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="343"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="354"/>
         <source>The other party has canceled the file transfer</source>
         <translation>对方已取消文件投送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="387"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="351"/>
         <source>File sent successfully</source>
         <translation>文件投送成功</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="417"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="224"/>
+        <source>View transfer history</source>
+        <translation>查看文件投送记录</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="233"/>
+        <source>Send files</source>
+        <translation>发送文件</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="423"/>
         <source>calculating</source>
         <translation>计算中</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="426"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="432"/>
         <source>The other party rejects your request</source>
         <translation>对方拒绝了您的请求</translation>
     </message>
@@ -277,12 +355,12 @@
 <context>
     <name>cooperation_core::TransferHelperPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="173"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="188"/>
         <source>Sending files to &quot;%1&quot;</source>
         <translation>正在向“%1”投送文件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="184"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="199"/>
         <source>The other party did not receive, the files failed to send</source>
         <translation>对方未接收，文件发送失败</translation>
     </message>
@@ -290,52 +368,52 @@
 <context>
     <name>daemon_cooperation::MainController</name>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="71"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="68"/>
         <source>File transfer</source>
         <translation>文件投送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="81"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="78"/>
         <source>View</source>
         <translation>查看</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="89"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="86"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="92"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="89"/>
         <source>File receiving %1% | Remaining time %2</source>
         <translation>文件接收中 %1% | 剩余时间 %2</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="163"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="160"/>
         <source>Reject</source>
         <translation>拒绝</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="164"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="161"/>
         <source>Accept</source>
         <translation>接受</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="165"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="162"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="166"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="163"/>
         <source>&quot;%1&quot; send some files to you</source>
         <translation>“%1”向你发送一封文件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="225"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="220"/>
         <source>The other party has canceled the file transfer</source>
         <translation>对方已取消文件发送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="268"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="206"/>
         <source>File sent successfully</source>
         <translation>文件投送成功</translation>
     </message>

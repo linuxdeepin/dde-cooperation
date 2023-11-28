@@ -73,7 +73,7 @@ void TransferDialog::createResultPage()
     msgLabel->setWordWrap(true);
 
     vLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
-    vLayout->addWidget(msgLabel, 0, Qt::AlignHCenter);
+    vLayout->addWidget(msgLabel);
 }
 
 void TransferDialog::createProgressPage()

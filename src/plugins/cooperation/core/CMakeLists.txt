@@ -43,12 +43,16 @@ if (CMAKE_SYSTEM MATCHES "Windows")
     FILE(GLOB BUSS_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/win/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/proxy/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/proxy/*.cpp"
     )
    find_package(Qt5 COMPONENTS Sql REQUIRED)
 elseif (CMAKE_SYSTEM MATCHES "Linux")
     FILE(GLOB BUSS_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/linux/*.cpp"
     )
     find_package(Dtk COMPONENTS Widget REQUIRED)
 else()

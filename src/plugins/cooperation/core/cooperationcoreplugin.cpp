@@ -12,6 +12,10 @@
 #include "config/configmanager.h"
 #include "singleton/singleapplication.h"
 
+#ifdef WIN32
+#include "proxy/cooperationproxy.h"
+#endif
+
 #include <co/flag.h>
 
 using namespace cooperation_core;
@@ -36,17 +40,22 @@ void CooperaionCorePlugin::initialize()
 bool CooperaionCorePlugin::start()
 {
     CooperationUtil::instance()->mainWindow()->show();
-//    MainController::instance()->regist();
+    MainController::instance()->regist();
     TransferHelper::instance()->regist();
     ShareManager::instance()->regist();
     MainController::instance()->start();
+
+#ifdef WIN32
+    CooperationProxy::instance();
+#endif
+
     return true;
 }
 
 void CooperaionCorePlugin::stop()
 {
     CooperationUtil::instance()->destroyMainWindow();
-//    MainController::instance()->unregist();
+    MainController::instance()->unregist();
     MainController::instance()->stop();
 }
 

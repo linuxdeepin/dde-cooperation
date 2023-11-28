@@ -1,2 +1,5 @@
 add_subdirectory(core)
-add_subdirectory(daemon)
+
+if (CMAKE_SYSTEM MATCHES "Linux")
+    add_subdirectory(daemon)
+endif()

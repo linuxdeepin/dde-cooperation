@@ -20,10 +20,12 @@ class MainController : public QObject
 public:
     static MainController *instance();
 
-    void start();
-    void stop();
     void regist();
     void unregist();
+
+public Q_SLOTS:
+    void start();
+    void stop();
 
 Q_SIGNALS:
     void onlineStateChanged(bool isOnline);
