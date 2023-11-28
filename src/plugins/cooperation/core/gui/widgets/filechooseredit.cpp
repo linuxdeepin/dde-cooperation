@@ -28,6 +28,16 @@ void FileChooserEdit::initUI()
     fileChooserBtn = new CooperationSuggestButton(this);
 #ifdef linux
 fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
+#else
+    fileChooserBtn->setStyleSheet(
+           "QPushButton {"
+           "   background-color: #0098FF;"
+           "   border-radius: 10px;"
+           "   color: white;"
+           "   font-weight: bold;"
+           "}"
+       );
+    fileChooserBtn->setText(" ...");
 #endif
     fileChooserBtn->setFixedSize(36, 36);
     connect(fileChooserBtn, &QPushButton::clicked, this, &FileChooserEdit::onButtonClicked);

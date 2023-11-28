@@ -18,7 +18,6 @@ typedef QPushButton CooperationSuggestButton;
 typedef QCheckBox CooperationSwitchButton;
 typedef QPushButton CooperationFloatingEdit;
 typedef QLabel CooperationSpinner;
-typedef QLineEdit CooperationSearchEdit;
 typedef QLineEdit CooperationLineEdit;
 #else
 #include <DMainWindow>

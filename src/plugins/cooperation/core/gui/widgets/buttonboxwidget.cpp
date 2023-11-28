@@ -30,10 +30,21 @@ int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, Button
         btn = new CooperationIconButton(this);
 #ifdef linux
         btn->setEnabledCircle(true);
+#else
+        btn->setStyleSheet(
+            "background-color: rgba(0,0,0,0.1);"
+            "border-radius: 16px;"
+            );
 #endif
         break;
     case kHighLight:
         btn = new CooperationFloatingEdit(this);
+#ifndef linux
+        btn->setStyleSheet(
+            "background-color: #0098FF;"
+            "border-radius: 16px;"
+            );
+#endif
         break;
     }
 
@@ -41,12 +52,7 @@ int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, Button
     btn->setFixedSize(32, 32);
     btn->setIconSize({ 16, 16 });
     btn->setIcon(icon);
-#ifndef linux
-    btn->setStyleSheet(
-        "background-color: #0098FF;;"
-        "border-radius: 16px;"
-        );
-#endif
+
     int index = mainLayout->count();
     mainLayout->addWidget(btn);
     connect(btn, &CooperationIconButton::clicked, this, [this, index] {

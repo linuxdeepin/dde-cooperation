@@ -4,7 +4,16 @@
 
 #include "transferdialog.h"
 
+#include <QMovie>
+
 using namespace cooperation_core;
+#ifdef linux
+const char *Ktransfer_success = "transfer_success";
+const char *Ktransfer_fail = "transfer_fail";
+#else
+const char *Ktransfer_success = ":/icons/deepin/builtin/icons/transfer_success_128px.svg";
+const char *Ktransfer_fail = ":/icons/deepin/builtin/icons/transfer_fail_128px.svg";
+#endif
 
 TransferDialog::TransferDialog(QWidget *parent)
     : CooperationDialog(parent)
@@ -51,6 +60,22 @@ void TransferDialog::createWaitConfirmPage()
     spinner->setFixedSize(48, 48);
     spinner->setAttribute(Qt::WA_TransparentForMouseEvents);
     spinner->setFocusPolicy(Qt::NoFocus);
+#ifndef linux
+    QLabel *titleLabel = new QLabel(tr("File Transfer"), this);
+    QFont font;
+    font.setWeight(QFont::DemiBold);
+    font.setPixelSize(18);
+    titleLabel->setFont(font);
+    titleLabel->setAlignment(Qt::AlignHCenter);
+
+    vLayout->addSpacing(30);
+    vLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
+    vLayout->addSpacing(50);
+
+    QMovie *movie = new QMovie(":/icons/deepin/builtin/icons/spinner.gif");
+    spinner->setMovie(movie);
+    movie->setSpeed(180);
+#endif
 
     QLabel *label = new QLabel(tr("Wait for confirmation..."), this);
     label->setAlignment(Qt::AlignHCenter);
@@ -104,6 +129,8 @@ void TransferDialog::switchWaitConfirmPage()
     stackedLayout->setCurrentIndex(0);
 #ifdef linux
     spinner->start();
+#else
+    spinner->movie()->start();
 #endif
     okBtn->setVisible(false);
 }
@@ -112,14 +139,16 @@ void TransferDialog::switchResultPage(bool success, const QString &msg)
 {
 #ifdef linux
     spinner->stop();
+#else
+    spinner->movie()->stop();
 #endif
     stackedLayout->setCurrentIndex(1);
 
     if (success) {
-        auto icon = QIcon::fromTheme("transfer_success");
+        auto icon = QIcon::fromTheme(Ktransfer_success);
         iconLabel->setPixmap(icon.pixmap(48, 48));
     } else {
-        auto icon = QIcon::fromTheme("transfer_fail");
+        auto icon = QIcon::fromTheme(Ktransfer_fail);
         iconLabel->setPixmap(icon.pixmap(48, 48));
     }
     msgLabel->setText(msg);
@@ -134,6 +163,8 @@ void TransferDialog::switchProgressPage(const QString &title)
 
 #ifdef linux
     spinner->stop();
+#else
+    spinner->movie()->stop();
 #endif
     stackedLayout->setCurrentIndex(2);
 

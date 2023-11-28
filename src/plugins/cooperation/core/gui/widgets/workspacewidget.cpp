@@ -43,12 +43,10 @@ void WorkspaceWidgetPrivate::initUI()
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(20, 15, 20, 15);
-    mainLayout->addWidget(searchEdit);
-
 #ifndef linux
-    mainLayout->addSpacing(55);
+    mainLayout->addSpacing(50);
 #endif
-
+    mainLayout->addWidget(searchEdit);
     mainLayout->addLayout(stackedLayout);
     q->setLayout(mainLayout);
 }
