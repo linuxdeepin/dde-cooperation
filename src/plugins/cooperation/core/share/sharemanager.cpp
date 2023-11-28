@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -18,6 +18,14 @@ inline constexpr char DisconnectButtonId[] { "disconnect-button" };
 
 using namespace cooperation_core;
 
+#ifdef linux
+inline constexpr char Kconnect[] { "connect" };
+inline constexpr char Kdisconnect[] { "disconnect" };
+#else
+inline constexpr char Kconnect[] { ":/icons/deepin/builtin/texts/connect_18px.svg" };
+inline constexpr char Kdisconnect[] { ":/icons/deepin/builtin/texts/disconnect_18px.svg" };
+#endif
+
 ShareManager::ShareManager(QObject *parent)
     : QObject(parent)
 {
@@ -35,7 +43,7 @@ void ShareManager::regist()
     ButtonStateCallback visibleCb = ShareManager::buttonVisible;
     QVariantMap historyInfo { { "id", ConnectButtonId },
                               { "description", tr("connect") },
-                              { "icon-name", "connect" },
+                              { "icon-name", Kconnect },
                               { "location", 0 },
                               { "button-style", 0 },
                               { "clicked-callback", QVariant::fromValue(clickedCb) },
@@ -43,7 +51,7 @@ void ShareManager::regist()
 
     QVariantMap transferInfo { { "id", DisconnectButtonId },
                                { "description", tr("Disconnect") },
-                               { "icon-name", "disconnect" },
+                               { "icon-name", Kdisconnect },
                                { "location", 1 },
                                { "button-style", 0 },
                                { "clicked-callback", QVariant::fromValue(clickedCb) },

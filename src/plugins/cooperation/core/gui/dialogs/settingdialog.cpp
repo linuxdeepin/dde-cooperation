@@ -201,16 +201,15 @@ void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 
 void SettingDialogPrivate::onNameEditingFinished()
 {
-#ifdef linux
     int length = nameEdit->text().length();
     if (length < 1 || length > 63) {
+#ifdef linux
         nameEdit->setAlert(true);
         nameEdit->showAlertMessage(tr("The device name must contain 1 to 63 characters"));
+#endif
         return;
     }
-
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey, nameEdit->text());
-#endif
 }
 
 void SettingDialogPrivate::onNameChanged(const QString &text)
@@ -284,7 +283,7 @@ void SettingDialog::loadConfig()
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
     d->nameEdit->setText(value.isValid()
                                  ? value.toString()
-                                 : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1));
+                                 : QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName());
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
     d->devShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : false);
