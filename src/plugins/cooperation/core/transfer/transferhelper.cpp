@@ -55,6 +55,10 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
       q(qq)
 {
     *transHistory = HistoryManager::instance()->getTransHistory();
+    connect(HistoryManager::instance(), &HistoryManager::transHistoryUpdated, q,
+            [] {
+                *transHistory = HistoryManager::instance()->getTransHistory();
+            });
 }
 
 TransferHelperPrivate::~TransferHelperPrivate()
@@ -102,7 +106,7 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
     QString saveDir = (deviceName + "(%1)").arg(CooperationUtil::localIPAddress());
     ipc::TransFilesParam transParam;
     transParam.session = CooperationUtil::instance()->sessionId().toStdString();
-    transParam.targetSession = CooperDaemonName;   // 发送给后端插件
+    transParam.targetSession = CooperRegisterName;   // 发送给后端插件
     transParam.id = TransferJobStartId;
     transParam.paths = fileVector;
     transParam.sub = true;
@@ -128,7 +132,7 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
     ApplyTransFiles transInfo;
     transInfo.appname = qApp->applicationName().toStdString();
     transInfo.type = type;
-    transInfo.tarAppname = CooperDaemonName;   // 发送给后端插件
+    transInfo.tarAppname = CooperRegisterName;   // 发送给后端插件
     transInfo.machineName = deviceName.toStdString();
 
     co::Json req = transInfo.as_json();
@@ -149,7 +153,7 @@ void TransferHelperPrivate::handleTryConnect(const QString &ip)
     conParam.appName = qApp->applicationName().toStdString();
     conParam.host = targetIp;
     conParam.password = pinCode;
-    conParam.targetAppname = CooperDaemonName;   // 发送给后端插件
+    conParam.targetAppname = CooperRegisterName;   // 发送给后端插件
 
     req = conParam.as_json();
     req.add_member("api", "Backend.tryConnect");
@@ -181,7 +185,6 @@ void TransferHelperPrivate::transferResult(bool result, const QString &msg)
 
 void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
 {
-
     QString title = tr("Sending files to \"%1\"").arg(sendToWho);
     transDialog()->switchProgressPage(title);
     transDialog()->updateProgress(value, remainTime);
@@ -218,7 +221,7 @@ void TransferHelper::regist()
     ButtonStateCallback visibleCb = TransferHelper::buttonVisible;
     ButtonStateCallback clickableCb = TransferHelper::buttonClickable;
     QVariantMap historyInfo { { "id", HistoryButtonId },
-                              { "description", QObject::tr("View transfer history") },
+                              { "description", tr("View transfer history") },
                               { "icon-name", Khistory },
                               { "location", 2 },
                               { "button-style", 0 },
@@ -227,7 +230,7 @@ void TransferHelper::regist()
                               { "clickable-callback", QVariant::fromValue(clickableCb) } };
 
     QVariantMap transferInfo { { "id", TransferButtonId },
-                               { "description", QObject::tr("Send files") },
+                               { "description", tr("Send files") },
                                { "icon-name", Ksend },
                                { "location", 3 },
                                { "button-style", 1 },

@@ -69,7 +69,7 @@ inline constexpr char TransHistoryKey[] { "TransHistory" };
 }
 
 inline const char MainAppName[] { "dde-cooperation" };
-inline const char CooperDaemonName[] {"daemon-cooperation"};
+inline const char CooperRegisterName[] {"daemon-cooperation"};
 
 // Setting menu action list
 enum MenuAction {

@@ -122,11 +122,11 @@ void CooperationUtilPrivate::localIPCStart()
 
                 for (const auto &appInfo : nodeInfo.apps) {
                     // 上线，非跨端应用无需处理
-                    if (param.result && appInfo.appname.compare(CooperDaemonName) != 0)
+                    if (param.result && appInfo.appname.compare(CooperRegisterName) != 0)
                         continue;
 
                     // 下线，跨端应用未下线
-                    if (!param.result && appInfo.appname.compare(CooperDaemonName) == 0)
+                    if (!param.result && appInfo.appname.compare(CooperRegisterName) == 0)
                         continue;
 
                     q->metaObject()->invokeMethod(MainController::instance(),
@@ -187,8 +187,10 @@ void CooperationUtilPrivate::localIPCStart()
                 }
             } break;
             case FRONT_SERVER_ONLINE:
-                pingBackend();
-                q->asyncDiscoveryDevice();
+                backendOk = pingBackend();
+                q->metaObject()->invokeMethod(MainController::instance(),
+                                              "start",
+                                              Qt::QueuedConnection);
                 break;
             default:
                 break;
@@ -213,7 +215,7 @@ QList<DeviceInfoPointer> CooperationUtilPrivate::parseDeviceInfo(const co::Json 
     for (const auto &node : nodeList.peers) {
         DeviceInfoPointer devInfo { nullptr };
         for (const auto &app : node.apps) {
-            if (app.appname != CooperDaemonName)
+            if (app.appname != CooperRegisterName)
                 continue;
 
             QJsonParseError error;
@@ -290,9 +292,8 @@ void CooperationUtil::registAppInfo(const QString &infoJson)
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
         co::Json req, res;
 
-        QString appName = qApp->applicationName();
         AppPeerInfo peerInfo;
-        peerInfo.appname = appName.toStdString();
+        peerInfo.appname = CooperRegisterName;
         peerInfo.json = infoJson.toStdString();
 
         req = peerInfo.as_json();
@@ -312,10 +313,9 @@ void CooperationUtil::unregistAppInfo()
     UNIGO([] {
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
         co::Json req, res;
-        QString appName = qApp->applicationName();
 
         AppPeerInfo peerInfo;
-        peerInfo.appname = appName.toStdString();
+        peerInfo.appname = CooperRegisterName;
 
         req = peerInfo.as_json();
         req.add_member("api", "Backend.unregisterDiscovery");
@@ -367,7 +367,7 @@ void CooperationUtil::setAppConfig(const QString &key, const QString &value)
         co::Json req, res;
 
         req = {
-            { "appname", CooperDaemonName },
+            { "appname", CooperRegisterName },
             { "key", key.toStdString() },
             { "value", value.toStdString() }
         };
