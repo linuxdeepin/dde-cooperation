@@ -15,6 +15,9 @@ Build-Depends:
  libzip-dev,
  uuid-dev,
  dde-file-manager-dev,
+ libcurl4-openssl-dev,
+ libxtst-dev,
+ libavahi-compat-libdnssd-dev,
 Standards-Version: 4.1.3
 Section: utils
 Homepage: http://www.deepin.org
