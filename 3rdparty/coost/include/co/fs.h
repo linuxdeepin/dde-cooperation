@@ -11,6 +11,8 @@ __coapi bool exists(const char* path);
 
 __coapi bool isdir(const char* path);
 
+__coapi bool isSymlink(const char* path);
+
 // modify time
 __coapi int64 mtime(const char* path);
 
