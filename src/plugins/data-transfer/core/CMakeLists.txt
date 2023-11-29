@@ -10,6 +10,7 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.cpp"
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.h"
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/datatransfercoreplugin.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/datatransfercoreplugin.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/type_defines.h"

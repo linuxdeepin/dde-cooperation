@@ -6,6 +6,7 @@
 #include "utils/cooperationutil.h"
 #include "config/configmanager.h"
 #include "common/constant.h"
+#include "common/commonutils.h"
 
 #include <QNetworkInterface>
 #include <QStandardPaths>
@@ -32,26 +33,12 @@ MainController::~MainController()
 void MainController::checkNetworkState()
 {
     // 网络状态检测
-    bool isOnlineTemp = isOnline;
-    QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
-    for (int i = 0; i < ifaces.count(); i++) {
-        QNetworkInterface iface = ifaces.at(i);
-        if (iface.flags().testFlag(QNetworkInterface::IsUp)
-            && iface.flags().testFlag(QNetworkInterface::IsRunning)
-            && !iface.flags().testFlag(QNetworkInterface::IsLoopBack)) {
-            if (!iface.addressEntries().isEmpty()) {
-                isOnlineTemp = true;
-                break;
-            }
-        } else if (!iface.addressEntries().isEmpty()) {
-            isOnlineTemp = false;
-        }
-    }
+    bool isConnected = deepin_cross::CommonUitls::getFirstIp().size() > 0;
 
-    if (isOnlineTemp != isOnline) {
-        isOnline = isOnlineTemp;
+    if (isConnected != isOnline) {
+        isOnline = isConnected;
         networkMonitorTimer->stop();
-        Q_EMIT onlineStateChanged(isOnlineTemp);
+        Q_EMIT onlineStateChanged(isConnected);
     }
 }
 

@@ -14,6 +14,7 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
     "${CMAKE_SOURCE_DIR}/src/config/*.h"
     "${CMAKE_SOURCE_DIR}/src/config/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/cooperationcoreplugin.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/cooperationcoreplugin.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/global_defines.h"
