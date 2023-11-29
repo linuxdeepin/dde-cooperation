@@ -24,6 +24,11 @@ bool isdir(const char* path) {
     return ::lstat(path, &attr) == 0 && S_ISDIR(attr.st_mode);
 }
 
+bool isSymlink(const char* path) {
+    struct stat attr;
+    return ::lstat(path, &attr) == 0 && S_ISLNK(attr.st_mode);
+}
+
 int64 mtime(const char* path) {
     struct stat attr;
     return ::lstat(path, &attr) == 0 ? attr.st_mtime : -1;

@@ -16,6 +16,7 @@
 #include "utils.h"
 
 #include <QSettings>
+#include <QReadWriteLock>
 
 #define KEY_HOSTUUID "hostuuid"
 #define KEY_NICKNAME "nickname"
@@ -50,7 +51,7 @@ public:
     void setAppConfig(fastring appname, fastring key, fastring value)
     {
         QString groupname(appname.c_str());
-        co::mutex_guard g(_config_mutex);
+        QWriteLocker lk(&_config_mutex);
         _fileConfig->beginGroup(groupname);
         _fileConfig->setValue(key.c_str(), value.c_str());
         _fileConfig->endGroup();
@@ -61,7 +62,7 @@ public:
     {
         QString groupname(appname.c_str());
         fastring value = "";
-        co::mutex_guard g(_config_mutex);
+        QReadLocker lk(&_config_mutex);
         _fileConfig->beginGroup(groupname);
         value = _fileConfig->value(key.c_str(), "").toString().toStdString();
         _fileConfig->endGroup();
@@ -71,8 +72,11 @@ public:
 
     void initPin()
     {
-        co::mutex_guard g(_config_mutex);
-        fastring pin = _fileConfig->value(KEY_AUTHPIN).toString().toStdString();
+        fastring pin = "";
+        {
+            QReadLocker lk(&_config_mutex);
+            pin = _fileConfig->value(KEY_AUTHPIN).toString().toStdString();
+        }
         if (pin.empty()) {
             refreshPin();
         } else {
@@ -88,48 +92,48 @@ public:
     void setPin(fastring pin)
     {
         _pinCode = pin;
-        co::mutex_guard g(_config_mutex);
+        QWriteLocker lk(&_config_mutex);
         _fileConfig->setValue(KEY_AUTHPIN, _pinCode.c_str());
     }
 
     const fastring refreshPin()
     {
         _pinCode = Util::genRandPin();
-        co::mutex_guard g(_config_mutex);
+        QWriteLocker lk(&_config_mutex);
         _fileConfig->setValue(KEY_AUTHPIN, _pinCode.c_str());
 
         return _pinCode;
     }
 
     const fastring getUUID() {
-        co::mutex_guard g(_config_mutex);
+        QReadLocker lk(&_config_mutex);
         QString uuid = _fileConfig->value(KEY_HOSTUUID).toString();
         return uuid.toStdString();
     }
 
     void setUUID(const char *name) {
-        co::mutex_guard g(_config_mutex);
+        QWriteLocker lk(&_config_mutex);
         _fileConfig->setValue(KEY_HOSTUUID, name);
     }
 
     const fastring getNickName() {
-        co::mutex_guard g(_config_mutex);
+        QReadLocker lk(&_config_mutex);
         QString nick = _fileConfig->value(KEY_NICKNAME).toString();
         return nick.toStdString();
     }
 
     void setNickName(const char *name) {
-        co::mutex_guard g(_config_mutex);
+        QWriteLocker lk(&_config_mutex);
         _fileConfig->setValue(KEY_NICKNAME, name);
     }
 
     int getMode() {
-        co::mutex_guard g(_config_mutex);
+        QReadLocker lk(&_config_mutex);
         return _fileConfig->value(KEY_MODE).toInt();
     }
 
     void setMode(int mode) {
-        co::mutex_guard g(_config_mutex);
+        QWriteLocker lk(&_config_mutex);
         _fileConfig->setValue(KEY_MODE, mode);
     }
 
@@ -185,7 +189,7 @@ private:
     fastring _targetName;
 
     QSettings *_fileConfig;
-    co::mutex _config_mutex;
+    QReadWriteLock _config_mutex;
 };
 
 enum status {

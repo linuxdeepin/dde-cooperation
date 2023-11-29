@@ -198,6 +198,9 @@ fastring TransferJob::getSubdir(const char *path, const char *root)
 
 void TransferJob::scanPath(fastring root, fastring path)
 {
+    // 链接文件不拷贝
+    if (fs::isSymlink(path.c_str()))
+        return;
     _fileid++;
     fastring subdir = getSubdir(path.c_str(), root.c_str());
     FileTransCreate info;
@@ -303,6 +306,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
 
         size_t block_len = block_size * sizeof(char);
         char *buf = reinterpret_cast<char *>(malloc(block_len));
+        size_t resize = 0;
         do {
             // 最多300个数据块
             if (self && self->queueCount() > 300)
@@ -311,7 +315,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
                 break;
 
             memset(buf, 0, block_len);
-            size_t resize = fd.read(buf, block_size);
+            resize = fd.read(buf, block_size);
             if (resize <= 0) {
                 LOG << "read file ERROR or END, resize = " << resize;
                 break;
@@ -332,7 +336,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
 
             read_size += resize;
             block_id++;
-        } while (read_size < file_size);
+        } while (read_size < file_size || resize > 0);
 
         free(buf);
         fd.close();
