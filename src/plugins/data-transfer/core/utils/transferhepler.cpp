@@ -1,6 +1,7 @@
 ﻿#include "optionsmanager.h"
 
 #include "transferhepler.h"
+#include "common/commonutils.h"
 
 #include <QDateTime>
 #include <QRandomGenerator>
@@ -23,17 +24,17 @@
 #include <QProcess>
 #include <QJsonArray>
 #include <QStandardPaths>
-
-
+#include <QNetworkInterface>
 
 #ifdef WIN32
-#include <gui/win/drapwindowsdata.h>
+#    include <gui/win/drapwindowsdata.h>
 #else
 #    include "settinghepler.h"
 #endif
 
 //#pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper() : QObject()
+TransferHelper::TransferHelper()
+    : QObject()
 {
     initOnlineState();
 #ifndef WIN32
@@ -41,7 +42,7 @@ TransferHelper::TransferHelper() : QObject()
 #endif
 }
 
-TransferHelper::~TransferHelper() { }
+TransferHelper::~TransferHelper() {}
 
 TransferHelper *TransferHelper::instance()
 {
@@ -51,31 +52,15 @@ TransferHelper *TransferHelper::instance()
 
 void TransferHelper::initOnlineState()
 {
-    // 发送网络请求并等待响应
+    //初始化网络监控
     QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, [this]() {
-        QProcess pingProcess;
-#ifdef WIN32
-        pingProcess.start("ping",
-                          QStringList() << "-n"
-                                        << "1"
-                                        << "www.baidu.com");
-#else
-        pingProcess.start("ping",
-                          QStringList() << "-c"
-                          << "1"
-                          << "www.baidu.com");
-#endif
-        pingProcess.waitForFinished(500);
-        if (pingProcess.exitCode() == 0 && online != true) {
-            online = true;
-            emit onlineStateChanged(online);
-            qInfo() << "Network is connected";
-        }
-        if (pingProcess.exitCode() != 0 && online == true) {
-            online = false;
-            emit onlineStateChanged(online);
-            qInfo() << "Network is not connected";
+    QObject::connect(timer, &QTimer::timeout, [this]() {
+        // 网络状态检测
+        bool isConnected = deepin_cross::CommonUitls::getFirstIp().size() > 0;
+        if (isConnected != online) {
+            qInfo() << "Network is" << isConnected;
+            online = isConnected;
+            Q_EMIT onlineStateChanged(isConnected);
         }
     });
 
@@ -84,9 +69,11 @@ void TransferHelper::initOnlineState()
 
 QString TransferHelper::tempCacheDir()
 {
-    QString savePath = QString("%1/%2/%3/")
+    QString savePath =
+            QString("%1/%2/%3/")
                     .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
-                    .arg(qApp->organizationName()).arg(qApp->applicationName()); //~/.cache/deepin/xx
+                    .arg(qApp->organizationName())
+                    .arg(qApp->applicationName());   //~/.cache/deepin/xx
 
     QDir cacheDir(savePath);
     if (!cacheDir.exists())
@@ -146,7 +133,7 @@ void TransferHelper::startTransfer()
     QStringList browserList = OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
     QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
 
-    QStringList paths = getTransferFilePath(filePathList,appList,browserList,configList);
+    QStringList paths = getTransferFilePath(filePathList, appList, browserList, configList);
     qInfo() << "transferring file list: " << paths;
     transferhandle.sendFiles(paths);
 }
@@ -157,8 +144,7 @@ QMap<QString, QString> TransferHelper::getAppList(QMap<QString, QString> &noReco
     QMap<QString, QString> appNameList =
             DrapWindowsData::instance()->RecommendedInstallationAppList(noRecommedApplist);
 
-    for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++)
-    {
+    for (auto iterator = appNameList.begin(); iterator != appNameList.end(); iterator++) {
         appList[iterator.key()] = QString(":/icon/AppIcons/%1.svg").arg(iterator.value());
     }
 
@@ -181,10 +167,10 @@ QMap<QString, QString> TransferHelper::getBrowserList()
     return browserList;
 }
 
-QStringList TransferHelper::getTransferFilePath(QStringList filePathList,QStringList appList,
-                                                QStringList browserList,QStringList configList)
+QStringList TransferHelper::getTransferFilePath(QStringList filePathList, QStringList appList,
+                                                QStringList browserList, QStringList configList)
 {
-    //add files
+    // add files
     QStringList transferFilePathList;
     for (auto file : filePathList) {
         transferFilePathList.append(file);
@@ -215,17 +201,19 @@ QStringList TransferHelper::getTransferFilePath(QStringList filePathList,QString
     }
 
     // add transfer.json
-    QString jsonfilePath = getTransferJson(appList,filePathList,browserList,bookmarksName,wallpaperName,tempSavePath);
+    QString jsonfilePath = getTransferJson(appList, filePathList, browserList, bookmarksName,
+                                           wallpaperName, tempSavePath);
 
     transferFilePathList.prepend(jsonfilePath);
     OptionsManager::instance()->addUserOption(Options::KUserDataInfoJsonPath, { jsonfilePath });
 
-    OptionsManager::instance()->addUserOption(Options::kTransferFileList,transferFilePathList);
+    OptionsManager::instance()->addUserOption(Options::kTransferFileList, transferFilePathList);
 
     return transferFilePathList;
 }
-QString TransferHelper::getTransferJson(QStringList appList,QStringList fileList,QStringList browserList,
-                                        QString bookmarksName,QString wallPaperName,QString tempSavePath)
+QString TransferHelper::getTransferJson(QStringList appList, QStringList fileList,
+                                        QStringList browserList, QString bookmarksName,
+                                        QString wallPaperName, QString tempSavePath)
 {
     // add app
     QJsonArray appArray;
@@ -256,11 +244,11 @@ QString TransferHelper::getTransferJson(QStringList appList,QStringList fileList
         jsonObject["wallpapers"] = wallPaperName;
     if (!bookmarksName.isEmpty())
         jsonObject["browserbookmark"] = bookmarksName;
-    if(!browserList.isEmpty())
+    if (!browserList.isEmpty())
         jsonObject["browsersName"] = browserArray;
 
     QString jsonfilePath = getJsonfile(jsonObject, QString(tempSavePath));
-    qInfo()<<"transfer.json save path:"<<jsonfilePath;
+    qInfo() << "transfer.json save path:" << jsonfilePath;
     return jsonfilePath;
 }
 
@@ -364,10 +352,11 @@ void TransferHelper::recordTranferJob(const QString &filepath)
 
             // skip finished files
             bool isend = false;
-            for (QString key: finshedFiles.keys()) {
+            for (QString key : finshedFiles.keys()) {
                 if (key.endsWith(file)) {
                     isend = true;
-                    if (ok) userData -= finshedFiles.value(key);
+                    if (ok)
+                        userData -= finshedFiles.value(key);
                     finshedFiles.remove(key);
                     break;
                 }
@@ -380,7 +369,8 @@ void TransferHelper::recordTranferJob(const QString &filepath)
         }
         // 3.save unfinished filelist for retransmission
         jsonObj["user_file"] = updatedFileList;
-        if (ok) jsonObj["user_data"] = QString::number(userData);
+        if (ok)
+            jsonObj["user_data"] = QString::number(userData);
         QJsonDocument jsonDoc;
         jsonDoc.setObject(jsonObj);
         QFile tempfile(tempPath);

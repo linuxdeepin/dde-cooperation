@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -169,6 +169,7 @@ void CooperationTransDialog::closeEvent(QCloseEvent *e)
 void CooperationTransDialog::init()
 {
     setWindowTitle(tr("File transfer"));
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowIcon(QIcon(":/icons/deepin/builtin/icons/dde-cooperation_128px.svg"));
     setFixedWidth(380);
 

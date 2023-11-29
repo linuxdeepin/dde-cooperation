@@ -64,6 +64,8 @@ void DeviceListWidget::updateItem(int index, const DeviceInfoPointer info)
 void DeviceListWidget::removeItem(int index)
 {
     QLayoutItem *item = mainLayout->takeAt(index);
+    if(!item)
+        return;
     QWidget *w = item->widget();
     if (w) {
         w->setParent(nullptr);
