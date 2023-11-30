@@ -113,7 +113,7 @@ void Discoverer::start()
 //            break;
         }
 
-        fastring msg(buffer, recv_len);
+        fastring msg(buffer, static_cast<size_t>(recv_len));
         handle_message(msg, co::addr2str(&cli));
     }
 

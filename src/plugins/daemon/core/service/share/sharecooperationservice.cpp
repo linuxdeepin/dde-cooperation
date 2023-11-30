@@ -54,10 +54,10 @@ BarrierType ShareCooperationService::barrierType() const
     return _brrierType;
 }
 
-void ShareCooperationService::restartBarrier()
+bool ShareCooperationService::restartBarrier()
 {
     stopBarrier();
-    startBarrier();
+    return startBarrier();
 }
 
 bool ShareCooperationService::setServerConfig(const ShareServerConfig &config)

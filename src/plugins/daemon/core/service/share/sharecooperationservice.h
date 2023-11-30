@@ -25,7 +25,7 @@ public:
     void setBarrierType(BarrierType type);
     BarrierType barrierType() const;
 
-    void restartBarrier();
+    bool restartBarrier();
 
     bool setServerConfig(const ShareServerConfig &config);
     bool setClientTargetIp(const QString &ip, const int &port);

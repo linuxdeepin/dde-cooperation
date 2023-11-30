@@ -496,3 +496,45 @@ struct ShareStart {
     }
 };
 
+struct ShareStartReply {
+    bool result;
+    bool isRemote;
+    fastring errorMsg;
+
+    void from_json(const co::Json& _x_) {
+        result = _x_.get("result").as_bool();
+        isRemote = _x_.get("isRemote").as_bool();
+        errorMsg = _x_.get("errorMsg").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("result", result);
+        _x_.add_member("isRemote", isRemote);
+        _x_.add_member("errorMsg", errorMsg);
+        return _x_;
+    }
+};
+
+struct ShareStartRmoteReply {
+    bool result;
+    fastring appName;
+    fastring tarAppname;
+    fastring errorMsg;
+
+    void from_json(const co::Json& _x_) {
+        result = _x_.get("result").as_bool();
+        appName = _x_.get("appName").as_c_str();
+        tarAppname = _x_.get("tarAppname").as_c_str();
+        errorMsg = _x_.get("errorMsg").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("result", result);
+        _x_.add_member("appName", appName);
+        _x_.add_member("tarAppname", tarAppname);
+        _x_.add_member("errorMsg", errorMsg);
+        return _x_;
+    }
+};

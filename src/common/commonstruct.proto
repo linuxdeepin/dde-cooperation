@@ -151,3 +151,15 @@ object ShareStart {
     string ip // 自己的ip
     int32 port // 端口号
 }
+object ShareStartReply {
+    bool result // 是否成功
+    bool isRemote // 是否是远端
+    string errorMsg // 错误消息
+}
+
+object ShareStartRmoteReply {
+    bool result // 是否成功
+    string appName // 自己的app名称
+    string tarAppname // 目标的app名称
+    string errorMsg // 错误消息
+}
