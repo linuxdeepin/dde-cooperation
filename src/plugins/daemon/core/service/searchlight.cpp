@@ -1,8 +1,9 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <QDebug>
+#include <utils/utils.h>
 #include "searchlight.h"
 #include "co/co/sock.h"
 #include "co/json.h"
@@ -144,11 +145,12 @@ void Discoverer::handle_message(const fastring& message, const fastring& sender_
 
     fastring name = node.get("name").as_string();
     fastring info = node.get("info").as_string();
+    fastring  ip = node.get("info","os","ipv4").as_string();
 
     QString endpoint(sender_endpoint.c_str());
     endpoint = endpoint.left(endpoint.indexOf(":"));
 
-    if (name == _listen_for_service) {
+    if (name == _listen_for_service && ip != Util::getFirstIp()) {
         // 找到最近的时间修改，只发送改变了的
         handleChanges(endpoint, info, _timer.ms());
     } else {

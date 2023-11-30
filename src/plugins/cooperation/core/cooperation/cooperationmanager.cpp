@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -20,7 +20,9 @@
 #include <QApplication>
 #include <QStandardPaths>
 #include <QDir>
+#ifdef linux
 #include <QDBusReply>
+#endif
 
 using ButtonStateCallback = std::function<bool(const QString &, const DeviceInfoPointer)>;
 using ClickedCallback = std::function<void(const QString &, const DeviceInfoPointer)>;
@@ -37,17 +39,27 @@ inline constexpr char NotifyAcceptAction[] { "accept" };
 inline constexpr char ConnectButtonId[] { "connect-button" };
 inline constexpr char DisconnectButtonId[] { "disconnect-button" };
 
+#ifdef linux
+inline constexpr char Kconnect[] { "connect" };
+inline constexpr char Kdisconnect[] { "disconnect" };
+#else
+inline constexpr char Kconnect[] { ":/icons/deepin/builtin/texts/connect_18px.svg" };
+inline constexpr char Kdisconnect[] { ":/icons/deepin/builtin/texts/disconnect_18px.svg" };
+#endif
+
 using namespace cooperation_core;
 
 CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
     : q(qq)
 {
+#ifdef linux
     notifyIfc = new QDBusInterface(NotifyServerName,
                                    NotifyServerPath,
                                    NotifyServerIfce,
                                    QDBusConnection::sessionBus(), this);
     QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
                                           this, SLOT(onActionTriggered(uint, const QString &)));
+#endif
     connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &CooperationManagerPrivate::onAppAttributeChanged);
 }
 
@@ -140,6 +152,7 @@ CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
 
 uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
 {
+#ifdef linux
     QDBusReply<uint> reply = notifyIfc->call(QString("Notify"),
                                              MainAppName,   // appname
                                              replacesId,
@@ -148,6 +161,7 @@ uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &bo
                                              body, actions, QVariantMap(), expireTimeout);
 
     return reply.isValid() ? reply.value() : replacesId;
+#endif
 }
 
 void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString &action)
@@ -185,7 +199,7 @@ void CooperationManager::regist()
     ButtonStateCallback visibleCb = CooperationManager::buttonVisible;
     QVariantMap historyInfo { { "id", ConnectButtonId },
                               { "description", tr("connect") },
-                              { "icon-name", "connect" },
+                              { "icon-name", Kconnect },
                               { "location", 0 },
                               { "button-style", 0 },
                               { "clicked-callback", QVariant::fromValue(clickedCb) },
@@ -193,7 +207,7 @@ void CooperationManager::regist()
 
     QVariantMap transferInfo { { "id", DisconnectButtonId },
                                { "description", tr("Disconnect") },
-                               { "icon-name", "disconnect" },
+                               { "icon-name", Kdisconnect },
                                { "location", 1 },
                                { "button-style", 0 },
                                { "clicked-callback", QVariant::fromValue(clickedCb) },
