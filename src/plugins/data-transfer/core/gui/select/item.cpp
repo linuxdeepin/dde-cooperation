@@ -1,4 +1,4 @@
-#include "item.h"
+﻿#include "item.h"
 
 #include <QApplication>
 #include <QLabel>
@@ -670,12 +670,20 @@ SelectListView::~SelectListView() { }
 void SelectListView::selectorDelAllItem()
 {
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
+    Qt::CheckState state = Qt::Unchecked;
     for (int row = 0; row < model->rowCount(); ++row) {
         QModelIndex itemIndex = model->index(row, 0);
         if (itemIndex.data(Qt::BackgroundRole).toBool() == true)
             continue;
-        Qt::CheckState state =
-                itemIndex.data(Qt::CheckStateRole) == Qt::Checked ? Qt::Unchecked : Qt::Checked;
+        if (itemIndex.data(Qt::CheckStateRole) == Qt::Unchecked) {
+            state = Qt::Checked;
+            break;
+        }
+    }
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex itemIndex = model->index(row, 0);
+        if (itemIndex.data(Qt::BackgroundRole).toBool() == true)
+            continue;
         model->setData(itemIndex, state, Qt::CheckStateRole);
     }
 }

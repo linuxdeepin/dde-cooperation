@@ -198,9 +198,11 @@ fastring TransferJob::getSubdir(const char *path, const char *root)
 
 void TransferJob::scanPath(fastring root, fastring path)
 {
+#ifdef linux
     // 链接文件不拷贝
     if (fs::isSymlink(path.c_str()))
         return;
+#endif
     _fileid++;
     fastring subdir = getSubdir(path.c_str(), root.c_str());
     FileTransCreate info;

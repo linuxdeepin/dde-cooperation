@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -45,7 +45,13 @@ void CooperationTaskDialog::init()
     mainLayout->addWidget(createWaitPage());
     mainLayout->addWidget(createFailPage());
 
+#ifdef linux
     addContent(contentWidget);
+#else
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(contentWidget);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+#endif
 }
 
 void CooperationTaskDialog::setTaskTitle(const QString &title)
@@ -67,7 +73,9 @@ QWidget *CooperationTaskDialog::createWaitPage()
     spinner->setFixedSize(48, 48);
     spinner->setAttribute(Qt::WA_TransparentForMouseEvents);
     spinner->setFocusPolicy(Qt::NoFocus);
+#ifdef linux
     spinner->start();
+#endif
 
     QPushButton *celBtn = new QPushButton(tr("Cancel", "button"), this);
     connect(celBtn, &QPushButton::clicked, this, &CooperationTaskDialog::waitCanceled);

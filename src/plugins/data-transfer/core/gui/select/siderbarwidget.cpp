@@ -252,7 +252,6 @@ void SidebarWidget::paintEvent(QPaintEvent *event)
     QListView::paintEvent(event);
     QPainter painter(viewport());
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(QPen(QColor(0, 0, 0, 50), 2));
     QPainterPath path;
     path.moveTo(10, 216);
     path.lineTo(190, 216);

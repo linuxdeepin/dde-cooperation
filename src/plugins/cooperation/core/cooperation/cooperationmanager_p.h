@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,7 +10,9 @@
 
 #include "ipc/bridge.h"
 
+#ifdef linux
 #include <QDBusInterface>
+#endif
 
 namespace cooperation_core {
 
@@ -31,7 +33,9 @@ public Q_SLOTS:
 
 public:
     CooperationManager *q;
+#ifdef linux
     QDBusInterface *notifyIfc { nullptr };
+#endif
     CooperationTaskDialog *ctDialog { nullptr };
     uint recvReplacesId { 0 };
     bool isRecvMode { true };
