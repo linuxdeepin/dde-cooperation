@@ -30,7 +30,8 @@ void HandleSendResultService::handleSendResultMsg(const QString appName, const Q
 
     if (res.errorType < INVOKE_OK) {
         SendStatus st;
-        st.type = res.errorType;
+        st.type = static_cast<int32>(res.protocolType);
+        st.status = res.errorType;
         st.msg = msg.toStdString();
         co::Json req = st.as_json();
         req.add_member("api", "Frontend.notifySendStatus");

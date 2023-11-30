@@ -103,7 +103,8 @@ void SendRpcWork::handlePing(const QStringList apps)
         if ( !rs.data.empty() || rs.errorType < INVOKE_OK) {
             DLOG << "remote server no reply ping !!!!! " << appName.toStdString();
             SendStatus st;
-            st.type = rs.errorType;
+            st.type = RPC_PING;
+            st.status = rs.errorType;
             st.msg = rs.data;
             co::Json req = st.as_json();
             req.add_member("api", "Frontend.notifySendStatus");

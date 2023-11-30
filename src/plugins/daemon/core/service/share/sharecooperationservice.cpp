@@ -62,6 +62,8 @@ bool ShareCooperationService::restartBarrier()
 
 bool ShareCooperationService::setServerConfig(const ShareServerConfig &config)
 {
+    if (!config.server_screen.empty())
+        _cooConfig->setScreenName(config.server_screen.c_str());
     if (BarrierType::Server != _brrierType) {
         ELOG << "not the brrier server !!!!!!!";
         return false;
@@ -92,7 +94,7 @@ bool ShareCooperationService::setServerConfig(const ShareServerConfig &config)
     return true;
 }
 
-bool ShareCooperationService::setClientTargetIp(const QString &ip, const int &port)
+bool ShareCooperationService::setClientTargetIp(const QString &screen, const QString &ip, const int &port)
 {
     if (BarrierType::Server == _brrierType) {
         ELOG << "not the brrier client !!!!!!!";
@@ -106,8 +108,10 @@ bool ShareCooperationService::setClientTargetIp(const QString &ip, const int &po
         ELOG << "error param !!!!!" << " ip = " << ip.toStdString() << ":" << port;
         return false;
     }
+    if (!screen.isEmpty())
+        _cooConfig->setScreenName(screen);
     _cooConfig->setServerIp(ip);
-    _cooConfig->setPort(port == 0 ? 24800 : port);
+    _cooConfig->setPort(port == 0 ? UNI_SHARE_SERVER_PORT : port);
     return true;
 }
 

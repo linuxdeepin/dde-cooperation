@@ -353,6 +353,26 @@ struct ShareConnectApply {
     }
 };
 
+struct ShareDisConnect {
+    fastring appName;
+    fastring tarAppname;
+    fastring msg;
+
+    void from_json(const co::Json& _x_) {
+        appName = _x_.get("appName").as_c_str();
+        tarAppname = _x_.get("tarAppname").as_c_str();
+        msg = _x_.get("msg").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("appName", appName);
+        _x_.add_member("tarAppname", tarAppname);
+        _x_.add_member("msg", msg);
+        return _x_;
+    }
+};
+
 struct ShareConnectReply {
     fastring appName;
     fastring tarAppname;
@@ -394,6 +414,8 @@ struct ShareStop {
 };
 
 struct ShareServerConfig {
+    fastring server_screen{ "" };
+    fastring client_screen{ "" };
     fastring screen_left{ "" };
     fastring screen_right{ "" };
     bool left_halfDuplexCapsLock{ false };
@@ -418,6 +440,8 @@ struct ShareServerConfig {
     int32 switchCornerSize{ 0 };
 
     void from_json(const co::Json& _x_) {
+        server_screen = _x_.get("server_screen").as_c_str();
+        client_screen = _x_.get("client_screen").as_c_str();
         screen_left = _x_.get("screen_left").as_c_str();
         screen_right = _x_.get("screen_right").as_c_str();
         left_halfDuplexCapsLock = _x_.get("left_halfDuplexCapsLock").as_bool();
@@ -444,6 +468,8 @@ struct ShareServerConfig {
 
     co::Json as_json() const {
         co::Json _x_;
+        _x_.add_member("server_screen", server_screen);
+        _x_.add_member("client_screen", client_screen);
         _x_.add_member("screen_left", screen_left);
         _x_.add_member("screen_right", screen_right);
         _x_.add_member("left_halfDuplexCapsLock", left_halfDuplexCapsLock);
@@ -538,3 +564,4 @@ struct ShareStartRmoteReply {
         return _x_;
     }
 };
+

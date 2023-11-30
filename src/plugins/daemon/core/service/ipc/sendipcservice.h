@@ -33,6 +33,7 @@ private slots:
     void handleSendToAllClient(const QString req);
     void handleNodeChanged(bool found, QString info);
     void handlebackendOnline();
+    void handlePing();
 
 private:
     explicit SendIpcWork(QObject *parent = nullptr);
@@ -63,6 +64,7 @@ signals:
     void sendToAllClient(const QString req);
     void nodeChanged(bool found, QString info);
     void backendOnline();
+    void pingFront();
 
 public slots:
     void handleSaveSession(const QString appName, const QString sessionID, const quint16 cbport);
@@ -83,6 +85,7 @@ private:
 private:
     QThread thread;
     QSharedPointer<SendIpcWork> work;
+    QTimer _ping;
 };
 
 #endif // SENDIPCSERVICE_H

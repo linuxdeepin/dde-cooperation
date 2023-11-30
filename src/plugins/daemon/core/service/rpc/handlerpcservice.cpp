@@ -268,7 +268,20 @@ void HandleRpcService::handleRemoteShareConnect(co::Json &info)
     co::Json req = event.as_json();
     req.add_member("api", "Frontend.shareEvents");
     SendIpcService::instance()->handleSendToClient(lo.tarAppname.c_str(), req.str().c_str());
+}
 
+void HandleRpcService::handleRemoteShareDisConnect(co::Json &info)
+{
+    // 发送给前端
+    ShareDisConnect sd;
+    sd.from_json(info);
+
+    ShareEvents ev;
+    ev.eventType = FRONT_SHARE_DISCONNECT;
+    ev.data = info.str();
+    co::Json req = ev.as_json();
+    req.add_member("api", "Frontend.shareEvents");
+    SendIpcService::instance()->handleSendToClient(sd.tarAppname.c_str(), req.str().c_str());
 }
 
 void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
@@ -304,7 +317,7 @@ void HandleRpcService::handleRemoteShareStart(co::Json &info)
 
     // 获取其中的ip进行Barrier的client配置
     ShareCooperationService::instance()->setBarrierType(BarrierType::Client);
-    if (!ShareCooperationService::instance()->setClientTargetIp(st.ip.c_str(), st.port)
+    if (!ShareCooperationService::instance()->setClientTargetIp(st.config.client_screen.c_str(), st.ip.c_str(), st.port)
             || !ShareCooperationService::instance()->restartBarrier()) {
         reply.result = false;
         reply.errorMsg = "init client config error or start error! param = " + info.str();
@@ -352,6 +365,18 @@ void HandleRpcService::handleRemoteShareStop(co::Json &info)
     SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
 }
 
+void HandleRpcService::handleRemoteDisConnectCb(co::Json &info)
+{
+    // 发送给前端
+    ShareDisConnect sd;
+    sd.from_json(info);
+
+    co::Json req = info;
+    req.add_member("api", "Frontend.cbDisConnect");
+    SendIpcService::instance()->handleSendToClient(sd.tarAppname.c_str(), req.str().c_str());
+    SendRpcService::instance()->removePing(sd.tarAppname.c_str());
+}
+
 void HandleRpcService::startRemoteServer(const quint16 port)
 {
     if (_rpc.isNull() && port != UNI_RPC_PORT_TRANS)
@@ -364,7 +389,8 @@ void HandleRpcService::startRemoteServer(const quint16 port)
     auto callback = [](const int type, const fastring &ip, const uint16 port){
         if (type == 0) {
             SendStatus st;
-            st.type = REMOTE_CLIENT_OFFLINE;
+            st.type = 0;
+            st.status = REMOTE_CLIENT_OFFLINE;
             st.msg = co::Json({{"ip", ip}, {"port", port}}).str();
             co::Json req = st.as_json();
             req.add_member("api", "Frontend.notifySendStatus");
@@ -466,6 +492,13 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 self->handleRemoteShareConnect(json_obj);
                 break;
             }
+            case APPLY_SHARE_DISCONNECT: {
+                // 被控制方收到共享连接申请
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteShareDisConnect(json_obj);
+                break;
+            }
             case APPLY_SHARE_CONNECT_RES:
             {
                 // 控制方收到被控制方申请共享连接的回复
@@ -496,6 +529,14 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 OutData data;
                 _outgo_chan << data;
                 self->handleRemoteShareStop(json_obj);
+                break;
+            }
+            case DISCONNECT_CB:
+            {
+                // 被控制方收到控制方的开始共享
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteDisConnectCb(json_obj);
                 break;
             }
             default:{

@@ -107,6 +107,12 @@ object ShareConnectApply {
   string data // 数据
 }
 
+object ShareDisConnect {
+  string appName // 自己的app名称
+  string tarAppname // 目标app的名称
+  string msg // 消息
+}
+
 object ShareConnectReply {
   string appName // 自己的app名称
   string tarAppname // 目标app的名称
@@ -120,6 +126,8 @@ object ShareStop {
 }
 
 object ShareServerConfig {
+    string server_screen // 服务器的屏幕名称
+    string client_screen // 客户端的屏幕名称
     string screen_left // 屏幕的左边
     string screen_right // 屏幕右边
     bool left_halfDuplexCapsLock //

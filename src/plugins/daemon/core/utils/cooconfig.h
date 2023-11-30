@@ -46,10 +46,10 @@ class CooConfig: public QObject
         void saveSettings();
         void setPort(int i);
         void setServerIp(const QString& s);
+        void setScreenName(const QString& s);
 
 protected:
         QSettings& settings();
-        void setScreenName(const QString& s);
 
         void setNetworkInterface(const QString& s);
         void setLogLevel(int i);

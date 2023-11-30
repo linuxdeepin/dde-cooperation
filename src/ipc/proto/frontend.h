@@ -25,6 +25,7 @@ class Frontend : public rpc::Service {
         _methods["Frontend.notifySendStatus"] = std::bind(&Frontend::notifySendStatus, this, _1, _2);
         _methods["Frontend.backendServerOnline"] = std::bind(&Frontend::backendServerOnline, this, _1, _2);
         _methods["Frontend.shareEvents"] = std::bind(&Frontend::shareEvents, this, _1, _2);
+        _methods["Frontend.cbDisConnect"] = std::bind(&Frontend::cbDisConnect, this, _1, _2);
     }
 
     virtual ~Frontend() {}
@@ -60,6 +61,8 @@ class Frontend : public rpc::Service {
     virtual void backendServerOnline(co::Json& req, co::Json& res) = 0;
 
     virtual void shareEvents(co::Json& req, co::Json& res) = 0;
+
+    virtual void cbDisConnect(co::Json& req, co::Json& res) = 0;
 
   private:
     co::map<const char*, Fun> _methods;

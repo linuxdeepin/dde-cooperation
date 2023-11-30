@@ -178,6 +178,10 @@ void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend
         handleShareConnect(msg);
         break;
     }
+    case BACK_SHARE_DISCONNECT: {
+        handleShareDisConnect(msg);
+        break;
+    }
     case BACK_SHARE_CONNECT_REPLY:
     {
         // 回复控制端接受控制还是拒绝控制
@@ -195,6 +199,10 @@ void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend
     case BACK_SHARE_STOP: {
         // 两端都可以共享，通知远端，在停止自己
         handleShareStop(msg);
+        break;
+    }
+    case BACK_DISCONNECT_CB: {
+        handleDisConnectCb(msg);
         break;
     }
     default:
@@ -372,7 +380,8 @@ void HandleIpcService::handleShareStart(co::Json json)
     ShareStart st;
     st.from_json(json);
     st.ip = st.ip.empty() ? Util::getFirstIp() : st.ip;
-    st.port = st.port == 0 ? 24800 : st.port;
+    st.port = st.port == 0 ? UNI_SHARE_SERVER_PORT : st.port;
+    st.tarAppname = st.tarAppname.empty() ? st.appName : st.tarAppname;
 
     // 读取相应的配置配置Barrier
     ShareCooperationService::instance()->setBarrierType(BarrierType::Server);
@@ -414,6 +423,15 @@ void HandleIpcService::handleShareConnect(co::Json json)
     SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT, appName, param.as_json().str().c_str());
 }
 
+void HandleIpcService::handleShareDisConnect(co::Json json)
+{
+    ShareDisConnect info;
+    info.from_json(json);
+    info.tarAppname = info.tarAppname.empty() ? info.appName : info.tarAppname;
+    SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_DISCONNECT, info.appName.c_str(),
+                                               info.as_json().str().c_str());
+}
+
 void HandleIpcService::handleShareConnectReply(co::Json json)
 {
     ShareConnectReply reply;
@@ -432,4 +450,15 @@ void HandleIpcService::handleShareStop(co::Json json)
                                                st.as_json().str().c_str());
     // 自己停止
     ShareCooperationService::instance()->stopBarrier();
+}
+
+void HandleIpcService::handleDisConnectCb(co::Json json)
+{
+    ShareDisConnect info;
+    info.from_json(json);
+    info.tarAppname = info.tarAppname.empty() ? info.appName : info.tarAppname;
+    SendRpcService::instance()->doSendProtoMsg(DISCONNECT_CB, info.appName.c_str(),
+                                               info.as_json().str().c_str());
+
+    SendRpcService::instance()->removePing(info.appName.c_str());
 }
