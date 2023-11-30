@@ -8,7 +8,7 @@
 #include "utils/cooperationutil.h"
 #include "maincontroller/maincontroller.h"
 #include "transfer/transferhelper.h"
-#include "share/sharemanager.h"
+#include "cooperation/cooperationmanager.h"
 #include "config/configmanager.h"
 #include "singleton/singleapplication.h"
 
@@ -42,7 +42,7 @@ bool CooperaionCorePlugin::start()
     CooperationUtil::instance()->mainWindow()->show();
     MainController::instance()->regist();
     TransferHelper::instance()->regist();
-    ShareManager::instance()->regist();
+    CooperationManager::instance()->regist();
     MainController::instance()->start();
 
 #ifdef WIN32

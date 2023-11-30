@@ -7,15 +7,20 @@
 #include "gui/mainwindow.h"
 #include "maincontroller/maincontroller.h"
 #include "transfer/transferhelper.h"
+#include "cooperation/cooperationmanager.h"
 
+#include "config/configmanager.h"
 #include "common/constant.h"
+#include "common/commonstruct.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/backend.h"
 
 #include <QJsonDocument>
 #include <QNetworkInterface>
+#include <QStandardPaths>
 #include <QDebug>
+#include <QDir>
 
 using namespace cooperation_core;
 
@@ -191,6 +196,21 @@ void CooperationUtilPrivate::localIPCStart()
                 q->metaObject()->invokeMethod(MainController::instance(),
                                               "start",
                                               Qt::QueuedConnection);
+                break;
+            case FRONT_SHARE_APPLY_CONNECT: {
+                ShareConnectApply conApply;
+                conApply.from_json(json_obj);
+                q->metaObject()->invokeMethod(CooperationManager::instance(),
+                                              "notifyConnectRequest",
+                                              Qt::QueuedConnection,
+                                              Q_ARG(QString, QString(conApply.data.c_str())));
+            } break;
+            case FRONT_SHARE_APPLY_CONNECT_REPLY: {
+                ShareConnectReply conReply;
+                conReply.from_json(json_obj);
+            } break;
+            case FRONT_SHARE_STOP:
+                DLOG << "share stop";
                 break;
             default:
                 break;
@@ -376,6 +396,37 @@ void CooperationUtil::setAppConfig(const QString &key, const QString &value)
         rpcClient.call(req, res);
         rpcClient.close();
     });
+}
+
+QVariantMap CooperationUtil::deviceInfo()
+{
+    QVariantMap info;
+    auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
+    info.insert(AppSettings::DiscoveryModeKey, value.isValid() ? value.toInt() : 0);
+
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
+    info.insert(AppSettings::DeviceNameKey,
+                value.isValid()
+                        ? value.toString()
+                        : QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName());
+
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
+    info.insert(AppSettings::PeripheralShareKey, value.isValid() ? value.toBool() : false);
+
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
+    info.insert(AppSettings::LinkDirectionKey, value.isValid() ? value.toInt() : 0);
+
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
+    info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
+
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
+    auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    info.insert(AppSettings::StoragePathKey, storagePath);
+
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
+    info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : false);
+
+    return info;
 }
 
 QString CooperationUtil::localIPAddress()

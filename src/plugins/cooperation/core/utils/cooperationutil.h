@@ -29,6 +29,7 @@ public:
     void asyncDiscoveryDevice();
     void setAppConfig(const QString &key, const QString &value);
 
+    static QVariantMap deviceInfo();
     static QString localIPAddress();
 
 Q_SIGNALS:

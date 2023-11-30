@@ -42,7 +42,6 @@ public:
     explicit TransferHelperPrivate(TransferHelper *qq);
     ~TransferHelperPrivate();
 
-    QWidget *mainWindow();
     TransferDialog *transDialog();
 
     void handleSendFiles(const QStringList &fileList);
