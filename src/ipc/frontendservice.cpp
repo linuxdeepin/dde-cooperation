@@ -4,6 +4,7 @@
 
 #include "frontendservice.h"
 #include "common/constant.h"
+#include "common/commonstruct.h"
 #include "ipc/proto/comstruct.h"
 
 #include "co/co.h"
@@ -184,5 +185,16 @@ void FrontendImpl::backendServerOnline(co::Json &req, co::Json &res)
 
 void FrontendImpl::shareEvents(co::Json &req, co::Json &res)
 {
+    BridgeJsonData bridge;
+    ShareEvents event;
+    event.from_json(req);
+    bridge.type = event.eventType;
+    bridge.json = event.data;
+    _interface->bridgeChan()->operator<<(bridge);
 
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
 }

@@ -377,10 +377,14 @@ void HandleIpcService::handleShareStart(co::Json json)
     // 读取相应的配置配置Barrier
     ShareCooperationService::instance()->setBarrierType(BarrierType::Server);
     if (!ShareCooperationService::instance()->setServerConfig(st.config) ||
-            !ShareCooperationService::instance()->startBarrier()) {
+            !ShareCooperationService::instance()->restartBarrier()) {
         ShareEvents ev;
-        ev.eventType = SHARE_START_RES;
-        ev.data = "init server error! param = " + json.str();
+        ev.eventType = FRONT_SHARE_START_REPLY;
+        ShareStartReply reply;
+        reply.result = false;
+        reply.isRemote = false;
+        reply.errorMsg = "init server error! param = " + json.str();
+        ev.data = reply.as_json().str();
         auto req = ev.as_json();
         // 通知前端
         req.add_member("api", "Frontend.shareEvents");

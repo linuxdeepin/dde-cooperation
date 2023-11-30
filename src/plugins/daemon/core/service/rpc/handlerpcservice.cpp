@@ -264,7 +264,7 @@ void HandleRpcService::handleRemoteShareConnect(co::Json &info)
                                                  lo.appName.c_str());
     ShareEvents event;
     event.eventType = FRONT_SHARE_APPLY_CONNECT;
-    event.data = lo.data;
+    event.data = info.str();
     co::Json req = event.as_json();
     req.add_member("api", "Frontend.shareEvents");
     SendIpcService::instance()->handleSendToClient(lo.tarAppname.c_str(), req.str().c_str());
@@ -288,22 +288,54 @@ void HandleRpcService::handleRemoteShareStart(co::Json &info)
 {
     ShareStart st;
     st.from_json(info);
+    ShareEvents evs;
+    evs.eventType = SHARE_START_RES;
+    ShareEvents ev;
+    ev.eventType = FRONT_SHARE_START_REPLY;
+
+    ShareStartReply reply;
+    reply.result = true;
+    reply.isRemote = false;
+
+    ShareStartRmoteReply rreply;
+    rreply.result = true;
+    rreply.tarAppname = st.appName;
+    rreply.appName = st.tarAppname;
+
     // 获取其中的ip进行Barrier的client配置
     ShareCooperationService::instance()->setBarrierType(BarrierType::Client);
     if (!ShareCooperationService::instance()->setClientTargetIp(st.ip.c_str(), st.port)
-            || !ShareCooperationService::instance()->startBarrier()) {
-        ShareEvents ev;
-        ev.eventType = SHARE_START_RES;
-        ev.data = "init client config error! param = " + info.str();
-        // 通知远程
-        SendRpcService::instance()->doSendProtoMsg(SHARE_START_RES, st.appName.c_str(),
-                                                   ev.data.c_str());
-        auto req = ev.as_json();
-        // 通知前端
-        req.add_member("api", "Frontend.shareEvents");
-        SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
-        return;
+            || !ShareCooperationService::instance()->restartBarrier()) {
+        reply.result = false;
+        reply.errorMsg = "init client config error or start error! param = " + info.str();
+        rreply.result = false;
+        rreply.errorMsg = "init client config error or start error! param = " + info.str();
     }
+    evs.data = rreply.as_json().str();
+    // 通知远程
+    SendRpcService::instance()->doSendProtoMsg(SHARE_START_RES, st.tarAppname.c_str(),
+                                               evs.as_json().str().c_str());
+    ev.data = reply.as_json().str();
+    auto req = ev.as_json();
+    // 通知前端
+    req.add_member("api", "Frontend.shareEvents");
+    SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
+}
+
+void HandleRpcService::handleRemoteShareStartRes(co::Json &info)
+{
+    ShareStartRmoteReply rreply;
+    rreply.from_json(info);
+    ShareStartReply reply;
+    reply.result = rreply.result;
+    reply.isRemote = true;
+    reply.errorMsg = rreply.errorMsg;
+    ShareEvents evs;
+    evs.eventType = SHARE_START_RES;
+    // 通知前端
+    auto req = evs.as_json();
+    req.add_member("api", "Frontend.shareEvents");
+    SendIpcService::instance()->handleSendToClient(rreply.tarAppname.c_str(), req.str().c_str());
 }
 
 void HandleRpcService::handleRemoteShareStop(co::Json &info)
@@ -357,7 +389,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 // timeout, next read
                 continue;
             }
-            // LOG << "ServiceManager get chan value: " << indata.type << " json:" << indata.json;
+            LOG << "ServiceManager get chan value: " << indata.type << " json:" << indata.json;
             co::Json json_obj = json::parse(indata.json);
             if (json_obj.is_null()) {
                 ELOG << "parse error from: " << indata.json;
@@ -443,6 +475,14 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 break;
             }
             case SHARE_START:
+            {
+                // 被控制方收到控制方的开始共享
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteShareStart(json_obj);
+                break;
+            }
+            case SHARE_START_RES:
             {
                 // 被控制方收到控制方的开始共享
                 OutData data;
