@@ -6,6 +6,7 @@
 #include "cooperationproxy.h"
 #include "cooperationdialog.h"
 #include "utils/historymanager.h"
+#include "utils/cooperationutil.h"
 
 #include "config/configmanager.h"
 #include "common/constant.h"
@@ -52,15 +53,7 @@ CooperationProxy *CooperationProxy::instance()
 CooperationTransDialog *CooperationProxy::cooperationDialog()
 {
     if (!cooperationDlg) {
-        QWidget *parent { nullptr };
-        for (auto w : qApp->topLevelWidgets()) {
-            if (w->objectName() == "MainWindow") {
-                parent = w;
-                break;
-            }
-        }
-
-        cooperationDlg = new CooperationTransDialog(parent);
+        cooperationDlg = new CooperationTransDialog(CooperationUtil::instance()->mainWindow());
         connect(cooperationDlg, &CooperationTransDialog::accepted, this, &CooperationProxy::onAccepted);
         connect(cooperationDlg, &CooperationTransDialog::rejected, this, &CooperationProxy::onRejected);
         connect(cooperationDlg, &CooperationTransDialog::canceled, this, &CooperationProxy::onCanceled);

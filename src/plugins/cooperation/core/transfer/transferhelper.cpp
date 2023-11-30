@@ -14,8 +14,8 @@
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/chan.h"
 #include "ipc/proto/backend.h"
-#include <QDesktopServices>
 
+#include <QDesktopServices>
 #include <QApplication>
 #include <QFileDialog>
 #include <QStandardPaths>
@@ -63,24 +63,12 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
 
 TransferHelperPrivate::~TransferHelperPrivate()
 {
-    if (transferDialog && !transferDialog->parent())
-        delete transferDialog;
-}
-
-QWidget *TransferHelperPrivate::mainWindow()
-{
-    for (auto w : qApp->topLevelWidgets()) {
-        if (w->objectName() == "MainWindow")
-            return w;
-    }
-
-    return nullptr;
 }
 
 TransferDialog *TransferHelperPrivate::transDialog()
 {
     if (!transferDialog) {
-        transferDialog = new TransferDialog(mainWindow());
+        transferDialog = new TransferDialog(CooperationUtil::instance()->mainWindow());
         connect(transferDialog, &TransferDialog::cancel, q, &TransferHelper::cancelTransfer);
     }
 
@@ -292,7 +280,14 @@ void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer in
 bool TransferHelper::buttonVisible(const QString &id, const DeviceInfoPointer info)
 {
     if (id == TransferButtonId) {
-        return (info->connectStatus() != DeviceInfo::Offline && info->transMode() == DeviceInfo::TransMode::Everyone);
+        switch (info->transMode()) {
+        case DeviceInfo::TransMode::Everyone:
+            return info->connectStatus() != DeviceInfo::Offline;
+        case DeviceInfo::TransMode::OnlyConnected:
+            return info->connectStatus() == DeviceInfo::Connected;
+        default:
+            return false;
+        }
     }
 
     if (id == HistoryButtonId) {
