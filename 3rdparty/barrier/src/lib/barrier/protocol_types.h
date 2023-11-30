@@ -36,7 +36,7 @@ static const SInt16        kProtocolMajorVersion = 1;
 static const SInt16        kProtocolMinorVersion = 6;
 
 // default contact port number
-static const UInt16        kDefaultPort = 24800;
+static const UInt16        kDefaultPort = 24802;
 
 // maximum total length for greeting returned by client
 static const UInt32        kMaxHelloLength = 1024;

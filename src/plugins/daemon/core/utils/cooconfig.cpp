@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cooconfig.h"
+#include "common/constant.h"
 
 #include <QtCore>
 #include <QtNetwork>
@@ -31,7 +32,7 @@ static const char* logLevelNames[] =
 CooConfig::CooConfig(QSettings* settings) :
     m_pSettings(settings),
     m_ScreenName(),
-    m_Port(24800),
+    m_Port(UNI_SHARE_SERVER_PORT),
     m_TargetServerIp(),
     m_Interface(),
     m_LogLevel(0),
@@ -110,7 +111,7 @@ void CooConfig::loadSettings()
     settings().beginGroup(groupname);
 
     m_ScreenName = settings().value("screenName", QHostInfo::localHostName()).toString();
-    m_Port = settings().value("port", 24800).toInt();
+    m_Port = settings().value("port", UNI_SHARE_SERVER_PORT).toInt();
     m_TargetServerIp = settings().value("serverIp").toString();
     m_Interface = settings().value("interface").toString();
     m_LogLevel = settings().value("logLevel", 3).toInt(); // level 3: INFO

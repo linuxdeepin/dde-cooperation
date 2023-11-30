@@ -32,8 +32,10 @@ public slots:
     bool handleJobActions(const uint type, co::Json &msg);
     void handleShareStart(co::Json json);
     void handleShareConnect(co::Json json);
+    void handleShareDisConnect(co::Json json);
     void handleShareConnectReply(co::Json json);
     void handleShareStop(co::Json json);
+    void handleDisConnectCb(co::Json json);
 private:
     void ipcServiceStart();
     void createIpcBackend(const quint16 port);

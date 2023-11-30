@@ -28,7 +28,7 @@ public:
     bool restartBarrier();
 
     bool setServerConfig(const ShareServerConfig &config);
-    bool setClientTargetIp(const QString &ip, const int &port);
+    bool setClientTargetIp(const QString &screen, const QString &ip, const int &port);
 
 signals:
 

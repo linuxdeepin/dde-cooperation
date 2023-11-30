@@ -165,6 +165,24 @@ void SendIpcWork::handlebackendOnline()
     }
 }
 
+void SendIpcWork::handlePing()
+{
+    for (auto i = _sessions.begin(); i != _sessions.end();) {
+        QSharedPointer<Session> s = *i;
+        if (!s->alive()) {
+
+            SendRpcService::instance()->removePing(s->getName());
+            // the frontend is offline
+            i = _sessions.erase(i);
+
+            //remove the frontend app register info
+            fastring name = s->getName().toStdString();
+            DiscoveryJob::instance()->removeAppbyName(name);
+        } else {
+            i++;
+        }
+    }
+}
 
 SendIpcService::SendIpcService(QObject *parent)
     : QObject(parent)
@@ -172,9 +190,10 @@ SendIpcService::SendIpcService(QObject *parent)
     work.reset(new SendIpcWork);
     work->moveToThread(&thread);
 
-
     initConnect();
     thread.start();
+    _ping.setInterval(1000);
+    _ping.start();
 }
 
 SendIpcService::~SendIpcService()
@@ -228,6 +247,7 @@ void SendIpcService::handleAddJob(const QString appName, const int jobId)
 void SendIpcService::initConnect()
 {
     connect(qApp, &QCoreApplication::aboutToQuit, this, &SendIpcService::handleAboutToQuit, Qt::DirectConnection);
+    connect(&_ping, &QTimer::timeout, this, &SendIpcService::pingFront, Qt::QueuedConnection);
 
     connect(this, &SendIpcService::connectClosed, work.data(), &SendIpcWork::handleConnectClosed,
             Qt::QueuedConnection);
@@ -244,5 +264,7 @@ void SendIpcService::initConnect()
     connect(this, &SendIpcService::nodeChanged, work.data(), &SendIpcWork::handleNodeChanged,
             Qt::QueuedConnection);
     connect(this, &SendIpcService::backendOnline, work.data(), &SendIpcWork::handlebackendOnline,
+            Qt::QueuedConnection);
+    connect(this, &SendIpcService::pingFront, work.data(), &SendIpcWork::handlePing,
             Qt::QueuedConnection);
 }

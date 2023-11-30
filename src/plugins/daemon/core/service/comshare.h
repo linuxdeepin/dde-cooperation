@@ -30,9 +30,11 @@ typedef enum income_type_t {
     TRANS_RESUME = 1013,
     APPLY_SHARE_CONNECT = 1014, // 控制方发送请求被控制方连接
     APPLY_SHARE_CONNECT_RES = 1015, // 被控制方回复控制方
-    SHARE_START = 1016, // 控制方发送给被控制方，开始共享
-    SHARE_START_RES = 1017, // 被控制方通知控制方，共享结果
-    SHARE_STOP = 1018, // 停止
+    APPLY_SHARE_DISCONNECT = 1016, // 控制方发送请求被控制方连接
+    SHARE_START = 1017, // 控制方发送给被控制方，开始共享
+    SHARE_START_RES = 1018, // 被控制方通知控制方，共享结果
+    SHARE_STOP = 1019, // 停止
+    DISCONNECT_CB = 1020, // 断开cb的连接
 } IncomeType;
 
 typedef enum outgo_type_t {
