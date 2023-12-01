@@ -27,6 +27,33 @@ void SortFilterWorker::onTransHistoryUpdated()
     *transHistory = HistoryManager::instance()->getTransHistory();
 }
 
+int SortFilterWorker::calculateIndex(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info)
+{
+    int index = 0;
+    switch (info->connectStatus()) {
+    case DeviceInfo::Connected:
+        // 连接中的设备放第一个
+        index = 0;
+        break;
+    case DeviceInfo::Connectable: {
+        index = findLast(DeviceInfo::Connectable, info);
+        if (index != -1)
+            break;
+
+        index = findFirst(DeviceInfo::Offline);
+        if (index != -1)
+            break;
+
+        index = list.size();
+    } break;
+    case DeviceInfo::Offline:
+        index = list.size();
+        break;
+    }
+
+    return index;
+}
+
 void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
 {
     if (isStoped)
@@ -38,33 +65,13 @@ void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
             continue;
         }
 
-        int index = 0;
-        switch (info->connectStatus()) {
-        case DeviceInfo::Connected:
-            // 连接中的设备放第一个
-            index = 0;
-            break;
-        case DeviceInfo::Connectable: {
-            index = findLast(DeviceInfo::Connectable, info);
-            if (index != -1)
-                break;
-
-            index = findFirst(DeviceInfo::Offline);
-            if (index != -1)
-                break;
-
-            index = allDeviceList.size();
-        } break;
-        case DeviceInfo::Offline:
-            index = allDeviceList.size();
-            break;
-        }
-
         if (isStoped)
             return;
 
+        auto index = calculateIndex(allDeviceList, info);
         allDeviceList.insert(index, info);
         visibleDeviceList.insert(index, info);
+
         Q_EMIT sortFilterResult(index, info);
     }
 }
@@ -149,8 +156,13 @@ void SortFilterWorker::updateDevice(const DeviceInfoPointer info)
     if (allDeviceList[index]->discoveryMode() == DeviceInfo::DiscoveryMode::NotAllow)
         return removeDevice(allDeviceList[index]->ipAddress());
 
-    if (allDeviceList[index]->deviceName() != info->deviceName()
-        || allDeviceList[index]->connectStatus() != info->connectStatus()) {
+    // 当连接状态不一致时，需要更新位置
+    bool needMove = allDeviceList[index]->connectStatus() != info->connectStatus();
+    if (needMove) {
+        allDeviceList.removeAt(index);
+        auto to = calculateIndex(allDeviceList, info);
+        allDeviceList.insert(to, info);
+    } else {
         allDeviceList.replace(index, info);
     }
 
@@ -158,8 +170,15 @@ void SortFilterWorker::updateDevice(const DeviceInfoPointer info)
         return;
 
     index = indexOf(visibleDeviceList, info);
-    visibleDeviceList.replace(index, info);
-    Q_EMIT deviceUpdated(index, info);
+    if (!needMove) {
+        visibleDeviceList.replace(index, info);
+        Q_EMIT deviceUpdated(index, info);
+    } else {
+        visibleDeviceList.removeAt(index);
+        auto to = calculateIndex(visibleDeviceList, info);
+        visibleDeviceList.insert(to, info);
+        Q_EMIT deviceMoved(index, to, info);
+    }
 }
 
 bool SortFilterWorker::contains(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info)

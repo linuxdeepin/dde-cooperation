@@ -92,6 +92,11 @@ MainWindow::~MainWindow()
 {
 }
 
+DeviceInfoPointer MainWindow::findDeviceInfo(const QString &ip)
+{
+    return d->workspaceWidget->findDeviceInfo(ip);
+}
+
 void MainWindow::onlineStateChanged(bool isOnline)
 {
     if (!isOnline) {

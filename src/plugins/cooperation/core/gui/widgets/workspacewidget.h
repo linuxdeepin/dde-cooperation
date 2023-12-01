@@ -32,6 +32,7 @@ public:
     void addDeviceInfos(const QList<DeviceInfoPointer> &infoList);
     void removeDeviceInfos(const QString &ip);
     void addDeviceOperation(const QVariantMap &map);
+    DeviceInfoPointer findDeviceInfo(const QString &ip);
 
     void clear();
 

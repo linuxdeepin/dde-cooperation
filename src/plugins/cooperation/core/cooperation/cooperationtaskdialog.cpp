@@ -15,13 +15,15 @@ CooperationTaskDialog::CooperationTaskDialog(QWidget *parent)
 
 void CooperationTaskDialog::switchWaitPage(const QString &dev)
 {
-    setTaskTitle(dev);
+    static QString title(tr("Requesting collaborate to \"%1\""));
+    setTaskTitle(title.arg(dev));
     mainLayout->setCurrentIndex(0);
 }
 
 void CooperationTaskDialog::switchFailPage(const QString &dev, const QString &msg, bool retry)
 {
-    setTaskTitle(dev);
+    static QString title(tr("Unable to collaborate to \"%1\""));
+    setTaskTitle(title.arg(dev));
 
     msgLabel->setText(msg);
     retryBtn->setVisible(retry);

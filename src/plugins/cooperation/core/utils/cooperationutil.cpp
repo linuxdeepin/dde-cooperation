@@ -208,6 +208,12 @@ void CooperationUtilPrivate::localIPCStart()
             case FRONT_SHARE_APPLY_CONNECT_REPLY: {
                 ShareConnectReply conReply;
                 conReply.from_json(json_obj);
+
+                LOG << "share apply connect info: " << json_obj;
+                q->metaObject()->invokeMethod(CooperationManager::instance(),
+                                              "handleConnectResult",
+                                              Qt::QueuedConnection,
+                                              Q_ARG(bool, conReply.reply));
             } break;
             case FRONT_SHARE_STOP:
                 DLOG << "share stop";
