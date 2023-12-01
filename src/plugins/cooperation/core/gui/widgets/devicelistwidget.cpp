@@ -80,12 +80,11 @@ void DeviceListWidget::moveItem(int srcIndex, int toIndex)
     if (srcIndex == toIndex)
         return;
 
-    QLayoutItem *item = mainLayout->itemAt(srcIndex);
+    QLayoutItem *item = mainLayout->takeAt(srcIndex);
     if (!item)
         return;
 
     mainLayout->insertItem(toIndex, item);
-    removeItem(srcIndex);
 }
 
 int DeviceListWidget::indexOf(const QString &ipStr)
@@ -102,6 +101,22 @@ int DeviceListWidget::indexOf(const QString &ipStr)
     }
 
     return -1;
+}
+
+DeviceInfoPointer DeviceListWidget::findDeviceInfo(const QString &ipStr)
+{
+    const int count = mainLayout->count();
+    for (int i = 0; i != count; ++i) {
+        QLayoutItem *item = mainLayout->itemAt(i);
+        DeviceItem *w = qobject_cast<DeviceItem *>(item->widget());
+        if (!w)
+            continue;
+
+        if (w->deviceInfo()->ipAddress() == ipStr)
+            return w->deviceInfo();
+    }
+
+    return nullptr;
 }
 
 int DeviceListWidget::itemCount()

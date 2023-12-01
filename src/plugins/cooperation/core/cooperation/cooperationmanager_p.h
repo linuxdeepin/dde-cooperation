@@ -23,18 +23,19 @@ public:
 
     void backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo = nullptr, bool accepted = false);
     CooperationTaskDialog *taskDialog();
-    void showCooperationResult(bool success, const QString &msg);
     uint notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout);
 
-public:
+public Q_SLOTS:
     void onActionTriggered(uint replacesId, const QString &action);
+    void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 
 public:
     CooperationManager *q;
     QDBusInterface *notifyIfc { nullptr };
     CooperationTaskDialog *ctDialog { nullptr };
-    bool isRecvMode { true };
     uint recvReplacesId { 0 };
+    bool isRecvMode { true };
+    DeviceInfoPointer tarDeviceInfo {nullptr};
 };
 
 }   // namespace cooperation_core

@@ -48,6 +48,7 @@ CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
                                    QDBusConnection::sessionBus(), this);
     QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
                                           this, SLOT(onActionTriggered(uint, const QString &)));
+    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &CooperationManagerPrivate::onAppAttributeChanged);
 }
 
 void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, bool accepted)
@@ -64,16 +65,21 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
         conEvent.appName = MainAppName;
         conEvent.tarAppname = MainAppName;
         conEvent.tarIp = devInfo->ipAddress().toStdString();
-        conEvent.data = myselfInfo->deviceName().toStdString();
+
+        QStringList dataInfo({ myselfInfo->deviceName(),
+                               myselfInfo->ipAddress() });
+        conEvent.data = dataInfo.join(',').toStdString();
 
         event.data = conEvent.as_json().str();
         req = event.as_json();
     } break;
     case BACK_SHARE_START: {
-        if (!myselfInfo->peripheralShared())
+        if (!devInfo->peripheralShared())
             return;
 
         ShareServerConfig config;
+        config.server_screen = myselfInfo->deviceName().toStdString();
+        config.client_screen = devInfo->deviceName().toStdString();
         switch (myselfInfo->linkMode()) {
         case DeviceInfo::LinkMode::RightMode:
             config.screen_left = myselfInfo->deviceName().toStdString();
@@ -110,7 +116,7 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
 
         event.data = replyEvent.as_json().str();
         req = event.as_json();
-    }break;
+    } break;
     default:
         break;
     }
@@ -130,15 +136,6 @@ CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
     }
 
     return ctDialog;
-}
-
-void CooperationManagerPrivate::showCooperationResult(bool success, const QString &msg)
-{
-    if (success) {
-
-    } else {
-
-    }
 }
 
 uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
@@ -163,6 +160,11 @@ void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString
     } else if (action == NotifyAcceptAction) {
         backendShareEvent(BACK_SHARE_CONNECT_REPLY, nullptr, true);
     }
+}
+
+void CooperationManagerPrivate::onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value)
+{
+
 }
 
 CooperationManager::CooperationManager(QObject *parent)
@@ -207,6 +209,7 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
         d->backendShareEvent(BACK_SHARE_CONNECT, info);
     });
 
+    d->tarDeviceInfo = info;
     d->isRecvMode = false;
     d->taskDialog()->switchWaitPage(info->deviceName());
     d->taskDialog()->show();
@@ -246,7 +249,7 @@ bool CooperationManager::buttonVisible(const QString &id, const DeviceInfoPointe
     return false;
 }
 
-void CooperationManager::notifyConnectRequest(const QString &dev)
+void CooperationManager::notifyConnectRequest(const QString &info)
 {
     d->isRecvMode = true;
     d->recvReplacesId = 0;
@@ -255,5 +258,22 @@ void CooperationManager::notifyConnectRequest(const QString &dev)
     QStringList actions { NotifyRejectAction, tr("Reject"),
                           NotifyAcceptAction, tr("Accept") };
 
-    d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(dev), actions, 10 * 1000);
+    auto infoList = info.split(',');
+    if (infoList.isEmpty())
+        return;
+
+    d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(infoList.first()), actions, 10 * 1000);
+}
+
+void CooperationManager::handleConnectResult(bool accepted)
+{
+    if (accepted) {
+        UNIGO([this]{
+            d->backendShareEvent(BACK_SHARE_START, d->tarDeviceInfo);
+        });
+    } else {
+        static QString msg(tr("\"%1\" has rejected your request for collaboration"));
+        d->taskDialog()->switchFailPage(d->tarDeviceInfo->deviceName(), msg, false);
+        d->taskDialog()->show();
+    }
 }

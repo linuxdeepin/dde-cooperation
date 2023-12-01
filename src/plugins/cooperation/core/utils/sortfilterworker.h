@@ -30,12 +30,14 @@ Q_SIGNALS:
     void sortFilterResult(int index, const DeviceInfoPointer info);
     void deviceRemoved(int index);
     void deviceUpdated(int index, const DeviceInfoPointer info);
+    void deviceMoved(int from, int to, const DeviceInfoPointer info);
     void filterFinished();
 
 private Q_SLOTS:
     void onTransHistoryUpdated();
 
 private:
+    int calculateIndex(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);
     int findFirst(DeviceInfo::ConnectStatus state);
     int findLast(DeviceInfo::ConnectStatus state, const DeviceInfoPointer info);
     void updateDevice(const DeviceInfoPointer info);

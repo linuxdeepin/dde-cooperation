@@ -26,7 +26,8 @@ public:
     static bool buttonVisible(const QString &id, const DeviceInfoPointer info);
 
 public Q_SLOTS:
-    void notifyConnectRequest(const QString &dev);
+    void notifyConnectRequest(const QString &info);
+    void handleConnectResult(bool accepted);
 
 private:
     explicit CooperationManager(QObject *parent = nullptr);

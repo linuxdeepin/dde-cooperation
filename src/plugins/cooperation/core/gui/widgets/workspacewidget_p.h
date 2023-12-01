@@ -39,6 +39,7 @@ public Q_SLOTS:
     void onFilterFinished();
     void onDeviceRemoved(int index);
     void onDeviceUpdated(int index, const DeviceInfoPointer info);
+    void onDeviceMoved(int from, int to, const DeviceInfoPointer info);
 
 Q_SIGNALS:
     void devicesAdded(const QList<DeviceInfoPointer> &infoList);

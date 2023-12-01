@@ -25,6 +25,7 @@ public:
     void removeItem(int index);
     void moveItem(int srcIndex, int toIndex);
     int indexOf(const QString &ipStr);
+    DeviceInfoPointer findDeviceInfo(const QString &ipStr);
     int itemCount();
 
     void addItemOperation(const QVariantMap &map);
