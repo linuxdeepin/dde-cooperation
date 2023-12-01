@@ -99,8 +99,8 @@ void SendRpcWork::handlePing(const QStringList apps)
         auto sender = this->rpcSender(appName);
         if (sender.isNull())
             continue;
-        SendResult rs = sender->doSendProtoMsg(RPC_PING, "remote_ping", QByteArray());
-        if ( !rs.data.empty() || rs.errorType < INVOKE_OK) {
+        SendResult rs = sender->doSendProtoMsg(RPC_PING, sender->targetAppname(), QByteArray());
+        if (rs.data.empty() || rs.errorType < INVOKE_OK) {
             DLOG << "remote server no reply ping !!!!! " << appName.toStdString();
             SendStatus st;
             st.type = RPC_PING;
