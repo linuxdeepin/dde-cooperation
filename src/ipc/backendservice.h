@@ -88,6 +88,8 @@ public:
 
     virtual void shareEvents(co::Json& req, co::Json& res) override;
 
+    virtual void disconnectCb(co::Json& req, co::Json& res) override;
+
 private:
     BackendService *_interface;
 };

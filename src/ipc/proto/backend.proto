@@ -21,6 +21,7 @@ service Backend {
     unregisterDiscovery, // unregister from discovery service
     applyTransFiles, // apply trans files to target remote server
     shareEvents, // share mouse and other evets
+    disconnectCb, // disconnect cb
 }
 
 // return {CallResult} msg is session id string

@@ -533,7 +533,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             }
             case DISCONNECT_CB:
             {
-                // 被控制方收到控制方的开始共享
+                // 断开连接
                 OutData data;
                 _outgo_chan << data;
                 self->handleRemoteDisConnectCb(json_obj);
