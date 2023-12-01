@@ -33,6 +33,7 @@ class Backend : public rpc::Service {
         _methods["Backend.unregisterDiscovery"] = std::bind(&Backend::unregisterDiscovery, this, _1, _2);
         _methods["Backend.applyTransFiles"] = std::bind(&Backend::applyTransFiles, this, _1, _2);
         _methods["Backend.shareEvents"] = std::bind(&Backend::shareEvents, this, _1, _2);
+        _methods["Backend.disconnectCb"] = std::bind(&Backend::disconnectCb, this, _1, _2);
     }
 
     virtual ~Backend() {}
@@ -84,6 +85,8 @@ class Backend : public rpc::Service {
     virtual void applyTransFiles(co::Json& req, co::Json& res) = 0;
 
     virtual void shareEvents(co::Json& req, co::Json& res) = 0;
+
+    virtual void disconnectCb(co::Json& req, co::Json& res) = 0;
 
   private:
     co::map<const char*, Fun> _methods;

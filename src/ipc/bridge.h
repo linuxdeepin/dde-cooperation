@@ -24,7 +24,7 @@ typedef enum req_type_t {
     FRONT_SHARE_DISCONNECT = 111, // 收到断开连接
     FRONT_SHARE_START_REPLY = 112, // 后端通知前端共享结果
     FRONT_SHARE_STOP = 113, // 收到停止事件
-    FRONT_DISCONNECT_CB = 114, // 文件投送断开连接
+    FRONT_DISCONNECT_CB = 114, // 断开连接
     BACK_GET_DISCOVERY = 200,
     BACK_GET_PEER = 201,
     BACK_GET_PASSWORD = 202,
