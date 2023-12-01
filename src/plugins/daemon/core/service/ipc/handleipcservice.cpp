@@ -262,7 +262,7 @@ void HandleIpcService::newTransSendJob(QString session, const QString targetSess
     }
 
     SendIpcService::instance()->handleAddJob(s, jobId);
-    JobManager::instance()->handleRemoteRequestJob(job.as_json().str().c_str());
+    JobManager::instance()->handleRemoteRequestJob(job.as_json().str().c_str(), nullptr);
 }
 
 void HandleIpcService::handleNodeRegister(bool unreg, const co::Json &info)

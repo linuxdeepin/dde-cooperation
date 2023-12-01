@@ -30,7 +30,7 @@ bool JobManager::handleCreateFile(const int jobId, const QString &fileName, cons
     return job->createFile(fileName, isDir);
 }
 
-bool JobManager::handleRemoteRequestJob(QString json)
+bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
 {
     co::Json info;
     if (!info.parse_from(json.toStdString())) {
@@ -44,6 +44,8 @@ bool JobManager::handleRemoteRequestJob(QString json)
     fastring tarAppname = fsjob.targetAppname;
     SendRpcService::instance()->removePing(appName.c_str());
     tarAppname = tarAppname.empty() ? appName : tarAppname;
+    if (targetAppName)
+        *targetAppName = QString(tarAppname.c_str());
     SendRpcService::instance()->removePing(tarAppname.c_str());
     QSharedPointer<TransferJob> job(new TransferJob());
     job->initJob(fsjob.app_who, tarAppname, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);

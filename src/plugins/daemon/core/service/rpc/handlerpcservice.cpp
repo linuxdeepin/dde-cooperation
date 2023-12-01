@@ -30,6 +30,10 @@ HandleRpcService::HandleRpcService(QObject *parent)
 {
     _rpc.reset(new RemoteServiceBinder);
     _rpc_trans.reset(new RemoteServiceBinder);
+    _timeOut.setInterval(1000);
+    connect(&_timeOut, &QTimer::timeout, this, &HandleRpcService::handleTimeOut);
+    connect(this, &HandleRpcService::startTimer, this, &HandleRpcService::handleStartTimer,
+            Qt::QueuedConnection);
 }
 
 HandleRpcService::~HandleRpcService()
@@ -50,6 +54,9 @@ void HandleRpcService::handleRpcLogin(bool result, const QString &targetAppname,
         SendRpcService::instance()->createRpcSender(appName, ip, UNI_RPC_PORT_BASE);
         SendRpcService::instance()->setTargetAppName(appName, targetAppname);
     }
+    QWriteLocker lk(&_lock);
+    _startPing.remove(appName);
+    _ping_lost_count.remove(appName);
 
     co::Json req;
     //cbConnect {GenericResult}
@@ -68,6 +75,12 @@ bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
     ApplyTransFiles obj;
     obj.from_json(info);
 
+    {
+        QWriteLocker lk(&_lock);
+        auto app = QString(obj.tarAppname.c_str());
+        _startPing.remove(app);
+        _ping_lost_count.remove(app);
+    }
     auto tmp = obj.tarAppname;
     obj.tarAppname = obj.appname;
     obj.appname = tmp;
@@ -245,7 +258,13 @@ void HandleRpcService::handleRemoteJobCancel(co::Json &info)
 
 void HandleRpcService::handleTransJob(co::Json &info)
 {
-    auto res = JobManager::instance()->handleRemoteRequestJob(info.str().c_str());
+    QString app;
+    auto res = JobManager::instance()->handleRemoteRequestJob(info.str().c_str(), &app);
+    {
+        QWriteLocker lk(&_lock);
+        _startPing.remove(app);
+        _ping_lost_count.remove(app);
+    }
     OutData data;
     data.type = OUT_TRANSJOB;
     data.json = co::Json({"result", res}).str();
@@ -377,6 +396,18 @@ void HandleRpcService::handleRemoteDisConnectCb(co::Json &info)
     SendRpcService::instance()->removePing(sd.tarAppname.c_str());
 }
 
+void HandleRpcService::handleRemotePing(const QString &info)
+{
+    auto appName = QString(info);
+    if (!_timeOut.isActive())
+        emit startTimer();
+    QWriteLocker lk(&_lock);
+    _startPing.remove(appName);
+    _ping_lost_count.remove(appName);
+    _startPing.insert(appName, true);
+    _ping_lost_count.insert(appName, 0);
+}
+
 void HandleRpcService::startRemoteServer(const quint16 port)
 {
     if (_rpc.isNull() && port != UNI_RPC_PORT_TRANS)
@@ -417,7 +448,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             }
             LOG << "ServiceManager get chan value: " << indata.type << " json:" << indata.json;
             co::Json json_obj = json::parse(indata.json);
-            if (json_obj.is_null()) {
+            if (RPC_PING != indata.type && json_obj.is_null()) {
                 ELOG << "parse error from: " << indata.json;
                 continue;
             }
@@ -482,6 +513,8 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 OutData data;
                 data.json = "remote_ping";
                 _outgo_chan << data;
+                if (self)
+                    self->handleRemotePing(indata.json.c_str());
                 break;
             }
             case APPLY_SHARE_CONNECT:
@@ -547,5 +580,33 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             }
         }
     });
+}
+
+void HandleRpcService::handleTimeOut()
+{
+    QWriteLocker lk(&_lock);
+    auto keys = _ping_lost_count.keys();
+    for (const auto &key : keys){
+        auto count = _ping_lost_count.take(key);
+        if (count > 3) {
+            // 通知客户端连接超时
+            SendStatus st;
+            st.type = 0;
+            st.status = REMOTE_CLIENT_OFFLINE;
+            co::Json req = st.as_json();
+            req.add_member("api", "Frontend.notifySendStatus");
+            ELOG << "remote server disconnect ======= " << key.toStdString();
+            SendIpcService::instance()->handleSendToClient(key, req.str().c_str());
+            continue;
+        }
+        _ping_lost_count.insert(key, ++count);
+    }
+}
+
+void HandleRpcService::handleStartTimer()
+{
+    if (_timeOut.isActive())
+        return;
+    _timeOut.start();
 }
 
