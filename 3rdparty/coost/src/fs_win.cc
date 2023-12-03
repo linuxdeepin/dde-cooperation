@@ -59,6 +59,11 @@ bool isdir(const char* path) {
     return x != INVALID_FILE_ATTRIBUTES && (x & FILE_ATTRIBUTE_DIRECTORY);
 }
 
+bool isSymlink(const char* path) {
+    const DWORD x = GetFileAttributesW(charToWideChar(path));
+    return x != INVALID_FILE_ATTRIBUTES && (x & FILE_ATTRIBUTE_REPARSE_POINT);
+}
+
 int64 mtime(const char* path) {
     WIN32_FILE_ATTRIBUTE_DATA info;
     BOOL r = GetFileAttributesExW(charToWideChar(path), GetFileExInfoStandard, &info);

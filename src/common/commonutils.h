@@ -6,6 +6,10 @@
 #define COMMONUTILS_H
 #include <QNetworkInterface>
 #include <QString>
+#include <QCoreApplication>
+#include <QStandardPaths>
+#include <QTranslator>
+#include <QDir>
 
 namespace deepin_cross {
 class CommonUitls
@@ -42,6 +46,47 @@ public:
             }
         }
         return ip.toStdString();
+    }
+
+    static void loadTranslator()
+    {
+        QStringList translateDirs;
+    #ifdef _WIN32
+        translateDirs << QDir::currentPath() + QDir::separator() + "translations";
+    #endif
+
+        auto dataDirs = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
+        for (auto &dir : dataDirs) {
+            translateDirs << dir + QDir::separator() + qApp->applicationName() + QDir::separator() + "translations";
+        }
+
+        auto locale = QLocale::system();
+        QStringList missingQmfiles;
+        QStringList translateFilenames { QString("%1_%2").arg(qApp->applicationName()).arg(QLocale::system().name()) };
+        const QStringList parseLocalNameList = locale.name().split("_", QString::SkipEmptyParts);
+        if (parseLocalNameList.length() > 0)
+            translateFilenames << QString("%1_%2").arg(qApp->applicationName()).arg(parseLocalNameList.at(0));
+
+        for (const auto &translateFilename : translateFilenames) {
+            for (const auto &dir : translateDirs) {
+                QString translatePath = dir + QDir::separator() + translateFilename;
+                if (QFile::exists(translatePath + ".qm")) {
+                    qDebug() << "load translate" << translatePath;
+                    auto translator = new QTranslator(qApp);
+                    translator->load(translatePath);
+                    qApp->installTranslator(translator);
+                    qApp->setProperty("dapp_locale", locale.name());
+                    return;
+                }
+            }
+
+            if (locale.language() != QLocale::English)
+                missingQmfiles << translateFilename + ".qm";
+        }
+
+        if (missingQmfiles.size() > 0) {
+            qWarning() << qApp->applicationName() << "can not find qm files" << missingQmfiles;
+        }
     }
 };
 }
