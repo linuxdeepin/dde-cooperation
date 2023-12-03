@@ -79,13 +79,13 @@ target_link_libraries(co
     PRIVATE ${CMAKE_DL_LIBS}
 )
 
-#if(BUILD_WITH_SYSTEMD AND UNIX AND NOT APPLE)
+if(BUILD_WITH_SYSTEMD AND UNIX AND NOT APPLE)
     pkg_check_modules(Systemd REQUIRED IMPORTED_TARGET libsystemd)
     target_link_libraries(co PRIVATE
       PkgConfig::Systemd
     )
     add_definitions(-DBUILD_WITH_SYSTEMD)
-#endif()
+endif()
 
 if(BUILD_SHARED_LIBS)
     set_target_properties(co
