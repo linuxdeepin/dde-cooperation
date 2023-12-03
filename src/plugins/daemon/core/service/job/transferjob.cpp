@@ -389,7 +389,7 @@ void TransferJob::handleBlockQueque()
             if (self->_queue_empty_times > 500) {
                 // 每10ms增1，连续5000ms无数据
                 DLOG << " wait block data timeout NOW!";
-                self->handleJobStatus(JOB_TRANS_FINISHED);
+                self->handleJobStatus(JOB_TRANS_FAILED);
                 break;
             }
         } while (!exit);

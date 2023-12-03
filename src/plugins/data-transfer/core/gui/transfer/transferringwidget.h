@@ -23,7 +23,6 @@ public slots:
     void updateProcess(const QString &tpye, const QString &content, int progressbar, int estimatedtime);
     void themeChanged(int theme);
     void clear();
-    void errorWidget();
 private:
     void initUI();
     void initConnect();

@@ -53,6 +53,7 @@ void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
     }
 
     if (!m_client->tryConnect()) {
+        rpc_controller->SetError(ERROR_FAILED_CONNECT, "failed to connect");
         ELOG << "client can not connect to server: " << m_addr.get()->toString();
         return;
     }

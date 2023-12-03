@@ -212,6 +212,8 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
             _job_maps.erase(it);
         }
         qInfo() << "Send job failed: (" << id << ") " << path;
+        emit TransferHelper::instance()->interruption();
+        emit TransferHelper::instance()->disconnected();
         break;
     case JOB_TRANS_DOING:
         _job_maps.insert(id, path);
