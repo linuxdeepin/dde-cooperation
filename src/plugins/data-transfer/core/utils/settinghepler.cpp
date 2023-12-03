@@ -59,6 +59,7 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     QJsonObject jsonObj = ParseJson(filepath + "/" + "transfer.json");
     if (jsonObj.isEmpty()) {
         isall = false;
+        addTaskcounter(-1);
         qWarning() << "transfer.json is invaild";
         emit TransferHelper::instance()->failure(tr("Profiles"), tr("File"), tr("Wrong or missing profile"));
         return false;
