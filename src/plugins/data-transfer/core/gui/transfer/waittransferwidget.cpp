@@ -43,12 +43,12 @@ void WaitTransferWidget::initUI()
 
     iconLabel = new QLabel(this);
     lighticonmovie = new QMovie(this);
-    lighticonmovie->setFileName(":/icon/GIF/light/transferring.gif");
+    lighticonmovie->setFileName(":/icon/GIF/light/waiting.gif");
     lighticonmovie->setScaledSize(QSize(200, 160));
     lighticonmovie->setSpeed(80);
     lighticonmovie->start();
     darkiconmovie = new QMovie(this);
-    darkiconmovie->setFileName(":/icon/GIF/dark/transferring.gif");
+    darkiconmovie->setFileName(":/icon/GIF/dark/waiting.gif");
     darkiconmovie->setScaledSize(QSize(200, 160));
     darkiconmovie->setSpeed(80);
     darkiconmovie->start();
@@ -90,7 +90,6 @@ void WaitTransferWidget::backPage()
 #ifndef WIN32
     emit TransferHelper::instance()->changeWidget(PageName::connectwidget);
 #endif
-
 }
 
 void WaitTransferWidget::themeChanged(int theme)
@@ -124,6 +123,7 @@ void WaitTransferWidget::cancel()
     int code = dlg.exec();
     if (code == 1) {
         backPage();
+        TransferHelper::instance()->disconnectRemote();
     }
 }
 

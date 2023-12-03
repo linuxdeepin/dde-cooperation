@@ -509,7 +509,7 @@ void DrapWindowsData::applianceFromSetting(QSettings &settings, QString registry
         QString installLocation = settings.value("InstallLocation").toString();
         QString displayIcon = settings.value("DisplayIcon").toString();
         bool isSystemComponent = settings.value("SystemComponent").toBool();
-        if (!isSystemComponent && !installLocation.isEmpty() && !displayName.isEmpty()) {
+        if (!isSystemComponent && !displayName.isEmpty()) {
             WinApp app;
             app.name = displayName;
             app.iconPath = displayIcon;

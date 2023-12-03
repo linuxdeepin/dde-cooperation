@@ -25,10 +25,11 @@ public:
     void tryConnect(QString ip, QString password);
     QString getConnectPassWord();
     void sendFiles(QStringList paths);
-    void sendMessage(json::Json& message);
+    void sendMessage(json::Json &message);
 
     static void logHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
     bool cancelTransferJob();
+    void disconnectRemote();
 public slots:
     void saveSession(fastring sessionid);
     void handleConnectStatus(int result, QString msg);
@@ -66,11 +67,12 @@ public:
     void setEmptyPassWord();
     QString getConnectPassWord();
     void sendFiles(int reqid, QStringList filepaths);
-    void sendMessage(json::Json& message);
+    void sendMessage(json::Json &message);
     void tryConnect(const std::string &ip, const std::string &password);
     fastring getSessionId();
+    void disconnectRemote();
 
-    void call(const json::Json& req, json::Json& res);
+    void call(const json::Json &req, json::Json &res);
 
     static TransferWoker *instance()
     {

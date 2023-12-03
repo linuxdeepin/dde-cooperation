@@ -41,7 +41,6 @@
 #include <QThreadPool>
 #include <QTimer>
 
-
 using namespace data_transfer_core;
 
 void MainWindowPrivate::initWindow()
@@ -115,9 +114,8 @@ void MainWindowPrivate::initWidgets()
     QObject::connect(stackedWidget, &QStackedWidget::currentChanged, this,
                      &MainWindowPrivate::handleCurrentChanged);
 
-    QObject::connect(
-            TransferHelper::instance(), &TransferHelper::transferSucceed, this,
-            [this] { stackedWidget->setCurrentIndex(PageName::successtranswidget); });
+    QObject::connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this,
+                     [this] { stackedWidget->setCurrentIndex(PageName::successtranswidget); });
 
     QObject::connect(appselectwidget, &AppSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);
@@ -129,40 +127,48 @@ void MainWindowPrivate::initWidgets()
     QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
                      createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
 
-    QObject::connect(TransferHelper::instance(),&TransferHelper::interruption,transferringwidget,&TransferringWidget::errorWidget);
-    QObject::connect(TransferHelper::instance(),&TransferHelper::unfinishedJob,this,[](const QString jsonstr){
-        if(CustomMessageBox::SelectContinueTransfer())
-        {
-            TransferHelper::instance()->Retransfer(jsonstr);
-        }
-    });
+    QObject::connect(TransferHelper::instance(), &TransferHelper::interruption, transferringwidget,
+                     &TransferringWidget::errorWidget);
+    QObject::connect(TransferHelper::instance(), &TransferHelper::unfinishedJob, this,
+                     [](const QString jsonstr) {
+                         if (CustomMessageBox::SelectContinueTransfer()) {
+                             TransferHelper::instance()->Retransfer(jsonstr);
+                         }
+                     });
     QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
                      createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
-    QObject::connect(TransferHelper::instance(),&TransferHelper::clearSelectWidget,this,&MainWindowPrivate::clearWidget);
-    QObject::connect(TransferHelper::instance(),&TransferHelper::changeWidgetText,this,&MainWindowPrivate::changeAllWidgtText);
-    QObject::connect(TransferHelper::instance(),&TransferHelper::changeWidget,[this](PageName index){
-        stackedWidget->setCurrentIndex(index);
-    });
+    QObject::connect(TransferHelper::instance(), &TransferHelper::clearSelectWidget, this,
+                     &MainWindowPrivate::clearWidget);
+    QObject::connect(TransferHelper::instance(), &TransferHelper::changeWidgetText, this,
+                     &MainWindowPrivate::changeAllWidgtText);
+    QObject::connect(TransferHelper::instance(), &TransferHelper::changeWidget,
+                     [this](PageName index) { stackedWidget->setCurrentIndex(index); });
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
             [this, errorwidget](bool online) {
                 if (online)
                     return;
-                if(OptionsManager::instance()->getUserOption(Options::kTransferMethod).isEmpty())
+                if (OptionsManager::instance()->getUserOption(Options::kTransferMethod).isEmpty())
                     return;
-                if(OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]==TransferMethod::kLocalExport)
+                if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
+                    == TransferMethod::kLocalExport)
                     return;
                 int index = stackedWidget->currentIndex();
                 // only these need jump to networkdisconnectwidget
-                if (index >= PageName::promptwidget && index <= PageName::appselectwidget)
+                if (index >= PageName::promptwidget && index <= PageName::readywidget)
                     stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
-                if (index == PageName::transferringwidget) {
+                if (index >= PageName::selectmainwidget && index <= PageName::appselectwidget) {
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
                     errorwidget->setErrorType(ErrorType::networkError);
                 }
             });
-
-
+    // disconect transfer
+    connect(TransferHelper::instance(), &TransferHelper::disconnected, [this, errorwidget]() {
+        int index = stackedWidget->currentIndex();
+        if (index >= PageName::selectmainwidget && index <= PageName::appselectwidget)
+            stackedWidget->setCurrentIndex(PageName::errorwidget);
+        errorwidget->setErrorType(ErrorType::networkError);
+    });
 }
 void MainWindowPrivate::paintEvent(QPaintEvent *event)
 {
@@ -274,18 +280,19 @@ void MainWindowPrivate::handleCurrentChanged(int index)
 
 void MainWindowPrivate::clearWidget()
 {
-  //  OptionsManager::instance()->clear();
+    //  OptionsManager::instance()->clear();
     SelectMainWidget *widgetMainselect =
-        qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
+            qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
     ConfigSelectWidget *widgetConfig =
-        qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
+            qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
     AppSelectWidget *widgetApp =
-        qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
+            qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
     FileSelectWidget *widgetFile =
-        qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
-    CreateBackupFileWidget *widgetbackupFile =
-        qobject_cast<CreateBackupFileWidget *>(stackedWidget->widget(PageName::createbackupfilewidget));
-    TransferringWidget *widgetTransfer =   qobject_cast<TransferringWidget *>(stackedWidget->widget(PageName::transferringwidget));
+            qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
+    CreateBackupFileWidget *widgetbackupFile = qobject_cast<CreateBackupFileWidget *>(
+            stackedWidget->widget(PageName::createbackupfilewidget));
+    TransferringWidget *widgetTransfer =
+            qobject_cast<TransferringWidget *>(stackedWidget->widget(PageName::transferringwidget));
 
     widgetFile->clear();
     widgetConfig->clear();
@@ -298,13 +305,13 @@ void MainWindowPrivate::clearWidget()
 void MainWindowPrivate::changeAllWidgtText()
 {
     SelectMainWidget *widgetMainselect =
-        qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
+            qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
     ConfigSelectWidget *widgetConfig =
-        qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
+            qobject_cast<ConfigSelectWidget *>(stackedWidget->widget(PageName::configselectwidget));
     AppSelectWidget *widgetApp =
-        qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
+            qobject_cast<AppSelectWidget *>(stackedWidget->widget(PageName::appselectwidget));
     FileSelectWidget *widgetFile =
-        qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
+            qobject_cast<FileSelectWidget *>(stackedWidget->widget(PageName::filewselectidget));
     widgetMainselect->changeText();
     widgetConfig->changeText();
     widgetApp->changeText();

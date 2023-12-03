@@ -457,8 +457,8 @@ void HandleIpcService::handleDisConnectCb(co::Json json)
     ShareDisConnect info;
     info.from_json(json);
     info.tarAppname = info.tarAppname.empty() ? info.appName : info.tarAppname;
-    SendRpcService::instance()->doSendProtoMsg(DISCONNECT_CB, info.appName.c_str(),
+    SendRpcService::instance()->doSendProtoMsg(DISCONNECT_CB, info.tarAppname.c_str(),
                                                info.as_json().str().c_str());
 
-    SendRpcService::instance()->removePing(info.appName.c_str());
+    SendRpcService::instance()->removePing(info.tarAppname.c_str());
 }

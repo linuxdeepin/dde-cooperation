@@ -110,6 +110,15 @@ void MainWindowPrivate::initWidgets()
                 }
             });
 
+    //disconect transfer
+    connect(TransferHelper::instance(), &TransferHelper::disconnected,
+            [this, errorwidget]() {
+                int index = stackedWidget->currentIndex();
+                if (index == PageName::transferringwidget || index == PageName::waitgwidget)
+                    stackedWidget->setCurrentIndex(PageName::errorwidget);
+                errorwidget->setErrorType(ErrorType::networkError);
+            });
+
     connect(TransferHelper::instance(), &TransferHelper::outOfStorage,
             [this, errorwidget](int size) {
                 stackedWidget->setCurrentIndex(PageName::errorwidget);
@@ -134,7 +143,7 @@ void MainWindowPrivate::initWidgets()
             });
     emit DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::instance()->themeType());
 
-    connect(TransferHelper::instance(),&TransferHelper::changeWidget,[this](PageName index){
+    connect(TransferHelper::instance(), &TransferHelper::changeWidget, [this](PageName index) {
         stackedWidget->setCurrentIndex(index);
     });
     q->centralWidget()->layout()->addWidget(stackedWidget);
