@@ -37,6 +37,8 @@ else()
     endif()
 endif()
 
+option(BUILD_WITH_SYSTEMD "Build with systemd" OFF)
+
 
 # build with openssl 1.1.0+
 option(WITH_OPENSSL "build with openssl" OFF)

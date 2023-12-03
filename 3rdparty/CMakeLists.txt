@@ -21,6 +21,7 @@ add_subdirectory(protobuf)
 # cmake .. -DWITH_LIBCURL=ON -DWITH_OPENSSL=ON -DBUILD_SHARED_LIBS=ON
 set(WITH_OPENSSL ON CACHE BOOL "build with openssl")
 set(BUILD_SHARED_LIBS ON CACHE BOOL "build shared lib")
+set(BUILD_WITH_SYSTEMD ON CACHE BOOL "Build with systemd")
 add_subdirectory(coost)
 
 add_subdirectory(zrpc)
