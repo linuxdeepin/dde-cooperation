@@ -202,6 +202,7 @@ void SelectMainWidget::backPage()
     } else if (method == TransferMethod::kNetworkTransmission) {
         back = PageName::readywidget;
     }
+    TransferHelper::instance()->disconnectRemote();
     emit TransferHelper::instance()->changeWidget(back);
 }
 

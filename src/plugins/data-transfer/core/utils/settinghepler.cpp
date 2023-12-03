@@ -60,7 +60,7 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     if (jsonObj.isEmpty()) {
         isall = false;
         qWarning() << "transfer.json is invaild";
-        emit TransferHelper::instance()->failure(tr("Profiles"), tr("File"),tr("Wrong or missing profile") );
+        emit TransferHelper::instance()->failure(tr("Profiles"), tr("File"), tr("Wrong or missing profile"));
         return false;
     }
 
@@ -135,7 +135,7 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
     bool success = moveFile(filepath, targetfile);
     qInfo() << "Set browser bookmarks" << targetfile << success;
     if (!success) {
-        emit TransferHelper::instance()->failure(tr("Browser Bookmarks"), tr("Bookmarks"),tr("Setup failed, configuration can be imported manually"));
+        emit TransferHelper::instance()->failure(tr("Browser Bookmarks"), tr("Bookmarks"), tr("Setup failed, configuration can be imported manually"));
         return false;
     }
     return true;
@@ -148,6 +148,7 @@ bool SettingHelper::installApps(const QString &app)
 
     QString &package = applist[app];
     if (package.isEmpty()) {
+        isall = false;
         emit TransferHelper::instance()->failure(app, tr("App"), tr("Installation failed, please go to the app store to install"));
         return false;
     }
@@ -178,7 +179,8 @@ bool SettingHelper::installApps(const QString &app)
 
     if (reply.type() != QDBusMessage::ReplyMessage) {
         qWarning() << "Installing " << app << "false" << reply.errorMessage();
-        emit TransferHelper::instance()->failure(app, tr("App"), app + tr("Installation failed, please go to the app store to install"));
+        isall = false;
+        emit TransferHelper::instance()->failure(app, tr("App"), tr("Installation failed, please go to the app store to install"));
         return false;
     }
 
@@ -218,9 +220,9 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
         if (key == "Status" && value == "succeed")
             addTaskcounter(-1);
         if (key == "Status" && value == "failed") {
-            addTaskcounter(-1);
             isall = false;
-            emit TransferHelper::instance()->failure(package, tr("App"), tr("Installation failed, please go to the app store to install"));
+            addTaskcounter(-1);
+            emit TransferHelper::instance()->failure(app, tr("App"), tr("Installation failed, please go to the app store to install"));
         }
     }
 }

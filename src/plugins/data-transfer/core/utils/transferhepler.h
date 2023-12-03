@@ -28,6 +28,8 @@ public:
 
     void tryConnect(const QString &ip, const QString &password);
 
+    void disconnectRemote();
+
     QString getJsonfile(const QJsonObject &jsonData, const QString &save);
 
     bool cancelTransferJob();
@@ -35,12 +37,12 @@ public:
 #ifdef WIN32
     QMap<QString, QString> getAppList(QMap<QString, QString> &noRecommedApplist);
     QMap<QString, QString> getBrowserList();
-    QStringList getTransferFilePath(QStringList filePathList,QStringList appList,
-                                    QStringList browserList,QStringList configList);
+    QStringList getTransferFilePath(QStringList filePathList, QStringList appList,
+                                    QStringList browserList, QStringList configList);
     void startTransfer();
-    QString getTransferJson(QStringList appList,QStringList fileList,QStringList browserList,
-                            QString bookmarksName,QString wallPaperName,QString tempSavePath);
-    void  Retransfer(const QString jsonstr);
+    QString getTransferJson(QStringList appList, QStringList fileList, QStringList browserList,
+                            QString bookmarksName, QString wallPaperName, QString tempSavePath);
+    void Retransfer(const QString jsonstr);
 #else
 public:
     int getRemainSize();
@@ -95,6 +97,9 @@ Q_SIGNALS:
 
     //change wideget
     void changeWidget(PageName index);
+
+    //disconnect tcp
+    void disconnected();
 
 private:
     void initOnlineState();

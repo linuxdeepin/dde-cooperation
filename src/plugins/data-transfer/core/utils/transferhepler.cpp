@@ -102,6 +102,11 @@ void TransferHelper::tryConnect(const QString &ip, const QString &password)
     transferhandle.tryConnect(ip, password);
 }
 
+void TransferHelper::disconnectRemote()
+{
+    transferhandle.disconnectRemote();
+}
+
 QString TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &save)
 {
     QString savePath = save;

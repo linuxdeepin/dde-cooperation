@@ -2,6 +2,7 @@
 #include "transferworker.h"
 
 #include "common/constant.h"
+#include "common/commonstruct.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
@@ -36,7 +37,7 @@ TransferHandle::TransferHandle()
 
     //log
     //handleConnectStatus(1,"66");
-   // qInstallMessageHandler(logHandler);
+    // qInstallMessageHandler(logHandler);
 }
 
 TransferHandle::~TransferHandle()
@@ -90,9 +91,7 @@ void TransferHandle::localIPCStart()
 
                 bool result = false;
                 fastring my_ver(FRONTEND_PROTO_VERSION);
-                if (my_ver.compare(param.version) == 0 &&
-                        (param.session.compare(_sessionid) == 0 ||
-                         param.session.compare("backendServerOnline") == 0 )) {
+                if (my_ver.compare(param.version) == 0 && (param.session.compare(_sessionid) == 0 || param.session.compare("backendServerOnline") == 0)) {
                     result = true;
                 } else {
                     DLOG << param.version << " =version not match= " << my_ver;
@@ -148,6 +147,14 @@ void TransferHandle::localIPCStart()
                 handleFileTransStatus(objstr);
                 break;
             }
+            case FRONT_SEND_STATUS: {
+                emit TransferHelper::instance()->disconnected();
+                break;
+            }
+            case FRONT_DISCONNECT_CB: {
+                emit TransferHelper::instance()->disconnected();
+                break;
+            }
             default:
                 break;
             }
@@ -161,8 +168,7 @@ void TransferHandle::localIPCStart()
     _rpcServer->add_service(frontendimp);
     _rpcServer->start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
 
-    connect(qApp, &QCoreApplication::aboutToQuit, [this]()
-    {
+    connect(qApp, &QCoreApplication::aboutToQuit, [this]() {
         DLOG << "App exit, exit ipc server";
         if (_rpcServer) {
             _rpcServer->exit();
@@ -308,8 +314,8 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
     }
 
-        qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
-        qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
+    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
+    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
     emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
 }
@@ -336,6 +342,13 @@ void TransferHandle::tryConnect(QString ip, QString password)
     if (!_backendOK) return;
 
     TransferWoker::instance()->tryConnect(ip.toStdString(), password.toStdString());
+}
+
+void TransferHandle::disconnectRemote()
+{
+    if (!_backendOK) return;
+
+    TransferWoker::instance()->disconnectRemote();
 }
 
 QString TransferHandle::getConnectPassWord()
@@ -459,6 +472,20 @@ void TransferWoker::tryConnect(const std::string &ip, const std::string &passwor
 
     req = conParam.as_json();
     req.add_member("api", "Backend.tryConnect");
+    call(req, res);
+}
+
+void TransferWoker::disconnectRemote()
+{
+    co::Json req, res;
+    fastring app_name(qApp->applicationName().toStdString());
+
+    ShareDisConnect info;
+    info.tarAppname = app_name;
+
+    req = info.as_json();
+    req.add_member("api", "Backend.disconnectCb");   //BackendImpl::disConnect
+    qInfo() << "disConnect" << req.str().c_str();
     call(req, res);
 }
 
