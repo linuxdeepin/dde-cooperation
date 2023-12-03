@@ -71,6 +71,7 @@ class __coapi LevelLogSaver {
 
   private:
     fastream& _s;
+    int _lv;
     size_t _n;
 };
 

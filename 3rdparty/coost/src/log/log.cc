@@ -16,6 +16,11 @@
 #include <backtrace.h>
 #include <cxxabi.h>
 #endif
+
+#ifdef BUILD_WITH_SYSTEMD
+#define SD_JOURNAL_LOG
+#include <systemd/sd-journal.h>
+#endif
 #endif
 #include <time.h>
 
@@ -40,6 +45,8 @@ DEF_uint32(log_flush_ms, 128, ">>#0 flush the log buffer every n ms");
 DEF_bool(cout, false, ">>#0 also logging to terminal");
 DEF_bool(log_daily, false, ">>#0 if true, enable daily log rotation");
 DEF_bool(log_compress, false, ">>#0 if true, compress rotated log files with xz");
+
+DEF_bool(journal, false, ">>#0 also logging to journal");
 
 // When this value is true, the above flags should have been initialized, 
 // and we are safe to start the logging thread.
@@ -377,7 +384,7 @@ class Logger {
     bool start();
     void stop(bool signal_safe=false);
 
-    void push_level_log(char* s, size_t n);
+    void push_level_log(char* s, size_t n, int level);
     void push_topic_log(const char* topic, char* s, size_t n);
     void push_fatal_log(char* s, size_t n);
 
@@ -430,6 +437,7 @@ class Logger {
         int write_flags;
     };
 
+    void write_to_journal(const char* p, int level);
     void write_level_logs(const char* p, size_t n);
     void write_topic_logs(LogFile& f, const char* topic, const char* p, size_t n);
     void thread_fun();
@@ -528,7 +536,7 @@ void Logger::stop(bool signal_safe) {
     }
 }
 
-void Logger::push_level_log(char* s, size_t n) {
+void Logger::push_level_log(char* s, size_t n, int level) {
     static bool _ = this->start(); (void)_;
     if (unlikely(n > FLG_max_log_size)) {
         n = FLG_max_log_size;
@@ -551,6 +559,7 @@ void Logger::push_level_log(char* s, size_t n) {
                 memcpy((char*)(buf.data()) + 7, p + 1, len);
                 buf.resize(len + 7);
             }
+            write_to_journal(s, level);
 
             buf.append(s, n);
             if (buf.size() > (buf.capacity() >> 1)) _log_event.signal();
@@ -600,6 +609,36 @@ void Logger::push_fatal_log(char* s, size_t n) {
 
     atomic_store(&mod().check_failed, true);
     abort();
+}
+
+void Logger::write_to_journal(const char* p, int level) {
+
+#ifdef SD_JOURNAL_LOG
+    if (FLG_journal) {
+        int priority = LOG_INFO; // Informational
+        switch (level) {
+            case log::xx::debug:
+                priority = LOG_DEBUG;
+                break;
+            case log::xx::info:
+                priority = LOG_INFO;
+                break;
+            case log::xx::warning:
+                priority = LOG_WARNING;
+                break;
+            case log::xx::error:
+                priority = LOG_ERR;
+                break;
+            case log::xx::fatal:
+                priority = LOG_CRIT;
+                break;
+            default:
+                priority = LOG_INFO;
+                break;
+        }
+        sd_journal_send("MESSAGE=%s", p, "PRIORITY=%d", priority, NULL);
+    }
+#endif
 }
 
 void Logger::write_level_logs(const char* p, size_t n) {
@@ -1055,6 +1094,7 @@ inline fastream& log_stream() {
 
 LevelLogSaver::LevelLogSaver(const char* fname, unsigned fnlen, unsigned line, int level)
     : _s(log_stream()) {
+    _lv = level;
     _n = _s.size();
     _s.resize(_n + (LogTime::t_len + 1)); // make room for: "I0523 17:00:00.123"
     _s[_n] = "DIWE"[level];
@@ -1063,7 +1103,7 @@ LevelLogSaver::LevelLogSaver(const char* fname, unsigned fnlen, unsigned line, i
 
 LevelLogSaver::~LevelLogSaver() {
     _s << '\n';
-    mod().logger->push_level_log((char*)_s.data() + _n, _s.size() - _n);
+    mod().logger->push_level_log((char*)_s.data() + _n, _s.size() - _n, _lv);
     _s.resize(_n);
 }
 
