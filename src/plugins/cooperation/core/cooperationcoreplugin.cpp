@@ -4,6 +4,7 @@
 
 #include "cooperationcoreplugin.h"
 #include "base/baseutils.h"
+#include "common/commonutils.h"
 #include "events/cooperationcoreeventreceiver.h"
 #include "utils/cooperationutil.h"
 #include "maincontroller/maincontroller.h"
@@ -35,6 +36,8 @@ void CooperaionCorePlugin::initialize()
     CooperationUtil::instance();
     bindEvents();
     initLog();
+
+    CommonUitls::loadTranslator();
 }
 
 bool CooperaionCorePlugin::start()

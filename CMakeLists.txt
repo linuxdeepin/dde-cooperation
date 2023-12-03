@@ -80,7 +80,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 set(USE_PROTOBUF_FILES ON)
 
 if (WIN32)
-    set(DEPLOY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output/${CMAKE_BUILD_TYPE}")
+    set(DEPLOY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output")
     message("   >>> DEPLOY_OUTPUT_DIRECTORY  ${DEPLOY_OUTPUT_DIRECTORY}")
 
     # windows runtime output defined
@@ -93,21 +93,23 @@ else()
     add_definitions(-D DISABLE_GO)
 endif()
 
-# 如果未设置CMAKE_BUILD_TYPE，则将其设置为Release
-if(NOT CMAKE_BUILD_TYPE)
-    message("Cmake build type is not defined!")
-    # set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
-else()
+## 如果未设置CMAKE_BUILD_TYPE，则将其设置为Release
+#if(NOT CMAKE_BUILD_TYPE)
+#    message("Cmake build type is not defined!")
+#    # set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
+#else()
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    # 设置环境变量
-    set(ENV{QT_SELECT} "5")
-    # generate qm
-    execute_process(COMMAND bash "translate_generation.sh"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
-endif()
+#if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+#    # 设置环境变量
+#    set(ENV{QT_SELECT} "5")
+#    # generate qm
+#    execute_process(COMMAND bash "translate_generation.sh"
+#        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
+#endif()
 
-endif()
+#endif()
+# 引入翻译生成
+include(translation-generate)
 
 if (NOT USE_PROTOBUF_FILES)
 	# define and use the local 3rdparty protobuf library

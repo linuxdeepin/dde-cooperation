@@ -88,12 +88,6 @@ int main(int argc, char *argv[])
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" );
     app.setApplicationDescription(app.translate("Application", "UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
-#else
-    QTranslator translator;
-    if(translator.load("./translations/deepin-data-transfer_zh_CN.qm"))
-    {
-        app.installTranslator(&translator);
-    }
 #endif
 
 

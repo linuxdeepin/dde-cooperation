@@ -4,6 +4,7 @@
 
 #include "datatransfercoreplugin.h"
 #include "base/baseutils.h"
+#include "common/commonutils.h"
 #include "gui/mainwindow.h"
 
 #include <QDebug>
@@ -13,6 +14,7 @@
 #include <utils/transferworker.h>
 
 using namespace data_transfer_core;
+using namespace deepin_cross;
 
 void DataTransferCorePlugin::initialize()
 {
@@ -25,6 +27,8 @@ void DataTransferCorePlugin::initialize()
     qInfo() << "set logdir: " << logdir.c_str();
     flag::set_value("log_dir", logdir); //日志保存目录
 #endif
+
+    CommonUitls::loadTranslator();
 }
 
 bool DataTransferCorePlugin::start()

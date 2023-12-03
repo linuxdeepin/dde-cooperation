@@ -17,8 +17,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui DBus)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui DBus)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui DBus Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui DBus Network)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -38,6 +38,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::DBus
+    Qt${QT_VERSION_MAJOR}::Network
     co
 )
 

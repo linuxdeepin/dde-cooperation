@@ -22,7 +22,6 @@ public:
     virtual void stop() override;
 
 private Q_SLOTS:
-    void loadTranslator();
     void onAllPluginsStarted();
 };
 
