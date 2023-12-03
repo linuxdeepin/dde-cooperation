@@ -133,6 +133,8 @@ void TransferringWidget::initConnect()
 {
     connect(TransferHelper::instance(), &TransferHelper::transferContent, this,
             &TransferringWidget::updateProcess);
+    connect(TransferHelper::instance(), &TransferHelper::disconnected, this,
+            &TransferringWidget::clear);
 }
 
 void TransferringWidget::initInformationPage()
@@ -249,19 +251,4 @@ void TransferringWidget::clear()
     progressLabel->setProgress(0);
     timeLabel->setText(tr("Calculationing..."));
     titileLabel->setText(tr("Transferring..."));
-}
-
-void TransferringWidget::errorWidget()
-{
-    QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
-
-    if (stackedWidget) {
-        ErrorWidget *errorwidget = qobject_cast<ErrorWidget*>(stackedWidget->widget(PageName::errorwidget));
-        errorwidget->setErrorType(ErrorType::outOfStorageError);
-        stackedWidget->setCurrentIndex(PageName::errorwidget);
-        //clear current widget
-        clear();
-    } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
-    }
 }
