@@ -105,7 +105,7 @@ void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
         out << htmlContent;
         outputFile.close();
     } else {
-        qDebug() << "Failed to open file";
+        DLOG << "Failed to open file";
         return;
     }
 }
@@ -116,8 +116,8 @@ QList<WinApp> DrapWindowsData::getApplianceList()
         getApplianceListInfo();
 
     for (auto value : applianceList)
-        qInfo() << "app name:" << value.name;
-    qInfo() << "applianceList.size:" << applianceList.size();
+        LOG << "app name:" << value.name;
+    LOG << "applianceList.size:" << applianceList.size();
     return applianceList;
 }
 
@@ -138,7 +138,7 @@ void DrapWindowsData::readFirefoxBookmarks(const QString &dbPath)
     db.setDatabaseName(dbPath);
 
     if (!db.open()) {
-        qDebug() << "Error opening firefox bookmark database:" << db.lastError();
+        DLOG << "Error opening firefox bookmark database:" << db.lastError();
         return;
     }
 
@@ -152,7 +152,7 @@ void DrapWindowsData::readFirefoxBookmarks(const QString &dbPath)
             insertBrowserBookmarkList(titleAndUrl);
         }
     } else {
-        qDebug() << "read firefox bookmark failed:" << query.lastError();
+        DLOG << "read firefox bookmark failed:" << query.lastError();
     }
     db.close();
 }
@@ -161,7 +161,7 @@ void DrapWindowsData::readMicrosoftEdgeAndGoogleChromeBookmark(const QString &js
 {
     QFile file(jsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Failed to open file :" << jsonPath;
+        DLOG << "Failed to open file :" << jsonPath;
         return;
     }
 
@@ -222,7 +222,7 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
             }
             file.close();
         } else {
-            qDebug() << "Can not open file:" << installIni;
+            DLOG << "Can not open file:" << installIni;
         }
 
         if (!bookMarkPath.isEmpty()) {
@@ -230,7 +230,7 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
             auto bookMark = QPair<QString, QString>(BrowserName::MozillaFirefox, path);
             browserBookmarkPath.push_back(bookMark);
         } else {
-            qDebug() << "Can not find bookMark path in installs.ini";
+            DLOG << "Can not find bookMark path in installs.ini";
         }
     }
 }
@@ -319,10 +319,10 @@ QString DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
         stream.setCodec("UTF-8");
         stream << doc.toJson();
         file.close();
-        qDebug() << "JSON file saved successfully.";
+        DLOG << "JSON file saved successfully.";
         return jsonfilePath;
     } else {
-        qWarning() << "Failed to save JSON file.";
+        WLOG << "Failed to save JSON file.";
         return QString();
     }
 }
@@ -334,7 +334,7 @@ QString DrapWindowsData::getUserName()
     QFileInfo fileInfo(userDir);
     QString userName = fileInfo.fileName();
 
-    qDebug() << "User Name: " << userName;
+    DLOG << "User Name: " << userName;
     return userName;
 }
 
@@ -342,7 +342,7 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 {
     QFile file(":/fileResource/apps.json");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "can not open app json";
+        WLOG << "can not open app json";
         return;
     }
 
@@ -351,7 +351,7 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
-        qWarning() << "app json Parsing failed";
+        WLOG << "app json Parsing failed";
         return;
     }
 
@@ -389,7 +389,7 @@ QString DrapWindowsData::getIP()
             if (entry.ip().protocol() != QAbstractSocket::NetworkLayerProtocol::IPv4Protocol)
                 continue;
             ip = QString(entry.ip().toString());
-            qDebug() << "IP Address:------" << ip;
+            DLOG << "IP Address:------" << ip;
         }
     }
     return ip;
@@ -445,10 +445,10 @@ void DrapWindowsData::getBrowserListInfo()
                         browserList.push_back(name);
                     }
                 } else {
-                    qDebug() << "Failed to read brower name on registry. error code:" << status;
+                    DLOG << "Failed to read brower name on registry. error code:" << status;
                 }
             } else {
-                qDebug() << "Failed to open registry HKEY_LOCAL_MACHINE\\" << strMidReglpcstr
+                DLOG << "Failed to open registry HKEY_LOCAL_MACHINE\\" << strMidReglpcstr
                          << " error code:" << status;
             }
             index++;
@@ -456,7 +456,7 @@ void DrapWindowsData::getBrowserListInfo()
         }
         RegCloseKey(hKey);
     } else {
-        qDebug() << "Failed to open registry HKEY_LOCAL_MACHINE\\" << lpSubKey
+        DLOG << "Failed to open registry HKEY_LOCAL_MACHINE\\" << lpSubKey
                  << " error code:" << queryStatus;
     }
 }
@@ -468,13 +468,13 @@ void DrapWindowsData::getDesktopWallpaperPathRegistInfo()
         QString wallpaperPathStr = QString::fromWCharArray(wallpaperPath);
         QFileInfo fileInfo(wallpaperPathStr);
         if (fileInfo.exists()) {
-            qDebug() << "Current wallpaper path: " << wallpaperPathStr;
+            DLOG << "Current wallpaper path: " << wallpaperPathStr;
             desktopWallpaperPath = wallpaperPathStr;
         } else {
-            qDebug() << "Wallpaper file does not exist.";
+            DLOG << "Wallpaper file does not exist.";
         }
     } else {
-        qDebug() << "Failed to retrieve wallpaper path.";
+        DLOG << "Failed to retrieve wallpaper path.";
     }
 }
 
@@ -488,13 +488,13 @@ void DrapWindowsData::getDesktopWallpaperPathAbsolutePathInfo()
         QImage wallpaperImage = wallpaperPixmap.toImage();
         QString wallpaperPathStr = QDir::tempPath() + "/ConvertedWallpaper.png";
         if (wallpaperImage.save(wallpaperPathStr, "PNG")) {
-            qDebug() << "TranscodedWallpaper converted and saved as PNG to: " << wallpaperPathStr;
+            DLOG << "TranscodedWallpaper converted and saved as PNG to: " << wallpaperPathStr;
             desktopWallpaperPath = wallpaperPathStr;
         } else {
-            qDebug() << "Failed to save the converted wallpaper.";
+            DLOG << "Failed to save the converted wallpaper.";
         }
     } else {
-        qDebug() << "Failed to load TranscodedWallpaper as QPixmap.";
+        DLOG << "Failed to load TranscodedWallpaper as QPixmap.";
     }
 }
 
@@ -553,7 +553,7 @@ void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &t
                              });
     if (find == browserBookmarkList.end()) {
         browserBookmarkList.push_back(titleAndUrl);
-        // qDebug() << titleAndUrl.first << ": " << titleAndUrl.second;
+        // DLOG << titleAndUrl.first << ": " << titleAndUrl.second;
     }
 }
 

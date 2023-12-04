@@ -145,7 +145,6 @@ void ChooseWidget::sendOptions()
     QStringList method;
     method << transferMethod;
 
-    qInfo() << "transfer method:" << method;
     OptionsManager::instance()->addUserOption(Options::kTransferMethod, method);
 }
 

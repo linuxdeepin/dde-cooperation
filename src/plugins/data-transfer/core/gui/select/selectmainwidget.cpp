@@ -175,7 +175,7 @@ void SelectMainWidget::nextPage()
     sizelist.push_back(QString::number(
             static_cast<qint64>(UserSelectFileSize::instance()->getAllSelectSize())));
     OptionsManager::instance()->addUserOption(Options::KSelectFileSize, sizelist);
-    qInfo() << "user select file size:"
+    LOG << "user select file size:"
             << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];
 
     PageName next;
@@ -219,7 +219,7 @@ void SelectMainWidget::selectPage()
         pageNum = PageName::configselectwidget;
     }
     if (pageNum == -1) {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+        WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     } else {
         stackedWidget->setCurrentIndex(pageNum);
@@ -269,7 +269,7 @@ void SelectItem::updateSelectSize(QString num)
     } else if (name == SelectItemName::CONFIG) {
         sizeLabel->setText(QString(tr("Selected:%1")).arg(num));
     } else {
-        qDebug() << "selectItemName is error!";
+        DLOG << "selectItemName is error!";
     }
 }
 void SelectItem::mousePressEvent(QMouseEvent *event)

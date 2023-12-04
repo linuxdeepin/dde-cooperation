@@ -18,7 +18,7 @@
 #define BUFFER_SIZE 8 * 1024
 ZipWork::ZipWork(QObject *parent) : QThread(parent)
 {
-    qInfo() << "zipwork start.";
+    LOG << "zipwork start.";
 
     maxNum = BUFFER_SIZE * 10240;
     // connect backup file process
@@ -44,7 +44,7 @@ void ZipWork::getUserDataPackagingFile()
 
     QString size = OptionsManager::instance()->getUserOption(Options::KBackupFileSize)[0];
     allFileSize = size.toULongLong();
-    qInfo() << "bakc up file size:" << allFileSize;
+    LOG << "bakc up file size:" << allFileSize;
     backupFile(zipFilePathList, getBackupFilName());
 }
 
@@ -234,19 +234,19 @@ void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &time
         } else {
             tempTime = maxNum;
         }
-        qInfo() << "num:" << num << " tempTime:" << tempTime;
+        LOG << "num:" << num << " tempTime:" << tempTime;
         // If the timer is started, the elapsed time is calculated and the timer is restarted
         if (num >= tempTime) {
             firstFlag = false;
             qint64 elapsed = timer.restart();
             if (allFileSize <= zipFileSize) {
                 needTime = static_cast<int>(elapsed * (0 / num)) / 1000;
-                qInfo() << "needtime:" << needTime << "(allFileSize - zipFileSize):" << 0
+                LOG << "needtime:" << needTime << "(allFileSize - zipFileSize):" << 0
                         << "zipFileSize:" << zipFileSize << " num:" << num
                         << " elapsed:" << elapsed;
             } else {
                 needTime = static_cast<int>(elapsed * ((allFileSize - zipFileSize) / num)) / 1000;
-                qInfo() << "needtime:" << needTime
+                LOG << "needtime:" << needTime
                         << "(allFileSize - zipFileSize)/num:" << (allFileSize - zipFileSize) / num
                         << " zipFileSize:" << zipFileSize << " num:" << num
                         << "elapsed:" << elapsed;
@@ -279,7 +279,7 @@ QString ZipWork::getBackupFilName()
     } else {
         zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] + ".zip";
     }
-    qInfo() << "backup file save path:" << zipFileName;
+    LOG << "backup file save path:" << zipFileName;
 
     return zipFileName;
 }
@@ -289,5 +289,5 @@ void ZipWork::abortingBackupFileProcess()
     abort = true;
     //  quit();
     // wait();
-    qInfo() << "backup file exit.";
+    LOG << "backup file exit.";
 }

@@ -196,7 +196,7 @@ void AppSelectWidget::sendOptions()
         }
     }
 
-    qInfo() << "select app :" << appName;
+    LOG << "select app :" << appName;
     OptionsManager::instance()->addUserOption(Options::kApp, appName);
 
     emit isOk(SelectItemName::APP);

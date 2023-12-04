@@ -181,17 +181,17 @@ void FileSelectWidget::updateFileViewData(QStandardItem *siderbarItem, const boo
         stackedWidget->removeWidget(view);
         sidebarFileViewList.remove(siderbarItem);
         delete view;
-        qInfo() << "del device";
+        LOG << "del device";
 
     } else {
         // add fileview
         QMap<QStandardItem *, DiskInfo> *diskList = sidebar->getSidebarDiskList();
         QString path = diskList->value(siderbarItem).rootPath;
-        qInfo() << "updateFileViewData add " << path;
+        LOG << "updateFileViewData add " << path;
         SelectListView *view = addFileViewData(path, siderbarItem);
         sidebarFileViewList[siderbarItem] = view;
         stackedWidget->addWidget(view);
-        qInfo() << "add device";
+        LOG << "add device";
     }
 }
 
@@ -362,7 +362,7 @@ void FileSelectWidget::sendOptions()
 {
     QStringList selectFileLsit = UserSelectFileSize::instance()->getSelectFilesList();
     OptionsManager::instance()->addUserOption(Options::kFile, selectFileLsit);
-    qInfo() << "select file:" << selectFileLsit;
+    LOG << "select file:" << selectFileLsit;
 
     emit isOk(SelectItemName::FILES);
 }

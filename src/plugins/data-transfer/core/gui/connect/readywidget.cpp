@@ -194,7 +194,6 @@ void ReadyWidget::tryConnect()
     tiptextlabel->setVisible(true);
     setnextButEnable(false);
 
-    qInfo() << ipInput->text() << " " << captchaInput->text();
     TransferHelper::instance()->tryConnect(ipInput->text(), captchaInput->text());
 }
 
@@ -238,7 +237,7 @@ void ReadyWidget::nextPage()
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+        WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
 
@@ -251,7 +250,7 @@ void ReadyWidget::backPage()
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+        WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                       "nullptr";
     }
 

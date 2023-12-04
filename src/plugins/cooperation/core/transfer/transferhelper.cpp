@@ -77,7 +77,7 @@ TransferDialog *TransferHelperPrivate::transDialog()
 
 void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
 {
-    qInfo() << "send files: " << fileList;
+    // LOG << "send files: " << fileList.toStdList();
     rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
     co::Json req, res;
 
@@ -163,7 +163,7 @@ void TransferHelperPrivate::handleCancelTransfer()
     req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
     rpcClient.call(req, res);
     rpcClient.close();
-    qInfo() << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
+    LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
 }
 
 void TransferHelperPrivate::transferResult(bool result, const QString &msg)

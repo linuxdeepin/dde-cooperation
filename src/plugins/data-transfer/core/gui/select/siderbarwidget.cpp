@@ -98,7 +98,7 @@ void SidebarWidget::updateSiderbarFileSize(quint64 fileSize, const QString &path
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
 
     if (!path.contains(cPath)) {
-        //    qInfo() << path << "is not c" << QFileInfo(path).absolutePath() << " " << cPath;
+        //    LOG << path << "is not c" << QFileInfo(path).absolutePath() << " " << cPath;
         return;
     }
 
@@ -195,7 +195,7 @@ void SidebarWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
         quint64 size = device.bytesTotal() - device.bytesAvailable();
         item->setData(fromByteToQstring(size), Qt::ToolTipRole);
         model->appendRow(item);
-        //  qInfo() << " model->appendRow:" << rootPath << "model.size:" << model->rowCount();
+        //  LOG << " model->appendRow:" << rootPath << "model.size:" << model->rowCount();
 
         // add device in sidebar
         DiskInfo siderbarDiskInfo;
@@ -205,14 +205,14 @@ void SidebarWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
 
         updateAllSizeUi(size, true);
         // update ui
-        qInfo() << "updateDevice add updatePorcessLabel";
+        LOG << "updateDevice add updatePorcessLabel";
         updatePorcessLabel();
 
         emit updateFileview(item, true);
     } else {
         // del ui
         QString rootPath = device.rootPath();
-        qInfo() << "del rootPath" << rootPath;
+        LOG << "del rootPath" << rootPath;
         auto iterator = sidebarDiskList.begin();
         while (iterator != sidebarDiskList.end()) {
 
@@ -282,7 +282,7 @@ void SidebarWidget::initData()
         sidebarDiskList[item] = siderbarDiskInfo;
     }
 
-    qInfo() << "sider model init size:" << model->rowCount();
+    LOG << "sider model init size:" << model->rowCount();
     QObject::connect(this, &QListView::clicked, this, &SidebarWidget::onClick);
 }
 
@@ -340,7 +340,7 @@ void SidebarWidget::updatePorcessLabel()
     quint64 selectSize = fromQstringToByte(selectSizeStr);
     double percentage = (static_cast<double>(selectSize) / allSize) * 100.0;
     int percentageAsInt = qBound(0, static_cast<int>(percentage), 100);
-    //    qInfo() << "setProgress:" << percentageAsInt << "selectSize" << selectSize
+    //    LOG << "setProgress:" << percentageAsInt << "selectSize" << selectSize
     //            << "allSize:" << allSize;
     processLabel->setProgress(percentageAsInt);
 }
@@ -356,7 +356,7 @@ void SidebarWidget::updateSelectFileNumState(QStandardItem *siderbarItem)
     } else {
         state = 2;
     }
-    // qInfo() << "root path:" << sidebarDiskList[siderbarItem].rootPath
+    // LOG << "root path:" << sidebarDiskList[siderbarItem].rootPath
     //        << " current :" << sidebarDiskList[siderbarItem].curSelectFileNum << "state" << state
     //       << sidebarDiskList[siderbarItem].allFileNum;
     int curState = siderbarItem->data(Qt::StatusTipRole).toInt();

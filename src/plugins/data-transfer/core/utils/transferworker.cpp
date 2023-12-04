@@ -116,7 +116,7 @@ void TransferHandle::localIPCStart()
                 NodePeerInfo peerobj;
                 peerobj.from_json(param.msg);
 
-                //qInfo() << param.result << " peer : " << param.msg.c_str();
+                //LOG << param.result << " peer : " << param.msg.c_str();
 
                 break;
             }
@@ -124,7 +124,7 @@ void TransferHandle::localIPCStart()
                 ipc::GenericResult param;
                 param.from_json(json_obj);
                 QString mesg(param.msg.c_str());
-                qInfo() << param.result << " FRONT_CONNECT_CB : " << param.msg.c_str();
+                LOG << param.result << " FRONT_CONNECT_CB : " << param.msg.c_str();
                 handleConnectStatus(param.result, mesg);
                 break;
             }
@@ -183,7 +183,7 @@ void TransferHandle::saveSession(fastring sessionid)
 
 void TransferHandle::handleConnectStatus(int result, QString msg)
 {
-    qInfo() << "connect status: " << result << " msg:" << msg;
+    LOG << "connect status: " << result << " msg:" << msg.toStdString();
     if (result > 0) {
         emit TransferHelper::instance()->connectSucceed();
 #ifndef WIN32
@@ -203,7 +203,7 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
 void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 {
     auto it = _job_maps.find(id);
-    qInfo() << "handleTransJobStatus " << result << " saved:" << path;
+    LOG << "handleTransJobStatus " << result << " saved:" << path.toStdString();
 
     switch (result) {
     case JOB_TRANS_FAILED:
@@ -211,7 +211,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
         if (it != _job_maps.end()) {
             _job_maps.erase(it);
         }
-        qInfo() << "Send job failed: (" << id << ") " << path;
+        LOG << "Send job failed: (" << id << ") " << path.toStdString();
         emit TransferHelper::instance()->interruption();
         emit TransferHelper::instance()->disconnected();
         break;
@@ -241,7 +241,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 void TransferHandle::handleFileTransStatus(QString statusstr)
 {
     // FileStatus
-    //    qInfo() << "handleFileTransStatus: " << statusstr;
+    //    LOG << "handleFileTransStatus: " << statusstr;
     co::Json status_json;
     status_json.parse_from(statusstr.toStdString());
     ipc::FileStatus param;
@@ -257,14 +257,14 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
             _file_stats.all_current_size += param.current;
             _file_ids.insert(param.file_id, param.current);
         }
-        qInfo() << "file receive IDLE: " << filepath;
+        LOG << "file receive IDLE: " << filepath.toStdString();
         break;
     }
     case FILE_TRANS_SPEED: {
         if (_file_ids.contains(param.file_id)) {
             // 已经记录过，只更新数据
             int64_t increment = param.current - _file_ids[param.file_id];
-            //        qInfo() << "_file_ids " << param.file_id << " increment: " << increment;
+            //        LOG << "_file_ids " << param.file_id << " increment: " << increment;
             _file_stats.all_current_size += increment;   //增量值
             _file_ids[param.file_id] = param.current;
 
@@ -275,9 +275,9 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         }
         float speed = param.current / 1024 / param.second;
         if (speed > 1024) {
-            qInfo() << filepath << "SPEED: " << speed / 1024 << "MB/s";
+            LOG << filepath.toStdString() << "SPEED: " << speed / 1024 << "MB/s";
         } else {
-            qInfo() << filepath << "SPEED: " << speed << "KB/s";
+            LOG << filepath.toStdString() << "SPEED: " << speed << "KB/s";
         }
         break;
     }
@@ -287,7 +287,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         _file_stats.all_current_size += increment;   //增量值
         _file_ids.remove(param.file_id);
 
-        qInfo() << "file receive END: " << filepath;
+        LOG << "file receive END: " << filepath.toStdString();
 #ifndef WIN32
         TransferHelper::instance()->addFinshedFiles(filepath, param.total);
 #endif
@@ -295,7 +295,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         break;
     }
     default:
-        qInfo() << "unhandle status: " << param.status;
+        LOG << "unhandle status: " << param.status;
         break;
     }
 
@@ -316,18 +316,18 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
     }
 
-    qInfo() << "progressbar: " << progressbar << " remain_time=" << remain_time;
-    qInfo() << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
+    LOG << "progressbar: " << progressbar << " remain_time=" << remain_time;
+    LOG << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
     emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
 }
 
 void TransferHandle::handleMiscMessage(QString jsonmsg)
 {
-    qInfo() << "misc message arrived:" << jsonmsg;
+    //LOG << "misc message arrived:" << jsonmsg.toStdString();
     co::Json miscJson;
     if (!miscJson.parse_from(jsonmsg.toStdString())) {
-        qDebug() << "error json format string!";
+        DLOG << "error json format string!";
         return;
     }
 
@@ -455,7 +455,7 @@ bool TransferWoker::cancelTransferJob(int jobid)
     req = jobParam.as_json();
     req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
     call(req, res);
-    qInfo() << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
+    LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
     return res.get("result").as_bool();
 }
 
@@ -487,7 +487,7 @@ void TransferWoker::disconnectRemote()
 
     req = info.as_json();
     req.add_member("api", "Backend.disconnectCb");   //BackendImpl::disConnect
-    qInfo() << "disConnect" << req.str().c_str();
+    LOG << "disConnect" << req.str().c_str();
     call(req, res);
 }
 
@@ -531,7 +531,7 @@ void TransferWoker::sendMessage(json::Json &message)
     req = miscParam.as_json();
     req.add_member("api", "Backend.miscMessage");   //BackendImpl::miscMessage
 
-    qInfo() << "sendMessage" << req.str().c_str();
+    LOG << "sendMessage" << req.str().c_str();
     call(req, res);
 }
 

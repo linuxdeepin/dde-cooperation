@@ -56,12 +56,12 @@ int UnzipWorker::getNumFiles(QString filepath)
 
     if (archive) {
         int fileCount = zip_get_num_files(archive);
-        qInfo() << "Number of files in ZIP file:" << fileCount;
+        LOG << "Number of files in ZIP file:" << fileCount;
 
         zip_close(archive);
         return fileCount;
     } else {
-        qInfo() << "Unable to open ZIP file";
+        LOG << "Unable to open ZIP file";
         return 0;
     }
 }
@@ -73,7 +73,7 @@ bool UnzipWorker::isValid(QString filepath)
 
     if (z) {
         int num_files = zip_get_num_files(z);
-        qInfo() << "Number of files in ZIP file:" << num_files;
+        LOG << "Number of files in ZIP file:" << num_files;
 
         for (int i = 0; i < num_files; i++) {
             struct zip_stat st;
@@ -86,7 +86,7 @@ bool UnzipWorker::isValid(QString filepath)
         zip_close(z);
         return false;
     } else {
-        qInfo() << "Unable to open ZIP file";
+        LOG << "Unable to open ZIP file";
         return false;
     }
 }
@@ -106,7 +106,7 @@ bool UnzipWorker::extract()
     process.setReadChannelMode(QProcess::SeparateChannels);
     process.start("unzip", arguments);
 
-    qInfo() << process.arguments();
+//    LOG << process.arguments().toStdList();
 
     while (process.waitForReadyRead()) {
         QByteArray output = process.readAllStandardOutput();
@@ -118,11 +118,11 @@ bool UnzipWorker::extract()
             int progressbar = static_cast<int>(value * 100) - 1;
             int estimatedtime = (count - currentTotal) / speed / 2 + 1;
             emit TransferHelper::instance()->transferContent(tr("Decompressing"), outputText, progressbar, estimatedtime);
-            qInfo() << value << outputText;
+            LOG << value << outputText.toStdString();
         }
     }
     if (process.exitCode() != 0)
-        qInfo() << "Error message:" << process.errorString();
+        LOG << "Error message:" << process.errorString().toStdString();
     process.waitForFinished();
     return true;
 }
@@ -130,9 +130,8 @@ bool UnzipWorker::extract()
 bool UnzipWorker::set()
 {
     QFile file(targetDir + "/" + datajson);
-    qInfo() << targetDir + datajson;
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "could not open datajson file";
+        WLOG << "could not open datajson file";
         return false;
     }
     QByteArray jsonData = file.readAll();
@@ -140,7 +139,7 @@ bool UnzipWorker::set()
 
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
-        qWarning() << "Parsing JSON data failed";
+        WLOG << "Parsing JSON data failed";
         return false;
     }
     QJsonObject jsonObj = jsonDoc.object();
@@ -161,9 +160,9 @@ bool UnzipWorker::setUesrFile(QJsonObject jsonObj)
             QString targetFile = QDir::homePath() + "/" + file;
             QString filepath = targetDir + file.mid(file.indexOf('/'));
             bool success = QFile::rename(filepath, targetFile);
-            qInfo() << filepath << success;
+            LOG << filepath.toStdString() << success;
         }
     }
-    qInfo() << jsonObj["user_file"].toString();
+    LOG << jsonObj["user_file"].toString().toStdString();
     return true;
 }
