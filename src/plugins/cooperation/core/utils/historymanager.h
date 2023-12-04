@@ -19,8 +19,12 @@ public:
     void writeIntoTransHistory(const QString &ip, const QString &savePath);
     void removeTransHistory(const QString &ip);
 
+    QMap<QString, QString> getConnectHistory();
+    void writeIntoConnectHistory(const QString &ip, const QString &devName);
+
 Q_SIGNALS:
     void transHistoryUpdated();
+    void connectHistoryUpdated();
 
 private:
     explicit HistoryManager(QObject *parent = nullptr);

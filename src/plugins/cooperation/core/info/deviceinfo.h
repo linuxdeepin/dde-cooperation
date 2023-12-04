@@ -20,6 +20,7 @@ class DeviceInfo
 {
 public:
     enum ConnectStatus {
+        Unknown,
         Connected,
         Connectable,
         Offline
@@ -43,6 +44,7 @@ public:
 
     explicit DeviceInfo();
     explicit DeviceInfo(const QString &ip, const QString &name);
+    explicit DeviceInfo(const DeviceInfo &other);
     virtual ~DeviceInfo();
 
     bool isValid();

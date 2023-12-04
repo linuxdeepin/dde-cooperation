@@ -215,8 +215,7 @@ void CooperationUtilPrivate::localIPCStart()
                                               Qt::QueuedConnection,
                                               Q_ARG(bool, conReply.reply));
             } break;
-            case FRONT_SHARE_STOP:
-                DLOG << "share stop";
+            case FRONT_SHARE_DISCONNECT:
                 break;
             default:
                 break;
@@ -258,8 +257,10 @@ QList<DeviceInfoPointer> CooperationUtilPrivate::parseDeviceInfo(const co::Json 
             break;
         }
 
-        if (devInfo && devInfo->isValid() && devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone)
+        if (devInfo && devInfo->isValid() && devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
+            devInfo->setConnectStatus(DeviceInfo::Connectable);
             devInfoList << devInfo;
+        }
     }
 
     return devInfoList;
@@ -293,6 +294,14 @@ QWidget *CooperationUtil::mainWindow()
 QString CooperationUtil::sessionId() const
 {
     return d->sessionId;
+}
+
+DeviceInfoPointer CooperationUtil::findDeviceInfo(const QString &ip)
+{
+    if (!d->window)
+        return nullptr;
+
+    return d->window->findDeviceInfo(ip);
 }
 
 void CooperationUtil::destroyMainWindow()

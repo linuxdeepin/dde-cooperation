@@ -4,6 +4,7 @@
 
 #include "../maincontroller.h"
 #include "utils/cooperationutil.h"
+#include "utils/historymanager.h"
 #include "config/configmanager.h"
 
 using namespace cooperation_core;

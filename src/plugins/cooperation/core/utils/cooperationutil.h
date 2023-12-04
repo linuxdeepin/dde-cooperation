@@ -21,6 +21,7 @@ public:
 
     QWidget *mainWindow();
     QString sessionId() const;
+    DeviceInfoPointer findDeviceInfo(const QString &ip);
     void destroyMainWindow();
     void registerDeviceOperation(const QVariantMap &map);
 

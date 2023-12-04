@@ -4,9 +4,11 @@
 
 #include "maincontroller.h"
 #include "utils/cooperationutil.h"
+#include "utils/historymanager.h"
 #include "config/configmanager.h"
 #include "common/constant.h"
 #include "common/commonutils.h"
+#include "cooperation/cooperationmanager.h"
 
 #include <QNetworkInterface>
 #include <QStandardPaths>
@@ -15,6 +17,9 @@
 #include <QHostInfo>
 #include <QDir>
 
+using ConnectHistory = QMap<QString, QString>;
+Q_GLOBAL_STATIC(ConnectHistory, connectHistory)
+
 using namespace cooperation_core;
 
 MainController::MainController(QObject *parent)
@@ -22,6 +27,11 @@ MainController::MainController(QObject *parent)
 {
     networkMonitorTimer = new QTimer(this);
     networkMonitorTimer->setInterval(1000);
+
+    *connectHistory = HistoryManager::instance()->getConnectHistory();
+    connect(HistoryManager::instance(), &HistoryManager::connectHistoryUpdated, this, [] {
+        *connectHistory = HistoryManager::instance()->getConnectHistory();
+    });
 
     initConnect();
 }
@@ -55,17 +65,24 @@ void MainController::updateDeviceList(const QString &ip, const QString &info, bo
             return;
 
         map.insert("IPAddress", ip);
-
         auto devInfo = DeviceInfo::fromVariantMap(map);
-        // 不允许被发现，作为下线处理
-        if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::NotAllow) {
-            Q_EMIT deviceOffline(ip);
+        if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
+            // 处理设备的共享属性发生变化情况
+            CooperationManager::instance()->checkAndProcessShare(devInfo);
+            Q_EMIT deviceOnline({ devInfo });
             return;
         }
-        Q_EMIT deviceOnline({ devInfo });
-    } else {
-        Q_EMIT deviceOffline(ip);
     }
+
+    // 更新设备状态为离线状态
+    if (connectHistory->contains(ip)) {
+        DeviceInfoPointer info(new DeviceInfo(ip, connectHistory->value(ip)));
+        info->setConnectStatus(DeviceInfo::Offline);
+        updateDeviceState(info);
+        return;
+    }
+
+    Q_EMIT deviceOffline(ip);
 }
 
 void MainController::onDiscoveryFinished(const QList<DeviceInfoPointer> &infoList)
@@ -99,9 +116,30 @@ void MainController::start()
     isRunning = true;
 
     // 延迟1s，为了展示发现界面
-    QTimer::singleShot(1000, this, [] { CooperationUtil::instance()->asyncDiscoveryDevice(); });
+    QTimer::singleShot(1000, this, &MainController::discoveryDevice);
 }
 
 void MainController::stop()
 {
+}
+
+void MainController::updateDeviceState(const DeviceInfoPointer info)
+{
+    Q_EMIT deviceOnline({ info });
+}
+
+void MainController::discoveryDevice()
+{
+    QList<DeviceInfoPointer> offlineDevList;
+    auto iter = connectHistory->begin();
+    for (; iter != connectHistory->end(); ++iter) {
+        DeviceInfoPointer info(new DeviceInfo(iter.key(), iter.value()));
+        info->setConnectStatus(DeviceInfo::Offline);
+        offlineDevList << info;
+    }
+
+    if (!offlineDevList.isEmpty())
+        deviceOnline(offlineDevList);
+
+    CooperationUtil::instance()->asyncDiscoveryDevice();
 }

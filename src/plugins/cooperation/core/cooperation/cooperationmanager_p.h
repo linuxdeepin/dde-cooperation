@@ -29,7 +29,6 @@ public:
 
 public Q_SLOTS:
     void onActionTriggered(uint replacesId, const QString &action);
-    void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 
 public:
     CooperationManager *q;
@@ -39,7 +38,12 @@ public:
     CooperationTaskDialog *ctDialog { nullptr };
     uint recvReplacesId { 0 };
     bool isRecvMode { true };
-    DeviceInfoPointer tarDeviceInfo {nullptr};
+    bool isReplied { false };
+
+    // 作为接收方时，发送方的ip
+    QString senderDeviceIp;
+    // 作为发送方时，为接收方设备信息；作为接收方时，为发送方设备信息
+    DeviceInfoPointer targetDeviceInfo { nullptr };
 };
 
 }   // namespace cooperation_core
