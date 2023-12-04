@@ -1,5 +1,10 @@
 function(TRANSLATION_GENERATE QMS)
-  find_package(Qt5LinguistTools REQUIRED)
+  find_package(Qt5LinguistTools QUIET)
+
+  if (NOT Qt5_LRELEASE_EXECUTABLE)
+    message(STATUS "set Qt5_LRELEASE_EXECUTABLE = lrelease")
+    set(Qt5_LRELEASE_EXECUTABLE "lrelease")
+  endif()
 
   if(NOT ARGN)
     message(SEND_ERROR "Error: TRANSLATION_GENERATE() called without any .ts path")
@@ -24,8 +29,6 @@ function(TRANSLATION_GENERATE QMS)
           VERBATIM
       )
   endforeach()
-
-  message(STATUS "Qt5_LRELEASE_EXECUTABLE = " ${Qt5_LRELEASE_EXECUTABLE})
 
   set_source_files_properties(${${QMS}} PROPERTIES GENERATED TRUE)
   set(${QMS} ${${QMS}} PARENT_SCOPE)
