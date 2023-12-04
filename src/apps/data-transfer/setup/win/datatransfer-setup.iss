@@ -3,7 +3,7 @@
 
 #define BuildDir "D:\work\pre-release\data-transfer-inno_release"
 #define MyAppName "deepin-datatransfer"
-#define MyAppVersion "0.4.1"
+#define MyAppVersion "0.4.2"
 #define MyAppPublisher "Uniontech, Inc."
 #define MyAppURL "https://www.deepin.org/"
 #define MyAppExeName "datatransfer.vbs"
@@ -53,7 +53,7 @@ english.CmAutoStart=Automatically launch after startup
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
-Name: "startupicon"; Description: "{cm:CmAutoStart}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
+;Name: "startupicon"; Description: "{cm:CmAutoStart}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
 
 [Files]
 Source: "{#BuildDir}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion

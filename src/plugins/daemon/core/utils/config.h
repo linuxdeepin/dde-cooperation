@@ -50,8 +50,8 @@ public:
     // 所有值都设置为string类型
     void setAppConfig(fastring appname, fastring key, fastring value)
     {
-        QString groupname(appname.c_str());
         QWriteLocker lk(&_config_mutex);
+        QString groupname(appname.c_str());
         _fileConfig->beginGroup(groupname);
         _fileConfig->setValue(key.c_str(), value.c_str());
         _fileConfig->endGroup();
@@ -60,9 +60,9 @@ public:
     // 所有值都返回为string类型，外部再转换
     fastring getAppConfig(fastring appname, fastring key)
     {
+        QReadLocker lk(&_config_mutex);
         QString groupname(appname.c_str());
         fastring value = "";
-        QReadLocker lk(&_config_mutex);
         _fileConfig->beginGroup(groupname);
         value = _fileConfig->value(key.c_str(), "").toString().toStdString();
         _fileConfig->endGroup();
@@ -175,9 +175,16 @@ public:
 
     const fastring getStorageDir(const fastring &appName)
     {
-        fastring home = getAppConfig(appName, "storagedir");
-        if (home.empty())
-            home = getStorageDir();
+        fastring home;
+        auto it = _storage_caches.find(appName);
+        if (it != _storage_caches.end()) {
+            home = it->second;
+        } else {
+            home = getAppConfig(appName, "storagedir");
+            if (home.empty())
+                home = getStorageDir();
+            _storage_caches.insert(std::make_pair(appName, home));
+        }
         return home;
     }
 
@@ -187,6 +194,7 @@ private:
     fastring _authedToken;
     fastring _storageDir;
     fastring _targetName;
+    co::map<fastring, fastring> _storage_caches;
 
     QSettings *_fileConfig;
     QReadWriteLock _config_mutex;
