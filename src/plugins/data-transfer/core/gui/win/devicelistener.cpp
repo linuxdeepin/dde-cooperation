@@ -9,7 +9,6 @@ DeviceListener::DeviceListener(QWidget *parent) : QWidget(parent)
 {
     setFixedSize(0, 0);
     updateDevice();
-    LOG << "DeviceListener init";
 }
 
 DeviceListener::~DeviceListener() { }
@@ -32,10 +31,8 @@ bool DeviceListener::nativeEvent(const QByteArray &eventType, void *message, lon
     if (msg->message == WM_DEVICECHANGE) {
         switch (msg->wParam) {
         case DBT_DEVICEARRIVAL:
-            LOG << "Device added";
             break;
         case DBT_DEVICEREMOVECOMPLETE:
-            LOG << "Device removed";
             break;
         }
     }

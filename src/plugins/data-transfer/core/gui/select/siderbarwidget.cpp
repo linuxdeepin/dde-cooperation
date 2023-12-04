@@ -3,6 +3,7 @@
 #include "siderbarwidget.h"
 #include "userselectfilesize.h"
 #include <gui/win/devicelistener.h>
+#include <co/log.h>
 
 #include <QPainter>
 #include <QDir>
@@ -212,7 +213,7 @@ void SidebarWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
     } else {
         // del ui
         QString rootPath = device.rootPath();
-        LOG << "del rootPath" << rootPath;
+        LOG << "del rootPath" << rootPath.toStdString();
         auto iterator = sidebarDiskList.begin();
         while (iterator != sidebarDiskList.end()) {
 

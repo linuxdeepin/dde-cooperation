@@ -139,7 +139,7 @@ void TransferHelper::startTransfer()
     QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
 
     QStringList paths = getTransferFilePath(filePathList, appList, browserList, configList);
-    LOG << "transferring file list: " << paths;
+    qInfo() << "transferring file list: " << paths;
     transferhandle.sendFiles(paths);
 }
 
@@ -227,7 +227,7 @@ QString TransferHelper::getTransferJson(QStringList appList, QStringList fileLis
     }
     // add file
     QJsonArray fileArray;
-    LOG << "home_path:" << QDir::homePath();
+    LOG << "home_path:" << QDir::homePath().toStdString();
     for (QString file : fileList) {
         if (file.contains(QDir::homePath()))
             file.replace(QDir::homePath() + "/", "");
@@ -253,7 +253,7 @@ QString TransferHelper::getTransferJson(QStringList appList, QStringList fileLis
         jsonObject["browsersName"] = browserArray;
 
     QString jsonfilePath = getJsonfile(jsonObject, QString(tempSavePath));
-    LOG << "transfer.json save path:" << jsonfilePath;
+    LOG << "transfer.json save path:" << jsonfilePath.toStdString();
     return jsonfilePath;
 }
 
@@ -264,7 +264,7 @@ void TransferHelper::Retransfer(const QString jsonstr)
 
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
-        WLOG << "Parsing JSON data failed: " << jsonstr;
+        WLOG << "Parsing JSON data failed: " << jsonstr.toStdString();
         return;
     }
     jsonObj = jsonDoc.object();
@@ -303,12 +303,12 @@ void TransferHelper::Retransfer(const QString jsonstr)
     sizelist.append(userData);
     OptionsManager::instance()->addUserOption(Options::KSelectFileSize, sizelist);
     LOG << "user select file size:"
-            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];
+            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
 
     QStringList paths = getTransferFilePath(filePathList, appList, browserList, configList);
-    LOG << "continue last file list: " << paths;
+    qInfo() << "continue last file list: " << paths;
     LOG << "continue last file size:"
-            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];
+            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
     transferhandle.sendFiles(paths);
 
     emit changeWidget(PageName::transferringwidget);

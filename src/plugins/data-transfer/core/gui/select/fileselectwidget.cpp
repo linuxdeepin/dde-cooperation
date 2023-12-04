@@ -187,7 +187,7 @@ void FileSelectWidget::updateFileViewData(QStandardItem *siderbarItem, const boo
         // add fileview
         QMap<QStandardItem *, DiskInfo> *diskList = sidebar->getSidebarDiskList();
         QString path = diskList->value(siderbarItem).rootPath;
-        LOG << "updateFileViewData add " << path;
+        LOG << "updateFileViewData add " << path.toStdString();
         SelectListView *view = addFileViewData(path, siderbarItem);
         sidebarFileViewList[siderbarItem] = view;
         stackedWidget->addWidget(view);
@@ -362,7 +362,7 @@ void FileSelectWidget::sendOptions()
 {
     QStringList selectFileLsit = UserSelectFileSize::instance()->getSelectFilesList();
     OptionsManager::instance()->addUserOption(Options::kFile, selectFileLsit);
-    LOG << "select file:" << selectFileLsit;
+    qInfo() << "select file:" << selectFileLsit;
 
     emit isOk(SelectItemName::FILES);
 }

@@ -57,8 +57,8 @@ void CreateBackupFileWidget::sendOptions()
     QStringList saveName;
     saveName << fileNameInput->text();
     OptionsManager::instance()->addUserOption(Options::kBackupFileName, saveName);
-    LOG << "backup file save path:" << savePath;
-    LOG << "backup file name:" << saveName;
+    qInfo() << "backup file save path:" << savePath;
+    qInfo() << "backup file name:" << saveName;
 }
 
 void CreateBackupFileWidget::clear()

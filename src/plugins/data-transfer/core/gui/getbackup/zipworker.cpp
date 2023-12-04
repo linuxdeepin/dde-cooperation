@@ -279,7 +279,7 @@ QString ZipWork::getBackupFilName()
     } else {
         zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] + ".zip";
     }
-    LOG << "backup file save path:" << zipFileName;
+    LOG << "backup file save path:" << zipFileName.toStdString();
 
     return zipFileName;
 }
