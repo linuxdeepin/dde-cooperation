@@ -1,4 +1,6 @@
 ﻿#include "drapwindowsdata.h"
+#include <co/log.h>
+
 #include <tchar.h>
 #include <QDebug>
 #include <QFile>
@@ -116,7 +118,7 @@ QList<WinApp> DrapWindowsData::getApplianceList()
         getApplianceListInfo();
 
     for (auto value : applianceList)
-        LOG << "app name:" << value.name;
+        LOG << "app name:" << value.name.toStdString();
     LOG << "applianceList.size:" << applianceList.size();
     return applianceList;
 }
@@ -138,7 +140,7 @@ void DrapWindowsData::readFirefoxBookmarks(const QString &dbPath)
     db.setDatabaseName(dbPath);
 
     if (!db.open()) {
-        DLOG << "Error opening firefox bookmark database:" << db.lastError();
+        qDebug() << "Error opening firefox bookmark database:" << db.lastError();
         return;
     }
 
@@ -152,7 +154,7 @@ void DrapWindowsData::readFirefoxBookmarks(const QString &dbPath)
             insertBrowserBookmarkList(titleAndUrl);
         }
     } else {
-        DLOG << "read firefox bookmark failed:" << query.lastError();
+        qDebug() << "read firefox bookmark failed:" << query.lastError();
     }
     db.close();
 }
@@ -161,7 +163,7 @@ void DrapWindowsData::readMicrosoftEdgeAndGoogleChromeBookmark(const QString &js
 {
     QFile file(jsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        DLOG << "Failed to open file :" << jsonPath;
+        ELOG << "Failed to open file :" << jsonPath.toStdString();
         return;
     }
 
@@ -222,7 +224,7 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
             }
             file.close();
         } else {
-            DLOG << "Can not open file:" << installIni;
+            DLOG << "Can not open file:" << installIni.toStdString();
         }
 
         if (!bookMarkPath.isEmpty()) {
@@ -334,7 +336,7 @@ QString DrapWindowsData::getUserName()
     QFileInfo fileInfo(userDir);
     QString userName = fileInfo.fileName();
 
-    DLOG << "User Name: " << userName;
+    DLOG << "User Name: " << userName.toStdString();
     return userName;
 }
 
@@ -389,7 +391,7 @@ QString DrapWindowsData::getIP()
             if (entry.ip().protocol() != QAbstractSocket::NetworkLayerProtocol::IPv4Protocol)
                 continue;
             ip = QString(entry.ip().toString());
-            DLOG << "IP Address:------" << ip;
+            //DLOG << "IP Address:------" << ip.toStdString();
         }
     }
     return ip;
@@ -468,7 +470,7 @@ void DrapWindowsData::getDesktopWallpaperPathRegistInfo()
         QString wallpaperPathStr = QString::fromWCharArray(wallpaperPath);
         QFileInfo fileInfo(wallpaperPathStr);
         if (fileInfo.exists()) {
-            DLOG << "Current wallpaper path: " << wallpaperPathStr;
+            DLOG << "Current wallpaper path: " << wallpaperPathStr.toStdString();
             desktopWallpaperPath = wallpaperPathStr;
         } else {
             DLOG << "Wallpaper file does not exist.";
@@ -488,7 +490,7 @@ void DrapWindowsData::getDesktopWallpaperPathAbsolutePathInfo()
         QImage wallpaperImage = wallpaperPixmap.toImage();
         QString wallpaperPathStr = QDir::tempPath() + "/ConvertedWallpaper.png";
         if (wallpaperImage.save(wallpaperPathStr, "PNG")) {
-            DLOG << "TranscodedWallpaper converted and saved as PNG to: " << wallpaperPathStr;
+            DLOG << "TranscodedWallpaper converted and saved as PNG to: " << wallpaperPathStr.toStdString();
             desktopWallpaperPath = wallpaperPathStr;
         } else {
             DLOG << "Failed to save the converted wallpaper.";

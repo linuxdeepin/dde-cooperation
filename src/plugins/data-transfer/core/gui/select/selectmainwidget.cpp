@@ -176,7 +176,7 @@ void SelectMainWidget::nextPage()
             static_cast<qint64>(UserSelectFileSize::instance()->getAllSelectSize())));
     OptionsManager::instance()->addUserOption(Options::KSelectFileSize, sizelist);
     LOG << "user select file size:"
-            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];
+            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
 
     PageName next;
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];

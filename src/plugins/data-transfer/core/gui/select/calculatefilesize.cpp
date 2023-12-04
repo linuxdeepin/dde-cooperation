@@ -1,4 +1,7 @@
 #include "calculatefilesize.h"
+
+#include <co/log.h>
+
 #include <QThreadPool>
 #include <QListView>
 #include <QStandardItemModel>
@@ -11,6 +14,7 @@
 #include <QCoreApplication>
 #include <math.h>
 #include <QMutex>
+
 QString fromByteToQstring(quint64 bytes)
 {
     float tempresult = static_cast<float>(bytes);
@@ -128,7 +132,7 @@ void CalculateFileSizeThreadPool::work(const QList<QString> &list)
             workList.push_back(task);
             threadPool->start(task);
         } else {
-            WLOG << "Path is neither a file nor a directory:" << path;
+            WLOG << "Path is neither a file nor a directory:" << path.toStdString();
         }
     }
 }
