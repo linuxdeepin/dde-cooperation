@@ -22,6 +22,7 @@ public:
 
     void regist();
     void unregist();
+    void updateDeviceState(const DeviceInfoPointer info);
 
 public Q_SLOTS:
     void start();
@@ -46,6 +47,7 @@ private:
 
     void initConnect();
     void registDeviceInfo();
+    void discoveryDevice();
 
 private:
     QTimer *networkMonitorTimer { nullptr };

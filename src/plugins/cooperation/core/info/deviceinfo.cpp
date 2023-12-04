@@ -29,6 +29,12 @@ DeviceInfo::DeviceInfo(const QString &ip, const QString &name)
     d->ipAddress = ip;
 }
 
+DeviceInfo::DeviceInfo(const DeviceInfo &other)
+    : DeviceInfo()
+{
+    operator=(other);
+}
+
 DeviceInfo::~DeviceInfo()
 {
 }

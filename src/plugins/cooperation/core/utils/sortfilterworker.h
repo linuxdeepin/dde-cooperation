@@ -38,8 +38,8 @@ private Q_SLOTS:
 
 private:
     int calculateIndex(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);
-    int findFirst(DeviceInfo::ConnectStatus state);
-    int findLast(DeviceInfo::ConnectStatus state, const DeviceInfoPointer info);
+    int findFirst(const QList<DeviceInfoPointer> &list, DeviceInfo::ConnectStatus state);
+    int findLast(const QList<DeviceInfoPointer> &list, DeviceInfo::ConnectStatus state, const DeviceInfoPointer info);
     void updateDevice(const DeviceInfoPointer info);
     bool contains(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);
     int indexOf(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);

@@ -36,17 +36,18 @@ int SortFilterWorker::calculateIndex(const QList<DeviceInfoPointer> &list, const
         index = 0;
         break;
     case DeviceInfo::Connectable: {
-        index = findLast(DeviceInfo::Connectable, info);
+        index = findLast(list, DeviceInfo::Connectable, info);
         if (index != -1)
             break;
 
-        index = findFirst(DeviceInfo::Offline);
+        index = findFirst(list, DeviceInfo::Offline);
         if (index != -1)
             break;
 
         index = list.size();
     } break;
     case DeviceInfo::Offline:
+    default:
         index = list.size();
         break;
     }
@@ -67,6 +68,9 @@ void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
 
         if (isStoped)
             return;
+
+        if (info->connectStatus() == DeviceInfo::Unknown)
+            info->setConnectStatus(DeviceInfo::Connectable);
 
         auto index = calculateIndex(allDeviceList, info);
         allDeviceList.insert(index, info);
@@ -108,12 +112,13 @@ void SortFilterWorker::filterDevice(const QString &filter)
 void SortFilterWorker::clear()
 {
     allDeviceList.clear();
+    visibleDeviceList.clear();
 }
 
-int SortFilterWorker::findFirst(DeviceInfo::ConnectStatus state)
+int SortFilterWorker::findFirst(const QList<DeviceInfoPointer> &list, DeviceInfo::ConnectStatus state)
 {
     int index = -1;
-    auto iter = std::find_if(allDeviceList.cbegin(), allDeviceList.cend(),
+    auto iter = std::find_if(list.cbegin(), list.cend(),
                              [&](const DeviceInfoPointer info) {
                                  if (isStoped)
                                      return true;
@@ -121,27 +126,27 @@ int SortFilterWorker::findFirst(DeviceInfo::ConnectStatus state)
                                  return info->connectStatus() == state;
                              });
 
-    if (iter == allDeviceList.cend())
+    if (iter == list.cend())
         return -1;
 
     return index;
 }
 
-int SortFilterWorker::findLast(DeviceInfo::ConnectStatus state, const DeviceInfoPointer info)
+int SortFilterWorker::findLast(const QList<DeviceInfoPointer> &list, DeviceInfo::ConnectStatus state, const DeviceInfoPointer info)
 {
     bool isRecord = transHistory->contains(info->ipAddress());
     int startPos = -1;
     int endPos = -1;
 
-    for (int i = allDeviceList.size() - 1; i >= 0; --i) {
-        if (allDeviceList[i]->connectStatus() == state) {
+    for (int i = list.size() - 1; i >= 0; --i) {
+        if (list[i]->connectStatus() == state) {
             startPos = (startPos == -1 ? i : startPos);
             endPos = i;
 
             if (!isRecord)
                 return startPos + 1;
 
-            if (transHistory->contains(allDeviceList[i]->ipAddress()))
+            if (transHistory->contains(list[i]->ipAddress()))
                 return endPos + 1;
         }
     }
@@ -153,8 +158,12 @@ void SortFilterWorker::updateDevice(const DeviceInfoPointer info)
 {
     // 更新
     int index = indexOf(allDeviceList, info);
-    if (allDeviceList[index]->discoveryMode() == DeviceInfo::DiscoveryMode::NotAllow)
-        return removeDevice(allDeviceList[index]->ipAddress());
+    if (info->connectStatus() == DeviceInfo::Unknown) {
+        // 设备属性发生改变时，连接状态为Unknown
+        // 若设备为非离线状态，则保持状态不变
+        auto status = allDeviceList[index]->connectStatus();
+        info->setConnectStatus(status == DeviceInfo::Offline ? DeviceInfo::Connectable : status);
+    }
 
     // 当连接状态不一致时，需要更新位置
     bool needMove = allDeviceList[index]->connectStatus() != info->connectStatus();

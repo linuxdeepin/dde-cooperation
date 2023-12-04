@@ -19,15 +19,17 @@ public:
 
     void regist();
 
-    void connectToDevice(const DeviceInfoPointer info);
-    void disconnectToDevice(const DeviceInfoPointer info);
+    void checkAndProcessShare(const DeviceInfoPointer info);
 
     static void buttonClicked(const QString &id, const DeviceInfoPointer info);
     static bool buttonVisible(const QString &id, const DeviceInfoPointer info);
 
 public Q_SLOTS:
+    void connectToDevice(const DeviceInfoPointer info);
+    void disconnectToDevice(const DeviceInfoPointer info);
     void notifyConnectRequest(const QString &info);
     void handleConnectResult(bool accepted);
+    void onVerifyTimeout();
 
 private:
     explicit CooperationManager(QObject *parent = nullptr);

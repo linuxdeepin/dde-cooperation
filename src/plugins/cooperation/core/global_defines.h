@@ -65,6 +65,7 @@ inline constexpr char ClipboardShareKey[] { "ClipboardShare" };
 
 inline constexpr char CacheGroup[] { "Cache" };
 inline constexpr char TransHistoryKey[] { "TransHistory" };
+inline constexpr char ConnectHistoryKey[] { "ConnectHistory" };
 }
 
 inline const char MainAppName[] { "dde-cooperation" };

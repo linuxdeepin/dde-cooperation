@@ -28,8 +28,13 @@ void HistoryManager::onAttributeChanged(const QString &group, const QString &key
     if (group != AppSettings::CacheGroup)
         return;
 
-    if (key == AppSettings::TransHistoryKey)
+    if (key == AppSettings::TransHistoryKey) {
         Q_EMIT transHistoryUpdated();
+        return;
+    }
+
+    if (key == AppSettings::ConnectHistoryKey)
+        Q_EMIT connectHistoryUpdated();
 }
 
 QMap<QString, QString> HistoryManager::getTransHistory()
@@ -89,4 +94,43 @@ void HistoryManager::removeTransHistory(const QString &ip)
     }
 
     ConfigManager::instance()->setAppAttribute(AppSettings::CacheGroup, AppSettings::TransHistoryKey, list);
+}
+
+QMap<QString, QString> HistoryManager::getConnectHistory()
+{
+    QMap<QString, QString> dataMap;
+
+    const auto &list = ConfigManager::instance()->appAttribute(AppSettings::CacheGroup, AppSettings::ConnectHistoryKey).toList();
+    for (const auto &item : list) {
+        const auto &map = item.toMap();
+        const auto &ip = map.value("ip").toString();
+        const auto &devName = map.value("devName").toString();
+        if (ip.isEmpty() || devName.isEmpty())
+            continue;
+
+        dataMap.insert(ip, devName);
+    }
+
+    return dataMap;
+}
+
+void HistoryManager::writeIntoConnectHistory(const QString &ip, const QString &devName)
+{
+    auto history = getConnectHistory();
+    if (history.contains(ip) && history.value(ip) == devName)
+        return;
+
+    history.insert(ip, devName);
+    QVariantList list;
+    auto iter = history.begin();
+    while (iter != history.end()) {
+        QVariantMap map;
+        map.insert("ip", iter.key());
+        map.insert("devName", iter.value());
+
+        list << map;
+        ++iter;
+    }
+
+    ConfigManager::instance()->setAppAttribute(AppSettings::CacheGroup, AppSettings::ConnectHistoryKey, list);
 }
