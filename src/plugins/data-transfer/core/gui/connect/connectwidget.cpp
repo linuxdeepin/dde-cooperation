@@ -213,7 +213,7 @@ void ConnectWidget::backPage()
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+        WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
 }
 

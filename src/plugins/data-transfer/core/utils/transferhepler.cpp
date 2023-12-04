@@ -58,7 +58,7 @@ void TransferHelper::initOnlineState()
         // 网络状态检测
         bool isConnected = deepin_cross::CommonUitls::getFirstIp().size() > 0;
         if (isConnected != online) {
-            qInfo() << "Network is" << isConnected;
+            LOG << "Network is" << isConnected;
             online = isConnected;
             Q_EMIT onlineStateChanged(isConnected);
         }
@@ -122,10 +122,10 @@ QString TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &
     if (file.open(QIODevice::WriteOnly)) {
         file.write(jsonDoc.toJson());
         file.close();
-        qDebug() << "JSON data exported to transfer.json";
+        DLOG << "JSON data exported to transfer.json";
         return savePath;
     } else {
-        qDebug() << "Failed to open file for writing.";
+        DLOG << "Failed to open file for writing.";
         return QString();
     }
 }
@@ -139,7 +139,7 @@ void TransferHelper::startTransfer()
     QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
 
     QStringList paths = getTransferFilePath(filePathList, appList, browserList, configList);
-    qInfo() << "transferring file list: " << paths;
+    LOG << "transferring file list: " << paths;
     transferhandle.sendFiles(paths);
 }
 
@@ -227,7 +227,7 @@ QString TransferHelper::getTransferJson(QStringList appList, QStringList fileLis
     }
     // add file
     QJsonArray fileArray;
-    qInfo() << "home_path:" << QDir::homePath();
+    LOG << "home_path:" << QDir::homePath();
     for (QString file : fileList) {
         if (file.contains(QDir::homePath()))
             file.replace(QDir::homePath() + "/", "");
@@ -253,7 +253,7 @@ QString TransferHelper::getTransferJson(QStringList appList, QStringList fileLis
         jsonObject["browsersName"] = browserArray;
 
     QString jsonfilePath = getJsonfile(jsonObject, QString(tempSavePath));
-    qInfo() << "transfer.json save path:" << jsonfilePath;
+    LOG << "transfer.json save path:" << jsonfilePath;
     return jsonfilePath;
 }
 
@@ -264,12 +264,12 @@ void TransferHelper::Retransfer(const QString jsonstr)
 
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
-        qWarning() << "Parsing JSON data failed: " << jsonstr;
+        WLOG << "Parsing JSON data failed: " << jsonstr;
         return;
     }
     jsonObj = jsonDoc.object();
     if (jsonObj.isEmpty()) {
-        qWarning() << "this job none file";
+        WLOG << "this job none file";
         return;
     }
 
@@ -302,12 +302,12 @@ void TransferHelper::Retransfer(const QString jsonstr)
     QStringList sizelist;
     sizelist.append(userData);
     OptionsManager::instance()->addUserOption(Options::KSelectFileSize, sizelist);
-    qInfo() << "user select file size:"
+    LOG << "user select file size:"
             << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];
 
     QStringList paths = getTransferFilePath(filePathList, appList, browserList, configList);
-    qInfo() << "continue last file list: " << paths;
-    qInfo() << "continue last file size:"
+    LOG << "continue last file list: " << paths;
+    LOG << "continue last file size:"
             << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];
     transferhandle.sendFiles(paths);
 
@@ -323,10 +323,10 @@ bool TransferHelper::checkSize(const QString &filepath)
         return false;
     auto sizestr = jsonObj["user_data"].toString();
     auto size = static_cast<int>(QVariant(sizestr).toLongLong() / 1024 / 1024 / 1024) * 2;
-    qInfo() << sizestr << "   jsonObj[ user_data ];" << size;
+    LOG << sizestr.toStdString() << "   jsonObj[ user_data ];" << size;
     int remainSize = getRemainSize();
     if (size > remainSize) {
-        qInfo() << "outOfStorage" << size;
+        LOG << "outOfStorage" << size;
         emit outOfStorage(size);
         cancelTransferJob();
         return false;
@@ -341,7 +341,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
     QFileInfo info(jsonfile);
     QString tempPath(tempCacheDir() + "/transfer-temp.json");
     if (!jsonfile.copy(tempPath))
-        qWarning() << "Failed to copy file";
+        WLOG << "Failed to copy file";
 
     connect(this, &TransferHelper::interruption, this, [this, filepath, tempPath]() {
         // 2.write unfinished files to tempjson file
@@ -380,7 +380,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
         jsonDoc.setObject(jsonObj);
         QFile tempfile(tempPath);
         if (!tempfile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-            qWarning() << "Failed to open JSON file for writing";
+            WLOG << "Failed to open JSON file for writing";
         tempfile.write(jsonDoc.toJson());
         tempfile.close();
     });
@@ -399,9 +399,9 @@ bool TransferHelper::isUnfinishedJob(QString &content)
     QFile f(transtempPath);
     if (!f.exists())
         return false;
-    qInfo() << "has UnfinishedJob: " << transtempPath;
+    LOG << "has UnfinishedJob: " << transtempPath.toStdString();
     if (!f.open(QIODevice::ReadOnly)) {
-        qWarning() << "could not open file";
+        WLOG << "could not open file";
         return false;
     }
     QByteArray bytes = f.readAll();

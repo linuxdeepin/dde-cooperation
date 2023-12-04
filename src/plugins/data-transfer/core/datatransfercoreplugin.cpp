@@ -23,7 +23,7 @@ void DataTransferCorePlugin::initialize()
     flag::set_value("journal", "true");   //journal日志
 
     fastring logdir = deepin_cross::BaseUtils::logDir().toStdString();
-    qInfo() << "set logdir: " << logdir.c_str();
+    LOG << "set logdir: " << logdir.c_str();
     flag::set_value("log_dir", logdir); //日志保存目录
 
     CommonUitls::loadTranslator();

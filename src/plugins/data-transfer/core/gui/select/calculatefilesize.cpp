@@ -128,7 +128,7 @@ void CalculateFileSizeThreadPool::work(const QList<QString> &list)
             workList.push_back(task);
             threadPool->start(task);
         } else {
-            qWarning() << "Path is neither a file nor a directory:" << path;
+            WLOG << "Path is neither a file nor a directory:" << path;
         }
     }
 }
@@ -171,7 +171,7 @@ void CalculateFileSizeThreadPool::exitPool()
         task->abortTask();
     }
     threadPool->waitForDone();
-    qInfo() << "calculate file size exit.";
+    LOG << "calculate file size exit.";
     delete threadPool;
     delete fileMap;
 }

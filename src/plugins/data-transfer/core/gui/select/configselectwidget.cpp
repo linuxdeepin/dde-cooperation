@@ -187,7 +187,7 @@ void ConfigSelectWidget::sendOptions()
         }
     }
 
-    qInfo() << "select browser :" << browser;
+    LOG << "select browser :" << browser;
     OptionsManager::instance()->addUserOption(Options::kBrowserBookmarks, browser);
 
     QStringList config;
@@ -201,7 +201,7 @@ void ConfigSelectWidget::sendOptions()
         }
     }
 
-    qInfo() << "select config :" << config;
+    LOG << "select config :" << config;
     OptionsManager::instance()->addUserOption(Options::kConfig, config);
 
     emit isOk(SelectItemName::CONFIG);

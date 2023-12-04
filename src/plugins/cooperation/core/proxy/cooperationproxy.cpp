@@ -313,7 +313,7 @@ void CooperationProxy::onCanceled()
         req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
         rpcClient.call(req, res);
         rpcClient.close();
-        qInfo() << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
+        LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
     });
 
     cooperationDialog()->close();

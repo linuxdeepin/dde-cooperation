@@ -32,9 +32,9 @@ QJsonObject SettingHelper::ParseJson(const QString &filepath)
 {
     QJsonObject jsonObj;
     QFile file(filepath);
-    qInfo() << "Parsing the configuration file for transmission" << file.fileName();
+    LOG << "Parsing the configuration file for transmission" << file.fileName().toStdString();
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "could not open datajson file";
+        WLOG << "could not open datajson file";
         return jsonObj;
     }
     QByteArray jsonData = file.readAll();
@@ -42,13 +42,13 @@ QJsonObject SettingHelper::ParseJson(const QString &filepath)
 
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
-        qWarning() << "Parsing JSON data failed";
+        WLOG << "Parsing JSON data failed";
         return jsonObj;
     }
     jsonObj = jsonDoc.object();
 
     if (jsonObj.isEmpty())
-        qWarning() << "this job none file";
+        WLOG << "this job none file";
 
     return jsonObj;
 }
@@ -60,7 +60,7 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     if (jsonObj.isEmpty()) {
         isall = false;
         addTaskcounter(-1);
-        qWarning() << "transfer.json is invaild";
+        WLOG << "transfer.json is invaild";
         emit TransferHelper::instance()->failure(tr("Profiles"), tr("File"), tr("Wrong or missing profile"));
         return false;
     }
@@ -92,7 +92,7 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
 
 bool SettingHelper::setWallpaper(const QString &filepath)
 {
-    qInfo() << "Setting picture as wallpaper" << filepath;
+    LOG << "Setting picture as wallpaper" << filepath.toStdString();
 
     QString service = "com.deepin.daemon.Appearance";
     QString path = "/com/deepin/daemon/Appearance";
@@ -107,10 +107,10 @@ bool SettingHelper::setWallpaper(const QString &filepath)
 
     QDBusMessage reply = interface.call(func, monitorName, imageFile);
     if (reply.type() == QDBusMessage::ReplyMessage) {
-        qDebug() << "SetMonitorBackground method called successfully";
+        DLOG << "SetMonitorBackground method called successfully";
         return true;
     } else {
-        qDebug() << "Failed to call SetMonitorBackground method";
+        DLOG << "Failed to call SetMonitorBackground method";
         return false;
     }
 }
@@ -131,10 +131,10 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
     }
 
     QString targetfile = targetDir + info.fileName();
-    qInfo() << "Set browser bookmarks" << filepath << targetfile;
+    LOG << "Set browser bookmarks" << filepath.toStdString() << targetfile.toStdString();
 
     bool success = moveFile(filepath, targetfile);
-    qInfo() << "Set browser bookmarks" << targetfile << success;
+    LOG << "Set browser bookmarks" << targetfile.toStdString() << success;
     if (!success) {
         emit TransferHelper::instance()->failure(tr("Browser Bookmarks"), tr("Bookmarks"), tr("Setup failed, configuration can be imported manually"));
         return false;
@@ -154,7 +154,7 @@ bool SettingHelper::installApps(const QString &app)
         return false;
     }
 
-    qInfo() << "Installing " << app << package;
+    LOG << "Installing " << app.toStdString() << package.toStdString();
 
     QString service = "com.deepin.lastore";
     QString path = "/com/deepin/lastore";
@@ -168,7 +168,7 @@ bool SettingHelper::installApps(const QString &app)
     if (existReply.type() == QDBusMessage::ReplyMessage) {
         bool isExist = existReply.arguments().at(0).toBool();
         if (isExist) {
-            qWarning() << app << "is installed";
+            WLOG << app.toStdString() << "is installed";
             return true;
         }
     }
@@ -179,19 +179,19 @@ bool SettingHelper::installApps(const QString &app)
     QDBusMessage reply = interface.call(func, QString(), package);
 
     if (reply.type() != QDBusMessage::ReplyMessage) {
-        qWarning() << "Installing " << app << "false" << reply.errorMessage();
+        WLOG << "Installing " << app.toStdString() << "false" << reply.errorMessage().toStdString();
         isall = false;
         emit TransferHelper::instance()->failure(app, tr("App"), tr("Installation failed, please go to the app store to install"));
         return false;
     }
 
     QString jobPath = reply.arguments().at(0).value<QDBusObjectPath>().path();
-    qInfo() << "Installing " << app << "true" << jobPath;
+    LOG << "Installing " << app.toStdString() << "true" << jobPath.toStdString();
 
     bool success = QDBusConnection::systemBus().connect(service, jobPath, "org.freedesktop.DBus.Properties",
                                                         "PropertiesChanged", this, SLOT(onPropertiesChanged(QDBusMessage)));
     if (!success)
-        qWarning() << "Failed to connect to signal";
+        WLOG << "Failed to connect to signal";
 
     emit TransferHelper::instance()->transferContent(tr("Installing..."), app, 100, -2);
 
@@ -216,7 +216,7 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
             package = packages.first();
         QString app = applist.key(package);
         QString content = applist.key(package) + "  Key:" + key + "   Value:" + value.toString();
-        qInfo() << content;
+
         emit TransferHelper::instance()->transferContent(tr("Installing..."), content, 100, -2);
         if (key == "Status" && value == "succeed")
             addTaskcounter(-1);
@@ -264,7 +264,7 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
             moveFile(file, targetFile);
         }
     }
-    qInfo() << jsonObj["user_file"].toString();
+    LOG << jsonObj["user_file"].toString().toStdString();
     return true;
 }
 
@@ -284,11 +284,11 @@ bool SettingHelper::moveFile(const QString &src, QString &dst)
         }
     }
     QFile f(src);
-    qInfo() << dst;
+    LOG << "moveFile dst: " << dst.toStdString();
     if (f.rename(dst))
         return true;
 
-    qWarning() << f.errorString();
+    WLOG << "moveFile error: " << f.errorString().toStdString();
     return false;
 }
 
@@ -300,5 +300,5 @@ void SettingHelper::initAppList()
     for (const QString &app : jsonObj.keys()) {
         applist[app] = jsonObj.value(app).toObject().value("packageName").toString();
     }
-    qInfo() << "SettingHelper::initAppList() finished";
+    LOG << "SettingHelper::initAppList() finished";
 }

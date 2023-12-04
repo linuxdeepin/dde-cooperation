@@ -136,7 +136,7 @@ bool UploadFileWidget::checkBackupFile(const QString &filePath)
 
     // Verify size
     QFileInfo info(filePath);
-    qInfo() << "checkBackupFile .size();" << info.size();
+    LOG << "checkBackupFile .size();" << info.size();
     int size = static_cast<int>(info.size() / 1024 / 1024 / 1024) * 2;
     if (size > TransferHelper::instance()->getRemainSize()) {
         tipLabel->setVisible(true);
@@ -152,7 +152,7 @@ void UploadFileWidget::nextPage()
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::transferringwidget);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+        WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
 }
 
@@ -162,7 +162,7 @@ void UploadFileWidget::backPage()
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::choosewidget);
     } else {
-        qWarning() << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
+        WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
     }
 }
 
@@ -334,7 +334,7 @@ QString UploadFileFrame::getZipFilePath() const
 void UploadFileFrame::uploadFile()
 {
     zipFilePath = QFileDialog::getOpenFileName(nullptr, tr("select zip file"), "", tr("ZIP file (*.zip)"));
-    qInfo() << "set zipFilePath =" + zipFilePath;
+    LOG << "set zipFilePath =" + zipFilePath.toStdString();
     if (!zipFilePath.isEmpty())
         emit updateUI(uploadStatus::valid);
 }
@@ -369,7 +369,7 @@ void UploadFileFrame::dropEvent(QDropEvent *event)
         return;
     } else {
         zipFilePath = url.path();
-        qInfo() << "set zipFilePath =" + zipFilePath;
+        LOG << "set zipFilePath =" + zipFilePath.toStdString();
         if (!zipFilePath.isEmpty())
             emit updateUI(uploadStatus::valid);
     }
