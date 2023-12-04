@@ -173,6 +173,9 @@ void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
 
 void TransferJob::insertFileInfo(FileInfo &info)
 {
+    // reset
+    atomic_store(&_queue_empty_times, 0);
+
     int fileid = info.file_id;
     auto it = _file_info_maps.find(fileid);
     if (it == _file_info_maps.end()) {
@@ -386,8 +389,8 @@ void TransferJob::handleBlockQueque()
                 }
             }
 
-            if (self->_queue_empty_times > 500) {
-                // 每10ms增1，连续5000ms无数据
+            if (self->_queue_empty_times > 3000) {
+                // 每10ms增1，连续30s无数据
                 DLOG << " wait block data timeout NOW!";
                 self->handleJobStatus(JOB_TRANS_FAILED);
                 break;

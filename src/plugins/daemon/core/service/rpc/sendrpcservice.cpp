@@ -62,7 +62,7 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
                 info.tarAppname = tar.isEmpty() ?
                                   appName.toStdString() : tar.toStdString();
             }
-            res = sender->doSendProtoMsg(type, info.as_json().str().c_str(), data);
+            res = sender->sendProtoMsg(type, info.as_json().str().c_str(), data);
         } else if (type == APPLY_SHARE_CONNECT_RES) {
             co::Json param;
             param.parse_from(msg.toStdString());
@@ -71,9 +71,9 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
             QString tar = sender->targetAppname();
             info.tarAppname = tar.isEmpty() ?
                               appName.toStdString() : tar.toStdString();
-            res = sender->doSendProtoMsg(type, info.as_json().str().c_str(), data);
+            res = sender->sendProtoMsg(type, info.as_json().str().c_str(), data);
         } else {
-            res = sender->doSendProtoMsg(type, msg, data);
+            res = sender->sendProtoMsg(type, msg, data);
         }
 
     } else {
@@ -99,7 +99,7 @@ void SendRpcWork::handlePing(const QStringList apps)
         auto sender = this->rpcSender(appName);
         if (sender.isNull())
             continue;
-        SendResult rs = sender->doSendProtoMsg(RPC_PING, sender->targetAppname(), QByteArray());
+        SendResult rs = sender->sendProtoMsg(RPC_PING, sender->targetAppname(), QByteArray());
         if (rs.data.empty() || rs.errorType < INVOKE_OK) {
             DLOG << "remote server no reply ping !!!!! " << appName.toStdString();
             SendStatus st;

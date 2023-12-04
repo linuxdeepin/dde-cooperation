@@ -70,6 +70,7 @@ public:
                                  QObject *parent = nullptr);
     ~RemoteServiceSender();
 
+    SendResult sendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data);
     SendResult doSendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data);
     void clearExecutor();
     void remoteIP(const QString &session, QString *ip, uint16 *port);
@@ -88,6 +89,7 @@ private:
     QString _target_ip;
     uint16 _target_port;
     bool isTrans { false };
+    int _rpc_call { 0 };
 };
 
 class RemoteServiceBinder : public QObject {

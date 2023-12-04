@@ -162,7 +162,7 @@ void Discoverer::handle_message(const fastring& message, const fastring& sender_
                 0,
                 _timer.ms(),
             };
-        DLOG << "ignoring: " << discovered_service;
+        //DLOG << "ignoring: " << discovered_service;
     }
 }
 

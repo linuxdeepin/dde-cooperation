@@ -62,6 +62,7 @@ RemoteServiceSender::RemoteServiceSender(const QString &appname, const QString &
     , _target_port(port)
     , isTrans(isTrans)
 {
+    atomic_store(&_rpc_call, 0);
 }
 
 RemoteServiceSender::~RemoteServiceSender()
@@ -70,8 +71,29 @@ RemoteServiceSender::~RemoteServiceSender()
         clearLongExecutor();
 }
 
+SendResult RemoteServiceSender::sendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data)
+{
+    SendResult res;
+#if defined(WIN32)
+    co::wait_group wg;
+    wg.add(1);
+    auto s = co::next_sched();
+    s->go([this, &type, msg, &data, &res, wg]() {
+#endif
+    res = doSendProtoMsg(type, msg, data);
+#if defined(WIN32)
+        wg.done();
+    });
+    wg.wait();
+#endif
+    return res;
+}
+
 SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data)
 {
+    while (_rpc_call == 1) sleep::ms(1);
+
+    atomic_store(&_rpc_call, 1);
     DLOG_IF(TEST_LOGOUT) << "send to remote = " << type << " = " << msg.toStdString() << "\n ip = "
          << _target_ip.toStdString() << " : port = " << _target_port;
     QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
@@ -100,17 +122,8 @@ SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString 
     int retryCount = 0;
 
 retryed:
-#if defined(WIN32)
-    co::wait_group wg;
-    wg.add(1);
-    UNIGO([&stub, &rpc_controller, &req, &rpc_res, wg]() {
-#endif
     stub.proto_msg(rpc_controller, &req, &rpc_res, nullptr);
-#if defined(WIN32)
-        wg.done();
-    });
-    wg.wait();
-#endif
+    atomic_store(&_rpc_call, 0);
 
     if (rpc_controller->ErrorCode() != 0) {
         retryCount++;
