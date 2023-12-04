@@ -51,12 +51,10 @@ bool TransferJob::initRpc(fastring target, uint16 port)
         // 必须等待对方回复了才执行后面的流程
         auto res = _remote->doSendProtoMsg(IN_TRANSJOB, req_job.as_json().str().c_str(), QByteArray());
         if (res.errorType < INVOKE_OK) {
-            SendStatus st;
-            st.type = res.errorType;
-            st.msg = res.as_json().str();
-            co::Json req = st.as_json();
-            req.add_member("api", "Frontend.notifySendStatus");
-            SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+            SendIpcService::instance()->handleRpcSendStatus(_app_name.c_str(), IN_TRANSJOB,
+                                                            res.errorType, res.as_json().str().c_str());
+            SendIpcService::instance()->handleRemoteOffline(_app_name.c_str(), REMOTE_CLIENT_OFFLINE,
+                                                            res.as_json().str().c_str());
             this->_init_success = false;
             return false;
         }
@@ -220,12 +218,10 @@ void TransferJob::scanPath(fastring root, fastring path)
     info.entry.rcvappName = _tar_app_name;
     auto res = _remote->doSendProtoMsg(FS_INFO, info.as_json().str().c_str(), QByteArray());
     if (res.errorType < INVOKE_OK) {
-        SendStatus st;
-        st.type = res.errorType;
-        st.msg = res.as_json().str();
-        co::Json req = st.as_json();
-        req.add_member("api", "Frontend.notifySendStatus");
-        SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+        SendIpcService::instance()->handleRpcSendStatus(_app_name.c_str(), IN_TRANSJOB,
+                                                        res.errorType, res.as_json().str().c_str());
+        SendIpcService::instance()->handleRemoteOffline(_app_name.c_str(), REMOTE_CLIENT_OFFLINE,
+                                                        res.as_json().str().c_str());
         cancel();
     }
     if (_status >= STOPED)
@@ -444,12 +440,10 @@ void TransferJob::handleBlockQueque()
             // DLOG << "(" << job_id << ") send block " << block->filename << " size: " << len;
             auto res = _remote->doSendProtoMsg(FS_DATA, file_block.as_json().str().c_str(), data);
             if (res.errorType < INVOKE_OK) {
-                SendStatus st;
-                st.type = res.errorType;
-                st.msg = res.as_json().str();
-                co::Json req = st.as_json();
-                req.add_member("api", "Frontend.notifySendStatus");
-                SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+                SendIpcService::instance()->handleRpcSendStatus(_app_name.c_str(), IN_TRANSJOB,
+                                                                res.errorType, res.as_json().str().c_str());
+                SendIpcService::instance()->handleRemoteOffline(_app_name.c_str(), REMOTE_CLIENT_OFFLINE,
+                                                                res.as_json().str().c_str());
                 cancel();
                 exception = true;
             }

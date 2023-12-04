@@ -301,6 +301,8 @@ void HandleRpcService::handleRemoteShareDisConnect(co::Json &info)
     co::Json req = ev.as_json();
     req.add_member("api", "Frontend.shareEvents");
     SendIpcService::instance()->handleSendToClient(sd.tarAppname.c_str(), req.str().c_str());
+    SendIpcService::instance()->handleRemoteOffline(sd.tarAppname.c_str(), REMOTE_SHARE_APPLY_CLIENT_OFFLINE,
+                                                    "remote apply diconnect share !!!");
 }
 
 void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
@@ -393,6 +395,8 @@ void HandleRpcService::handleRemoteDisConnectCb(co::Json &info)
     co::Json req = info;
     req.add_member("api", "Frontend.cbDisConnect");
     SendIpcService::instance()->handleSendToClient(sd.tarAppname.c_str(), req.str().c_str());
+    SendIpcService::instance()->handleRemoteOffline(sd.tarAppname.c_str(), REMOTE_APPLY_CLIENT_OFFLINE,
+                                                    "remote apply diconnect !!!");
     SendRpcService::instance()->removePing(sd.tarAppname.c_str());
 }
 
@@ -425,7 +429,8 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             st.msg = co::Json({{"ip", ip}, {"port", port}}).str();
             co::Json req = st.as_json();
             req.add_member("api", "Frontend.notifySendStatus");
-            SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+            SendIpcService::instance()->handleRemoteOfflineAll(LOCAL_LISTEN_CLIENT_OFFLINE,
+                                                               co::Json({{"ip", ip}, {"port", port}}).str().c_str());
         }
     };
     if (port == UNI_RPC_PORT_TRANS) {
@@ -590,13 +595,8 @@ void HandleRpcService::handleTimeOut()
         auto count = _ping_lost_count.take(key);
         if (count > 3) {
             // 通知客户端连接超时
-            SendStatus st;
-            st.type = 0;
-            st.status = REMOTE_CLIENT_OFFLINE;
-            co::Json req = st.as_json();
-            req.add_member("api", "Frontend.notifySendStatus");
-            ELOG << "remote server disconnect ======= " << key.toStdString();
-            SendIpcService::instance()->handleSendToClient(key, req.str().c_str());
+            SendIpcService::instance()->handleRemoteOffline(key, LOCAL_PING_TIME_OUT_CLIENT_OFFLINE,
+                                                            "remote ping time out !!!");
             continue;
         }
         _ping_lost_count.insert(key, ++count);

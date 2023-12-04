@@ -11,6 +11,7 @@
 #include <QSharedPointer>
 #include <QThread>
 
+#include "common/constant.h"
 #include "co/json.h"
 
 class BackendService;
@@ -77,6 +78,9 @@ public slots:
     void handleRemoveJob(const QString appName, const int jobID) { emit removeJob(appName, jobID); }
     void handleSendToAllClient(const QString req) { emit sendToAllClient(req); }
     void handlebackendOnline() { emit backendOnline(); }
+    void handleRemoteOffline(const QString &appName, const OffLineStatus status, const QString &errormsg);
+    void handleRemoteOfflineAll(const OffLineStatus status, const QString &errormsg);
+    void handleRpcSendStatus(const QString &appName, const int sendType, const int errCode, const QString &msg);
 
 private:
     explicit SendIpcService( QObject *parent = nullptr);

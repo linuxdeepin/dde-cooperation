@@ -565,3 +565,19 @@ struct ShareStartRmoteReply {
     }
 };
 
+struct RemoteOffline {
+    int32 errCode;
+    fastring errorMsg;
+
+    void from_json(const co::Json& _x_) {
+        errCode = (int32)_x_.get("errCode").as_int64();
+        errorMsg = _x_.get("errorMsg").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("errCode", errCode);
+        _x_.add_member("errorMsg", errorMsg);
+        return _x_;
+    }
+};

@@ -97,20 +97,11 @@ void SendRpcWork::handlePing(const QStringList apps)
         if (_stoped)
             return;
         auto sender = this->rpcSender(appName);
+
+
         if (sender.isNull())
             continue;
-        SendResult rs = sender->doSendProtoMsg(RPC_PING, sender->targetAppname(), QByteArray());
-        if (rs.data.empty() || rs.errorType < INVOKE_OK) {
-            DLOG << "remote server no reply ping !!!!! " << appName.toStdString();
-            SendStatus st;
-            st.type = RPC_PING;
-            st.status = rs.errorType;
-            st.msg = rs.data;
-            co::Json req = st.as_json();
-            req.add_member("api", "Frontend.notifySendStatus");
-            SendIpcService::instance()->handleSendToClient(appName, req.str().c_str());
-            SendRpcService::instance()->removePing(appName);
-        }
+        handleDoSendProtoMsg(RPC_PING, appName, sender->targetAppname(), QByteArray());
     }
 }
 

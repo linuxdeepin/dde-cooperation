@@ -244,6 +244,37 @@ void SendIpcService::handleAddJob(const QString appName, const int jobId)
     emit addJob(appName , jobId);
 }
 
+void SendIpcService::handleRemoteOffline(const QString &appName, const OffLineStatus status, const QString &errormsg)
+{
+    RemoteOffline st;
+    st.errCode = status;
+    st.errorMsg = errormsg.toStdString();
+    co::Json req = st.as_json();
+    req.add_member("api", "Frontend.remoteOffline");
+    handleSendToClient(appName, req.str().c_str());
+}
+
+void SendIpcService::handleRemoteOfflineAll(const OffLineStatus status, const QString &errormsg)
+{
+    RemoteOffline st;
+    st.errCode = status;
+    st.errorMsg = errormsg.toStdString();
+    co::Json req = st.as_json();
+    req.add_member("api", "Frontend.remoteOffline");
+    handleSendToAllClient(req.str().c_str());
+}
+
+void SendIpcService::handleRpcSendStatus(const QString &appName, const int sendType, const int errCode, const QString &msg)
+{
+    SendStatus st;
+    st.type = sendType;
+    st.status = errCode;
+    st.msg = msg.toStdString();
+    co::Json req = st.as_json();
+    req.add_member("api", "Frontend.notifySendStatus");
+    handleSendToClient(appName, req.str().c_str());
+}
+
 void SendIpcService::initConnect()
 {
     connect(qApp, &QCoreApplication::aboutToQuit, this, &SendIpcService::handleAboutToQuit, Qt::DirectConnection);
@@ -258,6 +289,8 @@ void SendIpcService::initConnect()
     connect(this, &SendIpcService::removeSessionBySessionID, work.data(), &SendIpcWork::handleRemoveSessionBySessionID,
             Qt::QueuedConnection);
     connect(this, &SendIpcService::sendToClient, work.data(), &SendIpcWork::handleSendToClient,
+            Qt::QueuedConnection);
+    connect(this, &SendIpcService::sendToAllClient, work.data(), &SendIpcWork::handleSendToAllClient,
             Qt::QueuedConnection);
     connect(this, &SendIpcService::addJob, work.data(), &SendIpcWork::handleAddJob,
             Qt::QueuedConnection);

@@ -211,3 +211,16 @@ void FrontendImpl::cbDisConnect(co::Json &req, co::Json &res)
         { "msg", "" }
     };
 }
+
+void FrontendImpl::remoteOffline(co::Json &req, co::Json &res)
+{
+    BridgeJsonData bridge;
+    bridge.type = FRONT_REMOTE_OFFLINE;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
+}

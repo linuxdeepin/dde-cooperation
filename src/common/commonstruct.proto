@@ -171,3 +171,8 @@ object ShareStartRmoteReply {
     string tarAppname // 目标的app名称
     string errorMsg // 错误消息
 }
+
+object RemoteOffline {
+    int32 errCode // 错误码
+    string errorMsg // 错误消息
+}

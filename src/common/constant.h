@@ -5,7 +5,7 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#define TEST_LOGOUT false
+#define TEST_LOGOUT true
 
 #define UNI_RPC_PROTO 1.0
 #define UNI_KEY "UOS-COOPERATION"
@@ -135,18 +135,20 @@ typedef enum flow_type_t {
     TRANS_DONE = 3,
 } FSFlowType;
 
-typedef enum rpc_result_t {
-    HAVE_NO_EXECTOR = -3,
-    PARAM_ERROR = -2,
-    INVOKE_FAIL = -1,
+typedef enum rpc_result_t {    
     INVOKE_OK = 0,
-    INVOKE_DONE = 1,
+    INVOKE_FAIL = 1,
+    PARAM_ERROR = 2,
+    HAVE_NO_EXECTOR = 3,
 } RpcResult;
 
-typedef enum rpc_send_status {
-    APPLY_TRANS_FILE = 0,
+typedef enum offline_status {
     REMOTE_CLIENT_OFFLINE = 1, // tcp远端的tcpclient下线（服务调用方下线）
-} RpcSendStatus;
+    LOCAL_LISTEN_CLIENT_OFFLINE = 2, // tcp服务器端监听传输文件的客户端下线
+    LOCAL_PING_TIME_OUT_CLIENT_OFFLINE = 3, // 本地收到ping超时，判断远端下线
+    REMOTE_APPLY_CLIENT_OFFLINE = 4, // 远端主动请求断开连接的下线
+    REMOTE_SHARE_APPLY_CLIENT_OFFLINE = 5, // 远端共享主动请求断开连接的下线
+} OffLineStatus;
 
 enum FileType {
   DIR = 0,

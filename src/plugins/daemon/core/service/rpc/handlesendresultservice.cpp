@@ -29,13 +29,8 @@ void HandleSendResultService::handleSendResultMsg(const QString appName, const Q
     res.from_json(res_json);
 
     if (res.errorType < INVOKE_OK) {
-        SendStatus st;
-        st.type = static_cast<int32>(res.protocolType);
-        st.status = res.errorType;
-        st.msg = msg.toStdString();
-        co::Json req = st.as_json();
-        req.add_member("api", "Frontend.notifySendStatus");
-        SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+        SendIpcService::instance()->handleRpcSendStatus(appName, static_cast<int>(res.protocolType), res.errorType, msg);
+        SendIpcService::instance()->handleRemoteOffline(appName, REMOTE_CLIENT_OFFLINE, msg);
         return;
     }
     if (res.protocolType == IN_LOGIN_INFO) {
