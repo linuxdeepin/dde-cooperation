@@ -181,49 +181,6 @@ void HandleRpcService::handleRemoteDisc(co::Json &info)
     SendIpcService::instance()->handleSendToClient(mis.app.c_str(), msg.str().c_str());
 }
 
-void HandleRpcService::handleRemoteFileInfo(co::Json &info)
-{
-    FileTransCreate res;
-    res.from_json(info);
-    int32 fileid = res.file_id;
-
-    FileEntry entry = res.entry;
-
-    FileType type = static_cast<FileType>(entry.filetype);
-    fastring filename;
-    if (res.sub_dir.empty()) {
-        filename = entry.name;
-    } else {
-        filename = res.sub_dir + "/" + entry.name;
-    }
-
-    FileInfo fsinfo;
-    fsinfo.job_id = res.job_id;
-    fsinfo.file_id = fileid;
-    fsinfo.name = filename;
-    fsinfo.total_size = entry.size;
-    fsinfo.current_size = 0;
-    fsinfo.time_spended = -1;
-    co::Json tm = fsinfo.as_json();
-    if (type == FILE_B) {
-        JobManager::instance()->handleFSInfo(tm, false);
-    } else if (type == DIR) {
-        JobManager::instance()->handleFSInfo(tm, true);
-    }
-
-    bool exist = JobManager::instance()->handleCreateFile(res.job_id, filename.c_str(), type == DIR);
-
-    FileTransResponse reply;
-    OutData data;
-
-    reply.id = fileid;
-    reply.name = (filename.c_str());
-    reply.result = (exist ? OK : IO_ERROR);
-    data.json = reply.as_json().str();
-    _outgo_chan << data;
-
-}
-
 void HandleRpcService::handleRemoteFileBlock(co::Json &info, fastring data)
 {
     FileTransResponse reply;
@@ -509,12 +466,6 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 // must update the binrary data into struct object.
                 self->handleRemoteFileBlock(json_obj, indata.buf);
-                break;
-            }
-            case FS_INFO:
-            {
-                self->handleRemoteFileInfo(json_obj);
-
                 break;
             }
             case TRANS_CANCEL:

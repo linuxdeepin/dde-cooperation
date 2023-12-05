@@ -29,7 +29,6 @@ public:
     bool handleRemoteApplyTransFile(co::Json &info);
     bool handleRemoteLogin(co::Json &info);
     void handleRemoteDisc(co::Json &info);
-    void handleRemoteFileInfo(co::Json &info);
     void handleRemoteFileBlock(co::Json &info, fastring data);
     void handleRemoteReport(co::Json &info);
     void handleRemoteJobCancel(co::Json &info);

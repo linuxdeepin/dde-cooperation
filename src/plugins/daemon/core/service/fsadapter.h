@@ -23,6 +23,8 @@ public:
     static bool newFileByFullPath(const char *fullpath, bool isdir);
     static bool noneExitFileByFullPath(const char *fullpath, bool isdir, fastring *path);
     static bool writeBlock(const char *name, int64 seek_len, const char *data, size_t size);
+    static bool writeBlock(const char *name, int64 seek_len, const char *data, size_t size,
+                           const int flags, fs::file **fx);
     static fastring noneExitPath(const char *name);
 
 signals:
