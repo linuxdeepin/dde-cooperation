@@ -35,6 +35,21 @@ TransferHandle::TransferHandle()
         saveSession(TransferWoker::instance()->getSessionId());
     }
 
+    QTimer *timer = new QTimer();
+
+    // 连接定时器的 timeout 信号到槽函数
+    ipcPing = 3;
+    connect(timer, &QTimer::timeout, [this, appName]() {
+        ipcPing--;
+        if (ipcPing <= 0) {
+            _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
+            if (_backendOK) {
+                saveSession(TransferWoker::instance()->getSessionId());
+            }
+        }
+    });
+    timer->start(1000);
+
     //log
     //handleConnectStatus(1,"66");
     // qInstallMessageHandler(logHandler);
@@ -86,6 +101,7 @@ void TransferHandle::localIPCStart()
             }
             switch (bridge.type) {
             case IPC_PING: {
+                ipcPing = 3;
                 ipc::PingFrontParam param;
                 param.from_json(json_obj);
 
@@ -153,6 +169,14 @@ void TransferHandle::localIPCStart()
             }
             case FRONT_DISCONNECT_CB: {
                 emit TransferHelper::instance()->disconnected();
+                break;
+            }
+            case FRONT_SERVER_ONLINE: {
+                QString appName = QCoreApplication::applicationName();
+                _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
+                if (_backendOK) {
+                    saveSession(TransferWoker::instance()->getSessionId());
+                }
                 break;
             }
             default:

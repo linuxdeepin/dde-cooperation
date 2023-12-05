@@ -54,6 +54,8 @@ private:
 
     bool _this_destruct = false;
     rpc::Server *_rpcServer = nullptr;
+
+    int ipcPing = 3;
 };
 
 class TransferWoker
