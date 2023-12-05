@@ -19,29 +19,12 @@ ShareCooperationService::ShareCooperationService(QObject *parent) : QObject(pare
 
     QSettings *settings = DaemonConfig::instance()->settings();
     _cooConfig = new CooConfig(settings);
-    // 初始化配置文件
-
-
-//    _cooConfig.setScreenName(m_pLineEditScreenName->text());
-//    _cooConfig.setPort(m_pSpinBoxPort->value());
-//    _cooConfig.setNetworkInterface(m_pLineEditInterface->text());
-//    _cooConfig.setCryptoEnabled(m_pCheckBoxEnableCrypto->isChecked());
-//    _cooConfig.setLogLevel(m_pComboLogLevel->currentIndex());
-//    _cooConfig.setLogToFile(m_pCheckBoxLogToFile->isChecked());
-//    _cooConfig.setLogFilename(m_pLineEditLogFilename->text());
-//    _cooConfig.setAutoStart(m_pCheckBoxAutoStart->isChecked());
-//    _cooConfig.saveSettings();
+    setBarrierProcess(new QProcess(this));
 }
 
 ShareCooperationService::~ShareCooperationService()
 {
 
-}
-
-ShareCooperationService *ShareCooperationService::instance()
-{
-    static ShareCooperationService in;
-    return &in;
 }
 
 void ShareCooperationService::setBarrierType(BarrierType type)
@@ -127,8 +110,6 @@ bool ShareCooperationService::startBarrier()
 
 
     args << "--name" << getScreenName();
-
-    setBarrierProcess(new QProcess(this));
 
 #ifndef Q_OS_LINUX
 

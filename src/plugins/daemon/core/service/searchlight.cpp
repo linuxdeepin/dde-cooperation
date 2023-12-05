@@ -243,6 +243,11 @@ void Announcer::updateBase(const fastring &info)
     _base_info = info;
 }
 
+fastring Announcer::baseInfo() const
+{
+    return _base_info;
+}
+
 void Announcer::appendApp(const fastring &info)
 {
     int idx = sameApp(info);

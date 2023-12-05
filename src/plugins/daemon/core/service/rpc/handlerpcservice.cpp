@@ -6,6 +6,7 @@
 #include "service/ipc/sendipcservice.h"
 #include "sendrpcservice.h"
 #include "service/rpc/remoteservice.h"
+#include "service/share/sharecooperationservicemanager.h"
 #include "service/share/sharecooperationservice.h"
 #include "common/constant.h"
 #include "common/commonstruct.h"
@@ -294,6 +295,7 @@ void HandleRpcService::handleRemoteShareDisConnect(co::Json &info)
     // 发送给前端
     ShareDisConnect sd;
     sd.from_json(info);
+    DiscoveryJob::instance()->updateAnnouncShare(false);
 
     ShareEvents ev;
     ev.eventType = FRONT_SHARE_DISCONNECT;
@@ -307,6 +309,9 @@ void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
 {
     ShareConnectReply reply;
     reply.from_json(info);
+
+    if (reply.reply == 1)
+        DiscoveryJob::instance()->updateAnnouncShare(true, reply.ip);
 
     ShareEvents event;
     event.eventType = FRONT_SHARE_APPLY_CONNECT_REPLY;
@@ -335,9 +340,9 @@ void HandleRpcService::handleRemoteShareStart(co::Json &info)
     rreply.appName = st.tarAppname;
 
     // 获取其中的ip进行Barrier的client配置
-    ShareCooperationService::instance()->setBarrierType(BarrierType::Client);
-    if (!ShareCooperationService::instance()->setClientTargetIp(st.config.client_screen.c_str(), st.ip.c_str(), st.port)
-            || !ShareCooperationService::instance()->restartBarrier()) {
+    if (!ShareCooperationServiceManager::instance()->client()->
+            setClientTargetIp(st.config.client_screen.c_str(), st.ip.c_str(), st.port)
+            || !ShareCooperationServiceManager::instance()->client()->restartBarrier()) {
         reply.result = false;
         reply.errorMsg = "init client config error or start error! param = " + info.str();
         rreply.result = false;
@@ -375,7 +380,15 @@ void HandleRpcService::handleRemoteShareStop(co::Json &info)
     ShareStop st;
     st.from_json(info);
     // 停止自己的共享，并告诉前端
-    ShareCooperationService::instance()->stopBarrier();
+    if (st.flags == ShareStopFlag::SHARE_STOP_ALL) {
+        ShareCooperationServiceManager::instance()->stop();
+        DiscoveryJob::instance()->updateAnnouncShare(false);
+    } else if (st.flags == ShareStopFlag::SHARE_STOP_CLIENT) {
+        ShareCooperationServiceManager::instance()->client()->stopBarrier();
+    } else {
+        ShareCooperationServiceManager::instance()->server()->stopBarrier();
+    }
+
     ShareEvents event;
     event.eventType = FRONT_SHARE_STOP;
     event.data = info.str();
@@ -553,7 +566,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 // 被控制方收到控制方的开始共享
                 OutData data;
                 _outgo_chan << data;
-                self->handleRemoteShareStart(json_obj);
+                self->handleRemoteShareStartRes(json_obj);
                 break;
             }
             case SHARE_STOP:

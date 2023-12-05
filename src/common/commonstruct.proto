@@ -117,12 +117,14 @@ object ShareConnectReply {
   string appName // 自己的app名称
   string tarAppname // 目标app的名称
   string msg // 错误信息
+  string ip // 发送端的ip
   int32 reply // 0是拒绝，1是同意
 }
 
 object ShareStop {
     string appName // 自己的app名称
     string tarAppname // 目标的app名称
+    int32 flags // 0是所有多关闭,1关闭服务器，2关闭客户端
 }
 
 object ShareServerConfig {

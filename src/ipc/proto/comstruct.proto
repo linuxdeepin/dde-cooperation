@@ -7,6 +7,7 @@ object NodePeerInfo {
     string username
     string hostname
     string ipv4
+    string share_connect_ip
     int32 port
     int32 os_type // OS type
     int32 mode_type // privacy mode type

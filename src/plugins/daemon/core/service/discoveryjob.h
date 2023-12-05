@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QReadWriteLock>
 #include <co/stl.h>
+#include <QMutex>
 
 class DiscoveryJob : public QObject
 {
@@ -20,7 +21,9 @@ public:
 
     void updateAnnouncBase(const fastring info);
     void updateAnnouncApp(bool remove, const fastring info);
+    void updateAnnouncShare(const bool remove, const fastring connectIP = "");
     void removeAppbyName(const fastring name);
+    fastring baseInfo() const;
 
     co::list<fastring> getNodes();
 
@@ -46,6 +49,7 @@ private:
     //<uuid, <peerinfo, exist>>
     QReadWriteLock _dis_lock;
     co::lru_map<fastring, std::pair<fastring, bool>> _dis_node_maps;
+    mutable QMutex _lock;
 };
 
 #endif // DISCOVERYJOB_H

@@ -105,6 +105,8 @@ public:
     // update the announce info
     void updateBase(const fastring &info);
 
+    fastring baseInfo() const;
+
     // append app's info
     void appendApp(const fastring &info);
 
