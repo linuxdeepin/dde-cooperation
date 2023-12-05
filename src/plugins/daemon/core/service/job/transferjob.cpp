@@ -77,7 +77,7 @@ void TransferJob::initJob(fastring appname, fastring targetappname, int id, fast
     _status = INIT;
     if (_writejob) {
         fastring fullpath = path::join(
-                    DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+                DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
         FSAdapter::newFileByFullPath(fullpath.c_str(), true);
     }
 }
@@ -154,9 +154,9 @@ void TransferJob::cancel(bool notify)
 {
     _file_info_maps.clear();
     if (notify) {
-        atomic_cas(&_status, STARTED, CANCELING); // 如果运行，则赋值取消
+        atomic_cas(&_status, STARTED, CANCELING);   // 如果运行，则赋值取消
     } else {
-        handleJobStatus(JOB_TRANS_CANCELED); // 通知前端应用作业已取消
+        handleJobStatus(JOB_TRANS_CANCELED);   // 通知前端应用作业已取消
         atomic_store(&_status, STOPED);
     }
 }
@@ -436,7 +436,7 @@ void TransferJob::handleBlockQueque()
                 // handleUpdate(IO_ERROR, block.filename.c_str(), "failed to write", binder);
             }
         } else {
-            co::sleep(1);
+            co::sleep(25);
             FileTransBlock file_block;
             file_block.job_id = (job_id);
             file_block.file_id = (file_id);
@@ -487,7 +487,7 @@ void TransferJob::handleUpdate(FileTransRe result, const char *path, const char 
     report.result = (result);
     report.error = (emsg);
     auto res = _remote->doSendProtoMsg(FS_REPORT,
-                                        report.as_json().str().c_str(), QByteArray());
+                                       report.as_json().str().c_str(), QByteArray());
 }
 
 bool TransferJob::syncHandleStatus()
@@ -521,7 +521,7 @@ void TransferJob::handleJobStatus(int status)
 {
     QString appname(_app_name.c_str());
     fastring fullpath = path::join(
-                DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+            DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
     QString savepath(fullpath.c_str());
 
     emit notifyJobResult(appname, _jobid, status, savepath);
