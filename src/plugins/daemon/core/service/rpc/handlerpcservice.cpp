@@ -295,7 +295,7 @@ void HandleRpcService::handleRemoteShareDisConnect(co::Json &info)
     // 发送给前端
     ShareDisConnect sd;
     sd.from_json(info);
-    DiscoveryJob::instance()->updateAnnouncShare(false);
+    DiscoveryJob::instance()->updateAnnouncShare(true);
 
     ShareEvents ev;
     ev.eventType = FRONT_SHARE_DISCONNECT;
@@ -311,7 +311,7 @@ void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
     reply.from_json(info);
 
     if (reply.reply == 1)
-        DiscoveryJob::instance()->updateAnnouncShare(true, reply.ip);
+        DiscoveryJob::instance()->updateAnnouncShare(false, reply.ip);
 
     ShareEvents event;
     event.eventType = FRONT_SHARE_APPLY_CONNECT_REPLY;
@@ -382,7 +382,7 @@ void HandleRpcService::handleRemoteShareStop(co::Json &info)
     // 停止自己的共享，并告诉前端
     if (st.flags == ShareStopFlag::SHARE_STOP_ALL) {
         ShareCooperationServiceManager::instance()->stop();
-        DiscoveryJob::instance()->updateAnnouncShare(false);
+        DiscoveryJob::instance()->updateAnnouncShare(true);
     } else if (st.flags == ShareStopFlag::SHARE_STOP_CLIENT) {
         ShareCooperationServiceManager::instance()->client()->stopBarrier();
     } else {

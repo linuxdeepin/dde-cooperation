@@ -40,7 +40,10 @@ void MainController::regist()
     static std::once_flag flag;
     std::call_once(flag, [&storagePath] { CooperationUtil::instance()->setAppConfig(KEY_APP_STORAGE_DIR, storagePath); });
 
-    auto doc = QJsonDocument::fromVariant(CooperationUtil::deviceInfo());
+    auto info = CooperationUtil::deviceInfo();
+    info.insert(AppSettings::CooperationEnabled, true);
+
+    auto doc = QJsonDocument::fromVariant(info);
     CooperationUtil::instance()->registAppInfo(doc.toJson());
 }
 

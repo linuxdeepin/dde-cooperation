@@ -23,7 +23,7 @@ class CooperationManagerPrivate : public QObject
 public:
     explicit CooperationManagerPrivate(CooperationManager *qq);
 
-    void backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo = nullptr, bool accepted = false);
+    void backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo = nullptr, QVariant param = QVariant());
     CooperationTaskDialog *taskDialog();
     uint notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout);
 

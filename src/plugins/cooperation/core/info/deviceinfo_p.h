@@ -20,6 +20,7 @@ public:
     QString ipAddress;
     bool isClipboardShared { false };
     bool isPeripheralShared { false };
+    bool cooperationEnabled { false };
     DeviceInfo::ConnectStatus conStatus { DeviceInfo::ConnectStatus::Unknown };
     DeviceInfo::TransMode transMode { DeviceInfo::TransMode::Everyone };
     DeviceInfo::DiscoveryMode discoveryMode { DeviceInfo::DiscoveryMode::Everyone };

@@ -10,6 +10,7 @@ inline constexpr char LinkDirectionKey[] { "LinkDirection" };
 inline constexpr char TransferModeKey[] { "TransferMode" };
 inline constexpr char StoragePathKey[] { "StoragePath" };
 inline constexpr char ClipboardShareKey[] { "ClipboardShare" };
+inline constexpr char CooperationEnabled[] { "CooperationEnabled" };
 
 inline constexpr char CacheGroup[] { "Cache" };
 inline constexpr char TransHistoryKey[] { "TransHistory" };

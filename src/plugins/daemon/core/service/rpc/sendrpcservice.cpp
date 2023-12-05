@@ -74,7 +74,7 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
             if (info.reply == 1) {
                 auto _tarip = sender->remoteIP();
                 info.ip = Util::getFirstIp();
-                DiscoveryJob::instance()->updateAnnouncShare(true, _tarip.toStdString());
+                DiscoveryJob::instance()->updateAnnouncShare(false, _tarip.toStdString());
             }
             info.tarAppname = tar.isEmpty() ?
                               appName.toStdString() : tar.toStdString();

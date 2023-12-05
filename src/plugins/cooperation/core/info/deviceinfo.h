@@ -73,6 +73,9 @@ public:
     void setClipboardShared(bool b);
     bool clipboardShared() const;
 
+    void setCooperationEnable(bool enable);
+    bool cooperationEnable() const;
+
     QVariantMap toVariantMap();
     static DeviceInfoPointer fromVariantMap(const QVariantMap &map);
 

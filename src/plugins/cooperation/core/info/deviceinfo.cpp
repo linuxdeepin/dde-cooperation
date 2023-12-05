@@ -124,7 +124,15 @@ bool DeviceInfo::clipboardShared() const
     return d->isClipboardShared;
 }
 
-#include <QVariantMap>
+void DeviceInfo::setCooperationEnable(bool enable)
+{
+    d->cooperationEnabled = enable;
+}
+
+bool DeviceInfo::cooperationEnable() const
+{
+    return d->cooperationEnabled;
+}
 
 QVariantMap DeviceInfo::toVariantMap()
 {
@@ -136,6 +144,7 @@ QVariantMap DeviceInfo::toVariantMap()
     map.insert(AppSettings::LinkDirectionKey, static_cast<int>(d->linkMode));
     map.insert(AppSettings::ClipboardShareKey, d->isClipboardShared);
     map.insert(AppSettings::PeripheralShareKey, d->isPeripheralShared);
+    map.insert(AppSettings::CooperationEnabled, d->cooperationEnabled);
 
     return map;
 }
@@ -153,6 +162,7 @@ DeviceInfoPointer DeviceInfo::fromVariantMap(const QVariantMap &map)
     info->setLinkMode(static_cast<LinkMode>(map.value(AppSettings::LinkDirectionKey).toInt()));
     info->setClipboardShared(map.value(AppSettings::ClipboardShareKey).toBool());
     info->setPeripheralShared(map.value(AppSettings::PeripheralShareKey).toBool());
+    info->setCooperationEnable(map.value(AppSettings::CooperationEnabled).toBool());
 
     return info;
 }
@@ -167,6 +177,7 @@ DeviceInfo &DeviceInfo::operator=(const DeviceInfo &info)
     d->linkMode = info.d->linkMode;
     d->isClipboardShared = info.d->isClipboardShared;
     d->isPeripheralShared = info.d->isPeripheralShared;
+    d->cooperationEnabled = info.d->cooperationEnabled;
 
     return *this;
 }

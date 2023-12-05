@@ -29,7 +29,8 @@ public Q_SLOTS:
     void disconnectToDevice(const DeviceInfoPointer info);
     void notifyConnectRequest(const QString &info);
     void handleConnectResult(bool accepted);
-    void onVerifyTimeout();
+    void handleDisConnectResult(const QString &devName);
+    void onVerifyTimeout(const QString &devName);
 
 private:
     explicit CooperationManager(QObject *parent = nullptr);

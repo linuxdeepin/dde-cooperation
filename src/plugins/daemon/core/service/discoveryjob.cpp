@@ -157,7 +157,7 @@ void DiscoveryJob::updateAnnouncShare(const bool remove, const fastring connectI
 void DiscoveryJob::removeAppbyName(const fastring name)
 {
     if (name.compare("dde-cooperation") == 0)
-        updateAnnouncShare(false);
+        updateAnnouncShare(true);
     ((searchlight::Announcer*)_announcer_p)->removeAppbyName(name);
 }
 

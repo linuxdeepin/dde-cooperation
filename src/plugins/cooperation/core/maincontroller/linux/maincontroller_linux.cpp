@@ -7,6 +7,8 @@
 #include "utils/historymanager.h"
 #include "config/configmanager.h"
 
+#include <QApplication>
+
 using namespace cooperation_core;
 
 void MainController::initConnect()
@@ -25,10 +27,12 @@ void MainController::onAppAttributeChanged(const QString &group, const QString &
 
 void MainController::regist()
 {
-    // TODO: 外设共享？
+    if (!qApp->property("onlyTransfer").toBool())
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::CooperationEnabled, true);
 }
 
 void MainController::unregist()
 {
-    // TODO:
+    if (!qApp->property("onlyTransfer").toBool())
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::CooperationEnabled, false);
 }
