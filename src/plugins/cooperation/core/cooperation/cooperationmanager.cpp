@@ -154,7 +154,7 @@ CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
 {
     if (!ctDialog) {
         ctDialog = new CooperationTaskDialog(CooperationUtil::instance()->mainWindow());
-        connect(ctDialog, &CooperationTaskDialog::retryConnected, q, &CooperationManager::connectToDevice);
+        connect(ctDialog, &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
     }
 
     return ctDialog;
