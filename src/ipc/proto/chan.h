@@ -92,8 +92,8 @@ struct FSDataBlock {
     int32 file_id;
     fastring filename;
     uint32 blk_id;
-    bool compressed;
-    uint32 data_size;
+    int32 flags{0};
+    int64 data_size;
     fastring data;
 
     void from_json(const co::Json& _x_) {
@@ -101,8 +101,8 @@ struct FSDataBlock {
         file_id = (int32)_x_.get("file_id").as_int64();
         filename = _x_.get("filename").as_c_str();
         blk_id = (uint32)_x_.get("blk_id").as_int64();
-        compressed = _x_.get("compressed").as_bool();
-        data_size = (uint32)_x_.get("data_size").as_int64();
+        flags = (int32)_x_.get("flags").as_int64();
+        data_size = _x_.get("data_size").as_int64();
         data = _x_.get("data").as_c_str();
     }
 
@@ -112,7 +112,7 @@ struct FSDataBlock {
         _x_.add_member("file_id", file_id);
         _x_.add_member("filename", filename);
         _x_.add_member("blk_id", blk_id);
-        _x_.add_member("compressed", compressed);
+        _x_.add_member("flags", flags);
         _x_.add_member("data_size", data_size);
         _x_.add_member("data", data);
         return _x_;

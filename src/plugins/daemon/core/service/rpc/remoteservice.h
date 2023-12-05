@@ -70,7 +70,6 @@ public:
                                  QObject *parent = nullptr);
     ~RemoteServiceSender();
 
-    SendResult sendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data);
     SendResult doSendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data);
     void clearExecutor();
     void remoteIP(const QString &session, QString *ip, uint16 *port);

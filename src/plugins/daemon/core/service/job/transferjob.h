@@ -12,7 +12,10 @@
 #include <ipc/proto/chan.h>
 #include "common/constant.h"
 #include "co/co.h"
+#include "co/fs.h"
 #include "co/time.h"
+#include <QMutex>
+#include <QReadWriteLock>
 
 class RemoteServiceSender;
 class TransferJob : public QObject
@@ -37,7 +40,6 @@ public:
     void cancel(bool notify = false);
 
     void pushQueque(const QSharedPointer<FSDataBlock> block);
-    void insertFileInfo(FileInfo &info);
     bool initSuccess() const { return _init_success; }
 
 signals:
@@ -57,47 +59,54 @@ public slots:
 
 private:
     fastring getSubdir(const char *path, const char *root);
-    void scanPath(fastring root, fastring path);
-    void readPath(fastring path, fastring root);
-    bool readFile(fastring filepath, int fileid, fastring subdir);
-    void readFileBlock(fastring filepath, int fileid, const fastring subname);
 
     void handleBlockQueque();
 
     void handleUpdate(FileTransRe result, const char *path, const char *emsg);
-    bool syncHandleStatus();
     void handleJobStatus(int status);
-    void handleTransStatus(int status, FileInfo &info);
+    void handleTransStatus(int status, const FileInfo &info);
     QSharedPointer<FSDataBlock> popQueue();
     int queueCount() const;
     void setFileName(const QString &name, const QString &acName);
     fastring acName(const fastring &name);
 
+    void scanPath(const fastring root,const fastring path, const bool acTotal);
+    void readPath(fastring path, fastring root, const bool acTotal);
+    bool readFile(fastring filepath, int fileid, fastring subdir, const bool acTotal);
+    void readFileBlock(fastring filepath, int fileid, const fastring subname, const  bool acTotal);
+    bool writeAndCreateFile(const QSharedPointer<FSDataBlock> block);
+    bool sendToRemote(const QSharedPointer<FSDataBlock> block);
+    void createSendCounting();
+
 private:
     int _jobid;
-    int _fileid = 0;
+    std::atomic_int _fileid = 0;
+    std::atomic_int _notify_fileid = 0;
     int _status = NONE;
     int _queue_empty_times = 0;
+    std::atomic_int64_t _total_size = 0;
+    std::atomic_int64_t _cur_size = 0;
 
     bool _sub;
-    bool _writejob;
+    bool _writejob {false};
     bool _init_success { true };
 
-    uint16 _tar_port;
+    uint16 _tar_port{0};
     fastring _app_name; // //前端应用名
     fastring _path; // 目录或文件路径
     fastring _savedir; // 写作业，文件保存的目录
     fastring _save_fulldir; // 全路径
     fastring _tar_app_name; // 发送到目标的应用名称
     fastring _tar_ip;
+    fastring _file_name;
 
-    co::mutex _queque_mutex;
+    mutable QReadWriteLock _queque_mutex;
     QQueue<QSharedPointer<FSDataBlock>> _block_queue;
-    co::mutex _map_mutex;
-    co::map<int32, FileInfo> _file_info_maps;
     QSharedPointer<RemoteServiceSender> _remote;
     QReadWriteLock _file_name_maps_lock;
     QMap<QString, QString> _file_name_maps;
+    QMutex _send_mutex;
+    fs::file *fx{ nullptr };
 };
 
 #endif   // TRANSFERJOB_H

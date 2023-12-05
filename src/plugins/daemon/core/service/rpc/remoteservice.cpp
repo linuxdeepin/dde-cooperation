@@ -5,6 +5,8 @@
 #include <google/protobuf/service.h>
 #include <sstream>
 #include <atomic>
+#include <QThread>
+#include <QCoreApplication>
 
 #include "remoteservice.h"
 #include "co/log.h"
@@ -71,29 +73,8 @@ RemoteServiceSender::~RemoteServiceSender()
         clearLongExecutor();
 }
 
-SendResult RemoteServiceSender::sendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data)
-{
-    SendResult res;
-#if defined(WIN32)
-    co::wait_group wg;
-    wg.add(1);
-    auto s = co::next_sched();
-    s->go([this, &type, msg, &data, &res, wg]() {
-#endif
-    res = doSendProtoMsg(type, msg, data);
-#if defined(WIN32)
-        wg.done();
-    });
-    wg.wait();
-#endif
-    return res;
-}
-
 SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString &msg, const QByteArray &data)
 {
-    while (_rpc_call == 1) sleep::ms(1);
-
-    atomic_store(&_rpc_call, 1);
     DLOG_IF(FLG_log_detail) << "send to remote = " << type << " = " << msg.toStdString() << "\n ip = "
          << _target_ip.toStdString() << " : port = " << _target_port;
     QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
@@ -122,8 +103,18 @@ SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString 
     int retryCount = 0;
 
 retryed:
+#if defined(WIN32)
+    co::wait_group wg;
+    wg.add(1);
+    auto s = co::next_sched();
+    s->go([this, &type, msg, &data, &res, wg]() {
+#endif
     stub.proto_msg(rpc_controller, &req, &rpc_res, nullptr);
-    atomic_store(&_rpc_call, 0);
+#if defined(WIN32)
+        wg.done();
+    });
+    wg.wait();
+#endif
 
     if (rpc_controller->ErrorCode() != 0) {
         retryCount++;
@@ -183,9 +174,10 @@ void RemoteServiceSender::setTargetAppName(const QString &targetApp)
 
 QSharedPointer<ZRpcClientExecutor> RemoteServiceSender::createExecutor()
 {
+    QWriteLocker lk(&_executor_lock);
     DLOG_IF(FLG_log_detail) << "app name : " << _app_name.toStdString() << ", = ip "
          << _target_ip.toStdString() << " : port =  " << _target_port;
-    QWriteLocker lk(&_executor_lock);
+
     if (_target_ip.isEmpty()) {
         ELOG << "Invalide IP address, _target_ip is empty!!!!";
         return nullptr;

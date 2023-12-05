@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QMap>
 #include <QSharedPointer>
+#include <QReadWriteLock>
 
 #include <service/job/transferjob.h>
 #include "common/commonstruct.h"
@@ -25,7 +26,6 @@ public slots:
     bool handleRemoteRequestJob(QString json, QString *targetAppName);
     bool doJobAction(const uint action, const int jobid);
     bool handleFSData(const co::Json &info, fastring buf, FileTransResponse *reply);
-    bool handleFSInfo(co::Json &info, bool dir = false);
     bool handleCancelJob(co::Json &info, FileTransResponse *reply);
     bool handleTransReport(co::Json &info, FileTransResponse *reply);
 
@@ -41,7 +41,7 @@ private:
     // record the send jobs which have error happend. that can be resumed by user.
     QMap<int, QSharedPointer<TransferJob>> _transjob_break;
     fastring _connected_target;
-    co::mutex g_m;
+    QReadWriteLock g_m;
 };
 
 #endif // JOBMANAGER_H

@@ -97,7 +97,6 @@ void Session::call(const json::Json &req, json::Json &res)
     if (!req.str().contains("Frontend.ping"))
         DLOG_IF(FLG_log_detail) << "Send To Client  : session = " << _name.toStdString() << ", port = " << _cb_port
              << " \n req : " << req;
-    coClient.reset( new rpc::Client("127.0.0.1", _cb_port, false));
 #if defined(WIN32)
     co::wait_group wg;
     wg.add(1);
@@ -116,7 +115,6 @@ void Session::call(const json::Json &req, json::Json &res)
              << req.get("api").str().c_str()
              << " \n res : " << res;
     }
-    coClient->close();
 }
 
 uint16 Session::port() const
