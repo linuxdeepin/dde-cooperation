@@ -6,6 +6,7 @@
 #include "sendipcservice.h"
 #include "service/rpc/sendrpcservice.h"
 #include "service/share/sharecooperationservice.h"
+#include "service/share/sharecooperationservicemanager.h"
 #include "ipc/proto/chan.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/backendservice.h"
@@ -289,6 +290,16 @@ void HandleIpcService::handleGetAllNodes(const QSharedPointer<BackendService> _b
         info.from_json(nodejs);
         nodeInfos.peers.push_back(info);
     }
+    auto _base = DiscoveryJob::instance()->baseInfo();
+    co::Json _base_json;
+    if (_base_json.parse_from(_base)) {
+        NodePeerInfo _info;
+        _info.from_json(_base_json);
+        NodeInfo info;
+        info.os = _info;
+        nodeInfos.peers.push_back(info);
+    }
+
     BridgeJsonData res;
     res.type = BACK_GET_DISCOVERY;
     res.json = nodeInfos.as_json().str();
@@ -384,9 +395,8 @@ void HandleIpcService::handleShareStart(co::Json json)
     st.tarAppname = st.tarAppname.empty() ? st.appName : st.tarAppname;
 
     // 读取相应的配置配置Barrier
-    ShareCooperationService::instance()->setBarrierType(BarrierType::Server);
-    if (!ShareCooperationService::instance()->setServerConfig(st.config) ||
-            !ShareCooperationService::instance()->restartBarrier()) {
+    if (!ShareCooperationServiceManager::instance()->server()->setServerConfig(st.config) ||
+            !ShareCooperationServiceManager::instance()->server()->restartBarrier()) {
         ShareEvents ev;
         ev.eventType = FRONT_SHARE_START_REPLY;
         ShareStartReply reply;
@@ -428,6 +438,7 @@ void HandleIpcService::handleShareDisConnect(co::Json json)
     ShareDisConnect info;
     info.from_json(json);
     info.tarAppname = info.tarAppname.empty() ? info.appName : info.tarAppname;
+    DiscoveryJob::instance()->updateAnnouncShare(false);
     SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_DISCONNECT, info.appName.c_str(),
                                                info.as_json().str().c_str());
 }
@@ -445,11 +456,22 @@ void HandleIpcService::handleShareStop(co::Json json)
 {
     ShareStop st;
     st.from_json(json);
+
+    // 停止自己的共享
+    if (st.flags == ShareStopFlag::SHARE_STOP_ALL) {
+        ShareCooperationServiceManager::instance()->stop();
+        DiscoveryJob::instance()->updateAnnouncShare(false);
+    } else if (st.flags == ShareStopFlag::SHARE_STOP_CLIENT) {
+        st.flags = ShareStopFlag::SHARE_STOP_SERVER;
+        ShareCooperationServiceManager::instance()->client()->stopBarrier();
+    } else {
+        st.flags = ShareStopFlag::SHARE_STOP_CLIENT;
+        ShareCooperationServiceManager::instance()->server()->stopBarrier();
+    }
+
     // 通知远端
     SendRpcService::instance()->doSendProtoMsg(SHARE_STOP, st.appName.c_str(),
                                                st.as_json().str().c_str());
-    // 自己停止
-    ShareCooperationService::instance()->stopBarrier();
 }
 
 void HandleIpcService::handleDisConnectCb(co::Json json)

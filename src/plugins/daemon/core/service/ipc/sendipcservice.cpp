@@ -259,6 +259,8 @@ void SendIpcService::initConnect()
             Qt::QueuedConnection);
     connect(this, &SendIpcService::sendToClient, work.data(), &SendIpcWork::handleSendToClient,
             Qt::QueuedConnection);
+    connect(this, &SendIpcService::sendToAllClient, work.data(), &SendIpcWork::handleSendToAllClient,
+            Qt::QueuedConnection);
     connect(this, &SendIpcService::addJob, work.data(), &SendIpcWork::handleAddJob,
             Qt::QueuedConnection);
     connect(this, &SendIpcService::nodeChanged, work.data(), &SendIpcWork::handleNodeChanged,

@@ -377,12 +377,14 @@ struct ShareConnectReply {
     fastring appName;
     fastring tarAppname;
     fastring msg;
+    fastring ip;
     int32 reply;
 
     void from_json(const co::Json& _x_) {
         appName = _x_.get("appName").as_c_str();
         tarAppname = _x_.get("tarAppname").as_c_str();
         msg = _x_.get("msg").as_c_str();
+        ip = _x_.get("ip").as_c_str();
         reply = (int32)_x_.get("reply").as_int64();
     }
 
@@ -391,6 +393,7 @@ struct ShareConnectReply {
         _x_.add_member("appName", appName);
         _x_.add_member("tarAppname", tarAppname);
         _x_.add_member("msg", msg);
+        _x_.add_member("ip", ip);
         _x_.add_member("reply", reply);
         return _x_;
     }
@@ -399,16 +402,19 @@ struct ShareConnectReply {
 struct ShareStop {
     fastring appName;
     fastring tarAppname;
+    int32 flags{ 0 };
 
     void from_json(const co::Json& _x_) {
         appName = _x_.get("appName").as_c_str();
         tarAppname = _x_.get("tarAppname").as_c_str();
+        flags = (int32)_x_.get("flags").as_int64();
     }
 
     co::Json as_json() const {
         co::Json _x_;
         _x_.add_member("appName", appName);
         _x_.add_member("tarAppname", tarAppname);
+        _x_.add_member("flags", flags);
         return _x_;
     }
 };

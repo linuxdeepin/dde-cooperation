@@ -13,6 +13,7 @@
 #include "utils/utils.h"
 #include "service/jobmanager.h"
 #include "common/commonstruct.h"
+#include "service/discoveryjob.h"
 
 #include <QCoreApplication>
 
@@ -69,6 +70,12 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
             ShareConnectReply info;
             info.from_json(param);
             QString tar = sender->targetAppname();
+            // 同意
+            if (info.reply == 1) {
+                auto _tarip = sender->remoteIP();
+                info.ip = Util::getFirstIp();
+                DiscoveryJob::instance()->updateAnnouncShare(true, _tarip.toStdString());
+            }
             info.tarAppname = tar.isEmpty() ?
                               appName.toStdString() : tar.toStdString();
             res = sender->sendProtoMsg(type, info.as_json().str().c_str(), data);

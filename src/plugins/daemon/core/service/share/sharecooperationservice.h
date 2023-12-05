@@ -18,9 +18,9 @@ class CooConfig;
 class ShareCooperationService : public QObject
 {
     Q_OBJECT
+    friend class ShareCooperationServiceManager;
 public:
     ~ShareCooperationService() override;
-    static ShareCooperationService *instance();
 
     void setBarrierType(BarrierType type);
     BarrierType barrierType() const;
@@ -62,8 +62,8 @@ protected:
     void setScreenOptions(const ShareServerConfig &config, QTextStream *stream);
 
 private:
-    CooConfig* _cooConfig;
-    QProcess* _pBarrier;
+    CooConfig* _cooConfig{nullptr};
+    QProcess* _pBarrier{nullptr};
     BarrierType _brrierType;
     QString _barrierConfig;
 

@@ -132,9 +132,39 @@ void DiscoveryJob::updateAnnouncApp(bool remove, const fastring info)
     }
 }
 
+void DiscoveryJob::updateAnnouncShare(const bool remove, const fastring connectIP)
+{
+    QMutexLocker lk(&_lock);
+    auto _base = ((searchlight::Announcer*)_announcer_p)->baseInfo();
+    co::Json _base_json;
+    if (!_base_json.parse_from(_base)) {
+        ELOG << "parse from base info error !!!";
+        return;
+    }
+
+    NodePeerInfo _info;
+    _info.from_json(_base_json);
+    if (remove) {
+        _info.share_connect_ip = "";
+    } else if (!connectIP.empty()) {
+        _info.share_connect_ip = connectIP;
+    } else {
+        return;
+    }
+    updateAnnouncBase(_info.as_json().str());
+}
+
 void DiscoveryJob::removeAppbyName(const fastring name)
 {
+    if (name.compare("dde-cooperation") == 0)
+        updateAnnouncShare(false);
     ((searchlight::Announcer*)_announcer_p)->removeAppbyName(name);
+}
+
+fastring DiscoveryJob::baseInfo() const
+{
+    QMutexLocker lk(&_lock);
+    return ((searchlight::Announcer*)_announcer_p)->baseInfo();
 }
 
 co::list<fastring> DiscoveryJob::getNodes()

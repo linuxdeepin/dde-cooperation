@@ -5,7 +5,7 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#define TEST_LOGOUT false
+#define TEST_LOGOUT true
 
 #define UNI_RPC_PROTO 1.0
 #define UNI_KEY "UOS-COOPERATION"
@@ -169,6 +169,12 @@ enum JobState {
   CANCELING = 4, // 取消
   WAIT_DONE = 5, // 等待完成
   STOPED = 6, // 停止|结束
+};
+
+enum ShareStopFlag {
+    SHARE_STOP_ALL = 0,
+    SHARE_STOP_CLIENT = 1,
+    SHARE_STOP_SERVER = 2,
 };
 
 // use thread replace the coroutine

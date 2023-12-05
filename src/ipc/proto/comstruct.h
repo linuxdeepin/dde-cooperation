@@ -11,6 +11,7 @@ struct NodePeerInfo {
     fastring username;
     fastring hostname;
     fastring ipv4;
+    fastring share_connect_ip;
     int32 port;
     int32 os_type;
     int32 mode_type;
@@ -22,6 +23,7 @@ struct NodePeerInfo {
         username = _x_.get("username").as_c_str();
         hostname = _x_.get("hostname").as_c_str();
         ipv4 = _x_.get("ipv4").as_c_str();
+        share_connect_ip = _x_.get("share_connect_ip").as_c_str();
         port = (int32)_x_.get("port").as_int64();
         os_type = (int32)_x_.get("os_type").as_int64();
         mode_type = (int32)_x_.get("mode_type").as_int64();
@@ -35,6 +37,7 @@ struct NodePeerInfo {
         _x_.add_member("username", username);
         _x_.add_member("hostname", hostname);
         _x_.add_member("ipv4", ipv4);
+        _x_.add_member("share_connect_ip", share_connect_ip);
         _x_.add_member("port", port);
         _x_.add_member("os_type", os_type);
         _x_.add_member("mode_type", mode_type);

@@ -9,7 +9,7 @@
 #include "service/ipc/sendipcservice.h"
 #include "service/rpc/sendrpcservice.h"
 #include "service/rpc/handlesendresultservice.h"
-#include "service/share/sharecooperationservice.h"
+#include "service/share/sharecooperationservicemanager.h"
 #include "jobmanager.h"
 
 #include "utils/config.h"
@@ -41,7 +41,7 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     SendIpcService::instance();
     SendRpcService::instance();
     JobManager::instance();
-    ShareCooperationService::instance();
+    ShareCooperationServiceManager::instance();
     connect(SendRpcService::instance(), &SendRpcService::sendToRpcResult,
             _logic.data(), &HandleSendResultService::handleSendResultMsg, Qt::QueuedConnection);
 }
@@ -88,6 +88,7 @@ fastring ServiceManager::genPeerInfo()
         { "username", Util::getUsername() },
         { "hostname", Util::getHostname() },
         { "ipv4", Util::getFirstIp() },
+        { "share_connect_ip", Util::getFirstIp() },
         { "port", UNI_RPC_PORT_BASE },
         { "os_type", Util::getOSType() },
         { "mode_type", mode },
