@@ -31,8 +31,8 @@ object FSDataBlock {
     int32 file_id
     string filename // 相对于TransJob中path的相对路径
     uint32 blk_id
-    bool compressed
-    uint32 data_size // 数据块长度
+    int32 flags // 标志位，所有文件读取完成1（data_size 也是0）
+    int64 data_size // 数据块长度
     string data // 块数据
 }
 

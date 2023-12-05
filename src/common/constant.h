@@ -181,6 +181,16 @@ enum ShareConnectReplyCode {
     SHARE_CONNECT_ERR_CONNECTED = 2, // 连接错误已连接
 };
 
+enum JobTransFileOp {
+    FIlE_NONE = 0x0000, //
+    FIlE_CREATE = 0x0001, // 文件创建
+    FILE_CLOSE = 0x0002, // 文件关闭
+    FILE_COMPRESS = 0x0004, // 文件加密
+    FILE_TRANS_OVER = 0x0008, // 所有文件传输结束
+    FIlE_DIR_CREATE = 0x0010, // 文件创建
+    FILE_COUNTING = 0x0020, // 数据统计中
+    FILE_COUNTED = 0X0040, // 数据统计完成
+};
 
 // use thread replace the coroutine
 #if defined(DISABLE_GO)

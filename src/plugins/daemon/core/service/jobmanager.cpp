@@ -57,19 +57,34 @@ bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
     connect(job.data(), &TransferJob::notifyJobResult, this, &JobManager::handleJobTransStatus, Qt::QueuedConnection);
     connect(job.data(), &TransferJob::notifyJobFinished, this, &JobManager::handleRemoveJob, Qt::QueuedConnection);
 
-    g_m.lock();
+    QSharedPointer<TransferJob> _job{nullptr};
     if (fsjob.write) {
         DLOG << "(" << jobId <<")write job save to: " << savedir;
+        {
+            QReadLocker lk(&g_m);
+            _job = _transjob_recvs.value(jobId);
+        }
+        if (!_job.isNull())
+            _job->cancel();
+
+        QWriteLocker lk(&g_m);
+        _transjob_recvs.remove(jobId);
         _transjob_recvs.insert(jobId, job);
     } else {
         DLOG << "(" << jobId <<")read job save to: " << savedir;
+        {
+            QReadLocker lk(&g_m);
+            _job = _transjob_sends.value(jobId);
+        }
+        if (!_job.isNull())
+            _job->cancel();
+
+        QWriteLocker lk(&g_m);
+        _transjob_sends.remove(jobId);
         _transjob_sends.insert(jobId, job);
     }
-    g_m.unlock();
 
-    UNIGO([this, job]() {
-        // start job one by one
-        co::mutex_guard g(g_m);
+    UNIGO([job]() {
         // DLOG << ".........start job: sched: " << co::sched_id() << " co: " << co::coroutine_id();
         job->start();
     });
@@ -83,13 +98,21 @@ bool JobManager::doJobAction(const uint action, const int jobid)
     bool result = false;
 
     if (BACK_CANCEL_JOB == action) {
-        auto rjob = _transjob_recvs.value(jobid);
+        QSharedPointer<TransferJob> rjob{nullptr};
+        {
+            QReadLocker lk(&g_m);
+            rjob = _transjob_recvs.value(jobid);
+        }
         if (!rjob.isNull()) {
             rjob->cancel(true);
             result = true;
         }
 
-        auto sjob = _transjob_sends.value(jobid);
+        QSharedPointer<TransferJob> sjob{nullptr};
+        {
+            QReadLocker lk(&g_m);
+            sjob = _transjob_sends.value(jobid);
+        }
         if (!sjob.isNull()) {
             sjob->cancel(true);
             result = true;
@@ -111,35 +134,14 @@ bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransRespo
         reply->id = datablock->file_id;
         reply->name = datablock->filename;
     }
-    auto job = _transjob_recvs.value(jobId);
-    if (!job.isNull()) {
-        job->pushQueque(datablock);
-    } else {
-        return false;
+    QSharedPointer<TransferJob> job{nullptr};
+    {
+        QReadLocker lk(&g_m);
+        job = _transjob_recvs.value(jobId);
     }
 
-    return true;
-}
-
-bool JobManager::handleFSInfo(co::Json &info, bool dir)
-{
-    FileInfo finfo;
-    finfo.from_json(info);
-    int32 jobId = finfo.job_id;
-
-    auto job = _transjob_recvs.value(jobId);
     if (!job.isNull()) {
-        //update the file relative to abs path
-        fastring savedpath = path::join(DaemonConfig::instance()->getStorageDir(job->getAppName()), finfo.name);
-        finfo.name = savedpath;
-        if (dir) {
-            //notify new directory
-            QString appname(job->getAppName().c_str());
-            QString fileinfo(finfo.as_json().str().c_str());
-            handleFileTransStatus(appname, FILE_TRANS_IDLE, fileinfo);
-        } else {
-            job->insertFileInfo(finfo);
-        }
+        job->pushQueque(datablock);
     } else {
         return false;
     }
@@ -158,7 +160,11 @@ bool JobManager::handleCancelJob(co::Json &info, FileTransResponse *reply)
         reply->name = obj.appname;
     }
 
-    auto rjob = _transjob_recvs.value(jobId);
+    QSharedPointer<TransferJob> rjob{nullptr};
+    {
+        QReadLocker lk(&g_m);
+        rjob = _transjob_recvs.value(jobId);
+    }
     if (!rjob.isNull()) {
         //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
         DLOG << "recv > remote canceled this job: " << jobId;
@@ -168,7 +174,11 @@ bool JobManager::handleCancelJob(co::Json &info, FileTransResponse *reply)
         result = true;
     }
 
-    auto sjob = _transjob_sends.value(jobId);
+    QSharedPointer<TransferJob> sjob{nullptr};
+    {
+        QReadLocker lk(&g_m);
+        sjob = _transjob_sends.value(jobId);
+    }
     if (!sjob.isNull()) {
         //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
         DLOG << "send > remote canceled this job: " << jobId;
@@ -195,7 +205,11 @@ bool JobManager::handleTransReport(co::Json &info, FileTransResponse *reply)
     switch (obj.result) {
     case IO_ERROR:
     {
-        auto job = _transjob_sends.value(jobId);
+        QSharedPointer<TransferJob> job{nullptr};
+        {
+            QReadLocker lk(&g_m);
+            job = _transjob_sends.value(jobId);
+        }
         if (!job.isNull()) {
             // move the job into breaks record map.
             _transjob_break.insert(jobId, _transjob_sends.take(jobId));
@@ -206,11 +220,19 @@ bool JobManager::handleTransReport(co::Json &info, FileTransResponse *reply)
         break;
     case FINIASH:
     {
-        auto job = _transjob_recvs.value(jobId);
+        QSharedPointer<TransferJob> job{nullptr};
+        {
+            QReadLocker lk(&g_m);
+            job = _transjob_recvs.value(jobId);
+        }
         if (!job.isNull()) {
             //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
             job->waitFinish();
-            _transjob_recvs.remove(jobId);
+            QSharedPointer<TransferJob> sjob{nullptr};
+            {
+                QWriteLocker lk(&g_m);
+                _transjob_recvs.remove(jobId);
+            }
             QString name(job->getAppName().c_str());
             SendIpcService::instance()->handleRemoveJob(job->getAppName().c_str(), jobId);
         } else {
@@ -267,6 +289,7 @@ void JobManager::handleJobTransStatus(QString appname, int jobid, int status, QS
 
 void JobManager::handleRemoveJob(const int jobid)
 {
+    QWriteLocker lk(&g_m);
     _transjob_recvs.remove(jobid);
     _transjob_sends.remove(jobid);
 }

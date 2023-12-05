@@ -16,6 +16,7 @@
 #include "service/comshare.h"
 
 #include <QPointer>
+#include <QElapsedTimer>
 
 TransferJob::TransferJob(QObject *parent)
     : QObject(parent)
@@ -48,8 +49,13 @@ bool TransferJob::initRpc(fastring target, uint16 port)
         req_job.write = (!_writejob);
         req_job.app_who = _tar_app_name;
         req_job.targetAppname = _app_name;
+        SendResult res;
         // 必须等待对方回复了才执行后面的流程
-        auto res = _remote->doSendProtoMsg(IN_TRANSJOB, req_job.as_json().str().c_str(), QByteArray());
+        {
+            QMutexLocker g(&_send_mutex);
+            res = _remote->doSendProtoMsg(IN_TRANSJOB, req_job.as_json().str().c_str(), QByteArray());
+        }
+
         if (res.errorType < INVOKE_OK) {
             SendStatus st;
             st.type = res.errorType;
@@ -124,17 +130,36 @@ void TransferJob::start()
         handleJobStatus(JOB_TRANS_DOING);
     } else {
         //并行读取文件数据
-        DLOG << "doTransfileJob path to save:" << _savedir;
-        co::Json pathJson;
-        pathJson.parse_from(_path);
-        DLOG << "read job start path: " << pathJson;
-        for (uint32 i = 0; i < pathJson.array_size(); i++) {
-            fastring jobpath = pathJson[i].as_string();
-            std::pair<fastring, fastring> pairs = path::split(jobpath);
-            fastring rootpath = pairs.first.c_str();
-            scanPath(rootpath, jobpath);
-        }
-        DLOG << "read job init end " << _file_info_maps.size();
+        UNIGO([this]() {
+            co::Json pathJson;
+            pathJson.parse_from(_path);
+            for (uint32 i = 0; i < pathJson.array_size(); i++) {
+                fastring jobpath = pathJson[i].as_string();
+                std::pair<fastring, fastring> pairs = path::split(jobpath);
+                fastring rootpath = pairs.first.c_str();
+                scanPath(rootpath, jobpath, true);
+            }
+            QSharedPointer<FSDataBlock> blocks(new FSDataBlock);
+            blocks->job_id = _jobid;
+            blocks->data_size = _total_size;
+            // copy binrary data
+            blocks->flags = JobTransFileOp::FILE_COUNTED;
+            pushQueque(blocks);
+
+            DLOG << "read job start path: " << pathJson;
+            for (uint32 i = 0; i < pathJson.array_size(); i++) {
+                fastring jobpath = pathJson[i].as_string();
+                std::pair<fastring, fastring> pairs = path::split(jobpath);
+                fastring rootpath = pairs.first.c_str();
+                scanPath(rootpath, jobpath, false);
+            }
+            QSharedPointer<FSDataBlock> block(new FSDataBlock);
+            block->job_id = _jobid;
+            block->data_size = 0;
+            // copy binrary data
+            block->flags = JobTransFileOp::FILE_TRANS_OVER;
+            pushQueque(block);
+        });
     }
 
     // 开始循环处理数据块
@@ -179,7 +204,6 @@ fastring TransferJob::getAppName()
 
 void TransferJob::cancel(bool notify)
 {
-    _file_info_maps.clear();
     if (notify) {
         atomic_cas(&_status, STARTED, CANCELING);   // 如果运行，则赋值取消
     } else {
@@ -194,27 +218,10 @@ void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
         DLOG << "This job has mark cancel, stop handle data.";
         return;
     }
-    co::mutex_guard g(_queque_mutex);
+    QWriteLocker g(&_queque_mutex);
     _block_queue.enqueue(block);
 }
 
-void TransferJob::insertFileInfo(FileInfo &info)
-{
-    // reset
-    atomic_store(&_queue_empty_times, 0);
-
-    int fileid = info.file_id;
-    auto it = _file_info_maps.find(fileid);
-    if (it == _file_info_maps.end()) {
-        DLOG_IF(FLG_log_detail) << "insertFileInfo new file INFO: " << fileid << info.name;
-        // skip 0B file
-        if (info.total_size > 0) {
-            co::mutex_guard g(_map_mutex);
-            _file_info_maps.insert(std::make_pair(fileid, info));
-            handleTransStatus(FILE_TRANS_IDLE, info);
-        }
-    }
-}
 
 fastring TransferJob::getSubdir(const char *path, const char *root)
 {
@@ -226,7 +233,140 @@ fastring TransferJob::getSubdir(const char *path, const char *root)
     return subdir;
 }
 
-void TransferJob::scanPath(fastring root, fastring path)
+void TransferJob::handleBlockQueque()
+{
+    bool exception = false;
+    bool counted = false;
+    QElapsedTimer time;
+    time.start();
+    int timeold = 0;
+    if (!_writejob)
+        createSendCounting();
+    // 发送当前统计文件中block
+    while (_status != STOPED) {
+        if (_status == CANCELING) {
+            break;
+        }
+        // 计时器处理
+        bool timeout = false;
+        if (time.elapsed() - timeold >= 500) {
+            timeold = time.elapsed();
+            timeout = true;
+        }
+        auto block = popQueue();
+        if (block.isNull() && (_writejob || (!timeout && !counted))) {
+            co::sleep(10);
+            continue;
+        }
+
+        if (block.isNull()) {
+            block.reset(new FSDataBlock);
+            block->flags = JobTransFileOp::FILE_COUNTING;
+        }
+
+        if (timeout) {
+            // 通知前端进度
+            FileInfo info;
+            info.job_id = _jobid;
+            info.file_id = _notify_fileid;
+            info.total_size = _total_size;
+            info.current_size = _cur_size;
+            info.name = _file_name;
+            info.time_spended = time.elapsed();
+            if (!counted) {
+                handleTransStatus(FILE_TRANS_IDLE, info);
+            } else {
+                handleTransStatus(FILE_TRANS_SPEED, info);
+            }
+        }
+
+
+        if (counted == false)
+            counted = block->flags & JobTransFileOp::FILE_COUNTED;
+
+        if (_writejob) {
+            if (block->flags & JobTransFileOp::FILE_COUNTING)
+                continue;
+            // 写入失败，怎么处理，继续尝试
+            exception = !writeAndCreateFile(block);
+        } else {
+            // 发送失败，怎么处理
+            exception = !sendToRemote(block);
+        }
+
+        if (exception) {
+            DLOG << "trans job exception hanpend: " << _jobid;
+            handleJobStatus(JOB_TRANS_FAILED);
+            break;
+        }
+
+        if(block->flags & JobTransFileOp::FILE_TRANS_OVER) {
+            DLOG << "transfer end ::: all file read or write over !!!";
+            break;
+        }
+    };
+    if (!exception) {
+        FileInfo info;
+        handleTransStatus(FILE_TRANS_END, info);
+        handleJobStatus(JOB_TRANS_FINISHED);
+    }
+    LOG << "trans job end: " << _jobid;
+    atomic_store(&_status, STOPED);
+}
+
+void TransferJob::handleUpdate(FileTransRe result, const char *path, const char *emsg)
+{
+    FileTransJobReport report;
+    report.job_id = (_jobid);
+    report.path = (path);
+    report.result = (result);
+    report.error = (emsg);
+    SendResult res;
+    // 必须等待对方回复了才执行后面的流程
+    {
+        QMutexLocker g(&_send_mutex);
+        res = _remote->doSendProtoMsg(FS_REPORT,
+                                      report.as_json().str().c_str(), QByteArray());
+    }
+}
+
+void TransferJob::handleJobStatus(int status)
+{
+    QString appname(_app_name.c_str());
+    fastring fullpath = path::join(
+                DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+    QString savepath(fullpath.c_str());
+
+    emit notifyJobResult(appname, _jobid, status, savepath);
+}
+
+void TransferJob::handleTransStatus(int status, const FileInfo &info)
+{
+    co::Json filejson = info.as_json();
+    QString appname(_app_name.c_str());
+    QString fileinfo(filejson.str().c_str());
+
+    // FileInfo > FileStatus in handle func
+    DLOG << "handleTransStatus  =  " << appname.toStdString() << " status = " << status
+         << " file info ===== " << filejson;
+    emit notifyFileTransStatus(appname, status, fileinfo);
+}
+
+QSharedPointer<FSDataBlock> TransferJob::popQueue()
+{
+    QWriteLocker g(&_queque_mutex);
+    if (_block_queue.empty())
+        return nullptr;
+    return _block_queue.dequeue();
+}
+
+int TransferJob::queueCount() const
+{
+    QReadLocker g(&_queque_mutex);
+    return _block_queue.count();
+}
+
+void TransferJob::scanPath(const fastring root, const fastring path, const bool acTotal)
 {
 #ifdef linux
     // 链接文件不拷贝
@@ -235,39 +375,35 @@ void TransferJob::scanPath(fastring root, fastring path)
 #endif
     _fileid++;
     fastring subdir = getSubdir(path.c_str(), root.c_str());
-    FileTransCreate info;
-    info.job_id = _jobid;
-    info.file_id = _fileid;
-    info.sub_dir = subdir.c_str();
     FileEntry *entry = new FileEntry();
     if (FSAdapter::getFileEntry(path.c_str(), &entry) < 0) {
         ELOG << "get file entry error !!!!";
         cancel();
         return;
     }
-    info.entry = *entry;
-    info.entry.appName = _app_name;
-    info.entry.rcvappName = _tar_app_name;
-    auto res = _remote->doSendProtoMsg(FS_INFO, info.as_json().str().c_str(), QByteArray());
-    if (res.errorType < INVOKE_OK) {
-        SendStatus st;
-        st.type = res.errorType;
-        st.msg = res.as_json().str();
-        co::Json req = st.as_json();
-        req.add_member("api", "Frontend.notifySendStatus");
-        SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
-        cancel();
-    }
+
     if (_status >= STOPED)
         return;
     if (fs::isdir(path.c_str())) {
-        readPath(path, root);
+        _total_size += 4096;
+        if (!acTotal) {
+            QSharedPointer<FSDataBlock> block(new FSDataBlock);
+            block->job_id = _jobid;
+            auto file = path;
+            block->filename = file.replace(root, "");
+            block->blk_id = 0;
+            block->flags = JobTransFileOp::FIlE_DIR_CREATE;
+            block->data_size = 0;
+            pushQueque(block);
+        }
+        // 发送文件创建操作
+        readPath(path, root, acTotal);
     } else {
-        readFile(path, _fileid, subdir.c_str());
+        readFile(path, _fileid, subdir.c_str(), acTotal);
     }
 }
 
-void TransferJob::readPath(fastring path, fastring root)
+void TransferJob::readPath(fastring path, fastring root, const bool acTotal)
 {
     if (_status >= STOPED)
         return;
@@ -277,11 +413,11 @@ void TransferJob::readPath(fastring path, fastring root)
     auto v = d.all();   // 读取所有子项
     for (const fastring &file : v) {
         fastring file_path = path::join(d.path(), file.c_str());
-        scanPath(root, file_path);
+        scanPath(root, file_path, acTotal);
     }
 }
 
-bool TransferJob::readFile(fastring filepath, int fileid, fastring subdir)
+bool TransferJob::readFile(fastring filepath, int fileid, fastring subdir, const bool acTotal)
 {
     if (_status >= STOPED)
         return false;
@@ -291,11 +427,11 @@ bool TransferJob::readFile(fastring filepath, int fileid, fastring subdir)
     fastring filename = pairs.second;
 
     fastring subname = path::join(subdir, filename.c_str());
-    readFileBlock(filepath, fileid, subname);
+    readFileBlock(filepath, fileid, subname, acTotal);
     return true;
 }
 
-void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring subname)
+void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring subname, const bool acTotal)
 {
     if (filepath.empty() || fileid < 0 || !fs::exists(filepath)) {
         ELOG << "readFileBlock file is invaild" << filepath;
@@ -308,279 +444,177 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
     size_t block_size = BLOCK_SIZE;
     int64 file_size = fs::fsize(filepath);
 
-    if (file_size <= 0) {
-        // error file or 0B file.
+    if (acTotal) {
+        _total_size += static_cast<int64>(file_size <= 0 ? 4096 : file_size);
         return;
     }
-    // record the file info
-    {
-        FileInfo info;
-        info.job_id = _jobid;
-        info.file_id = fileid;
-        info.name = filepath;
-        info.total_size = file_size;
-        info.current_size = 0;
-        info.time_spended = -1;
 
-        insertFileInfo(info);
-        //        LOG << "======this file (" << subname << "fileid" << fileid << ") start   _file_info_maps";
+    if (file_size <= 0) {
+        // error file or 0B file.
+        QSharedPointer<FSDataBlock> block(new FSDataBlock);
+        block->job_id = _jobid;
+        block->file_id = fileid;
+        block->filename = subname;
+        block->blk_id = 0;
+        block->data_size = 0;
+        block->flags = JobTransFileOp::FIlE_CREATE;
+        pushQueque(block);
+        return;
     }
     QPointer<TransferJob> self = this;
-    UNIGO([self, filepath, fileid, subname, file_size, block_size]() {
-        int64 read_size = 0;
-        uint32 block_id = 0;
+    int64 read_size = 0;
+    uint32 block_id = 0;
 
-        fs::file fd(filepath, 'r');
-        if (!fd) {
-            ELOG << "open file failed: " << filepath;
-            return;
-        }
+    fs::file fd(filepath, 'r');
+    if (!fd) {
+        ELOG << "open file failed: " << filepath;
+        return;
+    }
 
-        size_t block_len = block_size * sizeof(char);
-        char *buf = reinterpret_cast<char *>(malloc(block_len));
-        size_t resize = 0;
-        do {
-            // 最多300个数据块
-            if (self && self->queueCount() > 300)
-                co::sleep(10);
-            if (self.isNull() || self->_status >= STOPED)
-                break;
+    size_t block_len = block_size * sizeof(char);
+    char *buf = reinterpret_cast<char *>(malloc(block_len));
+    size_t resize = 0;
+    bool open = true;
+    do {
+        // 最多300个数据块
+        if (self && self->queueCount() > 300)
+            co::sleep(10);
+        if (self.isNull() || self->_status >= STOPED)
+            break;
 
-            memset(buf, 0, block_len);
-            resize = fd.read(buf, block_size);
-            if (resize <= 0) {
-                LOG_IF(FLG_log_detail) << "read file ERROR or END, resize = " << resize;
-                break;
-            }
-
-            QSharedPointer<FSDataBlock> block(new FSDataBlock);
-            if (self)
-                block->job_id = self->_jobid;
-            block->file_id = fileid;
-            block->filename = subname;
-            block->blk_id = block_id;
-            block->compressed = false;
-            // copy binrary data
-            fastring bufdata(buf, resize);
-            block->data = bufdata;
-            if (self)
-                self->pushQueque(block);
-
-            read_size += resize;
-            block_id++;
-        } while (read_size < file_size || resize > 0);
-
-        free(buf);
-        fd.close();
-    });
-}
-
-void TransferJob::handleBlockQueque()
-{
-    atomic_store(&_queue_empty_times, 0);
-    // 定时获取状态并通知，检测是否结束
-    QPointer<TransferJob> self = this;
-    UNIGO([self]() {
-        bool exit = false;
-        bool next_exit = false;
-        do {
-            co::sleep(1000);   // 每秒检测发送一次状态
-            if (self.isNull()) {
-                DLOG << "job has been distructed, break!";
-                break;
-            }
-            exit = (self->_status == CANCELING) || (self->_status >= STOPED);
-            if (exit) {
-                DLOG << "job has stop, break!";
-                break;
-            }
-
-            bool empty = self->syncHandleStatus();   //检测一次所有文件是否完成
-            if (empty) {
-                // 文件信息已全部为空，可能结束，也可能还有文件没有开始
-                if (self->_status == WAIT_DONE) {
-                    // 对端发送结束，等待完成
-                    if (next_exit) {
-                        // 已经被标记等待结束，这里定时更新，说明一定时间内无数据，直接结束
-                        self->handleJobStatus(JOB_TRANS_FINISHED);
-                        break;
-                    } else {
-                        next_exit = true;   //标记等待下一次状态检测退出
-                        continue;
-                    }
-                } else if (!self->_writejob) {
-                    DLOG_IF(FLG_log_detail) << "all file finished, send job finish.";
-                    // 通知对端文件已发完，并等待下一循环退出
-                    self->handleUpdate(FINIASH, self->_path.c_str(), "");
-                    atomic_store(&(self->_status), WAIT_DONE);
-                }
-            }
-
-            if (self->_queue_empty_times > 3000) {
-                // 每10ms增1，连续30s无数据
-                DLOG << " wait block data timeout NOW!";
-                self->handleJobStatus(JOB_TRANS_FAILED);
-                break;
-            }
-        } while (!exit);
-
-        if (!self.isNull() && self->_status != STOPED)
-            self->stop();
-    });
-
-    bool exception = false;
-    while (_status != STOPED) {
-        if (_status == CANCELING) {
+        memset(buf, 0, block_len);
+        resize = fd.read(buf, block_size);
+        if (resize > block_size) {
+            LOG << "read file ERROR  resize = " << resize;
             break;
         }
-        auto block = popQueue();
-        if (block.isNull()) {
-            atomic_inc(&_queue_empty_times);
-            co::sleep(10);
-            continue;
-        } else {
-            // reset
-            atomic_store(&_queue_empty_times, 0);
+
+        QSharedPointer<FSDataBlock> block(new FSDataBlock);
+        if (self)
+            block->job_id = self->_jobid;
+        block->file_id = fileid;
+        block->filename = subname;
+        block->blk_id = block_id;
+        // 判断文件刚开始读取
+        block->flags = open ? JobTransFileOp::FIlE_CREATE : JobTransFileOp::FIlE_NONE;
+        // 判断文件是否读取完成
+        block->flags = (resize == 0 || read_size + static_cast<int64>(resize) >= file_size) ? block->flags | JobTransFileOp::FILE_CLOSE : block->flags;
+        block->data_size = static_cast<int64>(resize);
+        // copy binrary data
+        fastring bufdata(buf, resize);
+        block->data = bufdata;
+        if (self)
+            self->pushQueque(block);
+        open = false;
+
+        if (resize == 0 || read_size + static_cast<int64>(resize) >= file_size) {
+            LOG << "read file End resize = " << resize;
+            break;
         }
 
-        int32 job_id = block->job_id;
-        int32 file_id = block->file_id;
-        uint64 blk_id = block->blk_id;
-        fastring path = _save_fulldir.empty()
-                ? path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir)
-                : _save_fulldir;
-        fastring acName = this->acName(block->filename);
-        acName = acName.empty() ? block->filename : acName;
-        fastring name = path::join(path, acName);
-        fastring buffer = block->data;
-        size_t len = buffer.size();
-        bool comp = block->compressed;
+        read_size += resize;
+        block_id++;
+    } while (read_size < file_size || (resize > 0 && resize == block_size));
 
-        if (_writejob) {
-            int64 offset = static_cast<int64>(blk_id * BLOCK_SIZE);
-            // ELOG << "file : " << name << " write : " << len;
-            bool good = FSAdapter::writeBlock(name.c_str(), offset, buffer.c_str(), len);
-            if (!good) {
-                ELOG << "file : " << name << " write BLOCK error";
-                exception = true;
-                // FIXME: the client can not callback.
-                // handleUpdate(IO_ERROR, block.filename.c_str(), "failed to write", binder);
-            }
-        } else {
-            co::sleep(25);
-            FileTransBlock file_block;
-            file_block.job_id = (job_id);
-            file_block.file_id = (file_id);
-            file_block.filename = (block->filename.c_str());
-            file_block.blk_id = (static_cast<uint>(blk_id));
-            file_block.compressed = (comp);
-            QByteArray data(buffer.c_str(), static_cast<int>(len));
-            // DLOG << "(" << job_id << ") send block " << block->filename << " size: " << len;
-            auto res = _remote->doSendProtoMsg(FS_DATA, file_block.as_json().str().c_str(), data);
-            if (res.errorType < INVOKE_OK) {
-                SendStatus st;
-                st.type = res.errorType;
-                st.msg = res.as_json().str();
-                co::Json req = st.as_json();
-                req.add_member("api", "Frontend.notifySendStatus");
-                SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
-                cancel();
-                exception = true;
-            }
-        }
+    free(buf);
+    fd.close();
+}
 
-        if (!exception) {
-            // update the file info
-            auto it = _file_info_maps.find(file_id);
-            if (it != _file_info_maps.end()) {
-                it->second.current_size += len;
-                if (blk_id == 0) {
-                    // first block data, file begin, start record time
-                    it->second.time_spended = 0;
-                }
-            }
-        }
-    };
-    if (exception) {
-        DLOG << "trans job exception hanpend: " << _jobid;
-        handleJobStatus(JOB_TRANS_FAILED);
+bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block)
+{
+    _notify_fileid = block->file_id;
+    fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+    fastring name = path::join(path, block->filename);
+    if (!block->filename.empty())
+        _file_name = name;
+    // 创建文件
+    if (block->flags & JobTransFileOp::FIlE_DIR_CREATE) {
+        if (!createFile(block->filename.c_str(), true))
+            return false;
+        _cur_size += 4096;
+        return true;
+    } else if (block->flags & JobTransFileOp::FILE_COUNTED) {
+        _total_size = block->data_size;
+        return true;
+    } else if (block->flags & JobTransFileOp::FILE_COUNTING || block->flags & JobTransFileOp::FILE_TRANS_OVER) {
+        return true;
     }
 
-    LOG << "trans job end: " << _jobid;
-    atomic_store(&_status, STOPED);
-}
+    fastring buffer = block->data;
+    size_t len = buffer.size();
+    int64 offset = static_cast<int64>(block->blk_id * BLOCK_SIZE);
+    // ELOG << "file : " << name << " write : " << len << " totol = " << _total_size << " curent " <<  _cur_size
+    //      << "  flags !!! " << block->flags;
+    int count = 3;
+    bool good = false;
+    do {
+        good = FSAdapter::writeBlock(name.c_str(), offset, buffer.c_str(), len, block->flags, &fx);
+        count--;
+    } while(!good && count >= 0);
 
-void TransferJob::handleUpdate(FileTransRe result, const char *path, const char *emsg)
-{
-    FileTransJobReport report;
-    report.job_id = (_jobid);
-    report.path = (path);
-    report.result = (result);
-    report.error = (emsg);
-    auto res = _remote->doSendProtoMsg(FS_REPORT,
-                                       report.as_json().str().c_str(), QByteArray());
-}
 
-bool TransferJob::syncHandleStatus()
-{
-    QPointer<TransferJob> self = this;
-    // update the file info
-    for (auto &pair : _file_info_maps) {
-        if (self.isNull())
-            return true;
-
-        //DLOG << "syncHandleStatus()" << pair.second.name;
-        if (pair.second.time_spended >= 0) {
-            pair.second.time_spended += 1;
-            bool end = pair.second.current_size >= pair.second.total_size;
-            handleTransStatus(end ? FILE_TRANS_END : FILE_TRANS_SPEED, pair.second);
-            if (end) {
-                DLOG_IF(FLG_log_detail) << "should notify file finish: " << pair.second.name << " jobid=" << pair.second.job_id;
-                co::mutex_guard g(_map_mutex);
-                _file_info_maps.erase(pair.first);
-                if (!_writejob) {
-                    //TODO: check sum
-                    // handleUpdate(OK, block.filename.c_str(), "");
-                }
-            }
+    if (!good) {
+        ELOG << "file : " << name << " write BLOCK error";
+    } else {
+        if (len == 0 && block->flags & JobTransFileOp::FIlE_CREATE) {
+            _cur_size += 4096;
+        } else {
+            _cur_size += static_cast<int64>(len);
         }
     }
-    return _file_info_maps.empty();
+    return good;
 }
 
-void TransferJob::handleJobStatus(int status)
+bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
 {
-    QString appname(_app_name.c_str());
-    fastring fullpath = _save_fulldir.empty()
-            ? path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir)
-            : _save_fulldir;
-    QString savepath(fullpath.c_str());
-
-    emit notifyJobResult(appname, _jobid, status, savepath);
+    co::sleep(5);
+    FileTransBlock file_block;
+    file_block.job_id = (_jobid);
+    file_block.file_id = (block->file_id);
+    file_block.filename = (block->filename.c_str());
+    file_block.blk_id = (static_cast<uint>(block->blk_id));
+    file_block.flags = block->flags;
+    file_block.data_size = block->data_size;
+    _notify_fileid = block->file_id;
+    fastring buffer = block->data;
+    QByteArray data(buffer.c_str(), static_cast<int>(block->data.empty() ? 0 : block->data_size));
+    // DLOG << "( ==== " << _jobid << ") send block " << block->filename << " size: " << block->data_size
+    //     << " ----- = " << queueCount() << "  flags  == " << block->flags;
+    SendResult res;
+    // 必须等待对方回复了才执行后面的流程
+    {
+        res.errorType = 0;
+        QMutexLocker g(&_send_mutex);
+        res = _remote->doSendProtoMsg(FS_DATA, file_block.as_json().str().c_str(), data);
+    }
+    if (res.errorType < INVOKE_OK) {
+        SendStatus st;
+        st.type = res.errorType;
+        st.msg = res.as_json().str();
+        co::Json req = st.as_json();
+        req.add_member("api", "Frontend.notifySendStatus");
+        SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+        cancel();
+        return false;
+    }
+    fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+    fastring fullpath = path::join(path, block->filename);
+    _file_name = fullpath;
+    if (block->data_size == 0 && block->flags & JobTransFileOp::FIlE_CREATE) {
+        _cur_size += 4096;
+    } else {
+        _cur_size += static_cast<int64>(block->data_size);
+    }
+    return true;
 }
 
-void TransferJob::handleTransStatus(int status, FileInfo &info)
+void TransferJob::createSendCounting()
 {
-    co::Json filejson = info.as_json();
-    QString appname(_app_name.c_str());
-    QString fileinfo(filejson.str().c_str());
-
-    // FileInfo > FileStatus in handle func
-    emit notifyFileTransStatus(appname, status, fileinfo);
-}
-
-QSharedPointer<FSDataBlock> TransferJob::popQueue()
-{
-    co::mutex_guard g(_queque_mutex);
-    if (_block_queue.empty())
-        return nullptr;
-    return _block_queue.dequeue();
-}
-
-int TransferJob::queueCount() const
-{
-    co::mutex_guard g(_queque_mutex);
-    return _block_queue.count();
+    QSharedPointer<FSDataBlock> block(new FSDataBlock);
+    block->job_id = _jobid;
+    block->flags = JobTransFileOp::FILE_COUNTING;
+    block->data_size = 0;
+    pushQueque(block);
 }
 
 void TransferJob::setFileName(const QString &name, const QString &acName)

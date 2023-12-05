@@ -78,7 +78,8 @@ object FileTransBlock {
   int32 file_id //
   string filename // 相对于TransJob中path的相对路径
   uint32 blk_id // 拷贝的块id
-  bool compressed //
+  int32 flags // 文件操作标志
+  int64 data_size //文件的长度
 }
 
 object FileTransJobAction {
