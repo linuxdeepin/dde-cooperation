@@ -63,7 +63,7 @@ CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
 #endif
 }
 
-void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, bool accepted)
+void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, QVariant param)
 {
     rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
     co::Json req, res;
@@ -125,6 +125,7 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
         ShareStop stopEvent;
         stopEvent.appName = MainAppName;
         stopEvent.tarAppname = MainAppName;
+        stopEvent.flags = param.toInt();
 
         event.data = stopEvent.as_json().str();
         req = event.as_json();
@@ -133,7 +134,7 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
         ShareConnectReply replyEvent;
         replyEvent.appName = MainAppName;
         replyEvent.tarAppname = MainAppName;
-        replyEvent.reply = accepted ? 1 : 0;
+        replyEvent.reply = param.toBool() ? 1 : 0;
 
         event.data = replyEvent.as_json().str();
         req = event.as_json();
@@ -189,17 +190,18 @@ void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString
             return;
 
         // 更新设备列表中的状态
-        info->setConnectStatus(DeviceInfo::Connected);
         targetDeviceInfo = DeviceInfoPointer::create(*info.data());
-        MainController::instance()->updateDeviceState({ info });
+        targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
+        MainController::instance()->updateDeviceState({ targetDeviceInfo });
 
         // 发送方若开启了外设共享，则同样进行共享操作
-        backendShareEvent(BACK_SHARE_START, info);
+        // 卡，功能失效
+        //        backendShareEvent(BACK_SHARE_START, info);
 
         // 记录
         HistoryManager::instance()->writeIntoConnectHistory(info->ipAddress(), info->deviceName());
 
-        static QString body(tr("Connection successful, coordinating with  \"%1\""));
+        static QString body(tr("Connection successful, coordinating with \"%1\""));
         notifyMessage(recvReplacesId, body.arg(info->deviceName()), {}, 3 * 1000);
     }
 }
@@ -248,15 +250,16 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
 
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     d->isRecvMode = false;
-    d->taskDialog()->switchWaitPage(info->deviceName());
+    auto devName = info->deviceName();
+    d->taskDialog()->switchWaitPage(devName);
     d->taskDialog()->show();
-    QTimer::singleShot(10 * 1000, this, &CooperationManager::onVerifyTimeout);
+    QTimer::singleShot(10 * 1000, this, [this, devName] { onVerifyTimeout(devName); });
 }
 
 void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
 {
     UNIGO([this, info] {
-        d->backendShareEvent(BACK_SHARE_STOP, info);
+        d->backendShareEvent(BACK_SHARE_STOP, info, 0);
         d->backendShareEvent(BACK_SHARE_DISCONNECT);
     });
 
@@ -282,7 +285,10 @@ void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
 
         UNIGO([this, info] {
-            d->backendShareEvent(info->peripheralShared() ? BACK_SHARE_START : BACK_SHARE_STOP, info);
+            if (info->peripheralShared())
+                d->backendShareEvent(BACK_SHARE_START, info);
+            else
+                d->backendShareEvent(BACK_SHARE_STOP, info, 1);
         });
     } else if (d->targetDeviceInfo->clipboardShared() != info->clipboardShared()) {
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
@@ -308,7 +314,7 @@ void CooperationManager::buttonClicked(const QString &id, const DeviceInfoPointe
 
 bool CooperationManager::buttonVisible(const QString &id, const DeviceInfoPointer info)
 {
-    if (qApp->property("onlyTransfer").toBool())
+    if (qApp->property("onlyTransfer").toBool() || !info->cooperationEnable())
         return false;
 
     if (id == ConnectButtonId && info->connectStatus() == DeviceInfo::ConnectStatus::Connectable)
@@ -336,8 +342,9 @@ void CooperationManager::notifyConnectRequest(const QString &info)
         return;
 
     d->senderDeviceIp = infoList[1];
-    d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(infoList.first()), actions, 10 * 1000);
-    QTimer::singleShot(10 * 1000, this, &CooperationManager::onVerifyTimeout);
+    auto devName = infoList[0];
+    d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(devName), actions, 10 * 1000);
+    QTimer::singleShot(10 * 1000, this, [this, devName] { onVerifyTimeout(devName); });
 }
 
 void CooperationManager::handleConnectResult(bool accepted)
@@ -364,19 +371,32 @@ void CooperationManager::handleConnectResult(bool accepted)
     }
 }
 
-void CooperationManager::onVerifyTimeout()
+void CooperationManager::handleDisConnectResult(const QString &devName)
+{
+    if (!d->targetDeviceInfo)
+        return;
+
+    static QString body(tr("Coordination with \"%1\" has ended"));
+    d->notifyMessage(d->recvReplacesId, body.arg(devName), {}, 3 * 1000);
+
+    d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
+    MainController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
+    d->targetDeviceInfo.reset();
+}
+
+void CooperationManager::onVerifyTimeout(const QString &devName)
 {
     if (d->isRecvMode) {
-        if (!d->targetDeviceInfo || d->isReplied)
+        if (d->isReplied)
             return;
 
         static QString body(tr("The connection request sent to you by \"%1\" was interrupted due to a timeout"));
-        d->notifyMessage(d->recvReplacesId, body.arg(d->targetDeviceInfo->deviceName()), {}, 3 * 1000);
+        d->notifyMessage(d->recvReplacesId, body.arg(devName), {}, 3 * 1000);
     } else {
-        if (!d->taskDialog()->isVisible() || !d->targetDeviceInfo)
+        if (!d->taskDialog()->isVisible())
             return;
 
-        d->taskDialog()->switchFailPage(d->targetDeviceInfo->deviceName(),
+        d->taskDialog()->switchFailPage(devName,
                                         tr("The other party does not confirm, please try again later"),
                                         true);
     }

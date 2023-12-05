@@ -19,12 +19,11 @@ ShareCooperationService::ShareCooperationService(QObject *parent) : QObject(pare
 
     QSettings *settings = DaemonConfig::instance()->settings();
     _cooConfig = new CooConfig(settings);
-    setBarrierProcess(new QProcess(this));
 }
 
 ShareCooperationService::~ShareCooperationService()
 {
-
+    stopBarrier();
 }
 
 void ShareCooperationService::setBarrierType(BarrierType type)
@@ -138,7 +137,7 @@ bool ShareCooperationService::startBarrier()
         return false;
     }
 
-
+    setBarrierProcess(new QProcess());
     connect(barrierProcess(), SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(barrierFinished(int, QProcess::ExitStatus)));
     connect(barrierProcess(), SIGNAL(readyReadStandardOutput()), this, SLOT(logOutput()));
     connect(barrierProcess(), SIGNAL(readyReadStandardError()), this, SLOT(logError()));

@@ -438,7 +438,7 @@ void HandleIpcService::handleShareDisConnect(co::Json json)
     ShareDisConnect info;
     info.from_json(json);
     info.tarAppname = info.tarAppname.empty() ? info.appName : info.tarAppname;
-    DiscoveryJob::instance()->updateAnnouncShare(false);
+    DiscoveryJob::instance()->updateAnnouncShare(true);
     SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_DISCONNECT, info.appName.c_str(),
                                                info.as_json().str().c_str());
 }
@@ -460,7 +460,7 @@ void HandleIpcService::handleShareStop(co::Json json)
     // 停止自己的共享
     if (st.flags == ShareStopFlag::SHARE_STOP_ALL) {
         ShareCooperationServiceManager::instance()->stop();
-        DiscoveryJob::instance()->updateAnnouncShare(false);
+        DiscoveryJob::instance()->updateAnnouncShare(true);
     } else if (st.flags == ShareStopFlag::SHARE_STOP_CLIENT) {
         st.flags = ShareStopFlag::SHARE_STOP_SERVER;
         ShareCooperationServiceManager::instance()->client()->stopBarrier();

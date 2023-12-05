@@ -100,7 +100,7 @@ QWidget *CooperationTaskDialog::createFailPage()
     connect(cancelBtn, &QPushButton::clicked, this, &CooperationTaskDialog::close);
 
     retryBtn = new QPushButton(tr("Retry", "button"), this);
-    connect(cancelBtn, &QPushButton::clicked, this, &CooperationTaskDialog::retryConnected);
+    connect(retryBtn, &QPushButton::clicked, this, &CooperationTaskDialog::retryConnected);
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addWidget(cancelBtn);

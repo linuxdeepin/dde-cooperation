@@ -215,8 +215,15 @@ void CooperationUtilPrivate::localIPCStart()
                                               Qt::QueuedConnection,
                                               Q_ARG(bool, conReply.reply));
             } break;
-            case FRONT_SHARE_DISCONNECT:
-                break;
+            case FRONT_SHARE_DISCONNECT: {
+                ShareDisConnect disCon;
+                disCon.from_json(json_obj);
+
+                q->metaObject()->invokeMethod(CooperationManager::instance(),
+                                              "handleDisConnectResult",
+                                              Qt::QueuedConnection,
+                                              Q_ARG(QString, QString(disCon.msg.c_str())));
+            } break;
             default:
                 break;
             }
@@ -236,6 +243,7 @@ QList<DeviceInfoPointer> CooperationUtilPrivate::parseDeviceInfo(const co::Json 
     NodeList nodeList;
     nodeList.from_json(obj);
 
+    auto lastInfo = nodeList.peers.pop_back();
     QList<DeviceInfoPointer> devInfoList;
     for (const auto &node : nodeList.peers) {
         DeviceInfoPointer devInfo { nullptr };
@@ -254,13 +262,16 @@ QList<DeviceInfoPointer> CooperationUtilPrivate::parseDeviceInfo(const co::Json 
 
             map.insert("IPAddress", node.os.ipv4.c_str());
             devInfo = DeviceInfo::fromVariantMap(map);
+            if (lastInfo.os.share_connect_ip == node.os.ipv4)
+                devInfo->setConnectStatus(DeviceInfo::Connected);
+            else
+                devInfo->setConnectStatus(DeviceInfo::Connectable);
+
             break;
         }
 
-        if (devInfo && devInfo->isValid() && devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
-            devInfo->setConnectStatus(DeviceInfo::Connectable);
+        if (devInfo && devInfo->isValid() && devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone)
             devInfoList << devInfo;
-        }
     }
 
     return devInfoList;
@@ -440,6 +451,9 @@ QVariantMap CooperationUtil::deviceInfo()
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
     info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : false);
+
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::CooperationEnabled);
+    info.insert(AppSettings::CooperationEnabled, value.isValid() ? value.toBool() : false);
 
     return info;
 }
