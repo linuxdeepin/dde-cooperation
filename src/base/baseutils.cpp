@@ -5,10 +5,6 @@
 #include "baseutils.h"
 
 #include <QProcessEnvironment>
-#include <QFile>
-#include <QDir>
-#include <QStandardPaths>
-#include <QCoreApplication>
 
 using namespace deepin_cross;
 
@@ -35,17 +31,4 @@ BaseUtils::OS_TYPE BaseUtils::osType()
     return kMacOS;
 #endif
     return kOther;
-}
-
-QString BaseUtils::logDir()
-{
-    QString logPath = QString("%1/%2/%3/")
-                    .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
-                    .arg(qApp->organizationName()).arg(qApp->applicationName()); //~/.cache/deepin/xx
-
-    QDir logDir(logPath);
-    if (!logDir.exists())
-        QDir().mkpath(logPath);
-
-    return logPath;
 }

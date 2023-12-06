@@ -5,8 +5,6 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#define TEST_LOGOUT false
-
 #define UNI_RPC_PROTO 1.0
 #define UNI_KEY "UOS-COOPERATION"
 #define UNI_RPC_PORT_UDP  51595

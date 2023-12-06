@@ -57,7 +57,7 @@ void HandleIpcService::createIpcBackend(const quint16 port)
                 continue;
             }
 
-            LOG << "HandleIpcService get bridge json: " << bridge.type << " json:" << bridge.json;
+            LOG_IF(FLG_log_detail) << "HandleIpcService get bridge json: " << bridge.type << " json:" << bridge.json;
             co::Json json_obj = json::parse(bridge.json);
             if (json_obj.is_null()) {
                 ELOG << "parse error from: " << bridge.json;

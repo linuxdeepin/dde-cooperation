@@ -7,6 +7,7 @@
 
 __coapi DEC_bool(cout);
 __coapi DEC_int32(min_log_level);
+__coapi DEC_bool(log_detail);
 
 namespace _xx {
 namespace log {

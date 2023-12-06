@@ -172,7 +172,7 @@ bool HandleRpcService::handleRemoteLogin(co::Json &info)
 
 void HandleRpcService::handleRemoteDisc(co::Json &info)
 {
-    DLOG << "handleRemoteDisc: " << info.dbg();
+    DLOG_IF(FLG_log_detail) << "handleRemoteDisc: " << info.dbg();
     MiscJsonCall mis;
     mis.from_json(info);
     co::Json msg;
@@ -459,7 +459,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 // timeout, next read
                 continue;
             }
-            LOG << "ServiceManager get chan value: " << indata.type << " json:" << indata.json;
+            LOG_IF(FLG_log_detail) << ">> get chan value: " << indata.type << " json:" << indata.json;
             co::Json json_obj = json::parse(indata.json);
             if (RPC_PING != indata.type && json_obj.is_null()) {
                 ELOG << "parse error from: " << indata.json;

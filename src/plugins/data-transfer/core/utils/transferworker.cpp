@@ -49,33 +49,11 @@ TransferHandle::TransferHandle()
         }
     });
     timer->start(1000);
-
-    //log
-    //handleConnectStatus(1,"66");
-    // qInstallMessageHandler(logHandler);
 }
 
 TransferHandle::~TransferHandle()
 {
     _this_destruct = true;
-}
-
-void TransferHandle::logHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
-{
-    switch (type) {
-    case QtDebugMsg:
-        DLOG << msg.toStdString();
-        break;
-    case QtInfoMsg:
-        LOG << msg.toStdString();
-        break;
-    case QtWarningMsg:
-        WLOG << msg.toStdString();
-        break;
-    default:
-        DLOG << msg.toStdString();
-        break;
-    }
 }
 
 void TransferHandle::localIPCStart()
@@ -227,7 +205,7 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
 void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 {
     auto it = _job_maps.find(id);
-    LOG << "handleTransJobStatus " << result << " saved:" << path.toStdString();
+    LOG_IF(FLG_log_detail) << "handleTransJobStatus " << result << " saved:" << path.toStdString();
 
     switch (result) {
     case JOB_TRANS_FAILED:
@@ -281,7 +259,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
             _file_stats.all_current_size += param.current;
             _file_ids.insert(param.file_id, param.current);
         }
-        LOG << "file receive IDLE: " << filepath.toStdString();
+        LOG_IF(FLG_log_detail) << "file receive IDLE: " << filepath.toStdString();
         break;
     }
     case FILE_TRANS_SPEED: {
@@ -311,7 +289,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         _file_stats.all_current_size += increment;   //增量值
         _file_ids.remove(param.file_id);
 
-        LOG << "file receive END: " << filepath.toStdString();
+        LOG_IF(FLG_log_detail) << "file receive END: " << filepath.toStdString();
 #ifndef WIN32
         TransferHelper::instance()->addFinshedFiles(filepath, param.total);
 #endif
@@ -340,8 +318,8 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
     }
 
-    LOG << "progressbar: " << progressbar << " remain_time=" << remain_time;
-    LOG << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
+    LOG_IF(FLG_log_detail) << "progressbar: " << progressbar << " remain_time=" << remain_time;
+    LOG_IF(FLG_log_detail) << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 
     emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
 }
