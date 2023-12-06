@@ -10,6 +10,7 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/ipc/backendservice.h"
     "${CMAKE_SOURCE_DIR}/src/ipc/backendservice.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
+    "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"

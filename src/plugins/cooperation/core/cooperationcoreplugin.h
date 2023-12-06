@@ -27,7 +27,6 @@ public:
 
 private:
     void bindEvents();
-    void initLog();
 };
 
 }   // namespace cooperation_core

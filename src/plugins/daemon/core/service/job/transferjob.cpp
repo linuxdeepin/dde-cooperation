@@ -179,7 +179,7 @@ void TransferJob::insertFileInfo(FileInfo &info)
     int fileid = info.file_id;
     auto it = _file_info_maps.find(fileid);
     if (it == _file_info_maps.end()) {
-        DLOG << "insertFileInfo new file INFO: " << fileid << info.name;
+        DLOG_IF(FLG_log_detail) << "insertFileInfo new file INFO: " << fileid << info.name;
         // skip 0B file
         if (info.total_size > 0) {
             co::mutex_guard g(_map_mutex);
@@ -322,7 +322,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
             memset(buf, 0, block_len);
             resize = fd.read(buf, block_size);
             if (resize <= 0) {
-                LOG << "read file ERROR or END, resize = " << resize;
+                LOG_IF(FLG_log_detail) << "read file ERROR or END, resize = " << resize;
                 break;
             }
 
@@ -382,7 +382,7 @@ void TransferJob::handleBlockQueque()
                         continue;
                     }
                 } else if (!self->_writejob) {
-                    DLOG << "all file finished, send job finish.";
+                    DLOG_IF(FLG_log_detail) << "all file finished, send job finish.";
                     // 通知对端文件已发完，并等待下一循环退出
                     self->handleUpdate(FINIASH, self->_path.c_str(), "");
                     atomic_store(&(self->_status), WAIT_DONE);
@@ -504,7 +504,7 @@ bool TransferJob::syncHandleStatus()
             bool end = pair.second.current_size >= pair.second.total_size;
             handleTransStatus(end ? FILE_TRANS_END : FILE_TRANS_SPEED, pair.second);
             if (end) {
-                DLOG_IF(TEST_LOGOUT) << "should notify file finish: " << pair.second.name << " jobid=" << pair.second.job_id;
+                DLOG_IF(FLG_log_detail) << "should notify file finish: " << pair.second.name << " jobid=" << pair.second.job_id;
                 co::mutex_guard g(_map_mutex);
                 _file_info_maps.erase(pair.first);
                 if (!_writejob) {

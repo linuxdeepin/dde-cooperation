@@ -47,6 +47,7 @@ DEF_bool(log_daily, false, ">>#0 if true, enable daily log rotation");
 DEF_bool(log_compress, false, ">>#0 if true, compress rotated log files with xz");
 
 DEF_bool(journal, false, ">>#0 also logging to journal");
+DEF_bool(log_detail, false, ">>#0 detail logs output.", d);
 
 // When this value is true, the above flags should have been initialized, 
 // and we are safe to start the logging thread.
@@ -559,7 +560,8 @@ void Logger::push_level_log(char* s, size_t n, int level) {
                 memcpy((char*)(buf.data()) + 7, p + 1, len);
                 buf.resize(len + 7);
             }
-            write_to_journal(s, level);
+            fastring log(s, n);
+            write_to_journal(log.c_str(), level);
 
             buf.append(s, n);
             if (buf.size() > (buf.capacity() >> 1)) _log_event.signal();

@@ -147,7 +147,7 @@ QSharedPointer<RemoteServiceSender> SendRpcWork::rpcSender(const QString &appNam
     // 获取ip
     auto ip = _app_ips.value(appName);
     if (ip.isEmpty()) {
-        ELOG << "has no ip, appname = " << appName.toStdString();
+        ELOG_IF(FLG_log_detail) << "has no ip, appname = " << appName.toStdString();
         return nullptr;
     }
     // 获取 remote

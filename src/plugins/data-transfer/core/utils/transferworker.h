@@ -27,7 +27,6 @@ public:
     void sendFiles(QStringList paths);
     void sendMessage(json::Json &message);
 
-    static void logHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
     bool cancelTransferJob();
     void disconnectRemote();
 public slots:

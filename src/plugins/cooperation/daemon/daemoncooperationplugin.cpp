@@ -10,11 +10,7 @@
 
 #include "config/configmanager.h"
 
-#include <QCoreApplication>
-#include <QStandardPaths>
-#include <QTranslator>
 #include <QTimer>
-#include <QDir>
 
 using namespace daemon_cooperation;
 using namespace deepin_cross;

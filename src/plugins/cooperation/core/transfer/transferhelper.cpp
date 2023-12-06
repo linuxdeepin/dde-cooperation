@@ -355,7 +355,7 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
 
 void TransferHelper::onFileTransStatusChanged(const QString &status)
 {
-    DLOG_IF(TEST_LOGOUT) << "file transfer info: " << status.toStdString();
+    DLOG_IF(FLG_log_detail) << "file transfer info: " << status.toStdString();
     co::Json statusJson;
     statusJson.parse_from(status.toStdString());
     ipc::FileStatus param;
