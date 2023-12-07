@@ -142,11 +142,11 @@ void TransferHandle::localIPCStart()
                 break;
             }
             case FRONT_SEND_STATUS: {
-                emit TransferHelper::instance()->disconnected();
+                TransferHelper::instance()->emitDisconnected();
                 break;
             }
             case FRONT_DISCONNECT_CB: {
-                emit TransferHelper::instance()->disconnected();
+                TransferHelper::instance()->emitDisconnected();
                 break;
             }
             case FRONT_SERVER_ONLINE: {
@@ -215,7 +215,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
         }
         LOG << "Send job failed: (" << id << ") " << path.toStdString();
         emit TransferHelper::instance()->interruption();
-        emit TransferHelper::instance()->disconnected();
+        TransferHelper::instance()->emitDisconnected();
         break;
     case JOB_TRANS_DOING:
         _job_maps.insert(id, path);
