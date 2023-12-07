@@ -8,10 +8,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.h"
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
-    "${CMAKE_SOURCE_DIR}/src/config/*.h"
-    "${CMAKE_SOURCE_DIR}/src/config/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
+    "${CMAKE_SOURCE_DIR}/src/configs/settings/*.h"
+    "${CMAKE_SOURCE_DIR}/src/configs/settings/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -19,12 +19,21 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
+if (CMAKE_SYSTEM MATCHES "Linux")
+    FILE(GLOB BUSS_FILES
+        "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.h"
+        "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.cpp"
+    )
+endif()
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui DBus Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui DBus Network)
+find_package(Dtk COMPONENTS Core REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${PLUGIN_FILES}
+    ${BUSS_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
@@ -41,6 +50,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::DBus
     Qt${QT_VERSION_MAJOR}::Network
+    ${DtkCore_LIBRARIES}
     co
 )
 
@@ -51,3 +61,6 @@ install(TARGETS
     DESTINATION
     ${DEEPIN_DAEMON_PLUGIN_DIR}
 )
+
+include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+INSTALL_DCONFIG("org.deepin.dde.cooperation.json")

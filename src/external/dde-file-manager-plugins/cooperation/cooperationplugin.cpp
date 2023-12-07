@@ -5,7 +5,7 @@
 #include "cooperationplugin.h"
 #include "menu/cooperationmenuscene.h"
 #include "utils/cooperationhelper.h"
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
 
 #include <dfm-base/settingdialog/settingjsongenerator.h>
 #include <dfm-base/settingdialog/customsettingitemregister.h>

@@ -5,7 +5,8 @@
 #include "settingdialog.h"
 #include "settingdialog_p.h"
 #include "global_defines.h"
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
+#include "configs/dconfig/dconfigmanager.h"
 
 #include <QPainter>
 #include <QEvent>
@@ -186,7 +187,11 @@ void SettingDialogPrivate::createClipboardShareWidget()
 
 void SettingDialogPrivate::onFindComboBoxValueChanged(int index)
 {
+#ifdef linux
+    DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKey::DiscoveryModeKey, index);
+#else
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey, index);
+#endif
 }
 
 void SettingDialogPrivate::onConnectComboBoxValueChanged(int index)
@@ -196,7 +201,11 @@ void SettingDialogPrivate::onConnectComboBoxValueChanged(int index)
 
 void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 {
+#ifdef linux
+    DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKey::TransferModeKey, index);
+#else
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey, index);
+#endif
 }
 
 void SettingDialogPrivate::onNameEditingFinished()
@@ -277,8 +286,15 @@ void SettingDialog::showEvent(QShowEvent *event)
 
 void SettingDialog::loadConfig()
 {
+#ifdef linux
+    auto value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::DiscoveryModeKey, 0);
+    int mode = value.toInt();
+    mode = (mode < 0) ? 0 : (mode > 1) ? 1 : mode;
+    d->findCB->setCurrentIndex(mode);
+#else
     auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
     d->findCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
+#endif
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
     d->nameEdit->setText(value.isValid()
@@ -292,8 +308,15 @@ void SettingDialog::loadConfig()
     d->connectCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
     d->connectItem->setVisible(d->devShareSwitchBtn->isChecked());
 
+#ifdef linux
+    value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::TransferModeKey, 0);
+    mode = value.toInt();
+    mode = (mode < 0) ? 0 : (mode > 2) ? 2 : mode;
+    d->transferCB->setCurrentIndex(mode);
+#else
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
     d->transferCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
+#endif
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
     d->chooserEdit->setText(value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));

@@ -6,7 +6,8 @@
 #include "global_defines.h"
 #include "utils/cooperationutil.h"
 #include "utils/historymanager.h"
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
+#include "configs/dconfig/dconfigmanager.h"
 
 #include "common/constant.h"
 #include "ipc/proto/frontend.h"
@@ -51,6 +52,7 @@ MainController::MainController(QObject *parent)
 
 void MainController::initConnect()
 {
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &MainController::onDConfigValueChanged);
     connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &MainController::onAppAttributeChanged);
     QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
                                           this, SLOT(onActionTriggered(uint, const QString &)));
@@ -99,8 +101,10 @@ void MainController::openFileLocation(const QString &path)
 void MainController::regist()
 {
     QVariantMap info;
-    auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
-    info.insert(AppSettings::DiscoveryModeKey, value.isValid() ? value.toInt() : 0);
+    auto value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::DiscoveryModeKey, 0);
+    int mode = value.toInt();
+    mode = (mode < 0) ? 0 : (mode > 1) ? 1 : mode;
+    info.insert(AppSettings::DiscoveryModeKey, mode);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
     info.insert(AppSettings::DeviceNameKey,
@@ -114,8 +118,10 @@ void MainController::regist()
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
     info.insert(AppSettings::LinkDirectionKey, value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
-    info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
+    value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::TransferModeKey, 0);
+    mode = value.toInt();
+    mode = (mode < 0) ? 0 : (mode > 2) ? 2 : mode;
+    info.insert(AppSettings::TransferModeKey, mode);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
     auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
@@ -136,6 +142,16 @@ void MainController::regist()
 void MainController::unregist()
 {
     CooperationUtil::instance()->unregistAppInfo();
+}
+
+void MainController::onDConfigValueChanged(const QString &config, const QString &key)
+{
+    Q_UNUSED(key)
+
+    if (config != kDefaultCfgPath)
+        return;
+
+    regist();
 }
 
 void MainController::onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value)

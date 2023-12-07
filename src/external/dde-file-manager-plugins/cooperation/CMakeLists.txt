@@ -7,8 +7,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.h"
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.cpp"
-    "${CMAKE_SOURCE_DIR}/src/config/*.h"
-    "${CMAKE_SOURCE_DIR}/src/config/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/config/settings/*.h"
+    "${CMAKE_SOURCE_DIR}/src/config/settings/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"

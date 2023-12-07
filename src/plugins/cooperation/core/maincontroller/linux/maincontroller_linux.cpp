@@ -5,7 +5,7 @@
 #include "../maincontroller.h"
 #include "utils/cooperationutil.h"
 #include "utils/historymanager.h"
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
 
 #include <QApplication>
 

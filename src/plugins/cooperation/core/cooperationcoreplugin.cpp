@@ -9,7 +9,7 @@
 #include "maincontroller/maincontroller.h"
 #include "transfer/transferhelper.h"
 #include "cooperation/cooperationmanager.h"
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
 #include "singleton/singleapplication.h"
 
 #ifdef WIN32

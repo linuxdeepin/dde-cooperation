@@ -8,7 +8,7 @@
 #include "utils/historymanager.h"
 #include "utils/cooperationutil.h"
 
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
 #include "common/constant.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/comstruct.h"

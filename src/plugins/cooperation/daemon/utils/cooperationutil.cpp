@@ -5,7 +5,7 @@
 #include "cooperationutil.h"
 #include "cooperationutil_p.h"
 #include "maincontroller/maincontroller.h"
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
 
 #include "common/constant.h"
 #include "ipc/frontendservice.h"
