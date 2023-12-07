@@ -39,6 +39,9 @@ TransferHelper::TransferHelper()
     initOnlineState();
 #ifndef WIN32
     SettingHelper::instance();
+    connect(this, &TransferHelper::transferSucceed, this, [this](bool isall) {
+        isSetting = false;
+    });
 #endif
 }
 
@@ -128,6 +131,14 @@ QString TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &
         DLOG << "Failed to open file for writing.";
         return QString();
     }
+}
+
+void TransferHelper::emitDisconnected()
+{
+#ifdef linux
+    if (!isSetting)
+#endif
+        emit disconnected();
 }
 
 #ifdef WIN32
@@ -303,12 +314,12 @@ void TransferHelper::Retransfer(const QString jsonstr)
     sizelist.append(userData);
     OptionsManager::instance()->addUserOption(Options::KSelectFileSize, sizelist);
     LOG << "user select file size:"
-            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
+        << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
 
     QStringList paths = getTransferFilePath(filePathList, appList, browserList, configList);
     qInfo() << "continue last file list: " << paths;
     LOG << "continue last file size:"
-            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
+        << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
     transferhandle.sendFiles(paths);
 
     emit changeWidget(PageName::transferringwidget);
@@ -420,6 +431,7 @@ void TransferHelper::addFinshedFiles(const QString &filepath, int64 size)
 
 void TransferHelper::setting(const QString &filepath)
 {
+    isSetting = true;
     SettingHelper::instance()->handleDataConfiguration(filepath);
 }
 

@@ -34,6 +34,8 @@ public:
 
     bool cancelTransferJob();
 
+    void emitDisconnected();
+
 #ifdef WIN32
     QMap<QString, QString> getAppList(QMap<QString, QString> &noRecommedApplist);
     QMap<QString, QString> getBrowserList();
@@ -54,6 +56,7 @@ public:
 
 private:
     QMap<QString, int64> finshedFiles;
+    bool isSetting = false;
 #endif
 
 Q_SIGNALS:
