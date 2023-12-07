@@ -5,7 +5,7 @@
 #include "global_defines.h"
 #include "historymanager.h"
 
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
 
 using namespace cooperation_core;
 

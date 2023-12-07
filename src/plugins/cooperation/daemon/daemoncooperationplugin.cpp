@@ -8,7 +8,7 @@
 #include "utils/cooperationutil.h"
 #include "common/commonutils.h"
 
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
 
 #include <QTimer>
 
@@ -20,9 +20,8 @@ void DaemonCooperationPlugin::initialize()
     auto appName = qApp->applicationName();
     qApp->setApplicationName(MainAppName);
     ConfigManager::instance();
-    qApp->setApplicationName(appName);
-
     CommonUitls::loadTranslator();
+    qApp->setApplicationName(appName);
 
     if (DPF_NAMESPACE::LifeCycle::isAllPluginsStarted())
         onAllPluginsStarted();

@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config/configmanager.h"
-#include "config/settings.h"
+#include "configmanager.h"
+#include "settings.h"
 
 #include <QCoreApplication>
 

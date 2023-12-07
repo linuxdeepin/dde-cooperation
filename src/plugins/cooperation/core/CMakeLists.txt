@@ -12,8 +12,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/singleton/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.h"
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
-    "${CMAKE_SOURCE_DIR}/src/config/*.h"
-    "${CMAKE_SOURCE_DIR}/src/config/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/configs/settings/*.h"
+    "${CMAKE_SOURCE_DIR}/src/configs/settings/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cooperationcoreplugin.h"
@@ -52,6 +52,8 @@ if (CMAKE_SYSTEM MATCHES "Windows")
    find_package(Qt5 COMPONENTS Sql REQUIRED)
 elseif (CMAKE_SYSTEM MATCHES "Linux")
     FILE(GLOB BUSS_FILES
+        "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.h"
+        "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/linux/*.cpp"

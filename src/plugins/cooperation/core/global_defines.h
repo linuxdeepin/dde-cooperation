@@ -69,6 +69,12 @@ inline constexpr char TransHistoryKey[] { "TransHistory" };
 inline constexpr char ConnectHistoryKey[] { "ConnectHistory" };
 }
 
+// 组策略
+namespace DConfigKey {
+inline constexpr char DiscoveryModeKey[] { "cooperation.discovery.mode" };
+inline constexpr char TransferModeKey[] { "cooperation.transfer.mode" };
+}
+
 inline const char MainAppName[] { "dde-cooperation" };
 inline const char CooperRegisterName[] { "daemon-cooperation" };
 

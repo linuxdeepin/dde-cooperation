@@ -4,7 +4,7 @@
 
 #include "transferhelper.h"
 #include "transferhelper_p.h"
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
 #include "utils/cooperationutil.h"
 #include "utils/historymanager.h"
 

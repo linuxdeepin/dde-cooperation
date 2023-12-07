@@ -9,7 +9,7 @@
 #include "info/deviceinfo.h"
 #include "maincontroller/maincontroller.h"
 
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
 #include "common/constant.h"
 #include "common/commonstruct.h"
 #include "ipc/frontendservice.h"
@@ -194,10 +194,6 @@ void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString
         targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
         MainController::instance()->updateDeviceState({ targetDeviceInfo });
 
-        // 发送方若开启了外设共享，则同样进行共享操作
-        // 卡，功能失效
-        //        backendShareEvent(BACK_SHARE_START, info);
-
         // 记录
         HistoryManager::instance()->writeIntoConnectHistory(info->ipAddress(), info->deviceName());
 
@@ -274,8 +270,8 @@ void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
 
 void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
 {
-    // 未协同，不进行处理
-    if (!d->targetDeviceInfo || d->targetDeviceInfo->connectStatus() != DeviceInfo::Connected)
+    // 未协同、接收端，不进行处理
+    if (d->isRecvMode || !d->targetDeviceInfo || d->targetDeviceInfo->connectStatus() != DeviceInfo::Connected)
         return;
 
     if (d->targetDeviceInfo->ipAddress() != info->ipAddress())
@@ -283,6 +279,7 @@ void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
 
     if (d->targetDeviceInfo->peripheralShared() != info->peripheralShared()) {
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
+        d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
 
         UNIGO([this, info] {
             if (info->peripheralShared())
@@ -292,6 +289,7 @@ void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
         });
     } else if (d->targetDeviceInfo->clipboardShared() != info->clipboardShared()) {
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
+        d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
 
         UNIGO([this, info] {
             d->backendShareEvent(BACK_SHARE_START, info);

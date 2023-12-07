@@ -16,6 +16,11 @@ inline constexpr char CacheGroup[] { "Cache" };
 inline constexpr char TransHistoryKey[] { "TransHistory" };
 }
 
+namespace DConfigKey {
+inline constexpr char DiscoveryModeKey[] { "cooperation.discovery.mode" };
+inline constexpr char TransferModeKey[] { "cooperation.transfer.mode" };
+}
+
 inline const char MainAppName[] { "dde-cooperation" };
 inline const char PluginName[] { "daemon-cooperation" };
 

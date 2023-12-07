@@ -34,6 +34,7 @@ public:
     void unregist();
 
 public Q_SLOTS:
+    void onDConfigValueChanged(const QString &config, const QString &key);
     void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
     void waitForConfirm(const QString &name);
     void onActionTriggered(uint replacesId, const QString &action);

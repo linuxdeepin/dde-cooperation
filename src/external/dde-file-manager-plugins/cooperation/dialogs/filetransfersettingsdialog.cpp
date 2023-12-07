@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filetransfersettingsdialog.h"
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
+#include "configs/dconfig/dconfigmanager.h"
 
 #include <DStyle>
 #include <DGuiApplicationHelper>
@@ -178,8 +179,15 @@ void FileTransferSettingsDialog::initConnect()
 
 void FileTransferSettingsDialog::loadConfig()
 {
+#ifdef linux
+    auto value = DConfigManager::instance()->value(kDefaultCfgPath, "cooperation.transfer.mode", 0);
+    int mode = value.toInt();
+    mode = (mode < 0) ? 0 : (mode > 2) ? 2 : mode;
+    comBox->setCurrentIndex(mode);
+#else
     auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "TransferMode");
     comBox->setCurrentIndex(value.isValid() ? value.toInt() : 0);
+#endif
 
     value = ConfigManager::instance()->appAttribute("GenericAttribute", "StoragePath");
     fileChooserEdit->setText(value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
@@ -218,7 +226,11 @@ void FileTransferSettingsDialog::onFileChoosered(const QString &fileName)
 
 void FileTransferSettingsDialog::onComBoxValueChanged(int index)
 {
+#ifdef linux
+    DConfigManager::instance()->setValue(kDefaultCfgPath, "cooperation.transfer.mode", index);
+#else
     ConfigManager::instance()->setAppAttribute("GenericAttribute", "TransferMode", index);
+#endif
 }
 
 void FileTransferSettingsDialog::showEvent(QShowEvent *e)

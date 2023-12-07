@@ -9,7 +9,8 @@
 #include "transfer/transferhelper.h"
 #include "cooperation/cooperationmanager.h"
 
-#include "config/configmanager.h"
+#include "configs/settings/configmanager.h"
+#include "configs/dconfig/dconfigmanager.h"
 #include "common/constant.h"
 #include "common/commonstruct.h"
 #include "ipc/frontendservice.h"
@@ -427,8 +428,15 @@ void CooperationUtil::setAppConfig(const QString &key, const QString &value)
 QVariantMap CooperationUtil::deviceInfo()
 {
     QVariantMap info;
+#ifdef linux
+    auto value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::DiscoveryModeKey, 0);
+    int mode = value.toInt();
+    mode = (mode < 0) ? 0 : (mode > 1) ? 1 : mode;
+    info.insert(AppSettings::DiscoveryModeKey, mode);
+#else
     auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
     info.insert(AppSettings::DiscoveryModeKey, value.isValid() ? value.toInt() : 0);
+#endif
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
     info.insert(AppSettings::DeviceNameKey,
@@ -442,8 +450,15 @@ QVariantMap CooperationUtil::deviceInfo()
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
     info.insert(AppSettings::LinkDirectionKey, value.isValid() ? value.toInt() : 0);
 
-    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
+#ifdef linux
+    value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::TransferModeKey, 0);
+    mode = value.toInt();
+    mode = (mode < 0) ? 0 : (mode > 2) ? 2 : mode;
+    info.insert(AppSettings::TransferModeKey, mode);
+#else
+    auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
     info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
+#endif
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
     auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);

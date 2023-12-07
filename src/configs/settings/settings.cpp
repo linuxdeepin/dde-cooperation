@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config/settings.h"
+#include "settings.h"
 
 #include <QFileSystemWatcher>
 #include <QCoreApplication>
