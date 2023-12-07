@@ -121,7 +121,11 @@ bool CommonUitls::detailLog()
     parser.addOption(option);
 
     // 解析命令行参数
-    parser.process(*qApp);
+    const auto &args = qApp->arguments();
+    if (args.size() != 2 || !args.contains("-d"))
+        return false;
+
+    parser.process(args);
 
     // 判断选项是否存在
     bool detailMode = parser.isSet(option);

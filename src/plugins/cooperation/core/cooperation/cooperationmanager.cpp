@@ -246,6 +246,7 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
 
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     d->isRecvMode = false;
+    d->isReplied = false;
     auto devName = info->deviceName();
     d->taskDialog()->switchWaitPage(devName);
     d->taskDialog()->show();
@@ -360,12 +361,14 @@ void CooperationManager::handleConnectResult(bool accepted)
         d->notifyMessage(d->recvReplacesId, body.arg(d->targetDeviceInfo->deviceName()), {}, 3 * 1000);
         d->taskDialog()->close();
     } else {
-        if (d->targetDeviceInfo)
-            d->targetDeviceInfo.reset();
+        if (!d->targetDeviceInfo)
+            return;
 
+        d->isReplied = true;
         static QString msg(tr("\"%1\" has rejected your request for collaboration"));
-        d->taskDialog()->switchFailPage(d->targetDeviceInfo->deviceName(), msg, false);
+        d->taskDialog()->switchFailPage(d->targetDeviceInfo->deviceName(), msg.arg(d->targetDeviceInfo->deviceName()), false);
         d->taskDialog()->show();
+        d->targetDeviceInfo.reset();
     }
 }
 
@@ -391,7 +394,7 @@ void CooperationManager::onVerifyTimeout(const QString &devName)
         static QString body(tr("The connection request sent to you by \"%1\" was interrupted due to a timeout"));
         d->notifyMessage(d->recvReplacesId, body.arg(devName), {}, 3 * 1000);
     } else {
-        if (!d->taskDialog()->isVisible())
+        if (!d->taskDialog()->isVisible() || d->isReplied)
             return;
 
         d->taskDialog()->switchFailPage(devName,

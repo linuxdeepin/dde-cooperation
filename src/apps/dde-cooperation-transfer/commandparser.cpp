@@ -52,8 +52,10 @@ void CommandParser::initOptions()
     QCommandLineOption sendFiles(QStringList() << "s"
                                                << "send-files",
                                  "send files");
+    QCommandLineOption detail("d", "Enable detail log");
 
     addOption(sendFiles);
+    addOption(detail);
 }
 
 void CommandParser::addOption(const QCommandLineOption &option)

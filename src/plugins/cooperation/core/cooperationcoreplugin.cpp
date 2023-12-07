@@ -25,6 +25,7 @@ void CooperaionCorePlugin::initialize()
         auto appName = qApp->applicationName();
         qApp->setApplicationName(MainAppName);
         ConfigManager::instance();
+//        CommonUitls::loadTranslator();
         qApp->setApplicationName(appName);
     } else {
         connect(qApp, &SingleApplication::raiseWindow, this, [] { CooperationUtil::instance()->mainWindow()->activateWindow(); });
@@ -34,7 +35,6 @@ void CooperaionCorePlugin::initialize()
     bindEvents();
 
     CommonUitls::initLog();
-    CommonUitls::loadTranslator();
 }
 
 bool CooperaionCorePlugin::start()

@@ -46,6 +46,7 @@ void StateLabel::paintEvent(QPaintEvent *event)
         textColor.setRgb(0, 130, 250);
         break;
     case DeviceInfo::Offline:
+    default:
         brushColor.setRgb(0, 0, 0, 25);
         textColor.setRgb(0, 0, 0, 128);
         break;
@@ -77,6 +78,7 @@ void DeviceItem::setDeviceInfo(const DeviceInfoPointer info)
     ipLabel->setText(info->ipAddress());
 
     update();
+    updateOperations();
 }
 
 DeviceInfoPointer DeviceItem::deviceInfo() const
@@ -161,7 +163,8 @@ void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connectable"));
     } break;
-    case DeviceInfo::Offline: {
+    case DeviceInfo::Offline:
+    default: {
         QIcon icon = QIcon::fromTheme(Kcomputer_off_line);
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("offline"));
