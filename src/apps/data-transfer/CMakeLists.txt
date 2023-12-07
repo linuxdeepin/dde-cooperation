@@ -77,5 +77,8 @@ else()
 
     # desktop
     install(FILES setup/linux/deepin-data-transfer.desktop DESTINATION share/applications)
+
+    # 日志收集配置
+    install(FILES setup/linux/deepin-data-transfer.json DESTINATION share/deepin-log-viewer/deepin-log.conf.d)
 endif()
 
