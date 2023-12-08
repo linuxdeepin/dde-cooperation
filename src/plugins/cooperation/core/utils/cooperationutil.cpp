@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -456,7 +456,7 @@ QVariantMap CooperationUtil::deviceInfo()
     mode = (mode < 0) ? 0 : (mode > 2) ? 2 : mode;
     info.insert(AppSettings::TransferModeKey, mode);
 #else
-    auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
+    value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
     info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
 #endif
 

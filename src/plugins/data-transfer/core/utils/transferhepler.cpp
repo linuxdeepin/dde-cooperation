@@ -340,6 +340,7 @@ bool TransferHelper::checkSize(const QString &filepath)
         LOG << "outOfStorage" << size;
         emit outOfStorage(size);
         cancelTransferJob();
+        disconnectRemote();
         return false;
     }
     return true;

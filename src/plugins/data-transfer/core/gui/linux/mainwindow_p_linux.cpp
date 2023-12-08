@@ -114,6 +114,8 @@ void MainWindowPrivate::initWidgets()
     connect(TransferHelper::instance(), &TransferHelper::disconnected,
             [this, errorwidget]() {
                 int index = stackedWidget->currentIndex();
+                if (index == PageName::errorwidget)
+                    return;
                 if (index == PageName::transferringwidget || index == PageName::waitgwidget)
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
                 errorwidget->setErrorType(ErrorType::networkError);
