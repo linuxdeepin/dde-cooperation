@@ -9,7 +9,6 @@
 
 #include "../transfer/transferringwidget.h"
 
-
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
 #include <QHBoxLayout>
@@ -23,12 +22,13 @@
 #include <QImage>
 #include <QMessageBox>
 
-ChooseWidget::ChooseWidget(QWidget *parent) : QFrame(parent)
+ChooseWidget::ChooseWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
-ChooseWidget::~ChooseWidget() { }
+ChooseWidget::~ChooseWidget() {}
 
 void ChooseWidget::initUI()
 {
@@ -98,20 +98,20 @@ void ChooseWidget::initUI()
     mainLayout->addLayout(indexLayout);
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
-    [this, tipiconlabel, tiptextlabel](bool online) {
-        if (online) {
-            tipiconlabel->setVisible(false);
-            tiptextlabel->setVisible(false);
-        } else {
-            tipiconlabel->setVisible(true);
-            tiptextlabel->setVisible(true);
-            winItem->checked = false;
-        }
-        winItem->setEnable(online);
-    });
+            [this, tipiconlabel, tiptextlabel](bool online) {
+                if (online) {
+                    tipiconlabel->setVisible(false);
+                    tiptextlabel->setVisible(false);
+                } else {
+                    tipiconlabel->setVisible(true);
+                    tiptextlabel->setVisible(true);
+                    winItem->checked = false;
+                }
+                winItem->setEnable(online);
+            });
 
     connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
-    connect(winItem, &ModeItem::clicked, [this ](int state) {
+    connect(winItem, &ModeItem::clicked, [this](int state) {
         if (state == true) {
             if (packageItem->checked == true) {
                 packageItem->checked = false;
@@ -178,12 +178,15 @@ void ChooseWidget::themeChanged(int theme)
     packageItem->themeChanged(theme);
 }
 
-ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : itemText(text), QFrame(parent)
+ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
+    : itemText(text), QFrame(parent)
 {
     setStyleSheet(".ModeItem{"
                   "border-radius: 8px;"
                   "opacity: 1;"
-                  "background-color: rgba(0,0,0, 0.1);}");
+                  "background-color: rgba(0,0,0, 0.1);}"
+                  ".ModeItem:hover{"
+                  "background-color: rgba(0,0,0, 0.2);}");
     setFixedSize(268, 222);
 
     iconLabel = new QLabel(this);
@@ -197,7 +200,7 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent) : itemText(text), 
     mainLayout->addWidget(iconLabel);
 }
 
-ModeItem::~ModeItem() { }
+ModeItem::~ModeItem() {}
 
 void ModeItem::setEnable(bool able)
 {
@@ -210,18 +213,20 @@ void ModeItem::themeChanged(int theme)
     // light
     if (theme == 1) {
         setStyleSheet(".ModeItem{"
-                      "border-radius: 8px; "
+                      "border-radius: 8px;"
                       "opacity: 1;"
-                      "background-color: rgba(0, 0, 0, 0.03);"
-                      "}");
+                      "background-color: rgba(0,0,0, 0.1);}"
+                      ".ModeItem:hover{"
+                      "background-color: rgba(0,0,0, 0.2);}");
         dark = false;
     } else {
         // dark
         setStyleSheet(".ModeItem{"
                       "border-radius: 8px;"
                       "opacity: 1;"
-                      "background-color: rgba(255,255,255, 0.1);"
-                      "}");
+                      "background-color: rgba(255,255,255, 0.1);}"
+                      ".ModeItem:hover{"
+                      "background-color: rgba(0,0,0, 0.2);}");
         dark = true;
     }
 }

@@ -91,6 +91,11 @@ void UploadFileWidget::initUI()
         nextPage();
     });
 
+    connect(this, &UploadFileWidget::Initial, this, [uploadFileFrame]() {
+        emit uploadFileFrame->updateUI(uploadStatus::Initial);
+        return;
+    });
+
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
     buttonLayout->addSpacing(15);
@@ -146,6 +151,11 @@ bool UploadFileWidget::checkBackupFile(const QString &filePath)
     return true;
 }
 
+void UploadFileWidget::clear()
+{
+    emit Initial();
+}
+
 void UploadFileWidget::nextPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
@@ -181,7 +191,6 @@ void UploadFileWidget::themeChanged(int theme)
                                   "opacity: 1;"
                                   "background-color: rgba(255,255,255, 0.1);"
                                   "}");
-
     }
 }
 
@@ -299,7 +308,7 @@ void UploadFileFrame::initStyleSheet()
 void UploadFileFrame::initFileFrame()
 {
     fileFrame = new QFrame(this);
-    fileFrame->setStyleSheet(".QFrame{background-color: rgba(0, 0, 0, 0.2);border-style: none;}");
+    fileFrame->setStyleSheet(".QFrame{background-color: rgba(0, 0, 0, 0.2);border-style: none; border-radius: 10px;}");
     fileFrame->setFixedSize(124, 111);
     fileFrame->setVisible(false);
 
@@ -346,7 +355,11 @@ void UploadFileFrame::dragEnterEvent(QDragEnterEvent *event)
 
 void UploadFileFrame::dragMoveEvent(QDragMoveEvent *event)
 {
-    setStyleSheet("background-color: rgba(0, 129, 255, 0.2);");
+    setStyleSheet(".UploadFileFrame{background-color: rgba(0, 129, 255, 0.2);"
+                  "border-radius: 10px;"
+                  "border-style: dashed;"
+                  "border-width: 2px;"
+                  "border-color: rgba(0, 0, 0, 0.06);}");
     event->accept();
 }
 

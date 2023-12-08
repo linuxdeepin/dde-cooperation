@@ -16,6 +16,9 @@ public:
     TransferringWidget(QWidget *parent = nullptr);
     ~TransferringWidget();
 
+    QString resetContent(const QString &type, const QString &content);
+    QString getTransferFileName(const QString &fullPath, const QString &targetPath);
+
 public slots:
     void initInformationPage();
     void changeTimeLabel(const QString &time);
@@ -23,6 +26,7 @@ public slots:
     void updateProcess(const QString &tpye, const QString &content, int progressbar, int estimatedtime);
     void themeChanged(int theme);
     void clear();
+
 private:
     void initUI();
     void initConnect();
@@ -38,6 +42,7 @@ private:
     ProgressBarLabel *progressLabel { nullptr };
     QFrame *fileNameFrame { nullptr };
     QTextBrowser *processTextBrowser { nullptr };
+    QStringList finishJobs;
     bool isVisible = false;
 };
 

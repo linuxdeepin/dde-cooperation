@@ -1,6 +1,7 @@
 ﻿#include "transferringwidget.h"
 #include "../type_defines.h"
 #include "errorwidget.h"
+
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
@@ -18,13 +19,14 @@
 #include <gui/connect/choosewidget.h>
 #include <utils/optionsmanager.h>
 
-TransferringWidget::TransferringWidget(QWidget *parent) : QFrame(parent)
+TransferringWidget::TransferringWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
     initConnect();
 }
 
-TransferringWidget::~TransferringWidget() { }
+TransferringWidget::~TransferringWidget() {}
 
 void TransferringWidget::initUI()
 {
@@ -97,17 +99,30 @@ void TransferringWidget::initUI()
     processTextBrowser->setStyleSheet("QTextBrowser {"
                                       "padding-top: 10px;"
                                       "padding-bottom: 10px;"
-                                      "padding-left: 5px;"
-                                      "padding-right: 5px;"
+                                      "padding-left: 8px;"
+                                      "padding-right: 8px;"
                                       "font-size: 12px;"
                                       "font-weight: 400;"
                                       "color: rgb(82, 106, 127);"
-                                      "line-height: 300%;"
                                       "background-color:rgba(0, 0, 0,0.08);}");
 
-    processTextBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    processTextBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    QString scrollBarStyle = "QScrollBar:vertical {"
+                             "width: 6px;"
+                             "background: #c0c0c0;"
+                             "border-radius: 3px;"
+                             "}"
+                             "QScrollBar::handle:vertical {"
+                             "background: #a0a0a0;"
+                             "border-radius: 3px;"
+                             "}"
+                             "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
+                             "background: #c0c0c0;"
+                             "border-radius: 3px;"
+                             "}";
+    processTextBrowser->verticalScrollBar()->setStyleSheet(scrollBarStyle);
 
+    processTextBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    processTextBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QHBoxLayout *textBrowerlayout = new QHBoxLayout(fileNameFrame);
     fileNameFrame->setLayout(textBrowerlayout);
     textBrowerlayout->addWidget(processTextBrowser);
@@ -198,15 +213,26 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
         return;
     }
 #else
-    if (content.contains("transfer.json") && tpye == tr("Transfering"))
+    if (tpye == tr("Transfering") && content.contains("transfer.json"))
         TransferHelper::instance()->checkSize(content);
 #endif
-    if(estimatedtime==-1)
+
+    if (estimatedtime == -1)
         return;
-    QString info = QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(tpye + content);
-    processTextBrowser->append(info);
+
+    //处理过程内容，只显示一级目录文件
+    QString str = resetContent(tpye, content);
+
+    if (!str.isEmpty()) {
+        QString info = QString("<img src=':/icon/success-128.svg' width='12' height='12' style='vertical-align: baseline;'>"
+                               "<font color='#526A7F'style='vertical-align: baseline;'>&nbsp;&nbsp;&nbsp;%1</font>"
+                               "&nbsp;&nbsp;<font color='#6199CA' style='vertical-align: baseline;'>%2</font>")
+                               .arg(str, tpye);
+        processTextBrowser->append(info);
+        fileLabel->setText(QString("%1<font style='color: rgba(0, 0, 0, 0.6);'>&nbsp;&nbsp;&nbsp;%2</font>").arg(tpye, str));
+    }
+
     progressLabel->setProgress(progressbar);
-    fileLabel->setText(info);
 
     timeLabel->setText(QString(tr("Calculationing...")));
     if (estimatedtime == 0) {
@@ -251,4 +277,48 @@ void TransferringWidget::clear()
     progressLabel->setProgress(0);
     timeLabel->setText(tr("Calculationing..."));
     titileLabel->setText(tr("Transferring..."));
+    finishJobs.clear();
+}
+
+QString TransferringWidget::resetContent(const QString &type, const QString &content)
+{
+    if (!type.startsWith(tr("Decompressing")) && !type.startsWith(tr("Transfering")))
+        return content;
+
+    QString res = content;
+
+    if (finishJobs.isEmpty()) {
+        if (type.startsWith(tr("Transfering"))) {
+            QStringList parts = content.split("/");
+            if (parts.size() > 3)
+                res = "/" + parts[1] + "/" + parts[2] + "/" + parts[3];
+        }
+        finishJobs.append(res);
+        return QString();
+    }
+
+    res = getTransferFileName(content, finishJobs.first());
+    if (finishJobs.contains(res))
+        return QString();
+    else
+        finishJobs.append(res);
+    return res;
+}
+
+QString TransferringWidget::getTransferFileName(const QString &fullPath, const QString &targetPath)
+{
+    std::string path = fullPath.toStdString();
+    std::string toRemove = targetPath.toStdString();
+
+    size_t found = path.find(toRemove);   // 查找子字符串的位置
+    if (found != std::string::npos) {   // 如果找到了子字符串
+        std::string result = path.substr(found + toRemove.length() + 1);   // 截取子字符串之后的部分
+        found = result.find('/');   // 查找第一个路径名
+        if (found != std::string::npos) {
+            result = result.substr(0, found);   // 截取第一个路径名
+        }
+        return QString::fromStdString(result);
+    } else {
+        return QString();
+    }
 }

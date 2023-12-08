@@ -106,7 +106,9 @@ bool UnzipWorker::extract()
     process.setReadChannelMode(QProcess::SeparateChannels);
     process.start("unzip", arguments);
 
-//    LOG << process.arguments().toStdList();
+    //    LOG << process.arguments().toStdList();
+
+    emit TransferHelper::instance()->transferContent(tr("Decompressing"), targetDir, 0, 0);
 
     while (process.waitForReadyRead()) {
         QByteArray output = process.readAllStandardOutput();

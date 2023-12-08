@@ -66,7 +66,7 @@ Q_SIGNALS:
     void transferring();
 
     // isall mean Have all files been transferred and configured successfully
-    void transferSucceed(bool isall);
+    void transferFinished();
 
     // Used to control the current operation content, progress, and estimated completion time
     // during transmission or decompression process
@@ -84,7 +84,7 @@ Q_SIGNALS:
     void outOfStorage(int size);
 
     // display config failure
-    void failure(QString name, QString type, QString reason);
+    void addResult(QString name, bool success, QString reason);
 
     // Transmission interruption
     void interruption();

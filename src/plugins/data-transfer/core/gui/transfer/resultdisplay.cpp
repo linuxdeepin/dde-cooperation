@@ -3,62 +3,78 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QDebug>
 #include <QToolButton>
-#include <QStackedWidget>
 #include <QApplication>
 #include <QStandardItemModel>
-#include <QPainter>
-#include <gui/mainwindow_p.h>
+#include <QScrollBar>
+#include <QTextBrowser>
 #include <utils/transferhepler.h>
 
-ResultDisplayWidget::ResultDisplayWidget(QWidget *parent) : QFrame(parent)
+ResultDisplayWidget::ResultDisplayWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
-ResultDisplayWidget::~ResultDisplayWidget() { }
+ResultDisplayWidget::~ResultDisplayWidget() {}
 
 void ResultDisplayWidget::initUI()
 {
-    initListTitle();
-    initListView();
-
     setStyleSheet("background-color: white; border-radius: 10px;");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
 
-    QLabel *iconLabel = new QLabel(this);
-    iconLabel->setPixmap(QIcon(":/icon/success half-96.svg").pixmap(73, 73));
-    iconLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    iconLabel = new QLabel(this);
+    iconLabel->setPixmap(QIcon(":/icon/success-128.svg").pixmap(96, 96));
+    iconLabel->setAlignment(Qt::AlignCenter);
 
-    QLabel *titileLabel = new QLabel(tr("Transfer completed partially"), this);
-    titileLabel->setStyleSheet("color: black;"
-                               "font-size: 24px;"
-                               "font-weight: 700;");
-    titileLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    titileLabel = new QLabel(tr("Transfer completed"), this);
+    QFont font;
+    font.setPointSize(16);
+    font.setWeight(QFont::DemiBold);
+    titileLabel->setFont(font);
+    titileLabel->setAlignment(Qt::AlignCenter);
 
-    QHBoxLayout *titilelayout = new QHBoxLayout(this);
-    titilelayout->addWidget(iconLabel);
-    titilelayout->addSpacing(5);
-    titilelayout->addWidget(titileLabel);
-    titilelayout->addSpacing(50);
+    tiptextlabel = new QLabel(this);
+    tiptextlabel->setText(QString("<font size=12px color='#526A7F' >%1</font>").arg(tr("Partial information migration failed, please go to UOS for manual transfer")));
+    tiptextlabel->setAlignment(Qt::AlignCenter);
+    tiptextlabel->setVisible(false);
 
-    QLabel *tipiconlabel = new QLabel(this);
-    tipiconlabel->setPixmap(QIcon(":/icon/dialog-warning.svg").pixmap(14, 14));
+    processTextBrowser = new QTextBrowser(this);
+    processTextBrowser->setFixedSize(460, 122);
+    processTextBrowser->setReadOnly(true);
+    processTextBrowser->setLineWrapMode(QTextBrowser::NoWrap);
+    processTextBrowser->setContextMenuPolicy(Qt::NoContextMenu);
+    processTextBrowser->setStyleSheet("QTextBrowser {"
+                                      "padding-top: 10px;"
+                                      "padding-bottom: 10px;"
+                                      "padding-left: 5px;"
+                                      "padding-right: 5px;"
+                                      "font-size: 12px;"
+                                      "font-weight: 400;"
+                                      "color: rgb(82, 106, 127);"
+                                      "line-height: 300%;"
+                                      "background-color:rgba(0, 0, 0,0.08);}");
+    QString scrollBarStyle = "QScrollBar:vertical {"
+                             "width: 6px;"
+                             "background: #c0c0c0;"
+                             "border-radius: 3px;"
+                             "}"
+                             "QScrollBar::handle:vertical {"
+                             "background: #a0a0a0;"
+                             "border-radius: 3px;"
+                             "}"
+                             "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
+                             "background: #c0c0c0;"
+                             "border-radius: 3px;"
+                             "}";
+    processTextBrowser->verticalScrollBar()->setStyleSheet(scrollBarStyle);
+    processTextBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-    QLabel *tiptextlabel = new QLabel(this);
-
-    tiptextlabel->setText(QString("<font size=12px color='gray' >%1</font>").arg(tr("Partial data transfer failed, please manual transfer later")));
-    QHBoxLayout *tiplayout = new QHBoxLayout(this);
-    tiplayout->addSpacing(95);
-    tiplayout->addWidget(tipiconlabel);
-    tiplayout->addWidget(tiptextlabel);
-    tiplayout->setAlignment(Qt::AlignLeft);
-
-    QHBoxLayout *listlayout = new QHBoxLayout();
-    listlayout->addWidget(listview);
+    QHBoxLayout *textBrowerlayout = new QHBoxLayout();
+    textBrowerlayout->setAlignment(Qt::AlignCenter);
+    textBrowerlayout->addWidget(processTextBrowser);
 
     QToolButton *backButton = new QToolButton(this);
     backButton->setText(tr("Back"));
@@ -81,49 +97,17 @@ void ResultDisplayWidget::initUI()
     buttonLayout->addWidget(nextButton);
     buttonLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    mainLayout->addSpacing(30);
-    mainLayout->addLayout(titilelayout);
-    mainLayout->addSpacing(10);
-    mainLayout->addLayout(tiplayout);
-    mainLayout->addWidget(listTitle);
-    mainLayout->addLayout(listlayout);
-    mainLayout->addSpacing(300);
-    mainLayout->addLayout(buttonLayout);
+    mainLayout->addSpacing(40);
+    mainLayout->addWidget(iconLabel);
     mainLayout->addSpacing(5);
+    mainLayout->addWidget(titileLabel);
+    mainLayout->addSpacing(10);
+    mainLayout->addWidget(tiptextlabel);
+    mainLayout->addLayout(textBrowerlayout);
+    mainLayout->addLayout(buttonLayout);
 
-    connect(TransferHelper::instance(), &TransferHelper::failure, this,
-            &ResultDisplayWidget::addFailure);
-}
-
-void ResultDisplayWidget::initListTitle()
-{
-    QLabel *text1 = new QLabel(tr("Content"), this);
-    QLabel *text2 = new QLabel(tr("Category"), this);
-    QLabel *text3 = new QLabel(tr("Failure reason"), this);
-
-    QHBoxLayout *layout = new QHBoxLayout();
-    layout->addSpacing(90);
-    layout->addWidget(text1);
-    layout->addSpacing(170);
-    layout->addWidget(text2);
-    layout->addSpacing(75);
-    layout->addWidget(text3);
-    layout->setAlignment(Qt::AlignLeft);
-
-    listTitle = new QFrame(this);
-    listTitle->setLayout(layout);
-}
-
-void ResultDisplayWidget::initListView()
-{
-    listview = new QListView(this);
-    listview->setSelectionMode(QAbstractItemView::NoSelection);
-    listview->setFixedSize(520, 235);
-    listview->setStyleSheet("background-color:rgba(0, 0, 0, 0.03);");
-    QStandardItemModel *model = new QStandardItemModel();
-    listview->setModel(model);
-    listview->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    listview->setItemDelegate(new itemDelegate());
+    connect(TransferHelper::instance(), &TransferHelper::addResult, this,
+            &ResultDisplayWidget::addResult);
 }
 
 void ResultDisplayWidget::nextPage()
@@ -135,90 +119,40 @@ void ResultDisplayWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        listTitle->setStyleSheet("background-color: white; border-radius: 10px;");
         setStyleSheet("background-color: white; border-radius: 10px;");
     } else {
         // dark
-        listTitle->setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
 }
 
-void ResultDisplayWidget::addFailure(QString name, QString type, QString reason)
+void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
 {
-    auto model = qobject_cast<QStandardItemModel *>(listview->model());
-
-    if (type == "clear") {
-        model->clear();
-        return;
-    }
-
-    QStandardItem *item = new QStandardItem();
-    item->setData(name, Qt::DisplayRole);
-    item->setData(type, Qt::ToolTipRole);
-    item->setData(reason, Qt::UserRole);
-    model->appendRow(item);
+    QString info, color;
+    if (!success) {
+        color = "#FF5736";
+        setStatus(false);
+    } else
+        color = "#6199CA";
+    info = QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color='%2'>%3</font>")
+                   .arg(name, color, reason);
+    processTextBrowser->append(info);
 }
 
 void ResultDisplayWidget::clear()
 {
-    auto model = qobject_cast<QStandardItemModel *>(listview->model());
-    model->clear();
+    processTextBrowser->clear();
+    setStatus(true);
 }
 
-itemDelegate::itemDelegate() { }
-
-itemDelegate::~itemDelegate() { }
-
-void itemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
-                         const QModelIndex &index) const
+void ResultDisplayWidget::setStatus(bool success)
 {
-    paintBackground(painter, option, index);
-    paintText(painter, option, index);
-}
-
-QSize itemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    Q_UNUSED(option);
-    Q_UNUSED(index);
-    return QSize(180, 36);
-}
-
-void itemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &option,
-                             const QModelIndex &index) const
-{
-    painter->save();
-
-    painter->setPen(QColor("#526A7F"));
-    QFont font;
-    font.setPixelSize(12);
-    painter->setFont(font);
-
-    QRect namePos = option.rect.adjusted(20, 0, 0, 0);
-    QString fileText = index.data(Qt::DisplayRole).toString();
-    painter->drawText(namePos, Qt::AlignLeft | Qt::AlignVCenter, fileText);
-
-    QRect tpyePos = option.rect.adjusted(210, 0, 0, 0);
-    QString tpyeText = index.data(Qt::ToolTipRole).toString();
-    painter->drawText(tpyePos, Qt::AlignLeft | Qt::AlignVCenter, tpyeText);
-
-    painter->setPen(QColor("#FF5736"));
-    QRect reasonPos = option.rect.adjusted(320, 0, 0, 0);
-    QString reasonText = index.data(Qt::UserRole).toString();
-    painter->drawText(reasonPos, Qt::AlignLeft | Qt::AlignVCenter, reasonText);
-
-    painter->restore();
-}
-
-void itemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem &option,
-                                   const QModelIndex &index) const
-{
-    painter->save();
-    QRect positon(option.rect);
-    painter->setPen(Qt::NoPen);
-    if (index.row() % 2 == 0) {
-        painter->setBrush(QColor(0, 0, 0, 12));
-        painter->drawRoundedRect(positon, 8, 8);
+    tiptextlabel->setVisible(!success);
+    if (success) {
+        titileLabel->setText(tr("Transfer completed"));
+        iconLabel->setPixmap(QIcon(":/icon/success-128.svg").pixmap(96, 96));
+    } else {
+        titileLabel->setText(tr("Transfer completed partially"));
+        iconLabel->setPixmap(QIcon(":/icon/success half-96.svg").pixmap(96, 96));
     }
-    painter->restore();
 }

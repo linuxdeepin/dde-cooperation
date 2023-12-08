@@ -14,7 +14,6 @@
 #include "../select/configselectwidget.h"
 #include "../select/fileselectwidget.h"
 
-#include "../transfer/successwidget.h"
 #include "../transfer/transferringwidget.h"
 #include "../transfer/errorwidget.h"
 
@@ -40,6 +39,8 @@
 #include <QDebug>
 #include <QThreadPool>
 #include <QTimer>
+
+#include <gui/transfer/resultdisplay.h>
 
 using namespace data_transfer_core;
 
@@ -76,9 +77,9 @@ void MainWindowPrivate::initWidgets()
     TransferringWidget *transferringwidget = new TransferringWidget(q);
     ReadyWidget *readywidget = new ReadyWidget(q);
     PromptWidget *promptwidget = new PromptWidget(q);
-    SuccessWidget *successwidget = new SuccessWidget(q);
     FileSelectWidget *filewselectidget =
             new FileSelectWidget(qobject_cast<SidebarWidget *>(sidebar->widget()), q);
+    ResultDisplayWidget *resultwidget = new ResultDisplayWidget(q);
     ConfigSelectWidget *configselectwidget = new ConfigSelectWidget(q);
     AppSelectWidget *appselectwidget = new AppSelectWidget(q);
     ErrorWidget *errorwidget = new ErrorWidget(q);
@@ -96,7 +97,7 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::readywidget, readywidget);
     stackedWidget->insertWidget(PageName::selectmainwidget, selectmainwidget);
     stackedWidget->insertWidget(PageName::transferringwidget, transferringwidget);
-    stackedWidget->insertWidget(PageName::successtranswidget, successwidget);
+    stackedWidget->insertWidget(PageName::resultwidget, resultwidget);
     stackedWidget->insertWidget(PageName::filewselectidget, filewselectidget);
     stackedWidget->insertWidget(PageName::configselectwidget, configselectwidget);
     stackedWidget->insertWidget(PageName::appselectwidget, appselectwidget);
@@ -114,8 +115,8 @@ void MainWindowPrivate::initWidgets()
     QObject::connect(stackedWidget, &QStackedWidget::currentChanged, this,
                      &MainWindowPrivate::handleCurrentChanged);
 
-    QObject::connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this,
-                     [this] { stackedWidget->setCurrentIndex(PageName::successtranswidget); });
+    QObject::connect(TransferHelper::instance(), &TransferHelper::transferFinished, this,
+                     [this] { stackedWidget->setCurrentIndex(PageName::resultwidget); });
 
     QObject::connect(appselectwidget, &AppSelectWidget::isOk, selectmainwidget,
                      &SelectMainWidget::changeSelectframeState);

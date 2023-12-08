@@ -39,7 +39,7 @@ TransferHelper::TransferHelper()
     initOnlineState();
 #ifndef WIN32
     SettingHelper::instance();
-    connect(this, &TransferHelper::transferSucceed, this, [this](bool isall) {
+    connect(this, &TransferHelper::transferFinished, this, [this]() {
         isSetting = false;
     });
 #endif
@@ -397,8 +397,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
         tempfile.close();
     });
 
-    connect(this, &TransferHelper::transferSucceed, this, [this, tempPath](bool isall) {
-        Q_UNUSED(isall)
+    connect(this, &TransferHelper::transferFinished, this, [this, tempPath] {
         finshedFiles.clear();
         QFile tempfile(tempPath);
         tempfile.remove(tempPath);
