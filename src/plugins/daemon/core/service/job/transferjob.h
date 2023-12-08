@@ -87,6 +87,7 @@ private:
     fastring _app_name; // //前端应用名
     fastring _path; // 目录或文件路径
     fastring _savedir; // 写作业，文件保存的目录
+    fastring _save_fulldir; // 全路径
     fastring _tar_app_name; // 发送到目标的应用名称
     fastring _tar_ip;
 
