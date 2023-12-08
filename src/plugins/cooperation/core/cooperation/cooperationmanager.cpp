@@ -105,16 +105,18 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
             return;
 
         ShareServerConfig config;
-        config.server_screen = myselfInfo->deviceName().toStdString();
-        config.client_screen = devInfo->deviceName().toStdString();
+        QString serverName = myselfInfo->ipAddress();
+        QString clientName = devInfo->ipAddress();
+        config.server_screen = serverName.toStdString();
+        config.client_screen = clientName.toStdString();
         switch (myselfInfo->linkMode()) {
         case DeviceInfo::LinkMode::RightMode:
-            config.screen_left = myselfInfo->deviceName().toStdString();
-            config.screen_right = devInfo->deviceName().toStdString();
+            config.screen_left = serverName.toStdString();
+            config.screen_right = clientName.toStdString();
             break;
         case DeviceInfo::LinkMode::LeftMode:
-            config.screen_left = devInfo->deviceName().toStdString();
-            config.screen_right = myselfInfo->deviceName().toStdString();
+            config.screen_left = clientName.toStdString();
+            config.screen_right = serverName.toStdString();
             break;
         }
         config.clipboardSharing = devInfo->clipboardShared();
@@ -211,6 +213,23 @@ CooperationManager::CooperationManager(QObject *parent)
     : QObject(parent),
       d(new CooperationManagerPrivate(this))
 {
+}
+
+CooperationManager::~CooperationManager()
+{
+    if (d->targetDeviceInfo && d->targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
+        co::wait_group wg;
+        wg.add(1);
+        UNIGO([this, wg]() {
+            d->backendShareEvent(BACK_SHARE_STOP, d->targetDeviceInfo, 0);
+            d->backendShareEvent(BACK_SHARE_DISCONNECT);
+            wg.done();
+        });
+        wg.wait();
+
+        static QString body(tr("Coordination with \"%1\" has ended"));
+        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+    }
 }
 
 CooperationManager *CooperationManager::instance()

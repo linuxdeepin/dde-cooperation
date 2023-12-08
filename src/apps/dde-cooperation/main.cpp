@@ -11,8 +11,12 @@
 #include <QDir>
 #include <QIcon>
 
+#include <signal.h>
+
 static constexpr char kPluginInterface[] { "org.deepin.plugin.cooperation" };
 static constexpr char kPluginCore[] { "cooperation-core" };
+
+using namespace deepin_cross;
 
 static bool loadPlugins()
 {
@@ -64,6 +68,12 @@ static bool loadPlugins()
     return true;
 }
 
+static void appExitHandler(int sig)
+{
+    qInfo() << "break with !SIGTERM! " << sig;
+    qApp->quit();
+}
+
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -100,6 +110,10 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    // 安全退出
+    signal(SIGINT, appExitHandler);
+    signal(SIGQUIT, appExitHandler);
+    signal(SIGTERM, appExitHandler);
     int ret = app.exec();
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 

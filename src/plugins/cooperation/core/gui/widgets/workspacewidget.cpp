@@ -28,6 +28,7 @@ WorkspaceWidgetPrivate::~WorkspaceWidgetPrivate()
 void WorkspaceWidgetPrivate::initUI()
 {
     searchEdit = new CooperationSearchEdit(q);
+    searchEdit->setPlaceholderText(tr("Please enter the device name or IP"));
     stackedLayout = new QStackedLayout;
 
     lfdWidget = new LookingForDeviceWidget(q);
