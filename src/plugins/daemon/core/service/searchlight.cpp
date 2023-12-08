@@ -11,6 +11,7 @@
 #include "co/co.h"
 #include "co/log.h"
 #include "common/constant.h"
+#include "ipc/proto/comstruct.h"
 
 //DEF_int32(max_idle, 3000, "max_idle");
 DEF_string(udp_ip, "0.0.0.0", "udp_ip");
@@ -326,7 +327,10 @@ void Announcer::start()
         baseJson.parse_from(_base_info);
         //NodeInfo
         co::Json nodeinfo;
-        nodeinfo.add_member("os", baseJson);
+        NodePeerInfo nodepeer;
+        nodepeer.from_json(baseJson);
+        nodepeer.ipv4 = Util::getFirstIp();
+        nodeinfo.add_member("os", nodepeer.as_json());
         co::Json appinfos;
         for (size_t i = 0; i < _app_infos.size(); ++i) {
             co::Json appjson;
