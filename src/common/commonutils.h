@@ -19,6 +19,7 @@ public:
     static void loadTranslator();
 
     static void initLog();
+    static QString elidedText(const QString &text, Qt::TextElideMode mode, int maxLength);
 
 private:
     static QString logDir();

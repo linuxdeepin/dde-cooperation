@@ -10,6 +10,7 @@
 #include "configs/dconfig/dconfigmanager.h"
 
 #include "common/constant.h"
+#include "common/commonutils.h"
 #include "ipc/proto/frontend.h"
 
 #include <co/co.h>
@@ -38,6 +39,7 @@ inline constexpr char NotifyCloseAction[] { "close" };
 inline constexpr char NotifyViewAction[] { "view" };
 
 using namespace daemon_cooperation;
+using namespace deepin_cross;
 
 MainController::MainController(QObject *parent)
     : QObject(parent)
@@ -181,7 +183,7 @@ void MainController::waitForConfirm(const QString &name)
                           NotifyCloseAction, tr("Close") };
     QString msg(tr("\"%1\" send some files to you"));
 
-    recvNotifyId = notifyMessage(recvNotifyId, msg.arg(name), actions, {}, 10 * 1000);
+    recvNotifyId = notifyMessage(recvNotifyId, msg.arg(CommonUitls::elidedText(name, Qt::ElideMiddle, 25)), actions, {}, 10 * 1000);
 }
 
 void MainController::onActionTriggered(uint replacesId, const QString &action)

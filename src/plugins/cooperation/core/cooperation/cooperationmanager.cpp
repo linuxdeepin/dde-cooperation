@@ -12,6 +12,7 @@
 #include "configs/settings/configmanager.h"
 #include "common/constant.h"
 #include "common/commonstruct.h"
+#include "common/commonutils.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
@@ -49,6 +50,7 @@ inline constexpr char Kdisconnect[] { ":/icons/deepin/builtin/texts/disconnect_1
 #endif
 
 using namespace cooperation_core;
+using namespace deepin_cross;
 
 CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
     : q(qq)
@@ -61,6 +63,9 @@ CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
     QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
                                           this, SLOT(onActionTriggered(uint, const QString &)));
 #endif
+    confirmTimer.setInterval(10 * 1000);
+    confirmTimer.setSingleShot(true);
+    connect(&confirmTimer, &QTimer::timeout, q, &CooperationManager::onVerifyTimeout);
 }
 
 void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, QVariant param)
@@ -177,7 +182,7 @@ uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &bo
 
 void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString &action)
 {
-    if (recvReplacesId != replacesId)
+    if (recvReplacesId != replacesId || isTimeout)
         return;
 
     isReplied = true;
@@ -198,7 +203,7 @@ void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString
         HistoryManager::instance()->writeIntoConnectHistory(info->ipAddress(), info->deviceName());
 
         static QString body(tr("Connection successful, coordinating with \"%1\""));
-        notifyMessage(recvReplacesId, body.arg(info->deviceName()), {}, 3 * 1000);
+        notifyMessage(recvReplacesId, body.arg(CommonUitls::elidedText(info->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
     }
 }
 
@@ -247,10 +252,11 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     d->isRecvMode = false;
     d->isReplied = false;
-    auto devName = info->deviceName();
-    d->taskDialog()->switchWaitPage(devName);
+    d->isTimeout = false;
+    d->targetDevName = info->deviceName();
+    d->taskDialog()->switchWaitPage(d->targetDevName);
     d->taskDialog()->show();
-    QTimer::singleShot(10 * 1000, this, [this, devName] { onVerifyTimeout(devName); });
+    d->confirmTimer.start();
 }
 
 void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
@@ -265,7 +271,7 @@ void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
         MainController::instance()->updateDeviceState({ d->targetDeviceInfo });
 
         static QString body(tr("Coordination with \"%1\" has ended"));
-        d->notifyMessage(d->recvReplacesId, body.arg(d->targetDeviceInfo->deviceName()), {}, 3 * 1000);
+        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
     }
 }
 
@@ -328,6 +334,7 @@ bool CooperationManager::buttonVisible(const QString &id, const DeviceInfoPointe
 void CooperationManager::notifyConnectRequest(const QString &info)
 {
     d->isReplied = false;
+    d->isTimeout = false;
     d->isRecvMode = true;
     d->recvReplacesId = 0;
     d->senderDeviceIp.clear();
@@ -341,9 +348,9 @@ void CooperationManager::notifyConnectRequest(const QString &info)
         return;
 
     d->senderDeviceIp = infoList[1];
-    auto devName = infoList[0];
-    d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(devName), actions, 10 * 1000);
-    QTimer::singleShot(10 * 1000, this, [this, devName] { onVerifyTimeout(devName); });
+    d->targetDevName = infoList[0];
+    d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), actions, 10 * 1000);
+    d->confirmTimer.start();
 }
 
 void CooperationManager::handleConnectResult(bool accepted)
@@ -358,7 +365,7 @@ void CooperationManager::handleConnectResult(bool accepted)
         });
 
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
-        d->notifyMessage(d->recvReplacesId, body.arg(d->targetDeviceInfo->deviceName()), {}, 3 * 1000);
+        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
         d->taskDialog()->close();
     } else {
         if (!d->targetDeviceInfo)
@@ -366,7 +373,7 @@ void CooperationManager::handleConnectResult(bool accepted)
 
         d->isReplied = true;
         static QString msg(tr("\"%1\" has rejected your request for collaboration"));
-        d->taskDialog()->switchFailPage(d->targetDeviceInfo->deviceName(), msg.arg(d->targetDeviceInfo->deviceName()), false);
+        d->taskDialog()->switchFailPage(d->targetDeviceInfo->deviceName(), msg.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), false);
         d->taskDialog()->show();
         d->targetDeviceInfo.reset();
     }
@@ -378,26 +385,27 @@ void CooperationManager::handleDisConnectResult(const QString &devName)
         return;
 
     static QString body(tr("Coordination with \"%1\" has ended"));
-    d->notifyMessage(d->recvReplacesId, body.arg(devName), {}, 3 * 1000);
+    d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(devName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
 
     d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
     MainController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
     d->targetDeviceInfo.reset();
 }
 
-void CooperationManager::onVerifyTimeout(const QString &devName)
+void CooperationManager::onVerifyTimeout()
 {
+    d->isTimeout = true;
     if (d->isRecvMode) {
         if (d->isReplied)
             return;
 
         static QString body(tr("The connection request sent to you by \"%1\" was interrupted due to a timeout"));
-        d->notifyMessage(d->recvReplacesId, body.arg(devName), {}, 3 * 1000);
+        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
     } else {
         if (!d->taskDialog()->isVisible() || d->isReplied)
             return;
 
-        d->taskDialog()->switchFailPage(devName,
+        d->taskDialog()->switchFailPage(d->targetDevName,
                                         tr("The other party does not confirm, please try again later"),
                                         true);
     }

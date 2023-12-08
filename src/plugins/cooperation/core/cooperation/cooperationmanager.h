@@ -30,7 +30,7 @@ public Q_SLOTS:
     void notifyConnectRequest(const QString &info);
     void handleConnectResult(bool accepted);
     void handleDisConnectResult(const QString &devName);
-    void onVerifyTimeout(const QString &devName);
+    void onVerifyTimeout();
 
 private:
     explicit CooperationManager(QObject *parent = nullptr);

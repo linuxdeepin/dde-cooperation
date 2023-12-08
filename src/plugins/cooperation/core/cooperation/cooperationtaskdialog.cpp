@@ -3,9 +3,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cooperationtaskdialog.h"
+#include "common/commonutils.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
+
+using namespace cooperation_core;
+using namespace deepin_cross;
 
 CooperationTaskDialog::CooperationTaskDialog(QWidget *parent)
     : CooperationDialog(parent)
@@ -16,14 +20,14 @@ CooperationTaskDialog::CooperationTaskDialog(QWidget *parent)
 void CooperationTaskDialog::switchWaitPage(const QString &dev)
 {
     static QString title(tr("Requesting collaborate to \"%1\""));
-    setTaskTitle(title.arg(dev));
+    setTaskTitle(title.arg(CommonUitls::elidedText(dev, Qt::ElideMiddle, 15)));
     mainLayout->setCurrentIndex(0);
 }
 
 void CooperationTaskDialog::switchFailPage(const QString &dev, const QString &msg, bool retry)
 {
     static QString title(tr("Unable to collaborate to \"%1\""));
-    setTaskTitle(title.arg(dev));
+    setTaskTitle(title.arg(CommonUitls::elidedText(dev, Qt::ElideMiddle, 15)));
 
     msgLabel->setText(msg);
     retryBtn->setVisible(retry);
@@ -99,7 +103,7 @@ QWidget *CooperationTaskDialog::createFailPage()
     cancelBtn = new QPushButton(tr("Cancel", "button"), this);
     connect(cancelBtn, &QPushButton::clicked, this, &CooperationTaskDialog::close);
 
-    retryBtn = new QPushButton(tr("Retry", "button"), this);
+    retryBtn = new CooperationSuggestButton(tr("Retry", "button"), this);
     connect(retryBtn, &QPushButton::clicked, this, &CooperationTaskDialog::retryConnected);
 
     QHBoxLayout *hlayout = new QHBoxLayout;
