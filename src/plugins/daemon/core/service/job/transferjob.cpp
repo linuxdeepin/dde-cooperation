@@ -84,9 +84,32 @@ void TransferJob::initJob(fastring appname, fastring targetappname, int id, fast
 
 bool TransferJob::createFile(const QString &filename, const bool isDir)
 {
+    // 不是跨端走以前的
+    if (_jobid != 1000) {
+        fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+        fastring fullpath = path::join(path, filename.toStdString().c_str());
+        return FSAdapter::newFileByFullPath(fullpath.c_str(), isDir);
+    }
+    // 判断是否是第一层
+    auto acfilename = filename;
+    if (acfilename.contains(QDir::separator())) {
+        auto first = acfilename.mid(0, acfilename.indexOf(QDir::separator()));
+        auto acFirst = acName(first.toStdString());
+        if (!acFirst.empty())
+            acfilename = acFirst.c_str() + acfilename.mid(acfilename.indexOf(QDir::separator()));
+    }
     fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
-    fastring fullpath = path::join(path, filename.toStdString().c_str());
-    return FSAdapter::newFileByFullPath(fullpath.c_str(), isDir);
+    fastring fullpath = path::join(path, acfilename.toStdString().c_str());
+
+    fastring ac;
+    bool ok = FSAdapter::noneExitFileByFullPath(fullpath.c_str(), isDir, &ac);
+    // DLOG << path << " , fullpath = " << fullpath << " , save = " << _savedir << " , filename = " << filename.toStdString()
+    //      << " ac = " << ac;
+    if (ok) {
+        auto ft = ac.replace(path+"/", "");
+        setFileName(filename, ft.c_str());
+    }
+    return ok;
 }
 
 void TransferJob::start()
@@ -420,7 +443,9 @@ void TransferJob::handleBlockQueque()
         int32 file_id = block->file_id;
         uint64 blk_id = block->blk_id;
         fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
-        fastring name = path::join(path, block->filename);
+        fastring acName = this->acName(block->filename);
+        acName = acName.empty() ? block->filename : acName;
+        fastring name = path::join(path, acName);
         fastring buffer = block->data;
         size_t len = buffer.size();
         bool comp = block->compressed;
@@ -549,4 +574,17 @@ int TransferJob::queueCount() const
 {
     co::mutex_guard g(_queque_mutex);
     return _block_queue.count();
+}
+
+void TransferJob::setFileName(const QString &name, const QString &acName)
+{
+    QWriteLocker lk(&_file_name_maps_lock);
+    _file_name_maps.remove(name);
+    _file_name_maps.insert(name, acName);
+}
+
+fastring TransferJob::acName(const fastring &name)
+{
+    QReadLocker lk(&_file_name_maps_lock);
+    return _file_name_maps.value(name.c_str()).toStdString();
 }

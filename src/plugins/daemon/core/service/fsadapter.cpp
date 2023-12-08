@@ -80,6 +80,26 @@ bool FSAdapter::newFileByFullPath(const char *fullpath, bool isdir)
     return fs::exists(fullpath);
 }
 
+bool FSAdapter::noneExitFileByFullPath(const char *fullpath, bool isdir, fastring *path)
+{
+    auto nonePath = noneExitPath(fullpath);
+    if (isdir) {
+        fs::mkdir(nonePath, true);
+    } else {
+        fastring parent = path::dir(nonePath);
+        fs::mkdir(parent, true); // 创建文件保存的根/子目录
+        if (!fs::exists(nonePath)) {
+            fs::file fx(nonePath, 'm');
+            fx.close();
+        }
+    }
+    // LOG << "new file -> fullpath: " << fullpath;
+    if (path)
+        *path = nonePath;
+
+    return fs::exists(nonePath);
+}
+
 bool FSAdapter::writeBlock(const char *name, int64 seek_len, const char *data, size_t size)
 {
     fs::file fx(name, 'm');
@@ -103,4 +123,28 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len, const char *data, s
     fx.close();
 
     return true;
+}
+
+fastring FSAdapter::noneExitPath(const char *name)
+{
+    fastring path(name);
+    if (!fs::exists(name))
+        return path;
+    auto index1 = path.find_last_of("/");
+    auto tm = path;
+    // 没找到/
+    if (index1 < path.size()) {
+        tm = path.substr(path.find_last_of("/"));
+    }
+    size_t index = tm.find_last_of(".");
+    fastring suffix = index >= tm.size() ? "" : tm.substr(path.find_last_of("."));
+    int n = 1;
+    fastring tmpName = path.replace(suffix, "");
+    fastring org = tmpName;
+    do {
+        tmpName = org + "_" + QString::number(n).toStdString();
+        path = tmpName + suffix;
+        n++;
+    } while (fs::exists(path));
+    return path;
 }
