@@ -395,8 +395,7 @@ void HandleIpcService::handleShareStart(co::Json json)
     st.tarAppname = st.tarAppname.empty() ? st.appName : st.tarAppname;
 
     // 读取相应的配置配置Barrier
-    if (!ShareCooperationServiceManager::instance()->server()->setServerConfig(st.config) ||
-            !ShareCooperationServiceManager::instance()->server()->restartBarrier()) {
+    if (!ShareCooperationServiceManager::instance()->server()->setServerConfig(st.config)) {
         ShareEvents ev;
         ev.eventType = FRONT_SHARE_START_REPLY;
         ShareStartReply reply;
@@ -410,9 +409,9 @@ void HandleIpcService::handleShareStart(co::Json json)
         SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
         return;
     }
-    // 通知远端启动客户端连接到这里的batter服务器
-    SendRpcService::instance()->doSendProtoMsg(SHARE_START, st.appName.c_str(),
-                                               st.as_json().str().c_str());
+
+    // 启动服务器
+    ShareCooperationServiceManager::instance()->startServer(st.as_json().str().c_str());
 }
 
 void HandleIpcService::handleShareConnect(co::Json json)
@@ -456,19 +455,18 @@ void HandleIpcService::handleShareStop(co::Json json)
 {
     ShareStop st;
     st.from_json(json);
-
     // 停止自己的共享
     if (st.flags == ShareStopFlag::SHARE_STOP_ALL) {
         ShareCooperationServiceManager::instance()->stop();
         DiscoveryJob::instance()->updateAnnouncShare(true);
     } else if (st.flags == ShareStopFlag::SHARE_STOP_CLIENT) {
         st.flags = ShareStopFlag::SHARE_STOP_SERVER;
+        ShareCooperationServiceManager::instance()->stopServer();
         ShareCooperationServiceManager::instance()->client()->stopBarrier();
     } else {
         st.flags = ShareStopFlag::SHARE_STOP_CLIENT;
-        ShareCooperationServiceManager::instance()->server()->stopBarrier();
+        ShareCooperationServiceManager::instance()->stopServer();
     }
-
     // 通知远端
     SendRpcService::instance()->doSendProtoMsg(SHARE_STOP, st.appName.c_str(),
                                                st.as_json().str().c_str());
@@ -483,4 +481,33 @@ void HandleIpcService::handleDisConnectCb(co::Json json)
                                                info.as_json().str().c_str());
 
     SendRpcService::instance()->removePing(info.tarAppname.c_str());
+}
+
+void HandleIpcService::handleShareServerStart(const bool ok, const QString msg)
+{
+    co::Json json;
+    if (!json.parse_from(msg.toStdString())) {
+        ELOG << "handleShareServerStart parse json error!!!!";
+        return;
+    }
+    ShareStart st;
+    st.from_json(json);
+    if (!ok) {
+        ShareEvents ev;
+        ev.eventType = FRONT_SHARE_START_REPLY;
+        ShareStartReply reply;
+        reply.result = false;
+        reply.isRemote = false;
+        reply.errorMsg = "init server error! param = " + json.str();
+        ev.data = reply.as_json().str();
+        auto req = ev.as_json();
+        // 通知前端
+        req.add_member("api", "Frontend.shareEvents");
+        SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
+        return;
+    }
+
+    // 通知远端启动客户端连接到这里的batter服务器
+    SendRpcService::instance()->doSendProtoMsg(SHARE_START, st.appName.c_str(),
+                                               st.as_json().str().c_str());
 }

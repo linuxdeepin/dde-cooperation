@@ -26,6 +26,15 @@ public:
     QSharedPointer<ShareCooperationService> client();
     QSharedPointer<ShareCooperationService> server();
     void stop();
+    bool startServer(const QString &msg);
+    bool stopServer() {emit stopShareServer(); return true;}
+signals:
+    void startShareServer(const QString msg);
+    void stopShareServer();
+    void startServerResult(const bool result, const QString msg);
+public slots:
+    void handleStartShareSever(const QString msg);
+    void handleStopShareSever();
 
 private:
     explicit ShareCooperationServiceManager(QObject *parent = nullptr);

@@ -36,6 +36,7 @@ public slots:
     void handleShareConnectReply(co::Json json);
     void handleShareStop(co::Json json);
     void handleDisConnectCb(co::Json json);
+    void handleShareServerStart(const bool ok, const QString msg);
 private:
     void ipcServiceStart();
     void createIpcBackend(const quint16 port);
