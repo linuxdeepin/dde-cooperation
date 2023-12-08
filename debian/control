@@ -50,14 +50,14 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-daemon
 Description: deepin data transfer frontend
  Deepin Desktop Environment (DDE) - data transfer frontend.
 
-Package: dde-cooperation
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-daemon
-Description: deepin cooperation frontend
- Deepin Desktop Environment (DDE) - cooperation frontend.
-
 Package: dde-cooperation-transfer
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-daemon
 Description: deepin file transfer frontend
  Deepin Desktop Environment (DDE) - file transfer frontend.
+
+Package: dde-cooperation
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-transfer
+Description: deepin cooperation frontend
+ Deepin Desktop Environment (DDE) - cooperation frontend.

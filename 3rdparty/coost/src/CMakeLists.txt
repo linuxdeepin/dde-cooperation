@@ -142,10 +142,10 @@ install(
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-install(
-    DIRECTORY ${PROJECT_SOURCE_DIR}/include/co
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+#install(
+#    DIRECTORY ${PROJECT_SOURCE_DIR}/include/co
+#    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+#)
 
 ## license
 install(
