@@ -66,7 +66,6 @@ public:
         _fileConfig->beginGroup(groupname);
         value = _fileConfig->value(key.c_str(), "").toString().toStdString();
         _fileConfig->endGroup();
-
         return value;
     }
 
@@ -176,15 +175,10 @@ public:
     const fastring getStorageDir(const fastring &appName)
     {
         fastring home;
-        auto it = _storage_caches.find(appName);
-        if (it != _storage_caches.end()) {
-            home = it->second;
-        } else {
-            home = getAppConfig(appName, "storagedir");
-            if (home.empty())
-                home = getStorageDir();
-            _storage_caches.insert(std::make_pair(appName, home));
-        }
+        home = getAppConfig(appName, "storagedir");
+        if (home.empty())
+            home = getStorageDir();
+
         return home;
     }
 
@@ -194,7 +188,6 @@ private:
     fastring _authedToken;
     fastring _storageDir;
     fastring _targetName;
-    co::map<fastring, fastring> _storage_caches;
 
     QSettings *_fileConfig;
     QReadWriteLock _config_mutex;

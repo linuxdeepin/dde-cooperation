@@ -75,9 +75,9 @@ void TransferJob::initJob(fastring appname, fastring targetappname, int id, fast
     _savedir = savedir;
     _writejob = write;
     _status = INIT;
+    _save_fulldir = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
     if (_writejob) {
-        fastring fullpath = path::join(
-                DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+        fastring fullpath = _save_fulldir;
         FSAdapter::newFileByFullPath(fullpath.c_str(), true);
     }
 }
@@ -86,7 +86,9 @@ bool TransferJob::createFile(const QString &filename, const bool isDir)
 {
     // 不是跨端走以前的
     if (_jobid != 1000) {
-        fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+        fastring path = _save_fulldir.empty()
+                ? path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir)
+                : _save_fulldir;
         fastring fullpath = path::join(path, filename.toStdString().c_str());
         return FSAdapter::newFileByFullPath(fullpath.c_str(), isDir);
     }
@@ -98,8 +100,10 @@ bool TransferJob::createFile(const QString &filename, const bool isDir)
         if (!acFirst.empty())
             acfilename = acFirst.c_str() + acfilename.mid(acfilename.indexOf(QDir::separator()));
     }
-    fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
-    fastring fullpath = path::join(path, acfilename.toStdString().c_str());
+    fastring path = _save_fulldir.empty()
+            ? path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir)
+            : _save_fulldir;
+    fastring fullpath = path::join(path, filename.toStdString().c_str());
 
     fastring ac;
     bool ok = FSAdapter::noneExitFileByFullPath(fullpath.c_str(), isDir, &ac);
@@ -116,7 +120,7 @@ void TransferJob::start()
 {
     atomic_store(&_status, STARTED);
     if (_writejob) {
-        DLOG << "start write job: " << _savedir;
+        DLOG << "start write job: " << _savedir << " fullpath = " << _save_fulldir;
         handleJobStatus(JOB_TRANS_DOING);
     } else {
         //并行读取文件数据
@@ -442,7 +446,9 @@ void TransferJob::handleBlockQueque()
         int32 job_id = block->job_id;
         int32 file_id = block->file_id;
         uint64 blk_id = block->blk_id;
-        fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+        fastring path = _save_fulldir.empty()
+                ? path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir)
+                : _save_fulldir;
         fastring acName = this->acName(block->filename);
         acName = acName.empty() ? block->filename : acName;
         fastring name = path::join(path, acName);
@@ -545,8 +551,9 @@ bool TransferJob::syncHandleStatus()
 void TransferJob::handleJobStatus(int status)
 {
     QString appname(_app_name.c_str());
-    fastring fullpath = path::join(
-            DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+    fastring fullpath = _save_fulldir.empty()
+            ? path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir)
+            : _save_fulldir;
     QString savepath(fullpath.c_str());
 
     emit notifyJobResult(appname, _jobid, status, savepath);
