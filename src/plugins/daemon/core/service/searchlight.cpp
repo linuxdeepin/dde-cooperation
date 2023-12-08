@@ -67,14 +67,15 @@ void Discoverer::start()
     //给 socket 设置 SO_REUSEADDR 选项，一般 server 端的 listening socket 需要设置这个选项，防止 server 重启后 bind 失败。
     co::set_reuseaddr(sockfd);
 
+recheck:
     // 将套接字加入到组播组
     struct ip_mreq mreq{};
     mreq.imr_multiaddr.s_addr = inet_addr(FLG_mcast_ip.c_str());
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
     if (co::setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char*)&mreq, sizeof(mreq)) < 0) {
-        ELOG << "Failed to join multicast group";
-        co::close(sockfd);
-        return;
+        ELOG << "Failed to join multicast group, retry after 3s.";
+        sleep::ms(3000); // 注册组播失败，3秒后重试
+        goto recheck;
     }
 
     struct sockaddr_in cli;
@@ -108,10 +109,9 @@ void Discoverer::start()
         memset(buffer, 0, sizeof(buffer));
         int recv_len = co::recvfrom(sockfd, buffer, sizeof(buffer), &cli, &len);
         if (recv_len < 0) {
-//            LOG << "discoverer server recvfrom error: " << co::strerror();
+            // LOG << "discoverer server recvfrom error: " << co::strerror();
             co::sleep(100);
             continue;
-//            break;
         }
 
         fastring msg(buffer, static_cast<size_t>(recv_len));
@@ -136,7 +136,7 @@ void Discoverer::exit()
 void Discoverer::handle_message(const fastring& message, const fastring& sender_endpoint)
 {
     // 处理接收到的数据
-//        LOG << "server recv ==== " << message << " from " << sender_endpoint;
+    // LOG << "server recv ==== " << message << " from " << sender_endpoint;
     co::Json node;
     if (!node.parse_from(message)) {
         DLOG << "Invalid service, ignore!!!!!";
