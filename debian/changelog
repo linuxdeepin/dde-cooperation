@@ -1,3 +1,9 @@
+dde-cooperation (0.4.4-1) unstable; urgency=medium
+
+  * v0.4.4 release version.
+
+ -- re2zero <yangwu@uniontech.com>  Fri, 08 Dec 2023 21:26:16 +0800
+
 dde-cooperation (0.4.3-1) unstable; urgency=medium
 
   * fix some known issues.
