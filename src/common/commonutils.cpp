@@ -100,6 +100,33 @@ void CommonUitls::initLog() {
     flag::set_value("log_dir", logdir);   //日志保存目录
 }
 
+QString CommonUitls::elidedText(const QString &text, Qt::TextElideMode mode, int maxLength)
+{
+    if (text.length() <= maxLength)
+        return text;
+
+    QString tmpText(text);
+    switch (mode) {
+    case Qt::ElideLeft:
+        tmpText = tmpText.right(maxLength);
+        tmpText.insert(0, "...");
+        break;
+    case Qt::ElideMiddle: {
+        int charsToRemove = tmpText.length() - maxLength + 3;   // 3 represents the length of "..."
+        int startRemoveIndex = (tmpText.length() - charsToRemove) / 2;
+        tmpText.remove(startRemoveIndex, charsToRemove);
+        tmpText.insert(startRemoveIndex, "...");
+    } break;
+    case Qt::ElideRight:
+        tmpText = tmpText.left(maxLength) + "...";
+        break;
+    default:
+        break;
+    }
+
+    return tmpText;
+}
+
 QString CommonUitls::logDir()
 {
     QString logPath = QString("%1/%2/%3/")

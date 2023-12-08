@@ -9,6 +9,8 @@
 
 #include <QStackedLayout>
 
+namespace cooperation_core {
+
 class CooperationTaskDialog : public CooperationDialog
 {
     Q_OBJECT
@@ -34,7 +36,9 @@ private:
     // fail widget
     QLabel *msgLabel { nullptr };
     QPushButton *cancelBtn { nullptr };
-    QPushButton *retryBtn { nullptr };
+    CooperationSuggestButton *retryBtn { nullptr };
 };
+
+}   // namespace cooperation_core
 
 #endif   // COOPERATIONTASKDIALOG_H

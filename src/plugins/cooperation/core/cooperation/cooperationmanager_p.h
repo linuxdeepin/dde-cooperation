@@ -13,6 +13,7 @@
 #ifdef linux
 #include <QDBusInterface>
 #endif
+#include <QTimer>
 
 namespace cooperation_core {
 
@@ -39,11 +40,14 @@ public:
     uint recvReplacesId { 0 };
     bool isRecvMode { true };
     bool isReplied { false };
+    bool isTimeout { false };
+    QTimer confirmTimer;
 
     // 作为接收方时，发送方的ip
     QString senderDeviceIp;
     // 作为发送方时，为接收方设备信息；作为接收方时，为发送方设备信息
     DeviceInfoPointer targetDeviceInfo { nullptr };
+    QString targetDevName;
 };
 
 }   // namespace cooperation_core
