@@ -137,12 +137,12 @@ fastring FSAdapter::noneExitPath(const char *name)
         tm = path.substr(path.find_last_of("/"));
     }
     size_t index = tm.find_last_of(".");
-    fastring suffix = index >= tm.size() ? "" : tm.substr(path.find_last_of("."));
+    fastring suffix = index >= tm.size() ? "" : tm.substr(tm.find_last_of("."));
     int n = 1;
     fastring tmpName = path.replace(suffix, "");
     fastring org = tmpName;
     do {
-        tmpName = org + "_" + QString::number(n).toStdString();
+        tmpName = org + "(" + QString::number(n).toStdString() + ")";
         path = tmpName + suffix;
         n++;
     } while (fs::exists(path));
