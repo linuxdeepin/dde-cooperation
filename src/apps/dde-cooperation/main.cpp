@@ -111,8 +111,10 @@ int main(int argc, char *argv[])
     }
 
     // 安全退出
-    signal(SIGINT, appExitHandler);
+#ifndef _WIN32
     signal(SIGQUIT, appExitHandler);
+#endif
+    signal(SIGINT, appExitHandler);
     signal(SIGTERM, appExitHandler);
     int ret = app.exec();
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();

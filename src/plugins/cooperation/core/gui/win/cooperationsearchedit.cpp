@@ -61,6 +61,11 @@ QString CooperationSearchEdit::text() const
     return searchEdit->text();
 }
 
+void CooperationSearchEdit::setPlaceholderText(const QString &text)
+{
+    //TODO: windows
+}
+
 bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == searchEdit) {

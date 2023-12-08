@@ -20,6 +20,7 @@ public:
     explicit CooperationSearchEdit(QWidget *parent = nullptr);
 
     QString text() const;
+    void setPlaceholderText(const QString &text);
 
 Q_SIGNALS:
     void textChanged(const QString &);
