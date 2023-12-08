@@ -58,36 +58,35 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     addTaskcounter(1);
     QJsonObject jsonObj = ParseJson(filepath + "/" + "transfer.json");
     if (jsonObj.isEmpty()) {
-        isall = false;
         addTaskcounter(-1);
         WLOG << "transfer.json is invaild";
-        emit TransferHelper::instance()->failure(tr("Profiles"), tr("File"), tr("Wrong or missing profile"));
+        emit TransferHelper::instance()->addResult(tr("Profiles"), false, tr("Wrong or missing profile"));
         return false;
     }
+
+    //Configure file
+    setFile(jsonObj, filepath);
 
     // Configure desktop wallpaper
     QString image = filepath + "/" + jsonObj["wallpapers"].toString();
     if (!jsonObj["wallpapers"].isNull())
-        isall &= setWallpaper(image);
-
-    //Configure file
-    isall &= setFile(jsonObj, filepath);
+        setWallpaper(image);
 
     //setBrowserBookMark
     if (!jsonObj["browserbookmark"].toString().isEmpty())
-        isall &= setBrowserBookMark(filepath + "/" + jsonObj["browserbookmark"].toString());
+        setBrowserBookMark(filepath + "/" + jsonObj["browserbookmark"].toString());
 
     //installApps
     QJsonValue userFileValue = jsonObj["app"];
     if (userFileValue.isArray()) {
         const QJsonArray &userFileArray = userFileValue.toArray();
         for (const auto &value : userFileArray) {
-            isall &= installApps(value.toString());
+            installApps(value.toString());
         }
     }
     addTaskcounter(-1);
     QFile::remove(filepath + "/" + "transfer.json");
-    return isall;
+    return true;
 }
 
 bool SettingHelper::setWallpaper(const QString &filepath)
@@ -108,6 +107,7 @@ bool SettingHelper::setWallpaper(const QString &filepath)
     QDBusMessage reply = interface.call(func, monitorName, imageFile);
     if (reply.type() == QDBusMessage::ReplyMessage) {
         DLOG << "SetMonitorBackground method called successfully";
+        emit TransferHelper::instance()->addResult(tr("My Wallpaper"), true, tr("Transfer completed"));
         return true;
     } else {
         DLOG << "Failed to call SetMonitorBackground method";
@@ -126,7 +126,7 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
 
     QFileInfo info(filepath);
     if (info.suffix() != "json") {
-        emit TransferHelper::instance()->failure(tr("Browser Bookmarks"), tr("Bookmarks"), tr("Format error"));
+        emit TransferHelper::instance()->addResult(tr("Browser Bookmarks"), false, tr("Format error"));
         return false;
     }
 
@@ -136,9 +136,10 @@ bool SettingHelper::setBrowserBookMark(const QString &filepath)
     bool success = moveFile(filepath, targetfile);
     LOG << "Set browser bookmarks" << targetfile.toStdString() << success;
     if (!success) {
-        emit TransferHelper::instance()->failure(tr("Browser Bookmarks"), tr("Bookmarks"), tr("Setup failed, configuration can be imported manually"));
+        emit TransferHelper::instance()->addResult(tr("Browser Bookmarks"), false, tr("Setup failed, configuration can be imported manually"));
         return false;
     }
+    emit TransferHelper::instance()->addResult(tr("BrowserBookMark"), true, tr("Transfer completed"));
     return true;
 }
 
@@ -149,8 +150,7 @@ bool SettingHelper::installApps(const QString &app)
 
     QString &package = applist[app];
     if (package.isEmpty()) {
-        isall = false;
-        emit TransferHelper::instance()->failure(app, tr("App"), tr("Installation failed, please go to the app store to install"));
+        emit TransferHelper::instance()->addResult(app, false, tr("Installation failed, please go to the app store to install"));
         return false;
     }
 
@@ -169,6 +169,7 @@ bool SettingHelper::installApps(const QString &app)
         bool isExist = existReply.arguments().at(0).toBool();
         if (isExist) {
             WLOG << app.toStdString() << "is installed";
+            emit TransferHelper::instance()->addResult(app, true, tr("is installed"));
             return true;
         }
     }
@@ -180,8 +181,7 @@ bool SettingHelper::installApps(const QString &app)
 
     if (reply.type() != QDBusMessage::ReplyMessage) {
         WLOG << "Installing " << app.toStdString() << "false" << reply.errorMessage().toStdString();
-        isall = false;
-        emit TransferHelper::instance()->failure(app, tr("App"), tr("Installation failed, please go to the app store to install"));
+        emit TransferHelper::instance()->addResult(app, false, tr("Installation failed, please go to the app store to install"));
         return false;
     }
 
@@ -193,7 +193,7 @@ bool SettingHelper::installApps(const QString &app)
     if (!success)
         WLOG << "Failed to connect to signal";
 
-    emit TransferHelper::instance()->transferContent(tr("Installing..."), app, 100, -2);
+    emit TransferHelper::instance()->transferContent(tr("Installing"), app, 100, -2);
 
     addTaskcounter(1);
     return true;
@@ -217,36 +217,34 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
         QString app = applist.key(package);
         QString content = applist.key(package) + "  Key:" + key + "   Value:" + value.toString();
 
-        emit TransferHelper::instance()->transferContent(tr("Installing..."), content, 100, -2);
-        if (key == "Status" && value == "succeed")
+        if (key == "Progress") {
+            float floatValue = value.toString().trimmed().toFloat();
+            int percentageValue = qRound(floatValue * 100);
+            QString progress = QString(tr("Installing Progress %1 %").arg(percentageValue));
+            emit TransferHelper::instance()->transferContent(progress, app, 99, -2);
+        }
+
+        LOG << "Installing " << content.toStdString();
+
+        if (key == "Status" && value == "succeed") {
+            emit TransferHelper::instance()->addResult(app, true, tr("Transfer completed"));
             addTaskcounter(-1);
+        }
         if (key == "Status" && value == "failed") {
-            isall = false;
             addTaskcounter(-1);
-            emit TransferHelper::instance()->failure(app, tr("App"), tr("Installation failed, please go to the app store to install"));
+            emit TransferHelper::instance()->addResult(app, false, tr("Installation failed, please go to the app store to install"));
         }
     }
 }
 
 void SettingHelper::addTaskcounter(int value)
 {
-    if (taskcounter == 0)
-        init();
-
     taskcounter += value;
 
     if (taskcounter == 0) {
         emit TransferHelper::instance()->transferContent("", tr("Transfer Complete"), 100, -1);
-        emit TransferHelper::instance()->transferSucceed(isall);
+        emit TransferHelper::instance()->transferFinished();
     }
-}
-
-void SettingHelper::init()
-{
-    isall = true;
-
-    //clear
-    emit TransferHelper::instance()->failure("", "clear", "");
 }
 
 bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
@@ -258,10 +256,12 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
             QString filename = value.toString();
             QString targetFile = QDir::homePath() + "/" + filename;
             QString file = filepath + filename.mid(filename.indexOf('/'));
-            auto dir = QFileInfo(targetFile).dir();
+            QFileInfo info = QFileInfo(targetFile);
+            auto dir = info.dir();
             if (!dir.exists())
                 dir.mkpath(".");
             moveFile(file, targetFile);
+            emit TransferHelper::instance()->addResult(info.fileName(), true, tr("Transfer completed"));
         }
     }
     LOG << jsonObj["user_file"].toString().toStdString();

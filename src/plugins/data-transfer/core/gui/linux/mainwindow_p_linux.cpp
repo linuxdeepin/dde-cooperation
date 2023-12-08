@@ -14,7 +14,6 @@
 #include <gui/connect/promptwidget.h>
 #include <gui/connect/startwidget.h>
 
-#include <gui/transfer/successwidget.h>
 #include <gui/transfer/transferringwidget.h>
 #include <gui/backupload/uploadfilewidget.h>
 #include <gui/transfer/errorwidget.h>
@@ -61,7 +60,6 @@ void MainWindowPrivate::initWidgets()
     WaitTransferWidget *waitgwidget = new WaitTransferWidget(q);
     TransferringWidget *transferringwidget = new TransferringWidget(q);
     ErrorWidget *errorwidget = new ErrorWidget(q);
-    SuccessWidget *successtranswidget = new SuccessWidget(q);
     ResultDisplayWidget *resultwidget = new ResultDisplayWidget(q);
 
     stackedWidget->insertWidget(PageName::startwidget, startwidget);
@@ -75,14 +73,16 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::waitgwidget, waitgwidget);
     stackedWidget->insertWidget(PageName::transferringwidget, transferringwidget);
     stackedWidget->insertWidget(PageName::errorwidget, errorwidget);
-    stackedWidget->insertWidget(PageName::successtranswidget, successtranswidget);
     stackedWidget->insertWidget(PageName::resultwidget, resultwidget);
 
     stackedWidget->setCurrentIndex(0);
 
-    connect(stackedWidget, &QStackedWidget::currentChanged, this, [transferringwidget](int index) {
-        if (index == PageName::choosewidget)
+    connect(stackedWidget, &QStackedWidget::currentChanged, this, [transferringwidget, resultwidget, uploadwidget](int index) {
+        if (index == PageName::choosewidget) {
             transferringwidget->clear();
+            resultwidget->clear();
+            uploadwidget->clear();
+        }
     });
     connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [this] {
         stackedWidget->setCurrentIndex(PageName::waitgwidget);
@@ -91,9 +91,8 @@ void MainWindowPrivate::initWidgets()
     connect(TransferHelper::instance(), &TransferHelper::transferring, this, [this] {
         stackedWidget->setCurrentIndex(PageName::transferringwidget);
     });
-    connect(TransferHelper::instance(), &TransferHelper::transferSucceed, this, [this](bool isall) {
-        int nextpage = isall ? PageName::successtranswidget : PageName::resultwidget;
-        stackedWidget->setCurrentIndex(nextpage);
+    connect(TransferHelper::instance(), &TransferHelper::transferFinished, this, [this] {
+        stackedWidget->setCurrentIndex(PageName::resultwidget);
     });
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
@@ -129,7 +128,7 @@ void MainWindowPrivate::initWidgets()
 
     //Adapt Theme Colors
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this,
-            [startwidget, errorwidget, resultwidget, choosewidget, uploadwidget, networkdisconnectwidget, connectwidget, promptwidget, waitgwidget, transferringwidget, successtranswidget](DGuiApplicationHelper::ColorType themeType) {
+            [startwidget, errorwidget, resultwidget, choosewidget, uploadwidget, networkdisconnectwidget, connectwidget, promptwidget, waitgwidget, transferringwidget](DGuiApplicationHelper::ColorType themeType) {
                 int theme = themeType == DGuiApplicationHelper::LightType ? 1 : 0;
                 errorwidget->themeChanged(theme);
                 resultwidget->themeChanged(theme);
@@ -141,7 +140,6 @@ void MainWindowPrivate::initWidgets()
                 promptwidget->themeChanged(theme);
                 waitgwidget->themeChanged(theme);
                 transferringwidget->themeChanged(theme);
-                successtranswidget->themeChanged(theme);
             });
     emit DGuiApplicationHelper::instance()->themeTypeChanged(DGuiApplicationHelper::instance()->themeType());
 

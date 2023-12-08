@@ -14,6 +14,7 @@ public:
     ~UploadFileWidget();
 
     bool checkBackupFile(const QString &filePath);
+    void clear();
 
 public slots:
     void nextPage();
@@ -22,6 +23,9 @@ public slots:
 
 private:
     void initUI();
+
+Q_SIGNALS:
+    void Initial();
 
 private:
     QToolButton *backButton { nullptr };

@@ -28,7 +28,6 @@ public:
 
     void addTaskcounter(int value);
 
-    void init();
 public Q_SLOTS:
     void onPropertiesChanged(const QDBusMessage &message);
 
@@ -38,9 +37,6 @@ private:
 private:
     //用于统计开启了多少个配置任务。
     int taskcounter = 0;
-
-    //用于记录是否有任务失败。
-    bool isall = true;
 
     //App and package list
     QMap<QString, QString> applist;
