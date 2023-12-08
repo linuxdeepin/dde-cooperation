@@ -44,6 +44,8 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     ShareCooperationServiceManager::instance();
     connect(SendRpcService::instance(), &SendRpcService::sendToRpcResult,
             _logic.data(), &HandleSendResultService::handleSendResultMsg, Qt::QueuedConnection);
+    connect(ShareCooperationServiceManager::instance(), &ShareCooperationServiceManager::startServerResult,
+            _ipcService, &HandleIpcService::handleShareServerStart);
 }
 
 ServiceManager::~ServiceManager()

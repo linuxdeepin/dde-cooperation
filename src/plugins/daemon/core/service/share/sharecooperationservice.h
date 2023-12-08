@@ -25,14 +25,13 @@ public:
     void setBarrierType(BarrierType type);
     BarrierType barrierType() const;
 
-    bool restartBarrier();
-
     bool setServerConfig(const ShareServerConfig &config);
     bool setClientTargetIp(const QString &screen, const QString &ip, const int &port);
 
 signals:
 
 public slots:
+    bool restartBarrier();
     bool startBarrier();
     void stopBarrier();
 

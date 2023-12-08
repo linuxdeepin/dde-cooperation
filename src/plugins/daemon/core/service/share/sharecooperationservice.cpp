@@ -368,6 +368,7 @@ void ShareCooperationService::barrierFinished(int exitCode, QProcess::ExitStatus
 {
     if (exitCode == 0) {
         LOG << "process exited normally";
+        return;
     } else {
         ELOG << "process exited with error code: " << exitCode;
     }
@@ -377,10 +378,10 @@ void ShareCooperationService::barrierFinished(int exitCode, QProcess::ExitStatus
 #if defined(Q_OS_WIN)
         co::Tasked s;
         s.run_in([this]() {
-            startBarrier();
+            restartBarrier();
         }, 1);
 #else
-        QTimer::singleShot(1000, this, SLOT(startBarrier()));
+        QTimer::singleShot(1000, this, SLOT(restartBarrier()));
 #endif
         LOG << "detected process not running, auto restarting";
     }

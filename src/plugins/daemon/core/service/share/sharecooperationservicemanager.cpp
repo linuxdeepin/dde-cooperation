@@ -19,6 +19,10 @@ ShareCooperationServiceManager::ShareCooperationServiceManager(QObject *parent) 
     _client->setBarrierType(BarrierType::Client);
     _server.reset(new ShareCooperationService);
     _server->setBarrierType(BarrierType::Server);
+    connect(this, &ShareCooperationServiceManager::startShareServer
+            , this, &ShareCooperationServiceManager::handleStartShareSever, Qt::QueuedConnection);
+    connect(this, &ShareCooperationServiceManager::stopShareServer
+            , this, &ShareCooperationServiceManager::handleStopShareSever, Qt::QueuedConnection);
 }
 
 ShareCooperationServiceManager::~ShareCooperationServiceManager()
@@ -45,6 +49,27 @@ QSharedPointer<ShareCooperationService> ShareCooperationServiceManager::server()
 void ShareCooperationServiceManager::stop()
 {
     _client->stopBarrier();
+    emit stopShareServer();
+}
+
+bool ShareCooperationServiceManager::startServer(const QString &msg)
+{
+    emit startShareServer(msg);
+    return true;
+}
+
+void ShareCooperationServiceManager::handleStartShareSever(const QString msg)
+{
+    if (_server.isNull())
+        return;
+    bool ok = _server->restartBarrier();
+    emit startServerResult(ok, msg);
+}
+
+void ShareCooperationServiceManager::handleStopShareSever()
+{
+    if (_server.isNull())
+        return;
     _server->stopBarrier();
 }
 
