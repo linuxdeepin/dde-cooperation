@@ -11,9 +11,12 @@
 #include <QTimer>
 
 #include <utils/utils.h>
+#include <co/tasked.h>
 
 ShareCooperationService::ShareCooperationService(QObject *parent) : QObject(parent)
 {
+    qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
+
     _expectedRunning = false;
     _brrierType = BarrierType::Server; // default start as server.
 
@@ -129,7 +132,6 @@ bool ShareCooperationService::startBarrier()
 //    args << "--profile-dir" << QString::fromStdString("\"" + barrier::DataDirectories::profile().u8string() + "\"");
 #endif
 
-        LOG << "config file: "  << this->configFilename().toStdString();
     if ((barrierType() == BarrierType::Client && !clientArgs(args, app))
         || (barrierType() == BarrierType::Server && !serverArgs(args, app)))
     {
@@ -143,15 +145,18 @@ bool ShareCooperationService::startBarrier()
     connect(barrierProcess(), SIGNAL(readyReadStandardError()), this, SLOT(logError()));
 
     LOG << "starting " << QString(barrierType() == BarrierType::Server ? "server" : "client").toStdString();
-
-//    LOG << args.toStdList();
-
     LOG << QString("command: %1 %2").arg(app, args.join(" ")).toStdString();
 
     LOG << "config file: "  << this->configFilename().toStdString();
     LOG << "log level: " << cooConfig().logLevelText().toStdString();
-
+#if defined(Q_OS_WIN)
+    QString winarg = args.join(" ");
+    barrierProcess()->setNativeArguments(winarg);
+    barrierProcess()->start(app);
+#else
     barrierProcess()->start(app, args);
+#endif
+
     if (!barrierProcess()->waitForStarted()) {
         ELOG << "Program can not be started: " << app.toStdString();
         return false;
@@ -369,7 +374,14 @@ void ShareCooperationService::barrierFinished(int exitCode, QProcess::ExitStatus
 
     // auto restart if expect keep running
     if (_expectedRunning) {
+#if defined(Q_OS_WIN)
+        co::Tasked s;
+        s.run_in([this]() {
+            startBarrier();
+        }, 1);
+#else
         QTimer::singleShot(1000, this, SLOT(startBarrier()));
+#endif
         LOG << "detected process not running, auto restarting";
     }
 }
