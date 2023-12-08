@@ -34,6 +34,7 @@ public Q_SLOTS:
 
 private:
     explicit CooperationManager(QObject *parent = nullptr);
+    ~CooperationManager();
 
     QSharedPointer<CooperationManagerPrivate> d { nullptr };
 };

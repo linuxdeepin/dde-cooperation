@@ -54,6 +54,9 @@ void MainController::checkNetworkState()
 
 void MainController::updateDeviceList(const QString &ip, const QString &info, bool isOnline)
 {
+    if (!this->isOnline)
+        return;
+
     if (isOnline) {
         QJsonParseError error;
         auto doc = QJsonDocument::fromJson(info.toLocal8Bit(), &error);
@@ -109,7 +112,7 @@ void MainController::start()
     if (isRunning)
         return;
 
-    isOnline = true;
+    isOnline = deepin_cross::CommonUitls::getFirstIp().size() > 0;
     networkMonitorTimer->start();
 
     Q_EMIT startDiscoveryDevice();
@@ -130,6 +133,12 @@ void MainController::updateDeviceState(const DeviceInfoPointer info)
 
 void MainController::discoveryDevice()
 {
+    if (!isOnline) {
+        isRunning = false;
+        Q_EMIT onlineStateChanged(isOnline);
+        return;
+    }
+
     QList<DeviceInfoPointer> offlineDevList;
     auto iter = connectHistory->begin();
     for (; iter != connectHistory->end(); ++iter) {
