@@ -70,6 +70,8 @@ private:
     void handleTransStatus(int status, FileInfo &info);
     QSharedPointer<FSDataBlock> popQueue();
     int queueCount() const;
+    void setFileName(const QString &name, const QString &acName);
+    fastring acName(const fastring &name);
 
 private:
     int _jobid;
@@ -93,6 +95,8 @@ private:
     co::mutex _map_mutex;
     co::map<int32, FileInfo> _file_info_maps;
     QSharedPointer<RemoteServiceSender> _remote;
+    QReadWriteLock _file_name_maps_lock;
+    QMap<QString, QString> _file_name_maps;
 };
 
 #endif   // TRANSFERJOB_H
