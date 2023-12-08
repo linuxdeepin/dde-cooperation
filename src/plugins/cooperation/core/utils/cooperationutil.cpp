@@ -79,6 +79,7 @@ void CooperationUtilPrivate::localIPCStart()
                 // timeout, next read
                 continue;
             }
+            DLOG_IF(FLG_log_detail) << "recv IPC:" << bridge.type << " " << bridge.json;
 
             co::Json json_obj = json::parse(bridge.json);
             if (json_obj.is_null()) {

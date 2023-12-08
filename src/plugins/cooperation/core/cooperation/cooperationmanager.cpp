@@ -154,7 +154,17 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
         return;
 
     req.add_member("api", "Backend.shareEvents");
+#if defined(WIN32)
+    co::wait_group wg;
+    wg.add(1);
+    UNIGO([&rpcClient, &req, &res, wg]() {
+        rpcClient.call(req, res);
+        wg.done();
+    });
+    wg.wait();
+#else
     rpcClient.call(req, res);
+#endif
     rpcClient.close();
 }
 
@@ -179,7 +189,11 @@ uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &bo
                                              body, actions, QVariantMap(), expireTimeout);
 
     return reply.isValid() ? reply.value() : replacesId;
+#else
+    //FIXME: should get result from a dialog.
+    backendShareEvent(BACK_SHARE_CONNECT_REPLY, nullptr, true);
 #endif
+    return 0;
 }
 
 void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString &action)
@@ -264,9 +278,7 @@ void CooperationManager::regist()
 
 void CooperationManager::connectToDevice(const DeviceInfoPointer info)
 {
-    UNIGO([this, info] {
-        d->backendShareEvent(BACK_SHARE_CONNECT, info);
-    });
+    d->backendShareEvent(BACK_SHARE_CONNECT, info);
 
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     d->isRecvMode = false;
@@ -280,10 +292,8 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
 
 void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
 {
-    UNIGO([this, info] {
-        d->backendShareEvent(BACK_SHARE_STOP, info, 0);
-        d->backendShareEvent(BACK_SHARE_DISCONNECT);
-    });
+    d->backendShareEvent(BACK_SHARE_STOP, info, 0);
+    d->backendShareEvent(BACK_SHARE_DISCONNECT);
 
     if (d->targetDeviceInfo) {
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
@@ -307,19 +317,15 @@ void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
 
-        UNIGO([this, info] {
-            if (info->peripheralShared())
-                d->backendShareEvent(BACK_SHARE_START, info);
-            else
-                d->backendShareEvent(BACK_SHARE_STOP, info, 1);
-        });
+        if (info->peripheralShared())
+            d->backendShareEvent(BACK_SHARE_START, info);
+        else
+            d->backendShareEvent(BACK_SHARE_STOP, info, 1);
     } else if (d->targetDeviceInfo->clipboardShared() != info->clipboardShared()) {
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
 
-        UNIGO([this, info] {
-            d->backendShareEvent(BACK_SHARE_START, info);
-        });
+        d->backendShareEvent(BACK_SHARE_START, info);
     }
 }
 
@@ -374,22 +380,20 @@ void CooperationManager::notifyConnectRequest(const QString &info)
 
 void CooperationManager::handleConnectResult(bool accepted)
 {
+    if (!d->targetDeviceInfo)
+        return;
+
     if (accepted) {
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
         MainController::instance()->updateDeviceState({ d->targetDeviceInfo });
         HistoryManager::instance()->writeIntoConnectHistory(d->targetDeviceInfo->ipAddress(), d->targetDeviceInfo->deviceName());
 
-        UNIGO([this] {
-            d->backendShareEvent(BACK_SHARE_START, d->targetDeviceInfo);
-        });
+        d->backendShareEvent(BACK_SHARE_START, d->targetDeviceInfo);
 
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
         d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
         d->taskDialog()->close();
     } else {
-        if (!d->targetDeviceInfo)
-            return;
-
         d->isReplied = true;
         static QString msg(tr("\"%1\" has rejected your request for collaboration"));
         d->taskDialog()->switchFailPage(d->targetDeviceInfo->deviceName(), msg.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), false);
