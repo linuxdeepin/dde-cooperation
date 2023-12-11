@@ -175,6 +175,14 @@ enum ShareStopFlag {
     SHARE_STOP_SERVER = 2,
 };
 
+enum ShareConnectReplyCode {
+    SHARE_CONNECT_APPLY = 0, // 申请连接
+    SHARE_CONNECT_COMFIRM = 1, // 接受连接申请
+    SHARE_CONNECT_REFUSE = 2, // 拒绝连接申请
+    SHARE_CONNECT_ERR_CONNECTED = 3, // 连接错误已连接
+};
+
+
 // use thread replace the coroutine
 #if defined(DISABLE_GO)
     #define UNIGO(...) \
