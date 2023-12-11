@@ -446,7 +446,7 @@ QVariantMap CooperationUtil::deviceInfo()
                         : QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName());
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
-    info.insert(AppSettings::PeripheralShareKey, value.isValid() ? value.toBool() : false);
+    info.insert(AppSettings::PeripheralShareKey, value.isValid() ? value.toBool() : true);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
     info.insert(AppSettings::LinkDirectionKey, value.isValid() ? value.toInt() : 0);
@@ -466,7 +466,7 @@ QVariantMap CooperationUtil::deviceInfo()
     info.insert(AppSettings::StoragePathKey, storagePath);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
-    info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : false);
+    info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : true);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::CooperationEnabled);
     info.insert(AppSettings::CooperationEnabled, value.isValid() ? value.toBool() : false);

@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
 
     deepin_cross::SingleApplication app(argc, argv);
     app.setOrganizationName("deepin");
+    app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
 #ifdef linux
     app.loadTranslator();

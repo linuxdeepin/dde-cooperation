@@ -26,6 +26,7 @@ void FileChooserEdit::initUI()
     pathLabel->setContentsMargins(8, 8, 8, 8);
 
     fileChooserBtn = new CooperationSuggestButton(this);
+    fileChooserBtn->setFocusPolicy(Qt::NoFocus);
 #ifdef linux
 fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
 #else

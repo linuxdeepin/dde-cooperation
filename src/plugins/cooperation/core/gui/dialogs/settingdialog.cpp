@@ -88,7 +88,7 @@ void SettingDialogPrivate::createBasicWidget()
     SettingItem *findItem = new SettingItem(q);
     findItem->setItemInfo(tr("Discovery mode"), findCB);
 
-    QLabel *tipLabel = new QLabel(tr("Discover and connect with you through the \"Cooperation\" app"), q);
+    QLabel *tipLabel = new QLabel(tr("Other devices can discover and connect with you through the \"Cooperation\" app"), q);
     auto margins = tipLabel->contentsMargins();
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
@@ -302,7 +302,7 @@ void SettingDialog::loadConfig()
                                  : QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName());
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
-    d->devShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : false);
+    d->devShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : true);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
     d->connectCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
@@ -322,5 +322,5 @@ void SettingDialog::loadConfig()
     d->chooserEdit->setText(value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
-    d->clipShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : false);
+    d->clipShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : true);
 }

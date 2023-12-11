@@ -6,6 +6,7 @@
 #include "dialogs/filetransfersettingsdialog.h"
 
 #include <DSettingsOption>
+#include <QApplication>
 
 #include <QPushButton>
 #include <QLabel>
@@ -28,6 +29,15 @@ QPair<QWidget *, QWidget *> CooperationHelper::createSettingButton(QObject *opt)
 
 void CooperationHelper::showSettingDialog()
 {
-    FileTransferSettingsDialog d;
+    QWidget *parent { nullptr };
+    for (auto w : qApp->topLevelWidgets()) {
+        auto name = w->objectName();
+        if (name == "DSettingsDialog") {
+            parent = w;
+            break;
+        }
+    }
+
+    FileTransferSettingsDialog d(parent);
     d.exec();
 }

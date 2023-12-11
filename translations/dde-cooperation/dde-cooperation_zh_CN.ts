@@ -4,12 +4,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="88"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="89"/>
         <source>Cooperation</source>
         <translation>跨端协同</translation>
     </message>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="92"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="93"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
         <translation>跨端协同是一款强大的跨终端办公工具，可帮助您在不同设备之间实现文件投送、共享键鼠、共享剪贴板。</translation>
     </message>
@@ -350,8 +350,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="91"/>
-        <source>Discover and connect with you through the &quot;Cooperation&quot; app</source>
-        <translation>可通过“跨端协同”应用发现您，并与您建立连接</translation>
+        <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
+        <translation>其他设备可通过“跨端协同”应用发现您，并与您建立连接</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="102"/>
