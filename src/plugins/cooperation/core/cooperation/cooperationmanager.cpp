@@ -173,6 +173,8 @@ CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
     if (!ctDialog) {
         ctDialog = new CooperationTaskDialog(CooperationUtil::instance()->mainWindow());
         connect(ctDialog, &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
+        connect(ctDialog, &CooperationDialog::rejected, this, [this] { onActionTriggered(recvReplacesId, NotifyRejectAction); });
+        connect(ctDialog, &CooperationDialog::accepted, this, [this] { onActionTriggered(recvReplacesId, NotifyAcceptAction); });
     }
 
     return ctDialog;
@@ -190,10 +192,15 @@ uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &bo
 
     return reply.isValid() ? reply.value() : replacesId;
 #else
-    //FIXME: should get result from a dialog.
-    backendShareEvent(BACK_SHARE_CONNECT_REPLY, nullptr, true);
-#endif
+    Q_UNUSED(replacesId)
+    Q_UNUSED(actions)
+    Q_UNUSED(expireTimeout)
+
+    CooperationUtil::instance()->mainWindow()->activateWindow();
+    taskDialog()->switchInfomationPage(tr("Cooperation"), body);
+    taskDialog()->show();
     return 0;
+#endif
 }
 
 void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString &action)
@@ -285,7 +292,9 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
     d->isReplied = false;
     d->isTimeout = false;
     d->targetDevName = info->deviceName();
-    d->taskDialog()->switchWaitPage(d->targetDevName);
+
+    static QString title(tr("Requesting collaborate to \"%1\""));
+    d->taskDialog()->switchWaitPage(title.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
     d->taskDialog()->show();
     d->confirmTimer.start();
 }
@@ -374,7 +383,14 @@ void CooperationManager::notifyConnectRequest(const QString &info)
 
     d->senderDeviceIp = infoList[1];
     d->targetDevName = infoList[0];
+
+#ifdef linux
     d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), actions, 10 * 1000);
+#else
+    CooperationUtil::instance()->mainWindow()->activateWindow();
+    d->taskDialog()->switchConfirmPage(tr("Cooperation"), body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
+    d->taskDialog()->show();
+#endif
     d->confirmTimer.start();
 }
 
@@ -395,8 +411,12 @@ void CooperationManager::handleConnectResult(bool accepted)
         d->taskDialog()->close();
     } else {
         d->isReplied = true;
+
+        static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("\"%1\" has rejected your request for collaboration"));
-        d->taskDialog()->switchFailPage(d->targetDeviceInfo->deviceName(), msg.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), false);
+        d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
+                                        msg.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
+                                        false);
         d->taskDialog()->show();
         d->targetDeviceInfo.reset();
     }
@@ -428,7 +448,8 @@ void CooperationManager::onVerifyTimeout()
         if (!d->taskDialog()->isVisible() || d->isReplied)
             return;
 
-        d->taskDialog()->switchFailPage(d->targetDevName,
+        static QString title(tr("Unable to collaborate to \"%1\""));
+        d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)),
                                         tr("The other party does not confirm, please try again later"),
                                         true);
     }
