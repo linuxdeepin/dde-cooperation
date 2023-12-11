@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
     SingleApplication app(argc, argv);
     app.setOrganizationName("deepin");
     app.setProperty("onlyTransfer", true);
+    app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     {
         // 加载翻译

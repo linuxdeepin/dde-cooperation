@@ -4,12 +4,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="88"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="89"/>
         <source>Cooperation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="92"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="93"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -350,7 +350,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="91"/>
-        <source>Discover and connect with you through the &quot;Cooperation&quot; app</source>
+        <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
