@@ -125,7 +125,7 @@ struct FileInfo {
     fastring name;
     int64 total_size;
     int64 current_size;
-    int32 time_spended;
+    int64 time_spended;
 
     void from_json(const co::Json& _x_) {
         job_id = (int32)_x_.get("job_id").as_int64();
@@ -133,7 +133,7 @@ struct FileInfo {
         name = _x_.get("name").as_c_str();
         total_size = (int64)_x_.get("total_size").as_int64();
         current_size = (int64)_x_.get("current_size").as_int64();
-        time_spended = (int32)_x_.get("time_spended").as_int64();
+        time_spended = (int64)_x_.get("time_spended").as_int64();
     }
 
     co::Json as_json() const {

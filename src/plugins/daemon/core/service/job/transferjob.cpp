@@ -239,7 +239,7 @@ void TransferJob::handleBlockQueque()
     bool counted = false;
     QElapsedTimer time;
     time.start();
-    int timeold = 0;
+    int64 timeold = 0;
     if (!_writejob)
         createSendCounting();
     // 发送当前统计文件中block
@@ -264,23 +264,6 @@ void TransferJob::handleBlockQueque()
             block->flags = JobTransFileOp::FILE_COUNTING;
         }
 
-        if (timeout) {
-            // 通知前端进度
-            FileInfo info;
-            info.job_id = _jobid;
-            info.file_id = _notify_fileid;
-            info.total_size = _total_size;
-            info.current_size = _cur_size;
-            info.name = _file_name;
-            info.time_spended = time.elapsed();
-            if (!counted) {
-                handleTransStatus(FILE_TRANS_IDLE, info);
-            } else {
-                handleTransStatus(FILE_TRANS_SPEED, info);
-            }
-        }
-
-
         if (counted == false)
             counted = block->flags & JobTransFileOp::FILE_COUNTED;
 
@@ -292,6 +275,27 @@ void TransferJob::handleBlockQueque()
         } else {
             // 发送失败，怎么处理
             exception = !sendToRemote(block);
+        }
+
+        // 通知前端进度
+        {
+            FileInfo info;
+            info.job_id = _jobid;
+            info.file_id = _notify_fileid;
+            info.total_size = _total_size;
+            info.current_size = _cur_size;
+            info.name = _file_name;
+            info.time_spended = time.elapsed();
+
+            if (block->flags & JobTransFileOp::FILE_CLOSE) {
+                handleTransStatus(FILE_TRANS_END, info);
+            } else if (block->flags & JobTransFileOp::FIlE_CREATE) {
+                handleTransStatus(FILE_TRANS_IDLE, info);
+            }
+
+            if (timeout && counted) {
+                handleTransStatus(FILE_TRANS_SPEED, info);
+            }
         }
 
         if (exception) {
@@ -306,8 +310,6 @@ void TransferJob::handleBlockQueque()
         }
     };
     if (!exception) {
-        FileInfo info;
-        handleTransStatus(FILE_TRANS_END, info);
         handleJobStatus(JOB_TRANS_FINISHED);
     }
     LOG << "trans job end: " << _jobid;

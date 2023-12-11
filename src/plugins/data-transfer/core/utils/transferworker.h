@@ -15,7 +15,7 @@ class TransferHandle : public QObject
     {
         int64_t all_total_size;   // 总量
         int64_t all_current_size;   // 当前已接收量
-        int32_t max_time_sec;   // 最大已用时间
+        int64_t cast_time_ms;   // 最大已用时间
     };
 
 public:
@@ -48,8 +48,6 @@ private:
 
     //record transfering files ans calculate the progress rate
     file_stats_s _file_stats;
-    // <file_id, last_current_size> 统计正在传输的文件量<文件id，上次已传输量>
-    QMap<int, int64_t> _file_ids;
 
     bool _this_destruct = false;
     rpc::Server *_rpcServer = nullptr;

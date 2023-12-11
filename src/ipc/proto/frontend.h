@@ -174,7 +174,7 @@ struct FileStatus {
     int32 status;
     int64 total;
     int64 current;
-    int32 second;
+    int64 millisec;
 
     void from_json(const co::Json& _x_) {
         job_id = (int32)_x_.get("job_id").as_int64();
@@ -183,7 +183,7 @@ struct FileStatus {
         status = (int32)_x_.get("status").as_int64();
         total = (int64)_x_.get("total").as_int64();
         current = (int64)_x_.get("current").as_int64();
-        second = (int32)_x_.get("second").as_int64();
+        millisec = (int64)_x_.get("millisec").as_int64();
     }
 
     co::Json as_json() const {
@@ -194,7 +194,7 @@ struct FileStatus {
         _x_.add_member("status", status);
         _x_.add_member("total", total);
         _x_.add_member("current", current);
-        _x_.add_member("second", second);
+        _x_.add_member("millisec", millisec);
         return _x_;
     }
 };

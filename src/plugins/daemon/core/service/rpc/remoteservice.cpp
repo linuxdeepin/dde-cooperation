@@ -107,7 +107,7 @@ retryed:
     co::wait_group wg;
     wg.add(1);
     auto s = co::next_sched();
-    s->go([this, &type, msg, &data, &res, wg]() {
+    s->go([&stub, &rpc_controller, &req, &rpc_res, wg]() {
 #endif
     stub.proto_msg(rpc_controller, &req, &rpc_res, nullptr);
 #if defined(WIN32)

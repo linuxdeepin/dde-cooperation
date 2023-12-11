@@ -42,7 +42,7 @@ object FileInfo {
     string name
     int64 total_size
     int64 current_size
-    int32 time_spended
+    int64 time_spended
 }
 
 object FSJobCancel {
