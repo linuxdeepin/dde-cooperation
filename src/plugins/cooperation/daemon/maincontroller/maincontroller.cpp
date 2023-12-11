@@ -172,7 +172,6 @@ void MainController::waitForConfirm(const QString &name)
     isTransTimeout = false;
     transferInfo.clear();
     recvFilesSavePath.clear();
-    fileIds.clear();
     recvNotifyId = 0;
 
     // 超时处理
@@ -253,36 +252,27 @@ void MainController::onFileTransStatusChanged(const QString &status)
     ipc::FileStatus param;
     param.from_json(statusJson);
 
-    if (fileIds.contains(param.file_id)) {
-        // 已经记录过，只更新数据
-        int64_t increment = param.current - fileIds[param.file_id];
-        transferInfo.transferSize += increment;   //增量值
-        fileIds[param.file_id] = param.current;
+    transferInfo.totalSize = param.total;
+    transferInfo.transferSize = param.current;
+    transferInfo.maxTimeMs = param.millisec;
 
-        if (param.current >= param.total) {
-            // 此文件已完成，从文件统计中删除
-            fileIds.remove(param.file_id);
-        }
-    } else {
-        transferInfo.totalSize += param.total;
-        transferInfo.transferSize += param.current;
-        fileIds.insert(param.file_id, param.current);
-    }
-
-    if (param.second > transferInfo.maxTimeSec)
-        transferInfo.maxTimeSec = param.second;
-
-    // 计算传输进度与剩余时间
+    // 计算整体进度和预估剩余时间
     double value = static_cast<double>(transferInfo.transferSize) / transferInfo.totalSize;
     int progressValue = static_cast<int>(value * 100);
+    QTime time(0, 0, 0);
+    int remain_time;
     if (progressValue <= 0) {
         return;
     } else if (progressValue >= 100) {
-        updateProgress(100, "00:00:00");
+        progressValue = 100;
+        remain_time = 0;
     } else {
-        int remainTime = transferInfo.maxTimeSec * 100 / progressValue - transferInfo.maxTimeSec;
-        QTime time(0, 0, 0);
-        time = time.addSecs(remainTime);
-        updateProgress(progressValue, time.toString("hh:mm:ss"));
+        remain_time = (transferInfo.maxTimeMs * 100 / progressValue - transferInfo.maxTimeMs) / 1000;
     }
+    time = time.addSecs(remain_time);
+
+    LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
+    LOG_IF(FLG_log_detail) << "totalSize: " << transferInfo.totalSize << " transferSize=" << transferInfo.transferSize;
+
+    updateProgress(progressValue, time.toString("hh:mm:ss"));
 }

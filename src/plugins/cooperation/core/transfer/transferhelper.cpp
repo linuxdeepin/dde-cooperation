@@ -361,45 +361,35 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
     ipc::FileStatus param;
     param.from_json(statusJson);
 
-    if (d->fileIds.contains(param.file_id)) {
-        // 已经记录过，只更新数据
-        int64_t increment = param.current - d->fileIds[param.file_id];
-        d->transferInfo.transferSize += increment;   //增量值
-        d->fileIds[param.file_id] = param.current;
+    d->transferInfo.totalSize = param.total;
+    d->transferInfo.transferSize = param.current;
+    d->transferInfo.maxTimeMs = param.millisec;
 
-        if (param.current >= param.total) {
-            // 此文件已完成，从文件统计中删除
-            d->fileIds.remove(param.file_id);
-        }
-    } else {
-        d->transferInfo.totalSize += param.total;
-        d->transferInfo.transferSize += param.current;
-        d->fileIds.insert(param.file_id, param.current);
-    }
-
-    if (param.second > d->transferInfo.maxTimeSec)
-        d->transferInfo.maxTimeSec = param.second;
-
-    // 计算传输进度与剩余时间
+    // 计算整体进度和预估剩余时间
     double value = static_cast<double>(d->transferInfo.transferSize) / d->transferInfo.totalSize;
     int progressValue = static_cast<int>(value * 100);
+    QTime time(0, 0, 0);
+    int remain_time;
     if (progressValue <= 0) {
         return;
     } else if (progressValue >= 100) {
-        d->updateProgress(100, "00:00:00");
+        progressValue = 100;
+        remain_time = 0;
     } else {
-        int remainTime = d->transferInfo.maxTimeSec * 100 / progressValue - d->transferInfo.maxTimeSec;
-        QTime time(0, 0, 0);
-        time = time.addSecs(remainTime);
-        d->updateProgress(progressValue, time.toString("hh:mm:ss"));
+        remain_time = (d->transferInfo.maxTimeMs * 100 / progressValue - d->transferInfo.maxTimeMs) / 1000;
     }
+    time = time.addSecs(remain_time);
+
+    LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
+    LOG_IF(FLG_log_detail) << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << d->transferInfo.transferSize;
+
+    d->updateProgress(progressValue, time.toString("hh:mm:ss"));
 }
 
 void TransferHelper::waitForConfirm()
 {
     d->isTransTimeout = false;
     d->transferInfo.clear();
-    d->fileIds.clear();
     d->recvFilesSavePath.clear();
 
     // 超时处理

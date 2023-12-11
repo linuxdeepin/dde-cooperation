@@ -29,13 +29,13 @@ public:
     {
         int64_t totalSize = 0;   // 总量
         int64_t transferSize = 0;   // 当前传输量
-        int32_t maxTimeSec = 0;   // 耗时
+        int64_t maxTimeMs = 0;   // 耗时
 
         void clear()
         {
             totalSize = 0;
             transferSize = 0;
-            maxTimeSec = 0;
+            maxTimeMs = 0;
         }
     };
 
@@ -58,7 +58,6 @@ public Q_SLOTS:
 private:
     TransferHelper *q;
 
-    QMap<int, int64_t> fileIds;   // <file_id, last_current_size> 统计正在传输的文件量<文件id，上次已传输量>
     QStringList readyToSendFiles;
     QString sendToWho;
 

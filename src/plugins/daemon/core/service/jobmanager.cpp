@@ -265,7 +265,7 @@ void JobManager::handleFileTransStatus(QString appname, int status, QString file
         { "status", status },
         { "total", filejob.total_size },
         { "current", filejob.current_size },
-        { "second", filejob.time_spended },
+        { "millisec", filejob.time_spended },
     };
 
     req.add_member("api", "Frontend.notifyFileStatus");

@@ -29,7 +29,6 @@ TransferHandle::TransferHandle()
     _backendOK = false;
     _request_job_id = appName.length();   // default start at appName's lenght
     _job_maps.clear();
-    _file_ids.clear();
 
     _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
     if (_backendOK) {
@@ -255,44 +254,29 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
 
     QString filepath(param.name.c_str());
 
+    _file_stats.all_total_size = param.total;
+
     switch (param.status) {
     case FILE_TRANS_IDLE: {
-        if (param.total > 0) {
-            // 这个文件未被统计
-            _file_stats.all_total_size += param.total;
-            _file_stats.all_current_size += param.current;
-            _file_ids.insert(param.file_id, param.current);
-        }
-        LOG_IF(FLG_log_detail) << "file receive IDLE: " << filepath.toStdString();
+        _file_stats.all_total_size = param.total;
+        _file_stats.all_current_size = param.current;
+        LOG_IF(FLG_log_detail) << "file receive IDLE: " << filepath.toStdString() << " total: " << param.total;
         break;
     }
     case FILE_TRANS_SPEED: {
-        if (_file_ids.contains(param.file_id)) {
-            // 已经记录过，只更新数据
-            int64_t increment = param.current - _file_ids[param.file_id];
-            //        LOG << "_file_ids " << param.file_id << " increment: " << increment;
-            _file_stats.all_current_size += increment;   //增量值
-            _file_ids[param.file_id] = param.current;
-
-            if (param.current >= param.total) {
-                // 此文件已完成，从文件统计中删除
-                _file_ids.remove(param.file_id);
+        int64_t increment = (param.current - _file_stats.all_current_size) * 1000; // 转换为毫秒速度
+        int64_t time_spend = param.millisec - _file_stats.cast_time_ms;
+        if (time_spend > 0) {
+            float speed = increment  / 1024 / time_spend;
+            if (speed > 1024) {
+                LOG << filepath.toStdString() << " SPEED: " << speed / 1024 << " MB/s";
+            } else {
+                LOG << filepath.toStdString() << " SPEED: " << speed << " KB/s";
             }
-        }
-        float speed = param.current / 1024 / param.second;
-        if (speed > 1024) {
-            LOG << filepath.toStdString() << "SPEED: " << speed / 1024 << "MB/s";
-        } else {
-            LOG << filepath.toStdString() << "SPEED: " << speed << "KB/s";
         }
         break;
     }
     case FILE_TRANS_END: {
-        // 此文件已完成，从文件统计中删除
-        int64_t increment = param.current - _file_ids[param.file_id];
-        _file_stats.all_current_size += increment;   //增量值
-        _file_ids.remove(param.file_id);
-
         LOG_IF(FLG_log_detail) << "file receive END: " << filepath.toStdString();
 #ifndef WIN32
         TransferHelper::instance()->addFinshedFiles(filepath, param.total);
@@ -304,22 +288,21 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         LOG << "unhandle status: " << param.status;
         break;
     }
+    _file_stats.all_current_size = param.current;
+    _file_stats.cast_time_ms = param.millisec;
 
-    if (param.second > _file_stats.max_time_sec) {
-        _file_stats.max_time_sec = param.second;
-    }
-
-    // 全部file_id的all_total_size, all_current/all_total_size
+    // 计算整体进度和预估剩余时间
     double value = static_cast<double>(_file_stats.all_current_size) / _file_stats.all_total_size;
     int progressbar = static_cast<int>(value * 100);
-    int remain_time;
+    int64 remain_time;
     if (progressbar <= 0) {
         remain_time = -1;
     } else if (progressbar > 100) {
         progressbar = 100;
         remain_time = 0;
     } else {
-        remain_time = _file_stats.max_time_sec * 100 / progressbar - _file_stats.max_time_sec;
+        // 转为秒
+        remain_time = (_file_stats.cast_time_ms * 100 / progressbar - _file_stats.cast_time_ms) / 1000;
     }
 
     LOG_IF(FLG_log_detail) << "progressbar: " << progressbar << " remain_time=" << remain_time;
@@ -382,7 +365,6 @@ void TransferHandle::sendFiles(QStringList paths)
     if (!_backendOK) return;
 
     //清空上次任务的所有文件统计
-    _file_ids.clear();
     int current_id = _request_job_id;
     TransferWoker::instance()->sendFiles(current_id, paths);
     current_id++;

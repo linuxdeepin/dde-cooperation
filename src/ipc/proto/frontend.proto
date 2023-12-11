@@ -50,5 +50,5 @@ object FileStatus {
     int32 status
     int64 total
     int64 current
-    int32 second
+    int64 millisec
 }
