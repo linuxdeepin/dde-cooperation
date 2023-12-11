@@ -17,8 +17,10 @@ class CooperationTaskDialog : public CooperationDialog
 public:
     explicit CooperationTaskDialog(QWidget *parent = nullptr);
 
-    void switchWaitPage(const QString &dev);
-    void switchFailPage(const QString &dev, const QString &msg, bool retry);
+    void switchWaitPage(const QString &title);
+    void switchFailPage(const QString &title, const QString &msg, bool retry);
+    void switchConfirmPage(const QString &title, const QString &msg);
+    void switchInfomationPage(const QString &title, const QString &msg);
 
 Q_SIGNALS:
     void waitCanceled();
@@ -29,13 +31,15 @@ protected:
     void setTaskTitle(const QString &title);
     QWidget *createWaitPage();
     QWidget *createFailPage();
+    QWidget *createConfirmPage();
+    QWidget *createInfomationPage();
 
 private:
-    QStackedLayout *mainLayout { nullptr };
+    QStackedLayout *switchLayout { nullptr };
 
-    // fail widget
-    QLabel *msgLabel { nullptr };
-    QPushButton *cancelBtn { nullptr };
+    QLabel *failMsgLabel { nullptr };
+    QLabel *confirmMsgLabel { nullptr };
+    QLabel *infoLabel { nullptr };
     CooperationSuggestButton *retryBtn { nullptr };
 };
 

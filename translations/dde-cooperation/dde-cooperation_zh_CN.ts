@@ -51,54 +51,70 @@
 <context>
     <name>cooperation_core::CooperationManager</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="246"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="267"/>
         <source>connect</source>
         <translation>连接</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="254"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="275"/>
         <source>Disconnect</source>
         <translation>断开</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="230"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="292"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="406"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="251"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="311"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="430"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
         <translation>与“%1”的协同已结束</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="361"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="296"/>
+        <source>Requesting collaborate to &quot;%1&quot;</source>
+        <translation>正在请求协同至“%1”</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="376"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
         <translation>接收到“%1”的协同连接请求</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="362"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="377"/>
         <source>Reject</source>
         <translation>拒绝</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="363"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="378"/>
         <source>Accept</source>
         <translation>接受</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="386"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="391"/>
+        <source>Cooperation</source>
+        <translation>跨端协同</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="409"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
         <translation>连接成功，正在与“%1”进行协同</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="394"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="415"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="451"/>
+        <source>Unable to collaborate to &quot;%1&quot;</source>
+        <translation>无法协同至“%1”</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="416"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
         <translation>“%1”已拒绝您的协同请求</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="421"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="445"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
         <translation>“%1”向您发起连接请求因超时中断</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="428"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="453"/>
         <source>The other party does not confirm, please try again later</source>
         <translation>对方未确认，请稍后再发起连接</translation>
     </message>
@@ -106,12 +122,13 @@
 <context>
     <name>cooperation_core::CooperationManagerPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="178"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="190"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="200"/>
         <source>Cooperation</source>
         <translation>跨端协同</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="207"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="228"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
         <translation>连接成功，正在与“%1”进行协同</translation>
     </message>
@@ -138,7 +155,7 @@
     <name>cooperation_core::CooperationSearchEdit</name>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/win/cooperationsearchedit.cpp" line="32"/>
-        <location filename="../../src/plugins/cooperation/core/gui/win/cooperationsearchedit.cpp" line="75"/>
+        <location filename="../../src/plugins/cooperation/core/gui/win/cooperationsearchedit.cpp" line="80"/>
         <source>                    Search</source>
         <translation>                    搜索</translation>
     </message>
@@ -146,27 +163,35 @@
 <context>
     <name>cooperation_core::CooperationTaskDialog</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="22"/>
-        <source>Requesting collaborate to &quot;%1&quot;</source>
-        <translation>正在请求协同至“%1”</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="29"/>
-        <source>Unable to collaborate to &quot;%1&quot;</source>
-        <translation>无法协同至“%1”</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="84"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="103"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="97"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="116"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="106"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="119"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>重试</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="141"/>
+        <source>Reject</source>
+        <comment>button</comment>
+        <translation>拒绝</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="144"/>
+        <source>Accept</source>
+        <comment>button</comment>
+        <translation>接受</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationtaskdialog.cpp" line="166"/>
+        <source>Close</source>
+        <comment>button</comment>
+        <translation>关闭</translation>
     </message>
 </context>
 <context>

@@ -17,21 +17,33 @@ CooperationTaskDialog::CooperationTaskDialog(QWidget *parent)
     init();
 }
 
-void CooperationTaskDialog::switchWaitPage(const QString &dev)
+void CooperationTaskDialog::switchWaitPage(const QString &title)
 {
-    static QString title(tr("Requesting collaborate to \"%1\""));
-    setTaskTitle(title.arg(CommonUitls::elidedText(dev, Qt::ElideMiddle, 15)));
-    mainLayout->setCurrentIndex(0);
+    setTaskTitle(title);
+    switchLayout->setCurrentIndex(0);
 }
 
-void CooperationTaskDialog::switchFailPage(const QString &dev, const QString &msg, bool retry)
+void CooperationTaskDialog::switchFailPage(const QString &title, const QString &msg, bool retry)
 {
-    static QString title(tr("Unable to collaborate to \"%1\""));
-    setTaskTitle(title.arg(CommonUitls::elidedText(dev, Qt::ElideMiddle, 15)));
+    setTaskTitle(title);
 
-    msgLabel->setText(msg);
+    failMsgLabel->setText(msg);
     retryBtn->setVisible(retry);
-    mainLayout->setCurrentIndex(1);
+    switchLayout->setCurrentIndex(1);
+}
+
+void CooperationTaskDialog::switchConfirmPage(const QString &title, const QString &msg)
+{
+    setTaskTitle(title);
+    confirmMsgLabel->setText(msg);
+    switchLayout->setCurrentIndex(2);
+}
+
+void CooperationTaskDialog::switchInfomationPage(const QString &title, const QString &msg)
+{
+    setTaskTitle(title);
+    infoLabel->setText(msg);
+    switchLayout->setCurrentIndex(3);
 }
 
 void CooperationTaskDialog::init()
@@ -43,17 +55,18 @@ void CooperationTaskDialog::init()
 #endif
     setFixedWidth(380);
 
-    QWidget *contentWidget = new QWidget(this);
-    mainLayout = new QStackedLayout(contentWidget);
-
-    mainLayout->addWidget(createWaitPage());
-    mainLayout->addWidget(createFailPage());
+    switchLayout = new QStackedLayout;
+    switchLayout->addWidget(createWaitPage());
+    switchLayout->addWidget(createFailPage());
+    switchLayout->addWidget(createConfirmPage());
+    switchLayout->addWidget(createInfomationPage());
 
 #ifdef linux
+    QWidget *contentWidget = new QWidget(this);
+    contentWidget->setLayout(switchLayout);
     addContent(contentWidget);
 #else
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(contentWidget);
+    setLayout(switchLayout);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 #endif
 }
@@ -71,7 +84,7 @@ QWidget *CooperationTaskDialog::createWaitPage()
 {
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
-    vlayout->setContentsMargins(0, 0, 0, 0);
+    vlayout->setContentsMargins(0, 20, 0, 0);
 
     CooperationSpinner *spinner = new CooperationSpinner(this);
     spinner->setFixedSize(48, 48);
@@ -94,24 +107,66 @@ QWidget *CooperationTaskDialog::createFailPage()
 {
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
-    vlayout->setContentsMargins(0, 0, 0, 0);
+    vlayout->setContentsMargins(0, 20, 0, 0);
 
-    msgLabel = new QLabel(this);
-    msgLabel->setAlignment(Qt::AlignHCenter);
-    msgLabel->setWordWrap(true);
+    failMsgLabel = new QLabel(this);
+    failMsgLabel->setAlignment(Qt::AlignHCenter);
+    failMsgLabel->setWordWrap(true);
 
-    cancelBtn = new QPushButton(tr("Cancel", "button"), this);
+    QPushButton *cancelBtn = new QPushButton(tr("Cancel", "button"), this);
     connect(cancelBtn, &QPushButton::clicked, this, &CooperationTaskDialog::close);
 
     retryBtn = new CooperationSuggestButton(tr("Retry", "button"), this);
     connect(retryBtn, &QPushButton::clicked, this, &CooperationTaskDialog::retryConnected);
 
     QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->addWidget(cancelBtn);
-    hlayout->addWidget(retryBtn);
+    hlayout->addWidget(cancelBtn, 0, Qt::AlignBottom);
+    hlayout->addWidget(retryBtn, 0, Qt::AlignBottom);
 
-    vlayout->addWidget(msgLabel);
+    vlayout->addWidget(failMsgLabel);
     vlayout->addLayout(hlayout);
+    return widget;
+}
 
+QWidget *CooperationTaskDialog::createConfirmPage()
+{
+    QWidget *widget = new QWidget(this);
+    QVBoxLayout *vlayout = new QVBoxLayout(widget);
+    vlayout->setContentsMargins(0, 20, 0, 0);
+
+    confirmMsgLabel = new QLabel(this);
+    confirmMsgLabel->setAlignment(Qt::AlignHCenter);
+    confirmMsgLabel->setWordWrap(true);
+
+    QPushButton *rejectBtn = new QPushButton(tr("Reject", "button"), this);
+    connect(rejectBtn, &QPushButton::clicked, this, &CooperationTaskDialog::reject);
+
+    QPushButton *acceptBtn = new CooperationSuggestButton(tr("Accept", "button"), this);
+    connect(acceptBtn, &QPushButton::clicked, this, &CooperationTaskDialog::accept);
+
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    hlayout->addWidget(rejectBtn, 0, Qt::AlignBottom);
+    hlayout->addWidget(acceptBtn, 0, Qt::AlignBottom);
+
+    vlayout->addWidget(confirmMsgLabel);
+    vlayout->addLayout(hlayout);
+    return widget;
+}
+
+QWidget *CooperationTaskDialog::createInfomationPage()
+{
+    QWidget *widget = new QWidget(this);
+    QVBoxLayout *vlayout = new QVBoxLayout(widget);
+    vlayout->setContentsMargins(0, 20, 0, 0);
+
+    infoLabel = new QLabel(this);
+    infoLabel->setAlignment(Qt::AlignHCenter);
+    infoLabel->setWordWrap(true);
+
+    QPushButton *closeBtn = new QPushButton(tr("Close", "button"), this);
+    connect(closeBtn, &QPushButton::clicked, this, &CooperationTaskDialog::close);
+
+    vlayout->addWidget(infoLabel);
+    vlayout->addWidget(closeBtn, 0, Qt::AlignBottom);
     return widget;
 }
