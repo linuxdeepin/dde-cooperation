@@ -282,6 +282,26 @@ void HandleRpcService::handleRemoteShareConnect(co::Json &info)
                                                 UNI_RPC_PORT_BASE);
     SendRpcService::instance()->setTargetAppName(lo.tarAppname.c_str(),
                                                  lo.appName.c_str());
+    // 判断当前是否连接
+    co::Json baseJson;
+    if (baseJson.parse_from(DiscoveryJob::instance()->baseInfo())) {
+        //NodeInfo
+        NodePeerInfo nodepeer;
+        nodepeer.from_json(baseJson);
+        if (!nodepeer.share_connect_ip.empty()
+                && nodepeer.share_connect_ip.compare(nodepeer.ipv4) != 0) {
+            ShareConnectReply reply;
+            reply.ip = nodepeer.ipv4;
+            reply.appName = lo.appName;
+            reply.tarAppname = lo.tarAppname;
+            reply.reply = SHARE_CONNECT_ERR_CONNECTED;
+            // 回复控制端连接结果
+            SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT_RES,
+                                                       reply.appName.c_str(), reply.as_json().str().c_str());
+            return;
+        }
+    }
+
     ShareEvents event;
     event.eventType = FRONT_SHARE_APPLY_CONNECT;
     event.data = info.str();
@@ -310,7 +330,7 @@ void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
     ShareConnectReply reply;
     reply.from_json(info);
 
-    if (reply.reply == 1)
+    if (reply.reply == SHARE_CONNECT_COMFIRM)
         DiscoveryJob::instance()->updateAnnouncShare(false, reply.ip);
 
     ShareEvents event;
