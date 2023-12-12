@@ -174,8 +174,8 @@ CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
     if (!ctDialog) {
         ctDialog = new CooperationTaskDialog(CooperationUtil::instance()->mainWindow());
         connect(ctDialog, &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
-        connect(ctDialog, &CooperationDialog::rejected, this, [this] { onActionTriggered(recvReplacesId, NotifyRejectAction); });
-        connect(ctDialog, &CooperationDialog::accepted, this, [this] { onActionTriggered(recvReplacesId, NotifyAcceptAction); });
+        connect(ctDialog, &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyRejectAction); });
+        connect(ctDialog, &CooperationTaskDialog::acceptRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyAcceptAction); });
     }
 
     return ctDialog;
@@ -410,7 +410,7 @@ void CooperationManager::handleConnectResult(int result)
 
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
         d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
-        d->taskDialog()->hide();
+        d->taskDialog()->close();
     } break;
     case SHARE_CONNECT_REFUSE: {
         d->isReplied = true;
