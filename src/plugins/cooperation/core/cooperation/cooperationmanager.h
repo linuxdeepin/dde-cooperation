@@ -28,7 +28,7 @@ public Q_SLOTS:
     void connectToDevice(const DeviceInfoPointer info);
     void disconnectToDevice(const DeviceInfoPointer info);
     void notifyConnectRequest(const QString &info);
-    void handleConnectResult(bool accepted);
+    void handleConnectResult(int result);
     void handleDisConnectResult(const QString &devName);
     void onVerifyTimeout();
 

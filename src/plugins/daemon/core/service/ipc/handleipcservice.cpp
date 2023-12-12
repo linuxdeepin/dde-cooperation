@@ -461,7 +461,6 @@ void HandleIpcService::handleShareStop(co::Json json)
         DiscoveryJob::instance()->updateAnnouncShare(true);
     } else if (st.flags == ShareStopFlag::SHARE_STOP_CLIENT) {
         st.flags = ShareStopFlag::SHARE_STOP_SERVER;
-        ShareCooperationServiceManager::instance()->stopServer();
         ShareCooperationServiceManager::instance()->client()->stopBarrier();
     } else {
         st.flags = ShareStopFlag::SHARE_STOP_CLIENT;
