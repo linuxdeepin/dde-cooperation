@@ -164,7 +164,7 @@ QWidget *CooperationTaskDialog::createInfomationPage()
     infoLabel->setWordWrap(true);
 
     QPushButton *closeBtn = new QPushButton(tr("Close", "button"), this);
-    connect(closeBtn, &QPushButton::clicked, this, &CooperationTaskDialog::close);
+    connect(closeBtn, &QPushButton::clicked, this, &CooperationTaskDialog::hide);
 
     vlayout->addWidget(infoLabel);
     vlayout->addWidget(closeBtn, 0, Qt::AlignBottom);

@@ -13,6 +13,7 @@
 #include "configs/dconfig/dconfigmanager.h"
 #include "common/constant.h"
 #include "common/commonstruct.h"
+#include "common/commonutils.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/backend.h"
@@ -477,26 +478,6 @@ QVariantMap CooperationUtil::deviceInfo()
 QString CooperationUtil::localIPAddress()
 {
     QString ip;
-    // QNetworkInterface 类提供了一个主机 IP 地址和网络接口的列表
-    foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces()) {
-        // 每个网络接口包含 0 个或多个 IP 地址
-        QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
-        if (netInterface.name().startsWith("virbr") || netInterface.name().startsWith("vmnet")
-            || netInterface.name().startsWith("docker")) {
-            // 跳过桥接，虚拟机和docker的网络接口
-            DLOG << "netInterface name:" << netInterface.name().toStdString();
-            continue;
-        }
-
-        // 遍历每一个 IP 地址
-        foreach (QNetworkAddressEntry entry, entryList) {
-            if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol && entry.ip() != QHostAddress::LocalHost) {
-                //IP地址
-                ip = entry.ip().toString();
-                DLOG << "IP Address:" << ip.toStdString();
-                return ip;
-            }
-        }
-    }
+    ip = deepin_cross::CommonUitls::getFirstIp().data();
     return ip;
 }
