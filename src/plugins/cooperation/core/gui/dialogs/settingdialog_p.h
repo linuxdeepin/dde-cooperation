@@ -59,7 +59,6 @@ private:
     CooperationSwitchButton *devShareSwitchBtn { nullptr };
     CooperationSwitchButton *clipShareSwitchBtn { nullptr };
     FileChooserEdit *chooserEdit { nullptr };
-    SettingItem *connectItem { nullptr };
 
     QStringList findComboBoxInfo;
     QList<QPair<QString, QString>> connectComboBoxInfo;
