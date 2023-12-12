@@ -25,6 +25,8 @@ public:
 Q_SIGNALS:
     void waitCanceled();
     void retryConnected();
+    void rejectRequest();
+    void acceptRequest();
 
 protected:
     void init();

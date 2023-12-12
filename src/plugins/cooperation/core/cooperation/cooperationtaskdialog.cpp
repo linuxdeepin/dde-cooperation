@@ -139,10 +139,10 @@ QWidget *CooperationTaskDialog::createConfirmPage()
     confirmMsgLabel->setWordWrap(true);
 
     QPushButton *rejectBtn = new QPushButton(tr("Reject", "button"), this);
-    connect(rejectBtn, &QPushButton::clicked, this, &CooperationTaskDialog::reject);
+    connect(rejectBtn, &QPushButton::clicked, this, &CooperationTaskDialog::rejectRequest);
 
     QPushButton *acceptBtn = new CooperationSuggestButton(tr("Accept", "button"), this);
-    connect(acceptBtn, &QPushButton::clicked, this, &CooperationTaskDialog::accept);
+    connect(acceptBtn, &QPushButton::clicked, this, &CooperationTaskDialog::acceptRequest);
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addWidget(rejectBtn, 0, Qt::AlignBottom);
@@ -164,7 +164,7 @@ QWidget *CooperationTaskDialog::createInfomationPage()
     infoLabel->setWordWrap(true);
 
     QPushButton *closeBtn = new QPushButton(tr("Close", "button"), this);
-    connect(closeBtn, &QPushButton::clicked, this, &CooperationTaskDialog::hide);
+    connect(closeBtn, &QPushButton::clicked, this, &CooperationTaskDialog::close);
 
     vlayout->addWidget(infoLabel);
     vlayout->addWidget(closeBtn, 0, Qt::AlignBottom);

@@ -34,6 +34,7 @@ void CooperaionCorePlugin::initialize()
     bindEvents();
 
     CommonUitls::initLog();
+    CommonUitls::loadTranslator();
 }
 
 bool CooperaionCorePlugin::start()
