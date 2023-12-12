@@ -4,3 +4,4 @@ usr/lib/*/dde-cooperation/plugins/daemon/libdaemon-cooperation.so
 usr/share/dde-cooperation/translations/*.qm
 usr/share/icons/hicolor/scalable/apps/dde-cooperation.svg
 usr/lib/*/dde-file-manager/plugins/common-edge/libdfmplugin-cooperation.so
+usr/share/dsg/configs/org.deepin.dde.cooperation/*.json

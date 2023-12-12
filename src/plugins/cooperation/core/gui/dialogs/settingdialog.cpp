@@ -95,6 +95,13 @@ void SettingDialogPrivate::createBasicWidget()
     tipLabel->setWordWrap(true);
 
     nameEdit = new CooperationLineEdit(q);
+    QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5-]+$"); // 正则表达式定义允许的字符范围
+    QRegExpValidator *validator = new QRegExpValidator(regExp, nameEdit);
+#ifdef linux
+    nameEdit->lineEdit()->setValidator(validator);
+#else
+    nameEdit->setValidator(validator);
+#endif
     nameEdit->setFixedWidth(280);
     connect(nameEdit, &CooperationLineEdit::editingFinished, this, &SettingDialogPrivate::onNameEditingFinished);
     connect(nameEdit, &CooperationLineEdit::textChanged, this, &SettingDialogPrivate::onNameChanged);
@@ -117,7 +124,7 @@ void SettingDialogPrivate::createDeviceShareWidget()
     connect(devShareSwitchBtn, &CooperationSwitchButton::clicked, this, &SettingDialogPrivate::onDeviceShareButtonClicked);
 
     SettingItem *deviceShareItem = new SettingItem(q);
-    deviceShareItem->setItemInfo(tr("Device share"), devShareSwitchBtn);
+    deviceShareItem->setItemInfo(tr("Peripheral share"), devShareSwitchBtn);
 
     QLabel *tipLabel = new QLabel(tr("Allows peripherals that have been established "
                                      "to collaborate across devices to control this "
@@ -134,7 +141,7 @@ void SettingDialogPrivate::createDeviceShareWidget()
         connectCB->addItem(QIcon::fromTheme(info.first), info.second);
     }
     connect(connectCB, qOverload<int>(&QComboBox::currentIndexChanged), this, &SettingDialogPrivate::onConnectComboBoxValueChanged);
-    connectItem = new SettingItem(q);
+    SettingItem *connectItem = new SettingItem(q);
     connectItem->setItemInfo(tr("Connection direction"), connectCB);
 
     contentLayout->addWidget(deviceShareItem);
@@ -233,7 +240,6 @@ void SettingDialogPrivate::onNameChanged(const QString &text)
 void SettingDialogPrivate::onDeviceShareButtonClicked(bool clicked)
 {
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey, clicked);
-    connectItem->setVisible(clicked);
 }
 
 void SettingDialogPrivate::onClipboardShareButtonClicked(bool clicked)
@@ -306,7 +312,6 @@ void SettingDialog::loadConfig()
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
     d->connectCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
-    d->connectItem->setVisible(d->devShareSwitchBtn->isChecked());
 
 #ifdef linux
     value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::TransferModeKey, 0);
