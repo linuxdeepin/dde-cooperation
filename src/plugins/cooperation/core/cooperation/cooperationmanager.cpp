@@ -408,7 +408,7 @@ void CooperationManager::handleConnectResult(bool accepted)
 
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
         d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
-        d->taskDialog()->close();
+        d->taskDialog()->hide();
     } else {
         d->isReplied = true;
 
