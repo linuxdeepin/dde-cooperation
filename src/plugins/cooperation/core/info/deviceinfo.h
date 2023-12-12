@@ -5,6 +5,8 @@
 #ifndef DEVICEINFO_H
 #define DEVICEINFO_H
 
+#include "base/baseutils.h"
+
 #include <QMetaType>
 #include <QSharedPointer>
 
@@ -48,6 +50,9 @@ public:
     virtual ~DeviceInfo();
 
     bool isValid();
+
+    void setOsType(deepin_cross::BaseUtils::OS_TYPE type);
+    deepin_cross::BaseUtils::OS_TYPE osType() const;
 
     void setIpAddress(const QString &ip);
     QString ipAddress() const;

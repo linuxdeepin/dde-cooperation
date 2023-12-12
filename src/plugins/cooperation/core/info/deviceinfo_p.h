@@ -18,6 +18,7 @@ public:
 
     QString deviceName;
     QString ipAddress;
+    deepin_cross::BaseUtils::OS_TYPE osType { deepin_cross::BaseUtils::kOther };
     bool isClipboardShared { false };
     bool isPeripheralShared { false };
     bool cooperationEnabled { false };

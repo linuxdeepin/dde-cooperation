@@ -52,6 +52,10 @@ if (CMAKE_SYSTEM MATCHES "Windows")
    find_package(Qt5 COMPONENTS Sql REQUIRED)
 elseif (CMAKE_SYSTEM MATCHES "Linux")
     FILE(GLOB BUSS_FILES
+        "${CMAKE_SOURCE_DIR}/src/base/reportlog/*.h"
+        "${CMAKE_SOURCE_DIR}/src/base/reportlog/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/base/reportlog/*/*.h"
+        "${CMAKE_SOURCE_DIR}/src/base/reportlog/*/*.cpp"
         "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.h"
         "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"

@@ -52,6 +52,8 @@ public:
     void transferResult(bool result, const QString &msg);
     void updateProgress(int value, const QString &remainTime);
 
+    void reportTransferResult(bool result);
+
 public Q_SLOTS:
     void onVerifyTimeout();
 
