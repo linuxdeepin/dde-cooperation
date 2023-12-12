@@ -94,16 +94,16 @@ bool TransferJob::createFile(const QString &filename, const bool isDir)
     }
     // 判断是否是第一层
     auto acfilename = filename;
-    if (acfilename.contains(QDir::separator())) {
-        auto first = acfilename.mid(0, acfilename.indexOf(QDir::separator()));
+    if (acfilename.contains("/")) {
+        auto first = acfilename.mid(0, acfilename.indexOf("/"));
         auto acFirst = acName(first.toStdString());
         if (!acFirst.empty())
-            acfilename = acFirst.c_str() + acfilename.mid(acfilename.indexOf(QDir::separator()));
+            acfilename = acFirst.c_str() + acfilename.mid(acfilename.indexOf("/"));
     }
     fastring path = _save_fulldir.empty()
             ? path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir)
             : _save_fulldir;
-    fastring fullpath = path::join(path, filename.toStdString().c_str());
+    fastring fullpath = path::join(path, acfilename.toStdString().c_str());
 
     fastring ac;
     bool ok = FSAdapter::noneExitFileByFullPath(fullpath.c_str(), isDir, &ac);
