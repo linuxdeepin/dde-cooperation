@@ -30,6 +30,7 @@ public:
 
 public Q_SLOTS:
     void onActionTriggered(uint replacesId, const QString &action);
+    void stopCooperation();
 
 public:
     CooperationManager *q;

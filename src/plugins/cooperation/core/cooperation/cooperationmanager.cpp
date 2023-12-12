@@ -66,6 +66,7 @@ CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
     confirmTimer.setInterval(10 * 1000);
     confirmTimer.setSingleShot(true);
     connect(&confirmTimer, &QTimer::timeout, q, &CooperationManager::onVerifyTimeout);
+    connect(qApp, &QApplication::aboutToQuit, this, &CooperationManagerPrivate::stopCooperation);
 }
 
 void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, QVariant param)
@@ -141,7 +142,7 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
         ShareConnectReply replyEvent;
         replyEvent.appName = MainAppName;
         replyEvent.tarAppname = MainAppName;
-        replyEvent.reply = param.toBool() ? 1 : 0;
+        replyEvent.reply = param.toBool() ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE;
 
         event.data = replyEvent.as_json().str();
         req = event.as_json();
@@ -203,6 +204,19 @@ uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &bo
 #endif
 }
 
+void CooperationManagerPrivate::stopCooperation()
+{
+    if (targetDeviceInfo && targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
+        backendShareEvent(BACK_SHARE_STOP, targetDeviceInfo, 0);
+        backendShareEvent(BACK_SHARE_DISCONNECT);
+
+#ifdef linux
+        static QString body(tr("Coordination with \"%1\" has ended"));
+        notifyMessage(recvReplacesId, body.arg(CommonUitls::elidedText(targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+#endif
+    }
+}
+
 void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString &action)
 {
     if (recvReplacesId != replacesId || isTimeout)
@@ -238,19 +252,6 @@ CooperationManager::CooperationManager(QObject *parent)
 
 CooperationManager::~CooperationManager()
 {
-    if (d->targetDeviceInfo && d->targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
-        co::wait_group wg;
-        wg.add(1);
-        UNIGO([this, wg]() {
-            d->backendShareEvent(BACK_SHARE_STOP, d->targetDeviceInfo, 0);
-            d->backendShareEvent(BACK_SHARE_DISCONNECT);
-            wg.done();
-        });
-        wg.wait();
-
-        static QString body(tr("Coordination with \"%1\" has ended"));
-        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
-    }
 }
 
 CooperationManager *CooperationManager::instance()
@@ -394,12 +395,13 @@ void CooperationManager::notifyConnectRequest(const QString &info)
     d->confirmTimer.start();
 }
 
-void CooperationManager::handleConnectResult(bool accepted)
+void CooperationManager::handleConnectResult(int result)
 {
     if (!d->targetDeviceInfo)
         return;
 
-    if (accepted) {
+    switch (result) {
+    case SHARE_CONNECT_COMFIRM: {
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
         MainController::instance()->updateDeviceState({ d->targetDeviceInfo });
         HistoryManager::instance()->writeIntoConnectHistory(d->targetDeviceInfo->ipAddress(), d->targetDeviceInfo->deviceName());
@@ -409,9 +411,9 @@ void CooperationManager::handleConnectResult(bool accepted)
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
         d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
         d->taskDialog()->hide();
-    } else {
+    } break;
+    case SHARE_CONNECT_REFUSE: {
         d->isReplied = true;
-
         static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("\"%1\" has rejected your request for collaboration"));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
@@ -419,6 +421,19 @@ void CooperationManager::handleConnectResult(bool accepted)
                                         false);
         d->taskDialog()->show();
         d->targetDeviceInfo.reset();
+    } break;
+    case SHARE_CONNECT_ERR_CONNECTED: {
+        d->isReplied = true;
+        static QString title(tr("Unable to collaborate to \"%1\""));
+        static QString msg(tr("\"%1\" is connecting with other devices"));
+        d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
+                                        msg.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
+                                        false);
+        d->taskDialog()->show();
+        d->targetDeviceInfo.reset();
+    } break;
+    default:
+        break;
     }
 }
 

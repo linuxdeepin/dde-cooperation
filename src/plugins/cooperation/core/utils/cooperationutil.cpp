@@ -216,7 +216,7 @@ void CooperationUtilPrivate::localIPCStart()
                 q->metaObject()->invokeMethod(CooperationManager::instance(),
                                               "handleConnectResult",
                                               Qt::QueuedConnection,
-                                              Q_ARG(bool, conReply.reply));
+                                              Q_ARG(int, conReply.reply));
             } break;
             case FRONT_SHARE_DISCONNECT: {
                 ShareDisConnect disCon;
