@@ -9,11 +9,15 @@
 #include "maincontroller/maincontroller.h"
 #include "transfer/transferhelper.h"
 #include "cooperation/cooperationmanager.h"
+#include "info/deviceinfo.h"
+
 #include "configs/settings/configmanager.h"
 #include "singleton/singleapplication.h"
 
 #ifdef WIN32
 #include "proxy/cooperationproxy.h"
+#else
+#include "base/reportlog/reportlogmanager.h"
 #endif
 
 using namespace cooperation_core;
@@ -25,8 +29,14 @@ void CooperaionCorePlugin::initialize()
         auto appName = qApp->applicationName();
         qApp->setApplicationName(MainAppName);
         ConfigManager::instance();
+#ifdef linux
+        ReportLogManager::instance()->init();
+#endif
         qApp->setApplicationName(appName);
     } else {
+#ifdef linux
+        ReportLogManager::instance()->init();
+#endif
         connect(qApp, &SingleApplication::raiseWindow, this, [] { CooperationUtil::instance()->mainWindow()->activateWindow(); });
     }
 
@@ -49,6 +59,7 @@ bool CooperaionCorePlugin::start()
     CooperationProxy::instance();
 #endif
 
+    reportDeviceStatus();
     return true;
 }
 
@@ -63,4 +74,20 @@ void CooperaionCorePlugin::bindEvents()
 {
     dpfSlotChannel->connect("cooperation_core", "slot_Register_Operation",
                             CooperationCoreEventReceiver::instance(), &CooperationCoreEventReceiver::handleRegisterOperation);
+}
+
+void CooperaionCorePlugin::reportDeviceStatus()
+{
+#ifdef linux
+    QTimer::singleShot(3000, this, [=]() {
+        auto devInfo = DeviceInfo::fromVariantMap(CooperationUtil::instance()->deviceInfo());
+
+        QVariantMap data;
+        data.insert("enableFileDelivery", devInfo->transMode() != DeviceInfo::TransMode::NotAllow);
+        data.insert("enablePeripheralShare", devInfo->peripheralShared());
+        data.insert("enableClipboardShare", devInfo->clipboardShared());
+
+        ReportLogManager::instance()->commit(ReportAttribute::CooperationStatus, data);
+    });
+#endif
 }

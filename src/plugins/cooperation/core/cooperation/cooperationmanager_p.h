@@ -27,6 +27,7 @@ public:
     void backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo = nullptr, QVariant param = QVariant());
     CooperationTaskDialog *taskDialog();
     uint notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout);
+    void reportConnectionData();
 
 public Q_SLOTS:
     void onActionTriggered(uint replacesId, const QString &action);

@@ -23,7 +23,8 @@
 #include <QStandardPaths>
 #include <QDir>
 #ifdef linux
-#    include <QDBusReply>
+#include "base/reportlog/reportlogmanager.h"
+#include <QDBusReply>
 #endif
 
 using ButtonStateCallback = std::function<bool(const QString &, const DeviceInfoPointer)>;
@@ -216,6 +217,36 @@ void CooperationManagerPrivate::stopCooperation()
         notifyMessage(recvReplacesId, body.arg(CommonUitls::elidedText(targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
 #endif
     }
+}
+
+void CooperationManagerPrivate::reportConnectionData()
+{
+#ifdef linux
+    if (!targetDeviceInfo)
+        return;
+
+    auto osName = [](BaseUtils::OS_TYPE type) {
+        switch (type) {
+        case BaseUtils::kLinux:
+            return "UOS";
+        case BaseUtils::kWindows:
+            return "Windows";
+        default:
+            break;
+        }
+
+        return "";
+    };
+
+    QString selfOsName = osName(BaseUtils::osType());
+    QString targetOsName = osName(targetDeviceInfo->osType());
+    if (selfOsName.isEmpty() || targetOsName.isEmpty())
+        return;
+
+    QVariantMap map;
+    map.insert("osOfDevices", QString("%1&%2").arg(selfOsName, targetOsName));
+    ReportLogManager::instance()->commit(ReportAttribute::ConnectionInfo, map);
+#endif
 }
 
 void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString &action)
@@ -413,6 +444,9 @@ void CooperationManager::handleConnectResult(int result)
 
     switch (result) {
     case SHARE_CONNECT_COMFIRM: {
+        // 上报埋点数据
+        d->reportConnectionData();
+
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
         MainController::instance()->updateDeviceState({ d->targetDeviceInfo });
         HistoryManager::instance()->writeIntoConnectHistory(d->targetDeviceInfo->ipAddress(), d->targetDeviceInfo->deviceName());

@@ -78,6 +78,13 @@ inline constexpr char DiscoveryModeKey[] { "cooperation.discovery.mode" };
 inline constexpr char TransferModeKey[] { "cooperation.transfer.mode" };
 }
 
+// 埋点属性
+namespace ReportAttribute {
+inline constexpr char CooperationStatus[] { "CooperationStatus" };
+inline constexpr char FileDelivery[] { "FileDelivery" };
+inline constexpr char ConnectionInfo[] { "ConnectionInfo" };
+}
+
 inline const char MainAppName[] { "dde-cooperation" };
 inline const char CooperRegisterName[] { "daemon-cooperation" };
 

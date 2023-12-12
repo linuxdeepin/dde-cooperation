@@ -52,7 +52,7 @@ void MainController::checkNetworkState()
     }
 }
 
-void MainController::updateDeviceList(const QString &ip, const QString &info, bool isOnline)
+void MainController::updateDeviceList(const QString &ip, int osType, const QString &info, bool isOnline)
 {
     if (!this->isOnline)
         return;
@@ -68,6 +68,7 @@ void MainController::updateDeviceList(const QString &ip, const QString &info, bo
             return;
 
         map.insert("IPAddress", ip);
+        map.insert("OSType", osType);
         auto devInfo = DeviceInfo::fromVariantMap(map);
         if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
             // 处理设备的共享属性发生变化情况

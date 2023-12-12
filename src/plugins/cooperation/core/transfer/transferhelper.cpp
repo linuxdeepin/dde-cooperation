@@ -24,6 +24,8 @@
 #include <QTimer>
 
 #ifdef linux
+#include "base/reportlog/reportlogmanager.h"
+
 #include <QDBusInterface>
 #include <QDBusReply>
 #endif
@@ -175,6 +177,7 @@ void TransferHelperPrivate::handleCancelTransfer()
 void TransferHelperPrivate::transferResult(bool result, const QString &msg)
 {
     transDialog()->switchResultPage(result, msg);
+    reportTransferResult(result);
 }
 
 void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
@@ -182,6 +185,15 @@ void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
     QString title = tr("Sending files to \"%1\"").arg(CommonUitls::elidedText(sendToWho, Qt::ElideMiddle, 15));
     transDialog()->switchProgressPage(title);
     transDialog()->updateProgress(value, remainTime);
+}
+
+void TransferHelperPrivate::reportTransferResult(bool result)
+{
+#ifdef linux
+    QVariantMap map;
+    map.insert("deliveryResult", result);
+    ReportLogManager::instance()->commit(ReportAttribute::FileDelivery, map);
+#endif
 }
 
 void TransferHelperPrivate::onVerifyTimeout()
