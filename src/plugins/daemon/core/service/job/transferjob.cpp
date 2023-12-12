@@ -259,24 +259,6 @@ void TransferJob::handleBlockQueque()
             continue;
         }
 
-        if (block.isNull()) {
-            block.reset(new FSDataBlock);
-            block->flags = JobTransFileOp::FILE_COUNTING;
-        }
-
-        if (counted == false)
-            counted = block->flags & JobTransFileOp::FILE_COUNTED;
-
-        if (_writejob) {
-            if (block->flags & JobTransFileOp::FILE_COUNTING)
-                continue;
-            // 写入失败，怎么处理，继续尝试
-            exception = !writeAndCreateFile(block);
-        } else {
-            // 发送失败，怎么处理
-            exception = !sendToRemote(block);
-        }
-
         // 通知前端进度
         {
             FileInfo info;
@@ -296,6 +278,24 @@ void TransferJob::handleBlockQueque()
             if (timeout && counted) {
                 handleTransStatus(FILE_TRANS_SPEED, info);
             }
+        }
+
+        if (block.isNull()) {
+            block.reset(new FSDataBlock);
+            block->flags = JobTransFileOp::FILE_COUNTING;
+        }
+
+        if (counted == false)
+            counted = block->flags & JobTransFileOp::FILE_COUNTED;
+
+        if (_writejob) {
+            if (block->flags & JobTransFileOp::FILE_COUNTING)
+                continue;
+            // 写入失败，怎么处理，继续尝试
+            exception = !writeAndCreateFile(block);
+        } else {
+            // 发送失败，怎么处理
+            exception = !sendToRemote(block);
         }
 
         if (exception) {
@@ -478,9 +478,12 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
     size_t resize = 0;
     bool open = true;
     do {
-        // 最多300个数据块
-        if (self && self->queueCount() > 300)
+        // 最多100个数据块->100M 限制内存使用
+        if (self && self->queueCount() > 100) {
             co::sleep(10);
+            continue;
+        }
+
         if (self.isNull() || self->_status >= STOPED)
             break;
 
@@ -569,7 +572,6 @@ bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block)
 
 bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
 {
-    co::sleep(5);
     FileTransBlock file_block;
     file_block.job_id = (_jobid);
     file_block.file_id = (block->file_id);
@@ -605,7 +607,12 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
     if (block->data_size == 0 && block->flags & JobTransFileOp::FIlE_CREATE) {
         _cur_size += 4096;
     } else {
-        _cur_size += static_cast<int64>(block->data_size);
+        if (block->flags & JobTransFileOp::FILE_COUNTED) {
+            // 跳过计算结果的total_size.
+            DLOG << "FILE_COUNTED: skip + " << block->data_size;
+        } else {
+            _cur_size += static_cast<int64>(block->data_size);
+        }
     }
     return true;
 }

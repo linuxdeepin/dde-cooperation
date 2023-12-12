@@ -88,12 +88,12 @@ struct FSResult {
 };
 
 struct FSDataBlock {
-    int32 job_id;
-    int32 file_id;
+    int32 job_id{0};
+    int32 file_id{0};
     fastring filename;
-    uint32 blk_id;
+    uint32 blk_id{0};
     int32 flags{0};
-    int64 data_size;
+    int64 data_size{0};
     fastring data;
 
     void from_json(const co::Json& _x_) {
