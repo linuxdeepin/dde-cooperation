@@ -286,6 +286,15 @@ void CooperationManager::regist()
 
 void CooperationManager::connectToDevice(const DeviceInfoPointer info)
 {
+    if (d->targetDeviceInfo && d->targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
+        static QString title(tr("Unable to collaborate to \"%1\""));
+        d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(info->deviceName(), Qt::ElideMiddle, 15)),
+                                        tr("You are connecting to another device"),
+                                        false);
+        d->taskDialog()->show();
+        return;
+    }
+
     d->backendShareEvent(BACK_SHARE_CONNECT, info);
 
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
@@ -397,6 +406,7 @@ void CooperationManager::notifyConnectRequest(const QString &info)
 
 void CooperationManager::handleConnectResult(int result)
 {
+    d->isReplied = true;
     if (!d->targetDeviceInfo)
         return;
 
@@ -413,7 +423,6 @@ void CooperationManager::handleConnectResult(int result)
         d->taskDialog()->close();
     } break;
     case SHARE_CONNECT_REFUSE: {
-        d->isReplied = true;
         static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("\"%1\" has rejected your request for collaboration"));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
@@ -423,7 +432,6 @@ void CooperationManager::handleConnectResult(int result)
         d->targetDeviceInfo.reset();
     } break;
     case SHARE_CONNECT_ERR_CONNECTED: {
-        d->isReplied = true;
         static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("\"%1\" is connecting with other devices"));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
