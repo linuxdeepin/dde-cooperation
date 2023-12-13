@@ -470,28 +470,28 @@
 <context>
     <name>ResultDisplayWidget</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="154"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="155"/>
         <source>Transfer completed partially</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="151"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="152"/>
         <source>Transfer completed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="39"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="40"/>
         <source>Partial information migration failed, please go to UOS for manual transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="79"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="80"/>
         <source>Back</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="88"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="89"/>
         <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -608,6 +608,11 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="223"/>
         <source>Installing Progress %1 %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="264"/>
+        <source>Transfer failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

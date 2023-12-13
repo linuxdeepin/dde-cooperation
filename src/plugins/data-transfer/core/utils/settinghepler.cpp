@@ -260,8 +260,9 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
             auto dir = info.dir();
             if (!dir.exists())
                 dir.mkpath(".");
-            moveFile(file, targetFile);
-            emit TransferHelper::instance()->addResult(info.fileName(), true, tr("Transfer completed"));
+            bool res = moveFile(file, targetFile);
+            QString des = res ? tr("Transfer completed") : tr("Transfer failed");
+            emit TransferHelper::instance()->addResult(info.fileName(), res, des);
         }
     }
     LOG << jsonObj["user_file"].toString().toStdString();
@@ -284,7 +285,7 @@ bool SettingHelper::moveFile(const QString &src, QString &dst)
         }
     }
     QFile f(src);
-    LOG << "moveFile dst: " << dst.toStdString();
+    LOG << "moveFile dst: " << src.toStdString() << dst.toStdString();
     if (f.rename(dst))
         return true;
 
