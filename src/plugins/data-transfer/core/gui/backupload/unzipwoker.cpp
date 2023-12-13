@@ -18,7 +18,7 @@ UnzipWorker::UnzipWorker(QString filepath)
     : filepath(filepath)
 {
     QFileInfo fileInfo(filepath);
-    targetDir = fileInfo.path() + "/" + fileInfo.baseName();
+    targetDir = QDir::homePath() + "/" + fileInfo.baseName();
     while (QFile::exists(targetDir)) {
         targetDir = targetDir + "tmp";
     }
@@ -110,7 +110,7 @@ bool UnzipWorker::extract()
 
     emit TransferHelper::instance()->transferContent(tr("Decompressing"), targetDir, 0, 0);
 
-    while (process.waitForReadyRead()) {
+    while (process.waitForReadyRead(100000)) {
         QByteArray output = process.readAllStandardOutput();
         QString outputText = QString::fromLocal8Bit(output);
         if (outputText.startsWith("  inflating: ")) {

@@ -71,6 +71,7 @@ void ResultDisplayWidget::initUI()
                              "}";
     processTextBrowser->verticalScrollBar()->setStyleSheet(scrollBarStyle);
     processTextBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    processTextBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QHBoxLayout *textBrowerlayout = new QHBoxLayout();
     textBrowerlayout->setAlignment(Qt::AlignCenter);
