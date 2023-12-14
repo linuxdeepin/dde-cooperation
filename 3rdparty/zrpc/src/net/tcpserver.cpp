@@ -22,7 +22,7 @@ TcpServer::TcpServer(NetAddress::ptr addr)
 
 void TcpServer::start() {
     const char *ip = m_addr.get()->getIP();
-    uint16 port = m_addr.get()->getPort();
+    uint16 port = static_cast<uint16>(m_addr.get()->getPort());
     bool ssl = m_addr.get()->isSSL();
 
     atomic_store(&_started, true, mo_relaxed);
@@ -34,7 +34,7 @@ void TcpServer::start() {
         const char *ca_path = m_addr.get()->getCrt();
         _tcp_serv.start(ip, port, key_path, ca_path);
     } else {
-        _tcp_serv.start(ip, port, NULL, NULL);
+        _tcp_serv.start(ip, port, nullptr, nullptr);
     }
 }
 
@@ -49,17 +49,17 @@ void TcpServer::exit() {
 
 TcpServer::~TcpServer() {
     exit();
-    DLOG << "~TcpServer";
+    // DLOG << "~TcpServer";
 }
 
 void TcpServer::on_connection_cb(tcp::Connection conn) {
-    DLOG << "on_connection_cb go";
+    // DLOG << "on_connection_cb go";
     TcpConnection::ptr tconn = addClient(&conn);
     tconn->initServer();
 }
 
 bool TcpServer::registerService(std::shared_ptr<google::protobuf::Service> service) {
-    LOG << "register service enter";
+    // LOG << "register service enter";
     if (service) {
         dynamic_cast<ZRpcDispacther *>(m_dispatcher.get())->registerService(service);
     } else {
@@ -75,23 +75,33 @@ void TcpServer::setCallBackFunc(const CallBackFunc &callback)
     this->callback = callback;
 }
 
+bool TcpServer::checkConnected()
+{
+    for (auto it = m_clients.begin(); it != m_clients.end(); ++it) {
+        if (!it->second)
+            continue;
+        if (!it->second->waited())
+            return true;
+    }
+    return false;
+}
+
 TcpConnection::ptr TcpServer::addClient(tcp::Connection *conntion) {
     int fd = conntion->socket();
     auto it = m_clients.find(fd);
     if (it != m_clients.end()) {
         it->second.reset();
         // set new Tcpconnection
-        DLOG << "fd " << fd << " have exist, reset it";
-        it->second = std::make_shared<TcpConnection>(this, conntion, 1024, getPeerAddr());
+        // DLOG << "fd " << fd << " have exist, reset it" << m_addr->toString();
+        it->second = std::make_shared<TcpConnection>(this, conntion, PERPKG_MAX_LEN, getPeerAddr());
         if (callback)
             it->second->setCallBack(callback);
         return it->second;
-
     } else {
-        DLOG << "fd " << fd << " did't exist, new it";
+        // DLOG << "fd " << fd << " did't exist, new it" << m_addr->toString();
         TcpConnection::ptr conn = std::make_shared<TcpConnection>(this,
                                                                   conntion,
-                                                                  1024,
+                                                                  PERPKG_MAX_LEN,
                                                                   getPeerAddr());
         if (callback)
             conn->setCallBack(callback);

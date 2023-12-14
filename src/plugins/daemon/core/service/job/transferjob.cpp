@@ -467,6 +467,8 @@ void TransferJob::readPath(fastring path, fastring root, const bool acTotal)
     fs::dir d(dirpath);
     auto v = d.all();   // 读取所有子项
     for (const fastring &file : v) {
+        if (_status >= STOPED)
+            return;
         fastring file_path = path::join(d.path(), file.c_str());
         scanPath(root, file_path, acTotal);
     }

@@ -78,11 +78,13 @@ SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString 
     DLOG_IF(FLG_log_detail) << "send to remote = " << type << " = " << msg.toStdString() << "\n ip = "
          << _target_ip.toStdString() << " : port = " << _target_port;
     QSharedPointer<ZRpcClientExecutor> _executor_p{nullptr};
+
     if (!isTrans) {
         _executor_p = createExecutor();
     } else {
         _executor_p = createTransExecutor();
     }
+
     SendResult res;
     res.protocolType = type;
     if (_executor_p.isNull()) {
@@ -227,11 +229,18 @@ void RemoteServiceBinder::startRpcListen(const char *keypath, const char *crtpat
     char crt[1024];
     strcpy(key, keypath);
     strcpy(crt, crtpath);
-    zrpc_ns::ZRpcServer *server = new zrpc_ns::ZRpcServer(port, key, crt);
+    server = new zrpc_ns::ZRpcServer(port, key, crt);
     server->registerService<RemoteServiceImpl>();
     if (call) {
         callback = call;
         server->setCallBackFunc(callback);
     }
     server->start();
+}
+
+bool RemoteServiceBinder::checkConneted()
+{
+    if (!server)
+        return false;
+    return server->checkConnected();
 }

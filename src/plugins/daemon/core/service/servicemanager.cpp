@@ -45,7 +45,11 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     connect(SendRpcService::instance(), &SendRpcService::sendToRpcResult,
             _logic.data(), &HandleSendResultService::handleSendResultMsg, Qt::QueuedConnection);
     connect(ShareCooperationServiceManager::instance(), &ShareCooperationServiceManager::startServerResult,
-            _ipcService, &HandleIpcService::handleShareServerStart);
+            _ipcService, &HandleIpcService::handleShareServerStart, Qt::QueuedConnection);
+
+    _net_check.setInterval(1000);
+    connect(&_net_check, &QTimer::timeout, this, &ServiceManager::checkSelfNetWork);
+    _net_check.start();
 }
 
 ServiceManager::~ServiceManager()
@@ -70,6 +74,38 @@ void ServiceManager::startRemoteServer()
         return;
     _rpcService = new HandleRpcService;
     _rpcService->startRemoteServer();
+}
+
+void ServiceManager::checkSelfNetWork()
+{
+    _network_ok = Util::getFirstIp().size() != 0;
+    if (!_network_ok) {
+        _dis_counts++;
+        return;
+    }
+
+    if (_dis_counts > 5)
+        _check_count = 0;
+
+    // 检查断网后网络连接，检查监听函数是否有监听的连接没有退出
+    if (_check_count >= 0) {
+        if (_rpcService->checkConnected()) {
+            _check_count++;
+        } else {
+            _check_count = -1;
+        }
+    }
+
+    if (_check_count >= 3) {
+        // 重新启动
+        DLOG << "========= restart cooperation deamon!!!!!!! =========";
+#if !defined(WIN32)
+        createBashAndRun();
+#endif
+        _check_count = -1;
+    }
+
+    _dis_counts = 0;
 }
 
 void ServiceManager::localIPCStart()
@@ -110,4 +146,28 @@ void ServiceManager::asyncDiscovery()
         fastring baseinfo = genPeerInfo();
         DiscoveryJob::instance()->announcerRun(baseinfo);
     });
+}
+
+void ServiceManager::createBashAndRun()
+{
+    QFile file("/tmp/cooperation-restart.sh");
+    if (!file.open(QFileDevice::OpenModeFlag::Truncate | QFileDevice::OpenModeFlag::WriteOnly)) {
+        ELOG << "open server config error, path = /tmp/cooperation-restart.sh" << ", case : "
+             << file.errorString().toStdString();
+        return;
+    }
+
+    QTextStream outStream(&file);
+    outStream << "#!/bin/sh" << endl << endl;
+    outStream << "pidof cooperation-daemon | xargs kill -9;" << endl;
+    outStream << "sleep 10;" << endl;
+    outStream << "pidof cooperation-daemon | xargs kill -9;" << endl;
+    outStream << "cooperation-daemon -d;" << endl;
+
+    outStream.flush();
+    file.flush();
+    file.close();
+    QProcess::execute("chmod 0777 /tmp/cooperation-restart.sh");
+
+    QProcess::startDetached("/tmp/cooperation-restart.sh");
 }

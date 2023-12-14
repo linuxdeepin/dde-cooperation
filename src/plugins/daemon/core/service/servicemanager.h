@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QTimer>
 
 #include "co/co.h"
 #include "co/json.h"
@@ -24,15 +25,22 @@ public:
     ~ServiceManager();
 
     void startRemoteServer();
+private Q_SLOTS:
+    void checkSelfNetWork();
 
 private:
     void localIPCStart();
     fastring genPeerInfo();
     void asyncDiscovery();
+    void createBashAndRun();
 private:
     HandleIpcService *_ipcService { nullptr };
     HandleRpcService *_rpcService { nullptr };
     QSharedPointer<HandleSendResultService> _logic;
+    bool _network_ok { true };
+    int _dis_counts { 0 };
+    int _check_count { -1 };
+    QTimer _net_check;
 };
 
 #endif // SERVICEMANAGER_H
