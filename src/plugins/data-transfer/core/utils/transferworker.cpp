@@ -15,6 +15,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QFile>
 
 #pragma execution_character_set("utf-8")
 TransferHandle::TransferHandle()
@@ -220,6 +221,9 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
     case JOB_TRANS_DOING:
         _job_maps.insert(id, path);
         emit TransferHelper::instance()->transferring();
+#ifndef WIN32
+        QFile::remove(path + "/" + "transfer.json");
+#endif
         break;
     case JOB_TRANS_FINISHED:
         // remove job from maps

@@ -24,15 +24,20 @@ CooperationSearchEdit::CooperationSearchEdit(QWidget *parent) : QFrame(parent)
 
     searchIcon = new QLabel(this);
     searchIcon->setPixmap(QIcon(iconpath).pixmap(10, 10));
-    searchIcon->setGeometry(178, 8, 20, 20);
     searchIcon->setStyleSheet("background-color: none;");
+
+    searchText = new QLabel(this);
+    searchText->setText(tr("Search"));
+    searchText->setGeometry(205, 7, 50, 20);
+    QFont font;
+    font.setPointSize(11);
+    searchText->setFont(font);
+    searchText->setStyleSheet("background-color: none;");
 
     searchEdit = new QLineEdit(this);
     searchEdit->setFixedHeight(35);
-    searchEdit->setPlaceholderText(tr("                    Search"));
     searchEdit->setStyleSheet("background-color: rgba(0,0,0,0);");
 
-    QFont font;
     font.setPointSize(11);
     searchEdit->setFont(font);
     searchEdit->installEventFilter(this);
@@ -63,7 +68,8 @@ QString CooperationSearchEdit::text() const
 
 void CooperationSearchEdit::setPlaceholderText(const QString &text)
 {
-    //TODO: windows
+    searchEdit->setPlaceholderText(text);
+    placeholderText = text;
 }
 
 bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
@@ -73,11 +79,13 @@ bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
         if (event->type() == QEvent::FocusIn) {
             searchIcon->setPixmap(searchicon.pixmap(18, 18));
             searchIcon->setGeometry(15, 8, 20, 20);
-            searchEdit->setPlaceholderText("");
+            searchText->setVisible(false);
+            searchEdit->setPlaceholderText(placeholderText);
         } else if (event->type() == QEvent::FocusOut && searchEdit->text().isEmpty()) {
             searchIcon->setPixmap(searchicon.pixmap(10, 10));
-            searchIcon->setGeometry(178, 8, 20, 20);
-            searchEdit->setPlaceholderText(tr("                    Search"));
+            searchIcon->setGeometry(185, 8, 20, 20);
+            searchText->setVisible(true);
+            searchEdit->setPlaceholderText("");
         }
     }
     return QObject::eventFilter(obj, event);

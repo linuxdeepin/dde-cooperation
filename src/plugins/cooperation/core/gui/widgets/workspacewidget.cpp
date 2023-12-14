@@ -7,6 +7,8 @@
 #include "cooperationstatewidget.h"
 #include "devicelistwidget.h"
 
+#include <QMouseEvent>
+
 using namespace cooperation_core;
 
 WorkspaceWidgetPrivate::WorkspaceWidgetPrivate(WorkspaceWidget *qq)
@@ -155,4 +157,18 @@ void WorkspaceWidget::clear()
 {
     d->dlWidget->clear();
     Q_EMIT d->clearDevice();
+}
+
+bool WorkspaceWidget::event(QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            QWidget *widget = childAt(mouseEvent->pos());
+            if (widget) {
+                widget->setFocus();
+            }
+        }
+    }
+    return QWidget::event(event);
 }

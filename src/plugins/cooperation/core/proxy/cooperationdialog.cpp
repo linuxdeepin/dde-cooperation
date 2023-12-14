@@ -138,6 +138,7 @@ void CooperationTransDialog::showResultDialog(bool success, const QString &msg)
 {
     resultWidget->setResult(success, msg);
     mainLayout->setCurrentWidget(resultWidget);
+    setHidden(false);
 }
 
 void CooperationTransDialog::showProgressDialog(const QString &title)
@@ -147,6 +148,7 @@ void CooperationTransDialog::showProgressDialog(const QString &title)
 
     progressWidget->setTitle(title);
     mainLayout->setCurrentWidget(progressWidget);
+    setHidden(false);
 }
 
 void CooperationTransDialog::updateProgressData(int value, const QString &msg)
