@@ -10,6 +10,8 @@
 #include <co/json.h>
 
 #include <QList>
+#include <QReadWriteLock>
+#include <QMap>
 
 typedef enum income_type_t {
     IN_LOGIN_RESULT= 100,
@@ -71,10 +73,36 @@ typedef enum barrier_type_t {
     Client = 666
 } BarrierType;
 
-class comshare
+enum CurrentStatus {
+    CURRENT_STATUS_DISCONNECT = 0, // 没有连接
+    CURRENT_STATUS_TRAN_CONNECT = 1, // 1是文件投送连接
+    CURRENT_STATUS_TRAN_APPLY = 2, // 2文件投送申请
+    CURRENT_STATUS_TRAN_FILE_SEN = 3, // 3文件发送
+    CURRENT_STATUS_TRAN_FILE_RCV = 4, // 4文件接收
+    CURRENT_STATUS_SHARE_CONNECT = 5, // 5键鼠共享连接
+    CURRENT_STATUS_SHARE_START = 6, // 5键鼠共享中
+};
+
+class Comshare
 {
+private:
+    Comshare();
 public:
-    comshare();
+    ~Comshare();
+    static Comshare *instance();
+    void updateStatus(const CurrentStatus st);
+    void updateComdata(const QString &appName, const QString &tarappName, const QString &ip);
+    QString targetAppName(const QString &appName);
+    QString targetIP(const QString &appName);
+    CurrentStatus currentStatus();
+    bool checkTransCanConnect();
+    bool checkCanTransJob();
+private:
+    QReadWriteLock _lock;
+    std::atomic_int _cur_status {0};// 0是没有连接，1是文件投送连接，
+    // 2文件投送申请，3文件发送，4文件接收，5键鼠共享连接，6键鼠共享中
+    QMap<QString, QString> _target_app; // appname
+    QMap<QString, QString> _target_ip; //
 };
 
 #endif // COMSHARE_H

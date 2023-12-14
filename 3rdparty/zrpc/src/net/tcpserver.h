@@ -36,6 +36,8 @@ public:
 
     void setCallBackFunc(const CallBackFunc &callback);
 
+    bool checkConnected();
+
 public:
     AbstractDispatcher::ptr getDispatcher();
 

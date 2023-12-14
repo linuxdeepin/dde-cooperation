@@ -18,12 +18,12 @@ TcpClient::TcpClient(NetAddress::ptr addr)
     m_codec = std::make_shared<ZRpcCodeC>();
 
     char *ip = m_peer_addr.get()->getIP();
-    uint16 port = m_peer_addr.get()->getPort();
+    uint16 port = static_cast<uint16>(m_peer_addr.get()->getPort());
     bool ssl = m_peer_addr.get()->isSSL();
 
     _tcp_cli = new tcp::Client(ip, port, ssl);
 
-    m_connection = std::make_shared<TcpConnection>(this, _tcp_cli, 1024, m_peer_addr);
+    m_connection = std::make_shared<TcpConnection>(this, _tcp_cli, PERPKG_MAX_LEN, m_peer_addr);
 }
 
 TcpClient::~TcpClient() {
@@ -37,7 +37,7 @@ bool TcpClient::tryConnect() {
     if (!this->connected() && !this->connect()) {
         if (callback) {
             fastring ip = m_peer_addr ? m_peer_addr->getIP() : "";
-            uint16 port = m_peer_addr ? m_peer_addr->getPort() : 0;
+            uint16 port = m_peer_addr ? static_cast<uint16>(m_peer_addr->getPort()) : 0;
             callback(1, ip, port); // 1 超时
         }
         return false;
@@ -57,7 +57,7 @@ bool TcpClient::connect() {
 
 TcpConnection *TcpClient::getConnection() {
     if (!m_connection.get()) {
-        m_connection = std::make_shared<TcpConnection>(this, _tcp_cli, 1024, m_peer_addr);
+        m_connection = std::make_shared<TcpConnection>(this, _tcp_cli, PERPKG_MAX_LEN, m_peer_addr);
     }
     return m_connection.get();
 }

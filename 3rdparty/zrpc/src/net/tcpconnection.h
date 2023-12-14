@@ -89,9 +89,11 @@ public:
 
     void initServer();
 
+    bool waited();
+
 private:
-    int64 read_hook(char *buf, size_t len);
-    int64 write_hook(const void *buf, size_t count);
+    int64 read_hook(char *buf, int len);
+    int64 write_hook(const void *buf, int count);
     void clearClient();
 
 private:
@@ -119,6 +121,7 @@ private:
     fastring remoteIP;
 
     CallBackFunc callback { nullptr };
+    int64 _rev_start_time = 0;
 };
 
 }   // namespace zrpc_ns

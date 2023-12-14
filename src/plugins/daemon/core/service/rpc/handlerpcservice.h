@@ -41,6 +41,8 @@ public:
     void handleRemoteShareStop(co::Json &info);
     void handleRemoteDisConnectCb(co::Json &info);
     void handleRemotePing(const QString &info);
+    // 检查51597和51599两个端口是否有连接阻塞，没有退出
+    bool checkConnected();
 
 private:
     void startRemoteServer(const quint16 port);

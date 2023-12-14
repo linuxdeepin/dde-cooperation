@@ -87,8 +87,8 @@ private:
     QString _app_name;
     QString _target_ip;
     uint16 _target_port;
-    bool isTrans { false };
     int _rpc_call { 0 };
+    bool isTrans { false };
 };
 
 class RemoteServiceBinder : public QObject {
@@ -98,8 +98,10 @@ public:
     ~RemoteServiceBinder() override = default;
     void startRpcListen(const char *keypath, const char *crtpath, const quint16 port,
                         const std::function<void(int, const fastring &, const uint16)> &call = nullptr);
+    bool checkConneted();
 private:
     std::function<void(int, const fastring &, const uint16)> callback{ nullptr };
+    zrpc_ns::ZRpcServer *server{nullptr};
 };
 
 #endif   // REMOTE_SERVICE_H

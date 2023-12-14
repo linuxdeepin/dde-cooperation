@@ -107,7 +107,7 @@ void ZRpcChannel::CallMethod(const google::protobuf::MethodDescriptor *method,
     if (res_data->err_code != 0) {
         ELOG << pb_struct.msg_req << "|server reply error_code=" << res_data->err_code
              << ", err_info=" << res_data->err_info;
-        rpc_controller->SetError(res_data->err_code, res_data->err_info);
+        rpc_controller->SetError(static_cast<int>(res_data->err_code), res_data->err_info);
         return;
     }
 

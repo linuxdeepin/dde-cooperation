@@ -10,13 +10,15 @@
 #include "specdata.h"
 #include "co/co.h"
 
+#include "co/time.h"
+
 namespace zrpc_ns {
 
 TcpConnection::TcpConnection(TcpServer *tcp_svr,
                              tcp::Connection *serv_conn,
                              int buff_size,
                              NetAddress::ptr peer_addr)
-    : m_state(Connected), m_connection_type(ServerConnection), m_peer_addr(peer_addr)
+    : m_peer_addr(peer_addr), m_state(Connected), m_connection_type(ServerConnection)
 {
 
     m_tcp_svr = tcp_svr;
@@ -26,14 +28,14 @@ TcpConnection::TcpConnection(TcpServer *tcp_svr,
     initBuffer(buff_size);
     m_state = Connected;
     remoteIP = getRemoteIp();
-    DLOG << "succ create tcp connection[" << m_state << "]";
+    // DLOG << "succ create tcp connection[" << m_state << "]";
 }
 
 TcpConnection::TcpConnection(TcpClient *tcp_cli,
                              tcp::Client *cli_conn,
                              int buff_size,
                              NetAddress::ptr peer_addr)
-    : m_state(NotConnected), m_connection_type(ClientConnection), m_peer_addr(peer_addr)
+    : m_peer_addr(peer_addr), m_state(NotConnected), m_connection_type(ClientConnection)
 {
 
     m_tcp_cli = tcp_cli;
@@ -44,7 +46,7 @@ TcpConnection::TcpConnection(TcpClient *tcp_cli,
     initBuffer(buff_size);
     remoteIP = getRemoteIp();
 
-    DLOG << "succ create tcp connection[NotConnected]";
+    // DLOG << "succ create tcp connection[NotConnected]";
 }
 
 void TcpConnection::setCallBack(const CallBackFunc &call)
@@ -57,6 +59,16 @@ void TcpConnection::initServer()
     this->MainServerLoopCorFunc();
 }
 
+bool TcpConnection::waited()
+{
+    if (atomic_load(&_rev_start_time) <= 0)
+        return false;
+    if (co::now::ms() - atomic_load(&_rev_start_time) > 3000)
+        return true;
+
+    return false;
+}
+
 void TcpConnection::setUpClient()
 {
     setState(Connected);
@@ -64,18 +76,17 @@ void TcpConnection::setUpClient()
 
 TcpConnection::~TcpConnection()
 {
-    DLOG << "~TcpConnection";
+//    DLOG << "~TcpConnection";
 }
 
 void TcpConnection::initBuffer(int size)
 {
-
     // 初始化缓冲区大小
     m_write_buffer = std::make_shared<TcpBuffer>(size);
     m_read_buffer = std::make_shared<TcpBuffer>(size);
 }
 
-int64 TcpConnection::read_hook(char *buf, size_t len)
+int64 TcpConnection::read_hook(char *buf, int len)
 {
     int64 r = 0;
 
@@ -96,7 +107,7 @@ int64 TcpConnection::read_hook(char *buf, size_t len)
     return r;
 }
 
-int64 TcpConnection::write_hook(const void *buf, size_t count)
+int64 TcpConnection::write_hook(const void *buf, int count)
 {
     int64 r = 0;
     if (m_connection_type == ServerConnection) {
@@ -118,7 +129,6 @@ int64 TcpConnection::write_hook(const void *buf, size_t count)
 
 void TcpConnection::MainServerLoopCorFunc()
 {
-
     while (!m_stop) {
         bool isfull = input();
         if (!isfull) {
@@ -127,11 +137,14 @@ void TcpConnection::MainServerLoopCorFunc()
             continue;
         }
 
+        if (m_stop)
+            break;
+
         execute();
 
         output();
     }
-    LOG << "this connection has already end loop";
+    // LOG << "this connection has already end loop";
 }
 
 bool TcpConnection::input()
@@ -159,23 +172,27 @@ bool TcpConnection::input()
 
         // DLOG << "m_read_buffer size=" << m_read_buffer->getBufferVector().size()
         //      << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
-        int rt = read_hook(&(m_read_buffer->m_buffer[write_index]), read_count);
+        atomic_store(&_rev_start_time, co::now::ms());
+        int64 rt = read_hook(&(m_read_buffer->m_buffer[static_cast<size_t>(write_index)]), read_count);
+        atomic_store(&_rev_start_time, 0);
         if (rt > 0) {
-            m_read_buffer->recycleWrite(rt);
+            m_read_buffer->recycleWrite(static_cast<int>(rt));
         }
 
         // DLOG << "m_read_buffer size=" << m_read_buffer->getBufferVector().size()
         //      << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
 
-        count += rt;
         if (rt <= 0) {
-            DLOG << "rt <= 0 >>> " << rt;
+            // DLOG << "rt <= 0 >>> " << rt;
             //             ELOG << "read empty while occur read event, because of peer close, sys error="
             //                  << strerror(errno) << ", now to clear tcp connection";
             //            // this cor can destroy
-            close_flag = true;
+            // 有可能连接上了，没有发送任何数据过来，这里直接关闭会导致后面不会回复任何消息
+            close_flag = rt < 0 || (rt ==0 && count == 0);
+            read_all = rt == 0;
             break;
         } else {
+            count += rt;
             if (rt == read_count) {
                 // is is possible read more data, should continue read
                 continue;
@@ -189,11 +206,11 @@ bool TcpConnection::input()
     if (close_flag) {
         clearClient();
         if (callback) {
-            uint16 port = m_tcp_svr ? m_tcp_svr->getLocalAddr()->getPort() : 0;
-            port = port == 0 && m_tcp_cli ? m_tcp_cli->getLocalAddr()->getPort() : 0;
+            uint16 port = m_tcp_svr ? static_cast<uint16>(m_tcp_svr->getLocalAddr()->getPort()) : 0;
+            port = port == 0 && m_tcp_cli ? static_cast<uint16>(m_tcp_cli->getLocalAddr()->getPort()) : 0;
             callback(0, remoteIP, port);
         }
-        DLOG << "peer closed " << " remote ip ===== " << remoteIP;
+        // DLOG << "peer closed " << " remote ip ===== " << remoteIP;
     }
 
     if (!read_all) {
@@ -244,14 +261,14 @@ void TcpConnection::output()
 
         int total_size = m_write_buffer->readAble();
         int read_index = m_write_buffer->readIndex();
-        int rt = write_hook(&(m_write_buffer->m_buffer[read_index]), total_size);
+        int64 rt = write_hook(&(m_write_buffer->m_buffer[static_cast<size_t>(read_index)]), total_size);
         if (rt <= 0) {
             ELOG << "write empty, error=" << strerror(errno);
             break;
         }
 
         // DLOG << "succ write " << rt << " bytes";
-        m_write_buffer->recycleRead(rt);
+        m_write_buffer->recycleRead(static_cast<int>(rt));
         // DLOG << "recycle write index =" << m_write_buffer->writeIndex()
         //      << ", read_index =" << m_write_buffer->readIndex()
         //      << "readable = " << m_write_buffer->readAble();
@@ -323,7 +340,7 @@ bool TcpConnection::getResPackageData(const std::string &msg_req,
 
 fastring TcpConnection::getRemoteIp()
 {
-    if (m_connection_type == ServerConnection) {
+    if (m_connection_type == ServerConnection && m_serv_conn) {
         int sockfd = m_serv_conn->socket();
         struct sockaddr_in addr;
         socklen_t addr_len = sizeof(addr);

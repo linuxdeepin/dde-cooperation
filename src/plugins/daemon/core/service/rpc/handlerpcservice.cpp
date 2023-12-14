@@ -54,6 +54,10 @@ void HandleRpcService::handleRpcLogin(bool result, const QString &targetAppname,
     if (result) {
         SendRpcService::instance()->createRpcSender(appName, ip, UNI_RPC_PORT_BASE);
         SendRpcService::instance()->setTargetAppName(appName, targetAppname);
+        // 设置为文件传输的连接状态
+        Comshare::instance()->updateStatus(CURRENT_STATUS_TRAN_CONNECT);
+        Comshare::instance()->updateComdata(appName, targetAppname, ip);
+        // 启动文件的监视
     }
     QWriteLocker lk(&_lock);
     _startPing.remove(appName);
@@ -127,10 +131,10 @@ bool HandleRpcService::handleRemoteLogin(co::Json &info)
             //            LOG << "pass= " << pass << " getPin=" << DaemonConfig::instance()->getPin();
             authOK = DaemonConfig::instance()->getPin().compare(pass) == 0;
         }
-
-        if (!authOK) {
+        bool statu = true;//Comshare::instance()->checkTransCanConnect();
+        if (!authOK || !statu) {
             lores.result = false;
-            lores.token = "Invalid auth code";
+            lores.token = authOK ? "connect file status error!" : "Invalid auth code";
         } else {
             DaemonConfig::instance()->saveRemoteSession(lo.session_id);
 
@@ -217,12 +221,15 @@ void HandleRpcService::handleRemoteJobCancel(co::Json &info)
 void HandleRpcService::handleTransJob(co::Json &info)
 {
     QString app;
-    auto res = JobManager::instance()->handleRemoteRequestJob(info.str().c_str(), &app);
-    {
+    bool res = false;
+    res = JobManager::instance()->handleRemoteRequestJob(info.str().c_str(), &app);
+    if (res) {
+        Comshare::instance()->updateStatus(CURRENT_STATUS_TRAN_FILE_RCV);
         QWriteLocker lk(&_lock);
         _startPing.remove(app);
         _ping_lost_count.remove(app);
     }
+
     OutData data;
     data.type = OUT_TRANSJOB;
     data.json = co::Json({"result", res}).str();
@@ -396,6 +403,11 @@ void HandleRpcService::handleRemotePing(const QString &info)
     _ping_lost_count.remove(appName);
     _startPing.insert(appName, true);
     _ping_lost_count.insert(appName, 0);
+}
+
+bool HandleRpcService::checkConnected()
+{
+    return _rpc->checkConneted() || _rpc_trans->checkConneted();
 }
 
 void HandleRpcService::startRemoteServer(const quint16 port)

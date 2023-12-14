@@ -19,7 +19,7 @@ ZRpcClient::ZRpcClient(const char *ip, uint16 port, bool ssl, const bool isLong)
 }
 
 void ZRpcClient::setTimeout(uint32 timeout) {
-    m_controller.get()->SetTimeout(timeout);
+    m_controller.get()->SetTimeout(static_cast<int>(timeout));
 }
 
 class ZRpcServerImpl {
@@ -44,6 +44,12 @@ public:
         return true;
     }
 
+    bool checkConnected() {
+        if (_tcpserver == nullptr)
+            return false;
+        return _tcpserver->checkConnected();
+    }
+
 private:
     TcpServer::ptr _tcpserver{nullptr};
 };
@@ -53,21 +59,26 @@ ZRpcServer::ZRpcServer(uint16 port, char *key, char *crt) {
 }
 
 ZRpcServer::~ZRpcServer() {
-    co::del((ZRpcServerImpl *)_p);
+    co::del(static_cast<ZRpcServerImpl *>(_p));
 }
 
 bool ZRpcServer::doregister(std::shared_ptr<google::protobuf::Service> service) {
-    TcpServer::ptr tcpserver = ((ZRpcServerImpl *)_p)->getServer();
+    TcpServer::ptr tcpserver = (static_cast<ZRpcServerImpl *>(_p))->getServer();
     return tcpserver->registerService(service);
 }
 
 bool ZRpcServer::start() {
-    return ((ZRpcServerImpl *)_p)->start();
+    return (static_cast<ZRpcServerImpl *>(_p))->start();
 }
 
 void ZRpcServer::setCallBackFunc(const std::function<void (int, const fastring &, const uint16)> &call)
 {
-    ((ZRpcServerImpl *)_p)->getServer()->setCallBackFunc(call);
+    (static_cast<ZRpcServerImpl *>(_p))->getServer()->setCallBackFunc(call);
+}
+
+bool ZRpcServer::checkConnected()
+{
+    return (static_cast<ZRpcServerImpl *>(_p))->checkConnected();
 }
 
 } // namespace zrpc_ns
