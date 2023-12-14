@@ -25,5 +25,6 @@
         <file>icons/deepin/builtin/icons/spinner.gif</file>
         <file>icons/deepin/builtin/texts/search_icon.svg</file>
         <file>icons/deepin/builtin/icons/tab_close_normal.svg</file>
+        <file>icons/deepin/builtin/icons/dde-cooperation_128px.png</file>
     </qresource>
 </RCC>

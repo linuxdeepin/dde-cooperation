@@ -19,7 +19,7 @@ void MainWindowPrivate::initWindow()
     q->setObjectName("MainWindow");
     q->setFixedSize(500, 630);
 
-    q->setWindowIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/dde-cooperation_128px.svg"));
+    q->setWindowIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/dde-cooperation_128px.png"));
 
     workspaceWidget = new WorkspaceWidget(q);
     q->setCentralWidget(workspaceWidget);
@@ -106,12 +106,15 @@ void MainWindowPrivate::initTitleBar()
                              "border-top-left-radius: 20px;"
                              "}");
     iconLabel->setPixmap(
-            QIcon(":/icons/deepin/builtin/icons/dde-cooperation_128px.svg").pixmap(35, 35));
+            QIcon(":/icons/deepin/builtin/icons/dde-cooperation_128px.png").pixmap(35, 35));
 
     QMenu *menu = new QMenu();
     helpButton->setMenu(menu);
     helpButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     helpButton->setPopupMode(QToolButton::InstantPopup);
+    helpButton->setStyleSheet("QToolButton::menu-indicator {"
+                              "image: none;"
+                              "}");
 
     QAction *action = new QAction(tr("Settings"), menu);
     action->setData(MenuAction::kSettings);

@@ -32,7 +32,9 @@ protected:
 private:
     QLineEdit *searchEdit{ nullptr };
     QLabel *searchIcon{ nullptr };
+    QLabel *searchText{ nullptr };
     QToolButton *closeBtn{ nullptr };
+    QString placeholderText;
 };
 
 } // namespace cooperation_core

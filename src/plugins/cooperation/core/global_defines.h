@@ -12,11 +12,11 @@
 #include <QCheckBox>
 typedef QMainWindow CooperationMainWindow;
 typedef QDialog CooperationDialog;
-typedef QPushButton CooperationIconButton;
+typedef QToolButton CooperationIconButton;
 typedef QDialog CooperationAbstractDialog;
 typedef QPushButton CooperationSuggestButton;
 typedef QCheckBox CooperationSwitchButton;
-typedef QPushButton CooperationFloatingEdit;
+typedef QToolButton CooperationFloatingEdit;
 typedef QLabel CooperationSpinner;
 typedef QLineEdit CooperationLineEdit;
 #else

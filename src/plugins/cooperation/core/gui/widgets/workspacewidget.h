@@ -36,6 +36,9 @@ public:
 
     void clear();
 
+protected:
+    bool event(QEvent *event) override;
+
 private:
     QScopedPointer<WorkspaceWidgetPrivate> d;
 };

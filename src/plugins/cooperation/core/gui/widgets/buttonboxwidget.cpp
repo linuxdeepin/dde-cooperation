@@ -32,18 +32,26 @@ int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, Button
         btn->setEnabledCircle(true);
 #else
         btn->setStyleSheet(
-            "background-color: rgba(0,0,0,0.1);"
-            "border-radius: 16px;"
-            );
+                    ".QToolButton {"
+                    "background-color: rgba(0,0,0,0.1);"
+                    "border-radius: 16px;"
+                    "}"
+                    "QToolTip {"
+                    "background-color: white;"
+                    "}");
 #endif
         break;
     case kHighLight:
         btn = new CooperationFloatingEdit(this);
 #ifndef linux
         btn->setStyleSheet(
+            ".QToolButton {"
             "background-color: #0098FF;"
             "border-radius: 16px;"
-            );
+            "}"
+            "QToolTip {"
+            "background-color: white;"
+            "}");
 #endif
         break;
     }
