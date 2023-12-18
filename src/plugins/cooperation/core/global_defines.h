@@ -19,6 +19,7 @@ typedef QCheckBox CooperationSwitchButton;
 typedef QToolButton CooperationFloatingEdit;
 typedef QLabel CooperationSpinner;
 typedef QLineEdit CooperationLineEdit;
+typedef QLabel CooperationLabel;
 #else
 #include <DMainWindow>
 #include <DAbstractDialog>
@@ -30,6 +31,7 @@ typedef QLineEdit CooperationLineEdit;
 #include <DIconButton>
 #include <DFloatingButton>
 #include <DLineEdit>
+#include <DLabel>
 typedef DTK_WIDGET_NAMESPACE::DDialog CooperationDialog;
 typedef DTK_WIDGET_NAMESPACE::DSpinner CooperationSpinner;
 typedef DTK_WIDGET_NAMESPACE::DMainWindow CooperationMainWindow;
@@ -40,6 +42,7 @@ typedef DTK_WIDGET_NAMESPACE::DSearchEdit CooperationSearchEdit;
 typedef DTK_WIDGET_NAMESPACE::DIconButton CooperationIconButton;
 typedef DTK_WIDGET_NAMESPACE::DFloatingButton CooperationFloatingEdit;
 typedef DTK_WIDGET_NAMESPACE::DLineEdit CooperationLineEdit;
+typedef DTK_WIDGET_NAMESPACE::DLabel CooperationLabel;
 #endif
 
 namespace OperationKey {

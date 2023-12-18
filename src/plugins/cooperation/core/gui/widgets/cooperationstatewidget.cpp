@@ -4,7 +4,12 @@
 
 #include "cooperationstatewidget.h"
 #include "backgroundwidget.h"
+#include "global_defines.h"
 #include "utils/cooperationguihelper.h"
+
+#ifdef linux
+#include <DPalette>
+#endif
 
 #include <QVariant>
 #include <QVBoxLayout>
@@ -117,7 +122,7 @@ void NoResultWidget::initUI()
     QString websiteLinkTemplate =
             "<a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
-    QLabel *contentLable1 = new QLabel(this);
+    CooperationLabel *contentLable1 = new CooperationLabel(this);
     font.setWeight(QFont::Normal);
     font.setPixelSize(12);
     contentLable1->setFont(font);
@@ -125,20 +130,26 @@ void NoResultWidget::initUI()
     contentLable1->setText(content1);
     connect(contentLable1, &QLabel::linkActivated, this, &NoResultWidget::onLinkActivated);
 
-    QLabel *contentLable2 = new QLabel(tr("2. On the same LAN as the device"), this);
+    CooperationLabel *contentLable2 = new CooperationLabel(tr("2. On the same LAN as the device"), this);
     contentLable2->setWordWrap(true);
     contentLable2->setFont(font);
-    QLabel *contentLable3 = new QLabel(
+    CooperationLabel *contentLable3 = new CooperationLabel(
             tr("3. Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\""),
             this);
     contentLable3->setWordWrap(true);
     contentLable3->setFont(font);
 
-    QList<QColor> colorList {QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
-                            QColor(192, 192, 192)};
+#ifdef linux
+    contentLable1->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
+    contentLable2->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
+    contentLable3->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
+#else
+    QList<QColor> colorList { QColor(0, 0, 0, qRound(255 * 0.6)),
+                              QColor(192, 192, 192) };
     CooperationGuiHelper::instance()->autoUpdateTextColor(contentLable1, colorList);
     CooperationGuiHelper::instance()->autoUpdateTextColor(contentLable2, colorList);
     CooperationGuiHelper::instance()->autoUpdateTextColor(contentLable3, colorList);
+#endif
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(15, 10, 15, 10);

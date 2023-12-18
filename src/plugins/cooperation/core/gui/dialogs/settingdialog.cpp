@@ -9,6 +9,10 @@
 #include "configs/settings/configmanager.h"
 #include "configs/dconfig/dconfigmanager.h"
 
+#ifdef linux
+#include <DPalette>
+#endif
+
 #include <QPainter>
 #include <QEvent>
 #include <QDir>
@@ -95,15 +99,20 @@ void SettingDialogPrivate::createBasicWidget()
     SettingItem *findItem = new SettingItem(q);
     findItem->setItemInfo(tr("Discovery mode"), findCB);
 
-    QLabel *tipLabel = new QLabel(tr("Other devices can discover and connect with you through the \"Cooperation\" app"), q);
+    CooperationLabel *tipLabel = new CooperationLabel(tr("Other devices can discover and connect with you through the \"Cooperation\" app"), q);
     auto margins = tipLabel->contentsMargins();
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
     tipLabel->setFont(tipFont);
+
+#ifdef linux
+    tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
+#else
     QList<QColor> colorList { QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
                               QColor(192, 192, 192) };
     CooperationGuiHelper::instance()->autoUpdateTextColor(tipLabel, colorList);
+#endif
 
     nameEdit = new CooperationLineEdit(q);
     nameEdit->installEventFilter(q);
@@ -138,18 +147,22 @@ void SettingDialogPrivate::createDeviceShareWidget()
     SettingItem *deviceShareItem = new SettingItem(q);
     deviceShareItem->setItemInfo(tr("Peripheral share"), devShareSwitchBtn);
 
-    QLabel *tipLabel = new QLabel(tr("Allows peripherals that have been established "
-                                     "to collaborate across devices to control this "
-                                     "device, including keyboard, mouse, trackpad, etc"),
-                                  q);
+    CooperationLabel *tipLabel = new CooperationLabel(tr("Allows peripherals that have been established "
+                                                         "to collaborate across devices to control this "
+                                                         "device, including keyboard, mouse, trackpad, etc"),
+                                                      q);
     auto margins = tipLabel->contentsMargins();
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
     tipLabel->setFont(tipFont);
+#ifdef linux
+    tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
+#else
     QList<QColor> colorList { QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
                               QColor(192, 192, 192) };
     CooperationGuiHelper::instance()->autoUpdateTextColor(tipLabel, colorList);
+#endif
 
     connectCB = new QComboBox(q);
     connectCB->setFixedWidth(280);
@@ -197,15 +210,19 @@ void SettingDialogPrivate::createClipboardShareWidget()
     SettingItem *clipShareItem = new SettingItem(q);
     clipShareItem->setItemInfo(tr("Share clipboard"), clipShareSwitchBtn);
 
-    QLabel *tipLabel = new QLabel(tr("The clipboard is shared between devices"), q);
+    CooperationLabel *tipLabel = new CooperationLabel(tr("The clipboard is shared between devices"), q);
     auto margins = tipLabel->contentsMargins();
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
     tipLabel->setFont(tipFont);
+#ifdef linux
+    tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
+#else
     QList<QColor> colorList { QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
                               QColor(192, 192, 192) };
     CooperationGuiHelper::instance()->autoUpdateTextColor(tipLabel, colorList);
+#endif
 
     contentLayout->addWidget(clipShareItem);
     contentLayout->addSpacing(4);
