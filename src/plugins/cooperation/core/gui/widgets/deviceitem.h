@@ -66,6 +66,7 @@ protected:
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
     void showEvent(QShowEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     void initUI();
@@ -77,7 +78,7 @@ private:
 private:
     QLabel *iconLabel { nullptr };
     QLabel *nameLabel { nullptr };
-    QLabel *ipLabel { nullptr };
+    CooperationLabel *ipLabel { nullptr };
     StateLabel *stateLabel { nullptr };
     ButtonBoxWidget *btnBoxWidget { nullptr };
 

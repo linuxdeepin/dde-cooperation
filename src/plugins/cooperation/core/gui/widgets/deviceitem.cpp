@@ -6,9 +6,14 @@
 #include "buttonboxwidget.h"
 #include "utils/cooperationguihelper.h"
 
+#ifdef linux
+#include <DPalette>
+#endif
+
 #include <QIcon>
 #include <QVBoxLayout>
 #include <QPainter>
+#include <QBitmap>
 
 using namespace cooperation_core;
 
@@ -106,10 +111,14 @@ void DeviceItem::initUI()
 
     iconLabel = new QLabel(this);
     nameLabel = new QLabel(this);
+    nameLabel->installEventFilter(this);
     setLabelFont(nameLabel, 14, QFont::Medium);
 
-    ipLabel = new QLabel(this);
+    ipLabel = new CooperationLabel(this);
     setLabelFont(ipLabel, 12, QFont::Medium);
+#ifdef linux
+    ipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
+#endif
 
     stateLabel = new StateLabel(this);
     stateLabel->setContentsMargins(8, 2, 8, 2);
@@ -133,7 +142,7 @@ void DeviceItem::initUI()
     mainLayout->setContentsMargins(10, 0, 10, 0);
     mainLayout->addWidget(iconLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
     mainLayout->addLayout(vLayout, 0);
-    mainLayout->addWidget(btnBoxWidget, 1, Qt::AlignRight);
+    mainLayout->addWidget(btnBoxWidget, 0, Qt::AlignRight);
     setLayout(mainLayout);
 }
 
@@ -154,8 +163,7 @@ void DeviceItem::setLabelFont(QLabel *label, int pointSize, int weight)
 void DeviceItem::setDeviceName(const QString &name)
 {
     QFontMetrics fm(nameLabel->font());
-    int width = 385 - (btnBoxWidget->isVisible() ? btnBoxWidget->width() : 0);
-    auto showName = fm.elidedText(name, Qt::ElideMiddle, width);
+    auto showName = fm.elidedText(name, Qt::ElideMiddle, 385);
 
     nameLabel->setText(showName);
     if (showName != name)
@@ -238,14 +246,12 @@ void DeviceItem::enterEvent(QEvent *event)
 {
     updateOperations();
     btnBoxWidget->setVisible(true);
-    setDeviceName(devInfo->deviceName());
     BackgroundWidget::enterEvent(event);
 }
 
 void DeviceItem::leaveEvent(QEvent *event)
 {
     btnBoxWidget->setVisible(false);
-    setDeviceName(devInfo->deviceName());
     BackgroundWidget::leaveEvent(event);
 }
 
@@ -258,4 +264,21 @@ void DeviceItem::showEvent(QShowEvent *event)
     }
 
     BackgroundWidget::showEvent(event);
+}
+
+bool DeviceItem::eventFilter(QObject *watched, QEvent *event)
+{
+    // 设备名的蒙版效果，采用字体渐变色实现
+    if (watched == nameLabel && event->type() == QEvent::Paint && btnBoxWidget->isVisible()) {
+        QPainter painter(nameLabel);
+        QLinearGradient lg(nameLabel->rect().topLeft(), nameLabel->rect().bottomRight());
+        lg.setColorAt(0.8, nameLabel->palette().windowText().color());
+        lg.setColorAt(1, nameLabel->palette().background().color());
+        painter.setPen(QPen(lg, nameLabel->font().weight()));
+
+        painter.drawText(nameLabel->rect(), static_cast<int>(nameLabel->alignment()), nameLabel->text());
+        return true;
+    }
+
+    return BackgroundWidget::eventFilter(watched, event);
 }
