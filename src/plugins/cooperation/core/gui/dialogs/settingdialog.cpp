@@ -5,6 +5,7 @@
 #include "settingdialog.h"
 #include "settingdialog_p.h"
 #include "global_defines.h"
+#include "utils/cooperationguihelper.h"
 #include "configs/settings/configmanager.h"
 #include "configs/dconfig/dconfigmanager.h"
 
@@ -30,8 +31,8 @@ SettingDialogPrivate::SettingDialogPrivate(SettingDialog *qq)
                          << tr("Not allow");
 
     mainLayout = new QVBoxLayout(q);
-    mainLayout->setContentsMargins(0, 0, 0, 10);
-    mainLayout->setSpacing(10);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
 }
 
 SettingDialogPrivate::~SettingDialogPrivate()
@@ -43,7 +44,7 @@ void SettingDialogPrivate::initWindow()
     q->setFixedSize(650, 520);
 
     contentLayout = new QVBoxLayout;
-    contentLayout->setContentsMargins(0, 0, 0, 0);
+    contentLayout->setContentsMargins(10, 0, 10, 0);
     contentLayout->setSpacing(0);
 
     QScrollArea *contentArea = new QScrollArea(q);
@@ -52,21 +53,27 @@ void SettingDialogPrivate::initWindow()
 
     QWidget *contentWidget = new QWidget(contentArea);
     contentWidget->installEventFilter(q);
+    contentWidget->setObjectName("ContentWidget");
     contentArea->setWidget(contentWidget);
     contentWidget->setLayout(contentLayout);
 
-    mainWidget = new QWidget(q);
+    QWidget *mainWidget = new QWidget(q);
     mainWidget->installEventFilter(q);
+    mainWidget->setObjectName("MainWidget");
     QHBoxLayout *layout = new QHBoxLayout(mainWidget);
-    layout->setContentsMargins(10, 10, 10, 10);
+    layout->setContentsMargins(0, 10, 0, 10);
     layout->addWidget(contentArea);
 
-    QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->setContentsMargins(10, 0, 10, 0);
+    QWidget *backgroundWidget = new QWidget(q);
+    backgroundWidget->setObjectName("BackgroundWidget");
+    backgroundWidget->installEventFilter(q);
+    QHBoxLayout *hLayout = new QHBoxLayout(backgroundWidget);
+    hLayout->setContentsMargins(10, 10, 10, 10);
     hLayout->addWidget(mainWidget);
 
-    mainLayout->addLayout(hLayout);
+    mainLayout->addWidget(backgroundWidget);
 
+    initFont();
     createBasicWidget();
     createDeviceShareWidget();
     createTransferWidget();
@@ -76,10 +83,10 @@ void SettingDialogPrivate::initWindow()
 void SettingDialogPrivate::createBasicWidget()
 {
     QLabel *basicLable = new QLabel(tr("Basic Settings"), q);
-    QFont font = basicLable->font();
-    font.setPointSize(16);
-    font.setWeight(QFont::Medium);
-    basicLable->setFont(font);
+    auto cm = basicLable->contentsMargins();
+    cm.setLeft(10);
+    basicLable->setContentsMargins(cm);
+    basicLable->setFont(groupFont);
 
     findCB = new QComboBox(q);
     findCB->addItems(findComboBoxInfo);
@@ -93,9 +100,14 @@ void SettingDialogPrivate::createBasicWidget()
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
+    tipLabel->setFont(tipFont);
+    QList<QColor> colorList { QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
+                              QColor(192, 192, 192) };
+    CooperationGuiHelper::instance()->autoUpdateTextColor(tipLabel, colorList);
 
     nameEdit = new CooperationLineEdit(q);
-    QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5-]+$"); // 正则表达式定义允许的字符范围
+    nameEdit->installEventFilter(q);
+    QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5-]+$");   // 正则表达式定义允许的字符范围
     QRegExpValidator *validator = new QRegExpValidator(regExp, nameEdit);
 #ifdef linux
     nameEdit->lineEdit()->setValidator(validator);
@@ -134,6 +146,10 @@ void SettingDialogPrivate::createDeviceShareWidget()
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
+    tipLabel->setFont(tipFont);
+    QList<QColor> colorList { QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
+                              QColor(192, 192, 192) };
+    CooperationGuiHelper::instance()->autoUpdateTextColor(tipLabel, colorList);
 
     connectCB = new QComboBox(q);
     connectCB->setFixedWidth(280);
@@ -147,7 +163,7 @@ void SettingDialogPrivate::createDeviceShareWidget()
     contentLayout->addWidget(deviceShareItem);
     contentLayout->addSpacing(4);
     contentLayout->addWidget(tipLabel);
-    contentLayout->addSpacing(4);
+    contentLayout->addSpacing(16);
     contentLayout->addWidget(connectItem);
     contentLayout->addSpacing(10);
 }
@@ -186,6 +202,10 @@ void SettingDialogPrivate::createClipboardShareWidget()
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
+    tipLabel->setFont(tipFont);
+    QList<QColor> colorList { QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
+                              QColor(192, 192, 192) };
+    CooperationGuiHelper::instance()->autoUpdateTextColor(tipLabel, colorList);
 
     contentLayout->addWidget(clipShareItem);
     contentLayout->addSpacing(4);
@@ -222,6 +242,7 @@ void SettingDialogPrivate::onNameEditingFinished()
 #ifdef linux
         nameEdit->setAlert(true);
         nameEdit->showAlertMessage(tr("The device name must contain 1 to 63 characters"));
+        nameEdit->setFocus();
 #endif
         return;
     }
@@ -230,11 +251,13 @@ void SettingDialogPrivate::onNameEditingFinished()
 
 void SettingDialogPrivate::onNameChanged(const QString &text)
 {
-    Q_UNUSED(text);
 #ifdef linux
     if (nameEdit->isAlert())
         nameEdit->setAlert(false);
 #endif
+
+    if (text.isEmpty())
+        onNameEditingFinished();
 }
 
 void SettingDialogPrivate::onDeviceShareButtonClicked(bool clicked)
@@ -250,6 +273,17 @@ void SettingDialogPrivate::onClipboardShareButtonClicked(bool clicked)
 void SettingDialogPrivate::onFileChoosed(const QString &path)
 {
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey, path);
+}
+
+void SettingDialogPrivate::initFont()
+{
+    groupFont = q->font();
+    groupFont.setWeight(QFont::DemiBold);
+    groupFont.setPixelSize(16);
+
+    tipFont = q->font();
+    tipFont.setWeight(QFont::Normal);
+    tipFont.setPixelSize(12);
 }
 
 SettingDialog::SettingDialog(QWidget *parent)
@@ -271,15 +305,46 @@ SettingDialog::~SettingDialog()
 bool SettingDialog::eventFilter(QObject *watched, QEvent *event)
 {
     // 绘制背景
-    if (watched == d->mainWidget && event->type() == QEvent::Paint) {
-        QPainter painter(d->mainWidget);
+    do {
+        if (event->type() != QEvent::Paint)
+            break;
+
+        QWidget *widget = qobject_cast<QWidget *>(watched);
+        if (!widget)
+            break;
+
+        QPainter painter(widget);
         painter.setRenderHint(QPainter::Antialiasing);
         painter.setPen(Qt::NoPen);
-        painter.setBrush(QColor(248, 248, 248));
 
-        painter.drawRoundedRect(d->mainWidget->rect(), 8, 8);
-        return true;
-    }
+        if ((watched->objectName() == "ContentWidget" || watched->objectName() == "MainWidget")) {
+            QColor color(255, 255, 255);
+            if (CooperationGuiHelper::isDarkTheme())
+                color.setRgb(41, 41, 41);
+            painter.setBrush(color);
+
+            if (watched->objectName() == "MainWidget")
+                painter.drawRoundedRect(widget->rect(), 8, 8);
+            else
+                painter.drawRect(widget->rect());
+            return true;
+        } else if (watched->objectName() == "BackgroundWidget") {
+            QColor color(245, 245, 245);
+            if (CooperationGuiHelper::isDarkTheme())
+                color.setRgb(36, 36, 36);
+            painter.setBrush(color);
+            painter.drawRect(widget->rect());
+            return true;
+        }
+#ifdef linux
+        // DLineEdit在DAbstractDialog中使用setAlert，绘制无效，所以自绘
+        else if (d->nameEdit == watched && d->nameEdit->isAlert()) {
+            painter.setBrush(QColor(241, 57, 50, qRound(0.15 * 255)));
+            painter.drawRoundedRect(d->nameEdit->lineEdit()->rect(), 8, 8);
+            return true;
+        }
+#endif
+    } while (false);
 
     return CooperationAbstractDialog::eventFilter(watched, event);
 }

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "settingitem.h"
+#include "utils/cooperationguihelper.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -21,6 +22,11 @@ SettingItem::SettingItem(QWidget *parent)
 void SettingItem::setItemInfo(const QString &text, QWidget *w)
 {
     QLabel *label = new QLabel(text, this);
+    auto font = label->font();
+    font.setWeight(QFont::Medium);
+    font.setPixelSize(14);
+    label->setFont(font);
+
     mainLayout->addWidget(label, 0, Qt::AlignLeft);
     mainLayout->addWidget(w, 0, Qt::AlignRight);
 }
@@ -48,6 +54,9 @@ void SettingItem::paintEvent(QPaintEvent *event)
                270, 90);
 
     QColor color(0, 0, 0, static_cast<int>(255 * 0.03));
+    if (CooperationGuiHelper::isDarkTheme())
+        color.setRgb(255, 255, 255, static_cast<int>(255 * 0.05));
+
     painter.fillPath(path, color);
 
     return QFrame::paintEvent(event);

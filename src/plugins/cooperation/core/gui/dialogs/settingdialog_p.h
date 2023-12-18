@@ -41,6 +41,7 @@ public Q_SLOTS:
     void onFileChoosed(const QString &path);
 
 private:
+    void initFont();
     void createBasicWidget();
     void createDeviceShareWidget();
     void createTransferWidget();
@@ -49,7 +50,6 @@ private:
 private:
     SettingDialog *q { nullptr };
     QVBoxLayout *mainLayout { nullptr };
-    QWidget *mainWidget { nullptr };
     QVBoxLayout *contentLayout { nullptr };
 
     QComboBox *findCB { nullptr };
@@ -63,6 +63,9 @@ private:
     QStringList findComboBoxInfo;
     QList<QPair<QString, QString>> connectComboBoxInfo;
     QStringList transferComboBoxInfo;
+
+    QFont groupFont;
+    QFont tipFont;
 };
 
 }   // namespace cooperation_core

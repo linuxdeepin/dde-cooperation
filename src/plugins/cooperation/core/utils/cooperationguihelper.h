@@ -1,0 +1,34 @@
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef COOPERATIONGUIHELPER_H
+#define COOPERATIONGUIHELPER_H
+
+#include <QWidget>
+
+namespace cooperation_core {
+
+class CooperationGuiHelper : public QObject
+{
+    Q_OBJECT
+public:
+    static CooperationGuiHelper *instance();
+
+    // colorList: 1.light type color, 2.dark type color
+    bool autoUpdateTextColor(QWidget *widget, const QList<QColor> &colorList);
+
+    static bool isDarkTheme();
+    static void setFontColor(QWidget *widget, QColor color);
+
+Q_SIGNALS:
+    void themeTypeChanged();
+
+private:
+    explicit CooperationGuiHelper(QObject *parent = nullptr);
+    void initConnection();
+};
+
+}   // namespace cooperation_core
+
+#endif   // COOPERATIONGUIHELPER_H

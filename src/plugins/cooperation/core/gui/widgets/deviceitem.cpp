@@ -4,6 +4,7 @@
 
 #include "deviceitem.h"
 #include "buttonboxwidget.h"
+#include "utils/cooperationguihelper.h"
 
 #include <QIcon>
 #include <QVBoxLayout>
@@ -40,15 +41,27 @@ void StateLabel::paintEvent(QPaintEvent *event)
     case DeviceInfo::Connected:
         brushColor.setRgb(241, 255, 243);
         textColor.setRgb(51, 202, 78);
+        if (CooperationGuiHelper::isDarkTheme()) {
+            brushColor.setRgb(63, 70, 64, static_cast<int>(255 * 0.2));
+            textColor.setRgb(67, 159, 83);
+        }
         break;
     case DeviceInfo::Connectable:
         brushColor.setRgb(56, 127, 247, 22);
         textColor.setRgb(0, 130, 250);
+        if (CooperationGuiHelper::isDarkTheme()) {
+            brushColor.setRgb(26, 84, 182, static_cast<int>(255 * 0.2));
+            textColor.setRgb(0, 105, 202);
+        }
         break;
     case DeviceInfo::Offline:
     default:
         brushColor.setRgb(0, 0, 0, 25);
         textColor.setRgb(0, 0, 0, 128);
+        if (CooperationGuiHelper::isDarkTheme()) {
+            brushColor.setRgb(255, 255, 255, static_cast<int>(255 * 0.05));
+            textColor.setRgb(255, 255, 255, static_cast<int>(255 * 0.4));
+        }
         break;
     }
 
@@ -100,7 +113,7 @@ void DeviceItem::initUI()
 
     stateLabel = new StateLabel(this);
     stateLabel->setContentsMargins(8, 2, 8, 2);
-    setLabelFont(stateLabel, 10, QFont::Medium);
+    setLabelFont(stateLabel, 11, QFont::Medium);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setSpacing(2);
@@ -118,7 +131,7 @@ void DeviceItem::initUI()
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setContentsMargins(10, 0, 10, 0);
-    mainLayout->addWidget(iconLabel, 0, Qt::AlignLeft);
+    mainLayout->addWidget(iconLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
     mainLayout->addLayout(vLayout, 0);
     mainLayout->addWidget(btnBoxWidget, 1, Qt::AlignRight);
     setLayout(mainLayout);
@@ -132,7 +145,7 @@ void DeviceItem::initConnect()
 void DeviceItem::setLabelFont(QLabel *label, int pointSize, int weight)
 {
     QFont font = this->font();
-    font.setPointSize(pointSize);
+    font.setPixelSize(pointSize);
     font.setWeight(weight);
 
     label->setFont(font);

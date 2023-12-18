@@ -4,7 +4,9 @@
 
 #include "cooperationstatewidget.h"
 #include "backgroundwidget.h"
+#include "utils/cooperationguihelper.h"
 
+#include <QVariant>
 #include <QVBoxLayout>
 #include <QIcon>
 #include <QLabel>
@@ -31,6 +33,8 @@ LookingForDeviceWidget::LookingForDeviceWidget(QWidget *parent)
 
 void LookingForDeviceWidget::initUI()
 {
+    setFocusPolicy(Qt::ClickFocus);
+
     QLabel *iconLabel = new QLabel(this);
     iconLabel->setFixedSize(277, 277);
     QIcon icon = QIcon::fromTheme(Kfind_device);
@@ -56,6 +60,8 @@ NoNetworkWidget::NoNetworkWidget(QWidget *parent)
 
 void NoNetworkWidget::initUI()
 {
+    setFocusPolicy(Qt::ClickFocus);
+
     QLabel *iconLabel = new QLabel(this);
     iconLabel->setFixedSize(150, 150);
     QIcon icon = QIcon::fromTheme(Kno_network);
@@ -87,18 +93,23 @@ void NoResultWidget::onLinkActivated(const QString &link)
 
 void NoResultWidget::initUI()
 {
+    setFocusPolicy(Qt::ClickFocus);
+
     QLabel *iconLabel = new QLabel(this);
     iconLabel->setFixedSize(150, 150);
     QIcon icon = QIcon::fromTheme(Knot_find_device);
     iconLabel->setPixmap(icon.pixmap(150, 150));
 
     QLabel *tipsLabel = new QLabel(tr("No device found"), this);
+    auto font = tipsLabel->font();
+    font.setWeight(QFont::Medium);
+    tipsLabel->setFont(font);
 
     BackgroundWidget *contentBackgroundWidget = new BackgroundWidget(this);
     contentBackgroundWidget->setBackground(17, BackgroundWidget::ItemBackground,
                                            BackgroundWidget::TopAndBottom);
     QString leadintText =
-            tr("1.Enable cross-end collaborative applications. Applications on the UOS "
+            tr("1. Enable cross-end collaborative applications. Applications on the UOS "
                "can be downloaded from the App Store, and applications on the Windows "
                "side can be downloaded from: ");
     QString hyperlink = "https://www.deepin.org/index/assistant";
@@ -107,20 +118,31 @@ void NoResultWidget::initUI()
             "<a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
     QLabel *contentLable1 = new QLabel(this);
+    font.setWeight(QFont::Normal);
+    font.setPixelSize(12);
+    contentLable1->setFont(font);
     contentLable1->setWordWrap(true);
     contentLable1->setText(content1);
     connect(contentLable1, &QLabel::linkActivated, this, &NoResultWidget::onLinkActivated);
 
-    QLabel *contentLable2 = new QLabel(tr("2.On the same LAN as the device"), this);
+    QLabel *contentLable2 = new QLabel(tr("2. On the same LAN as the device"), this);
     contentLable2->setWordWrap(true);
+    contentLable2->setFont(font);
     QLabel *contentLable3 = new QLabel(
-            tr("3.Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\""),
+            tr("3. Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\""),
             this);
     contentLable3->setWordWrap(true);
+    contentLable3->setFont(font);
+
+    QList<QColor> colorList {QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
+                            QColor(192, 192, 192)};
+    CooperationGuiHelper::instance()->autoUpdateTextColor(contentLable1, colorList);
+    CooperationGuiHelper::instance()->autoUpdateTextColor(contentLable2, colorList);
+    CooperationGuiHelper::instance()->autoUpdateTextColor(contentLable3, colorList);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(15, 10, 15, 10);
-    contentLayout->setSpacing(4);
+    contentLayout->setSpacing(10);
     contentLayout->addWidget(contentLable1);
     contentLayout->addWidget(contentLable2);
     contentLayout->addWidget(contentLable3);
