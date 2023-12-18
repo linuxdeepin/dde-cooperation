@@ -90,6 +90,7 @@ void TransferDialog::createResultPage()
 {
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vLayout = new QVBoxLayout(widget);
+    vLayout->setSpacing(0);
     stackedLayout->addWidget(widget);
 
     iconLabel = new QLabel(this);
@@ -98,6 +99,7 @@ void TransferDialog::createResultPage()
     msgLabel->setWordWrap(true);
 
     vLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
+    vLayout->addSpacing(10);
     vLayout->addWidget(msgLabel);
 }
 
@@ -105,10 +107,14 @@ void TransferDialog::createProgressPage()
 {
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vLayout = new QVBoxLayout(widget);
+    vLayout->setSpacing(0);
     stackedLayout->addWidget(widget);
 
     titleLabel = new QLabel(this);
     titleLabel->setAlignment(Qt::AlignHCenter);
+    auto font = titleLabel->font();
+    font.setPixelSize(14);
+    titleLabel->setFont(font);
 
     progressBar = new QProgressBar(this);
     progressBar->setRange(0, 100);
@@ -118,10 +124,14 @@ void TransferDialog::createProgressPage()
 
     progressMsgLael = new QLabel(this);
     progressMsgLael->setAlignment(Qt::AlignHCenter);
+    font.setPixelSize(12);
+    progressMsgLael->setFont(font);
 
-    vLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
-    vLayout->addWidget(progressBar, 0, Qt::AlignHCenter);
-    vLayout->addWidget(progressMsgLael, 0, Qt::AlignHCenter);
+    vLayout->addWidget(titleLabel);
+    vLayout->addSpacing(20);
+    vLayout->addWidget(progressBar);
+    vLayout->addSpacing(18);
+    vLayout->addWidget(progressMsgLael);
 }
 
 void TransferDialog::switchWaitConfirmPage()

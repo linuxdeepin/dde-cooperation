@@ -19,7 +19,7 @@ DeviceListWidget::DeviceListWidget(QWidget *parent)
 
 void DeviceListWidget::initUI()
 {
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     horizontalScrollBar()->setDisabled(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QWidget *mainWidget = new QWidget(this);

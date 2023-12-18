@@ -30,13 +30,17 @@ WorkspaceWidgetPrivate::~WorkspaceWidgetPrivate()
 void WorkspaceWidgetPrivate::initUI()
 {
     searchEdit = new CooperationSearchEdit(q);
+    searchEdit->setContentsMargins(20, 0, 20, 0);
+
     searchEdit->setPlaceholderText(tr("Please enter the device name or IP"));
     stackedLayout = new QStackedLayout;
 
     lfdWidget = new LookingForDeviceWidget(q);
     nnWidget = new NoNetworkWidget(q);
     nrWidget = new NoResultWidget(q);
+    nrWidget->setContentsMargins(20, 0, 20, 0);
     dlWidget = new DeviceListWidget(q);
+    dlWidget->setContentsMargins(20, 0, 20, 0);
 
     stackedLayout->addWidget(lfdWidget);
     stackedLayout->addWidget(nnWidget);
@@ -45,11 +49,13 @@ void WorkspaceWidgetPrivate::initUI()
     stackedLayout->setCurrentIndex(0);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setContentsMargins(20, 15, 20, 15);
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0, 15, 0, 15);
 #ifndef linux
     mainLayout->addSpacing(50);
 #endif
     mainLayout->addWidget(searchEdit);
+    mainLayout->addSpacing(16);
     mainLayout->addLayout(stackedLayout);
     q->setLayout(mainLayout);
 }

@@ -3,12 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "buttonboxwidget.h"
-#ifdef linux
-#include <DIconButton>
-#include <DFloatingButton>
-
-DWIDGET_USE_NAMESPACE
-#endif
 
 using namespace cooperation_core;
 
@@ -24,13 +18,10 @@ ButtonBoxWidget::ButtonBoxWidget(QWidget *parent)
 
 int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, ButtonStyle style)
 {
-    CooperationIconButton *btn { nullptr };
+    CooperationIconButton *btn = new CooperationIconButton(this);
     switch (style) {
     case kNormal:
-        btn = new CooperationIconButton(this);
-#ifdef linux
-        btn->setEnabledCircle(true);
-#else
+#ifndef linux
         btn->setStyleSheet(
                     ".QToolButton {"
                     "background-color: rgba(0,0,0,0.1);"
@@ -42,8 +33,9 @@ int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, Button
 #endif
         break;
     case kHighLight:
-        btn = new CooperationFloatingEdit(this);
-#ifndef linux
+#ifdef linux
+        btn->setBackgroundRole(QPalette::Highlight);
+#else
         btn->setStyleSheet(
             ".QToolButton {"
             "background-color: #0098FF;"
@@ -56,6 +48,9 @@ int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, Button
         break;
     }
 
+#ifdef linux
+    btn->setEnabledCircle(true);
+#endif
     btn->setToolTip(toolTip);
     btn->setFixedSize(32, 32);
     btn->setIconSize({ 16, 16 });

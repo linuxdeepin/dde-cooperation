@@ -65,6 +65,7 @@ void CooperationTaskDialog::init()
     QWidget *contentWidget = new QWidget(this);
     contentWidget->setLayout(switchLayout);
     addContent(contentWidget);
+    setContentsMargins(0, 0, 0, 0);
 #else
     setLayout(switchLayout);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -84,10 +85,10 @@ QWidget *CooperationTaskDialog::createWaitPage()
 {
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
-    vlayout->setContentsMargins(0, 20, 0, 0);
+    vlayout->setContentsMargins(0, 0, 0, 0);
 
     CooperationSpinner *spinner = new CooperationSpinner(this);
-    spinner->setFixedSize(48, 48);
+    spinner->setFixedSize(36, 36);
     spinner->setAttribute(Qt::WA_TransparentForMouseEvents);
     spinner->setFocusPolicy(Qt::NoFocus);
 #ifdef linux
@@ -98,7 +99,7 @@ QWidget *CooperationTaskDialog::createWaitPage()
     connect(celBtn, &QPushButton::clicked, this, &CooperationTaskDialog::waitCanceled);
 
     vlayout->addWidget(spinner, 0, Qt::AlignHCenter);
-    vlayout->addWidget(celBtn);
+    vlayout->addWidget(celBtn, 0, Qt::AlignBottom);
 
     return widget;
 }
@@ -107,7 +108,7 @@ QWidget *CooperationTaskDialog::createFailPage()
 {
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
-    vlayout->setContentsMargins(0, 20, 0, 0);
+    vlayout->setContentsMargins(0, 0, 0, 0);
 
     failMsgLabel = new QLabel(this);
     failMsgLabel->setAlignment(Qt::AlignHCenter);
@@ -132,7 +133,7 @@ QWidget *CooperationTaskDialog::createConfirmPage()
 {
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
-    vlayout->setContentsMargins(0, 20, 0, 0);
+    vlayout->setContentsMargins(0, 0, 0, 0);
 
     confirmMsgLabel = new QLabel(this);
     confirmMsgLabel->setAlignment(Qt::AlignHCenter);
@@ -157,7 +158,7 @@ QWidget *CooperationTaskDialog::createInfomationPage()
 {
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
-    vlayout->setContentsMargins(0, 20, 0, 0);
+    vlayout->setContentsMargins(0, 0, 0, 0);
 
     infoLabel = new QLabel(this);
     infoLabel->setAlignment(Qt::AlignHCenter);
