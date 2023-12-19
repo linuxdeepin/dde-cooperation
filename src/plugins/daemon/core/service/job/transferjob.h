@@ -27,7 +27,7 @@ public:
     ~TransferJob() override;
     bool initRpc(fastring target, uint16 port);
     void initJob(fastring appname, fastring targetappname, int id, fastring path, bool sub, fastring savedir, bool write);
-    bool createFile(const QString &filename, const bool isDir);
+    bool createFile(const fastring fullpath, const bool isDir);
 
     void start();
     void stop();
@@ -74,7 +74,7 @@ private:
     void readPath(fastring path, fastring root, const bool acTotal);
     bool readFile(fastring filepath, int fileid, fastring subdir, const bool acTotal);
     void readFileBlock(fastring filepath, int fileid, const fastring subname, const  bool acTotal);
-    bool writeAndCreateFile(const QSharedPointer<FSDataBlock> block);
+    bool writeAndCreateFile(const QSharedPointer<FSDataBlock> block, const fastring fullpath);
     bool sendToRemote(const QSharedPointer<FSDataBlock> block);
     void createSendCounting();
 
@@ -98,7 +98,6 @@ private:
     fastring _save_fulldir; // 全路径
     fastring _tar_app_name; // 发送到目标的应用名称
     fastring _tar_ip;
-    fastring _file_name;
 
     mutable QReadWriteLock _queque_mutex;
     QQueue<QSharedPointer<FSDataBlock>> _block_queue;
