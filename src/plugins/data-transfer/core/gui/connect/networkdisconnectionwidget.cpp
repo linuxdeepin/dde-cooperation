@@ -50,7 +50,7 @@ void NetworkDisconnectionWidget::initUI()
     QObject::connect(retryButton, &QToolButton::clicked, this, &NetworkDisconnectionWidget::retryPage);
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(15);
+    buttonLayout->addSpacing(10);
     buttonLayout->addWidget(retryButton);
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
@@ -78,7 +78,7 @@ void NetworkDisconnectionWidget::backPage()
 
 void NetworkDisconnectionWidget::retryPage()
 {
-     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
+    emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void NetworkDisconnectionWidget::themeChanged(int theme)

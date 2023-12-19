@@ -8,12 +8,13 @@
 #include <QCheckBox>
 #include <QTextBrowser>
 #include <utils/transferhepler.h>
-PromptWidget::PromptWidget(QWidget *parent) : QFrame(parent)
+PromptWidget::PromptWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
-PromptWidget::~PromptWidget() { }
+PromptWidget::~PromptWidget() {}
 
 void PromptWidget::initUI()
 {
@@ -23,18 +24,18 @@ void PromptWidget::initUI()
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
 
-    QLabel *textLabel = new QLabel(tr("Before tranfer"), this);
+    QLabel *titileLabel = new QLabel(tr("Before tranfer"), this);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
-    textLabel->setFont(font);
-    textLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    titileLabel->setFont(font);
+    titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QStringList prompts{ tr("Data transfer requires some time, to avoid interrupting the migration "
-                            "due to low battery, please keep connect to the  power."),
-                         tr("Other applications may slowdown the transfer speed. For smoother "
-                            "experience, please close other applications."),
-                         tr("For the security of your transfer, please use a trusted network.") };
+    QStringList prompts { tr("Data transfer requires some time, to avoid interrupting the migration "
+                             "due to low battery, please keep connect to the  power."),
+                          tr("Other applications may slowdown the transfer speed. For smoother "
+                             "experience, please close other applications."),
+                          tr("For the security of your transfer, please use a trusted network.") };
 
     QGridLayout *gridLayout = new QGridLayout();
     gridLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -49,7 +50,6 @@ void PromptWidget::initUI()
         gridLayout->addWidget(textlabel, i, 1);
         gridLayout->setHorizontalSpacing(10);
         gridLayout->setVerticalSpacing(10);
-
     }
 
     QHBoxLayout *promptLayout = new QHBoxLayout();
@@ -103,12 +103,12 @@ void PromptWidget::initUI()
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(15);
+    buttonLayout->addSpacing(10);
     buttonLayout->addWidget(nextButton);
     buttonLayout->setAlignment(Qt::AlignCenter);
 
     mainLayout->addSpacing(30);
-    mainLayout->addWidget(textLabel);
+    mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(30);
     mainLayout->addLayout(promptLayout);
     mainLayout->addSpacing(220);
@@ -123,7 +123,6 @@ void PromptWidget::nextPage()
     emit TransferHelper::instance()->changeWidget(PageName::connectwidget);
 
 #endif
-
 }
 
 void PromptWidget::backPage()
@@ -135,14 +134,14 @@ void PromptWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
+        setStyleSheet("background-color: white; border-radius: 10px;");
         backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                   "background-color: lightgray;"
                                   "}");
 
     } else {
         // dark
-        setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
+        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
         backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                   "opacity: 1;"
                                   "background-color: rgba(255,255,255, 0.1);"

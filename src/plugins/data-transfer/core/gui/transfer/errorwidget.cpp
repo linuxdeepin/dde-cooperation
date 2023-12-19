@@ -10,12 +10,13 @@
 #include <gui/connect/choosewidget.h>
 #include <utils/transferhepler.h>
 
-ErrorWidget::ErrorWidget(QWidget *parent) : QFrame(parent)
+ErrorWidget::ErrorWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
-ErrorWidget::~ErrorWidget() { }
+ErrorWidget::~ErrorWidget() {}
 void ErrorWidget::initUI()
 {
     setStyleSheet("background-color: white; border-radius: 10px;");
@@ -86,7 +87,7 @@ void ErrorWidget::initUI()
     QObject::connect(retryButton, &QToolButton::clicked, this, &ErrorWidget::retryPage);
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(15);
+    buttonLayout->addSpacing(10);
     buttonLayout->addWidget(retryButton);
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 

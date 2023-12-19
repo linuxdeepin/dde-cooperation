@@ -31,7 +31,7 @@ void ResultDisplayWidget::initUI()
 
     titileLabel = new QLabel(tr("Transfer completed"), this);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignCenter);
@@ -77,10 +77,10 @@ void ResultDisplayWidget::initUI()
     textBrowerlayout->setAlignment(Qt::AlignCenter);
     textBrowerlayout->addWidget(processTextBrowser);
 
-    QToolButton *backButton = new QToolButton(this);
+    backButton = new QToolButton(this);
     backButton->setText(tr("Back"));
     backButton->setFixedSize(120, 35);
-    backButton->setStyleSheet("background-color: lightgray;");
+    backButton->setStyleSheet(".QToolButton{background-color: lightgray;border-radius: 8px;}");
     connect(backButton, &QToolButton::clicked, this, &ResultDisplayWidget::nextPage);
 
     QToolButton *nextButton = new QToolButton(this);
@@ -93,10 +93,11 @@ void ResultDisplayWidget::initUI()
     connect(nextButton, &QToolButton::clicked, qApp, &QApplication::quit);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->setSpacing(0);
     buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(15);
+    buttonLayout->addSpacing(10);
     buttonLayout->addWidget(nextButton);
-    buttonLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
+    buttonLayout->setAlignment(Qt::AlignCenter);
 
     mainLayout->addSpacing(40);
     mainLayout->addWidget(iconLabel);
@@ -121,9 +122,36 @@ void ResultDisplayWidget::themeChanged(int theme)
     // light
     if (theme == 1) {
         setStyleSheet("background-color: white; border-radius: 10px;");
+        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "background-color: lightgray;"
+                                  "}");
+        processTextBrowser->setStyleSheet("QTextBrowser {"
+                                          "padding-top: 10px;"
+                                          "padding-bottom: 10px;"
+                                          "padding-left: 5px;"
+                                          "padding-right: 5px;"
+                                          "font-size: 12px;"
+                                          "font-weight: 400;"
+                                          "color: rgb(82, 106, 127);"
+                                          "line-height: 300%;"
+                                          "background-color:rgba(0, 0, 0,0.08);}");
     } else {
         // dark
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        processTextBrowser->setStyleSheet("QTextBrowser {"
+                                          "padding-top: 10px;"
+                                          "padding-bottom: 10px;"
+                                          "padding-left: 5px;"
+                                          "padding-right: 5px;"
+                                          "font-size: 12px;"
+                                          "font-weight: 400;"
+                                          "color: rgb(82, 106, 127);"
+                                          "line-height: 300%;"
+                                          "background-color:rgba(255,255,255, 0.1);}");
+        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
+                                  "opacity: 1;"
+                                  "background-color: rgba(255,255,255, 0.1);"
+                                  "}");
     }
 }
 

@@ -54,7 +54,7 @@ void TransferringWidget::initUI()
     titileLabel = new QLabel(tr("Transferring..."), this);
     titileLabel->setFixedHeight(50);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -79,6 +79,9 @@ void TransferringWidget::initUI()
     QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
                               .arg(tr("Show logs"));
     displayLabel = new QLabel(display, this);
+    QFont tipfont;
+    tipfont.setPointSize(8);
+    displayLabel->setFont(tipfont);
     displayLabel->setAlignment(Qt::AlignCenter);
     QObject::connect(displayLabel, &QLabel::linkActivated, this,
                      &TransferringWidget::initInformationPage);
@@ -135,6 +138,7 @@ void TransferringWidget::initUI()
     mainLayout->addLayout(progressLayout);
     mainLayout->addSpacing(7);
     mainLayout->addWidget(timeLabel);
+    mainLayout->addSpacing(30);
     mainLayout->addWidget(fileLabel);
     mainLayout->addWidget(displayLabel);
     mainLayout->addWidget(fileNameFrame);
@@ -235,12 +239,6 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     progressLabel->setProgress(progressbar);
 
     timeLabel->setText(QString(tr("Calculationing...")));
-    if (estimatedtime == 0) {
-        QString str = QString(tr("Transfer completed"));
-        timeLabel->setText(str);
-        fileLabel->setText(str);
-        titileLabel->setText(str);
-    }
     if (estimatedtime > 0) {
         titileLabel->setText(tr("Transferring..."));
         if (estimatedtime > 60)
@@ -251,10 +249,7 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
                     QString(tr("Transfer will be completed in %1 secondes")).arg(estimatedtime));
     }
     if (estimatedtime == -2) {
-        QString str = QString(tr("Installing..."));
-        timeLabel->setText(str);
-        fileLabel->setText(str);
-        titileLabel->setText(str);
+        timeLabel->setText(QString(tr("Transfer will be completed in --")));
     }
 }
 
