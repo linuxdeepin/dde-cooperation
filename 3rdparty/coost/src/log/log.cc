@@ -113,8 +113,8 @@ inline void signal_safe_sleep(int ms) {
 class LogTime {
   public:
     enum {
-        t_len = 17, // length of time 
-        t_min = 8,  // position of minute
+        t_len = 24, // length of time
+        t_min = 14,  // position of minute
         t_sec = t_min + 3,
         t_ms = t_sec + 3,
     };
@@ -170,7 +170,7 @@ void LogTime::update() {
       #else
         localtime_r(&_start, &_tm);
       #endif
-        strftime(_buf, 16, "%m%d %H:%M:%S.", &_tm);
+        strftime(_buf, 23, "%Y-%m-%d %H:%M:%S.", &_tm);
     }
 
   set_ms:
@@ -550,7 +550,7 @@ void Logger::push_level_log(char* s, size_t n, int level) {
     {
         std::lock_guard<std::mutex> g(_llog.x.m);
         if (!_stop) {
-            memcpy(s + 1, _llog.x.time_str, LogTime::t_len); // log time
+            memcpy(s, _llog.x.time_str, LogTime::t_len); // log time
 
             auto& buf = _llog.x.buf;
             if (unlikely(buf.size() + n >= FLG_max_log_buffer_size)) {
@@ -561,7 +561,8 @@ void Logger::push_level_log(char* s, size_t n, int level) {
                 buf.resize(len + 7);
             }
             fastring log(s, n);
-            write_to_journal(log.c_str(), level);
+            const char* journal_log = log.c_str() + LogTime::t_len + 1;
+            write_to_journal(journal_log, level);
 
             buf.append(s, n);
             if (buf.size() > (buf.capacity() >> 1)) _log_event.signal();
@@ -943,7 +944,7 @@ void ExceptHandler::handle_signal(int sig) {
     auto f = &ExceptHandler::write_fatal_message;
     auto& s = *m.stream; s.clear();
     if (!m.check_failed) {
-        s << 'F' << m.log_time->get() << "] ";
+        s << 'F' << "[" << m.log_time->get() << "] ";
     }
 
     switch (sig) {
@@ -1099,8 +1100,8 @@ LevelLogSaver::LevelLogSaver(const char* fname, unsigned fnlen, unsigned line, i
     _lv = level;
     _n = _s.size();
     _s.resize(_n + (LogTime::t_len + 1)); // make room for: "I0523 17:00:00.123"
-    _s[_n] = "DIWE"[level];
-    (_s << ' ' << co::thread_id() << ' ').append(fname, fnlen) << ':' << line << "] ";
+    const char *levels[] = {"Debug", "Info", "Warning", "Error"};
+    (_s << " ["<< levels[level] << "  ] " << "[" << co::thread_id() << ' ').append(fname, fnlen) << ':' << line << "] ";
 }
 
 LevelLogSaver::~LevelLogSaver() {
