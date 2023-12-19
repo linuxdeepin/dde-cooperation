@@ -23,21 +23,22 @@ public slots:
 private:
     void initUI();
     void sendOptions();
+
 private:
     QString transferMethod;
     QToolButton *nextButton = nullptr;
     int nextpage;
-    ModeItem *winItem{nullptr};
-    ModeItem *packageItem{nullptr};
-    QString internetMethodName{ tr("From Windows PC") };
+    ModeItem *winItem { nullptr };
+    ModeItem *packageItem { nullptr };
+    QString internetMethodName { tr("From Windows PC") };
 #ifdef WIN32
     QString localFileMethodName { tr("Export to local directory") };
     int selecPage1 = PageName::promptwidget;
     int selecPage2 = PageName::selectmainwidget;
 #else
     QString localFileMethodName { tr("Import from backup files") };
-    int selecPage1{ PageName::promptwidget };
-    int selecPage2{ PageName::uploadwidget };
+    int selecPage1 { PageName::promptwidget };
+    int selecPage2 { PageName::uploadwidget };
 #endif
 };
 
@@ -45,6 +46,7 @@ class ModeItem : public QFrame
 {
     Q_OBJECT
     friend ChooseWidget;
+
 public:
     ModeItem(QString text, QIcon icon, QWidget *parent = nullptr);
     ~ModeItem() override;
@@ -59,19 +61,26 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    bool enable{ true };
-    bool checked{ false };
-    QLabel *iconLabel{ nullptr };
+    bool enable { true };
+    bool checked { false };
+    QLabel *iconLabel { nullptr };
     QString itemText;
-    bool dark{false};
+    bool dark { false };
 };
 
 class IndexLabel : public QLabel
 {
 public:
-    IndexLabel(int index, QWidget *parent = nullptr) : QLabel(parent), index(index)
+    IndexLabel(int index, QWidget *parent = nullptr)
+        : QLabel(parent), index(index)
     {
         setFixedSize(50, 10);
+    }
+
+    void setIndex(int i)
+    {
+        index = i;
+        update();
     }
 
 private:
@@ -96,7 +105,7 @@ protected:
                 brushColor.setAlpha(40);
 
             painter.setBrush(brushColor);
-            painter.drawEllipse((diam + 5) * i, 0, diam, diam);
+            painter.drawEllipse((diam + 5) * i + 5, 0, diam, diam);
         }
     }
 };

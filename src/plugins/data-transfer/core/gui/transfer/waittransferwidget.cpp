@@ -33,7 +33,7 @@ void WaitTransferWidget::initUI()
     QLabel *titileLabel = new QLabel(tr("Waiting for transfer..."), this);
     titileLabel->setFixedHeight(50);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -112,13 +112,16 @@ void WaitTransferWidget::themeChanged(int theme)
 DWIDGET_USE_NAMESPACE
 void WaitTransferWidget::cancel()
 {
-    DDialog dlg;
+    QMainWindow *activeMainWindow = qobject_cast<QMainWindow *>(QApplication::activeWindow());
+    DDialog dlg(activeMainWindow);
     dlg.setIcon(QIcon::fromTheme("dialog-warning"));
     dlg.addButton(tr("Cancel"));
     dlg.addButton(tr("Close"), true, DDialog::ButtonWarning);
 
     dlg.setTitle(tr("This operation will clear the transmission progress, Do you want to continue."));
     dlg.setMessage(tr("This operation is not recoverable"));
+
+    dlg.move(activeMainWindow->pos() + QPoint(185, 200));
 
     int code = dlg.exec();
     if (code == 1) {

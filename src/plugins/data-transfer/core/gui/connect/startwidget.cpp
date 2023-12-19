@@ -32,12 +32,12 @@ void StartWidget::initUI()
     iconLabel->setPixmap(QIcon(":/icon/picture-home.png").pixmap(200, 160));
     iconLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
-    QLabel *textLabel1 = new QLabel(tr("UOS data transfer"), this);
+    QLabel *titileLabel = new QLabel(tr("UOS data transfer"), this);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
-    textLabel1->setFont(font);
-    textLabel1->setAlignment(Qt::AlignCenter);
+    titileLabel->setFont(font);
+    titileLabel->setAlignment(Qt::AlignCenter);
 
     QLabel *textLabel2 = new QLabel(tr("UOS transfer tool enables one click migration of your files, personal data, and applications to\nUOS, helping you seamlessly replace your system."), this);
     textLabel2->setAlignment(Qt::AlignTop | Qt::AlignCenter);
@@ -56,7 +56,7 @@ void StartWidget::initUI()
 
     mainLayout->addSpacing(50);
     mainLayout->addWidget(iconLabel);
-    mainLayout->addWidget(textLabel1);
+    mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(textLabel2);
     mainLayout->addSpacing(60);
     mainLayout->addLayout(buttonLayout);

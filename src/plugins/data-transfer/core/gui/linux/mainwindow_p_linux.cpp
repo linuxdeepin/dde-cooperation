@@ -75,7 +75,7 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::errorwidget, errorwidget);
     stackedWidget->insertWidget(PageName::resultwidget, resultwidget);
 
-    stackedWidget->setCurrentIndex(0);
+    stackedWidget->setCurrentIndex(PageName::startwidget);
 
     connect(stackedWidget, &QStackedWidget::currentChanged, this, [transferringwidget, resultwidget, uploadwidget](int index) {
         if (index == PageName::choosewidget) {

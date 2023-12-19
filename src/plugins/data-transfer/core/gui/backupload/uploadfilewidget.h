@@ -5,33 +5,6 @@
 #include <QLabel>
 #include <QToolButton>
 
-class UploadFileWidget : public QFrame
-{
-    Q_OBJECT
-
-public:
-    UploadFileWidget(QWidget *parent = nullptr);
-    ~UploadFileWidget();
-
-    bool checkBackupFile(const QString &filePath);
-    void clear();
-
-public slots:
-    void nextPage();
-    void backPage();
-    void themeChanged(int theme);
-
-private:
-    void initUI();
-
-Q_SIGNALS:
-    void Initial();
-
-private:
-    QToolButton *backButton { nullptr };
-    QLabel *tipLabel { nullptr };
-};
-
 class UploadFileFrame : public QFrame
 {
     Q_OBJECT
@@ -66,6 +39,34 @@ enum uploadStatus {
     Initial = 0,
     valid,
     formaterror
+};
+
+class UploadFileWidget : public QFrame
+{
+    Q_OBJECT
+
+public:
+    UploadFileWidget(QWidget *parent = nullptr);
+    ~UploadFileWidget();
+
+    bool checkBackupFile(const QString &filePath);
+    void clear();
+
+public slots:
+    void nextPage();
+    void backPage();
+    void themeChanged(int theme);
+
+private:
+    void initUI();
+
+Q_SIGNALS:
+    void Initial();
+
+private:
+    QToolButton *backButton { nullptr };
+    QLabel *tipLabel { nullptr };
+    UploadFileFrame *uploadFileFrame { nullptr };
 };
 
 #endif

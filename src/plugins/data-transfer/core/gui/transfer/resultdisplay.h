@@ -5,6 +5,8 @@
 
 class QTextBrowser;
 class QLabel;
+class QToolButton;
+
 class ResultDisplayWidget : public QFrame
 {
     Q_OBJECT
@@ -28,6 +30,7 @@ private:
     QLabel *iconLabel { nullptr };
     QLabel *titileLabel { nullptr };
     QLabel *tiptextlabel { nullptr };
+    QToolButton *backButton { nullptr };
 };
 
 #endif

@@ -1,18 +1,18 @@
 ﻿#ifndef WIN32
-#include "choosewidget.h"
-#include "connectwidget.h"
-#include "../type_defines.h"
+#    include "choosewidget.h"
+#    include "connectwidget.h"
+#    include "../type_defines.h"
 
-#include <QLabel>
-#include <QDebug>
-#include <QToolButton>
-#include <QStackedWidget>
-#include <QLineEdit>
-#include <QTimer>
-#include <QHostInfo>
-#include <QNetworkInterface>
+#    include <QLabel>
+#    include <QDebug>
+#    include <QToolButton>
+#    include <QStackedWidget>
+#    include <QLineEdit>
+#    include <QTimer>
+#    include <QHostInfo>
+#    include <QNetworkInterface>
 
-#include <utils/transferhepler.h>
+#    include <utils/transferhepler.h>
 
 ConnectWidget::ConnectWidget(QWidget *parent)
     : QFrame(parent)
@@ -34,9 +34,9 @@ void ConnectWidget::initUI()
     mainLayout->addSpacing(30);
 
     QLabel *titileLabel = new QLabel(tr("Ready to connect"), this);
-    titileLabel->setFixedHeight(40);
+    titileLabel->setFixedHeight(50);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -105,7 +105,8 @@ void ConnectWidget::initConnectLayout()
 
     ipLabel->setStyleSheet("background-color: rgba(0, 129, 255, 0.2); border-radius: 16;");
     QString ip = QString("<font size=12px >%1： </font><span style='font-size: 17px; font-weight: 600;'>%2</span>")
-                         .arg(tr("Local IP")).arg(ipaddress);
+                         .arg(tr("Local IP"))
+                         .arg(ipaddress);
     ipLabel->setText(ip);
     ipLabel->setFixedSize(204, 32);
 
@@ -192,7 +193,7 @@ void ConnectWidget::initConnectLayout()
     separatorLabel->setFixedSize(2, 160);
     separatorLabel->setStyleSheet(styleSheet);
 
-    connectLayout->addSpacing(60);
+    connectLayout->addSpacing(37);
     connectLayout->addLayout(ipVLayout);
     connectLayout->addSpacing(30);
     connectLayout->addWidget(separatorLabel);

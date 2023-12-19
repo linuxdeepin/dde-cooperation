@@ -17,12 +17,13 @@
 
 #pragma execution_character_set("utf-8")
 
-ReadyWidget::ReadyWidget(QWidget *parent) : QFrame(parent)
+ReadyWidget::ReadyWidget(QWidget *parent)
+    : QFrame(parent)
 {
     initUI();
 }
 
-ReadyWidget::~ReadyWidget() { }
+ReadyWidget::~ReadyWidget() {}
 
 void ReadyWidget::clear()
 {
@@ -30,6 +31,7 @@ void ReadyWidget::clear()
     captchaInput->clear();
     tiptextlabel->setVisible(false);
     setnextButEnable(false);
+    tiptextlabel->setText(QString("<font size='3'color='#000000'>%1</font>").arg(tr("connect...")));
 }
 
 void ReadyWidget::initUI()
@@ -44,15 +46,12 @@ void ReadyWidget::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
 
-    QLabel *mainLabel = new QLabel(tr("Ready to connect"), this);
-    mainLabel->setStyleSheet("opacity: 1;"
-                             "color: rgba(0,26,46,1);"
-                             "font-family: \"SourceHanSansSC-Bold\";"
-                             "font-size: 24px;"
-                             "font-weight: 700;"
-                             "font-style: normal;"
-                             "text-align: left;");
-    mainLabel->setAlignment(Qt::AlignTop | Qt::AlignCenter);
+    QLabel *titileLabel = new QLabel(tr("Ready to connect"), this);
+    QFont font;
+    font.setPixelSize(24);
+    font.setWeight(QFont::DemiBold);
+    titileLabel->setFont(font);
+    titileLabel->setAlignment(Qt::AlignTop | Qt::AlignCenter);
 
     QLabel *ipLabel = new QLabel(tr("IP"), this);
     QHBoxLayout *ipLayout = new QHBoxLayout(this);
@@ -133,7 +132,8 @@ void ReadyWidget::initUI()
 
     tiptextlabel = new QLabel(this);
 
-    tiptextlabel->setText(QString("<font size='3' color='#000000'>%1</font>").arg(tr("connect...")));
+    tiptextlabel->setText(
+            QString("<font size='3' color='#000000'>%1</font>").arg(tr("connect...")));
     tiptextlabel->setVisible(false);
     tiptextlabel->setAlignment(Qt::AlignCenter);
 
@@ -149,7 +149,8 @@ void ReadyWidget::initUI()
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
     buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(15);
+    buttonLayout->addSpacing(10);
+    buttonLayout->setSpacing(0);
     buttonLayout->addWidget(nextButton);
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
@@ -160,7 +161,7 @@ void ReadyWidget::initUI()
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addSpacing(20);
-    mainLayout->addWidget(mainLabel);
+    mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(20);
     mainLayout->addLayout(ipLayout);
     mainLayout->addLayout(editLayout1);
@@ -182,10 +183,8 @@ void ReadyWidget::initUI()
                      &ReadyWidget::connectFailed);
 
     // Connect the timer's timeout signal to hiding the label
-    QObject::connect(timer, &QTimer::timeout, [&]() {
-        tiptextlabel->setText(QString("<font size='3' color='#000000'>%1</font>").arg(tr("connect...")));
-        tiptextlabel->setVisible(false);
-        setnextButEnable(true);
+    QObject::connect(timer, &QTimer::timeout, [this]() {
+        connectFailed();
     });
 }
 
@@ -195,6 +194,7 @@ void ReadyWidget::tryConnect()
     setnextButEnable(false);
 
     TransferHelper::instance()->tryConnect(ipInput->text(), captchaInput->text());
+    timer->start();
 }
 
 void ReadyWidget::setnextButEnable(bool enabel)
@@ -238,7 +238,7 @@ void ReadyWidget::nextPage()
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
     } else {
         WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
+                "nullptr";
     }
 
     clear();
@@ -251,7 +251,7 @@ void ReadyWidget::backPage()
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
     } else {
         WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
+                "nullptr";
     }
 
     clear();
@@ -277,11 +277,10 @@ void ReadyWidget::onLineTextChange()
     }
 
     setnextButEnable(true);
-
 }
 
 void ReadyWidget::connectFailed()
 {
-    tiptextlabel->setText(QString("<font size='3' color='#FF5736'>%1</font>").arg(tr("Failed to connect, please check your input")));
-    timer->start();
+    tiptextlabel->setText(QString("<font size='3' color='#FF5736'>%1</font>")
+                                  .arg(tr("Failed to connect, please check your input")));
 }

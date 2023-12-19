@@ -38,12 +38,12 @@ void ChooseWidget::initUI()
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
 
-    QLabel *textLabel1 = new QLabel(tr("Export to local directory"), this);
+    QLabel *titileLabel = new QLabel(tr("Export to local directory"), this);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
-    textLabel1->setFont(font);
-    textLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    titileLabel->setFont(font);
+    titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     winItem = new ModeItem(internetMethodName, QIcon(":/icon/select1.png"), this);
     packageItem = new ModeItem(localFileMethodName, QIcon(":/icon/select2.png"), this);
@@ -87,7 +87,7 @@ void ChooseWidget::initUI()
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addSpacing(30);
-    mainLayout->addWidget(textLabel1);
+    mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(40);
     mainLayout->addLayout(modeLayout);
     mainLayout->addSpacing(90);
