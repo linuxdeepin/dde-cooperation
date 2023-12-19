@@ -88,47 +88,26 @@ void TransferJob::initJob(fastring appname, fastring targetappname, int id, fast
     }
 }
 
-bool TransferJob::createFile(const QString &filename, const bool isDir)
+bool TransferJob::createFile(const fastring fullpath, const bool isDir)
 {
-    // 不是跨端走以前的
-    if (_jobid != 1000) {
-        fastring path = _save_fulldir.empty()
-                ? path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir)
-                : _save_fulldir;
-        fastring fullpath = path::join(path, filename.toStdString().c_str());
-        return FSAdapter::newFileByFullPath(fullpath.c_str(), isDir);
+    if (fullpath.empty()) {
+        ELOG << "Try create file with empty path: " << fullpath;
+        return false;
     }
-    // 判断是否是第一层
-    auto acfilename = filename;
-    if (acfilename.contains("/")) {
-        auto first = acfilename.mid(0, acfilename.indexOf("/"));
-        auto acFirst = acName(first.toStdString());
-        if (!acFirst.empty())
-            acfilename = acFirst.c_str() + acfilename.mid(acfilename.indexOf("/"));
-    }
-    fastring path = _save_fulldir.empty()
-            ? path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir)
-            : _save_fulldir;
-    fastring fullpath = path::join(path, acfilename.toStdString().c_str());
 
-    fastring ac;
-    bool ok = FSAdapter::noneExitFileByFullPath(fullpath.c_str(), isDir, &ac);
-    // DLOG << path << " , fullpath = " << fullpath << " , save = " << _savedir << " , filename = " << filename.toStdString()
-    //      << " ac = " << ac;
-    if (ok) {
-        auto ft = ac.replace(path+"/", "");
-        setFileName(filename, ft.c_str());
-    }
-    return ok;
+    return FSAdapter::newFileByFullPath(fullpath.c_str(), isDir);
 }
 
 void TransferJob::start()
 {
     atomic_store(&_status, STARTED);
+
     if (_writejob) {
         DLOG << "start write job: " << _savedir << " fullpath = " << _save_fulldir;
         handleJobStatus(JOB_TRANS_DOING);
     } else {
+        // 读取所有文件的信息
+        DLOG << "doTransfileJob path to save:" << _savedir;
         //并行读取文件数据
         UNIGO([this]() {
             co::Json pathJson;
@@ -222,7 +201,6 @@ void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
     _block_queue.enqueue(block);
 }
 
-
 fastring TransferJob::getSubdir(const char *path, const char *root)
 {
     fastring indir = "";
@@ -259,27 +237,6 @@ void TransferJob::handleBlockQueque()
             continue;
         }
 
-        // 通知前端进度
-        {
-            FileInfo info;
-            info.job_id = _jobid;
-            info.file_id = _notify_fileid;
-            info.total_size = _total_size;
-            info.current_size = _cur_size;
-            info.name = _file_name;
-            info.time_spended = time.elapsed();
-
-            if (block->flags & JobTransFileOp::FILE_CLOSE) {
-                handleTransStatus(FILE_TRANS_END, info);
-            } else if (block->flags & JobTransFileOp::FIlE_CREATE) {
-                handleTransStatus(FILE_TRANS_IDLE, info);
-            }
-
-            if (timeout && counted) {
-                handleTransStatus(FILE_TRANS_SPEED, info);
-            }
-        }
-
         if (block.isNull()) {
             block.reset(new FSDataBlock);
             block->flags = JobTransFileOp::FILE_COUNTING;
@@ -288,11 +245,23 @@ void TransferJob::handleBlockQueque()
         if (counted == false)
             counted = block->flags & JobTransFileOp::FILE_COUNTED;
 
+        fastring fullpath = "";
+        //加解密文件名，防止路径特殊导致序列化卡住
+        if (!block->filename.empty()) {
+            fastring filename = _writejob ? Util::decodeBase64(block->filename.c_str())
+                                          : Util::encodeBase64(block->filename.c_str());
+
+            //真实全路径，写文件和通知
+            fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
+            fullpath = path::join(path, _writejob ? filename : block->filename);
+
+            block->filename = (filename);
+        }
         if (_writejob) {
             if (block->flags & JobTransFileOp::FILE_COUNTING)
                 continue;
             // 写入失败，怎么处理，继续尝试
-            exception = !writeAndCreateFile(block);
+            exception = !writeAndCreateFile(block, fullpath);
         } else {
             // 发送失败，怎么处理
             exception = !sendToRemote(block);
@@ -307,6 +276,27 @@ void TransferJob::handleBlockQueque()
         if(block->flags & JobTransFileOp::FILE_TRANS_OVER) {
             DLOG << "transfer end ::: all file read or write over !!!";
             break;
+        }
+
+        // 通知前端进度
+        {
+            FileInfo info;
+            info.job_id = _jobid;
+            info.file_id = _notify_fileid;
+            info.total_size = _total_size;
+            info.current_size = _cur_size;
+            info.name = fullpath;
+            info.time_spended = time.elapsed();
+
+            if (block->flags & JobTransFileOp::FILE_CLOSE) {
+                handleTransStatus(FILE_TRANS_END, info);
+            } else if (block->flags & JobTransFileOp::FIlE_CREATE) {
+                handleTransStatus(FILE_TRANS_IDLE, info);
+            }
+
+            if (timeout && counted) {
+                handleTransStatus(FILE_TRANS_SPEED, info);
+            }
         }
     };
     if (!exception) {
@@ -525,16 +515,12 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
     fd.close();
 }
 
-bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block)
+bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block, const fastring fullpath)
 {
     _notify_fileid = block->file_id;
-    fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
-    fastring name = path::join(path, block->filename);
-    if (!block->filename.empty())
-        _file_name = name;
     // 创建文件
     if (block->flags & JobTransFileOp::FIlE_DIR_CREATE) {
-        if (!createFile(block->filename.c_str(), true))
+        if (!createFile(fullpath, true))
             return false;
         _cur_size += 4096;
         return true;
@@ -553,13 +539,13 @@ bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block)
     int count = 3;
     bool good = false;
     do {
-        good = FSAdapter::writeBlock(name.c_str(), offset, buffer.c_str(), len, block->flags, &fx);
+        good = FSAdapter::writeBlock(fullpath.c_str(), offset, buffer.c_str(), len, block->flags, &fx);
         count--;
     } while(!good && count >= 0);
 
 
     if (!good) {
-        ELOG << "file : " << name << " write BLOCK error";
+        ELOG << "file : " << fullpath << " write BLOCK error";
     } else {
         if (len == 0 && block->flags & JobTransFileOp::FIlE_CREATE) {
             _cur_size += 4096;
@@ -601,9 +587,7 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
         cancel();
         return false;
     }
-    fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
-    fastring fullpath = path::join(path, block->filename);
-    _file_name = fullpath;
+
     if (block->data_size == 0 && block->flags & JobTransFileOp::FIlE_CREATE) {
         _cur_size += 4096;
     } else {

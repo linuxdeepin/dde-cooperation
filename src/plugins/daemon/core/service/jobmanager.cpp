@@ -22,14 +22,6 @@ JobManager::~JobManager()
 
 }
 
-bool JobManager::handleCreateFile(const int jobId, const QString &fileName, const bool isDir)
-{
-    auto job = _transjob_recvs.value(jobId);
-    if (job.isNull())
-        return false;
-    return job->createFile(fileName, isDir);
-}
-
 bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
 {
     co::Json info;

@@ -22,7 +22,6 @@ public:
     ~JobManager();
 
 public slots:
-    bool handleCreateFile(const int jobId, const QString &fileName, const bool isDir);
     bool handleRemoteRequestJob(QString json, QString *targetAppName);
     bool doJobAction(const uint action, const int jobid);
     bool handleFSData(const co::Json &info, fastring buf, FileTransResponse *reply);
