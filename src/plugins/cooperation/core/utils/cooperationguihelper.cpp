@@ -5,9 +5,11 @@
 #include "cooperationguihelper.h"
 
 #ifdef linux
-#    include <DGuiApplicationHelper>
+#include <DGuiApplicationHelper>
 DGUI_USE_NAMESPACE
 #endif
+
+#include <QVariant>
 
 using namespace cooperation_core;
 

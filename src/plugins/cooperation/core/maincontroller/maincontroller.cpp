@@ -90,14 +90,14 @@ void MainController::updateDeviceList(const QString &ip, const QString &info, bo
 
 void MainController::onDiscoveryFinished(const QList<DeviceInfoPointer> &infoList)
 {
-    if (infoList.isEmpty()) {
+    if (infoList.isEmpty() && connectHistory->isEmpty()) {
         Q_EMIT discoveryFinished(false);
         isRunning = false;
         return;
     }
 
     Q_EMIT deviceOnline(infoList);
-    Q_EMIT discoveryFinished(!infoList.isEmpty());
+    Q_EMIT discoveryFinished(true);
     isRunning = false;
 }
 

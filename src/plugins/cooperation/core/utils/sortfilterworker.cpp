@@ -61,23 +61,37 @@ void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
         return;
 
     for (auto info : infoList) {
-        if (contains(allDeviceList, info)) {
-            updateDevice(info);
-            continue;
-        }
-
         if (isStoped)
             return;
+
+        // 分别进行更新
+        if (contains(allDeviceList, info)) {
+            updateDevice(allDeviceList, info, false);
+            if (contains(visibleDeviceList, info))
+                updateDevice(visibleDeviceList, info, true);
+            continue;
+        }
 
         if (info->connectStatus() == DeviceInfo::Unknown)
             info->setConnectStatus(DeviceInfo::Connectable);
 
         auto index = calculateIndex(allDeviceList, info);
         allDeviceList.insert(index, info);
-        visibleDeviceList.insert(index, info);
 
+        // 判断是否需要过滤
+        if (!filterText.isEmpty()) {
+            if (info->deviceName().contains(filterText, Qt::CaseInsensitive)
+                || info->ipAddress().contains(filterText, Qt::CaseInsensitive))
+                index = calculateIndex(visibleDeviceList, info);
+            else
+                continue;
+        }
+
+        visibleDeviceList.insert(index, info);
         Q_EMIT sortFilterResult(index, info);
     }
+
+    Q_EMIT filterFinished();
 }
 
 void SortFilterWorker::removeDevice(const QString &ip)
@@ -95,6 +109,7 @@ void SortFilterWorker::removeDevice(const QString &ip)
 
 void SortFilterWorker::filterDevice(const QString &filter)
 {
+    filterText = filter;
     visibleDeviceList.clear();
     int index = -1;
     for (const auto &dev : allDeviceList) {
@@ -154,39 +169,29 @@ int SortFilterWorker::findLast(const QList<DeviceInfoPointer> &list, DeviceInfo:
     return qMin(startPos, endPos);
 }
 
-void SortFilterWorker::updateDevice(const DeviceInfoPointer info)
+void SortFilterWorker::updateDevice(QList<DeviceInfoPointer> &list, const DeviceInfoPointer info, bool needNotify)
 {
     // 更新
-    int index = indexOf(allDeviceList, info);
+    int index = indexOf(list, info);
     if (info->connectStatus() == DeviceInfo::Unknown) {
         // 设备属性发生改变时，连接状态为Unknown
         // 若设备为非离线状态，则保持状态不变
-        auto status = allDeviceList[index]->connectStatus();
+        auto status = list[index]->connectStatus();
         info->setConnectStatus(status == DeviceInfo::Offline ? DeviceInfo::Connectable : status);
     }
 
     // 当连接状态不一致时，需要更新位置
-    bool needMove = allDeviceList[index]->connectStatus() != info->connectStatus();
+    bool needMove = list[index]->connectStatus() != info->connectStatus();
     if (needMove) {
-        allDeviceList.removeAt(index);
-        auto to = calculateIndex(allDeviceList, info);
-        allDeviceList.insert(to, info);
+        list.removeAt(index);
+        auto to = calculateIndex(list, info);
+        list.insert(to, info);
+        if (needNotify)
+            Q_EMIT deviceMoved(index, to, info);
     } else {
-        allDeviceList.replace(index, info);
-    }
-
-    if (!contains(visibleDeviceList, info))
-        return;
-
-    index = indexOf(visibleDeviceList, info);
-    if (!needMove) {
-        visibleDeviceList.replace(index, info);
-        Q_EMIT deviceUpdated(index, info);
-    } else {
-        visibleDeviceList.removeAt(index);
-        auto to = calculateIndex(visibleDeviceList, info);
-        visibleDeviceList.insert(to, info);
-        Q_EMIT deviceMoved(index, to, info);
+        list.replace(index, info);
+        if (needNotify)
+            Q_EMIT deviceUpdated(index, info);
     }
 }
 
