@@ -67,8 +67,9 @@ private:
     void handleTransStatus(int status, const FileInfo &info);
     QSharedPointer<FSDataBlock> popQueue();
     int queueCount() const;
-    void setFileName(const QString &name, const QString &acName);
+    void setFileName(const fastring &name, const fastring &acName);
     fastring acName(const fastring &name);
+    fastring getSaveFullpath(const fastring &filename);
 
     void scanPath(const fastring root,const fastring path, const bool acTotal);
     void readPath(fastring path, fastring root, const bool acTotal);
@@ -103,7 +104,7 @@ private:
     QQueue<QSharedPointer<FSDataBlock>> _block_queue;
     QSharedPointer<RemoteServiceSender> _remote;
     QReadWriteLock _file_name_maps_lock;
-    QMap<QString, QString> _file_name_maps;
+    QMap<fastring, fastring> _file_name_maps;
     QMutex _send_mutex;
     fs::file *fx{ nullptr };
 };

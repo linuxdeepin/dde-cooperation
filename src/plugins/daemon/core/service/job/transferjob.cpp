@@ -88,6 +88,42 @@ void TransferJob::initJob(fastring appname, fastring targetappname, int id, fast
     }
 }
 
+void TransferJob::setFileName(const fastring &name, const fastring &acName)
+{
+    QWriteLocker lk(&_file_name_maps_lock);
+    _file_name_maps.remove(name);
+    _file_name_maps.insert(name, acName);
+}
+
+fastring TransferJob::acName(const fastring &name)
+{
+    QReadLocker lk(&_file_name_maps_lock);
+    return _file_name_maps.value(name);
+}
+
+fastring TransferJob::getSaveFullpath(const fastring &filename)
+{
+    // 第一层子目录已存在则尝试获取已重命名后的名字，比如 abc/ddd/eee.txt -> abc(1)/ddd/eee.txt
+    auto acfilename = filename;
+    if (acfilename.contains("/")) {
+        auto first = acfilename.substr(0, acfilename.find_first_of("/"));
+        auto acFirst = acName(first);
+        if (!acFirst.empty()) {
+            //已经重命名，组合为新的保存路径
+            acfilename = acFirst.c_str() + acfilename.substr(acfilename.find_first_of("/"));
+        }
+    } else {
+        auto reName = acName(filename);
+        if (!reName.empty()) {
+            //已经重命名
+            acfilename = reName;
+        }
+    }
+
+    fastring fullpath = path::join(_save_fulldir, acfilename);
+    return fullpath;
+}
+
 bool TransferJob::createFile(const fastring fullpath, const bool isDir)
 {
     if (fullpath.empty()) {
@@ -246,15 +282,26 @@ void TransferJob::handleBlockQueque()
             counted = block->flags & JobTransFileOp::FILE_COUNTED;
 
         fastring fullpath = "";
+        bool needReacquire = (_jobid == 1000) && ((block->flags & JobTransFileOp::FIlE_DIR_CREATE)
+                                                  || (block->flags & JobTransFileOp::FIlE_CREATE));
+        bool reacquired = false;
         //加解密文件名，防止路径特殊导致序列化卡住
         if (!block->filename.empty()) {
             fastring filename = _writejob ? Util::decodeBase64(block->filename.c_str())
                                           : Util::encodeBase64(block->filename.c_str());
 
             //真实全路径，写文件和通知
-            fastring path = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
-            fullpath = path::join(path, _writejob ? filename : block->filename);
+            fullpath = getSaveFullpath(_writejob ? filename : block->filename);
+            if (needReacquire) {
+                // 跨端：需重新命名已存在文件
+                fastring newPath;
+                reacquired = FSAdapter::reacquirePath(fullpath, &newPath);
+                if (reacquired) {
+                    fullpath = newPath;
+                }
+            }
 
+            // 重新赋加密解密名字
             block->filename = (filename);
         }
         if (_writejob) {
@@ -262,6 +309,13 @@ void TransferJob::handleBlockQueque()
                 continue;
             // 写入失败，怎么处理，继续尝试
             exception = !writeAndCreateFile(block, fullpath);
+
+            if (reacquired && !exception) {
+                //创建文件成功，记录文件名对应的新名称
+                auto ft = fullpath.replace(_save_fulldir + "/", "");
+                DLOG << "record: " << block->filename << " to:" << ft;
+                setFileName(block->filename, ft);
+            }
         } else {
             // 发送失败，怎么处理
             exception = !sendToRemote(block);
@@ -273,7 +327,7 @@ void TransferJob::handleBlockQueque()
             break;
         }
 
-        if(block->flags & JobTransFileOp::FILE_TRANS_OVER) {
+        if (block->flags & JobTransFileOp::FILE_TRANS_OVER) {
             DLOG << "transfer end ::: all file read or write over !!!";
             break;
         }
@@ -608,17 +662,4 @@ void TransferJob::createSendCounting()
     block->flags = JobTransFileOp::FILE_COUNTING;
     block->data_size = 0;
     pushQueque(block);
-}
-
-void TransferJob::setFileName(const QString &name, const QString &acName)
-{
-    QWriteLocker lk(&_file_name_maps_lock);
-    _file_name_maps.remove(name);
-    _file_name_maps.insert(name, acName);
-}
-
-fastring TransferJob::acName(const fastring &name)
-{
-    QReadLocker lk(&_file_name_maps_lock);
-    return _file_name_maps.value(name.c_str()).toStdString();
 }

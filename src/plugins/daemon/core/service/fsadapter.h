@@ -21,11 +21,10 @@ public:
     static int getFileEntry(const char *path, FileEntry **entry);
     static bool newFile(const char *path, bool isdir);
     static bool newFileByFullPath(const char *fullpath, bool isdir);
-    static bool noneExitFileByFullPath(const char *fullpath, bool isdir, fastring *path);
     static bool writeBlock(const char *name, int64 seek_len, const char *data, size_t size);
     static bool writeBlock(const char *name, int64 seek_len, const char *data, size_t size,
                            const int flags, fs::file **fx);
-    static fastring noneExitPath(const char *name);
+    static bool reacquirePath(const fastring filepath, fastring *newpath);
 
 signals:
 
