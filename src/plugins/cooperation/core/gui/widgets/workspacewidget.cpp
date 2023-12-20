@@ -53,8 +53,10 @@ void WorkspaceWidgetPrivate::initUI()
     mainLayout->setContentsMargins(0, 15, 0, 15);
 #ifndef linux
     mainLayout->addSpacing(50);
-#endif
+    mainLayout->addWidget(searchEdit, 0, Qt::AlignHCenter);
+#else
     mainLayout->addWidget(searchEdit);
+#endif
     mainLayout->addSpacing(16);
     mainLayout->addLayout(stackedLayout);
     q->setLayout(mainLayout);
@@ -76,14 +78,16 @@ void WorkspaceWidgetPrivate::initConnect()
 
 void WorkspaceWidgetPrivate::onSearchValueChanged(const QString &text)
 {
-    currentPage = WorkspaceWidget::kDeviceListWidget;
-    stackedLayout->setCurrentWidget(dlWidget);
+    if (currentPage == WorkspaceWidget::kNoNetworkWidget)
+        return;
+
     dlWidget->clear();
     Q_EMIT filterDevice(text);
 }
 
 void WorkspaceWidgetPrivate::onSortFilterResult(int index, const DeviceInfoPointer info)
 {
+    q->switchWidget(WorkspaceWidget::kDeviceListWidget);
     dlWidget->insertItem(index, info);
 }
 

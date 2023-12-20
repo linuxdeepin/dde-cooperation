@@ -40,13 +40,14 @@ private:
     int calculateIndex(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);
     int findFirst(const QList<DeviceInfoPointer> &list, DeviceInfo::ConnectStatus state);
     int findLast(const QList<DeviceInfoPointer> &list, DeviceInfo::ConnectStatus state, const DeviceInfoPointer info);
-    void updateDevice(const DeviceInfoPointer info);
+    void updateDevice(QList<DeviceInfoPointer> &list, const DeviceInfoPointer info, bool needNotify);
     bool contains(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);
     int indexOf(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info);
 
 private:
     QList<DeviceInfoPointer> visibleDeviceList;
     QList<DeviceInfoPointer> allDeviceList;
+    QString filterText;
     std::atomic_bool isStoped { false };
 };
 
