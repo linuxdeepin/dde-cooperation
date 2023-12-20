@@ -173,6 +173,7 @@ CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
 {
     if (!ctDialog) {
         ctDialog = new CooperationTaskDialog(CooperationUtil::instance()->mainWindow());
+        ctDialog->setModal(true);
         connect(ctDialog, &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
         connect(ctDialog, &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyRejectAction); });
         connect(ctDialog, &CooperationTaskDialog::acceptRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyAcceptAction); });
@@ -303,10 +304,10 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
     d->isTimeout = false;
     d->targetDevName = info->deviceName();
 
+    d->confirmTimer.start();
     static QString title(tr("Requesting collaborate to \"%1\""));
     d->taskDialog()->switchWaitPage(title.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
     d->taskDialog()->show();
-    d->confirmTimer.start();
 }
 
 void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
@@ -394,6 +395,7 @@ void CooperationManager::notifyConnectRequest(const QString &info)
     d->senderDeviceIp = infoList[1];
     d->targetDevName = infoList[0];
 
+    d->confirmTimer.start();
 #ifdef linux
     d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), actions, 10 * 1000);
 #else
@@ -401,7 +403,6 @@ void CooperationManager::notifyConnectRequest(const QString &info)
     d->taskDialog()->switchConfirmPage(tr("Cooperation"), body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
     d->taskDialog()->show();
 #endif
-    d->confirmTimer.start();
 }
 
 void CooperationManager::handleConnectResult(int result)

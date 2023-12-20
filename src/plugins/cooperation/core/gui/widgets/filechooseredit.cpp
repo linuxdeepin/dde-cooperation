@@ -8,6 +8,11 @@
 #include <DStyle>
 #endif
 
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#include <DSizeMode>
+DWIDGET_USE_NAMESPACE
+#endif
+
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QPainter>
@@ -23,24 +28,26 @@ FileChooserEdit::FileChooserEdit(QWidget *parent)
 void FileChooserEdit::initUI()
 {
     pathLabel = new QLabel(this);
-    pathLabel->setContentsMargins(8, 8, 8, 8);
+    auto margins = pathLabel->contentsMargins();
+    margins.setLeft(8);
+    margins.setRight(8);
+    pathLabel->setContentsMargins(margins);
 
     fileChooserBtn = new CooperationSuggestButton(this);
     fileChooserBtn->setFocusPolicy(Qt::NoFocus);
 #ifdef linux
-fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
+    fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
 #else
     fileChooserBtn->setStyleSheet(
-           "QPushButton {"
-           "   background-color: #0098FF;"
-           "   border-radius: 10px;"
-           "   color: white;"
-           "   font-weight: bold;"
-           "}"
-       );
+            "QPushButton {"
+            "   background-color: #0098FF;"
+            "   border-radius: 10px;"
+            "   color: white;"
+            "   font-weight: bold;"
+            "}");
     fileChooserBtn->setText(" ...");
 #endif
-    fileChooserBtn->setFixedSize(36, 36);
+
     connect(fileChooserBtn, &QPushButton::clicked, this, &FileChooserEdit::onButtonClicked);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
@@ -50,6 +57,8 @@ fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon
 
     mainLayout->addWidget(pathLabel);
     mainLayout->addWidget(fileChooserBtn);
+
+    updateSizeMode();
 }
 
 void FileChooserEdit::setText(const QString &text)
@@ -66,10 +75,25 @@ void FileChooserEdit::onButtonClicked()
 {
     auto dirPath = QFileDialog::getExistingDirectory(this);
     if (dirPath.isEmpty())
-        return;    
+        return;
 
     setText(dirPath);
     emit fileChoosed(dirPath);
+}
+
+void FileChooserEdit::updateSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    fileChooserBtn->setFixedSize(DSizeModeHelper::element(QSize(24, 24), QSize(36, 36)));
+    pathLabel->setFixedHeight(DSizeModeHelper::element(24, 36));
+
+    if (!property("isConnected").toBool()) {
+        setProperty("isConnected", true);
+        connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &FileChooserEdit::updateSizeMode);
+    }
+#else
+    fileChooserBtn->setFixedSize(36, 36);
+#endif
 }
 
 void FileChooserEdit::paintEvent(QPaintEvent *event)
