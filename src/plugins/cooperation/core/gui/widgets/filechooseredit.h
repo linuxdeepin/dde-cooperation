@@ -26,6 +26,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onButtonClicked();
+    void updateSizeMode();
 
 protected:
     void paintEvent(QPaintEvent *event) override;

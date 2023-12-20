@@ -9,6 +9,7 @@
 #include "utils/historymanager.h"
 
 #include "common/constant.h"
+#include "common/commonutils.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
@@ -48,6 +49,7 @@ inline constexpr char Khistory[] { ":/icons/deepin/builtin/texts/history_18px.sv
 inline constexpr char Ksend[] { ":/icons/deepin/builtin/texts/send_18px.svg" };
 #endif
 
+using namespace deepin_cross;
 using namespace cooperation_core;
 
 TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
@@ -59,6 +61,9 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
             [] {
                 *transHistory = HistoryManager::instance()->getTransHistory();
             });
+
+    confirmTimer.setInterval(10 * 1000);
+    connect(&confirmTimer, &QTimer::timeout, this, &TransferHelperPrivate::onVerifyTimeout);
 }
 
 TransferHelperPrivate::~TransferHelperPrivate()
@@ -69,6 +74,7 @@ TransferDialog *TransferHelperPrivate::transDialog()
 {
     if (!transferDialog) {
         transferDialog = new TransferDialog(CooperationUtil::instance()->mainWindow());
+        transferDialog->setModal(true);
         connect(transferDialog, &TransferDialog::cancel, q, &TransferHelper::cancelTransfer);
     }
 
@@ -173,7 +179,7 @@ void TransferHelperPrivate::transferResult(bool result, const QString &msg)
 
 void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
 {
-    QString title = tr("Sending files to \"%1\"").arg(sendToWho);
+    QString title = tr("Sending files to \"%1\"").arg(CommonUitls::elidedText(sendToWho, Qt::ElideMiddle, 15));
     transDialog()->switchProgressPage(title);
     transDialog()->updateProgress(value, remainTime);
 }
@@ -393,7 +399,7 @@ void TransferHelper::waitForConfirm()
     d->recvFilesSavePath.clear();
 
     // 超时处理
-    QTimer::singleShot(10 * 1000, d.data(), &TransferHelperPrivate::onVerifyTimeout);
+    d->confirmTimer.start();
     d->transDialog()->switchWaitConfirmPage();
     d->transDialog()->show();
 }

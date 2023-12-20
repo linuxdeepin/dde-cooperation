@@ -66,6 +66,7 @@ private:
     TransferDialog *transferDialog { nullptr };
     uint recvNotifyId { 0 };
 
+    QTimer confirmTimer;
     bool isTransTimeout = false;
     QString recvFilesSavePath;
 };
