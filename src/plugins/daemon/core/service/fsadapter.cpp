@@ -76,34 +76,13 @@ bool FSAdapter::newFileByFullPath(const char *fullpath, bool isdir)
             fx.close();
         }
     }
+//    LOG << "new file -> fullpath: " << fullpath;
 
     return fs::exists(fullpath);
 }
 
-bool FSAdapter::noneExitFileByFullPath(const char *fullpath, bool isdir, fastring *path)
-{
-    auto nonePath = noneExitPath(fullpath);
-    if (isdir) {
-        fs::mkdir(nonePath, true);
-    } else {
-        fastring parent = path::dir(nonePath);
-        fs::mkdir(parent, true); // 创建文件保存的根/子目录
-        if (!fs::exists(nonePath)) {
-            fs::file fx(nonePath, 'm');
-            fx.close();
-        }
-    }
-    // LOG << "new file -> fullpath: " << fullpath;
-    if (path)
-        *path = nonePath;
-
-    return fs::exists(nonePath);
-}
-
 bool FSAdapter::writeBlock(const char *name, int64 seek_len, const char *data, size_t size)
 {
-    if (size <= 0)
-        return true;
     fs::file fx(name, 'm');
     if (!fx.exists()) {
         ELOG << "writeBlock File does not exist: " << name;
@@ -181,18 +160,33 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len,
     return write;
 }
 
-fastring FSAdapter::noneExitPath(const char *name)
+bool FSAdapter::reacquirePath(const fastring filepath, fastring *newpath)
 {
-    fastring path(name);
-    if (!fs::exists(name))
-        return path;
-    size_t index = path.find_last_of(".");
-    fastring suffix = index >= path.size() ? "" : path.substr(path.find_last_of("."));
+    if (!fs::exists(filepath)) {
+        return false;
+    }
+
+    std::pair<fastring, fastring> sp = path::split(filepath);
+    if (sp.first.empty()) {
+        ELOG << "the filepath not start with /";
+        return false;
+    }
+
+    // 获取一个可用不存在的名字路径
+    // /a/b/c/d.txt -> /a/b/c/d(1).txt; /a/b/c/d -> /a/b/c/d(1)
+    fastring tmpPath = filepath;
+    fastring suffix = path::ext(filepath);
+    fastring org = sp.second.replace(suffix, "");
+    fastring tmpName;
     int n = 1;
-    fastring tmpName = index >= path.size() ?  path : path.substr(0, path.find_last_of("."));
     do {
-        tmpName += " " + QString::number(n).toStdString();
-        path = tmpName + suffix;
-    } while (!fs::exists(path));
-    return path;
+        tmpName = org + "(" << n << ")" + suffix;
+        tmpPath = path::join(sp.first, tmpName);
+        n++;
+    } while (fs::exists(tmpPath));
+
+    LOG << "reacquire " << filepath << " -> " << tmpPath;
+
+    *newpath = tmpPath;
+    return true;
 }
