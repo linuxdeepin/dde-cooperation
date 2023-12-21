@@ -69,7 +69,7 @@ private:
     int queueCount() const;
     void setFileName(const fastring &name, const fastring &acName);
     fastring acName(const fastring &name);
-    fastring getSaveFullpath(const fastring &filename);
+    fastring getSaveFullpath(const fastring &rootdir, const fastring &filename);
 
     void scanPath(const fastring root,const fastring path, const bool acTotal);
     void readPath(fastring path, fastring root, const bool acTotal);

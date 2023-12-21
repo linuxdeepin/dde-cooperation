@@ -244,6 +244,7 @@ struct FileTransResponse {
 struct FileTransBlock {
     int32 job_id;
     int32 file_id;
+    fastring rootdir;
     fastring filename;
     uint32 blk_id;
     int32 flags;
@@ -252,6 +253,7 @@ struct FileTransBlock {
     void from_json(const co::Json& _x_) {
         job_id = (int32)_x_.get("job_id").as_int64();
         file_id = (int32)_x_.get("file_id").as_int64();
+        rootdir = _x_.get("rootdir").as_c_str();
         filename = _x_.get("filename").as_c_str();
         blk_id = (uint32)_x_.get("blk_id").as_int64();
         flags = (int32)_x_.get("flags").as_int64();
@@ -262,6 +264,7 @@ struct FileTransBlock {
         co::Json _x_;
         _x_.add_member("job_id", job_id);
         _x_.add_member("file_id", file_id);
+        _x_.add_member("rootdir", rootdir);
         _x_.add_member("filename", filename);
         _x_.add_member("blk_id", blk_id);
         _x_.add_member("flags", flags);

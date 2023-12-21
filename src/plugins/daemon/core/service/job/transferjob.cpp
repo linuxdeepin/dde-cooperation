@@ -101,7 +101,7 @@ fastring TransferJob::acName(const fastring &name)
     return _file_name_maps.value(name);
 }
 
-fastring TransferJob::getSaveFullpath(const fastring &filename)
+fastring TransferJob::getSaveFullpath(const fastring &rootdir, const fastring &filename)
 {
     // 第一层子目录已存在则尝试获取已重命名后的名字，比如 abc/ddd/eee.txt -> abc(1)/ddd/eee.txt
     auto acfilename = filename;
@@ -120,7 +120,7 @@ fastring TransferJob::getSaveFullpath(const fastring &filename)
         }
     }
 
-    fastring fullpath = path::join(_save_fulldir, acfilename);
+    fastring fullpath = path::join(rootdir, acfilename);
     return fullpath;
 }
 
@@ -233,6 +233,13 @@ void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
         DLOG << "This job has mark cancel, stop handle data.";
         return;
     }
+
+    if (_writejob) {
+        // 更新对端发送文件根目录为本地保存目录
+        block->rootdir.clear();
+        block->rootdir = (_save_fulldir);
+    }
+
     QWriteLocker g(&_queque_mutex);
     _block_queue.enqueue(block);
 }
@@ -291,7 +298,7 @@ void TransferJob::handleBlockQueque()
                                           : Util::encodeBase64(block->filename.c_str());
 
             //真实全路径，写文件和通知
-            fullpath = getSaveFullpath(_writejob ? filename : block->filename);
+            fullpath = getSaveFullpath(block->rootdir, _writejob ? filename : block->filename);
             if (needReacquire) {
                 // 跨端：需重新命名已存在文件
                 fastring newPath;
@@ -312,7 +319,7 @@ void TransferJob::handleBlockQueque()
 
             if (reacquired && !exception) {
                 //创建文件成功，记录文件名对应的新名称
-                auto ft = fullpath.replace(_save_fulldir + "/", "");
+                auto ft = fullpath.replace(block->rootdir + "/", "");
                 DLOG << "record: " << block->filename << " to:" << ft;
                 setFileName(block->filename, ft);
             }
@@ -435,6 +442,7 @@ void TransferJob::scanPath(const fastring root, const fastring path, const bool 
         if (!acTotal) {
             QSharedPointer<FSDataBlock> block(new FSDataBlock);
             block->job_id = _jobid;
+            block->rootdir = root;
             auto file = path;
             block->filename = file.replace(root, "");
             block->blk_id = 0;
@@ -495,11 +503,16 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         return;
     }
 
+    // 文件所在根目录
+    auto file = filepath;
+    auto root = file.replace(subname, "");
+
     if (file_size <= 0) {
         // error file or 0B file.
         QSharedPointer<FSDataBlock> block(new FSDataBlock);
         block->job_id = _jobid;
         block->file_id = fileid;
+        block->rootdir = root;
         block->filename = subname;
         block->blk_id = 0;
         block->data_size = 0;
@@ -542,6 +555,7 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
         if (self)
             block->job_id = self->_jobid;
         block->file_id = fileid;
+        block->rootdir = root;
         block->filename = subname;
         block->blk_id = block_id;
         // 判断文件刚开始读取
@@ -615,6 +629,7 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
     FileTransBlock file_block;
     file_block.job_id = (_jobid);
     file_block.file_id = (block->file_id);
+    file_block.rootdir = ""; // 重置文件根目录
     file_block.filename = (block->filename.c_str());
     file_block.blk_id = (static_cast<uint>(block->blk_id));
     file_block.flags = block->flags;
