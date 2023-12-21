@@ -76,6 +76,7 @@ object FileTransResponse {
 object FileTransBlock {
   int32 job_id // job id
   int32 file_id //
+  string rootdir // 文件的读取或保存路径
   string filename // 相对于TransJob中path的相对路径
   uint32 blk_id // 拷贝的块id
   int32 flags // 文件操作标志

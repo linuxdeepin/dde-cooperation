@@ -29,6 +29,7 @@ object FSResult {
 object FSDataBlock {
     int32 job_id
     int32 file_id
+    string rootdir // 文件的读取或保存路径
     string filename // 相对于TransJob中path的相对路径
     uint32 blk_id
     int32 flags // 标志位，所有文件读取完成1（data_size 也是0）
