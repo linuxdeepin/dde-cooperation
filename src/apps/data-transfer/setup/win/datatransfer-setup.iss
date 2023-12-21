@@ -3,7 +3,7 @@
 
 #define BuildDir "D:\work\pre-release\data-transfer-inno_release"
 #define MyAppName "deepin-datatransfer"
-#define MyAppVersion "0.4.4"
+#define MyAppVersion "0.5.0"
 #define MyAppPublisher "Uniontech, Inc."
 #define MyAppURL "https://www.deepin.org/"
 #define MyAppExeName "datatransfer.vbs"
@@ -46,7 +46,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 
 [CustomMessages]
-chinesesimplified.CmAppName=深度-数据迁移
+chinesesimplified.CmAppName=数据迁移
 chinesesimplified.CmAutoStart=开机启动
 english.CmAppName=deepin-datatransfer
 english.CmAutoStart=Automatically launch after startup
