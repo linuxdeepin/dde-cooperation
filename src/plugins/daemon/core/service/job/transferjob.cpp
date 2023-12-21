@@ -219,6 +219,7 @@ fastring TransferJob::getAppName()
 
 void TransferJob::cancel(bool notify)
 {
+    DLOG << "job cancel: " << notify;
     if (notify) {
         atomic_cas(&_status, STARTED, CANCELING);   // 如果运行，则赋值取消
     } else {
@@ -229,8 +230,9 @@ void TransferJob::cancel(bool notify)
 
 void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
 {
-    if (_status == CANCELING) {
-        DLOG << "This job has mark cancel, stop handle data.";
+    QWriteLocker g(&_queque_mutex);
+    if (_status == CANCELING || _status == STOPED) {
+        DLOG << "This job has mark cancel or stoped, stop handle data.";
         return;
     }
 
@@ -240,7 +242,6 @@ void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
         block->rootdir = (_save_fulldir);
     }
 
-    QWriteLocker g(&_queque_mutex);
     _block_queue.enqueue(block);
 }
 
