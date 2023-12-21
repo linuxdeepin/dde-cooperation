@@ -13,8 +13,6 @@ Build-Depends:
  qtbase5-dev,
  libssl-dev,
  libzip-dev,
- uuid-dev,
- dde-file-manager-dev,
  libcurl4-openssl-dev,
  libxtst-dev,
  libavahi-compat-libdnssd-dev,
@@ -32,17 +30,15 @@ Homepage: http://www.deepin.org
 Package: dde-cooperation-dev
 Section: libdevel
 Architecture: any
-Multi-Arch: same
 Depends: dde-cooperation (= ${binary:Version}), ${misc:Depends}
-Description: Dev package for deepin cooperation project
- Dev package for deepin cooperation project
+Description: Development package for deepin cooperation frontend
+ This package contains the header files and static libraries
 
 Package: dde-cooperation-daemon
 Architecture: any
-Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Deepin cooperation backend
- Deepin cooperation backend
+ All cooperation related application's backend server
 
 Package: deepin-data-transfer
 Architecture: any
