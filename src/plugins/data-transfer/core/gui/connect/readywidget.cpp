@@ -190,6 +190,8 @@ void ReadyWidget::initUI()
 
 void ReadyWidget::tryConnect()
 {
+    tiptextlabel->setText(
+            QString("<font size='3' color='#000000'>%1</font>").arg(tr("connect...")));
     tiptextlabel->setVisible(true);
     setnextButEnable(false);
 

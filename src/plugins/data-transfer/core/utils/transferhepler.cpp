@@ -334,7 +334,8 @@ bool TransferHelper::checkSize(const QString &filepath)
         return false;
     auto sizestr = jsonObj["user_data"].toString();
     auto size = static_cast<int>(QVariant(sizestr).toLongLong() / 1024 / 1024 / 1024) * 2;
-    LOG << sizestr.toStdString() << "   jsonObj[ user_data ];" << size;
+    LOG << "The actual size is " << sizestr.toStdString() << "B "
+        << "Two times the space needs to be reserved" << size << "G";
     int remainSize = getRemainSize();
     if (size > remainSize) {
         LOG << "outOfStorage" << size;

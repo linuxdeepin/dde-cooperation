@@ -103,7 +103,7 @@ void ConnectWidget::initConnectLayout()
 
     iconLabel->setPixmap(QIcon(":/icon/computer.svg").pixmap(96, 96));
 
-    ipLabel->setStyleSheet("background-color: rgba(0, 129, 255, 0.2); border-radius: 16;");
+    ipLabel->setStyleSheet("background-color: rgba(0, 129, 255, 0.1); border-radius: 16; border: 1px solid rgba(0, 129, 255, 0.2);");
     QString ip = QString("<font size=12px >%1： </font><span style='font-size: 17px; font-weight: 600;'>%2</span>")
                          .arg(tr("Local IP"))
                          .arg(ipaddress);
@@ -147,6 +147,7 @@ void ConnectWidget::initConnectLayout()
     tipfont.setPointSize(8);
     refreshLabel->setFont(tipfont);
     refreshLabel->setAlignment(Qt::AlignBottom);
+    refreshLabel->setFixedHeight(55);
     refreshLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Refresh")));
 
     tipLabel->setFont(tipfont);
@@ -222,14 +223,14 @@ void ConnectWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
+        setStyleSheet("background-color: rgba(255,255,255,1); border-radius: 10px;");
         backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                   "background-color: lightgray;"
                                   "}");
 
     } else {
         // dark
-        setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
+        setStyleSheet("background-color: rgba(37, 37, 37,1); border-radius: 10px;");
         backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                   "opacity: 1;"
                                   "background-color: rgba(255,255,255, 0.1);"
