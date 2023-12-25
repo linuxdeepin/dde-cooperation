@@ -242,9 +242,10 @@ void UploadFileFrame::initUI()
     textLabel->setFont(tipfont);
     connect(displayLabel, &QLabel::linkActivated, this, &UploadFileFrame::uploadFile);
 
-    QToolButton *closeBtn = new QToolButton(this);
-    closeBtn->setIcon(QIcon::fromTheme(":/icon/tab_close_normal.svg"));
-    closeBtn->setStyleSheet(".QToolButton{background-color: rgba(0, 0, 0, 0);border-style: none;}");
+    QPushButton *closeBtn = new QPushButton(this);
+    closeBtn->setIcon(QIcon(":/icon/tab_close_normal.svg"));
+    closeBtn->setWindowOpacity(1.0);
+    closeBtn->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
     closeBtn->setIconSize(QSize(35, 35));
     closeBtn->setGeometry(270, 55, 35, 35);
     closeBtn->setVisible(false);
@@ -270,7 +271,7 @@ void UploadFileFrame::initUI()
     mainLayout->addLayout(fileHLayout);
     mainLayout->addSpacing(70);
 
-    connect(closeBtn, &QToolButton::clicked, this, [this] {
+    connect(closeBtn, &QPushButton::clicked, this, [this] {
         emit updateUI(uploadStatus::Initial);
     });
 
@@ -323,7 +324,7 @@ void UploadFileFrame::initStyleSheet()
 void UploadFileFrame::initFileFrame()
 {
     fileFrame = new QFrame(this);
-    fileFrame->setStyleSheet(".QFrame{background-color: rgba(0, 0, 0, 0.2);border-style: none; border-radius: 10px;}");
+    fileFrame->setStyleSheet(".QFrame{background-color: rgba(0, 0, 0, 0.1);border-style: none; border-radius: 10px;}");
     fileFrame->setFixedSize(124, 111);
     fileFrame->setVisible(false);
 

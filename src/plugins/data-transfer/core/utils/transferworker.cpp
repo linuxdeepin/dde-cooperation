@@ -264,10 +264,10 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
         break;
     }
     case FILE_TRANS_SPEED: {
-        int64_t increment = (param.current - _file_stats.all_current_size) * 1000; // 转换为毫秒速度
+        int64_t increment = (param.current - _file_stats.all_current_size) * 1000;   // 转换为毫秒速度
         int64_t time_spend = param.millisec - _file_stats.cast_time_ms;
         if (time_spend > 0) {
-            float speed = increment  / 1024 / time_spend;
+            float speed = increment / 1024 / time_spend;
             if (speed > 1024) {
                 LOG << filepath.toStdString() << " SPEED: " << speed / 1024 << " MB/s";
             } else {
@@ -354,7 +354,7 @@ QString TransferHandle::getConnectPassWord()
 
 bool TransferHandle::cancelTransferJob()
 {
-    if (!_backendOK) return false;
+    if (!_backendOK || _job_maps.isEmpty()) return false;
 
     int jobid = _job_maps.firstKey();
     return TransferWoker::instance()->cancelTransferJob(jobid);

@@ -71,24 +71,42 @@ bool UnzipWorker::isValid(QString filepath)
     const char *zipFilePath = filepath.toLocal8Bit().constData();
     struct zip *z = zip_open(zipFilePath, 0, nullptr);
 
-    if (z) {
-        int num_files = zip_get_num_files(z);
-        LOG << "Number of files in ZIP file:" << num_files;
-
-        for (int i = 0; i < num_files; i++) {
-            struct zip_stat st;
-            zip_stat_init(&st);
-            zip_stat_index(z, static_cast<zip_uint64_t>(i), 0, &st);
-            const char *jsonfile = "transfer.json";
-            if (strcmp(st.name, jsonfile) == 0)
-                return true;
-        }
-        zip_close(z);
-        return false;
-    } else {
-        LOG << "Unable to open ZIP file";
+    if (!z) {
+        WLOG << "Unable to open ZIP file";
         return false;
     }
+
+    const char *jsonfile = "transfer.json";
+
+    zip_int64_t fileIndex = zip_name_locate(z, jsonfile, 0);
+    if (fileIndex < 0) {
+        WLOG << "Failed to locate specific file in zip\n";
+        zip_close(z);
+        return false;
+    }
+
+    struct zip_file *file = zip_fopen_index(z, static_cast<zip_uint64_t>(fileIndex), 0);
+    if (file == nullptr) {
+        WLOG << "Failed to open file in zip\n";
+        zip_close(z);
+        return 1;
+    }
+
+    // 读取json文件数据
+    char buffer[1024];
+    zip_int64_t bytesRead;
+
+    QString tempfile = QDir::homePath() + "/Downloads/transfer.json";
+    FILE *outputFile = fopen(tempfile.toLocal8Bit().constData(), "wb");
+    while (((bytesRead = zip_fread(file, buffer, sizeof(buffer))) > 0)) {
+        fwrite(buffer, 1, static_cast<size_t>(bytesRead), outputFile);
+    }
+    fclose(outputFile);
+
+    zip_close(z);
+    bool res = TransferHelper::instance()->checkSize(tempfile);
+    QFile::remove(tempfile);
+    return res;
 }
 
 bool UnzipWorker::extract()

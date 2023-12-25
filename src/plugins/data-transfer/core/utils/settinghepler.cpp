@@ -108,6 +108,9 @@ bool SettingHelper::setWallpaper(const QString &filepath)
     if (reply.type() == QDBusMessage::ReplyMessage) {
         DLOG << "SetMonitorBackground method called successfully";
         emit TransferHelper::instance()->addResult(tr("My Wallpaper"), true, tr("Transfer completed"));
+        QFileInfo info(filepath);
+        QString destination = QDir::homePath() + "/Pictures/ConvertedWallpaper.png";
+        moveFile(filepath, destination);
         return true;
     } else {
         DLOG << "Failed to call SetMonitorBackground method";
