@@ -1,10 +1,4 @@
 ﻿{
-    "360安全卫士": {
-        "feature": [
-            "360安全卫士"
-        ],
-        "packageName": "com.qihoo.360safe"
-    },
     "360安全浏览器": {
         "feature": [
             "360安全浏览器"

@@ -47,7 +47,7 @@ public:
     void Retransfer(const QString jsonstr);
 #else
 public:
-    int getRemainSize();
+    static int getRemainSize();
     bool checkSize(const QString &filepath);
     void setting(const QString &filepath);
     void recordTranferJob(const QString &filepath);

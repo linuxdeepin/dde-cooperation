@@ -8,7 +8,7 @@
 #include "utils/cooperationguihelper.h"
 
 #ifdef linux
-#include <DPalette>
+#    include <DPalette>
 #endif
 
 #include <QVariant>
@@ -26,7 +26,7 @@ const char *Kno_network = "no_network";
 const char *Knot_find_device = "not_find_device";
 #else
 const char *Kfind_device = ":/icons/deepin/builtin/light/icons/find_device_277px.svg";
-const char *Kno_network = ":/icons/deepin/builtin/light/icons/no_network_150px.svg";
+const char *Kno_network = ":/icons/deepin/builtin/icons/dark@2x.png";
 const char *Knot_find_device = ":/icons/deepin/builtin/light/icons/not_find_device_150px.svg";
 #endif
 

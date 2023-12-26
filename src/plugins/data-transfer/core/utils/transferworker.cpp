@@ -191,9 +191,11 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
 #ifndef WIN32
         json::Json message;
         QString unfinishJson;
+        int remainSpace = TransferHelper::getRemainSize();
         bool unfinish = TransferHelper::instance()->isUnfinishedJob(unfinishJson);
         if (unfinish) {
             message.add_member("unfinish_json", unfinishJson.toStdString());
+            message.add_member("remaining_space", remainSpace);
             sendMessage(message);
         }
 #endif
@@ -325,6 +327,10 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
         QString undoneJsonstr = miscJson.get("unfinish_json").as_c_str();
         // 弹出前次迁移未完成对话框
         emit TransferHelper::instance()->unfinishedJob(undoneJsonstr);
+    }
+
+    if (miscJson.has_member("remaining_space")) {
+        int remainSpace = miscJson.get("remaining_space").as_int();
     }
 }
 
