@@ -116,5 +116,9 @@
         <file>fileResource/apps.json</file>
         <file>icon/check_black.svg</file>
         <file>icon/success_16.svg</file>
+        <file>icon/icon_512.svg</file>
+        <file>icon/icon_256.svg</file>
+        <file>icon/icon_128.svg</file>
+        <file>icon/icon_96.svg</file>
     </qresource>
 </RCC>

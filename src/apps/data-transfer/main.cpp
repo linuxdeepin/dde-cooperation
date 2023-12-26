@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     app.setApplicationName("deepin-data-transfer");
     app.setApplicationDisplayName(app.translate("Application", "UOS data transfer"));
     app.setApplicationVersion(APP_VERSION);
-    QIcon icon(":/icons/icon.svg");
+    QIcon icon(":/icons/icon_256.svg");
     app.setProductIcon(icon);
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" );
     app.setApplicationDescription(app.translate("Application", "UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system."));

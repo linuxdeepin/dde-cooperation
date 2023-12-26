@@ -67,15 +67,21 @@ void UploadFileWidget::initUI()
     backButton->setFixedSize(120, 35);
     connect(backButton, &QToolButton::clicked, this, &UploadFileWidget::backPage);
 
-    QToolButton *nextButton = new QToolButton(this);
+    nextButton = new QToolButton(this);
     QPalette palette = nextButton->palette();
     palette.setColor(QPalette::ButtonText, Qt::white);
     nextButton->setPalette(palette);
     nextButton->setText(tr("Next"));
     nextButton->setFixedSize(120, 35);
-    nextButton->setStyleSheet(".QToolButton{background-color: rgba(0, 125, 255, 0.2);border-radius: 8px;}");
+
+    nextButton->setStyleSheet("QToolButton[Theme=\"true\"][Enabled=\"true\"] { background-color: rgba(0,152, 255,1);border-radius: 8px; }"
+                              "QToolButton[Theme=\"true\"][Enabled=\"false\"] {background-color: rgba(0,152, 255,0.5);border-radius: 8px; }"
+                              "QToolButton[Theme=\"false\"][Enabled=\"true\"] { background-color: rgba(0,152, 255,0.6);color: lightgray;border-radius: 8px; }"
+                              "QToolButton[Theme=\"false\"][Enabled=\"false\"] { background-color: rgba(0,152, 255,0.3);color: lightgray; border-radius: 8px; }");
+
     nextButton->setEnabled(false);
-    connect(nextButton, &QToolButton::clicked, this, [this, nextButton]() {
+    updataNextBut();
+    connect(nextButton, &QToolButton::clicked, this, [this]() {
         if (nextButton->text() == tr("Retry")) {
             emit uploadFileFrame->updateUI(uploadStatus::Initial);
             tipLabel->setVisible(false);
@@ -116,19 +122,26 @@ void UploadFileWidget::initUI()
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
 
-    connect(uploadFileFrame, &UploadFileFrame::updateUI, this, [this, nextButton, indelabel](int status) {
+    connect(uploadFileFrame, &UploadFileFrame::updateUI, this, [this, indelabel](int status) {
         tipLabel->setVisible(false);
         if (status == uploadStatus::valid) {
             nextButton->setEnabled(true);
             indelabel->setIndex(2);
-            nextButton->setStyleSheet(".QToolButton{background-color: rgba(0, 125, 255, 1);border-radius: 8px;}");
         } else {
             indelabel->setIndex(1);
             nextButton->setEnabled(false);
             nextButton->setText(tr("Next"));
-            nextButton->setStyleSheet(".QToolButton{background-color: rgba(0,152, 255, 0.2);border-radius: 8px;}");
         }
+        updataNextBut();
     });
+}
+
+void UploadFileWidget::updataNextBut()
+{
+    nextButton->setProperty("Theme", currentState);
+    nextButton->setProperty("Enabled", nextButton->isEnabled());
+    nextButton->style()->unpolish(nextButton);
+    nextButton->style()->polish(nextButton);
 }
 
 bool UploadFileWidget::checkBackupFile(const QString &filePath)
@@ -182,6 +195,7 @@ void UploadFileWidget::themeChanged(int theme)
     //light
     if (theme == 1) {
         setStyleSheet(".UploadFileWidget{background-color: white; border-radius: 10px;}");
+
         backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                                   "background-color: lightgray;"
                                   "}");
@@ -190,6 +204,7 @@ void UploadFileWidget::themeChanged(int theme)
                                        "border-style: dashed;"
                                        "border-width: 2px;"
                                        "border-color: rgba(0, 0, 0, 0.06);}");
+       currentState = true;
     } else {
         //dark
         setStyleSheet(".UploadFileWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
@@ -203,7 +218,9 @@ void UploadFileWidget::themeChanged(int theme)
                                        "border-style: dashed;"
                                        "border-width: 2px;"
                                        "border-color: rgba(255,255,255, 0.1);}");
+         currentState = false;
     }
+    updataNextBut();
 }
 
 UploadFileFrame::UploadFileFrame(QWidget *parent)

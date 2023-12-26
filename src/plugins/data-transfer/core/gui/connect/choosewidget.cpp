@@ -38,7 +38,7 @@ void ChooseWidget::initUI()
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
 
-    QLabel *titileLabel = new QLabel(tr("Export to local directory"), this);
+    QLabel *titileLabel = new QLabel(tr("Select a transfer way"), this);
     QFont font;
     font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
@@ -98,17 +98,17 @@ void ChooseWidget::initUI()
     mainLayout->addLayout(indexLayout);
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
-            [this, tipiconlabel, tiptextlabel](bool online) {
-                if (online) {
-                    tipiconlabel->setVisible(false);
-                    tiptextlabel->setVisible(false);
-                } else {
-                    tipiconlabel->setVisible(true);
-                    tiptextlabel->setVisible(true);
-                    winItem->checked = false;
-                }
-                winItem->setEnable(online);
-            });
+    [this, tipiconlabel, tiptextlabel](bool online) {
+        if (online) {
+            tipiconlabel->setVisible(false);
+            tiptextlabel->setVisible(false);
+        } else {
+            tipiconlabel->setVisible(true);
+            tiptextlabel->setVisible(true);
+            winItem->checked = false;
+        }
+        winItem->setEnable(online);
+    });
 
     connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
     connect(winItem, &ModeItem::clicked, [this](int state) {
@@ -193,7 +193,6 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
     iconLabel->setPixmap(icon.pixmap(150, 120));
     iconLabel->setStyleSheet(".QLabel{background-color: rgba(0, 0, 0, 0);}");
     iconLabel->setAlignment(Qt::AlignCenter);
-
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
@@ -205,6 +204,7 @@ ModeItem::~ModeItem() {}
 void ModeItem::setEnable(bool able)
 {
     enable = able;
+    setEnabled(able);
     update();
 }
 
@@ -245,10 +245,12 @@ void ModeItem::paintEvent(QPaintEvent *event)
 {
     QPainter paint(this);
     paint.setRenderHint(QPainter::Antialiasing);
-    if (!enable)
-        paint.setOpacity(0.6);
-    else
+    if (!enable) {
+        paint.setOpacity(0.5);
+    } else {
         paint.setOpacity(1);
+    }
+
     if (checked) {
         paint.setPen(QPen(QColor(0, 129, 255, 255), 5));
         paint.drawEllipse(12, 12, 16, 16);
