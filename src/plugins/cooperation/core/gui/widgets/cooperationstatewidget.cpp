@@ -44,6 +44,9 @@ void LookingForDeviceWidget::initUI()
     iconLabel->setFixedSize(277, 277);
     QIcon icon = QIcon::fromTheme(Kfind_device);
     iconLabel->setPixmap(icon.pixmap(277, 277));
+    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, [icon, iconLabel] {
+        iconLabel->setPixmap(icon.pixmap(277, 277));
+    });
 
     QLabel *tipsLabel = new QLabel(tr("Looking for devices"), this);
 
@@ -71,6 +74,9 @@ void NoNetworkWidget::initUI()
     iconLabel->setFixedSize(150, 150);
     QIcon icon = QIcon::fromTheme(Kno_network);
     iconLabel->setPixmap(icon.pixmap(150, 150));
+    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, [icon, iconLabel] {
+        iconLabel->setPixmap(icon.pixmap(150, 150));
+    });
 
     QLabel *tipsLabel = new QLabel(tr("Please connect to the network"), this);
 
@@ -104,6 +110,9 @@ void NoResultWidget::initUI()
     iconLabel->setFixedSize(150, 150);
     QIcon icon = QIcon::fromTheme(Knot_find_device);
     iconLabel->setPixmap(icon.pixmap(150, 150));
+    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, [icon, iconLabel] {
+        iconLabel->setPixmap(icon.pixmap(150, 150));
+    });
 
     QLabel *tipsLabel = new QLabel(tr("No device found"), this);
     auto font = tipsLabel->font();
