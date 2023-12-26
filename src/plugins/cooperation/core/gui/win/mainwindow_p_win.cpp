@@ -23,7 +23,7 @@ void MainWindowPrivate::initWindow()
 
     workspaceWidget = new WorkspaceWidget(q);
     q->setCentralWidget(workspaceWidget);
-    workspaceWidget->setStyleSheet("background-color: rgba(0,0,0,0);"
+    workspaceWidget->setStyleSheet("background-color: rgba(230,230,230, 0.1);"
                                    "border-bottom-right-radius: 10px;"
                                    "border-bottom-left-radius: 10px;");
 }
@@ -32,7 +32,7 @@ void MainWindowPrivate::paintEvent(QPaintEvent *event)
 {
     QPainter painter(q);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setBrush(QColor(220, 220, 220));
+    painter.setBrush(QColor(230, 230, 230));
     painter.setPen(Qt::NoPen);
 
     QPainterPath path;

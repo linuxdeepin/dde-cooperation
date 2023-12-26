@@ -33,11 +33,11 @@ void FileChooserEdit::initUI()
     margins.setRight(8);
     pathLabel->setContentsMargins(margins);
 
-    fileChooserBtn = new CooperationSuggestButton(this);
-    fileChooserBtn->setFocusPolicy(Qt::NoFocus);
 #ifdef linux
+    fileChooserBtn = new CooperationSuggestButton(this);
     fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
 #else
+    fileChooserBtn = new FileChooserBtn(this);
     fileChooserBtn->setStyleSheet(
             "QPushButton {"
             "   background-color: #0098FF;"
@@ -45,9 +45,8 @@ void FileChooserEdit::initUI()
             "   color: white;"
             "   font-weight: bold;"
             "}");
-    fileChooserBtn->setText(" ...");
 #endif
-
+    fileChooserBtn->setFocusPolicy(Qt::NoFocus);
     connect(fileChooserBtn, &QPushButton::clicked, this, &FileChooserEdit::onButtonClicked);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;

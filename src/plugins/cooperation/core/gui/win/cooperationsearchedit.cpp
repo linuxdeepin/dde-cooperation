@@ -28,7 +28,7 @@ CooperationSearchEdit::CooperationSearchEdit(QWidget *parent) : QFrame(parent)
 
     searchText = new QLabel(this);
     searchText->setText(tr("Search"));
-    searchText->setGeometry(205, 7, 50, 20);
+    searchText->setGeometry(213, 7, 50, 20);
     QFont font;
     font.setPointSize(11);
     searchText->setFont(font);
@@ -55,7 +55,7 @@ CooperationSearchEdit::CooperationSearchEdit(QWidget *parent) : QFrame(parent)
 
     QHBoxLayout *mainLayout = new QHBoxLayout();
     setLayout(mainLayout);
-    mainLayout->addSpacing(40);
+    mainLayout->addSpacing(25);
     mainLayout->addWidget(searchEdit);
     mainLayout->setMargin(0);
     mainLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
@@ -77,13 +77,13 @@ bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
     if (obj == searchEdit) {
         QIcon searchicon(iconpath);
         if (event->type() == QEvent::FocusIn) {
-            searchIcon->setPixmap(searchicon.pixmap(18, 18));
-            searchIcon->setGeometry(15, 8, 20, 20);
+            searchIcon->setPixmap(searchicon.pixmap(17, 17));
+            searchIcon->setGeometry(15, 7, 20, 20);
             searchText->setVisible(false);
             searchEdit->setPlaceholderText(placeholderText);
         } else if (event->type() == QEvent::FocusOut && searchEdit->text().isEmpty()) {
-            searchIcon->setPixmap(searchicon.pixmap(10, 10));
-            searchIcon->setGeometry(185, 8, 20, 20);
+            searchIcon->setPixmap(searchicon.pixmap(17, 17));
+            searchIcon->setGeometry(190, 7, 20, 20);
             searchText->setVisible(true);
             searchEdit->setPlaceholderText("");
         }
