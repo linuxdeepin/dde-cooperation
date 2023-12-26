@@ -65,9 +65,13 @@
 <context>
     <name>ChooseWidget</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="41"/>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="35"/>
         <source>Export to local directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="41"/>
+        <source>Select a transfer way</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -179,17 +183,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="150"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="151"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="158"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="159"/>
         <source>The code will be expired in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="158"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="159"/>
         <source>please input connect code as soon as possible</source>
         <translation type="unfinished"></translation>
     </message>
@@ -416,53 +420,54 @@
 <context>
     <name>ReadyWidget</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="48"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="49"/>
         <source>Ready to connect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="51"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="56"/>
         <source>IP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="58"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="63"/>
         <source>Please input the IP of UOS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="79"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="84"/>
         <source>Please open data transfer on UOS, and get the IP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="85"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="90"/>
         <source>Connect code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="95"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="100"/>
         <source>Please input the connect code on UOS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="112"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="117"/>
         <source>Back</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="130"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="180"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="34"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="136"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="194"/>
         <source>connect...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="139"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="145"/>
         <source>Connect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="278"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="287"/>
         <source>Failed to connect, please check your input</source>
         <translation type="unfinished"></translation>
     </message>
@@ -578,62 +583,62 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="110"/>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="142"/>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="230"/>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="264"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="145"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="233"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="267"/>
         <source>Transfer completed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="129"/>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="139"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="132"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="142"/>
         <source>Browser Bookmarks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="142"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="145"/>
         <source>BrowserBookMark</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="172"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="175"/>
         <source>is installed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="196"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="199"/>
         <source>Installing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="223"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="226"/>
         <source>Installing Progress %1 %</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="264"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="267"/>
         <source>Transfer failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="129"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="132"/>
         <source>Format error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="139"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="142"/>
         <source>Setup failed, configuration can be imported manually</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="153"/>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="184"/>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="235"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="156"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="187"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="245"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="248"/>
         <source>Transfer Complete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -707,15 +712,15 @@ UOS, helping you seamlessly replace your system.</source>
     <name>TransferringWidget</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="54"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="249"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="280"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="274"/>
         <source>Transferring...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="77"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="241"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="279"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="273"/>
         <source>Calculationing...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -732,34 +737,29 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="203"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="251"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="245"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="220"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="280"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="286"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="292"/>
         <source>Transfering</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
-        <source>Transfer completed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="255"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="249"/>
         <source>Transfer will be completed in %1 secondes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="258"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="252"/>
         <source>Transfer will be completed in --</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="286"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="280"/>
         <source>Decompressing</source>
         <translation type="unfinished"></translation>
     </message>
@@ -767,8 +767,8 @@ UOS, helping you seamlessly replace your system.</source>
 <context>
     <name>UnzipWorker</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="111"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="122"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="129"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="140"/>
         <source>Decompressing</source>
         <translation type="unfinished"></translation>
     </message>
@@ -776,38 +776,38 @@ UOS, helping you seamlessly replace your system.</source>
 <context>
     <name>UploadFileFrame</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="229"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="246"/>
         <source>Drag file here </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="234"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="287"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="251"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="305"/>
         <source>Import file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="286"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="304"/>
         <source>Drag file here</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="304"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="322"/>
         <source>Only .zip is supported, please</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="305"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="323"/>
         <source>reselect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="360"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="378"/>
         <source>select zip file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="360"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="378"/>
         <source>ZIP file (*.zip)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -831,23 +831,23 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="74"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="128"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
         <source>Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="79"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="86"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="85"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="92"/>
         <source>Retry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="138"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="151"/>
         <source>The file is corrupted and cannot be migrated. Please replace it with a backup file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="149"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="162"/>
         <source>Insufficient space on UOS. Please reserve at least %1G of space and try again.</source>
         <translation type="unfinished"></translation>
     </message>

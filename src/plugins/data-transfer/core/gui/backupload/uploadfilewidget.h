@@ -59,14 +59,16 @@ public slots:
 
 private:
     void initUI();
-
+    void updataNextBut();
 Q_SIGNALS:
     void Initial();
 
 private:
     QToolButton *backButton { nullptr };
+    QToolButton *nextButton { nullptr };
     QLabel *tipLabel { nullptr };
     UploadFileFrame *uploadFileFrame { nullptr };
+    bool currentState { true };
 };
 
 #endif
