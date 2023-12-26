@@ -162,7 +162,6 @@ void ServiceManager::createBashAndRun()
     outStream << "pidof cooperation-daemon | xargs kill -9;" << endl;
     outStream << "sleep 10;" << endl;
     outStream << "pidof cooperation-daemon | xargs kill -9;" << endl;
-    outStream << "cooperation-daemon -d;" << endl;
 
     outStream.flush();
     file.flush();
