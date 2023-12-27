@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 
 #include <fmt/core.h>
+#include <fmt/format.h>
 #include <google/protobuf/util/time_util.h>
 
 #include <QTcpSocket>
@@ -302,7 +303,7 @@ void FuseClient::handleResponse() noexcept {
 
         Message msg = MessageHelper::parseMessageBody<Message>(buffer.data(), buffer.size());
 
-        qDebug() << fmt::format("message type: {}", msg.payload_case()).data();
+        qDebug() << fmt::format("message type: {}", fmt::underlying(msg.payload_case())).data();
 
         switch (msg.payload_case()) {
         case Message::PayloadCase::kFsMethodGetAttrResponse: {

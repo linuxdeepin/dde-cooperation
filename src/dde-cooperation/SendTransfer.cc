@@ -7,6 +7,7 @@
 #include <fstream>
 
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <QFile>
 #include <QTcpSocket>
@@ -237,7 +238,7 @@ void SendTransfer::dispatcher() {
         buffer = m_conn->read(size);
 
         Message msg = MessageHelper::parseMessageBody<Message>(buffer.data(), buffer.size());
-        qDebug() << fmt::format("message type: {}", msg.payload_case()).data();
+        qDebug() << fmt::format("message type: {}", fmt::underlying(msg.payload_case())).data();
 
         switch (msg.payload_case()) {
         case Message::PayloadCase::kSendFileResponse:

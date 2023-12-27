@@ -11,6 +11,7 @@
 
 #include <uuid/uuid.h>
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <QUdpSocket>
 #include <QTcpServer>
@@ -467,7 +468,7 @@ void Manager::handleReceivedSocketScan() noexcept {
         size -= header_size;
 
         auto base = MessageHelper::parseMessageBody<Message>(buff, size);
-        qDebug() << fmt::format("received packet, type: {}", base.payload_case()).data();
+        qDebug() << fmt::format("received packet, type: {}", fmt::underlying(base.payload_case())).data();
 
         if (!m_deviceSharingSwitch) {
             return;
