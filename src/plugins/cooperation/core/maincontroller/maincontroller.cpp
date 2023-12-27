@@ -52,7 +52,7 @@ void MainController::checkNetworkState()
     }
 }
 
-void MainController::updateDeviceList(const QString &ip, int osType, const QString &info, bool isOnline)
+void MainController::updateDeviceList(const QString &ip, const QString &connectedIp, int osType, const QString &info, bool isOnline)
 {
     if (!this->isOnline)
         return;
@@ -71,6 +71,9 @@ void MainController::updateDeviceList(const QString &ip, int osType, const QStri
         map.insert("OSType", osType);
         auto devInfo = DeviceInfo::fromVariantMap(map);
         if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
+            if (connectedIp == CooperationUtil::localIPAddress())
+                devInfo->setConnectStatus(DeviceInfo::Connected);
+
             // 处理设备的共享属性发生变化情况
             CooperationManager::instance()->checkAndProcessShare(devInfo);
             Q_EMIT deviceOnline({ devInfo });

@@ -123,6 +123,7 @@ void CooperationUtilPrivate::localIPCStart()
                                                   "updateDeviceList",
                                                   Qt::QueuedConnection,
                                                   Q_ARG(QString, QString(nodeInfo.os.ipv4.c_str())),
+                                                  Q_ARG(QString, QString("")),
                                                   Q_ARG(int, nodeInfo.os.os_type),
                                                   Q_ARG(QString, QString("")),
                                                   Q_ARG(bool, param.result));
@@ -142,6 +143,7 @@ void CooperationUtilPrivate::localIPCStart()
                                                   "updateDeviceList",
                                                   Qt::QueuedConnection,
                                                   Q_ARG(QString, QString(nodeInfo.os.ipv4.c_str())),
+                                                  Q_ARG(QString, QString(nodeInfo.os.share_connect_ip.c_str())),
                                                   Q_ARG(int, nodeInfo.os.os_type),
                                                   Q_ARG(QString, QString(appInfo.json.c_str())),
                                                   Q_ARG(bool, param.result));
