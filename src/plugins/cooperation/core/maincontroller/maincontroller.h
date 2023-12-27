@@ -37,7 +37,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void checkNetworkState();
-    void updateDeviceList(const QString &ip, int osType, const QString &info, bool isOnline);
+    void updateDeviceList(const QString &ip, const QString &connectedIp, int osType, const QString &info, bool isOnline);
     void onDiscoveryFinished(const QList<DeviceInfoPointer> &infoList);
     void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 
