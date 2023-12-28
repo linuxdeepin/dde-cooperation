@@ -274,21 +274,26 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
 
 bool SettingHelper::moveFile(const QString &src, QString &dst)
 {
-    QFileInfo srcFileInfo(src);
-    QString dstDir = QFileInfo(dst).path();
     if (QFile::exists(dst)) {
         int i = 1;
-        QString baseName = srcFileInfo.baseName();
-        QString suffix = srcFileInfo.completeSuffix();
-        if (!suffix.isEmpty())
+        QString fileName = dst.split("/").last();
+        QString dstDir = dst.remove(fileName);
+        QStringList filenamelist = fileName.split(".");
+        QString suffix;
+        if (!QFileInfo(src).isDir() && filenamelist.size() >= 2) {
+            suffix = filenamelist.last();
             suffix = "." + suffix;
+        }
+        QString baseName = fileName;
+        baseName = fileName.remove(suffix);
+
         while (QFile::exists(dst)) {
             dst = dstDir + "/" + baseName + "(" + QString::number(i) + ")" + suffix;
             i++;
         }
     }
     QFile f(src);
-    LOG << "moveFile dst: " << src.toStdString() << dst.toStdString();
+    LOG << "moveFile dst: " << src.toStdString() << "   " << dst.toStdString();
     if (f.rename(dst))
         return true;
 

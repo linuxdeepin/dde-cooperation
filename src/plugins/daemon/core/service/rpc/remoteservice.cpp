@@ -102,9 +102,7 @@ SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString 
     req.set_msg(msg.toStdString());
     fastring dt(data.toStdString().c_str(), static_cast<size_t>(data.size()));
     req.set_data(dt.c_str(), dt.size());
-    int retryCount = 0;
 
-retryed:
 #if defined(WIN32)
     co::wait_group wg;
     wg.add(1);
@@ -119,10 +117,6 @@ retryed:
 #endif
 
     if (rpc_controller->ErrorCode() != 0) {
-        retryCount++;
-        if (retryCount <= 3)
-            goto retryed;
-
         res.errorType = INVOKE_FAIL;
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
             << ", error info: " << rpc_controller->ErrorText();
