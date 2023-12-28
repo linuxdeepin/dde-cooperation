@@ -7,6 +7,7 @@
 #include <openssl/err.h>
 #include "co/hook.h"
 #include "co/context/arch.h"
+#include "co/time.h"
 
 namespace ssl {
 
@@ -99,6 +100,10 @@ int shutdown(S* s, int ms) {
     e = SSL_get_error((SSL*)s, 0);
     if (e == SSL_ERROR_SYSCALL || e == SSL_ERROR_SSL) return -1;
 
+#if defined(DISABLE_GO)
+    int timeout = ms * 100;
+#endif
+
     do {
         ERR_clear_error();
         r = SSL_shutdown((SSL*)s);
@@ -109,13 +114,26 @@ int shutdown(S* s, int ms) {
         }
 
         e = SSL_get_error((SSL*)s, r);
+#if defined(DISABLE_GO)
+        if ((e == SSL_ERROR_WANT_WRITE) || (e == SSL_ERROR_WANT_READ)) {
+            if (timeout <= 0) {
+                DLOG << "SSL_shutdown timeout " << r;
+                return r;
+            }
+            sleep::us(10);
+            timeout--;
+            continue;
+        }
+#else
         if (e == SSL_ERROR_WANT_READ) {
             co::io_event ev(fd, co::ev_read);
             if (!ev.wait(ms)) return -1;
         } else if (e == SSL_ERROR_WANT_WRITE) {
             co::io_event ev(fd, co::ev_write);
             if (!ev.wait(ms)) return -1;
-        } else {
+        }
+#endif
+        else {
             DLOG << "SSL_shutdown return " << r << ", error: " << e;
             return r;
         }
@@ -131,7 +149,8 @@ int accept(S* s, int ms) {
     if (fd < 0) return -1;
 
 #if defined(DISABLE_GO)
-    set_non_blocking(fd, 0);
+    int timeout = ms * 100;
+    SSL_set_accept_state((SSL*)s);
 #endif
 
     do {
@@ -144,13 +163,26 @@ int accept(S* s, int ms) {
         }
 
         e = SSL_get_error((SSL*)s, r);
+#if defined(DISABLE_GO)
+        if ((e == SSL_ERROR_WANT_WRITE) || (e == SSL_ERROR_WANT_READ)) {
+            if (timeout <= 0) {
+                DLOG << "SSL_accept timeout " << r;
+                return r;
+            }
+            sleep::us(10);
+            timeout--;
+            continue;
+        }
+#else
         if (e == SSL_ERROR_WANT_READ) {
             co::io_event ev(fd, co::ev_read);
             if (!ev.wait(ms)) return -1;
         } else if (e == SSL_ERROR_WANT_WRITE) {
             co::io_event ev(fd, co::ev_write);
             if (!ev.wait(ms)) return -1;
-        } else {
+        }
+#endif
+        else {
             //DLOG << "SSL_accept return " << r << ", error: " << e;
             return r;
         }
@@ -166,7 +198,7 @@ int connect(S* s, int ms) {
     if (fd < 0) return -1;
 
 #if defined(DISABLE_GO)
-    set_non_blocking(fd, 0);
+    int timeout = ms * 100;
 #endif
 
     do {
@@ -179,13 +211,26 @@ int connect(S* s, int ms) {
         }
 
         e = SSL_get_error((SSL*)s, r);
+#if defined(DISABLE_GO)
+        if ((e == SSL_ERROR_WANT_WRITE) || (e == SSL_ERROR_WANT_READ)) {
+            if (timeout <= 0) {
+                DLOG << "SSL_connect timeout " << r;
+                return r;
+            }
+            sleep::us(10);
+            timeout--;
+            continue;
+        }
+#else
         if (e == SSL_ERROR_WANT_READ) {
             co::io_event ev(fd, co::ev_read);
             if (!ev.wait(ms)) return -1;
         } else if (e == SSL_ERROR_WANT_WRITE) {
             co::io_event ev(fd, co::ev_write);
             if (!ev.wait(ms)) return -1;
-        } else {
+        }
+#endif
+        else {
             //DLOG << "SSL_connect return " << r << ", error: " << e;
             return r;
         }
@@ -201,7 +246,7 @@ int recv(S* s, void* buf, int n, int ms) {
     if (fd < 0) return -1;
 
 #if defined(DISABLE_GO)
-    set_non_blocking(fd, 0);
+    int timeout = ms * 100;
 #endif
 
     do {
@@ -212,18 +257,33 @@ int recv(S* s, void* buf, int n, int ms) {
             //DLOG << "SSL_read return 0, error: " << SSL_get_error(s, 0);
             return 0;
         }
- 
+
         e = SSL_get_error((SSL*)s, r);
+#if defined(DISABLE_GO)
+        if ((e == SSL_ERROR_WANT_WRITE) || (e == SSL_ERROR_WANT_READ)) {
+            if (timeout <= 0) {
+                DLOG << "SSL_read timeout " << r;
+                return r;
+            }
+            sleep::us(10);
+            timeout--;
+            continue;
+        }
+#else
         if (e == SSL_ERROR_WANT_READ) {
             co::io_event ev(fd, co::ev_read);
             if (!ev.wait(ms)) return -1;
         } else if (e == SSL_ERROR_WANT_WRITE) {
             co::io_event ev(fd, co::ev_write);
             if (!ev.wait(ms)) return -1;
-        } else {
+        }
+#endif
+        else {
             //DLOG << "SSL_read return " << r << ", error: " << e;
             return r;
         }
+
+
     } while (true);
 }
 
@@ -236,7 +296,7 @@ int recvn(S* s, void* buf, int n, int ms) {
     if (fd < 0) return -1;
 
 #if defined(DISABLE_GO)
-    set_non_blocking(fd, 0);
+    int timeout = ms * 100;
 #endif
 
     char* p = (char*) buf;
@@ -253,13 +313,26 @@ int recvn(S* s, void* buf, int n, int ms) {
 
         if (r < 0) {
             e = SSL_get_error((SSL*)s, r);
+    #if defined(DISABLE_GO)
+            if ((e == SSL_ERROR_WANT_WRITE) || (e == SSL_ERROR_WANT_READ)) {
+                if (timeout <= 0) {
+                    DLOG << "SSL_read timeout " << r;
+                    return r;
+                }
+                sleep::us(10);
+                timeout--;
+                continue;
+            }
+    #else
             if (e == SSL_ERROR_WANT_READ) {
                 co::io_event ev(fd, co::ev_read);
                 if (!ev.wait(ms)) return -1;
             } else if (e == SSL_ERROR_WANT_WRITE) {
                 co::io_event ev(fd, co::ev_write);
                 if (!ev.wait(ms)) return -1;
-            } else {
+            }
+    #endif
+            else {
                 //DLOG << "SSL_read return " << r << ", error: " << e;
                 return r;
             }
@@ -279,7 +352,7 @@ int send(S* s, const void* buf, int n, int ms) {
     if (fd < 0) return -1;
 
 #if defined(DISABLE_GO)
-    set_non_blocking(fd, 0);
+    int timeout = ms * 100;
 #endif
 
     const char* p = (const char*) buf;
@@ -296,13 +369,26 @@ int send(S* s, const void* buf, int n, int ms) {
 
         if (r < 0) {
             e = SSL_get_error((SSL*)s, r);
+#if defined(DISABLE_GO)
+            if ((e == SSL_ERROR_WANT_WRITE) || (e == SSL_ERROR_WANT_READ)) {
+                if (timeout <= 0) {
+                    DLOG << "SSL_write timeout " << r;
+                    return r;
+                }
+                sleep::us(10);
+                timeout--;
+                continue;
+            }
+#else
             if (e == SSL_ERROR_WANT_READ) {
                 co::io_event ev(fd, co::ev_read);
                 if (!ev.wait(ms)) return -1;
             } else if (e == SSL_ERROR_WANT_WRITE) {
                 co::io_event ev(fd, co::ev_write);
                 if (!ev.wait(ms)) return -1;
-            } else {
+            }
+#endif
+            else {
                 //DLOG << "SSL_write return " << r << ", error: " << e;
                 return r;
             }

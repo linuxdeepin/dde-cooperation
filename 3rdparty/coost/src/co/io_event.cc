@@ -31,6 +31,7 @@ bool io_event::wait(uint32 ms) {
         return true;
     }
 #else
+    sleep::ms(ms);
     return false;
 #endif
 }

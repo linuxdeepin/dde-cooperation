@@ -47,9 +47,9 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     connect(ShareCooperationServiceManager::instance(), &ShareCooperationServiceManager::startServerResult,
             _ipcService, &HandleIpcService::handleShareServerStart, Qt::QueuedConnection);
 
-    _net_check.setInterval(1000);
-    connect(&_net_check, &QTimer::timeout, this, &ServiceManager::checkSelfNetWork);
-    _net_check.start();
+//    _net_check.setInterval(1000);
+//    connect(&_net_check, &QTimer::timeout, this, &ServiceManager::checkSelfNetWork);
+//    _net_check.start();
 }
 
 ServiceManager::~ServiceManager()

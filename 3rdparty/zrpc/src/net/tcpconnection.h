@@ -104,7 +104,7 @@ private:
 
     tcp::Connection *m_serv_conn { nullptr };
     tcp::Client *m_cli_conn { nullptr };
-    int m_trans_timeout { -1 };   // max receive or send timeout, ms
+    int m_trans_timeout { 1000 };   // max receive or send timeout, ms
 
     TcpConnectionState m_state { TcpConnectionState::Connected };
     ConnectionType m_connection_type { ServerConnection };
