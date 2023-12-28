@@ -64,6 +64,8 @@ namespace epoch = co::epoch;
 namespace _xx {
 namespace sleep {
 
+__coapi void us(uint64 n);
+
 __coapi void ms(uint32 n);
 
 __coapi void sec(uint32 n);

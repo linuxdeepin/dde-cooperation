@@ -7,6 +7,7 @@
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/backend.h"
+#include "ipc/proto/chan.h"
 
 #include <co/rpc.h>
 #include <co/co.h>
@@ -142,7 +143,12 @@ void TransferHandle::localIPCStart()
                 break;
             }
             case FRONT_SEND_STATUS: {
-                TransferHelper::instance()->emitDisconnected();
+                SendStatus param;
+                param.from_json(json_obj);
+                if (REMOTE_CLIENT_OFFLINE == param.status) {
+                    cancelTransferJob(); //离线，取消job
+                    TransferHelper::instance()->emitDisconnected();
+                }
                 break;
             }
             case FRONT_DISCONNECT_CB: {

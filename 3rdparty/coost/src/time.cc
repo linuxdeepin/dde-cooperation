@@ -87,6 +87,13 @@ int64 ms() {
 namespace _xx {
 namespace sleep {
 
+void us(uint64 n) {
+    struct timespec ts;
+    ts.tv_sec = 0;
+    ts.tv_nsec = n % 10 * 10000;
+    while (nanosleep(&ts, &ts) == -1 && errno == EINTR);
+}
+
 void ms(uint32 n) {
     struct timespec ts;
     ts.tv_sec = n / 1000;

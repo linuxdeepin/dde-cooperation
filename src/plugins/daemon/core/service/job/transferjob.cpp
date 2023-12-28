@@ -267,6 +267,7 @@ void TransferJob::handleBlockQueque()
     // 发送当前统计文件中block
     while (_status != STOPED) {
         if (_status == CANCELING) {
+            exception = true;
             break;
         }
         // 计时器处理
@@ -655,6 +656,7 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
         st.msg = res.as_json().str();
         co::Json req = st.as_json();
         req.add_member("api", "Frontend.notifySendStatus");
+        ELOG << "sendToRemote invoke fail";
         SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
         cancel();
         return false;

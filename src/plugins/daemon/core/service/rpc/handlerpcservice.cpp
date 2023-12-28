@@ -58,10 +58,15 @@ void HandleRpcService::handleRpcLogin(bool result, const QString &targetAppname,
         Comshare::instance()->updateStatus(CURRENT_STATUS_TRAN_CONNECT);
         Comshare::instance()->updateComdata(appName, targetAppname, ip);
         // 启动文件的监视
+
+        // 接受登陆，开始监听连接是否断开（来自对方的ping）
+        if (!_timeOut.isActive())
+            emit startTimer();
+    } else {
+        QWriteLocker lk(&_lock);
+        _startPing.remove(appName);
+        _ping_lost_count.remove(appName);
     }
-    QWriteLocker lk(&_lock);
-    _startPing.remove(appName);
-    _ping_lost_count.remove(appName);
 
     co::Json req;
     //cbConnect {GenericResult}
@@ -427,6 +432,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             st.msg = co::Json({{"ip", ip}, {"port", port}}).str();
             co::Json req = st.as_json();
             req.add_member("api", "Frontend.notifySendStatus");
+            ELOG << "connection callback offline: " << ip << ":" << port;
             SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
         }
     };
@@ -591,7 +597,7 @@ void HandleRpcService::handleTimeOut()
             st.status = REMOTE_CLIENT_OFFLINE;
             co::Json req = st.as_json();
             req.add_member("api", "Frontend.notifySendStatus");
-            ELOG << "remote server disconnect ======= " << key.toStdString();
+            ELOG << "timeout: remote server disconnect: " << key.toStdString();
             SendIpcService::instance()->handleSendToClient(key, req.str().c_str());
             continue;
         }

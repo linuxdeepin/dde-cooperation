@@ -92,13 +92,26 @@ int64 TcpConnection::read_hook(char *buf, int len)
 
     if (m_connection_type == ServerConnection) {
         if (m_serv_conn) {
-            r = m_serv_conn->recv(buf, len);
+            r = m_serv_conn->recv(buf, len, m_trans_timeout);
+            if (unlikely(r == 0)) {
+                ELOG << "zrpc server close the connection..";
+                m_serv_conn->close();
+            }
+            if (unlikely(r < 0)) {
+                ELOG << "zrpc recv error: " << m_serv_conn->strerror();
+            }
         } else {
             ELOG << "TcpConnection::read_hook NULL m_serv_conn";
         }
     } else if (m_connection_type == ClientConnection) {
         if (m_cli_conn) {
-            r = m_cli_conn->recv(buf, len);
+            r = m_cli_conn->recv(buf, len, m_trans_timeout);
+            if (unlikely(r == 0)) {
+                ELOG << "zrpc server has close the connection..";
+            }
+            if (unlikely(r < 0)) {
+                ELOG << "zrpc recv error: " << m_cli_conn->strerror();
+            }
         } else {
             ELOG << "TcpConnection::read_hook NULL m_cli_conn";
         }
