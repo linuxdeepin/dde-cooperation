@@ -49,11 +49,15 @@ MainController::MainController(QObject *parent)
                                    NotifyServerIfce,
                                    QDBusConnection::sessionBus(), this);
 
+    transTimer.setInterval(10 * 1000);
+    transTimer.setSingleShot(true);
+
     initConnect();
 }
 
 void MainController::initConnect()
 {
+    connect(&transTimer, &QTimer::timeout, this, &MainController::onConfirmTimeout);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &MainController::onDConfigValueChanged);
     connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &MainController::onAppAttributeChanged);
     QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
@@ -169,18 +173,18 @@ void MainController::onAppAttributeChanged(const QString &group, const QString &
 
 void MainController::waitForConfirm(const QString &name)
 {
-    isTransTimeout = false;
     transferInfo.clear();
     recvFilesSavePath.clear();
     recvNotifyId = 0;
+    isReplied = false;
+    isRequestTimeout = false;
+    requestFrom = name;
 
-    // 超时处理
-    QTimer::singleShot(10 * 1000, this, [this] { isTransTimeout = true; });
-
+    transTimer.start();
     QStringList actions { NotifyRejectAction, tr("Reject"),
                           NotifyAcceptAction, tr("Accept"),
                           NotifyCloseAction, tr("Close") };
-    QString msg(tr("\"%1\" send some files to you"));
+    static QString msg(tr("\"%1\" send some files to you"));
 
     recvNotifyId = notifyMessage(recvNotifyId, msg.arg(CommonUitls::elidedText(name, Qt::ElideMiddle, 25)), actions, {}, 10 * 1000);
 }
@@ -190,14 +194,12 @@ void MainController::onActionTriggered(uint replacesId, const QString &action)
     if (replacesId != recvNotifyId)
         return;
 
+    isReplied = true;
     if (action == NotifyCancelAction) {
         CooperationUtil::instance()->cancelTrans();
-    } else if (action == NotifyRejectAction) {
+    } else if (action == NotifyRejectAction && !isRequestTimeout) {
         CooperationUtil::instance()->replyTransRequest(ApplyTransType::APPLY_TRANS_REFUSED);
-    } else if (action == NotifyAcceptAction) {
-        if (isTransTimeout)
-            return;
-
+    } else if (action == NotifyAcceptAction && !isRequestTimeout) {
         CooperationUtil::instance()->replyTransRequest(ApplyTransType::APPLY_TRANS_CONFIRM);
     } else if (action == NotifyCloseAction) {
         notifyIfc->call("CloseNotification", recvNotifyId);
@@ -275,4 +277,14 @@ void MainController::onFileTransStatusChanged(const QString &status)
     LOG_IF(FLG_log_detail) << "totalSize: " << transferInfo.totalSize << " transferSize=" << transferInfo.transferSize;
 
     updateProgress(progressValue, time.toString("hh:mm:ss"));
+}
+
+void MainController::onConfirmTimeout()
+{
+    isRequestTimeout = true;
+    if (isReplied)
+        return;
+
+    static QString msg(tr("\"%1\" delivery of files to you was interrupted due to a timeout"));
+    recvNotifyId = notifyMessage(recvNotifyId, msg.arg(CommonUitls::elidedText(requestFrom, Qt::ElideMiddle, 25)), {}, {}, 3 * 1000);
 }

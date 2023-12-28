@@ -15,20 +15,6 @@
     </message>
 </context>
 <context>
-    <name>QObject</name>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/cooperationplugin.cpp" line="55"/>
-        <source>File transfer settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/cooperationplugin.cpp" line="57"/>
-        <source>Settings</source>
-        <comment>button</comment>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>cooperation_core::ConfirmWidget</name>
     <message>
         <location filename="../../src/plugins/cooperation/core/proxy/cooperationdialog.cpp" line="20"/>
@@ -51,81 +37,81 @@
 <context>
     <name>cooperation_core::CooperationManager</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="268"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="300"/>
         <source>connect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="276"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="308"/>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="321"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="453"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="353"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="488"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="306"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="339"/>
         <source>Requesting collaborate to &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="292"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="324"/>
         <source>You are connecting to another device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="386"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="418"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="387"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="419"/>
         <source>Reject</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="388"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="420"/>
         <source>Accept</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="401"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="434"/>
         <source>Cooperation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="421"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="456"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="290"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="426"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="435"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="474"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="322"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="461"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="470"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="509"/>
         <source>Unable to collaborate to &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="427"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="462"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="436"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="471"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="468"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="503"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="476"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="511"/>
         <source>The other party does not confirm, please try again later</source>
         <translation type="unfinished"></translation>
     </message>
@@ -133,18 +119,18 @@
 <context>
     <name>cooperation_core::CooperationManagerPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="191"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="201"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="193"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="203"/>
         <source>Cooperation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="214"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="216"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="242"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="274"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -152,17 +138,22 @@
 <context>
     <name>cooperation_core::CooperationProxy</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="102"/>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="106"/>
         <source>File sent successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="105"/>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="109"/>
         <source>The other party has canceled the file transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="341"/>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="154"/>
+        <source>&quot;%1&quot; delivery of files to you was interrupted due to a timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="346"/>
         <source>Receiving files from &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -220,17 +211,17 @@
 <context>
     <name>cooperation_core::DeviceItem</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="172"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="180"/>
         <source>connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="177"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="185"/>
         <source>connectable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="183"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="191"/>
         <source>offline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -238,7 +229,7 @@
 <context>
     <name>cooperation_core::LookingForDeviceWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="43"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="51"/>
         <source>Looking for devices</source>
         <translation type="unfinished"></translation>
     </message>
@@ -267,7 +258,7 @@
 <context>
     <name>cooperation_core::NoNetworkWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="70"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="81"/>
         <source>Please connect to the network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -275,22 +266,22 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="103"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="117"/>
         <source>No device found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="112"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="126"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="128"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="142"/>
         <source>2. On the same LAN as the device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="132"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="146"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -327,89 +318,89 @@
 <context>
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="23"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="29"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="27"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="33"/>
         <source>Everyone in the same LAN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="24"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="31"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="28"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="35"/>
         <source>Not allow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="26"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="30"/>
         <source>Screen right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="27"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="31"/>
         <source>Screen left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="30"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="34"/>
         <source>Only those who are collaborating are allowed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="85"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="89"/>
         <source>Basic Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="96"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="100"/>
         <source>Discovery mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="98"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="102"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="121"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="130"/>
         <source>Device name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="139"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="148"/>
         <source>Peripheral share</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="141"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="150"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="161"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="174"/>
         <source>Connection direction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="178"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="191"/>
         <source>Allows the following users to send files to me</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="185"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="198"/>
         <source>File save location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="198"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="211"/>
         <source>Share clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="200"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
         <source>The clipboard is shared between devices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="244"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="261"/>
         <source>The device name must contain 1 to 63 characters</source>
         <translation type="unfinished"></translation>
     </message>
@@ -448,37 +439,37 @@
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="332"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="350"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="349"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="367"/>
         <source>The other party has canceled the file transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="346"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="364"/>
         <source>File sent successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="212"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="230"/>
         <source>View transfer history</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="221"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="239"/>
         <source>Send files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="418"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="426"/>
         <source>calculating</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="427"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="435"/>
         <source>The other party rejects your request</source>
         <translation type="unfinished"></translation>
     </message>
@@ -486,12 +477,12 @@
 <context>
     <name>cooperation_core::TransferHelperPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="176"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="185"/>
         <source>Sending files to &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="187"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="205"/>
         <source>The other party did not receive, the files failed to send</source>
         <translation type="unfinished"></translation>
     </message>
@@ -507,102 +498,58 @@
 <context>
     <name>daemon_cooperation::MainController</name>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="72"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="76"/>
         <source>File transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="82"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="86"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="90"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="94"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="93"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="97"/>
         <source>File receiving %1% | Remaining time %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="181"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="184"/>
         <source>Reject</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="182"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="185"/>
         <source>Accept</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="183"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="186"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="184"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="187"/>
         <source>&quot;%1&quot; send some files to you</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="241"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="242"/>
         <source>The other party has canceled the file transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="227"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="288"/>
+        <source>&quot;%1&quot; delivery of files to you was interrupted due to a timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="228"/>
         <source>File sent successfully</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_cooperation::CooperationMenuScene</name>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/menu/cooperationmenuscene.cpp" line="32"/>
-        <source>File transfer</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_cooperation::CooperationPlugin</name>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/cooperationplugin.cpp" line="50"/>
-        <source>File transfer</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_cooperation::FileTransferSettingsDialog</name>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/dialogs/filetransfersettingsdialog.cpp" line="150"/>
-        <source>File transfer settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/dialogs/filetransfersettingsdialog.cpp" line="164"/>
-        <source>Everyone in the same LAN</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/dialogs/filetransfersettingsdialog.cpp" line="165"/>
-        <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/dialogs/filetransfersettingsdialog.cpp" line="166"/>
-        <source>Not allow</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/dialogs/filetransfersettingsdialog.cpp" line="170"/>
-        <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/external/dde-file-manager-plugins/cooperation/dialogs/filetransfersettingsdialog.cpp" line="171"/>
-        <source>File save location</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

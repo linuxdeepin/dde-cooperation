@@ -10,6 +10,7 @@
 
 #include "configs/settings/configmanager.h"
 #include "common/constant.h"
+#include "common/commonutils.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/backend.h"
@@ -26,6 +27,7 @@
 using TransHistoryInfo = QMap<QString, QString>;
 Q_GLOBAL_STATIC(TransHistoryInfo, transHistory)
 
+using namespace deepin_cross;
 using namespace cooperation_core;
 
 CooperationProxy::CooperationProxy(QObject *parent)
@@ -37,6 +39,10 @@ CooperationProxy::CooperationProxy(QObject *parent)
         backendOk = pingBackend();
         LOG << "The result of ping backend is " << backendOk;
     });
+
+    transTimer.setInterval(10 * 1000);
+    transTimer.setSingleShot(true);
+    connect(&transTimer, &QTimer::timeout, this, &CooperationProxy::onConfirmTimeout);
 }
 
 CooperationProxy::~CooperationProxy()
@@ -66,14 +72,13 @@ CooperationTransDialog *CooperationProxy::cooperationDialog()
 
 void CooperationProxy::waitForConfirm(const QString &name)
 {
-    isTransTimeout = false;
+    isReplied = false;
     transferInfo.clear();
     recvFilesSavePath.clear();
     fromWho = name;
 
-    // 超时处理
-    QTimer::singleShot(10 * 1000, this, [this] { isTransTimeout = true; });
-    cooperationDialog()->showConfirmDialog(name);
+    transTimer.start();
+    cooperationDialog()->showConfirmDialog(CommonUitls::elidedText(name, Qt::ElideMiddle, 15));
     cooperationDialog()->show();
 }
 
@@ -139,6 +144,15 @@ void CooperationProxy::onFileTransStatusChanged(const QString &status)
     LOG_IF(FLG_log_detail) << "totalSize: " << transferInfo.totalSize << " transferSize=" << transferInfo.transferSize;
 
     updateProgress(progressValue, time.toString("hh:mm:ss"));
+}
+
+void CooperationProxy::onConfirmTimeout()
+{
+    if (isReplied)
+        return;
+
+    static QString msg(tr("\"%1\" delivery of files to you was interrupted due to a timeout"));
+    showTransResult(false, msg.arg(CommonUitls::elidedText(fromWho, Qt::ElideMiddle, 15)));
 }
 
 bool CooperationProxy::pingBackend()
@@ -256,6 +270,7 @@ void CooperationProxy::localIPCStart()
 
 void CooperationProxy::replyTransRequest(int type)
 {
+    isReplied = true;
     UNIGO([=] {
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
         co::Json res;
@@ -329,6 +344,6 @@ void CooperationProxy::showTransResult(bool success, const QString &msg)
 void CooperationProxy::updateProgress(int value, const QString &msg)
 {
     static QString title(tr("Receiving files from \"%1\""));
-    cooperationDialog()->showProgressDialog(title.arg(fromWho));
+    cooperationDialog()->showProgressDialog(title.arg(CommonUitls::elidedText(fromWho, Qt::ElideMiddle, 15)));
     cooperationDialog()->updateProgressData(value, msg);
 }

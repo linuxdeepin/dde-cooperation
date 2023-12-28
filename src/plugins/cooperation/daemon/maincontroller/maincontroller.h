@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QDBusInterface>
+#include <QTimer>
 
 namespace daemon_cooperation {
 
@@ -40,6 +41,7 @@ public Q_SLOTS:
     void onActionTriggered(uint replacesId, const QString &action);
     void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onFileTransStatusChanged(const QString &status);
+    void onConfirmTimeout();
 
 private:
     explicit MainController(QObject *parent = nullptr);
@@ -55,9 +57,11 @@ private:
     QDBusInterface *notifyIfc { nullptr };
     TransferInfo transferInfo;
     QString recvFilesSavePath;
+    QString requestFrom;
+    QTimer transTimer;
     uint recvNotifyId { 0 };
-    bool isTransTimeout = false;
-
+    bool isReplied { false };
+    bool isRequestTimeout { false };
 };
 
 }   // namespace daemon_cooperation
