@@ -163,6 +163,7 @@ void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
         setStatus(false);
     } else
         color = "#6199CA";
+    name = ellipsizedText(name, 430, QFont());
     info = QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color='%2'>%3</font>")
                    .arg(name, color, reason);
     processTextBrowser->append(info);
@@ -183,5 +184,18 @@ void ResultDisplayWidget::setStatus(bool success)
     } else {
         titileLabel->setText(tr("Transfer completed partially"));
         iconLabel->setPixmap(QIcon(":/icon/success half-96.svg").pixmap(96, 96));
+    }
+}
+
+QString ResultDisplayWidget::ellipsizedText(const QString &input, int maxLength, const QFont &font)
+{
+    QFontMetrics fontMetrics(font);
+    int textWidth = fontMetrics.horizontalAdvance(input);   // 获取文本的宽度
+
+    if (textWidth <= maxLength) {
+        return input;   // 如果文本宽度未超出限制，则直接返回原文本
+    } else {
+        QString ellipsizedString = fontMetrics.elidedText(input, Qt::ElideMiddle, maxLength);   // 使用省略号替代超出部分
+        return ellipsizedString;
     }
 }

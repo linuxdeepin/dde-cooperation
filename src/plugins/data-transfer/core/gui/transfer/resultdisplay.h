@@ -15,6 +15,7 @@ public:
     ResultDisplayWidget(QWidget *parent = nullptr);
     ~ResultDisplayWidget();
 
+    QString ellipsizedText(const QString &input, int maxLength, const QFont &font);
 public slots:
     void themeChanged(int theme);
     void addResult(QString name, bool success, QString reason);

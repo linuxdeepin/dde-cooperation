@@ -204,7 +204,7 @@ void UploadFileWidget::themeChanged(int theme)
                                        "border-style: dashed;"
                                        "border-width: 2px;"
                                        "border-color: rgba(0, 0, 0, 0.06);}");
-       currentState = true;
+        currentState = true;
     } else {
         //dark
         setStyleSheet(".UploadFileWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
@@ -218,7 +218,7 @@ void UploadFileWidget::themeChanged(int theme)
                                        "border-style: dashed;"
                                        "border-width: 2px;"
                                        "border-color: rgba(255,255,255, 0.1);}");
-         currentState = false;
+        currentState = false;
     }
     updataNextBut();
 }
@@ -259,12 +259,12 @@ void UploadFileFrame::initUI()
     textLabel->setFont(tipfont);
     connect(displayLabel, &QLabel::linkActivated, this, &UploadFileFrame::uploadFile);
 
-    QPushButton *closeBtn = new QPushButton(this);
+    QPushButton *closeBtn = new QPushButton(qobject_cast<QWidget *>(this->parent()));
     closeBtn->setIcon(QIcon(":/icon/tab_close_normal.svg"));
     closeBtn->setWindowOpacity(1.0);
     closeBtn->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
     closeBtn->setIconSize(QSize(35, 35));
-    closeBtn->setGeometry(270, 55, 35, 35);
+    closeBtn->setGeometry(405, 145, 35, 35);
     closeBtn->setVisible(false);
 
     QLabel *WarningIconLabel = new QLabel(iconLabel);
