@@ -4,5 +4,5 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-lupdate ./plugins/cooperation ./apps/dde-cooperation ./external/dde-file-manager-plugins/cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation.ts
-lupdate ./plugins/cooperation ./apps/dde-cooperation ./external/dde-file-manager-plugins/cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_zh_CN.ts
+lupdate ./plugins/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation.ts
+lupdate ./plugins/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_zh_CN.ts

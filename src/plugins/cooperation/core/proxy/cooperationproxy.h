@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QTimer>
 
 class FrontendService;
 
@@ -38,6 +39,7 @@ public Q_SLOTS:
     void waitForConfirm(const QString &name);
     void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onFileTransStatusChanged(const QString &status);
+    void onConfirmTimeout();
 
     void onAccepted();
     void onRejected();
@@ -66,7 +68,8 @@ private:
     TransferInfo transferInfo;
     QString recvFilesSavePath;
     QString fromWho;
-    bool isTransTimeout { false };
+    QTimer transTimer;
+    bool isReplied { false };
     CooperationTransDialog *cooperationDlg { nullptr };
 };
 
