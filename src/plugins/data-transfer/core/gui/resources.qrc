@@ -120,5 +120,10 @@
         <file>icon/icon_256.svg</file>
         <file>icon/icon_128.svg</file>
         <file>icon/icon_96.svg</file>
+        <file>icon/arrow.svg</file>
+        <file>icon/file@2x.png</file>
+        <file>icon/picture-app@2x.png</file>
+        <file>icon/picture-configuration@2x.png</file>
+        <file>icon/picture-file@2x.png</file>
     </qresource>
 </RCC>

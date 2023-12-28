@@ -13,7 +13,6 @@
 #include <utils/transferhepler.h>
 #include <utils/optionsmanager.h>
 
-
 SelectMainWidget::SelectMainWidget(QWidget *parent) : QFrame(parent)
 {
     initUi();
@@ -79,19 +78,22 @@ void SelectMainWidget::initUi()
     setLayout(mainLayout);
 
     titileLabel = new QLabel(LocalText, this);
+   titileLabel->setFixedHeight(50);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    fileItem = new SelectItem(tr("File"), QIcon(":/icon/file.svg"), SelectItemName::FILES, this);
+    fileItem = new SelectItem(tr("File"), QIcon(":/icon/picture-file@2x.png"),
+                              SelectItemName::FILES, this);
     QObject::connect(UserSelectFileSize::instance(), &UserSelectFileSize::updateUserFileSelectSize,
                      fileItem, &SelectItem::updateSelectSize);
 
-    appItem = new SelectItem(tr("App"), QIcon(":/icon/app.svg"), SelectItemName::APP, this);
-    configItem =
-            new SelectItem(tr("Config"), QIcon(":/icon/disposition.svg"), SelectItemName::CONFIG, this);
+    appItem = new SelectItem(tr("App"), QIcon(":/icon/picture-app@2x.png"), SelectItemName::APP,
+                             this);
+    configItem = new SelectItem(tr("Config"), QIcon(":/icon/picture-configuration@2x.png"),
+                                SelectItemName::CONFIG, this);
 
     QHBoxLayout *modeLayout = new QHBoxLayout();
 
@@ -176,7 +178,7 @@ void SelectMainWidget::nextPage()
             static_cast<qint64>(UserSelectFileSize::instance()->getAllSelectSize())));
     OptionsManager::instance()->addUserOption(Options::KSelectFileSize, sizelist);
     LOG << "user select file size:"
-            << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
+        << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
 
     PageName next;
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
@@ -220,7 +222,7 @@ void SelectMainWidget::selectPage()
     }
     if (pageNum == -1) {
         WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
-                      "nullptr";
+                "nullptr";
     } else {
         stackedWidget->setCurrentIndex(pageNum);
     }

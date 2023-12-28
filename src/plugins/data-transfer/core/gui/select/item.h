@@ -9,13 +9,18 @@
 #include <QListView>
 #include <QModelIndex>
 #include <QMouseEvent>
+#include <QPushButton>
+#include <QSortFilterProxyModel>
+class QSortFilterProxyModel;
 
+enum ListSelectionState { selectall = 0, selecthalf, unselected };
 class SelectAllButton : public QFrame
 {
     Q_OBJECT
 public:
     SelectAllButton(QWidget *parent = nullptr);
     ~SelectAllButton();
+    void changeState(ListSelectionState state);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -25,10 +30,26 @@ signals:
     void selectAll();
 
 private:
-    QRectF iconPosSize{ 2, 2, 16, 16 };
-    qreal iconRadius{ 3 };
+    QRectF iconPosSize{ 1, 1, 18, 18 };
+    qreal iconRadius{ 4 };
+    ListSelectionState curState{ ListSelectionState::unselected };
 };
 
+class SortButton : public QPushButton
+{
+    Q_OBJECT
+public:
+    SortButton(QWidget *parent = nullptr);
+    ~SortButton();
+
+private:
+    bool flag{ true };
+signals:
+    void sort();
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+};
 class ItemTitlebar : public QFrame
 {
     Q_OBJECT
@@ -54,21 +75,26 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override;
 
+public slots:
+    void updateSelectAllButState(ListSelectionState selectState);
 signals:
     void selectAll();
+    void sort();
 
 private:
     void initUI();
 
 private:
-    QString label1{ "表项一" };
+    QString label1{ "label1" };
     qreal label1LeftMargin{ 50 };
-    QString label2{ "表项二" };
+    QString label2{ "label2" };
     qreal label2LeftMargin{ 360 };
-    QRectF iconPosSize{ 10, 12, 16, 16 };
+    QRectF iconPosSize{ 10, 10, 14, 14 };
     qreal iconRadius{ 3 };
 
     SelectAllButton *selectAllButton{ nullptr };
+    SortButton *sortButton{ nullptr };
+    int allTableEntries{ 0 };
 };
 
 class ItemDelegate : public QItemDelegate
@@ -184,16 +210,43 @@ private:
                      const QModelIndex &index) override;
 };
 
+class SortProxyModel : public QSortFilterProxyModel
+{
+    Q_OBJECT
+public:
+    SortProxyModel(QObject *parent = nullptr);
+    ~SortProxyModel();
+    void setMode(bool mode);
+    void setFlag(bool flag);
+private:
+    bool sortModel{ true };
+    bool flagDisplayrole{ true };
+protected:
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
+};
+
 class SelectListView : public QListView
 {
     Q_OBJECT
 public:
     SelectListView(QFrame *parent = nullptr);
     ~SelectListView();
-
+    void setAllSize(int size);
+    QStandardItemModel *getModel();
+    void setSortRole(bool flag);
 private:
-    bool isSelectAll{ false };
+    int curSelectItemNum{ 0 };
+    int allSize{ -1 };
+    ListSelectionState curSelectState{ ListSelectionState::unselected };
+    bool ascendingOrder{ false };
+    SortProxyModel *proxyModel{ nullptr };
+    bool flag_DisplayRole{ true };
 public slots:
     void selectorDelAllItem();
+    void updateCurSelectItem(QStandardItem *item);
+    void sortListview();
+signals:
+    void currentSelectState(ListSelectionState selectState);
 };
+
 #endif

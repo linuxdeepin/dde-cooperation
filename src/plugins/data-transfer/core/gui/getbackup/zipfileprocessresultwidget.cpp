@@ -81,11 +81,17 @@ void ZipFileProcessResultWidget::successed()
     icon->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     tipLabel1 = new QLabel(tr("Back up succeed"), this);
+    QFont font;
+    font.setPixelSize(24);
+    font.setWeight(QFont::DemiBold);
+    tipLabel1->setFont(font);
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    tipLabel2 = new QLabel(tr("Congratulations, Your Information has been Successfully Backed Up."), this);
+    tipLabel2 = new QLabel(tr("Congratulations, Your Information has been Successfully Backed Up."),
+                           this);
     tipLabel2->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Go to View"));
+    QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
+                              .arg(tr("Go to View"));
     displayLabel = new QLabel(display, this);
     displayLabel->setAlignment(Qt::AlignCenter);
     QObject::connect(displayLabel, &QLabel::linkActivated, this,
@@ -95,7 +101,7 @@ void ZipFileProcessResultWidget::successed()
     this->layout()->addWidget(icon);
     ((QHBoxLayout *)(this->layout()))->addSpacing(10);
     this->layout()->addWidget(tipLabel1);
-    ((QHBoxLayout *)(this->layout()))->addSpacing(0);
+    ((QHBoxLayout *)(this->layout()))->addSpacing(10);
     this->layout()->addWidget(tipLabel2);
     ((QHBoxLayout *)(this->layout()))->addSpacing(100);
     this->layout()->addWidget(displayLabel);

@@ -55,7 +55,7 @@ void CreateBackupFileWidget::sendOptions()
     OptionsManager::instance()->addUserOption(Options::kBackupFileSavePath, savePath);
 
     QStringList saveName;
-    saveName << fileNameInput->text();
+    saveName << fileNameInput->getBackupFileName();
     OptionsManager::instance()->addUserOption(Options::kBackupFileName, saveName);
     qInfo() << "backup file save path:" << savePath;
     qInfo() << "backup file name:" << saveName;
@@ -71,17 +71,22 @@ void CreateBackupFileWidget::clear()
     fileNameInput->clear();
 }
 
+void CreateBackupFileWidget::setBackupFileName(QString name)
+{
+    fileNameInput->setBackupFileName(name);
+}
+
 void CreateBackupFileWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".CreateBackupFileWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
 
     QLabel *titileLabel = new QLabel(tr("Create data backup"), this);
-    titileLabel->setFixedHeight(30);
+    titileLabel->setFixedHeight(50);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -96,18 +101,18 @@ void CreateBackupFileWidget::initUI()
     QHBoxLayout *fileNameLayout = new QHBoxLayout();
     fileNameLayout->addSpacing(140);
     fileNameLayout->addWidget(fileNameLabel);
-    fileNameLayout->setAlignment(Qt::AlignBottom);
 
     QFrame *fileName = new QFrame(this);
     QHBoxLayout *fileNameEditLayout = new QHBoxLayout();
+    fileNameEditLayout->setAlignment(Qt::AlignHCenter);
     fileName->setLayout(fileNameEditLayout);
     fileName->setFixedSize(459, 36);
-    fileName->setStyleSheet("border-radius: 8px;"
+    fileName->setStyleSheet(".QFrame{border-radius: 8px;"
                             "opacity: 1;"
-                            "background-color: rgba(0,0,0, 0.08);");
+                            "background-color: rgba(0,0,0, 0.08);}");
 
     QLabel *fileNameInputLabel1 = new QLabel(QString(tr("Name")), fileName);
-    fileNameInputLabel1->setFixedWidth(56);
+    fileNameInputLabel1->setFixedWidth(40);
     fileNameInputLabel1->setStyleSheet("opacity: 1;"
                                        "background-color: rgba(0,0,0,0);"
                                        "color: rgba(65,77,104,1);"
@@ -116,43 +121,15 @@ void CreateBackupFileWidget::initUI()
                                        "font-style: normal;"
                                        "text-align: left;");
 
-    fileNameInput = new QLineEdit(fileName);
-    fileNameInput->setFixedWidth(211);
-    fileNameInput->setPlaceholderText(tr("Default File Name"));
-    fileNameInput->setStyleSheet("QLineEdit {"
-                                 "opacity: 1;"
-                                 "background-color: rgba(0,0,0,0.01);"
-                                 "color: rgba(82,106,127,1);"
-                                 "font-family:\"SourceHanSansSC-Normal\";"
-                                 "font-size: 12px;"
-                                 "font-weight: 400;"
-                                 "font-style: normal;"
-                                 "text-align: left;"
-                                 "background-image: url(\":/icon/edit.svg\");"
-                                 "background-repeat: no-repeat;"
-                                 "background-position: center;}");
-    connect(fileNameInput, &QLineEdit::textChanged, [=]() {
-        bool isEmpty = fileNameInput->text().isEmpty();
-        if (!isEmpty) {
-            fileNameInput->setStyleSheet("QLineEdit { "
-                                         "background-color: rgba(0,0,0,0.01);"
-                                         "background-image: none; }");
-        } else {
-            fileNameInput->setStyleSheet("QLineEdit { "
-                                         "background-color: rgba(0,0,0,0.01);"
-                                         "background-image: url(\":/icon/edit.svg\");"
-                                         "background-repeat: no-repeat; "
-                                         "background-position: center;}");
-        }
-    });
+    fileNameInput = new LineEditWidget(fileName);
 
     QHBoxLayout *fileNameInputLabel1Layout = new QHBoxLayout();
+    fileNameInputLabel1Layout->setAlignment(Qt::AlignTop | Qt::AlignVCenter);
     fileNameInputLabel1Layout->addSpacing(10);
     fileNameInputLabel1Layout->addWidget(fileNameInputLabel1);
-    fileNameInputLabel1Layout->addSpacing(10);
     fileNameInputLabel1Layout->addWidget(fileNameInput);
 
-    backupFileSizeLabel = new QLabel(QString("大小:  0B"), fileName);
+    backupFileSizeLabel = new QLabel(QString(tr("size:0B")), fileName);
     backupFileSizeLabel->setStyleSheet("opacity: 1;"
                                        "background-color: rgba(0,0,0,0);"
                                        "color: rgba(65,77,104,1);"
@@ -384,7 +361,7 @@ void CreateBackupFileWidget::updaeBackupFileSize()
     QStringList browserList = OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
     QStringList configList = OptionsManager::instance()->getUserOption(Options::kConfig);
 
-    TransferHelper::instance()->getTransferFilePath(filePathList,appList,browserList,configList);
+    TransferHelper::instance()->getTransferFilePath(filePathList, appList, browserList, configList);
 
     QStringList userDataInfoJsonPath =
             OptionsManager::instance()->getUserOption(Options::KUserDataInfoJsonPath);
@@ -405,10 +382,13 @@ void CreateBackupFileWidget::updaeBackupFileSize()
     }
 
     allSize = userSelectFileSize + userDataInfoJsonSize + wallpaperSize + bookmarkJsonSize;
-    OptionsManager::instance()->addUserOption(Options::KBackupFileSize,QStringList{QString::number(allSize)});
+    OptionsManager::instance()->addUserOption(Options::KBackupFileSize,
+                                              QStringList{ QString::number(allSize) });
     backupFileSizeLabel->setText(QString(tr("Size:%1")).arg(fromByteToQstring(allSize)));
 
     checkDisk();
+
+    setBackupFileName(TransferHelper::instance()->defaultBackupFileName());
 }
 
 void CreateBackupFileWidget::getUpdateDeviceSingla()
@@ -482,4 +462,99 @@ void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool
             }
         }
     }
+}
+
+LineEditWidget::LineEditWidget(QWidget *parent) : QFrame(parent)
+{
+    setFixedSize(250, 20);
+    // 创建布局和控件
+    QHBoxLayout *mainLayout = new QHBoxLayout();
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    setLayout(mainLayout);
+    lineEdit = new NameLineEdit(this);
+    lineEdit->setFixedHeight(height());
+
+    lineEdit->setAlignment(Qt::AlignVCenter);
+    editButton = new QToolButton(this);
+    editButton->setIcon(QIcon(":/icon/edit.svg"));
+    editButton->setStyleSheet(".QToolButton{border: none;background:rgba(0,0,0,0);}");
+    editButton->setFixedSize(14, 14);
+
+    lineEdit->setReadOnly(true);
+    lineEdit->setEchoMode(QLineEdit::Normal);
+
+    mainLayout->setAlignment(Qt::AlignCenter);
+    mainLayout->addWidget(lineEdit);
+    mainLayout->addWidget(editButton);
+
+    QObject::connect(editButton, &QPushButton::clicked, this, &LineEditWidget::enterEditMode);
+    QObject::connect(lineEdit, &NameLineEdit::editingFinished, this, &LineEditWidget::exitEditMode);
+    QObject::connect(lineEdit, &NameLineEdit::out, this, &LineEditWidget::exitEditMode);
+}
+
+LineEditWidget::~LineEditWidget() { }
+
+void LineEditWidget::clear()
+{
+    lineEdit->clear();
+}
+
+void LineEditWidget::setBackupFileName(QString name)
+{
+    lineEdit->setText(name);
+    lineEdit->setCursorPosition(0);
+}
+
+QString LineEditWidget::getBackupFileName()
+{
+    return lineEdit->text();
+}
+
+void LineEditWidget::enterEditMode()
+{
+    lineEdit->setReadOnly(false);
+    lineEdit->selectAll();
+    lineEdit->setFocus();
+    editButton->hide();
+}
+
+void LineEditWidget::exitEditMode()
+{
+    lineEdit->setCursorPosition(0);
+    lineEdit->setReadOnly(true);
+    editButton->show();
+    adjustButtonPosition();
+    lineEdit->deselect();
+}
+
+void LineEditWidget::adjustButtonPosition()
+{
+    QFontMetrics metrics(lineEdit->font());
+    int textWidth = metrics.horizontalAdvance(lineEdit->text());
+    int buttonX = lineEdit->pos().x() + textWidth + 5;
+    int buttonY = lineEdit->pos().y() + (lineEdit->height() - editButton->height()) / 2;
+    buttonX += lineEdit->contentsMargins().left() + lineEdit->textMargins().left();
+    int maxButtonX = lineEdit->pos().x() + width() - editButton->width();
+    buttonX = qMin(buttonX, maxButtonX);
+    editButton->move(buttonX, buttonY);
+}
+
+NameLineEdit::NameLineEdit(QWidget *parent) : QLineEdit(parent)
+{
+    setStyleSheet(".NameLineEdit{background:rgba(0,0,0,0); "
+                  "border: none;"
+                  "color: rgba(65,77,104,1);"
+                  "font-family: \"SourceHanSansSC-Medium\";"
+                  "font-size: 13px;font-weight: 400;"
+                  "font-style: normal;"
+                  "text-align: left;"
+                  "}");
+}
+
+NameLineEdit::~NameLineEdit() { }
+
+void NameLineEdit::focusOutEvent(QFocusEvent *event)
+{
+    emit out();
+    QLineEdit::focusOutEvent(event);
 }

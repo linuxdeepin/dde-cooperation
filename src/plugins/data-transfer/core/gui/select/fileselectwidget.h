@@ -6,10 +6,11 @@
 #include <QMap>
 #include <QStandardItemModel>
 #include "../select/selectmainwidget.h"
-
+#include "item.h"
 class QLabel;
 class SelectListView;
 class QStackedWidget;
+class ItemTitlebar;
 
 class FileSelectWidget : public QFrame
 {
@@ -31,7 +32,8 @@ public slots:
     void updateFileViewSize(quint64 fileSize, const QString &path);
     void updateFileViewData(QStandardItem *siderbarItem, const bool &isAdd);
     void selectOrDelAllItemFromSiderbar(QStandardItem *siderbarItem);
-
+    void updateTitleSelectBtnState(QStandardItem *siderbarItem,ListSelectionState state);
+    void sortListview();
 signals:
     void isOk(const SelectItemName &name);
 
@@ -51,7 +53,7 @@ private:
     QLabel *titileLabel{ nullptr };
     QString InternetText{ tr("Select the file to transfer") };
     QString LocalText{ tr("Please select the files to back up") };
-
+    ItemTitlebar *titlebar{ nullptr };
 };
 
 #endif

@@ -3,13 +3,48 @@
 
 #include <QFrame>
 #include <QMap>
-
+#include <QLineEdit>
 class QListView;
-class QLineEdit;
 class QLabel;
 class QStorageInfo;
 class QStandardItem;
 class QToolButton;
+
+class NameLineEdit : public QLineEdit
+{
+    Q_OBJECT
+
+public:
+    NameLineEdit(QWidget *parent = nullptr);
+    ~NameLineEdit();
+signals:
+    void out();
+
+protected:
+    void focusOutEvent(QFocusEvent *event) override;
+};
+class LineEditWidget : public QFrame
+{
+    Q_OBJECT
+
+public:
+    LineEditWidget(QWidget *parent = nullptr);
+    ~LineEditWidget();
+    void clear();
+    void setBackupFileName(QString name);
+    QString getBackupFileName();
+private slots:
+    void enterEditMode();
+
+    void exitEditMode();
+
+    void adjustButtonPosition();
+
+private:
+    NameLineEdit *lineEdit;
+    QToolButton *editButton;
+};
+
 class CreateBackupFileWidget : public QFrame
 {
     Q_OBJECT
@@ -19,6 +54,8 @@ public:
 
     void sendOptions();
     void clear();
+    void setBackupFileName(QString name);
+
 private:
     void initUI();
     void initDiskListView();
@@ -40,7 +77,8 @@ private:
     QLabel *promptLabel{ nullptr };
     QLabel *backupFileSizeLabel{ nullptr };
     QListView *diskListView{ nullptr };
-    QLineEdit *fileNameInput{ nullptr };
+    //    QLineEdit *fileNameInput{ nullptr };
+    LineEditWidget *fileNameInput{ nullptr };
     QToolButton *determineButton{ nullptr };
     QList<QStorageInfo> deviceList;
 

@@ -54,18 +54,13 @@ void ChooseWidget::initUI()
     modeLayout->addWidget(packageItem, Qt::AlignTop);
     modeLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tipiconlabel = new QLabel(this);
-    tipiconlabel->setPixmap(QIcon(":/icon/warning.svg").pixmap(14, 14));
-
     QLabel *tiptextlabel = new QLabel(this);
     QString prompt = tr("Unable to connect to the network， please check your network connection or select export to local directory.");
-    tiptextlabel->setText(QString("<font size=13px color='#FF5736'>%1</font>").arg(prompt));
+    tiptextlabel->setText(QString("<font size='3' color='#FF5736'>%1</font>").arg(prompt));
 
-    tipiconlabel->setVisible(false);
     tiptextlabel->setVisible(false);
 
     QHBoxLayout *tiplayout = new QHBoxLayout();
-    tiplayout->addWidget(tipiconlabel);
     tiplayout->addSpacing(5);
     tiplayout->addWidget(tiptextlabel);
     tiplayout->setAlignment(Qt::AlignCenter);
@@ -98,12 +93,10 @@ void ChooseWidget::initUI()
     mainLayout->addLayout(indexLayout);
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
-    [this, tipiconlabel, tiptextlabel](bool online) {
+    [this, tiptextlabel](bool online) {
         if (online) {
-            tipiconlabel->setVisible(false);
             tiptextlabel->setVisible(false);
         } else {
-            tipiconlabel->setVisible(true);
             tiptextlabel->setVisible(true);
             winItem->checked = false;
         }

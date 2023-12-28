@@ -38,7 +38,8 @@ void ZipWork::run()
 
 void ZipWork::getUserDataPackagingFile()
 {
-    QStringList zipFilePathList = OptionsManager::instance()->getUserOption(Options::kTransferFileList);
+    QStringList zipFilePathList =
+            OptionsManager::instance()->getUserOption(Options::kTransferFileList);
 
     // Get the number of files to zip
 
@@ -242,14 +243,12 @@ void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &time
             if (allFileSize <= zipFileSize) {
                 needTime = static_cast<int>(elapsed * (0 / num)) / 1000;
                 LOG << "needtime:" << needTime << "(allFileSize - zipFileSize):" << 0
-                        << "zipFileSize:" << zipFileSize << " num:" << num
-                        << " elapsed:" << elapsed;
+                    << "zipFileSize:" << zipFileSize << " num:" << num << " elapsed:" << elapsed;
             } else {
                 needTime = static_cast<int>(elapsed * ((allFileSize - zipFileSize) / num)) / 1000;
                 LOG << "needtime:" << needTime
-                        << "(allFileSize - zipFileSize)/num:" << (allFileSize - zipFileSize) / num
-                        << " zipFileSize:" << zipFileSize << " num:" << num
-                        << "elapsed:" << elapsed;
+                    << "(allFileSize - zipFileSize)/num:" << (allFileSize - zipFileSize) / num
+                    << " zipFileSize:" << zipFileSize << " num:" << num << "elapsed:" << elapsed;
             }
             num = 0;
         }
@@ -274,8 +273,7 @@ QString ZipWork::getBackupFilName()
     QString zipFileName;
 
     if (zipFileNameList[0] == "") {
-        zipFileName = zipFileSavePath[0] + "/" + DrapWindowsData::instance()->getUserName() + "_"
-                + DrapWindowsData::instance()->getIP() + "_" + formattedDateTime + ".zip";
+        zipFileName = TransferHelper::instance()->defaultBackupFileName() + ".zip";
     } else {
         zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] + ".zip";
     }

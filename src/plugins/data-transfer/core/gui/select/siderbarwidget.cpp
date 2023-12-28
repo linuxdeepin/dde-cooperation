@@ -1,5 +1,5 @@
 ﻿#include "calculatefilesize.h"
-#include "item.h"
+
 #include "siderbarwidget.h"
 #include "userselectfilesize.h"
 #include <gui/win/devicelistener.h>
@@ -13,7 +13,8 @@
 #include <QLabel>
 
 #include <gui/transfer/transferringwidget.h>
-
+#include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
 SidebarWidget::SidebarWidget(QWidget *parent) : QListView(parent)
 {
     UserPath[tr("Videos")] = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
@@ -40,14 +41,17 @@ SidebarWidget::SidebarWidget(QWidget *parent) : QListView(parent)
 
     QObject::connect(UserSelectFileSize::instance(), &UserSelectFileSize::updateUserFileSelectNum,
                      this, &SidebarWidget::updateCurSelectFileNum);
+
+    QObject::connect(TransferHelper::instance(), &TransferHelper::remoteRemainSpace, this,
+                     &SidebarWidget::updateRemoteSpaceSize);
 }
 
 SidebarWidget::~SidebarWidget() { }
 
 void SidebarWidget::updateUserSelectFileSizeUi()
 {
-    allSizeStr = fromByteToQstring(allSize);
-    QString text = QString("%1/%2").arg(selectSizeStr).arg(allSizeStr);
+    // allSizeStr = fromByteToQstring(allSize);
+    QString text = QString("%1/%2").arg(selectSizeStr).arg(remoteSpaceSize);
     userSelectFileSize->setText(text);
 }
 
@@ -70,10 +74,15 @@ void SidebarWidget::updateSiderDataAndUi(QStandardItem *siderbarItem, quint64 si
 
 void SidebarWidget::updateSelectSizeUi(const QString &sizeStr)
 {
-    selectSizeStr = sizeStr;
-    updateUserSelectFileSizeUi();
-    // update process
-    updatePorcessLabel();
+    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+    if (method == TransferMethod::kLocalExport) {
+        localTransferLabel->setText(QString(tr("Select:%1").arg(sizeStr)));
+    } else {
+        selectSizeStr = sizeStr;
+        updateUserSelectFileSizeUi();
+        // update process
+        updatePorcessLabel();
+    }
 }
 
 void SidebarWidget::updateAllSizeUi(const quint64 &size, const bool &isAdd)
@@ -89,6 +98,20 @@ void SidebarWidget::updateAllSizeUi(const quint64 &size, const bool &isAdd)
 void SidebarWidget::addDiskFileNum(QStandardItem *siderbarItem, int num)
 {
     sidebarDiskList[siderbarItem].allFileNum = num;
+}
+
+void SidebarWidget::changeUI()
+{
+    QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
+    if (method == TransferMethod::kLocalExport) {
+        localTransferLabel->setVisible(true);
+        userSelectFileSize->setVisible(false);
+        processLabel->setVisible(false);
+    } else if (method == TransferMethod::kNetworkTransmission) {
+        localTransferLabel->setVisible(false);
+        userSelectFileSize->setVisible(true);
+        processLabel->setVisible(true);
+    }
 }
 
 void SidebarWidget::updateSiderbarFileSize(quint64 fileSize, const QString &path)
@@ -179,6 +202,16 @@ void SidebarWidget::onClick(const QModelIndex &index)
     }
 }
 
+void SidebarWidget::updateRemoteSpaceSize(int size)
+{
+    if (size < 1024) {
+        remoteSpaceSize = QString("%1GB").arg(size);
+    } else {
+        remoteSpaceSize = QString("%1TB").arg(float(size / 1024));
+    }
+    updateUserSelectFileSizeUi();
+}
+
 void SidebarWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
 {
     if (isAdd) {
@@ -192,7 +225,7 @@ void SidebarWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
                 + rootPath.at(0) + ":)";
         item->setData(displayName, Qt::DisplayRole);
         item->setData(rootPath, Qt::UserRole);
-        item->setData(0, Qt::StatusTipRole);
+        item->setData(2, Qt::StatusTipRole);
         quint64 size = device.bytesTotal() - device.bytesAvailable();
         item->setData(fromByteToQstring(size), Qt::ToolTipRole);
         model->appendRow(item);
@@ -273,7 +306,7 @@ void SidebarWidget::initData()
         item->setCheckState(Qt::Unchecked);
         item->setData(iterator.key(), Qt::DisplayRole);
         item->setData(iterator.value(), Qt::UserRole);
-        item->setData(0, Qt::StatusTipRole);
+        item->setData(2, Qt::StatusTipRole);
         model->appendRow(item);
 
         // add device in sidebar
@@ -302,6 +335,20 @@ void SidebarWidget::initUi()
     processLabel = new ProgressBarLabel(this);
     processLabel->setFixedSize(120, 8);
     processLabel->setGeometry(40, 480, processLabel->width(), processLabel->height());
+    processLabel->setVisible(false);
+    userSelectFileSize->setVisible(false);
+
+    localTransferLabel = new QLabel(this);
+    localTransferLabel->setStyleSheet(".QLabel{opacity: 1;"
+                                      "color: rgba(82,106,127,1);"
+                                      "font-family: \"SourceHanSansSC - Normal\";"
+                                      "font-size: 14px;"
+                                      "font-weight: 400;"
+                                      "font-style: normal;"
+                                      "text-align: left;}");
+    localTransferLabel->setText(QString(tr("Select:%1").arg("0B")));
+    localTransferLabel->setGeometry(70, 460, 100, 17);
+    localTransferLabel->setVisible(false);
 }
 
 void SidebarWidget::initSidebarSize()
@@ -339,7 +386,8 @@ void SidebarWidget::updateSiderbarUi(QStandardItem *siderbarItem)
 void SidebarWidget::updatePorcessLabel()
 {
     quint64 selectSize = fromQstringToByte(selectSizeStr);
-    double percentage = (static_cast<double>(selectSize) / allSize) * 100.0;
+    double percentage =
+            (static_cast<double>(selectSize) / fromQstringToByte(remoteSpaceSize)) * 100.0;
     int percentageAsInt = qBound(0, static_cast<int>(percentage), 100);
     //    LOG << "setProgress:" << percentageAsInt << "selectSize" << selectSize
     //            << "allSize:" << allSize;
@@ -349,13 +397,13 @@ void SidebarWidget::updatePorcessLabel()
 void SidebarWidget::updateSelectFileNumState(QStandardItem *siderbarItem)
 {
     int curNum = sidebarDiskList.value(siderbarItem).curSelectFileNum;
-    int state = 0; // 0 Not selected,1 Half selected，2 All selected
+    ListSelectionState state = ListSelectionState::unselected;
     if (curNum == 0) {
-        state = 0;
+        state = ListSelectionState::unselected;
     } else if (curNum < sidebarDiskList.value(siderbarItem).allFileNum) {
-        state = 1;
+        state = ListSelectionState::selecthalf;
     } else {
-        state = 2;
+        state = ListSelectionState::selectall;
     }
     // LOG << "root path:" << sidebarDiskList[siderbarItem].rootPath
     //        << " current :" << sidebarDiskList[siderbarItem].curSelectFileNum << "state" << state
@@ -363,6 +411,7 @@ void SidebarWidget::updateSelectFileNumState(QStandardItem *siderbarItem)
     int curState = siderbarItem->data(Qt::StatusTipRole).toInt();
     if (curState == state)
         return;
+    emit updateSelectBtnState(siderbarItem, state);
     siderbarItem->setData(state, Qt::StatusTipRole);
 }
 

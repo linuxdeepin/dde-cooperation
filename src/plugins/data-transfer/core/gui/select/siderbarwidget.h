@@ -4,7 +4,7 @@
 #include <QListView>
 #include <QMap>
 #include <QStandardItemModel>
-
+#include "item.h"
 class QLabel;
 class QHBoxLayout;
 class QStackedWidget;
@@ -36,12 +36,15 @@ public:
     void updateAllSizeUi(const quint64 &size, const bool &isAdd);
 
     void addDiskFileNum(QStandardItem *siderbarItem, int num);
+
+    void changeUI();
 public slots:
     void updateSelectSizeUi(const QString &sizeStr);
     void updateSiderbarFileSize(quint64 fileSize, const QString &path);
     void getUpdateDeviceSingla();
     void updateCurSelectFileNum(const QString &path,bool isAdd);
     void onClick(const QModelIndex &index);
+    void updateRemoteSpaceSize(int size);
 protected:
     void paintEvent(QPaintEvent *event) override;
 
@@ -63,18 +66,20 @@ private:
 signals:
     void updateFileview(QStandardItem *siderbarItem, const bool &isAdd);
     void selectOrDelAllFileViewItem(QStandardItem *siderbarItem);
+    void updateSelectBtnState(QStandardItem *siderbarItem,ListSelectionState state);
 private:
     QMap<QStandardItem *, DiskInfo> sidebarDiskList;
 
     QLabel *userSelectFileSize{ nullptr };
     ProgressBarLabel *processLabel{ nullptr };
 
+    QLabel *localTransferLabel{ nullptr };
     QList<QStorageInfo> deviceList;
 
     QString selectSizeStr{ "0B" };
     QString allSizeStr{ "0B" };
     quint64 allSize{ 0 };
-
+    QString remoteSpaceSize{"0B"};
     QMap<QString, QString> UserPath;
 };
 #endif // SIDERBARWIDGET_H

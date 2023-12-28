@@ -33,19 +33,16 @@
 #endif
 
 //#pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper()
-    : QObject()
+TransferHelper::TransferHelper() : QObject()
 {
     initOnlineState();
 #ifndef WIN32
     SettingHelper::instance();
-    connect(this, &TransferHelper::transferFinished, this, [this]() {
-        isSetting = false;
-    });
+    connect(this, &TransferHelper::transferFinished, this, [this]() { isSetting = false; });
 #endif
 }
 
-TransferHelper::~TransferHelper() {}
+TransferHelper::~TransferHelper() { }
 
 TransferHelper *TransferHelper::instance()
 {
@@ -76,7 +73,7 @@ QString TransferHelper::tempCacheDir()
             QString("%1/%2/%3/")
                     .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
                     .arg(qApp->organizationName())
-                    .arg(qApp->applicationName());   //~/.cache/deepin/xx
+                    .arg(qApp->applicationName()); //~/.cache/deepin/xx
 
     QDir cacheDir(savePath);
     if (!cacheDir.exists())
@@ -323,6 +320,15 @@ void TransferHelper::Retransfer(const QString jsonstr)
     transferhandle.sendFiles(paths);
 
     emit changeWidget(PageName::transferringwidget);
+}
+
+QString TransferHelper::defaultBackupFileName()
+{
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    QString formattedDateTime = currentDateTime.toString("yyyyMMddhhmm");
+
+    return QString(DrapWindowsData::instance()->getUserName() + "_"
+                   + DrapWindowsData::instance()->getIP() + "_" + formattedDateTime);
 }
 
 #else

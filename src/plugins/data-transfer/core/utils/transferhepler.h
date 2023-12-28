@@ -45,6 +45,7 @@ public:
     QString getTransferJson(QStringList appList, QStringList fileList, QStringList browserList,
                             QString bookmarksName, QString wallPaperName, QString tempSavePath);
     void Retransfer(const QString jsonstr);
+    QString defaultBackupFileName();
 #else
 public:
     static int getRemainSize();
@@ -103,6 +104,9 @@ Q_SIGNALS:
 
     //disconnect tcp
     void disconnected();
+
+    //remote remainspace
+    void remoteRemainSpace(int size);
 
 private:
     void initOnlineState();

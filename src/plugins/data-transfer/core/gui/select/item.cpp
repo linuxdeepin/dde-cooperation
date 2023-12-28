@@ -1,9 +1,10 @@
 ﻿#include "item.h"
-
+#include "calculatefilesize.h"
 #include <QApplication>
 #include <QLabel>
 #include <QPainterPath>
 #include <QDebug>
+#include <QSortFilterProxyModel>
 #include <QtSvg/QSvgRenderer>
 ItemTitlebar::ItemTitlebar(const QString &label1_, const QString &label2_,
                            const qreal &label1LeftMargin_, const qreal &label2LeftMargin_,
@@ -21,6 +22,9 @@ ItemTitlebar::ItemTitlebar(const QString &label1_, const QString &label2_,
 
     QObject::connect(selectAllButton, &SelectAllButton::selectAll, this, &ItemTitlebar::selectAll);
 
+    sortButton = new SortButton(this);
+    sortButton->move(label2LeftMargin - 25, iconPosSize.y());
+    QObject::connect(sortButton, &SortButton::sort, this, &ItemTitlebar::sort);
     initUI();
 }
 
@@ -28,6 +32,11 @@ ItemTitlebar::ItemTitlebar(QWidget *parent) : QFrame(parent)
 {
     selectAllButton = new SelectAllButton(this);
     selectAllButton->move(iconPosSize.x(), iconPosSize.y());
+    QObject::connect(selectAllButton, &SelectAllButton::selectAll, this, &ItemTitlebar::selectAll);
+
+    sortButton = new SortButton(this);
+    sortButton->move(label2LeftMargin - 25, iconPosSize.y());
+    QObject::connect(sortButton, &SortButton::sort, this, &ItemTitlebar::sort);
     initUI();
 }
 
@@ -38,16 +47,26 @@ void ItemTitlebar::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    painter.setPen(QPen(QColor(0, 0, 0, 50), 1));
+    painter.setPen(QPen(QColor(0, 0, 0, 100), 0.8));
+    QPainterPath path2;
+    path2.moveTo(0, 33);
+    path2.lineTo(size().width(), 33);
+    painter.drawPath(path2);
+
     QPainterPath path3;
-    path3.moveTo(label1LeftMargin, 5);
-    path3.lineTo(label1LeftMargin, 32);
+    path3.moveTo(label1LeftMargin, 3);
+    path3.lineTo(label1LeftMargin, 30);
     painter.drawPath(path3);
 
     QPainterPath path4;
-    path4.moveTo(label2LeftMargin, 5);
-    path4.lineTo(label2LeftMargin, 32);
+    path4.moveTo(label2LeftMargin, 3);
+    path4.lineTo(label2LeftMargin, 30);
     painter.drawPath(path4);
+}
+
+void ItemTitlebar::updateSelectAllButState(ListSelectionState selectState)
+{
+    selectAllButton->changeState(selectState);
 }
 
 void ItemTitlebar::initUI()
@@ -548,7 +567,7 @@ void SidebarItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionVie
     QRect checkBoxRect = QRect(pos.x(), pos.y(), 18, 18);
     painter->drawRoundedRect(checkBoxRect, 4, 4);
 
-    if (index.data(Qt::StatusTipRole).value<int>() == 2) {
+    if (index.data(Qt::StatusTipRole).value<int>() == 0) {
         QRect iconRect(checkBoxRect.left() + 3, checkBoxRect.top() + 3, 13, 11);
         QSvgRenderer render(QString(":/icon/check_black.svg"));
         render.render(painter, iconRect);
@@ -629,28 +648,50 @@ SelectAllButton::SelectAllButton(QWidget *parent) : QFrame(parent)
 
 SelectAllButton::~SelectAllButton() { }
 
+void SelectAllButton::changeState(ListSelectionState state)
+{
+    if (curState == state)
+        return;
+    curState = state;
+    update();
+}
+
 void SelectAllButton::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    QPainterPath path1;
-    path1.addRoundedRect(iconPosSize, iconRadius, iconRadius);
-    painter.setPen(QPen(QColor(65, 77, 104), 2));
-    painter.drawPath(path1);
+    QColor color;
 
-    painter.setPen(QPen(QColor(0, 26, 46), 2));
-    QPainterPath path2;
-    path2.moveTo(iconPosSize.x() + 4, iconPosSize.y() + 8);
-    path2.lineTo(iconPosSize.x() + 12, iconPosSize.y() + 8);
-    painter.drawPath(path2);
+    painter.setPen(color);
+    painter.drawRoundedRect(iconPosSize, iconRadius, iconRadius);
+
+    if (curState == ListSelectionState::selectall) {
+        QRect iconRect(iconPosSize.left() + 3, iconPosSize.top() + 3, 13, 11);
+        QSvgRenderer render(QString(":/icon/check_black.svg"));
+        render.render(&painter, iconRect);
+    } else if (curState == ListSelectionState::selecthalf) {
+        int y = iconPosSize.top() + 9;
+        int x1 = iconPosSize.left() + 4;
+        int x2 = iconPosSize.left() + 14;
+        painter.setPen(QPen(QColor(0, 0, 0, 255), 2));
+        painter.drawLine(x1, y, x2, y);
+    }
 }
 
 void SelectAllButton::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
+        ListSelectionState state;
+        if (curState == ListSelectionState::selectall) {
+            state = ListSelectionState::unselected;
+        } else {
+            state = ListSelectionState::selectall;
+        }
+        changeState(state);
         emit selectAll();
     }
+    return QFrame::mousePressEvent(event);
 }
 
 SelectListView::SelectListView(QFrame *parent) : QListView(parent)
@@ -660,16 +701,37 @@ SelectListView::SelectListView(QFrame *parent) : QListView(parent)
                   "border: none;"
                   "}");
     setEditTriggers(QAbstractItemView::NoEditTriggers);
-    setModel(model);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSelectionMode(QAbstractItemView::NoSelection);
+    setVerticalScrollMode(QListView::ScrollPerPixel);
+    QObject::connect(model, &QStandardItemModel::itemChanged, this,
+                     &SelectListView::updateCurSelectItem);
+
+    proxyModel = new SortProxyModel(this);
+    proxyModel->setSourceModel(model);
+    setModel(proxyModel);
 }
 
 SelectListView::~SelectListView() { }
 
+void SelectListView::setAllSize(int size)
+{
+    allSize = size;
+}
+
+QStandardItemModel *SelectListView::getModel()
+{
+    return qobject_cast<QStandardItemModel *>(proxyModel->sourceModel());
+}
+
+void SelectListView::setSortRole(bool flag)
+{
+    proxyModel->setFlag(flag);
+}
+
 void SelectListView::selectorDelAllItem()
 {
-    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
+    QStandardItemModel *model = getModel();
     Qt::CheckState state = Qt::Unchecked;
     for (int row = 0; row < model->rowCount(); ++row) {
         QModelIndex itemIndex = model->index(row, 0);
@@ -686,4 +748,118 @@ void SelectListView::selectorDelAllItem()
             continue;
         model->setData(itemIndex, state, Qt::CheckStateRole);
     }
+}
+
+void SelectListView::updateCurSelectItem(QStandardItem *item)
+{
+    if (item->data(Qt::CheckStateRole) == Qt::Checked) {
+        curSelectItemNum++;
+    } else {
+        curSelectItemNum--;
+    }
+    if (curSelectItemNum < 0) {
+        curSelectItemNum = 0;
+        return;
+    }
+    ListSelectionState state;
+
+    int tempAllsize = allSize == -1 ? model()->rowCount() : allSize;
+
+    if (curSelectItemNum == 0) {
+        state = ListSelectionState::unselected;
+    } else if (curSelectItemNum < tempAllsize) {
+        state = ListSelectionState::selecthalf;
+    } else {
+        state = ListSelectionState::selectall;
+    }
+    if (state == curSelectState) {
+        return;
+    }
+    curSelectState = state;
+    emit currentSelectState(curSelectState);
+}
+
+void SelectListView::sortListview()
+{
+    proxyModel->setMode(ascendingOrder);
+    if (ascendingOrder) {
+        proxyModel->sort(0, Qt::AscendingOrder);
+    } else {
+        proxyModel->sort(0, Qt::DescendingOrder);
+    }
+    ascendingOrder = !ascendingOrder;
+    // setModel(proxyModel);
+}
+
+SortButton::SortButton(QWidget *parent) : QPushButton(parent)
+{
+    setIcon(QIcon(":/icon/arrow.svg"));
+    setStyleSheet(".SortButton { border: none; }");
+    setIconSize(QSize(18, 18));
+}
+
+SortButton::~SortButton() { }
+
+void SortButton::mousePressEvent(QMouseEvent *event)
+{
+    if (flag) {
+        QMatrix matrix;
+        matrix.rotate(180);
+        setIcon(QPixmap(":/icon/arrow.svg").transformed(matrix, Qt::SmoothTransformation));
+    } else {
+        setIcon(QIcon(":/icon/arrow.svg"));
+    }
+    flag = !flag;
+    emit sort();
+    return QPushButton::mouseMoveEvent(event);
+}
+
+SortProxyModel::SortProxyModel(QObject *parent) : QSortFilterProxyModel(parent) { }
+
+SortProxyModel::~SortProxyModel() { }
+
+void SortProxyModel::setMode(bool Model)
+{
+    sortModel = Model;
+}
+
+void SortProxyModel::setFlag(bool flag)
+{
+    flagDisplayrole = flag;
+}
+
+bool SortProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+{
+    QVariant leftCategory = sourceModel()->data(left, Qt::ToolTipPropertyRole);
+    QVariant rightCategory = sourceModel()->data(right, Qt::ToolTipPropertyRole);
+
+    if (leftCategory.type() == QVariant::Int && rightCategory.type() == QVariant::Int) {
+        if (leftCategory.toInt() != rightCategory.toInt()) {
+            if (sortModel)
+                return leftCategory.toInt() < rightCategory.toInt();
+            else
+                return leftCategory.toInt() > rightCategory.toInt();
+        }
+    }
+    if (flagDisplayrole) {
+        QVariant leftData = sourceModel()->data(left, Qt::DisplayRole);
+        QVariant rightData = sourceModel()->data(right, Qt::DisplayRole);
+
+        if (leftData.type() == QVariant::String && rightData.type() == QVariant::String) {
+            QChar firstLetter1 = leftData.toString().at(0);
+            QChar firstLetter2 = rightData.toString().at(0);
+            return firstLetter1 < firstLetter2;
+        }
+    } else {
+        QVariant leftData = sourceModel()->data(left, Qt::ToolTipRole);
+        QVariant rightData = sourceModel()->data(right, Qt::ToolTipRole);
+
+        if (leftData.type() == QVariant::String && rightData.type() == QVariant::String) {
+            quint64 firstLetter1 = fromQstringToByte(leftData.toString());
+            quint64 firstLetter2 = fromQstringToByte(rightData.toString());
+            return firstLetter1 > firstLetter2;
+        }
+    }
+
+    return false;
 }

@@ -14,14 +14,14 @@
 #include <utils/transferhepler.h>
 #include <utils/optionsmanager.h>
 
-zipFileProcessWidget::zipFileProcessWidget(QWidget *parent) : QFrame(parent)
+ZipFileProcessWidget::ZipFileProcessWidget(QWidget *parent) : QFrame(parent)
 {
     initUI();
 }
 
-zipFileProcessWidget::~zipFileProcessWidget() { }
+ZipFileProcessWidget::~ZipFileProcessWidget() { }
 
-void zipFileProcessWidget::updateProcess(const QString &content, int processbar, int estimatedtime)
+void ZipFileProcessWidget::updateProcess(const QString &content, int processbar, int estimatedtime)
 {
     if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
         == TransferMethod::kNetworkTransmission) {
@@ -37,30 +37,33 @@ void zipFileProcessWidget::updateProcess(const QString &content, int processbar,
     changeProgressBarLabel(processbar);
 }
 
-void zipFileProcessWidget::changeFileLabel(const QString &path)
+void ZipFileProcessWidget::changeFileLabel(const QString &path)
 {
-    QString info = QString( QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>").arg(tr("Packing  %1").arg(path)));
+    QString info = QString(QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>")
+                                   .arg(tr("Packing  %1").arg(path)));
     fileLabel->setText(info);
 }
 
-void zipFileProcessWidget::changeTimeLabel(const int &time)
+void ZipFileProcessWidget::changeTimeLabel(const int &time)
 {
     if (time > 60) {
         int textTime = time / 60;
-        timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes").arg(QString::number(textTime))));
+        timeLabel->setText(QString(
+                tr("Transfer will be completed in %1 minutes").arg(QString::number(textTime))));
     } else {
-        timeLabel->setText(QString(tr("Transfer will be completed in %1 secondes").arg(QString::number(time))));
+        timeLabel->setText(QString(
+                tr("Transfer will be completed in %1 secondes").arg(QString::number(time))));
     }
 }
 
-void zipFileProcessWidget::changeProgressBarLabel(const int &processbar)
+void ZipFileProcessWidget::changeProgressBarLabel(const int &processbar)
 {
     progressLabel->setProgress(processbar);
 }
 
-void zipFileProcessWidget::initUI()
+void ZipFileProcessWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".ZipFileProcessWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     setLayout(mainLayout);
@@ -78,9 +81,9 @@ void zipFileProcessWidget::initUI()
     iconLabel->setMovie(iconmovie);
 
     QLabel *titileLabel = new QLabel(tr("Creating Backup File..."), this);
-    titileLabel->setFixedHeight(50);
+   titileLabel->setFixedHeight(50);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignHCenter);
@@ -93,11 +96,9 @@ void zipFileProcessWidget::initUI()
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
     timeLabel = new QLabel(this);
-    timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes").arg(QString::number(0))));
+    timeLabel->setText(
+            QString(tr("Transfer will be completed in %1 minutes").arg(QString::number(0))));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    QFont timefont;
-    font.setPointSize(7);
-    timeLabel->setFont(timefont);
 
     fileLabel = new QLabel(this);
     fileLabel->setFixedHeight(15);
@@ -121,10 +122,10 @@ void zipFileProcessWidget::initUI()
     mainLayout->addLayout(indexLayout);
 
     QObject::connect(TransferHelper::instance(), &TransferHelper::zipTransferContent, this,
-                     &zipFileProcessWidget::updateProcess);
+                     &ZipFileProcessWidget::updateProcess);
 }
 
-void zipFileProcessWidget::nextPage()
+void ZipFileProcessWidget::nextPage()
 {
-   emit TransferHelper::instance()->changeWidget(PageName::zipfileprocessresultwidget);
+    emit TransferHelper::instance()->changeWidget(PageName::zipfileprocessresultwidget);
 }

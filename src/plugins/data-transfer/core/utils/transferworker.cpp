@@ -331,6 +331,7 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
 
     if (miscJson.has_member("remaining_space")) {
         int remainSpace = miscJson.get("remaining_space").as_int();
+        emit TransferHelper::instance()->remoteRemainSpace(remainSpace);
     }
 }
 

@@ -31,23 +31,22 @@ void AppSelectWidget::initUI()
     setLayout(mainLayout);
 
     titileLabel = new QLabel(LocalText, this);
-    titileLabel->setFixedHeight(20);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     initSelectFrame();
 
-    QLabel *tipLabel1 = new QLabel(tr("Check transfer application will automatically install the corresponding UOS version of the application."),
+    QLabel *tipLabel1 = new QLabel(tr("Check transfer application will automatically install the "
+                                      "corresponding UOS version of the application."),
                                    this);
     tipLabel1->setWordWrap(true);
     tipLabel1->setFixedHeight(30);
 
     tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignCenter);
     font.setPointSize(10);
-
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
 
@@ -83,7 +82,6 @@ void AppSelectWidget::initUI()
                                 "font-style: normal;"
                                 "text-align: center;"
                                 ";}");
-
     QObject::connect(cancelButton, &QToolButton::clicked, this, &AppSelectWidget::backPage);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
@@ -99,7 +97,6 @@ void AppSelectWidget::initUI()
     mainLayout->addWidget(tipLabel1);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(selectFrame);
-
     mainLayout->addLayout(buttonLayout);
 }
 
@@ -108,14 +105,13 @@ void AppSelectWidget::initSelectFrame()
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
     ItemTitlebar *titlebar = new ItemTitlebar(tr("Application"), tr("Recommendation"), 50, 360,
-                                              QRectF(10, 12, 16, 16), 3, this);
+                                              QRectF(10, 8, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
 
     selectFrame = new QFrame(this);
-
+    selectFrame->setContentsMargins(0, 0, 0, 0);
     selectFrame->setFixedSize(500, 318);
-    selectFrame->setProperty("class", "myselectframe");
-    selectFrame->setStyleSheet(".myselectframe{"
+    selectFrame->setStyleSheet(".QFrame{"
                                "border-radius: 8px;"
                                " border: 1px solid rgba(0,0,0, 0.2);"
                                " opacity: 1;"
@@ -124,16 +120,17 @@ void AppSelectWidget::initSelectFrame()
     selectFrame->setLayout(selectframeLayout);
 
     appView = new SelectListView(this);
-    appView->setVerticalScrollMode(QListView::ScrollPerPixel);
-    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(appView->model());
+    QStandardItemModel *model = appView->getModel();
     appView->setItemDelegate(new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
 
     QMap<QString, QString> noRecommendList;
     QMap<QString, QString> appList = TransferHelper::instance()->getAppList(noRecommendList);
+    appView->setAllSize(appList.size());
     for (auto iterator = appList.begin(); iterator != appList.end(); ++iterator) {
         QStandardItem *item = new QStandardItem();
         item->setData(iterator.key(), Qt::DisplayRole);
         item->setData(tr("Transferable"), Qt::ToolTipRole);
+        item->setData(1, Qt::ToolTipPropertyRole);
         item->setIcon(QIcon(iterator.value()));
         item->setCheckable(true);
         model->appendRow(item);
@@ -144,6 +141,7 @@ void AppSelectWidget::initSelectFrame()
         item->setData(iterator.key(), Qt::DisplayRole);
         item->setData(tr("Not Suitable"), Qt::ToolTipRole);
         item->setData(true, Qt::BackgroundRole);
+        item->setData(2, Qt::ToolTipPropertyRole);
         QPixmap pix = DrapWindowsData::instance()->getAppIcon(iterator.value());
         if (pix.isNull()) {
             item->setIcon(QIcon(":/icon/fileicon.svg"));
@@ -161,6 +159,9 @@ void AppSelectWidget::initSelectFrame()
 
     QObject::connect(titlebar, &ItemTitlebar::selectAll, appView,
                      &SelectListView::selectorDelAllItem);
+    QObject::connect(appView, &SelectListView::currentSelectState, titlebar,
+                     &ItemTitlebar::updateSelectAllButState);
+    QObject::connect(titlebar, &ItemTitlebar::sort, appView, &SelectListView::sortListview);
 }
 
 void AppSelectWidget::changeText()
@@ -175,12 +176,12 @@ void AppSelectWidget::changeText()
 
 void AppSelectWidget::clear()
 {
-    QStandardItemModel *configmodel = qobject_cast<QStandardItemModel *>(appView->model());
+    QStandardItemModel *configmodel = appView->getModel();
     for (int row = 0; row < configmodel->rowCount(); ++row) {
         QModelIndex itemIndex = configmodel->index(row, 0);
         configmodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
     }
-      OptionsManager::instance()->addUserOption(Options::kApp,QStringList());
+    OptionsManager::instance()->addUserOption(Options::kApp, QStringList());
 }
 
 void AppSelectWidget::sendOptions()
@@ -232,6 +233,6 @@ void AppSelectWidget::backPage()
 {
     // delete Options
     delOptions();
-    //backpage
+    // backpage
     emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }

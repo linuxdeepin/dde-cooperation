@@ -85,7 +85,7 @@ void MainWindowPrivate::initWidgets()
     ErrorWidget *errorwidget = new ErrorWidget(q);
 
     NetworkDisconnectionWidget *networkdisconnectionwidget = new NetworkDisconnectionWidget(q);
-    zipFileProcessWidget *zipfileprocesswidget = new zipFileProcessWidget(q);
+    ZipFileProcessWidget *zipfileprocesswidget = new ZipFileProcessWidget(q);
     ZipFileProcessResultWidget *zipfileprocessresultwidget = new ZipFileProcessResultWidget(q);
     CreateBackupFileWidget *createbackupfilewidget = new CreateBackupFileWidget(q);
     SelectMainWidget *selectmainwidget = new SelectMainWidget(q);
@@ -315,4 +315,5 @@ void MainWindowPrivate::changeAllWidgtText()
     widgetConfig->changeText();
     widgetApp->changeText();
     widgetFile->changeText();
+    qobject_cast<SidebarWidget *>(sidebar->widget())->changeUI();
 }

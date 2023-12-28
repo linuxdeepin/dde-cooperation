@@ -1,6 +1,6 @@
 ﻿#include "siderbarwidget.h"
 #include "fileselectwidget.h"
-#include "item.h"
+
 #include "calculatefilesize.h"
 #include "userselectfilesize.h"
 #include "../type_defines.h"
@@ -40,16 +40,14 @@ void FileSelectWidget::initUI()
     setLayout(mainLayout);
 
     titileLabel = new QLabel(LocalText, this);
-    titileLabel->setFixedHeight(30);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QHBoxLayout *headerLayout = new QHBoxLayout();
-    ItemTitlebar *titlebar =
-            new ItemTitlebar(tr("Name"), tr("Size"), 50, 360, QRectF(10, 12, 16, 16), 3, this);
+    titlebar = new ItemTitlebar(tr("Name"), tr("Size"), 50, 360, QRectF(10, 8, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
     headerLayout->addWidget(titlebar);
 
@@ -109,11 +107,10 @@ void FileSelectWidget::initUI()
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
     mainLayout->addSpacing(30);
-    mainLayout->setSpacing(0);
     mainLayout->addWidget(titileLabel);
+    mainLayout->addSpacing(3);
     mainLayout->addWidget(tipLabel1);
     mainLayout->addLayout(headerLayout);
-
     mainLayout->addLayout(fileviewLayout);
     mainLayout->addSpacing(5);
     mainLayout->addLayout(buttonLayout);
@@ -122,6 +119,9 @@ void FileSelectWidget::initUI()
                      &FileSelectWidget::selectOrDelAllItem);
     QObject::connect(sidebar, &SidebarWidget::selectOrDelAllFileViewItem, this,
                      &FileSelectWidget::selectOrDelAllItemFromSiderbar);
+    QObject::connect(sidebar, &SidebarWidget::updateSelectBtnState, this,
+                     &FileSelectWidget::updateTitleSelectBtnState);
+    QObject::connect(titlebar, &ItemTitlebar::sort, this, &FileSelectWidget::sortListview);
 }
 
 void FileSelectWidget::startCalcluateFileSize(QList<QString> fileList)
@@ -202,6 +202,24 @@ void FileSelectWidget::selectOrDelAllItemFromSiderbar(QStandardItem *siderbarIte
     listview->selectorDelAllItem();
 }
 
+void FileSelectWidget::updateTitleSelectBtnState(QStandardItem *siderbarItem,
+                                                 ListSelectionState state)
+{
+    SelectListView *listview =
+            qobject_cast<SelectListView *>(sidebarFileViewList.value(siderbarItem));
+    if (sidebarFileViewList[siderbarItem] != listview)
+        return;
+    titlebar->updateSelectAllButState(state);
+}
+
+void FileSelectWidget::sortListview()
+{
+    for (auto iteraotr = sidebarFileViewList.begin(); iteraotr != sidebarFileViewList.end();
+         ++iteraotr) {
+        qobject_cast<SelectListView *>(iteraotr.value())->sortListview();
+    }
+}
+
 SelectListView *FileSelectWidget::addFileViewData(const QString &path, QStandardItem *sidebaritem)
 {
     QDir directory(path);
@@ -212,14 +230,10 @@ SelectListView *FileSelectWidget::addFileViewData(const QString &path, QStandard
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
     ItemDelegate *delegate = new ItemDelegate(99, 250, 379, 100, 50, QPoint(65, 6), QPoint(14, 9));
 
-    QStandardItemModel *model = new QStandardItemModel(this);
     SelectListView *fileView = new SelectListView(this);
-    fileView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    fileView->setModel(model);
+    fileView->setSortRole(false);
+    QStandardItemModel *model = fileView->getModel();
     fileView->setItemDelegate(delegate);
-    fileView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    fileView->setSelectionMode(QAbstractItemView::NoSelection);
-    fileView->setVerticalScrollMode(QListView::ScrollPerPixel);
 
     int diskFileNUM = 0;
     QList<QString> needCalculateFileList;
@@ -234,6 +248,7 @@ SelectListView *FileSelectWidget::addFileViewData(const QString &path, QStandard
         item->setData(fileinfos[i].filePath(), Qt::UserRole);
         item->setIcon(QIcon(":/icon/folder.svg"));
         item->setCheckable(true);
+        item->setData(1, Qt::ToolTipPropertyRole);
         model->appendRow(item);
 
         // add fileInfo
@@ -255,9 +270,9 @@ SelectListView *FileSelectWidget::addFileViewData(const QString &path, QStandard
         QStandardItem *item = new QStandardItem();
         item->setData(fileinfos[i].fileName(), Qt::DisplayRole);
         item->setData(fromByteToQstring(fileinfos[i].size()), Qt::ToolTipRole);
-        item->setIcon(QIcon(":/icon/fileicon.svg"));
+        item->setIcon(QIcon(":/icon/file@2x.png"));
         item->setData(fileinfos[i].filePath(), Qt::UserRole);
-
+        item->setData(2, Qt::ToolTipPropertyRole);
         item->setCheckable(true);
         model->appendRow(item);
 
@@ -300,7 +315,7 @@ void FileSelectWidget::clear()
     int pageCount = stackedWidget->count();
     for (int i = 0; i < pageCount; ++i) {
         SelectListView *currentPage = qobject_cast<SelectListView *>(stackedWidget->widget(i));
-        QStandardItemModel *model = qobject_cast<QStandardItemModel *>(currentPage->model());
+        QStandardItemModel *model = currentPage->getModel();
         for (int row = 0; row < model->rowCount(); ++row) {
             QModelIndex itemIndex = model->index(row, 0);
             model->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
@@ -347,7 +362,7 @@ void FileSelectWidget::nextPage()
     sendOptions();
 
     // nextpage
-   emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }
 
 void FileSelectWidget::backPage()

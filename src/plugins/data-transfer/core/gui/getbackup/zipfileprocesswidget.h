@@ -5,14 +5,14 @@
 
 class QLabel;
 class ProgressBarLabel;
-class zipFileProcessWidget : public QFrame
+class ZipFileProcessWidget : public QFrame
 {
+    Q_OBJECT
 public:
-    zipFileProcessWidget(QWidget *parent = nullptr);
-    ~zipFileProcessWidget();
+    ZipFileProcessWidget(QWidget *parent = nullptr);
+    ~ZipFileProcessWidget();
 public slots:
     void updateProcess(const QString &content, int processbar, int estimatedtime);
-
 private:
     void changeFileLabel(const QString &path);
     void changeTimeLabel(const int &time);

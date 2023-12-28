@@ -28,22 +28,18 @@ void ConfigSelectWidget::initUI()
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
-
     titileLabel = new QLabel(LocalText, this);
-    titileLabel->setFixedHeight(20);
     QFont font;
-    font.setPointSize(16);
+    font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    initSelectBrowerBookMarkFrame();
-    initSelectConfigFrame();
-
     QLabel *tipLabel1 =
             new QLabel(tr("Check transfer configuration will automatically apply to UOS."), this);
-    tipLabel1->setFixedHeight(12);
-    tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    tipLabel1->setWordWrap(true);
+    tipLabel1->setFixedHeight(30);
+    tipLabel1->setAlignment(Qt::AlignCenter);
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
@@ -88,15 +84,16 @@ void ConfigSelectWidget::initUI()
     buttonLayout->addSpacing(15);
     buttonLayout->addWidget(determineButton);
     buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
-
+    initSelectBrowerBookMarkFrame();
+    initSelectConfigFrame();
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     mainLayout->addSpacing(30);
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(3);
     mainLayout->addWidget(tipLabel1);
-    mainLayout->addSpacing(25);
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(selectBrowerBookMarkFrame);
-    mainLayout->addSpacing(20);
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(selectConfigFrame);
     mainLayout->addLayout(buttonLayout);
 }
@@ -106,10 +103,10 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
     ItemTitlebar *titlebar = new ItemTitlebar(tr("Browser bookmarks"), tr("Recommendation"), 50,
-                                              360, QRectF(10, 12, 16, 16), 3, this);
+                                              360, QRectF(10, 8, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
     selectBrowerBookMarkFrame = new QFrame(this);
-    selectBrowerBookMarkFrame->setFixedSize(500, 190);
+    selectBrowerBookMarkFrame->setFixedSize(500, 210);
     selectBrowerBookMarkFrame->setStyleSheet(".QFrame{"
                                              "border-radius: 8px;"
                                              " border: 1px solid rgba(0,0,0, 0.2);"
@@ -119,7 +116,8 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
     selectBrowerBookMarkFrame->setLayout(selectframeLayout);
 
     browserView = new SelectListView(this);
-    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(browserView->model());
+
+    QStandardItemModel *model = browserView->getModel();
     browserView->setItemDelegate(
             new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
 
@@ -137,18 +135,21 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
     selectframeLayout->addWidget(browserView);
     QObject::connect(titlebar, &ItemTitlebar::selectAll, browserView,
                      &SelectListView::selectorDelAllItem);
+    QObject::connect(browserView, &SelectListView::currentSelectState, titlebar,
+                     &ItemTitlebar::updateSelectAllButState);
+    QObject::connect(titlebar, &ItemTitlebar::sort, browserView, &SelectListView::sortListview);
 }
 
 void ConfigSelectWidget::initSelectConfigFrame()
 {
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     ItemTitlebar *titlebar = new ItemTitlebar(tr("Personal Settings"), tr("Recommendation"), 50,
-                                              360, QRectF(10, 12, 16, 16), 3, this);
+                                              360, QRectF(10, 8, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
 
     selectConfigFrame = new QFrame(this);
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
-    selectConfigFrame->setFixedSize(500, 75);
+    selectConfigFrame->setFixedSize(500, 88);
     selectConfigFrame->setStyleSheet(".QFrame{"
                                      "border-radius: 8px;"
                                      "border: 1px solid rgba(0,0,0, 0.2);"
@@ -158,7 +159,8 @@ void ConfigSelectWidget::initSelectConfigFrame()
     selectConfigFrame->setLayout(selectframeLayout);
 
     configView = new SelectListView(this);
-    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(configView->model());
+
+    QStandardItemModel *model = configView->getModel();
     configView->setItemDelegate(
             new ItemDelegate(55, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
 
@@ -172,6 +174,9 @@ void ConfigSelectWidget::initSelectConfigFrame()
     selectframeLayout->addWidget(configView);
     QObject::connect(titlebar, &ItemTitlebar::selectAll, configView,
                      &SelectListView::selectorDelAllItem);
+    QObject::connect(configView, &SelectListView::currentSelectState, titlebar,
+                     &ItemTitlebar::updateSelectAllButState);
+    QObject::connect(titlebar, &ItemTitlebar::sort, configView, &SelectListView::sortListview);
 }
 
 void ConfigSelectWidget::sendOptions()
@@ -210,7 +215,7 @@ void ConfigSelectWidget::sendOptions()
 void ConfigSelectWidget::delOptions()
 {
     // Clear All config Selections
-    QAbstractItemModel *model = browserView->model();
+    QAbstractItemModel *model = browserView->getModel();
     for (int row = 0; row < model->rowCount(); ++row) {
         QModelIndex index = model->index(row, 0);
         QVariant checkboxData = model->data(index, Qt::CheckStateRole);
@@ -220,7 +225,7 @@ void ConfigSelectWidget::delOptions()
         }
     }
 
-    model = configView->model();
+    model = configView->getModel();
     for (int row = 0; row < model->rowCount(); ++row) {
         QModelIndex index = model->index(row, 0);
         QVariant checkboxData = model->data(index, Qt::CheckStateRole);
@@ -248,13 +253,13 @@ void ConfigSelectWidget::changeText()
 
 void ConfigSelectWidget::clear()
 {
-    QStandardItemModel *browsermodel = qobject_cast<QStandardItemModel *>(browserView->model());
+    QStandardItemModel *browsermodel = browserView->getModel();
     for (int row = 0; row < browsermodel->rowCount(); ++row) {
         QModelIndex itemIndex = browsermodel->index(row, 0);
         browsermodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
     }
 
-    QStandardItemModel *configmodel = qobject_cast<QStandardItemModel *>(configView->model());
+    QStandardItemModel *configmodel = configView->getModel();
     for (int row = 0; row < configmodel->rowCount(); ++row) {
         QModelIndex itemIndex = configmodel->index(row, 0);
         configmodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
