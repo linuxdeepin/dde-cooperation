@@ -410,6 +410,21 @@ void HandleRpcService::handleRemotePing(const QString &info)
     _ping_lost_count.insert(appName, 0);
 }
 
+void HandleRpcService::handleRemoteDisApplyShareConnect(co::Json &info)
+{
+    // 发送给前端
+    ShareConnectDisApply sd;
+    sd.from_json(info);
+
+    ShareEvents event;
+    event.eventType = FRONT_SHARE_DISAPPLY_CONNECT;
+    event.data = info.str();
+    co::Json req = info;
+    req.add_member("api", "Frontend.shareEvents");
+    SendIpcService::instance()->handleSendToClient(sd.tarAppname.c_str(), req.str().c_str());
+    SendRpcService::instance()->removePing(sd.tarAppname.c_str());
+}
+
 bool HandleRpcService::checkConnected()
 {
     return _rpc->checkConneted() || _rpc_trans->checkConneted();
@@ -572,6 +587,14 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 OutData data;
                 _outgo_chan << data;
                 self->handleRemoteDisConnectCb(json_obj);
+                break;
+            }
+            case DISAPPLY_SHARE_CONNECT:
+            {
+                // 断开连接
+                OutData data;
+                _outgo_chan << data;
+                self->handleRemoteDisApplyShareConnect(json_obj);
                 break;
             }
             default:{

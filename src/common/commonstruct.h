@@ -520,7 +520,7 @@ struct ShareStart {
         tarAppname = _x_.get("tarAppname").as_c_str();
         config.from_json(_x_.get("config"));
         ip = _x_.get("ip").as_c_str();
-        port = (int32)_x_.get("port").as_int64();
+        port = static_cast<int32>(_x_.get("port").as_int64());
     }
 
     co::Json as_json() const {
@@ -573,6 +573,30 @@ struct ShareStartRmoteReply {
         _x_.add_member("appName", appName);
         _x_.add_member("tarAppname", tarAppname);
         _x_.add_member("errorMsg", errorMsg);
+        return _x_;
+    }
+};
+
+// 取消共享连接申请
+struct ShareConnectDisApply {
+    fastring appName;
+    fastring tarAppname;
+    fastring ip;
+    fastring msg;
+
+    void from_json(const co::Json& _x_) {
+        appName = _x_.get("appName").as_c_str();
+        tarAppname = _x_.get("tarAppname").as_c_str();
+        ip = _x_.get("ip").as_c_str();
+        msg = _x_.get("msg").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("appName", appName);
+        _x_.add_member("tarAppname", tarAppname);
+        _x_.add_member("ip", ip);
+        _x_.add_member("msg", msg);
         return _x_;
     }
 };
