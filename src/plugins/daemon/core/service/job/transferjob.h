@@ -91,6 +91,7 @@ private:
     bool _sub;
     bool _writejob {false};
     bool _init_success { true };
+    bool _mark_canceled { false };
 
     uint16 _tar_port{0};
     fastring _app_name; // //前端应用名

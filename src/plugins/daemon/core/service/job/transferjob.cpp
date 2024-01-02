@@ -137,6 +137,7 @@ bool TransferJob::createFile(const fastring fullpath, const bool isDir)
 void TransferJob::start()
 {
     atomic_store(&_status, STARTED);
+    _mark_canceled = false;
 
     if (_writejob) {
         DLOG << "start write job: " << _savedir << " fullpath = " << _save_fulldir;
@@ -220,6 +221,7 @@ fastring TransferJob::getAppName()
 void TransferJob::cancel(bool notify)
 {
     DLOG << "job cancel: " << notify;
+    _mark_canceled = true;
     if (notify) {
         atomic_cas(&_status, STARTED, CANCELING);   // 如果运行，则赋值取消
     } else {
@@ -362,7 +364,7 @@ void TransferJob::handleBlockQueque()
             }
         }
     };
-    if (!exception) {
+    if (!exception && !_mark_canceled) {
         handleJobStatus(JOB_TRANS_FINISHED);
     }
     LOG << "trans job end: " << _jobid;

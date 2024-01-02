@@ -178,6 +178,7 @@ void TransferHandle::localIPCStart()
 
     connect(qApp, &QCoreApplication::aboutToQuit, [this]() {
         DLOG << "App exit, exit ipc server";
+        cancelTransferJob(); //退出，取消job
         if (_rpcServer) {
             _rpcServer->exit();
         }
@@ -244,6 +245,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
 #endif
         break;
     case JOB_TRANS_CANCELED:
+        _job_maps.remove(id);
         emit TransferHelper::instance()->interruption();
         break;
     default:
@@ -371,16 +373,16 @@ bool TransferHandle::cancelTransferJob()
 
     int jobid = _job_maps.firstKey();
     return TransferWoker::instance()->cancelTransferJob(jobid);
+    _job_maps.remove(jobid);
 }
 
 void TransferHandle::sendFiles(QStringList paths)
 {
     if (!_backendOK) return;
 
-    //清空上次任务的所有文件统计
-    int current_id = _request_job_id;
-    TransferWoker::instance()->sendFiles(current_id, paths);
-    current_id++;
+    TransferWoker::instance()->sendFiles(_request_job_id, paths);
+    _job_maps.insert(_request_job_id, paths.first());
+    _request_job_id++;
 }
 
 void TransferHandle::sendMessage(json::Json &message)
