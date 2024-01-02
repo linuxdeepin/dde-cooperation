@@ -247,6 +247,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
     case JOB_TRANS_CANCELED:
         _job_maps.remove(id);
         emit TransferHelper::instance()->interruption();
+        TransferHelper::instance()->emitDisconnected();
         break;
     default:
         break;
