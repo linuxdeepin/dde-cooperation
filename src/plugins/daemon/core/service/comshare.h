@@ -37,6 +37,7 @@ typedef enum income_type_t {
     SHARE_START_RES = 1018, // 被控制方通知控制方，共享结果
     SHARE_STOP = 1019, // 停止
     DISCONNECT_CB = 1020, // 断开cb的连接
+    DISAPPLY_SHARE_CONNECT = 1021, // 取消申请共享
 } IncomeType;
 
 typedef enum outgo_type_t {

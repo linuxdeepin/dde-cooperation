@@ -34,6 +34,7 @@ public slots:
     void handleShareConnect(co::Json json);
     void handleShareDisConnect(co::Json json);
     void handleShareConnectReply(co::Json json);
+    void handleShareConnectDisApply(co::Json json);
     void handleShareStop(co::Json json);
     void handleDisConnectCb(co::Json json);
     void handleShareServerStart(const bool ok, const QString msg);

@@ -206,6 +206,10 @@ void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend
         handleDisConnectCb(msg);
         break;
     }
+    case BACK_SHARE_DISAPPLY_CONNECT: {
+        handleShareConnectDisApply(msg);
+        break;
+    }
     default:
         break;
     }
@@ -449,6 +453,18 @@ void HandleIpcService::handleShareConnectReply(co::Json json)
     // 回复控制端连接结果
     SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT_RES,
                                                reply.appName.c_str(), json.str().c_str());
+}
+// 取消协同申请
+void HandleIpcService::handleShareConnectDisApply(co::Json json)
+{
+    ShareConnectDisApply reply;
+    reply.from_json(json);
+
+    reply.ip = Util::getFirstIp();
+    // 回复控制端连接结果
+    SendRpcService::instance()->doSendProtoMsg(DISAPPLY_SHARE_CONNECT,
+                                               reply.appName.c_str(), json.str().c_str());
+
 }
 
 void HandleIpcService::handleShareStop(co::Json json)

@@ -175,3 +175,10 @@ object ShareStartRmoteReply {
     string tarAppname // 目标的app名称
     string errorMsg // 错误消息
 }
+
+object ShareConnectDisApply { // 取消共享连接申请
+    string appName // 自己的app名称
+    string tarAppname // 目标app的名称
+    string ip // 取消的ip（自己的ip）
+    string msg // 取消消息
+}
