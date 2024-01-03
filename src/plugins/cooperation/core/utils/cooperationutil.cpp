@@ -226,6 +226,7 @@ void CooperationUtilPrivate::localIPCStart()
                 ShareDisConnect disCon;
                 disCon.from_json(json_obj);
 
+                LOG << "share disconnect info: " << json_obj;
                 q->metaObject()->invokeMethod(CooperationManager::instance(),
                                               "handleDisConnectResult",
                                               Qt::QueuedConnection,

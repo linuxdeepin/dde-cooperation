@@ -46,7 +46,7 @@ DiscoveryJob::~DiscoveryJob()
 void DiscoveryJob::discovererRun()
 {
     _discoverer_p = co::make<searchlight::Discoverer>(
-        "ulink_service",
+        "{\"name\":\"ulink_service\",\"port\"",
         [this](const QList<searchlight::Discoverer::service> & services)
         {
             QWriteLocker lk(&_dis_lock);

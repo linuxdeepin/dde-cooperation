@@ -6,6 +6,7 @@
 #include "cooperationutil_p.h"
 #include "maincontroller/maincontroller.h"
 #include "configs/settings/configmanager.h"
+#include "maincontroller/maincontroller.h"
 
 #include "common/constant.h"
 #include "ipc/frontendservice.h"
@@ -132,6 +133,7 @@ void CooperationUtilPrivate::localIPCStart()
             } break;
             case FRONT_SERVER_ONLINE:
                 pingBackend();
+                MainController::instance()->regist();
                 break;
             default:
                 break;

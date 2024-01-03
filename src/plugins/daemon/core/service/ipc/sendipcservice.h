@@ -38,6 +38,7 @@ private slots:
 private:
     explicit SendIpcWork(QObject *parent = nullptr);
     void stop();
+    void handleStopShareConnect(const QString &info, const QSharedPointer<Session> s);
 
 private:
     // record the frontend session
