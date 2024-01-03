@@ -27,7 +27,7 @@ void DeviceListWidget::initUI()
     mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignCenter);
-    mainLayout->addSpacing(8);
+    mainLayout->setSpacing(10);
     mainWidget->setLayout(mainLayout);
 
     setWidget(mainWidget);

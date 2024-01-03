@@ -37,7 +37,7 @@ public Q_SLOTS:
     void onFindComboBoxValueChanged(int index);
     void onConnectComboBoxValueChanged(int index);
     void onTransferComboBoxValueChanged(int index);
-    void onNameEditingFinished();
+    void checkNameValid();
     void onNameChanged(const QString &text);
     void onDeviceShareButtonClicked(bool clicked);
     void onClipboardShareButtonClicked(bool clicked);

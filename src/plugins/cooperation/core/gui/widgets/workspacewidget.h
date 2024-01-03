@@ -22,7 +22,9 @@ public:
         kLookignForDeviceWidget = 0,
         kNoNetworkWidget,
         kNoResultWidget,
-        kDeviceListWidget
+        kDeviceListWidget,
+
+        kUnknownPage = 99,
     };
 
     explicit WorkspaceWidget(QWidget *parent = nullptr);

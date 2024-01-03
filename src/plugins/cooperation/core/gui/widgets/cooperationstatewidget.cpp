@@ -16,6 +16,7 @@
 #include <QIcon>
 #include <QLabel>
 #include <QUrl>
+#include <QTimer>
 #include <QDesktopServices>
 
 using namespace cooperation_core;
@@ -25,7 +26,7 @@ const char *Kfind_device = "find_device";
 const char *Kno_network = "no_network";
 const char *Knot_find_device = "not_find_device";
 #else
-const char *Kfind_device = ":/icons/deepin/builtin/light/icons/find_device_277px.svg";
+const char *Kfind_device = ":/icons/deepin/builtin/light/icons/find_device_250px.svg";
 const char *Kno_network = ":/icons/deepin/builtin/icons/dark@2x.png";
 const char *Knot_find_device = ":/icons/deepin/builtin/light/icons/not_find_device_150px.svg";
 #endif
@@ -34,30 +35,78 @@ LookingForDeviceWidget::LookingForDeviceWidget(QWidget *parent)
     : QWidget(parent)
 {
     initUI();
+
+    animationTimer = new QTimer(this);
+    animationTimer->setInterval(16);
+    connect(animationTimer, &QTimer::timeout, this, [this] { update(); });
+}
+
+void LookingForDeviceWidget::seAnimationtEnabled(bool enabled)
+{
+    if (isEnabled == enabled)
+        return;
+
+    angle = 0;
+    (isEnabled = enabled) ? animationTimer->start() : animationTimer->stop();
 }
 
 void LookingForDeviceWidget::initUI()
 {
     setFocusPolicy(Qt::ClickFocus);
 
-    QLabel *iconLabel = new QLabel(this);
-    iconLabel->setFixedSize(277, 277);
+    iconLabel = new QLabel(this);
+    iconLabel->setFixedSize(250, 250);
     QIcon icon = QIcon::fromTheme(Kfind_device);
-    iconLabel->setPixmap(icon.pixmap(277, 277));
-    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, [icon, iconLabel] {
-        iconLabel->setPixmap(icon.pixmap(277, 277));
+    iconLabel->setPixmap(icon.pixmap(250, 250));
+    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, [icon, this] {
+        iconLabel->setPixmap(icon.pixmap(250, 250));
     });
 
     QLabel *tipsLabel = new QLabel(tr("Looking for devices"), this);
+    tipsLabel->setAlignment(Qt::AlignHCenter);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
     vLayout->addSpacing(38);
     vLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
-    vLayout->addWidget(tipsLabel, 0, Qt::AlignCenter);
+    vLayout->addWidget(tipsLabel, 0, Qt::AlignVCenter);
     vLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
     setLayout(vLayout);
+}
+
+void LookingForDeviceWidget::paintEvent(QPaintEvent *event)
+{
+    // 绘制动画效果
+    if (isEnabled) {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+
+        // 获取中心点坐标
+        int centerX = iconLabel->geometry().center().x() + 1;
+        int centerY = iconLabel->geometry().center().y();
+        QConicalGradient gradient(centerX, centerY, angle + 180);
+        if (CooperationGuiHelper::isDarkTheme()) {
+            gradient.setColorAt(0.3, QColor(63, 63, 63));
+            gradient.setColorAt(0.7, QColor(63, 63, 63, 0));
+        } else {
+            gradient.setColorAt(0.3, QColor(208, 228, 245));
+            gradient.setColorAt(0.7, QColor(208, 228, 245, 0));
+        }
+
+        painter.setBrush(gradient);
+        painter.setPen(Qt::NoPen);
+
+        // 计算绘制矩形区域，半径111
+        int newLeft = centerX - 111;
+        int newTop = centerY - 111;
+        QRect drawRect(newLeft, newTop, 222, 222);
+
+        painter.drawPie(drawRect, angle * 16, 90 * 16);
+        angle -= 2;
+    }
+
+    QWidget::paintEvent(event);
 }
 
 NoNetworkWidget::NoNetworkWidget(QWidget *parent)
