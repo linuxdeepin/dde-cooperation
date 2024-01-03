@@ -56,7 +56,7 @@ public:
     NoResultWidget *nrWidget { nullptr };
     DeviceListWidget *dlWidget { nullptr };
 
-    WorkspaceWidget::PageName currentPage;
+    WorkspaceWidget::PageName currentPage { WorkspaceWidget::kUnknownPage };
     QSharedPointer<SortFilterWorker> sortFilterWorker { nullptr };
     QSharedPointer<QThread> workThread { nullptr };
 };

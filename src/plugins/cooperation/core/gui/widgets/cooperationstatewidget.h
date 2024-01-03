@@ -6,6 +6,7 @@
 #define COOPERATIONSTATEWIDGET_H
 
 #include <QWidget>
+#include <QLabel>
 
 namespace cooperation_core {
 
@@ -15,8 +16,18 @@ class LookingForDeviceWidget : public QWidget
 public:
     explicit LookingForDeviceWidget(QWidget *parent = nullptr);
 
+    void seAnimationtEnabled(bool enabled);
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
 private:
     void initUI();
+
+    QLabel *iconLabel { nullptr };
+    QTimer *animationTimer { nullptr };
+    int angle { 0 };
+    bool isEnabled { false };
 };
 
 class NoNetworkWidget : public QWidget

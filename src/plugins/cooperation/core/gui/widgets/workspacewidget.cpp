@@ -57,7 +57,7 @@ void WorkspaceWidgetPrivate::initUI()
 #else
     mainLayout->addWidget(searchEdit);
 #endif
-    mainLayout->addSpacing(16);
+    mainLayout->addSpacing(15);
     mainLayout->addLayout(stackedLayout);
     q->setLayout(mainLayout);
 }
@@ -136,8 +136,13 @@ int WorkspaceWidget::itemCount()
 
 void WorkspaceWidget::switchWidget(PageName page)
 {
-    if (d->currentPage == page)
+    if (d->currentPage == page || page == kUnknownPage)
         return;
+
+    if (page == kLookignForDeviceWidget)
+        d->lfdWidget->seAnimationtEnabled(true);
+    else
+        d->lfdWidget->seAnimationtEnabled(false);
 
     d->currentPage = page;
     d->stackedLayout->setCurrentIndex(page);

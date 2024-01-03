@@ -10,7 +10,7 @@
 #include "configs/dconfig/dconfigmanager.h"
 
 #ifdef linux
-#include <DPalette>
+#    include <DPalette>
 #endif
 
 #include <QPainter>
@@ -138,7 +138,7 @@ void SettingDialogPrivate::createBasicWidget()
     nameEdit->setFixedHeight(36);
 #endif
     nameEdit->setFixedWidth(280);
-    connect(nameEdit, &CooperationLineEdit::editingFinished, this, &SettingDialogPrivate::onNameEditingFinished);
+    connect(nameEdit, &CooperationLineEdit::editingFinished, this, &SettingDialogPrivate::checkNameValid);
     connect(nameEdit, &CooperationLineEdit::textChanged, this, &SettingDialogPrivate::onNameChanged);
     SettingItem *nameItem = new SettingItem(q);
     nameItem->setItemInfo(tr("Device name"), nameEdit);
@@ -271,7 +271,7 @@ void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 #endif
 }
 
-void SettingDialogPrivate::onNameEditingFinished()
+void SettingDialogPrivate::checkNameValid()
 {
     int length = nameEdit->text().length();
     if (length < 1 || length > 63) {
@@ -287,13 +287,14 @@ void SettingDialogPrivate::onNameEditingFinished()
 
 void SettingDialogPrivate::onNameChanged(const QString &text)
 {
+    Q_UNUSED(text)
+
 #ifdef linux
     if (nameEdit->isAlert())
         nameEdit->setAlert(false);
 #endif
 
-    if (text.isEmpty())
-        onNameEditingFinished();
+    checkNameValid();
 }
 
 void SettingDialogPrivate::onDeviceShareButtonClicked(bool clicked)
