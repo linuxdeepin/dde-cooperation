@@ -71,6 +71,7 @@ void MainWindowPrivate::initTitleBar()
                             "border-top-right-radius: 10px;"
                             "border-top-left-radius: 10px;"
                             "}");
+    titleBar->setFocusPolicy(Qt::ClickFocus);
 
     QToolButton *refreshBtn = new QToolButton(q);
     refreshBtn->setIcon(QIcon(":/icons/deepin/builtin/texts/refresh_14px.svg"));
