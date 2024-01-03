@@ -28,7 +28,7 @@ CooperationSearchEdit::CooperationSearchEdit(QWidget *parent) : QFrame(parent)
 
     searchText = new QLabel(this);
     searchText->setText(tr("Search"));
-    searchText->setGeometry(213, 7, 50, 20);
+    searchText->setGeometry(223, 7, 50, 20);
     QFont font;
     font.setPointSize(11);
     searchText->setFont(font);
@@ -83,7 +83,7 @@ bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
             searchEdit->setPlaceholderText(placeholderText);
         } else if (event->type() == QEvent::FocusOut && searchEdit->text().isEmpty()) {
             searchIcon->setPixmap(searchicon.pixmap(17, 17));
-            searchIcon->setGeometry(190, 7, 20, 20);
+            searchIcon->setGeometry(200, 7, 20, 20);
             searchText->setVisible(true);
             searchEdit->setPlaceholderText("");
         }

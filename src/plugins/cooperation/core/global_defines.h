@@ -10,16 +10,41 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QPainter>
 typedef QMainWindow CooperationMainWindow;
 typedef QDialog CooperationDialog;
 typedef QToolButton CooperationIconButton;
 typedef QDialog CooperationAbstractDialog;
 typedef QPushButton CooperationSuggestButton;
-typedef QCheckBox CooperationSwitchButton;
 typedef QToolButton CooperationFloatingEdit;
 typedef QLabel CooperationSpinner;
 typedef QLineEdit CooperationLineEdit;
 typedef QLabel CooperationLabel;
+class CooperationSwitchButton : public QPushButton {
+public:
+    CooperationSwitchButton(QWidget *parent = nullptr) : QPushButton(parent){
+        setFixedSize(50, 24);
+        setCheckable(true);
+    }
+protected:
+    void paintEvent(QPaintEvent *event) override {
+        Q_UNUSED(event);
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        int x = 0;
+        QColor color("#000000");
+        if(isChecked()){
+            x = 20;
+            color.setNamedColor("#0098FF");
+        }
+        QRectF rect(x, 0, 30, 24);
+        painter.setBrush(QColor(qRgba(220, 220, 220, 128)));
+        painter.setPen(Qt::NoPen);
+        painter.drawRoundedRect(this->rect(), 8, 8);
+        painter.setBrush(color);
+        painter.drawRoundedRect(rect, 8, 8);
+    }
+};
 #else
 #include <DMainWindow>
 #include <DAbstractDialog>

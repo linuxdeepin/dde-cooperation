@@ -202,9 +202,9 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
         bool unfinish = TransferHelper::instance()->isUnfinishedJob(unfinishJson);
         if (unfinish) {
             message.add_member("unfinish_json", unfinishJson.toStdString());
-            message.add_member("remaining_space", remainSpace);
-            sendMessage(message);
         }
+        message.add_member("remaining_space", remainSpace);
+        sendMessage(message);
 #endif
     } else {
         emit TransferHelper::instance()->connectFailed();
@@ -340,6 +340,7 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
 
     if (miscJson.has_member("remaining_space")) {
         int remainSpace = miscJson.get("remaining_space").as_int();
+        LOG << "remaining_space " << remainSpace <<"G";
         emit TransferHelper::instance()->remoteRemainSpace(remainSpace);
     }
 }

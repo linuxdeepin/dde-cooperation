@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -17,6 +17,9 @@ SettingItem::SettingItem(QWidget *parent)
     mainLayout = new QHBoxLayout;
     mainLayout->setContentsMargins(10, 6, 10, 6);
     setLayout(mainLayout);
+#ifndef linux
+    setFixedHeight(48);
+#endif
 }
 
 void SettingItem::setItemInfo(const QString &text, QWidget *w)
@@ -52,8 +55,11 @@ void SettingItem::paintEvent(QPaintEvent *event)
     path.arcTo(QRect(QPoint(paintRect.bottomRight() - QPoint(radius * 2, radius * 2)),
                      QSize(radius * 2, radius * 2)),
                270, 90);
-
+#ifdef linux
     QColor color(0, 0, 0, static_cast<int>(255 * 0.03));
+#else
+    QColor color(0, 0, 0, static_cast<int>(255 * 0.09));
+#endif
     if (CooperationGuiHelper::isDarkTheme())
         color.setRgb(255, 255, 255, static_cast<int>(255 * 0.05));
 
