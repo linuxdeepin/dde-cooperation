@@ -154,7 +154,7 @@ void Discoverer::handle_message(const fastring& message, const fastring& sender_
     auto preHost = ip.find_last_of(".") > ip.size()
             ? ip : ip.substr(0, ip.find_last_of("."));
     fastring self_ip = Util::getFirstIp();
-    if (name == _listen_for_service && ip != self_ip && self_ip.starts_with(preHost)) {
+    if (message.starts_with(_listen_for_service) && ip != self_ip && self_ip.starts_with(preHost)) {
         // 找到最近的时间修改，只发送改变了的
         handleChanges(endpoint, info, _timer.ms());
     } else {

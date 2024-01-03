@@ -7,8 +7,10 @@
 #include "service/comshare.h"
 #include "session.h"
 #include "service/discoveryjob.h"
+#include "service/share/sharecooperationservicemanager.h"
 #include "service/rpc/sendrpcservice.h"
 #include "common/constant.h"
+#include "ipc/proto/comstruct.h"
 
 #include <QCoreApplication>
 #include <QThread>
@@ -20,6 +22,50 @@ SendIpcWork::SendIpcWork(QObject *parent) : QObject(parent)
 void SendIpcWork::stop()
 {
     _stoped = true;
+}
+
+void SendIpcWork::handleStopShareConnect(const QString &info, const QSharedPointer<Session> s)
+{
+    fastring nodeinfo(info.toStdString());
+    co::Json js;
+    if (!js.parse_from(nodeinfo)) {
+        ELOG << "parse node info to json error, info = " << nodeinfo;
+        return;
+    }
+
+    NodeInfo _nodeinfo;
+    _nodeinfo.from_json(js);
+    auto _base = DiscoveryJob::instance()->baseInfo();
+    co::Json _base_json;
+    if (!_base_json.parse_from(_base)) {
+        ELOG << "parse base info to json error, base info = " << _base;
+        return;
+    }
+
+    NodePeerInfo _info;
+    _info.from_json(_base_json);
+    if (_info.share_connect_ip.empty() || _info.share_connect_ip != _nodeinfo.os.share_connect_ip ||
+            nodeinfo.contains("\"appname\":\"dde-cooperation\""))
+        return;
+
+    // 清理连接并停止共享
+    ShareCooperationServiceManager::instance()->stop();
+    _info.share_connect_ip = "";
+    DiscoveryJob::instance()->updateAnnouncBase(_info.as_json().str());
+    // 向前段发送断开连接信号
+    ShareEvents ev;
+    ev.eventType = FRONT_SHARE_DISCONNECT;
+    ShareDisConnect disInfo;
+    disInfo.appName = "dde-cooperation";
+    disInfo.tarAppname = "dde-cooperation";
+    ev.data = disInfo.as_json().str();
+    co::Json req = ev.as_json(), res;
+    req.add_member("api", "Frontend.shareEvents");
+    if (s) {
+        s->call(req,res);
+    } else {
+        SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
+    }
 }
 
 SendIpcWork::~SendIpcWork()
@@ -124,6 +170,10 @@ void SendIpcWork::handleNodeChanged(bool found, QString info)
         if (s->alive()) {
             // fastring session_id(s->getSession().toStdString());
             fastring nodeinfo(info.toStdString());
+            if (!found && s->getName() == "dde-cooperation")
+                handleStopShareConnect(info, s);
+
+
             co::Json req, res;
             //cbPeerInfo {GenericResult}
             req = {
@@ -150,7 +200,7 @@ void SendIpcWork::handleNodeChanged(bool found, QString info)
 void SendIpcWork::handlebackendOnline()
 {
     QList<uint16> ports{UNI_IPC_FRONTEND_PORT, UNI_IPC_FRONTEND_COOPERATION_PORT,
-                UNI_IPC_FRONTEND_TRANSFER_PORT};
+                UNI_IPC_FRONTEND_TRANSFER_PORT, UNI_IPC_BACKEND_COOPER_PLUGIN_PORT};
     for (const auto &session : _sessions) {
         ports.removeOne(session->port());
     }
