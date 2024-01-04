@@ -7,6 +7,7 @@
 #include "cooperationdialog.h"
 #include "utils/historymanager.h"
 #include "utils/cooperationutil.h"
+#include "maincontroller/maincontroller.h"
 
 #include "configs/settings/configmanager.h"
 #include "common/constant.h"
@@ -254,6 +255,7 @@ void CooperationProxy::localIPCStart()
             } break;
             case FRONT_SERVER_ONLINE:
                 pingBackend();
+                MainController::instance()->regist();
                 break;
             default:
                 break;
