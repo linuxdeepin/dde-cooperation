@@ -155,6 +155,8 @@ void FileSelectWidget::changeFileView(const QModelIndex &siderbarIndex)
         if (path == rootPath) {
             QStandardItem *item = iteraotr.key();
             stackedWidget->setCurrentWidget(sidebarFileViewList[item]);
+            auto state = static_cast<ListSelectionState>(item->data(Qt::StatusTipRole).toInt());
+            titlebar->updateSelectAllButState(state);
         }
     }
 }

@@ -32,9 +32,6 @@ private slots:
 #ifdef WIN32
 protected:
     void paintEvent(QPaintEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
 
 private:
     void initTitleBar();
@@ -47,16 +44,30 @@ protected:
     QDockWidget *sidebar{ nullptr };
     QStackedWidget *stackedWidget{ nullptr };
 #ifdef WIN32
-
 protected:
     QHBoxLayout *windowsCentralWidget{ nullptr };
     QHBoxLayout *windowsCentralWidgetContent{ nullptr };
     QHBoxLayout *windowsCentralWidgetSidebar{ nullptr };
+};
 
+class MoveFilter : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit MoveFilter(MainWindow *qq);
+
+protected:
+    bool eventFilter(QObject* obj, QEvent* event) override;
+
+protected:
+    MainWindow *q{ nullptr };
     QPoint lastPosition;
     bool leftButtonPressed{ false };
+
 #endif
 };
+
 
 } // namespace data_transfer_core
 #endif // MAINWINDOW_P_H
