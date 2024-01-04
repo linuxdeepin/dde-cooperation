@@ -201,41 +201,17 @@ void MainWindowPrivate::initSideBar()
     windowsCentralWidgetSidebar->addWidget(sidebar);
 }
 
-void MainWindowPrivate::mouseMoveEvent(QMouseEvent *event)
-{
-    if ((event->buttons() == Qt::LeftButton) && leftButtonPressed) {
-        q->move(event->globalPos() - lastPosition);
-    }
-}
-
-void MainWindowPrivate::mouseReleaseEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event)
-    leftButtonPressed = false;
-}
-
-void MainWindowPrivate::mousePressEvent(QMouseEvent *event)
-{
-    if (event->buttons() == Qt::LeftButton) {
-        leftButtonPressed = true;
-        lastPosition = event->globalPos() - q->pos();
-    }
-}
-
 void MainWindowPrivate::initTitleBar()
 {
     QWidget *titleBar = new QWidget(q->centralWidget());
+    MoveFilter *filter = new MoveFilter(q);
+    titleBar->installEventFilter(filter);
     titleBar->setFixedHeight(50);
-    titleBar->setStyleSheet("QWidget {"
-                            "background-color: white;"
+    titleBar->setStyleSheet("background-color: white;"
                             "border-top-left-radius: 20px;"
-                            "border-top-right-radius: 20px;"
-                            "}");
+                            "border-top-right-radius: 20px;");
 
     QToolButton *closeButton = new QToolButton(titleBar);
-    closeButton->setStyleSheet("QWidget {"
-                               "border-top-right-radius: 20px;"
-                               "}");
     closeButton->setFixedSize(50, 50);
     closeButton->setIcon(QIcon(":/icon/close_normal.svg"));
     closeButton->setIconSize(QSize(50, 50));
@@ -245,22 +221,14 @@ void MainWindowPrivate::initTitleBar()
     minButton->setFixedSize(50, 50);
     minButton->setIconSize(QSize(50, 50));
 
-    QToolButton *helpButton = new QToolButton(titleBar);
-    helpButton->setFixedSize(50, 50);
-    helpButton->setIcon(QIcon(":/icon/menu_normal.svg"));
-    helpButton->setIconSize(QSize(50, 50));
-
-    QLabel *mainLabel = new QLabel(titleBar);
-    mainLabel->setStyleSheet("QWidget {"
-                             "border-top-left-radius: 20px;"
-                             "}");
-    mainLabel->setPixmap(QPixmap(":/icon/icon.svg"));
+    QLabel *iconLabel = new QLabel(titleBar);
+    iconLabel->setPixmap(QPixmap(":/icon/icon.svg"));
     QObject::connect(closeButton, &QToolButton::clicked, q, []() { QCoreApplication::quit(); });
     QObject::connect(minButton, &QToolButton::clicked, q, &MainWindow::showMinimized);
 
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);
 
-    titleLayout->addWidget(mainLabel);
+    titleLayout->addWidget(iconLabel);
     titleLayout->addWidget(minButton, Qt::AlignHCenter);
     titleLayout->addWidget(closeButton, Qt::AlignHCenter);
     titleLayout->setContentsMargins(8, 0, 0, 0);
@@ -316,4 +284,31 @@ void MainWindowPrivate::changeAllWidgtText()
     widgetApp->changeText();
     widgetFile->changeText();
     qobject_cast<SidebarWidget *>(sidebar->widget())->changeUI();
+}
+
+MoveFilter::MoveFilter(MainWindow *qq) : q(qq) { }
+
+bool MoveFilter::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->buttons() == Qt::LeftButton) {
+            leftButtonPressed = true;
+            lastPosition = mouseEvent->globalPos() - q->pos();
+        }
+        return true;
+    }
+    if (event->type() == QEvent::MouseButtonRelease) {
+        leftButtonPressed = false;
+        return true;
+    }
+    if (event->type() == QEvent::MouseMove) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if ((mouseEvent->buttons() == Qt::LeftButton) && leftButtonPressed) {
+            q->move(mouseEvent->globalPos() - lastPosition);
+        }
+        return true;
+    }
+
+    return QObject::eventFilter(obj, event);
 }

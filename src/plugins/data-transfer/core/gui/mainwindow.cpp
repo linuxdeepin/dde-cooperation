@@ -22,23 +22,9 @@ void MainWindow::paintEvent(QPaintEvent *event)
     d->paintEvent(event);
 }
 
-void MainWindow::mouseMoveEvent(QMouseEvent *event)
-{
-    d->mouseMoveEvent(event);
-}
-
-void MainWindow::mouseReleaseEvent(QMouseEvent *event)
-{
-    d->mousePressEvent(event);
-}
-
-void MainWindow::mousePressEvent(QMouseEvent *event)
-{
-    d->mousePressEvent(event);
-}
-
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     QApplication::quit();
 }
 #endif
@@ -70,3 +56,4 @@ void MainWindowPrivate::moveCenter()
     int y = (cursorScreen->availableGeometry().height() - q->height()) / 2;
     q->move(QPoint(x, y) + cursorScreen->geometry().topLeft());
 }
+
