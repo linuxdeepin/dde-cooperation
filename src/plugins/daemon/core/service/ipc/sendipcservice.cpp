@@ -294,6 +294,59 @@ void SendIpcService::handleAddJob(const QString appName, const int jobId)
     emit addJob(appName , jobId);
 }
 
+void SendIpcService::preprocessOfflineStatus(const QString appName, int32 type, const fastring msg)
+{
+    //缓存一下要通知的状态，如果3秒未更新，才发送通知
+    SendStatus st;
+    st.type = type;
+    st.status = REMOTE_CLIENT_OFFLINE;
+    st.msg = msg;
+    _offline_status.remove(appName);
+    _offline_status.insert(appName, st);
+
+    _cacheTimer.setInterval(3000);
+    connect(&_cacheTimer, &QTimer::timeout, [this, appName]() {
+        auto names = _offline_status.keys();
+        for (const auto &name : names) {
+            auto st = _offline_status.take(name);
+            co::Json req = st.as_json();
+            req.add_member("api", "Frontend.notifySendStatus");
+            if (name.compare("all") == 0) {
+                DLOG << "notify all offline: " << req.dbg();
+                handleSendToAllClient(req.str().c_str());
+            } else {
+                DLOG << "notify " << name.toStdString() << " offline: " << req.dbg();
+                handleSendToClient(name, req.str().c_str());
+            }
+        }
+    });
+
+    emit startOfflineTimer();
+}
+
+void SendIpcService::cancelOfflineStatus(const QString appName)
+{
+    //取消缓存的通知
+    _offline_status.remove(appName);
+    if (_offline_status.count() == 0 || appName.compare("all") == 0) {
+        DLOG << "cancel offline: " << appName.toStdString();
+        emit stopOfflineTimer();
+    }
+}
+
+void SendIpcService::handleStartOfflineTimer()
+{
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    if (!_cacheTimer.isActive())
+        _cacheTimer.start();
+}
+
+void SendIpcService::handleStopOfflineTimer()
+{
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    _cacheTimer.stop();
+}
+
 void SendIpcService::initConnect()
 {
     connect(qApp, &QCoreApplication::aboutToQuit, this, &SendIpcService::handleAboutToQuit, Qt::DirectConnection);
@@ -319,4 +372,7 @@ void SendIpcService::initConnect()
             Qt::QueuedConnection);
     connect(this, &SendIpcService::pingFront, work.data(), &SendIpcWork::handlePing,
             Qt::QueuedConnection);
+
+    connect(this, &SendIpcService::startOfflineTimer, this, &SendIpcService::handleStartOfflineTimer, Qt::QueuedConnection);
+    connect(this, &SendIpcService::stopOfflineTimer, this, &SendIpcService::handleStopOfflineTimer, Qt::QueuedConnection);
 }

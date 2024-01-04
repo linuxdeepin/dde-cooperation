@@ -12,6 +12,7 @@
 #include <QThread>
 
 #include "co/json.h"
+#include "ipc/proto/chan.h"
 
 class BackendService;
 class Session;
@@ -67,6 +68,9 @@ signals:
     void backendOnline();
     void pingFront();
 
+    void startOfflineTimer();
+    void stopOfflineTimer();
+
 public slots:
     void handleSaveSession(const QString appName, const QString sessionID, const quint16 cbport);
     void handleConnectClosed(const uint16 port);
@@ -79,6 +83,13 @@ public slots:
     void handleSendToAllClient(const QString req) { emit sendToAllClient(req); }
     void handlebackendOnline() { emit backendOnline(); }
 
+    //缓存远端离线消息，可能因某次失败而触发，若3秒内有正常则应取消此消息到前端
+    void preprocessOfflineStatus(const QString appName, int32 type, const fastring msg);
+    void cancelOfflineStatus(const QString appName);
+
+    void handleStartOfflineTimer();
+    void handleStopOfflineTimer();
+
 private:
     explicit SendIpcService( QObject *parent = nullptr);
     void initConnect();
@@ -87,6 +98,8 @@ private:
     QThread thread;
     QSharedPointer<SendIpcWork> work;
     QTimer _ping;
+    QMap<QString, SendStatus> _offline_status;
+    QTimer _cacheTimer;
 };
 
 #endif // SENDIPCSERVICE_H

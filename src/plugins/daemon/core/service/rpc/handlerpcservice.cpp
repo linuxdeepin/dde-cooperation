@@ -228,6 +228,10 @@ void HandleRpcService::handleTransJob(co::Json &info)
     res = JobManager::instance()->handleRemoteRequestJob(info.str().c_str(), &app);
     if (res) {
         Comshare::instance()->updateStatus(CURRENT_STATUS_TRAN_FILE_RCV);
+    }
+
+    if (!app.isEmpty()) {
+        // 发送端已移除ping, 这里接收端始终也移除
         QWriteLocker lk(&_lock);
         _ping_lost_count.remove(app);
     }
@@ -395,14 +399,23 @@ void HandleRpcService::handleRemoteDisConnectCb(co::Json &info)
     SendRpcService::instance()->removePing(sd.tarAppname.c_str());
 }
 
-void HandleRpcService::handleRemotePing(const QString &info)
+void HandleRpcService::handleRemotePing(co::Json &info)
 {
-    auto appName = QString(info);
+    PingPong pingjson;
+    pingjson.from_json(info);
+    auto appName = QString(pingjson.appName.c_str());
+    auto remoteip = QString(pingjson.ip.c_str());
     if (!_timeOut.isActive())
         emit startTimer();
     QWriteLocker lk(&_lock);
     _ping_lost_count.remove(appName);
     _ping_lost_count.insert(appName, 0);
+    // 记录远端ping的IP地址，断开连接时通过ip获取要通知的Appname
+    _remote_ping_ips.remove(appName);
+    _remote_ping_ips.insert(appName, remoteip);
+
+    //取消离线预处理
+    SendIpcService::instance()->cancelOfflineStatus(appName);
 }
 
 void HandleRpcService::handleRemoteDisApplyShareConnect(co::Json &info)
@@ -425,6 +438,24 @@ bool HandleRpcService::checkConnected()
     return _rpc->checkConneted() || _rpc_trans->checkConneted();
 }
 
+void HandleRpcService::handleOffline(const QString ip)
+{
+    QWriteLocker lk(&_lock);
+    for (auto it = _remote_ping_ips.begin(); it != _remote_ping_ips.end();) {
+        QString remoteip = it.value();
+        if (ip.compare(remoteip) == 0) {
+            QString appname = it.key();
+            fastring msg = co::Json({{"ip", remoteip.toStdString()}, {"appName", appname.toStdString()}}).str();
+            ELOG << "connection offline: " << appname.toStdString() << " ip:" << remoteip.toStdString();
+            SendIpcService::instance()->preprocessOfflineStatus(appname, CONNCB_TIMEOUT, msg);
+            // 移除ping记录
+            it = _remote_ping_ips.erase(it);
+            continue;
+        }
+        it++;
+    }
+}
+
 void HandleRpcService::startRemoteServer(const quint16 port)
 {
     if (_rpc.isNull() && port != UNI_RPC_PORT_TRANS)
@@ -434,16 +465,14 @@ void HandleRpcService::startRemoteServer(const quint16 port)
     auto rpc = port != UNI_RPC_PORT_TRANS ? _rpc : _rpc_trans;
     fastring key = Cert::instance()->writeKey();
     fastring crt = Cert::instance()->writeCrt();
-    auto callback = [](const int type, const fastring &ip, const uint16 port){
+    QPointer<HandleRpcService> my = this;
+    auto callback = [my](const int type, const fastring &ip, const uint16 port){
         if (type == 0) {
-            SendStatus st;
-            st.type = 0;
-            st.status = REMOTE_CLIENT_OFFLINE;
-            st.msg = co::Json({{"ip", ip}, {"port", port}}).str();
-            co::Json req = st.as_json();
-            req.add_member("api", "Frontend.notifySendStatus");
             ELOG << "connection callback offline: " << ip << ":" << port;
-            SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+            if (!my.isNull()) {
+                QString remoteip = QString(ip.c_str());
+                my->handleOffline(remoteip);
+            }
         }
     };
     if (port == UNI_RPC_PORT_TRANS) {
@@ -466,7 +495,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             }
             LOG_IF(FLG_log_detail) << ">> get chan value: " << indata.type << " json:" << indata.json;
             co::Json json_obj = json::parse(indata.json);
-            if (RPC_PING != indata.type && json_obj.is_null()) {
+            if (json_obj.is_null()) {
                 ELOG << "parse error from: " << indata.json;
                 continue;
             }
@@ -522,11 +551,13 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             }
             case RPC_PING:
             {
+                PingPong pong;
+                pong.ip = Util::getFirstIp();
                 OutData data;
-                data.json = "remote_ping";
+                data.json = pong.as_json().str();
                 _outgo_chan << data;
                 if (self)
-                    self->handleRemotePing(indata.json.c_str());
+                    self->handleRemotePing(json_obj);
                 break;
             }
             case APPLY_SHARE_CONNECT:
@@ -606,17 +637,13 @@ void HandleRpcService::handleTimeOut()
 {
     QWriteLocker lk(&_lock);
     auto keys = _ping_lost_count.keys();
-    for (const auto &key : keys){
+    for (const auto &key : keys) {
         auto count = _ping_lost_count.take(key);
         if (count > 3) {
             // 通知客户端连接超时
-            SendStatus st;
-            st.type = 0;
-            st.status = REMOTE_CLIENT_OFFLINE;
-            co::Json req = st.as_json();
-            req.add_member("api", "Frontend.notifySendStatus");
             ELOG << "timeout: remote server disconnect: " << key.toStdString();
-            SendIpcService::instance()->handleSendToClient(key, req.str().c_str());
+            fastring msg = co::Json({{"app", key.toStdString()}, {"offline", true}}).str();
+            SendIpcService::instance()->preprocessOfflineStatus(key, NOPING_TIMEOUT, msg);
             continue;
         }
         _ping_lost_count.insert(key, ++count);
