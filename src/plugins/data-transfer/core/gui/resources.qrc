@@ -125,5 +125,7 @@
         <file>icon/picture-app@2x.png</file>
         <file>icon/picture-configuration@2x.png</file>
         <file>icon/picture-file@2x.png</file>
+        <file>icon/check_white.svg</file>
+        <file>icon/arrow_black.svg</file>
     </qresource>
 </RCC>

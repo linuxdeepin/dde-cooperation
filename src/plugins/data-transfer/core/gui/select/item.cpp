@@ -556,10 +556,13 @@ void SidebarItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionVie
     painter->setRenderHint(QPainter::Antialiasing);
 
     QColor color;
+    QString icon;
     if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
         color = QColor(255, 255, 255, 255);
+        icon = ":/icon/check_white.svg";
     } else {
         color = QColor(0, 0, 0, 255);
+        icon = ":/icon/check_black.svg";
     }
 
     painter->setPen(color);
@@ -569,13 +572,13 @@ void SidebarItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionVie
 
     if (index.data(Qt::StatusTipRole).value<int>() == 0) {
         QRect iconRect(checkBoxRect.left() + 3, checkBoxRect.top() + 3, 13, 11);
-        QSvgRenderer render(QString(":/icon/check_black.svg"));
+        QSvgRenderer render(icon);
         render.render(painter, iconRect);
     } else if (index.data(Qt::StatusTipRole).value<int>() == 1) {
         int y = checkBoxRect.top() + 9;
         int x1 = checkBoxRect.left() + 4;
         int x2 = checkBoxRect.left() + 14;
-        painter->setPen(QPen(QColor(0, 0, 0, 255), 2));
+        painter->setPen(QPen(color, 2));
         painter->drawLine(x1, y, x2, y);
     }
     painter->restore();
@@ -590,7 +593,7 @@ void SidebarItemDelegate::paintBackground(QPainter *painter, const QStyleOptionV
         painter->setBrush(QColor(0, 129, 255, 255));
 
     } else {
-        painter->setBrush(QColor(0, 0, 0, 12));
+        painter->setBrush(QColor(255, 255, 255));
     }
 
     painter->drawRoundedRect(positon, 8, 8);
@@ -793,7 +796,7 @@ void SelectListView::sortListview()
 
 SortButton::SortButton(QWidget *parent) : QPushButton(parent)
 {
-    setIcon(QIcon(":/icon/arrow.svg"));
+    setIcon(QIcon(":/icon/arrow_black.svg"));
     setStyleSheet(".SortButton { border: none; }");
     setIconSize(QSize(18, 18));
 }
@@ -805,9 +808,9 @@ void SortButton::mousePressEvent(QMouseEvent *event)
     if (flag) {
         QMatrix matrix;
         matrix.rotate(180);
-        setIcon(QPixmap(":/icon/arrow.svg").transformed(matrix, Qt::SmoothTransformation));
+        setIcon(QPixmap(":/icon/arrow_black.svg").transformed(matrix, Qt::SmoothTransformation));
     } else {
-        setIcon(QIcon(":/icon/arrow.svg"));
+        setIcon(QIcon(":/icon/arrow_black.svg"));
     }
     flag = !flag;
     emit sort();
