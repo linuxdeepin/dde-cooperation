@@ -64,7 +64,6 @@ private:
     QTimer _timeOut;
     QReadWriteLock _lock;
     QMap<QString, int> _ping_lost_count;
-    QMap<QString, bool> _startPing;
 };
 
 #endif // HANDLERPCSERVICE_H
