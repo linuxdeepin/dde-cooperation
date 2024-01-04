@@ -146,6 +146,12 @@ typedef enum rpc_send_status {
     REMOTE_CLIENT_OFFLINE = 1, // tcp远端的tcpclient下线（服务调用方下线）
 } RpcSendStatus;
 
+typedef enum offline_type {
+    PING_FAILED = 0x02, // ping失败
+    CONNCB_TIMEOUT = 0x04, // zrpc回调连接断开
+    NOPING_TIMEOUT = 0x06, // 超时未收到ping
+} OfflineType;
+
 enum FileType {
   DIR = 0,
   DIR_LINK = 1,

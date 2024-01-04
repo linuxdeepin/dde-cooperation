@@ -49,6 +49,8 @@ private:
     // <appName, ip>
     QMap<QString, QString> _app_ips;
     std::atomic_bool _stoped{false};
+
+    QMap<QString, int> _ping_failed_count;
 };
 
 class SendRpcService : public QObject

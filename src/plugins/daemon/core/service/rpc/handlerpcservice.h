@@ -40,12 +40,13 @@ public:
     void handleRemoteShareStartRes(co::Json &info);
     void handleRemoteShareStop(co::Json &info);
     void handleRemoteDisConnectCb(co::Json &info);
-    void handleRemotePing(const QString &info);
+    void handleRemotePing(co::Json &info);
     void handleRemoteDisApplyShareConnect(co::Json &info);
     // 检查51597和51599两个端口是否有连接阻塞，没有退出
     bool checkConnected();
 
 private:
+    void handleOffline(const QString ip);
     void startRemoteServer(const quint16 port);
 
 private Q_SLOTS:
@@ -59,11 +60,10 @@ signals:
 private:
     QSharedPointer<RemoteServiceBinder> _rpc{ nullptr };
     QSharedPointer<RemoteServiceBinder> _rpc_trans{ nullptr };
-    // port backend
-    QMap<QString, QString> _sessionIDs;
     QTimer _timeOut;
     QReadWriteLock _lock;
     QMap<QString, int> _ping_lost_count;
+    QMap<QString, QString> _remote_ping_ips;
 };
 
 #endif // HANDLERPCSERVICE_H

@@ -107,17 +107,30 @@ void SendRpcWork::handlePing(const QStringList apps)
         auto sender = this->rpcSender(appName);
         if (sender.isNull())
             continue;
-        SendResult rs = sender->doSendProtoMsg(RPC_PING, sender->targetAppname(), QByteArray());
+
+        PingPong ping;
+        ping.appName = appName.toStdString();
+        ping.tarAppname = sender->targetAppname().toStdString();
+        ping.ip = Util::getFirstIp();
+
+        SendResult rs = sender->doSendProtoMsg(RPC_PING, ping.as_json().str().c_str(), QByteArray());
         if (rs.data.empty() || rs.errorType < INVOKE_OK) {
             DLOG << "remote server no reply ping !!!!! " << appName.toStdString();
-            SendStatus st;
-            st.type = RPC_PING;
-            st.status = REMOTE_CLIENT_OFFLINE;
-            st.msg = rs.data;
-            co::Json req = st.as_json();
-            req.add_member("api", "Frontend.notifySendStatus");
-            SendIpcService::instance()->handleSendToClient(appName, req.str().c_str());
-            SendRpcService::instance()->removePing(appName);
+            auto count = _ping_failed_count.take(appName);
+            if (count > 2) {
+                // 通知客户端ping超时
+                ELOG << "timeout: server no reply ping: " << count;
+                fastring msg = co::Json({{"app", appName.toStdString()}, {"offline", true}}).str();
+                SendIpcService::instance()->preprocessOfflineStatus(appName, PING_FAILED, msg);
+                SendRpcService::instance()->removePing(appName);
+            } else {
+                _ping_failed_count.insert(appName, ++count);
+            }
+        } else {
+            // 取消离线预处理消息
+            SendIpcService::instance()->cancelOfflineStatus(appName);
+            _ping_failed_count.remove(appName);
+            _ping_failed_count.insert(appName, 0);
         }
     }
 }

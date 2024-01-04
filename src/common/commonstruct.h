@@ -601,3 +601,24 @@ struct ShareConnectDisApply {
     }
 };
 
+// PingPong请求响应结构
+struct PingPong {
+    fastring appName;
+    fastring tarAppname;
+    fastring ip;
+
+    void from_json(const co::Json& _x_) {
+        appName = _x_.get("appName").as_c_str();
+        tarAppname = _x_.get("tarAppname").as_c_str();
+        ip = _x_.get("ip").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("appName", appName);
+        _x_.add_member("tarAppname", tarAppname);
+        _x_.add_member("ip", ip);
+        return _x_;
+    }
+};
+

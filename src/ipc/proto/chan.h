@@ -192,8 +192,8 @@ struct FSReport {
 };
 
 struct SendStatus {
-    int32 type;
-    int32 status;
+    int32 type{0};
+    int32 status{0};
     fastring msg;
 
     void from_json(const co::Json& _x_) {
