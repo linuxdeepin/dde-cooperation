@@ -45,7 +45,12 @@ TransferHandle::TransferHandle()
         if (ipcPing <= 0) {
             _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
             if (_backendOK) {
+                ipcPing = 3;
                 saveSession(TransferWoker::instance()->getSessionId());
+            } else {
+                //后端离线，跳转提示界面.
+                // FIXME: 只有从等待传输界面开始才能跳转
+                TransferHelper::instance()->emitDisconnected();
             }
         }
     });

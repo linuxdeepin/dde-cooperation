@@ -64,7 +64,6 @@ void HandleRpcService::handleRpcLogin(bool result, const QString &targetAppname,
             emit startTimer();
     } else {
         QWriteLocker lk(&_lock);
-        _startPing.remove(appName);
         _ping_lost_count.remove(appName);
     }
 
@@ -88,7 +87,6 @@ bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
     {
         QWriteLocker lk(&_lock);
         auto app = QString(obj.tarAppname.c_str());
-        _startPing.remove(app);
         _ping_lost_count.remove(app);
     }
     auto tmp = obj.tarAppname;
@@ -231,7 +229,6 @@ void HandleRpcService::handleTransJob(co::Json &info)
     if (res) {
         Comshare::instance()->updateStatus(CURRENT_STATUS_TRAN_FILE_RCV);
         QWriteLocker lk(&_lock);
-        _startPing.remove(app);
         _ping_lost_count.remove(app);
     }
 
@@ -404,9 +401,7 @@ void HandleRpcService::handleRemotePing(const QString &info)
     if (!_timeOut.isActive())
         emit startTimer();
     QWriteLocker lk(&_lock);
-    _startPing.remove(appName);
     _ping_lost_count.remove(appName);
-    _startPing.insert(appName, true);
     _ping_lost_count.insert(appName, 0);
 }
 

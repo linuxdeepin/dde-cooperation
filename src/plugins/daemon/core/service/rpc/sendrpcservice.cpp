@@ -98,7 +98,6 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
 
 void SendRpcWork::handlePing(const QStringList apps)
 {
-    return;
     if (_stoped)
         return;
 
@@ -113,7 +112,7 @@ void SendRpcWork::handlePing(const QStringList apps)
             DLOG << "remote server no reply ping !!!!! " << appName.toStdString();
             SendStatus st;
             st.type = RPC_PING;
-            st.status = rs.errorType;
+            st.status = REMOTE_CLIENT_OFFLINE;
             st.msg = rs.data;
             co::Json req = st.as_json();
             req.add_member("api", "Frontend.notifySendStatus");
