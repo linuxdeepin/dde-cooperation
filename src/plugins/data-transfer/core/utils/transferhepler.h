@@ -54,10 +54,12 @@ public:
     void recordTranferJob(const QString &filepath);
     bool isUnfinishedJob(QString &content);
     void addFinshedFiles(const QString &filepath, int64 size);
+    void setConnectIP(const QString &ip);
 
 private:
     QMap<QString, int64> finshedFiles;
     bool isSetting = false;
+    QString connectIP;
 #endif
 
 Q_SIGNALS:

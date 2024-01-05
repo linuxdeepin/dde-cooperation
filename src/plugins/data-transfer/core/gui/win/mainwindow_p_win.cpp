@@ -164,7 +164,7 @@ void MainWindowPrivate::initWidgets()
     // disconect transfer
     connect(TransferHelper::instance(), &TransferHelper::disconnected, [this, errorwidget]() {
         int index = stackedWidget->currentIndex();
-        if (index >= PageName::selectmainwidget && index <= PageName::appselectwidget)
+        if (index >= PageName::selectmainwidget && index <= PageName::transferringwidget)
             stackedWidget->setCurrentIndex(PageName::errorwidget);
         errorwidget->setErrorType(ErrorType::networkError);
     });

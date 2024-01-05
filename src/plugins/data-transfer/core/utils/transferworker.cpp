@@ -184,6 +184,7 @@ void TransferHandle::localIPCStart()
     connect(qApp, &QCoreApplication::aboutToQuit, [this]() {
         DLOG << "App exit, exit ipc server";
         cancelTransferJob(); //退出，取消job
+        disconnectRemote();
         if (_rpcServer) {
             _rpcServer->exit();
         }
@@ -203,6 +204,8 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
 #ifndef WIN32
         json::Json message;
         QString unfinishJson;
+        QString ip = msg.split(" ").first();
+        TransferHelper::instance()->setConnectIP(ip);
         int remainSpace = TransferHelper::getRemainSize();
         bool unfinish = TransferHelper::instance()->isUnfinishedJob(unfinishJson);
         if (unfinish) {

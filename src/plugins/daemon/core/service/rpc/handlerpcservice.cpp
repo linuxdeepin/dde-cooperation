@@ -72,7 +72,7 @@ void HandleRpcService::handleRpcLogin(bool result, const QString &targetAppname,
     req = {
         { "id", 0 },
         { "result", result ? 1 : 0 },
-        { "msg", appName.toStdString() },
+        { "msg", (ip + " " + appName).toStdString() },
         { "isself", false},
     };
     req.add_member("api", "Frontend.cbConnect");
