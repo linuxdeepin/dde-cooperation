@@ -343,7 +343,7 @@ bool TransferHelper::checkSize(const QString &filepath)
     LOG << "The actual size is " << sizestr.toStdString() << "B "
         << "Two times the space needs to be reserved" << size << "G";
     int remainSize = getRemainSize();
-    if (size > remainSize) {
+    if (size >= remainSize) {
         LOG << "outOfStorage" << size;
         emit outOfStorage(size);
         cancelTransferJob();
@@ -358,9 +358,9 @@ void TransferHelper::recordTranferJob(const QString &filepath)
     // 1.copy transferjson to temp
     QFile jsonfile(filepath);
     QFileInfo info(jsonfile);
-    QString tempPath(tempCacheDir() + "/transfer-temp.json");
+    QString tempPath(tempCacheDir() + connectIP + "transfer-temp.json");
     if (!jsonfile.copy(tempPath))
-        WLOG << "Failed to copy file";
+        WLOG << "Failed to copy recordTranfer file" + tempPath.toStdString() ;
 
     connect(this, &TransferHelper::interruption, this, [this, filepath, tempPath]() {
         // 2.write unfinished files to tempjson file
@@ -413,7 +413,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
 
 bool TransferHelper::isUnfinishedJob(QString &content)
 {
-    QString transtempPath(tempCacheDir() + "/transfer-temp.json");
+    QString transtempPath(tempCacheDir() + connectIP +"transfer-temp.json");
     QFile f(transtempPath);
     if (!f.exists())
         return false;
@@ -434,6 +434,11 @@ void TransferHelper::addFinshedFiles(const QString &filepath, int64 size)
     finshedFiles.insert(filepath, size);
     if (filepath.endsWith("transfer.json"))
         TransferHelper::instance()->recordTranferJob(filepath);
+}
+
+void TransferHelper::setConnectIP(const QString &ip)
+{
+    connectIP = ip;
 }
 
 void TransferHelper::setting(const QString &filepath)
