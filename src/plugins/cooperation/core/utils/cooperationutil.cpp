@@ -232,6 +232,14 @@ void CooperationUtilPrivate::localIPCStart()
                                               Qt::QueuedConnection,
                                               Q_ARG(QString, QString(disCon.msg.c_str())));
             } break;
+            case FRONT_SHARE_DISAPPLY_CONNECT: {
+                ShareConnectDisApply param;
+                param.from_json(json_obj);
+                LOG << "share cancel apply : " << json_obj;
+                q->metaObject()->invokeMethod(CooperationManager::instance(),
+                                              "handleCancelCooperApply",
+                                              Qt::QueuedConnection);
+            } break;
             default:
                 break;
             }

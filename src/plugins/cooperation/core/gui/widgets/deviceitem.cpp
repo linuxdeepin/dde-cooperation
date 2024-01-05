@@ -18,9 +18,9 @@
 using namespace cooperation_core;
 
 #ifdef linux
-const char *Kcomputer_connected = "computer_connected";
-const char *Kcomputer_can_connect = "computer_can_connect";
-const char *Kcomputer_off_line = "computer_off_line";
+static constexpr char Kcomputer_connected[] = "computer_connected";
+static constexpr char Kcomputer_can_connect[] = "computer_can_connect";
+static constexpr char Kcomputer_off_line[] = "computer_off_line";
 #else
 const char *Kcomputer_connected = ":/icons/deepin/builtin/icons/computer_connected_52px.svg";
 const char *Kcomputer_can_connect = ":/icons/deepin/builtin/icons/computer_can_connect_52px.svg";

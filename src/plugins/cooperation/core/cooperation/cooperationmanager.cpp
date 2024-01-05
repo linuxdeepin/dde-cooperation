@@ -148,6 +148,13 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
         event.data = replyEvent.as_json().str();
         req = event.as_json();
     } break;
+    case BACK_SHARE_DISAPPLY_CONNECT: {
+        ShareConnectDisApply cancelEvent;
+        cancelEvent.appName = MainAppName;
+        cancelEvent.tarAppname = MainAppName;
+        event.data = cancelEvent.as_json().str();
+        req = event.as_json();
+    } break;
     default:
         break;
     }
@@ -178,6 +185,7 @@ CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
         connect(ctDialog, &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
         connect(ctDialog, &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyRejectAction); });
         connect(ctDialog, &CooperationTaskDialog::acceptRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyAcceptAction); });
+        connect(ctDialog, &CooperationTaskDialog::waitCanceled, this, &CooperationManagerPrivate::onCancelCooperApply);
     }
 
     return ctDialog;
@@ -217,6 +225,16 @@ void CooperationManagerPrivate::stopCooperation()
         notifyMessage(recvReplacesId, body.arg(CommonUitls::elidedText(targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
 #endif
     }
+}
+
+void CooperationManagerPrivate::onCancelCooperApply()
+{
+    confirmTimer.stop();
+    backendShareEvent(BACK_SHARE_DISAPPLY_CONNECT);
+    static QString title(tr("connect failed"));
+    static QString msg(tr("You have cancelled the connection request !"));
+    taskDialog()->switchInfomationPage(title, msg);
+    taskDialog()->show();
 }
 
 void CooperationManagerPrivate::reportConnectionData()
@@ -510,5 +528,22 @@ void CooperationManager::onVerifyTimeout()
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)),
                                         tr("The other party does not confirm, please try again later"),
                                         true);
+    }
+}
+
+void CooperationManager::handleCancelCooperApply()
+{
+    d->confirmTimer.stop();
+    if (d->isRecvMode) {
+        if (d->isReplied)
+            return;
+        static QString body(tr("The other party has cancelled the connection request !"));
+#ifdef linux
+        d->notifyMessage(d->recvReplacesId, body, {}, 3 * 1000);
+#else
+        static QString title(tr("connect failed"));
+        d->taskDialog()->switchInfomationPage(title, body);
+        d->taskDialog()->show();
+#endif
     }
 }
