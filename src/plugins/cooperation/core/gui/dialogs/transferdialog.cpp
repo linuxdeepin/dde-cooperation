@@ -8,8 +8,8 @@
 
 using namespace cooperation_core;
 #ifdef linux
-const char *Ktransfer_success = "transfer_success";
-const char *Ktransfer_fail = "transfer_fail";
+static constexpr char Ktransfer_success[] = "transfer_success";
+static constexpr char Ktransfer_fail[] = "transfer_fail";
 #else
 const char *Ktransfer_success = ":/icons/deepin/builtin/icons/transfer_success_128px.svg";
 const char *Ktransfer_fail = ":/icons/deepin/builtin/icons/transfer_fail_128px.svg";

@@ -427,7 +427,7 @@ void HandleRpcService::handleRemoteDisApplyShareConnect(co::Json &info)
     ShareEvents event;
     event.eventType = FRONT_SHARE_DISAPPLY_CONNECT;
     event.data = info.str();
-    co::Json req = info;
+    co::Json req = event.as_json();
     req.add_member("api", "Frontend.shareEvents");
     SendIpcService::instance()->handleSendToClient(sd.tarAppname.c_str(), req.str().c_str());
     SendRpcService::instance()->removePing(sd.tarAppname.c_str());

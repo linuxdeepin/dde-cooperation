@@ -31,6 +31,7 @@ public Q_SLOTS:
     void handleConnectResult(int result);
     void handleDisConnectResult(const QString &devName);
     void onVerifyTimeout();
+    void handleCancelCooperApply();
 
 private:
     explicit CooperationManager(QObject *parent = nullptr);
