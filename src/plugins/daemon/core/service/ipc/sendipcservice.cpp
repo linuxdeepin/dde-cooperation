@@ -300,6 +300,7 @@ void SendIpcService::preprocessOfflineStatus(const QString appName, int32 type, 
     SendStatus st;
     st.type = type;
     st.status = REMOTE_CLIENT_OFFLINE;
+    st.curstatus = Comshare::instance()->currentStatus();
     st.msg = msg;
     _offline_status.remove(appName);
     _offline_status.insert(appName, st);

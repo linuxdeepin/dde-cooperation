@@ -47,7 +47,6 @@ void MainController::checkNetworkState()
 
     if (isConnected != isOnline) {
         isOnline = isConnected;
-        networkMonitorTimer->stop();
         Q_EMIT onlineStateChanged(isConnected);
     }
 }

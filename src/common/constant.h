@@ -198,6 +198,16 @@ enum JobTransFileOp {
     FILE_COUNTED = 0X0040, // 数据统计完成
 };
 
+enum CurrentStatus {
+    CURRENT_STATUS_DISCONNECT = 0, // 没有连接
+    CURRENT_STATUS_TRAN_CONNECT = 1, // 1是文件投送连接
+    CURRENT_STATUS_TRAN_APPLY = 2, // 2文件投送申请
+    CURRENT_STATUS_TRAN_FILE_SEN = 3, // 3文件发送
+    CURRENT_STATUS_TRAN_FILE_RCV = 4, // 4文件接收
+    CURRENT_STATUS_SHARE_CONNECT = 5, // 5键鼠共享连接
+    CURRENT_STATUS_SHARE_START = 6, // 5键鼠共享中
+};
+
 // use thread replace the coroutine
 #if defined(DISABLE_GO)
     #define UNIGO(...) \

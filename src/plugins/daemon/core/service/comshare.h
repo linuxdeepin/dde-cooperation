@@ -5,6 +5,7 @@
 #ifndef COMSHARE_H
 #define COMSHARE_H
 
+#include "common/constant.h"
 #include "message.pb.h"
 #include <co/co.h>
 #include <co/json.h>
@@ -73,16 +74,6 @@ typedef enum barrier_type_t {
     Server = 555,
     Client = 666
 } BarrierType;
-
-enum CurrentStatus {
-    CURRENT_STATUS_DISCONNECT = 0, // 没有连接
-    CURRENT_STATUS_TRAN_CONNECT = 1, // 1是文件投送连接
-    CURRENT_STATUS_TRAN_APPLY = 2, // 2文件投送申请
-    CURRENT_STATUS_TRAN_FILE_SEN = 3, // 3文件发送
-    CURRENT_STATUS_TRAN_FILE_RCV = 4, // 4文件接收
-    CURRENT_STATUS_SHARE_CONNECT = 5, // 5键鼠共享连接
-    CURRENT_STATUS_SHARE_START = 6, // 5键鼠共享中
-};
 
 class Comshare
 {

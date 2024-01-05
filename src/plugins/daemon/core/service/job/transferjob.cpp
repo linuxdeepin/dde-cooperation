@@ -84,8 +84,11 @@ void TransferJob::initJob(fastring appname, fastring targetappname, int id, fast
     _status = INIT;
     _save_fulldir = path::join(DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
     if (_writejob) {
+        Comshare::instance()->updateStatus(CURRENT_STATUS_TRAN_FILE_RCV);
         fastring fullpath = _save_fulldir;
         FSAdapter::newFileByFullPath(fullpath.c_str(), true);
+    } else {
+        Comshare::instance()->updateStatus(CURRENT_STATUS_TRAN_FILE_SEN);
     }
 }
 

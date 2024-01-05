@@ -217,6 +217,7 @@ void HandleRpcService::handleRemoteJobCancel(co::Json &info)
     OutData out;
 
     JobManager::instance()->handleCancelJob(info, &reply);
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     out.json = reply.as_json().str();
     _outgo_chan << out;
 }
@@ -271,7 +272,7 @@ void HandleRpcService::handleRemoteShareConnect(co::Json &info)
             return;
         }
     }
-
+    Comshare::instance()->updateStatus(CURRENT_STATUS_SHARE_CONNECT);
     ShareEvents event;
     event.eventType = FRONT_SHARE_APPLY_CONNECT;
     event.data = info.str();
@@ -286,6 +287,7 @@ void HandleRpcService::handleRemoteShareDisConnect(co::Json &info)
     ShareDisConnect sd;
     sd.from_json(info);
     DiscoveryJob::instance()->updateAnnouncShare(true);
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
 
     ShareEvents ev;
     ev.eventType = FRONT_SHARE_DISCONNECT;
@@ -300,8 +302,11 @@ void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
     ShareConnectReply reply;
     reply.from_json(info);
 
-    if (reply.reply == SHARE_CONNECT_COMFIRM)
+    if (reply.reply == SHARE_CONNECT_COMFIRM) {
         DiscoveryJob::instance()->updateAnnouncShare(false, reply.ip);
+    } else {
+        Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
+    }
 
     ShareEvents event;
     event.eventType = FRONT_SHARE_APPLY_CONNECT_REPLY;
@@ -313,6 +318,7 @@ void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
 
 void HandleRpcService::handleRemoteShareStart(co::Json &info)
 {
+    Comshare::instance()->updateStatus(CURRENT_STATUS_SHARE_START);
     ShareStart st;
     st.from_json(info);
     ShareEvents evs;
@@ -339,6 +345,8 @@ void HandleRpcService::handleRemoteShareStart(co::Json &info)
         rreply.errorMsg = "init client config error or start error! param = " + info.str();
     }
     evs.data = rreply.as_json().str();
+    if (!reply.result)
+        Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     // 通知远程
     SendRpcService::instance()->doSendProtoMsg(SHARE_START_RES, st.tarAppname.c_str(),
                                                evs.as_json().str().c_str());
@@ -359,6 +367,9 @@ void HandleRpcService::handleRemoteShareStartRes(co::Json &info)
     reply.errorMsg = rreply.errorMsg;
     ShareEvents evs;
     evs.eventType = SHARE_START_RES;
+    if (!reply.result)
+        Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
+
     // 通知前端
     auto req = evs.as_json();
     req.add_member("api", "Frontend.shareEvents");
@@ -367,6 +378,7 @@ void HandleRpcService::handleRemoteShareStartRes(co::Json &info)
 
 void HandleRpcService::handleRemoteShareStop(co::Json &info)
 {
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     ShareStop st;
     st.from_json(info);
     // 停止自己的共享，并告诉前端
@@ -389,6 +401,7 @@ void HandleRpcService::handleRemoteShareStop(co::Json &info)
 
 void HandleRpcService::handleRemoteDisConnectCb(co::Json &info)
 {
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     // 发送给前端
     ShareDisConnect sd;
     sd.from_json(info);
@@ -420,6 +433,7 @@ void HandleRpcService::handleRemotePing(co::Json &info)
 
 void HandleRpcService::handleRemoteDisApplyShareConnect(co::Json &info)
 {
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     // 发送给前端
     ShareConnectDisApply sd;
     sd.from_json(info);

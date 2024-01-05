@@ -17,6 +17,7 @@
 #include "ipc/frontendservice.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/backend.h"
+#include "ipc/proto/chan.h"
 
 #include <QJsonDocument>
 #include <QNetworkInterface>
@@ -240,6 +241,19 @@ void CooperationUtilPrivate::localIPCStart()
                                               "handleCancelCooperApply",
                                               Qt::QueuedConnection);
             } break;
+            case FRONT_SEND_STATUS:
+            {
+                SendStatus param;
+                param.from_json(json_obj);
+                if (REMOTE_CLIENT_OFFLINE == param.status &&
+                        (param.curstatus == CURRENT_STATUS_TRAN_FILE_SEN ||
+                         param.curstatus == CURRENT_STATUS_TRAN_FILE_RCV)) {
+                    q->metaObject()->invokeMethod(CooperationManager::instance(),
+                                                  "handleNetworkDismiss",
+                                                  Qt::QueuedConnection);
+                }
+                break;
+            }
             default:
                 break;
             }

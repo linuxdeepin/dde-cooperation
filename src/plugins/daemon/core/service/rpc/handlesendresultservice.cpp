@@ -58,6 +58,7 @@ void HandleSendResultService::handleLogin(const QString &appName, const QString 
             // TODO: save the target peer info into target's map
             fastring token = res.token;
             PeerInfo target_info = res.peer;
+            Comshare::instance()->updateStatus(CURRENT_STATUS_TRAN_CONNECT);
             // login successful
             DaemonConfig::instance()->saveAuthed(token);
             SendRpcService::instance()->addPing(res.appName.c_str());

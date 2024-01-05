@@ -547,3 +547,24 @@ void CooperationManager::handleCancelCooperApply()
 #endif
     }
 }
+
+void CooperationManager::handleNetworkDismiss()
+{
+    if (d->isRecvMode) {
+        if (d->isReplied)
+            return;
+
+        static QString body(tr("Network not connected, file delivery failed this time.\
+                               Please connect to the network and try again!"));
+        d->notifyMessage(d->recvReplacesId, body, {}, 3 * 1000);
+    } else {
+        if (!d->taskDialog()->isVisible() || d->isReplied)
+            return;
+
+        static QString title(tr("File transfer failed"));
+        d->taskDialog()->switchFailPage(title,
+                                        tr("Network not connected, file delivery failed this time.\
+                                           Please connect to the network and try again!"),
+                                        true);
+    }
+}
