@@ -61,6 +61,7 @@ object FSReport {
 object SendStatus {
     int32 type // 服务器发送都对方服务器的类型, 0表示自己监听到发送端断开连接
     int32 status // 0 发送成功，-1发送失败，-2参数错误, 1表示远端下线
+    int32 curstatus // 当前所在阶段
     string msg
 }
 

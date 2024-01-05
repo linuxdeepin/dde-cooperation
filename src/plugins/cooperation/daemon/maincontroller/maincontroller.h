@@ -42,6 +42,7 @@ public Q_SLOTS:
     void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onFileTransStatusChanged(const QString &status);
     void onConfirmTimeout();
+    void onNetworkMiss();
 
 private:
     explicit MainController(QObject *parent = nullptr);

@@ -290,3 +290,14 @@ void MainController::onConfirmTimeout()
     static QString msg(tr("\"%1\" delivery of files to you was interrupted due to a timeout"));
     recvNotifyId = notifyMessage(recvNotifyId, msg.arg(CommonUitls::elidedText(requestFrom, Qt::ElideMiddle, 25)), {}, {}, 3 * 1000);
 }
+
+void MainController::onNetworkMiss()
+{
+    if (recvNotifyId == 0)
+        return;
+    QStringList actions;
+    actions << NotifyViewAction << tr("View");
+    static QString msg(tr("Network not connected, file delivery failed this time.\
+                             Please connect to the network and try again!"));
+    recvNotifyId = notifyMessage(recvNotifyId, msg, actions, {}, 15 * 1000);
+}

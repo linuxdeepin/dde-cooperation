@@ -12,6 +12,7 @@
 #include "ipc/frontendservice.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/backend.h"
+#include "ipc/proto/chan.h"
 
 #include <QJsonDocument>
 #include <QStandardPaths>
@@ -135,6 +136,17 @@ void CooperationUtilPrivate::localIPCStart()
                 pingBackend();
                 MainController::instance()->regist();
                 break;
+            case FRONT_SEND_STATUS:
+            {
+                SendStatus param;
+                param.from_json(json_obj);
+                if (REMOTE_CLIENT_OFFLINE == param.status && param.curstatus == CURRENT_STATUS_TRAN_FILE_RCV) {
+                    q->metaObject()->invokeMethod(MainController::instance(),
+                                                  "onNetworkMiss",
+                                                  Qt::QueuedConnection);
+                }
+                break;
+            }
             default:
                 break;
             }

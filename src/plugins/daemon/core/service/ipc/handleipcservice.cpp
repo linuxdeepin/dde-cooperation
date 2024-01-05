@@ -434,10 +434,12 @@ void HandleIpcService::handleShareConnect(co::Json json)
     SendRpcService::instance()->createRpcSender(appName, targetIp, UNI_RPC_PORT_BASE);
     // 发送给被控制端请求共享连接
     SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT, appName, param.as_json().str().c_str());
+    Comshare::instance()->updateStatus(CURRENT_STATUS_SHARE_CONNECT);
 }
 
 void HandleIpcService::handleShareDisConnect(co::Json json)
 {
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     ShareDisConnect info;
     info.from_json(json);
     info.tarAppname = info.tarAppname.empty() ? info.appName : info.tarAppname;
@@ -450,6 +452,8 @@ void HandleIpcService::handleShareConnectReply(co::Json json)
 {
     ShareConnectReply reply;
     reply.from_json(json);
+    if (reply.reply == SHARE_CONNECT_REFUSE)
+        Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     // 回复控制端连接结果
     SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT_RES,
                                                reply.appName.c_str(), json.str().c_str());
@@ -457,6 +461,7 @@ void HandleIpcService::handleShareConnectReply(co::Json json)
 // 取消协同申请
 void HandleIpcService::handleShareConnectDisApply(co::Json json)
 {
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     ShareConnectDisApply reply;
     reply.from_json(json);
 
@@ -485,6 +490,7 @@ void HandleIpcService::handleShareStop(co::Json json)
     // 通知远端
     SendRpcService::instance()->doSendProtoMsg(SHARE_STOP, st.appName.c_str(),
                                                st.as_json().str().c_str());
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
 }
 
 void HandleIpcService::handleDisConnectCb(co::Json json)
@@ -496,6 +502,7 @@ void HandleIpcService::handleDisConnectCb(co::Json json)
                                                info.as_json().str().c_str());
 
     SendRpcService::instance()->removePing(info.tarAppname.c_str());
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
 }
 
 void HandleIpcService::handleShareServerStart(const bool ok, const QString msg)
@@ -503,6 +510,7 @@ void HandleIpcService::handleShareServerStart(const bool ok, const QString msg)
     co::Json json;
     if (!json.parse_from(msg.toStdString())) {
         ELOG << "handleShareServerStart parse json error!!!!";
+        Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
         return;
     }
     ShareStart st;
@@ -519,9 +527,10 @@ void HandleIpcService::handleShareServerStart(const bool ok, const QString msg)
         // 通知前端
         req.add_member("api", "Frontend.shareEvents");
         SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
+        Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
         return;
     }
-
+    Comshare::instance()->updateStatus(CURRENT_STATUS_SHARE_START);
     // 通知远端启动客户端连接到这里的batter服务器
     SendRpcService::instance()->doSendProtoMsg(SHARE_START, st.appName.c_str(),
                                                st.as_json().str().c_str());
