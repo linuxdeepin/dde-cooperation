@@ -41,6 +41,8 @@ public:
 
     void pushQueque(const QSharedPointer<FSDataBlock> block);
     bool initSuccess() const { return _init_success; }
+    void setDeviceNotenough();
+    qint64 freeBytes() const;
 
 signals:
     // 传输作业结果通知：文件（目录），结果，保存路径
@@ -92,6 +94,7 @@ private:
     bool _writejob {false};
     bool _init_success { true };
     bool _mark_canceled { false };
+    std::atomic_bool _device_not_enough{ false };
 
     uint16 _tar_port{0};
     fastring _app_name; // //前端应用名
@@ -100,6 +103,7 @@ private:
     fastring _save_fulldir; // 全路径
     fastring _tar_app_name; // 发送到目标的应用名称
     fastring _tar_ip;
+    std::atomic_int64_t _device_free_size{ -1 };
 
     mutable QReadWriteLock _queque_mutex;
     QQueue<QSharedPointer<FSDataBlock>> _block_queue;

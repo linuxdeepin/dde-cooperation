@@ -134,6 +134,9 @@ bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransRespo
 
     if (!job.isNull()) {
         job->pushQueque(datablock);
+        if (datablock->flags & JobTransFileOp::FILE_COUNTED && job->freeBytes() < datablock->data_size) {
+            return false;
+        }
     } else {
         return false;
     }

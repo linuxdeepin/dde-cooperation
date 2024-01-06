@@ -17,6 +17,7 @@
 
 #include <QPointer>
 #include <QElapsedTimer>
+#include <QStorageInfo>
 
 TransferJob::TransferJob(QObject *parent)
     : QObject(parent)
@@ -142,6 +143,8 @@ void TransferJob::start()
     if (_writejob) {
         DLOG << "start write job: " << _savedir << " fullpath = " << _save_fulldir;
         handleJobStatus(JOB_TRANS_DOING);
+        QStorageInfo info(_save_fulldir.c_str());
+        _device_free_size = info.bytesFree();
     } else {
         // 读取所有文件的信息
         DLOG << "doTransfileJob path to save:" << _savedir;
@@ -245,6 +248,11 @@ void TransferJob::pushQueque(const QSharedPointer<FSDataBlock> block)
     }
 
     _block_queue.enqueue(block);
+}
+
+qint64 TransferJob::freeBytes() const
+{
+    return _device_free_size;
 }
 
 fastring TransferJob::getSubdir(const char *path, const char *root)
@@ -367,7 +375,8 @@ void TransferJob::handleBlockQueque()
     if (!exception && !_mark_canceled) {
         handleJobStatus(JOB_TRANS_FINISHED);
     }
-    LOG << "trans job end: " << _jobid;
+    LOG << "trans job end: " << _jobid << " freebytes = " << _device_free_size
+        << "  not enought = " << _device_not_enough;
     atomic_store(&_status, STOPED);
 }
 
@@ -393,6 +402,8 @@ void TransferJob::handleJobStatus(int status)
     fastring fullpath = path::join(
                 DaemonConfig::instance()->getStorageDir(_app_name), _savedir);
     QString savepath(fullpath.c_str());
+    if (_device_not_enough)
+        savepath += "::not enough";
 
     emit notifyJobResult(appname, _jobid, status, savepath);
 }
@@ -600,6 +611,12 @@ bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block, co
         return true;
     } else if (block->flags & JobTransFileOp::FILE_COUNTED) {
         _total_size = block->data_size;
+        // 磁盘空间不足判断
+        if (_total_size >= _device_free_size) {
+            // 通知发送端磁盘空间不足
+            _device_not_enough = true;
+            return false;
+        }
         return true;
     } else if (block->flags & JobTransFileOp::FILE_COUNTING || block->flags & JobTransFileOp::FILE_TRANS_OVER) {
         return true;
@@ -632,6 +649,8 @@ bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block, co
 
 bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
 {
+    if (_device_not_enough)
+        return false;
     FileTransBlock file_block;
     file_block.job_id = (_jobid);
     file_block.file_id = (block->file_id);
@@ -651,6 +670,15 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
         res.errorType = 0;
         QMutexLocker g(&_send_mutex);
         res = _remote->doSendProtoMsg(FS_DATA, file_block.as_json().str().c_str(), data);
+    }
+    co::Json resJson;
+    if (resJson.parse_from(res.data)) {
+        FileTransResponse transres;
+        transres.from_json(resJson);
+        if (transres.result == IO_ERROR) {
+            _device_not_enough = block->flags & JobTransFileOp::FILE_COUNTED;
+            return false;
+        }
     }
     if (res.errorType < INVOKE_OK) {
         SendStatus st;

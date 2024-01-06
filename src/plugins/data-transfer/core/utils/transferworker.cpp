@@ -133,6 +133,7 @@ void TransferHandle::localIPCStart()
                 param.from_json(json_obj);
                 QString mesg(param.msg.c_str());   // job path
 
+                mesg = mesg.replace("::not enough", "");
                 handleTransJobStatus(param.id, param.result, mesg);
                 break;
             }
