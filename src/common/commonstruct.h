@@ -222,7 +222,7 @@ struct FileTransCreate {
 };
 
 struct FileTransResponse {
-    int32 id;
+    int32 id { -1 };
     fastring name;
     int32 result;
 
