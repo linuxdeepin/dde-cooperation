@@ -3,7 +3,7 @@
 
 #define BuildDir "D:\work\pre-release\cooperation-inno_release"
 #define MyAppName "deepin-cooperation"
-#define MyAppVersion "0.5.0"
+#define MyAppVersion "0.5.5"
 #define MyAppPublisher "Uniontech, Inc."
 #define MyAppURL "https://www.deepin.org/"
 #define MyAppExeName "cooperation.vbs"
