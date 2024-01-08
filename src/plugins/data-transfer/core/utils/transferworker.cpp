@@ -185,9 +185,7 @@ void TransferHandle::localIPCStart()
         DLOG << "App exit, exit ipc server";
         cancelTransferJob(); //退出，取消job
         disconnectRemote();
-        if (_rpcServer) {
-            _rpcServer->exit();
-        }
+        //FIXME: it always abort if invoke exit
     });
 }
 
