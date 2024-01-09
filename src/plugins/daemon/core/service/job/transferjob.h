@@ -43,6 +43,7 @@ public:
     bool initSuccess() const { return _init_success; }
     void setDeviceNotenough();
     qint64 freeBytes() const;
+    void offlineCancel(const QString &ip);
 
 signals:
     // 传输作业结果通知：文件（目录），结果，保存路径
@@ -95,6 +96,7 @@ private:
     bool _init_success { true };
     bool _mark_canceled { false };
     std::atomic_bool _device_not_enough{ false };
+    std::atomic_bool _offlined {false};
 
     uint16 _tar_port{0};
     fastring _app_name; // //前端应用名

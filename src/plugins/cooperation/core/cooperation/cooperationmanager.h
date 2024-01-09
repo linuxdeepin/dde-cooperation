@@ -32,7 +32,7 @@ public Q_SLOTS:
     void handleDisConnectResult(const QString &devName);
     void onVerifyTimeout();
     void handleCancelCooperApply();
-    void handleNetworkDismiss();
+    void handleNetworkDismiss(const QString &msg);
 
 private:
     explicit CooperationManager(QObject *parent = nullptr);

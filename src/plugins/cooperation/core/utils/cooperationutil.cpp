@@ -251,7 +251,8 @@ void CooperationUtilPrivate::localIPCStart()
                      param.msg.contains("\"protocolType\":1004"))) {
                     q->metaObject()->invokeMethod(CooperationManager::instance(),
                                                   "handleNetworkDismiss",
-                                                  Qt::QueuedConnection);
+                                                  Qt::QueuedConnection,
+                                                  Q_ARG(QString, QString(param.msg.c_str())));
                 }
                 break;
             }

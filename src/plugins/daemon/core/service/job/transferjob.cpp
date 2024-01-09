@@ -258,6 +258,14 @@ qint64 TransferJob::freeBytes() const
     return _device_free_size;
 }
 
+void TransferJob::offlineCancel(const QString &ip)
+{
+    if (_offlined || !ip.isEmpty() || ip != QString(_tar_ip.c_str()))
+        return;
+    _offlined = true;
+    handleJobStatus(JOB_TRANS_FAILED);
+}
+
 fastring TransferJob::getSubdir(const char *path, const char *root)
 {
     fastring indir = "";
@@ -343,7 +351,7 @@ void TransferJob::handleBlockQueque()
             exception = !sendToRemote(block);
         }
 
-        if (exception) {
+        if (exception && !_offlined) {
             DLOG << "trans job exception hanpend: " << _jobid;
             handleJobStatus(JOB_TRANS_FAILED);
             break;
@@ -375,7 +383,7 @@ void TransferJob::handleBlockQueque()
             }
         }
     };
-    if (!exception && !_mark_canceled) {
+    if (!exception && !_mark_canceled && !_offlined) {
         handleJobStatus(JOB_TRANS_FINISHED);
     }
     LOG << "trans job end: " << _jobid << " freebytes = " << _device_free_size
@@ -407,6 +415,9 @@ void TransferJob::handleJobStatus(int status)
     QString savepath(fullpath.c_str());
     if (_device_not_enough)
         savepath += "::not enough";
+
+    if (_offlined)
+        savepath += "::off line";
 
     emit notifyJobResult(appname, _jobid, status, savepath);
 }
@@ -683,7 +694,7 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
             return false;
         }
     }
-    if (res.errorType < INVOKE_OK) {
+    if (res.errorType < INVOKE_OK && !_offlined) {
         SendStatus st;
         st.type = res.errorType;
         st.msg = res.as_json().str();

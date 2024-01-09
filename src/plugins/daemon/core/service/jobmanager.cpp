@@ -289,6 +289,20 @@ void JobManager::handleRemoveJob(const int jobid)
     _transjob_sends.remove(jobid);
 }
 
+void JobManager::handleOtherOffline(const QString &ip)
+{
+    QSharedPointer<TransferJob> job {nullptr};
+    {
+        QWriteLocker lk(&g_m);
+        if (_transjob_sends.isEmpty() && _transjob_recvs.isEmpty())
+            return;
+        job = _transjob_sends.isEmpty() ? _transjob_recvs.first() : _transjob_sends.first();
+    }
+    if (job.isNull())
+        return;
+    job->offlineCancel(ip);
+}
+
 
 JobManager::JobManager(QObject *parent) : QObject (parent)
 {

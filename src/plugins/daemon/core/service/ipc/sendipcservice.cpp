@@ -11,6 +11,7 @@
 #include "service/rpc/sendrpcservice.h"
 #include "common/constant.h"
 #include "ipc/proto/comstruct.h"
+#include "service/jobmanager.h"
 
 #include <QCoreApplication>
 #include <QThread>
@@ -44,6 +45,7 @@ void SendIpcWork::handleStopShareConnect(const QString &info, const QSharedPoint
 
     NodePeerInfo _info;
     _info.from_json(_base_json);
+    JobManager::instance()->handleOtherOffline(_info.ipv4.c_str());
     if (_info.share_connect_ip.empty() || _info.share_connect_ip != _nodeinfo.os.share_connect_ip ||
             nodeinfo.contains("\"appname\":\"dde-cooperation\""))
         return;

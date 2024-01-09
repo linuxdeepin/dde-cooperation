@@ -31,6 +31,7 @@ public slots:
     void handleFileTransStatus(QString appname, int status, QString fileinfo);
     void handleJobTransStatus(QString appname, int jobid, int status, QString savedir);
     void handleRemoveJob(const int jobid);
+    void handleOtherOffline(const QString &ip);
 private:
     explicit JobManager(QObject *parent = nullptr);
 
