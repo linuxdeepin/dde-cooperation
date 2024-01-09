@@ -200,6 +200,7 @@ struct SendStatus {
     void from_json(const co::Json& _x_) {
         type = (int32)_x_.get("type").as_int64();
         status = (int32)_x_.get("status").as_int64();
+        curstatus = (int32)_x_.get("curstatus").as_int64();
         msg = _x_.get("msg").as_c_str();
     }
 
@@ -207,6 +208,7 @@ struct SendStatus {
         co::Json _x_;
         _x_.add_member("type", type);
         _x_.add_member("status", status);
+        _x_.add_member("curstatus", curstatus);
         _x_.add_member("msg", msg);
         return _x_;
     }

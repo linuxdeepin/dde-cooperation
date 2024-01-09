@@ -299,5 +299,5 @@ void MainController::onNetworkMiss()
     actions << NotifyViewAction << tr("View");
     static QString msg(tr("Network not connected, file delivery failed this time.\
                              Please connect to the network and try again!"));
-    recvNotifyId = notifyMessage(recvNotifyId, msg, actions, {}, 15 * 1000);
+    recvNotifyId = notifyMessage(recvNotifyId, msg, actions, {}, 150 * 1000);
 }

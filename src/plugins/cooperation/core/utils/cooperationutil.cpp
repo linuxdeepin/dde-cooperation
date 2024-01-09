@@ -245,9 +245,10 @@ void CooperationUtilPrivate::localIPCStart()
             {
                 SendStatus param;
                 param.from_json(json_obj);
-                if (REMOTE_CLIENT_OFFLINE == param.status &&
-                        (param.curstatus == CURRENT_STATUS_TRAN_FILE_SEN ||
-                         param.curstatus == CURRENT_STATUS_TRAN_FILE_RCV)) {
+                LOG << " FRONT_SEND_STATUS  : " << json_obj;
+                if ((param.curstatus == CURRENT_STATUS_TRAN_FILE_SEN ||
+                     param.curstatus == CURRENT_STATUS_TRAN_FILE_RCV ||
+                     param.msg.contains("\"protocolType\":1004"))) {
                     q->metaObject()->invokeMethod(CooperationManager::instance(),
                                                   "handleNetworkDismiss",
                                                   Qt::QueuedConnection);
