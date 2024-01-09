@@ -79,6 +79,9 @@ else()
     # desktop
     install(FILES setup/linux/dde-cooperation.desktop DESTINATION share/applications)
 
+    # manual
+    install(DIRECTORY assets/dde-cooperation DESTINATION share/deepin-manual/manual-assets/application)
+
     # 日志收集配置
     install(FILES setup/linux/dde-cooperation.json DESTINATION share/deepin-log-viewer/deepin-log.conf.d)
 endif()
