@@ -337,6 +337,7 @@ SettingDialog::SettingDialog(QWidget *parent)
                   "}");
     setFixedSize(650, 530);
 #endif
+    setModal(true);
 }
 
 SettingDialog::~SettingDialog()
