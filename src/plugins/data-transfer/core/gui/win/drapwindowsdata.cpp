@@ -1,5 +1,6 @@
 ﻿#include "drapwindowsdata.h"
 #include <co/log.h>
+#include "common/commonutils.h"
 
 #include <tchar.h>
 #include <QDebug>
@@ -17,11 +18,9 @@
 #include <QFileInfo>
 
 #include <QStandardPaths>
-#include <QHostInfo>
 #include <QApplication>
 #include <QDir>
 #include <QPixmap>
-#include <QNetworkInterface>
 #include <QSettings>
 #include <ShlObj.h>
 #include <QtWin>
@@ -383,17 +382,7 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 
 QString DrapWindowsData::getIP()
 {
-    QString ip;
-    for (auto inter : QNetworkInterface::allInterfaces()) {
-        if (inter.type() != QNetworkInterface::InterfaceType::Ethernet)
-            continue;
-        foreach (QNetworkAddressEntry entry, inter.addressEntries()) {
-            if (entry.ip().protocol() != QAbstractSocket::NetworkLayerProtocol::IPv4Protocol)
-                continue;
-            ip = QString(entry.ip().toString());
-            //DLOG << "IP Address:------" << ip.toStdString();
-        }
-    }
+    QString ip = deepin_cross::CommonUitls::getFirstIp().data();
     return ip;
 }
 
