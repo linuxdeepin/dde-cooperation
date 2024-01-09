@@ -7,6 +7,7 @@
 
 #include <dde-cooperation-framework/dpf.h>
 #include <QDir>
+#include <QProcess>
 
 static constexpr char kPluginInterface[] { "org.deepin.plugin.daemon" };
 static constexpr char kPluginCore[] { "daemon-core" };
@@ -62,6 +63,76 @@ static bool loadPlugins()
     return true;
 }
 
+static bool isActiveUser()
+{
+#ifdef _WIN32
+    return "admin";
+#endif
+    QString username = "";
+    // 执行 loginctl user-status 命令
+    QProcess process;
+    process.start("loginctl list-sessions");
+    process.waitForFinished(-1);
+
+    // 获取命令输出
+    QString output = process.readAllStandardOutput();
+    if (output.isEmpty()) {
+        qCritical() << "loginctl list-sessions empty out!";
+        return true;
+    }
+
+    QMap<QString, QString> sessions;
+    int first = output.indexOf('\n');
+    int last = output.lastIndexOf("\n\n");
+    QString midValue = output.mid(first + 1, last - first -1);
+    QStringList lines = midValue.split('\n');
+    for (int i = 0; i < lines.size(); ++i) {
+        QStringList values = lines.at(i).trimmed().split(' ');
+        if (values.size() == 4) {
+            QString session = values.at(0);
+            QString user = values.at(2);
+            qInfo() << "session：" << session << " user:" << user;
+            sessions.insert(session, user);
+        }
+    }
+
+    foreach (auto session, sessions.keys()) {
+        process.start("loginctl session-status " + session);
+        process.waitForFinished(-1);
+
+        // 获取命令输出
+        QString output = process.readAllStandardOutput();
+        if (output.isEmpty()) {
+            qCritical() << "do not get session-status:" << session;
+            continue;
+        }
+
+        // 解析输出，检查状态和桌面状态
+        bool isActive = false;
+        bool isDesktopActive = false;
+
+        QStringList lines = output.split('\n');
+        for (const QString& line : lines) {
+            if (line.contains("Desktop:")) {
+                isDesktopActive = true;
+            }
+            if (line.contains("State: active")) {
+                isActive = true;
+            }
+        }
+
+        // 判断用户状态和桌面状态
+        if (isActive && isDesktopActive) {
+            username = sessions.take(session);
+        }
+    }
+
+    QString curUser = QDir::home().dirName();
+    qInfo() << "active session user:" << username << " current user:" << curUser;
+
+    return (curUser.compare(username) == 0);
+}
+
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -74,6 +145,14 @@ int main(int argc, char *argv[])
     if (deepin_cross::BaseUtils::isWayland()) {
         // do something
     }
+
+#ifdef __linux__
+    // 只运行在登录会话用户
+    if (!isActiveUser()) {
+        qCritical() << "exit, inactive desktop session.";
+        return 1;
+    }
+#endif
 
     if (!loadPlugins()) {
         qCritical() << "load plugin failed";

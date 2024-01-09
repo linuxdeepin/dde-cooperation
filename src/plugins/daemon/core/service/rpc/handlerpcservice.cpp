@@ -484,7 +484,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
     fastring crt = Cert::instance()->writeCrt();
     QPointer<HandleRpcService> my = this;
     auto callback = [my](const int type, const fastring &ip, const uint16 port){
-        if (type == 0) {
+        if (type < 0) {
             ELOG << "connection callback offline: " << ip << ":" << port;
             if (!my.isNull()) {
                 QString remoteip = QString(ip.c_str());

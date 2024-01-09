@@ -11,6 +11,8 @@
 #include <QDir>
 #include <QCommandLineParser>
 
+#include "co/co/sock.h"
+
 using namespace deepin_cross;
 
 std::string CommonUitls::getFirstIp()
@@ -44,6 +46,33 @@ std::string CommonUitls::getFirstIp()
         }
     }
     return ip.toStdString();
+}
+
+bool CommonUitls::isPortInUse(int port)
+{
+    sock_t sockfd = co::socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        WLOG << "socket failed";
+        return false;
+    }
+
+    bool inUse = false;
+    struct sockaddr_in addr;
+    bool init = co::init_addr(&addr, "0.0.0.0", port);
+    if (init) {
+        int res = co::bind(sockfd, &addr, sizeof(addr));
+        if (res < 0) {
+            ELOG << "Failed to bind address";
+            inUse = true;
+        }
+    } else {
+        ELOG << "Failed to init address";
+        co::close(sockfd);
+        inUse = true;
+    }
+
+    co::close(sockfd);
+    return inUse;
 }
 
 void CommonUitls::loadTranslator()

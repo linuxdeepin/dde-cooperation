@@ -14,12 +14,17 @@
 
 #include "utils/config.h"
 #include "utils/cert.h"
+#include "common/commonutils.h"
 
 #include <QCoreApplication>
 
 
 ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
+#if !defined(WIN32)
+    // check network port
+    checkNetPort();
+#endif
     // init and start backend IPC
     localIPCStart();
 
@@ -47,9 +52,11 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     connect(ShareCooperationServiceManager::instance(), &ShareCooperationServiceManager::startServerResult,
             _ipcService, &HandleIpcService::handleShareServerStart, Qt::QueuedConnection);
 
-//    _net_check.setInterval(1000);
-//    connect(&_net_check, &QTimer::timeout, this, &ServiceManager::checkSelfNetWork);
-//    _net_check.start();
+#if !defined(WIN32)
+    _kill_check.setInterval(3000);
+    connect(&_kill_check, &QTimer::timeout, this, &ServiceManager::checkSelfKill);
+    _kill_check.start();
+#endif
 }
 
 ServiceManager::~ServiceManager()
@@ -76,36 +83,14 @@ void ServiceManager::startRemoteServer()
     _rpcService->startRemoteServer();
 }
 
-void ServiceManager::checkSelfNetWork()
+void ServiceManager::checkSelfKill()
 {
-    _network_ok = Util::getFirstIp().size() != 0;
-    if (!_network_ok) {
-        _dis_counts++;
-        return;
+    QFile file(_killScript);
+    if (file.exists()) {
+        DLOG << "=== other user needs this, stop me! ===";
+        QProcess::startDetached(_killScript);
+        file.remove();
     }
-
-    if (_dis_counts > 5)
-        _check_count = 0;
-
-    // 检查断网后网络连接，检查监听函数是否有监听的连接没有退出
-    if (_check_count >= 0) {
-        if (_rpcService->checkConnected()) {
-            _check_count++;
-        } else {
-            _check_count = -1;
-        }
-    }
-
-    if (_check_count >= 3) {
-        // 重新启动
-        DLOG << "========= restart cooperation deamon!!!!!!! =========";
-#if !defined(WIN32)
-        createBashAndRun();
-#endif
-        _check_count = -1;
-    }
-
-    _dis_counts = 0;
 }
 
 void ServiceManager::localIPCStart()
@@ -148,13 +133,13 @@ void ServiceManager::asyncDiscovery()
     });
 }
 
-void ServiceManager::createBashAndRun()
+bool ServiceManager::createKillScript(const QString &filename)
 {
-    QFile file("/tmp/cooperation-restart.sh");
+    QFile file(filename);
     if (!file.open(QFileDevice::OpenModeFlag::Truncate | QFileDevice::OpenModeFlag::WriteOnly)) {
-        ELOG << "open server config error, path = /tmp/cooperation-restart.sh" << ", case : "
+        ELOG << "open server config error, path = " << filename.toStdString() << ", case : "
              << file.errorString().toStdString();
-        return;
+        return false;
     }
 
     QTextStream outStream(&file);
@@ -166,7 +151,31 @@ void ServiceManager::createBashAndRun()
     outStream.flush();
     file.flush();
     file.close();
-    QProcess::execute("chmod 0777 /tmp/cooperation-restart.sh");
+    QProcess::execute("chmod 0777 " + filename);
 
-    QProcess::startDetached("/tmp/cooperation-restart.sh");
+    return true;
+}
+
+void ServiceManager::createBashAndRun()
+{
+    if (createKillScript(_killScript)) {
+        QProcess::startDetached(_killScript);
+    }
+}
+
+void ServiceManager::checkNetPort()
+{
+    QFile file(_killScript);
+
+    bool inUse = deepin_cross::CommonUitls::isPortInUse(UNI_RPC_PORT_BASE);
+    if (inUse) {
+        DLOG << "=== network port is using, restart! ===";
+        if (!file.exists()) {
+            createKillScript(_killScript);
+        }
+    } else {
+        if (file.exists()) {
+            file.remove();
+        }
+    }
 }

@@ -15,6 +15,7 @@ class CommonUitls
 {
 public:
     static std::string getFirstIp();
+    static bool isPortInUse(int port);
 
     static void loadTranslator();
 

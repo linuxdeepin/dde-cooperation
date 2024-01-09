@@ -77,8 +77,10 @@ int main(int argc, char *argv[])
 #endif
 
     deepin_cross::SingleApplication app(argc, argv);
-#ifndef WIN32
     app.setOrganizationName("deepin");
+    app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+#ifdef linux
     app.loadTranslator();
     app.setApplicationName("deepin-data-transfer");
     app.setApplicationDisplayName(app.translate("Application", "UOS data transfer"));
@@ -87,7 +89,6 @@ int main(int argc, char *argv[])
     app.setProductIcon(icon);
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" );
     app.setApplicationDescription(app.translate("Application", "UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system."));
-    app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
 

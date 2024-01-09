@@ -26,21 +26,21 @@ public:
 
     void startRemoteServer();
 private Q_SLOTS:
-    void checkSelfNetWork();
+    void checkSelfKill();
 
 private:
     void localIPCStart();
     fastring genPeerInfo();
     void asyncDiscovery();
+    bool createKillScript(const QString &filename);
     void createBashAndRun();
+    void checkNetPort();
 private:
     HandleIpcService *_ipcService { nullptr };
     HandleRpcService *_rpcService { nullptr };
     QSharedPointer<HandleSendResultService> _logic;
-    bool _network_ok { true };
-    int _dis_counts { 0 };
-    int _check_count { -1 };
-    QTimer _net_check;
+    QTimer _kill_check;
+    const QString _killScript { "/tmp/cooperation-kill.sh" };
 };
 
 #endif // SERVICEMANAGER_H

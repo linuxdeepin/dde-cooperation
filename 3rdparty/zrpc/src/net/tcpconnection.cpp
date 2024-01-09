@@ -170,6 +170,7 @@ bool TcpConnection::input()
     bool read_all = false;
     bool close_flag = false;
     int count = 0;
+    int type = 0;
 
     while (!read_all) {
 
@@ -196,13 +197,14 @@ bool TcpConnection::input()
         //      << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
 
         if (rt <= 0) {
-            // DLOG << "rt <= 0 >>> " << rt;
+            DLOG << "rt <= 0 >>> " << rt << " count=" << count;
             //             ELOG << "read empty while occur read event, because of peer close, sys error="
             //                  << strerror(errno) << ", now to clear tcp connection";
             //            // this cor can destroy
             // 有可能连接上了，没有发送任何数据过来，这里直接关闭会导致后面不会回复任何消息
-            close_flag = rt < 0 || (rt ==0 && count == 0);
+            close_flag = rt < 0 || (rt == 0 && count == 0);
             read_all = rt == 0;
+            type = static_cast<int32>(rt);
             break;
         } else {
             count += rt;
@@ -221,7 +223,7 @@ bool TcpConnection::input()
         if (callback) {
             uint16 port = m_tcp_svr ? static_cast<uint16>(m_tcp_svr->getLocalAddr()->getPort()) : 0;
             port = port == 0 && m_tcp_cli ? static_cast<uint16>(m_tcp_cli->getLocalAddr()->getPort()) : 0;
-            callback(0, remoteIP, port);
+            callback(type, remoteIP, port);
         }
         // DLOG << "peer closed " << " remote ip ===== " << remoteIP;
     }
