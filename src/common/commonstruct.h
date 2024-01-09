@@ -224,7 +224,7 @@ struct FileTransCreate {
 struct FileTransResponse {
     int32 id { -1 };
     fastring name;
-    int32 result;
+    int32 result { -1 };
 
     void from_json(const co::Json& _x_) {
         id = (int32)_x_.get("id").as_int64();

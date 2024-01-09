@@ -237,9 +237,12 @@ void HandleRpcService::handleTransJob(co::Json &info)
         _ping_lost_count.remove(app);
     }
 
+    FileTransResponse reply;
+    reply.result = (res ? OK : IO_ERROR);
+
     OutData data;
     data.type = OUT_TRANSJOB;
-    data.json = co::Json({"result", res}).str();
+    data.json = reply.as_json().str();
     _outgo_chan << data;
 }
 
