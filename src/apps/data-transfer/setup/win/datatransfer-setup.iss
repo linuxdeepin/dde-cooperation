@@ -3,7 +3,7 @@
 
 #define BuildDir "D:\work\pre-release\data-transfer-inno_release"
 #define MyAppName "deepin-datatransfer"
-#define MyAppVersion "0.5.5"
+#define MyAppVersion "0.5.6"
 #define MyAppPublisher "Uniontech, Inc."
 #define MyAppURL "https://www.deepin.org/"
 #define MyAppExeName "datatransfer.vbs"
