@@ -75,7 +75,7 @@ bool isActiveUser()
     // 执行 loginctl user-status 命令
     QProcess process;
     process.start("loginctl list-sessions");
-    process.waitForFinished(-1);
+    process.waitForFinished(3000);
 
     // 获取命令输出
     QString output = process.readAllStandardOutput();
@@ -83,20 +83,22 @@ bool isActiveUser()
         qCritical() << "loginctl list-sessions empty out!";
         return true;
     }
-
+    qCritical() << output;
     QMap<QString, QString> sessions;
-    int first = output.indexOf('\n');
-    int last = output.lastIndexOf("\n\n");
-    QString midValue = output.mid(first + 1, last - first -1);
-    QStringList lines = midValue.split('\n');
-    for (int i = 0; i < lines.size(); ++i) {
-        QStringList values = lines.at(i).trimmed().split(' ');
-        if (values.size() == 4) {
-            QString session = values.at(0);
-            QString user = values.at(2);
-            qInfo() << "session：" << session << " user:" << user;
-            sessions.insert(session, user);
-        }
+    auto infoList = output.split("\n");
+    if (infoList.length() < 2) {
+        qCritical() << "loginctl list-sessions empty session!";
+        return true;
+    }
+    infoList.takeFirst();
+    for( auto line : infoList) {
+        if (line.isEmpty())
+            break;
+        auto lineInfo = line.trimmed().split(" ");
+        if (lineInfo.length() < 3)
+            continue;
+
+        sessions.insert(lineInfo.at(0), lineInfo.at(2));
     }
 
     foreach (auto session, sessions.keys()) {
@@ -131,7 +133,7 @@ bool isActiveUser()
     }
 
     QString curUser = QDir::home().dirName();
-    qInfo() << "active session user:" << username << " current user:" << curUser;
+    qCritical() << "active session user:" << username << " current user:" << curUser;
 
     return (curUser.compare(username) == 0);
 }
@@ -140,7 +142,7 @@ bool portInUse(int port)
 {
     QProcess process;
     process.start("netstat -ano");
-    process.waitForFinished(-1);
+    process.waitForFinished(3000);
 
     // 获取命令输出
     QString output = process.readAllStandardOutput();
