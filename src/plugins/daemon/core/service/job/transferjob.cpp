@@ -50,6 +50,7 @@ bool TransferJob::initRpc(fastring target, uint16 port)
         req_job.write = (!_writejob);
         req_job.app_who = _tar_app_name;
         req_job.targetAppname = _app_name;
+        req_job.ip = Util::getFirstIp();
         SendResult res;
         // 必须等待对方回复了才执行后面的流程
         {
@@ -260,7 +261,7 @@ qint64 TransferJob::freeBytes() const
 
 void TransferJob::offlineCancel(const QString &ip)
 {
-    if (_offlined || !ip.isEmpty() || ip != QString(_tar_ip.c_str()))
+    if (_offlined || ip.isEmpty() || ip != QString(_tar_ip.c_str()))
         return;
     _offlined = true;
     handleJobStatus(JOB_TRANS_FAILED);
