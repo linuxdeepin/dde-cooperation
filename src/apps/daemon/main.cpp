@@ -8,10 +8,13 @@
 #include <dde-cooperation-framework/dpf.h>
 #include <QDir>
 #include <QProcess>
+#include <QTimer>
+
+#define BASEPROTO_PORT 51597
 
 static constexpr char kPluginInterface[] { "org.deepin.plugin.daemon" };
 static constexpr char kPluginCore[] { "daemon-core" };
-static constexpr char kLibCore[] { "libdaemon-core.so" };
+static constexpr char kfallbackFile[] { "/tmp/cooperation-fallback" };
 
 static bool loadPlugins()
 {
@@ -63,7 +66,7 @@ static bool loadPlugins()
     return true;
 }
 
-static bool isActiveUser()
+bool isActiveUser()
 {
 #ifdef _WIN32
     return "admin";
@@ -133,6 +136,20 @@ static bool isActiveUser()
     return (curUser.compare(username) == 0);
 }
 
+bool portInUse(int port)
+{
+    QProcess process;
+    process.start("netstat -ano");
+    process.waitForFinished(-1);
+
+    // 获取命令输出
+    QString output = process.readAllStandardOutput();
+    if (output.contains("0.0.0.0:" + QString::number(port)))
+        return true;
+
+    return false;
+}
+
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -152,6 +169,42 @@ int main(int argc, char *argv[])
         qCritical() << "exit, inactive desktop session.";
         return 1;
     }
+
+    QString filePath = kfallbackFile;
+    QFile file(filePath);
+    bool inUse = portInUse(BASEPROTO_PORT);
+    if (inUse) {
+        qCritical() << "exit, network port (" << BASEPROTO_PORT << ") is busing........";
+        if (!file.exists()) {
+            // 创建监视文件
+            QString data = "fallback!";
+            if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                QTextStream out(&file);
+                out << data;
+                file.close();
+            }
+        }
+        return 1;
+    } else {
+        if (file.exists()) {
+            file.remove();
+        }
+    }
+
+    QTimer timer;
+    timer.setInterval(3000);
+    QObject::connect(&timer, &QTimer::timeout, [&]() {
+        QFile file(filePath);
+        if (file.exists()) {
+            file.remove();
+            QProcess process;
+            process.start("systemctl --user restart cooperation-daemon.service");
+            process.waitForFinished(-1);
+            qInfo() << "service restarted now!!";
+        }
+    });
+    timer.start();
+
 #endif
 
     if (!loadPlugins()) {

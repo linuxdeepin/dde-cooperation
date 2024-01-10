@@ -43,8 +43,8 @@ private:
 private:
     explicit DiscoveryJob(QObject *parent = nullptr);
     virtual ~DiscoveryJob();
-    void *_discoverer_p;
-    void *_announcer_p;
+    void *_discoverer_p = { nullptr };
+    void *_announcer_p = { nullptr };
 
     //<uuid, <peerinfo, exist>>
     QReadWriteLock _dis_lock;

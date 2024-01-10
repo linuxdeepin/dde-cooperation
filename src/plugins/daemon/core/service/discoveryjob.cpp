@@ -106,11 +106,15 @@ void DiscoveryJob::announcerRun(const fastring &info)
 
 void DiscoveryJob::stopDiscoverer()
 {
+    if (_discoverer_p == nullptr)
+        return;
     ((searchlight::Discoverer*)_discoverer_p)->exit();
 }
 
 void DiscoveryJob::stopAnnouncer()
 {
+    if (_announcer_p == nullptr)
+        return;
     ((searchlight::Announcer*)_announcer_p)->exit();
     while (!((searchlight::Announcer*)_announcer_p)->finished()) {
         co::sleep(100);

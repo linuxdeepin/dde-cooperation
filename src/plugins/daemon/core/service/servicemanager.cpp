@@ -21,10 +21,6 @@
 
 ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
-#if !defined(WIN32)
-    // check network port
-    checkNetPort();
-#endif
     // init and start backend IPC
     localIPCStart();
 
@@ -52,11 +48,6 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     connect(ShareCooperationServiceManager::instance(), &ShareCooperationServiceManager::startServerResult,
             _ipcService, &HandleIpcService::handleShareServerStart, Qt::QueuedConnection);
 
-#if !defined(WIN32)
-    _kill_check.setInterval(3000);
-    connect(&_kill_check, &QTimer::timeout, this, &ServiceManager::checkSelfKill);
-    _kill_check.start();
-#endif
 }
 
 ServiceManager::~ServiceManager()
@@ -83,15 +74,6 @@ void ServiceManager::startRemoteServer()
     _rpcService->startRemoteServer();
 }
 
-void ServiceManager::checkSelfKill()
-{
-    QFile file(_killScript);
-    if (file.exists()) {
-        DLOG << "=== other user needs this, stop me! ===";
-        QProcess::startDetached(_killScript);
-        file.remove();
-    }
-}
 
 void ServiceManager::localIPCStart()
 {
@@ -131,51 +113,4 @@ void ServiceManager::asyncDiscovery()
         fastring baseinfo = genPeerInfo();
         DiscoveryJob::instance()->announcerRun(baseinfo);
     });
-}
-
-bool ServiceManager::createKillScript(const QString &filename)
-{
-    QFile file(filename);
-    if (!file.open(QFileDevice::OpenModeFlag::Truncate | QFileDevice::OpenModeFlag::WriteOnly)) {
-        ELOG << "open server config error, path = " << filename.toStdString() << ", case : "
-             << file.errorString().toStdString();
-        return false;
-    }
-
-    QTextStream outStream(&file);
-    outStream << "#!/bin/sh" << endl << endl;
-    outStream << "pidof cooperation-daemon | xargs kill -9;" << endl;
-    outStream << "sleep 10;" << endl;
-    outStream << "pidof cooperation-daemon | xargs kill -9;" << endl;
-
-    outStream.flush();
-    file.flush();
-    file.close();
-    QProcess::execute("chmod 0777 " + filename);
-
-    return true;
-}
-
-void ServiceManager::createBashAndRun()
-{
-    if (createKillScript(_killScript)) {
-        QProcess::startDetached(_killScript);
-    }
-}
-
-void ServiceManager::checkNetPort()
-{
-    QFile file(_killScript);
-
-    bool inUse = deepin_cross::CommonUitls::isPortInUse(UNI_RPC_PORT_BASE);
-    if (inUse) {
-        DLOG << "=== network port is using, restart! ===";
-        if (!file.exists()) {
-            createKillScript(_killScript);
-        }
-    } else {
-        if (file.exists()) {
-            file.remove();
-        }
-    }
 }
