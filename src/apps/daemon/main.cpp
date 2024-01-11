@@ -90,11 +90,19 @@ bool isActiveUser()
         qCritical() << "loginctl list-sessions empty session!";
         return true;
     }
-    infoList.takeFirst();
-    for( auto line : infoList) {
+    auto first = infoList.takeFirst();
+    auto index = first.indexOf("TTY");
+    if (index < 0) {
+        qCritical() << "loginctl list-sessions empty TTY string!";
+        return true;
+    }
+    QRegExp reg(" +");
+    for(const auto &line : infoList) {
         if (line.isEmpty())
             break;
-        auto lineInfo = line.trimmed().split(" ");
+        if (line.length() <= index || !line.mid(index).replace(" ", "").isEmpty())
+            continue;
+        auto lineInfo = line.trimmed().split(reg);
         if (lineInfo.length() < 3)
             continue;
 
