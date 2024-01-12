@@ -22,9 +22,6 @@ ItemTitlebar::ItemTitlebar(const QString &label1_, const QString &label2_,
 
     QObject::connect(selectAllButton, &SelectAllButton::selectAll, this, &ItemTitlebar::selectAll);
 
-    sortButton = new SortButton(this);
-    sortButton->move(label2LeftMargin - 25, iconPosSize.y());
-    QObject::connect(sortButton, &SortButton::sort, this, &ItemTitlebar::sort);
     initUI();
 }
 
@@ -34,9 +31,6 @@ ItemTitlebar::ItemTitlebar(QWidget *parent) : QFrame(parent)
     selectAllButton->move(iconPosSize.x(), iconPosSize.y());
     QObject::connect(selectAllButton, &SelectAllButton::selectAll, this, &ItemTitlebar::selectAll);
 
-    sortButton = new SortButton(this);
-    sortButton->move(label2LeftMargin - 25, iconPosSize.y());
-    QObject::connect(sortButton, &SortButton::sort, this, &ItemTitlebar::sort);
     initUI();
 }
 
@@ -47,21 +41,21 @@ void ItemTitlebar::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    painter.setPen(QPen(QColor(0, 0, 0, 100), 0.8));
-    QPainterPath path2;
-    path2.moveTo(0, 33);
-    path2.lineTo(size().width(), 33);
-    painter.drawPath(path2);
+    painter.setPen(QPen(QColor(0, 0, 0, 200), 0.3));
+    QPainterPath bottomLine;
+    bottomLine.moveTo(type ? 3 : 50, 33);
+    bottomLine.lineTo(size().width(), 33);
+    painter.drawPath(bottomLine);
 
-    QPainterPath path3;
-    path3.moveTo(label1LeftMargin, 3);
-    path3.lineTo(label1LeftMargin, 30);
-    painter.drawPath(path3);
+    QPainterPath line1;
+    line1.moveTo(label2LeftMargin, 3);
+    line1.lineTo(label2LeftMargin, 30);
+    painter.drawPath(line1);
 
-    QPainterPath path4;
-    path4.moveTo(label2LeftMargin, 3);
-    path4.lineTo(label2LeftMargin, 30);
-    painter.drawPath(path4);
+    QPainterPath line2;
+    line2.moveTo(type ? label1LeftMargin : label2LeftMargin + 139, 3);
+    line2.lineTo(type ? label1LeftMargin : label2LeftMargin + 139, 30);
+    painter.drawPath(line2);
 }
 
 void ItemTitlebar::updateSelectAllButState(ListSelectionState selectState)
@@ -89,12 +83,35 @@ void ItemTitlebar::initUI()
     QLabel *title2 = new QLabel(label2, this);
 
     title1->setGeometry(label1LeftMargin + 10, 8, 177.3, 20);
-    title2->setGeometry(label2LeftMargin + 10, 8, 61.3, 20);
+    title2->setGeometry(label2LeftMargin + 12, 8, 61.3, 20);
+
+    sortButton1 = new SortButton(this);
+    sortButton1->move(label2LeftMargin - 25, iconPosSize.y());
+    sortButton1->setVisible(false);
+
+    sortButton2 = new SortButton(this);
+    sortButton2->move(label2LeftMargin + 115, iconPosSize.y());
+    sortButton2->setVisible(false);
+}
+
+SortButton *ItemTitlebar::getSortButton1() const
+{
+    return sortButton1;
+}
+
+SortButton *ItemTitlebar::getSortButton2() const
+{
+    return sortButton2;
 }
 
 void ItemTitlebar::setIconRadius(qreal newIconRadius)
 {
     iconRadius = newIconRadius;
+}
+
+void ItemTitlebar::setType(bool value)
+{
+    type = value;
 }
 
 void ItemTitlebar::setIconPosSize(const QRectF &newIconPosSize)
@@ -798,7 +815,7 @@ SortButton::SortButton(QWidget *parent) : QPushButton(parent)
 {
     setIcon(QIcon(":/icon/arrow_black.svg"));
     setStyleSheet(".SortButton { border: none; }");
-    setIconSize(QSize(18, 18));
+    setIconSize(QSize(16, 16));
 }
 
 SortButton::~SortButton() { }

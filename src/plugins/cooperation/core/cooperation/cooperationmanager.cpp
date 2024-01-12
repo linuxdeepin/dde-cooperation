@@ -23,8 +23,8 @@
 #include <QStandardPaths>
 #include <QDir>
 #ifdef linux
-#include "base/reportlog/reportlogmanager.h"
-#include <QDBusReply>
+#    include "base/reportlog/reportlogmanager.h"
+#    include <QDBusReply>
 #endif
 
 using ButtonStateCallback = std::function<bool(const QString &, const DeviceInfoPointer)>;
@@ -231,10 +231,6 @@ void CooperationManagerPrivate::onCancelCooperApply()
 {
     confirmTimer.stop();
     backendShareEvent(BACK_SHARE_DISAPPLY_CONNECT);
-    static QString title(tr("connect failed"));
-    static QString msg(tr("You have cancelled the connection request !"));
-    taskDialog()->switchInfomationPage(title, msg);
-    taskDialog()->show();
 }
 
 void CooperationManagerPrivate::reportConnectionData()

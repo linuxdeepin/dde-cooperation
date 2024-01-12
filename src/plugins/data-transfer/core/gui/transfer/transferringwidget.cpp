@@ -272,6 +272,7 @@ void TransferringWidget::clear()
     progressLabel->setProgress(0);
     timeLabel->setText(tr("Calculationing..."));
     titileLabel->setText(tr("Transferring..."));
+    fileLabel->setText("");
     finishJobs.clear();
 }
 

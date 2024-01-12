@@ -161,7 +161,9 @@ void AppSelectWidget::initSelectFrame()
                      &SelectListView::selectorDelAllItem);
     QObject::connect(appView, &SelectListView::currentSelectState, titlebar,
                      &ItemTitlebar::updateSelectAllButState);
-    QObject::connect(titlebar, &ItemTitlebar::sort, appView, &SelectListView::sortListview);
+    auto sortBtn = titlebar->getSortButton1();
+    sortBtn->setVisible(true);
+    QObject::connect(sortBtn, &SortButton::sort, appView, &SelectListView::sortListview);
 }
 
 void AppSelectWidget::changeText()

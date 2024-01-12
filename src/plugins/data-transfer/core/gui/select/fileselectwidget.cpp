@@ -121,7 +121,15 @@ void FileSelectWidget::initUI()
                      &FileSelectWidget::selectOrDelAllItemFromSiderbar);
     QObject::connect(sidebar, &SidebarWidget::updateSelectBtnState, this,
                      &FileSelectWidget::updateTitleSelectBtnState);
-    QObject::connect(titlebar, &ItemTitlebar::sort, this, &FileSelectWidget::sortListview);
+
+    auto sortBtn = titlebar->getSortButton1();
+    sortBtn->setVisible(true);
+    titlebar->setType(false);
+    QObject::connect(sortBtn, &SortButton::sort, this, &FileSelectWidget::sortListview);
+
+    auto sortBtn2 = titlebar->getSortButton2();
+    sortBtn2->setVisible(true);
+    QObject::connect(sortBtn2, &SortButton::sort, this, &FileSelectWidget::sortListviewColumn2);
 }
 
 void FileSelectWidget::startCalcluateFileSize(QList<QString> fileList)
@@ -214,11 +222,23 @@ void FileSelectWidget::updateTitleSelectBtnState(QStandardItem *siderbarItem,
     titlebar->updateSelectAllButState(state);
 }
 
+void FileSelectWidget::sortListviewColumn2()
+{
+    for (auto iteraotr = sidebarFileViewList.begin(); iteraotr != sidebarFileViewList.end();
+         ++iteraotr) {
+        auto view = qobject_cast<SelectListView *>(iteraotr.value());
+        view->sortListview();
+        view->setSortRole(false);
+    }
+}
+
 void FileSelectWidget::sortListview()
 {
     for (auto iteraotr = sidebarFileViewList.begin(); iteraotr != sidebarFileViewList.end();
          ++iteraotr) {
-        qobject_cast<SelectListView *>(iteraotr.value())->sortListview();
+        auto view = qobject_cast<SelectListView *>(iteraotr.value());
+        view->sortListview();
+        view->setSortRole(true);
     }
 }
 

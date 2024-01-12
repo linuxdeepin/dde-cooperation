@@ -196,7 +196,7 @@ bool SettingHelper::installApps(const QString &app)
     if (!success)
         WLOG << "Failed to connect to signal";
 
-    emit TransferHelper::instance()->transferContent(tr("Installing"), app, 100, -2);
+    emit TransferHelper::instance()->transferContent(tr("Installing"), app, 99, -2);
 
     addTaskcounter(1);
     return true;
@@ -220,12 +220,12 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
         QString app = applist.key(package);
         QString content = applist.key(package) + "  Key:" + key + "   Value:" + value.toString();
 
-        if (key == "Progress") {
-            float floatValue = value.toString().trimmed().toFloat();
-            int percentageValue = qRound(floatValue * 100);
-            QString progress = QString(tr("Installing Progress %1 %").arg(percentageValue));
-            emit TransferHelper::instance()->transferContent(progress, app, 99, -2);
-        }
+        //        if (key == "Progress") {
+        //            float floatValue = value.toString().trimmed().toFloat();
+        //            int percentageValue = qRound(floatValue * 100);
+        //            QString progress = QString(tr("Installing Progress %1 %").arg(percentageValue));
+        //            emit TransferHelper::instance()->transferContent(progress, app, 99, -2);
+        //        }
 
         LOG << "Installing " << content.toStdString();
 

@@ -34,6 +34,8 @@ public slots:
     void selectOrDelAllItemFromSiderbar(QStandardItem *siderbarItem);
     void updateTitleSelectBtnState(QStandardItem *siderbarItem,ListSelectionState state);
     void sortListview();
+    void sortListviewColumn2();
+
 signals:
     void isOk(const SelectItemName &name);
 

@@ -72,6 +72,12 @@ public:
 
     void setIconRadius(qreal newIconRadius);
 
+    void setType(bool value);
+
+    SortButton *getSortButton1() const;
+
+    SortButton *getSortButton2() const;
+
 protected:
     void paintEvent(QPaintEvent *event) override;
 
@@ -91,9 +97,11 @@ private:
     qreal label2LeftMargin{ 360 };
     QRectF iconPosSize{ 10, 10, 14, 14 };
     qreal iconRadius{ 3 };
+    bool type{ true };
 
     SelectAllButton *selectAllButton{ nullptr };
-    SortButton *sortButton{ nullptr };
+    SortButton *sortButton1{ nullptr };
+    SortButton *sortButton2{ nullptr };
     int allTableEntries{ 0 };
 };
 
@@ -218,9 +226,11 @@ public:
     ~SortProxyModel();
     void setMode(bool mode);
     void setFlag(bool flag);
+
 private:
     bool sortModel{ true };
     bool flagDisplayrole{ true };
+
 protected:
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 };
@@ -234,6 +244,7 @@ public:
     void setAllSize(int size);
     QStandardItemModel *getModel();
     void setSortRole(bool flag);
+
 private:
     int curSelectItemNum{ 0 };
     int allSize{ -1 };
@@ -245,6 +256,7 @@ public slots:
     void selectorDelAllItem();
     void updateCurSelectItem(QStandardItem *item);
     void sortListview();
+
 signals:
     void currentSelectState(ListSelectionState selectState);
 };
