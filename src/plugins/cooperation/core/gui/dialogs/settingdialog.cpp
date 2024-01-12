@@ -18,9 +18,13 @@
 #include <QDir>
 #include <QStandardPaths>
 
+#include <info/deviceinfo.h>
+#include <utils/cooperationutil.h>
+#include <base/reportlog/reportlogmanager.h>
+
 #ifdef linux
-const char *Kdisplay_right = "display_right";
-const char *Kdisplay_left = "display_left";
+static const char *Kdisplay_right = "display_right";
+static const char *Kdisplay_left = "display_left";
 #else
 const char *Kdisplay_right = ":/icons/deepin/builtin/texts/display_right_24px.svg";
 const char *Kdisplay_left = ":/icons/deepin/builtin/texts/display_left_24px.svg";
@@ -33,8 +37,8 @@ SettingDialogPrivate::SettingDialogPrivate(SettingDialog *qq)
       q(qq)
 {
     findComboBoxInfo << tr("Everyone in the same LAN")
-                     << tr("Not allow");
 
+                     << tr("Not allow");
     connectComboBoxInfo << QPair<QString, QString>(Kdisplay_right, tr("Screen right"))
                         << QPair<QString, QString>(Kdisplay_left, tr("Screen left"));
 
@@ -266,6 +270,7 @@ void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 {
 #ifdef linux
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKey::TransferModeKey, index);
+    reportDeviceStatus(DConfigKey::TransferModeKey, index != 2);
 #else
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey, index);
 #endif
@@ -300,11 +305,13 @@ void SettingDialogPrivate::onNameChanged(const QString &text)
 void SettingDialogPrivate::onDeviceShareButtonClicked(bool clicked)
 {
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey, clicked);
+    reportDeviceStatus(AppSettings::PeripheralShareKey, clicked);
 }
 
 void SettingDialogPrivate::onClipboardShareButtonClicked(bool clicked)
 {
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey, clicked);
+    reportDeviceStatus(AppSettings::ClipboardShareKey, clicked);
 }
 
 void SettingDialogPrivate::onFileChoosed(const QString &path)
@@ -323,6 +330,22 @@ void SettingDialogPrivate::initFont()
     tipFont.setPixelSize(12);
 }
 
+void SettingDialogPrivate::reportDeviceStatus(const QString &type, bool status)
+{
+#ifdef linux
+    QVariantMap data;
+
+    if (type == AppSettings::PeripheralShareKey)
+        data.insert("enablePeripheralShare", status);
+    else if (type == DConfigKey::TransferModeKey)
+        data.insert("enableFileDelivery", status);
+    else if (type == AppSettings::ClipboardShareKey)
+        data.insert("enableClipboardShare", status);
+
+    deepin_cross::ReportLogManager::instance()->commit(ReportAttribute::CooperationStatus, data);
+#endif
+}
+
 SettingDialog::SettingDialog(QWidget *parent)
     : CooperationAbstractDialog(parent),
       d(new SettingDialogPrivate(this))
@@ -333,7 +356,7 @@ SettingDialog::SettingDialog(QWidget *parent)
 #else
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setStyleSheet("QScrollBar:vertical {"
-                  "    width: 0px;"  // 将垂直滚动条宽度设为0
+                  "    width: 0px;"   // 将垂直滚动条宽度设为0
                   "}");
     setFixedSize(650, 530);
 #endif
@@ -445,26 +468,25 @@ void SettingDialog::loadConfig()
 void SettingDialogPrivate::setQComboxWinStyle(QComboBox *combox)
 {
     combox->setStyleSheet(
-           "QComboBox {"
-           "   border: 1px solid rgba(0,0,0,0.1);"
-           "   border-radius: 8px;"
-           "   padding: 5px;"
-           "   background-color: rgba(0,0,0,0.08);"
-           "}"
-           "QComboBox::down-arrow {"
-           "   width: 12px;"
-           "   height: 12px;"
-           "   image: url(':/icons/deepin/builtin/texts/combobox_arrow.svg');"
-           "   subcontrol-origin: padding;"
-           "   subcontrol-position: right center;"
-           "   right: 10px;"
-           "}"
-           "QComboBox::drop-down {"
-           "   width: 0px;"
-           "   border: none;"
-           "   padding-right: 0px;"
-           "}"
-       );
+            "QComboBox {"
+            "   border: 1px solid rgba(0,0,0,0.1);"
+            "   border-radius: 8px;"
+            "   padding: 5px;"
+            "   background-color: rgba(0,0,0,0.08);"
+            "}"
+            "QComboBox::down-arrow {"
+            "   width: 12px;"
+            "   height: 12px;"
+            "   image: url(':/icons/deepin/builtin/texts/combobox_arrow.svg');"
+            "   subcontrol-origin: padding;"
+            "   subcontrol-position: right center;"
+            "   right: 10px;"
+            "}"
+            "QComboBox::drop-down {"
+            "   width: 0px;"
+            "   border: none;"
+            "   padding-right: 0px;"
+            "}");
     combox->setFixedHeight(36);
 }
 #endif

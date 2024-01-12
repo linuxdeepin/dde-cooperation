@@ -27,7 +27,6 @@ public:
 
 private:
     void bindEvents();
-    void reportDeviceStatus();
 };
 
 }   // namespace cooperation_core

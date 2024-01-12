@@ -241,14 +241,11 @@ void CooperationUtilPrivate::localIPCStart()
                                               "handleCancelCooperApply",
                                               Qt::QueuedConnection);
             } break;
-            case FRONT_SEND_STATUS:
-            {
+            case FRONT_SEND_STATUS: {
                 SendStatus param;
                 param.from_json(json_obj);
                 LOG << " FRONT_SEND_STATUS  : " << json_obj;
-                if ((param.curstatus == CURRENT_STATUS_TRAN_FILE_SEN ||
-                     param.curstatus == CURRENT_STATUS_TRAN_FILE_RCV ||
-                     param.msg.contains("\"protocolType\":1004"))) {
+                if ((param.curstatus == CURRENT_STATUS_TRAN_FILE_SEN || param.curstatus == CURRENT_STATUS_TRAN_FILE_RCV || param.msg.contains("\"protocolType\":1004"))) {
                     q->metaObject()->invokeMethod(CooperationManager::instance(),
                                                   "handleNetworkDismiss",
                                                   Qt::QueuedConnection,
@@ -501,6 +498,9 @@ QVariantMap CooperationUtil::deviceInfo()
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::CooperationEnabled);
     info.insert(AppSettings::CooperationEnabled, value.isValid() ? value.toBool() : false);
+
+    value = deepin_cross::BaseUtils::osType();
+    info.insert("osType", value);
 
     return info;
 }

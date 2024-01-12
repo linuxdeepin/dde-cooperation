@@ -42,6 +42,7 @@ public Q_SLOTS:
     void onDeviceShareButtonClicked(bool clicked);
     void onClipboardShareButtonClicked(bool clicked);
     void onFileChoosed(const QString &path);
+    void reportDeviceStatus(const QString &type, bool status);
 
 private:
     void initFont();
