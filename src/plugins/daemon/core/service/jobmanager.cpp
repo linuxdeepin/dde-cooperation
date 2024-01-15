@@ -160,7 +160,7 @@ bool JobManager::handleCancelJob(co::Json &info, FileTransResponse *reply)
         QReadLocker lk(&g_m);
         rjob = _transjob_recvs.value(jobId);
     }
-    if (!rjob.isNull()) {
+    if (!rjob.isNull() && !rjob->ended()) {
         //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
         DLOG << "recv > remote canceled this job: " << jobId;
         rjob->cancel();
@@ -174,7 +174,7 @@ bool JobManager::handleCancelJob(co::Json &info, FileTransResponse *reply)
         QReadLocker lk(&g_m);
         sjob = _transjob_sends.value(jobId);
     }
-    if (!sjob.isNull()) {
+    if (!sjob.isNull() && !sjob->ended()) {
         //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
         DLOG << "send > remote canceled this job: " << jobId;
         sjob->cancel();
@@ -287,20 +287,34 @@ void JobManager::handleRemoveJob(const int jobid)
     QWriteLocker lk(&g_m);
     _transjob_recvs.remove(jobid);
     _transjob_sends.remove(jobid);
+    for (auto it = _transjob_break.begin(); it != _transjob_break.end();) {
+        if (it.value()->ended()) {
+            it = _transjob_break.erase(it);
+        } else {
+            it++;
+        }
+    }
 }
 
 void JobManager::handleOtherOffline(const QString &ip)
 {
     QSharedPointer<TransferJob> job {nullptr};
     {
-        QWriteLocker lk(&g_m);
+        QReadLocker lk(&g_m);
         if (_transjob_sends.isEmpty() && _transjob_recvs.isEmpty())
             return;
         job = _transjob_sends.isEmpty() ? _transjob_recvs.first() : _transjob_sends.first();
     }
     if (job.isNull())
         return;
-    job->offlineCancel(ip);
+    auto suc = job->offlineCancel(ip);
+    if (!suc)
+        return;
+    QWriteLocker lk(&g_m);
+    auto id = _transjob_sends.isEmpty() ? _transjob_recvs.key(job) : _transjob_sends.key(job);
+    _transjob_sends.clear();
+    _transjob_recvs.clear();
+    _transjob_break.insert(id,job);
 }
 
 

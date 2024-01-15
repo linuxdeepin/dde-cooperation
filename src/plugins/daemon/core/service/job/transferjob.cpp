@@ -259,12 +259,13 @@ qint64 TransferJob::freeBytes() const
     return _device_free_size;
 }
 
-void TransferJob::offlineCancel(const QString &ip)
+bool TransferJob::offlineCancel(const QString &ip)
 {
     if (_offlined || ip.isEmpty() || ip != QString(_tar_ip.c_str()))
-        return;
+        return false;
     _offlined = true;
     handleJobStatus(JOB_TRANS_FAILED);
+    return true;
 }
 
 fastring TransferJob::getSubdir(const char *path, const char *root)
@@ -352,9 +353,10 @@ void TransferJob::handleBlockQueque()
             exception = !sendToRemote(block);
         }
 
-        if (exception && !_offlined) {
-            DLOG << "trans job exception hanpend: " << _jobid;
-            handleJobStatus(JOB_TRANS_FAILED);
+        if (exception || _offlined) {
+            DLOG << "trans job exception hanpend: " << _jobid;\
+            if (!_offlined)
+                handleJobStatus(JOB_TRANS_FAILED);
             break;
         }
 
