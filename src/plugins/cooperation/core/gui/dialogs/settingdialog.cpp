@@ -17,6 +17,7 @@
 #include <QEvent>
 #include <QDir>
 #include <QStandardPaths>
+#include <QToolTip>
 
 #include <info/deviceinfo.h>
 #include <utils/cooperationutil.h>
@@ -29,6 +30,8 @@ static const char *Kdisplay_left = "display_left";
 const char *Kdisplay_right = ":/icons/deepin/builtin/texts/display_right_24px.svg";
 const char *Kdisplay_left = ":/icons/deepin/builtin/texts/display_left_24px.svg";
 #endif
+
+static const char *KAlert = "tool_tip_name_is_valid";
 
 using namespace cooperation_core;
 
@@ -284,9 +287,20 @@ void SettingDialogPrivate::checkNameValid()
         nameEdit->setAlert(true);
         nameEdit->showAlertMessage(tr("The device name must contain 1 to 63 characters"));
         nameEdit->setFocus();
-#endif
         return;
+
+#else
+        nameEdit->setProperty(KAlert, true);
+        QToolTip::showText(nameEdit->parentWidget()->mapToGlobal(nameEdit->pos()) + QPoint(41, 22),
+                           tr("The device name must contain 1 to 63 characters"));
+        nameEdit->setFocus();
+        return;
+    } else {
+        nameEdit->setProperty(KAlert, false);
+        QToolTip::hideText();
+#endif
     }
+
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey, nameEdit->text());
 }
 
@@ -411,6 +425,13 @@ bool SettingDialog::eventFilter(QObject *watched, QEvent *event)
             painter.setBrush(QColor(241, 57, 50, qRound(0.15 * 255)));
             painter.drawRoundedRect(d->nameEdit->lineEdit()->rect(), 8, 8);
             return true;
+        }
+#else
+        // DLineEdit在DAbstractDialog中使用setAlert，绘制无效，所以自绘
+        else if (d->nameEdit == watched && d->nameEdit->property(KAlert).toBool()) {
+            painter.setBrush(QColor(241, 57, 50, qRound(0.15 * 255)));
+            painter.drawRoundedRect(d->nameEdit->rect(), 8, 8);
+            return CooperationAbstractDialog::eventFilter(watched, event);
         }
 #endif
     } while (false);

@@ -54,6 +54,7 @@ void SendIpcWork::handleStopShareConnect(const QString &info, const QSharedPoint
     ShareCooperationServiceManager::instance()->stop();
     _info.share_connect_ip = "";
     DiscoveryJob::instance()->updateAnnouncBase(_info.as_json().str());
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     // 向前段发送断开连接信号
     ShareEvents ev;
     ev.eventType = FRONT_SHARE_DISCONNECT;
