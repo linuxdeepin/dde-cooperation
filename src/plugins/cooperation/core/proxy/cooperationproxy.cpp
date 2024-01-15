@@ -88,7 +88,11 @@ void CooperationProxy::onTransJobStatusChanged(int id, int result, const QString
     LOG << "id: " << id << " result: " << result << " msg: " << msg.toStdString();
     switch (result) {
     case JOB_TRANS_FAILED:
-        break;
+        if (msg.contains("::not enough")) {
+            showTransResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
+        } else if (msg.contains("::off line")) {
+            showTransResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
+        } break;
     case JOB_TRANS_DOING:
         break;
     case JOB_TRANS_FINISHED: {
