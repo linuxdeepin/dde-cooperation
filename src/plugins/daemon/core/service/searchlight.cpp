@@ -322,7 +322,6 @@ void Announcer::start()
     node.add_member("port", _service_port);
 
     LOG << "announcer server start";
-    int failedCount = 0;
     // 发送数据包 int sendto(sock_t fd, const void* buf, int n, const void* dst_addr, int addrlen, int ms=-1);
     while (!_stop) {
         co::Json baseJson;
@@ -348,17 +347,9 @@ void Announcer::start()
         fastring message = node.str();
 
         // DLOG << "UDP send: === " << message;
-        int send_len = co::sendto(sockfd, message.c_str(), message.size(), &dest_addr, len);
-        if (send_len < 0 || nodepeer.ipv4 == "") {
+        int send_len = co::sendto(sockfd, message.c_str(), static_cast<int>(message.size()), &dest_addr, len);
+        if (send_len < 0 || nodepeer.ipv4 == "")
             ELOG << "Failed to send data";
-            failedCount++;
-            if (failedCount >= 3) {
-                nodepeer.share_connect_ip = "";
-                updateBase(nodepeer.as_json().str());
-            }
-        } else {
-            failedCount = 0;
-        }
 
         co::sleep(1000); // announcer every second
     }

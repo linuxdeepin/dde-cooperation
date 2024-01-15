@@ -46,7 +46,7 @@ void SendIpcWork::handleStopShareConnect(const QString &info, const QSharedPoint
     NodePeerInfo _info;
     _info.from_json(_base_json);
     JobManager::instance()->handleOtherOffline(_nodeinfo.os.ipv4.c_str());
-    if (_info.share_connect_ip.empty() || _info.share_connect_ip != _nodeinfo.os.share_connect_ip ||
+    if (_info.share_connect_ip.empty() || _info.share_connect_ip != _nodeinfo.os.ipv4 ||
             nodeinfo.contains("\"appname\":\"dde-cooperation\""))
         return;
 
