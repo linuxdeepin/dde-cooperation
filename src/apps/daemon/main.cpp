@@ -100,7 +100,7 @@ bool isActiveUser()
     for(const auto &line : infoList) {
         if (line.isEmpty())
             break;
-        if (line.length() <= index || !line.mid(index).replace(" ", "").isEmpty())
+        if (!line.mid(index).replace(" ", "").isEmpty())
             continue;
         auto lineInfo = line.trimmed().split(reg);
         if (lineInfo.length() < 3)
