@@ -4,6 +4,7 @@
 
 #include "base/baseutils.h"
 #include "config.h"
+#include "common/constant.h"
 
 #include <dde-cooperation-framework/dpf.h>
 #include <QDir>
@@ -100,8 +101,6 @@ bool isActiveUser()
     for(const auto &line : infoList) {
         if (line.isEmpty())
             break;
-        if (!line.mid(index).replace(" ", "").isEmpty())
-            continue;
         auto lineInfo = line.trimmed().split(reg);
         if (lineInfo.length() < 3)
             continue;
@@ -141,6 +140,7 @@ bool isActiveUser()
     }
 
     QString curUser = QDir::home().dirName();
+    qApp->setProperty(KEY_CURRENT_ACTIVE_USER, username);
     qCritical() << "active session user:" << username << " current user:" << curUser;
 
     return (curUser.compare(username) == 0);

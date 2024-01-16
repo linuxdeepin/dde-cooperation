@@ -47,6 +47,19 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
             _logic.data(), &HandleSendResultService::handleSendResultMsg, Qt::QueuedConnection);
     connect(ShareCooperationServiceManager::instance(), &ShareCooperationServiceManager::startServerResult,
             _ipcService, &HandleIpcService::handleShareServerStart, Qt::QueuedConnection);
+#ifndef _WIN32
+    _userTimer.setInterval(500);
+    connect(&_userTimer, &QTimer::timeout, this, [this](){
+        QString curUser = QDir::home().dirName();
+        auto active = qApp->property(KEY_CURRENT_ACTIVE_USER).toString();
+        if (!active.isEmpty() && curUser != active) {
+            _userTimer.stop();
+            qCritical() <<  curUser << active;
+            qApp->exit(0);
+        }
+    });
+    _userTimer.start(2000);
+#endif
 
 }
 

@@ -35,6 +35,7 @@ private:
     HandleIpcService *_ipcService { nullptr };
     HandleRpcService *_rpcService { nullptr };
     QSharedPointer<HandleSendResultService> _logic;
+    QTimer _userTimer;
 };
 
 #endif // SERVICEMANAGER_H

@@ -28,6 +28,9 @@
 #define FEATURE_NAME_KEYBOARD "share_keyboard"
 #define FEATURE_NAME_MOUSE "share_mouse"
 
+// 当前用户判断退出
+#define KEY_CURRENT_ACTIVE_USER "KEY_CURRENT_ACTIVE_USER"
+
 
 #define UNI_IPC_PROTO 1.0
 #define UNI_IPC_BACKEND_PORT 7788
