@@ -1,7 +1,7 @@
-[CustomMessages]
+ï»¿[CustomMessages]
 en.CmAppName=deepin-cooperation
 en.CmAutoStart=Automatically launch after startup
-chs.CmAppName=Éî¶È-¿ç¶ËĞ­Í¬
-chs.CmAutoStart=¿ª»úÆô¶¯
+chs.CmAppName=æ·±åº¦-è·¨ç«¯ååŒ
+chs.CmAutoStart=å¼€æœºå¯åŠ¨
 
 [Files]

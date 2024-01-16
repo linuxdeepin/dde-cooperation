@@ -1,7 +1,7 @@
-[CustomMessages]
+ï»¿[CustomMessages]
 en.CmAppName=deepin-datatransfer
 en.CmAutoStart=Automatically launch after startup
-chs.CmAppName=Êı¾İÇ¨ÒÆ
-chs.CmAutoStart=¿ª»úÆô¶¯
+chs.CmAppName=æ•°æ®è¿ç§»
+chs.CmAutoStart=å¼€æœºå¯åŠ¨
 
 [Files]

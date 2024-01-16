@@ -11,6 +11,7 @@
 #include <QStorageInfo>
 #include <QDebug>
 #include <QLabel>
+#include <QPainterPath>
 
 #include <gui/transfer/transferringwidget.h>
 #include <utils/optionsmanager.h>

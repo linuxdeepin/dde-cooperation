@@ -1,17 +1,17 @@
-[Languages]
-Name: "chs"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+ï»¿[Languages]
+Name: "chs"; MessagesFile: "scripts\lang\ChineseSimplified.isl"
 
 [CustomMessages]
 ;http://www.microsoft.com/globaldev/reference/lcid-all.mspx
 chs.lcid=1033
-chs.depdownload_msg=ÔÚ°²×°³ÌĞò¿ÉÒÔ¼ÌĞø°²×°Ö®Ç°£¬ĞèÒªÒÔÏÂÓ¦ÓÃ³ÌĞò£º%n%n%1%nÁ¢¼´ÏÂÔØ²¢°²×°?
-chs.depdownload_memo_title=ÏÂÔØÒÀÀµÏî
-chs.depinstall_memo_title=°²×°ÒÀÀµÏî
-chs.depinstall_title=ÕıÔÚ°²×°ÒÀÀµÏî
-chs.depinstall_description=ÇëÉÔºò£¬°²×°³ÌĞò»áÔÚÄúµÄ¼ÆËã»úÉÏ°²×°ÒÀÀµÏî¡£
-chs.depinstall_status=ÕıÔÚ°²×° %1...
-chs.depinstall_missing=±ØĞëÏÈ°²×° %1£¬È»ºó²ÅÄÜ¼ÌĞø°²×°¡£Çë°²×° %1 ²¢ÔÙ´ÎÔËĞĞ°²×°³ÌĞò¡£
-chs.depinstall_error=°²×°ÒÀÀµÏîÊ±³ö´í¡£ÇëÖØĞÂÆô¶¯¼ÆËã»ú²¢ÔÙ´ÎÔËĞĞ°²×°³ÌĞò£¬»òÊÖ¶¯°²×°ÒÔÏÂÒÀÀµÏî£º%n
+chs.depdownload_msg=åœ¨å®‰è£…ç¨‹åºå¯ä»¥ç»§ç»­å®‰è£…ä¹‹å‰ï¼Œéœ€è¦ä»¥ä¸‹åº”ç”¨ç¨‹åºï¼š%n%n%1%nç«‹å³ä¸‹è½½å¹¶å®‰è£…?
+chs.depdownload_memo_title=ä¸‹è½½ä¾èµ–é¡¹
+chs.depinstall_memo_title=å®‰è£…ä¾èµ–é¡¹
+chs.depinstall_title=æ­£åœ¨å®‰è£…ä¾èµ–é¡¹
+chs.depinstall_description=è¯·ç¨å€™ï¼Œå®‰è£…ç¨‹åºä¼šåœ¨æ‚¨çš„è®¡ç®—æœºä¸Šå®‰è£…ä¾èµ–é¡¹ã€‚
+chs.depinstall_status=æ­£åœ¨å®‰è£… %1...
+chs.depinstall_missing=å¿…é¡»å…ˆå®‰è£… %1ï¼Œç„¶åæ‰èƒ½ç»§ç»­å®‰è£…ã€‚è¯·å®‰è£… %1 å¹¶å†æ¬¡è¿è¡Œå®‰è£…ç¨‹åºã€‚
+chs.depinstall_error=å®‰è£…ä¾èµ–é¡¹æ—¶å‡ºé”™ã€‚è¯·é‡æ–°å¯åŠ¨è®¡ç®—æœºå¹¶å†æ¬¡è¿è¡Œå®‰è£…ç¨‹åºï¼Œæˆ–æ‰‹åŠ¨å®‰è£…ä»¥ä¸‹ä¾èµ–é¡¹ï¼š%n
 
 chs.isxdl_langfile=chinese.ini
 

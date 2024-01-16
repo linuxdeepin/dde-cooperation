@@ -12,6 +12,7 @@
 #include <QLabel>
 #include <QAction>
 #include <QMenu>
+#include <QPainterPath>
 
 using namespace cooperation_core;
 void MainWindowPrivate::initWindow()
