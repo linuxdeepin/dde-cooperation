@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>AppSelectWidget</name>
     <message>
@@ -11,7 +9,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="54"/>
         <source>Confirm</source>
-        <translation>确认</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="71"/>
@@ -175,7 +173,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="101"/>
         <source>computer</source>
-        <translation>的电脑</translation>
+        <translation>电脑</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="108"/>
@@ -190,7 +188,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="159"/>
         <source>The code will be expired in</source>
-        <translation>密码有效时间还剩 </translation>
+        <translation>密码有效时间还剩</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="159"/>
@@ -796,12 +794,12 @@ UOS，助您无缝更换系统</translation>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="304"/>
         <source>Drag file here</source>
-        <translation>拖拽文件至此</translation>
+        <translation>导入文件</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="322"/>
         <source>Only .zip is supported, please</source>
-        <translation>仅至此zip格式，请重新选择</translation>
+        <translation>仅支持zip格式，请重新选择</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="323"/>

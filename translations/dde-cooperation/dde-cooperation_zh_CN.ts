@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>Application</name>
     <message>
@@ -90,27 +88,27 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="540"/>
         <source>The other party has cancelled the connection request !</source>
-        <translation type="unfinished"></translation>
+        <translation>对方取消了连接请求！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="544"/>
         <source>connect failed</source>
-        <translation type="unfinished"></translation>
+        <translation>连接失败</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="557"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation type="unfinished"></translation>
+        <translation>网络未连接，文件发送失败。   请连接网络并重试！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="564"/>
         <source>File transfer failed</source>
-        <translation type="unfinished"></translation>
+        <translation>文件传输失败</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="566"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
-        <translation type="unfinished"></translation>
+        <translation>络未连接，文件发送失败。请连接网络并重试！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="340"/>
@@ -157,12 +155,12 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="234"/>
         <source>connect failed</source>
-        <translation type="unfinished"></translation>
+        <translation>连接失败</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="235"/>
         <source>You have cancelled the connection request !</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="292"/>
@@ -308,7 +306,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="175"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
-        <translation>1. 开启跨端协同应用，UOS端应用可在应用商店下载，Windows端下载地址: </translation>
+        <translation>1. 开启跨端协同应用，UOS端应用可在应用商店下载，Windows端下载地址:</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="191"/>
@@ -501,7 +499,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="360"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation type="unfinished"></translation>
+        <translation>存储空间不足，文件发送失败。请清理磁盘空间并重试！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="428"/>
@@ -581,7 +579,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="225"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation type="unfinished"></translation>
+        <translation>存储空间不足，文件发送失败。请清理磁盘空间并重试！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="244"/>
@@ -596,7 +594,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="300"/>
         <source>Network not connected, file delivery failed this time.                             Please connect to the network and try again!</source>
-        <translation type="unfinished"></translation>
+        <translation>网络未连接，文件发送失败。   请连接网络并重试！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="230"/>

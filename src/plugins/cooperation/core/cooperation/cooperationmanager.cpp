@@ -231,6 +231,7 @@ void CooperationManagerPrivate::onCancelCooperApply()
 {
     confirmTimer.stop();
     backendShareEvent(BACK_SHARE_DISAPPLY_CONNECT);
+    taskDialog()->hide();
 }
 
 void CooperationManagerPrivate::reportConnectionData()
