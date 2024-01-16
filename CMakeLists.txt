@@ -20,6 +20,9 @@ endif()
 if(MINGW)
     # windows7 minGW support
     add_definitions(-D _WIN32_WINNT=0x0601)
+
+    # windeployqt 依赖
+    include (cmake/qt-helper.cmake)
 endif()
 
 #安全加固
@@ -56,10 +59,7 @@ if(NOT DEFINED DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR)
     set(DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/plugins)
 endif()
 
-# If do't define version number, specify the version number
-if(NOT DEFINED APP_VERSION)
-    set(APP_VERSION "1.0.0" CACHE STRING "define project version")
-endif()
+include (cmake/version.cmake)
 
 message("   >>> LIB_INSTALL_DIR  ${LIB_INSTALL_DIR}")
 message("   >>> DDE_COOPERATION_PLUGIN_ROOT_DIR  ${DDE_COOPERATION_PLUGIN_ROOT_DIR}")
@@ -88,6 +88,8 @@ if (WIN32)
 #    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
 #    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
 
+    file(GLOB INNO_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/dist/inno/scripts)
+    file(COPY ${INNO_SCRIPTS} DESTINATION ${CMAKE_BINARY_DIR})
 else()
     # Disable the coroutine in coost.
     add_definitions(-D DISABLE_GO)

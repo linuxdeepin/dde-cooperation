@@ -1,0 +1,107 @@
+#define MyAppName "@PRODUCT_NAME@"
+#define MyAppDaemonName "cooperation-daemon"
+#define MyAppVersion "@APP_VERSION_MAJOR@.@APP_VERSION_MINOR@.@APP_VERSION_PATCH@.@APP_BUILD_NUMBER@"
+#define MyAppTextVersion "@APP_VERSION@"
+#define MyAppPublisher "Uniontech, Inc."
+#define MyAppURL "https://www.deepin.org/"
+#define MyAppCopyright "Copyright (C) 2023-2024 Uniontech Inc."
+#define MyAppExeName "@PROJ_NAME@.exe"
+#define MyAppServiceName "Cooperation"
+#define MyAppServiceExe "cooperation-daemon.exe"
+#define MyAppServiceDesc "Deepin cooperation background processes."
+#define MyAppListenerDesc "Deepin cooperation Listener"
+#define MyAppMainName "main.vbs"
+
+[Setup]
+AppId={{@PRODUCT_ID@}
+AppName={cm:CmAppName}
+AppVersion={#MyAppTextVersion}
+AppVerName={#MyAppName} {#MyAppTextVersion}
+AppPublisher={#MyAppPublisher}
+AppPublisherURL={#MyAppURL}
+AppSupportURL={#MyAppURL}
+AppUpdatesURL={#MyAppURL}
+DefaultDirName={pf}\{#MyAppName}
+DefaultGroupName={cm:CmAppName}
+DisableProgramGroupPage=yes
+LicenseFile=@CMAKE_SOURCE_DIR@/dist/License.rtf
+OutputDir=@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/../installer-inno
+OutputBaseFilename={#MyAppName}-{#MyAppTextVersion}-setup
+SetupIconFile=@CMAKE_CURRENT_SOURCE_DIR@/res/win/@PROJ_NAME@.ico
+VersionInfoProductTextVersion={#MyAppTextVersion}
+VersionInfoProductVersion={#MyAppVersion}
+VersionInfoTextVersion={#MyAppTextVersion}
+VersionInfoVersion={#MyAppVersion}
+VersionInfoCopyright={#MyAppCopyright}
+
+Compression=lzma
+SolidCompression=yes
+WizardStyle=modern
+ArchitecturesInstallIn64BitMode=x64 ia64
+UninstallDisplayIcon={app}\{#MyAppExeName}
+UninstallDisplayName={cm:CmAppName}
+Uninstallable=yes
+
+#include "scripts\lang\english.iss"
+#include "scripts\lang\chinese.iss"
+#include "scripts\lang\@PRODUCT_NAME@.iss"
+
+[CustomMessages]
+DependenciesDir="redist"
+
+[Tasks]
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
+; Name: "startupicon"; Description: "{cm:CmAutoStart}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
+
+[Files]
+Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/{#MyAppServiceExe}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@PROJ_NAME@/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
+[Icons]
+Name: "{commonprograms}\{cm:CmAppName}"; Filename: "{app}\{#MyAppMainName}"; IconFilename:"{app}\{#MyAppExeName}"
+Name: "{commondesktop}\{cm:CmAppName}"; Filename: "{app}\{#MyAppMainName}"; Tasks: desktopicon; IconFilename:"{app}\{#MyAppExeName}"
+Name: "{group}\{cm:CmAppName}"; Filename: "{app}\{#MyAppMainName}"; IconFilename:"{app}\{#MyAppExeName}"
+; Name: "{group}\{cm:UninstallProgram,{cm:CmAppName}}"; Filename: "{uninstallexe}";
+; Name: "{autodesktop}\{cm:CmAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename:"{app}\{#MyAppExeName}"
+; Name: "{autostartup}\{cm:CmAppName}"; Filename: "{app}\{#MyAppDaemonName}"; Tasks:startupicon; IconFilename:"{app}\{#MyAppExeName}"
+
+[Run]
+; there's no "check if exists" or "insert if not exists" for netsh's firewall commands
+; to avoid duplicate entries remove the existing rule (fails if it doesn't exist) before adding
+; Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""{#MyAppListenerDesc}"""; Flags: runhidden
+; Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall add rule name=""{#MyAppListenerDesc}"" protocol=TCP dir=in localport=51596-51600 action=allow"; Flags: runhidden
+; Filename: {sys}\sc.exe; Parameters: "delete {#MyAppServiceName}"; Flags: runhidden
+; Filename: {sys}\sc.exe; Parameters: "create {#MyAppServiceName} start= auto binPath= ""\""{app}\{#MyAppServiceExe}\"""""; Flags: runhidden
+; Filename: {sys}\sc.exe; Parameters: "description {#MyAppServiceName} ""{#MyAppServiceDesc}"""; Flags: runhidden
+; Filename: {sys}\sc.exe; Parameters: "start {#MyAppServiceName}"; Flags: runhidden
+; Filename: "{app}\{#MyAppServiceExe}"; Description: "{#MyAppServiceName}"; Flags: runhidden nowait
+Filename: "{app}\{#MyAppMainName}"; Description: "{cm:LaunchProgram,{cm:CmAppName}}"; Flags: shellexec nowait postinstall skipifsilent
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{commonappdata}\#MyAppName"
+
+[UninstallRun]
+Filename: {sys}\taskkill; Parameters: "/im {#MyAppServiceExe} /f /t"; Flags: runhidden
+Filename: {sys}\taskkill; Parameters: "/im {#MyAppExeName} /f /t"; Flags: runhidden
+;Filename: {sys}\net.exe; Parameters: "stop {#MyAppServiceName}"; Flags: runhidden
+;Filename: {sys}\sc.exe; Parameters: "delete {#MyAppServiceName}"; Flags: runhidden
+;Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""{#MyAppListenerDesc}"""; Flags: runhidden
+
+; shared code for installing the products
+#include "scripts\products.iss"
+#include "scripts\products\stringversion.iss"
+#include "scripts\products\winversion.iss"
+#include "scripts\products\msiproduct.iss"
+#include "scripts\products\vcredist2017.iss"
+
+[Code]
+function InitializeSetup(): boolean;
+begin
+	// initialize windows version
+	initwinversion();
+
+	vcredist2017('14'); // min allowed version is 14.0
+
+	Result := true;
+end;

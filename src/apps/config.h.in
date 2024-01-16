@@ -7,37 +7,37 @@
 
 #ifndef DDE_COOPERATION_PLUGIN_ROOT_DIR
 #    define DDE_COOPERATION_PLUGIN_ROOT_DIR "${DDE_COOPERATION_PLUGIN_ROOT_DIR}"
-#elif
+#else
 #    warning "cmake unseting definition DDE_COOPERATION_PLUGIN_ROOT_DIR"
 #endif
 
 #ifndef DEEPIN_DAEMON_PLUGIN_DIR
 #    define DEEPIN_DAEMON_PLUGIN_DIR "${DEEPIN_DAEMON_PLUGIN_DIR}"
-#elif
+#else
 #    warning "cmake unseting definition DEEPIN_DAEMON_PLUGIN_DIR"
 #endif
 
 #ifndef DEEPIN_DATA_TRANS_PLUGIN_DIR
 #    define DEEPIN_DATA_TRANS_PLUGIN_DIR "${DEEPIN_DATA_TRANS_PLUGIN_DIR}"
-#elif
+#else
 #    warning "cmake unseting definition DEEPIN_DATA_TRANS_PLUGIN_DIR"
 #endif
 
 #ifndef DEEPIN_COOPERATION_PLUGIN_DIR
 #    define DEEPIN_COOPERATION_PLUGIN_DIR "${DEEPIN_COOPERATION_PLUGIN_DIR}"
-#elif
+#else
 #    warning "cmake unseting definition DEEPIN_COOPERATION_PLUGIN_DIR"
 #endif
 
 #ifndef DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR
 #    define DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR "${DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR}"
-#elif
+#else
 #    warning "cmake unseting definition DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR"
 #endif
 
 #ifndef APP_VERSION
 #    define APP_VERSION "${APP_VERSION}"
-#elif
+#else
 #    warning "cmake unseting definition APP_VERSION"
 #endif
 

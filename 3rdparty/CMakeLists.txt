@@ -53,6 +53,6 @@ else()
     # 拷贝编译好的版本windows版本
     file(GLOB BARRIER_BINS ${CMAKE_CURRENT_SOURCE_DIR}/barrier/bins/*)
     file(COPY ${BARRIER_BINS}
-      DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
+      DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dde-cooperation)
     message("   >>> copy barrier binary and depends:  ${BARRIER_BINS}")
 endif()

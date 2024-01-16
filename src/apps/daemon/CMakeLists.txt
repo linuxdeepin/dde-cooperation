@@ -19,20 +19,29 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
 if (WIN32)
     # 管理员权限
-    set (RC_FILES res/win/daemon.rc)
+    set (SET_ADMIN "1 24 DISCARDABLE ${CMAKE_CURRENT_SOURCE_DIR}/../uac.manifest")
+    # 文件描述信息
+    set (PRODUCT_INFO "Deepin cooperation server")
+    set (PRODUCT_NAME "cooperation")
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+    set (RC_FILES ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${PROJ_NAME}
+    qt_add_executable(${PROJ_NAME} WIN32
         MANUAL_FINALIZATION
         ${CPP_SRC}
         ${RC_FILES}
     )
 else()
-    add_executable(${PROJ_NAME}
+    add_executable(${PROJ_NAME} WIN32
         ${CPP_SRC}
         ${RC_FILES}
     )
+endif()
+
+if (WIN32)
+    add_link_options(${PROJ_NAME} PRIVATE -mwindows)
 endif()
 
 target_link_libraries(${PROJ_NAME}
