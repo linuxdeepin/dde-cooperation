@@ -83,7 +83,7 @@ void TransferDialog::createWaitConfirmPage()
     vLayout->addWidget(spinner, 0, Qt::AlignHCenter);
     vLayout->addSpacing(15);
     vLayout->addWidget(label, 0, Qt::AlignHCenter);
-    vLayout->addSpacerItem(new QSpacerItem(1, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    vLayout->addSpacerItem(new QSpacerItem(1, 85, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 void TransferDialog::createResultPage()
