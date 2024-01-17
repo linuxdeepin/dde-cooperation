@@ -35,7 +35,7 @@ protected:
 private:
     void initUI();
 
-    QLabel *pathLabel { nullptr };
+    CooperationLineEdit *pathLabel { nullptr };
     CooperationSuggestButton *fileChooserBtn { nullptr };
 };
 

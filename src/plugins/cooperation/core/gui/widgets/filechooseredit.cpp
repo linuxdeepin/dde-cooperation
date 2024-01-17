@@ -27,7 +27,7 @@ FileChooserEdit::FileChooserEdit(QWidget *parent)
 
 void FileChooserEdit::initUI()
 {
-    pathLabel = new QLabel(this);
+    pathLabel = new CooperationLineEdit(this);
     auto margins = pathLabel->contentsMargins();
     margins.setLeft(8);
     margins.setRight(8);
