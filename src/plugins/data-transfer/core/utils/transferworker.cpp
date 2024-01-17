@@ -152,7 +152,7 @@ void TransferHandle::localIPCStart()
                 SendStatus param;
                 param.from_json(json_obj);
                 if (REMOTE_CLIENT_OFFLINE == param.status) {
-                    cancelTransferJob(); //离线，取消job
+                    cancelTransferJob();   //离线，取消job
                     TransferHelper::instance()->emitDisconnected();
                 }
                 break;
@@ -184,7 +184,8 @@ void TransferHandle::localIPCStart()
 
     connect(qApp, &QCoreApplication::aboutToQuit, [this]() {
         DLOG << "App exit, exit ipc server";
-        cancelTransferJob(); //退出，取消job
+        cancelTransferJob();   //退出，取消job
+        emit TransferHelper::instance()->interruption();
         disconnectRemote();
         //FIXME: it always abort if invoke exit
     });
@@ -347,7 +348,7 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
 
     if (miscJson.has_member("remaining_space")) {
         int remainSpace = miscJson.get("remaining_space").as_int();
-        LOG << "remaining_space " << remainSpace <<"G";
+        LOG << "remaining_space " << remainSpace << "G";
         emit TransferHelper::instance()->remoteRemainSpace(remainSpace);
     }
 }
@@ -381,8 +382,8 @@ bool TransferHandle::cancelTransferJob()
     if (!_backendOK || _job_maps.isEmpty()) return false;
 
     int jobid = _job_maps.firstKey();
-    return TransferWoker::instance()->cancelTransferJob(jobid);
     _job_maps.remove(jobid);
+    return TransferWoker::instance()->cancelTransferJob(jobid);
 }
 
 void TransferHandle::sendFiles(QStringList paths)

@@ -44,9 +44,6 @@ void UnzipWorker::run()
 
     //configuration
     TransferHelper::instance()->setting(targetDir);
-
-    //remove temp dir
-    QDir(targetDir).removeRecursively();
 }
 
 int UnzipWorker::getNumFiles(QString filepath)

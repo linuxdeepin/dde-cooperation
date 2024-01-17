@@ -33,7 +33,8 @@
 #endif
 
 //#pragma execution_character_set("utf-8")
-TransferHelper::TransferHelper() : QObject()
+TransferHelper::TransferHelper()
+    : QObject()
 {
     initOnlineState();
 #ifndef WIN32
@@ -42,7 +43,7 @@ TransferHelper::TransferHelper() : QObject()
 #endif
 }
 
-TransferHelper::~TransferHelper() { }
+TransferHelper::~TransferHelper() {}
 
 TransferHelper *TransferHelper::instance()
 {
@@ -73,7 +74,7 @@ QString TransferHelper::tempCacheDir()
             QString("%1/%2/%3/")
                     .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
                     .arg(qApp->organizationName())
-                    .arg(qApp->applicationName()); //~/.cache/deepin/xx
+                    .arg(qApp->applicationName());   //~/.cache/deepin/xx
 
     QDir cacheDir(savePath);
     if (!cacheDir.exists())
@@ -360,12 +361,12 @@ void TransferHelper::recordTranferJob(const QString &filepath)
     QFileInfo info(jsonfile);
     QString tempPath(tempCacheDir() + connectIP + "transfer-temp.json");
     if (!jsonfile.copy(tempPath))
-        WLOG << "Failed to copy recordTranfer file" + tempPath.toStdString() ;
+        WLOG << "Failed to copy recordTranfer file" + tempPath.toStdString();
 
     connect(this, &TransferHelper::interruption, this, [this, filepath, tempPath]() {
         // 2.write unfinished files to tempjson file
         QJsonObject jsonObj = SettingHelper::ParseJson(filepath);
-
+        QString fileDir = filepath.left(filepath.lastIndexOf('/'));
         QJsonArray userFileArray = jsonObj["user_file"].toArray();
         QJsonArray updatedFileList;
         bool ok;
@@ -373,11 +374,12 @@ void TransferHelper::recordTranferJob(const QString &filepath)
 
         foreach (const QJsonValue &fileValue, userFileArray) {
             QString file = fileValue.toString();
+            QString filename = file.mid(file.indexOf('/'));
 
             // skip finished files
             bool isend = false;
             for (QString key : finshedFiles.keys()) {
-                if (key.endsWith(file)) {
+                if (key.endsWith(filename)) {
                     isend = true;
                     if (ok)
                         userData -= finshedFiles.value(key);
@@ -386,6 +388,14 @@ void TransferHelper::recordTranferJob(const QString &filepath)
                 }
             }
             if (isend) {
+                //Move completed files first
+                QString targetFile = QDir::homePath() + "/" + file;
+                QString originfile = fileDir + filename;
+                QFileInfo info = QFileInfo(targetFile);
+                auto dir = info.dir();
+                if (!dir.exists())
+                    dir.mkpath(".");
+                SettingHelper::instance()->moveFile(originfile, targetFile);
                 continue;
             }
 
@@ -402,6 +412,11 @@ void TransferHelper::recordTranferJob(const QString &filepath)
             WLOG << "Failed to open JSON file for writing";
         tempfile.write(jsonDoc.toJson());
         tempfile.close();
+        // remove transfer dir
+        QDir dir(fileDir);
+        if (!dir.removeRecursively()) {
+            WLOG << "Failed to remove directory";
+        }
     });
 
     connect(this, &TransferHelper::transferFinished, this, [this, tempPath] {
@@ -413,7 +428,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
 
 bool TransferHelper::isUnfinishedJob(QString &content)
 {
-    QString transtempPath(tempCacheDir() + connectIP +"transfer-temp.json");
+    QString transtempPath(tempCacheDir() + connectIP + "transfer-temp.json");
     QFile f(transtempPath);
     if (!f.exists())
         return false;
