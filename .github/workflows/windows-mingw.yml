@@ -10,15 +10,15 @@ jobs:
       matrix:
         include:
           - name: win64_mingw
-            os: windows-2022
+            os: windows-2019
             build_type: Release
-            compiler_type: mingw810_64
-            compiler_version: 8.10.0
-            qt_arch: win64_mingw81
-            qt_version: 5.15.2
+            compiler_type: mingw730_64
+            compiler_version: 7.30.0
+            qt_arch: win64_mingw73
+            qt_version: 5.14.2
             qt_target: desktop
-            qt_tools: "tools_mingw,qt.tools.win64_mingw810"
-            qt_tools_mingw_install: mingw810_64
+            qt_tools: "tools_mingw,qt.tools.win64_mingw730"
+            qt_tools_mingw_install: mingw730_64
     runs-on: ${{ matrix.os }}
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
@@ -40,6 +40,7 @@ jobs:
           target: ${{ matrix.qt_target }}
           arch: ${{ matrix.qt_arch }}
           tools: ${{ matrix.qt_tools }}
+          cached: 'false'
           # cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
       - name: Setup ninja
@@ -63,6 +64,13 @@ jobs:
         with:
           path: source
           fetch-depth: 0
+
+      - name: Qt 5 environment configuration
+        if: ${{ startsWith( matrix.qt_version, 5 ) }}
+        shell: pwsh
+        run: |
+          Write-Output "${{ env.Qt5_DIR }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          Write-Output "${{ env.Qt5_DIR }}/../../Tools/${{ matrix.qt_tools_mingw_install }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: mingw-build
         id: build
