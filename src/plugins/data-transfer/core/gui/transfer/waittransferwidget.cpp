@@ -9,7 +9,6 @@
 #include <QMovie>
 
 #include <utils/transferhepler.h>
-#include <gui/connect/choosewidget.h>
 
 WaitTransferWidget::WaitTransferWidget(QWidget *parent)
     : QFrame(parent)
@@ -32,10 +31,7 @@ void WaitTransferWidget::initUI()
 
     QLabel *titileLabel = new QLabel(tr("Waiting for transfer..."), this);
     titileLabel->setFixedHeight(50);
-    QFont font;
-    font.setPixelSize(24);
-    font.setWeight(QFont::DemiBold);
-    titileLabel->setFont(font);
+    titileLabel->setFont(StyleHelper::font(2));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QLabel *tipLabel = new QLabel(tr("Please select the data to transfer on Windows"), this);
@@ -58,7 +54,7 @@ void WaitTransferWidget::initUI()
     backButton = new QToolButton(this);
     backButton->setText(tr("Cancel"));
     backButton->setFixedSize(250, 36);
-    backButton->setStyleSheet("background-color: lightgray;");
+    backButton->setStyleSheet(StyleHelper::longBtnStyle(1));
 #ifndef WIN32
     connect(backButton, &QToolButton::clicked, this, &WaitTransferWidget::cancel);
 #endif
@@ -97,12 +93,12 @@ void WaitTransferWidget::themeChanged(int theme)
     //light
     if (theme == 1) {
         setStyleSheet("background-color: white; border-radius: 10px;");
-        backButton->setStyleSheet("background-color: lightgray;");
+        backButton->setStyleSheet(StyleHelper::longBtnStyle(1));
         iconLabel->setMovie(lighticonmovie);
     } else {
         //dark
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
-        backButton->setStyleSheet("background-color: rgba(0, 0, 0, 0.08);");
+        backButton->setStyleSheet(StyleHelper::longBtnStyle(0));
         iconLabel->setMovie(darkiconmovie);
     }
 }

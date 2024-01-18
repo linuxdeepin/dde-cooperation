@@ -15,8 +15,6 @@
 #include <QScrollBar>
 
 #include <utils/transferhepler.h>
-
-#include <gui/connect/choosewidget.h>
 #include <utils/optionsmanager.h>
 
 TransferringWidget::TransferringWidget(QWidget *parent)
@@ -53,10 +51,7 @@ void TransferringWidget::initUI()
 
     titileLabel = new QLabel(tr("Transferring..."), this);
     titileLabel->setFixedHeight(50);
-    QFont font;
-    font.setPixelSize(24);
-    font.setWeight(QFont::DemiBold);
-    titileLabel->setFont(font);
+    titileLabel->setFont(StyleHelper::font(2));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     progressLabel = new ProgressBarLabel(this);
@@ -69,7 +64,7 @@ void TransferringWidget::initUI()
     timeLabel = new QLabel(this);
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     QFont timefont;
-    font.setPointSize(7);
+    timefont.setPointSize(12);
     timeLabel->setFont(timefont);
 
     fileLabel = new QLabel(this);

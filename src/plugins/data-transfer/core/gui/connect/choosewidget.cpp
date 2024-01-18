@@ -39,10 +39,7 @@ void ChooseWidget::initUI()
     mainLayout->setSpacing(0);
 
     QLabel *titileLabel = new QLabel(tr("Select a transfer way"), this);
-    QFont font;
-    font.setPixelSize(24);
-    font.setWeight(QFont::DemiBold);
-    titileLabel->setFont(font);
+    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     winItem = new ModeItem(internetMethodName, QIcon(":/icon/select1.png"), this);
@@ -55,8 +52,9 @@ void ChooseWidget::initUI()
     modeLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QLabel *tiptextlabel = new QLabel(this);
+    tiptextlabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error));
     QString prompt = tr("Unable to connect to the network， please check your network connection or select export to local directory.");
-    tiptextlabel->setText(QString("<font size='3' color='#FF5736'>%1</font>").arg(prompt));
+    tiptextlabel->setText(prompt);
 
     tiptextlabel->setVisible(false);
 
@@ -65,13 +63,12 @@ void ChooseWidget::initUI()
     tiplayout->addWidget(tiptextlabel);
     tiplayout->setAlignment(Qt::AlignCenter);
 
-    nextButton = new QToolButton(this);
+    nextButton = new QPushButton(this);
     nextButton->setText(tr("Next"));
     nextButton->setFixedSize(250, 35);
+    nextButton->setStyleSheet(StyleHelper::longBtnStyle(1));
     nextButton->setEnabled(false);
-    nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                              "background-color: lightgray;"
-                              "}");
+
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(nextButton, Qt::AlignCenter);
 
@@ -81,7 +78,7 @@ void ChooseWidget::initUI()
     QHBoxLayout *indexLayout = new QHBoxLayout();
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
-    mainLayout->addSpacing(30);
+    mainLayout->addSpacing(40);
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(40);
     mainLayout->addLayout(modeLayout);
@@ -93,15 +90,15 @@ void ChooseWidget::initUI()
     mainLayout->addLayout(indexLayout);
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
-    [this, tiptextlabel](bool online) {
-        if (online) {
-            tiptextlabel->setVisible(false);
-        } else {
-            tiptextlabel->setVisible(true);
-            winItem->checked = false;
-        }
-        winItem->setEnable(online);
-    });
+            [this, tiptextlabel](bool online) {
+                if (online) {
+                    tiptextlabel->setVisible(false);
+                } else {
+                    tiptextlabel->setVisible(true);
+                    winItem->checked = false;
+                }
+                winItem->setEnable(online);
+            });
 
     connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
     connect(winItem, &ModeItem::clicked, [this](int state) {
@@ -155,17 +152,11 @@ void ChooseWidget::themeChanged(int theme)
     // light
     if (theme == 1) {
         setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
-        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                  "background-color: lightgray;"
-                                  "}");
-
+        nextButton->setStyleSheet(StyleHelper::longBtnStyle(1));
     } else {
         // dark
         setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
-        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                  "opacity: 1;"
-                                  "background-color: rgba(255,255,255, 0.1);"
-                                  "}");
+        nextButton->setStyleSheet(StyleHelper::longBtnStyle(0));
     }
     winItem->themeChanged(theme);
     packageItem->themeChanged(theme);

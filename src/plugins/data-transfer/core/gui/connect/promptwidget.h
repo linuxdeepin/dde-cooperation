@@ -2,7 +2,6 @@
 #define PROMPTWIDGET_H
 
 #include <QFrame>
-class QToolButton;
 class PromptWidget : public QFrame
 {
     Q_OBJECT
@@ -18,7 +17,6 @@ public slots:
 
 private:
     void initUI();
-    QToolButton *backButton{nullptr};
 };
 
 #endif

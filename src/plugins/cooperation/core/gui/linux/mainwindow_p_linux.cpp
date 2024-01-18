@@ -30,6 +30,7 @@ void MainWindowPrivate::initTitleBar()
     auto titleBar = q->titlebar();
     DIconButton *refreshBtn = new DIconButton(q);
     refreshBtn->setIcon(QIcon::fromTheme("refresh"));
+    refreshBtn->setIconSize(QSize(16, 16));
     refreshBtn->setToolTip(tr("Re-scan for devices"));
     titleBar->addWidget(refreshBtn, Qt::AlignLeft);
     connect(refreshBtn, &DIconButton::clicked, q, [] { MainController::instance()->start(); });

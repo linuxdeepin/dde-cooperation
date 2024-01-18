@@ -3,7 +3,7 @@
 
 #include <QFrame>
 #include <QLabel>
-#include <QToolButton>
+#include <QPushButton>
 
 class UploadFileFrame : public QFrame
 {
@@ -15,6 +15,7 @@ public:
 
     void uploadFile();
     QString getZipFilePath() const;
+    void themeChanged(int theme);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
@@ -27,12 +28,12 @@ signals:
 
 private:
     void initUI();
-    void initStyleSheet();
     void initFileFrame();
 
 private:
     QString zipFilePath;
     QFrame *fileFrame { nullptr };
+    bool lightTheme { true };
 };
 
 enum uploadStatus {
@@ -59,16 +60,14 @@ public slots:
 
 private:
     void initUI();
-    void updataNextBut();
 Q_SIGNALS:
     void Initial();
 
 private:
-    QToolButton *backButton { nullptr };
-    QToolButton *nextButton { nullptr };
+    QPushButton *backButton { nullptr };
+    QPushButton *nextButton { nullptr };
     QLabel *tipLabel { nullptr };
     UploadFileFrame *uploadFileFrame { nullptr };
-    bool currentState { true };
 };
 
 #endif

@@ -14,8 +14,6 @@
 #include <QMimeData>
 #include <QUrl>
 
-#include <gui/connect/choosewidget.h>
-
 #include <utils/transferhepler.h>
 
 #pragma execution_character_set("utf-8")
@@ -41,18 +39,15 @@ void UploadFileWidget::initUI()
 
     QLabel *titileLabel = new QLabel(tr("Select data transfer file"), this);
     titileLabel->setFixedHeight(50);
-    QFont font;
-    font.setPixelSize(24);
-    font.setWeight(QFont::DemiBold);
-    titileLabel->setFont(font);
+    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     uploadFileFrame = new UploadFileFrame(this);
     QHBoxLayout *uploadLayout = new QHBoxLayout();
     uploadLayout->addWidget(uploadFileFrame, Qt::AlignCenter);
 
-    tipLabel = new QLabel(QString("<font size=12px color='#FF5736' >%1</font>").arg(tr("File error, cannot transfer, please reselect")), this);
-    tipLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
+    tipLabel = new QLabel(tr("File error, cannot transfer, please reselect"), this);
+    tipLabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error) + "background-color: rgba(0, 0, 0, 0);border-style: none;");
     tipLabel->setFixedHeight(20);
     tipLabel->setAlignment(Qt::AlignCenter);
     tipLabel->setVisible(false);
@@ -62,26 +57,16 @@ void UploadFileWidget::initUI()
     tipLayout->addWidget(tipLabel);
     tipLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    backButton = new QToolButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    backButton = buttonLayout->getButton1();
     backButton->setText(tr("Back"));
-    backButton->setFixedSize(120, 35);
-    connect(backButton, &QToolButton::clicked, this, &UploadFileWidget::backPage);
-
-    nextButton = new QToolButton(this);
-    QPalette palette = nextButton->palette();
-    palette.setColor(QPalette::ButtonText, Qt::white);
-    nextButton->setPalette(palette);
+    backButton->setFixedSize(120, 36);
+    nextButton = buttonLayout->getButton2();
     nextButton->setText(tr("Next"));
-    nextButton->setFixedSize(120, 35);
-
-    nextButton->setStyleSheet("QToolButton[Theme=\"true\"][Enabled=\"true\"] { background-color: rgba(0,152, 255,1);border-radius: 8px; }"
-                              "QToolButton[Theme=\"true\"][Enabled=\"false\"] {background-color: rgba(0,152, 255,0.5);border-radius: 8px; }"
-                              "QToolButton[Theme=\"false\"][Enabled=\"true\"] { background-color: rgba(0,152, 255,0.6);color: lightgray;border-radius: 8px; }"
-                              "QToolButton[Theme=\"false\"][Enabled=\"false\"] { background-color: rgba(0,152, 255,0.3);color: lightgray; border-radius: 8px; }");
-
     nextButton->setEnabled(false);
-    updataNextBut();
-    connect(nextButton, &QToolButton::clicked, this, [this]() {
+
+    connect(backButton, &QPushButton::clicked, this, &UploadFileWidget::backPage);
+    connect(nextButton, &QPushButton::clicked, this, [this]() {
         if (nextButton->text() == tr("Retry")) {
             emit uploadFileFrame->updateUI(uploadStatus::Initial);
             tipLabel->setVisible(false);
@@ -102,22 +87,16 @@ void UploadFileWidget::initUI()
         return;
     });
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(10);
-    buttonLayout->addWidget(nextButton);
-    buttonLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
-
     IndexLabel *indelabel = new IndexLabel(1, this);
-    indelabel->setAlignment(Qt::AlignCenter);
 
     QHBoxLayout *indexLayout = new QHBoxLayout();
-    indexLayout->addWidget(indelabel, Qt::AlignCenter);
+    indexLayout->addWidget(indelabel, Qt::AlignCenter | Qt::AlignBottom);
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addLayout(uploadLayout);
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(100);
     mainLayout->addLayout(tipLayout);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
@@ -132,23 +111,14 @@ void UploadFileWidget::initUI()
             nextButton->setEnabled(false);
             nextButton->setText(tr("Next"));
         }
-        updataNextBut();
     });
-}
-
-void UploadFileWidget::updataNextBut()
-{
-    nextButton->setProperty("Theme", currentState);
-    nextButton->setProperty("Enabled", nextButton->isEnabled());
-    nextButton->style()->unpolish(nextButton);
-    nextButton->style()->polish(nextButton);
 }
 
 bool UploadFileWidget::checkBackupFile(const QString &filePath)
 {
     //Verify effectiveness
     if (!UnzipWorker::isValid(filePath)) {
-        tipLabel->setText(QString("<font size=12px color='#FF5736' >%1</font>").arg(tr("The file is corrupted and cannot be migrated. Please replace it with a backup file.")));
+        tipLabel->setText(tr("The file is corrupted and cannot be migrated. Please replace it with a backup file."));
         tipLabel->setVisible(true);
         return false;
     }
@@ -159,7 +129,7 @@ bool UploadFileWidget::checkBackupFile(const QString &filePath)
     int size = static_cast<int>(info.size() / 1024 / 1024 / 1024) * 2;
     if (size >= TransferHelper::getRemainSize()) {
         tipLabel->setVisible(true);
-        tipLabel->setText(QString("<font size=12px color='#FF5736' >%1</font>").arg(tr("Insufficient space on UOS. Please reserve at least %1G of space and try again.").arg(size)));
+        tipLabel->setText(tr("Insufficient space on UOS. Please reserve at least %1G of space and try again.").arg(size));
         return false;
     }
     return true;
@@ -195,32 +165,12 @@ void UploadFileWidget::themeChanged(int theme)
     //light
     if (theme == 1) {
         setStyleSheet(".UploadFileWidget{background-color: white; border-radius: 10px;}");
-
-        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                  "background-color: lightgray;"
-                                  "}");
-        uploadFileFrame->setStyleSheet(".UploadFileFrame{background-color: rgba(0, 0, 0, 0.03);"
-                                       "border-radius: 10px;"
-                                       "border-style: dashed;"
-                                       "border-width: 2px;"
-                                       "border-color: rgba(0, 0, 0, 0.06);}");
-        currentState = true;
+        uploadFileFrame->themeChanged(1);
     } else {
         //dark
         setStyleSheet(".UploadFileWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
-        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                  "opacity: 1;"
-                                  "background-color: rgba(255,255,255, 0.1);"
-                                  "}");
-        uploadFileFrame->setStyleSheet(".UploadFileFrame{"
-                                       "background-color: rgba(255,255,255, 0.05);"
-                                       "border-radius: 10px;"
-                                       "border-style: dashed;"
-                                       "border-width: 2px;"
-                                       "border-color: rgba(255,255,255, 0.1);}");
-        currentState = false;
+        uploadFileFrame->themeChanged(0);
     }
-    updataNextBut();
 }
 
 UploadFileFrame::UploadFileFrame(QWidget *parent)
@@ -243,7 +193,7 @@ void UploadFileFrame::initUI()
     iconLabel->setStyleSheet(".QLabel{background-color: rgba(0, 0, 0, 0);border-style: none;}");
     iconLabel->setAlignment(Qt::AlignCenter);
 
-    QLabel *textLabel = new QLabel(QString("<font color='gray' >%1</font>").arg(tr("Drag file here ")), this);
+    QLabel *textLabel = new QLabel(QString("<font color='gray' >%1</font>").arg(tr("Drag file here")), this);
     textLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
     textLabel->setFixedHeight(20);
     textLabel->setAlignment(Qt::AlignCenter);
@@ -301,7 +251,7 @@ void UploadFileFrame::initUI()
             iconLabel->setVisible(true);
             textLabel->setVisible(true);
             displayLabel->setVisible(true);
-            textLabel->setText(QString("<font color='gray' >%1</font>").arg(tr("Drag file here")));
+            textLabel->setText(QString("<font color='gray' >%1</font>").arg(tr("Drag file here ")));
             displayLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;font-size:12px;\">%1</a>").arg(tr("Import file")));
             break;
         }
@@ -317,8 +267,10 @@ void UploadFileFrame::initUI()
         case uploadStatus::formaterror: {
             fileFrame->setVisible(false);
             closeBtn->setVisible(false);
-            iconLabel->setVisible(true);
             WarningIconLabel->setVisible(true);
+            iconLabel->setVisible(true);
+            textLabel->setVisible(true);
+            displayLabel->setVisible(true);
             textLabel->setText(QString("<font color='gray' >%1</font>").arg(tr("Only .zip is supported, please")));
             displayLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;font-size:12px;\">%1</a>").arg(tr("reselect")));
             break;
@@ -329,13 +281,25 @@ void UploadFileFrame::initUI()
     });
 }
 
-void UploadFileFrame::initStyleSheet()
+void UploadFileFrame::themeChanged(int theme)
 {
-    setStyleSheet(".UploadFileFrame{background-color: rgba(0, 0, 0, 0.03);"
-                  "border-radius: 10px;"
-                  "border-style: dashed;"
-                  "border-width: 2px;"
-                  "border-color: rgba(0, 0, 0, 0.06);}");
+    //light
+    lightTheme = theme;
+    if (theme == 1) {
+        setStyleSheet(".UploadFileFrame{background-color: rgba(0, 0, 0, 0.03);"
+                      "border-radius: 10px;"
+                      "border-style: dashed;"
+                      "border-width: 2px;"
+                      "border-color: rgba(0, 0, 0, 0.06);}");
+    } else {
+        //dark
+        setStyleSheet(".UploadFileFrame{"
+                      "background-color: rgba(255,255,255, 0.05);"
+                      "border-radius: 10px;"
+                      "border-style: dashed;"
+                      "border-width: 2px;"
+                      "border-color: rgba(255,255,255, 0.1);}");
+    }
 }
 
 void UploadFileFrame::initFileFrame()
@@ -388,23 +352,25 @@ void UploadFileFrame::dragEnterEvent(QDragEnterEvent *event)
 
 void UploadFileFrame::dragMoveEvent(QDragMoveEvent *event)
 {
+    QString bordercolor = lightTheme ? "border-color: rgba(0, 0, 0, 0.06);}"
+                                     : "border-color: rgba(255,255,255, 0.1);}";
     setStyleSheet(".UploadFileFrame{background-color: rgba(0, 129, 255, 0.2);"
                   "border-radius: 10px;"
                   "border-style: dashed;"
                   "border-width: 2px;"
-                  "border-color: rgba(0, 0, 0, 0.06);}");
+                  + bordercolor);
     event->accept();
 }
 
 void UploadFileFrame::dragLeaveEvent(QDragLeaveEvent *event)
 {
     Q_UNUSED(event);
-    initStyleSheet();
+    themeChanged(lightTheme);
 }
 
 void UploadFileFrame::dropEvent(QDropEvent *event)
 {
-    initStyleSheet();
+    themeChanged(lightTheme);
     const QList<QUrl> &urls = event->mimeData()->urls();
     if (urls.size() != 1)
         return;

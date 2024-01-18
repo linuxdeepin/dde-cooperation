@@ -112,6 +112,9 @@ else()
     # desktop
     install(FILES res/linux/deepin-data-transfer.desktop DESTINATION share/applications)
 
+    # manual
+    install(DIRECTORY assets/deepin-data-transfer DESTINATION share/deepin-manual/manual-assets/application)
+
     # 日志收集配置
     install(FILES res/linux/deepin-data-transfer.json DESTINATION share/deepin-log-viewer/deepin-log.conf.d)
 endif()

@@ -76,7 +76,7 @@ void MainWindowPrivate::initTitleBar()
 
     QToolButton *refreshBtn = new QToolButton(q);
     refreshBtn->setIcon(QIcon(":/icons/deepin/builtin/texts/refresh_14px.svg"));
-    refreshBtn->setIconSize(QSize(13, 13));
+    refreshBtn->setIconSize(QSize(16, 16));
     refreshBtn->setToolTip(tr("Re-scan for devices"));
     refreshBtn->setStyleSheet("QToolButton {"
                               "background-color: rgba(0,0,0,0.15);"

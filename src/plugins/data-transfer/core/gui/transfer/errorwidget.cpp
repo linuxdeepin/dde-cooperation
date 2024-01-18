@@ -7,7 +7,6 @@
 #include <QVBoxLayout>
 #include <QStackedWidget>
 #include <QDebug>
-#include <gui/connect/choosewidget.h>
 #include <utils/transferhepler.h>
 
 ErrorWidget::ErrorWidget(QWidget *parent)
@@ -40,15 +39,12 @@ void ErrorWidget::initUI()
 
     errorPixmap.scaled(32, 32, Qt::KeepAspectRatio);
     errorLabel->setPixmap(errorPixmap);
-    errorLabel->setGeometry(420, 180, errorPixmap.width(), errorPixmap.height());
+    errorLabel->setGeometry(420, 200, errorPixmap.width(), errorPixmap.height());
 
     QString titleStr = internetError;
     titleLabel = new QLabel(titleStr, this);
     titleLabel->setFixedHeight(50);
-    QFont font;
-    font.setPointSize(16);
-    font.setWeight(QFont::DemiBold);
-    titleLabel->setFont(font);
+    titleLabel->setFont(StyleHelper::font(2));
     titleLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     ProgressBarLabel *progressLabel = new ProgressBarLabel(this);
@@ -59,37 +55,25 @@ void ErrorWidget::initUI()
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
     QLabel *timeLabel = new QLabel(this);
+    QFont font;
+    font.setPixelSize(12);
+    timeLabel->setFont(font);
     timeLabel->setText(QString("%1 - -").arg(tr("Transfer will be completed in")));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    QFont timefont;
-    font.setPointSize(5);
-    timeLabel->setFont(timefont);
 
     promptLabel = new QLabel(this);
-    promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(tr("Try again")));
+    promptLabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error));
     promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-    QToolButton *backButton = new QToolButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    QPushButton *backButton = buttonLayout->getButton1();
     backButton->setText(tr("Back"));
-    backButton->setFixedSize(120, 35);
-    backButton->setStyleSheet("background-color: lightgray;");
-    QObject::connect(backButton, &QToolButton::clicked, this, &ErrorWidget::backPage);
-
-    QToolButton *retryButton = new QToolButton(this);
-
+    backButton->setFixedSize(120, 36);
+    QPushButton *retryButton = buttonLayout->getButton2();
     retryButton->setText(tr("Try again"));
-    retryButton->setStyleSheet("background-color: #0098FF;");
-    QPalette palette = retryButton->palette();
-    palette.setColor(QPalette::ButtonText, Qt::white);
-    retryButton->setPalette(palette);
-    retryButton->setFixedSize(120, 35);
 
-    QObject::connect(retryButton, &QToolButton::clicked, this, &ErrorWidget::retryPage);
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(10);
-    buttonLayout->addWidget(retryButton);
-    buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+    connect(backButton, &QPushButton::clicked, this, &ErrorWidget::backPage);
+    connect(retryButton, &QPushButton::clicked, this, &ErrorWidget::retryPage);
 
     IndexLabel *indelabel = new IndexLabel(3, this);
     indelabel->setAlignment(Qt::AlignCenter);
@@ -98,11 +82,11 @@ void ErrorWidget::initUI()
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    mainLayout->addSpacing(30);
+    mainLayout->addSpacing(50);
     mainLayout->addWidget(iconLabel);
-    mainLayout->addSpacing(20);
-    mainLayout->addWidget(titleLabel);
     mainLayout->addSpacing(15);
+    mainLayout->addWidget(titleLabel);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(progressLayout);
     mainLayout->addSpacing(5);
     mainLayout->addWidget(timeLabel);
@@ -131,10 +115,10 @@ void ErrorWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet("background-color: white; border-radius: 10px;");
+        setStyleSheet(".ErrorWidget{background-color: white; border-radius: 10px;}");
     } else {
         // dark
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        setStyleSheet(".ErrorWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
     }
 }
 
@@ -142,8 +126,7 @@ void ErrorWidget::setErrorType(ErrorType type, int size)
 {
     if (type == ErrorType::networkError) {
         titleLabel->setText(internetError);
-        promptLabel->setText(
-                QString("<font size='2' color='#FF5736'>%1</font>").arg(internetErrorPrompt));
+        promptLabel->setText(internetErrorPrompt);
     } else {
         titleLabel->setText(transferError);
         QString prompt;
@@ -151,6 +134,6 @@ void ErrorWidget::setErrorType(ErrorType type, int size)
             prompt = QString(transferErrorPromptWin);
         else
             prompt = QString(transferErrorPromptUOS).arg(size);
-        promptLabel->setText(QString("<font size='2' color='#FF5736'>%1</font>").arg(prompt));
+        promptLabel->setText(prompt);
     }
 }

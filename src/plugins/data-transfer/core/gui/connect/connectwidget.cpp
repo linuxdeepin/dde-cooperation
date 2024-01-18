@@ -1,5 +1,4 @@
 ﻿#ifndef WIN32
-#    include "choosewidget.h"
 #    include "connectwidget.h"
 #    include "../type_defines.h"
 
@@ -35,15 +34,13 @@ void ConnectWidget::initUI()
 
     QLabel *titileLabel = new QLabel(tr("Ready to connect"), this);
     titileLabel->setFixedHeight(50);
-    QFont font;
-    font.setPixelSize(24);
-    font.setWeight(QFont::DemiBold);
-    titileLabel->setFont(font);
+    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QLabel *tipLabel = new QLabel(tr("Please open data transfer on Windows, and imput the IP and connect code"), this);
     tipLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     tipLabel->setFixedHeight(20);
+    QFont font;
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
     tipLabel->setFont(font);
@@ -69,7 +66,7 @@ void ConnectWidget::initUI()
     backButton = new QToolButton(this);
     backButton->setText(tr("Back"));
     backButton->setFixedSize(250, 36);
-    backButton->setStyleSheet("background-color: #E3E3E3;");
+    backButton->setStyleSheet(StyleHelper::longBtnStyle(1));
     connect(backButton, &QToolButton::clicked, this, &ConnectWidget::backPage);
 
     QHBoxLayout *layout = new QHBoxLayout();
@@ -224,17 +221,11 @@ void ConnectWidget::themeChanged(int theme)
     // light
     if (theme == 1) {
         setStyleSheet("background-color: rgba(255,255,255,1); border-radius: 10px;");
-        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                  "background-color: lightgray;"
-                                  "}");
-
+        backButton->setStyleSheet(StyleHelper::longBtnStyle(1));
     } else {
         // dark
         setStyleSheet("background-color: rgba(37, 37, 37,1); border-radius: 10px;");
-        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                  "opacity: 1;"
-                                  "background-color: rgba(255,255,255, 0.1);"
-                                  "}");
+        backButton->setStyleSheet(StyleHelper::longBtnStyle(0));
     }
 }
 #endif

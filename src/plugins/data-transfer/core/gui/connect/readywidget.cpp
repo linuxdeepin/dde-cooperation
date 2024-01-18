@@ -11,8 +11,6 @@
 #include <QRegularExpressionValidator>
 #include <QTimer>
 
-#include <gui/connect/choosewidget.h>
-
 #include <utils/transferhepler.h>
 
 #pragma execution_character_set("utf-8")
@@ -31,7 +29,8 @@ void ReadyWidget::clear()
     captchaInput->clear();
     tiptextlabel->setVisible(false);
     setnextButEnable(false);
-    tiptextlabel->setText(QString("<font size='3'color='#000000'>%1</font>").arg(tr("connect...")));
+    tiptextlabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::normal));
+    tiptextlabel->setText(tr("connect..."));
 }
 
 void ReadyWidget::initUI()
@@ -131,9 +130,8 @@ void ReadyWidget::initUI()
     connect(backButton, &QToolButton::clicked, this, &ReadyWidget::backPage);
 
     tiptextlabel = new QLabel(this);
-
-    tiptextlabel->setText(
-            QString("<font size='3' color='#000000'>%1</font>").arg(tr("connect...")));
+    tiptextlabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::normal));
+    tiptextlabel->setText(tr("connect..."));
     tiptextlabel->setVisible(false);
     tiptextlabel->setAlignment(Qt::AlignCenter);
 
@@ -283,6 +281,6 @@ void ReadyWidget::onLineTextChange()
 
 void ReadyWidget::connectFailed()
 {
-    tiptextlabel->setText(QString("<font size='3' color='#FF5736'>%1</font>")
-                                  .arg(tr("Failed to connect, please check your input")));
+    tiptextlabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error));
+    tiptextlabel->setText(tr("Failed to connect, please check your input"));
 }

@@ -20,7 +20,7 @@ ResultDisplayWidget::~ResultDisplayWidget() {}
 
 void ResultDisplayWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".ResultDisplayWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
@@ -30,10 +30,7 @@ void ResultDisplayWidget::initUI()
     iconLabel->setAlignment(Qt::AlignCenter);
 
     titileLabel = new QLabel(tr("Transfer completed"), this);
-    QFont font;
-    font.setPixelSize(24);
-    font.setWeight(QFont::DemiBold);
-    titileLabel->setFont(font);
+    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignCenter);
 
     tiptextlabel = new QLabel(this);
@@ -77,27 +74,14 @@ void ResultDisplayWidget::initUI()
     textBrowerlayout->setAlignment(Qt::AlignCenter);
     textBrowerlayout->addWidget(processTextBrowser);
 
-    backButton = new QToolButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    QPushButton *backButton = buttonLayout->getButton1();
     backButton->setText(tr("Back"));
-    backButton->setFixedSize(120, 35);
-    backButton->setStyleSheet(".QToolButton{background-color: lightgray;border-radius: 8px;}");
-    connect(backButton, &QToolButton::clicked, this, &ResultDisplayWidget::nextPage);
-
-    QToolButton *nextButton = new QToolButton(this);
-    QPalette palette = nextButton->palette();
-    palette.setColor(QPalette::ButtonText, Qt::white);
-    nextButton->setPalette(palette);
+    QPushButton *nextButton = buttonLayout->getButton2();
     nextButton->setText(tr("Exit"));
-    nextButton->setFixedSize(120, 35);
-    nextButton->setStyleSheet("background-color: #0098FF;");
-    connect(nextButton, &QToolButton::clicked, qApp, &QApplication::quit);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->setSpacing(0);
-    buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(10);
-    buttonLayout->addWidget(nextButton);
-    buttonLayout->setAlignment(Qt::AlignCenter);
+    connect(backButton, &QPushButton::clicked, this, &ResultDisplayWidget::nextPage);
+    connect(nextButton, &QPushButton::clicked, qApp, &QApplication::quit);
 
     mainLayout->addSpacing(40);
     mainLayout->addWidget(iconLabel);
@@ -121,11 +105,9 @@ void ResultDisplayWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet("background-color: white; border-radius: 10px;");
-        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                  "background-color: lightgray;"
-                                  "}");
+        setStyleSheet(".ResultDisplayWidget{background-color: white; border-radius: 10px;}");
         processTextBrowser->setStyleSheet("QTextBrowser {"
+                                          "border-radius: 10px;"
                                           "padding-top: 10px;"
                                           "padding-bottom: 10px;"
                                           "padding-left: 5px;"
@@ -137,8 +119,9 @@ void ResultDisplayWidget::themeChanged(int theme)
                                           "background-color:rgba(0, 0, 0,0.08);}");
     } else {
         // dark
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        setStyleSheet(".ResultDisplayWidget{-color: rgb(37, 37, 37); border-radius: 10px;}");
         processTextBrowser->setStyleSheet("QTextBrowser {"
+                                          "border-radius: 10px;"
                                           "padding-top: 10px;"
                                           "padding-bottom: 10px;"
                                           "padding-left: 5px;"
@@ -148,10 +131,6 @@ void ResultDisplayWidget::themeChanged(int theme)
                                           "color: rgb(82, 106, 127);"
                                           "line-height: 300%;"
                                           "background-color:rgba(255,255,255, 0.1);}");
-        backButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                  "opacity: 1;"
-                                  "background-color: rgba(255,255,255, 0.1);"
-                                  "}");
     }
 }
 

@@ -26,7 +26,7 @@ private:
 
 private:
     QString transferMethod;
-    QToolButton *nextButton = nullptr;
+    QPushButton *nextButton = nullptr;
     int nextpage;
     ModeItem *winItem { nullptr };
     ModeItem *packageItem { nullptr };
@@ -66,48 +66,6 @@ private:
     QLabel *iconLabel { nullptr };
     QString itemText;
     bool dark { false };
-};
-
-class IndexLabel : public QLabel
-{
-public:
-    IndexLabel(int index, QWidget *parent = nullptr)
-        : QLabel(parent), index(index)
-    {
-        setFixedSize(50, 10);
-    }
-
-    void setIndex(int i)
-    {
-        index = i;
-        update();
-    }
-
-private:
-    int index;
-
-protected:
-    void paintEvent(QPaintEvent *event) override
-    {
-        Q_UNUSED(event);
-
-        QPainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing);
-        painter.setPen(Qt::NoPen);
-        int diam = 6;
-
-        QColor brushColor;
-        brushColor.setNamedColor("#0081FF");
-        for (int i = 0; i < 4; i++) {
-            if (i == index)
-                brushColor.setAlpha(190);
-            else
-                brushColor.setAlpha(40);
-
-            painter.setBrush(brushColor);
-            painter.drawEllipse((diam + 5) * i + 5, 0, diam, diam);
-        }
-    }
 };
 
 #endif

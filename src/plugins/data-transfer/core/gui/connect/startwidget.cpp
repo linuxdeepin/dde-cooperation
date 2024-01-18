@@ -34,9 +34,7 @@ void StartWidget::initUI()
 
     QLabel *titileLabel = new QLabel(tr("UOS data transfer"), this);
     QFont font;
-    font.setPixelSize(24);
-    font.setWeight(QFont::DemiBold);
-    titileLabel->setFont(font);
+    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignCenter);
 
     QLabel *textLabel2 = new QLabel(tr("UOS transfer tool enables one click migration of your files, personal data, and applications to\nUOS, helping you seamlessly replace your system."), this);
@@ -48,7 +46,7 @@ void StartWidget::initUI()
     nextButton = new QToolButton(this);
     nextButton->setText(tr("Next"));
     nextButton->setFixedSize(250, 36);
-    nextButton->setStyleSheet("background-color: lightgray;");
+    nextButton->setStyleSheet(StyleHelper::longBtnStyle(1));
     connect(nextButton, &QToolButton::clicked, this, &StartWidget::nextPage);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
@@ -72,13 +70,10 @@ void StartWidget::themeChanged(int theme)
     //light
     if (theme == 1) {
         setStyleSheet("background-color: white; border-radius: 10px;");
-        nextButton->setStyleSheet("background-color: lightgray;");
+        nextButton->setStyleSheet(StyleHelper::longBtnStyle(1));
     } else {
         //dark
-        nextButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                  "opacity: 1;"
-                                  "background-color: rgba(255,255,255, 0.1);"
-                                  "}");
+        nextButton->setStyleSheet(StyleHelper::longBtnStyle(0));
         setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
     }
 }
