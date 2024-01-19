@@ -25,7 +25,7 @@ ConnectWidget::~ConnectWidget()
 
 void ConnectWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".ConnectWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
@@ -63,14 +63,11 @@ void ConnectWidget::initUI()
     WarnningLabel->setMargin(5);
     WarnningLabel->setVisible(false);
 
-    backButton = new QToolButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    buttonLayout->setCount(1);
+    backButton = buttonLayout->getButton1();
     backButton->setText(tr("Back"));
-    backButton->setFixedSize(250, 36);
-    backButton->setStyleSheet(StyleHelper::longBtnStyle(1));
-    connect(backButton, &QToolButton::clicked, this, &ConnectWidget::backPage);
-
-    QHBoxLayout *layout = new QHBoxLayout();
-    layout->addWidget(backButton, Qt::AlignCenter);
+    connect(backButton, &QPushButton::clicked, this, &ConnectWidget::backPage);
 
     IndexLabel *indelabel = new IndexLabel(1, this);
     indelabel->setAlignment(Qt::AlignCenter);
@@ -80,9 +77,11 @@ void ConnectWidget::initUI()
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel);
+    mainLayout->addSpacing(70);
     mainLayout->addLayout(connectLayout);
     mainLayout->addWidget(WarnningLabel);
-    mainLayout->addLayout(layout);
+    mainLayout->addSpacing(60);
+    mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
 }
@@ -220,12 +219,10 @@ void ConnectWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet("background-color: rgba(255,255,255,1); border-radius: 10px;");
-        backButton->setStyleSheet(StyleHelper::longBtnStyle(1));
+        setStyleSheet(".ConnectWidget{background-color: rgba(255,255,255,1); border-radius: 10px;}");
     } else {
         // dark
-        setStyleSheet("background-color: rgba(37, 37, 37,1); border-radius: 10px;");
-        backButton->setStyleSheet(StyleHelper::longBtnStyle(0));
+        setStyleSheet(".ConnectWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
     }
 }
 #endif

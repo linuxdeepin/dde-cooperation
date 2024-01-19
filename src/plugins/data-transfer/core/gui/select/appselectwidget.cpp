@@ -50,45 +50,14 @@ void AppSelectWidget::initUI()
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
 
-    determineButton = new QToolButton(this);
-    determineButton->setText(tr("Confirm"));
-    determineButton->setFixedSize(120, 35);
-    determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                   "border: 1px solid rgba(0,0,0, 0.03);"
-                                   "opacity: 1;"
-                                   "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                                   "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
-                                   "font-family: \"SourceHanSansSC-Medium\";"
-                                   "font-size: 14px;"
-                                   "font-weight: 500;"
-                                   "color: rgba(255,255,255,1);"
-                                   "font-style: normal;"
-                                   "text-align: center;"
-                                   "}");
-    QObject::connect(determineButton, &QToolButton::clicked, this, &AppSelectWidget::nextPage);
-
-    cancelButton = new QToolButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    cancelButton = buttonLayout->getButton1();
     cancelButton->setText(tr("Cancel"));
-    cancelButton->setFixedSize(120, 35);
-    cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                "border: 1px solid rgba(0,0,0, 0.03);"
-                                "opacity: 1;"
-                                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                                "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                                "font-family: \"SourceHanSansSC-Medium\";"
-                                "font-size: 14px;"
-                                "font-weight: 500;"
-                                "color: rgba(65,77,104,1);"
-                                "font-style: normal;"
-                                "text-align: center;"
-                                ";}");
-    QObject::connect(cancelButton, &QToolButton::clicked, this, &AppSelectWidget::backPage);
+    determineButton = buttonLayout->getButton2();
+    determineButton->setText(tr("Confirm"));
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(cancelButton);
-    buttonLayout->addSpacing(15);
-    buttonLayout->addWidget(determineButton);
-    buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+    connect(determineButton, &QPushButton::clicked, this, &AppSelectWidget::nextPage);
+    connect(cancelButton, &QPushButton::clicked, this, &AppSelectWidget::backPage);
 
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     mainLayout->addSpacing(30);

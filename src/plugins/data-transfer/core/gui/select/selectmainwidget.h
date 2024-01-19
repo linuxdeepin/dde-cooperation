@@ -5,7 +5,7 @@
 #include <QCheckBox>
 class QLabel;
 class SidebarWidget;
-class QToolButton;
+class QPushButton;
 class IndexLabel;
 enum SelectItemName { FILES, APP, CONFIG };
 class SelectItem : public QFrame
@@ -65,7 +65,7 @@ private:
     SelectItem *appItem{ nullptr };
     SelectItem *configItem{ nullptr };
     QLabel *titileLabel{ nullptr };
-    QToolButton *nextButton{ nullptr };
+    QPushButton *nextButton{ nullptr };
     IndexLabel *LocalIndelabel{ nullptr };
     IndexLabel *InternetIndelabel{ nullptr };
 

@@ -19,7 +19,7 @@ NetworkDisconnectionWidget::~NetworkDisconnectionWidget()
 
 void NetworkDisconnectionWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".NetworkDisconnectionWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
@@ -34,24 +34,14 @@ void NetworkDisconnectionWidget::initUI()
     promptLabel->setText(tr("The network has been disconnected. Please check your network"));
     promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-    QToolButton *backButton = new QToolButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    QPushButton *backButton = buttonLayout->getButton1();
+    QPushButton *retryButton = buttonLayout->getButton2();
     backButton->setText(tr("Back"));
-    backButton->setStyleSheet("background-color: #E3E3E3;");
-    backButton->setFixedSize(120, 35);
-    QObject::connect(backButton, &QToolButton::clicked, this, &NetworkDisconnectionWidget::backPage);
-
-    QToolButton *retryButton = new QToolButton(this);
-
     retryButton->setText(tr("Try again"));
-    retryButton->setStyleSheet("background-color: #E3E3E3;");
-    retryButton->setFixedSize(120, 35);
 
-    QObject::connect(retryButton, &QToolButton::clicked, this, &NetworkDisconnectionWidget::retryPage);
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(10);
-    buttonLayout->addWidget(retryButton);
-    buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+    connect(backButton, &QPushButton::clicked, this, &NetworkDisconnectionWidget::backPage);
+    connect(retryButton, &QPushButton::clicked, this, &NetworkDisconnectionWidget::retryPage);
 
     IndexLabel *indelabel = new IndexLabel(3, this);
     indelabel->setAlignment(Qt::AlignCenter);
@@ -84,9 +74,9 @@ void NetworkDisconnectionWidget::themeChanged(int theme)
 {
     //light
     if (theme == 1) {
-        setStyleSheet("background-color: white; border-radius: 10px;");
+        setStyleSheet(".NetworkDisconnectionWidget{background-color: white; border-radius: 10px;}");
     } else {
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        setStyleSheet(".NetworkDisconnectionWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
         //dark
     }
 }

@@ -18,7 +18,7 @@ ErrorWidget::ErrorWidget(QWidget *parent)
 ErrorWidget::~ErrorWidget() {}
 void ErrorWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".ErrorWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);

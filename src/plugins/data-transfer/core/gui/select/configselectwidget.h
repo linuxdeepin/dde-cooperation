@@ -41,8 +41,8 @@ private:
     SelectListView *configView{ nullptr };
 
     QVBoxLayout *selectMainLayout{ nullptr };
-    QToolButton *determineButton{ nullptr };
-    QToolButton *cancelButton{ nullptr };
+    QPushButton *determineButton{ nullptr };
+    QPushButton *cancelButton{ nullptr };
 
     QLabel *titileLabel{ nullptr };
 

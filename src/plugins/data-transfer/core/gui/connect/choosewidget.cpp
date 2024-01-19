@@ -63,14 +63,10 @@ void ChooseWidget::initUI()
     tiplayout->addWidget(tiptextlabel);
     tiplayout->setAlignment(Qt::AlignCenter);
 
-    nextButton = new QPushButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    buttonLayout->setCount(1);
+    nextButton = buttonLayout->getButton1();
     nextButton->setText(tr("Next"));
-    nextButton->setFixedSize(250, 35);
-    nextButton->setStyleSheet(StyleHelper::longBtnStyle(1));
-    nextButton->setEnabled(false);
-
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(nextButton, Qt::AlignCenter);
 
     IndexLabel *indelabel = new IndexLabel(0, this);
     indelabel->setAlignment(Qt::AlignCenter);
@@ -152,11 +148,9 @@ void ChooseWidget::themeChanged(int theme)
     // light
     if (theme == 1) {
         setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
-        nextButton->setStyleSheet(StyleHelper::longBtnStyle(1));
     } else {
         // dark
         setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
-        nextButton->setStyleSheet(StyleHelper::longBtnStyle(0));
     }
     winItem->themeChanged(theme);
     packageItem->themeChanged(theme);

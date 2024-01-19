@@ -1,11 +1,11 @@
 ﻿#ifndef CONNECTWIDGET_H
 #define CONNECTWIDGET_H
 #ifndef WIN32
-#include <QFrame>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QToolButton>
+#    include <QFrame>
 
+class QLabel;
+class QHBoxLayout;
+class QPushButton;
 class ConnectWidget : public QFrame
 {
     Q_OBJECT
@@ -28,7 +28,7 @@ private:
     QLabel *WarnningLabel = nullptr;
     QHBoxLayout *connectLayout = nullptr;
     int remainingTime = 300;
-    QToolButton *backButton = nullptr;
+    QPushButton *backButton = nullptr;
 };
 #endif
 #endif

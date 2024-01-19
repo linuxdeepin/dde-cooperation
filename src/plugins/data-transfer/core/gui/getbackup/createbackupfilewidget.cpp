@@ -189,39 +189,18 @@ void CreateBackupFileWidget::initUI()
     promptLabel->setAlignment(Qt::AlignCenter);
     promptLabel->setVisible(false);
 
-    determineButton = new QToolButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    QPushButton *cancelButton = buttonLayout->getButton1();
+    cancelButton->setText(tr("Cancel"));
+    determineButton = buttonLayout->getButton2();
     determineButton->setText(tr("Backup"));
-    determineButton->setFixedSize(120, 35);
-    setDetermineButtonEnable(false);
 
-    QObject::connect(determineButton, &QToolButton::clicked, this, [this]() {
+    connect(cancelButton, &QToolButton::clicked, this, &CreateBackupFileWidget::backPage);
+    connect(determineButton, &QToolButton::clicked, this, [this]() {
         nextPage();
         ZipWork *worker = new ZipWork(this);
         worker->start();
     });
-
-    QToolButton *cancelButton = new QToolButton(this);
-    cancelButton->setText(tr("Cancel"));
-    cancelButton->setFixedSize(120, 35);
-    cancelButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                "border: 1px solid rgba(0,0,0, 0.03);"
-                                "opacity: 1;"
-                                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                                "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                                "font-family: \"SourceHanSansSC-Medium\";"
-                                "font-size: 14px;"
-                                "font-weight: 500;"
-                                "color: rgba(65,77,104,1);"
-                                "font-style: normal;"
-                                "text-align: center;"
-                                ";}");
-    QObject::connect(cancelButton, &QToolButton::clicked, this, &CreateBackupFileWidget::backPage);
-
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(cancelButton);
-    buttonLayout->addSpacing(15);
-    buttonLayout->addWidget(determineButton);
-    buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
     IndexLabel *indelabel = new IndexLabel(2, this);
     indelabel->setAlignment(Qt::AlignCenter);
@@ -230,15 +209,16 @@ void CreateBackupFileWidget::initUI()
 
     mainLayout->addSpacing(30);
     mainLayout->addWidget(titileLabel);
-    mainLayout->addSpacing(20);
+    mainLayout->addSpacing(15);
     mainLayout->addLayout(fileNameLayout);
     mainLayout->addLayout(layout1);
     mainLayout->addSpacing(20);
     mainLayout->addLayout(savePathLayout);
     mainLayout->addLayout(diskListViewLayout);
-    mainLayout->addSpacing(30);
+    mainLayout->addSpacing(40);
     mainLayout->addWidget(promptLabel);
     mainLayout->addLayout(buttonLayout);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
     QObject::connect(diskListView, &QListView::clicked, this, [this](const QModelIndex &index) {
         if (index.data(Qt::CheckStateRole) == Qt::Unchecked) {

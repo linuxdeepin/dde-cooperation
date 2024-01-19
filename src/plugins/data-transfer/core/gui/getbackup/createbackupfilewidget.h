@@ -9,6 +9,7 @@ class QLabel;
 class QStorageInfo;
 class QStandardItem;
 class QToolButton;
+class QPushButton;
 
 class NameLineEdit : public QLineEdit
 {
@@ -79,7 +80,7 @@ private:
     QListView *diskListView{ nullptr };
     //    QLineEdit *fileNameInput{ nullptr };
     LineEditWidget *fileNameInput{ nullptr };
-    QToolButton *determineButton{ nullptr };
+    QPushButton *determineButton{ nullptr };
     QList<QStorageInfo> deviceList;
 
     QMap<QStandardItem *, quint64> diskCapacity;

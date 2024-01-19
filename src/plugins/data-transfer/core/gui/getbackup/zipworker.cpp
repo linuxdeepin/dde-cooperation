@@ -275,7 +275,8 @@ QString ZipWork::getBackupFilName()
     if (zipFileNameList[0] == "") {
         zipFileName = TransferHelper::instance()->defaultBackupFileName() + ".zip";
     } else {
-        zipFileName = zipFileSavePath[0] + "/" + zipFileNameList[0] + ".zip";
+        QString path = zipFileSavePath.isEmpty() ? "" : zipFileSavePath[0];
+        zipFileName = path + "/" + zipFileNameList[0] + ".zip";
     }
     LOG << "backup file save path:" << zipFileName.toStdString();
 

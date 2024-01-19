@@ -2,10 +2,10 @@
 #define WAITTRANSFERRWIDGET_H
 
 #include <QFrame>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QToolButton>
 
+class QLabel;
+class QHBoxLayout;
+class QPushButton;
 class WaitTransferWidget : public QFrame
 {
     Q_OBJECT
@@ -23,7 +23,7 @@ private:
     void initUI();
 
 private:
-    QToolButton *backButton { nullptr };
+    QPushButton *backButton { nullptr };
     QLabel *iconLabel { nullptr };
     QMovie *lighticonmovie { nullptr };
     QMovie *darkiconmovie { nullptr };

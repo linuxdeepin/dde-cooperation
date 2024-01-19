@@ -55,6 +55,7 @@ public:
     ButtonLayout(QWidget *parent = nullptr);
     ~ButtonLayout();
 
+    void setCount(int count);
     QPushButton *getButton1() const;
     QPushButton *getButton2() const;
 
@@ -78,7 +79,6 @@ public:
     StyleHelper();
 
     static QFont font(int type);
-    static QString longBtnStyle(int theme);
     static QString textStyle(TextStyle type);
 };
 

@@ -1,10 +1,9 @@
 #ifndef STARTWIDGET_H
 #define STARTWIDGET_H
 
-#include <QCheckBox>
 #include <QFrame>
-#include <QToolButton>
 
+class QPushButton;
 class StartWidget : public QFrame
 {
     Q_OBJECT
@@ -19,7 +18,7 @@ public slots:
 
 private:
     void initUI();
-    QToolButton *nextButton { nullptr };
+    QPushButton *nextButton { nullptr };
 };
 
 #endif

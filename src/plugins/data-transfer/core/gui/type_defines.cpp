@@ -38,16 +38,28 @@ ButtonLayout::ButtonLayout(QWidget *parent)
                            "text-align: center;"
                            "}");
 #endif
-
     addWidget(button1);
-    addSpacing(10);
     addWidget(button2);
-    setSpacing(0);
+    setSpacing(10);
     setAlignment(Qt::AlignCenter);
 }
 
 ButtonLayout::~ButtonLayout()
 {
+}
+
+void ButtonLayout::setCount(int count)
+{
+    switch (count) {
+    case 1:
+        button1->setFixedSize(250, 36);
+        button2->setVisible(false);
+        break;
+    case 2:
+        button1->setFixedSize(120, 36);
+        button2->setVisible(true);
+        break;
+    }
 }
 
 QPushButton *ButtonLayout::getButton1() const
@@ -93,19 +105,6 @@ QFont StyleHelper::font(int type)
         break;
     }
     return font;
-}
-
-QString StyleHelper::longBtnStyle(int theme)
-{
-    //light
-    if (theme == 1)
-        return QString("border-radius: 8px; background-color: lightgray;");
-    else
-        //dark
-        return QString(".QToolButton{border-radius: 8px;"
-                       "opacity: 1;"
-                       "background-color: rgba(255,255,255, 0.1);"
-                       "}");
 }
 
 QString StyleHelper::textStyle(StyleHelper::TextStyle type)

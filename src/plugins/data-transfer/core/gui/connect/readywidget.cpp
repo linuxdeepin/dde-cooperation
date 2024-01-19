@@ -35,7 +35,7 @@ void ReadyWidget::clear()
 
 void ReadyWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".ReadyWidget{background-color: white; border-radius: 10px;}");
 
     // init timer
     timer = new QTimer(this);

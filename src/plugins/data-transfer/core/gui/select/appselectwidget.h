@@ -10,7 +10,7 @@
 
 class QVBoxLayout;
 class QListView;
-class QToolButton;
+class QPushButton;
 class SelectListView;
 class AppSelectWidget : public QFrame
 {
@@ -39,8 +39,8 @@ private:
     SelectListView *appView{ nullptr };
 
     QVBoxLayout *selectMainLayout{ nullptr };
-    QToolButton *determineButton{ nullptr };
-    QToolButton *cancelButton{ nullptr };
+    QPushButton *determineButton{ nullptr };
+    QPushButton *cancelButton{ nullptr };
     QLabel *titileLabel{ nullptr };
 
     QString InternetText{ tr("Select apps to transfer") };

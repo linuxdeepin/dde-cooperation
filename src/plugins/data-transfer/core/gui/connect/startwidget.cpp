@@ -22,7 +22,7 @@ StartWidget::~StartWidget()
 
 void StartWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".StartWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
@@ -43,14 +43,11 @@ void StartWidget::initUI()
     font.setWeight(QFont::Thin);
     textLabel2->setFont(font);
 
-    nextButton = new QToolButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    buttonLayout->setCount(1);
+    QPushButton *nextButton = buttonLayout->getButton1();
     nextButton->setText(tr("Next"));
-    nextButton->setFixedSize(250, 36);
-    nextButton->setStyleSheet(StyleHelper::longBtnStyle(1));
-    connect(nextButton, &QToolButton::clicked, this, &StartWidget::nextPage);
-
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(nextButton, Qt::AlignCenter);
+    connect(nextButton, &QPushButton::clicked, this, &StartWidget::nextPage);
 
     mainLayout->addSpacing(50);
     mainLayout->addWidget(iconLabel);
@@ -69,11 +66,9 @@ void StartWidget::themeChanged(int theme)
 {
     //light
     if (theme == 1) {
-        setStyleSheet("background-color: white; border-radius: 10px;");
-        nextButton->setStyleSheet(StyleHelper::longBtnStyle(1));
+        setStyleSheet(".StartWidget{background-color: white; border-radius: 10px;}");
     } else {
         //dark
-        nextButton->setStyleSheet(StyleHelper::longBtnStyle(0));
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        setStyleSheet(".StartWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
     }
 }

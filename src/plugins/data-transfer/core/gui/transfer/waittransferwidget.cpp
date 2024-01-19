@@ -22,7 +22,7 @@ WaitTransferWidget::~WaitTransferWidget()
 
 void WaitTransferWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".WaitTransferWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
@@ -51,16 +51,13 @@ void WaitTransferWidget::initUI()
     iconLabel->setMovie(lighticonmovie);
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    backButton = new QToolButton(this);
+    ButtonLayout *buttonLayout = new ButtonLayout();
+    buttonLayout->setCount(1);
+    backButton = buttonLayout->getButton1();
     backButton->setText(tr("Cancel"));
-    backButton->setFixedSize(250, 36);
-    backButton->setStyleSheet(StyleHelper::longBtnStyle(1));
 #ifndef WIN32
-    connect(backButton, &QToolButton::clicked, this, &WaitTransferWidget::cancel);
+    connect(backButton, &QPushButton::clicked, this, &WaitTransferWidget::cancel);
 #endif
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(backButton);
-    buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
     IndexLabel *indelabel = new IndexLabel(2, this);
     indelabel->setAlignment(Qt::AlignCenter);
@@ -92,13 +89,11 @@ void WaitTransferWidget::themeChanged(int theme)
 {
     //light
     if (theme == 1) {
-        setStyleSheet("background-color: white; border-radius: 10px;");
-        backButton->setStyleSheet(StyleHelper::longBtnStyle(1));
+        setStyleSheet(".WaitTransferWidget{background-color: white; border-radius: 10px;}");
         iconLabel->setMovie(lighticonmovie);
     } else {
         //dark
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
-        backButton->setStyleSheet(StyleHelper::longBtnStyle(0));
+        setStyleSheet(".WaitTransferWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
         iconLabel->setMovie(darkiconmovie);
     }
 }

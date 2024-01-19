@@ -28,7 +28,7 @@ TransferringWidget::~TransferringWidget() {}
 
 void TransferringWidget::initUI()
 {
-    setStyleSheet("background-color: white; border-radius: 10px;");
+    setStyleSheet(".TransferringWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
@@ -252,11 +252,11 @@ void TransferringWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet("background-color: white; border-radius: 10px;");
+        setStyleSheet(".TransferringWidget{background-color: white; border-radius: 10px;}");
         iconLabel->setMovie(lighticonmovie);
     } else {
         // dark
-        setStyleSheet("background-color: rgb(37, 37, 37); border-radius: 10px;");
+        setStyleSheet(".TransferringWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
         iconLabel->setMovie(darkiconmovie);
     }
 }
