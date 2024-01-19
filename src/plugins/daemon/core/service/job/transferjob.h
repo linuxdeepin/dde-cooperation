@@ -30,7 +30,7 @@ public:
     bool createFile(const fastring fullpath, const bool isDir);
 
     void start();
-    void stop();
+    void stop(const bool notify = true);
     void waitFinish();
     bool ended();
     bool isRunning();
@@ -97,6 +97,7 @@ private:
     bool _mark_canceled { false };
     std::atomic_bool _device_not_enough{ false };
     std::atomic_bool _offlined {false};
+    std::atomic_bool _not_notify {false};
 
     uint16 _tar_port{0};
     fastring _app_name; // //前端应用名

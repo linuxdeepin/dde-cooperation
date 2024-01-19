@@ -193,8 +193,9 @@ void TransferJob::start()
     emit notifyJobFinished(_jobid);
 }
 
-void TransferJob::stop()
+void TransferJob::stop(const bool notify)
 {
+    _not_notify = !notify;
     DLOG << "(" << _jobid << ") stop now!";
     atomic_store(&_status, STOPED);
 }
@@ -386,7 +387,7 @@ void TransferJob::handleBlockQueque()
             }
         }
     };
-    if (!exception && !_mark_canceled && !_offlined) {
+    if (!_not_notify && !exception && !_mark_canceled && !_offlined) {
         handleJobStatus(JOB_TRANS_FINISHED);
     }
     LOG << "trans job end: " << _jobid << " freebytes = " << _device_free_size
@@ -705,7 +706,7 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
         req.add_member("api", "Frontend.notifySendStatus");
         ELOG << "sendToRemote invoke fail";
         SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
-        cancel();
+        offlineCancel(_tar_ip.c_str());
         return false;
     }
 

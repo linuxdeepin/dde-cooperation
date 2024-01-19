@@ -56,8 +56,11 @@ bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
             QReadLocker lk(&g_m);
             _job = _transjob_recvs.value(jobId);
         }
-        if (!_job.isNull())
-            _job->cancel();
+        if (!_job.isNull() && !_job->ended()) {
+            QWriteLocker lk(&g_m);
+            _transjob_break.insert(jobId, _job);
+            _job->stop(false);
+        }
 
         QWriteLocker lk(&g_m);
         _transjob_recvs.remove(jobId);
@@ -68,8 +71,12 @@ bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
             QReadLocker lk(&g_m);
             _job = _transjob_sends.value(jobId);
         }
-        if (!_job.isNull())
-            _job->cancel();
+
+        if (!_job.isNull() && !_job->ended()) {
+            QWriteLocker lk(&g_m);
+            _transjob_break.insert(jobId, _job);
+            _job->stop(false);
+        }
 
         QWriteLocker lk(&g_m);
         _transjob_sends.remove(jobId);
