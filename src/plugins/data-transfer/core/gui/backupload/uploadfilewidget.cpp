@@ -306,6 +306,7 @@ void UploadFileFrame::themeChanged(int theme)
     closeBtn->setIcon(closeIcon);
     QString color = lightTheme ? "background-color: rgba(0, 0, 0, 0.1);"
                                : "background-color: rgba(255,255,255, 0.1);";
+    closeBtn->setGeometry(405, lightTheme ? 165 : 170, 35, 35);
     fileFrame->setStyleSheet(".QFrame{" + color + "border-style: none; border-radius: 10px;}");
 }
 
@@ -366,6 +367,9 @@ void UploadFileFrame::dragMoveEvent(QDragMoveEvent *event)
                   "border-style: dashed;"
                   "border-width: 2px;"
                   + bordercolor);
+    QString color = lightTheme ? "background-color: rgba(0, 0, 0, 0.1);"
+                               : "background-color: rgba(255,255,255, 0.1);";
+    fileFrame->setStyleSheet(".QFrame{" + color + "border-style: none; border-radius: 10px;}");
     event->accept();
 }
 

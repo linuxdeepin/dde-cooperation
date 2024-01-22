@@ -61,7 +61,6 @@ private:
     void initUI();
     void initDiskListView();
     void checkDisk();
-    void setDetermineButtonEnable(bool enable);
 
 public slots:
     void nextPage();

@@ -69,6 +69,7 @@ void CreateBackupFileWidget::clear()
         model->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
     }
     fileNameInput->clear();
+    determineButton->setEnabled(false);
 }
 
 void CreateBackupFileWidget::setBackupFileName(QString name)
@@ -194,6 +195,8 @@ void CreateBackupFileWidget::initUI()
     cancelButton->setText(tr("Cancel"));
     determineButton = buttonLayout->getButton2();
     determineButton->setText(tr("Backup"));
+    determineButton->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::gray));
+    determineButton->setEnabled(false);
 
     connect(cancelButton, &QToolButton::clicked, this, &CreateBackupFileWidget::backPage);
     connect(determineButton, &QToolButton::clicked, this, [this]() {
@@ -226,9 +229,9 @@ void CreateBackupFileWidget::initUI()
     mainLayout->setSpacing(0);
     QObject::connect(diskListView, &QListView::clicked, this, [this](const QModelIndex &index) {
         if (index.data(Qt::CheckStateRole) == Qt::Unchecked) {
-            setDetermineButtonEnable(false);
+            determineButton->setEnabled(false);
         } else {
-            setDetermineButtonEnable(true);
+            determineButton->setEnabled(true);
         }
     });
 
@@ -285,39 +288,6 @@ void CreateBackupFileWidget::checkDisk()
         promptLabel->setVisible(true);
     else
         promptLabel->setVisible(false);
-}
-
-void CreateBackupFileWidget::setDetermineButtonEnable(bool enable)
-{
-    if (enable) {
-        determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                       "border: 1px solid rgba(0,0,0, 0.03);"
-                                       "opacity: 1;"
-                                       "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                                       "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                                       "font-family: \"SourceHanSansSC-Medium\";"
-                                       "font-size: 14px;"
-                                       "font-weight: 500;"
-                                       "color: rgba(65,77,104,1);"
-                                       "font-style: normal;"
-                                       "text-align: center;"
-                                       ";}");
-        determineButton->setEnabled(true);
-    } else {
-        determineButton->setStyleSheet(".QToolButton{border-radius: 8px;"
-                                       "border: 1px solid rgba(0,0,0, 0.03);"
-                                       "opacity: 1;"
-                                       "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                                       "rgba(230, 230, 230, 0.6), stop:1 rgba(227, 227, 227, 0.6));"
-                                       "font-family: \"SourceHanSansSC-Medium\";"
-                                       "font-size: 14px;"
-                                       "font-weight: 500;"
-                                       "color: rgba(65,77,104,0.6);"
-                                       "font-style: normal;"
-                                       "text-align: center;"
-                                       ";}");
-        determineButton->setEnabled(false);
-    }
 }
 
 void CreateBackupFileWidget::nextPage()

@@ -39,6 +39,7 @@ void NetworkDisconnectionWidget::initUI()
     QPushButton *retryButton = buttonLayout->getButton2();
     backButton->setText(tr("Back"));
     retryButton->setText(tr("Try again"));
+    retryButton->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::gray));
 
     connect(backButton, &QPushButton::clicked, this, &NetworkDisconnectionWidget::backPage);
     connect(retryButton, &QPushButton::clicked, this, &NetworkDisconnectionWidget::retryPage);

@@ -74,12 +74,17 @@ public:
         normal = 0,
         error
     };
+    enum ButtonStyle {
+        gray = 0,
+        blue
+    };
 
 public:
     StyleHelper();
 
     static QFont font(int type);
     static QString textStyle(TextStyle type);
+    static QString buttonStyle(int type);
     static QString textBrowserStyle(int type);
 };
 

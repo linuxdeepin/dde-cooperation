@@ -12,42 +12,8 @@ ButtonLayout::ButtonLayout(QWidget *parent)
     button2->setFixedSize(120, 36);
 
 #ifdef WIN32
-    button1->setStyleSheet(".QPushButton{"
-                           "border-radius: 8px;"
-                           "opacity: 1;"
-                           "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                           "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                           "font-family: \"SourceHanSansSC-Medium\";"
-                           "font-size: 14px;"
-                           "font-weight: 500;"
-                           "color: rgba(65,77,104,1);"
-                           "font-style: normal;"
-                           "text-align: center;"
-                           ";}"
-                           "QPushButton:disabled {"
-                           "border-radius: 8px;"
-                           "opacity: 1;"
-                           "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                           "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
-                           "font-family: \"SourceHanSansSC-Medium\";"
-                           "font-size: 14px;"
-                           "font-weight: 500;"
-                           "color: rgba(65,77,104,0.5);"
-                           "font-style: normal;"
-                           "text-align: center;"
-                           "}");
-    button2->setStyleSheet(".QPushButton{"
-                           "border-radius: 8px;"
-                           "opacity: 1;"
-                           "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
-                           "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
-                           "font-family: \"SourceHanSansSC-Medium\";"
-                           "font-size: 14px;"
-                           "font-weight: 500;"
-                           "color: rgba(255,255,255,1);"
-                           "font-style: normal;"
-                           "text-align: center;"
-                           "}");
+    button1->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::gray));
+    button2->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::blue));
 #endif
     addWidget(button1);
     addWidget(button2);
@@ -127,6 +93,54 @@ QString StyleHelper::textStyle(StyleHelper::TextStyle type)
         break;
     case error:
         style = "color: #FF5736; font-size: 12px;";
+        break;
+    }
+    return style;
+}
+
+QString StyleHelper::buttonStyle(int type)
+{
+    QString style;
+    switch (type) {
+    case gray:
+        style = ".QPushButton{"
+                "border-radius: 8px;"
+                "opacity: 1;"
+                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                "font-family: \"SourceHanSansSC-Medium\";"
+                "font-size: 14px;"
+                "font-weight: 500;"
+                "color: rgba(65,77,104,1);"
+                "font-style: normal;"
+                "text-align: center;"
+                ";}"
+                "QPushButton:disabled {"
+                "border-radius: 8px;"
+                "opacity: 1;"
+                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                "font-family: \"SourceHanSansSC-Medium\";"
+                "font-size: 14px;"
+                "font-weight: 500;"
+                "color: rgba(65,77,104,0.5);"
+                "font-style: normal;"
+                "text-align: center;"
+                "}";
+        break;
+    case blue:
+        style = ".QPushButton{"
+                "border-radius: 8px;"
+                "opacity: 1;"
+                "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
+                "font-family: \"SourceHanSansSC-Medium\";"
+                "font-size: 14px;"
+                "font-weight: 500;"
+                "color: rgba(255,255,255,1);"
+                "font-style: normal;"
+                "text-align: center;"
+                "}";
         break;
     }
     return style;
