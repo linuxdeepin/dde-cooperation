@@ -35,7 +35,11 @@ protected:
 private:
     void initUI();
 
+#ifdef linux
     CooperationLineEdit *pathLabel { nullptr };
+#else
+    QLabel *pathLabel { nullptr };
+#endif
     CooperationSuggestButton *fileChooserBtn { nullptr };
 };
 

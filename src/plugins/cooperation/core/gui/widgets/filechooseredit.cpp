@@ -27,16 +27,18 @@ FileChooserEdit::FileChooserEdit(QWidget *parent)
 
 void FileChooserEdit::initUI()
 {
+#ifdef linux
     pathLabel = new CooperationLineEdit(this);
+    pathLabel->setClearButtonEnabled(false);
+    pathLabel->lineEdit()->setReadOnly(true);
+    fileChooserBtn = new CooperationSuggestButton(this);
+    fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
+#else
+    pathLabel = new QLabel(this);
     auto margins = pathLabel->contentsMargins();
     margins.setLeft(8);
     margins.setRight(8);
     pathLabel->setContentsMargins(margins);
-
-#ifdef linux
-    fileChooserBtn = new CooperationSuggestButton(this);
-    fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
-#else
     fileChooserBtn = new FileChooserBtn(this);
     fileChooserBtn->setStyleSheet(
             "QPushButton {"
