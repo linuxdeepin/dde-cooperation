@@ -12,8 +12,8 @@ ButtonLayout::ButtonLayout(QWidget *parent)
     button2->setFixedSize(120, 36);
 
 #ifdef WIN32
-    button1->setStyleSheet(".QPushButton{border-radius: 8px;"
-                           "border: 1px solid rgba(0,0,0, 0.03);"
+    button1->setStyleSheet(".QPushButton{"
+                           "border-radius: 8px;"
                            "opacity: 1;"
                            "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
                            "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
@@ -23,10 +23,21 @@ ButtonLayout::ButtonLayout(QWidget *parent)
                            "color: rgba(65,77,104,1);"
                            "font-style: normal;"
                            "text-align: center;"
-                           ";}");
+                           ";}"
+                           "QPushButton:disabled {"
+                           "border-radius: 8px;"
+                           "opacity: 1;"
+                           "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
+                           "rgba(230, 230, 230, 1), stop:1 rgba(227, 227, 227, 1));"
+                           "font-family: \"SourceHanSansSC-Medium\";"
+                           "font-size: 14px;"
+                           "font-weight: 500;"
+                           "color: rgba(65,77,104,0.5);"
+                           "font-style: normal;"
+                           "text-align: center;"
+                           "}");
     button2->setStyleSheet(".QPushButton{"
                            "border-radius: 8px;"
-                           "border: 1px solid rgba(0,0,0, 0.03);"
                            "opacity: 1;"
                            "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 "
                            "rgba(37, 183, 255, 1), stop:1 rgba(0, 152, 255, 1));"
@@ -121,6 +132,40 @@ QString StyleHelper::textStyle(StyleHelper::TextStyle type)
     return style;
 }
 
+QString StyleHelper::textBrowserStyle(int type)
+{
+    QString style;
+    switch (type) {
+    case 1:
+        style = "QTextBrowser {"
+                "border-radius: 10px;"
+                "padding-top: 10px;"
+                "padding-bottom: 10px;"
+                "padding-left: 5px;"
+                "padding-right: 5px;"
+                "font-size: 12px;"
+                "font-weight: 400;"
+                "color: rgb(82, 106, 127);"
+                "line-height: 300%;"
+                "background-color:rgba(0, 0, 0,0.08);}";
+        break;
+    case 0:
+        style = "QTextBrowser {"
+                "border-radius: 10px;"
+                "padding-top: 10px;"
+                "padding-bottom: 10px;"
+                "padding-left: 5px;"
+                "padding-right: 5px;"
+                "font-size: 12px;"
+                "font-weight: 400;"
+                "color: rgb(82, 106, 127);"
+                "line-height: 300%;"
+                "background-color:rgba(255,255,255, 0.1);}";
+        break;
+    }
+    return style;
+}
+
 IndexLabel::IndexLabel(int index, QWidget *parent)
     : QLabel(parent), index(index)
 {
@@ -151,6 +196,6 @@ void IndexLabel::paintEvent(QPaintEvent *event)
             brushColor.setAlpha(40);
 
         painter.setBrush(brushColor);
-        painter.drawEllipse((diam + 8) * i + 5, 0, diam, diam);
+        painter.drawEllipse((diam + 8) * i + 6, 0, diam, diam);
     }
 }

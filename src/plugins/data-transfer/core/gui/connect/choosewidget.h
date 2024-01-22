@@ -53,6 +53,7 @@ public:
 
     void setEnable(bool able);
     void themeChanged(int theme);
+    void setIcon(QIcon icon);
 signals:
     void clicked(bool checked);
 

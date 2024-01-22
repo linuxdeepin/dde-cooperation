@@ -113,7 +113,7 @@ void AppSelectWidget::initSelectFrame()
         item->setData(2, Qt::ToolTipPropertyRole);
         QPixmap pix = DrapWindowsData::instance()->getAppIcon(iterator.value());
         if (pix.isNull()) {
-            item->setIcon(QIcon(":/icon/fileicon.svg"));
+            item->setIcon(QIcon(":/icon/file@2x.png"));
         } else {
             item->setIcon(QIcon(pix));
         }

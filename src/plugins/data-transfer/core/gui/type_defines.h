@@ -80,6 +80,7 @@ public:
 
     static QFont font(int type);
     static QString textStyle(TextStyle type);
+    static QString textBrowserStyle(int type);
 };
 
 #include <QLabel>

@@ -185,10 +185,9 @@ void ConnectWidget::initConnectLayout()
     passwordVLayout->setAlignment(Qt::AlignCenter);
 
     //separatorLabel
-    QString styleSheet = "QLabel { background-color: rgba(0, 0, 0, 0.1); width: 2px; }";
-    QLabel *separatorLabel = new QLabel(this);
+    separatorLabel = new QLabel(this);
     separatorLabel->setFixedSize(2, 160);
-    separatorLabel->setStyleSheet(styleSheet);
+    separatorLabel->setStyleSheet(".QLabel { background-color: rgba(0, 0, 0, 0.1); width: 2px; }");
 
     connectLayout->addSpacing(37);
     connectLayout->addLayout(ipVLayout);
@@ -220,9 +219,11 @@ void ConnectWidget::themeChanged(int theme)
     // light
     if (theme == 1) {
         setStyleSheet(".ConnectWidget{background-color: rgba(255,255,255,1); border-radius: 10px;}");
+        separatorLabel->setStyleSheet("QLabel { background-color: rgba(0, 0, 0, 0.1); width: 2px; }");
     } else {
         // dark
         setStyleSheet(".ConnectWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
+        separatorLabel->setStyleSheet("background-color: rgba(220, 220, 220,0.1); width: 2px;");
     }
 }
 #endif

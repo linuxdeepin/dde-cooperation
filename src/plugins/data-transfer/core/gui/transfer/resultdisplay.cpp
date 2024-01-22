@@ -43,16 +43,8 @@ void ResultDisplayWidget::initUI()
     processTextBrowser->setReadOnly(true);
     processTextBrowser->setLineWrapMode(QTextBrowser::NoWrap);
     processTextBrowser->setContextMenuPolicy(Qt::NoContextMenu);
-    processTextBrowser->setStyleSheet("QTextBrowser {"
-                                      "padding-top: 10px;"
-                                      "padding-bottom: 10px;"
-                                      "padding-left: 5px;"
-                                      "padding-right: 5px;"
-                                      "font-size: 12px;"
-                                      "font-weight: 400;"
-                                      "color: rgb(82, 106, 127);"
-                                      "line-height: 300%;"
-                                      "background-color:rgba(0, 0, 0,0.08);}");
+    processTextBrowser->setStyleSheet(StyleHelper::textBrowserStyle(1));
+
     QString scrollBarStyle = "QScrollBar:vertical {"
                              "width: 6px;"
                              "background: #c0c0c0;"
@@ -105,7 +97,7 @@ void ResultDisplayWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        setStyleSheet(".ResultDisplayWidget{background-color: white; border-radius: 10px;}");
+        processTextBrowser->setStyleSheet(StyleHelper::textBrowserStyle(1));
         processTextBrowser->setStyleSheet("QTextBrowser {"
                                           "border-radius: 10px;"
                                           "padding-top: 10px;"
@@ -120,17 +112,7 @@ void ResultDisplayWidget::themeChanged(int theme)
     } else {
         // dark
         setStyleSheet(".ResultDisplayWidget{-color: rgb(37, 37, 37); border-radius: 10px;}");
-        processTextBrowser->setStyleSheet("QTextBrowser {"
-                                          "border-radius: 10px;"
-                                          "padding-top: 10px;"
-                                          "padding-bottom: 10px;"
-                                          "padding-left: 5px;"
-                                          "padding-right: 5px;"
-                                          "font-size: 12px;"
-                                          "font-weight: 400;"
-                                          "color: rgb(82, 106, 127);"
-                                          "line-height: 300%;"
-                                          "background-color:rgba(255,255,255, 0.1);}");
+        processTextBrowser->setStyleSheet(StyleHelper::textBrowserStyle(0));
     }
 }
 

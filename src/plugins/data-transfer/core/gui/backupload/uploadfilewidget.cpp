@@ -93,6 +93,7 @@ void UploadFileWidget::initUI()
     indexLayout->addWidget(indelabel, Qt::AlignCenter | Qt::AlignBottom);
 
     mainLayout->addWidget(titileLabel);
+    mainLayout->addSpacing(20);
     mainLayout->addLayout(uploadLayout);
     mainLayout->addSpacing(100);
     mainLayout->addLayout(tipLayout);
@@ -193,7 +194,7 @@ void UploadFileFrame::initUI()
     iconLabel->setStyleSheet(".QLabel{background-color: rgba(0, 0, 0, 0);border-style: none;}");
     iconLabel->setAlignment(Qt::AlignCenter);
 
-    QLabel *textLabel = new QLabel(QString("<font color='gray' >%1</font>").arg(tr("Drag file here")), this);
+    QLabel *textLabel = new QLabel(QString("<font color='gray' >%1</font>").arg(tr("Drag file here ")), this);
     textLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
     textLabel->setFixedHeight(20);
     textLabel->setAlignment(Qt::AlignCenter);
@@ -209,12 +210,13 @@ void UploadFileFrame::initUI()
     textLabel->setFont(tipfont);
     connect(displayLabel, &QLabel::linkActivated, this, &UploadFileFrame::uploadFile);
 
-    QPushButton *closeBtn = new QPushButton(qobject_cast<QWidget *>(this->parent()));
+    closeBtn = new QPushButton(qobject_cast<QWidget *>(this->parent()));
     closeBtn->setIcon(QIcon(":/icon/tab_close_normal.svg"));
+    closeBtn->setIcon(QIcon::fromTheme("tab_close_normal"));
     closeBtn->setWindowOpacity(1.0);
     closeBtn->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
     closeBtn->setIconSize(QSize(35, 35));
-    closeBtn->setGeometry(405, 145, 35, 35);
+    closeBtn->setGeometry(405, 170, 35, 35);
     closeBtn->setVisible(false);
 
     QLabel *WarningIconLabel = new QLabel(iconLabel);
@@ -242,7 +244,7 @@ void UploadFileFrame::initUI()
         emit updateUI(uploadStatus::Initial);
     });
 
-    connect(this, &UploadFileFrame::updateUI, this, [WarningIconLabel, this, closeBtn, iconLabel, textLabel, displayLabel](int status) {
+    connect(this, &UploadFileFrame::updateUI, this, [WarningIconLabel, this, iconLabel, textLabel, displayLabel](int status) {
         switch (status) {
         case uploadStatus::Initial: {
             fileFrame->setVisible(false);
@@ -300,12 +302,17 @@ void UploadFileFrame::themeChanged(int theme)
                       "border-width: 2px;"
                       "border-color: rgba(255,255,255, 0.1);}");
     }
+    auto closeIcon = lightTheme ? QIcon(":/icon/light/tab_close_normal.svg") : QIcon(":/icon/dark/tab_close_normal.svg");
+    closeBtn->setIcon(closeIcon);
+    QString color = lightTheme ? "background-color: rgba(0, 0, 0, 0.1);"
+                               : "background-color: rgba(255,255,255, 0.1);";
+    fileFrame->setStyleSheet(".QFrame{" + color + "border-style: none; border-radius: 10px;}");
 }
 
 void UploadFileFrame::initFileFrame()
 {
     fileFrame = new QFrame(this);
-    fileFrame->setStyleSheet(".QFrame{background-color: rgba(0, 0, 0, 0.1);border-style: none; border-radius: 10px;}");
+    fileFrame->setStyleSheet(".QFrame{background-color: rgba(230, 230, 230, 0.1);border-style: none; border-radius: 10px;}");
     fileFrame->setFixedSize(124, 111);
     fileFrame->setVisible(false);
 

@@ -211,15 +211,19 @@ void CreateBackupFileWidget::initUI()
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(15);
     mainLayout->addLayout(fileNameLayout);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(layout1);
     mainLayout->addSpacing(20);
     mainLayout->addLayout(savePathLayout);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(diskListViewLayout);
     mainLayout->addSpacing(40);
     mainLayout->addWidget(promptLabel);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
+    mainLayout->setSpacing(0);
     QObject::connect(diskListView, &QListView::clicked, this, [this](const QModelIndex &index) {
         if (index.data(Qt::CheckStateRole) == Qt::Unchecked) {
             setDetermineButtonEnable(false);

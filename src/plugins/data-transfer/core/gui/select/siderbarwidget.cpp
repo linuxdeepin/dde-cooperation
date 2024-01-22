@@ -286,6 +286,7 @@ void SidebarWidget::paintEvent(QPaintEvent *event)
 {
     QListView::paintEvent(event);
     QPainter painter(viewport());
+    painter.setPen(QPen(QColor(0, 0, 0, 200), 0.3));
     painter.setRenderHint(QPainter::Antialiasing);
     QPainterPath path;
     path.moveTo(10, 216);

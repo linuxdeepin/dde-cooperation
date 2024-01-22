@@ -67,6 +67,7 @@ void ChooseWidget::initUI()
     buttonLayout->setCount(1);
     nextButton = buttonLayout->getButton1();
     nextButton->setText(tr("Next"));
+    nextButton->setEnabled(false);
 
     IndexLabel *indelabel = new IndexLabel(0, this);
     indelabel->setAlignment(Qt::AlignCenter);
@@ -76,7 +77,7 @@ void ChooseWidget::initUI()
 
     mainLayout->addSpacing(40);
     mainLayout->addWidget(titileLabel);
-    mainLayout->addSpacing(40);
+    mainLayout->addSpacing(60);
     mainLayout->addLayout(modeLayout);
     mainLayout->addSpacing(90);
     mainLayout->addLayout(tiplayout);
@@ -89,9 +90,11 @@ void ChooseWidget::initUI()
             [this, tiptextlabel](bool online) {
                 if (online) {
                     tiptextlabel->setVisible(false);
+                    winItem->setIcon(QIcon(":/icon/select1.png"));
                 } else {
                     tiptextlabel->setVisible(true);
                     winItem->checked = false;
+                    winItem->setIcon(QIcon(":/icon/select1@2x.png"));
                 }
                 winItem->setEnable(online);
             });
@@ -182,7 +185,28 @@ ModeItem::~ModeItem() {}
 void ModeItem::setEnable(bool able)
 {
     enable = able;
+#ifdef linux
     setEnabled(able);
+#else
+    if  (able)
+        setStyleSheet(".ModeItem{"
+                      "border-radius: 8px;"
+                      "opacity: 1;"
+                      "background-color: rgba(0,0,0, 0.1);}"
+                      ".ModeItem:hover{"
+                      "background-color: rgba(0,0,0, 0.2);}");
+    else
+        setStyleSheet(".ModeItem{"
+                      "border-radius: 8px;"
+                      "opacity: 1;"
+                      "background-color: rgba(0,0,0, 0.1);}");
+#endif
+    update();
+}
+
+void ModeItem::setIcon(QIcon icon)
+{
+    iconLabel->setPixmap(icon.pixmap(150, 120));
     update();
 }
 

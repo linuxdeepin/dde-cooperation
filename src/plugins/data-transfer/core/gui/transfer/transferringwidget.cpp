@@ -74,9 +74,6 @@ void TransferringWidget::initUI()
     QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
                               .arg(tr("Show logs"));
     displayLabel = new QLabel(display, this);
-    QFont tipfont;
-    tipfont.setPointSize(8);
-    displayLabel->setFont(tipfont);
     displayLabel->setAlignment(Qt::AlignCenter);
     QObject::connect(displayLabel, &QLabel::linkActivated, this,
                      &TransferringWidget::initInformationPage);
@@ -94,15 +91,7 @@ void TransferringWidget::initUI()
     processTextBrowser->setReadOnly(true);
     processTextBrowser->setLineWrapMode(QTextBrowser::NoWrap);
     processTextBrowser->setContextMenuPolicy(Qt::NoContextMenu);
-    processTextBrowser->setStyleSheet("QTextBrowser {"
-                                      "padding-top: 10px;"
-                                      "padding-bottom: 10px;"
-                                      "padding-left: 8px;"
-                                      "padding-right: 8px;"
-                                      "font-size: 12px;"
-                                      "font-weight: 400;"
-                                      "color: rgb(82, 106, 127);"
-                                      "background-color:rgba(0, 0, 0,0.08);}");
+    processTextBrowser->setStyleSheet(StyleHelper::textBrowserStyle(1));
 
     QString scrollBarStyle = "QScrollBar:vertical {"
                              "width: 6px;"

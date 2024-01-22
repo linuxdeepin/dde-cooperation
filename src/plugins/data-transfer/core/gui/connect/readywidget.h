@@ -4,7 +4,7 @@
 #include <QFrame>
 
 class QLineEdit;
-class QToolButton;
+class QPushButton;
 class QLabel;
 class ReadyWidget : public QFrame
 {
@@ -25,7 +25,7 @@ private:
     void setnextButEnable(bool enabel);
     QLineEdit *ipInput{ nullptr };
     QLineEdit *captchaInput{ nullptr };
-    QToolButton *nextButton{ nullptr };
+    QPushButton *nextButton{ nullptr };
     QLabel *tiptextlabel{ nullptr };
 
     QTimer *timer{ nullptr };

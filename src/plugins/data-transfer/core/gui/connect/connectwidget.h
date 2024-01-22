@@ -29,6 +29,7 @@ private:
     QHBoxLayout *connectLayout = nullptr;
     int remainingTime = 300;
     QPushButton *backButton = nullptr;
+    QLabel *separatorLabel = nullptr;
 };
 #endif
 #endif

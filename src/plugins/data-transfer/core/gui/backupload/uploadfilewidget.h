@@ -34,6 +34,7 @@ private:
     QString zipFilePath;
     QFrame *fileFrame { nullptr };
     bool lightTheme { true };
+    QPushButton *closeBtn { nullptr };
 };
 
 enum uploadStatus {

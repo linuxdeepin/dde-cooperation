@@ -55,11 +55,13 @@ void SelectMainWidget::changeText()
     if (method == TransferMethod::kLocalExport) {
         titileLabel->setText(LocalText);
         nextButton->setText(BtnLocalText);
+        LocalIndelabel->setVisible(true);
         InternetIndelabel->setVisible(false);
     } else if (method == TransferMethod::kNetworkTransmission) {
         titileLabel->setText(InternetText);
         nextButton->setText(BtnInternetText);
         LocalIndelabel->setVisible(false);
+        InternetIndelabel->setVisible(true);
     }
 }
 
@@ -78,7 +80,7 @@ void SelectMainWidget::initUi()
     setLayout(mainLayout);
 
     titileLabel = new QLabel(LocalText, this);
-   titileLabel->setFixedHeight(50);
+    titileLabel->setFixedHeight(50);
     QFont font;
     font.setPixelSize(24);
     font.setWeight(QFont::DemiBold);
@@ -103,6 +105,7 @@ void SelectMainWidget::initUi()
     modeLayout->addSpacing(0);
     modeLayout->addWidget(configItem, Qt::AlignTop);
     modeLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    modeLayout->setSpacing(10);
 
     ButtonLayout *buttonLayout = new ButtonLayout();
     QPushButton *backButton = buttonLayout->getButton1();
@@ -122,11 +125,12 @@ void SelectMainWidget::initUi()
     indexLayout->addWidget(LocalIndelabel, Qt::AlignCenter);
     indexLayout->addWidget(InternetIndelabel, Qt::AlignCenter);
 
+    mainLayout->setSpacing(0);
     mainLayout->addSpacing(40);
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(45);
     mainLayout->addLayout(modeLayout);
-    mainLayout->addSpacing(80);
+    mainLayout->addSpacing(150);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);

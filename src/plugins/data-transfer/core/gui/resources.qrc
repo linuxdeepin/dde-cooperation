@@ -26,7 +26,6 @@
         <file>icon/fileicon.svg</file>
         <file>icon/zip-64.svg</file>
         <file>icon/application-x-zip.svg</file>
-        <file>icon/tab_close_normal.svg</file>
         <file>icon/warning.svg</file>
         <file>icon/zipfileprocess.png</file>
         <file>icon/zipfileprocess@2x.png</file>
@@ -127,5 +126,7 @@
         <file>icon/picture-file@2x.png</file>
         <file>icon/check_white.svg</file>
         <file>icon/arrow_black.svg</file>
+        <file>icon/dark/tab_close_normal.svg</file>
+        <file>icon/light/tab_close_normal.svg</file>
     </qresource>
 </RCC>
