@@ -72,7 +72,7 @@ void TransferringWidget::initUI()
     timeLabel->setText(QString(tr("Calculationing...")));
 
     QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
-                              .arg(tr("Show logs"));
+                              .arg(tr("Show processes"));
     displayLabel = new QLabel(display, this);
     displayLabel->setAlignment(Qt::AlignCenter);
     QObject::connect(displayLabel, &QLabel::linkActivated, this,
@@ -149,7 +149,7 @@ void TransferringWidget::initInformationPage()
         fileNameFrame->setVisible(true);
 
         QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
-                                  .arg(tr("Hide logs"));
+                                  .arg(tr("Hide processes"));
         displayLabel->setText(display);
         QPropertyAnimation *showAnimation = new QPropertyAnimation(processTextBrowser, "pos");
         showAnimation->setDuration(200);
@@ -162,7 +162,7 @@ void TransferringWidget::initInformationPage()
         isVisible = false;
 
         QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
-                                  .arg(tr("Show logs"));
+                                  .arg(tr("Show processes"));
         displayLabel->setText(display);
 
         QPropertyAnimation *hideAnimation = new QPropertyAnimation(processTextBrowser, "pos");
