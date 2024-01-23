@@ -153,8 +153,11 @@ void DeviceItem::initConnect()
 
 void DeviceItem::setLabelFont(CooperationLabel *label, int pointSize, int weight)
 {
+    Q_UNUSED(pointSize);
     QFont font = this->font();
+#ifndef linux
     font.setPixelSize(pointSize);
+#endif
     font.setWeight(weight);
 
     label->setFont(font);
