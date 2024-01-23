@@ -101,7 +101,7 @@ void SettingDialogPrivate::initWindow()
 
 void SettingDialogPrivate::createBasicWidget()
 {
-    QLabel *basicLable = new QLabel(tr("Basic Settings"), q);
+    CooperationLabel *basicLable = new CooperationLabel(tr("Basic Settings"), q);
     auto cm = basicLable->contentsMargins();
     cm.setLeft(10);
     basicLable->setContentsMargins(cm);
@@ -341,7 +341,6 @@ void SettingDialogPrivate::initFont()
 
     tipFont = q->font();
     tipFont.setWeight(QFont::Normal);
-    tipFont.setPixelSize(12);
 }
 
 void SettingDialogPrivate::reportDeviceStatus(const QString &type, bool status)

@@ -39,9 +39,9 @@ protected:
 private:
     QStackedLayout *switchLayout { nullptr };
 
-    QLabel *failMsgLabel { nullptr };
-    QLabel *confirmMsgLabel { nullptr };
-    QLabel *infoLabel { nullptr };
+    CooperationLabel *failMsgLabel { nullptr };
+    CooperationLabel *confirmMsgLabel { nullptr };
+    CooperationLabel *infoLabel { nullptr };
     CooperationSuggestButton *retryBtn { nullptr };
 };
 

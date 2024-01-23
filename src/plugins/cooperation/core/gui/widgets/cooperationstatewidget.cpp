@@ -54,7 +54,7 @@ void LookingForDeviceWidget::initUI()
 {
     setFocusPolicy(Qt::ClickFocus);
 
-    iconLabel = new QLabel(this);
+    iconLabel = new CooperationLabel(this);
     iconLabel->setFixedSize(250, 250);
     QIcon icon = QIcon::fromTheme(Kfind_device);
     iconLabel->setPixmap(icon.pixmap(250, 250));
@@ -62,7 +62,7 @@ void LookingForDeviceWidget::initUI()
         iconLabel->setPixmap(icon.pixmap(250, 250));
     });
 
-    QLabel *tipsLabel = new QLabel(tr("Looking for devices"), this);
+    CooperationLabel *tipsLabel = new CooperationLabel(tr("Looking for devices"), this);
     tipsLabel->setAlignment(Qt::AlignHCenter);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
@@ -119,7 +119,7 @@ void NoNetworkWidget::initUI()
 {
     setFocusPolicy(Qt::ClickFocus);
 
-    QLabel *iconLabel = new QLabel(this);
+    CooperationLabel *iconLabel = new CooperationLabel(this);
     iconLabel->setFixedSize(150, 150);
     QIcon icon = QIcon::fromTheme(Kno_network);
     iconLabel->setPixmap(icon.pixmap(150, 150));
@@ -127,7 +127,7 @@ void NoNetworkWidget::initUI()
         iconLabel->setPixmap(icon.pixmap(150, 150));
     });
 
-    QLabel *tipsLabel = new QLabel(tr("Please connect to the network"), this);
+    CooperationLabel *tipsLabel = new CooperationLabel(tr("Please connect to the network"), this);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
@@ -155,7 +155,7 @@ void NoResultWidget::initUI()
 {
     setFocusPolicy(Qt::ClickFocus);
 
-    QLabel *iconLabel = new QLabel(this);
+    CooperationLabel *iconLabel = new CooperationLabel(this);
     iconLabel->setFixedSize(150, 150);
     QIcon icon = QIcon::fromTheme(Knot_find_device);
     iconLabel->setPixmap(icon.pixmap(150, 150));
@@ -163,7 +163,7 @@ void NoResultWidget::initUI()
         iconLabel->setPixmap(icon.pixmap(150, 150));
     });
 
-    QLabel *tipsLabel = new QLabel(tr("No device found"), this);
+    CooperationLabel *tipsLabel = new CooperationLabel(tr("No device found"), this);
     auto font = tipsLabel->font();
     font.setWeight(QFont::Medium);
     tipsLabel->setFont(font);

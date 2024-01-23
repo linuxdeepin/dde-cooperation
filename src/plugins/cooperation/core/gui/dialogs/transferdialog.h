@@ -9,7 +9,6 @@
 
 #include <QStackedLayout>
 #include <QPushButton>
-#include <QLabel>
 #include <QProgressBar>
 
 namespace cooperation_core {
@@ -45,10 +44,10 @@ private:
 
     QPushButton *okBtn { nullptr };
     CooperationSpinner *spinner { nullptr };
-    QLabel *iconLabel { nullptr };
-    QLabel *msgLabel { nullptr };
-    QLabel *titleLabel { nullptr };
-    QLabel *progressMsgLael { nullptr };
+    CooperationLabel *iconLabel { nullptr };
+    CooperationLabel *msgLabel { nullptr };
+    CooperationLabel *titleLabel { nullptr };
+    CooperationLabel *progressMsgLael { nullptr };
     QProgressBar *progressBar { nullptr };
 };
 

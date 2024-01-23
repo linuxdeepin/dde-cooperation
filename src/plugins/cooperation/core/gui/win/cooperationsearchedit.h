@@ -5,10 +5,11 @@
 #ifndef COOPERATIONSEARCHEDIT_H
 #define COOPERATIONSEARCHEDIT_H
 
+#include "global_defines.h"
+
 #include <QFrame>
 
 class QLineEdit;
-class QLabel;
 class QToolButton;
 namespace cooperation_core {
 
@@ -31,8 +32,8 @@ protected:
 
 private:
     QLineEdit *searchEdit{ nullptr };
-    QLabel *searchIcon{ nullptr };
-    QLabel *searchText{ nullptr };
+    CooperationLabel *searchIcon{ nullptr };
+    CooperationLabel *searchText{ nullptr };
     QToolButton *closeBtn{ nullptr };
     QString placeholderText;
 };

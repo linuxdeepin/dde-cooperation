@@ -9,14 +9,13 @@
 #include "info/deviceinfo.h"
 #include "backgroundwidget.h"
 
-#include <QLabel>
 #include <QIcon>
 #include <QMap>
 
 namespace cooperation_core {
 
 class ButtonBoxWidget;
-class StateLabel : public QLabel
+class StateLabel : public CooperationLabel
 {
     Q_OBJECT
 public:
@@ -71,13 +70,13 @@ protected:
 private:
     void initUI();
     void initConnect();
-    void setLabelFont(QLabel *label, int pointSize, int weight);
+    void setLabelFont(CooperationLabel *label, int pointSize, int weight);
     void setDeviceName(const QString &name);
     void setDeviceStatus(DeviceInfo::ConnectStatus status);
 
 private:
-    QLabel *iconLabel { nullptr };
-    QLabel *nameLabel { nullptr };
+    CooperationLabel *iconLabel { nullptr };
+    CooperationLabel *nameLabel { nullptr };
     CooperationLabel *ipLabel { nullptr };
     StateLabel *stateLabel { nullptr };
     ButtonBoxWidget *btnBoxWidget { nullptr };

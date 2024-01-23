@@ -5,8 +5,9 @@
 #ifndef COOPERATIONDIALOG_H
 #define COOPERATIONDIALOG_H
 
+#include "global_defines.h"
+
 #include <QDialog>
-#include <QLabel>
 #include <QPushButton>
 #include <QProgressBar>
 #include <QStackedLayout>
@@ -28,7 +29,7 @@ Q_SIGNALS:
 private:
     void init();
 
-    QLabel *msgLabel { nullptr };
+    CooperationLabel *msgLabel { nullptr };
     QPushButton *acceptBtn { nullptr };
     QPushButton *rejectBtn { nullptr };
 };
@@ -48,8 +49,8 @@ Q_SIGNALS:
 private:
     void init();
 
-    QLabel *titleLabel { nullptr };
-    QLabel *msgLabel { nullptr };
+    CooperationLabel *titleLabel { nullptr };
+    CooperationLabel *msgLabel { nullptr };
     QProgressBar *progressBar { nullptr };
     QPushButton *cancelBtn { nullptr };
 };
@@ -69,8 +70,8 @@ Q_SIGNALS:
 private:
     void init();
 
-    QLabel *iconLabel { nullptr };
-    QLabel *msgLabel { nullptr };
+    CooperationLabel *iconLabel { nullptr };
+    CooperationLabel *msgLabel { nullptr };
     QPushButton *okBtn { nullptr };
     QPushButton *viewBtn { nullptr };
 };

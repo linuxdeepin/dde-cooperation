@@ -5,7 +5,6 @@
 #include "cooperationtaskdialog.h"
 #include "common/commonutils.h"
 
-#include <QLabel>
 #include <QVBoxLayout>
 
 using namespace cooperation_core;
@@ -110,7 +109,7 @@ QWidget *CooperationTaskDialog::createFailPage()
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
     vlayout->setContentsMargins(0, 0, 0, 0);
 
-    failMsgLabel = new QLabel(this);
+    failMsgLabel = new CooperationLabel(this);
     failMsgLabel->setAlignment(Qt::AlignHCenter);
     failMsgLabel->setWordWrap(true);
 
@@ -135,7 +134,7 @@ QWidget *CooperationTaskDialog::createConfirmPage()
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
     vlayout->setContentsMargins(0, 0, 0, 0);
 
-    confirmMsgLabel = new QLabel(this);
+    confirmMsgLabel = new CooperationLabel(this);
     confirmMsgLabel->setAlignment(Qt::AlignHCenter);
     confirmMsgLabel->setWordWrap(true);
 
@@ -160,7 +159,7 @@ QWidget *CooperationTaskDialog::createInfomationPage()
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
     vlayout->setContentsMargins(0, 0, 0, 0);
 
-    infoLabel = new QLabel(this);
+    infoLabel = new CooperationLabel(this);
     infoLabel->setAlignment(Qt::AlignHCenter);
     infoLabel->setWordWrap(true);
 

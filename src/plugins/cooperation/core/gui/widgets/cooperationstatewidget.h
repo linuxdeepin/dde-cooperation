@@ -6,7 +6,7 @@
 #define COOPERATIONSTATEWIDGET_H
 
 #include <QWidget>
-#include <QLabel>
+#include "global_defines.h"
 
 namespace cooperation_core {
 
@@ -24,7 +24,7 @@ protected:
 private:
     void initUI();
 
-    QLabel *iconLabel { nullptr };
+    CooperationLabel *iconLabel { nullptr };
     QTimer *animationTimer { nullptr };
     int angle { 0 };
     bool isEnabled { false };

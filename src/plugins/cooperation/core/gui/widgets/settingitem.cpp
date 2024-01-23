@@ -4,8 +4,8 @@
 
 #include "settingitem.h"
 #include "utils/cooperationguihelper.h"
+#include "global_defines.h"
 
-#include <QLabel>
 #include <QPainter>
 #include <QPainterPath>
 
@@ -24,10 +24,9 @@ SettingItem::SettingItem(QWidget *parent)
 
 void SettingItem::setItemInfo(const QString &text, QWidget *w)
 {
-    QLabel *label = new QLabel(text, this);
+    CooperationLabel *label = new CooperationLabel(text, this);
     auto font = label->font();
     font.setWeight(QFont::Medium);
-    font.setPixelSize(14);
     label->setFont(font);
 
     mainLayout->addWidget(label, 0, Qt::AlignLeft);

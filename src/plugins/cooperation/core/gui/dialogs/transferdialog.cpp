@@ -77,7 +77,7 @@ void TransferDialog::createWaitConfirmPage()
     movie->setSpeed(180);
 #endif
 
-    QLabel *label = new QLabel(tr("Wait for confirmation..."), this);
+    CooperationLabel *label = new CooperationLabel(tr("Wait for confirmation..."), this);
     label->setAlignment(Qt::AlignHCenter);
     vLayout->addSpacing(20);
     vLayout->addWidget(spinner, 0, Qt::AlignHCenter);
@@ -93,8 +93,8 @@ void TransferDialog::createResultPage()
     vLayout->setSpacing(0);
     stackedLayout->addWidget(widget);
 
-    iconLabel = new QLabel(this);
-    msgLabel = new QLabel(this);
+    iconLabel = new CooperationLabel(this);
+    msgLabel = new CooperationLabel(this);
     msgLabel->setAlignment(Qt::AlignHCenter);
     msgLabel->setWordWrap(true);
 
@@ -110,7 +110,7 @@ void TransferDialog::createProgressPage()
     vLayout->setSpacing(0);
     stackedLayout->addWidget(widget);
 
-    titleLabel = new QLabel(this);
+    titleLabel = new CooperationLabel(this);
     titleLabel->setAlignment(Qt::AlignHCenter);
     auto font = titleLabel->font();
     font.setPixelSize(14);
@@ -122,7 +122,7 @@ void TransferDialog::createProgressPage()
     progressBar->setTextVisible(false);
     progressBar->setFixedSize(339, 8);
 
-    progressMsgLael = new QLabel(this);
+    progressMsgLael = new CooperationLabel(this);
     progressMsgLael->setAlignment(Qt::AlignHCenter);
     font.setPixelSize(12);
     progressMsgLael->setFont(font);

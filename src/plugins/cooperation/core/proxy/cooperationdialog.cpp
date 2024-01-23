@@ -23,7 +23,7 @@ void ConfirmWidget::setDeviceName(const QString &name)
 
 void ConfirmWidget::init()
 {
-    msgLabel = new QLabel(this);
+    msgLabel = new CooperationLabel(this);
     rejectBtn = new QPushButton(tr("Reject", "button"), this);
     acceptBtn = new QPushButton(tr("Accept", "button"), this);
 
@@ -59,8 +59,8 @@ void ProgressWidget::setProgress(int value, const QString &msg)
 
 void ProgressWidget::init()
 {
-    titleLabel = new QLabel(this);
-    msgLabel = new QLabel(this);
+    titleLabel = new CooperationLabel(this);
+    msgLabel = new CooperationLabel(this);
 
     progressBar = new QProgressBar(this);
     progressBar->setRange(0, 100);
@@ -100,8 +100,8 @@ void ResultWidget::setResult(bool success, const QString &msg)
 
 void ResultWidget::init()
 {
-    iconLabel = new QLabel(this);
-    msgLabel = new QLabel(this);
+    iconLabel = new CooperationLabel(this);
+    msgLabel = new CooperationLabel(this);
     msgLabel->setWordWrap(true);
     msgLabel->setAlignment(Qt::AlignHCenter);
 

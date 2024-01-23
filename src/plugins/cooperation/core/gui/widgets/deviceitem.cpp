@@ -28,7 +28,7 @@ const char *Kcomputer_off_line = ":/icons/deepin/builtin/icons/computer_off_line
 #endif
 
 StateLabel::StateLabel(QWidget *parent)
-    : QLabel(parent)
+    : CooperationLabel(parent)
 {
 }
 
@@ -109,8 +109,8 @@ void DeviceItem::initUI()
     setFixedSize(460, 90);
     setBackground(8, NoType, TopAndBottom);
 
-    iconLabel = new QLabel(this);
-    nameLabel = new QLabel(this);
+    iconLabel = new CooperationLabel(this);
+    nameLabel = new CooperationLabel(this);
     nameLabel->installEventFilter(this);
     setLabelFont(nameLabel, 14, QFont::Medium);
 
@@ -151,7 +151,7 @@ void DeviceItem::initConnect()
     connect(btnBoxWidget, &ButtonBoxWidget::buttonClicked, this, &DeviceItem::onButtonClicked);
 }
 
-void DeviceItem::setLabelFont(QLabel *label, int pointSize, int weight)
+void DeviceItem::setLabelFont(CooperationLabel *label, int pointSize, int weight)
 {
     QFont font = this->font();
     font.setPixelSize(pointSize);
