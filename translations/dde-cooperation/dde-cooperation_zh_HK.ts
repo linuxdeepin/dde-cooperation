@@ -35,106 +35,106 @@
 <context>
     <name>cooperation_core::CooperationManager</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="318"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="315"/>
         <source>connect</source>
         <translation>連接</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="326"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="323"/>
         <source>Disconnect</source>
         <translation>斷開</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="371"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="506"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="368"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="503"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
         <translation>與“%1”的協同已結束</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="357"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="354"/>
         <source>Requesting collaborate to &quot;%1&quot;</source>
         <translation>正在請求協同至“%1”</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="342"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="339"/>
         <source>You are connecting to another device</source>
         <translation>您正在與其他設備進行協同</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="436"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="433"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
         <translation>接收到“%1”的協同連接請求</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="437"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="434"/>
         <source>Reject</source>
         <translation>拒絕</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="438"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="435"/>
         <source>Accept</source>
         <translation>接受</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="452"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="449"/>
         <source>Cooperation</source>
         <translation>跨端協同</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="474"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="471"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
         <translation>連接成功，正在與“%1”進行協同</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="540"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="537"/>
         <source>The other party has cancelled the connection request !</source>
         <translation>對方取消了連接請求！</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="544"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="541"/>
         <source>connect failed</source>
         <translation>連接失敗</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="557"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="551"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
         <translation>網絡未連接，文件發送失敗。   請連接網絡並重試！</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="564"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="558"/>
         <source>File transfer failed</source>
         <translation>文件傳輸失敗</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="566"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="560"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
         <translation>絡未連接，文件發送失敗。請連接網絡並重試！</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="340"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="479"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="488"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="527"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="337"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="476"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="485"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="524"/>
         <source>Unable to collaborate to &quot;%1&quot;</source>
         <translation>無法協同至“%1”</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="480"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="477"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
         <translation>“%1”已拒絕您的協同請求</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="489"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="486"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
         <translation>“%1”正在與其他設備協同</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="521"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="518"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
         <translation>“%1”向您發起連接請求因超時中斷</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="529"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="526"/>
         <source>The other party does not confirm, please try again later</source>
         <translation>對方未確認，請稍後再發起連接</translation>
     </message>
@@ -153,17 +153,7 @@
         <translation>與“%1”的協同已結束</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="234"/>
-        <source>connect failed</source>
-        <translation>連接失敗</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="235"/>
-        <source>You have cancelled the connection request !</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="292"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="289"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
         <translation>連接成功，正在與“%1”進行協同</translation>
     </message>
@@ -171,22 +161,32 @@
 <context>
     <name>cooperation_core::CooperationProxy</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="107"/>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="92"/>
+        <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
+        <translation>存儲空間不足，文件發送失敗。請清理磁盤空間並重試！</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="94"/>
+        <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
+        <translation>網絡未連接，文件發送失敗。請連接網絡並重試！</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="111"/>
         <source>File sent successfully</source>
         <translation>文件投送成功</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="110"/>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="114"/>
         <source>The other party has canceled the file transfer</source>
         <translation>對方已取消文件投送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="155"/>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="159"/>
         <source>&quot;%1&quot; delivery of files to you was interrupted due to a timeout</source>
         <translation>“%1”向您投送文件因超時中斷</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="348"/>
+        <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="352"/>
         <source>Receiving files from &quot;%1&quot;</source>
         <translation>正在接收“%1”投送的文件</translation>
     </message>
@@ -270,20 +270,20 @@
 <context>
     <name>cooperation_core::MainWindowPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="33"/>
-        <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="79"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="34"/>
+        <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="80"/>
         <source>Re-scan for devices</source>
         <translation>重新尋找設備</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="48"/>
-        <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="120"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="49"/>
+        <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="121"/>
         <source>Settings</source>
         <translation>設置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="52"/>
-        <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="124"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="53"/>
+        <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="125"/>
         <source>Download Windows client</source>
         <translation>Windows客戶端下載</translation>
     </message>
@@ -351,89 +351,90 @@
 <context>
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="35"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="41"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="42"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="48"/>
         <source>Everyone in the same LAN</source>
         <translation>同一局域網下的所有人</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="36"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="43"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="44"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
         <source>Not allow</source>
         <translation>不允許</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="38"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="45"/>
         <source>Screen right</source>
         <translation>螢幕右側</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="39"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="46"/>
         <source>Screen left</source>
         <translation>螢幕左側</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="42"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
         <source>Only those who are collaborating are allowed</source>
         <translation>僅允許正在協同的人</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="97"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="104"/>
         <source>Basic Settings</source>
         <translation>基礎設置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="108"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="115"/>
         <source>Discovery mode</source>
         <translation>可被發現</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="110"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="117"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
         <translation>其他設備可通過“跨端協同”應用發現您，並與您建立連接</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="144"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="151"/>
         <source>Device name</source>
         <translation>設備暱稱</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="162"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="169"/>
         <source>Peripheral share</source>
         <translation>外設共享</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="164"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="171"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
         <translation>允許已建立跨端協同連接的外設控制此設備，包括鍵盤、鼠標、觸控板等</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="190"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="197"/>
         <source>Connection direction</source>
         <translation>鏈接方向</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="207"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="214"/>
         <source>Allows the following users to send files to me</source>
         <translation>允許以下用戶向我投送文件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="214"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="221"/>
         <source>File save location</source>
         <translation>文件保存位置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="230"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="237"/>
         <source>Share clipboard</source>
         <translation>剪切板共享</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="232"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="239"/>
         <source>The clipboard is shared between devices</source>
         <translation>在設備間共享剪切板</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="288"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="295"/>
         <source>The device name must contain 1 to 63 characters</source>
         <translation>設備暱稱必須介於1-63個字符之內</translation>
     </message>
@@ -477,12 +478,12 @@
         <translation>連接到“%1”失敗</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="369"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="372"/>
         <source>The other party has canceled the file transfer</source>
         <translation>對方已取消文件投送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="366"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="369"/>
         <source>File sent successfully</source>
         <translation>文件投送成功</translation>
     </message>
@@ -502,12 +503,17 @@
         <translation>存儲空間不足，文件發送失敗。請清理磁盤空間並重試！</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="428"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="362"/>
+        <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
+        <translation>網絡未連接，文件發送失敗。請連接網絡並重試！</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="431"/>
         <source>calculating</source>
         <translation>計算中</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="437"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="440"/>
         <source>The other party rejects your request</source>
         <translation>對方已拒絕您的請求</translation>
     </message>
@@ -542,7 +548,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="86"/>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="299"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="301"/>
         <source>View</source>
         <translation>查看</translation>
     </message>
@@ -582,22 +588,27 @@
         <translation>存儲空間不足，文件發送失敗。請清理磁盤空間並重試！</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="244"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="227"/>
+        <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
+        <translation>網絡未連接，文件發送失敗。請連接網絡並重試！</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="246"/>
         <source>The other party has canceled the file transfer</source>
         <translation>對方已取消文件發送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="290"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="292"/>
         <source>&quot;%1&quot; delivery of files to you was interrupted due to a timeout</source>
         <translation>“%1”向您投送文件因超時中斷</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="300"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="302"/>
         <source>Network not connected, file delivery failed this time.                             Please connect to the network and try again!</source>
         <translation>網絡未連接，文件發送失敗。   請連接網絡並重試！</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="230"/>
+        <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="232"/>
         <source>File sent successfully</source>
         <translation>文件投送成功</translation>
     </message>

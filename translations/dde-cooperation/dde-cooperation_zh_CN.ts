@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>Application</name>
     <message>
@@ -100,7 +98,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="551"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation>网络未连接，文件发送失败。&#xa0;&#xa0; 请连接网络并重试！</translation>
+        <translation>网络未连接，文件发送失败。   请连接网络并重试！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="558"/>
@@ -170,7 +168,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="94"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>网络未连接，文件发送失败。请连接网络并重试！</translation>
+        <translation>网络未连接，文件发送失败。 请连接网络并重试！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/proxy/cooperationproxy.cpp" line="111"/>
@@ -607,7 +605,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="302"/>
         <source>Network not connected, file delivery failed this time.                             Please connect to the network and try again!</source>
-        <translation>网络未连接，文件发送失败。&#xa0;&#xa0; 请连接网络并重试！</translation>
+        <translation>网络未连接，文件发送失败。   请连接网络并重试！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="232"/>
