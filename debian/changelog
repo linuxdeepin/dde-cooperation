@@ -1,3 +1,10 @@
+dde-cooperation (0.6.3) unstable; urgency=medium
+
+  * v0.6.3 release version.
+  * fix some UI issues.
+
+ -- liujinchang <liujinchang@uniontech.com>  Thu, 25 Jan 2024 11:120:43 +0800
+
 dde-cooperation (0.6.2) unstable; urgency=medium
 
   * v0.6.2 release version.
