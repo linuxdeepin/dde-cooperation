@@ -15,7 +15,8 @@
 #include <QScrollBar>
 
 #include <utils/transferhepler.h>
-#include <utils/optionsmanager.h>
+#include <utils/transferhepler.h>
+#include <common/commonutils.h>
 
 TransferringWidget::TransferringWidget(QWidget *parent)
     : QFrame(parent)
@@ -212,6 +213,7 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     QString str = resetContent(tpye, content);
 
     if (!str.isEmpty()) {
+        str = deepin_cross::CommonUitls::elidedText(str, Qt::ElideMiddle, 30);
         QString info = QString("<img src=':/icon/success-128.svg' width='12' height='12' style='vertical-align: baseline;'>"
                                "<font color='#526A7F'style='vertical-align: baseline;'>&nbsp;&nbsp;&nbsp;%1</font>"
                                "&nbsp;&nbsp;<font color='#6199CA' style='vertical-align: baseline;'>%2</font>")

@@ -444,6 +444,16 @@ void SettingDialog::showEvent(QShowEvent *event)
     CooperationAbstractDialog::showEvent(event);
 }
 
+void SettingDialog::keyPressEvent(QKeyEvent *event) {
+#ifndef linux
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        event->ignore();
+        return;
+    }
+#endif
+    CooperationAbstractDialog::keyPressEvent(event); // 其他键按默认处理
+}
+
 void SettingDialog::loadConfig()
 {
 #ifdef linux

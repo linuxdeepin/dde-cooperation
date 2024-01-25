@@ -11,6 +11,7 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QPainter>
+#include <QMouseEvent>
 typedef QMainWindow CooperationMainWindow;
 typedef QDialog CooperationDialog;
 typedef QToolButton CooperationIconButton;
@@ -25,6 +26,7 @@ public:
     CooperationSwitchButton(QWidget *parent = nullptr) : QPushButton(parent){
         setFixedSize(50, 24);
         setCheckable(true);
+        setDefault(false);
     }
 protected:
     void paintEvent(QPaintEvent *event) override {
@@ -43,6 +45,13 @@ protected:
         painter.drawRoundedRect(this->rect(), 8, 8);
         painter.setBrush(color);
         painter.drawRoundedRect(rect, 8, 8);
+    }
+    void keyPressEvent(QKeyEvent *event) override {
+        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+            event->ignore();
+            return;
+        }
+        QPushButton::keyPressEvent(event);
     }
 };
 #else

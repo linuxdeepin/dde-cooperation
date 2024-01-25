@@ -1,6 +1,7 @@
 ﻿#include "zipfileprocessresultwidget.h"
 #include <utils/optionsmanager.h>
 #include <utils/transferhepler.h>
+#include <common/commonutils.h>
 #include "../type_defines.h"
 
 #include <QHBoxLayout>
@@ -117,7 +118,7 @@ void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int pr
     displayLabel->setVisible(false);
     icon->setPixmap(QIcon(":/icon/fail.svg").pixmap(128, 128));
     tipLabel1->setText(tr("Back up failed"));
-    tipLabel2->setText(content);
+    tipLabel2->setText(deepin_cross::CommonUitls::elidedText(content, Qt::ElideMiddle, 40));
     exitButton->setStyleSheet(".QToolButton{border-radius: 8px;"
                               "border: 1px solid rgba(0,0,0, 0.03);"
                               "opacity: 1;"

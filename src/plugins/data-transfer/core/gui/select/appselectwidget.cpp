@@ -73,7 +73,7 @@ void AppSelectWidget::initSelectFrame()
 {
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
-    ItemTitlebar *titlebar = new ItemTitlebar(tr("Application"), tr("Recommendation"), 50, 360,
+    ItemTitlebar *titlebar = new ItemTitlebar(tr("Application"), tr("Recommendation"), 40, 360,
                                               QRectF(10, 8, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
 
@@ -82,15 +82,15 @@ void AppSelectWidget::initSelectFrame()
     selectFrame->setFixedSize(500, 318);
     selectFrame->setStyleSheet(".QFrame{"
                                "border-radius: 8px;"
-                               " border: 1px solid rgba(0,0,0, 0.2);"
-                               " opacity: 1;"
+                               "border: 2px solid rgba(0,0,0, 0.1);"
+                               "opacity: 1;"
                                "background-color: rgba(255,255,255, 1);"
                                "}");
     selectFrame->setLayout(selectframeLayout);
 
     appView = new SelectListView(this);
     QStandardItemModel *model = appView->getModel();
-    appView->setItemDelegate(new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
+    appView->setItemDelegate(new ItemDelegate(84, 250, 376, 100, 40, QPoint(52, 6), QPoint(10, 9)));
 
     QMap<QString, QString> noRecommendList;
     QMap<QString, QString> appList = TransferHelper::instance()->getAppList(noRecommendList);

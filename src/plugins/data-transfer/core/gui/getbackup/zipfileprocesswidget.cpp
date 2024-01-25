@@ -13,6 +13,7 @@
 #include <gui/connect/choosewidget.h>
 #include <utils/transferhepler.h>
 #include <utils/optionsmanager.h>
+#include <common/commonutils.h>
 
 ZipFileProcessWidget::ZipFileProcessWidget(QWidget *parent) : QFrame(parent)
 {
@@ -32,7 +33,7 @@ void ZipFileProcessWidget::updateProcess(const QString &content, int processbar,
         nextPage();
         return;
     }
-    changeFileLabel(content);
+    changeFileLabel(deepin_cross::CommonUitls::elidedText(content, Qt::ElideMiddle, 40));
     changeTimeLabel(estimatedtime);
     changeProgressBarLabel(processbar);
 }

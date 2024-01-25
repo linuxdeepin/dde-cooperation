@@ -53,7 +53,6 @@ void UploadFileWidget::initUI()
     tipLabel->setVisible(false);
 
     QHBoxLayout *tipLayout = new QHBoxLayout();
-    tipLayout->addSpacing(15);
     tipLayout->addWidget(tipLabel);
     tipLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
@@ -97,7 +96,7 @@ void UploadFileWidget::initUI()
     mainLayout->addLayout(uploadLayout);
     mainLayout->addSpacing(100);
     mainLayout->addLayout(tipLayout);
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(5);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);

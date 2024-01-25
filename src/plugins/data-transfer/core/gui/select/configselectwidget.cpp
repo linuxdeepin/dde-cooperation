@@ -71,14 +71,14 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
 {
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
-    ItemTitlebar *titlebar = new ItemTitlebar(tr("Browser bookmarks"), tr("Recommendation"), 50,
+    ItemTitlebar *titlebar = new ItemTitlebar(tr("Browser bookmarks"), tr("Recommendation"), 40,
                                               360, QRectF(10, 8, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
     selectBrowerBookMarkFrame = new QFrame(this);
     selectBrowerBookMarkFrame->setFixedSize(500, 210);
     selectBrowerBookMarkFrame->setStyleSheet(".QFrame{"
                                              "border-radius: 8px;"
-                                             " border: 1px solid rgba(0,0,0, 0.2);"
+                                             " border: 2px solid rgba(0,0,0, 0.1);"
                                              " opacity: 1;"
                                              "background-color: rgba(255,255,255, 1);"
                                              "}");
@@ -88,7 +88,7 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
 
     QStandardItemModel *model = browserView->getModel();
     browserView->setItemDelegate(
-            new ItemDelegate(84, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
+            new ItemDelegate(84, 250, 376, 100, 40, QPoint(52, 6), QPoint(10, 9)));
 
     QMap<QString, QString> browserList = TransferHelper::instance()->getBrowserList();
     for (auto iterator = browserList.begin(); iterator != browserList.end(); iterator++) {
@@ -112,7 +112,7 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
 void ConfigSelectWidget::initSelectConfigFrame()
 {
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
-    ItemTitlebar *titlebar = new ItemTitlebar(tr("Personal Settings"), tr("Recommendation"), 50,
+    ItemTitlebar *titlebar = new ItemTitlebar(tr("Personal Settings"), tr("Recommendation"), 40,
                                               360, QRectF(10, 8, 16, 16), 3, this);
     titlebar->setFixedSize(500, 36);
 
@@ -121,7 +121,7 @@ void ConfigSelectWidget::initSelectConfigFrame()
     selectConfigFrame->setFixedSize(500, 88);
     selectConfigFrame->setStyleSheet(".QFrame{"
                                      "border-radius: 8px;"
-                                     "border: 1px solid rgba(0,0,0, 0.2);"
+                                     "border: 2px solid rgba(0,0,0, 0.1);"
                                      "opacity: 1;"
                                      "background-color: rgba(255,255,255, 1);"
                                      "}");
@@ -131,7 +131,7 @@ void ConfigSelectWidget::initSelectConfigFrame()
 
     QStandardItemModel *model = configView->getModel();
     configView->setItemDelegate(
-            new ItemDelegate(55, 250, 366, 100, 50, QPoint(52, 6), QPoint(10, 9)));
+            new ItemDelegate(55, 250, 376, 100, 40, QPoint(52, 6), QPoint(10, 9)));
 
     QStandardItem *item = new QStandardItem();
     item->setData(tr("Customized Wallpaper"), Qt::DisplayRole);
