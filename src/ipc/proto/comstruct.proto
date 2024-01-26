@@ -44,3 +44,14 @@ object ApplyTransFiles {
   string selfIp // 自己的IP地址
   int32 selfPort // 自己的端口
 }
+
+object SearchDevice {
+    string appname // 应用名称
+    string ip // 目标IP
+}
+
+object SearchDeviceResult {
+    bool result  // 搜索结果
+    string msg // 消息
+}
+

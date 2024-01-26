@@ -7,6 +7,7 @@
 #include <QReadWriteLock>
 #include <QMap>
 #include <QSharedPointer>
+#include <QMutex>
 
 #include <co/time.h>
 #include <co/stl.h>
@@ -75,6 +76,9 @@ public:
     bool started();
 
     void exit();
+
+    void setSearchIp(const QString &ip);
+    QString searchIp();
 private:
     void handle_message(const fastring& message, const fastring& sender_endpoint);
     bool remove_idle_services();
@@ -89,6 +93,10 @@ private:
     QReadWriteLock _discovered_lock;
     services _discovered_services;
     QList<service> _change_sevices;
+    mutable QMutex _search_ip_lock;
+    QString _search_ip;
+    int count = 0;
+    QStringList filter;
 
     DISALLOW_COPY_AND_ASSIGN(Discoverer);
 };

@@ -14,6 +14,7 @@ service Frontend {
     backendServerOnline, // server start ping client, and client is online, notify client ping server
     shareEvents, // share events
     cbDisConnect, // disconnect cb
+    searchDeviceRes, // search ip device result
 }
 
 // return {GenericResult}

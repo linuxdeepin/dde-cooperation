@@ -90,6 +90,8 @@ public:
 
     virtual void disconnectCb(co::Json& req, co::Json& res) override;
 
+    virtual void searchDevice(co::Json& req, co::Json& res) override;
+
 private:
     BackendService *_interface;
 };

@@ -68,6 +68,8 @@ public:
 
     virtual void cbDisConnect(co::Json& req, co::Json& res) override;
 
+    virtual void searchDeviceRes(co::Json& req, co::Json& res) override;
+
 private:
     FrontendService *_interface;
 };

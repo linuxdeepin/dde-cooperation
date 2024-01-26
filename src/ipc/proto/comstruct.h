@@ -168,3 +168,37 @@ struct ApplyTransFiles {
     }
 };
 
+struct SearchDevice {
+    fastring app;
+    fastring ip;
+
+    void from_json(const co::Json& _x_) {
+        app = _x_.get("app").as_c_str();
+        ip = _x_.get("ip").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("app", app);
+        _x_.add_member("ip", ip);
+        return _x_;
+    }
+};
+
+struct SearchDeviceResult {
+    bool result;
+    fastring msg;
+
+    void from_json(const co::Json& _x_) {
+        result = _x_.get("result").as_bool();
+        msg = _x_.get("msg").as_c_str();
+    }
+
+    co::Json as_json() const {
+        co::Json _x_;
+        _x_.add_member("result", result);
+        _x_.add_member("msg", msg);
+        return _x_;
+    }
+};
+

@@ -419,6 +419,8 @@ void HandleRpcService::handleRemotePing(co::Json &info)
 {
     PingPong pingjson;
     pingjson.from_json(info);
+    if (QString(pingjson.ip.c_str()).contains("search-ping"))
+        return;
     auto appName = QString(pingjson.appName.c_str());
     auto remoteip = QString(pingjson.ip.c_str());
     if (!_timeOut.isActive())

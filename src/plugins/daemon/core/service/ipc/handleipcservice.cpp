@@ -210,6 +210,10 @@ void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend
         handleShareConnectDisApply(msg);
         break;
     }
+    case BACK_SEARCH_IP_DEVICE: { // 搜索设备
+        handleSearchDevice(msg);
+        break;
+    }
     default:
         break;
     }
@@ -534,4 +538,11 @@ void HandleIpcService::handleShareServerStart(const bool ok, const QString msg)
     // 通知远端启动客户端连接到这里的batter服务器
     SendRpcService::instance()->doSendProtoMsg(SHARE_START, st.appName.c_str(),
                                                st.as_json().str().c_str());
+}
+
+void HandleIpcService::handleSearchDevice(co::Json json)
+{
+    SearchDevice de;
+    de.from_json(json);
+    DiscoveryJob::instance()->searchDeviceByIp(de.ip.c_str());
 }

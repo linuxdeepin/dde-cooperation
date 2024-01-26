@@ -22,6 +22,7 @@ service Backend {
     applyTransFiles, // apply trans files to target remote server
     shareEvents, // share mouse and other evets
     disconnectCb, // disconnect cb
+    searchDevice, // search target ip device
 }
 
 // return {CallResult} msg is session id string

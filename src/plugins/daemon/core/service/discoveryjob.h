@@ -33,6 +33,8 @@ public:
         return &ins;
     }
 
+    void searchDeviceByIp(const QString &ip);
+
 signals:
     void sigNodeChanged(bool found, QString info);
 

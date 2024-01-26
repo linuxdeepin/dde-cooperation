@@ -211,3 +211,16 @@ void FrontendImpl::cbDisConnect(co::Json &req, co::Json &res)
         { "msg", "" }
     };
 }
+
+void FrontendImpl::searchDeviceRes(co::Json &req, co::Json &res)
+{
+    BridgeJsonData bridge;
+    bridge.type = FRONT_SEARCH_IP_DEVICE_RESULT;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
+}

@@ -149,12 +149,14 @@ void ChooseWidget::nextPage()
 void ChooseWidget::themeChanged(int theme)
 {
     // light
+#ifndef linux
     if (theme == 1) {
         setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
     } else {
         // dark
         setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
     }
+#endif
     winItem->themeChanged(theme);
     packageItem->themeChanged(theme);
 }
@@ -270,4 +272,5 @@ void ModeItem::paintEvent(QPaintEvent *event)
     else
         paint.setPen(QColor(65, 77, 104, 255));
     paint.drawText(36, 24, itemText);
+    return QFrame::paintEvent(event);
 }

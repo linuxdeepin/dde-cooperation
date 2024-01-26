@@ -372,3 +372,17 @@ void BackendImpl::disconnectCb(co::Json &req, co::Json &res)
         { "msg", "" }
     };
 }
+
+void BackendImpl::searchDevice(co::Json &req, co::Json &res)
+{
+    BridgeJsonData bridge;
+    bridge.type = BACK_SEARCH_IP_DEVICE;
+    bridge.json = req.str();
+    _interface->bridgeChan()->operator<<(bridge);
+
+    // do not need to wait for result
+    res = {
+        { "result", true },
+        { "msg", "" }
+    };
+}

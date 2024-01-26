@@ -135,6 +135,29 @@ void Discoverer::exit()
     _stop = true;
 }
 
+void Discoverer::setSearchIp(const QString &ip)
+{
+    QMutexLocker lk(&_search_ip_lock);
+    _search_ip = ip;
+    count = 0;
+    if (!ip.isEmpty())
+        filter.append(ip);
+}
+
+QString Discoverer::searchIp()
+{
+    QMutexLocker lk(&_search_ip_lock);
+    if (_search_ip.isEmpty())
+        return _search_ip;
+    count++;
+    if (count <= 3)
+        return _search_ip;
+    filter.removeAll(_search_ip);
+    _search_ip = "";
+    count = 0;
+    return _search_ip;
+}
+
 void Discoverer::handle_message(const fastring& message, const fastring& sender_endpoint)
 {
     // 处理接收到的数据
@@ -147,15 +170,21 @@ void Discoverer::handle_message(const fastring& message, const fastring& sender_
 
     fastring name = node.get("name").as_string();
     fastring info = node.get("info").as_string();
-    fastring  ip = node.get("info","os","ipv4").as_string();
+    QString  ip = node.get("info","os","ipv4").as_string().c_str();
 
     QString endpoint(sender_endpoint.c_str());
     endpoint = endpoint.left(endpoint.indexOf(":"));
     // 判断同网段
-    auto preHost = ip.find_last_of(".") > ip.size()
-            ? ip : ip.substr(0, ip.find_last_of("."));
+    auto preHost = ip.lastIndexOf(".") > ip.size()
+            ? ip : ip.mid(0, ip.lastIndexOf("."));
     fastring self_ip = Util::getFirstIp();
-    if (message.starts_with(_listen_for_service) && ip != self_ip && self_ip.starts_with(preHost)) {
+    QStringList filters;
+    {
+        QMutexLocker lk(&_search_ip_lock);
+        filters = filter;
+    }
+    if (message.starts_with(_listen_for_service) && ip != QString(self_ip.c_str())
+            && (filters.contains(ip) || QString(self_ip.c_str()).startsWith(preHost))) {
         // 找到最近的时间修改，只发送改变了的
         handleChanges(endpoint, info, _timer.ms());
     } else {
