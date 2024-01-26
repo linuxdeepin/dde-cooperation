@@ -39,7 +39,7 @@ enum PageName {
     promptwidget,
     connectwidget,
     uploadwidget,
-    waitgwidget,
+    waitwidget,
     errorwidget,
     transferringwidget,
     resultwidget

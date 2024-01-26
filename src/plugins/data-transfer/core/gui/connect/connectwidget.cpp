@@ -201,7 +201,7 @@ void ConnectWidget::initConnectLayout()
 
 void ConnectWidget::nextPage()
 {
-    emit TransferHelper::instance()->changeWidget(PageName::waitgwidget);
+    emit TransferHelper::instance()->changeWidget(PageName::waitwidget);
 }
 
 void ConnectWidget::backPage()

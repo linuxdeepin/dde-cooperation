@@ -70,22 +70,20 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::networkdisconnectwidget, networkdisconnectwidget);
     stackedWidget->insertWidget(PageName::promptwidget, promptwidget);
     stackedWidget->insertWidget(PageName::connectwidget, connectwidget);
-    stackedWidget->insertWidget(PageName::waitgwidget, waitgwidget);
+    stackedWidget->insertWidget(PageName::waitwidget, waitgwidget);
     stackedWidget->insertWidget(PageName::transferringwidget, transferringwidget);
     stackedWidget->insertWidget(PageName::errorwidget, errorwidget);
     stackedWidget->insertWidget(PageName::resultwidget, resultwidget);
 
     stackedWidget->setCurrentIndex(PageName::startwidget);
 
-    connect(stackedWidget, &QStackedWidget::currentChanged, this, [transferringwidget, resultwidget, uploadwidget](int index) {
-        if (index == PageName::choosewidget) {
-            transferringwidget->clear();
-            resultwidget->clear();
-            uploadwidget->clear();
-        }
+    connect(TransferHelper::instance(), &TransferHelper::clearWidget, this, [transferringwidget, resultwidget, uploadwidget]() {
+        transferringwidget->clear();
+        resultwidget->clear();
+        uploadwidget->clear();
     });
     connect(TransferHelper::instance(), &TransferHelper::connectSucceed, this, [this] {
-        stackedWidget->setCurrentIndex(PageName::waitgwidget);
+        stackedWidget->setCurrentIndex(PageName::waitwidget);
     });
 
     connect(TransferHelper::instance(), &TransferHelper::transferring, this, [this] {
@@ -101,7 +99,7 @@ void MainWindowPrivate::initWidgets()
                     return;
                 int index = stackedWidget->currentIndex();
                 //only these need jump to networkdisconnectwidget
-                if (index == PageName::connectwidget || index == PageName::waitgwidget || index == PageName::promptwidget)
+                if (index == PageName::connectwidget || index == PageName::waitwidget || index == PageName::promptwidget)
                     stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
                 if (index == PageName::transferringwidget) {
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
@@ -115,7 +113,7 @@ void MainWindowPrivate::initWidgets()
                 int index = stackedWidget->currentIndex();
                 if (index == PageName::errorwidget)
                     return;
-                if (index == PageName::transferringwidget || index == PageName::waitgwidget)
+                if (index == PageName::transferringwidget || index == PageName::waitwidget)
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
                 errorwidget->setErrorType(ErrorType::networkError);
             });

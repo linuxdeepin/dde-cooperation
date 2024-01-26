@@ -34,7 +34,10 @@ void ResultDisplayWidget::initUI()
     titileLabel->setAlignment(Qt::AlignCenter);
 
     tiptextlabel = new QLabel(this);
-    tiptextlabel->setText(QString("<font size=12px color='#526A7F' >%1</font>").arg(tr("Partial information migration failed, please go to UOS for manual transfer")));
+    QFont font;
+    font.setPixelSize(12);
+    tiptextlabel->setFont(font);
+    tiptextlabel->setText(QString("<font color='#526A7F' >%1</font>").arg(tr("Partial information migration failed, please go to UOS for manual transfer")));
     tiptextlabel->setAlignment(Qt::AlignCenter);
     tiptextlabel->setVisible(false);
 
@@ -86,11 +89,23 @@ void ResultDisplayWidget::initUI()
 
     connect(TransferHelper::instance(), &TransferHelper::addResult, this,
             &ResultDisplayWidget::addResult);
+#ifdef linux
+    connect(TransferHelper::instance(), &TransferHelper::transferFinished, this, [this] {
+        TransferHelper::instance()->sendMessage("add_result", processText);
+    });
+#endif
 }
 
 void ResultDisplayWidget::nextPage()
 {
-    emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
+#ifdef linux
+    emit TransferHelper::instance()->changeWidget(PageName::waitwidget);
+    TransferHelper::instance()->sendMessage("change_page", "selectmainwidget");
+#else
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
+    TransferHelper::instance()->sendMessage("change_page", "waitwidget");
+#endif
+    emit TransferHelper::instance()->clearWidget();
 }
 
 void ResultDisplayWidget::themeChanged(int theme)
@@ -98,17 +113,6 @@ void ResultDisplayWidget::themeChanged(int theme)
     // light
     if (theme == 1) {
         processTextBrowser->setStyleSheet(StyleHelper::textBrowserStyle(1));
-        processTextBrowser->setStyleSheet("QTextBrowser {"
-                                          "border-radius: 10px;"
-                                          "padding-top: 10px;"
-                                          "padding-bottom: 10px;"
-                                          "padding-left: 5px;"
-                                          "padding-right: 5px;"
-                                          "font-size: 12px;"
-                                          "font-weight: 400;"
-                                          "color: rgb(82, 106, 127);"
-                                          "line-height: 300%;"
-                                          "background-color:rgba(0, 0, 0,0.08);}");
     } else {
         // dark
         setStyleSheet(".ResultDisplayWidget{-color: rgb(37, 37, 37); border-radius: 10px;}");
@@ -125,14 +129,23 @@ void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
     } else
         color = "#6199CA";
     name = ellipsizedText(name, 430, QFont());
+#ifdef linux
     info = QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color='%2'>%3</font>")
                    .arg(name, color, reason);
+#else
+    info = QString("<p style='line-height: 0.5;'><font color='#526A7F'>&nbsp;%1</font>&nbsp;<font color='%2'>%3</font></p>")
+                   .arg(name, color, reason);
+#endif
+
     processTextBrowser->append(info);
+    QString res = success ? "true" : "false";
+    processText.append(name + " " + res + " " + reason + ";");
 }
 
 void ResultDisplayWidget::clear()
 {
     processTextBrowser->clear();
+    processText.clear();
     setStatus(true);
 }
 

@@ -141,8 +141,6 @@ void ChooseWidget::nextPage()
 {
     sendOptions();
     emit TransferHelper::instance()->changeWidgetText();
-    emit TransferHelper::instance()->clearSelectWidget();
-
     emit TransferHelper::instance()->changeWidget((PageName)nextpage);
 }
 
@@ -190,7 +188,7 @@ void ModeItem::setEnable(bool able)
 #ifdef linux
     setEnabled(able);
 #else
-    if  (able)
+    if (able)
         setStyleSheet(".ModeItem{"
                       "border-radius: 8px;"
                       "opacity: 1;"

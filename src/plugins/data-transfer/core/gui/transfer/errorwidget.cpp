@@ -102,13 +102,13 @@ void ErrorWidget::initUI()
 
 void ErrorWidget::backPage()
 {
-    emit TransferHelper::instance()->clearSelectWidget();
+    emit TransferHelper::instance()->clearWidget();
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void ErrorWidget::retryPage()
 {
-    emit TransferHelper::instance()->clearSelectWidget();
+    emit TransferHelper::instance()->clearWidget();
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 void ErrorWidget::themeChanged(int theme)

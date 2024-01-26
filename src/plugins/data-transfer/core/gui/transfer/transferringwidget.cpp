@@ -236,6 +236,14 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     }
     if (estimatedtime == -2) {
         timeLabel->setText(QString(tr("Transfer will be completed in --")));
+#ifdef linux
+        //通知对方进程情况
+        QString mes = tpye + " "
+                + content + " "
+                + QString::number(progressbar) + " "
+                + QString::number(estimatedtime) + ";";
+        TransferHelper::instance()->sendMessage("transfer_content", mes);
+#endif
     }
 }
 

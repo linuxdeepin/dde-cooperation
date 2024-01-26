@@ -246,9 +246,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
         if (it != _job_maps.end()) {
             _job_maps.erase(it);
         }
-#ifdef WIN32
-        emit TransferHelper::instance()->transferFinished();
-#else
+#ifndef WIN32
         TransferHelper::instance()->setting(path);
 #endif
         break;
@@ -326,7 +324,6 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
 
     LOG_IF(FLG_log_detail) << "progressbar: " << progressbar << " remain_time=" << remain_time;
     LOG_IF(FLG_log_detail) << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
-
     emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
 }
 
@@ -339,10 +336,9 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
         return;
     }
 
-    // 前次迁移未完成信息
     if (miscJson.has_member("unfinish_json")) {
+        // 前次迁移未完成信息
         QString undoneJsonstr = miscJson.get("unfinish_json").as_c_str();
-        // 弹出前次迁移未完成对话框
         emit TransferHelper::instance()->unfinishedJob(undoneJsonstr);
     }
 
@@ -350,6 +346,44 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
         int remainSpace = miscJson.get("remaining_space").as_int();
         LOG << "remaining_space " << remainSpace << "G";
         emit TransferHelper::instance()->remoteRemainSpace(remainSpace);
+    }
+
+    if (miscJson.has_member("add_result")) {
+        QString result = miscJson.get("add_result").as_c_str();
+        LOG << "add_result--------------------- " << result.data();
+        for (QString str : result.split(";")) {
+            auto res = str.split(" ");
+            if (res.size() != 3)
+                continue;
+            emit TransferHelper::instance()->addResult(res.at(0), res.at(1) == "true", res.at(2));
+        }
+        emit TransferHelper::instance()->transferFinished();
+    }
+
+    if (miscJson.has_member("change_page")) {
+        QString result = miscJson.get("change_page").as_c_str();
+        LOG << "change_page--------------------- " << result.data();
+#ifdef linux
+        if (result == "waitwidget") {
+            emit TransferHelper::instance()->changeWidget(PageName::waitwidget);
+            emit TransferHelper::instance()->clearWidget();
+        }
+#else
+        if (result == "selectmainwidget") {
+            emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
+            emit TransferHelper::instance()->clearWidget();
+        }
+#endif
+    }
+
+    if (miscJson.has_member("transfer_content")) {
+        QString result = miscJson.get("transfer_content").as_c_str();
+        for (QString str : result.split(";")) {
+            auto res = str.split(" ");
+            if (res.size() != 4)
+                continue;
+            emit TransferHelper::instance()->transferContent(res.at(0), res.at(1), res.at(2).toInt(), res.at(3).toInt());
+        }
     }
 }
 

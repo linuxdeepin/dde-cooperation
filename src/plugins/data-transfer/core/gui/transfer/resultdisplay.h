@@ -27,6 +27,7 @@ private:
 
 private:
     QTextBrowser *processTextBrowser { nullptr };
+    QString processText;
     QLabel *iconLabel { nullptr };
     QLabel *titileLabel { nullptr };
     QLabel *tiptextlabel { nullptr };

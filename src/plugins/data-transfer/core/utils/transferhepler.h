@@ -36,6 +36,7 @@ public:
 
     void emitDisconnected();
 
+    void sendMessage(const QString &type, const QString &message);
 #ifdef WIN32
     QMap<QString, QString> getAppList(QMap<QString, QString> &noRecommedApplist);
     QMap<QString, QString> getBrowserList();
@@ -95,8 +96,8 @@ Q_SIGNALS:
     // unfinish json content from latest job
     void unfinishedJob(const QString jsonstr);
 
-    // clear select widget
-    void clearSelectWidget();
+    // clear widget content for next transfer
+    void clearWidget();
 
     // change widget text by select
     void changeWidgetText();

@@ -139,6 +139,13 @@ void TransferHelper::emitDisconnected()
         emit disconnected();
 }
 
+void TransferHelper::sendMessage(const QString &type, const QString &message)
+{
+    json::Json mes;
+    mes.add_member(type.toUtf8().constData(), message.toStdString());
+    transferhandle.sendMessage(mes);
+}
+
 #ifdef WIN32
 void TransferHelper::startTransfer()
 {

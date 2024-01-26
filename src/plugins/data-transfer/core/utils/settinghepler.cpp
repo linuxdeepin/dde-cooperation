@@ -235,8 +235,8 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
             addTaskcounter(-1);
         }
         if (key == "Status" && value == "failed") {
-            addTaskcounter(-1);
             emit TransferHelper::instance()->addResult(app, false, tr("Installation failed, please go to the app store to install"));
+            addTaskcounter(-1);
         }
     }
 }

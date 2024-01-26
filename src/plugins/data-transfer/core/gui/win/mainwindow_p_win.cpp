@@ -136,7 +136,7 @@ void MainWindowPrivate::initWidgets()
                      });
     QObject::connect(selectmainwidget, &SelectMainWidget::updateBackupFileSize,
                      createbackupfilewidget, &CreateBackupFileWidget::updaeBackupFileSize);
-    QObject::connect(TransferHelper::instance(), &TransferHelper::clearSelectWidget, this,
+    QObject::connect(TransferHelper::instance(), &TransferHelper::clearWidget, this,
                      &MainWindowPrivate::clearWidget);
     QObject::connect(TransferHelper::instance(), &TransferHelper::changeWidgetText, this,
                      &MainWindowPrivate::changeAllWidgtText);
@@ -260,6 +260,8 @@ void MainWindowPrivate::clearWidget()
             stackedWidget->widget(PageName::createbackupfilewidget));
     TransferringWidget *widgetTransfer =
             qobject_cast<TransferringWidget *>(stackedWidget->widget(PageName::transferringwidget));
+    ResultDisplayWidget *widgetRes =
+            qobject_cast<ResultDisplayWidget *>(stackedWidget->widget(PageName::resultwidget));
 
     widgetFile->clear();
     widgetConfig->clear();
@@ -267,6 +269,7 @@ void MainWindowPrivate::clearWidget()
     widgetMainselect->clear();
     widgetbackupFile->clear();
     widgetTransfer->clear();
+    widgetRes->clear();
 }
 
 void MainWindowPrivate::changeAllWidgtText()
