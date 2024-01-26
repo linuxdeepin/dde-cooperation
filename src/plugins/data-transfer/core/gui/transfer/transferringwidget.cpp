@@ -15,7 +15,7 @@
 #include <QScrollBar>
 
 #include <utils/transferhepler.h>
-#include <utils/transferhepler.h>
+#include <utils/optionsmanager.h>
 #include <common/commonutils.h>
 
 TransferringWidget::TransferringWidget(QWidget *parent)
