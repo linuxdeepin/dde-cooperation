@@ -92,6 +92,8 @@ public:
 
     virtual void searchDevice(co::Json& req, co::Json& res) override;
 
+    virtual void currentStatus(co::Json& req, co::Json& res) override;
+
 private:
     BackendService *_interface;
 };

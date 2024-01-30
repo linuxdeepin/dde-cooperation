@@ -23,6 +23,7 @@ service Backend {
     shareEvents, // share mouse and other evets
     disconnectCb, // disconnect cb
     searchDevice, // search target ip device
+    currentStatus, // current server status
 }
 
 // return {CallResult} msg is session id string

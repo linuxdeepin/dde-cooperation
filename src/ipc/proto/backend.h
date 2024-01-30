@@ -35,6 +35,7 @@ class Backend : public rpc::Service {
         _methods["Backend.shareEvents"] = std::bind(&Backend::shareEvents, this, _1, _2);
         _methods["Backend.disconnectCb"] = std::bind(&Backend::disconnectCb, this, _1, _2);
         _methods["Backend.searchDevice"] = std::bind(&Backend::searchDevice, this, _1, _2);
+        _methods["Backend.currentStatus"] = std::bind(&Backend::currentStatus, this, _1, _2);
     }
 
     virtual ~Backend() {}
@@ -90,6 +91,8 @@ class Backend : public rpc::Service {
     virtual void disconnectCb(co::Json& req, co::Json& res) = 0;
 
     virtual void searchDevice(co::Json& req, co::Json& res) = 0;
+
+    virtual void currentStatus(co::Json& req, co::Json& res) = 0;
 
   private:
     co::map<const char*, Fun> _methods;

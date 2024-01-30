@@ -4,6 +4,7 @@
 
 #include "backendservice.h"
 #include "common/constant.h"
+#include "service/comshare.h"
 #include "common/commonstruct.h"
 #include "utils/config.h"
 
@@ -383,6 +384,16 @@ void BackendImpl::searchDevice(co::Json &req, co::Json &res)
     // do not need to wait for result
     res = {
         { "result", true },
+        { "msg", "" }
+    };
+}
+
+void BackendImpl::currentStatus(co::Json &req, co::Json &res)
+{
+    Q_UNUSED(req);
+    // do not need to wait for result
+    res = {
+        { "result", Comshare::instance()->currentStatus() },
         { "msg", "" }
     };
 }
