@@ -31,25 +31,15 @@ void WaitTransferWidget::initUI()
 
     QLabel *titileLabel = new QLabel(tr("Waiting for transfer..."), this);
     titileLabel->setFixedHeight(50);
-    titileLabel->setFont(StyleHelper::font(2));
+    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QLabel *tipLabel = new QLabel(tr("Please select the data to transfer on Windows"), this);
     tipLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-    iconLabel = new QLabel(this);
-    lighticonmovie = new QMovie(this);
-    lighticonmovie->setFileName(":/icon/GIF/light/waiting.gif");
-    lighticonmovie->setScaledSize(QSize(200, 160));
-    lighticonmovie->setSpeed(80);
-    lighticonmovie->start();
-    darkiconmovie = new QMovie(this);
-    darkiconmovie->setFileName(":/icon/GIF/dark/waiting.gif");
-    darkiconmovie->setScaledSize(QSize(200, 160));
-    darkiconmovie->setSpeed(80);
-    darkiconmovie->start();
-    iconLabel->setMovie(lighticonmovie);
-    iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
+    auto iconWidget = new MovieWidget("transferring", this);
+    QHBoxLayout *iconLayout = new QHBoxLayout();
+    iconLayout->addWidget(iconWidget, Qt::AlignCenter);
 
     ButtonLayout *buttonLayout = new ButtonLayout();
     buttonLayout->setCount(1);
@@ -67,8 +57,9 @@ void WaitTransferWidget::initUI()
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel);
-    mainLayout->addWidget(iconLabel);
-    mainLayout->addSpacing(50);
+    mainLayout->addSpacing(65);
+    mainLayout->addLayout(iconLayout);
+    mainLayout->addStretch();
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
@@ -90,11 +81,9 @@ void WaitTransferWidget::themeChanged(int theme)
     //light
     if (theme == 1) {
         setStyleSheet(".WaitTransferWidget{background-color: white; border-radius: 10px;}");
-        iconLabel->setMovie(lighticonmovie);
     } else {
         //dark
         setStyleSheet(".WaitTransferWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
-        iconLabel->setMovie(darkiconmovie);
     }
 }
 

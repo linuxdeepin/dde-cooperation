@@ -24,9 +24,6 @@ private:
 
 private:
     QPushButton *backButton { nullptr };
-    QLabel *iconLabel { nullptr };
-    QMovie *lighticonmovie { nullptr };
-    QMovie *darkiconmovie { nullptr };
 
 #ifndef WIN32
 public:

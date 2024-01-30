@@ -32,10 +32,8 @@ private:
     void initConnect();
 
 private:
+    QWidget *iconWidget { nullptr };
     QLabel *titileLabel { nullptr };
-    QLabel *iconLabel { nullptr };
-    QMovie *lighticonmovie { nullptr };
-    QMovie *darkiconmovie { nullptr };
     QLabel *fileLabel { nullptr };
     QLabel *displayLabel { nullptr };
     QLabel *timeLabel { nullptr };

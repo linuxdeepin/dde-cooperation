@@ -88,6 +88,11 @@ bool TransferHelper::getOnlineState() const
     return online;
 }
 
+bool TransferHelper::getConnectStatus() const
+{
+    return true;
+}
+
 QString TransferHelper::getConnectPassword()
 {
     return transferhandle.getConnectPassWord();

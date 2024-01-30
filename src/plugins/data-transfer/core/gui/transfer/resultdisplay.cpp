@@ -34,9 +34,7 @@ void ResultDisplayWidget::initUI()
     titileLabel->setAlignment(Qt::AlignCenter);
 
     tiptextlabel = new QLabel(this);
-    QFont font;
-    font.setPixelSize(12);
-    tiptextlabel->setFont(font);
+    tiptextlabel->setFont(StyleHelper::font(3));
     tiptextlabel->setText(QString("<font color='#526A7F' >%1</font>").arg(tr("Partial information migration failed, please go to UOS for manual transfer")));
     tiptextlabel->setAlignment(Qt::AlignCenter);
     tiptextlabel->setVisible(false);

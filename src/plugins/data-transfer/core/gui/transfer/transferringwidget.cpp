@@ -36,23 +36,13 @@ void TransferringWidget::initUI()
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
 
-    iconLabel = new QLabel(this);
-    lighticonmovie = new QMovie(this);
-    lighticonmovie->setFileName(":/icon/GIF/light/transferring.gif");
-    lighticonmovie->setScaledSize(QSize(200, 160));
-    lighticonmovie->setSpeed(80);
-    lighticonmovie->start();
-    darkiconmovie = new QMovie(this);
-    darkiconmovie->setFileName(":/icon/GIF/dark/transferring.gif");
-    darkiconmovie->setScaledSize(QSize(200, 160));
-    darkiconmovie->setSpeed(80);
-    darkiconmovie->start();
-    iconLabel->setMovie(lighticonmovie);
-    iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
+    iconWidget = new MovieWidget("transferring", this);
+    QHBoxLayout *iconLayout = new QHBoxLayout();
+    iconLayout->addWidget(iconWidget, Qt::AlignCenter);
 
     titileLabel = new QLabel(tr("Transferring..."), this);
     titileLabel->setFixedHeight(50);
-    titileLabel->setFont(StyleHelper::font(2));
+    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     progressLabel = new ProgressBarLabel(this);
@@ -64,17 +54,16 @@ void TransferringWidget::initUI()
 
     timeLabel = new QLabel(this);
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    QFont timefont;
-    timefont.setPointSize(12);
-    timeLabel->setFont(timefont);
+    timeLabel->setFont(StyleHelper::font(3));
+    timeLabel->setText(QString(tr("Calculationing...")));
 
     fileLabel = new QLabel(this);
     fileLabel->setAlignment(Qt::AlignCenter);
-    timeLabel->setText(QString(tr("Calculationing...")));
 
     QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
                               .arg(tr("Show processes"));
     displayLabel = new QLabel(display, this);
+    displayLabel->setFont(StyleHelper::font(3));
     displayLabel->setAlignment(Qt::AlignCenter);
     QObject::connect(displayLabel, &QLabel::linkActivated, this,
                      &TransferringWidget::initInformationPage);
@@ -116,7 +105,7 @@ void TransferringWidget::initUI()
     textBrowerlayout->addWidget(processTextBrowser);
 
     mainLayout->setAlignment(Qt::AlignHCenter);
-    mainLayout->addWidget(iconLabel);
+    mainLayout->addLayout(iconLayout);
     mainLayout->addSpacing(20);
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(20);
@@ -145,7 +134,7 @@ void TransferringWidget::initInformationPage()
 {
     if (!isVisible) {
         isVisible = true;
-        iconLabel->setVisible(false);
+        iconWidget->setVisible(false);
         fileLabel->setVisible(false);
         fileNameFrame->setVisible(true);
 
@@ -177,7 +166,7 @@ void TransferringWidget::initInformationPage()
         hideAnimation->start();
         loop.exec();
 
-        iconLabel->setVisible(true);
+        iconWidget->setVisible(true);
         fileLabel->setVisible(true);
         fileNameFrame->setVisible(false);
     }
@@ -252,11 +241,9 @@ void TransferringWidget::themeChanged(int theme)
     // light
     if (theme == 1) {
         setStyleSheet(".TransferringWidget{background-color: white; border-radius: 10px;}");
-        iconLabel->setMovie(lighticonmovie);
     } else {
         // dark
         setStyleSheet(".TransferringWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
-        iconLabel->setMovie(darkiconmovie);
     }
 }
 

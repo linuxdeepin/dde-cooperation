@@ -103,4 +103,24 @@ private:
 protected:
     void paintEvent(QPaintEvent *event) override;
 };
+
+class MovieWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    MovieWidget(QString filename, QWidget *parent = nullptr);
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
+private slots:
+    void nextFrame();
+    void loadFrames();
+
+private:
+    QString movie;
+    QTimer *timer;
+    QVector<QPixmap> frames;   // 存储图像帧
+    int currentFrame = 0;   // 当前帧索引
+};
 #endif   // TYPE_DEFINES_H

@@ -25,6 +25,7 @@ public:
 
     QString getConnectPassword();
     bool getOnlineState() const;
+    bool getConnectStatus() const;
 
     void tryConnect(const QString &ip, const QString &password);
 

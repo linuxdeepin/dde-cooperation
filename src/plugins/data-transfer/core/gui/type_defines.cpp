@@ -1,6 +1,7 @@
 ﻿#include "type_defines.h"
 
 #include <QPainter>
+#include <QTimer>
 
 ButtonLayout::ButtonLayout(QWidget *parent)
     : QHBoxLayout(parent)
@@ -77,6 +78,9 @@ QFont StyleHelper::font(int type)
     case 2:
         font.setPixelSize(17);
         font.setWeight(QFont::DemiBold);
+        break;
+    case 3:
+        font.setPixelSize(12);
         break;
     default:
         break;
@@ -211,5 +215,37 @@ void IndexLabel::paintEvent(QPaintEvent *event)
 
         painter.setBrush(brushColor);
         painter.drawEllipse((diam + 8) * i + 6, 0, diam, diam);
+    }
+}
+
+MovieWidget::MovieWidget(QString filename, QWidget *parent)
+    : QWidget(parent), movie(filename)
+{
+    setFixedSize(200, 160);
+    loadFrames();
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MovieWidget::nextFrame);
+    timer->start(50);
+}
+
+void MovieWidget::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+    QPainter painter(this);
+    painter.drawPixmap(0, 0, frames[currentFrame]);
+}
+
+void MovieWidget::nextFrame()
+{
+    currentFrame = (currentFrame + 1) % frames.size();
+    update();
+}
+
+void MovieWidget::loadFrames()
+{
+    for (int i = 0; i <= 49; ++i) {
+        QPixmap frame = QIcon(":/icon/movie/" + movie + "/" + movie + QString::number(i) + ".png")
+                                .pixmap(200, 160);
+        frames.append(frame);
     }
 }
