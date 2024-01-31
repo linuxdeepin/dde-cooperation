@@ -12,6 +12,8 @@
 #include <QVBoxLayout>
 #include <QApplication>
 
+#include <gui/widgets/cooperationstatewidget.h>
+
 using namespace cooperation_core;
 DWIDGET_USE_NAMESPACE
 

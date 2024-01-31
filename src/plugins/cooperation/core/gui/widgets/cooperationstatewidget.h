@@ -6,6 +6,7 @@
 #define COOPERATIONSTATEWIDGET_H
 
 #include <QWidget>
+#include "backgroundwidget.h"
 #include "global_defines.h"
 
 namespace cooperation_core {
@@ -40,17 +41,42 @@ private:
     void initUI();
 };
 
+class NoResultTipWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit NoResultTipWidget(QWidget *parent = nullptr);
+
+    void onLinkActivated(const QString &link);
+
+private:
+    void initUI();
+};
+
 class NoResultWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit NoResultWidget(QWidget *parent = nullptr);
 
-public Q_SLOTS:
-    void onLinkActivated(const QString &link);
+private:
+    void initUI();
+};
+
+class BottomLabel : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit BottomLabel(QWidget *parent = nullptr);
+
+protected:
+    void paintEvent(QPaintEvent *) override;
 
 private:
     void initUI();
+
+private:
+    CooperationAbstractDialog *dailog { nullptr };
 };
 
 }   // namespace cooperation_core

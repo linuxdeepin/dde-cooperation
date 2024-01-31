@@ -8,6 +8,14 @@
 #include "devicelistwidget.h"
 
 #include <QMouseEvent>
+#include <QRegularExpression>
+#include <QTimer>
+#include <QToolButton>
+#include <QToolTip>
+
+#include <transfer/transferhelper.h>
+
+#include <maincontroller/maincontroller.h>
 
 using namespace cooperation_core;
 
@@ -50,20 +58,24 @@ void WorkspaceWidgetPrivate::initUI()
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 15, 0, 15);
+    mainLayout->setContentsMargins(0, 15, 0, 0);
 #ifndef linux
     mainLayout->addSpacing(50);
     mainLayout->addWidget(searchEdit, 0, Qt::AlignHCenter);
 #else
     mainLayout->addWidget(searchEdit);
 #endif
+    BottomLabel *bottomLabel = new BottomLabel(q);
+
     mainLayout->addSpacing(15);
     mainLayout->addLayout(stackedLayout);
+    mainLayout->addWidget(bottomLabel);
     q->setLayout(mainLayout);
 }
 
 void WorkspaceWidgetPrivate::initConnect()
 {
+    connect(searchEdit, &CooperationSearchEdit::editingFinished, this, &WorkspaceWidgetPrivate::onSearchDevice);
     connect(searchEdit, &CooperationSearchEdit::textChanged, this, &WorkspaceWidgetPrivate::onSearchValueChanged);
     connect(this, &WorkspaceWidgetPrivate::devicesAdded, sortFilterWorker.data(), &SortFilterWorker::addDevice, Qt::QueuedConnection);
     connect(this, &WorkspaceWidgetPrivate::devicesRemoved, sortFilterWorker.data(), &SortFilterWorker::removeDevice, Qt::QueuedConnection);
@@ -83,6 +95,19 @@ void WorkspaceWidgetPrivate::onSearchValueChanged(const QString &text)
 
     dlWidget->clear();
     Q_EMIT filterDevice(text);
+}
+
+void WorkspaceWidgetPrivate::onSearchDevice()
+{
+    QRegularExpression ipPattern("^(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|172\\.(1[6-9]|2[0-9]|3[0-1])\\.\\d{1,3}\\.\\d{1,3}|192\\.168\\.\\d{1,3}\\.\\d{1,3})$");
+    QString ip = searchEdit->text();
+    if (!ipPattern.match(ip).hasMatch())
+        return;
+
+    q->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
+    QTimer::singleShot(500, this, [ip] {
+        TransferHelper::instance()->searchDevice(ip);
+    });
 }
 
 void WorkspaceWidgetPrivate::onSortFilterResult(int index, const DeviceInfoPointer info)

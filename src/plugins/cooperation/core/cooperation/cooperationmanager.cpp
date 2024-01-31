@@ -562,3 +562,9 @@ void CooperationManager::handleNetworkDismiss(const QString &msg)
                                         true);
     }
 }
+
+void CooperationManager::handleSearchDeviceResult(bool res)
+{
+    if(!res)
+        emit MainController::instance()->discoveryFinished(false);
+}

@@ -8,6 +8,8 @@
 #include <QStandardItemModel>
 #include <QScrollBar>
 #include <QTextBrowser>
+#include <QTimer>
+#include <QStackedWidget>
 #include <utils/transferhepler.h>
 
 ResultDisplayWidget::ResultDisplayWidget(QWidget *parent)
@@ -96,14 +98,17 @@ void ResultDisplayWidget::initUI()
 
 void ResultDisplayWidget::nextPage()
 {
-#ifdef linux
-    emit TransferHelper::instance()->changeWidget(PageName::waitwidget);
-    TransferHelper::instance()->sendMessage("change_page", "selectmainwidget");
-#else
-    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
-    TransferHelper::instance()->sendMessage("change_page", "waitwidget");
-#endif
-    emit TransferHelper::instance()->clearWidget();
+    TransferHelper::instance()->sendMessage("change_page", "startTransfer");
+    QTimer::singleShot(1000, this, [this] {
+        QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
+        if (stackedWidget) {
+            if (stackedWidget->currentIndex() == PageName::resultwidget)
+                stackedWidget->setCurrentIndex(PageName::choosewidget);
+        } else {
+            WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
+                    "nullptr";
+        }
+    });
 }
 
 void ResultDisplayWidget::themeChanged(int theme)

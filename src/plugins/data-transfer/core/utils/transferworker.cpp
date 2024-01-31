@@ -350,7 +350,7 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
 
     if (miscJson.has_member("add_result")) {
         QString result = miscJson.get("add_result").as_c_str();
-        LOG << "add_result--------------------- " << result.data();
+        LOG << "add_result" << result.data();
         for (QString str : result.split(";")) {
             auto res = str.split(" ");
             if (res.size() != 3)
@@ -362,18 +362,17 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
 
     if (miscJson.has_member("change_page")) {
         QString result = miscJson.get("change_page").as_c_str();
-        LOG << "change_page--------------------- " << result.data();
+        LOG << "change_page" << result.data();
+        if (!result.endsWith("_cb"))
+            TransferHelper::instance()->sendMessage("change_page", result + "_cb");
+        if (result.startsWith("startTransfer")) {
 #ifdef linux
-        if (result == "waitwidget") {
             emit TransferHelper::instance()->changeWidget(PageName::waitwidget);
-            emit TransferHelper::instance()->clearWidget();
-        }
 #else
-        if (result == "selectmainwidget") {
             emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
+#endif
             emit TransferHelper::instance()->clearWidget();
         }
-#endif
     }
 
     if (miscJson.has_member("transfer_content")) {

@@ -253,6 +253,15 @@ void CooperationUtilPrivate::localIPCStart()
                 }
                 break;
             }
+            case FRONT_SEARCH_IP_DEVICE_RESULT: {
+                SearchDeviceResult param;
+                param.from_json(json_obj);
+                LOG << "SearchDeviceResult : " << json_obj;
+                q->metaObject()->invokeMethod(CooperationManager::instance(),
+                                              "handleSearchDeviceResult",
+                                              Qt::QueuedConnection,
+                                              Q_ARG(bool, param.result));
+            } break;
             default:
                 break;
             }

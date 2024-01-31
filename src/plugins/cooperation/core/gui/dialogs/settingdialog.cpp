@@ -22,6 +22,7 @@
 #include <info/deviceinfo.h>
 #include <utils/cooperationutil.h>
 #include <base/reportlog/reportlogmanager.h>
+#include <gui/widgets/deviceitem.h>
 
 #ifdef linux
 static const char *Kdisplay_right = "display_right";
@@ -120,7 +121,7 @@ void SettingDialogPrivate::createBasicWidget()
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
-    tipLabel->setFont(tipFont);
+    CooperationGuiHelper::setLabelFont(tipLabel, 12, 10, tipFont.weight());
 
 #ifdef linux
     tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
@@ -177,9 +178,10 @@ void SettingDialogPrivate::createDeviceShareWidget()
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
-    tipLabel->setFont(tipFont);
+    CooperationGuiHelper::setLabelFont(tipLabel, 12, 10, tipFont.weight());
     connectCB = new QComboBox(q);
     connectCB->setFixedWidth(280);
+    connectCB->setIconSize(QSize(24, 24));
 
 #ifdef linux
     tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
@@ -242,7 +244,7 @@ void SettingDialogPrivate::createClipboardShareWidget()
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
-    tipLabel->setFont(tipFont);
+    CooperationGuiHelper::setLabelFont(tipLabel, 12, 10, tipFont.weight());
 #ifdef linux
     tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
 #else
@@ -370,7 +372,10 @@ SettingDialog::SettingDialog(QWidget *parent)
 #else
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setStyleSheet("QScrollBar:vertical {"
-                  "    width: 0px;"   // 将垂直滚动条宽度设为0
+                  "    width: 0px;"
+                  "}"
+                  "QScrollBar:horizontal {"
+                  "    width: 0px;"
                   "}");
     setFixedSize(650, 530);
 #endif

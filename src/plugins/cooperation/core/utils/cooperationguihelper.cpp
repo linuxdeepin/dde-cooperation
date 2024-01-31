@@ -3,10 +3,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cooperationguihelper.h"
+#include "global_defines.h"
 
 #ifdef linux
-#include <DGuiApplicationHelper>
+#    include <DGuiApplicationHelper>
 DGUI_USE_NAMESPACE
+#endif
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+DWIDGET_USE_NAMESPACE
 #endif
 
 #include <QVariant>
@@ -66,4 +72,24 @@ void CooperationGuiHelper::setFontColor(QWidget *widget, QColor color)
     QPalette palette = widget->palette();
     palette.setColor(QPalette::WindowText, color);
     widget->setPalette(palette);
+}
+
+void CooperationGuiHelper::setLabelFont(QLabel *label, int pointSize, int minpointSize, int weight)
+{
+    QFont font;
+    int size = pointSize;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    size = DSizeModeHelper::element(minpointSize, pointSize);
+    QObject::connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, label, [pointSize, minpointSize, label] {
+        int size = DSizeModeHelper::element(minpointSize, pointSize);
+        QFont font;
+        font.setPixelSize(size);
+        label->setFont(font);
+    });
+#endif
+
+    font.setPixelSize(size);
+    font.setWeight(weight);
+
+    label->setFont(font);
 }

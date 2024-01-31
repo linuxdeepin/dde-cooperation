@@ -28,5 +28,6 @@
         <file>icons/deepin/builtin/texts/combobox_arrow.svg</file>
         <file>icons/deepin/builtin/dark/icons/find_device_250px.svg</file>
         <file>icons/deepin/builtin/light/icons/find_device_250px.svg</file>
+        <file>icons/deepin/builtin/texts/icon_tips.svg</file>
     </qresource>
 </RCC>

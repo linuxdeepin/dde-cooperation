@@ -37,7 +37,7 @@ void WaitTransferWidget::initUI()
     QLabel *tipLabel = new QLabel(tr("Please select the data to transfer on Windows"), this);
     tipLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-    auto iconWidget = new MovieWidget("transferring", this);
+    auto iconWidget = new MovieWidget("waiting", this);
     QHBoxLayout *iconLayout = new QHBoxLayout();
     iconLayout->addWidget(iconWidget, Qt::AlignCenter);
 

@@ -70,7 +70,6 @@ protected:
 private:
     void initUI();
     void initConnect();
-    void setLabelFont(CooperationLabel *label, int pointSize, int weight);
     void setDeviceName(const QString &name);
     void setDeviceStatus(DeviceInfo::ConnectStatus status);
 

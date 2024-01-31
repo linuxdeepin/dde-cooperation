@@ -6,6 +6,7 @@
 #define COOPERATIONGUIHELPER_H
 
 #include <QWidget>
+#include <QLabel>
 
 namespace cooperation_core {
 
@@ -20,6 +21,8 @@ public:
 
     static bool isDarkTheme();
     static void setFontColor(QWidget *widget, QColor color);
+
+    static void setLabelFont(QLabel *label, int pointSize, int minpointSize, int weight);
 
 Q_SIGNALS:
     void themeTypeChanged();

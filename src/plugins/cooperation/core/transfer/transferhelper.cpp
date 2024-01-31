@@ -24,10 +24,10 @@
 #include <QTimer>
 
 #ifdef linux
-#include "base/reportlog/reportlogmanager.h"
+#    include "base/reportlog/reportlogmanager.h"
 
-#include <QDBusInterface>
-#include <QDBusReply>
+#    include <QDBusInterface>
+#    include <QDBusReply>
 #endif
 
 using ButtonStateCallback = std::function<bool(const QString &, const DeviceInfoPointer)>;
@@ -157,6 +157,23 @@ void TransferHelperPrivate::handleTryConnect(const QString &ip)
     rpcClient.close();
 }
 
+void TransferHelperPrivate::handleSearchDevice(const QString &ip)
+{
+    LOG << "searching " << ip.toStdString();
+    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
+    co::Json req, res;
+    fastring targetIp(ip.toStdString());
+
+    SearchDevice conParam;
+    conParam.app = qApp->applicationName().toStdString();
+    conParam.ip = targetIp;
+
+    req = conParam.as_json();
+    req.add_member("api", "Backend.searchDevice");
+    rpcClient.call(req, res);
+    rpcClient.close();
+}
+
 void TransferHelperPrivate::handleCancelTransfer()
 {
     rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
@@ -265,6 +282,13 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
     });
 
     waitForConfirm();
+}
+
+void TransferHelper::searchDevice(const QString &ip)
+{
+    UNIGO([ip, this] {
+        d->handleSearchDevice(ip);
+    });
 }
 
 TransferHelper::TransferStatus TransferHelper::transferStatus()

@@ -13,7 +13,7 @@
 #include <QThread>
 
 #ifndef linux
-    #include <gui/win/cooperationsearchedit.h>
+#    include <gui/win/cooperationsearchedit.h>
 #endif
 
 namespace cooperation_core {
@@ -40,6 +40,7 @@ public Q_SLOTS:
     void onDeviceRemoved(int index);
     void onDeviceUpdated(int index, const DeviceInfoPointer info);
     void onDeviceMoved(int from, int to, const DeviceInfoPointer info);
+    void onSearchDevice();
 
 Q_SIGNALS:
     void devicesAdded(const QList<DeviceInfoPointer> &infoList);

@@ -7,7 +7,11 @@
 #include "utils/cooperationguihelper.h"
 
 #ifdef linux
-#include <DPalette>
+#    include <DPalette>
+#endif
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+DWIDGET_USE_NAMESPACE
 #endif
 
 #include <QIcon>
@@ -112,17 +116,17 @@ void DeviceItem::initUI()
     iconLabel = new CooperationLabel(this);
     nameLabel = new CooperationLabel(this);
     nameLabel->installEventFilter(this);
-    setLabelFont(nameLabel, 14, QFont::Medium);
+    CooperationGuiHelper::setLabelFont(nameLabel, 14, 12, QFont::Medium);
 
     ipLabel = new CooperationLabel(this);
-    setLabelFont(ipLabel, 12, QFont::Medium);
+    CooperationGuiHelper::setLabelFont(ipLabel, 12, 10, QFont::Medium);
 #ifdef linux
     ipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
 #endif
 
     stateLabel = new StateLabel(this);
     stateLabel->setContentsMargins(8, 2, 8, 2);
-    setLabelFont(stateLabel, 11, QFont::Medium);
+    CooperationGuiHelper::setLabelFont(stateLabel, 11, 10, QFont::Medium);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setSpacing(2);
@@ -149,18 +153,6 @@ void DeviceItem::initUI()
 void DeviceItem::initConnect()
 {
     connect(btnBoxWidget, &ButtonBoxWidget::buttonClicked, this, &DeviceItem::onButtonClicked);
-}
-
-void DeviceItem::setLabelFont(CooperationLabel *label, int pointSize, int weight)
-{
-    Q_UNUSED(pointSize);
-    QFont font = this->font();
-#ifndef linux
-    font.setPixelSize(pointSize);
-#endif
-    font.setWeight(weight);
-
-    label->setFont(font);
 }
 
 void DeviceItem::setDeviceName(const QString &name)

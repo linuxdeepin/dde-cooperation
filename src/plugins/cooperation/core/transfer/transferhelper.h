@@ -27,6 +27,7 @@ public:
 
     void regist();
     void sendFiles(const QString &ip, const QString &devName, const QStringList &fileList);
+    void searchDevice(const QString &ip);
     TransferStatus transferStatus();
 
     static void buttonClicked(const QString &id, const DeviceInfoPointer info);
