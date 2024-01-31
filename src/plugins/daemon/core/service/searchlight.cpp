@@ -138,24 +138,8 @@ void Discoverer::exit()
 void Discoverer::setSearchIp(const QString &ip)
 {
     QMutexLocker lk(&_search_ip_lock);
-    _search_ip = ip;
-    count = 0;
-    if (!ip.isEmpty())
+    if (!ip.isEmpty() && !filter.contains(ip))
         filter.append(ip);
-}
-
-QString Discoverer::searchIp()
-{
-    QMutexLocker lk(&_search_ip_lock);
-    if (_search_ip.isEmpty())
-        return _search_ip;
-    count++;
-    if (count <= 3)
-        return _search_ip;
-    filter.removeAll(_search_ip);
-    _search_ip = "";
-    count = 0;
-    return _search_ip;
 }
 
 void Discoverer::handle_message(const fastring& message, const fastring& sender_endpoint)
@@ -346,38 +330,14 @@ void Announcer::start()
 
     _stop = false;
 
-    co::Json node;
-    node.add_member("name", _service_name);
-    node.add_member("port", _service_port);
-
     LOG << "announcer server start";
     // 发送数据包 int sendto(sock_t fd, const void* buf, int n, const void* dst_addr, int addrlen, int ms=-1);
     while (!_stop) {
-        co::Json baseJson;
-        baseJson.parse_from(_base_info);
-        //NodeInfo
-        co::Json nodeinfo;
-        NodePeerInfo nodepeer;
-        nodepeer.from_json(baseJson);
-        nodepeer.ipv4 = Util::getFirstIp();
-        nodeinfo.add_member("os", nodepeer.as_json());
-        co::Json appinfos;
-        for (size_t i = 0; i < _app_infos.size(); ++i) {
-            co::Json appjson;
-            if (appjson.parse_from(_app_infos[i])) {
-                appinfos.push_back(appjson);
-            }
-        }
-        nodeinfo.add_member("apps", appinfos);
-
-        // update the last info
-        node.remove("info");
-        node.add_member("info", nodeinfo);
-        fastring message = node.str();
+        fastring message = udpSendPackage();
 
         // DLOG << "UDP send: === " << message;
         int send_len = co::sendto(sockfd, message.c_str(), static_cast<int>(message.size()), &dest_addr, len);
-        if (send_len < 0 || nodepeer.ipv4 == "")
+        if (send_len < 0 || Util::getFirstIp() == "")
             ELOG << "Failed to send data";
 
         co::sleep(1000); // announcer every second
@@ -397,6 +357,34 @@ bool Announcer::started() {
 void Announcer::exit()
 {
     _stop = true;
+}
+
+fastring Announcer::udpSendPackage()
+{
+    co::Json node;
+    node.add_member("name", _service_name);
+    node.add_member("port", _service_port);
+    co::Json baseJson;
+    baseJson.parse_from(_base_info);
+    //NodeInfo
+    co::Json nodeinfo;
+    NodePeerInfo nodepeer;
+    nodepeer.from_json(baseJson);
+    nodepeer.ipv4 = Util::getFirstIp();
+    nodeinfo.add_member("os", nodepeer.as_json());
+    co::Json appinfos;
+    for (size_t i = 0; i < _app_infos.size(); ++i) {
+        co::Json appjson;
+        if (appjson.parse_from(_app_infos[i])) {
+            appinfos.push_back(appjson);
+        }
+    }
+    nodeinfo.add_member("apps", appinfos);
+
+    // update the last info
+    node.remove("info");
+    node.add_member("info", nodeinfo);
+    return node.str();
 }
 
 int Announcer::sameApp(const fastring &info)

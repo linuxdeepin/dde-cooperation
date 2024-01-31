@@ -35,6 +35,8 @@ public:
 
     void searchDeviceByIp(const QString &ip);
 
+    fastring udpSendPackage();
+
 signals:
     void sigNodeChanged(bool found, QString info);
 

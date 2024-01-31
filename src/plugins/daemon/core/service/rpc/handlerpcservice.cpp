@@ -457,6 +457,14 @@ bool HandleRpcService::checkConnected()
     return _rpc->checkConneted() || _rpc_trans->checkConneted();
 }
 
+void HandleRpcService::handleRemoteSearchIp(co::Json &info)
+{
+    Q_UNUSED(info);
+    OutData data;
+    data.json = DiscoveryJob::instance()->udpSendPackage();
+    _outgo_chan << data;
+}
+
 void HandleRpcService::handleOffline(const QString ip)
 {
     QWriteLocker lk(&_lock);
@@ -640,6 +648,12 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 OutData data;
                 _outgo_chan << data;
                 self->handleRemoteDisApplyShareConnect(json_obj);
+                break;
+            }
+            case SEARCH_DEVICE_BY_IP:
+            {
+                if (self)
+                    self->handleRemoteSearchIp(json_obj);
                 break;
             }
             default:{

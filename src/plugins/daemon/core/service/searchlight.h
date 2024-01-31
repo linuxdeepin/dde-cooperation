@@ -78,7 +78,7 @@ public:
     void exit();
 
     void setSearchIp(const QString &ip);
-    QString searchIp();
+
 private:
     void handle_message(const fastring& message, const fastring& sender_endpoint);
     bool remove_idle_services();
@@ -94,8 +94,6 @@ private:
     services _discovered_services;
     QList<service> _change_sevices;
     mutable QMutex _search_ip_lock;
-    QString _search_ip;
-    int count = 0;
     QStringList filter;
 
     DISALLOW_COPY_AND_ASSIGN(Discoverer);
@@ -133,6 +131,8 @@ public:
     void exit();
 
     bool finished() const { return _finished; }
+
+    fastring udpSendPackage();
 
 private:
     int sameApp(const fastring &info);

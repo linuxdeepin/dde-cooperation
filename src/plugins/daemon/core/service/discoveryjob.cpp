@@ -82,37 +82,19 @@ void DiscoveryJob::discovererRun()
                     _dis_node_maps.insert(uid, std::make_pair(service.info, true));
                 }
             }
-            QString searchIp = ((searchlight::Discoverer*)_discoverer_p)->searchIp();
             // loop and notify all not exist node.
             for (auto it = _dis_node_maps.begin(); it != _dis_node_maps.end(); ++it) {
-                if (it->second.second && searchIp.isEmpty())
+                if (it->second.second)
                     continue;
                 auto msg = it->second.first;
                 co::Json node;
                 node.parse_from(it->second.first);
                 NodeInfo nodeInfo;
                 nodeInfo.from_json(node);
-
-                if (!it->second.second) {
-                    //DLOG << "peer losted: " << it->second.first;
-                    nodeInfo.apps.clear();
-                    emit sigNodeChanged(false, QString(nodeInfo.as_json().str().c_str()));
-                    _dis_node_maps.erase(it);
-                    continue;
-                }
-
-                if (QString(nodeInfo.os.ipv4.c_str()).contains(searchIp)) {
-                    // 通知前端搜索结果
-                    SearchDeviceResult ev;
-                    ev.result = true;
-                    ev.msg = nodeInfo.as_json().str().c_str();
-                    auto req = ev.as_json();
-                    // 通知前端
-                    req.add_member("api", "Frontend.searchDeviceRes");
-                    SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
-                    searchIp.clear();
-                    ((searchlight::Discoverer*)_discoverer_p)->setSearchIp("");
-                }
+                //DLOG << "peer losted: " << it->second.first;
+                nodeInfo.apps.clear();
+                emit sigNodeChanged(false, QString(nodeInfo.as_json().str().c_str()));
+                _dis_node_maps.erase(it);
             }
         }
     );
@@ -208,11 +190,22 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip)
     RemoteServiceSender sender("dde-cooperation", ip, 51597, false);
     PingPong ping;
     ping.ip = "search-ping";
-    if (Util::getFirstIp().empty()
-            || sender.doSendProtoMsg(RPC_PING, ping.as_json().str().c_str(), QByteArray()).errorType < INVOKE_OK){
+    SearchDeviceResult ev;
+    auto offline = Util::getFirstIp().empty();
+    if (offline) {
+        ev.result = false;
+        auto req = ev.as_json();
+        // 通知前端
+        req.add_member("api", "Frontend.searchDeviceRes");
+        SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
+        ((searchlight::Discoverer*)_discoverer_p)->setSearchIp("");
+        return;
+    }
+
+    auto result = sender.doSendProtoMsg(SEARCH_DEVICE_BY_IP, ping.as_json().str().c_str(), QByteArray());
+    if (result.errorType < INVOKE_OK){
         // 通知前端搜索失败
         // 通知前端搜索结果
-        SearchDeviceResult ev;
         ev.result = false;
         auto req = ev.as_json();
         // 通知前端
@@ -222,6 +215,17 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip)
         return;
     }
     ((searchlight::Discoverer*)_discoverer_p)->setSearchIp(ip);
+    ev.result = true;
+    ev.msg = result.data;
+    auto req = ev.as_json();
+    // 通知前端
+    req.add_member("api", "Frontend.searchDeviceRes");
+    SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
+}
+
+fastring DiscoveryJob::udpSendPackage()
+{
+    return ((searchlight::Announcer*)_announcer_p)->udpSendPackage();
 }
 
 void DiscoveryJob::compareOldAndNew(const fastring &uid, const QString &cur,
