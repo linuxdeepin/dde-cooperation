@@ -387,6 +387,28 @@ fastring Announcer::udpSendPackage()
     return node.str();
 }
 
+fastring Announcer::nodeInfoStr()
+{
+    co::Json baseJson;
+    baseJson.parse_from(_base_info);
+    //NodeInfo
+    co::Json nodeinfo;
+    NodePeerInfo nodepeer;
+    nodepeer.from_json(baseJson);
+    nodepeer.ipv4 = Util::getFirstIp();
+    nodeinfo.add_member("os", nodepeer.as_json());
+    co::Json appinfos;
+    for (size_t i = 0; i < _app_infos.size(); ++i) {
+        co::Json appjson;
+        if (appjson.parse_from(_app_infos[i])) {
+            appinfos.push_back(appjson);
+        }
+    }
+    nodeinfo.add_member("apps", appinfos);
+
+    return nodeinfo.str();
+}
+
 int Announcer::sameApp(const fastring &info)
 {
     co::Json appjson;

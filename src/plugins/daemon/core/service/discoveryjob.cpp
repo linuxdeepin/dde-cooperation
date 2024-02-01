@@ -215,6 +215,7 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip)
         return;
     }
     ((searchlight::Discoverer*)_discoverer_p)->setSearchIp(ip);
+    emit sigNodeChanged(true, result.data.c_str());
     ev.result = true;
     ev.msg = result.data;
     auto req = ev.as_json();
@@ -225,7 +226,7 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip)
 
 fastring DiscoveryJob::udpSendPackage()
 {
-    return ((searchlight::Announcer*)_announcer_p)->udpSendPackage();
+    return ((searchlight::Announcer*)_announcer_p)->nodeInfoStr();
 }
 
 void DiscoveryJob::compareOldAndNew(const fastring &uid, const QString &cur,

@@ -134,6 +134,8 @@ public:
 
     fastring udpSendPackage();
 
+    fastring nodeInfoStr();
+
 private:
     int sameApp(const fastring &info);
 
