@@ -1,9 +1,18 @@
+dde-cooperation (0.7.0) unstable; urgency=medium
+
+  * v0.7.0 release version.
+  * fix some UI issues.
+  * dde-cooperation supports manual search to discover cross-subnet segment devices.
+  * data-transfer supports clicking the back button to go to the next transfer.
+
+ -- liujinchang <liujinchang@uniontech.com>  Thu, 1 Feb 2024 14:06:15 +0800
+
 dde-cooperation (0.6.3) unstable; urgency=medium
 
   * v0.6.3 release version.
   * fix some UI issues.
 
- -- liujinchang <liujinchang@uniontech.com>  Thu, 25 Jan 2024 11:120:43 +0800
+ -- liujinchang <liujinchang@uniontech.com>  Thu, 25 Jan 2024 11:20:43 +0800
 
 dde-cooperation (0.6.2) unstable; urgency=medium
 
