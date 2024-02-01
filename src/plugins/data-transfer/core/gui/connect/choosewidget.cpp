@@ -94,7 +94,7 @@ void ChooseWidget::initUI()
                 } else {
                     tiptextlabel->setVisible(true);
                     winItem->checked = false;
-                    winItem->setIcon(QIcon(":/icon/select1@2x.png"));
+                    winItem->setIcon(QIcon(":/icon/select1-disable.png"));
                 }
                 winItem->setEnable(online);
             });
@@ -147,14 +147,12 @@ void ChooseWidget::nextPage()
 void ChooseWidget::themeChanged(int theme)
 {
     // light
-#ifndef linux
     if (theme == 1) {
         setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
     } else {
         // dark
         setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
     }
-#endif
     winItem->themeChanged(theme);
     packageItem->themeChanged(theme);
 }

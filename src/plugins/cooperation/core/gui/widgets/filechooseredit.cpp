@@ -5,11 +5,11 @@
 #include "filechooseredit.h"
 
 #ifdef linux
-#include <DStyle>
+#    include <DStyle>
 #endif
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
-#include <DSizeMode>
+#    include <DSizeMode>
 DWIDGET_USE_NAMESPACE
 #endif
 
@@ -99,6 +99,7 @@ void FileChooserEdit::updateSizeMode()
 
 void FileChooserEdit::paintEvent(QPaintEvent *event)
 {
+#ifndef linux
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::NoPen);
@@ -106,6 +107,6 @@ void FileChooserEdit::paintEvent(QPaintEvent *event)
     QColor color(0, 0, 0, static_cast<int>(255 * 0.08));
     painter.setBrush(color);
     painter.drawRoundedRect(pathLabel->rect(), 8, 8);
-
+#endif
     QWidget::paintEvent(event);
 }

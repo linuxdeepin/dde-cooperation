@@ -284,6 +284,7 @@ void BottomLabel::initUI()
     ipLabel->setFont(font);
 
     dailog = new CooperationAbstractDialog(this);
+    QScrollArea *scrollArea = new QScrollArea(dailog);
     QToolButton *tipButton = new QToolButton(qobject_cast<QWidget *>(this->parent()));
 #ifdef linux
     tipButton->setGeometry(460, 552, 24, 24);
@@ -295,13 +296,12 @@ void BottomLabel::initUI()
                           "QScrollBar:vertical {"
                           "width: 0px;"
                           "}");
+    scrollArea->setStyleSheet("QScrollArea { border: none; background-color: transparent; }");
 #endif
     tipButton->setIcon(QIcon(":/icons/deepin/builtin/texts/icon_tips.svg"));
     tipButton->setIconSize(QSize(24, 24));
 
-
     dailog->setFixedSize(260, 207);
-    QScrollArea *scrollArea = new QScrollArea(dailog);
     scrollArea->setWidgetResizable(true);
     QWidget *contentWidget = new QWidget;
 
@@ -312,13 +312,12 @@ void BottomLabel::initUI()
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(0, 0, 0, 0);
     dailog->setLayout(contentLayout);
-    scrollArea->setStyleSheet("QScrollArea { border: none; background-color: transparent; }");
     contentLayout->addWidget(scrollArea);
 
     connect(tipButton, &QToolButton::clicked, [this]() {
         QMainWindow *activeMainWindow = qobject_cast<QMainWindow *>(QApplication::activeWindow());
 #ifdef linux
-       dailog->move(activeMainWindow->pos() + QPoint(220, 390));
+        dailog->move(activeMainWindow->pos() + QPoint(220, 390));
 #else
        dailog->move(activeMainWindow->pos() + QPoint(220, 360));
 #endif
