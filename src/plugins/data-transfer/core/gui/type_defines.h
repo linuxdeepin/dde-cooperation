@@ -46,7 +46,12 @@ enum PageName {
 };
 #endif
 
+#include <QLabel>
+#include <QPushButton>
 #include <QHBoxLayout>
+#include <QItemDelegate>
+#include <QListView>
+class QSvgRenderer;
 class ButtonLayout : public QHBoxLayout
 {
     Q_OBJECT
@@ -88,8 +93,6 @@ public:
     static QString textBrowserStyle(int type);
 };
 
-#include <QLabel>
-#include <QPushButton>
 class IndexLabel : public QLabel
 {
 public:
@@ -122,5 +125,38 @@ private:
     QTimer *timer;
     QVector<QPixmap> frames;   // 存储图像帧
     int currentFrame = 0;   // 当前帧索引
+};
+
+class ProcessWindowItemDelegate : public QItemDelegate
+{
+    Q_OBJECT
+public:
+    ProcessWindowItemDelegate();
+    ~ProcessWindowItemDelegate() override;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+    void setTheme(int newTheme);
+    void addIcon(const QString &path);
+    void setStageColor(QColor color);
+private:
+    void paintText(QPainter *painter, const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const;
+    void paintIcon(QPainter *painter, const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const;
+
+private:
+    int theme { 1 };
+    QVector<QSvgRenderer*> renders;
+    QColor stageTextColor;
+};
+class ProcessDetailsWindow : public QListView
+{
+    Q_OBJECT
+public:
+    ProcessDetailsWindow(QFrame *parent = nullptr);
+    ~ProcessDetailsWindow();
+    void clear();
 };
 #endif   // TYPE_DEFINES_H

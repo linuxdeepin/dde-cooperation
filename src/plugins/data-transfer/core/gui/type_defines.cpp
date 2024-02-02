@@ -1,7 +1,10 @@
 ﻿#include "type_defines.h"
 
 #include <QPainter>
+#include <QStandardItemModel>
 #include <QTimer>
+
+#include <QtSvg/QSvgRenderer>
 
 ButtonLayout::ButtonLayout(QWidget *parent)
     : QHBoxLayout(parent)
@@ -248,4 +251,116 @@ void MovieWidget::loadFrames()
                                 .pixmap(200, 160);
         frames.append(frame);
     }
+}
+
+ProcessDetailsWindow::ProcessDetailsWindow(QFrame *parent)
+    : QListView(parent)
+{
+}
+
+ProcessDetailsWindow::~ProcessDetailsWindow() {}
+
+void ProcessDetailsWindow::clear()
+{
+    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
+    model->clear();
+}
+
+ProcessWindowItemDelegate::ProcessWindowItemDelegate()
+{
+}
+
+ProcessWindowItemDelegate::~ProcessWindowItemDelegate() {}
+
+void ProcessWindowItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                                      const QModelIndex &index) const
+{
+    paintIcon(painter, option, index);
+    paintText(painter, option, index);
+}
+
+QSize ProcessWindowItemDelegate::sizeHint(const QStyleOptionViewItem &option,
+                                          const QModelIndex &index) const
+{
+    Q_UNUSED(option)
+    Q_UNUSED(index)
+    return QSize(100, 20);
+}
+
+void ProcessWindowItemDelegate::setTheme(int newTheme)
+{
+    theme = newTheme;
+}
+
+void ProcessWindowItemDelegate::addIcon(const QString &path)
+{
+    QSvgRenderer *render = new QSvgRenderer(path);
+    renders.push_back(render);
+}
+
+void ProcessWindowItemDelegate::setStageColor(QColor color)
+{
+    stageTextColor = color;
+}
+
+void ProcessWindowItemDelegate::paintText(QPainter *painter, const QStyleOptionViewItem &option,
+                                          const QModelIndex &index) const
+{
+    painter->save();
+    QString processName = index.data(Qt::DisplayRole).toString();
+    QString processStage = index.data(Qt::ToolTipRole).toString();
+    int StatusTipRole = index.data(Qt::StatusTipRole).toInt();
+    QColor fontNameColor;
+    QColor fontStageColor;
+    if (theme == 0) {
+        fontNameColor = Qt::white;
+        fontStageColor = QColor(123, 159, 191, 255);
+    } else {
+        fontNameColor = Qt::black;
+        fontStageColor = QColor(0, 130, 250, 100);
+    }
+    if (StatusTipRole != 0) {
+        fontStageColor = stageTextColor;
+    }
+
+    QFont font;
+    font.setPixelSize(12);
+    QPen textNamePen(fontNameColor);
+    painter->setFont(font);
+    painter->setPen(textNamePen);
+
+    QRect remarkTextPos;
+    if (!renders.isEmpty()) {
+        remarkTextPos = option.rect.adjusted(40, 0, 0, 0);
+    } else {
+        remarkTextPos = option.rect.adjusted(20, 0, 0, 0);
+    }
+    painter->drawText(remarkTextPos, Qt::AlignLeft | Qt::AlignVCenter, processName);
+
+    QFontMetrics fontMetrics(font);
+    int firstTextWidth = fontMetrics.horizontalAdvance(processName);
+
+    QPen textStagePen(fontStageColor);
+    painter->setPen(textStagePen);
+    remarkTextPos.adjust(firstTextWidth + 20, 0, 0, 0);
+    painter->drawText(remarkTextPos, Qt::AlignLeft | Qt::AlignVCenter, processStage);
+
+    painter->restore();
+}
+
+void ProcessWindowItemDelegate::paintIcon(QPainter *painter, const QStyleOptionViewItem &option,
+                                          const QModelIndex &index) const
+{
+    if (renders.isEmpty())
+        return;
+
+    painter->save();
+    int num = index.data(Qt::UserRole).toInt();
+    QPoint pos = option.rect.topLeft();
+
+    QRect iconRect(pos.x() + 10, pos.y(), 20, 20);
+
+    QSvgRenderer *render = renders[num];
+    render->render(painter, iconRect);
+    painter->restore();
 }

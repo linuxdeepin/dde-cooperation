@@ -55,9 +55,8 @@ void ErrorWidget::initUI()
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
     QLabel *timeLabel = new QLabel(this);
-    QFont font;
-    font.setPixelSize(12);
-    timeLabel->setFont(font);
+
+    timeLabel->setFont(StyleHelper::font(3));
     timeLabel->setText(QString("%1 - -").arg(tr("Transfer will be completed in")));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 

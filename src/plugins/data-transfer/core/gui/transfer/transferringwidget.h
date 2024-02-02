@@ -5,9 +5,23 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPainter>
-
+#include <QItemDelegate>
+#include <QListView>
+#include <QVector>
+#include "../type_defines.h"
 class ProgressBarLabel;
-class QTextBrowser;
+
+class ProcessWindow : public ProcessDetailsWindow
+{
+    Q_OBJECT
+public:
+   ProcessWindow(QFrame *parent = nullptr);
+   ~ProcessWindow()override;
+   void updateContent(const QString &name, const QString &type);
+   void changeTheme(int theme);
+private:
+   void init();
+};
 class TransferringWidget : public QFrame
 {
     Q_OBJECT
@@ -20,17 +34,17 @@ public:
     QString getTransferFileName(const QString &fullPath, const QString &targetPath);
 
 public slots:
-    void initInformationPage();
+    void updateInformationPage();
     void changeTimeLabel(const QString &time);
     void changeProgressLabel(const int &ratio);
-    void updateProcess(const QString &tpye, const QString &content, int progressbar, int estimatedtime);
+    void updateProcess(const QString &tpye, const QString &content, int progressbar,
+                       int estimatedtime);
     void themeChanged(int theme);
     void clear();
 
 private:
     void initUI();
     void initConnect();
-
 private:
     QWidget *iconWidget { nullptr };
     QLabel *titileLabel { nullptr };
@@ -39,7 +53,7 @@ private:
     QLabel *timeLabel { nullptr };
     ProgressBarLabel *progressLabel { nullptr };
     QFrame *fileNameFrame { nullptr };
-    QTextBrowser *processTextBrowser { nullptr };
+    ProcessWindow *processWindow { nullptr };
     QStringList finishJobs;
     bool isVisible = false;
 };
@@ -47,48 +61,11 @@ private:
 class ProgressBarLabel : public QLabel
 {
 public:
-    ProgressBarLabel(QWidget *parent = nullptr)
-        : QLabel(parent), m_progress(0)
-    {
-        setFixedSize(280, 8);
-    }
-
-    void setProgress(int progress)
-    {
-        m_progress = progress;
-        update();
-    }
+    ProgressBarLabel(QWidget *parent = nullptr);
+    void setProgress(int progress);
 
 protected:
-    void paintEvent(QPaintEvent *event) override
-    {
-        QLabel::paintEvent(event);
-
-        QPainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing);
-        painter.setPen(Qt::NoPen);
-
-        // 绘制背景
-        painter.setBrush(QColor(220, 220, 220));
-        painter.drawRoundedRect(rect(), 5, 5);
-
-        // 绘制进度条
-        int width = static_cast<int>(rect().width() * (m_progress / 100.0));
-        QRectF progressRect(rect().left(), rect().top(), width, rect().height());
-        QLinearGradient gradient(progressRect.topLeft(), progressRect.topRight());
-        QColor start;
-        QColor mid;
-        QColor end;
-        start.setNamedColor("#0080FF");
-        mid.setNamedColor("#0397FE");
-        end.setNamedColor("#06BEFD");
-        gradient.setColorAt(0, start);
-        gradient.setColorAt(0.28, mid);
-        gradient.setColorAt(1, end);
-
-        painter.setBrush(gradient);
-        painter.drawRoundedRect(progressRect, 5, 5);
-    }
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     int m_progress;

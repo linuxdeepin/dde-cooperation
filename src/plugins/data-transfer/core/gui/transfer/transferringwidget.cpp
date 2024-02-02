@@ -1,5 +1,5 @@
 ﻿#include "transferringwidget.h"
-#include "../type_defines.h"
+
 #include "errorwidget.h"
 
 #include <QHBoxLayout>
@@ -7,12 +7,11 @@
 #include <QDebug>
 #include <QToolButton>
 #include <QStackedWidget>
-#include <QTextBrowser>
 #include <QPropertyAnimation>
 #include <QEventLoop>
 #include <QPainterPath>
 #include <QMovie>
-#include <QScrollBar>
+#include <QStandardItemModel>
 
 #include <utils/transferhepler.h>
 #include <utils/optionsmanager.h>
@@ -66,7 +65,7 @@ void TransferringWidget::initUI()
     displayLabel->setFont(StyleHelper::font(3));
     displayLabel->setAlignment(Qt::AlignCenter);
     QObject::connect(displayLabel, &QLabel::linkActivated, this,
-                     &TransferringWidget::initInformationPage);
+                     &TransferringWidget::updateInformationPage);
 
     IndexLabel *indelabel = new IndexLabel(3, this);
     indelabel->setAlignment(Qt::AlignCenter);
@@ -76,33 +75,12 @@ void TransferringWidget::initUI()
 
     fileNameFrame = new QFrame(this);
     fileNameFrame->setFixedSize(500, 250);
-    processTextBrowser = new QTextBrowser(fileNameFrame);
-    processTextBrowser->setFixedSize(500, 250);
-    processTextBrowser->setReadOnly(true);
-    processTextBrowser->setLineWrapMode(QTextBrowser::NoWrap);
-    processTextBrowser->setContextMenuPolicy(Qt::NoContextMenu);
-    processTextBrowser->setStyleSheet(StyleHelper::textBrowserStyle(1));
 
-    QString scrollBarStyle = "QScrollBar:vertical {"
-                             "width: 6px;"
-                             "background: #c0c0c0;"
-                             "border-radius: 3px;"
-                             "}"
-                             "QScrollBar::handle:vertical {"
-                             "background: #a0a0a0;"
-                             "border-radius: 3px;"
-                             "}"
-                             "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
-                             "background: #c0c0c0;"
-                             "border-radius: 3px;"
-                             "}";
-    processTextBrowser->verticalScrollBar()->setStyleSheet(scrollBarStyle);
+    processWindow = new ProcessWindow(this);
 
-    processTextBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    processTextBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QHBoxLayout *textBrowerlayout = new QHBoxLayout(fileNameFrame);
     fileNameFrame->setLayout(textBrowerlayout);
-    textBrowerlayout->addWidget(processTextBrowser);
+    textBrowerlayout->addWidget(processWindow);
 
     mainLayout->setAlignment(Qt::AlignHCenter);
     mainLayout->addLayout(iconLayout);
@@ -118,7 +96,6 @@ void TransferringWidget::initUI()
     mainLayout->addWidget(fileNameFrame);
     mainLayout->addSpacing(5);
     mainLayout->addLayout(indexLayout);
-
     fileNameFrame->setVisible(false);
 }
 
@@ -130,7 +107,7 @@ void TransferringWidget::initConnect()
             &TransferringWidget::clear);
 }
 
-void TransferringWidget::initInformationPage()
+void TransferringWidget::updateInformationPage()
 {
     if (!isVisible) {
         isVisible = true;
@@ -141,7 +118,7 @@ void TransferringWidget::initInformationPage()
         QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
                                   .arg(tr("Hide processes"));
         displayLabel->setText(display);
-        QPropertyAnimation *showAnimation = new QPropertyAnimation(processTextBrowser, "pos");
+        QPropertyAnimation *showAnimation = new QPropertyAnimation(processWindow, "pos");
         showAnimation->setDuration(200);
         showAnimation->setStartValue(QPoint(0, 250));
         showAnimation->setEndValue(QPoint(0, 0));
@@ -155,7 +132,7 @@ void TransferringWidget::initInformationPage()
                                   .arg(tr("Show processes"));
         displayLabel->setText(display);
 
-        QPropertyAnimation *hideAnimation = new QPropertyAnimation(processTextBrowser, "pos");
+        QPropertyAnimation *hideAnimation = new QPropertyAnimation(processWindow, "pos");
         hideAnimation->setDuration(100);
         hideAnimation->setStartValue(QPoint(0, 0));
         hideAnimation->setEndValue(QPoint(0, 250));
@@ -202,13 +179,10 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     QString str = resetContent(tpye, content);
 
     if (!str.isEmpty()) {
-        str = deepin_cross::CommonUitls::elidedText(str, Qt::ElideMiddle, 30);
-        QString info = QString("<img src=':/icon/success-128.svg' width='12' height='12' style='vertical-align: baseline;'>"
-                               "<font color='#526A7F'style='vertical-align: baseline;'>&nbsp;&nbsp;&nbsp;%1</font>"
-                               "&nbsp;&nbsp;<font color='#6199CA' style='vertical-align: baseline;'>%2</font>")
-                               .arg(str, tpye);
-        processTextBrowser->append(info);
-        fileLabel->setText(QString("%1<font style='color: rgba(0, 0, 0, 0.6);'>&nbsp;&nbsp;&nbsp;%2</font>").arg(tpye, str));
+        processWindow->updateContent(str, tpye);
+        fileLabel->setText(
+                QString("<font style='font-size: 12px;'>%1 %2<font style='color: rgba(0, 0, 0, 0.6);'>&nbsp;&nbsp;&nbsp;")
+                        .arg(tpye, str));
     }
 
     progressLabel->setProgress(progressbar);
@@ -227,9 +201,7 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
         timeLabel->setText(QString(tr("Transfer will be completed in --")));
 #ifdef linux
         //通知对方进程情况
-        QString mes = tpye + " "
-                + content + " "
-                + QString::number(progressbar) + " "
+        QString mes = tpye + " " + content + " " + QString::number(progressbar) + " "
                 + QString::number(estimatedtime) + ";";
         TransferHelper::instance()->sendMessage("transfer_content", mes);
 #endif
@@ -243,13 +215,15 @@ void TransferringWidget::themeChanged(int theme)
         setStyleSheet(".TransferringWidget{background-color: white; border-radius: 10px;}");
     } else {
         // dark
-        setStyleSheet(".TransferringWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
+        setStyleSheet(
+                ".TransferringWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
     }
+    processWindow->changeTheme(theme);
 }
 
 void TransferringWidget::clear()
 {
-    processTextBrowser->clear();
+    processWindow->clear();
     progressLabel->setProgress(0);
     timeLabel->setText(tr("Calculationing..."));
     titileLabel->setText(tr("Transferring..."));
@@ -298,4 +272,122 @@ QString TransferringWidget::getTransferFileName(const QString &fullPath, const Q
     } else {
         return QString();
     }
+}
+
+ProcessWindow::ProcessWindow(QFrame *parent)
+    : ProcessDetailsWindow(parent)
+{
+    init();
+}
+
+ProcessWindow::~ProcessWindow()
+{
+}
+
+void ProcessWindow::updateContent(const QString &name, const QString &type)
+{
+    int maxWith = 100;
+    QString nameT = QFontMetrics(StyleHelper::font(3)).elidedText(name, Qt::ElideRight, maxWith);
+    QString typeT = QFontMetrics(StyleHelper::font(3)).elidedText(type, Qt::ElideRight, maxWith);
+
+    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
+    int num;
+    if (type == tr("Installing")) {
+        num = 1;
+    } else {
+        num = 0;
+    }
+
+    for (int col = 0; col < model->columnCount(); ++col) {
+        QModelIndex index = model->index(0, col);
+        QString itemName = model->data(index, Qt::DisplayRole).toString();
+        if (itemName == nameT) {
+            model->setData(index, typeT, Qt::ToolTipRole);
+            model->setData(index, num, Qt::UserRole);
+            return;
+        }
+    }
+
+    QStandardItem *item = new QStandardItem();
+    item->setData(nameT, Qt::DisplayRole);
+    item->setData(typeT, Qt::ToolTipRole);
+    item->setData(num, Qt::UserRole);
+    item->setData(0, Qt::StatusTipRole);
+    model->appendRow(item);
+}
+
+void ProcessWindow::changeTheme(int theme)
+{
+    if (theme == 1) {
+        setStyleSheet(".ProcessWindow{background-color: rgba(0, 0, 0, 0.08);"
+                      "border-radius: 10px;"
+                      "padding: 10px 30px 10px 10px;"
+                      "}");
+    } else {
+        // dark
+        setStyleSheet(".ProcessWindow{background-color: rgba(255,255,255, 0.08);"
+                      "border-radius: 10px;"
+                      "padding: 10px 30px 10px 10px;"
+                      "}");
+    }
+
+    ProcessWindowItemDelegate *delegate = qobject_cast<ProcessWindowItemDelegate *>(this->itemDelegate());
+    delegate->setTheme(theme);
+}
+
+void ProcessWindow::init()
+{
+    setStyleSheet(".ProcessWindow{background-color: rgba(0, 0, 0, 0.08);"
+                  "border-radius: 10px;"
+                  "padding: 10px 30px 10px 10px;"
+                  "}");
+    QStandardItemModel *model = new QStandardItemModel(this);
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    setModel(model);
+    ProcessWindowItemDelegate *delegate = new ProcessWindowItemDelegate();
+    delegate->addIcon(QString(":/icon/working.svg"));
+    delegate->addIcon(QString(":/icon/workDone.svg"));
+    setItemDelegate(delegate);
+}
+
+ProgressBarLabel::ProgressBarLabel(QWidget *parent)
+    : QLabel(parent), m_progress(0)
+{
+    setFixedSize(280, 8);
+}
+
+void ProgressBarLabel::setProgress(int progress)
+{
+    m_progress = progress;
+    update();
+}
+
+void ProgressBarLabel::paintEvent(QPaintEvent *event)
+{
+    QLabel::paintEvent(event);
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(Qt::NoPen);
+
+    // 绘制背景
+    painter.setBrush(QColor(220, 220, 220));
+    painter.drawRoundedRect(rect(), 5, 5);
+
+    // 绘制进度条
+    int width = static_cast<int>(rect().width() * (m_progress / 100.0));
+    QRectF progressRect(rect().left(), rect().top(), width, rect().height());
+    QLinearGradient gradient(progressRect.topLeft(), progressRect.topRight());
+    QColor start;
+    QColor mid;
+    QColor end;
+    start.setNamedColor("#0080FF");
+    mid.setNamedColor("#0397FE");
+    end.setNamedColor("#06BEFD");
+    gradient.setColorAt(0, start);
+    gradient.setColorAt(0.28, mid);
+    gradient.setColorAt(1, end);
+
+    painter.setBrush(gradient);
+    painter.drawRoundedRect(progressRect, 5, 5);
 }

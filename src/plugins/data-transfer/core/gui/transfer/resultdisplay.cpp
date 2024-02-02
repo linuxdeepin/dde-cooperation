@@ -1,6 +1,4 @@
 ﻿#include "resultdisplay.h"
-#include "../type_defines.h"
-
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QToolButton>
@@ -37,37 +35,15 @@ void ResultDisplayWidget::initUI()
 
     tiptextlabel = new QLabel(this);
     tiptextlabel->setFont(StyleHelper::font(3));
-    tiptextlabel->setText(QString("<font color='#526A7F' >%1</font>").arg(tr("Partial information migration failed, please go to UOS for manual transfer")));
+    tiptextlabel->setText(QString(tr("Partial information migration failed, please go to UOS for manual transfer")));
     tiptextlabel->setAlignment(Qt::AlignCenter);
     tiptextlabel->setVisible(false);
 
-    processTextBrowser = new QTextBrowser(this);
-    processTextBrowser->setFixedSize(460, 122);
-    processTextBrowser->setReadOnly(true);
-    processTextBrowser->setLineWrapMode(QTextBrowser::NoWrap);
-    processTextBrowser->setContextMenuPolicy(Qt::NoContextMenu);
-    processTextBrowser->setStyleSheet(StyleHelper::textBrowserStyle(1));
-
-    QString scrollBarStyle = "QScrollBar:vertical {"
-                             "width: 6px;"
-                             "background: #c0c0c0;"
-                             "border-radius: 3px;"
-                             "}"
-                             "QScrollBar::handle:vertical {"
-                             "background: #a0a0a0;"
-                             "border-radius: 3px;"
-                             "}"
-                             "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
-                             "background: #c0c0c0;"
-                             "border-radius: 3px;"
-                             "}";
-    processTextBrowser->verticalScrollBar()->setStyleSheet(scrollBarStyle);
-    processTextBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    processTextBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    resultWindow = new ResultWindow();
 
     QHBoxLayout *textBrowerlayout = new QHBoxLayout();
     textBrowerlayout->setAlignment(Qt::AlignCenter);
-    textBrowerlayout->addWidget(processTextBrowser);
+    textBrowerlayout->addWidget(resultWindow);
 
     ButtonLayout *buttonLayout = new ButtonLayout();
     QPushButton *backButton = buttonLayout->getButton1();
@@ -115,39 +91,31 @@ void ResultDisplayWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        processTextBrowser->setStyleSheet(StyleHelper::textBrowserStyle(1));
+        titileLabel->setStyleSheet("QLabel{color:rgb(0,26,46);}");
+        tiptextlabel->setStyleSheet("QLabel{color:rgb(0,26,46);}");
     } else {
         // dark
         setStyleSheet(".ResultDisplayWidget{-color: rgb(37, 37, 37); border-radius: 10px;}");
-        processTextBrowser->setStyleSheet(StyleHelper::textBrowserStyle(0));
+        titileLabel->setStyleSheet("QLabel{color:rgb(192,198,212);}");
+        tiptextlabel->setStyleSheet("QLabel{color:rgb(192,198,212);}");
     }
+    resultWindow->changeTheme(theme);
 }
 
 void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
 {
     QString info, color;
-    if (!success) {
-        color = "#FF5736";
+    if (!success)
         setStatus(false);
-    } else
-        color = "#6199CA";
-    name = ellipsizedText(name, 430, QFont());
-#ifdef linux
-    info = QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color='%2'>%3</font>")
-                   .arg(name, color, reason);
-#else
-    info = QString("<p style='line-height: 0.5;'><font color='#526A7F'>&nbsp;%1</font>&nbsp;<font color='%2'>%3</font></p>")
-                   .arg(name, color, reason);
-#endif
 
-    processTextBrowser->append(info);
+    resultWindow->updateContent(name, reason, success);
     QString res = success ? "true" : "false";
     processText.append(name + " " + res + " " + reason + ";");
 }
 
 void ResultDisplayWidget::clear()
 {
-    processTextBrowser->clear();
+    resultWindow->clear();
     processText.clear();
     setStatus(true);
 }
@@ -164,15 +132,75 @@ void ResultDisplayWidget::setStatus(bool success)
     }
 }
 
-QString ResultDisplayWidget::ellipsizedText(const QString &input, int maxLength, const QFont &font)
+ResultWindow::ResultWindow(QFrame *parent)
+    : ProcessDetailsWindow(parent)
 {
-    QFontMetrics fontMetrics(font);
-    int textWidth = fontMetrics.horizontalAdvance(input);   // 获取文本的宽度
+    init();
+}
 
-    if (textWidth <= maxLength) {
-        return input;   // 如果文本宽度未超出限制，则直接返回原文本
-    } else {
-        QString ellipsizedString = fontMetrics.elidedText(input, Qt::ElideMiddle, maxLength);   // 使用省略号替代超出部分
-        return ellipsizedString;
+ResultWindow::~ResultWindow()
+{
+}
+
+void ResultWindow::updateContent(const QString &name, const QString &type, bool success)
+{
+    int maxWith = 430;
+    QString nameT = QFontMetrics(StyleHelper::font(3)).elidedText(name, Qt::ElideRight, maxWith);
+    QString typeT = QFontMetrics(StyleHelper::font(3)).elidedText(type, Qt::ElideRight, maxWith);
+
+    QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
+
+    for (int col = 0; col < model->columnCount(); ++col) {
+        QModelIndex index = model->index(0, col);
+        QString itemName = model->data(index, Qt::DisplayRole).toString();
+        if (itemName == nameT) {
+            model->setData(index, typeT, Qt::ToolTipRole);
+            return;
+        }
     }
+
+    QStandardItem *item = new QStandardItem();
+    item->setData(nameT, Qt::DisplayRole);
+    item->setData(typeT, Qt::ToolTipRole);
+    if (success) {
+        item->setData(0, Qt::StatusTipRole);
+    } else {
+        item->setData(1, Qt::StatusTipRole);
+    }
+
+    model->appendRow(item);
+}
+
+void ResultWindow::changeTheme(int theme)
+{
+    if (theme == 1) {
+        setStyleSheet(".ResultWindow{background-color: rgba(0, 0, 0, 0.08);"
+                      "border-radius: 10px;"
+                      "padding: 10px 30px 10px 10px;"
+                      "}");
+    } else {
+        // dark
+        setStyleSheet(".ResultWindow{background-color: rgba(255,255,255, 0.08);"
+                      "border-radius: 10px;"
+                      "padding: 10px 30px 10px 10px;"
+                      "}");
+    }
+
+    ProcessWindowItemDelegate *delegate = qobject_cast<ProcessWindowItemDelegate *>(this->itemDelegate());
+    delegate->setTheme(theme);
+}
+
+void ResultWindow::init()
+{
+    setStyleSheet(".ResultWindow{background-color: rgba(0, 0, 0, 0.08);"
+                  "border-radius: 10px;"
+                  "padding: 10px 30px 10px 10px;"
+                  "}");
+    QStandardItemModel *model = new QStandardItemModel(this);
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    setModel(model);
+    ProcessWindowItemDelegate *delegate = new ProcessWindowItemDelegate();
+    delegate->setStageColor(QColor(Qt::red));
+    setItemDelegate(delegate);
+    setFixedSize(460,112);
 }

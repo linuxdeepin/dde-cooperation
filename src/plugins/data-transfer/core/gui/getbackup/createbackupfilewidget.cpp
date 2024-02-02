@@ -421,7 +421,7 @@ void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool
 LineEditWidget::LineEditWidget(QWidget *parent) : QFrame(parent)
 {
     setFixedSize(250, 20);
-    // 创建布局和控件
+
     QHBoxLayout *mainLayout = new QHBoxLayout();
     mainLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout);
@@ -457,6 +457,7 @@ void LineEditWidget::setBackupFileName(QString name)
 {
     lineEdit->setText(name);
     lineEdit->setCursorPosition(0);
+    adjustButtonPosition();
 }
 
 QString LineEditWidget::getBackupFileName()

@@ -114,7 +114,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
         qint64 bytesRead = in.readRawData(buffer, BUFFER_SIZE);
         if (bytesRead == -1) {
             free(buffer);
-            qCritical() << "Error reading from sou rce file:" << filePath;
+            qCritical() << "Error reading from source file:" << filePath;
             destinationFile.close();
             sourceFile.close();
             emit backupFileProcessSingal(QString(tr("Error reading file :%1")).arg(filePath), -1,
@@ -182,9 +182,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
         qCritical("Error creating the ZIP file.");
         // backup file false
         emit backupFileProcessSingal(
-                QString(tr("Failed to create compressed file, check if file %1 is already open!"))
-                        .arg(destinationZipFile),
-                -1, -1);
+                QString(tr("%1 File compression failed")).arg(destinationZipFile), -1, -1);
         return false;
     }
 
@@ -210,7 +208,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
         qCritical() << "Error while compressing. Error code:" << zip.getZipError();
         // backup file false
         emit backupFileProcessSingal(
-                QString("File compression failed, error code:%1").arg(zip.getZipError()), -1, -1);
+                QString(tr("%1 File compression failed")).arg(destinationZipFile), -1, -1);
         return false;
     }
 
@@ -221,7 +219,6 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
 
 void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer, int size)
 {
-
     zipFileSize += size;
     num += size;
     double progress = (static_cast<double>(zipFileSize) / static_cast<double>(allFileSize)) * 100;
@@ -231,7 +228,6 @@ void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &time
         quint64 tempTime = 0;
         if (firstFlag) {
             tempTime = BUFFER_SIZE * 5;
-
         } else {
             tempTime = maxNum;
         }

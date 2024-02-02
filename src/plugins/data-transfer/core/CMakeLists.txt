@@ -57,12 +57,12 @@ else()
     message (FATAL_ERROR "not support on ${CMAKE_SYSTEM} yet.")
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network )
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Network Svg)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network Svg)
 
 if (CMAKE_SYSTEM MATCHES "Windows")
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Svg WinExtras)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Svg WinExtras)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS  WinExtras)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS  WinExtras)
 endif()
 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
@@ -88,6 +88,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Svg
     co
 )
 
@@ -102,7 +103,6 @@ if (CMAKE_SYSTEM MATCHES "Windows")
     target_link_libraries(${PROJECT_NAME}
         ${QUAZIP_LIB_TARGET_NAME}
         Qt${QT_VERSION_MAJOR}::Sql
-        Qt${QT_VERSION_MAJOR}::Svg
         Qt${QT_VERSION_MAJOR}::WinExtras
     )
 endif()
