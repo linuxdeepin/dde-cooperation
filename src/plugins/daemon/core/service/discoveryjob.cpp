@@ -107,7 +107,7 @@ void DiscoveryJob::announcerRun(const fastring &info)
     _announcer_p = co::make<searchlight::Announcer>("ulink_service", UNI_RPC_PORT_BASE, info);
 
     ((searchlight::Announcer*)_announcer_p)->start([this](const QString &ip){
-        QtConcurrent::run([this, ip](){
+        UNIGO([this, ip](){
             auto selfIp = Util::getFirstIp();
             if (selfIp.empty())
                 return;
@@ -211,9 +211,7 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip, const bool remove)
         ((searchlight::Discoverer*)_discoverer_p)->setSearchIp("");
         return;
     }
-    RemoteServiceSender sender("dde-cooperation", ip, 51597, false);
-    PingPong ping;
-    ping.ip = "search-ping";
+
     SearchDeviceResult ev;
     auto offline = Util::getFirstIp().empty();
     if (offline) {
@@ -222,11 +220,17 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip, const bool remove)
         // 通知前端
         req.add_member("api", "Frontend.searchDeviceRes");
         SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
-        ((searchlight::Discoverer*)_discoverer_p)->setSearchIp("");
         return;
     }
 
+    int64 startTime = QDateTime::currentMSecsSinceEpoch();
+    RemoteServiceSender sender("dde-cooperation", ip, 51597, false);
+    Comshare::instance()->searchIp(QString::number(quintptr(&sender))+ip, startTime);
+    PingPong ping;
+    ping.ip = "search-ping";
     auto result = sender.doSendProtoMsg(SEARCH_DEVICE_BY_IP, ping.as_json().str().c_str(), QByteArray());
+    if (!Comshare::instance()->checkSearchRes(QString::number(quintptr(&sender))+ip, startTime))
+        return;
     if (result.errorType < INVOKE_OK){
         // 通知前端搜索失败
         // 通知前端搜索结果

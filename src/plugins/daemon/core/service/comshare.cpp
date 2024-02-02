@@ -4,6 +4,7 @@
 
 #include "comshare.h"
 
+#include <QTime>
 
 Comshare::Comshare()
 {
@@ -59,4 +60,27 @@ bool Comshare::checkTransCanConnect()
     QReadLocker lk(&_lock);
     return _cur_status <= CurrentStatus::CURRENT_STATUS_DISCONNECT ||
             _cur_status > CURRENT_STATUS_TRAN_FILE_RCV;
+}
+
+void Comshare::searchIp(const QString &token, const int64 time)
+{
+    QMutexLocker lk(&_search_lock);
+    _search_ips.insert(token, time);
+}
+
+bool Comshare::checkSearchRes(const QString &token, const int64 time)
+{
+    QMutexLocker lk(&_search_lock);
+    if (!_search_ips.contains(token)) {
+        return false;
+    }
+    for (auto it = _search_ips.begin(); it != _search_ips.end();) {
+        if (it.value() <= time) {
+            it = _search_ips.erase(it);
+        } else {
+            it++;
+        }
+    }
+
+    return true;
 }

@@ -13,6 +13,7 @@
 #include <QList>
 #include <QReadWriteLock>
 #include <QMap>
+#include <QMutex>
 
 typedef enum income_type_t {
     IN_LOGIN_RESULT= 100,
@@ -91,12 +92,16 @@ public:
     CurrentStatus currentStatus();
     bool checkTransCanConnect();
     bool checkCanTransJob();
+    void searchIp(const QString &token, const int64 time);
+    bool checkSearchRes(const QString &token, const int64 time);
 private:
     QReadWriteLock _lock;
     std::atomic_int _cur_status {0};// 0是没有连接，1是文件投送连接，
     // 2文件投送申请，3文件发送，4文件接收，5键鼠共享连接，6键鼠共享中
     QMap<QString, QString> _target_app; // appname
     QMap<QString, QString> _target_ip; //
+    QMutex _search_lock;
+    QMap<QString, int64> _search_ips;
 };
 
 #endif // COMSHARE_H
