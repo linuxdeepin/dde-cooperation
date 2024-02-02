@@ -461,8 +461,21 @@ void HandleRpcService::handleRemoteSearchIp(co::Json &info)
 {
     Q_UNUSED(info);
     OutData data;
-    data.json = DiscoveryJob::instance()->udpSendPackage();
+    data.json = DiscoveryJob::instance()->nodeInfoStr();
     _outgo_chan << data;
+}
+
+void HandleRpcService::hanldeRemoteDiscover(co::Json &info)
+{
+    DiscoverInfo dis, res;
+    OutData data;
+    res.ip = Util::getFirstIp();
+    res.msg = DiscoveryJob::instance()->udpSendPackage();
+    data.json = res.as_json().str();
+    _outgo_chan << data;
+
+    dis.from_json(info);
+    DiscoveryJob::instance()->handleUpdPackage(dis.ip.c_str(), dis.msg.c_str());
 }
 
 void HandleRpcService::handleOffline(const QString ip)
@@ -654,6 +667,12 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 if (self)
                     self->handleRemoteSearchIp(json_obj);
+                break;
+            }
+            case DISCOVER_BY_TCP:
+            {
+                if (self)
+                    self->hanldeRemoteDiscover(json_obj);
                 break;
             }
             default:{

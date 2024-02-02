@@ -544,5 +544,5 @@ void HandleIpcService::handleSearchDevice(co::Json json)
 {
     SearchDevice de;
     de.from_json(json);
-    DiscoveryJob::instance()->searchDeviceByIp(de.ip.c_str());
+    DiscoveryJob::instance()->searchDeviceByIp(de.ip.c_str(), de.remove);
 }

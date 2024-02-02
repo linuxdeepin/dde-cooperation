@@ -40,6 +40,7 @@ typedef enum income_type_t {
     DISCONNECT_CB = 1020, // 断开cb的连接
     DISAPPLY_SHARE_CONNECT = 1021, // 取消申请共享
     SEARCH_DEVICE_BY_IP = 1022, // 通过ip搜索设备
+    DISCOVER_BY_TCP = 1023, // 通过ip搜索的设备，模拟udp包的发送
 } IncomeType;
 
 typedef enum outgo_type_t {

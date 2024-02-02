@@ -33,9 +33,13 @@ public:
         return &ins;
     }
 
-    void searchDeviceByIp(const QString &ip);
+    void searchDeviceByIp(const QString &ip, const bool remove);
 
     fastring udpSendPackage();
+
+    fastring nodeInfoStr();
+
+    void handleUpdPackage(const QString &ip, const QString &msg);
 
 signals:
     void sigNodeChanged(bool found, QString info);

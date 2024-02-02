@@ -19,6 +19,10 @@ DEF_string(udp_ip, "0.0.0.0", "udp_ip");
 DEF_int32(udp_port, 30001, "udp_port");
 DEF_string(mcast_ip, "239.255.0.1", "mcast_ip");
 
+static QMutex _search_ip_lock;
+static QStringList filter;
+static std::atomic_bool _send_tcp { false };
+
 namespace searchlight {
 
 Discoverer::Discoverer(const fastring& listen_for_service,
@@ -138,11 +142,15 @@ void Discoverer::exit()
 void Discoverer::setSearchIp(const QString &ip)
 {
     QMutexLocker lk(&_search_ip_lock);
-    if (!ip.isEmpty() && !filter.contains(ip))
+    filter.clear();
+    _send_tcp = true;
+    if (!ip.isEmpty() && !filter.contains(ip)) {
         filter.append(ip);
+    }
 }
 
-void Discoverer::handle_message(const fastring& message, const fastring& sender_endpoint)
+void Discoverer::handle_message(const fastring& message, const fastring& sender_endpoint,
+                                const bool isFilter)
 {
     // 处理接收到的数据
     // LOG << "server recv ==== " << message << " from " << sender_endpoint;
@@ -156,19 +164,23 @@ void Discoverer::handle_message(const fastring& message, const fastring& sender_
     fastring info = node.get("info").as_string();
     QString  ip = node.get("info","os","ipv4").as_string().c_str();
 
+
     QString endpoint(sender_endpoint.c_str());
     endpoint = endpoint.left(endpoint.indexOf(":"));
     // 判断同网段
     auto preHost = ip.lastIndexOf(".") > ip.size()
             ? ip : ip.mid(0, ip.lastIndexOf("."));
     fastring self_ip = Util::getFirstIp();
+    bool filterContain { false };
     QStringList filters;
     {
         QMutexLocker lk(&_search_ip_lock);
-        filters = filter;
+        filterContain = filter.contains(ip);
+        if (filterContain && isFilter)
+            _send_tcp = false;
     }
     if (message.starts_with(_listen_for_service) && ip != QString(self_ip.c_str())
-            && (filters.contains(ip) || QString(self_ip.c_str()).startsWith(preHost))) {
+            && (filterContain || !isFilter || QString(self_ip.c_str()).startsWith(preHost))) {
         // 找到最近的时间修改，只发送改变了的
         handleChanges(endpoint, info, _timer.ms());
     } else {
@@ -301,7 +313,7 @@ void Announcer::removeAppbyName(const fastring &name)
     }
 }
 
-void Announcer::start()
+void Announcer::start(handleTcpDiscover handle)
 {
     _stop = true;
     sock_t sockfd = co::udp_socket();
@@ -341,6 +353,11 @@ void Announcer::start()
             ELOG << "Failed to send data";
 
         co::sleep(1000); // announcer every second
+
+        QMutexLocker lk(&_search_ip_lock);
+        if (_send_tcp && !filter.empty()) {
+            handle(filter.first());
+        }
     }
 
     // 关闭套接字

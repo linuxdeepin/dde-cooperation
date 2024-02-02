@@ -16,6 +16,7 @@
 #include "utils/utils.h"
 
 #include <QMap>
+#include <QtConcurrent>
 
 DiscoveryJob::DiscoveryJob(QObject *parent)
     : QObject(parent)
@@ -105,7 +106,26 @@ void DiscoveryJob::announcerRun(const fastring &info)
 {
     _announcer_p = co::make<searchlight::Announcer>("ulink_service", UNI_RPC_PORT_BASE, info);
 
-    ((searchlight::Announcer*)_announcer_p)->start();
+    ((searchlight::Announcer*)_announcer_p)->start([this](const QString &ip){
+        QtConcurrent::run([this, ip](){
+            auto selfIp = Util::getFirstIp();
+            if (selfIp.empty())
+                return;
+            RemoteServiceSender sender("dde-cooperation", ip, 51597, false);
+            DiscoverInfo req, res;
+            req.ip = selfIp;
+            req.msg = ((searchlight::Announcer*)_announcer_p)->udpSendPackage();
+            auto result = sender.doSendProtoMsg(DISCOVER_BY_TCP, req.as_json().str().c_str(), QByteArray());
+            if (result.errorType < INVOKE_OK)
+                return;
+
+            co::Json json;
+            if (!json.parse_from(result.data))
+                return;
+            res.from_json(json);
+            handleUpdPackage(res.ip.c_str(), res.msg.c_str());
+        });
+    });
 }
 
 void DiscoveryJob::stopDiscoverer()
@@ -185,8 +205,12 @@ co::list<fastring> DiscoveryJob::getNodes()
     return notes;
 }
 
-void DiscoveryJob::searchDeviceByIp(const QString &ip)
+void DiscoveryJob::searchDeviceByIp(const QString &ip, const bool remove)
 {
+    if (remove) {
+        ((searchlight::Discoverer*)_discoverer_p)->setSearchIp("");
+        return;
+    }
     RemoteServiceSender sender("dde-cooperation", ip, 51597, false);
     PingPong ping;
     ping.ip = "search-ping";
@@ -226,7 +250,18 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip)
 
 fastring DiscoveryJob::udpSendPackage()
 {
+    return ((searchlight::Announcer*)_announcer_p)->udpSendPackage();
+}
+
+fastring DiscoveryJob::nodeInfoStr()
+{
     return ((searchlight::Announcer*)_announcer_p)->nodeInfoStr();
+}
+
+void DiscoveryJob::handleUpdPackage(const QString &ip, const QString &msg)
+{
+    return ((searchlight::Discoverer*)_discoverer_p)->
+            handle_message(msg.toStdString(), ip.toStdString(), false);
 }
 
 void DiscoveryJob::compareOldAndNew(const fastring &uid, const QString &cur,

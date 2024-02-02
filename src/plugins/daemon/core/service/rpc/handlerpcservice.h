@@ -45,6 +45,7 @@ public:
     // 检查51597和51599两个端口是否有连接阻塞，没有退出
     bool checkConnected();
     void handleRemoteSearchIp(co::Json &info);
+    void hanldeRemoteDiscover(co::Json &info);
 
 private:
     void handleOffline(const QString ip);

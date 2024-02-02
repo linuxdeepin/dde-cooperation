@@ -79,8 +79,10 @@ public:
 
     void setSearchIp(const QString &ip);
 
+    void handle_message(const fastring& message, const fastring& sender_endpoint,
+                        const bool isFilter = true);
+
 private:
-    void handle_message(const fastring& message, const fastring& sender_endpoint);
     bool remove_idle_services();
     void handleChanges(const QString &endpoint, const fastring &info, const qint64 time);
 
@@ -93,8 +95,6 @@ private:
     QReadWriteLock _discovered_lock;
     services _discovered_services;
     QList<service> _change_sevices;
-    mutable QMutex _search_ip_lock;
-    QStringList filter;
 
     DISALLOW_COPY_AND_ASSIGN(Discoverer);
 };
@@ -122,8 +122,9 @@ public:
     // remove app's info by name
     void removeAppbyName(const fastring &name);
 
+    typedef std::function<void(const QString &ip)> handleTcpDiscover;
     // start announce
-    void start();
+    void start(handleTcpDiscover handle);
 
     bool started();
 

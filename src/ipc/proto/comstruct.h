@@ -171,16 +171,19 @@ struct ApplyTransFiles {
 struct SearchDevice {
     fastring app;
     fastring ip;
+    bool remove{ false };
 
     void from_json(const co::Json& _x_) {
         app = _x_.get("app").as_c_str();
         ip = _x_.get("ip").as_c_str();
+        remove = _x_.get("remove").as_bool();
     }
 
     co::Json as_json() const {
         co::Json _x_;
         _x_.add_member("app", app);
         _x_.add_member("ip", ip);
+        _x_.add_member("remove", remove);
         return _x_;
     }
 };
