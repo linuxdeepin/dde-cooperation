@@ -63,6 +63,23 @@ protected:
     }
 };
 
+class InformationDialog : public CooperationDialog
+{
+    Q_OBJECT
+
+public:
+    explicit InformationDialog(QWidget *parent = nullptr);
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+private:
+    void initUI();
+
+private:
+    CooperationLabel *iconLabel { nullptr };
+    CooperationLabel *msgLabel { nullptr };
+    CooperationLabel *titleLabel { nullptr };
+};
 }   // namespace cooperation_core
 
 #endif   // FILECHOOSEREDIT_H
