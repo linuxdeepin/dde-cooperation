@@ -78,6 +78,12 @@ void FileChooserEdit::onButtonClicked()
     if (dirPath.isEmpty())
         return;
 
+    if (!QFileInfo(dirPath).isWritable()||QDir(dirPath).entryInfoList().isEmpty()) {
+        InformationDialog dialog;
+        dialog.exec();
+        return;
+    }
+
     setText(dirPath);
     emit fileChoosed(dirPath);
 }
@@ -109,4 +115,49 @@ void FileChooserEdit::paintEvent(QPaintEvent *event)
     painter.drawRoundedRect(pathLabel->rect(), 8, 8);
 #endif
     QWidget::paintEvent(event);
+}
+InformationDialog::InformationDialog(QWidget *parent)
+    : CooperationDialog(parent)
+{
+    initUI();
+}
+
+void InformationDialog::closeEvent(QCloseEvent *event)
+{
+    CooperationAbstractDialog::closeEvent(event);
+}
+
+void InformationDialog::initUI()
+{
+    setFixedSize(380, 234);
+    setContentsMargins(0, 0, 0, 0);
+    QWidget *contentWidget = new QWidget(this);
+    QPushButton *okBtn = new QPushButton(this);
+    okBtn->setText(tr("OK"));
+    connect(okBtn, &QPushButton::clicked, this, &InformationDialog::close);
+
+#ifdef linux
+    setIcon(QIcon::fromTheme("dde-cooperation"));
+    setTitle(tr("select file error"));
+    addContent(contentWidget);
+#else
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(contentWidget);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+#endif
+    iconLabel = new CooperationLabel(this);
+    msgLabel = new CooperationLabel(this);
+    msgLabel->setAlignment(Qt::AlignHCenter);
+    msgLabel->setText(tr("the selected path does not exist or does not have write permissions. Please choose again."));
+    msgLabel->setWordWrap(true);
+    iconLabel = new CooperationLabel(this);
+    iconLabel->setAlignment(Qt::AlignHCenter);
+    QIcon icon(QString(":/icons/deepin/builtin/icons/transfer_fail_128px.svg"));
+    iconLabel->setPixmap(icon.pixmap(48, 48));
+    QVBoxLayout *vLayout = new QVBoxLayout(contentWidget);
+    vLayout->setMargin(0);
+    vLayout->addWidget(titleLabel, Qt::AlignTop);
+    vLayout->addWidget(iconLabel);
+    vLayout->addWidget(msgLabel);
+    vLayout->addWidget(okBtn, 0, Qt::AlignBottom);
 }

@@ -527,3 +527,4 @@ void SettingDialogPrivate::setQComboxWinStyle(QComboBox *combox)
     combox->setFixedHeight(36);
 }
 #endif
+
