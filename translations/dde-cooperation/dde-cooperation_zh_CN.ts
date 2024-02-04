@@ -254,19 +254,38 @@
 <context>
     <name>cooperation_core::DeviceItem</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="183"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="175"/>
         <source>connected</source>
         <translation>协同中</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="188"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="180"/>
         <source>connectable</source>
         <translation>可连</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="194"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="186"/>
         <source>offline</source>
         <translation>离线</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::InformationDialog</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/filechooseredit.cpp" line="137"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/filechooseredit.cpp" line="142"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/filechooseredit.cpp" line="149"/>
+        <source>the file save location is invalid</source>
+        <translation>文件保存位置无效</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/filechooseredit.cpp" line="155"/>
+        <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
+        <translation>此路径为只读目录，请更换文件保存位置。</translation>
     </message>
 </context>
 <context>
@@ -369,90 +388,90 @@
 <context>
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="42"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="48"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="43"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
         <source>Everyone in the same LAN</source>
         <translation>同一局域网下的所有人</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="44"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="45"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="51"/>
         <source>Not allow</source>
         <translation>不允许</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="45"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="46"/>
         <source>Screen right</source>
         <translation>屏幕右侧</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="46"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
         <source>Screen left</source>
         <translation>屏幕左侧</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
         <source>Only those who are collaborating are allowed</source>
         <translation>仅允许正在协同的人</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="105"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="106"/>
         <source>Basic Settings</source>
         <translation>基础设置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="116"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="117"/>
         <source>Discovery mode</source>
         <translation>可被发现</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="118"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="119"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
         <translation>其他设备可通过“跨端协同”应用发现您，并与您建立连接</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="152"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="153"/>
         <source>Device name</source>
         <translation>设备昵称</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="170"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="171"/>
         <source>Peripheral share</source>
         <translation>外设共享</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="172"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="173"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
         <translation>允许已建立跨端协同连接的外设控制此设备，包括键盘、鼠标、触控板等</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="198"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="200"/>
         <source>Connection direction</source>
         <translation>链接方向</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="217"/>
         <source>Allows the following users to send files to me</source>
         <translation>允许以下用户向我投送文件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="222"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
         <source>File save location</source>
         <translation>文件保存位置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="238"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="240"/>
         <source>Share clipboard</source>
         <translation>剪切板共享</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="240"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="242"/>
         <source>The clipboard is shared between devices</source>
         <translation>在设备间共享剪切板</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="289"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="291"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
         <source>The device name must contain 1 to 63 characters</source>
         <translation>设备昵称必须介于1-63个字符之内</translation>
     </message>
@@ -491,47 +510,47 @@
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="375"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="374"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation>连接到“%1”失败</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="397"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="396"/>
         <source>The other party has canceled the file transfer</source>
         <translation>对方已取消文件投送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="394"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="393"/>
         <source>File sent successfully</source>
         <translation>文件投送成功</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="248"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="247"/>
         <source>View transfer history</source>
         <translation>查看文件投送记录</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="257"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="256"/>
         <source>Send files</source>
         <translation>发送文件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="385"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="384"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
         <translation>存储空间不足，文件发送失败。请清理磁盘空间并重试！</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="387"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="386"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
         <translation>网络未连接，文件发送失败。请连接网络并重试！</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="456"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="455"/>
         <source>calculating</source>
         <translation>计算中</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="465"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="464"/>
         <source>The other party rejects your request</source>
         <translation>对方已拒绝您的请求</translation>
     </message>
@@ -539,12 +558,12 @@
 <context>
     <name>cooperation_core::TransferHelperPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="203"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="202"/>
         <source>Sending files to &quot;%1&quot;</source>
         <translation>正在向“%1”投送文件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="223"/>
+        <location filename="../../src/plugins/cooperation/core/transfer/transferhelper.cpp" line="222"/>
         <source>The other party did not receive, the files failed to send</source>
         <translation>对方未接收，文件发送失败</translation>
     </message>
@@ -552,7 +571,7 @@
 <context>
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="41"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="43"/>
         <source>Please enter the device name or IP</source>
         <translation>请输入设备昵称/IP</translation>
     </message>
