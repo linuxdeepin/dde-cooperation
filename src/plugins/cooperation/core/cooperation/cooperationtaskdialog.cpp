@@ -140,7 +140,7 @@ QWidget *CooperationTaskDialog::createConfirmPage()
 
     QPushButton *rejectBtn = new QPushButton(tr("Reject", "button"), this);
     connect(rejectBtn, &QPushButton::clicked, this, &CooperationTaskDialog::rejectRequest);
-
+    connect(rejectBtn, &QPushButton::clicked, this, &CooperationTaskDialog::close);
     QPushButton *acceptBtn = new CooperationSuggestButton(tr("Accept", "button"), this);
     connect(acceptBtn, &QPushButton::clicked, this, &CooperationTaskDialog::acceptRequest);
 

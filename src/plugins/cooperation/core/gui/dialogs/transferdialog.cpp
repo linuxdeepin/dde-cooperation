@@ -23,7 +23,7 @@ TransferDialog::TransferDialog(QWidget *parent)
 
 void TransferDialog::initUI()
 {
-    setFixedSize(380, 234);
+    setFixedWidth(380);
     setContentsMargins(0, 0, 0, 0);
 
     QWidget *contentWidget = new QWidget(this);

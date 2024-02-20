@@ -462,12 +462,12 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="240"/>
         <source>Share clipboard</source>
-        <translation>剪切板共享</translation>
+        <translation>剪贴板共享</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="242"/>
         <source>The clipboard is shared between devices</source>
-        <translation>在设备间共享剪切板</translation>
+        <translation>在设备间共享剪贴板</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="291"/>
