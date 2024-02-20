@@ -10,6 +10,9 @@
 #include <QTranslator>
 #include <QDir>
 #include <QCommandLineParser>
+#include <QSettings>
+#include <QFileSystemWatcher>
+#include <QTimer>
 
 #include "co/co/sock.h"
 
@@ -116,17 +119,48 @@ void CommonUitls::loadTranslator()
     }
 }
 
-void CommonUitls::initLog() {
+void CommonUitls::initLog()
+{
     flag::set_value("rpc_log", "false");   //rpc日志关闭
     flag::set_value("cout", "true");   //终端日志输出
     flag::set_value("journal", "true");   //journal日志
     if (detailLog()) {
-        flag::set_value("log_detail", "true"); //详细日志输出
+        flag::set_value("log_detail", "true");   //详细日志输出
     }
 
     fastring logdir = logDir().toStdString();
     LOG << "set logdir: " << logdir.c_str();
     flag::set_value("log_dir", logdir);   //日志保存目录
+
+#ifdef linux
+    QString logConfPath = QString("/usr/share/%1/")
+                                  .arg(qApp->applicationName());   //  /usr/share/xx
+#else
+    QString logConfPath = logDir();
+#endif
+    QString configFile = logConfPath + "config.conf";   //日志级别配置
+    QFile file(configFile);
+    QSettings settings(configFile, QSettings::IniFormat);
+    if (!file.exists()) {
+        settings.setValue("g_minLogLevel", 2);
+        settings.sync();
+    }
+
+    int level = settings.value("g_minLogLevel", 2).toInt();
+    LOG << "set LogLevel " << level;
+    log::xx::g_minLogLevel = static_cast<log::xx::LogLevel>(level);
+
+    QTimer *timer = new QTimer();
+    QObject::connect(timer, &QTimer::timeout, [configFile] {
+        QSettings settings(configFile, QSettings::IniFormat);
+        int level = settings.value("g_minLogLevel", 2).toInt();
+        auto logLevel = static_cast<log::xx::LogLevel>(level);
+        if (log::xx::g_minLogLevel != logLevel) {
+            log::xx::g_minLogLevel = logLevel;
+            LOG << "set LogLevel " << level;
+        }
+    });
+    timer->start(2000);
 }
 
 QString CommonUitls::elidedText(const QString &text, Qt::TextElideMode mode, int maxLength)
@@ -159,8 +193,9 @@ QString CommonUitls::elidedText(const QString &text, Qt::TextElideMode mode, int
 QString CommonUitls::logDir()
 {
     QString logPath = QString("%1/%2/%3/")
-                    .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
-                    .arg(qApp->organizationName()).arg(qApp->applicationName()); //~/.cache/deepin/xx
+                              .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
+                              .arg(qApp->organizationName())
+                              .arg(qApp->applicationName());   //~/.cache/deepin/xx
 
     QDir logDir(logPath);
     if (!logDir.exists())

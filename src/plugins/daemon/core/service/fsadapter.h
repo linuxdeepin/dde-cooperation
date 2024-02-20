@@ -24,7 +24,7 @@ public:
     static bool writeBlock(const char *name, int64 seek_len, const char *data, size_t size);
     static bool writeBlock(const char *name, int64 seek_len, const char *data, size_t size,
                            const int flags, fs::file **fx);
-    static bool reacquirePath(const fastring filepath, fastring *newpath);
+    static bool reacquirePath(fastring filepath, fastring *newpath);
 
 signals:
 

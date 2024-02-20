@@ -70,6 +70,7 @@ void SettingDialogPrivate::initWindow()
     QScrollArea *contentArea = new QScrollArea(q);
     contentArea->setFrameShape(QFrame::NoFrame);
     contentArea->setWidgetResizable(true);
+    contentArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QWidget *contentWidget = new QWidget(contentArea);
     contentWidget->installEventFilter(q);

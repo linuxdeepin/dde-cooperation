@@ -53,13 +53,13 @@ bool FSAdapter::newFile(const char *path, bool isdir)
         fs::mkdir(fullpath, true);
     } else {
         fastring parent = path::dir(fullpath);
-        fs::mkdir(parent, true); // 创建文件保存的根/子目录
+        fs::mkdir(parent, true);   // 创建文件保存的根/子目录
         if (!fs::exists(fullpath)) {
             fs::file fx(fullpath, 'm');
             fx.close();
         }
     }
-//    LOG << "new file -> fullpath: " << fullpath;
+    //    LOG << "new file -> fullpath: " << fullpath;
 
     return fs::exists(fullpath);
 }
@@ -70,13 +70,13 @@ bool FSAdapter::newFileByFullPath(const char *fullpath, bool isdir)
         fs::mkdir(fullpath, true);
     } else {
         fastring parent = path::dir(fullpath);
-        fs::mkdir(parent, true); // 创建文件保存的根/子目录
+        fs::mkdir(parent, true);   // 创建文件保存的根/子目录
         if (!fs::exists(fullpath)) {
             fs::file fx(fullpath, 'm');
             fx.close();
         }
     }
-//    LOG << "new file -> fullpath: " << fullpath;
+    LOG << "new file -> fullpath: " << fullpath;
 
     return fs::exists(fullpath);
 }
@@ -119,7 +119,7 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len,
             return false;
         }
         fastring parent = path::dir(name);
-        fs::mkdir(parent, true); // 创建文件保存的根/子目录
+        fs::mkdir(parent, true);   // 创建文件保存的根/子目录
         (*fx) = new fs::file(name, 'm');
         if (!(*fx)->exists()) {
             ELOG << " file create error , file = " << name << ", flags = " << flags;
@@ -160,10 +160,24 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len,
     return write;
 }
 
-bool FSAdapter::reacquirePath(const fastring filepath, fastring *newpath)
+bool FSAdapter::reacquirePath(fastring filepath, fastring *newpath)
 {
+    size_t maxLength = 128;
+    bool flag = false;
+    std::string str = filepath.data();
+    if (filepath.size() > maxLength) {
+        LOG << "The file name is too long, automatically shortened" << str << filepath.size();
+        size_t charsToRemove = str.length() - maxLength + 3;   // 3 是因为 "..." 占用了3个字符
+        size_t startPos = str.length() / 2 - charsToRemove / 2;
+        str.erase(startPos, charsToRemove);
+        str.insert(startPos, "...");
+        filepath = str;
+        *newpath = str;
+        flag = true;
+    }
+
     if (!fs::exists(filepath)) {
-        return false;
+        return false || flag;
     }
 
     std::pair<fastring, fastring> sp = path::split(filepath);

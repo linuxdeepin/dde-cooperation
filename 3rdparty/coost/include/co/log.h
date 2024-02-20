@@ -63,6 +63,8 @@ enum LogLevel {
     fatal = 4
 };
 
+inline LogLevel g_minLogLevel = info;
+
 class __coapi LevelLogSaver {
   public:
     LevelLogSaver(const char* fname, unsigned fnlen, unsigned line, int level);
@@ -135,12 +137,13 @@ using namespace _xx;
 //
 // LOG << "hello world " << 23;
 // WLOG_IF(1 + 1 == 2) << "xx";
+
 #define _CO_LOG_STREAM(lv)  log::xx::LevelLogSaver(_CO_FILELINE, lv).stream()
 #define _CO_FLOG_STREAM     log::xx::FatalLogSaver(_CO_FILELINE).stream()
-#define DLOG  if (FLG_min_log_level <= log::xx::debug)   _CO_LOG_STREAM(log::xx::debug)
-#define LOG   if (FLG_min_log_level <= log::xx::info)    _CO_LOG_STREAM(log::xx::info)
-#define WLOG  if (FLG_min_log_level <= log::xx::warning) _CO_LOG_STREAM(log::xx::warning)
-#define ELOG  if (FLG_min_log_level <= log::xx::error)   _CO_LOG_STREAM(log::xx::error)
+#define DLOG  if (log::xx::g_minLogLevel <= log::xx::debug)   _CO_LOG_STREAM(log::xx::debug)
+#define LOG   if (log::xx::g_minLogLevel <= log::xx::info)    _CO_LOG_STREAM(log::xx::info)
+#define WLOG  if (log::xx::g_minLogLevel <= log::xx::warning) _CO_LOG_STREAM(log::xx::warning)
+#define ELOG  if (log::xx::g_minLogLevel <= log::xx::error)   _CO_LOG_STREAM(log::xx::error)
 #define FLOG  _CO_FLOG_STREAM << "fatal error! "
 
 // conditional log
