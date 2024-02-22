@@ -69,14 +69,23 @@ class BottomLabel : public QWidget
 public:
     explicit BottomLabel(QWidget *parent = nullptr);
 
+    void showDialog() const;
+
 protected:
     void paintEvent(QPaintEvent *) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
+private slots:
+    void updateSizeMode();
 
 private:
     void initUI();
 
 private:
-    CooperationAbstractDialog *dailog { nullptr };
+    CooperationAbstractDialog *dialog { nullptr };
+    QLabel *tipLabel { nullptr };
+    QLabel *ipLabel { nullptr };
+    QTimer *timer { nullptr };
 };
 
 }   // namespace cooperation_core

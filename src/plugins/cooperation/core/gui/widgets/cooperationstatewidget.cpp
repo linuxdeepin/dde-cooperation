@@ -10,6 +10,10 @@
 #ifdef linux
 #    include <DPalette>
 #endif
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+DWIDGET_USE_NAMESPACE
+#endif
 
 #include <QVariant>
 #include <QVBoxLayout>
@@ -20,6 +24,7 @@
 #include <QDesktopServices>
 #include <QToolButton>
 #include <QScrollArea>
+#include <QMouseEvent>
 
 #include <utils/cooperationutil.h>
 
@@ -261,6 +266,7 @@ BottomLabel::BottomLabel(QWidget *parent)
 {
     initUI();
     setFixedSize(500, 33);
+    dialog->installEventFilter(this);
 }
 
 void BottomLabel::paintEvent(QPaintEvent *)
@@ -271,37 +277,54 @@ void BottomLabel::paintEvent(QPaintEvent *)
     painter.drawLine(0, 0, width(), 0);
 }
 
+bool BottomLabel::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == tipLabel) {
+        if (event->type() == QEvent::Enter)
+            showDialog();
+        else if (event->type() == QEvent::Leave)
+            timer->start();
+    } else if (obj == dialog) {
+        if (event->type() == QEvent::Enter) {
+            showDialog();
+        } else if (event->type() == QEvent::Leave) {
+            timer->start();
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
 void BottomLabel::initUI()
 {
     QString ip = QString(tr("Local IP: %1").arg(CooperationUtil::localIPAddress()));
-    QLabel *ipLabel = new QLabel(ip);
+    ipLabel = new QLabel(ip);
     ipLabel->setAlignment(Qt::AlignHCenter);
     ipLabel->setFixedHeight(30);
-    ipLabel->setStyleSheet("color: rgba(0, 0, 0, 0.6);");
-    QFont font;
-    font.setWeight(QFont::Normal);
-    font.setPixelSize(12);
-    ipLabel->setFont(font);
+    CooperationGuiHelper::setLabelFont(ipLabel, 12, 10, QFont::Normal);
 
-    dailog = new CooperationAbstractDialog(this);
-    QScrollArea *scrollArea = new QScrollArea(dailog);
-    QToolButton *tipButton = new QToolButton(qobject_cast<QWidget *>(this->parent()));
+    dialog = new CooperationAbstractDialog(this);
+    QScrollArea *scrollArea = new QScrollArea(dialog);
+    tipLabel = new QLabel(qobject_cast<QWidget *>(this->parent()));
+    tipLabel->installEventFilter(this);
 #ifdef linux
-    tipButton->setGeometry(460, 552, 24, 24);
+    updateSizeMode();
+    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, &BottomLabel::updateSizeMode);
+#    ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &BottomLabel::updateSizeMode);
+#    endif
 #else
-    tipButton->setGeometry(455, 600, 24, 24);
-    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    dailog->setStyleSheet("background-color: white;"
+    tipLabel->setGeometry(455, 600, 24, 24);
+    tipLabel->setPixmap(QIcon(":/icons/deepin/builtin/light/icons/icon_tips_128px.svg").pixmap(24, 24));
+    dialog->setWindowFlags(dialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    dialog->setStyleSheet("background-color: white;"
                           "border-radius: 10px;}"
                           "QScrollBar:vertical {"
                           "width: 0px;"
                           "}");
     scrollArea->setStyleSheet("QScrollArea { border: none; background-color: transparent; }");
 #endif
-    tipButton->setIcon(QIcon(":/icons/deepin/builtin/texts/icon_tips.svg"));
-    tipButton->setIconSize(QSize(24, 24));
 
-    dailog->setFixedSize(260, 207);
+    dialog->setFixedSize(260, 207);
     scrollArea->setWidgetResizable(true);
     QWidget *contentWidget = new QWidget;
 
@@ -311,22 +334,43 @@ void BottomLabel::initUI()
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(0, 0, 0, 0);
-    dailog->setLayout(contentLayout);
+    dialog->setLayout(contentLayout);
     contentLayout->addWidget(scrollArea);
 
-    connect(tipButton, &QToolButton::clicked, [this]() {
-        QMainWindow *activeMainWindow = qobject_cast<QMainWindow *>(QApplication::activeWindow());
-#ifdef linux
-        dailog->move(activeMainWindow->pos() + QPoint(220, 390));
-#else
-       dailog->move(activeMainWindow->pos() + QPoint(220, 360));
-#endif
-        if (dailog->isVisible())
-            dailog->hide();
-        else
-            dailog->show();
-    });
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(ipLabel);
+    mainLayout->setAlignment(Qt::AlignHCenter);
     setLayout(mainLayout);
+
+    timer = new QTimer(this);
+    timer->setInterval(200);
+    connect(timer, &QTimer::timeout, dialog, &QDialog::hide);
+}
+
+void BottomLabel::showDialog() const
+{
+    timer->stop();
+    if (dialog->isVisible())
+        return;
+    QMainWindow *activeMainWindow = qobject_cast<QMainWindow *>(qApp->topLevelAt(QCursor::pos()));
+#ifdef linux
+    dialog->move(activeMainWindow->pos() + QPoint(220, 393));
+#else
+    dialog->move(activeMainWindow->pos() + QPoint(220, 360));
+#endif
+    dialog->show();
+}
+
+void BottomLabel::updateSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    tipLabel->setGeometry(460, DSizeModeHelper::element(562, 552), 24, 24);
+    int size = DSizeModeHelper::element(18, 24);
+    ipLabel->setFixedHeight(DSizeModeHelper::element(15, 30));
+    tipLabel->setPixmap(QIcon::fromTheme("icon_tips").pixmap(size, size));
+#else
+    tipLabel->setGeometry(460, 552, 24, 24);
+    ipLabel->setFixedHeight(30);
+    tipLabel->setPixmap(QIcon(":/icons/deepin/builtin/light/icons/icon_tips.svg").pixmap(24, 24));
+#endif
 }
