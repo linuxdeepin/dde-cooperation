@@ -223,9 +223,12 @@ void MainController::onTransJobStatusChanged(int id, int result, const QString &
     case JOB_TRANS_FAILED:
         if (msg.contains("::not enough")) {
             transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
-        }  else if (msg.contains("::off line")) {
+        } else if (msg.contains("::off line")) {
             transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
-        } break;
+        } else {
+            transferResult(false, tr("File sent failed"));
+        }
+        break;
     case JOB_TRANS_DOING:
         break;
     case JOB_TRANS_FINISHED: {

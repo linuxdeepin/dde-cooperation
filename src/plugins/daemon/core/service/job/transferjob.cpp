@@ -28,6 +28,13 @@ TransferJob::TransferJob(QObject *parent)
 TransferJob::~TransferJob()
 {
     _status = STOPED;
+    if (fx != nullptr) {
+        // 主动释放文件句柄，否则取消或异常时在win上有可能导致一直被占用
+        LOG << "release fd for file:" << fx->path();
+        fx->close();
+        delete fx;
+        fx = nullptr;
+    }
 }
 
 bool TransferJob::initRpc(fastring target, uint16 port)
@@ -355,9 +362,8 @@ void TransferJob::handleBlockQueque()
         }
 
         if (exception || _offlined) {
-            DLOG << "trans job exception hanpend: " << _jobid;\
-            if (!_offlined)
-                handleJobStatus(JOB_TRANS_FAILED);
+            DLOG << "trans job exception hanpend: " << _jobid;
+            handleJobStatus(JOB_TRANS_FAILED);
             break;
         }
 
@@ -650,7 +656,7 @@ bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block, co
     do {
         good = FSAdapter::writeBlock(fullpath.c_str(), offset, buffer.c_str(), len, block->flags, &fx);
         count--;
-    } while(!good && count >= 0);
+    } while(!good && count > 0);
 
 
     if (!good) {
