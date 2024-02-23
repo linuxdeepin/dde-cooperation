@@ -121,6 +121,12 @@ void CommonUitls::loadTranslator()
 
 void CommonUitls::initLog()
 {
+#ifdef QT_DEBUG
+    int level = 0;
+    log::xx::g_minLogLevel = static_cast<log::xx::LogLevel>(level);
+    LOG << "set LogLevel " << level;
+#endif
+
     flag::set_value("rpc_log", "false");   //rpc日志关闭
     flag::set_value("cout", "true");   //终端日志输出
     flag::set_value("journal", "true");   //journal日志
@@ -146,6 +152,7 @@ void CommonUitls::initLog()
         settings.sync();
     }
 
+#ifndef QT_DEBUG
     int level = settings.value("g_minLogLevel", 2).toInt();
     LOG << "set LogLevel " << level;
     log::xx::g_minLogLevel = static_cast<log::xx::LogLevel>(level);
@@ -161,6 +168,7 @@ void CommonUitls::initLog()
         }
     });
     timer->start(2000);
+#endif
 }
 
 QString CommonUitls::elidedText(const QString &text, Qt::TextElideMode mode, int maxLength)

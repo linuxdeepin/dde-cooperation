@@ -63,7 +63,7 @@ enum LogLevel {
     fatal = 4
 };
 
-inline LogLevel g_minLogLevel = info;
+inline LogLevel g_minLogLevel = warning;
 
 class __coapi LevelLogSaver {
   public:

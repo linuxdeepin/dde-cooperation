@@ -162,22 +162,8 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len,
 
 bool FSAdapter::reacquirePath(fastring filepath, fastring *newpath)
 {
-    size_t maxLength = 128;
-    bool flag = false;
-    std::string str = filepath.data();
-    if (filepath.size() > maxLength) {
-        LOG << "The file name is too long, automatically shortened" << str << filepath.size();
-        size_t charsToRemove = str.length() - maxLength + 3;   // 3 是因为 "..." 占用了3个字符
-        size_t startPos = str.length() / 2 - charsToRemove / 2;
-        str.erase(startPos, charsToRemove);
-        str.insert(startPos, "...");
-        filepath = str;
-        *newpath = str;
-        flag = true;
-    }
-
     if (!fs::exists(filepath)) {
-        return false || flag;
+        return false;
     }
 
     std::pair<fastring, fastring> sp = path::split(filepath);

@@ -226,7 +226,7 @@ void MainController::onTransJobStatusChanged(int id, int result, const QString &
         } else if (msg.contains("::off line")) {
             transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
         } else {
-            transferResult(false, tr("File sent failed"));
+            transferResult(false, tr("File read/write exception"));
         }
         break;
     case JOB_TRANS_DOING:

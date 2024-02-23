@@ -19,7 +19,6 @@ JobManager *JobManager::instance()
 
 JobManager::~JobManager()
 {
-
 }
 
 bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
@@ -49,9 +48,9 @@ bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
     connect(job.data(), &TransferJob::notifyJobResult, this, &JobManager::handleJobTransStatus, Qt::QueuedConnection);
     connect(job.data(), &TransferJob::notifyJobFinished, this, &JobManager::handleRemoveJob, Qt::QueuedConnection);
 
-    QSharedPointer<TransferJob> _job{nullptr};
+    QSharedPointer<TransferJob> _job { nullptr };
     if (fsjob.write) {
-        DLOG << "(" << jobId <<")write job save to: " << savedir;
+        DLOG << "(" << jobId << ")write job save to: " << savedir;
         {
             QReadLocker lk(&g_m);
             _job = _transjob_recvs.value(jobId);
@@ -66,7 +65,7 @@ bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
         _transjob_recvs.remove(jobId);
         _transjob_recvs.insert(jobId, job);
     } else {
-        DLOG << "(" << jobId <<")read job save to: " << savedir;
+        DLOG << "(" << jobId << ")read job save to: " << savedir;
         {
             QReadLocker lk(&g_m);
             _job = _transjob_sends.value(jobId);
@@ -88,7 +87,6 @@ bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
         job->start();
     });
 
-
     return true;
 }
 
@@ -97,7 +95,7 @@ bool JobManager::doJobAction(const uint action, const int jobid)
     bool result = false;
 
     if (BACK_CANCEL_JOB == action) {
-        QSharedPointer<TransferJob> rjob{nullptr};
+        QSharedPointer<TransferJob> rjob { nullptr };
         {
             QReadLocker lk(&g_m);
             rjob = _transjob_recvs.value(jobid);
@@ -107,7 +105,7 @@ bool JobManager::doJobAction(const uint action, const int jobid)
             result = true;
         }
 
-        QSharedPointer<TransferJob> sjob{nullptr};
+        QSharedPointer<TransferJob> sjob { nullptr };
         {
             QReadLocker lk(&g_m);
             sjob = _transjob_sends.value(jobid);
@@ -117,13 +115,12 @@ bool JobManager::doJobAction(const uint action, const int jobid)
             result = true;
         }
     } else if (BACK_RESUME_JOB == action) {
-
     }
     return result;
 }
 
 bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransResponse *reply)
-{ 
+{
     QSharedPointer<FSDataBlock> datablock(new FSDataBlock);
     datablock->from_json(info);
     datablock->data = buf;
@@ -133,7 +130,7 @@ bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransRespo
         reply->id = datablock->file_id;
         reply->name = datablock->filename;
     }
-    QSharedPointer<TransferJob> job{nullptr};
+    QSharedPointer<TransferJob> job { nullptr };
     {
         QReadLocker lk(&g_m);
         job = _transjob_recvs.value(jobId);
@@ -143,6 +140,13 @@ bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransRespo
         job->pushQueque(datablock);
         if (datablock->flags & JobTransFileOp::FILE_COUNTED && job->freeBytes() < datablock->data_size) {
             return false;
+        } else if (datablock->flags & JobTransFileOp::FIlE_DIR_CREATE || datablock->flags & JobTransFileOp::FIlE_CREATE) {
+            co::sleep(10);
+            job = _transjob_recvs.value(jobId);
+            if (job.isNull() || job->ended()) {
+                LOG << "create dir/file failed.";
+                return false;
+            }
         }
     } else {
         return false;
@@ -162,7 +166,7 @@ bool JobManager::handleCancelJob(co::Json &info, FileTransResponse *reply)
         reply->name = obj.appname;
     }
 
-    QSharedPointer<TransferJob> rjob{nullptr};
+    QSharedPointer<TransferJob> rjob { nullptr };
     {
         QReadLocker lk(&g_m);
         rjob = _transjob_recvs.value(jobId);
@@ -176,7 +180,7 @@ bool JobManager::handleCancelJob(co::Json &info, FileTransResponse *reply)
         result = true;
     }
 
-    QSharedPointer<TransferJob> sjob{nullptr};
+    QSharedPointer<TransferJob> sjob { nullptr };
     {
         QReadLocker lk(&g_m);
         sjob = _transjob_sends.value(jobId);
@@ -205,9 +209,8 @@ bool JobManager::handleTransReport(co::Json &info, FileTransResponse *reply)
     }
 
     switch (obj.result) {
-    case IO_ERROR:
-    {
-        QSharedPointer<TransferJob> job{nullptr};
+    case IO_ERROR: {
+        QSharedPointer<TransferJob> job { nullptr };
         {
             QReadLocker lk(&g_m);
             job = _transjob_sends.value(jobId);
@@ -220,9 +223,8 @@ bool JobManager::handleTransReport(co::Json &info, FileTransResponse *reply)
     }
     case OK:
         break;
-    case FINIASH:
-    {
-        QSharedPointer<TransferJob> job{nullptr};
+    case FINIASH: {
+        QSharedPointer<TransferJob> job { nullptr };
         {
             QReadLocker lk(&g_m);
             job = _transjob_recvs.value(jobId);
@@ -230,7 +232,7 @@ bool JobManager::handleTransReport(co::Json &info, FileTransResponse *reply)
         if (!job.isNull()) {
             //disconnect(job, &TransferJob::notifyFileTransStatus, this, &ServiceManager::handleFileTransStatus);
             job->waitFinish();
-            QSharedPointer<TransferJob> sjob{nullptr};
+            QSharedPointer<TransferJob> sjob { nullptr };
             {
                 QWriteLocker lk(&g_m);
                 _transjob_recvs.remove(jobId);
@@ -305,7 +307,7 @@ void JobManager::handleRemoveJob(const int jobid)
 
 void JobManager::handleOtherOffline(const QString &ip)
 {
-    QSharedPointer<TransferJob> job {nullptr};
+    QSharedPointer<TransferJob> job { nullptr };
     {
         QReadLocker lk(&g_m);
         if (_transjob_sends.isEmpty() && _transjob_recvs.isEmpty())
@@ -321,11 +323,10 @@ void JobManager::handleOtherOffline(const QString &ip)
     auto id = _transjob_sends.isEmpty() ? _transjob_recvs.key(job) : _transjob_sends.key(job);
     _transjob_sends.clear();
     _transjob_recvs.clear();
-    _transjob_break.insert(id,job);
+    _transjob_break.insert(id, job);
 }
 
-
-JobManager::JobManager(QObject *parent) : QObject (parent)
+JobManager::JobManager(QObject *parent)
+    : QObject(parent)
 {
-
 }

@@ -25,7 +25,7 @@
 #include <QCoreApplication>
 
 co::chan<IncomeData> _income_chan(10, 300);
-co::chan<OutData> _outgo_chan(10, 10);
+co::chan<OutData> _outgo_chan(10, 20);
 HandleRpcService::HandleRpcService(QObject *parent)
     : QObject(parent)
 {
