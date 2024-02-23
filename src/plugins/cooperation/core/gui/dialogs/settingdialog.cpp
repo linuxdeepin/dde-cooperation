@@ -475,9 +475,15 @@ void SettingDialog::loadConfig()
 #endif
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
-    d->nameEdit->setText(value.isValid()
-                                 ? value.toString()
-                                 : QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName());
+    if (value.isValid()) {
+        d->nameEdit->setText(value.toString());
+    } else {
+        QString defaultName = QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName();
+        d->nameEdit->setText(defaultName);
+
+        // sync the default name into config
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey, defaultName);
+    }
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
     d->devShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : true);
@@ -496,7 +502,15 @@ void SettingDialog::loadConfig()
 #endif
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
-    d->chooserEdit->setText(value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+    if (value.isValid()) {
+        d->chooserEdit->setText(value.toString());
+    } else {
+        QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+        d->chooserEdit->setText(defaultPath);
+
+        // sync the default path into config
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey, defaultPath);
+    }
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
     d->clipShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : true);
