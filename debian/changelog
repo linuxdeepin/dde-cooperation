@@ -1,3 +1,11 @@
+dde-cooperation (0.7.1) unstable; urgency=medium
+
+  * v0.7.1 release version.
+  * fix some UI issues.
+  * exit backend with frontend for windows.
+
+ -- re2zero <yangwu@uniontech.com>  Fri, 23 Feb 2024 17:36:16 +0800
+
 dde-cooperation (0.7.0) unstable; urgency=medium
 
   * v0.7.0 release version.
