@@ -100,7 +100,7 @@ void CreateBackupFileWidget::initUI()
                                  "font-style: normal;"
                                  "text-align: left;");
     QHBoxLayout *fileNameLayout = new QHBoxLayout();
-    fileNameLayout->addSpacing(140);
+    fileNameLayout->addSpacing(130);
     fileNameLayout->addWidget(fileNameLabel);
 
     QFrame *fileName = new QFrame(this);
@@ -146,10 +146,8 @@ void CreateBackupFileWidget::initUI()
     fileNameEditLayout->addLayout(fileNameInputLabel2Layout);
 
     QHBoxLayout *layout1 = new QHBoxLayout();
-    layout1->addSpacing(140);
+    layout1->setAlignment(Qt::AlignHCenter);
     layout1->addWidget(fileName);
-    layout1->addSpacing(140);
-    layout1->setAlignment(Qt::AlignTop);
 
     QLabel *savePathLabel1 = new QLabel(tr("Location"), this);
     savePathLabel1->setFixedWidth(65);
@@ -171,15 +169,15 @@ void CreateBackupFileWidget::initUI()
                                   "text-align: left; ");
     QHBoxLayout *savePathLayout = new QHBoxLayout();
     savePathLayout->setAlignment(Qt::AlignTop);
-    savePathLayout->addSpacing(140);
+    savePathLayout->addSpacing(130);
     savePathLayout->addWidget(savePathLabel1);
     savePathLayout->addWidget(savePathLabel2);
 
     initDiskListView();
 
     QHBoxLayout *diskListViewLayout = new QHBoxLayout();
-    diskListViewLayout->setAlignment(Qt::AlignTop);
-    diskListViewLayout->addSpacing(140);
+    diskListViewLayout->setAlignment(Qt::AlignHCenter);
+
     diskListViewLayout->addWidget(diskListView);
 
     promptLabel = new QLabel(this);

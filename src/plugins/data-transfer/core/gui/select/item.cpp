@@ -208,7 +208,7 @@ void ItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem
     if (index.data(Qt::BackgroundRole).toBool() == true) {
         painter->setOpacity(opacity);
     }
-    QColor evencolor = QColor(0, 0, 0, 30);
+    QColor evencolor = QColor(0, 0, 0, 20);
     QPoint topleft = option.rect.topLeft();
     QRect positon(backgroundColorLeftMargin, topleft.y(), 440, 36);
     if (index.row() % 2 != 0) {
@@ -263,9 +263,11 @@ void ItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionViewItem &
     painter->drawRoundedRect(checkBoxRect, 4, 4);
 
     if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
-        QRect iconRect(checkBoxRect.left() + 3, checkBoxRect.top() + 3, 13, 11);
-        QSvgRenderer render(QString(":/icon/check_black.svg"));
-        render.render(painter, iconRect);
+       QRect iconRect(checkBoxRect.left() + 3, checkBoxRect.top() + 3, 13, 11);
+//        QSvgRenderer render(QString(":/icon/check_black.svg"));
+//        render.render(painter, iconRect);
+        QPixmap pixmap = QIcon(":/icon/check_black.svg").pixmap(13,11);
+        painter->drawPixmap(iconRect,pixmap);
     }
     painter->restore();
 }
@@ -553,15 +555,15 @@ void SidebarItemDelegate::paintText(QPainter *painter, const QStyleOptionViewIte
     filenameTextFont.setPixelSize(12);
     QString filenameText = index.data(Qt::DisplayRole).toString();
     QFontMetrics filenameMetrics(filenameTextFont);
-    filenameText = filenameMetrics.elidedText(filenameText, Qt::ElideRight, 100);
+    filenameText = filenameMetrics.elidedText(filenameText, Qt::ElideRight, 90);
     painter->drawText(filenameTextPos, Qt::AlignLeft | Qt::AlignVCenter, filenameText);
 
-    QRect remarkTextPos = option.rect.adjusted(148, -2, 0, 0);
+    QRect remarkTextPos = option.rect.adjusted(138, -2, 0, 0);
     QFont remarkTextFont;
     remarkTextFont.setPixelSize(12);
     QString remarkText = index.data(Qt::ToolTipRole).toString();
     QFontMetrics remarkMetrics(remarkTextFont);
-    remarkTextFont = remarkMetrics.elidedText(remarkText, Qt::ElideRight, 50);
+    remarkText = remarkMetrics.elidedText(remarkText, Qt::ElideRight, 50);
     painter->drawText(remarkTextPos, Qt::AlignLeft | Qt::AlignVCenter, remarkText);
 
     painter->restore();
@@ -589,8 +591,9 @@ void SidebarItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionVie
 
     if (index.data(Qt::StatusTipRole).value<int>() == 0) {
         QRect iconRect(checkBoxRect.left() + 3, checkBoxRect.top() + 3, 13, 11);
-        QSvgRenderer render(icon);
-        render.render(painter, iconRect);
+//        QSvgRenderer render(icon);
+        QPixmap pixmap = QIcon(icon).pixmap(13,11);
+        painter->drawPixmap(iconRect,pixmap);
     } else if (index.data(Qt::StatusTipRole).value<int>() == 1) {
         int y = checkBoxRect.top() + 9;
         int x1 = checkBoxRect.left() + 4;
@@ -688,8 +691,8 @@ void SelectAllButton::paintEvent(QPaintEvent *event)
 
     if (curState == ListSelectionState::selectall) {
         QRect iconRect(iconPosSize.left() + 3, iconPosSize.top() + 3, 13, 11);
-        QSvgRenderer render(QString(":/icon/check_black.svg"));
-        render.render(&painter, iconRect);
+        QPixmap pixmap = QIcon(":/icon/check_black.svg").pixmap(13,11);
+        painter.drawPixmap(iconRect,pixmap);
     } else if (curState == ListSelectionState::selecthalf) {
         int y = iconPosSize.top() + 9;
         int x1 = iconPosSize.left() + 4;

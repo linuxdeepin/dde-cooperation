@@ -60,7 +60,7 @@ void FileSelectWidget::initUI()
             tr("When transfer completed, the data will be placed in the user's home directory"),
             this);
     tipLabel1->setWordWrap(true);
-    tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    tipLabel1->setAlignment( Qt::AlignHCenter);
     tipLabel1->setFixedHeight(30);
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
@@ -77,11 +77,11 @@ void FileSelectWidget::initUI()
 
     mainLayout->addSpacing(30);
     mainLayout->addWidget(titileLabel);
-    mainLayout->addSpacing(3);
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(tipLabel1);
     mainLayout->addLayout(headerLayout);
     mainLayout->addLayout(fileviewLayout);
-    mainLayout->addSpacing(5);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(buttonLayout);
 
     QObject::connect(titlebar, &ItemTitlebar::selectAll, this,

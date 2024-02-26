@@ -125,14 +125,14 @@ void SelectMainWidget::initUi()
     indexLayout->addWidget(LocalIndelabel, Qt::AlignCenter);
     indexLayout->addWidget(InternetIndelabel, Qt::AlignCenter);
 
-    mainLayout->setSpacing(0);
+   // mainLayout->setSpacing(0);
     mainLayout->addSpacing(40);
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(45);
     mainLayout->addLayout(modeLayout);
-    mainLayout->addSpacing(150);
+    mainLayout->addSpacing(160);
     mainLayout->addLayout(buttonLayout);
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(4);
     mainLayout->addLayout(indexLayout);
 }
 void SelectMainWidget::nextPage()

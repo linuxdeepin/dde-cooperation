@@ -46,15 +46,12 @@ void ReadyWidget::initUI()
     setLayout(mainLayout);
 
     QLabel *titileLabel = new QLabel(tr("Ready to connect"), this);
-    QFont font;
-    font.setPixelSize(24);
-    font.setWeight(QFont::DemiBold);
-    titileLabel->setFont(font);
+    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignCenter);
 
     QLabel *ipLabel = new QLabel(tr("IP"), this);
     QHBoxLayout *ipLayout = new QHBoxLayout(this);
-    ipLayout->addSpacing(200);
+    ipLayout->addSpacing(190);
     ipLayout->addWidget(ipLabel);
     ipLayout->setAlignment(Qt::AlignBottom);
 
@@ -76,21 +73,20 @@ void ReadyWidget::initUI()
         ipInput->setClearButtonEnabled(!isEmpty);
     });
     QHBoxLayout *editLayout1 = new QHBoxLayout(this);
-    editLayout1->setAlignment(Qt::AlignLeft);
-    editLayout1->addSpacing(200);
+    editLayout1->setAlignment(Qt::AlignCenter);
     editLayout1->addWidget(ipInput);
 
     QLabel *cue = new QLabel(tr("Please open data transfer on UOS, and get the IP"), this);
     QHBoxLayout *cueLayout = new QHBoxLayout(this);
-    cueLayout->addSpacing(200);
+    cueLayout->addSpacing(190);
     cueLayout->addWidget(cue);
     cueLayout->setAlignment(Qt::AlignTop);
 
     QLabel *Captcha = new QLabel(tr("Connect code"), this);
     QHBoxLayout *captchaLayout = new QHBoxLayout(this);
-    captchaLayout->addSpacing(200);
+    captchaLayout->addSpacing(190);
     captchaLayout->addWidget(Captcha);
-    captchaLayout->setAlignment(Qt::AlignBottom);
+    captchaLayout->setAlignment(Qt::AlignTop);
 
     captchaInput = new QLineEdit(this);
     QRegularExpressionValidator *captchaValidator =
@@ -108,15 +104,14 @@ void ReadyWidget::initUI()
     });
 
     QHBoxLayout *editLayout2 = new QHBoxLayout(this);
-    editLayout2->setAlignment(Qt::AlignLeft);
-    editLayout2->addSpacing(200);
+    editLayout2->setAlignment(Qt::AlignCenter);
     editLayout2->addWidget(captchaInput);
 
     tiptextlabel = new QLabel(this);
     tiptextlabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::normal));
     tiptextlabel->setText(tr("connect..."));
     tiptextlabel->setVisible(false);
-    tiptextlabel->setAlignment(Qt::AlignCenter);
+    tiptextlabel->setAlignment(Qt::AlignBottom|Qt::AlignHCenter);
 
     ButtonLayout *buttonLayout = new ButtonLayout();
     QPushButton *backButton = buttonLayout->getButton1();
@@ -131,13 +126,12 @@ void ReadyWidget::initUI()
 
     IndexLabel *indelabel = new IndexLabel(1, this);
     indelabel->setAlignment(Qt::AlignCenter);
-
     QHBoxLayout *indexLayout = new QHBoxLayout(this);
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
-    mainLayout->addSpacing(20);
+    mainLayout->addSpacing(40);
     mainLayout->addWidget(titileLabel);
-    mainLayout->addSpacing(20);
+    mainLayout->addSpacing(30);
     mainLayout->addLayout(ipLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(editLayout1);
@@ -147,10 +141,11 @@ void ReadyWidget::initUI()
     mainLayout->addLayout(captchaLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(editLayout2);
-    mainLayout->addSpacing(200);
+    mainLayout->addSpacing(100);
     mainLayout->addWidget(tiptextlabel);
+//    mainLayout->addSpacing(10);
     mainLayout->addLayout(buttonLayout);
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(4);
     mainLayout->addLayout(indexLayout);
 
     QObject::connect(ipInput, &QLineEdit::textChanged, this, &ReadyWidget::onLineTextChange);

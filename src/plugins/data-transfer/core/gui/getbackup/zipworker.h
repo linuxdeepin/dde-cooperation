@@ -29,6 +29,8 @@ private:
     void sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer,int size);
 
     QString getBackupFilName();
+
+    void sendBackupFileFailMessage(const QString &path);
 signals:
     void backupFileProcessSingal(const QString &content, int progressbar, int estimatedtime);
 public slots:

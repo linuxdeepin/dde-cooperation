@@ -60,10 +60,11 @@ void ConfigSelectWidget::initUI()
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(3);
     mainLayout->addWidget(tipLabel1);
-    mainLayout->addSpacing(10);
+//    mainLayout->addSpacing(10);
     mainLayout->addWidget(selectBrowerBookMarkFrame);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(selectConfigFrame);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(buttonLayout);
 }
 

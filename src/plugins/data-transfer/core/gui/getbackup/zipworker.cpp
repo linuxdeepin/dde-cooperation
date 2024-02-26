@@ -3,7 +3,7 @@
 
 #include "zipworker.h"
 #include "../win/drapwindowsdata.h"
-
+#include <common/commonutils.h>
 #include <QProcess>
 #include <QDebug>
 #include <QFile>
@@ -87,12 +87,12 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
         QFile::remove(zipFile);
         return false;
     }
+
     QFile sourceFile(filePath);
     if (!sourceFile.open(QIODevice::ReadOnly)) {
         qCritical() << "Error reading source file:" << filePath;
         // backup file false
-        emit backupFileProcessSingal(
-                QString(tr("Error in compressing source files :%1")).arg(filePath), -1, -1);
+        sendBackupFileFailMessage(filePath);
         return false;
     }
 
@@ -102,8 +102,8 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
     if (!destinationFile.open(QIODevice::WriteOnly, newInfo)) {
         qCritical() << "Error writing to ZIP file for:" << filePath;
         // backup file false
-        emit backupFileProcessSingal(QString(tr("Error writing compressed file :%1")).arg(filePath),
-                                     -1, -1);
+
+        sendBackupFileFailMessage(filePath);
         return false;
     }
 
@@ -117,8 +117,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
             qCritical() << "Error reading from source file:" << filePath;
             destinationFile.close();
             sourceFile.close();
-            emit backupFileProcessSingal(QString(tr("Error reading file :%1")).arg(filePath), -1,
-                                         -1);
+            sendBackupFileFailMessage(filePath);
             return false;
         }
 
@@ -128,8 +127,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
             qCritical() << "Error writing to ZIP file for:" << filePath;
             destinationFile.close();
             sourceFile.close();
-            emit backupFileProcessSingal(
-                    QString(tr("Error writing compressed file :%1")).arg(filePath), -1, -1);
+            sendBackupFileFailMessage(filePath);
             return false;
         }
 
@@ -181,8 +179,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     if (!zip.open(QuaZip::mdCreate)) {
         qCritical("Error creating the ZIP file.");
         // backup file false
-        emit backupFileProcessSingal(
-                QString(tr("%1 File compression failed")).arg(destinationZipFile), -1, -1);
+        sendBackupFileFailMessage(destinationZipFile);
         return false;
     }
 
@@ -207,8 +204,8 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     if (zip.getZipError() != UNZ_OK) {
         qCritical() << "Error while compressing. Error code:" << zip.getZipError();
         // backup file false
-        emit backupFileProcessSingal(
-                QString(tr("%1 File compression failed")).arg(destinationZipFile), -1, -1);
+
+        sendBackupFileFailMessage(destinationZipFile);
         return false;
     }
 
@@ -277,6 +274,13 @@ QString ZipWork::getBackupFilName()
     LOG << "backup file save path:" << zipFileName.toStdString();
 
     return zipFileName;
+}
+
+void ZipWork::sendBackupFileFailMessage(const QString &path)
+{
+    QString text = deepin_cross::CommonUitls::elidedText(path, Qt::ElideRight,50);
+    emit backupFileProcessSingal(
+            QString(tr("%1 File compression failed")).arg(text), -1, -1);
 }
 
 void ZipWork::abortingBackupFileProcess()

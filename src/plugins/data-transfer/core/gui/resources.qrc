@@ -1,4 +1,4 @@
-﻿<RCC>
+<RCC>
     <qresource prefix="/">
         <file>icon/dialog-warning.svg</file>
         <file>icon/icon.svg</file>
@@ -21,7 +21,6 @@
         <file>icon/file.svg</file>
         <file>icon/checked.svg</file>
         <file>icon/edit.svg</file>
-        <file>icon/folder.svg</file>
         <file>icon/fileicon.svg</file>
         <file>icon/zip-64.svg</file>
         <file>icon/application-x-zip.svg</file>
@@ -280,5 +279,6 @@
         <file>icon/workDone.svg</file>
         <file>icon/warning2.svg</file>
         <file>icon/select1@2x.png</file>
+        <file>icon/folder.svg</file>
     </qresource>
 </RCC>

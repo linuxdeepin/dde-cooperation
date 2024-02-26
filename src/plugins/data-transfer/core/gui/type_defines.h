@@ -51,7 +51,7 @@ enum PageName {
 #include <QHBoxLayout>
 #include <QItemDelegate>
 #include <QListView>
-class QSvgRenderer;
+
 class ButtonLayout : public QHBoxLayout
 {
     Q_OBJECT
@@ -146,7 +146,7 @@ private:
 
 private:
     int theme { 1 };
-    QVector<QSvgRenderer *> renders;
+    QVector<QPixmap> pixmaps;
     QColor stageTextColor;
 };
 class ProcessDetailsWindow : public QListView

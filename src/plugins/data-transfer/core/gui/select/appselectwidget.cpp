@@ -37,15 +37,14 @@ void AppSelectWidget::initUI()
     titileLabel->setFont(font);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    initSelectFrame();
+
 
     QLabel *tipLabel1 = new QLabel(tr("Check transfer application will automatically install the "
                                       "corresponding UOS version of the application."),
                                    this);
     tipLabel1->setWordWrap(true);
     tipLabel1->setFixedHeight(30);
-
-    tipLabel1->setAlignment(Qt::AlignTop | Qt::AlignCenter);
+    tipLabel1->setAlignment(Qt::AlignCenter);
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
     tipLabel1->setFont(font);
@@ -59,13 +58,15 @@ void AppSelectWidget::initUI()
     connect(determineButton, &QPushButton::clicked, this, &AppSelectWidget::nextPage);
     connect(cancelButton, &QPushButton::clicked, this, &AppSelectWidget::backPage);
 
+    initSelectFrame();
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+
     mainLayout->addSpacing(30);
     mainLayout->addWidget(titileLabel);
     mainLayout->addSpacing(3);
     mainLayout->addWidget(tipLabel1);
-    mainLayout->addSpacing(10);
     mainLayout->addWidget(selectFrame);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(buttonLayout);
 }
 

@@ -58,9 +58,9 @@ else()
 endif()
 
 if (WIN32)
-    set(qt_required_components Core Gui Network Widgets Svg Sql WinExtras)
+    set(qt_required_components Core Gui Network Widgets  Sql WinExtras)
 else()
-    set(qt_required_components Core Gui Network Widgets Svg)
+    set(qt_required_components Core Gui Network Widgets )
 endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
@@ -88,7 +88,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
-    Qt${QT_VERSION_MAJOR}::Svg
     co
 )
 

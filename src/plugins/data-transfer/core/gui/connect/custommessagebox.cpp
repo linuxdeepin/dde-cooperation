@@ -3,7 +3,6 @@
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QPainter>
-#include <QtSvg/QSvgRenderer>
 #include <QPainterPath>
 
 CustomMessageBox::CustomMessageBox(const QString &mainTitle, const QString &subTitle,
@@ -106,14 +105,8 @@ void CustomMessageBox::initUi()
                              "}");
     mainLabel->setFixedSize(40, 40);
 
-    QSvgRenderer *renderer = new QSvgRenderer(QString(":/icon/dialog-warning.svg"), this);
-    QPixmap pixmap(mainLabel->width(), mainLabel->height());
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
-    painter.setRenderHint(QPainter::Antialiasing);
-    renderer->render(&painter);
+    QPixmap pixmap = QIcon(QString(":/icon/dialog-warning.svg")).pixmap(mainLabel->width(), mainLabel->height());
     mainLabel->setPixmap(pixmap);
-    mainLabel->show();
 
     QToolButton *closeButton = new QToolButton(this);
     closeButton->setStyleSheet("QWidget {"

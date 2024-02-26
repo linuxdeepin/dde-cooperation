@@ -65,9 +65,9 @@ void ZipFileProcessResultWidget::initUI()
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
-    buttonLayout->addSpacing(15);
     buttonLayout->addWidget(exitButton);
-    buttonLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+    buttonLayout->setSpacing(10);
+    buttonLayout->setAlignment(Qt::AlignCenter);
 
     mainLayout->addLayout(buttonLayout);
 

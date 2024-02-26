@@ -294,8 +294,8 @@ void ProcessWindowItemDelegate::setTheme(int newTheme)
 
 void ProcessWindowItemDelegate::addIcon(const QString &path)
 {
-    QSvgRenderer *render = new QSvgRenderer(path);
-    renders.push_back(render);
+    QPixmap pixmap = QIcon(path).pixmap(20, 20);
+    pixmaps.push_back(pixmap);
 }
 
 void ProcessWindowItemDelegate::setStageColor(QColor color)
@@ -330,7 +330,7 @@ void ProcessWindowItemDelegate::paintText(QPainter *painter, const QStyleOptionV
     painter->setPen(textNamePen);
 
     QRect remarkTextPos;
-    if (!renders.isEmpty()) {
+    if (!pixmaps.isEmpty()) {
         remarkTextPos = option.rect.adjusted(40, 0, 0, 0);
     } else {
         remarkTextPos = option.rect.adjusted(20, 0, 0, 0);
@@ -351,16 +351,14 @@ void ProcessWindowItemDelegate::paintText(QPainter *painter, const QStyleOptionV
 void ProcessWindowItemDelegate::paintIcon(QPainter *painter, const QStyleOptionViewItem &option,
                                           const QModelIndex &index) const
 {
-    if (renders.isEmpty())
+    if (pixmaps.isEmpty())
         return;
 
     painter->save();
     int num = index.data(Qt::UserRole).toInt();
     QPoint pos = option.rect.topLeft();
-
     QRect iconRect(pos.x() + 10, pos.y(), 20, 20);
-
-    QSvgRenderer *render = renders[num];
-    render->render(painter, iconRect);
+    QPixmap pixmap = pixmaps[num];
+    painter->drawPixmap(iconRect, pixmap);
     painter->restore();
 }
