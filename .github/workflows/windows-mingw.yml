@@ -24,6 +24,7 @@ jobs:
       BUILD_TYPE: ${{ matrix.build_type }}
       COMPILER_TYPE: ${{ matrix.compiler_type }}
       QT_VERSION: ${{ matrix.qt_version }}
+      OPENSSL_ROOT_DIR: "/c/Program Files/OpenSSL"
     steps:
       # - name: '⚙️ Cache Qt'
       #   id: cache-qt
@@ -43,8 +44,15 @@ jobs:
           cached: 'false'
           # cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
-      - name: Setup ninja
-        uses: seanmiddleditch/gha-setup-ninja@v3
+      # 3.20.0 版本，高版本无法找到ZLIB
+      - name: Setup cmake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: 3.20.0
+          ninjaVersion: 1.11.1
+
+      # - name: Setup ninja
+      #   uses: seanmiddleditch/gha-setup-ninja@v3
 
       # - name: Update ccache
       #   if: runner.os == 'Windows'
