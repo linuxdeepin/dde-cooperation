@@ -347,11 +347,16 @@
         <source>4. Try entering the target device IP in the top search box</source>
         <translation>4.尝试在顶部搜索框输入目标设备IP</translation>
     </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="197"/>
+        <source>Unable to find collaborative device？</source>
+        <translation>找不到协同设备？</translation>
+    </message>
 </context>
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="238"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="247"/>
         <source>No device found</source>
         <translation>未搜寻到任何设备</translation>
     </message>

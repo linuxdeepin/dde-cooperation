@@ -169,7 +169,7 @@ void NoResultTipWidget::initUI()
     QString hyperlink = "https://www.deepin.org/index/assistant";
 
     QString websiteLinkTemplate =
-            "<a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
+            "<br/><a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
     CooperationLabel *contentLable1 = new CooperationLabel(this);
     QFont font;
@@ -194,11 +194,28 @@ void NoResultTipWidget::initUI()
     contentLable4->setWordWrap(true);
     contentLable4->setFont(font);
 
+    CooperationLabel *titleLabel = new CooperationLabel(tr("Unable to find collaborative device？"));
+    titleLabel->setAlignment(Qt::AlignLeft);
+    font.setPixelSize(14);
+    font.setWeight(450);
+    titleLabel->setFont(font);
+    titleLabel->setWordWrap(true);
+
+    QVBoxLayout *contentLayout = new QVBoxLayout;
+    contentLayout->setSpacing(5);
+    contentLayout->addWidget(titleLabel);
+    contentLayout->addWidget(contentLable1);
+    contentLayout->addWidget(contentLable2);
+    contentLayout->addWidget(contentLable3);
+    contentLayout->addWidget(contentLable4);
+    setLayout(contentLayout);
+
 #ifdef linux
     contentLable1->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
     contentLable2->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
     contentLable3->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
     contentLable4->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
+    titleLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTitle);
 #else
     QList<QColor> colorList { QColor(0, 0, 0, qRound(255 * 0.6)),
                               QColor(192, 192, 192) };
@@ -206,15 +223,9 @@ void NoResultTipWidget::initUI()
     CooperationGuiHelper::instance()->autoUpdateTextColor(contentLable2, colorList);
     CooperationGuiHelper::instance()->autoUpdateTextColor(contentLable3, colorList);
     CooperationGuiHelper::instance()->autoUpdateTextColor(contentLable4, colorList);
+    CooperationGuiHelper::instance()->autoUpdateTextColor(titleLabel, colorList);
+    contentLayout->setSpacing(15);
 #endif
-
-    QVBoxLayout *contentLayout = new QVBoxLayout;
-    contentLayout->setSpacing(10);
-    contentLayout->addWidget(contentLable1);
-    contentLayout->addWidget(contentLable2);
-    contentLayout->addWidget(contentLable3);
-    contentLayout->addWidget(contentLable4);
-    setLayout(contentLayout);
 }
 
 NoResultWidget::NoResultWidget(QWidget *parent)
@@ -240,14 +251,6 @@ void NoResultWidget::initUI()
     font.setWeight(QFont::Medium);
     tipsLabel->setFont(font);
 
-    BackgroundWidget *contentBackgroundWidget = new BackgroundWidget(this);
-    contentBackgroundWidget->setBackground(17, BackgroundWidget::ItemBackground,
-                                           BackgroundWidget::TopAndBottom);
-
-    QVBoxLayout *contentLayout = new QVBoxLayout;
-    contentLayout->addWidget(new NoResultTipWidget());
-    contentBackgroundWidget->setLayout(contentLayout);
-
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
@@ -256,7 +259,6 @@ void NoResultWidget::initUI()
     vLayout->addSpacing(14);
     vLayout->addWidget(tipsLabel, 0, Qt::AlignCenter);
     vLayout->addSpacing(22);
-    vLayout->addWidget(contentBackgroundWidget);
     vLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
     setLayout(vLayout);
 }
@@ -306,6 +308,7 @@ void BottomLabel::initUI()
     QScrollArea *scrollArea = new QScrollArea(dialog);
     tipLabel = new QLabel(qobject_cast<QWidget *>(this->parent()));
     tipLabel->installEventFilter(this);
+
 #ifdef linux
     updateSizeMode();
     connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, &BottomLabel::updateSizeMode);
@@ -324,18 +327,23 @@ void BottomLabel::initUI()
     scrollArea->setStyleSheet("QScrollArea { border: none; background-color: transparent; }");
 #endif
 
-    dialog->setFixedSize(260, 207);
+    dialog->setFixedSize(260, 198);
     scrollArea->setWidgetResizable(true);
     QWidget *contentWidget = new QWidget;
 
     QVBoxLayout *layout = new QVBoxLayout(contentWidget);
+    layout->setAlignment(Qt::AlignTop);
+    layout->setContentsMargins(5, 6, 5, 0);
     layout->addWidget(new NoResultTipWidget());
     scrollArea->setWidget(contentWidget);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(0, 0, 0, 0);
-    dialog->setLayout(contentLayout);
     contentLayout->addWidget(scrollArea);
+    contentLayout->setAlignment(Qt::AlignCenter);
+
+    dialog->setLayout(contentLayout);
+    dialog->setWindowFlags(Qt::ToolTip);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(ipLabel);
@@ -353,11 +361,7 @@ void BottomLabel::showDialog() const
     if (dialog->isVisible())
         return;
     QMainWindow *activeMainWindow = qobject_cast<QMainWindow *>(qApp->topLevelAt(QCursor::pos()));
-#ifdef linux
-    dialog->move(activeMainWindow->pos() + QPoint(220, 393));
-#else
-    dialog->move(activeMainWindow->pos() + QPoint(220, 360));
-#endif
+    dialog->move(activeMainWindow->pos() + QPoint(228, 402));
     dialog->show();
 }
 
