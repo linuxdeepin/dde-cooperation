@@ -471,7 +471,14 @@ void SettingDialog::loadConfig()
     d->findCB->setCurrentIndex(mode);
 #else
     auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
-    d->findCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
+    if (value.isValid()) {
+        d->findCB->setCurrentIndex(value.toInt());
+    } else {
+        // sync the default value into config
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey, 0);
+
+        d->findCB->setCurrentIndex(0);
+    }
 #endif
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
@@ -486,10 +493,25 @@ void SettingDialog::loadConfig()
     }
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
-    d->devShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : true);
+    if (value.isValid()) {
+        d->devShareSwitchBtn->setChecked(value.toBool());
+    } else {
+        // sync the default value into config
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey, true);
+
+        d->devShareSwitchBtn->setChecked(true);
+    }
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey);
     d->connectCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
+    if (value.isValid()) {
+        d->connectCB->setCurrentIndex(value.toInt());
+    } else {
+        // sync the default value into config
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey, true);
+
+        d->connectCB->setCurrentIndex(0);
+    }
 
 #ifdef linux
     value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::TransferModeKey, 0);
@@ -498,7 +520,14 @@ void SettingDialog::loadConfig()
     d->transferCB->setCurrentIndex(mode);
 #else
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
-    d->transferCB->setCurrentIndex(value.isValid() ? value.toInt() : 0);
+    if (value.isValid()) {
+        d->transferCB->setCurrentIndex(value.toInt());
+    } else {
+        // sync the default value into config
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey, true);
+
+        d->transferCB->setCurrentIndex(0);
+    }
 #endif
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
@@ -513,7 +542,14 @@ void SettingDialog::loadConfig()
     }
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
-    d->clipShareSwitchBtn->setChecked(value.isValid() ? value.toBool() : true);
+    if (value.isValid()) {
+        d->clipShareSwitchBtn->setChecked(value.toBool());
+    } else {
+        // sync the default path into config
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey, true);
+
+        d->clipShareSwitchBtn->setChecked(true);
+    }
 }
 
 #ifndef linux
