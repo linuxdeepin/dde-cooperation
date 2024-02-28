@@ -84,6 +84,7 @@ void ResultDisplayWidget::nextPage()
             WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                     "nullptr";
         }
+        emit TransferHelper::instance()->clearWidget();
     });
 }
 
@@ -202,5 +203,5 @@ void ResultWindow::init()
     ProcessWindowItemDelegate *delegate = new ProcessWindowItemDelegate();
     delegate->setStageColor(QColor(Qt::red));
     setItemDelegate(delegate);
-    setFixedSize(460,112);
+    setFixedSize(460, 112);
 }

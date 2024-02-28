@@ -262,8 +262,9 @@ QString TransferringWidget::getTransferFileName(const QString &fullPath, const Q
     std::string toRemove = targetPath.toStdString();
 
     size_t found = path.find(toRemove);   // 查找子字符串的位置
-    if (found != std::string::npos) {   // 如果找到了子字符串
-        std::string result = path.substr(found + toRemove.length() + 1);   // 截取子字符串之后的部分
+    auto index = found + toRemove.length() + 1;
+    if (found != std::string::npos && index <= path.length()) {   // 如果找到了子字符串
+        std::string result = path.substr(index);   // 截取子字符串之后的部分
         found = result.find('/');   // 查找第一个路径名
         if (found != std::string::npos) {
             result = result.substr(0, found);   // 截取第一个路径名
