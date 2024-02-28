@@ -57,13 +57,13 @@ else()
     message (FATAL_ERROR "not support on ${CMAKE_SYSTEM} yet.")
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Network Svg)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network Svg)
-
-if (CMAKE_SYSTEM MATCHES "Windows")
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS  WinExtras)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS  WinExtras)
+if (WIN32)
+    set(qt_required_components Core Gui Network Widgets Svg Sql WinExtras)
+else()
+    set(qt_required_components Core Gui Network Widgets Svg)
 endif()
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
 
@@ -123,3 +123,6 @@ install(TARGETS
     ${DEEPIN_DATA_TRANS_PLUGIN_DIR}
 )
 
+if (WIN32)
+    deployqt_qt_runtime(${PROJECT_NAME} ${qt_required_components})
+endif()
