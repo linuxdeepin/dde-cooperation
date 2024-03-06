@@ -26,20 +26,16 @@ void ErrorWidget::initUI()
     mainLayout->addSpacing(30);
 
     QLabel *iconLabel = new QLabel(this);
-    QPixmap icon(":/icon/transfer.png");
-    QPixmap transparentPixmap(icon.size());
-    iconLabel->setPixmap(icon);
+    iconLabel->setPixmap(QIcon(":/icon/transfer.png").pixmap(200, 160));
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     QLabel *errorLabel = new QLabel(this);
     errorLabel->setStyleSheet(".QLabel{"
                               "background-color: transparent;"
                               "}");
-    QPixmap errorPixmap(":/icon/warning.svg");
 
-    errorPixmap.scaled(32, 32, Qt::KeepAspectRatio);
-    errorLabel->setPixmap(errorPixmap);
-    errorLabel->setGeometry(420, 200, errorPixmap.width(), errorPixmap.height());
+    errorLabel->setPixmap(QIcon(":/icon/warning.svg").pixmap(48, 48));
+    errorLabel->setGeometry(420, 200, 48, 48);
 
     QString titleStr = internetError;
     titleLabel = new QLabel(titleStr, this);

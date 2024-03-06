@@ -25,6 +25,8 @@ private:
     void initUI();
 
 private:
+    QLabel *ipLabel = nullptr;
+    QLabel *ipLabel1 = nullptr;
     QLabel *WarnningLabel = nullptr;
     QHBoxLayout *connectLayout = nullptr;
     int remainingTime = 300;

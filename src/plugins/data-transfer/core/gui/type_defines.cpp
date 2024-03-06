@@ -53,22 +53,22 @@ QPushButton *ButtonLayout::getButton2() const
     return button2;
 }
 
-void ButtonLayout::themeChanged(int theme)
-{
-    // light
-    if (theme == 1) {
-        button1->setStyleSheet(".QToolButton{border-radius: 8px;"
-                               "background-color: lightgray;"
-                               "}");
+//void ButtonLayout::themeChanged(int theme)
+//{
+//    // light
+//    if (theme == 1) {
+//        button1->setStyleSheet(".QToolButton{border-radius: 8px;"
+//                               "background-color: lightgray;"
+//                               "}");
 
-    } else {
-        // dark
-        button1->setStyleSheet(".QToolButton{border-radius: 8px;"
-                               "opacity: 1;"
-                               "background-color: rgba(255,255,255, 0.1);"
-                               "}");
-    }
-}
+//    } else {
+//        // dark
+//        button1->setStyleSheet(".QToolButton{border-radius: 8px;"
+//                               "opacity: 1;"
+//                               "background-color: rgba(255,255,255, 0.1);"
+//                               "}");
+//    }
+//}
 
 QFont StyleHelper::font(int type)
 {
@@ -313,10 +313,10 @@ void ProcessWindowItemDelegate::paintText(QPainter *painter, const QStyleOptionV
     QColor fontNameColor;
     QColor fontStageColor;
     if (theme == 0) {
-        fontNameColor = Qt::white;
+        fontNameColor = QColor(255, 255, 255, 155);
         fontStageColor = QColor(123, 159, 191, 255);
     } else {
-        fontNameColor = Qt::black;
+        fontNameColor = QColor(0, 0, 0, 155);
         fontStageColor = QColor(0, 130, 250, 100);
     }
     if (StatusTipRole != 0) {

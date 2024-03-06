@@ -12,7 +12,6 @@
         <file>icon/wait.png</file>
         <file>icon/wait@2x.png</file>
         <file>icon/transfer.png</file>
-        <file>icon/transfer@2x.png</file>
         <file>icon/success-128.svg</file>
         <file>icon/close_normal.svg</file>
         <file>icon/menu_normal.svg</file>
@@ -31,7 +30,6 @@
         <file>icon/zipfileprocess@2x.png</file>
         <file>icon/fail.svg</file>
         <file>icon/noInternet.png</file>
-        <file>icon/noInternet@2x.png</file>
         <file>icon/drive-harddisk-32px.svg</file>
         <file>icon/drive-harddisk-usb-32px.svg</file>
         <file>icon/select.svg</file>
@@ -280,5 +278,7 @@
         <file>icon/movie/waiting/waiting9.png</file>
         <file>icon/working.svg</file>
         <file>icon/workDone.svg</file>
+        <file>icon/warning2.svg</file>
+        <file>icon/select1@2x.png</file>
     </qresource>
 </RCC>

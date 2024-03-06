@@ -39,7 +39,7 @@ void ResultDisplayWidget::initUI()
     tiptextlabel->setAlignment(Qt::AlignCenter);
     tiptextlabel->setVisible(false);
 
-    resultWindow = new ResultWindow();
+    resultWindow = new ResultWindow(this);
 
     QHBoxLayout *textBrowerlayout = new QHBoxLayout();
     textBrowerlayout->setAlignment(Qt::AlignCenter);
@@ -92,13 +92,10 @@ void ResultDisplayWidget::themeChanged(int theme)
 {
     // light
     if (theme == 1) {
-        titileLabel->setStyleSheet("QLabel{color:rgb(0,26,46);}");
-        tiptextlabel->setStyleSheet("QLabel{color:rgb(0,26,46);}");
+        setStyleSheet(".ResultDisplayWidget{background-color: white; border-radius: 10px;}");
     } else {
         // dark
-        setStyleSheet(".ResultDisplayWidget{-color: rgb(37, 37, 37); border-radius: 10px;}");
-        titileLabel->setStyleSheet("QLabel{color:rgb(192,198,212);}");
-        tiptextlabel->setStyleSheet("QLabel{color:rgb(192,198,212);}");
+        setStyleSheet(".ResultDisplayWidget{color: rgb(37, 37, 37); border-radius: 10px;}");
     }
     resultWindow->changeTheme(theme);
 }
@@ -177,13 +174,13 @@ void ResultWindow::changeTheme(int theme)
     if (theme == 1) {
         setStyleSheet(".ResultWindow{background-color: rgba(0, 0, 0, 0.08);"
                       "border-radius: 10px;"
-                      "padding: 10px 30px 10px 10px;"
+                      "padding: 10px 5px 10px 0px;"
                       "}");
     } else {
         // dark
         setStyleSheet(".ResultWindow{background-color: rgba(255,255,255, 0.08);"
                       "border-radius: 10px;"
-                      "padding: 10px 30px 10px 10px;"
+                      "padding: 10px 5px 10px 0px;"
                       "}");
     }
 
@@ -195,7 +192,7 @@ void ResultWindow::init()
 {
     setStyleSheet(".ResultWindow{background-color: rgba(0, 0, 0, 0.08);"
                   "border-radius: 10px;"
-                  "padding: 10px 30px 10px 10px;"
+                  "padding: 10px 5px 10px 10px;"
                   "}");
     QStandardItemModel *model = new QStandardItemModel(this);
     setEditTriggers(QAbstractItemView::NoEditTriggers);

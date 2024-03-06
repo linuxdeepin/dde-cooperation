@@ -27,7 +27,7 @@ void NetworkDisconnectionWidget::initUI()
     mainLayout->addSpacing(30);
 
     QLabel *iconLabel = new QLabel(this);
-    iconLabel->setPixmap(QPixmap(":/icon/noInternet.png"));
+    iconLabel->setPixmap(QIcon(":/icon/noInternet.png").pixmap(200, 160));
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     QLabel *promptLabel = new QLabel(this);

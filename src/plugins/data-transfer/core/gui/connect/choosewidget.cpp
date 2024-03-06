@@ -91,10 +91,11 @@ void ChooseWidget::initUI()
                 if (online) {
                     tiptextlabel->setVisible(false);
                     winItem->setIcon(QIcon(":/icon/select1.png"));
+                    nextButton->setEnabled(true);
                 } else {
                     tiptextlabel->setVisible(true);
                     winItem->checked = false;
-                    winItem->setIcon(QIcon(":/icon/select1-disable.png"));
+                    nextButton->setEnabled(false);
                 }
                 winItem->setEnable(online);
             });
@@ -246,7 +247,7 @@ void ModeItem::paintEvent(QPaintEvent *event)
     QPainter paint(this);
     paint.setRenderHint(QPainter::Antialiasing);
     if (!enable) {
-        paint.setOpacity(0.5);
+        paint.setOpacity(0.4);
     } else {
         paint.setOpacity(1);
     }

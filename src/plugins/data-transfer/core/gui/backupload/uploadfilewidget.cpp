@@ -59,7 +59,6 @@ void UploadFileWidget::initUI()
     ButtonLayout *buttonLayout = new ButtonLayout();
     backButton = buttonLayout->getButton1();
     backButton->setText(tr("Back"));
-    backButton->setFixedSize(120, 36);
     nextButton = buttonLayout->getButton2();
     nextButton->setText(tr("Next"));
     nextButton->setEnabled(false);
@@ -105,6 +104,7 @@ void UploadFileWidget::initUI()
         tipLabel->setVisible(false);
         if (status == uploadStatus::valid) {
             nextButton->setEnabled(true);
+            nextButton->setText(tr("Next"));
             indelabel->setIndex(2);
         } else {
             indelabel->setIndex(1);

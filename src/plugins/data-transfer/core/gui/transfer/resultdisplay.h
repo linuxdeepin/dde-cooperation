@@ -9,13 +9,15 @@ class ResultWindow : public ProcessDetailsWindow
 {
     Q_OBJECT
 public:
-   ResultWindow(QFrame *parent = nullptr);
-   ~ResultWindow()override;
-   void updateContent(const QString &name, const QString &type,bool success);
-   void changeTheme(int theme);
+    ResultWindow(QFrame *parent = nullptr);
+    ~ResultWindow() override;
+    void updateContent(const QString &name, const QString &type, bool success);
+    void changeTheme(int theme);
+
 private:
-   void init();
+    void init();
 };
+
 class ResultDisplayWidget : public QFrame
 {
     Q_OBJECT

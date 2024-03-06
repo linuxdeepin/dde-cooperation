@@ -95,24 +95,35 @@ void ConnectWidget::initConnectLayout()
     QVBoxLayout *ipVLayout = new QVBoxLayout();
     QLabel *iconLabel = new QLabel(this);
     QLabel *nameLabel = new QLabel(QHostInfo::localHostName() + tr("computer"), this);
-    QLabel *ipLabel = new QLabel(this);
-
+    QFrame *ipFrame = new QFrame(this);
+    ipLabel = new QLabel(this);
+    ipLabel1 = new QLabel(tr("Local IP") + ":", this);
     iconLabel->setPixmap(QIcon(":/icon/computer.svg").pixmap(96, 96));
 
-    ipLabel->setStyleSheet("background-color: rgba(0, 129, 255, 0.1); border-radius: 16; border: 1px solid rgba(0, 129, 255, 0.2);");
-    QString ip = QString("<font size=12px >%1： </font><span style='font-size: 17px; font-weight: 600;'>%2</span>")
-                         .arg(tr("Local IP"))
+    ipFrame->setStyleSheet(".QFrame{"
+                           "background-color: rgba(0, 129, 255, 0.1); "
+                           "border-radius: 16; "
+                           "border: 1px solid rgba(0, 129, 255, 0.2);"
+                           "}");
+    ipFrame->setFixedSize(204, 32);
+    QString ip = QString("<span style='font-size: 17px; font-weight: 600;'>%1</span>")
                          .arg(ipaddress);
     ipLabel->setText(ip);
-    ipLabel->setFixedSize(204, 32);
+    ipLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ipLabel1->setFont(StyleHelper::font(3));
+    QHBoxLayout *ipHLayout = new QHBoxLayout(ipFrame);
+    ipHLayout->addWidget(ipLabel1);
+    ipHLayout->addWidget(ipLabel);
+    ipHLayout->setSpacing(8);
+    ipHLayout->addSpacing(26);
+    ipHLayout->setMargin(0);
 
     iconLabel->setAlignment(Qt::AlignCenter);
     nameLabel->setAlignment(Qt::AlignCenter);
-    ipLabel->setAlignment(Qt::AlignCenter);
 
     ipVLayout->addWidget(iconLabel);
     ipVLayout->addWidget(nameLabel);
-    ipVLayout->addWidget(ipLabel);
+    ipVLayout->addWidget(ipFrame);
     ipVLayout->setAlignment(Qt::AlignCenter);
 
     //passwordLayout
@@ -147,12 +158,13 @@ void ConnectWidget::initConnectLayout()
     refreshLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Refresh")));
 
     tipLabel->setFont(tipfont);
+    tipLabel->setWordWrap(true);
 
     QTimer *timer = new QTimer();
     connect(timer, &QTimer::timeout, [refreshLabel, tipLabel, passwordLabel, nullLabel, timer, this]() {
         if (remainingTime > 0) {
             remainingTime--;
-            QString tip = QString("%1<font color='#6199CA'>%2s</font>%3").arg(tr("The code will be expired in")).arg(QString::number(remainingTime)).arg(tr("please input connect code as soon as possible"));
+            QString tip = QString("%1<font color='#6199CA'> %2s </font>%3").arg(tr("The code will be expired in")).arg(QString::number(remainingTime)).arg(tr("please input connect code as soon as possible"));
             tipLabel->setText(tip);
         } else {
             tipLabel->setVisible(false);
@@ -220,10 +232,14 @@ void ConnectWidget::themeChanged(int theme)
     if (theme == 1) {
         setStyleSheet(".ConnectWidget{background-color: rgba(255,255,255,1); border-radius: 10px;}");
         separatorLabel->setStyleSheet("QLabel { background-color: rgba(0, 0, 0, 0.1); width: 2px; }");
+        ipLabel->setStyleSheet(" ");
+        ipLabel1->setStyleSheet(" ");
     } else {
         // dark
         setStyleSheet(".ConnectWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
         separatorLabel->setStyleSheet("background-color: rgba(220, 220, 220,0.1); width: 2px;");
+       ipLabel->setStyleSheet("color: rgb(192, 192, 192);");
+       ipLabel1->setStyleSheet("color: rgb(192, 192, 192);");
     }
 }
 #endif
