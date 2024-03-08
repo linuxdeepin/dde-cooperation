@@ -64,9 +64,6 @@ public:
     QPushButton *getButton1() const;
     QPushButton *getButton2() const;
 
-public slots:
-    void themeChanged(int theme);
-
 private:
     QPushButton *button1 { nullptr };
     QPushButton *button2 { nullptr };
@@ -140,6 +137,7 @@ public:
     void setTheme(int newTheme);
     void addIcon(const QString &path);
     void setStageColor(QColor color);
+
 private:
     void paintText(QPainter *painter, const QStyleOptionViewItem &option,
                    const QModelIndex &index) const;
@@ -148,7 +146,7 @@ private:
 
 private:
     int theme { 1 };
-    QVector<QSvgRenderer*> renders;
+    QVector<QSvgRenderer *> renders;
     QColor stageTextColor;
 };
 class ProcessDetailsWindow : public QListView

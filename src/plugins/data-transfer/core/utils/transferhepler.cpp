@@ -62,6 +62,8 @@ void TransferHelper::initOnlineState()
             LOG << "Network is" << isConnected;
             online = isConnected;
             Q_EMIT onlineStateChanged(isConnected);
+            if (transferhandle.isTransferring())
+                Q_EMIT interruption();
         }
     });
 
@@ -372,17 +374,27 @@ void TransferHelper::recordTranferJob(const QString &filepath)
     QFile jsonfile(filepath);
     QFileInfo info(jsonfile);
     QString tempPath(tempCacheDir() + connectIP + "transfer-temp.json");
+    QFile tempfile(tempPath);
+    if (tempfile.exists())
+        tempfile.remove();
     if (!jsonfile.copy(tempPath))
         WLOG << "Failed to copy recordTranfer file" + tempPath.toStdString();
 
     connect(this, &TransferHelper::interruption, this, [this, filepath, tempPath]() {
         // 2.write unfinished files to tempjson file
         QJsonObject jsonObj = SettingHelper::ParseJson(filepath);
+        QFile jsonfile(filepath);
         QString fileDir = filepath.left(filepath.lastIndexOf('/'));
+        if (!jsonfile.exists() || jsonObj.isEmpty()) {
+            WLOG << "Failed to recordTranfer file";
+            return;
+        }
         QJsonArray userFileArray = jsonObj["user_file"].toArray();
         QJsonArray updatedFileList;
         bool ok;
         int64 userData = jsonObj["user_data"].toString().toLongLong(&ok);
+
+        LOG << "finshedFiles-----" << finshedFiles.size();
 
         foreach (const QJsonValue &fileValue, userFileArray) {
             QString file = fileValue.toString();

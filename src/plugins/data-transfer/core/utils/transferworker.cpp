@@ -185,7 +185,6 @@ void TransferHandle::localIPCStart()
     connect(qApp, &QCoreApplication::aboutToQuit, [this]() {
         DLOG << "App exit, exit ipc server";
         cancelTransferJob();   //退出，取消job
-        emit TransferHelper::instance()->interruption();
         disconnectRemote();
         //FIXME: it always abort if invoke exit
     });
@@ -416,7 +415,13 @@ bool TransferHandle::cancelTransferJob()
 
     int jobid = _job_maps.firstKey();
     _job_maps.remove(jobid);
+    emit TransferHelper::instance()->interruption();
     return TransferWoker::instance()->cancelTransferJob(jobid);
+}
+
+bool TransferHandle::isTransferring()
+{
+    return !_job_maps.isEmpty();
 }
 
 void TransferHandle::sendFiles(QStringList paths)

@@ -28,7 +28,9 @@ public:
     void sendMessage(json::Json &message);
 
     bool cancelTransferJob();
+    bool isTransferring();
     void disconnectRemote();
+
 public slots:
     void saveSession(fastring sessionid);
     void handleConnectStatus(int result, QString msg);
