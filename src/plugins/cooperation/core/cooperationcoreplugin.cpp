@@ -44,6 +44,7 @@ void CooperaionCorePlugin::initialize()
     bindEvents();
 
     CommonUitls::initLog();
+    CommonUitls::manageDaemonProcess("front");
     CommonUitls::loadTranslator();
 }
 

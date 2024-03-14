@@ -22,9 +22,12 @@ public:
     static void initLog();
     static QString elidedText(const QString &text, Qt::TextElideMode mode, int maxLength);
 
+    static void manageDaemonProcess(const QString &side);
+
 private:
     static QString logDir();
     static bool detailLog();
+    static bool isProcessRunning(const QString &processName);
 };
 }
 

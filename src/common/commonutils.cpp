@@ -13,10 +13,16 @@
 #include <QSettings>
 #include <QFileSystemWatcher>
 #include <QTimer>
+#include <QProcess>
 
 #include "co/co/sock.h"
 
 using namespace deepin_cross;
+
+static constexpr char kApp1[] { "dde-cooperation" };
+static constexpr char kApp2[] { "dde-cooperation-transfer" };
+static constexpr char kApp3[] { "deepin-data-transfer" };
+static constexpr char kDaemon[] { "cooperation-daemon" };
 
 std::string CommonUitls::getFirstIp()
 {
@@ -229,4 +235,36 @@ bool CommonUitls::detailLog()
     // 判断选项是否存在
     bool detailMode = parser.isSet(option);
     return detailMode;
+}
+
+bool CommonUitls::isProcessRunning(const QString &processName)
+{
+    QProcess ps;
+    ps.start("pidof", QStringList() << processName);
+    ps.waitForFinished();
+    return ps.exitCode() == 0;
+}
+
+void CommonUitls::manageDaemonProcess(const QString &side)
+{
+#ifndef linux
+    return;
+#endif
+    if (side == "front") {
+        if (!isProcessRunning(kDaemon))
+            QProcess::startDetached(kDaemon, QStringList());
+        return;
+    }
+    QTimer *timer = new QTimer();
+    QObject::connect(timer, &QTimer::timeout, [] {
+        bool exist = isProcessRunning(kApp1) || isProcessRunning(kApp2) || isProcessRunning(kApp3);
+        if (exist) {
+            return;
+        } else {
+            LOG << "no front-end processes, backend shut down";
+            QString cmd = "killall " + QString::fromUtf8(kDaemon);
+            QProcess::execute(cmd);
+        }
+    });
+    timer->start(10000);
 }

@@ -13,6 +13,7 @@ using namespace deepin_cross;
 void daemonCorePlugin::initialize()
 {
     CommonUitls::initLog();
+    CommonUitls::manageDaemonProcess("backend");
 }
 
 bool daemonCorePlugin::start()

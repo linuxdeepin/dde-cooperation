@@ -128,10 +128,7 @@ void ConnectWidget::initConnectLayout()
 
     //passwordLayout
     QString password = TransferHelper::instance()->getConnectPassword();
-    if (password.isEmpty())
-        remainingTime = 0;
-    else
-        remainingTime = 300;
+    remainingTime = 300;
 
     QHBoxLayout *passwordHLayout = new QHBoxLayout();
     QVBoxLayout *passwordVLayout = new QVBoxLayout();
@@ -162,7 +159,7 @@ void ConnectWidget::initConnectLayout()
 
     QTimer *timer = new QTimer();
     connect(timer, &QTimer::timeout, [refreshLabel, tipLabel, passwordLabel, nullLabel, timer, this]() {
-        if (remainingTime > 0) {
+        if (remainingTime > 0 && !passwordLabel->text().isEmpty()) {
             remainingTime--;
             QString tip = QString("%1<font color='#6199CA'> %2s </font>%3").arg(tr("The code will be expired in")).arg(QString::number(remainingTime)).arg(tr("please input connect code as soon as possible"));
             tipLabel->setText(tip);
@@ -238,8 +235,8 @@ void ConnectWidget::themeChanged(int theme)
         // dark
         setStyleSheet(".ConnectWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
         separatorLabel->setStyleSheet("background-color: rgba(220, 220, 220,0.1); width: 2px;");
-       ipLabel->setStyleSheet("color: rgb(192, 192, 192);");
-       ipLabel1->setStyleSheet("color: rgb(192, 192, 192);");
+        ipLabel->setStyleSheet("color: rgb(192, 192, 192);");
+        ipLabel1->setStyleSheet("color: rgb(192, 192, 192);");
     }
 }
 #endif

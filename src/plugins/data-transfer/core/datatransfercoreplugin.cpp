@@ -14,6 +14,7 @@ using namespace deepin_cross;
 
 void DataTransferCorePlugin::initialize()
 {
+    CommonUitls::manageDaemonProcess("front");
     CommonUitls::initLog();
     CommonUitls::loadTranslator();
 }
