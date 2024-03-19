@@ -64,6 +64,16 @@ public:
     QPushButton *getButton1() const;
     QPushButton *getButton2() const;
 
+
+//public slots:
+//    void themeChanged(int theme);
+
+#ifdef WIN32
+#else
+protected:
+    bool eventFilter(QObject *watched,QEvent *event)override;
+#endif
+
 private:
     QPushButton *button1 { nullptr };
     QPushButton *button2 { nullptr };
@@ -146,6 +156,7 @@ private:
 
 private:
     int theme { 1 };
+
     QVector<QPixmap> pixmaps;
     QColor stageTextColor;
 };
@@ -157,4 +168,35 @@ public:
     ~ProcessDetailsWindow();
     void clear();
 };
+
+class AdaptFontLabel : public QLabel
+{
+    Q_OBJECT
+public:
+    enum Style {
+        fontstyle1 = 0,
+        fontstyle2,
+        fontstyle3,
+        fontstyle4,
+        fontstyle5,
+        fontstyle6,
+        fontstyle7,
+        normal,
+        error
+    };
+
+public:
+    AdaptFontLabel(QString str, Style type, QWidget *parent = nullptr);
+    AdaptFontLabel(Style type, QWidget *parent = nullptr);
+    AdaptFontLabel(QWidget *parent = nullptr);
+    ~AdaptFontLabel();
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
+private:
+    Style m_type;
+    QString m_text;
+};
+
 #endif   // TYPE_DEFINES_H

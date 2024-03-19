@@ -39,8 +39,8 @@ private:
     ResultWindow *resultWindow { nullptr };
     QString processText;
     QLabel *iconLabel { nullptr };
-    QLabel *titileLabel { nullptr };
-    QLabel *tiptextlabel { nullptr };
+    AdaptFontLabel *titileLabel { nullptr };
+    AdaptFontLabel *tiptextlabel { nullptr };
 };
 
 #endif

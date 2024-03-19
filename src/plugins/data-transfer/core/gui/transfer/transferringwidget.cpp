@@ -39,9 +39,9 @@ void TransferringWidget::initUI()
     QHBoxLayout *iconLayout = new QHBoxLayout();
     iconLayout->addWidget(iconWidget, Qt::AlignCenter);
 
-    titileLabel = new QLabel(tr("Transferring..."), this);
+    titileLabel = new AdaptFontLabel(tr("Transferring..."),AdaptFontLabel::fontstyle1, this);
     titileLabel->setFixedHeight(50);
-    titileLabel->setFont(StyleHelper::font(1));
+//    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     progressLabel = new ProgressBarLabel(this);
@@ -51,18 +51,18 @@ void TransferringWidget::initUI()
     QHBoxLayout *progressLayout = new QHBoxLayout();
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
-    timeLabel = new QLabel(this);
+    timeLabel = new AdaptFontLabel(AdaptFontLabel::fontstyle3, this);
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    timeLabel->setFont(StyleHelper::font(3));
+//    timeLabel->setFont(StyleHelper::font(3));
     timeLabel->setText(QString(tr("Calculationing...")));
 
-    fileLabel = new QLabel(this);
+    fileLabel = new AdaptFontLabel(AdaptFontLabel::fontstyle3,this);
     fileLabel->setAlignment(Qt::AlignCenter);
 
     QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
                               .arg(tr("Show processes"));
-    displayLabel = new QLabel(display, this);
-    displayLabel->setFont(StyleHelper::font(3));
+    displayLabel = new AdaptFontLabel(display,AdaptFontLabel::fontstyle3,this);
+//    displayLabel->setFont(StyleHelper::font(3));
     displayLabel->setAlignment(Qt::AlignCenter);
     QObject::connect(displayLabel, &QLabel::linkActivated, this,
                      &TransferringWidget::updateInformationPage);
@@ -181,7 +181,7 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     if (!str.isEmpty()) {
         processWindow->updateContent(str, tpye);
         fileLabel->setText(
-                QString("<font style='font-size: 12px;'>%1 %2<font style='color: rgba(0, 0, 0, 0.6);'>&nbsp;&nbsp;&nbsp;")
+                QString("%1 %2<font style='color: rgba(0, 0, 0, 0.6);'>&nbsp;&nbsp;&nbsp;")
                         .arg(tpye, str));
     }
 
@@ -288,8 +288,17 @@ ProcessWindow::~ProcessWindow()
 void ProcessWindow::updateContent(const QString &name, const QString &type)
 {
     int maxWith = 100;
-    QString nameT = QFontMetrics(StyleHelper::font(3)).elidedText(name, Qt::ElideRight, maxWith);
-    QString typeT = QFontMetrics(StyleHelper::font(3)).elidedText(type, Qt::ElideRight, maxWith);
+    QFont font;
+#ifdef linux
+
+    font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() - 2);
+#else
+    font = StyleHelper::font(3);
+#endif
+    QString nameT = QFontMetrics(font).elidedText(name, Qt::ElideRight, maxWith);
+    QString typeT = QFontMetrics(font).elidedText(type, Qt::ElideRight, maxWith);
+//    QString nameT = QFontMetrics(StyleHelper::font(3)).elidedText(name, Qt::ElideRight, maxWith);
+//    QString typeT = QFontMetrics(StyleHelper::font(3)).elidedText(type, Qt::ElideRight, maxWith);
 
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
     int num;

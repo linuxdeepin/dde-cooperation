@@ -3,6 +3,7 @@
 
 #include <QFrame>
 
+class QLabel;
 class QPushButton;
 class StartWidget : public QFrame
 {

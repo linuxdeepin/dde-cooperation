@@ -68,6 +68,10 @@ private:
     QList<QPair<QString, QString>> connectComboBoxInfo;
     QStringList transferComboBoxInfo;
 
+    CooperationLabel *tipLabel { nullptr };
+    CooperationLabel *tipLabel1 { nullptr };
+    CooperationLabel *tipLabel2 { nullptr };
+    CooperationLabel *basicLable { nullptr };
     QFont groupFont;
     QFont tipFont;
 };

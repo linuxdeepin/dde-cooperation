@@ -32,34 +32,35 @@ void ConnectWidget::initUI()
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
 
-    QLabel *titileLabel = new QLabel(tr("Ready to connect"), this);
+    AdaptFontLabel *titileLabel = new AdaptFontLabel(tr("Ready to connect"), AdaptFontLabel::fontstyle1, this);
     titileLabel->setFixedHeight(50);
-    titileLabel->setFont(StyleHelper::font(1));
+    // titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tipLabel = new QLabel(tr("Please open data transfer on Windows, and imput the IP and connect code"), this);
+    AdaptFontLabel *tipLabel = new AdaptFontLabel(tr("Please open data transfer on Windows, and imput the IP and connect code"),
+                                                  AdaptFontLabel::fontstyle3, this);
     tipLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    tipLabel->setFixedHeight(20);
-    QFont font;
-    font.setPointSize(10);
-    font.setWeight(QFont::Thin);
-    tipLabel->setFont(font);
-
+    //tipLabel->setFixedHeight(20);
+    //    QFont font;
+    //    font.setPointSize(10);
+    //    font.setWeight(QFont::Thin);
+    //    tipLabel->setFont(font);
+    tipLabel->setWordWrap(true);
     connectLayout = new QHBoxLayout();
     initConnectLayout();
 
-    WarnningLabel = new QLabel(tr("Connect code is expired, please refresh for new code"), this);
+    WarnningLabel = new AdaptFontLabel(tr("Connect code is expired, please refresh for new code"), AdaptFontLabel::error, this);
     WarnningLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
-    WarnningLabel->setFixedHeight(80);
-    font.setPointSize(8);
-    font.setWeight(QFont::Thin);
-    WarnningLabel->setFont(font);
+    // WarnningLabel->setFixedHeight(80);
+    //    font.setPointSize(8);
+    //    font.setWeight(QFont::Thin);
+    //    WarnningLabel->setFont(font);
 
-    QPalette palette;
-    QColor color;
-    color.setNamedColor("#FF5736");
-    palette.setColor(QPalette::WindowText, color);
-    WarnningLabel->setPalette(palette);
+    //    QPalette palette;
+    //    QColor color;
+    //color.setNamedColor("#FF5736");
+    //palette.setColor(QPalette::WindowText, color);
+    //  WarnningLabel->setPalette(palette);
     WarnningLabel->setMargin(5);
     WarnningLabel->setVisible(false);
 
@@ -79,8 +80,9 @@ void ConnectWidget::initUI()
     mainLayout->addWidget(tipLabel);
     mainLayout->addSpacing(70);
     mainLayout->addLayout(connectLayout);
+    mainLayout->addSpacing(50);
     mainLayout->addWidget(WarnningLabel);
-    mainLayout->addSpacing(60);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
@@ -96,8 +98,9 @@ void ConnectWidget::initConnectLayout()
     QLabel *iconLabel = new QLabel(this);
     QLabel *nameLabel = new QLabel(QHostInfo::localHostName() + tr("computer"), this);
     QFrame *ipFrame = new QFrame(this);
-    ipLabel = new QLabel(this);
-    ipLabel1 = new QLabel(tr("Local IP") + ":", this);
+    ipFrame->setContentsMargins(0, 0, 0, 0);
+    ipLabel = new AdaptFontLabel(AdaptFontLabel::fontstyle7, this);
+    ipLabel1 = new AdaptFontLabel(tr("Local IP") + ":", AdaptFontLabel::fontstyle3, this);
     iconLabel->setPixmap(QIcon(":/icon/computer.svg").pixmap(96, 96));
 
     ipFrame->setStyleSheet(".QFrame{"
@@ -106,17 +109,18 @@ void ConnectWidget::initConnectLayout()
                            "border: 1px solid rgba(0, 129, 255, 0.2);"
                            "}");
     ipFrame->setFixedSize(204, 32);
-    QString ip = QString("<span style='font-size: 17px; font-weight: 600;'>%1</span>")
-                         .arg(ipaddress);
-    ipLabel->setText(ip);
-    ipLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    ipLabel1->setFont(StyleHelper::font(3));
+    //    QString ip = QString("<span style='font-size: 17px; font-weight: 600;'>%1</span>")
+    //                         .arg(ipaddress);
+    ipLabel->setText(ipaddress);
+    // ipLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    //ipLabel1->setFont(StyleHelper::font(3));
     QHBoxLayout *ipHLayout = new QHBoxLayout(ipFrame);
-    ipHLayout->addWidget(ipLabel1);
-    ipHLayout->addWidget(ipLabel);
-    ipHLayout->setSpacing(8);
-    ipHLayout->addSpacing(26);
+    //   ipHLayout->setSpacing(8);
+    ipHLayout->setAlignment(Qt::AlignHCenter);
     ipHLayout->setMargin(0);
+    ipHLayout->addWidget(ipLabel1);
+    // ipHLayout->addSpacing(8);
+    ipHLayout->addWidget(ipLabel);
 
     iconLabel->setAlignment(Qt::AlignCenter);
     nameLabel->setAlignment(Qt::AlignCenter);
@@ -132,20 +136,20 @@ void ConnectWidget::initConnectLayout()
 
     QHBoxLayout *passwordHLayout = new QHBoxLayout();
     QVBoxLayout *passwordVLayout = new QVBoxLayout();
-    QLabel *passwordLabel = new QLabel(password, this);
-    QLabel *refreshLabel = new QLabel("", this);
-    QLabel *tipLabel = new QLabel(this);
+    AdaptFontLabel *passwordLabel = new AdaptFontLabel(password, AdaptFontLabel::fontstyle6, this);
+    AdaptFontLabel *refreshLabel = new AdaptFontLabel(AdaptFontLabel::fontstyle3, this);
+    AdaptFontLabel *tipLabel = new AdaptFontLabel(AdaptFontLabel::fontstyle3, this);
     QLabel *nullLabel = new QLabel("<font color='#D8D8D8' size='14'>---- ---- ---- --</font>", this);
 
     nullLabel->setFixedWidth(200);
     nullLabel->setVisible(false);
 
-    QFont font;
-    font.setPointSize(40);
-    font.setLetterSpacing(QFont::AbsoluteSpacing, 4);
-    font.setWeight(QFont::Normal);
-    font.setStyleHint(QFont::Helvetica);
-    passwordLabel->setFont(font);
+    //    QFont font;
+    //    font.setPointSize(40);
+    //    font.setLetterSpacing(QFont::AbsoluteSpacing, 4);
+    //    font.setWeight(QFont::Normal);
+    //    font.setStyleHint(QFont::Helvetica);
+    //    passwordLabel->setFont(font);
 
     QFont tipfont;
     tipfont.setPointSize(8);
@@ -154,8 +158,8 @@ void ConnectWidget::initConnectLayout()
     refreshLabel->setFixedHeight(55);
     refreshLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Refresh")));
 
-    tipLabel->setFont(tipfont);
-    tipLabel->setWordWrap(true);
+    //tipLabel->setFont(tipfont);
+     tipLabel->setWordWrap(true);
 
     QTimer *timer = new QTimer();
     connect(timer, &QTimer::timeout, [refreshLabel, tipLabel, passwordLabel, nullLabel, timer, this]() {

@@ -29,12 +29,12 @@ void WaitTransferWidget::initUI()
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
 
-    QLabel *titileLabel = new QLabel(tr("Waiting for transfer..."), this);
+    AdaptFontLabel *titileLabel = new AdaptFontLabel(tr("Waiting for transfer..."),AdaptFontLabel::fontstyle1, this);
     titileLabel->setFixedHeight(50);
-    titileLabel->setFont(StyleHelper::font(1));
+//    titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tipLabel = new QLabel(tr("Please select the data to transfer on Windows"), this);
+    AdaptFontLabel *tipLabel = new AdaptFontLabel(tr("Please select the data to transfer on Windows"),AdaptFontLabel::fontstyle4, this);
     tipLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
     auto iconWidget = new MovieWidget("waiting", this);

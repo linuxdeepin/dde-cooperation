@@ -29,12 +29,12 @@ void ResultDisplayWidget::initUI()
     iconLabel->setPixmap(QIcon(":/icon/success-128.svg").pixmap(96, 96));
     iconLabel->setAlignment(Qt::AlignCenter);
 
-    titileLabel = new QLabel(tr("Transfer completed"), this);
-    titileLabel->setFont(StyleHelper::font(1));
+    titileLabel = new AdaptFontLabel(tr("Transfer completed"), AdaptFontLabel::fontstyle1, this);
+    // titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignCenter);
 
-    tiptextlabel = new QLabel(this);
-    tiptextlabel->setFont(StyleHelper::font(3));
+    tiptextlabel = new AdaptFontLabel(AdaptFontLabel::fontstyle3, this);
+    //    tiptextlabel->setFont(StyleHelper::font(3));
     tiptextlabel->setText(QString(tr("Partial information migration failed, please go to UOS for manual transfer")));
     tiptextlabel->setAlignment(Qt::AlignCenter);
     tiptextlabel->setVisible(false);
@@ -50,7 +50,6 @@ void ResultDisplayWidget::initUI()
     backButton->setText(tr("Back"));
     QPushButton *nextButton = buttonLayout->getButton2();
     nextButton->setText(tr("Exit"));
-
     connect(backButton, &QPushButton::clicked, this, &ResultDisplayWidget::nextPage);
     connect(nextButton, &QPushButton::clicked, qApp, &QApplication::quit);
 
@@ -143,8 +142,15 @@ ResultWindow::~ResultWindow()
 void ResultWindow::updateContent(const QString &name, const QString &type, bool success)
 {
     int maxWith = 430;
-    QString nameT = QFontMetrics(StyleHelper::font(3)).elidedText(name, Qt::ElideRight, maxWith);
-    QString typeT = QFontMetrics(StyleHelper::font(3)).elidedText(type, Qt::ElideRight, maxWith);
+    QFont font;
+#ifdef linux
+
+    font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() - 2);
+#else
+    font = StyleHelper::font(3);
+#endif
+    QString nameT = QFontMetrics(font).elidedText(name, Qt::ElideRight, maxWith);
+    QString typeT = QFontMetrics(font).elidedText(type, Qt::ElideRight, maxWith);
 
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
 

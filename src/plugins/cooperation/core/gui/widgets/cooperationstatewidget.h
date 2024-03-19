@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -49,8 +49,14 @@ public:
 
     void onLinkActivated(const QString &link);
 
+protected:
+    bool eventFilter(QObject *wathced, QEvent *event);
 private:
     void initUI();
+    CooperationLabel *contentLable1 { nullptr };
+    CooperationLabel *contentLable2 { nullptr };
+    CooperationLabel *contentLable3 { nullptr };
+    CooperationLabel *contentLable4 { nullptr };
 };
 
 class NoResultWidget : public QWidget
@@ -84,7 +90,7 @@ private:
 private:
     CooperationAbstractDialog *dialog { nullptr };
     QLabel *tipLabel { nullptr };
-    QLabel *ipLabel { nullptr };
+    CooperationLabel *ipLabel { nullptr };
     QTimer *timer { nullptr };
 };
 

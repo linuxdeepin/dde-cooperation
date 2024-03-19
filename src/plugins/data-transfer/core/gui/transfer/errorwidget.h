@@ -4,7 +4,10 @@
 #include <QFrame>
 #include <QLabel>
 
-enum ErrorType { networkError = 0, outOfStorageError };
+class AdaptFontLabel;
+
+enum ErrorType { networkError = 0,
+                 outOfStorageError };
 
 class ErrorWidget : public QFrame
 {
@@ -23,16 +26,16 @@ private:
     void initUI();
 
 private:
-    QLabel *titleLabel = nullptr;
-    QLabel *promptLabel = nullptr;
+    AdaptFontLabel *titleLabel { nullptr };
+    AdaptFontLabel *promptLabel { nullptr };
 
-    QString internetError{ tr("Network Error") };
-    QString transferError{ tr("Transfer interrupted") };
-    QString internetErrorPrompt{
+    QString internetError { tr("Network Error") };
+    QString transferError { tr("Transfer interrupted") };
+    QString internetErrorPrompt {
         tr("The network disconnected, transfer failed, please connect the network and try again")
     };
-    QString transferErrorPromptUOS{ tr(
+    QString transferErrorPromptUOS { tr(
             "Insufficient space in UOS, please clear at least %1 GB and try again") };
-    QString transferErrorPromptWin{ tr("Insufficient space in UOS, Please reserve enough space") };
+    QString transferErrorPromptWin { tr("Insufficient space in UOS, Please reserve enough space") };
 };
-#endif // ERRORWIDGET_H
+#endif   // ERRORWIDGET_H

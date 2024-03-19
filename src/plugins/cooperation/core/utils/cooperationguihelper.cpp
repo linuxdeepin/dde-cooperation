@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -76,20 +76,32 @@ void CooperationGuiHelper::setFontColor(QWidget *widget, QColor color)
 
 void CooperationGuiHelper::setLabelFont(QLabel *label, int pointSize, int minpointSize, int weight)
 {
+
+//    QFont font;
+//    int size = pointSize;
+//#ifdef DTKWIDGET_CLASS_DSizeMode
+//    size = DSizeModeHelper::element(minpointSize, pointSize);
+//    QObject::connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, label, [pointSize, minpointSize, label] {
+//        int size = DSizeModeHelper::element(minpointSize, pointSize);
+//        QFont font;
+//        font.setPixelSize(size);
+//        label->setFont(font);
+//    });
+//#endif
+
+//    font.setPixelSize(size);
+//    font.setWeight(weight);
+
+//    label->setFont(font);
+
+#ifndef linux
     QFont font;
     int size = pointSize;
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    size = DSizeModeHelper::element(minpointSize, pointSize);
-    QObject::connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, label, [pointSize, minpointSize, label] {
-        int size = DSizeModeHelper::element(minpointSize, pointSize);
-        QFont font;
-        font.setPixelSize(size);
-        label->setFont(font);
-    });
-#endif
 
     font.setPixelSize(size);
     font.setWeight(weight);
 
     label->setFont(font);
+#endif
+
 }

@@ -37,7 +37,7 @@ void UploadFileWidget::initUI()
     mainLayout->setSpacing(0);
     mainLayout->addSpacing(30);
 
-    QLabel *titileLabel = new QLabel(tr("Select data transfer file"), this);
+    AdaptFontLabel *titileLabel = new AdaptFontLabel(tr("Select data transfer file"), AdaptFontLabel::fontstyle1, this);
     titileLabel->setFixedHeight(50);
     titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -46,9 +46,9 @@ void UploadFileWidget::initUI()
     QHBoxLayout *uploadLayout = new QHBoxLayout();
     uploadLayout->addWidget(uploadFileFrame, Qt::AlignCenter);
 
-    tipLabel = new QLabel(tr("File error, cannot transfer, please reselect"), this);
-    tipLabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error) + "background-color: rgba(0, 0, 0, 0);border-style: none;");
-    tipLabel->setFixedHeight(20);
+    tipLabel = new AdaptFontLabel(tr("File error, cannot transfer, please reselect"), AdaptFontLabel::error, this);
+    //    tipLabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error) + "background-color: rgba(0, 0, 0, 0);border-style: none;");
+    //    tipLabel->setFixedHeight(20);
     tipLabel->setAlignment(Qt::AlignCenter);
     tipLabel->setVisible(false);
 
@@ -193,20 +193,21 @@ void UploadFileFrame::initUI()
     iconLabel->setStyleSheet(".QLabel{background-color: rgba(0, 0, 0, 0);border-style: none;}");
     iconLabel->setAlignment(Qt::AlignCenter);
 
-    QLabel *textLabel = new QLabel(QString("<font color='gray' >%1</font>").arg(tr("Drag file here ")), this);
-    textLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
-    textLabel->setFixedHeight(20);
+    AdaptFontLabel *textLabel = new AdaptFontLabel(QString("<font color='gray' >%1</font>").arg(tr("Drag file here ")),
+                                                   AdaptFontLabel::fontstyle3, this);
+    //textLabel->setStyleSheet("background-color: rgba(0, 0, 0, 0);border-style: none;");
+  // textLabel->setFixedHeight(20);
     textLabel->setAlignment(Qt::AlignCenter);
 
     QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Import file"));
-    QLabel *displayLabel = new QLabel(display, this);
-    displayLabel->setStyleSheet(".QLabel{background-color: rgba(0, 0, 0, 0);border-style: none;}");
+    AdaptFontLabel *displayLabel = new AdaptFontLabel(display, AdaptFontLabel::fontstyle3, this);
+    // displayLabel->setStyleSheet(".QLabel{background-color: rgba(0, 0, 0, 0);border-style: none;}");
     displayLabel->setAlignment(Qt::AlignCenter);
-    displayLabel->setFixedHeight(20);
-    QFont tipfont;
-    tipfont.setPixelSize(12);
-    displayLabel->setFont(tipfont);
-    textLabel->setFont(tipfont);
+      // displayLabel->setFixedHeight(20);
+    //    QFont tipfont;
+    //    tipfont.setPixelSize(12);
+    //    displayLabel->setFont(tipfont);
+    //textLabel->setFont(tipfont);
     connect(displayLabel, &QLabel::linkActivated, this, &UploadFileFrame::uploadFile);
 
     closeBtn = new QPushButton(qobject_cast<QWidget *>(this->parent()));
@@ -231,10 +232,10 @@ void UploadFileFrame::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
-    mainLayout->addSpacing(50);
+    mainLayout->addSpacing(70);
     mainLayout->addWidget(iconLabel);
     mainLayout->addWidget(textLabel);
-    mainLayout->addSpacing(5);
+    mainLayout->addSpacing(1);
     mainLayout->addWidget(displayLabel);
     mainLayout->addLayout(fileHLayout);
     mainLayout->addSpacing(70);
@@ -253,7 +254,7 @@ void UploadFileFrame::initUI()
             textLabel->setVisible(true);
             displayLabel->setVisible(true);
             textLabel->setText(QString("<font color='gray' >%1</font>").arg(tr("Drag file here ")));
-            displayLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;font-size:12px;\">%1</a>").arg(tr("Import file")));
+            displayLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Import file")));
             break;
         }
         case uploadStatus::valid: {
@@ -273,7 +274,7 @@ void UploadFileFrame::initUI()
             textLabel->setVisible(true);
             displayLabel->setVisible(true);
             textLabel->setText(QString("<font color='gray' >%1</font>").arg(tr("Only .zip is supported, please")));
-            displayLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;font-size:12px;\">%1</a>").arg(tr("reselect")));
+            displayLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("reselect")));
             break;
         }
         default:
@@ -382,9 +383,11 @@ void UploadFileFrame::dropEvent(QDropEvent *event)
 {
     themeChanged(lightTheme);
     const QList<QUrl> &urls = event->mimeData()->urls();
+
     if (urls.size() != 1)
         return;
     QUrl url = urls.first();
+
     QFileInfo info(url.url());
     if (info.suffix() != "zip") {
         emit updateUI(uploadStatus::formaterror);

@@ -3,7 +3,7 @@
 #include <QPainter>
 #include <QStandardItemModel>
 #include <QTimer>
-
+#include <QDebug>
 #include <QtSvg/QSvgRenderer>
 
 ButtonLayout::ButtonLayout(QWidget *parent)
@@ -18,6 +18,9 @@ ButtonLayout::ButtonLayout(QWidget *parent)
 #ifdef WIN32
     button1->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::gray));
     button2->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::blue));
+#else
+    button1->installEventFilter(this);
+    button2->installEventFilter(this);
 #endif
     addWidget(button1);
     addWidget(button2);
@@ -52,6 +55,21 @@ QPushButton *ButtonLayout::getButton2() const
 {
     return button2;
 }
+#ifdef WIN32
+#else
+bool ButtonLayout::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::Paint) {
+        QPushButton *target = qobject_cast<QPushButton *>(watched);
+        QFont font;
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize());
+        target->setFont(font);
+        return false;
+    }
+
+    return QHBoxLayout::eventFilter(watched, event);
+}
+#endif
 
 //void ButtonLayout::themeChanged(int theme)
 //{
@@ -85,6 +103,10 @@ QFont StyleHelper::font(int type)
     case 3:
         font.setPixelSize(12);
         break;
+    case 4:
+        font.setWeight(QFont::Thin);
+        font.setPixelSize(10);
+        break;
     default:
         break;
     }
@@ -97,9 +119,11 @@ QString StyleHelper::textStyle(StyleHelper::TextStyle type)
     switch (type) {
     case normal:
         style = "color: #000000; font-size: 12px;";
+        //style = QString("color: #000000; font-size: %1 px;").arg(QFontInfo(QApplication::font()).pixelSize() - 6);
         break;
     case error:
         style = "color: #FF5736; font-size: 12px;";
+        //style = QString("color: #FF5736; font-size: %1 px;").arg(QFontInfo(QApplication::font()).pixelSize() - 6);
         break;
     }
     return style;
@@ -324,7 +348,11 @@ void ProcessWindowItemDelegate::paintText(QPainter *painter, const QStyleOptionV
     }
 
     QFont font;
+#ifdef linux
+    font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() - 2);
+#else
     font.setPixelSize(12);
+#endif
     QPen textNamePen(fontNameColor);
     painter->setFont(font);
     painter->setPen(textNamePen);
@@ -361,4 +389,98 @@ void ProcessWindowItemDelegate::paintIcon(QPainter *painter, const QStyleOptionV
     QPixmap pixmap = pixmaps[num];
     painter->drawPixmap(iconRect, pixmap);
     painter->restore();
+}
+
+AdaptFontLabel::AdaptFontLabel(QString str, Style type, QWidget *parent)
+    : QLabel(parent), m_type(type)
+{
+    setText(str);
+}
+
+AdaptFontLabel::AdaptFontLabel(AdaptFontLabel::Style type, QWidget *parent)
+    : QLabel(parent), m_type(type)
+{
+}
+
+AdaptFontLabel::AdaptFontLabel(QWidget *parent)
+    : QLabel(parent)
+{
+}
+
+AdaptFontLabel::~AdaptFontLabel()
+{
+}
+
+void AdaptFontLabel::paintEvent(QPaintEvent *event)
+{
+    QFont font;
+    switch (m_type) {
+    case fontstyle1:
+#ifdef WIN32
+        font.setPixelSize(24);
+#else
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() + 10);
+#endif
+        font.setWeight(QFont::DemiBold);
+        break;
+    case fontstyle2:
+#ifdef WIN32
+        font.setPixelSize(17);
+#else
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() + 3);
+#endif
+        font.setWeight(QFont::DemiBold);
+        break;
+    case fontstyle3:
+#ifdef WIN32
+        font.setPixelSize(12);
+#else
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() - 2);
+#endif
+        break;
+    case fontstyle4:
+#ifdef WIN32
+        font.setPixelSize(10);
+#else
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() - 4);
+#endif
+        font.setWeight(QFont::Thin);
+        break;
+    case fontstyle5:
+#ifdef WIN32
+        font.setPixelSize(14);
+#else
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize());
+#endif
+        font.setWeight(QFont::Medium);
+        break;
+#ifdef WIN32
+
+#else
+    case fontstyle6:
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() + 40);
+        font.setLetterSpacing(QFont::AbsoluteSpacing, 4);
+        font.setWeight(QFont::Normal);
+        font.setStyleHint(QFont::Helvetica);
+        break;
+    case fontstyle7:
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() + 3);
+        font.setWeight(QFont::DemiBold);
+        break;
+#endif
+    case normal:
+        break;
+    case error:
+        QPalette palette = QLabel::palette();
+        palette.setColor(QPalette::WindowText, Qt::red);
+        QLabel::setPalette(palette);
+#ifdef WIN32
+        font.setPixelSize(12);
+#else
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() - 2);
+#endif
+        break;
+    }
+    setFont(font);
+    QLabel::paintEvent(event);
 }

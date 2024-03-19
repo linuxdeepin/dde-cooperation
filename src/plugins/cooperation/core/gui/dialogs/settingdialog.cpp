@@ -104,7 +104,7 @@ void SettingDialogPrivate::initWindow()
 
 void SettingDialogPrivate::createBasicWidget()
 {
-    CooperationLabel *basicLable = new CooperationLabel(tr("Basic Settings"), q);
+    basicLable = new CooperationLabel(tr("Basic Settings"), q);
     auto cm = basicLable->contentsMargins();
     cm.setLeft(10);
     basicLable->setContentsMargins(cm);
@@ -117,7 +117,7 @@ void SettingDialogPrivate::createBasicWidget()
     SettingItem *findItem = new SettingItem(q);
     findItem->setItemInfo(tr("Discovery mode"), findCB);
 
-    CooperationLabel *tipLabel = new CooperationLabel(tr("Other devices can discover and connect with you through the \"Cooperation\" app"), q);
+    tipLabel = new CooperationLabel(tr("Other devices can discover and connect with you through the \"Cooperation\" app"), q);
     auto margins = tipLabel->contentsMargins();
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
@@ -171,15 +171,15 @@ void SettingDialogPrivate::createDeviceShareWidget()
     SettingItem *deviceShareItem = new SettingItem(q);
     deviceShareItem->setItemInfo(tr("Peripheral share"), devShareSwitchBtn);
 
-    CooperationLabel *tipLabel = new CooperationLabel(tr("Allows peripherals that have been established "
-                                                         "to collaborate across devices to control this "
-                                                         "device, including keyboard, mouse, trackpad, etc"),
-                                                      q);
-    auto margins = tipLabel->contentsMargins();
+    tipLabel1 = new CooperationLabel(tr("Allows peripherals that have been established "
+                                        "to collaborate across devices to control this "
+                                        "device, including keyboard, mouse, trackpad, etc"),
+                                     q);
+    auto margins = tipLabel1->contentsMargins();
     margins.setLeft(10);
-    tipLabel->setContentsMargins(margins);
-    tipLabel->setWordWrap(true);
-    CooperationGuiHelper::setLabelFont(tipLabel, 12, 10, tipFont.weight());
+    tipLabel1->setContentsMargins(margins);
+    tipLabel1->setWordWrap(true);
+    CooperationGuiHelper::setLabelFont(tipLabel1, 12, 10, tipFont.weight());
     connectCB = new QComboBox(q);
     connectCB->setFixedWidth(280);
     connectCB->setIconSize(QSize(24, 24));
@@ -202,7 +202,7 @@ void SettingDialogPrivate::createDeviceShareWidget()
 
     contentLayout->addWidget(deviceShareItem);
     contentLayout->addSpacing(4);
-    contentLayout->addWidget(tipLabel);
+    contentLayout->addWidget(tipLabel1);
     contentLayout->addSpacing(16);
     contentLayout->addWidget(connectItem);
     contentLayout->addSpacing(10);
@@ -240,12 +240,12 @@ void SettingDialogPrivate::createClipboardShareWidget()
     SettingItem *clipShareItem = new SettingItem(q);
     clipShareItem->setItemInfo(tr("Share clipboard"), clipShareSwitchBtn);
 
-    CooperationLabel *tipLabel = new CooperationLabel(tr("The clipboard is shared between devices"), q);
-    auto margins = tipLabel->contentsMargins();
+    tipLabel2 = new CooperationLabel(tr("The clipboard is shared between devices"), q);
+    auto margins = tipLabel2->contentsMargins();
     margins.setLeft(10);
-    tipLabel->setContentsMargins(margins);
-    tipLabel->setWordWrap(true);
-    CooperationGuiHelper::setLabelFont(tipLabel, 12, 10, tipFont.weight());
+    tipLabel2->setContentsMargins(margins);
+    tipLabel2->setWordWrap(true);
+    CooperationGuiHelper::setLabelFont(tipLabel2, 12, 10, tipFont.weight());
 #ifdef linux
     tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
 #else
@@ -256,7 +256,7 @@ void SettingDialogPrivate::createClipboardShareWidget()
 
     contentLayout->addWidget(clipShareItem);
     contentLayout->addSpacing(4);
-    contentLayout->addWidget(tipLabel);
+    contentLayout->addWidget(tipLabel2);
 }
 
 void SettingDialogPrivate::onFindComboBoxValueChanged(int index)
@@ -389,6 +389,18 @@ SettingDialog::~SettingDialog()
 
 bool SettingDialog::eventFilter(QObject *watched, QEvent *event)
 {
+#ifdef linux
+    if (event->type() == QEvent::Paint) {
+        QFont font = d->tipLabel->font();
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() - 2);
+        d->tipLabel->setFont(font);
+        d->tipLabel1->setFont(font);
+        d->tipLabel2->setFont(font);
+        font = d->basicLable->font();
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() + 2);
+        d->basicLable->setFont(font);
+    }
+#endif
     // 绘制背景
     do {
         if (event->type() != QEvent::Paint)

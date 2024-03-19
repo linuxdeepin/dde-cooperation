@@ -38,8 +38,8 @@ void ChooseWidget::initUI()
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
 
-    QLabel *titileLabel = new QLabel(tr("Select a transfer way"), this);
-    titileLabel->setFont(StyleHelper::font(1));
+    AdaptFontLabel *titileLabel = new AdaptFontLabel(tr("Select a transfer way"), AdaptFontLabel::fontstyle1, this);
+    //titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     winItem = new ModeItem(internetMethodName, QIcon(":/icon/select1.png"), this);
@@ -51,11 +51,11 @@ void ChooseWidget::initUI()
     modeLayout->addWidget(packageItem, Qt::AlignTop);
     modeLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QLabel *tiptextlabel = new QLabel(this);
-    tiptextlabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error));
     QString prompt = tr("Unable to connect to the network， please check your network connection or select export to local directory.");
-    tiptextlabel->setText(prompt);
-
+    AdaptFontLabel *tiptextlabel = new AdaptFontLabel(prompt, AdaptFontLabel::error, this);
+    //tiptextlabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error));
+    //tiptextlabel->setTextStyle(StyleHelper::error);
+    //tiptextlabel->setText(prompt);
     tiptextlabel->setVisible(false);
 
     QHBoxLayout *tiplayout = new QHBoxLayout();
@@ -244,6 +244,7 @@ void ModeItem::mousePressEvent(QMouseEvent *event)
 
 void ModeItem::paintEvent(QPaintEvent *event)
 {
+
     QPainter paint(this);
     paint.setRenderHint(QPainter::Antialiasing);
     if (!enable) {
@@ -259,8 +260,14 @@ void ModeItem::paintEvent(QPaintEvent *event)
         paint.setPen(QPen(QColor(65, 77, 104, 255), 1));
         paint.drawEllipse(12, 12, 16, 16);
     }
+
     QFont font("SourceHanSansSC-Medium");
+
+#ifdef WIN32
     font.setPixelSize(14);
+#else
+    font.setPixelSize(QFontInfo(QApplication::font()).pixelSize());
+#endif
     font.setWeight(QFont::Medium);
     font.setStyleName("Normal");
     paint.setFont(font);

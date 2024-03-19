@@ -47,10 +47,10 @@ private:
     void initConnect();
 private:
     QWidget *iconWidget { nullptr };
-    QLabel *titileLabel { nullptr };
-    QLabel *fileLabel { nullptr };
-    QLabel *displayLabel { nullptr };
-    QLabel *timeLabel { nullptr };
+    AdaptFontLabel *titileLabel { nullptr };
+    AdaptFontLabel *fileLabel { nullptr };
+    AdaptFontLabel *displayLabel { nullptr };
+    AdaptFontLabel *timeLabel { nullptr };
     ProgressBarLabel *progressLabel { nullptr };
     QFrame *fileNameFrame { nullptr };
     ProcessWindow *processWindow { nullptr };

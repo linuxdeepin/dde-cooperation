@@ -30,7 +30,7 @@ void NetworkDisconnectionWidget::initUI()
     iconLabel->setPixmap(QIcon(":/icon/noInternet.png").pixmap(200, 160));
     iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    QLabel *promptLabel = new QLabel(this);
+    AdaptFontLabel *promptLabel = new AdaptFontLabel(AdaptFontLabel::fontstyle4,this);
     promptLabel->setText(tr("The network has been disconnected. Please check your network"));
     promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 

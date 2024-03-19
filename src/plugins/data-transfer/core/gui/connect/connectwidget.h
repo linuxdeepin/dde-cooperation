@@ -6,6 +6,7 @@
 class QLabel;
 class QHBoxLayout;
 class QPushButton;
+class AdaptFontLabel;
 class ConnectWidget : public QFrame
 {
     Q_OBJECT
@@ -25,9 +26,9 @@ private:
     void initUI();
 
 private:
-    QLabel *ipLabel = nullptr;
-    QLabel *ipLabel1 = nullptr;
-    QLabel *WarnningLabel = nullptr;
+    AdaptFontLabel *ipLabel = nullptr;
+    AdaptFontLabel *ipLabel1 = nullptr;
+    AdaptFontLabel *WarnningLabel = nullptr;
     QHBoxLayout *connectLayout = nullptr;
     int remainingTime = 300;
     QPushButton *backButton = nullptr;

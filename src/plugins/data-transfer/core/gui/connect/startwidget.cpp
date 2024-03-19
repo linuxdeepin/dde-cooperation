@@ -32,16 +32,16 @@ void StartWidget::initUI()
     iconLabel->setPixmap(QIcon(":/icon/picture-home.png").pixmap(200, 160));
     iconLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
-    QLabel *titileLabel = new QLabel(tr("UOS data transfer"), this);
-    QFont font;
-    titileLabel->setFont(StyleHelper::font(1));
+    AdaptFontLabel *titileLabel = new AdaptFontLabel(tr("UOS data transfer"),AdaptFontLabel::fontstyle1,this);
+    //titileLabel->setFont(StyleHelper::font(1));
     titileLabel->setAlignment(Qt::AlignCenter);
 
-    QLabel *textLabel2 = new QLabel(tr("UOS transfer tool enables one click migration of your files, personal data, and applications to\nUOS, helping you seamlessly replace your system."), this);
+
+    AdaptFontLabel *textLabel2 = new AdaptFontLabel(tr("UOS transfer tool enables one click migration of your files, personal data, and applications to\nUOS, helping you seamlessly replace your system."),
+
+                                                    AdaptFontLabel::fontstyle5,this);
     textLabel2->setAlignment(Qt::AlignTop | Qt::AlignCenter);
-    font.setPointSize(10);
-    font.setWeight(QFont::Thin);
-    textLabel2->setFont(font);
+//    textLabel2->setFont(StyleHelper::font(4));
 
     ButtonLayout *buttonLayout = new ButtonLayout();
     buttonLayout->setCount(1);
@@ -72,3 +72,4 @@ void StartWidget::themeChanged(int theme)
         setStyleSheet(".StartWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
     }
 }
+

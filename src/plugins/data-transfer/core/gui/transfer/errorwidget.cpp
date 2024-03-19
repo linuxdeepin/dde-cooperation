@@ -38,9 +38,9 @@ void ErrorWidget::initUI()
     errorLabel->setGeometry(420, 200, 48, 48);
 
     QString titleStr = internetError;
-    titleLabel = new QLabel(titleStr, this);
-    titleLabel->setFixedHeight(50);
-    titleLabel->setFont(StyleHelper::font(2));
+    titleLabel = new AdaptFontLabel(titleStr,AdaptFontLabel::fontstyle2,this);
+    //titleLabel->setFixedHeight(50);
+//    titleLabel->setFont(StyleHelper::font(2));
     titleLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     ProgressBarLabel *progressLabel = new ProgressBarLabel(this);
@@ -50,15 +50,15 @@ void ErrorWidget::initUI()
     QHBoxLayout *progressLayout = new QHBoxLayout();
     progressLayout->addWidget(progressLabel, Qt::AlignCenter);
 
-    QLabel *timeLabel = new QLabel(this);
+    AdaptFontLabel *timeLabel = new AdaptFontLabel(AdaptFontLabel::fontstyle3,this);
 
-    timeLabel->setFont(StyleHelper::font(3));
+//    timeLabel->setFont(StyleHelper::font(3));
     timeLabel->setText(QString("%1 - -").arg(tr("Transfer will be completed in")));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-    promptLabel = new QLabel(this);
-    promptLabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error));
-    promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    promptLabel = new AdaptFontLabel(AdaptFontLabel::error,this);
+//    promptLabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error));
+    promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
     ButtonLayout *buttonLayout = new ButtonLayout();
     QPushButton *backButton = buttonLayout->getButton1();
@@ -74,9 +74,9 @@ void ErrorWidget::initUI()
     indelabel->setAlignment(Qt::AlignCenter);
 
     QHBoxLayout *indexLayout = new QHBoxLayout();
-    indexLayout->addWidget(indelabel, Qt::AlignCenter);
+    indexLayout->addWidget(indelabel, Qt::AlignCenter|Qt::AlignBottom);
 
-    mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    mainLayout->setAlignment(Qt::AlignHCenter);
     mainLayout->addSpacing(50);
     mainLayout->addWidget(iconLabel);
     mainLayout->addSpacing(15);

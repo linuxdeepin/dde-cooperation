@@ -160,6 +160,22 @@ void NoResultTipWidget::onLinkActivated(const QString &link)
     QDesktopServices::openUrl(QUrl(link));
 }
 
+bool NoResultTipWidget::eventFilter(QObject *wathced, QEvent *event)
+{
+#ifdef linux
+    if (event->type() == QEvent::Paint) {
+        QFont font;
+        font.setWeight(QFont::Normal);
+        font.setPixelSize(QFontInfo(QApplication::font()).pixelSize() - 2);
+        contentLable1->setFont(font);
+        contentLable2->setFont(font);
+        contentLable3->setFont(font);
+        contentLable4->setFont(font);
+    }
+#endif
+    return QWidget::eventFilter(wathced, event);
+}
+
 void NoResultTipWidget::initUI()
 {
     QString leadintText =
@@ -171,37 +187,47 @@ void NoResultTipWidget::initUI()
     QString websiteLinkTemplate =
             "<br/><a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
-    CooperationLabel *contentLable1 = new CooperationLabel(this);
+    contentLable1 = new CooperationLabel(this);
+    contentLable1->setWordWrap(true);
+    contentLable1->setText(content1);
+    connect(contentLable1, &QLabel::linkActivated, this, &NoResultTipWidget::onLinkActivated);
+    contentLable2 = new CooperationLabel(tr("2. On the same LAN as the device"), this);
+    contentLable2->setAlignment(Qt::AlignLeft);
+    contentLable2->setWordWrap(true);
+    contentLable3 = new CooperationLabel(
+            tr("3. Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\""),
+            this);
+    contentLable3->setAlignment(Qt::AlignLeft);
+    contentLable3->setWordWrap(true);
+
+    contentLable4 = new CooperationLabel(
+            tr("4. Try entering the target device IP in the top search box"),
+            this);
+    contentLable4->setAlignment(Qt::AlignLeft);
+    contentLable4->setWordWrap(true);
+
+    CooperationLabel *titleLabel = new CooperationLabel(tr("Unable to find collaborative device？"));
+    titleLabel->setAlignment(Qt::AlignLeft);
+    titleLabel->setWordWrap(true);
+#ifndef linux
     QFont font;
     font.setWeight(QFont::Normal);
     font.setPixelSize(12);
     contentLable1->setFont(font);
-    contentLable1->setWordWrap(true);
-    contentLable1->setText(content1);
-    connect(contentLable1, &QLabel::linkActivated, this, &NoResultTipWidget::onLinkActivated);
-
-    CooperationLabel *contentLable2 = new CooperationLabel(tr("2. On the same LAN as the device"), this);
-    contentLable2->setWordWrap(true);
     contentLable2->setFont(font);
-    CooperationLabel *contentLable3 = new CooperationLabel(
-            tr("3. Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\""),
-            this);
-    contentLable3->setWordWrap(true);
     contentLable3->setFont(font);
-    CooperationLabel *contentLable4 = new CooperationLabel(
-            tr("4. Try entering the target device IP in the top search box"),
-            this);
-    contentLable4->setWordWrap(true);
     contentLable4->setFont(font);
-
-    CooperationLabel *titleLabel = new CooperationLabel(tr("Unable to find collaborative device？"));
-    titleLabel->setAlignment(Qt::AlignLeft);
     font.setPixelSize(14);
     font.setWeight(450);
     titleLabel->setFont(font);
-    titleLabel->setWordWrap(true);
+#endif
+    contentLable1->installEventFilter(this);
+    contentLable2->installEventFilter(this);
+    contentLable3->installEventFilter(this);
+    contentLable4->installEventFilter(this);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
+    // contentLayout->setAlignment(Qt::AlignLeft);
     contentLayout->setSpacing(5);
     contentLayout->addWidget(titleLabel);
     contentLayout->addWidget(contentLable1);
@@ -299,9 +325,9 @@ bool BottomLabel::eventFilter(QObject *obj, QEvent *event)
 void BottomLabel::initUI()
 {
     QString ip = QString(tr("Local IP: %1").arg(CooperationUtil::localIPAddress()));
-    ipLabel = new QLabel(ip);
-    ipLabel->setAlignment(Qt::AlignHCenter);
-    ipLabel->setFixedHeight(30);
+    ipLabel = new CooperationLabel(ip);
+    ipLabel->setAlignment(Qt::AlignCenter);
+    //  ipLabel->setFixedHeight(30);
     CooperationGuiHelper::setLabelFont(ipLabel, 12, 10, QFont::Normal);
 
     dialog = new CooperationAbstractDialog(this);
@@ -329,13 +355,13 @@ void BottomLabel::initUI()
 
     dialog->setFixedSize(260, 198);
     scrollArea->setWidgetResizable(true);
-    QWidget *contentWidget = new QWidget;
-
-    QVBoxLayout *layout = new QVBoxLayout(contentWidget);
-    layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(5, 6, 5, 0);
-    layout->addWidget(new NoResultTipWidget());
-    scrollArea->setWidget(contentWidget);
+    //        QWidget *contentWidget = new QWidget(this);
+    ////    scrollArea->setStyleSheet("background-color:blue");
+    //        QVBoxLayout *layout = new QVBoxLayout(contentWidget);
+    //        layout->setAlignment(Qt::AlignTop);
+    //        layout->setContentsMargins(5, 6, 5, 0);
+    //        layout->addWidget(new NoResultTipWidget(this));
+    scrollArea->setWidget(new NoResultTipWidget(this));
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(0, 0, 0, 0);
@@ -343,9 +369,11 @@ void BottomLabel::initUI()
     contentLayout->setAlignment(Qt::AlignCenter);
 
     dialog->setLayout(contentLayout);
+
     dialog->setWindowFlags(Qt::ToolTip);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(ipLabel);
     mainLayout->setAlignment(Qt::AlignHCenter);
     setLayout(mainLayout);
@@ -370,7 +398,7 @@ void BottomLabel::updateSizeMode()
 #ifdef DTKWIDGET_CLASS_DSizeMode
     tipLabel->setGeometry(460, DSizeModeHelper::element(562, 552), 24, 24);
     int size = DSizeModeHelper::element(18, 24);
-    ipLabel->setFixedHeight(DSizeModeHelper::element(15, 30));
+    // ipLabel->setFixedHeight(DSizeModeHelper::element(15, 30));
     tipLabel->setPixmap(QIcon::fromTheme("icon_tips").pixmap(size, size));
 #else
     tipLabel->setGeometry(460, 552, 24, 24);
