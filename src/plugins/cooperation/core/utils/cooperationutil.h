@@ -9,6 +9,7 @@
 #include "info/deviceinfo.h"
 
 #include <QWidget>
+#include <QDialog>
 
 namespace cooperation_core {
 
@@ -32,6 +33,8 @@ public:
 
     static QVariantMap deviceInfo();
     static QString localIPAddress();
+
+    void showFeatureDisplayDialog(QDialog *dlg);
 
 Q_SIGNALS:
     void discoveryFinished(const QList<DeviceInfoPointer> &infoList);

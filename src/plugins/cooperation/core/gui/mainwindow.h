@@ -31,6 +31,7 @@ public:
 #endif
 
 public Q_SLOTS:
+    void setFirstTipVisible();
     void onlineStateChanged(bool isOnline);
     void onLookingForDevices();
     void onDiscoveryFinished(bool hasFound);

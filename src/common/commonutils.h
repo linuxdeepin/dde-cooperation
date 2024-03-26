@@ -24,6 +24,7 @@ public:
 
     static void manageDaemonProcess(const QString &side);
 
+    static bool isFirstStart();
 private:
     static QString logDir();
     static bool detailLog();

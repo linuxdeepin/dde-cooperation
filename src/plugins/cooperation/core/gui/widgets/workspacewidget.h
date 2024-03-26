@@ -37,6 +37,7 @@ public:
     DeviceInfoPointer findDeviceInfo(const QString &ip);
 
     void clear();
+    void setFirstStartTip(bool visible);
 
 protected:
     bool event(QEvent *event) override;

@@ -23,6 +23,7 @@ public:
     static void setFontColor(QWidget *widget, QColor color);
 
     static void setLabelFont(QLabel *label, int pointSize, int minpointSize, int weight);
+    static void setAutoFont(QWidget *widget, int size, int weight);
 
 Q_SIGNALS:
     void themeTypeChanged();

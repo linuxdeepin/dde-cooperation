@@ -18,6 +18,8 @@
 #    include "proxy/cooperationproxy.h"
 #else
 #    include "base/reportlog/reportlogmanager.h"
+#    include <DFeatureDisplayDialog>
+DWIDGET_USE_NAMESPACE
 #endif
 
 using namespace cooperation_core;
@@ -29,16 +31,14 @@ void CooperaionCorePlugin::initialize()
         auto appName = qApp->applicationName();
         qApp->setApplicationName(MainAppName);
         ConfigManager::instance();
-#ifdef linux
-        ReportLogManager::instance()->init();
-#endif
         qApp->setApplicationName(appName);
     } else {
-#ifdef linux
-        ReportLogManager::instance()->init();
-#endif
         connect(qApp, &SingleApplication::raiseWindow, this, [] { CooperationUtil::instance()->mainWindow()->activateWindow(); });
     }
+
+#ifdef linux
+    ReportLogManager::instance()->init();
+#endif
 
     CooperationUtil::instance();
     bindEvents();
@@ -56,7 +56,15 @@ bool CooperaionCorePlugin::start()
     CooperationManager::instance()->regist();
     MainController::instance()->start();
 
-#ifdef WIN32
+#ifdef linux
+    if (CommonUitls::isFirstStart()) {
+        emit MainController::instance()->firstStart();
+        DFeatureDisplayDialog *dlg = qApp->featureDisplayDialog();
+        auto btn = dlg->getButton(0);
+        connect(btn, &QAbstractButton::clicked, qApp, &SingleApplication::helpActionTriggered);
+        CooperationUtil::instance()->showFeatureDisplayDialog(dlg);
+    }
+#else
     CooperationProxy::instance();
 #endif
 

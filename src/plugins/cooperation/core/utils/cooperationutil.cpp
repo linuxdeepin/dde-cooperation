@@ -25,6 +25,10 @@
 #include <QDebug>
 #include <QDir>
 
+#ifdef linux
+#    include <DFeatureDisplayDialog>
+DWIDGET_USE_NAMESPACE
+#endif
 using namespace cooperation_core;
 
 CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
@@ -519,4 +523,21 @@ QString CooperationUtil::localIPAddress()
     QString ip;
     ip = deepin_cross::CommonUitls::getFirstIp().data();
     return ip;
+}
+
+void CooperationUtil::showFeatureDisplayDialog(QDialog *dlg1)
+{
+    DFeatureDisplayDialog *dlg = static_cast<DFeatureDisplayDialog *>(dlg1);
+    auto btn = dlg->getButton(0);
+    btn->setText(tr("View Help Manual"));
+    dlg->setTitle(tr("Welcome to dde-cooperation"));
+    dlg->addItem(new DFeatureItem(QIcon::fromTheme(":/icons/deepin/builtin/icons/tip_kvm.png"),
+                                  tr("Keyboard and mouse sharing"), tr("When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device"), dlg));
+    dlg->addItem(new DFeatureItem(QIcon::fromTheme(":/icons/deepin/builtin/icons/tip_clipboard.png"),
+                                  tr("Clipboard sharing"), tr("Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device"), dlg));
+    dlg->addItem(new DFeatureItem(QIcon::fromTheme(":/icons/deepin/builtin/icons/tip_file.png"),
+                                  tr("Delivery of documents"), tr("After connecting between two devices, you can initiate a file delivery to the other device"), dlg));
+    dlg->addItem(new DFeatureItem(QIcon::fromTheme(":/icons/deepin/builtin/icons/tip_more.png"),
+                                  tr("Usage"), tr("For detailed instructions, please click on the Help Manual below"), dlg));
+    dlg->show();
 }

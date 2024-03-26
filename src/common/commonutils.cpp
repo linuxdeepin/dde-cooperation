@@ -268,3 +268,23 @@ void CommonUitls::manageDaemonProcess(const QString &side)
     });
     timer->start(10000);
 }
+
+bool CommonUitls::isFirstStart()
+{
+    QString flagPath = QString("%1/%2/%3/first_run.flag")
+                               .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
+                               .arg(qApp->organizationName())
+                               .arg(qApp->applicationName());   //~/.cache/deepin/xx
+
+    QFile flag(flagPath);
+    if (flag.exists())
+        return false;
+
+    if (flag.open(QIODevice::WriteOnly)) {
+        LOG << "FirstStart";
+        flag.close();
+    } else {
+        WLOG << "FirstStart Failed to create file: " << flagPath.toStdString();
+    }
+    return true;
+}

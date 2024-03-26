@@ -34,6 +34,7 @@ Q_SIGNALS:
     void deviceOnline(const QList<DeviceInfoPointer> &infoList);
     void deviceOffline(const QString &ip);
     void discoveryFinished(bool hasFound);
+    void firstStart();
 
 private Q_SLOTS:
     void checkNetworkState();

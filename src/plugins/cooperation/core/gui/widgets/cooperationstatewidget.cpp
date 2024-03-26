@@ -162,6 +162,7 @@ void NoResultTipWidget::onLinkActivated(const QString &link)
 
 void NoResultTipWidget::initUI()
 {
+    CooperationGuiHelper::setAutoFont(this, 12, QFont::Normal);
     QString leadintText =
             tr("1. Enable cross-end collaborative applications. Applications on the UOS "
                "can be downloaded from the App Store, and applications on the Windows "
@@ -172,33 +173,30 @@ void NoResultTipWidget::initUI()
             "<br/><a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
     CooperationLabel *contentLable1 = new CooperationLabel(this);
-    QFont font;
-    font.setWeight(QFont::Normal);
-    font.setPixelSize(12);
-    contentLable1->setFont(font);
     contentLable1->setWordWrap(true);
     contentLable1->setText(content1);
     connect(contentLable1, &QLabel::linkActivated, this, &NoResultTipWidget::onLinkActivated);
 
     CooperationLabel *contentLable2 = new CooperationLabel(tr("2. On the same LAN as the device"), this);
     contentLable2->setWordWrap(true);
-    contentLable2->setFont(font);
-    CooperationLabel *contentLable3 = new CooperationLabel(
-            tr("3. Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\""),
-            this);
+
+    QString settingTip;
+    if (qApp->property("onlyTransfer").toBool()) {
+        settingTip = tr("3. File Manager-Settings-File Drop-Allow the following users to drop files to me -\"Everyone on the same LAN\"");
+    } else {
+        settingTip = tr("3. Settings-Basic Settings-Discovery Mode-\"Allow everyone in the same LAN\"");
+    }
+
+    CooperationLabel *contentLable3 = new CooperationLabel(settingTip, this);
     contentLable3->setWordWrap(true);
-    contentLable3->setFont(font);
     CooperationLabel *contentLable4 = new CooperationLabel(
             tr("4. Try entering the target device IP in the top search box"),
             this);
     contentLable4->setWordWrap(true);
-    contentLable4->setFont(font);
 
     CooperationLabel *titleLabel = new CooperationLabel(tr("Unable to find collaborative device？"));
     titleLabel->setAlignment(Qt::AlignLeft);
-    font.setPixelSize(14);
-    font.setWeight(450);
-    titleLabel->setFont(font);
+    CooperationGuiHelper::setAutoFont(titleLabel, 14, 450);
     titleLabel->setWordWrap(true);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
@@ -302,7 +300,7 @@ void BottomLabel::initUI()
     ipLabel = new QLabel(ip);
     ipLabel->setAlignment(Qt::AlignHCenter);
     ipLabel->setFixedHeight(30);
-    CooperationGuiHelper::setLabelFont(ipLabel, 12, 10, QFont::Normal);
+    CooperationGuiHelper::setAutoFont(ipLabel, 12, QFont::Normal);
 
     dialog = new CooperationAbstractDialog(this);
     QScrollArea *scrollArea = new QScrollArea(dialog);
@@ -373,8 +371,54 @@ void BottomLabel::updateSizeMode()
     ipLabel->setFixedHeight(DSizeModeHelper::element(15, 30));
     tipLabel->setPixmap(QIcon::fromTheme("icon_tips").pixmap(size, size));
 #else
-    tipLabel->setGeometry(460, 552, 24, 24);
+    tipLabel->setGeometry(480, 552, 24, 24);
     ipLabel->setFixedHeight(30);
     tipLabel->setPixmap(QIcon(":/icons/deepin/builtin/light/icons/icon_tips.svg").pixmap(24, 24));
 #endif
+}
+
+FirstTipWidget::FirstTipWidget(QWidget *parent)
+    : QWidget(parent)
+{
+    initUI();
+}
+
+void FirstTipWidget::setVisible(bool visible)
+{
+    QWidget::setVisible(visible);
+    tipBtn->setVisible(visible);
+    tipBtn->setGeometry(450, 45 + height() / 2, 30, 30);
+}
+
+void FirstTipWidget::initUI()
+{
+    QLabel *firstTip = new QLabel(tr("Make sure that the person you are collaborating with has the \"Cross Collaboration\" application"
+                                     " enabled and is connected to the same network as you are."));
+    CooperationGuiHelper::setAutoFont(firstTip, 12, 400);
+    firstTip->setWordWrap(true);
+    firstTip->setFixedWidth(480);
+    firstTip->setContentsMargins(10, 10, 40, 10);
+    firstTip->setStyleSheet("background-color: white; "
+                            "border-radius: 10px;"
+                            "color: rgba(0, 0, 0, 0.6);");
+
+    tipBtn = new QToolButton(dynamic_cast<QWidget *>(parent()));
+    tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_normal.svg"));
+    tipBtn->setIconSize(QSize(40, 40));
+    tipBtn->setStyleSheet("QToolButton:hover {"
+                          " background-color: white;"
+                          " }");
+
+    connect(tipBtn, &QToolButton::clicked, this, [this]() {
+        setVisible(false);
+    });
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    hLayout->setAlignment(Qt::AlignCenter);
+    hLayout->addWidget(firstTip);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0, 15, 0, 0);
+    mainLayout->addLayout(hLayout);
+    setLayout(mainLayout);
 }

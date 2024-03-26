@@ -17,6 +17,8 @@
 
 #include <maincontroller/maincontroller.h>
 
+#include <utils/cooperationguihelper.h>
+
 using namespace cooperation_core;
 
 WorkspaceWidgetPrivate::WorkspaceWidgetPrivate(WorkspaceWidget *qq)
@@ -37,18 +39,26 @@ WorkspaceWidgetPrivate::~WorkspaceWidgetPrivate()
 
 void WorkspaceWidgetPrivate::initUI()
 {
+    tipWidget = new FirstTipWidget(q);
+    tipWidget->setVisible(false);
+
     searchEdit = new CooperationSearchEdit(q);
-    searchEdit->setContentsMargins(20, 0, 20, 0);
+    searchEdit->setContentsMargins(10, 0, 10, 0);
 
     searchEdit->setPlaceholderText(tr("Please enter the device name or IP"));
+    searchEdit->setPlaceHolder(tr("Please enter the device ip/name of the collaborator"));
     stackedLayout = new QStackedLayout;
+
+    QLabel *deviceclass = new QLabel(tr("Nearby Device"));
+    deviceclass->setContentsMargins(20, 0, 10, 0);
+    CooperationGuiHelper::setAutoFont(deviceclass, 14, 400);
 
     lfdWidget = new LookingForDeviceWidget(q);
     nnWidget = new NoNetworkWidget(q);
     nrWidget = new NoResultWidget(q);
-    nrWidget->setContentsMargins(20, 0, 20, 0);
+    nrWidget->setContentsMargins(10, 0, 10, 0);
     dlWidget = new DeviceListWidget(q);
-    dlWidget->setContentsMargins(20, 0, 20, 0);
+    dlWidget->setContentsMargins(10, 0, 10, 0);
 
     stackedLayout->addWidget(lfdWidget);
     stackedLayout->addWidget(nnWidget);
@@ -67,7 +77,10 @@ void WorkspaceWidgetPrivate::initUI()
 #endif
     BottomLabel *bottomLabel = new BottomLabel(q);
 
-    mainLayout->addSpacing(15);
+    mainLayout->addWidget(tipWidget);
+    mainLayout->addSpacing(10);
+    mainLayout->addWidget(deviceclass);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(stackedLayout);
     mainLayout->addWidget(bottomLabel);
     q->setLayout(mainLayout);
@@ -197,6 +210,11 @@ void WorkspaceWidget::clear()
 {
     d->dlWidget->clear();
     Q_EMIT d->clearDevice();
+}
+
+void WorkspaceWidget::setFirstStartTip(bool visible)
+{
+    d->tipWidget->setVisible(visible);
 }
 
 bool WorkspaceWidget::event(QEvent *event)

@@ -23,6 +23,7 @@ class LookingForDeviceWidget;
 class NoNetworkWidget;
 class NoResultWidget;
 class DeviceListWidget;
+class FirstTipWidget;
 class WorkspaceWidgetPrivate : public QObject
 {
     Q_OBJECT
@@ -52,6 +53,7 @@ public:
     WorkspaceWidget *q { nullptr };
     QStackedLayout *stackedLayout { nullptr };
     CooperationSearchEdit *searchEdit { nullptr };
+    FirstTipWidget *tipWidget { nullptr };
     LookingForDeviceWidget *lfdWidget { nullptr };
     NoNetworkWidget *nnWidget { nullptr };
     NoResultWidget *nrWidget { nullptr };

@@ -252,6 +252,59 @@
     </message>
 </context>
 <context>
+    <name>cooperation_core::CooperationUtil</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="529"/>
+        <source>View Help Manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="530"/>
+        <source>Welcome to dde-cooperation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="532"/>
+        <source>Keyboard and mouse sharing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="532"/>
+        <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="534"/>
+        <source>Clipboard sharing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="534"/>
+        <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="536"/>
+        <source>Delivery of documents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="536"/>
+        <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="538"/>
+        <source>For detailed instructions, please click on the Help Manual below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="538"/>
+        <source>Usage</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>cooperation_core::DeviceItem</name>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="175"/>
@@ -266,6 +319,14 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="186"/>
         <source>offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::FirstTipWidget</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="395"/>
+        <source>Make sure that the person you are collaborating with has the &quot;Cross Collaboration&quot; application enabled and is connected to the same network as you are.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -305,13 +366,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="51"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="42"/>
+        <source>Selection of delivery device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="52"/>
         <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="121"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="55"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="56"/>
         <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="125"/>
         <source>Download Windows client</source>
         <translation type="unfinished"></translation>
@@ -328,13 +394,18 @@
 <context>
     <name>cooperation_core::NoResultTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="166"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="167"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="183"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="180"/>
         <source>2. On the same LAN as the device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
+        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -343,7 +414,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="192"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="193"/>
         <source>4. Try entering the target device IP in the top search box</source>
         <translation type="unfinished"></translation>
     </message>
@@ -450,33 +521,38 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="201"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="183"/>
+        <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="212"/>
         <source>Connection direction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="218"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="231"/>
         <source>Allows the following users to send files to me</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="225"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="238"/>
         <source>File save location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="241"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
         <source>Share clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="243"/>
-        <source>The clipboard is shared between devices</source>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="256"/>
+        <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="292"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="299"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="310"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="317"/>
         <source>The device name must contain 1 to 63 characters</source>
         <translation type="unfinished"></translation>
     </message>
@@ -581,8 +657,18 @@
 <context>
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="43"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="48"/>
         <source>Please enter the device name or IP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="49"/>
+        <source>Please enter the device ip/name of the collaborator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <source>Nearby Device</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

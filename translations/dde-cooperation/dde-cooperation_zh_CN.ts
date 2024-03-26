@@ -252,6 +252,59 @@
     </message>
 </context>
 <context>
+    <name>cooperation_core::CooperationUtil</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="529"/>
+        <source>View Help Manual</source>
+        <translation>查看帮助手册</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="530"/>
+        <source>Welcome to dde-cooperation</source>
+        <translation>欢迎使用跨端协同</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="532"/>
+        <source>Keyboard and mouse sharing</source>
+        <translation>键鼠共享</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="532"/>
+        <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
+        <translation>两台设备间进行连接后，可使用发起方的键鼠控制另一设备</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="534"/>
+        <source>Clipboard sharing</source>
+        <translation>剪贴板共享</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="534"/>
+        <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
+        <translation>两台设备间进行连接后，将共享剪贴板，可在一台设备上复制，另一台设备粘贴</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="536"/>
+        <source>Delivery of documents</source>
+        <translation>文件投送</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="536"/>
+        <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
+        <translation>两台设备间进行连接后，可向对方设备发起文件投送</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="538"/>
+        <source>For detailed instructions, please click on the Help Manual below</source>
+        <translation>详细的使用方法，请点击下方《帮助手册》进行查看</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="538"/>
+        <source>Usage</source>
+        <translation>使用方法</translation>
+    </message>
+</context>
+<context>
     <name>cooperation_core::DeviceItem</name>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="175"/>
@@ -267,6 +320,14 @@
         <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="186"/>
         <source>offline</source>
         <translation>离线</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::FirstTipWidget</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="395"/>
+        <source>Make sure that the person you are collaborating with has the &quot;Cross Collaboration&quot; application enabled and is connected to the same network as you are.</source>
+        <translation>请确保协同对象已经开启“跨端协同”应用，并与您链接同一网络。</translation>
     </message>
 </context>
 <context>
@@ -305,13 +366,18 @@
         <translation>重新寻找设备</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="51"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="42"/>
+        <source>Selection of delivery device</source>
+        <translation>选择投送设备</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="52"/>
         <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="121"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="55"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="56"/>
         <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="125"/>
         <source>Download Windows client</source>
         <translation>Windows客户端下载</translation>
@@ -328,14 +394,19 @@
 <context>
     <name>cooperation_core::NoResultTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="166"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="167"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation>1. 开启跨端协同应用，UOS端应用可在应用商店下载，Windows端下载地址:</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="183"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="180"/>
         <source>2. On the same LAN as the device</source>
         <translation>2. 与本设备在同一局域网</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
+        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
+        <translation>3. 文件管理器-设置-文件投送-允许以下用户向我投送文件-“同一局域网下的所有人”</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="187"/>
@@ -343,7 +414,7 @@
         <translation>3. 设置-基础设置-可被发现-“允许同一局域网下的所有人”</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="192"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="193"/>
         <source>4. Try entering the target device IP in the top search box</source>
         <translation>4.尝试在顶部搜索框输入目标设备IP</translation>
     </message>
@@ -450,33 +521,38 @@
         <translation>允许已建立跨端协同连接的外设控制此设备，包括键盘、鼠标、触控板等</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="201"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="183"/>
+        <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
+        <translation>当此设备作为连接方时，鼠标从此设备屏幕上穿透到被连接方的位置</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="212"/>
         <source>Connection direction</source>
         <translation>链接方向</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="218"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="231"/>
         <source>Allows the following users to send files to me</source>
         <translation>允许以下用户向我投送文件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="225"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="238"/>
         <source>File save location</source>
         <translation>文件保存位置</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="241"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
         <source>Share clipboard</source>
         <translation>剪贴板共享</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="243"/>
-        <source>The clipboard is shared between devices</source>
-        <translation>在设备间共享剪贴板</translation>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="256"/>
+        <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
+        <translation>服务端（被连接的设备）开启共享后，两台电脑之间将共享剪贴板</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="292"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="299"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="310"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="317"/>
         <source>The device name must contain 1 to 63 characters</source>
         <translation>设备昵称必须介于1-63个字符之内</translation>
     </message>
@@ -581,9 +657,19 @@
 <context>
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="43"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="48"/>
         <source>Please enter the device name or IP</source>
         <translation>请输入设备昵称/IP</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="49"/>
+        <source>Please enter the device ip/name of the collaborator</source>
+        <translation>请输入协同对象的设备IP/昵称</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <source>Nearby Device</source>
+        <translation>附近的设备</translation>
     </message>
 </context>
 <context>

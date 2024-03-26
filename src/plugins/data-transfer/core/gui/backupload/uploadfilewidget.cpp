@@ -185,7 +185,7 @@ UploadFileFrame::~UploadFileFrame()
 
 void UploadFileFrame::initUI()
 {
-    setFixedSize(460, 275);
+    setFixedSize(480, 275);
     setAcceptDrops(true);
 
     QLabel *iconLabel = new QLabel(this);

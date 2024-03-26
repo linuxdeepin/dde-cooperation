@@ -30,5 +30,9 @@
         <file>icons/deepin/builtin/light/icons/find_device_250px.svg</file>
         <file>icons/deepin/builtin/light/icons/icon_tips_128px.svg</file>
         <file>icons/deepin/builtin/dark/icons/icon_tips_128px.svg</file>
+        <file>icons/deepin/builtin/icons/tip_clipboard.png</file>
+        <file>icons/deepin/builtin/icons/tip_file.png</file>
+        <file>icons/deepin/builtin/icons/tip_kvm.png</file>
+        <file>icons/deepin/builtin/icons/tip_more.png</file>
     </qresource>
 </RCC>

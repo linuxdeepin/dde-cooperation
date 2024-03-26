@@ -110,23 +110,23 @@ DeviceInfoPointer DeviceItem::deviceInfo() const
 
 void DeviceItem::initUI()
 {
-    setFixedSize(460, 90);
+    setFixedSize(480, 90);
     setBackground(8, NoType, TopAndBottom);
 
     iconLabel = new CooperationLabel(this);
     nameLabel = new CooperationLabel(this);
     nameLabel->installEventFilter(this);
-    CooperationGuiHelper::setLabelFont(nameLabel, 14, 12, QFont::Medium);
+    CooperationGuiHelper::setAutoFont(nameLabel, 14, QFont::Medium);
 
     ipLabel = new CooperationLabel(this);
-    CooperationGuiHelper::setLabelFont(ipLabel, 12, 10, QFont::Medium);
+    CooperationGuiHelper::setAutoFont(ipLabel, 12, QFont::Medium);
 #ifdef linux
     ipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
 #endif
 
     stateLabel = new StateLabel(this);
     stateLabel->setContentsMargins(8, 2, 8, 2);
-    CooperationGuiHelper::setLabelFont(stateLabel, 11, 10, QFont::Medium);
+    CooperationGuiHelper::setAutoFont(stateLabel, 11, QFont::Medium);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setSpacing(2);

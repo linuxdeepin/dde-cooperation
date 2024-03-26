@@ -88,6 +88,19 @@ private:
     QTimer *timer { nullptr };
 };
 
+class FirstTipWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit FirstTipWidget(QWidget *parent = nullptr);
+
+    void setVisible(bool visible) override;
+
+private:
+    void initUI();
+    QToolButton *tipBtn { nullptr };
+};
+
 }   // namespace cooperation_core
 
 #endif   // COOPERATIONSTATEWIDGET_H

@@ -30,6 +30,7 @@ void MainWindowPrivate::initConnect()
     connect(MainController::instance(), &MainController::deviceOnline, q, &MainWindow::addDevice);
     connect(MainController::instance(), &MainController::deviceOffline, q, &MainWindow::removeDevice);
     connect(MainController::instance(), &MainController::discoveryFinished, q, &MainWindow::onDiscoveryFinished);
+    connect(MainController::instance(), &MainController::firstStart, q, &MainWindow::setFirstTipVisible);
 }
 
 void MainWindowPrivate::moveCenter()
@@ -103,6 +104,11 @@ void MainWindow::onlineStateChanged(bool isOnline)
         d->workspaceWidget->clear();
         d->workspaceWidget->switchWidget(WorkspaceWidget::kNoNetworkWidget);
     }
+}
+
+void MainWindow::setFirstTipVisible()
+{
+    d->workspaceWidget->setFirstStartTip(true);
 }
 
 void MainWindow::onLookingForDevices()

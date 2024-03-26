@@ -6,10 +6,10 @@
 #define SINGLEAPPLICATION_H
 
 #ifdef WIN32
-#include <QApplication>
+#    include <QApplication>
 typedef QApplication CrossApplication;
 #else
-#include <DApplication>
+#    include <DApplication>
 typedef DTK_WIDGET_NAMESPACE::DApplication CrossApplication;
 #endif
 
@@ -20,7 +20,7 @@ QT_END_NAMESPACE
 namespace deepin_cross {
 
 #if defined(qApp)
-#undef qApp
+#    undef qApp
 #endif
 #define qApp (static_cast<SingleApplication *>(CrossApplication::instance()))
 
@@ -32,6 +32,7 @@ public:
     ~SingleApplication();
     bool setSingleInstance(const QString &key);
     void closeServer();
+    void helpActionTriggered();
 
 Q_SIGNALS:
     void raiseWindow();

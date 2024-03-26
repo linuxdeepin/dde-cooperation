@@ -39,6 +39,7 @@ void MainWindowPrivate::initTitleBar()
 
     if (qApp->property("onlyTransfer").toBool()) {
         titleBar->setMenuVisible(false);
+        titleBar->addWidget(new QLabel(tr("Selection of delivery device")), Qt::AlignHCenter);
         auto margins = titleBar->contentsMargins();
         margins.setLeft(10);
         titleBar->setContentsMargins(margins);

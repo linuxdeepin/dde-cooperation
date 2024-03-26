@@ -61,7 +61,7 @@ SettingDialogPrivate::~SettingDialogPrivate()
 
 void SettingDialogPrivate::initWindow()
 {
-    q->setFixedSize(650, 520);
+    q->setFixedSize(650, 584);
 
     contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(10, 0, 10, 0);
@@ -98,8 +98,8 @@ void SettingDialogPrivate::initWindow()
     initFont();
     createBasicWidget();
     createDeviceShareWidget();
-    createTransferWidget();
     createClipboardShareWidget();
+    createTransferWidget();
 }
 
 void SettingDialogPrivate::createBasicWidget()
@@ -108,7 +108,7 @@ void SettingDialogPrivate::createBasicWidget()
     auto cm = basicLable->contentsMargins();
     cm.setLeft(10);
     basicLable->setContentsMargins(cm);
-    basicLable->setFont(groupFont);
+    CooperationGuiHelper::setAutoFont(basicLable, 16, QFont::DemiBold);
 
     findCB = new QComboBox(q);
     findCB->addItems(findComboBoxInfo);
@@ -122,7 +122,7 @@ void SettingDialogPrivate::createBasicWidget()
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
-    CooperationGuiHelper::setLabelFont(tipLabel, 12, 10, tipFont.weight());
+    CooperationGuiHelper::setAutoFont(tipLabel, 12, tipFont.weight());
 
 #ifdef linux
     tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
@@ -179,13 +179,24 @@ void SettingDialogPrivate::createDeviceShareWidget()
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
-    CooperationGuiHelper::setLabelFont(tipLabel, 12, 10, tipFont.weight());
+
+    CooperationLabel *tipLabel2 = new CooperationLabel(tr("When this device is the connected party, the mouse penetrates"
+                                                          " from the screen of this device to the position of the connected party"),
+                                                       q);
+    margins = tipLabel2->contentsMargins();
+    margins.setLeft(10);
+    tipLabel2->setContentsMargins(margins);
+    tipLabel2->setWordWrap(true);
+
+    CooperationGuiHelper::setAutoFont(tipLabel, 12, tipFont.weight());
+    CooperationGuiHelper::setAutoFont(tipLabel2, 12, tipFont.weight());
     connectCB = new QComboBox(q);
     connectCB->setFixedWidth(280);
     connectCB->setIconSize(QSize(24, 24));
 
 #ifdef linux
     tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
+    tipLabel2->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
 #else
     QList<QColor> colorList { QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
                               QColor(192, 192, 192) };
@@ -205,6 +216,8 @@ void SettingDialogPrivate::createDeviceShareWidget()
     contentLayout->addWidget(tipLabel);
     contentLayout->addSpacing(16);
     contentLayout->addWidget(connectItem);
+    contentLayout->addSpacing(4);
+    contentLayout->addWidget(tipLabel2);
     contentLayout->addSpacing(10);
 }
 
@@ -240,12 +253,16 @@ void SettingDialogPrivate::createClipboardShareWidget()
     SettingItem *clipShareItem = new SettingItem(q);
     clipShareItem->setItemInfo(tr("Share clipboard"), clipShareSwitchBtn);
 
-    CooperationLabel *tipLabel = new CooperationLabel(tr("The clipboard is shared between devices"), q);
+    CooperationLabel *tipLabel = new CooperationLabel(tr("When sharing is enabled on the"
+                                                         " server (the connected device), "
+                                                         "the clipboard will be shared between "
+                                                         "the two computers"),
+                                                      q);
     auto margins = tipLabel->contentsMargins();
     margins.setLeft(10);
     tipLabel->setContentsMargins(margins);
     tipLabel->setWordWrap(true);
-    CooperationGuiHelper::setLabelFont(tipLabel, 12, 10, tipFont.weight());
+    CooperationGuiHelper::setAutoFont(tipLabel, 12, tipFont.weight());
 #ifdef linux
     tipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
 #else
@@ -257,6 +274,7 @@ void SettingDialogPrivate::createClipboardShareWidget()
     contentLayout->addWidget(clipShareItem);
     contentLayout->addSpacing(4);
     contentLayout->addWidget(tipLabel);
+    contentLayout->addSpacing(10);
 }
 
 void SettingDialogPrivate::onFindComboBoxValueChanged(int index)

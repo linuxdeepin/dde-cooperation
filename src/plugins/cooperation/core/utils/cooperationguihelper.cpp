@@ -7,6 +7,7 @@
 
 #ifdef linux
 #    include <DGuiApplicationHelper>
+#    include <DFontSizeManager>
 DGUI_USE_NAMESPACE
 #endif
 
@@ -92,4 +93,31 @@ void CooperationGuiHelper::setLabelFont(QLabel *label, int pointSize, int minpoi
     font.setWeight(weight);
 
     label->setFont(font);
+}
+
+void CooperationGuiHelper::setAutoFont(QWidget *widget, int size, int weight)
+{
+#ifdef linux
+    switch (size) {
+    case 16:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T5, weight);
+        break;
+    case 14:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T6, weight);
+        break;
+    case 12:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T8, weight);
+        break;
+    case 11:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T9, weight);
+        break;
+    default:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T6, weight);
+    }
+#else
+    QFont font;
+    font.setPixelSize(size);
+    font.setWeight(weight);
+    widget->setFont(font);
+#endif
 }
