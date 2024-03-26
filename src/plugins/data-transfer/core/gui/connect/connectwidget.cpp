@@ -10,6 +10,7 @@
 #    include <QTimer>
 #    include <QHostInfo>
 #    include <QNetworkInterface>
+#    include <QDesktopServices>
 
 #    include <utils/transferhepler.h>
 
@@ -40,10 +41,20 @@ void ConnectWidget::initUI()
     QLabel *tipLabel = new QLabel(tr("Please open data transfer on Windows, and imput the IP and connect code"), this);
     tipLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     tipLabel->setFixedHeight(20);
+
+    QLabel *downloadLabel = new QLabel("", this);
+    downloadLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    downloadLabel->setFixedHeight(20);
+    downloadLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Download Windows client")));
+    connect(downloadLabel, &QLabel::linkActivated, this, [] {
+        QDesktopServices::openUrl(QUrl("https://www.chinauos.com/resource/deepin-data-transfer"));
+    });
+
     QFont font;
     font.setPointSize(10);
     font.setWeight(QFont::Thin);
     tipLabel->setFont(font);
+    downloadLabel->setFont(font);
 
     connectLayout = new QHBoxLayout();
     initConnectLayout();
@@ -77,6 +88,7 @@ void ConnectWidget::initUI()
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel);
+    mainLayout->addWidget(downloadLabel);
     mainLayout->addSpacing(70);
     mainLayout->addLayout(connectLayout);
     mainLayout->addWidget(WarnningLabel);
