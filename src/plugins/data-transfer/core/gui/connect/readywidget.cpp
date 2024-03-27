@@ -46,7 +46,7 @@ void ReadyWidget::initUI()
     setLayout(mainLayout);
 
     QLabel *titileLabel = new QLabel(tr("Ready to connect"), this);
-    titileLabel->setFont(StyleHelper::font(1));
+    StyleHelper::setAutoFont(titileLabel, 24, QFont::DemiBold);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignCenter);
 
     QLabel *ipLabel = new QLabel(tr("IP"), this);

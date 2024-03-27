@@ -160,6 +160,11 @@ void NoResultTipWidget::onLinkActivated(const QString &link)
     QDesktopServices::openUrl(QUrl(link));
 }
 
+void NoResultTipWidget::setTitleVisible(bool visible)
+{
+    titleLabel->setVisible(visible);
+}
+
 void NoResultTipWidget::initUI()
 {
     CooperationGuiHelper::setAutoFont(this, 12, QFont::Normal);
@@ -194,7 +199,7 @@ void NoResultTipWidget::initUI()
             this);
     contentLable4->setWordWrap(true);
 
-    CooperationLabel *titleLabel = new CooperationLabel(tr("Unable to find collaborative device？"));
+    titleLabel = new CooperationLabel(tr("Unable to find collaborative device？"));
     titleLabel->setAlignment(Qt::AlignLeft);
     CooperationGuiHelper::setAutoFont(titleLabel, 14, 450);
     titleLabel->setWordWrap(true);
@@ -249,6 +254,16 @@ void NoResultWidget::initUI()
     font.setWeight(QFont::Medium);
     tipsLabel->setFont(font);
 
+    BackgroundWidget *contentBackgroundWidget = new BackgroundWidget(this);
+    contentBackgroundWidget->setBackground(17, BackgroundWidget::ItemBackground,
+                                           BackgroundWidget::TopAndBottom);
+
+    QVBoxLayout *contentLayout = new QVBoxLayout;
+    NoResultTipWidget *noResultTipWidget = new NoResultTipWidget();
+    noResultTipWidget->setTitleVisible(false);
+    contentLayout->addWidget(noResultTipWidget);
+    contentBackgroundWidget->setLayout(contentLayout);
+
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
@@ -257,6 +272,7 @@ void NoResultWidget::initUI()
     vLayout->addSpacing(14);
     vLayout->addWidget(tipsLabel, 0, Qt::AlignCenter);
     vLayout->addSpacing(22);
+    vLayout->addWidget(contentBackgroundWidget);
     vLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
     setLayout(vLayout);
 }
@@ -387,27 +403,41 @@ void FirstTipWidget::setVisible(bool visible)
 {
     QWidget::setVisible(visible);
     tipBtn->setVisible(visible);
+#ifdef linux
     tipBtn->setGeometry(450, 45 + height() / 2, 30, 30);
+#else
+    tipBtn->setGeometry(450, 93 + height() / 2, 30, 30);
+#endif
+}
+
+void FirstTipWidget::themeTypeChanged()
+{
+    if (CooperationGuiHelper::instance()->isDarkTheme()) {
+        firstTip->setStyleSheet("background-color: rgba(255, 255, 255, 0.03); "
+                                "border-radius: 10px;"
+                                "color: rgba(255, 255, 255, 0.6);");
+        tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/dark/icons/tab_close_normal.svg"));
+    } else {
+        firstTip->setStyleSheet("background-color: white; "
+                                "border-radius: 10px;"
+                                "color: rgba(0, 0, 0, 0.6);");
+        tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_normal.svg"));
+    }
 }
 
 void FirstTipWidget::initUI()
 {
-    QLabel *firstTip = new QLabel(tr("Make sure that the person you are collaborating with has the \"Cross Collaboration\" application"
-                                     " enabled and is connected to the same network as you are."));
+    firstTip = new QLabel(tr("Make sure that the person you are collaborating with has the \"Cross Collaboration\" application"
+                             " enabled and is connected to the same network as you are."));
     CooperationGuiHelper::setAutoFont(firstTip, 12, 400);
     firstTip->setWordWrap(true);
     firstTip->setFixedWidth(480);
     firstTip->setContentsMargins(10, 10, 40, 10);
-    firstTip->setStyleSheet("background-color: white; "
-                            "border-radius: 10px;"
-                            "color: rgba(0, 0, 0, 0.6);");
 
     tipBtn = new QToolButton(dynamic_cast<QWidget *>(parent()));
     tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_normal.svg"));
-    tipBtn->setIconSize(QSize(40, 40));
-    tipBtn->setStyleSheet("QToolButton:hover {"
-                          " background-color: white;"
-                          " }");
+    tipBtn->setIconSize(QSize(30, 30));
+    themeTypeChanged();
 
     connect(tipBtn, &QToolButton::clicked, this, [this]() {
         setVisible(false);
@@ -421,4 +451,6 @@ void FirstTipWidget::initUI()
     mainLayout->setContentsMargins(0, 15, 0, 0);
     mainLayout->addLayout(hLayout);
     setLayout(mainLayout);
+
+    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, &FirstTipWidget::themeTypeChanged);
 }

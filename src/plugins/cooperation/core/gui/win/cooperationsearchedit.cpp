@@ -14,21 +14,23 @@
 using namespace cooperation_core;
 const char *iconpath = ":/icons/deepin/builtin/texts/search_icon.svg";
 
-CooperationSearchEdit::CooperationSearchEdit(QWidget *parent) : QFrame(parent)
+CooperationSearchEdit::CooperationSearchEdit(QWidget *parent)
+    : QFrame(parent)
 {
     setStyleSheet("border-radius: 8px;"
                   "background-color: rgba(0,0,0,0.1);");
 
-    setFixedSize(460, 35);
+    setFixedSize(480, 35);
     setFocusPolicy(Qt::StrongFocus);
 
     searchIcon = new QLabel(this);
-    searchIcon->setPixmap(QIcon(iconpath).pixmap(10, 10));
+    searchIcon->setPixmap(QIcon(iconpath).pixmap(17, 17));
+    searchIcon->setGeometry(125, 7, 20, 20);
     searchIcon->setStyleSheet("background-color: none;");
 
     searchText = new QLabel(this);
     searchText->setText(tr("Search"));
-    searchText->setGeometry(223, 7, 50, 20);
+    searchText->setGeometry(148, 7, 250, 20);
     QFont font;
     font.setPointSize(11);
     searchText->setFont(font);
@@ -48,7 +50,7 @@ CooperationSearchEdit::CooperationSearchEdit(QWidget *parent) : QFrame(parent)
     closeBtn->setIcon(QIcon(":/icons/deepin/builtin/icons/tab_close_normal.svg"));
     closeBtn->setIconSize(QSize(35, 35));
     closeBtn->setStyleSheet("background-color: rgba(0,0,0,0);");
-    closeBtn->setGeometry(420, 0, 35, 35);
+    closeBtn->setGeometry(440, 0, 35, 35);
     closeBtn->setVisible(false);
     connect(searchEdit, &QLineEdit::textChanged, this,
             [this](const QString &str) { closeBtn->setVisible(!str.isEmpty()); });
@@ -69,8 +71,12 @@ QString CooperationSearchEdit::text() const
 
 void CooperationSearchEdit::setPlaceholderText(const QString &text)
 {
-    searchEdit->setPlaceholderText(text);
     placeholderText = text;
+}
+
+void CooperationSearchEdit::setPlaceHolder(const QString &text)
+{
+    searchText->setText(text);
 }
 
 bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
@@ -84,7 +90,7 @@ bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
             searchEdit->setPlaceholderText(placeholderText);
         } else if (event->type() == QEvent::FocusOut && searchEdit->text().isEmpty()) {
             searchIcon->setPixmap(searchicon.pixmap(17, 17));
-            searchIcon->setGeometry(200, 7, 20, 20);
+            searchIcon->setGeometry(125, 7, 20, 20);
             searchText->setVisible(true);
             searchEdit->setPlaceholderText("");
         }

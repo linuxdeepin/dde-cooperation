@@ -66,7 +66,9 @@ void SingleApplication::closeServer()
 
 void SingleApplication::helpActionTriggered()
 {
+#ifdef linux
     DApplication::handleHelpAction();
+#endif
 }
 
 QString SingleApplication::userServerName(const QString &key)

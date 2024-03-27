@@ -52,6 +52,7 @@ Q_SIGNALS:
 public:
     WorkspaceWidget *q { nullptr };
     QStackedLayout *stackedLayout { nullptr };
+    QLabel *deviceLabel { nullptr };
     CooperationSearchEdit *searchEdit { nullptr };
     FirstTipWidget *tipWidget { nullptr };
     LookingForDeviceWidget *lfdWidget { nullptr };

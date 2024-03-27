@@ -201,6 +201,7 @@ void SettingDialogPrivate::createDeviceShareWidget()
     QList<QColor> colorList { QColor(0, 0, 0, static_cast<int>(255 * 0.5)),
                               QColor(192, 192, 192) };
     CooperationGuiHelper::instance()->autoUpdateTextColor(tipLabel, colorList);
+    CooperationGuiHelper::instance()->autoUpdateTextColor(tipLabel2, colorList);
     setQComboxWinStyle(connectCB);
 #endif
 
@@ -218,7 +219,7 @@ void SettingDialogPrivate::createDeviceShareWidget()
     contentLayout->addWidget(connectItem);
     contentLayout->addSpacing(4);
     contentLayout->addWidget(tipLabel2);
-    contentLayout->addSpacing(10);
+    contentLayout->addSpacing(16);
 }
 
 void SettingDialogPrivate::createTransferWidget()
@@ -274,7 +275,7 @@ void SettingDialogPrivate::createClipboardShareWidget()
     contentLayout->addWidget(clipShareItem);
     contentLayout->addSpacing(4);
     contentLayout->addWidget(tipLabel);
-    contentLayout->addSpacing(10);
+    contentLayout->addSpacing(16);
 }
 
 void SettingDialogPrivate::onFindComboBoxValueChanged(int index)

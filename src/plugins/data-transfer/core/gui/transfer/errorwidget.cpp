@@ -40,7 +40,6 @@ void ErrorWidget::initUI()
     QString titleStr = internetError;
     titleLabel = new QLabel(titleStr, this);
     titleLabel->setFixedHeight(50);
-    titleLabel->setFont(StyleHelper::font(2));
     titleLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     ProgressBarLabel *progressLabel = new ProgressBarLabel(this);
@@ -52,13 +51,15 @@ void ErrorWidget::initUI()
 
     QLabel *timeLabel = new QLabel(this);
 
-    timeLabel->setFont(StyleHelper::font(3));
     timeLabel->setText(QString("%1 - -").arg(tr("Transfer will be completed in")));
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
     promptLabel = new QLabel(this);
     promptLabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error));
     promptLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+
+    StyleHelper::setAutoFont(titleLabel, 17, QFont::DemiBold);
+    StyleHelper::setAutoFont(timeLabel, 12, QFont::Normal);
 
     ButtonLayout *buttonLayout = new ButtonLayout();
     QPushButton *backButton = buttonLayout->getButton1();

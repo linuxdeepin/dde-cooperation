@@ -49,9 +49,9 @@ void WorkspaceWidgetPrivate::initUI()
     searchEdit->setPlaceHolder(tr("Please enter the device ip/name of the collaborator"));
     stackedLayout = new QStackedLayout;
 
-    QLabel *deviceclass = new QLabel(tr("Nearby Device"));
-    deviceclass->setContentsMargins(20, 0, 10, 0);
-    CooperationGuiHelper::setAutoFont(deviceclass, 14, 400);
+    deviceLabel = new QLabel(tr("Nearby Device"));
+    deviceLabel->setContentsMargins(20, 0, 10, 0);
+    CooperationGuiHelper::setAutoFont(deviceLabel, 14, 400);
 
     lfdWidget = new LookingForDeviceWidget(q);
     nnWidget = new NoNetworkWidget(q);
@@ -79,7 +79,7 @@ void WorkspaceWidgetPrivate::initUI()
 
     mainLayout->addWidget(tipWidget);
     mainLayout->addSpacing(10);
-    mainLayout->addWidget(deviceclass);
+    mainLayout->addWidget(deviceLabel);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(stackedLayout);
     mainLayout->addWidget(bottomLabel);
@@ -176,6 +176,11 @@ void WorkspaceWidget::switchWidget(PageName page)
 {
     if (d->currentPage == page || page == kUnknownPage)
         return;
+
+    if (page == kDeviceListWidget)
+        d->deviceLabel->setVisible(true);
+    else
+        d->deviceLabel->setVisible(false);
 
     if (page == kLookignForDeviceWidget)
         d->lfdWidget->seAnimationtEnabled(true);

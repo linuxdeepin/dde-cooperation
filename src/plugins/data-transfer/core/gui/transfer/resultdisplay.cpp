@@ -30,11 +30,11 @@ void ResultDisplayWidget::initUI()
     iconLabel->setAlignment(Qt::AlignCenter);
 
     titileLabel = new QLabel(tr("Transfer completed"), this);
-    titileLabel->setFont(StyleHelper::font(1));
+    StyleHelper::setAutoFont(titileLabel, 24, QFont::DemiBold);
     titileLabel->setAlignment(Qt::AlignCenter);
 
     tiptextlabel = new QLabel(this);
-    tiptextlabel->setFont(StyleHelper::font(3));
+    StyleHelper::setAutoFont(tiptextlabel, 12, QFont::Normal);
     tiptextlabel->setText(QString(tr("Partial information migration failed, please go to UOS for manual transfer")));
     tiptextlabel->setAlignment(Qt::AlignCenter);
     tiptextlabel->setVisible(false);

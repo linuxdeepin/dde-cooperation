@@ -41,7 +41,7 @@ void TransferringWidget::initUI()
 
     titileLabel = new QLabel(tr("Transferring..."), this);
     titileLabel->setFixedHeight(50);
-    titileLabel->setFont(StyleHelper::font(1));
+    StyleHelper::setAutoFont(titileLabel, 24, QFont::DemiBold);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     progressLabel = new ProgressBarLabel(this);
@@ -53,7 +53,7 @@ void TransferringWidget::initUI()
 
     timeLabel = new QLabel(this);
     timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    timeLabel->setFont(StyleHelper::font(3));
+    StyleHelper::setAutoFont(timeLabel, 12, QFont::Normal);
     timeLabel->setText(QString(tr("Calculationing...")));
 
     fileLabel = new QLabel(this);
@@ -62,7 +62,7 @@ void TransferringWidget::initUI()
     QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
                               .arg(tr("Show processes"));
     displayLabel = new QLabel(display, this);
-    displayLabel->setFont(StyleHelper::font(3));
+    StyleHelper::setAutoFont(displayLabel, 12, QFont::Normal);
     displayLabel->setAlignment(Qt::AlignCenter);
     QObject::connect(displayLabel, &QLabel::linkActivated, this,
                      &TransferringWidget::updateInformationPage);
@@ -180,8 +180,9 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
 
     if (!str.isEmpty()) {
         processWindow->updateContent(str, tpye);
+        StyleHelper::setAutoFont(fileLabel, 12, QFont::Normal);
         fileLabel->setText(
-                QString("<font style='font-size: 12px;'>%1 %2<font style='color: rgba(0, 0, 0, 0.6);'>&nbsp;&nbsp;&nbsp;")
+                QString("<font>%1 %2<font style='color: rgba(0, 0, 0, 0.6);'>&nbsp;&nbsp;&nbsp;")
                         .arg(tpye, str));
     }
 

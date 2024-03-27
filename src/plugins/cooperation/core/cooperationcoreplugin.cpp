@@ -56,15 +56,17 @@ bool CooperaionCorePlugin::start()
     CooperationManager::instance()->regist();
     MainController::instance()->start();
 
-#ifdef linux
     if (CommonUitls::isFirstStart()) {
         emit MainController::instance()->firstStart();
+#ifdef linux
         DFeatureDisplayDialog *dlg = qApp->featureDisplayDialog();
         auto btn = dlg->getButton(0);
         connect(btn, &QAbstractButton::clicked, qApp, &SingleApplication::helpActionTriggered);
         CooperationUtil::instance()->showFeatureDisplayDialog(dlg);
+#endif
     }
-#else
+
+#ifndef linux
     CooperationProxy::instance();
 #endif
 

@@ -34,5 +34,6 @@
         <file>icons/deepin/builtin/icons/tip_file.png</file>
         <file>icons/deepin/builtin/icons/tip_kvm.png</file>
         <file>icons/deepin/builtin/icons/tip_more.png</file>
+        <file>icons/deepin/builtin/dark/icons/tab_close_normal.svg</file>
     </qresource>
 </RCC>

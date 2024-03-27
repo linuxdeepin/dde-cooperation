@@ -39,7 +39,7 @@ void ChooseWidget::initUI()
     mainLayout->setSpacing(0);
 
     QLabel *titileLabel = new QLabel(tr("Select a transfer way"), this);
-    titileLabel->setFont(StyleHelper::font(1));
+    StyleHelper::setAutoFont(titileLabel, 24, QFont::DemiBold);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     winItem = new ModeItem(internetMethodName, QIcon(":/icon/select1.png"), this);
@@ -169,6 +169,8 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
                   "background-color: rgba(0,0,0, 0.2);}");
     setFixedSize(268, 222);
 
+    StyleHelper::setAutoFont(this, 14, QFont::Medium);
+
     iconLabel = new QLabel(this);
     iconLabel->setPixmap(icon.pixmap(150, 120));
     iconLabel->setStyleSheet(".QLabel{background-color: rgba(0, 0, 0, 0);}");
@@ -259,11 +261,6 @@ void ModeItem::paintEvent(QPaintEvent *event)
         paint.setPen(QPen(QColor(65, 77, 104, 255), 1));
         paint.drawEllipse(12, 12, 16, 16);
     }
-    QFont font("SourceHanSansSC-Medium");
-    font.setPixelSize(14);
-    font.setWeight(QFont::Medium);
-    font.setStyleName("Normal");
-    paint.setFont(font);
     if (dark)
         paint.setPen(QColor(192, 198, 212, 255));
     else

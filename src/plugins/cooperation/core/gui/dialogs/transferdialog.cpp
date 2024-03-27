@@ -29,7 +29,12 @@ void TransferDialog::initUI()
     QWidget *contentWidget = new QWidget(this);
     stackedLayout = new QStackedLayout;
     okBtn = new QPushButton(this);
-    connect(okBtn, &QPushButton::clicked, this, &TransferDialog::close);
+    connect(okBtn, &QPushButton::clicked, this, [this] {
+        close();
+        if (qApp->property("onlyTransfer").toBool() && result) {
+            qApp->exit();
+        }
+    });
 
     QVBoxLayout *vLayout = new QVBoxLayout(contentWidget);
     vLayout->setMargin(0);
@@ -154,6 +159,7 @@ void TransferDialog::switchResultPage(bool success, const QString &msg)
 #endif
     stackedLayout->setCurrentIndex(1);
 
+    result = success;
     if (success) {
         auto icon = QIcon::fromTheme(Ktransfer_success);
         iconLabel->setPixmap(icon.pixmap(48, 48));

@@ -22,6 +22,7 @@ public:
 
     QString text() const;
     void setPlaceholderText(const QString &text);
+    void setPlaceHolder(const QString &text);
 
 Q_SIGNALS:
     void textChanged(const QString &);

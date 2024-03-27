@@ -49,6 +49,7 @@ private:
     CooperationLabel *titleLabel { nullptr };
     CooperationLabel *progressMsgLael { nullptr };
     QProgressBar *progressBar { nullptr };
+    bool result { false };
 };
 
 }   // namespace cooperation_core

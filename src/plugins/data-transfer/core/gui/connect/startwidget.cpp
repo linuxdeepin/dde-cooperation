@@ -33,15 +33,12 @@ void StartWidget::initUI()
     iconLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
     QLabel *titileLabel = new QLabel(tr("UOS data transfer"), this);
-    QFont font;
-    titileLabel->setFont(StyleHelper::font(1));
+    StyleHelper::setAutoFont(titileLabel, 24, QFont::DemiBold);
     titileLabel->setAlignment(Qt::AlignCenter);
 
     QLabel *textLabel2 = new QLabel(tr("UOS transfer tool enables one click migration of your files, personal data, and applications to\nUOS, helping you seamlessly replace your system."), this);
     textLabel2->setAlignment(Qt::AlignTop | Qt::AlignCenter);
-    font.setPointSize(10);
-    font.setWeight(QFont::Thin);
-    textLabel2->setFont(font);
+    StyleHelper::setAutoFont(textLabel2, 14, QFont::Normal);
 
     ButtonLayout *buttonLayout = new ButtonLayout();
     buttonLayout->setCount(1);

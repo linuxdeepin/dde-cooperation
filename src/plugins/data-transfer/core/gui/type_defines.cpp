@@ -3,8 +3,12 @@
 #include <QPainter>
 #include <QStandardItemModel>
 #include <QTimer>
-
 #include <QtSvg/QSvgRenderer>
+
+#ifdef linux
+#    include <DFontSizeManager>
+DWIDGET_USE_NAMESPACE
+#endif
 
 ButtonLayout::ButtonLayout(QWidget *parent)
     : QHBoxLayout(parent)
@@ -18,6 +22,9 @@ ButtonLayout::ButtonLayout(QWidget *parent)
 #ifdef WIN32
     button1->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::gray));
     button2->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::blue));
+#else
+    StyleHelper::setAutoFont(button1, 14, QFont::Medium);
+    StyleHelper::setAutoFont(button2, 14, QFont::Medium);
 #endif
     addWidget(button1);
     addWidget(button2);
@@ -53,23 +60,6 @@ QPushButton *ButtonLayout::getButton2() const
     return button2;
 }
 
-//void ButtonLayout::themeChanged(int theme)
-//{
-//    // light
-//    if (theme == 1) {
-//        button1->setStyleSheet(".QToolButton{border-radius: 8px;"
-//                               "background-color: lightgray;"
-//                               "}");
-
-//    } else {
-//        // dark
-//        button1->setStyleSheet(".QToolButton{border-radius: 8px;"
-//                               "opacity: 1;"
-//                               "background-color: rgba(255,255,255, 0.1);"
-//                               "}");
-//    }
-//}
-
 QFont StyleHelper::font(int type)
 {
     QFont font;
@@ -91,6 +81,44 @@ QFont StyleHelper::font(int type)
     return font;
 }
 
+void StyleHelper::setAutoFont(QWidget *widget, int size, int weight)
+{
+#ifdef linux
+    switch (size) {
+    case 54:
+        DFontSizeManager::instance()->setFontPixelSize(DFontSizeManager::T1, 54);
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T1, weight);
+        break;
+    case 24:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T3, weight);
+        break;
+    case 17:
+        DFontSizeManager::instance()->setFontPixelSize(DFontSizeManager::T5, 17);
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T5, weight);
+        break;
+    case 14:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T6, weight);
+        break;
+    case 12:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T8, weight);
+        break;
+    case 11:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T9, weight);
+        break;
+    case 10:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T10, weight);
+        break;
+    default:
+        DFontSizeManager::instance()->bind(widget, DFontSizeManager::T6, weight);
+    }
+#else
+    QFont font;
+    font.setPixelSize(size);
+    font.setWeight(weight);
+    widget->setFont(font);
+#endif
+}
+
 QString StyleHelper::textStyle(StyleHelper::TextStyle type)
 {
     QString style;
@@ -99,7 +127,7 @@ QString StyleHelper::textStyle(StyleHelper::TextStyle type)
         style = "color: #000000; font-size: 12px;";
         break;
     case error:
-        style = "color: #FF5736; font-size: 12px;";
+        style = "color: #FF5736;";
         break;
     }
     return style;
@@ -322,9 +350,13 @@ void ProcessWindowItemDelegate::paintText(QPainter *painter, const QStyleOptionV
     if (StatusTipRole != 0) {
         fontStageColor = stageTextColor;
     }
-
+#ifdef linux
+    QFont font(qApp->font());
+#else
     QFont font;
-    font.setPixelSize(12);
+    font.setPixelSize(14);
+#endif
+    font.setPixelSize(QFontInfo(font).pixelSize() - 2);
     QPen textNamePen(fontNameColor);
     painter->setFont(font);
     painter->setPen(textNamePen);

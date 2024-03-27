@@ -27,7 +27,8 @@ void PromptWidget::initUI()
     mainLayout->setSpacing(0);
 
     QLabel *titileLabel = new QLabel(tr("Before tranfer"), this);
-    titileLabel->setFont(StyleHelper::font(2));
+    StyleHelper::setAutoFont(titileLabel, 17, QFont::DemiBold);
+
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QStringList prompts { tr("Data transfer requires some time, to avoid interrupting the migration "
@@ -43,6 +44,7 @@ void PromptWidget::initUI()
         iconlabel->setPixmap(QIcon(":/icon/dialog-warning.svg").pixmap(14, 14));
 
         QLabel *textlabel = new QLabel(prompts[i], this);
+        StyleHelper::setAutoFont(textlabel, 14, QFont::Normal);
         textlabel->setWordWrap(true);
         textlabel->setFixedSize(500, 50);
         gridLayout->addWidget(iconlabel, i, 0);

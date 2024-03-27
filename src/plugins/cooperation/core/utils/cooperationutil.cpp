@@ -527,6 +527,7 @@ QString CooperationUtil::localIPAddress()
 
 void CooperationUtil::showFeatureDisplayDialog(QDialog *dlg1)
 {
+#ifdef linux
     DFeatureDisplayDialog *dlg = static_cast<DFeatureDisplayDialog *>(dlg1);
     auto btn = dlg->getButton(0);
     btn->setText(tr("View Help Manual"));
@@ -540,4 +541,5 @@ void CooperationUtil::showFeatureDisplayDialog(QDialog *dlg1)
     dlg->addItem(new DFeatureItem(QIcon::fromTheme(":/icons/deepin/builtin/icons/tip_more.png"),
                                   tr("Usage"), tr("For detailed instructions, please click on the Help Manual below"), dlg));
     dlg->show();
+#endif
 }

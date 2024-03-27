@@ -31,7 +31,7 @@ void WaitTransferWidget::initUI()
 
     QLabel *titileLabel = new QLabel(tr("Waiting for transfer..."), this);
     titileLabel->setFixedHeight(50);
-    titileLabel->setFont(StyleHelper::font(1));
+    StyleHelper::setAutoFont(titileLabel, 24, QFont::DemiBold);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QLabel *tipLabel = new QLabel(tr("Please select the data to transfer on Windows"), this);

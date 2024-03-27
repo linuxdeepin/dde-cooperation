@@ -88,6 +88,7 @@ public:
     static QString textStyle(TextStyle type);
     static QString buttonStyle(int type);
     static QString textBrowserStyle(int type);
+    static void setAutoFont(QWidget *widget, int size, int weight);
 };
 
 class IndexLabel : public QLabel

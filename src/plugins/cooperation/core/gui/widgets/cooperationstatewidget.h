@@ -48,9 +48,11 @@ public:
     explicit NoResultTipWidget(QWidget *parent = nullptr);
 
     void onLinkActivated(const QString &link);
+    void setTitleVisible(bool visible);
 
 private:
     void initUI();
+    CooperationLabel *titleLabel { nullptr };
 };
 
 class NoResultWidget : public QWidget
@@ -95,10 +97,12 @@ public:
     explicit FirstTipWidget(QWidget *parent = nullptr);
 
     void setVisible(bool visible) override;
+    void themeTypeChanged();
 
 private:
     void initUI();
     QToolButton *tipBtn { nullptr };
+    QLabel *firstTip { nullptr };
 };
 
 }   // namespace cooperation_core

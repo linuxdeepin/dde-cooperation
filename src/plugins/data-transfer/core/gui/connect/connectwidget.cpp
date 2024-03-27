@@ -35,7 +35,7 @@ void ConnectWidget::initUI()
 
     QLabel *titileLabel = new QLabel(tr("Ready to connect"), this);
     titileLabel->setFixedHeight(50);
-    titileLabel->setFont(StyleHelper::font(1));
+    StyleHelper::setAutoFont(titileLabel, 24, QFont::DemiBold);
     titileLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
     QLabel *tipLabel = new QLabel(tr("Please open data transfer on Windows, and imput the IP and connect code"), this);
@@ -44,17 +44,14 @@ void ConnectWidget::initUI()
 
     QLabel *downloadLabel = new QLabel("", this);
     downloadLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    downloadLabel->setFixedHeight(20);
+    downloadLabel->setContentsMargins(0, 10, 0, 0);
     downloadLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Download Windows client")));
     connect(downloadLabel, &QLabel::linkActivated, this, [] {
         QDesktopServices::openUrl(QUrl("https://www.chinauos.com/resource/deepin-data-transfer"));
     });
 
-    QFont font;
-    font.setPointSize(10);
-    font.setWeight(QFont::Thin);
-    tipLabel->setFont(font);
-    downloadLabel->setFont(font);
+    StyleHelper::setAutoFont(tipLabel, 14, QFont::Normal);
+    StyleHelper::setAutoFont(downloadLabel, 12, QFont::Normal);
 
     connectLayout = new QHBoxLayout();
     initConnectLayout();
@@ -62,9 +59,7 @@ void ConnectWidget::initUI()
     WarnningLabel = new QLabel(tr("Connect code is expired, please refresh for new code"), this);
     WarnningLabel->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
     WarnningLabel->setFixedHeight(80);
-    font.setPointSize(8);
-    font.setWeight(QFont::Thin);
-    WarnningLabel->setFont(font);
+    StyleHelper::setAutoFont(WarnningLabel, 12, QFont::Normal);
 
     QPalette palette;
     QColor color;
@@ -89,7 +84,7 @@ void ConnectWidget::initUI()
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel);
     mainLayout->addWidget(downloadLabel);
-    mainLayout->addSpacing(70);
+    mainLayout->addSpacing(60);
     mainLayout->addLayout(connectLayout);
     mainLayout->addWidget(WarnningLabel);
     mainLayout->addSpacing(60);
@@ -118,11 +113,12 @@ void ConnectWidget::initConnectLayout()
                            "border: 1px solid rgba(0, 129, 255, 0.2);"
                            "}");
     ipFrame->setFixedSize(204, 32);
-    QString ip = QString("<span style='font-size: 17px; font-weight: 600;'>%1</span>")
-                         .arg(ipaddress);
-    ipLabel->setText(ip);
+
+    ipLabel->setText(ipaddress);
     ipLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    ipLabel1->setFont(StyleHelper::font(3));
+    StyleHelper::setAutoFont(ipLabel, 17, QFont::Bold);
+    StyleHelper::setAutoFont(ipLabel1, 12, QFont::Normal);
+
     QHBoxLayout *ipHLayout = new QHBoxLayout(ipFrame);
     ipHLayout->addWidget(ipLabel1);
     ipHLayout->addWidget(ipLabel);
@@ -153,20 +149,19 @@ void ConnectWidget::initConnectLayout()
     nullLabel->setVisible(false);
 
     QFont font;
-    font.setPointSize(40);
     font.setLetterSpacing(QFont::AbsoluteSpacing, 4);
     font.setWeight(QFont::Normal);
     font.setStyleHint(QFont::Helvetica);
     passwordLabel->setFont(font);
 
-    QFont tipfont;
-    tipfont.setPointSize(8);
-    refreshLabel->setFont(tipfont);
+    StyleHelper::setAutoFont(refreshLabel, 12, QFont::Normal);
+    StyleHelper::setAutoFont(tipLabel, 12, QFont::Normal);
+    StyleHelper::setAutoFont(passwordLabel, 54, QFont::Normal);
+
     refreshLabel->setAlignment(Qt::AlignBottom);
     refreshLabel->setFixedHeight(55);
     refreshLabel->setText(QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>").arg(tr("Refresh")));
 
-    tipLabel->setFont(tipfont);
     tipLabel->setWordWrap(true);
 
     QTimer *timer = new QTimer();
