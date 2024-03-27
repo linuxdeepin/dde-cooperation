@@ -64,6 +64,11 @@
       defined(__sw_64__)
   #define ARCH_SW
 
+#elif defined(riscv) || \
+      defined(__riscv) || \
+      defined(__riscv_xlen)
+  #define ARCH_RISCV
+
 #else
   #error unknown arch
 #endif
@@ -132,6 +137,7 @@
     defined(__ppc64__) || \
     defined(__powerpc64__) || \
     defined(__loongarch64) || \
+    defined(__riscv_xlen) || \    
     defined(_M_X64) || \
     defined(_M_AMD64) || \
     defined(_M_IA64) || \
