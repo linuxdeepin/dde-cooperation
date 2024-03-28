@@ -14,17 +14,17 @@ UOS端可通过在**应用商店**中搜索“跨端协同”获取应用；Wind
 
 ![listofdevices](./fig/listofdevices.png)
 
-找到目标协同设备（可通过计算机名、IP进行识别），点击连接<img src="../common/connect.png" alt="connect" style="zoom:40%;" />后，完成两台设备的连接。
+找到目标协同设备（可通过计算机名、IP进行识别），点击连接![dde-cooperation](../common/connect.svg)后，完成两台设备的连接。
 
 **2. 通过搜索设备IP连接设备**
 
-在搜索框内，搜索目标协同设备的IP，点击连接<img src="../common/connect.png" alt="connect" style="zoom:40%;" />后，完成两台设备的连接。
+在搜索框内，搜索目标协同设备的IP，点击连接![dde-cooperation](../common/connect.svg)后，完成两台设备的连接。
 
 ### 文件投送
 
 **1. 通过协同设备列表-文件投送按钮进行投送**
 
-当两台设备处于协同状态下，在设备列表界面点击<img src="../common/send.png" alt="send" style="zoom:40%;" />，在选择文件窗口中，选择需要发送的文件，点击**确定**，即开始文件投送。
+当两台设备处于协同状态下，在设备列表界面点击![dde-cooperation](../common/send.svg)，在选择文件窗口中，选择需要发送的文件，点击**确定**，即开始文件投送。
 
 **2. 通过文件-右键菜单进行投送**
 
@@ -44,7 +44,7 @@ PS：如果是投送到Windows端，需要将Windows端的跨端协同应用保�
 
 ### 跨端协同设置
 
-您可以通过点击标题栏<img src="../common/menu.png" alt="menu" style="zoom:50%;" />选择**设置**进入跨端协同的设置界面。
+您可以通过点击标题栏![dde-cooperation](../common/menu.svg)选择**设置**进入跨端协同的设置界面。
 
 1. 可被发现
 

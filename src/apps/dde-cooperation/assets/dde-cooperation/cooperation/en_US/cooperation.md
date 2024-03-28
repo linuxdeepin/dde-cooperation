@@ -14,17 +14,17 @@ When the "Cooperation" application is turned on, the device will automatically s
 
 ![listofdevices](./fig/listofdevices.png)
 
-Find the target collaborative device (which can be recognized by computer name and IP), click Connect<img src="../common/connect.png" alt="connect" style="zoom:40%;" />after completing the connection of the two devices.。
+Find the target collaborative device (which can be recognized by computer name and IP), click Connect![dde-cooperation](../common/connect.svg)after completing the connection of the two devices.。
 
 **2. Connection to equipment by searching for equipment IP**
 
-In the search box, search for the IP of the target collaborative device and click Connect <img src="../common/connect.png" alt="connect" style="zoom:40%;" />and then complete the connection of the two devices.
+In the search box, search for the IP of the target collaborative device and click Connect ![dde-cooperation](../common/connect.svg)and then complete the connection of the two devices.
 
 ###  File delivery
 
 **1. Delivery through the collaborative equipment list -- file delivery button **
 
-When the two devices are in a cooperative state, in the device list interface, click<img src="../common/send.png" alt="send" style="zoom:40%;" />, in the file selection window, select the file that needs to be sent, and click **OK**, that is to start the file delivery.
+When the two devices are in a cooperative state, in the device list interface, click![dde-cooperation](../common/send.svg), in the file selection window, select the file that needs to be sent, and click **OK**, that is to start the file delivery.
 
 **2. Delivery via file-right-click menu**
 
@@ -44,7 +44,7 @@ When two devices, A and B, are in a collaborative state, and the "Clipboard Shar
 
 ### Cooperation settings
 
-You can access the Cross-end Collaboration settings screen by clicking on the title bar<img src="../common/menu.png" alt="menu" style="zoom:50%;" />and selecting **Settings** to enter the settings interface of cross-end collaboration.
+You can access the Cross-end Collaboration settings screen by clicking on the title bar![dde-cooperation](../common/menu.svg)and selecting **Settings** to enter the settings interface of cross-end collaboration.
 
 1. Discoverable
 

@@ -14,17 +14,17 @@ UOS端可透過在**應用商店**中搜尋“跨端協同”獲取應用；Wind
 
 ![listofdevices](./fig/listofdevices.png)
 
-找到目標協同裝置（可透過電腦名、IP進行識別），點擊連接<img src="../common/connect.png" alt="connect" style="zoom:40%;" />後，完成兩台裝置的連接。
+找到目標協同裝置（可透過電腦名、IP進行識別），點擊連接![dde-cooperation](../common/connect.svg)後，完成兩台裝置的連接。
 
 **2. 透過搜尋裝置IP連接裝置**
 
-在搜尋框內，搜尋目標協同裝置的IP，點擊連接<img src="../common/connect.png" alt="connect" style="zoom:40%;" />後，完成兩台裝置的連接。
+在搜尋框內，搜尋目標協同裝置的IP，點擊連接![dde-cooperation](../common/connect.svg)後，完成兩台裝置的連接。
 
 ### 文件投送
 
 **1. 透過協同裝置列表-文件投送按鈕進行投送**
 
-當兩台裝置處於協同狀態下，在裝置列表介面點擊<img src="../common/send.png" alt="send" style="zoom:40%;" />，在選擇文件視窗中，選擇需要發送的文件，點擊**確定**，即開始文件投送。
+當兩台裝置處於協同狀態下，在裝置列表介面點擊![dde-cooperation](../common/send.svg)，在選擇文件視窗中，選擇需要發送的文件，點擊**確定**，即開始文件投送。
 
 **2. 透過文件-右鍵選單進行投送**
 
@@ -44,7 +44,7 @@ PS：如果是投送到Windows端，需要將Windows端的跨端協同應用保�
 
 ### 跨端協同設定
 
-您可以透過點擊標題欄<img src="../common/menu.png" alt="menu" style="zoom:50%;" />選擇**設定**進入跨端協同的設定介面。
+您可以透過點擊標題欄![dde-cooperation](../common/menu.svg)選擇**設定**進入跨端協同的設定介面。
 
 1. 可被發現
 
