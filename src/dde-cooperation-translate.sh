@@ -6,3 +6,6 @@
 
 lupdate ./plugins/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation.ts
 lupdate ./plugins/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_zh_CN.ts
+lupdate ./plugins/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_zh_HK.ts
+lupdate ./plugins/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_zh_TW.ts
+lupdate ./plugins/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_ug.ts

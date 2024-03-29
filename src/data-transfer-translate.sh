@@ -6,3 +6,5 @@
 
 lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../translations/deepin-data-transfer/deepin-data-transfer.ts
 lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../translations/deepin-data-transfer/deepin-data-transfer_zh_CN.ts
+lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../translations/deepin-data-transfer/deepin-data-transfer_zh_HK.ts
+lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../translations/deepin-data-transfer/deepin-data-transfer_zh_TW.ts

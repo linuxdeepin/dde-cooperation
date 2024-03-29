@@ -7,32 +7,32 @@
         <translation>མཉམ་འགྲོས་ཉེར་སྤྱོད་བདམས་ན། དེ་དང་འདྲ་བའི་UOSཔར་གཞིའི་ཉེར་སྤྱོད་རང་འགུལ་ངང་སྒྲིག་སྦྱོར་བྱེད་སྲིད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="57"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="56"/>
         <source>Confirm</source>
         <translation>གཏན་ཁེལ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="55"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="54"/>
         <source>Cancel</source>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="76"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="77"/>
         <source>Application</source>
         <translation>ཉེར་སྤྱོད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="76"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="77"/>
         <source>Recommendation</source>
         <translation>སྤོ་བའི་བསམ་འཆར།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="101"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="102"/>
         <source>Transferable</source>
         <translation>རེད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="111"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="112"/>
         <source>Not Suitable</source>
         <translation>མ་རེད།</translation>
     </message>
@@ -111,29 +111,29 @@
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="74"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
         <source>Browser bookmarks</source>
         <translation>ལྟ་ཆས་ཀྱི་ཤོག་འཛར།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="74"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="115"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Recommendation</source>
         <translation>སྤོ་བའི་བསམ་འཆར།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="97"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="138"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="139"/>
         <source>Transferable</source>
         <translation>རེད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="115"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Personal Settings</source>
         <translation>སྒེར་གྱི་བཀོད་སྒྲིག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="137"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="138"/>
         <source>Customized Wallpaper</source>
         <translation>རང་སྒྲུབ་ཅོག་ངོས།</translation>
     </message>
@@ -151,47 +151,52 @@
 <context>
     <name>ConnectWidget</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="35"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="36"/>
         <source>Ready to connect</source>
         <translation>འབྲེལ་རྩིས་བྱ་རྒྱུ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="40"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="41"/>
         <source>Please open data transfer on Windows, and imput the IP and connect code</source>
         <translation>Windowsསྣེ་ནས་སྤོ་བའི་ཡོ་བྱད་ཁ་ཕྱེ་རྗེས། འཕྲུལ་ཆས་འདིའི་IPདང་འབྲེལ་མཐུད་གསང་ཨང་འཇུག་རྒྱུ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="51"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="48"/>
+        <source>Download Windows client</source>
+        <translation>Windowsསྤྱོད་སྣེ་ཕབ་ལེན།</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="59"/>
         <source>Connect code is expired, please refresh for new code</source>
         <translation>འབྲེལ་མཐུད་གསང་ཨང་དུས་ཡུན་བརྒལ་ཟིན་པས། གསར་སྒྱུར་བྱས་ནས་གསང་ཨང་གསར་པ་ལེན་རྒྱུ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="69"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="75"/>
         <source>Back</source>
         <translation>ཕྱིར་ལོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="97"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="104"/>
         <source>computer</source>
         <translation>གློག་ཀླད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="104"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="107"/>
         <source>Local IP</source>
         <translation>རང་འཕྲུལ་འཁོར་IP</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="147"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="163"/>
         <source>Refresh</source>
         <translation>གསར་སྒྱུར།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="155"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>The code will be expired in</source>
         <translation>གསང་ཨང་སྤྱོད་གོ་ཆོད་པའི་དུས་ཚོད་</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="155"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>please input connect code as soon as possible</source>
         <translation>འབྲེལ་མཐུད་གསང་ཨང་གང་མགྱོགས་འཇུག་རོགས།</translation>
     </message>
@@ -219,42 +224,42 @@
         <translation>ཆེ་ཆུང་།0B</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="154"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="152"/>
         <source>Location</source>
         <translation>ཉར་ཚགས་བྱེད་ཡུལ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="164"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="162"/>
         <source>(Select Backup Disk)</source>
         <translation>（གྲབས་ཉར་སྡུད་སྡེར་འདེམས་རྒྱུ་）</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="189"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="187"/>
         <source>Insufficient space in the selected disk, please clean the space</source>
         <translation>མིག་སྔའི་སྡུད་སྡེར་ཤོང་ཚད་མི་འདང་བས། སྡུད་སྡེར་གཙང་སེལ་གནང་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="197"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="195"/>
         <source>Backup</source>
         <translation>གྲབས་ཉར་འགོ་ཚུགས་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="195"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="193"/>
         <source>Cancel</source>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="341"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="339"/>
         <source>Size:%1</source>
         <translation>ཆེ་ཆུང་། %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="384"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="382"/>
         <source>local disk</source>
         <translation>རང་སའི་སྡུད་སྡེར།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="390"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
         <source>%1/%2 available</source>
         <translation>%1/%2སྤྱད་ཆོག</translation>
     </message>
@@ -262,22 +267,22 @@
 <context>
     <name>CustomMessageBox</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="67"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="66"/>
         <source>Reselect</source>
         <translation>ཡང་བསྐྱར་འདེམས་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="82"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="81"/>
         <source>Continue</source>
         <translation>མུ་མཐུད་བསྐུར་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="145"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>The presence of outstanding transfer tasks between you and the target device has been detected.</source>
         <translation>ཁྱེད་དང་དམིགས་ཡུལ་སྒྲིག་ཆས་དབར་ཚར་མེད་པའི་བརྒྱུད་བསྐུར་ལས་འགན་ཡོད་པ་བཤེར་འཇལ་ཐུབ་སོང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="145"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>Do you want to continue with the last transfer?</source>
         <translation>ཁྱེད་ཀྱིས་མུ་མཐུད་སྔ་མའི་བརྒྱུད་བསྐུར་ལས་འགན་ལེགས་གྲུབ་བྱེད་དམ།</translation>
     </message>
@@ -285,17 +290,17 @@
 <context>
     <name>ErrorWidget</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="61"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="54"/>
         <source>Transfer will be completed in</source>
         <translation>སྔོན་རྩིས་ལྟར་ན་ད་དུང་  སྤོ་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="73"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="69"/>
         <source>Try again</source>
         <translation>ཡང་བསྐྱར་ཚོད་ལྟ་བགྱིས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="70"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="66"/>
         <source>Back</source>
         <translation>ཕྱིར་ལོག</translation>
     </message>
@@ -382,6 +387,14 @@
     </message>
 </context>
 <context>
+    <name>ProcessWindow</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="297"/>
+        <source>Installing</source>
+        <translation>སྒྲིག་སྦྱོར་བཞིན་པ། </translation>
+    </message>
+</context>
+<context>
     <name>PromptWidget</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="29"/>
@@ -389,27 +402,27 @@
         <translation>འགོ་མ་ཚུགས་གོང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="33"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
         <source>Data transfer requires some time, to avoid interrupting the migration due to low battery, please keep connect to the  power.</source>
         <translation>སྤོ་བར་དུས་ཚོད་ངེས་ཅན་དགོས་པས། གློག་ཆད་ནས་སྤོ་མཚམས་མི་ཆད་པའི་ཆེད་དུ་གློག་ཁུངས་སྦྲེལ་རོགས་གནང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="35"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="36"/>
         <source>Other applications may slowdown the transfer speed. For smoother experience, please close other applications.</source>
         <translation>ཉེར་སྤྱོད་གཞན་དག་གིས་སྤོ་བའི་མགྱོགས་ཚད་ལ་ཤུགས་རྐྱེན་མི་ཐེབས་པའི་ཆེད་དུ་ཉེར་སྤྱོད་གཞན་དག་སྒོ་རྒྱག་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="37"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="38"/>
         <source>For the security of your transfer, please use a trusted network.</source>
         <translation>ཁྱེད་ཀྱི་བརྒྱུད་བསྐུར་ཆ་འཕྲིན་གྱི་བདེ་འཇགས་ཆེད་ཡིད་ཆེས་རུང་བའི་དྲ་རྒྱ་སྤྱོད་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="60"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
         <source>Back</source>
         <translation>ཕྱིར་ལོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="64"/>
         <source>Confirm</source>
         <translation>གཏན་ཁེལ།</translation>
     </message>
@@ -422,49 +435,49 @@
         <translation>འབྲེལ་རྩིས་བྱ་རྒྱུ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="55"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="52"/>
         <source>IP</source>
         <translation>IPས་གནས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="62"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="59"/>
         <source>Please input the IP of UOS</source>
         <translation>UOSསྣེའི་IPས་གནས་འཇུག་རོགས་གནང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="83"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="79"/>
         <source>Please open data transfer on UOS, and get the IP</source>
         <translation>UOSསྣེའི་གཞི་གྲངས་སྤོ་བའི་ཡོ་བྱད་ཁ་ཕྱེ་བ་དང་སྦྲགས། IPས་གནས་ལྟ་རོགས་གནང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="89"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="85"/>
         <source>Connect code</source>
         <translation>འབྲེལ་མཐུད་གསང་ཨང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="99"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="95"/>
         <source>Please input the connect code on UOS</source>
         <translation>UOSསྣེར་འཆར་བའི་འབྲེལ་མཐུད་གསང་ཨང་འཇུག་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="123"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="118"/>
         <source>Back</source>
         <translation>ཕྱིར་ལོག</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="117"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="172"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="112"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="167"/>
         <source>connect...</source>
         <translation>སྦྲེལ་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="125"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="120"/>
         <source>Connect</source>
         <translation>སྦྲེལ་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="263"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="258"/>
         <source>Failed to connect, please check your input</source>
         <translation>སྦྲེལ་མ་ཐུབ་པས། ནང་འཇུག་ཞིབ་བཤེར་བྱ་རོགས།</translation>
     </message>
@@ -472,28 +485,28 @@
 <context>
     <name>ResultDisplayWidget</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="146"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="128"/>
         <source>Transfer completed partially</source>
         <translation>ཆ་ཤས་སྤོ་ཐུབ་སོང་།</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="143"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
         <translation>སྤོ་ཐུབ་སོང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="37"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="38"/>
         <source>Partial information migration failed, please go to UOS for manual transfer</source>
         <translation>ཆ་འཕྲིན་ཆ་ཤས་སྤོ་ཐུབ་མ་སོང་བས། UOSལག་འགུལ་ཐོག་ནས་སྤོ་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="71"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="50"/>
         <source>Back</source>
         <translation>ཕྱིར་ལོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="73"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="52"/>
         <source>Exit</source>
         <translation>ཕྱིར་འཐེན། </translation>
     </message>
@@ -625,7 +638,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
-        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="239"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
         <translation>སྒྲིག་སྦྱོར་མ་ཐུབ་པས། ཉེར་སྤྱོད་ཚོང་ཁང་དུ་བསྐྱོད་ནས་སྒྲིག་སྦྱོར་བྱ་རྒྱུ། </translation>
     </message>
@@ -687,13 +700,13 @@
         <translation>UOSསྤོ་བའི་ཡོ་བྱད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="40"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="39"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to
 UOS, helping you seamlessly replace your system.</source>
         <translation>UOSསྤོ་བའི་ཡོ་བྱད། སྤྱོད་ཐེངས་གཅིག་ལ་ཁྱེད་ཀྱི་ཡིག་ཆ་དང་མི་སྒེར་གྱི་གཞི་གྲངས། ཉེར་སྤྱོད་གཞི་གྲངས་ཚང་མ་UOSལ་སྤོ་ཐུབ་པས། འཕྲལ་མར་རྒྱུད་ཁོངས་བརྗེ་རོགས་བྱེད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="49"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="46"/>
         <source>Next</source>
         <translation>རྗེས་མ། </translation>
     </message>
@@ -701,7 +714,7 @@ UOS, helping you seamlessly replace your system.</source>
 <context>
     <name>TransferHandle</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/utils/transferworker.cpp" line="330"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/transferworker.cpp" line="326"/>
         <source>Transfering</source>
         <translation>བསྐུར་བཞིན་པ། </translation>
     </message>
@@ -709,55 +722,55 @@ UOS, helping you seamlessly replace your system.</source>
 <context>
     <name>TransferringWidget</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="52"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="227"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="258"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="42"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="193"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="230"/>
         <source>Transferring...</source>
         <translation>བསྐུར་བཞིན་པ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="72"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="225"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="257"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="191"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
         <source>Calculationing...</source>
         <translation>རྩིས་བཞིན་པ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="75"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="165"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="132"/>
         <source>Show processes</source>
         <translation>བྱ་རིམ་གསལ་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="152"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="119"/>
         <source>Hide processes</source>
         <translation>བྱ་རིམ་ཡིབ་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="187"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="195"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>སྔོན་རྩིས་ལྟར་ན་སྤོས་ཚར་བར་ད་དུང་སྐར་མ་%1 དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="204"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="265"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="271"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
         <translation>བསྐུར་བཞིན་པ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="233"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="199"/>
         <source>Transfer will be completed in %1 secondes</source>
         <translation>སྔོན་རྩིས་ལྟར་ན་སྤོས་ཚར་བར་ད་དུང་སྐར་ཆ་%1 དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="236"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="202"/>
         <source>Transfer will be completed in --</source>
         <translation>སྔོན་རྩིས་ལྟར་ན་སྤོས་ཚར་བར་ད་དུང་དུས་ཚོད་  དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="265"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
         <source>Decompressing</source>
         <translation>སྡུད་གྲོལ་བཞིན་པ། </translation>
     </message>
@@ -796,12 +809,12 @@ UOS, helping you seamlessly replace your system.</source>
         <translation>ཡང་བསྐྱར་འདེམས་པ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="350"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>select zip file</source>
         <translation>zipཡིག་ཆ་འདེམས་རྒྱུ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="350"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>ZIP file (*.zip)</source>
         <translation>ZIPཡིག་ཆ་(*.zip)</translation>
     </message>
@@ -824,14 +837,15 @@ UOS, helping you seamlessly replace your system.</source>
         <translation>ཕྱིར་ལོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="65"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="108"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="113"/>
         <source>Next</source>
         <translation>རྗེས་མ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="70"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="77"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="76"/>
         <source>Retry</source>
         <translation>ཡང་བསྐྱར་ཚོད་ལྟ་བགྱིས། </translation>
     </message>
@@ -867,23 +881,23 @@ UOS, helping you seamlessly replace your system.</source>
         <translation>Windowsསྣེ་ནས་བསྐུར་དགོས་པའི་ནང་དོན་འདེམས་རྒྱུ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="57"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="109"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="98"/>
         <source>Cancel</source>
         <translation>འདོར་བ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="110"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="99"/>
         <source>Close</source>
         <translation>སྒོ་རྒྱག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="112"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="101"/>
         <source>This operation will clear the transmission progress, Do you want to continue.</source>
         <translation>བཀོལ་སྤྱོད་འདིས་བརྒྱུད་བསྐུར་བྱེད་རིམ་གཙང་སེལ་བྱེད་པས། མུ་མཐུད་བྱེད་དགོས་སམ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="113"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="102"/>
         <source>This operation is not recoverable</source>
         <translation>བཀོལ་སྤྱོད་འདི་སླར་གསོ་བྱེད་ཐབས་མེད། </translation>
     </message>
@@ -891,32 +905,32 @@ UOS, helping you seamlessly replace your system.</source>
 <context>
     <name>ZipFileProcessResultWidget</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="31"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="32"/>
         <source>Exit</source>
         <translation>ཕྱིར་འཐེན། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="48"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="49"/>
         <source>Back</source>
         <translation>ཕྱིར་ལོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="83"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="84"/>
         <source>Back up succeed</source>
         <translation>གྲབས་ཉར་ཚར་སོང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="89"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="90"/>
         <source>Congratulations, Your Information has been Successfully Backed Up.</source>
         <translation>བཀྲ་ཤིས་ཞུ། ཆ་འཕྲིན་གྲབས་ཉར་ཐུབ་སོང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="94"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="95"/>
         <source>Go to View</source>
         <translation>ལྟ་བཤེར་བྱེད་པ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="119"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="120"/>
         <source>Back up failed</source>
         <translation>གྲབས་ཉར་མི་ཐུབ། </translation>
     </message>
@@ -924,23 +938,23 @@ UOS, helping you seamlessly replace your system.</source>
 <context>
     <name>ZipFileProcessWidget</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="43"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="44"/>
         <source>Packing  %1</source>
         <translation>ཐུབ་ཁ་རྒྱག་བཞིན་པ། %1</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="52"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="100"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>ལེགས་པར་གྲུབ་པར་ད་དུང་སྐར་མ་%1དགོས། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="55"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="56"/>
         <source>Transfer will be completed in %1 secondes</source>
         <translation>ལེགས་པར་གྲུབ་པར་ད་དུང་སྐར་ཆ་%1དགོས། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="83"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="84"/>
         <source>Creating Backup File...</source>
         <translation>གྲབས་ཉར་ཡིག་ཆ་གསར་བཟོ་བྱེད་བཞིན་པ། </translation>
     </message>
@@ -948,28 +962,12 @@ UOS, helping you seamlessly replace your system.</source>
 <context>
     <name>ZipWork</name>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="95"/>
-        <source>Error in compressing source files :%1</source>
-        <translation>ཁུ་བསྡུའི་ཡོངས་ཁུངས་ཡིག་ཆ་ནོར་བ།  %1</translation>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
+        <source>%1 File compression failed</source>
+        <translation>%1 ཡིག་ཆ་སྡུད་སྒྲིལ་བྱེད་མ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="105"/>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="132"/>
-        <source>Error writing compressed file :%1</source>
-        <translation>ཡིག་ཆ་འབྲི་ནོར་ཤོར་བ། %1</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="120"/>
-        <source>Error reading file :%1</source>
-        <translation>ཡིག་ཆ་ཀློག་ནོར་ཤོར་བ། %1</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="185"/>
-        <source>Failed to create compressed file, check if file %1 is already open!</source>
-        <translation>གྲབས་ཉར་ཡིག་ཆ་གསར་བཟོ་མི་ཐུབ་པས། %1ཡོད་མེད་ཞིབ་བཤེར་བྱེད་དགོས། </translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="218"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
         <source>Back up file done</source>
         <translation>ཡིག་ཆ་གྲབས་ཉར་བྱས་ཟིན། </translation>
     </message>
