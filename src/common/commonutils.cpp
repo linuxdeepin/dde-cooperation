@@ -141,7 +141,7 @@ void CommonUitls::initLog()
     }
 
     fastring logdir = logDir().toStdString();
-    LOG << "set logdir: " << logdir.c_str();
+    WLOG << "set logdir: " << logdir.c_str();
     flag::set_value("log_dir", logdir);   //日志保存目录
 
 #ifdef linux
@@ -160,7 +160,7 @@ void CommonUitls::initLog()
 
 #ifndef QT_DEBUG
     int level = settings.value("g_minLogLevel", 2).toInt();
-    LOG << "set LogLevel " << level;
+    WLOG << "set LogLevel " << level;
     log::xx::g_minLogLevel = static_cast<log::xx::LogLevel>(level);
 
     QTimer *timer = new QTimer();
@@ -170,7 +170,7 @@ void CommonUitls::initLog()
         auto logLevel = static_cast<log::xx::LogLevel>(level);
         if (log::xx::g_minLogLevel != logLevel) {
             log::xx::g_minLogLevel = logLevel;
-            LOG << "set LogLevel " << level;
+            WLOG << "update LogLevel " << level;
         }
     });
     timer->start(2000);

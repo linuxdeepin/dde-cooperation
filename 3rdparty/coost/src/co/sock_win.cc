@@ -419,7 +419,7 @@ void cleanup_sock() {
 
 } // co
 
-#if defined(_MSC_VER) && defined(BUILDING_CO_SHARED)
+#if defined(BUILDING_CO_SHARED)
 extern "C" {
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID) {
