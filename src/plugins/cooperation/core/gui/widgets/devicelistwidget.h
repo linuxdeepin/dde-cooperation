@@ -10,7 +10,7 @@
 
 #include <QScrollArea>
 #include <QVBoxLayout>
-
+#include <QMouseEvent>
 namespace cooperation_core {
 
 class DeviceListWidget : public QScrollArea
@@ -38,6 +38,9 @@ private:
 private:
     QVBoxLayout *mainLayout { nullptr };
     QList<DeviceItem::Operation> operationList;
+
+protected:
+    bool event(QEvent *e) override;
 };
 
 }   // namespace cooperation_core

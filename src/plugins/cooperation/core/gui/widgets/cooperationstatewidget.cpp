@@ -149,8 +149,8 @@ void NoNetworkWidget::initUI()
     setLayout(vLayout);
 }
 
-NoResultTipWidget::NoResultTipWidget(QWidget *parent)
-    : QWidget(parent)
+NoResultTipWidget::NoResultTipWidget(QWidget *parent, bool usetipMode)
+    : QWidget(parent),useTipMode(usetipMode)
 {
     initUI();
 }
@@ -175,7 +175,7 @@ void NoResultTipWidget::initUI()
     QString hyperlink = "https://www.chinauos.com/resource/assistant";
 
     QString websiteLinkTemplate =
-            "<br/><a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
+        "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
     CooperationLabel *contentLable1 = new CooperationLabel(this);
     contentLable1->setWordWrap(true);
@@ -213,6 +213,14 @@ void NoResultTipWidget::initUI()
     contentLayout->addWidget(contentLable4);
     contentLayout->setContentsMargins(5, 3, 5, 5);
     setLayout(contentLayout);
+
+    if(useTipMode){
+        titleLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        contentLable1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        contentLable2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        contentLable3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        contentLable4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    }
 
 #ifdef linux
     contentLable1->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
@@ -267,13 +275,18 @@ void NoResultWidget::initUI()
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
-    vLayout->setSpacing(0);
-    vLayout->addSpacing(88);
+
+    QSpacerItem *sp_1 = new QSpacerItem(20, 88, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QSpacerItem *sp_2 = new QSpacerItem(20, 14, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QSpacerItem *sp_3 = new QSpacerItem(20, 22, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+    vLayout->addItem(sp_1);
     vLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
-    vLayout->addSpacing(14);
+    vLayout->addItem(sp_2);
     vLayout->addWidget(tipsLabel, 0, Qt::AlignCenter);
-    vLayout->addSpacing(22);
+    vLayout->addItem(sp_3);
     vLayout->addWidget(contentBackgroundWidget);
+
     vLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
     setLayout(vLayout);
 }
@@ -349,7 +362,8 @@ void BottomLabel::initUI()
     QVBoxLayout *layout = new QVBoxLayout(contentWidget);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(5, 6, 5, 0);
-    layout->addWidget(new NoResultTipWidget());
+    NoResultTipWidget *tipWidgt = new NoResultTipWidget(scrollArea, true);
+    layout->addWidget(tipWidgt);
     scrollArea->setWidget(contentWidget);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
@@ -359,6 +373,9 @@ void BottomLabel::initUI()
 
     dialog->setLayout(contentLayout);
     dialog->setWindowFlags(Qt::ToolTip);
+
+    CooperationGuiHelper::setAutoFont(tipWidgt, 14, QFont::Normal);
+    CooperationGuiHelper::setAutoFont(tipWidgt, 12, QFont::Normal);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(ipLabel);
@@ -435,9 +452,21 @@ void FirstTipWidget::initUI()
     firstTip->setFixedWidth(480);
     firstTip->setContentsMargins(10, 10, 40, 10);
 
-    tipBtn = new QToolButton(dynamic_cast<QWidget *>(parent()));
+    tipBtn = new QPushButton(dynamic_cast<QWidget *>(parent()));
     tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_normal.svg"));
     tipBtn->setIconSize(QSize(30, 30));
+
+    tipBtn->setStyleSheet("QPushButton{"
+                          "border-radius: 15px;"
+                          "min-width:30px;"
+                          "min-height:30px;"
+                          "max-width:30px;"
+                          "max-height:30px;}"
+                          "QPushButton:hover{"
+                          "background-color: #E5E5E5;}"
+                          "QPushButton:pressed{"
+                          "background-color: #A0B0BB;}");
+
     themeTypeChanged();
 
     connect(tipBtn, &QToolButton::clicked, this, [this]() {
@@ -449,7 +478,7 @@ void FirstTipWidget::initUI()
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 15, 0, 0);
+    mainLayout->setContentsMargins(0, 10, 0, 0);
     mainLayout->addLayout(hLayout);
     setLayout(mainLayout);
 

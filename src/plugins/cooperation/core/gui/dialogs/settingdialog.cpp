@@ -527,7 +527,7 @@ void SettingDialog::loadConfig()
         d->connectCB->setCurrentIndex(value.toInt());
     } else {
         // sync the default value into config
-        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey, true);
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey, 0);
 
         d->connectCB->setCurrentIndex(0);
     }
