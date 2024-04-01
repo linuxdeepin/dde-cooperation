@@ -145,6 +145,9 @@ endif()
 # build 3rd party libraries first
 add_subdirectory(3rdparty)
 
+# Modules
+add_subdirectory("modules")
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
