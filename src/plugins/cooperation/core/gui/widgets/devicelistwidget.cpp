@@ -25,7 +25,7 @@ void DeviceListWidget::initUI()
     QWidget *mainWidget = new QWidget(this);
 
     mainLayout = new QVBoxLayout;
-    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setContentsMargins(0, 0, 0, 10);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignCenter);
     mainLayout->setSpacing(10);
     mainWidget->setLayout(mainLayout);
@@ -33,6 +33,18 @@ void DeviceListWidget::initUI()
     setWidget(mainWidget);
     setWidgetResizable(true);
     setFrameShape(NoFrame);
+}
+
+bool DeviceListWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(e);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            return true;
+        }
+    }
+
+    return QScrollArea::event(e);
 }
 
 void DeviceListWidget::appendItem(const DeviceInfoPointer info)

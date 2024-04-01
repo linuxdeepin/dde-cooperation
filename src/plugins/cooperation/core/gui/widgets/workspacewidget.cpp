@@ -45,7 +45,7 @@ void WorkspaceWidgetPrivate::initUI()
     searchEdit = new CooperationSearchEdit(q);
     searchEdit->setContentsMargins(10, 0, 10, 0);
 
-    searchEdit->setPlaceholderText(tr("Please enter the device name or IP"));
+    searchEdit->setPlaceholderText(tr("Please enter the device ip/name of the collaborator"));
     searchEdit->setPlaceHolder(tr("Please enter the device ip/name of the collaborator"));
     stackedLayout = new QStackedLayout;
 

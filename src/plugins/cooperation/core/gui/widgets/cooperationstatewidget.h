@@ -45,14 +45,14 @@ class NoResultTipWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit NoResultTipWidget(QWidget *parent = nullptr);
+    explicit NoResultTipWidget(QWidget *parent = nullptr, bool usetipMode = false);
 
     void onLinkActivated(const QString &link);
     void setTitleVisible(bool visible);
-
 private:
     void initUI();
     CooperationLabel *titleLabel { nullptr };
+    bool useTipMode = false;
 };
 
 class NoResultWidget : public QWidget
@@ -101,7 +101,7 @@ public:
 
 private:
     void initUI();
-    QToolButton *tipBtn { nullptr };
+    QPushButton *tipBtn { nullptr };
     QLabel *firstTip { nullptr };
 };
 
