@@ -92,7 +92,7 @@ struct FSDataBlock {
     int32 file_id{0};
     fastring rootdir;
     fastring filename;
-    uint32 blk_id{0};
+    int64 blk_id{0};
     int32 flags{0};
     int64 data_size{0};
     fastring data;
@@ -102,7 +102,7 @@ struct FSDataBlock {
         file_id = (int32)_x_.get("file_id").as_int64();
         rootdir = _x_.get("rootdir").as_c_str();
         filename = _x_.get("filename").as_c_str();
-        blk_id = (uint32)_x_.get("blk_id").as_int64();
+        blk_id = (int64)_x_.get("blk_id").as_int64();
         flags = (int32)_x_.get("flags").as_int64();
         data_size = _x_.get("data_size").as_int64();
         data = _x_.get("data").as_c_str();
