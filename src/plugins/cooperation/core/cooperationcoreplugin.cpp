@@ -18,8 +18,10 @@
 #    include "proxy/cooperationproxy.h"
 #else
 #    include "base/reportlog/reportlogmanager.h"
+#ifdef HAVE_DTK_FEATUREDISPLAY
 #    include <DFeatureDisplayDialog>
 DWIDGET_USE_NAMESPACE
+#endif
 #endif
 
 using namespace cooperation_core;
@@ -58,7 +60,7 @@ bool CooperaionCorePlugin::start()
 
     if (CommonUitls::isFirstStart()) {
         emit MainController::instance()->firstStart();
-#ifdef linux
+#ifdef HAVE_DTK_FEATUREDISPLAY
         DFeatureDisplayDialog *dlg = qApp->featureDisplayDialog();
         auto btn = dlg->getButton(0);
         connect(btn, &QAbstractButton::clicked, qApp, &SingleApplication::helpActionTriggered);

@@ -58,7 +58,7 @@ else()
 endif()
 
 if (WIN32)
-    set(qt_required_components Core Gui Network Widgets  Sql WinExtras)
+    set(qt_required_components Core Gui Network Widgets Sql WinExtras)
 else()
     set(qt_required_components Core Gui Network Widgets DBus)
 endif()
@@ -81,6 +81,10 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_SOURCE_DIR}/src/
 )
 
+if (Qt5DBus_FOUND)
+    include_directories(${Qt5DBus_INCLUDE_DIRS})
+endif (Qt5DBus_FOUND)
+
 # 公共依赖库，添加到这里
 target_link_libraries(${PROJECT_NAME}
     deepin_cross::framework
@@ -88,6 +92,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::DBus
     co
 )
 

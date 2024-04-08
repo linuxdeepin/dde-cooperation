@@ -527,7 +527,7 @@ QString CooperationUtil::localIPAddress()
 
 void CooperationUtil::showFeatureDisplayDialog(QDialog *dlg1)
 {
-#ifdef linux
+#ifdef HAVE_DTK_FEATUREDISPLAY
     DFeatureDisplayDialog *dlg = static_cast<DFeatureDisplayDialog *>(dlg1);
     auto btn = dlg->getButton(0);
     btn->setText(tr("View Help Manual"));

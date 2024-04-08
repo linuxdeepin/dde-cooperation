@@ -63,6 +63,13 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
         "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/linux/*.cpp"
     )
     find_package(Dtk COMPONENTS Widget REQUIRED)
+    find_path(FEATURE_DISPLAY_DIR dfeaturedisplaydialog.h PATHS ${DtkWidget_INCLUDE_DIRS})
+    if (FEATURE_DISPLAY_DIR)
+        message(STATUS "Found dfeaturedisplaydialog.h at ${FEATURE_DISPLAY_DIR}")
+        add_definitions(-DHAVE_DTK_FEATUREDISPLAY)
+    else()
+        message(STATUS "Could not find dfeaturedisplaydialog.h")
+    endif()
 else()
     message (FATAL_ERROR "not support on ${CMAKE_SYSTEM} yet.")
 endif()
@@ -94,6 +101,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::DBus
     co
 )
 

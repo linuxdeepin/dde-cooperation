@@ -7,6 +7,7 @@
 
 #ifdef linux
 #    include <DFontSizeManager>
+#    include <DApplication>
 DWIDGET_USE_NAMESPACE
 #endif
 

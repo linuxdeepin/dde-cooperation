@@ -7,6 +7,7 @@
 #include <QToolButton>
 #include <QStackedWidget>
 #include <QMovie>
+#include <QApplication>
 
 #include <utils/transferhepler.h>
 
