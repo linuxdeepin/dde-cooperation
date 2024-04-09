@@ -172,7 +172,7 @@ void NoResultTipWidget::initUI()
             tr("1. Enable cross-end collaborative applications. Applications on the UOS "
                "can be downloaded from the App Store, and applications on the Windows "
                "side can be downloaded from: ");
-    QString hyperlink = "https://www.deepin.org/index/assistant";
+    QString hyperlink = "https://www.chinauos.com/resource/assistant";
 
     QString websiteLinkTemplate =
             "<br/><a href='%1' style='text-decoration: none; color: #0081FF;'>%2</a>";
@@ -211,6 +211,7 @@ void NoResultTipWidget::initUI()
     contentLayout->addWidget(contentLable2);
     contentLayout->addWidget(contentLable3);
     contentLayout->addWidget(contentLable4);
+    contentLayout->setContentsMargins(5, 3, 5, 5);
     setLayout(contentLayout);
 
 #ifdef linux
@@ -341,7 +342,7 @@ void BottomLabel::initUI()
     scrollArea->setStyleSheet("QScrollArea { border: none; background-color: transparent; }");
 #endif
 
-    dialog->setFixedSize(260, 198);
+    dialog->setFixedSize(260, 208);
     scrollArea->setWidgetResizable(true);
     QWidget *contentWidget = new QWidget;
 
@@ -375,7 +376,7 @@ void BottomLabel::showDialog() const
     if (dialog->isVisible())
         return;
     QMainWindow *activeMainWindow = qobject_cast<QMainWindow *>(qApp->topLevelAt(QCursor::pos()));
-    dialog->move(activeMainWindow->pos() + QPoint(228, 402));
+    dialog->move(activeMainWindow->pos() + QPoint(228, 398));
     dialog->show();
 }
 

@@ -4,7 +4,7 @@
 
 Cooperation is a software that helps users to collaborate between multiple devices, it enables file drop, keystroke sharing, clipboard sharing between windows and UOS devices.
 
-For UOS, you can get the app by searching for "Cross-end Collaboration" in the **App Store**. For Windows, you can go to[https://www.deepin.org/index/assistant](https://www.deepin.org/index/assistant).
+For UOS, you can get the app by searching for "Cross-end Collaboration" in the **App Store**. For Windows, you can go to[https://www.chinauos.com/resource/assistant](https://www.chinauos.com/resource/assistant).
 
 ### Connecting devices
 

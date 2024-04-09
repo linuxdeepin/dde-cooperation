@@ -4,7 +4,7 @@
 
 跨端协同是一款帮助用户在多个设备间进行协同办公的软件，它能在windows和UOS设备之间实现文件投送、键鼠共享、剪贴板共享。
 
-UOS端可通过在**应用商店**中搜索“跨端协同”获取应用；Windows端可访问[https://www.deepin.org/index/assistant](https://www.deepin.org/index/assistant)获取。
+UOS端可通过在**应用商店**中搜索“跨端协同”获取应用；Windows端可访问[https://www.chinauos.com/resource/assistant](https://www.chinauos.com/resource/assistant)获取。
 
 ### 连接设备
 

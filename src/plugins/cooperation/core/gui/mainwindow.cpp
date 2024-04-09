@@ -74,7 +74,7 @@ void MainWindowPrivate::handleSettingMenuTriggered(int action)
         });
     } break;
     case MenuAction::kDownloadWindowClient:
-        QDesktopServices::openUrl(QUrl("https://www.deepin.org/index/assistant"));
+        QDesktopServices::openUrl(QUrl("https://www.chinauos.com/resource/assistant"));
         break;
     }
 }

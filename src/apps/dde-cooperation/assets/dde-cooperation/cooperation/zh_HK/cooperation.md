@@ -4,7 +4,7 @@
 
 跨端協同是一款幫助用戶在多個設備間進行協同辦公的軟件，它能在windows和UOS設備之間實現文件投送、鍵鼠共享、剪貼板共享。
 
-UOS端可通過在**應用商店**中搜索“跨端協同”獲取應用；Windows端可訪問[https://www.deepin.org/index/assistant](https://www.deepin.org/index/assistant)獲取。
+UOS端可通過在**應用商店**中搜索“跨端協同”獲取應用；Windows端可訪問[https://www.chinauos.com/resource/assistant](https://www.chinauos.com/resource/assistant)獲取。
 
 ### 連接設備
 
