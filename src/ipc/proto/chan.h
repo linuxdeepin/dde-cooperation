@@ -171,7 +171,7 @@ struct FSJobCancel {
 struct FSReport {
     int32 job_id;
     fastring path;
-    int32 result;
+    int32 result { -1 };
     fastring error;
 
     void from_json(const co::Json& _x_) {

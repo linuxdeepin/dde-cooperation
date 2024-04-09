@@ -170,7 +170,7 @@ bool HandleRpcService::handleRemoteLogin(co::Json &info)
         handleRpcLogin(result.result, lo.selfappName.c_str(), appname, result.ip.c_str());
     }
     OutData data;
-    data.type = OUT_LOGIN;
+    data.type = LOGIN_INFO;
     data.json = lores.as_json().str();
     _outgo_chan << data;
 
@@ -194,6 +194,7 @@ void HandleRpcService::handleRemoteFileBlock(co::Json &info, fastring data)
     auto res = JobManager::instance()->handleFSData(info, data, &reply);
 
     OutData out;
+    out.type = FS_DATA;
     reply.result = (res ? OK : IO_ERROR);
     out.json = reply.as_json().str();
     _outgo_chan << out;
@@ -204,6 +205,7 @@ void HandleRpcService::handleRemoteReport(co::Json &info)
     FileTransResponse reply;
     reply.result = OK;
     OutData out;
+    out.type = FS_REPORT;
 
     JobManager::instance()->handleTransReport(info, &reply);
     out.json = reply.as_json().str();
@@ -215,6 +217,7 @@ void HandleRpcService::handleRemoteJobCancel(co::Json &info)
     FileTransResponse reply;
     reply.result = OK;
     OutData out;
+    out.type = TRANS_CANCEL;
 
     JobManager::instance()->handleCancelJob(info, &reply);
     Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
@@ -241,7 +244,7 @@ void HandleRpcService::handleTransJob(co::Json &info)
     reply.result = (res ? OK : IO_ERROR);
 
     OutData data;
-    data.type = OUT_TRANSJOB;
+    data.type = TRANSJOB;
     data.json = reply.as_json().str();
     _outgo_chan << data;
 }
@@ -461,6 +464,7 @@ void HandleRpcService::handleRemoteSearchIp(co::Json &info)
 {
     Q_UNUSED(info);
     OutData data;
+    data.type = SEARCH_DEVICE_BY_IP;
     data.json = DiscoveryJob::instance()->nodeInfoStr();
     _outgo_chan << data;
 }
@@ -469,6 +473,7 @@ void HandleRpcService::hanldeRemoteDiscover(co::Json &info)
 {
     DiscoverInfo dis, res;
     OutData data;
+    data.type = DISCOVER_BY_TCP;
     res.ip = Util::getFirstIp();
     res.msg = DiscoveryJob::instance()->udpSendPackage();
     data.json = res.as_json().str();
@@ -540,21 +545,21 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 continue;
             }
             switch (indata.type) {
-            case IN_LOGIN_INFO:
+            case LOGIN_INFO:
             {
                 self->handleRemoteLogin(json_obj);
                 break;
             }
-            case IN_LOGIN_CONFIRM:
+            case LOGIN_CONFIRM:
             {
                 //TODO: notify user confirm login
                 break;
             }
-            case IN_LOGIN_RESULT:// 服务器端回复登陆结果
+            case LOGIN_RESULT:// 服务器端回复登陆结果
             {
                 break;
             }
-            case IN_TRANSJOB:
+            case TRANSJOB:
             {
                 self->handleTransJob(json_obj);
                 break;
@@ -578,6 +583,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             case TRANS_APPLY:
             {
                 OutData data;
+                data.type = TRANS_APPLY;
                 _outgo_chan << data;
                 self->handleRemoteApplyTransFile(json_obj);
                 break;
@@ -585,6 +591,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             case MISC:
             {
                 OutData data;
+                data.type = MISC;
                 _outgo_chan << data;
                 self->handleRemoteDisc(json_obj);
                 break;
@@ -594,6 +601,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 PingPong pong;
                 pong.ip = Util::getFirstIp();
                 OutData data;
+                data.type = RPC_PING;
                 data.json = pong.as_json().str();
                 _outgo_chan << data;
                 if (self)
@@ -604,6 +612,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 // 被控制方收到共享连接申请
                 OutData data;
+                data.type = APPLY_SHARE_DISCONNECT;
                 _outgo_chan << data;
                 self->handleRemoteShareConnect(json_obj);
                 break;
@@ -611,6 +620,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             case APPLY_SHARE_DISCONNECT: {
                 // 被控制方收到共享连接申请
                 OutData data;
+                data.type = APPLY_SHARE_DISCONNECT;
                 _outgo_chan << data;
                 self->handleRemoteShareDisConnect(json_obj);
                 break;
@@ -619,6 +629,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 // 控制方收到被控制方申请共享连接的回复
                 OutData data;
+                data.type = APPLY_SHARE_CONNECT_RES;
                 _outgo_chan << data;
                 self->handleRemoteShareConnectReply(json_obj);
                 break;
@@ -627,6 +638,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 // 被控制方收到控制方的开始共享
                 OutData data;
+                data.type = SHARE_START;
                 _outgo_chan << data;
                 self->handleRemoteShareStart(json_obj);
                 break;
@@ -635,6 +647,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 // 被控制方收到控制方的开始共享
                 OutData data;
+                data.type = SHARE_START_RES;
                 _outgo_chan << data;
                 self->handleRemoteShareStartRes(json_obj);
                 break;
@@ -643,6 +656,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 // 被控制方收到控制方的开始共享
                 OutData data;
+                data.type = SHARE_STOP;
                 _outgo_chan << data;
                 self->handleRemoteShareStop(json_obj);
                 break;
@@ -651,6 +665,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 // 断开连接
                 OutData data;
+                data.type = DISCONNECT_CB;
                 _outgo_chan << data;
                 self->handleRemoteDisConnectCb(json_obj);
                 break;
@@ -659,6 +674,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 // 断开连接
                 OutData data;
+                data.type = DISAPPLY_SHARE_CONNECT;
                 _outgo_chan << data;
                 self->handleRemoteDisApplyShareConnect(json_obj);
                 break;
@@ -677,6 +693,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             }
             default:{
                 OutData data;
+                data.type = UNKOWN;
                 _outgo_chan << data;
                 break;
             }

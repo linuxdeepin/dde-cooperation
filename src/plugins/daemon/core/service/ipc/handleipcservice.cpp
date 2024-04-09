@@ -363,7 +363,7 @@ void HandleIpcService::handleTryConnect(co::Json json)
     // 创建远程发送的work
     SendRpcService::instance()->createRpcSender(param.appName.c_str(), ip, UNI_RPC_PORT_BASE);
     SendRpcService::instance()->setTargetAppName(appName, targetAppname);
-    SendRpcService::instance()->doSendProtoMsg(IN_LOGIN_INFO, appName, login.as_json().str().c_str());
+    SendRpcService::instance()->doSendProtoMsg(LOGIN_INFO, appName, login.as_json().str().c_str());
 
 }
 

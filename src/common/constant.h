@@ -163,7 +163,7 @@ enum FileType {
 };
 
 enum FileTransRe {
-  IO_ERROR = 0, // 出现读写错误
+  IO_ERROR = -2, // 出现读写错误
   OK = 1,  //无错误
   FINIASH = 2, // 完成
 };

@@ -62,7 +62,7 @@ bool TransferJob::initRpc(fastring target, uint16 port)
         // 必须等待对方回复了才执行后面的流程
         {
             QMutexLocker g(&_send_mutex);
-            res = _remote->doSendProtoMsg(IN_TRANSJOB, req_job.as_json().str().c_str(), QByteArray());
+            res = _remote->doSendProtoMsg(TRANSJOB, req_job.as_json().str().c_str(), QByteArray());
         }
 
         if (res.errorType < INVOKE_OK) {
@@ -359,10 +359,12 @@ void TransferJob::handleBlockQueque()
         } else {
             // 发送失败，怎么处理
             exception = !sendToRemote(block);
+            if (exception)
+                WLOG << "sendToRemote exception!!!!";
         }
 
         if (exception || _offlined) {
-            DLOG << "trans job exception hanpend: " << _jobid;
+            DLOG << "trans job exception hanpend: " << _jobid << " exception? " << exception << " offlined? " << _offlined;
             handleJobStatus(JOB_TRANS_FAILED);
             break;
         }
@@ -696,14 +698,18 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
         res = _remote->doSendProtoMsg(FS_DATA, file_block.as_json().str().c_str(), data);
     }
     co::Json resJson;
-    if (resJson.parse_from(res.data)) {
+    if (res.protocolType == FS_DATA && resJson.parse_from(res.data)) {
         FileTransResponse transres;
         transres.from_json(resJson);
         if (transres.result == IO_ERROR) {
+            DLOG << "remote return: IO_ERROR!";
             _device_not_enough = block->flags & JobTransFileOp::FILE_COUNTED;
             return false;
         }
+    } else {
+        WLOG << "remote return type: " << res.protocolType << " data: \n" << res.data;
     }
+
     if (res.errorType < INVOKE_OK && !_offlined) {
         SendStatus st;
         st.type = res.errorType;

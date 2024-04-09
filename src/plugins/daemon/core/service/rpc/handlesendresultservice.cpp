@@ -38,7 +38,7 @@ void HandleSendResultService::handleSendResultMsg(const QString appName, const Q
         SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
         return;
     }
-    if (res.protocolType == IN_LOGIN_INFO) {
+    if (res.protocolType == LOGIN_INFO) {
         handleLogin(appName, res.data.c_str());
     }
 }

@@ -316,6 +316,7 @@ void JobManager::handleOtherOffline(const QString &ip)
     }
     if (job.isNull())
         return;
+
     auto suc = job->offlineCancel(ip);
     if (!suc)
         return;

@@ -15,12 +15,12 @@
 #include <QMap>
 #include <QMutex>
 
-typedef enum income_type_t {
-    IN_LOGIN_RESULT= 100,
-    IN_LOGIN_INFO = 999,
-    IN_LOGIN_CONFIRM = 1000,
-    IN_TRANSJOB = 1001,
-    IN_PEER = 1002,
+typedef enum chan_type_t {
+    UNKOWN = 10,
+    LOGIN_RESULT= 100,
+    LOGIN_INFO = 999,
+    LOGIN_CONFIRM = 1000,
+    TRANSJOB = 1001,
     FS_ACTION = 1003,
     FS_DATA = 1004,
     FS_DONE = 1005,
@@ -42,17 +42,10 @@ typedef enum income_type_t {
     DISAPPLY_SHARE_CONNECT = 1021, // 取消申请共享
     SEARCH_DEVICE_BY_IP = 1022, // 通过ip搜索设备
     DISCOVER_BY_TCP = 1023, // 通过ip搜索的设备，模拟udp包的发送
-} IncomeType;
-
-typedef enum outgo_type_t {
-    OUT_LOGIN = 2000,
-    OUT_TRANSJOB = 2001,
-    OUT_PEER = 2002,
-    FS_ACTION_RESULT = 2003,
-} OutgoType;
+} ChanType;
 
 struct IncomeData {
-    IncomeType type;
+    ChanType type;
     fastring json; // json数据结构实例
     fastring buf; // 二进制数据
 };
@@ -62,7 +55,7 @@ typedef enum communication_type_t {
 } CommunicationType;
 
 struct OutData {
-    OutgoType type;
+    ChanType type;
     fastring json; // json数据结构实例
 };
 

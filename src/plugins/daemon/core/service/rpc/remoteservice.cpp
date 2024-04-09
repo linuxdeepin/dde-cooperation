@@ -39,7 +39,7 @@ void RemoteServiceImpl::proto_msg(google::protobuf::RpcController *controller,
     Q_UNUSED(controller);
     DLOG_IF(FLG_log_detail) << " req= type = " << request->type() << " msg  =  " << request->msg();
     IncomeData in;
-    in.type = static_cast<IncomeType>(request->type());
+    in.type = static_cast<ChanType>(request->type());
     in.json = request->msg();
     std::string buffer = request->data();
     in.buf = buffer;
@@ -47,7 +47,13 @@ void RemoteServiceImpl::proto_msg(google::protobuf::RpcController *controller,
 
     OutData out;
     _outgo_chan >> out;
-    response->set_type(in.type);
+    if (in.type != out.type) {
+        WLOG << "RPC response not match type:" << in.type << " != " << out.type;
+        // skip this, try next data
+        _outgo_chan >> out;
+        if (in.type != out.type) return;
+    }
+    response->set_type(out.type);
     response->set_msg(out.json.c_str());
 
     DLOG_IF(FLG_log_detail) << " res= " << response->ShortDebugString().c_str();
