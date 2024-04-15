@@ -563,7 +563,7 @@
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="46"/>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="69"/>
         <source>File Transfer</source>
-        <translation>裝置暱稱必須介於1-63個字元之內</translation>
+        <translation>文件投送</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="85"/>

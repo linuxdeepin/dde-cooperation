@@ -155,6 +155,7 @@ void SettingDialogPrivate::createBasicWidget()
 
     nameEdit = new CooperationLineEdit(q);
     nameEdit->installEventFilter(q);
+    nameEdit->setClearButtonEnabled(false);
     QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5-]+$");   // 正则表达式定义允许的字符范围
     QRegExpValidator *validator = new QRegExpValidator(regExp, nameEdit);
 #ifdef linux
@@ -482,6 +483,27 @@ bool SettingDialog::eventFilter(QObject *watched, QEvent *event)
         }
 #endif
     } while (false);
+
+    if(event->type() == QEvent::KeyRelease){
+        QWidget *widget = qobject_cast<QWidget *>(watched);
+        if (widget && d->nameEdit == watched){
+            QKeyEvent *keypressEvent = static_cast<QKeyEvent *>(event);
+            if(keypressEvent->key() == Qt::Key_Return || keypressEvent->key() == Qt::Key_Enter){
+                d->q->setFocus();
+            }
+        }
+    }
+
+    QWidget *widget = qobject_cast<QWidget *>(watched);
+    if (widget && d->nameEdit == watched){
+        if(event->type() == QEvent::Paint){
+            if(d->nameEdit->hasFocus()){
+                d->nameEdit->setClearButtonEnabled(true);
+            }else{
+                d->nameEdit->setClearButtonEnabled(false);
+            }
+        }
+    }
 
     return CooperationAbstractDialog::eventFilter(watched, event);
 }

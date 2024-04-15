@@ -9,6 +9,8 @@
 #include "backgroundwidget.h"
 #include "global_defines.h"
 
+#include <DIconButton>
+
 namespace cooperation_core {
 
 class LookingForDeviceWidget : public QWidget
@@ -101,7 +103,7 @@ public:
 
 private:
     void initUI();
-    QPushButton *tipBtn { nullptr };
+    DTK_WIDGET_NAMESPACE::DIconButton *tipBtn { nullptr };
     QLabel *firstTip { nullptr };
 };
 
