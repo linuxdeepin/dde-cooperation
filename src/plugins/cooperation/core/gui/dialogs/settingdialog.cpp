@@ -75,19 +75,20 @@ void SettingDialogPrivate::initWindow()
 
 #ifndef linux
     QString scrollBarStyle = "QScrollBar:vertical {"
-                                 "    background: white;"
-                                 "    width: 6px;"
-                                 "    border-radius: 3px;"
-                                 "    margin: 0px;"
-                                 "}"
-                                 "QScrollBar::handle:vertical {"
-                                 "    background: darkGrey;"
-                                 "    min-height: 30px;"
-                                 "    border-radius: 3px;"
-                                 "}"
-                                 "QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {"
-                                 "    height: 0px;"
-                                 "}";;
+                             "    background: white;"
+                             "    width: 6px;"
+                             "    border-radius: 3px;"
+                             "    margin: 0px;"
+                             "}"
+                             "QScrollBar::handle:vertical {"
+                             "    background: darkGrey;"
+                             "    min-height: 30px;"
+                             "    border-radius: 3px;"
+                             "}"
+                             "QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {"
+                             "    height: 0px;"
+                             "}";
+    ;
     contentArea->verticalScrollBar()->setStyleSheet(scrollBarStyle);
 #endif
 
@@ -159,6 +160,7 @@ void SettingDialogPrivate::createBasicWidget()
     QRegExpValidator *validator = new QRegExpValidator(regExp, nameEdit);
 #ifdef linux
     nameEdit->lineEdit()->setValidator(validator);
+    nameEdit->setClearButtonEnabled(false);
 #else
     nameEdit->setValidator(validator);
     nameEdit->setStyleSheet("   border-radius: 8px;"
@@ -482,6 +484,38 @@ bool SettingDialog::eventFilter(QObject *watched, QEvent *event)
         }
 #endif
     } while (false);
+
+    if (event->type() == QEvent::KeyRelease) {
+        QWidget *widget = qobject_cast<QWidget *>(watched);
+        if (widget && d->nameEdit == watched) {
+            QKeyEvent *keypressEvent = static_cast<QKeyEvent *>(event);
+            if (keypressEvent->key() == Qt::Key_Return || keypressEvent->key() == Qt::Key_Enter) {
+                d->q->setFocus();
+            }
+        }
+    }
+
+    QWidget *widget = qobject_cast<QWidget *>(watched);
+    if (widget && d->nameEdit == watched) {
+        if (event->type() == QEvent::Paint) {
+#ifdef linux
+            if (d->nameEdit->hasFocus()) {
+                d->nameEdit->setClearButtonEnabled(true);
+            } else {
+                d->nameEdit->setClearButtonEnabled(false);
+            }
+#else
+            QToolButton *closeBtn = d->nameEdit->findChild<QToolButton *>();
+            if (closeBtn != nullptr) {
+                if (d->nameEdit->hasFocus()) {
+                    closeBtn->setVisible(true);
+                } else {
+                    closeBtn->setVisible(false);
+                }
+            }
+#endif
+        }
+    }
 
     return CooperationAbstractDialog::eventFilter(watched, event);
 }

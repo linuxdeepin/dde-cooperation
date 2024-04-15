@@ -49,6 +49,7 @@ public:
 
     void onLinkActivated(const QString &link);
     void setTitleVisible(bool visible);
+
 private:
     void initUI();
     CooperationLabel *titleLabel { nullptr };
@@ -101,7 +102,8 @@ public:
 
 private:
     void initUI();
-    QPushButton *tipBtn { nullptr };
+
+    CooperationIconButton *tipBtn { nullptr };
     QLabel *firstTip { nullptr };
 };
 

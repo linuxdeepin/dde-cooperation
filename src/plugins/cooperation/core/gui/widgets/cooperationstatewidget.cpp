@@ -429,11 +429,13 @@ void FirstTipWidget::setVisible(bool visible)
     QWidget::setVisible(visible);
     tipBtn->setVisible(visible);
 #ifdef linux
-    tipBtn->setGeometry(450, 41 + height() / 2, 30, 30);
+    tipBtn->setGeometry(450, DSizeModeHelper::element(29, 42) + height() / 2, 30, 30);
 #    ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this] {
         tipBtn->setGeometry(450, DSizeModeHelper::element(29, 42) + height() / 2, 30, 30);
     });
+#    else
+    tipBtn->setGeometry(450, 42 + height() / 2, 30, 30);
 #    endif
 #else
     tipBtn->setGeometry(450, 90 + height() / 2, 30, 30);
@@ -446,12 +448,10 @@ void FirstTipWidget::themeTypeChanged()
         firstTip->setStyleSheet("background-color: rgba(255, 255, 255, 0.03); "
                                 "border-radius: 10px;"
                                 "color: rgba(255, 255, 255, 0.6);");
-        tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/dark/icons/tab_close_normal.svg"));
     } else {
         firstTip->setStyleSheet("background-color: white; "
                                 "border-radius: 10px;"
                                 "color: rgba(0, 0, 0, 0.6);");
-        tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_normal.svg"));
     }
 }
 
@@ -464,20 +464,15 @@ void FirstTipWidget::initUI()
     firstTip->setFixedWidth(480);
     firstTip->setContentsMargins(10, 10, 40, 10);
 
-    tipBtn = new QPushButton(dynamic_cast<QWidget *>(parent()));
-    tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_normal.svg"));
-    tipBtn->setIconSize(QSize(30, 30));
+    tipBtn = new CooperationIconButton(dynamic_cast<QWidget *>(parent()));
+#ifdef linux
+    tipBtn->setIcon(DStyle::SP_CloseButton);
+    tipBtn->setFlat(true);
+#else
+    tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/clear.svg"));
+#endif
 
-    tipBtn->setStyleSheet("QPushButton{"
-                          "border-radius: 15px;"
-                          "min-width:30px;"
-                          "min-height:30px;"
-                          "max-width:30px;"
-                          "max-height:30px;}"
-                          "QPushButton:hover{"
-                          "background-color: #E5E5E5;}"
-                          "QPushButton:pressed{"
-                          "background-color: #A0B0BB;}");
+    tipBtn->setIconSize(QSize(30, 30));
 
     themeTypeChanged();
 
