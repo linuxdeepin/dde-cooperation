@@ -67,6 +67,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components}
 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
 
+list(APPEND LINKLIBS session)
+list(APPEND LINKLIBS filesync)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${PLUGIN_FILES}
@@ -89,6 +92,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     co
+    ${LINKLIBS}
 )
 
 # 平台相关的库，添加到这里

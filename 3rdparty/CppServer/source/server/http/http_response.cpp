@@ -119,6 +119,13 @@ HTTPResponse& HTTPResponse::Clear()
     return *this;
 }
 
+HTTPResponse& HTTPResponse::ClearCache()
+{
+    _cache.clear();
+    _cache_size = 0;
+    return *this;
+}
+
 HTTPResponse& HTTPResponse::SetBegin(int status, std::string_view protocol)
 {
     std::string status_phrase;

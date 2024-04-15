@@ -131,6 +131,8 @@ if (NOT USE_PROTOBUF_FILES)
 	include(protobuf-generate)
 endif()
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/include)
+
 set(COOST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/coost")
 include_directories(${COOST_DIR}/include)
 
@@ -145,11 +147,30 @@ endif()
 # build 3rd party libraries first
 add_subdirectory(3rdparty)
 
+#set(CPPSERVER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/CppServer")
+#include_directories(${CPPSERVER_DIR}/include)
+
 # Modules
 add_subdirectory("modules")
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+# Proto library
+# file(GLOB_RECURSE PROTO_HEADER_FILES "proto/*.h")
+# file(GLOB_RECURSE PROTO_INLINE_FILES "proto/*.inl")
+# file(GLOB_RECURSE PROTO_SOURCE_FILES "proto/*.cpp")
+# add_library(proto ${PROTO_HEADER_FILES} ${PROTO_INLINE_FILES} ${PROTO_SOURCE_FILES})
+# set_target_properties(proto PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}" FOLDER "proto")
+# target_include_directories(proto PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/proto")
+# target_link_libraries(proto ${LINKLIBS})
+# list(APPEND INSTALL_TARGETS proto)
+# list(APPEND LINKLIBS proto)
+
+# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/proto)
+
+# launcher
+# add_subdirectory("launcher")
+
+# set(CMAKE_AUTOUIC ON)
+# set(CMAKE_AUTOMOC ON)
+# set(CMAKE_AUTORCC ON)
 
 add_subdirectory(src)

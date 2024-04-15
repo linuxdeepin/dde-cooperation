@@ -87,6 +87,9 @@ public:
     //! Clear the HTTP response cache
     HTTPResponse& Clear();
 
+    //! Clear the HTTP response cache
+    HTTPResponse& ClearCache();
+
     //! Set the HTTP response begin with a given status and protocol
     /*!
         \param status - HTTP status

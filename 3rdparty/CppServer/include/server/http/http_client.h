@@ -139,6 +139,15 @@ protected:
     */
     virtual void onReceivedResponseHeader(const HTTPResponse& response) {}
 
+    //! Handle HTTP response body received notification
+    /*!
+        Notification is called when HTTP response body was received
+        from the server.
+
+        \param response - HTTP response body
+    */
+    virtual bool onReceivedResponseBody(const HTTPResponse& response) { return false; }
+
     //! Handle HTTP response received notification
     /*!
         Notification is called when HTTP response was received

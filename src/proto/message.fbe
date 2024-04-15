@@ -1,0 +1,76 @@
+/*
+   Fast Binary Encoding protocol for CppServer
+   https://github.com/chronoxor/FastBinaryEncoding
+
+   Generate protocol command: fbec --cpp --proto --input=base.fbe --output=.
+*/
+
+// Domain declaration
+domain com.uniontech
+
+// Package declaration
+package proto
+
+// Protocol version
+version 1.0
+
+// UInt8 enum declaration
+enum MessageType : uint8
+{
+    MSG_TYPE_BASE = 0;
+    MSG_TYPE_LAUNCH = 1;
+    MSG_TYPE_APP;
+    MSG_TYPE_LAST = 254;
+    MSG_TYPE_MAX = MSG_TYPE_LAST;
+}
+
+// Message request message
+[request]
+[response(MessageResponse)]
+[reject(MessageReject)]
+message MessageRequest
+{
+    // Request Id
+    uuid [id] = uuid1;
+    // Request type
+    uint8 type;
+    // Request message
+    string Message;
+}
+
+// Message response
+message MessageResponse
+{
+    // Response Id
+    uuid [id] = uuid1;
+    // Calculated message length
+    uint32 Length;
+    // Calculated message hash
+    uint32 Hash;
+    // Response message
+    string Message;
+}
+
+// Message reject
+message MessageReject
+{
+    // Reject Id
+    uuid [id] = uuid1;
+    // Error message
+    string Error;
+}
+
+// Message notification
+message MessageNotify
+{
+    // Server notification
+    string Notification;
+}
+
+// Disconnect request message
+[request]
+message DisconnectRequest
+{
+    // Request Id
+    uuid [id] = uuid1;
+}
