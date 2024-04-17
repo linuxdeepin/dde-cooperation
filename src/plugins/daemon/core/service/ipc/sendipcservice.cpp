@@ -173,8 +173,11 @@ void SendIpcWork::handleNodeChanged(bool found, QString info)
         if (s->alive()) {
             // fastring session_id(s->getSession().toStdString());
             fastring nodeinfo(info.toStdString());
-            if (!found && s->getName() == "dde-cooperation")
-                handleStopShareConnect(info, s);
+            if (!found && s->getName() == "dde-cooperation") {
+                WLOG << "The node losted from discovery.";
+                // FIXME: The discovery lost mutli-UDP on some WIFI(unstable)
+                // handleStopShareConnect(info, s);
+            }
 
 
             co::Json req, res;
