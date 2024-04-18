@@ -1,3 +1,10 @@
+dde-cooperation (0.7.10) unstable; urgency=medium
+
+  * v0.7.10 release version.
+  * fix wifi network.
+
+ -- liujinchang <liujinchang@uniontech.com> Thu, 18 Apr 15:14:27 2024 +0800
+
 dde-cooperation (0.7.9) unstable; urgency=medium
 
   * v0.7.9 release version.
