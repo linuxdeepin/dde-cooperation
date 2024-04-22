@@ -18,6 +18,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QToolTip>
+#include <QScrollBar>
 
 #include <info/deviceinfo.h>
 #include <utils/cooperationutil.h>
@@ -71,6 +72,24 @@ void SettingDialogPrivate::initWindow()
     contentArea->setFrameShape(QFrame::NoFrame);
     contentArea->setWidgetResizable(true);
     contentArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+#ifndef linux
+    QString scrollBarStyle = "QScrollBar:vertical {"
+                                 "    background: white;"
+                                 "    width: 6px;"
+                                 "    border-radius: 3px;"
+                                 "    margin: 0px;"
+                                 "}"
+                                 "QScrollBar::handle:vertical {"
+                                 "    background: darkGrey;"
+                                 "    min-height: 30px;"
+                                 "    border-radius: 3px;"
+                                 "}"
+                                 "QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {"
+                                 "    height: 0px;"
+                                 "}";;
+    contentArea->verticalScrollBar()->setStyleSheet(scrollBarStyle);
+#endif
 
     QWidget *contentWidget = new QWidget(contentArea);
     contentWidget->installEventFilter(q);
@@ -146,6 +165,15 @@ void SettingDialogPrivate::createBasicWidget()
                             "   padding: 5px;"
                             "   background-color: rgba(0,0,0,0.08);");
     nameEdit->setFixedHeight(36);
+    QToolButton *closeBtn = new QToolButton(nameEdit);
+    closeBtn->setIcon(QIcon(":/icons/deepin/builtin/icons/tab_close_normal.svg"));
+    closeBtn->setIconSize(QSize(35, 35));
+    closeBtn->setStyleSheet("background-color: rgba(0,0,0,0);");
+    closeBtn->setGeometry(230, -7, 50, 50);
+    closeBtn->setVisible(false);
+    connect(nameEdit, &QLineEdit::textChanged, this,
+            [closeBtn](const QString &str) { closeBtn->setVisible(!str.isEmpty()); });
+    connect(closeBtn, &QToolButton::clicked, this, [this] { nameEdit->setText(""); });
 #endif
     nameEdit->setFixedWidth(280);
     connect(nameEdit, &CooperationLineEdit::editingFinished, this, &SettingDialogPrivate::checkNameValid);
@@ -391,12 +419,6 @@ SettingDialog::SettingDialog(QWidget *parent)
     d->initTitleBar();
 #else
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    setStyleSheet("QScrollBar:vertical {"
-                  "    width: 0px;"
-                  "}"
-                  "QScrollBar:horizontal {"
-                  "    width: 0px;"
-                  "}");
     setFixedSize(650, 530);
 #endif
     setModal(true);

@@ -22,14 +22,39 @@ void DeviceListWidget::initUI()
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     horizontalScrollBar()->setDisabled(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    QWidget *mainWidget = new QWidget(this);
-
     mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 10);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignCenter);
     mainLayout->setSpacing(10);
-    mainWidget->setLayout(mainLayout);
 
+#ifndef linux
+    QString scrollBarStyle = "QScrollBar:vertical {"
+                             "    background: lightGrey;"
+                             "    width: 8px;"
+                             "    border-radius: 4px;"
+                             "}"
+                             "QScrollBar::handle:vertical {"
+                             "    background: darkGrey;"
+                             "    min-height: 30px;"
+                             "    border-radius: 4px;"
+                             "}"
+                             "QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {"
+                             "    height: 0px;"
+                             "}";
+    verticalScrollBar()->setStyleSheet(scrollBarStyle);
+    connect(verticalScrollBar(), &QScrollBar::rangeChanged, this, [this](int min, int max) {
+        if (max)
+            mainLayout->setContentsMargins(10, 0, 0, 10);
+        else
+            mainLayout->setContentsMargins(0, 0, 0, 10);
+    });
+    mainLayout->setContentsMargins(0, 0, 0, 10);
+#else
+    mainLayout->setContentsMargins(0, 0, 0, 10);
+#endif
+
+    QWidget *mainWidget = new QWidget(this);
+    mainWidget->setLayout(mainLayout);
     setWidget(mainWidget);
     setWidgetResizable(true);
     setFrameShape(NoFrame);
@@ -38,7 +63,7 @@ void DeviceListWidget::initUI()
 bool DeviceListWidget::event(QEvent *e)
 {
     if (e->type() == QEvent::MouseButtonPress) {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(e);
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(e);
         if (mouseEvent->button() == Qt::LeftButton) {
             return true;
         }
@@ -76,7 +101,7 @@ void DeviceListWidget::updateItem(int index, const DeviceInfoPointer info)
 void DeviceListWidget::removeItem(int index)
 {
     QLayoutItem *item = mainLayout->takeAt(index);
-    if(!item)
+    if (!item)
         return;
     QWidget *w = item->widget();
     if (w) {

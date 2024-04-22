@@ -15,16 +15,21 @@ class CommonUitls
 {
 public:
     static std::string getFirstIp();
+
     static bool isPortInUse(int port);
 
     static void loadTranslator();
 
     static void initLog();
+
     static QString elidedText(const QString &text, Qt::TextElideMode mode, int maxLength);
 
     static void manageDaemonProcess(const QString &side);
 
     static bool isFirstStart();
+
+    static QString tipConfPath();
+
 private:
     static QString logDir();
     static bool detailLog();

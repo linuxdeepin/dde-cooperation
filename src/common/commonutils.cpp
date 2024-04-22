@@ -204,6 +204,11 @@ QString CommonUitls::elidedText(const QString &text, Qt::TextElideMode mode, int
     return tmpText;
 }
 
+QString CommonUitls::tipConfPath()
+{
+    return logDir() + "tip.flag";
+}
+
 QString CommonUitls::logDir()
 {
     QString logPath = QString("%1/%2/%3/")

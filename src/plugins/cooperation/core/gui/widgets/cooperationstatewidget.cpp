@@ -28,6 +28,8 @@ DWIDGET_USE_NAMESPACE
 
 #include <utils/cooperationutil.h>
 
+#include <common/commonutils.h>
+
 using namespace cooperation_core;
 
 #ifdef linux
@@ -150,7 +152,7 @@ void NoNetworkWidget::initUI()
 }
 
 NoResultTipWidget::NoResultTipWidget(QWidget *parent, bool usetipMode)
-    : QWidget(parent),useTipMode(usetipMode)
+    : QWidget(parent), useTipMode(usetipMode)
 {
     initUI();
 }
@@ -175,7 +177,7 @@ void NoResultTipWidget::initUI()
     QString hyperlink = "https://www.chinauos.com/resource/assistant";
 
     QString websiteLinkTemplate =
-        "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";
+            "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
     CooperationLabel *contentLable1 = new CooperationLabel(this);
     contentLable1->setWordWrap(true);
@@ -214,7 +216,7 @@ void NoResultTipWidget::initUI()
     contentLayout->setContentsMargins(5, 3, 5, 5);
     setLayout(contentLayout);
 
-    if(useTipMode){
+    if (useTipMode) {
         titleLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         contentLable1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         contentLable2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -285,7 +287,12 @@ void NoResultWidget::initUI()
     vLayout->addItem(sp_2);
     vLayout->addWidget(tipsLabel, 0, Qt::AlignCenter);
     vLayout->addItem(sp_3);
-    vLayout->addWidget(contentBackgroundWidget);
+    QScrollArea *scrollArea = new QScrollArea();
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(contentBackgroundWidget);
+    scrollArea->show();
+    scrollArea->setFrameStyle(QFrame::NoFrame);
+    vLayout->addWidget(scrollArea);
 
     vLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
     setLayout(vLayout);
@@ -422,9 +429,14 @@ void FirstTipWidget::setVisible(bool visible)
     QWidget::setVisible(visible);
     tipBtn->setVisible(visible);
 #ifdef linux
-    tipBtn->setGeometry(450, 45 + height() / 2, 30, 30);
+    tipBtn->setGeometry(450, 41 + height() / 2, 30, 30);
+#    ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this] {
+        tipBtn->setGeometry(450, DSizeModeHelper::element(29, 42) + height() / 2, 30, 30);
+    });
+#    endif
 #else
-    tipBtn->setGeometry(450, 93 + height() / 2, 30, 30);
+    tipBtn->setGeometry(450, 90 + height() / 2, 30, 30);
 #endif
 }
 
@@ -470,6 +482,9 @@ void FirstTipWidget::initUI()
     themeTypeChanged();
 
     connect(tipBtn, &QToolButton::clicked, this, [this]() {
+        QFile flag(deepin_cross::CommonUitls::tipConfPath());
+        if (flag.open(QIODevice::WriteOnly))
+            flag.close();
         setVisible(false);
     });
     QHBoxLayout *hLayout = new QHBoxLayout;

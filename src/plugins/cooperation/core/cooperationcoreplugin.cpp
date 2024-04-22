@@ -19,6 +19,7 @@
 #else
 #    include "base/reportlog/reportlogmanager.h"
 #    include <DFeatureDisplayDialog>
+#    include <QFile>
 DWIDGET_USE_NAMESPACE
 #endif
 
@@ -56,8 +57,10 @@ bool CooperaionCorePlugin::start()
     CooperationManager::instance()->regist();
     MainController::instance()->start();
 
-    if (CommonUitls::isFirstStart()) {
+    if (qApp->property("onlyTransfer").toBool() || !QFile(CommonUitls::tipConfPath()).exists())
         emit MainController::instance()->firstStart();
+
+    if (CommonUitls::isFirstStart() && !qApp->property("onlyTransfer").toBool()) {
 #ifdef linux
         DFeatureDisplayDialog *dlg = qApp->featureDisplayDialog();
         auto btn = dlg->getButton(0);

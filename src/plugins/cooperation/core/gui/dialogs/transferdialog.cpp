@@ -29,12 +29,7 @@ void TransferDialog::initUI()
     QWidget *contentWidget = new QWidget(this);
     stackedLayout = new QStackedLayout;
     okBtn = new QPushButton(this);
-    connect(okBtn, &QPushButton::clicked, this, [this] {
-        close();
-        if (qApp->property("onlyTransfer").toBool() && result) {
-            qApp->exit();
-        }
-    });
+    connect(okBtn, &QPushButton::clicked, this, &TransferDialog::close);
 
     QVBoxLayout *vLayout = new QVBoxLayout(contentWidget);
     vLayout->setMargin(0);
@@ -201,6 +196,8 @@ void TransferDialog::updateProgress(int value, const QString &remainTime)
 
 void TransferDialog::closeEvent(QCloseEvent *event)
 {
+    if (qApp->property("onlyTransfer").toBool() && result)
+        qApp->exit();
     Q_EMIT cancel();
     CooperationAbstractDialog::closeEvent(event);
 }
