@@ -3,7 +3,7 @@ build
 
 # CMake
 build
-cmake
+#cmake
 cmake-build-*
 
 # Ctags files
@@ -12,6 +12,7 @@ tags.idx
 
 # Modules
 modules/*
+!modules/fmt
 !modules/CMakeLists.txt
 !modules/*.cmake
 
