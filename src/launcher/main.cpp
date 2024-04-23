@@ -21,7 +21,7 @@ protected:
 
         // Send invite notification
         proto::MessageNotify notify;
-        notify.Notification = "Hello from Simple protocol server! Please send a message or '!' to disconnect the client!";
+        notify.notification = "Hello from Simple protocol server! Please send a message or '!' to disconnect the client!";
         send(notify);
     }
 
@@ -37,28 +37,28 @@ protected:
 
     // Protocol handlers
     void onReceive(const ::proto::DisconnectRequest& request) override { Disconnect(); }
-    void onReceive(const ::proto::MessageRequest& request) override
+    void onReceive(const ::proto::OriginMessage& request) override
     {
         std::cout << "Received: " << request << std::endl;
 
         // Validate request
-        if (request.Message.empty())
+        if (request.json_msg.empty())
         {
             // Send reject
             proto::MessageReject reject;
             reject.id = request.id;
-            reject.Error = "Request message is empty!";
+            reject.error = "Request message is empty!";
             send(reject);
             return;
         }
 
-        static std::hash<std::string> hasher;
+//        static std::hash<std::string> hasher;
 
         // Send response
-        proto::MessageResponse response;
+        proto::OriginMessage response;
         response.id = request.id;
-        response.Hash = (uint32_t)hasher(request.Message);
-        response.Length = (uint32_t)request.Message.size();
+        response.mask = request.mask;
+        response.json_msg = request.json_msg;
         send(response);
     }
 
@@ -135,7 +135,7 @@ int main(int argc, char** argv)
 
         // Multicast admin notification to all sessions
         proto::MessageNotify notify;
-        notify.Notification = "(admin) " + line;
+        notify.notification = "(admin) " + line;
         server->send(notify);
     }
 

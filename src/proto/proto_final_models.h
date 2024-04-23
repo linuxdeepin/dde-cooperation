@@ -21,23 +21,15 @@
 
 namespace FBE {
 
-// Fast Binary Encoding ::proto::MessageType final model
+// Fast Binary Encoding ::proto::OriginMessage final model
 template <>
-class FinalModel<::proto::MessageType> : public FinalModelBase<::proto::MessageType, uint8_t>
-{
-public:
-    using FinalModelBase<::proto::MessageType, uint8_t>::FinalModelBase;
-};
-
-// Fast Binary Encoding ::proto::MessageRequest final model
-template <>
-class FinalModel<::proto::MessageRequest>
+class FinalModel<::proto::OriginMessage>
 {
 public:
     FinalModel(FBEBuffer& buffer, size_t offset) noexcept;
 
     // Get the allocation size
-    size_t fbe_allocation_size(const ::proto::MessageRequest& fbe_value) const noexcept;
+    size_t fbe_allocation_size(const ::proto::OriginMessage& fbe_value) const noexcept;
     // Get the final offset
     size_t fbe_offset() const noexcept { return _offset; }
     // Set the final offset
@@ -56,14 +48,14 @@ public:
     size_t verify_fields() const noexcept;
 
     // Get the struct value
-    size_t get(::proto::MessageRequest& fbe_value) const noexcept;
+    size_t get(::proto::OriginMessage& fbe_value) const noexcept;
     // Get the struct fields values
-    size_t get_fields(::proto::MessageRequest& fbe_value) const noexcept;
+    size_t get_fields(::proto::OriginMessage& fbe_value) const noexcept;
 
     // Set the struct value
-    size_t set(const ::proto::MessageRequest& fbe_value) noexcept;
+    size_t set(const ::proto::OriginMessage& fbe_value) noexcept;
     // Set the struct fields values
-    size_t set_fields(const ::proto::MessageRequest& fbe_value) noexcept;
+    size_t set_fields(const ::proto::OriginMessage& fbe_value) noexcept;
 
 private:
     FBEBuffer& _buffer;
@@ -71,111 +63,35 @@ private:
 
 public:
     FinalModel<FBE::uuid_t> id;
-    FinalModel<uint8_t> type;
-    FinalModel<std::string> Message;
+    FinalModel<int32_t> mask;
+    FinalModel<std::string> json_msg;
 };
 
 namespace proto {
 
-// Fast Binary Encoding MessageRequest final model
-class MessageRequestFinalModel : public FBE::Model
+// Fast Binary Encoding OriginMessage final model
+class OriginMessageFinalModel : public FBE::Model
 {
 public:
-    MessageRequestFinalModel() : _model(this->buffer(), 8) {}
-    MessageRequestFinalModel(const std::shared_ptr<FBEBuffer>& buffer) : FBE::Model(buffer), _model(this->buffer(), 8) {}
+    OriginMessageFinalModel() : _model(this->buffer(), 8) {}
+    OriginMessageFinalModel(const std::shared_ptr<FBEBuffer>& buffer) : FBE::Model(buffer), _model(this->buffer(), 8) {}
 
     // Get the model type
-    static constexpr size_t fbe_type() noexcept { return FinalModel<::proto::MessageRequest>::fbe_type(); }
+    static constexpr size_t fbe_type() noexcept { return FinalModel<::proto::OriginMessage>::fbe_type(); }
 
     // Check if the struct value is valid
     bool verify();
 
     // Serialize the struct value
-    size_t serialize(const ::proto::MessageRequest& value);
+    size_t serialize(const ::proto::OriginMessage& value);
     // Deserialize the struct value
-    size_t deserialize(::proto::MessageRequest& value) const noexcept;
+    size_t deserialize(::proto::OriginMessage& value) const noexcept;
 
     // Move to the next struct value
     void next(size_t prev) noexcept { _model.fbe_shift(prev); }
 
 private:
-    FinalModel<::proto::MessageRequest> _model;
-};
-
-} // namespace proto
-
-// Fast Binary Encoding ::proto::MessageResponse final model
-template <>
-class FinalModel<::proto::MessageResponse>
-{
-public:
-    FinalModel(FBEBuffer& buffer, size_t offset) noexcept;
-
-    // Get the allocation size
-    size_t fbe_allocation_size(const ::proto::MessageResponse& fbe_value) const noexcept;
-    // Get the final offset
-    size_t fbe_offset() const noexcept { return _offset; }
-    // Set the final offset
-    size_t fbe_offset(size_t offset) const noexcept { return _offset = offset; }
-    // Get the final type
-    static constexpr size_t fbe_type() noexcept { return 2; }
-
-    // Shift the current final offset
-    void fbe_shift(size_t size) noexcept { _offset += size; }
-    // Unshift the current final offset
-    void fbe_unshift(size_t size) noexcept { _offset -= size; }
-
-    // Check if the struct value is valid
-    size_t verify() const noexcept;
-    // Check if the struct fields are valid
-    size_t verify_fields() const noexcept;
-
-    // Get the struct value
-    size_t get(::proto::MessageResponse& fbe_value) const noexcept;
-    // Get the struct fields values
-    size_t get_fields(::proto::MessageResponse& fbe_value) const noexcept;
-
-    // Set the struct value
-    size_t set(const ::proto::MessageResponse& fbe_value) noexcept;
-    // Set the struct fields values
-    size_t set_fields(const ::proto::MessageResponse& fbe_value) noexcept;
-
-private:
-    FBEBuffer& _buffer;
-    mutable size_t _offset;
-
-public:
-    FinalModel<FBE::uuid_t> id;
-    FinalModel<uint32_t> Length;
-    FinalModel<uint32_t> Hash;
-    FinalModel<std::string> Message;
-};
-
-namespace proto {
-
-// Fast Binary Encoding MessageResponse final model
-class MessageResponseFinalModel : public FBE::Model
-{
-public:
-    MessageResponseFinalModel() : _model(this->buffer(), 8) {}
-    MessageResponseFinalModel(const std::shared_ptr<FBEBuffer>& buffer) : FBE::Model(buffer), _model(this->buffer(), 8) {}
-
-    // Get the model type
-    static constexpr size_t fbe_type() noexcept { return FinalModel<::proto::MessageResponse>::fbe_type(); }
-
-    // Check if the struct value is valid
-    bool verify();
-
-    // Serialize the struct value
-    size_t serialize(const ::proto::MessageResponse& value);
-    // Deserialize the struct value
-    size_t deserialize(::proto::MessageResponse& value) const noexcept;
-
-    // Move to the next struct value
-    void next(size_t prev) noexcept { _model.fbe_shift(prev); }
-
-private:
-    FinalModel<::proto::MessageResponse> _model;
+    FinalModel<::proto::OriginMessage> _model;
 };
 
 } // namespace proto
@@ -194,7 +110,7 @@ public:
     // Set the final offset
     size_t fbe_offset(size_t offset) const noexcept { return _offset = offset; }
     // Get the final type
-    static constexpr size_t fbe_type() noexcept { return 3; }
+    static constexpr size_t fbe_type() noexcept { return 2; }
 
     // Shift the current final offset
     void fbe_shift(size_t size) noexcept { _offset += size; }
@@ -222,7 +138,7 @@ private:
 
 public:
     FinalModel<FBE::uuid_t> id;
-    FinalModel<std::string> Error;
+    FinalModel<std::string> error;
 };
 
 namespace proto {
@@ -268,7 +184,7 @@ public:
     // Set the final offset
     size_t fbe_offset(size_t offset) const noexcept { return _offset = offset; }
     // Get the final type
-    static constexpr size_t fbe_type() noexcept { return 4; }
+    static constexpr size_t fbe_type() noexcept { return 3; }
 
     // Shift the current final offset
     void fbe_shift(size_t size) noexcept { _offset += size; }
@@ -295,7 +211,7 @@ private:
     mutable size_t _offset;
 
 public:
-    FinalModel<std::string> Notification;
+    FinalModel<std::string> notification;
 };
 
 namespace proto {
@@ -341,7 +257,7 @@ public:
     // Set the final offset
     size_t fbe_offset(size_t offset) const noexcept { return _offset = offset; }
     // Get the final type
-    static constexpr size_t fbe_type() noexcept { return 5; }
+    static constexpr size_t fbe_type() noexcept { return 4; }
 
     // Shift the current final offset
     void fbe_shift(size_t size) noexcept { _offset += size; }

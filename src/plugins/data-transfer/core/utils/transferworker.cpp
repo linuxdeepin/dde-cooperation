@@ -3,63 +3,268 @@
 
 #include "common/constant.h"
 #include "common/commonstruct.h"
+#include "common/commonutils.h"
 #include "ipc/frontendservice.h"
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/backend.h"
 #include "ipc/proto/chan.h"
 
-#include <co/rpc.h>
-#include <co/co.h>
-#include <co/all.h>
+//#include <co/rpc.h>
+//#include <co/co.h>
+//#include <co/all.h>
+
+#include "protoconstants.h"
+
 
 #include <QTimer>
 #include <QDebug>
 #include <QCoreApplication>
 #include <QFile>
+#include <QHostInfo>
+#include <QStorageInfo>
+#include <QStandardPaths>
 
 #pragma execution_character_set("utf-8")
+TransferStatus::TransferStatus()
+    : QObject()
+{
+
+}
+
+TransferStatus::~TransferStatus()
+{
+}
+
+// return true -> cancel
+bool TransferStatus::onProgress(const std::string &path, uint64_t current, uint64_t total)
+{
+//    LOG_IF(FLG_log_detail) << "progressbar: " << progressbar << " remain_time=" << remain_time;
+//    LOG_IF(FLG_log_detail) << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
+//    emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
+    LOG << "path: " << path << " current=" << current << " total=" << total;
+
+    return false;
+}
+
+void TransferStatus::onWebChanged(int state, std::string msg)
+{
+
+}
+
+
+//-------------------------------------
+
 TransferHandle::TransferHandle()
     : QObject()
 {
     _this_destruct = false;
-    localIPCStart();
+//    localIPCStart();
 
-    QString appName = QCoreApplication::applicationName();
+//    QString appName = QCoreApplication::applicationName();
 
-    _backendOK = false;
-    _request_job_id = appName.length();   // default start at appName's lenght
-    _job_maps.clear();
+//    _backendOK = false;
+//    _request_job_id = appName.length();   // default start at appName's lenght
+//    _job_maps.clear();
 
-    _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
-    if (_backendOK) {
-        saveSession(TransferWoker::instance()->getSessionId());
+//    _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
+//    if (_backendOK) {
+//        saveSession(TransferWoker::instance()->getSessionId());
+//    }
+
+//    QTimer *timer = new QTimer();
+
+//    // 连接定时器的 timeout 信号到槽函数
+//    ipcPing = 3;
+//    connect(timer, &QTimer::timeout, [this, appName]() {
+//        ipcPing--;
+//        if (ipcPing <= 0) {
+//            _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
+//            if (_backendOK) {
+//                ipcPing = 3;
+//                saveSession(TransferWoker::instance()->getSessionId());
+//            } else {
+//                //后端离线，跳转提示界面.
+//                // FIXME: 只有从等待传输界面开始才能跳转
+//                TransferHelper::instance()->emitDisconnected();
+//            }
+//        }
+//    });
+//    timer->start(1000);
+
+    if (!_statusRecorder) {
+        _statusRecorder = std::make_shared<TransferStatus>();
     }
 
-    QTimer *timer = new QTimer();
-
-    // 连接定时器的 timeout 信号到槽函数
-    ipcPing = 3;
-    connect(timer, &QTimer::timeout, [this, appName]() {
-        ipcPing--;
-        if (ipcPing <= 0) {
-            _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
-            if (_backendOK) {
-                ipcPing = 3;
-                saveSession(TransferWoker::instance()->getSessionId());
-            } else {
-                //后端离线，跳转提示界面.
-                // FIXME: 只有从等待传输界面开始才能跳转
-                TransferHelper::instance()->emitDisconnected();
-            }
-        }
-    });
-    timer->start(1000);
+    connect(this, &TransferHandle::notifyTransData, this, &TransferHandle::handleDataDownload, Qt::QueuedConnection);
+    connect(this, &TransferHandle::notifyCancelWeb, this, &TransferHandle::handleWebCancel, Qt::QueuedConnection);
 }
 
 TransferHandle::~TransferHandle()
 {
     _this_destruct = true;
+
+    if (!_server) {
+        // Stop the server
+        std::cout << "Server stopping...";
+        _server->Stop();
+        std::cout << "Done!" << std::endl;
+    }
+
+    if (!_service) {
+        // Stop the Asio service
+        std::cout << "Asio service stopping...";
+        _service->Stop();
+        std::cout << "Done!" << std::endl;
+    }
+}
+
+void TransferHandle::onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response)
+{
+    if (request.json_msg.empty()) {
+        std::cout << "empty json message: " << std::endl;
+        return;
+    }
+
+    // Step 2: 解析响应数据
+    picojson::value v;
+    std::string err = picojson::parse(v, request.json_msg);
+    if (!err.empty()) {
+        std::cout << "Failed to parse JSON data: " << err << std::endl;
+        return;
+    }
+
+//    picojson::array files = v.get("files").get<picojson::array>();
+    int type = request.mask;
+    switch (type) {
+    case REQ_LOGIN: {
+        LoginMessage req, res;
+        req.from_json(v);
+        std::cout << "Login: " << req.name << " " << req.auth << std::endl;
+        std::hash<std::string> hasher;
+        uint32_t pinHash = (uint32_t)hasher(_pinCode.toStdString());
+        uint32_t pwdnumber = std::stoul(req.auth);
+        if (pinHash == pwdnumber) {
+            res.auth = "thatsgood";
+            response->mask = LOGIN_SUCCESS;
+        } else {
+            // return empty auth token.
+            res.auth = "";
+            response->mask = LOGIN_DENIED;
+        }
+        res.name = QHostInfo::localHostName().toStdString();
+        response->json_msg = res.as_json().serialize();
+    }
+    break;
+    case REQ_FREE_SPACE: {
+        FreeSpaceMessage req, res;
+        req.from_json(v);
+
+        int remainSpace = TransferHelper::getRemainSize(); // xx G
+        res.free = remainSpace;
+        response->json_msg = res.as_json().serialize();
+    }
+    break;
+    case REQ_TRANS_DATAS: {
+        TransDataMessage req, res;
+        req.from_json(v);
+
+//        bool isdir = req.flag;
+//        std::cout << "trans data: " << req.token << " " << isdir << std::endl;
+//        std::cout << "Names: ";
+//        for (const auto &name : req.names) {
+//            std::cout << name << " ";
+//        }
+//        std::cout << std::endl;
+
+        res.id = req.id;
+        res.names = req.names;
+        res.flag = true;
+        res.size = TransferHelper::getRemainSize();
+        response->json_msg = res.as_json().serialize();
+
+        emit notifyTransData(req.names);
+    }
+    break;
+    case REQ_TRANS_CANCLE: {
+        TransCancelMessage req, res;
+        req.from_json(v);
+
+        std::cout << "cancel name: " << req.name << " " << req.reason << std::endl;
+
+        res.id = req.id;
+        res.name = req.name;
+        res.reason = "";
+        response->json_msg = res.as_json().serialize();
+
+        emit notifyCancelWeb(req.id);
+    }
+    break;
+    case CAST_INFO: {
+    }
+    break;
+    default:
+        std::cout << "unkown type: " << type << std::endl;
+        break;
+    }
+
+    response->id = request.id;
+    response->mask = 1;
+}
+
+void TransferHandle::onStateChanged(int state, std::string msg)
+{
+//    RPC_ERROR = -2,
+//    RPC_DISCONNECTED = -1,
+//    RPC_DISCONNECTING = 0,
+//    RPC_CONNECTING = 1,
+//    RPC_CONNECTED = 2,
+    switch (state) {
+    case RPC_CONNECTED: {
+        _connectedAddress = QString(msg.c_str());
+        std::cout << "connected remote: " << msg << std::endl;
+        // update save dir
+        _saveDir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + QDir::separator() + _connectedAddress;
+    }
+    break;
+    case RPC_DISCONNECTED: {
+        std::cout << "disconnected remote: " << msg << std::endl;
+    }
+    break;
+    case RPC_ERROR: {
+        std::cout << "error remote: " << msg << std::endl;
+    }
+    break;
+    default:
+        std::cout << "other handling CONNECTING or DISCONNECTING: " << msg << std::endl;
+        break;
+    }
+}
+
+void TransferHandle::init()
+{
+    // Create a new Asio service
+    _service = std::make_shared<AsioService>();
+
+    // Start the Asio service
+    std::cout << "Asio service starting...";
+    _service->Start();
+    std::cout << "Done!" << std::endl;
+
+    // Create a new proto protocol server
+    if (!_server) {
+        _server = std::make_shared<ProtoServer>(_service, SESSION_TCP_PORT);
+        _server->SetupReuseAddress(true);
+        _server->SetupReusePort(true);
+
+        auto self(this->shared_from_this());
+        _server->setCallbacks(self);
+    }
+
+    // Start the server
+    std::cout << "Server starting...";
+    _server->Start();
+    std::cout << "Done!" << std::endl;
 }
 
 void TransferHandle::localIPCStart()
@@ -188,6 +393,65 @@ void TransferHandle::localIPCStart()
         disconnectRemote();
         //FIXME: it always abort if invoke exit
     });
+}
+
+void TransferHandle::connectRemote(QString &address)
+{
+    if (!_client) {
+        _client = std::make_shared<ProtoClient>(_service, address.toStdString(), UNI_IPC_FRONTEND_PORT);
+        std::cout << "Client connecting...";
+        _client->ConnectAsync();
+        std::cout << "Done!" << std::endl;
+    } else {
+        _client->IsConnected() ? _client->ReconnectAsync() : _client->ConnectAsync();
+    }
+}
+
+bool TransferHandle::startFileWeb()
+{
+    // Create a new file http server
+    if (!_file_server) {
+        _file_server = std::make_shared<FileServer>(_service, WEB_TCP_PORT);
+//        std::shared_ptr<TransferStatus> recorder = std::make_shared<TransferStatus>();;
+        if (_statusRecorder) {
+            _file_server->setCallback(_statusRecorder);
+        }
+    }
+
+    return _file_server->start();
+}
+
+bool TransferHandle::handleDataDownload(const std::vector<std::string> nameVector)
+{
+    // Create a new file http client
+    if (!_file_client) {
+        _file_client = std::make_shared<FileClient>(_service, _connectedAddress.toStdString(), WEB_TCP_PORT); //service, address, port
+        if (_statusRecorder) {
+            _file_client->setCallback(_statusRecorder);
+        }
+    }
+
+    _file_client->cancel(false);
+    _file_client->setConfig(_accessToken.toStdString(), _saveDir.toStdString());
+    std::cout << "Download Names: " << std::endl;
+    for (const auto name : nameVector) {
+        std::cout << name << std::endl;
+        _file_client->downloadFolder(name);
+    }
+    return true;
+}
+
+void TransferHandle::handleWebCancel(const std::string jobid)
+{
+    if (_file_client && _file_client->downloading()) {
+        _file_client->cancel();
+    }
+
+    if (_file_server) {
+        _file_server->clearBind();
+        _file_server->clearToken();
+        _file_server->stop();
+    }
 }
 
 void TransferHandle::saveSession(fastring sessionid)
@@ -385,38 +649,78 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
     }
 }
 
-void TransferHandle::tryConnect(QString ip, QString password)
+bool TransferHandle::tryConnect(QString ip, QString password)
 {
-    if (!_backendOK) return;
+    connectRemote(ip);
+    if (!_client) return true;
 
-    TransferWoker::instance()->tryConnect(ip.toStdString(), password.toStdString());
+    std::hash<std::string> hasher;
+    uint32_t pinHash = (uint32_t)hasher(password.toStdString());
+
+    LoginMessage req, res;
+    req.name = qApp->applicationName().toStdString();
+    req.auth = std::to_string(pinHash);
+    proto::OriginMessage request;
+    request.json_msg = req.as_json().serialize();
+
+    auto response = _client->request(request).get();
+    if (LOGIN_SUCCESS == response.mask) {
+        emit TransferHelper::instance()->connectSucceed();
+        return true;
+    }
+    return false;
+
+//    if (!_backendOK) return;
+
+//    TransferWoker::instance()->tryConnect(ip.toStdString(), password.toStdString());
 }
 
 void TransferHandle::disconnectRemote()
 {
-    if (!_backendOK) return;
+    if (!_client) return;
 
-    TransferWoker::instance()->disconnectRemote();
+    _client->DisconnectAsync();
+//    if (!_backendOK) return;
+
+//    TransferWoker::instance()->disconnectRemote();
 }
 
 QString TransferHandle::getConnectPassWord()
 {
-    if (!_backendOK) return "";
+    _pinCode = deepin_cross::CommonUitls::generateRandomPassword();
+    DLOG << "getConnectPassWord :" << _pinCode.toStdString();
+    return _pinCode;
+//    if (!_backendOK) return "";
 
-    QString password;
-    TransferWoker::instance()->setEmptyPassWord();
-    password = TransferWoker::instance()->getConnectPassWord();
-    return password;
+//    QString password;
+//    TransferWoker::instance()->setEmptyPassWord();
+//    password = TransferWoker::instance()->getConnectPassWord();
+//    return password;
 }
 
 bool TransferHandle::cancelTransferJob()
 {
-    if (!_backendOK || _job_maps.isEmpty()) return false;
-
+    TransCancelMessage req;
     int jobid = _job_maps.firstKey();
-    _job_maps.remove(jobid);
-    emit TransferHelper::instance()->interruption();
-    return TransferWoker::instance()->cancelTransferJob(jobid);
+    req.id = std::to_string(jobid);
+    req.name = _job_maps.value(jobid).toStdString();
+    req.reason = "User canceled";
+    proto::OriginMessage request;
+    request.json_msg = req.as_json().serialize();
+
+    auto response = _client->request(request).get();
+    if (DO_SUCCESS == response.mask) {
+        emit TransferHelper::instance()->interruption();
+        return true;
+    }
+    return false;
+
+//    if (!_backendOK || _job_maps.isEmpty()) return false;
+
+//    int jobid = _job_maps.firstKey();
+//    _job_maps.remove(jobid);
+//    emit TransferHelper::instance()->interruption();
+//    return TransferWoker::instance()->cancelTransferJob(jobid);
 }
 
 bool TransferHandle::isTransferring()
@@ -426,11 +730,43 @@ bool TransferHandle::isTransferring()
 
 void TransferHandle::sendFiles(QStringList paths)
 {
-    if (!_backendOK) return;
+    // first try run web, or prompt error
+    if (!startFileWeb()) {
+        ELOG << "try start web sever failed!!!";
+        return;
+    }
 
-    TransferWoker::instance()->sendFiles(_request_job_id, paths);
-    _job_maps.insert(_request_job_id, paths.first());
-    _request_job_id++;
+    _file_server->clearBind();
+    std::vector<std::string> name_vector;
+    for (auto path : paths) {
+        QFileInfo fileInfo(path);
+        QString name = fileInfo.fileName();
+        name_vector.push_back(name.toStdString());
+        _file_server->webBind(name.toStdString(), path.toStdString());
+    }
+
+    TransDataMessage req;
+    req.id = std::to_string(_request_job_id);
+    req.names = name_vector;
+    req.token = "gen-temp-token";
+    req.flag = true; // many folders
+    req.size = -1; // unkown size
+    proto::OriginMessage request;
+    request.json_msg = req.as_json().serialize();
+
+    auto response = _client->request(request).get();
+    if (DO_SUCCESS == response.mask) {
+        _request_job_id++;
+    } else {
+        // emit error!
+        _file_server->stop();
+    }
+
+//    if (!_backendOK) return;
+
+//    TransferWoker::instance()->sendFiles(_request_job_id, paths);
+//    _job_maps.insert(_request_job_id, paths.first());
+//    _request_job_id++;
 }
 
 void TransferHandle::sendMessage(json::Json &message)

@@ -6,13 +6,40 @@
 #include <QSet>
 #include <co/rpc.h>
 #include <co/co.h>
+#include "session/asioservice.h"
+#include "session/protoserver.h"
+#include "session/protoclient.h"
 
-class FrontendService;
-class TransferHandle : public QObject
+#include "filesync/fileserver.h"
+#include "filesync/fileclient.h"
+
+class TransferStatus : public QObject, public ProgressCallInterface
 {
     Q_OBJECT
-    struct file_stats_s
-    {
+    struct file_stats_s {
+        int64_t all_total_size;   // 总量
+        int64_t all_current_size;   // 当前已接收量
+        int64_t cast_time_ms;   // 最大已用时间
+    };
+
+public:
+    TransferStatus();
+    ~TransferStatus();
+
+    bool onProgress(const std::string &path, uint64_t current, uint64_t total);
+
+    void onWebChanged(int state, std::string msg);
+private:
+
+    //record transfering files ans calculate the progress rate
+    file_stats_s _file_stats;
+};
+
+class FrontendService;
+class TransferHandle : public QObject, public ServerCallInterface
+{
+    Q_OBJECT
+    struct file_stats_s {
         int64_t all_total_size;   // 总量
         int64_t all_current_size;   // 当前已接收量
         int64_t cast_time_ms;   // 最大已用时间
@@ -22,7 +49,13 @@ public:
     TransferHandle();
     ~TransferHandle();
 
-    void tryConnect(QString ip, QString password);
+    void init();
+
+    void onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response) override;
+
+    void onStateChanged(int state, std::string msg) override;
+
+    bool tryConnect(QString ip, QString password);
     QString getConnectPassWord();
     void sendFiles(QStringList paths);
     void sendMessage(json::Json &message);
@@ -38,8 +71,30 @@ public slots:
     void handleFileTransStatus(QString statusstr);
     void handleMiscMessage(QString jsonmsg);
 
+Q_SIGNALS:
+    void notifyTransData(const std::vector<std::string> nameVector);
+    void notifyCancelWeb(const std::string jobid);
+
+private slots:
+    bool handleDataDownload(const std::vector<std::string> nameVector);
+    void handleWebCancel(const std::string jobid);
+
 private:
     void localIPCStart();
+    void connectRemote(QString &address);
+
+    bool startFileWeb();
+
+    std::shared_ptr<TransferStatus> _statusRecorder { nullptr };
+
+    std::shared_ptr<AsioService> _service { nullptr };
+    // rpc service and client
+    std::shared_ptr<ProtoServer> _server { nullptr };
+    std::shared_ptr<ProtoClient> _client { nullptr };
+
+    // file sync service and client
+    std::shared_ptr<FileServer> _file_server { nullptr };
+    std::shared_ptr<FileClient> _file_client { nullptr };
 
     FrontendService *_frontendIpcService = nullptr;
     bool _backendOK = false;
@@ -55,6 +110,11 @@ private:
     rpc::Server *_rpcServer = nullptr;
 
     int ipcPing = 3;
+
+    QString _pinCode = "123456";
+    QString _accessToken = "";
+    QString _saveDir = "";
+    QString _connectedAddress = "";
 };
 
 class TransferWoker
@@ -85,6 +145,7 @@ private:
     TransferWoker();
 
     std::shared_ptr<rpc::Client> coClient { nullptr };
+
     fastring _session_id = "";
 };
 

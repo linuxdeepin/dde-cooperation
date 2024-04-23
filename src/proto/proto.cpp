@@ -9,36 +9,26 @@
 
 namespace proto {
 
-std::ostream& operator<<(std::ostream& stream, MessageType value)
-{
-    if (value == MessageType::MSG_TYPE_BASE) return stream << "MSG_TYPE_BASE";
-    if (value == MessageType::MSG_TYPE_LAUNCH) return stream << "MSG_TYPE_LAUNCH";
-    if (value == MessageType::MSG_TYPE_APP) return stream << "MSG_TYPE_APP";
-    if (value == MessageType::MSG_TYPE_LAST) return stream << "MSG_TYPE_LAST";
-    if (value == MessageType::MSG_TYPE_MAX) return stream << "MSG_TYPE_MAX";
-    return stream << "<unknown>";
-}
-
-MessageRequest::MessageRequest()
+OriginMessage::OriginMessage()
     : id(FBE::uuid_t::sequential())
-    , type((uint8_t)0u)
-    , Message()
+    , mask((int32_t)0ll)
+    , json_msg()
 {}
 
-MessageRequest::MessageRequest(const FBE::uuid_t& arg_id, uint8_t arg_type, const std::string& arg_Message)
+OriginMessage::OriginMessage(const FBE::uuid_t& arg_id, int32_t arg_mask, const std::string& arg_json_msg)
     : id(arg_id)
-    , type(arg_type)
-    , Message(arg_Message)
+    , mask(arg_mask)
+    , json_msg(arg_json_msg)
 {}
 
-bool MessageRequest::operator==(const MessageRequest& other) const noexcept
+bool OriginMessage::operator==(const OriginMessage& other) const noexcept
 {
     return (
         (id == other.id)
         );
 }
 
-bool MessageRequest::operator<(const MessageRequest& other) const noexcept
+bool OriginMessage::operator<(const OriginMessage& other) const noexcept
 {
     if (id < other.id)
         return true;
@@ -47,82 +37,32 @@ bool MessageRequest::operator<(const MessageRequest& other) const noexcept
     return false;
 }
 
-void MessageRequest::swap(MessageRequest& other) noexcept
+void OriginMessage::swap(OriginMessage& other) noexcept
 {
     using std::swap;
     swap(id, other.id);
-    swap(type, other.type);
-    swap(Message, other.Message);
+    swap(mask, other.mask);
+    swap(json_msg, other.json_msg);
 }
 
-std::ostream& operator<<(std::ostream& stream, const MessageRequest& value)
+std::ostream& operator<<(std::ostream& stream, const OriginMessage& value)
 {
-    stream << "MessageRequest(";
+    stream << "OriginMessage(";
     stream << "id="; stream << "\"" << value.id << "\"";
-    stream << ",type="; stream << (int)value.type;
-    stream << ",Message="; stream << "\"" << value.Message << "\"";
-    stream << ")";
-    return stream;
-}
-
-MessageResponse::MessageResponse()
-    : id(FBE::uuid_t::sequential())
-    , Length((uint32_t)0ull)
-    , Hash((uint32_t)0ull)
-    , Message()
-{}
-
-MessageResponse::MessageResponse(const FBE::uuid_t& arg_id, uint32_t arg_Length, uint32_t arg_Hash, const std::string& arg_Message)
-    : id(arg_id)
-    , Length(arg_Length)
-    , Hash(arg_Hash)
-    , Message(arg_Message)
-{}
-
-bool MessageResponse::operator==(const MessageResponse& other) const noexcept
-{
-    return (
-        (id == other.id)
-        );
-}
-
-bool MessageResponse::operator<(const MessageResponse& other) const noexcept
-{
-    if (id < other.id)
-        return true;
-    if (other.id < id)
-        return false;
-    return false;
-}
-
-void MessageResponse::swap(MessageResponse& other) noexcept
-{
-    using std::swap;
-    swap(id, other.id);
-    swap(Length, other.Length);
-    swap(Hash, other.Hash);
-    swap(Message, other.Message);
-}
-
-std::ostream& operator<<(std::ostream& stream, const MessageResponse& value)
-{
-    stream << "MessageResponse(";
-    stream << "id="; stream << "\"" << value.id << "\"";
-    stream << ",Length="; stream << value.Length;
-    stream << ",Hash="; stream << value.Hash;
-    stream << ",Message="; stream << "\"" << value.Message << "\"";
+    stream << ",mask="; stream << value.mask;
+    stream << ",json_msg="; stream << "\"" << value.json_msg << "\"";
     stream << ")";
     return stream;
 }
 
 MessageReject::MessageReject()
     : id(FBE::uuid_t::sequential())
-    , Error()
+    , error()
 {}
 
-MessageReject::MessageReject(const FBE::uuid_t& arg_id, const std::string& arg_Error)
+MessageReject::MessageReject(const FBE::uuid_t& arg_id, const std::string& arg_error)
     : id(arg_id)
-    , Error(arg_Error)
+    , error(arg_error)
 {}
 
 bool MessageReject::operator==(const MessageReject& other) const noexcept
@@ -145,24 +85,24 @@ void MessageReject::swap(MessageReject& other) noexcept
 {
     using std::swap;
     swap(id, other.id);
-    swap(Error, other.Error);
+    swap(error, other.error);
 }
 
 std::ostream& operator<<(std::ostream& stream, const MessageReject& value)
 {
     stream << "MessageReject(";
     stream << "id="; stream << "\"" << value.id << "\"";
-    stream << ",Error="; stream << "\"" << value.Error << "\"";
+    stream << ",error="; stream << "\"" << value.error << "\"";
     stream << ")";
     return stream;
 }
 
 MessageNotify::MessageNotify()
-    : Notification()
+    : notification()
 {}
 
-MessageNotify::MessageNotify(const std::string& arg_Notification)
-    : Notification(arg_Notification)
+MessageNotify::MessageNotify(const std::string& arg_notification)
+    : notification(arg_notification)
 {}
 
 bool MessageNotify::operator==(const MessageNotify& other) const noexcept
@@ -180,13 +120,13 @@ bool MessageNotify::operator<(const MessageNotify& other) const noexcept
 void MessageNotify::swap(MessageNotify& other) noexcept
 {
     using std::swap;
-    swap(Notification, other.Notification);
+    swap(notification, other.notification);
 }
 
 std::ostream& operator<<(std::ostream& stream, const MessageNotify& value)
 {
     stream << "MessageNotify(";
-    stream << "Notification="; stream << "\"" << value.Notification << "\"";
+    stream << "notification="; stream << "\"" << value.notification << "\"";
     stream << ")";
     return stream;
 }

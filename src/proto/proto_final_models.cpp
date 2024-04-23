@@ -9,23 +9,23 @@
 
 namespace FBE {
 
-FinalModel<::proto::MessageRequest>::FinalModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
+FinalModel<::proto::OriginMessage>::FinalModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
     , id(buffer, 0)
-    , type(buffer, 0)
-    , Message(buffer, 0)
+    , mask(buffer, 0)
+    , json_msg(buffer, 0)
 {}
 
-size_t FinalModel<::proto::MessageRequest>::fbe_allocation_size(const ::proto::MessageRequest& fbe_value) const noexcept
+size_t FinalModel<::proto::OriginMessage>::fbe_allocation_size(const ::proto::OriginMessage& fbe_value) const noexcept
 {
     size_t fbe_result = 0
         + id.fbe_allocation_size(fbe_value.id)
-        + type.fbe_allocation_size(fbe_value.type)
-        + Message.fbe_allocation_size(fbe_value.Message)
+        + mask.fbe_allocation_size(fbe_value.mask)
+        + json_msg.fbe_allocation_size(fbe_value.json_msg)
         ;
     return fbe_result;
 }
 
-size_t FinalModel<::proto::MessageRequest>::verify() const noexcept
+size_t FinalModel<::proto::OriginMessage>::verify() const noexcept
 {
     _buffer.shift(fbe_offset());
     size_t fbe_result = verify_fields();
@@ -33,7 +33,7 @@ size_t FinalModel<::proto::MessageRequest>::verify() const noexcept
     return fbe_result;
 }
 
-size_t FinalModel<::proto::MessageRequest>::verify_fields() const noexcept
+size_t FinalModel<::proto::OriginMessage>::verify_fields() const noexcept
 {
     size_t fbe_current_offset = 0;
     size_t fbe_field_size;
@@ -44,14 +44,14 @@ size_t FinalModel<::proto::MessageRequest>::verify_fields() const noexcept
         return std::numeric_limits<std::size_t>::max();
     fbe_current_offset += fbe_field_size;
 
-    type.fbe_offset(fbe_current_offset);
-    fbe_field_size = type.verify();
+    mask.fbe_offset(fbe_current_offset);
+    fbe_field_size = mask.verify();
     if (fbe_field_size == std::numeric_limits<std::size_t>::max())
         return std::numeric_limits<std::size_t>::max();
     fbe_current_offset += fbe_field_size;
 
-    Message.fbe_offset(fbe_current_offset);
-    fbe_field_size = Message.verify();
+    json_msg.fbe_offset(fbe_current_offset);
+    fbe_field_size = json_msg.verify();
     if (fbe_field_size == std::numeric_limits<std::size_t>::max())
         return std::numeric_limits<std::size_t>::max();
     fbe_current_offset += fbe_field_size;
@@ -59,7 +59,7 @@ size_t FinalModel<::proto::MessageRequest>::verify_fields() const noexcept
     return fbe_current_offset;
 }
 
-size_t FinalModel<::proto::MessageRequest>::get(::proto::MessageRequest& fbe_value) const noexcept
+size_t FinalModel<::proto::OriginMessage>::get(::proto::OriginMessage& fbe_value) const noexcept
 {
     _buffer.shift(fbe_offset());
     size_t fbe_result = get_fields(fbe_value);
@@ -67,7 +67,7 @@ size_t FinalModel<::proto::MessageRequest>::get(::proto::MessageRequest& fbe_val
     return fbe_result;
 }
 
-size_t FinalModel<::proto::MessageRequest>::get_fields(::proto::MessageRequest& fbe_value) const noexcept
+size_t FinalModel<::proto::OriginMessage>::get_fields(::proto::OriginMessage& fbe_value) const noexcept
 {
     size_t fbe_current_offset = 0;
     size_t fbe_current_size = 0;
@@ -78,20 +78,20 @@ size_t FinalModel<::proto::MessageRequest>::get_fields(::proto::MessageRequest& 
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
-    type.fbe_offset(fbe_current_offset);
-    fbe_field_size = type.get(fbe_value.type);
+    mask.fbe_offset(fbe_current_offset);
+    fbe_field_size = mask.get(fbe_value.mask);
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
-    Message.fbe_offset(fbe_current_offset);
-    fbe_field_size = Message.get(fbe_value.Message);
+    json_msg.fbe_offset(fbe_current_offset);
+    fbe_field_size = json_msg.get(fbe_value.json_msg);
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
     return fbe_current_size;
 }
 
-size_t FinalModel<::proto::MessageRequest>::set(const ::proto::MessageRequest& fbe_value) noexcept
+size_t FinalModel<::proto::OriginMessage>::set(const ::proto::OriginMessage& fbe_value) noexcept
 {
     _buffer.shift(fbe_offset());
     size_t fbe_result = set_fields(fbe_value);
@@ -99,7 +99,7 @@ size_t FinalModel<::proto::MessageRequest>::set(const ::proto::MessageRequest& f
     return fbe_result;
 }
 
-size_t FinalModel<::proto::MessageRequest>::set_fields(const ::proto::MessageRequest& fbe_value) noexcept
+size_t FinalModel<::proto::OriginMessage>::set_fields(const ::proto::OriginMessage& fbe_value) noexcept
 {
     size_t fbe_current_offset = 0;
     size_t fbe_current_size = 0;
@@ -110,13 +110,13 @@ size_t FinalModel<::proto::MessageRequest>::set_fields(const ::proto::MessageReq
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
-    type.fbe_offset(fbe_current_offset);
-    fbe_field_size = type.set(fbe_value.type);
+    mask.fbe_offset(fbe_current_offset);
+    fbe_field_size = mask.set(fbe_value.mask);
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
-    Message.fbe_offset(fbe_current_offset);
-    fbe_field_size = Message.set(fbe_value.Message);
+    json_msg.fbe_offset(fbe_current_offset);
+    fbe_field_size = json_msg.set(fbe_value.json_msg);
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
@@ -125,7 +125,7 @@ size_t FinalModel<::proto::MessageRequest>::set_fields(const ::proto::MessageReq
 
 namespace proto {
 
-bool MessageRequestFinalModel::verify()
+bool OriginMessageFinalModel::verify()
 {
     if ((this->buffer().offset() + _model.fbe_offset()) > this->buffer().size())
         return false;
@@ -138,7 +138,7 @@ bool MessageRequestFinalModel::verify()
     return ((8 + _model.verify()) == fbe_struct_size);
 }
 
-size_t MessageRequestFinalModel::serialize(const ::proto::MessageRequest& value)
+size_t OriginMessageFinalModel::serialize(const ::proto::OriginMessage& value)
 {
     size_t fbe_initial_size = this->buffer().size();
 
@@ -158,191 +158,7 @@ size_t MessageRequestFinalModel::serialize(const ::proto::MessageRequest& value)
     return fbe_struct_size;
 }
 
-size_t MessageRequestFinalModel::deserialize(::proto::MessageRequest& value) const noexcept
-{
-    assert(((this->buffer().offset() + _model.fbe_offset()) <= this->buffer().size()) && "Model is broken!");
-    if ((this->buffer().offset() + _model.fbe_offset()) > this->buffer().size())
-        return 0;
-
-    size_t fbe_struct_size = *((const uint32_t*)(this->buffer().data() + this->buffer().offset() + _model.fbe_offset() - 8));
-    size_t fbe_struct_type = *((const uint32_t*)(this->buffer().data() + this->buffer().offset() + _model.fbe_offset() - 4));
-    assert(((fbe_struct_size > 0) && (fbe_struct_type == fbe_type())) && "Model is broken!");
-    if ((fbe_struct_size == 0) || (fbe_struct_type != fbe_type()))
-        return 8;
-
-    return 8 + _model.get(value);
-}
-
-} // namespace proto
-
-FinalModel<::proto::MessageResponse>::FinalModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
-    , id(buffer, 0)
-    , Length(buffer, 0)
-    , Hash(buffer, 0)
-    , Message(buffer, 0)
-{}
-
-size_t FinalModel<::proto::MessageResponse>::fbe_allocation_size(const ::proto::MessageResponse& fbe_value) const noexcept
-{
-    size_t fbe_result = 0
-        + id.fbe_allocation_size(fbe_value.id)
-        + Length.fbe_allocation_size(fbe_value.Length)
-        + Hash.fbe_allocation_size(fbe_value.Hash)
-        + Message.fbe_allocation_size(fbe_value.Message)
-        ;
-    return fbe_result;
-}
-
-size_t FinalModel<::proto::MessageResponse>::verify() const noexcept
-{
-    _buffer.shift(fbe_offset());
-    size_t fbe_result = verify_fields();
-    _buffer.unshift(fbe_offset());
-    return fbe_result;
-}
-
-size_t FinalModel<::proto::MessageResponse>::verify_fields() const noexcept
-{
-    size_t fbe_current_offset = 0;
-    size_t fbe_field_size;
-
-    id.fbe_offset(fbe_current_offset);
-    fbe_field_size = id.verify();
-    if (fbe_field_size == std::numeric_limits<std::size_t>::max())
-        return std::numeric_limits<std::size_t>::max();
-    fbe_current_offset += fbe_field_size;
-
-    Length.fbe_offset(fbe_current_offset);
-    fbe_field_size = Length.verify();
-    if (fbe_field_size == std::numeric_limits<std::size_t>::max())
-        return std::numeric_limits<std::size_t>::max();
-    fbe_current_offset += fbe_field_size;
-
-    Hash.fbe_offset(fbe_current_offset);
-    fbe_field_size = Hash.verify();
-    if (fbe_field_size == std::numeric_limits<std::size_t>::max())
-        return std::numeric_limits<std::size_t>::max();
-    fbe_current_offset += fbe_field_size;
-
-    Message.fbe_offset(fbe_current_offset);
-    fbe_field_size = Message.verify();
-    if (fbe_field_size == std::numeric_limits<std::size_t>::max())
-        return std::numeric_limits<std::size_t>::max();
-    fbe_current_offset += fbe_field_size;
-
-    return fbe_current_offset;
-}
-
-size_t FinalModel<::proto::MessageResponse>::get(::proto::MessageResponse& fbe_value) const noexcept
-{
-    _buffer.shift(fbe_offset());
-    size_t fbe_result = get_fields(fbe_value);
-    _buffer.unshift(fbe_offset());
-    return fbe_result;
-}
-
-size_t FinalModel<::proto::MessageResponse>::get_fields(::proto::MessageResponse& fbe_value) const noexcept
-{
-    size_t fbe_current_offset = 0;
-    size_t fbe_current_size = 0;
-    size_t fbe_field_size;
-
-    id.fbe_offset(fbe_current_offset);
-    fbe_field_size = id.get(fbe_value.id);
-    fbe_current_offset += fbe_field_size;
-    fbe_current_size += fbe_field_size;
-
-    Length.fbe_offset(fbe_current_offset);
-    fbe_field_size = Length.get(fbe_value.Length);
-    fbe_current_offset += fbe_field_size;
-    fbe_current_size += fbe_field_size;
-
-    Hash.fbe_offset(fbe_current_offset);
-    fbe_field_size = Hash.get(fbe_value.Hash);
-    fbe_current_offset += fbe_field_size;
-    fbe_current_size += fbe_field_size;
-
-    Message.fbe_offset(fbe_current_offset);
-    fbe_field_size = Message.get(fbe_value.Message);
-    fbe_current_offset += fbe_field_size;
-    fbe_current_size += fbe_field_size;
-
-    return fbe_current_size;
-}
-
-size_t FinalModel<::proto::MessageResponse>::set(const ::proto::MessageResponse& fbe_value) noexcept
-{
-    _buffer.shift(fbe_offset());
-    size_t fbe_result = set_fields(fbe_value);
-    _buffer.unshift(fbe_offset());
-    return fbe_result;
-}
-
-size_t FinalModel<::proto::MessageResponse>::set_fields(const ::proto::MessageResponse& fbe_value) noexcept
-{
-    size_t fbe_current_offset = 0;
-    size_t fbe_current_size = 0;
-    size_t fbe_field_size;
-
-    id.fbe_offset(fbe_current_offset);
-    fbe_field_size = id.set(fbe_value.id);
-    fbe_current_offset += fbe_field_size;
-    fbe_current_size += fbe_field_size;
-
-    Length.fbe_offset(fbe_current_offset);
-    fbe_field_size = Length.set(fbe_value.Length);
-    fbe_current_offset += fbe_field_size;
-    fbe_current_size += fbe_field_size;
-
-    Hash.fbe_offset(fbe_current_offset);
-    fbe_field_size = Hash.set(fbe_value.Hash);
-    fbe_current_offset += fbe_field_size;
-    fbe_current_size += fbe_field_size;
-
-    Message.fbe_offset(fbe_current_offset);
-    fbe_field_size = Message.set(fbe_value.Message);
-    fbe_current_offset += fbe_field_size;
-    fbe_current_size += fbe_field_size;
-
-    return fbe_current_size;
-}
-
-namespace proto {
-
-bool MessageResponseFinalModel::verify()
-{
-    if ((this->buffer().offset() + _model.fbe_offset()) > this->buffer().size())
-        return false;
-
-    size_t fbe_struct_size = *((const uint32_t*)(this->buffer().data() + this->buffer().offset() + _model.fbe_offset() - 8));
-    size_t fbe_struct_type = *((const uint32_t*)(this->buffer().data() + this->buffer().offset() + _model.fbe_offset() - 4));
-    if ((fbe_struct_size == 0) || (fbe_struct_type != fbe_type()))
-        return false;
-
-    return ((8 + _model.verify()) == fbe_struct_size);
-}
-
-size_t MessageResponseFinalModel::serialize(const ::proto::MessageResponse& value)
-{
-    size_t fbe_initial_size = this->buffer().size();
-
-    uint32_t fbe_struct_type = (uint32_t)fbe_type();
-    uint32_t fbe_struct_size = (uint32_t)(8 + _model.fbe_allocation_size(value));
-    uint32_t fbe_struct_offset = (uint32_t)(this->buffer().allocate(fbe_struct_size) - this->buffer().offset());
-    assert(((this->buffer().offset() + fbe_struct_offset + fbe_struct_size) <= this->buffer().size()) && "Model is broken!");
-    if ((this->buffer().offset() + fbe_struct_offset + fbe_struct_size) > this->buffer().size())
-        return 0;
-
-    fbe_struct_size = (uint32_t)(8 + _model.set(value));
-    this->buffer().resize(fbe_initial_size + fbe_struct_size);
-
-    *((uint32_t*)(this->buffer().data() + this->buffer().offset() + _model.fbe_offset() - 8)) = fbe_struct_size;
-    *((uint32_t*)(this->buffer().data() + this->buffer().offset() + _model.fbe_offset() - 4)) = fbe_struct_type;
-
-    return fbe_struct_size;
-}
-
-size_t MessageResponseFinalModel::deserialize(::proto::MessageResponse& value) const noexcept
+size_t OriginMessageFinalModel::deserialize(::proto::OriginMessage& value) const noexcept
 {
     assert(((this->buffer().offset() + _model.fbe_offset()) <= this->buffer().size()) && "Model is broken!");
     if ((this->buffer().offset() + _model.fbe_offset()) > this->buffer().size())
@@ -361,14 +177,14 @@ size_t MessageResponseFinalModel::deserialize(::proto::MessageResponse& value) c
 
 FinalModel<::proto::MessageReject>::FinalModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
     , id(buffer, 0)
-    , Error(buffer, 0)
+    , error(buffer, 0)
 {}
 
 size_t FinalModel<::proto::MessageReject>::fbe_allocation_size(const ::proto::MessageReject& fbe_value) const noexcept
 {
     size_t fbe_result = 0
         + id.fbe_allocation_size(fbe_value.id)
-        + Error.fbe_allocation_size(fbe_value.Error)
+        + error.fbe_allocation_size(fbe_value.error)
         ;
     return fbe_result;
 }
@@ -392,8 +208,8 @@ size_t FinalModel<::proto::MessageReject>::verify_fields() const noexcept
         return std::numeric_limits<std::size_t>::max();
     fbe_current_offset += fbe_field_size;
 
-    Error.fbe_offset(fbe_current_offset);
-    fbe_field_size = Error.verify();
+    error.fbe_offset(fbe_current_offset);
+    fbe_field_size = error.verify();
     if (fbe_field_size == std::numeric_limits<std::size_t>::max())
         return std::numeric_limits<std::size_t>::max();
     fbe_current_offset += fbe_field_size;
@@ -420,8 +236,8 @@ size_t FinalModel<::proto::MessageReject>::get_fields(::proto::MessageReject& fb
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
-    Error.fbe_offset(fbe_current_offset);
-    fbe_field_size = Error.get(fbe_value.Error);
+    error.fbe_offset(fbe_current_offset);
+    fbe_field_size = error.get(fbe_value.error);
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
@@ -447,8 +263,8 @@ size_t FinalModel<::proto::MessageReject>::set_fields(const ::proto::MessageReje
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
-    Error.fbe_offset(fbe_current_offset);
-    fbe_field_size = Error.set(fbe_value.Error);
+    error.fbe_offset(fbe_current_offset);
+    fbe_field_size = error.set(fbe_value.error);
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
@@ -508,13 +324,13 @@ size_t MessageRejectFinalModel::deserialize(::proto::MessageReject& value) const
 } // namespace proto
 
 FinalModel<::proto::MessageNotify>::FinalModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
-    , Notification(buffer, 0)
+    , notification(buffer, 0)
 {}
 
 size_t FinalModel<::proto::MessageNotify>::fbe_allocation_size(const ::proto::MessageNotify& fbe_value) const noexcept
 {
     size_t fbe_result = 0
-        + Notification.fbe_allocation_size(fbe_value.Notification)
+        + notification.fbe_allocation_size(fbe_value.notification)
         ;
     return fbe_result;
 }
@@ -532,8 +348,8 @@ size_t FinalModel<::proto::MessageNotify>::verify_fields() const noexcept
     size_t fbe_current_offset = 0;
     size_t fbe_field_size;
 
-    Notification.fbe_offset(fbe_current_offset);
-    fbe_field_size = Notification.verify();
+    notification.fbe_offset(fbe_current_offset);
+    fbe_field_size = notification.verify();
     if (fbe_field_size == std::numeric_limits<std::size_t>::max())
         return std::numeric_limits<std::size_t>::max();
     fbe_current_offset += fbe_field_size;
@@ -555,8 +371,8 @@ size_t FinalModel<::proto::MessageNotify>::get_fields(::proto::MessageNotify& fb
     size_t fbe_current_size = 0;
     size_t fbe_field_size;
 
-    Notification.fbe_offset(fbe_current_offset);
-    fbe_field_size = Notification.get(fbe_value.Notification);
+    notification.fbe_offset(fbe_current_offset);
+    fbe_field_size = notification.get(fbe_value.notification);
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 
@@ -577,8 +393,8 @@ size_t FinalModel<::proto::MessageNotify>::set_fields(const ::proto::MessageNoti
     size_t fbe_current_size = 0;
     size_t fbe_field_size;
 
-    Notification.fbe_offset(fbe_current_offset);
-    fbe_field_size = Notification.set(fbe_value.Notification);
+    notification.fbe_offset(fbe_current_offset);
+    fbe_field_size = notification.set(fbe_value.notification);
     fbe_current_offset += fbe_field_size;
     fbe_current_size += fbe_field_size;
 

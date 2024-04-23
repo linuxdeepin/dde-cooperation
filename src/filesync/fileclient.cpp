@@ -7,6 +7,7 @@
 #include "string/string_utils.h"
 #include "filesystem/file.h"
 #include "filesystem/path.h"
+#include "filesystem/directory.h"
 
 #include "picojson/picojson.h"
 
@@ -16,6 +17,14 @@ using ResponseHandler = std::function<bool(int status, const void *buffer, size_
 
 using CppServer::HTTP::HTTPRequest;
 using CppServer::HTTP::HTTPResponse;
+
+enum HandleResult {
+    RES_OKHEADER = 200,
+    RES_NOTFOUND = 404,
+    RES_ERROR = 444,
+    RES_BODY = 555,
+    RES_FINISH = 666,
+};
 
 class HTTPFileClient : public CppServer::HTTP::HTTPClientEx
 {
@@ -40,7 +49,7 @@ protected:
             // get body by stream, so mark response arrived.
             HTTPClientEx::onReceivedResponse(response);
 
-            if (_handler(response.status() == 200 ? 1 : 0, nullptr, 0)) {
+            if (_handler(response.status() == 200 ? RES_OKHEADER : RES_NOTFOUND, nullptr, response.body_length())) {
                 // cancel
                 DisconnectAsync();
             }
@@ -54,7 +63,7 @@ protected:
         std::cout << "Response done! data len:" << response.body_length() << std::endl;
 
         if (_handler) {
-            _handler(666, nullptr, 0);
+            _handler(RES_FINISH, nullptr, 0);
             _response.Clear();
             // DisconnectAsync();
             Disconnect();
@@ -68,7 +77,7 @@ protected:
         if (_handler) {
             std::string cache = response.cache();
             size_t size = cache.size();
-            if (_handler(2, cache.data(), size)) {
+            if (_handler(RES_BODY, cache.data(), size)) {
                 // cancel
                 DisconnectAsync();
             }
@@ -82,7 +91,7 @@ protected:
     {
         std::cout << "Response error: " << error << std::endl;
         if (_handler) {
-            _handler(400, nullptr, 0);
+            _handler(RES_ERROR, nullptr, 0);
         }
     }
 
@@ -111,26 +120,26 @@ FileClient::~FileClient()
     }
 }
 
-void FileClient::setToken(const std::string &token)
+//void FileClient::setCallback(std::shared_ptr<ProgressCallInterface> callback) {
+//    _callback = callback;
+//}
+
+void FileClient::setConfig(const std::string &token, const std::string &savedir)
 {
     _token = token;
-}
-
-void FileClient::setSave(const std::string &savedir)
-{
     _savedir = savedir;
 }
 
 // request the dir/file info
-// [GET]predownload/<name>&token
-bool FileClient::prepareDownload(const std::string &name, std::string *body)
+// [GET]info/<name>&token
+bool FileClient::getInfo(const std::string &name, std::string *body)
 {
     if (_token.empty()) {
         std::cout << "Must set access token!" << std::endl;
         return false;
     }
 
-    std::string url = "predownload/";
+    std::string url = "info/";
     url.append(name);
     url.append("&token=").append(_token);
 
@@ -150,7 +159,7 @@ bool FileClient::prepareDownload(const std::string &name, std::string *body)
 
 // download the file by name
 // [GET]download/<name>&token
-bool FileClient::downloadFile(const std::string &name, Progress progress)
+bool FileClient::downloadFile(const std::string &name)
 {
     if (_savedir.empty()) {
         std::cout << "Must set save dir first!" << std::endl;
@@ -160,6 +169,8 @@ bool FileClient::downloadFile(const std::string &name, Progress progress)
         std::cout << "Must set access token!" << std::endl;
         return false;
     }
+
+    _running = true;
 
     uint64_t current, total = 0;
     uint64_t offset = 0;
@@ -175,49 +186,50 @@ bool FileClient::downloadFile(const std::string &name, Progress progress)
     url.append("&token=").append(_token);
     url.append("&offset=").append(std::to_string(offset));
 
-    ResponseHandler cb([&tempFile, &progress, &current, &total](int status, const void *buffer, size_t size) -> bool {
+    ResponseHandler cb([this, &tempFile, &current, &total, &offset](int status, const void *buffer, size_t size) -> bool {
+        std::string filepath = tempFile.absolute().string();
         switch (status)
         {
-        case 0:
+        case RES_NOTFOUND:
             std::cout << "File not Found!" << std::endl;
             if (tempFile.IsFileWriteOpened())
                 tempFile.Close();
             break;
-        case 1:
+        case RES_OKHEADER:
             total = size;
-            if (progress) {
-                if (!progress(current, total)) {
+            if (_callback) {
+                if (!_callback->onProgress(filepath, current, total)) {
                     // return true to cancel download from outside.
                     return true;
                 }
             }
             tempFile.OpenOrCreate(false, true, true);
-            tempFile.Seek(0);
+            tempFile.Seek(offset);
             break;
-        case 2:
+        case RES_BODY:
             if (tempFile.IsFileWriteOpened() && buffer && size > 0) {
                 current += size;
                 // 实现层已循环写全部
                 tempFile.Write(buffer, size);
                 // tempFile.Flush();
                 // notify downloading：current total
-                if (progress) {
-                    if (!progress(current, total)) {
+                if (_callback) {
+                    if (!_callback->onProgress(filepath, current, total)) {
                         // return true to cancel download from outside.
                         return true;
                     }
                 }
             }
             break;
-        case 400:
+        case RES_ERROR:
             if (tempFile.IsFileWriteOpened())
                 tempFile.Close();
             // notify download error：break off
-            if (progress) {
-                progress(-1, total);
+            if (_callback) {
+                _callback->onProgress(filepath, -1, total);
             }
             break;
-        case 666:
+        case RES_FINISH:
             if (tempFile.IsFileWriteOpened()) {
                 tempFile.Close();
                 std::cout << "File path:" << tempFile.absolute().RemoveExtension() << std::endl;
@@ -226,8 +238,8 @@ bool FileClient::downloadFile(const std::string &name, Progress progress)
                 tempFile.Clear();
             }
             // notify download finished
-            if (progress) {
-                progress(total, total);
+            if (_callback) {
+                _callback->onProgress(filepath, total, total);
             }
             break;
 
@@ -243,11 +255,13 @@ bool FileClient::downloadFile(const std::string &name, Progress progress)
     return true;
 }
 
-void FileClient::downloadFolder(const std::string &folderName, Progress progress)
+void FileClient::downloadFolder(const std::string &folderName)
 {
+    _running = true;
+
     // Step 1: 请求文件夹信息
     std::string res_body;
-    if (prepareDownload(folderName, &res_body)) {
+    if (getInfo(folderName, &res_body)) {
         std::cout << "Failed to prepare for downloading folder information!" << std::endl;
         return;
     }
@@ -264,28 +278,47 @@ void FileClient::downloadFolder(const std::string &folderName, Progress progress
 
     // Step 3: 循环处理文件夹内文件
     for (const auto &file : files) {
+        if (_cancel)
+            break;
+
         std::string fileName = file.get("name").to_str();
         double fileSize = file.get("size").get<double>();
 
         if (fileSize == 0) {
-            // 文件夹
-            downloadFolder(fileName, progress); // 递归下载文件夹
+            // 文件夹, 创建
+            CppCommon::Path folderPath = CppCommon::Path(_savedir) / folderName;
+            if (!folderPath.IsExists() || !folderPath.IsDirectory())
+                CppCommon::Directory::Create(folderPath);
+
+            std::string relName = folderName + "/" + fileName;
+            downloadFolder(relName); // 递归下载文件夹
         } else {
             // 具体文件
-            if (!downloadFile(fileName, progress)) {
+            if (!downloadFile(fileName)) {
                 std::cout << "Failed to download file: " << fileName << std::endl;
             }
         }
     }
 }
 
-void FileClient::cancel()
+void FileClient::cancel(bool cancel)
 {
+    _cancel = cancel;
+//    _running = !_cancel;
 }
 
-void FileClient::walkDownload(const std::string &name, const std::string &token, const std::string &savedir)
+bool FileClient::downloading()
 {
-    _token = token;
-    _savedir = savedir;
-
+    return _httpClient->IsConnected();
+//    return _running;
 }
+
+//void FileClient::walkDownload(const std::string &name, const std::string &token, const std::string &savedir)
+//{
+//    _cancel = false;
+//    _token = token;
+//    _savedir = savedir;
+
+//    // 此文件信息未知，文件夹或文件，先查询
+//    downloadFolder(name, progress);
+//}

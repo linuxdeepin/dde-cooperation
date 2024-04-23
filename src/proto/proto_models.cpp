@@ -9,23 +9,23 @@
 
 namespace FBE {
 
-FieldModel<::proto::MessageRequest>::FieldModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
+FieldModel<::proto::OriginMessage>::FieldModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
     , id(buffer, 4 + 4)
-    , type(buffer, id.fbe_offset() + id.fbe_size())
-    , Message(buffer, type.fbe_offset() + type.fbe_size())
+    , mask(buffer, id.fbe_offset() + id.fbe_size())
+    , json_msg(buffer, mask.fbe_offset() + mask.fbe_size())
 {}
 
-size_t FieldModel<::proto::MessageRequest>::fbe_body() const noexcept
+size_t FieldModel<::proto::OriginMessage>::fbe_body() const noexcept
 {
     size_t fbe_result = 4 + 4
         + id.fbe_size()
-        + type.fbe_size()
-        + Message.fbe_size()
+        + mask.fbe_size()
+        + json_msg.fbe_size()
         ;
     return fbe_result;
 }
 
-size_t FieldModel<::proto::MessageRequest>::fbe_extra() const noexcept
+size_t FieldModel<::proto::OriginMessage>::fbe_extra() const noexcept
 {
     if ((_buffer.offset() + fbe_offset() + fbe_size()) > _buffer.size())
         return 0;
@@ -38,8 +38,8 @@ size_t FieldModel<::proto::MessageRequest>::fbe_extra() const noexcept
 
     size_t fbe_result = fbe_body()
         + id.fbe_extra()
-        + type.fbe_extra()
-        + Message.fbe_extra()
+        + mask.fbe_extra()
+        + json_msg.fbe_extra()
         ;
 
     _buffer.unshift(fbe_struct_offset);
@@ -47,7 +47,7 @@ size_t FieldModel<::proto::MessageRequest>::fbe_extra() const noexcept
     return fbe_result;
 }
 
-bool FieldModel<::proto::MessageRequest>::verify(bool fbe_verify_type) const noexcept
+bool FieldModel<::proto::OriginMessage>::verify(bool fbe_verify_type) const noexcept
 {
     if ((_buffer.offset() + fbe_offset() + fbe_size()) > _buffer.size())
         return true;
@@ -70,7 +70,7 @@ bool FieldModel<::proto::MessageRequest>::verify(bool fbe_verify_type) const noe
     return fbe_result;
 }
 
-bool FieldModel<::proto::MessageRequest>::verify_fields(size_t fbe_struct_size) const noexcept
+bool FieldModel<::proto::OriginMessage>::verify_fields(size_t fbe_struct_size) const noexcept
 {
     size_t fbe_current_size = 4 + 4;
 
@@ -80,22 +80,22 @@ bool FieldModel<::proto::MessageRequest>::verify_fields(size_t fbe_struct_size) 
         return false;
     fbe_current_size += id.fbe_size();
 
-    if ((fbe_current_size + type.fbe_size()) > fbe_struct_size)
+    if ((fbe_current_size + mask.fbe_size()) > fbe_struct_size)
         return true;
-    if (!type.verify())
+    if (!mask.verify())
         return false;
-    fbe_current_size += type.fbe_size();
+    fbe_current_size += mask.fbe_size();
 
-    if ((fbe_current_size + Message.fbe_size()) > fbe_struct_size)
+    if ((fbe_current_size + json_msg.fbe_size()) > fbe_struct_size)
         return true;
-    if (!Message.verify())
+    if (!json_msg.verify())
         return false;
-    fbe_current_size += Message.fbe_size();
+    fbe_current_size += json_msg.fbe_size();
 
     return true;
 }
 
-size_t FieldModel<::proto::MessageRequest>::get_begin() const noexcept
+size_t FieldModel<::proto::OriginMessage>::get_begin() const noexcept
 {
     if ((_buffer.offset() + fbe_offset() + fbe_size()) > _buffer.size())
         return 0;
@@ -114,12 +114,12 @@ size_t FieldModel<::proto::MessageRequest>::get_begin() const noexcept
     return fbe_struct_offset;
 }
 
-void FieldModel<::proto::MessageRequest>::get_end(size_t fbe_begin) const noexcept
+void FieldModel<::proto::OriginMessage>::get_end(size_t fbe_begin) const noexcept
 {
     _buffer.unshift(fbe_begin);
 }
 
-void FieldModel<::proto::MessageRequest>::get(::proto::MessageRequest& fbe_value) const noexcept
+void FieldModel<::proto::OriginMessage>::get(::proto::OriginMessage& fbe_value) const noexcept
 {
     size_t fbe_begin = get_begin();
     if (fbe_begin == 0)
@@ -130,7 +130,7 @@ void FieldModel<::proto::MessageRequest>::get(::proto::MessageRequest& fbe_value
     get_end(fbe_begin);
 }
 
-void FieldModel<::proto::MessageRequest>::get_fields(::proto::MessageRequest& fbe_value, size_t fbe_struct_size) const noexcept
+void FieldModel<::proto::OriginMessage>::get_fields(::proto::OriginMessage& fbe_value, size_t fbe_struct_size) const noexcept
 {
     size_t fbe_current_size = 4 + 4;
 
@@ -140,20 +140,20 @@ void FieldModel<::proto::MessageRequest>::get_fields(::proto::MessageRequest& fb
         fbe_value.id = FBE::uuid_t::sequential();
     fbe_current_size += id.fbe_size();
 
-    if ((fbe_current_size + type.fbe_size()) <= fbe_struct_size)
-        type.get(fbe_value.type);
+    if ((fbe_current_size + mask.fbe_size()) <= fbe_struct_size)
+        mask.get(fbe_value.mask);
     else
-        fbe_value.type = (uint8_t)0u;
-    fbe_current_size += type.fbe_size();
+        fbe_value.mask = (int32_t)0ll;
+    fbe_current_size += mask.fbe_size();
 
-    if ((fbe_current_size + Message.fbe_size()) <= fbe_struct_size)
-        Message.get(fbe_value.Message);
+    if ((fbe_current_size + json_msg.fbe_size()) <= fbe_struct_size)
+        json_msg.get(fbe_value.json_msg);
     else
-        fbe_value.Message = "";
-    fbe_current_size += Message.fbe_size();
+        fbe_value.json_msg = "";
+    fbe_current_size += json_msg.fbe_size();
 }
 
-size_t FieldModel<::proto::MessageRequest>::set_begin()
+size_t FieldModel<::proto::OriginMessage>::set_begin()
 {
     assert(((_buffer.offset() + fbe_offset() + fbe_size()) <= _buffer.size()) && "Model is broken!");
     if ((_buffer.offset() + fbe_offset() + fbe_size()) > _buffer.size())
@@ -173,12 +173,12 @@ size_t FieldModel<::proto::MessageRequest>::set_begin()
     return fbe_struct_offset;
 }
 
-void FieldModel<::proto::MessageRequest>::set_end(size_t fbe_begin)
+void FieldModel<::proto::OriginMessage>::set_end(size_t fbe_begin)
 {
     _buffer.unshift(fbe_begin);
 }
 
-void FieldModel<::proto::MessageRequest>::set(const ::proto::MessageRequest& fbe_value) noexcept
+void FieldModel<::proto::OriginMessage>::set(const ::proto::OriginMessage& fbe_value) noexcept
 {
     size_t fbe_begin = set_begin();
     if (fbe_begin == 0)
@@ -188,16 +188,16 @@ void FieldModel<::proto::MessageRequest>::set(const ::proto::MessageRequest& fbe
     set_end(fbe_begin);
 }
 
-void FieldModel<::proto::MessageRequest>::set_fields(const ::proto::MessageRequest& fbe_value) noexcept
+void FieldModel<::proto::OriginMessage>::set_fields(const ::proto::OriginMessage& fbe_value) noexcept
 {
     id.set(fbe_value.id);
-    type.set(fbe_value.type);
-    Message.set(fbe_value.Message);
+    mask.set(fbe_value.mask);
+    json_msg.set(fbe_value.json_msg);
 }
 
 namespace proto {
 
-bool MessageRequestModel::verify()
+bool OriginMessageModel::verify()
 {
     if ((this->buffer().offset() + model.fbe_offset() - 4) > this->buffer().size())
         return false;
@@ -209,13 +209,13 @@ bool MessageRequestModel::verify()
     return model.verify();
 }
 
-size_t MessageRequestModel::create_begin()
+size_t OriginMessageModel::create_begin()
 {
     size_t fbe_begin = this->buffer().allocate(4 + model.fbe_size());
     return fbe_begin;
 }
 
-size_t MessageRequestModel::create_end(size_t fbe_begin)
+size_t OriginMessageModel::create_end(size_t fbe_begin)
 {
     size_t fbe_end = this->buffer().size();
     uint32_t fbe_full_size = (uint32_t)(fbe_end - fbe_begin);
@@ -223,7 +223,7 @@ size_t MessageRequestModel::create_end(size_t fbe_begin)
     return fbe_full_size;
 }
 
-size_t MessageRequestModel::serialize(const ::proto::MessageRequest& value)
+size_t OriginMessageModel::serialize(const ::proto::OriginMessage& value)
 {
     size_t fbe_begin = create_begin();
     model.set(value);
@@ -231,261 +231,7 @@ size_t MessageRequestModel::serialize(const ::proto::MessageRequest& value)
     return fbe_full_size;
 }
 
-size_t MessageRequestModel::deserialize(::proto::MessageRequest& value) const noexcept
-{
-    if ((this->buffer().offset() + model.fbe_offset() - 4) > this->buffer().size())
-        return 0;
-
-    uint32_t fbe_full_size = *((const uint32_t*)(this->buffer().data() + this->buffer().offset() + model.fbe_offset() - 4));
-    assert((fbe_full_size >= model.fbe_size()) && "Model is broken!");
-    if (fbe_full_size < model.fbe_size())
-        return 0;
-
-    model.get(value);
-    return fbe_full_size;
-}
-
-} // namespace proto
-
-FieldModel<::proto::MessageResponse>::FieldModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
-    , id(buffer, 4 + 4)
-    , Length(buffer, id.fbe_offset() + id.fbe_size())
-    , Hash(buffer, Length.fbe_offset() + Length.fbe_size())
-    , Message(buffer, Hash.fbe_offset() + Hash.fbe_size())
-{}
-
-size_t FieldModel<::proto::MessageResponse>::fbe_body() const noexcept
-{
-    size_t fbe_result = 4 + 4
-        + id.fbe_size()
-        + Length.fbe_size()
-        + Hash.fbe_size()
-        + Message.fbe_size()
-        ;
-    return fbe_result;
-}
-
-size_t FieldModel<::proto::MessageResponse>::fbe_extra() const noexcept
-{
-    if ((_buffer.offset() + fbe_offset() + fbe_size()) > _buffer.size())
-        return 0;
-
-    uint32_t fbe_struct_offset = *((const uint32_t*)(_buffer.data() + _buffer.offset() + fbe_offset()));
-    if ((fbe_struct_offset == 0) || ((_buffer.offset() + fbe_struct_offset + 4) > _buffer.size()))
-        return 0;
-
-    _buffer.shift(fbe_struct_offset);
-
-    size_t fbe_result = fbe_body()
-        + id.fbe_extra()
-        + Length.fbe_extra()
-        + Hash.fbe_extra()
-        + Message.fbe_extra()
-        ;
-
-    _buffer.unshift(fbe_struct_offset);
-
-    return fbe_result;
-}
-
-bool FieldModel<::proto::MessageResponse>::verify(bool fbe_verify_type) const noexcept
-{
-    if ((_buffer.offset() + fbe_offset() + fbe_size()) > _buffer.size())
-        return true;
-
-    uint32_t fbe_struct_offset = *((const uint32_t*)(_buffer.data() + _buffer.offset() + fbe_offset()));
-    if ((fbe_struct_offset == 0) || ((_buffer.offset() + fbe_struct_offset + 4 + 4) > _buffer.size()))
-        return false;
-
-    uint32_t fbe_struct_size = *((const uint32_t*)(_buffer.data() + _buffer.offset() + fbe_struct_offset));
-    if (fbe_struct_size < (4 + 4))
-        return false;
-
-    uint32_t fbe_struct_type = *((const uint32_t*)(_buffer.data() + _buffer.offset() + fbe_struct_offset + 4));
-    if (fbe_verify_type && (fbe_struct_type != fbe_type()))
-        return false;
-
-    _buffer.shift(fbe_struct_offset);
-    bool fbe_result = verify_fields(fbe_struct_size);
-    _buffer.unshift(fbe_struct_offset);
-    return fbe_result;
-}
-
-bool FieldModel<::proto::MessageResponse>::verify_fields(size_t fbe_struct_size) const noexcept
-{
-    size_t fbe_current_size = 4 + 4;
-
-    if ((fbe_current_size + id.fbe_size()) > fbe_struct_size)
-        return true;
-    if (!id.verify())
-        return false;
-    fbe_current_size += id.fbe_size();
-
-    if ((fbe_current_size + Length.fbe_size()) > fbe_struct_size)
-        return true;
-    if (!Length.verify())
-        return false;
-    fbe_current_size += Length.fbe_size();
-
-    if ((fbe_current_size + Hash.fbe_size()) > fbe_struct_size)
-        return true;
-    if (!Hash.verify())
-        return false;
-    fbe_current_size += Hash.fbe_size();
-
-    if ((fbe_current_size + Message.fbe_size()) > fbe_struct_size)
-        return true;
-    if (!Message.verify())
-        return false;
-    fbe_current_size += Message.fbe_size();
-
-    return true;
-}
-
-size_t FieldModel<::proto::MessageResponse>::get_begin() const noexcept
-{
-    if ((_buffer.offset() + fbe_offset() + fbe_size()) > _buffer.size())
-        return 0;
-
-    uint32_t fbe_struct_offset = *((const uint32_t*)(_buffer.data() + _buffer.offset() + fbe_offset()));
-    assert(((fbe_struct_offset > 0) && ((_buffer.offset() + fbe_struct_offset + 4 + 4) <= _buffer.size())) && "Model is broken!");
-    if ((fbe_struct_offset == 0) || ((_buffer.offset() + fbe_struct_offset + 4 + 4) > _buffer.size()))
-        return 0;
-
-    uint32_t fbe_struct_size = *((const uint32_t*)(_buffer.data() + _buffer.offset() + fbe_struct_offset));
-    assert((fbe_struct_size >= (4 + 4)) && "Model is broken!");
-    if (fbe_struct_size < (4 + 4))
-        return 0;
-
-    _buffer.shift(fbe_struct_offset);
-    return fbe_struct_offset;
-}
-
-void FieldModel<::proto::MessageResponse>::get_end(size_t fbe_begin) const noexcept
-{
-    _buffer.unshift(fbe_begin);
-}
-
-void FieldModel<::proto::MessageResponse>::get(::proto::MessageResponse& fbe_value) const noexcept
-{
-    size_t fbe_begin = get_begin();
-    if (fbe_begin == 0)
-        return;
-
-    uint32_t fbe_struct_size = *((const uint32_t*)(_buffer.data() + _buffer.offset()));
-    get_fields(fbe_value, fbe_struct_size);
-    get_end(fbe_begin);
-}
-
-void FieldModel<::proto::MessageResponse>::get_fields(::proto::MessageResponse& fbe_value, size_t fbe_struct_size) const noexcept
-{
-    size_t fbe_current_size = 4 + 4;
-
-    if ((fbe_current_size + id.fbe_size()) <= fbe_struct_size)
-        id.get(fbe_value.id, FBE::uuid_t::sequential());
-    else
-        fbe_value.id = FBE::uuid_t::sequential();
-    fbe_current_size += id.fbe_size();
-
-    if ((fbe_current_size + Length.fbe_size()) <= fbe_struct_size)
-        Length.get(fbe_value.Length);
-    else
-        fbe_value.Length = (uint32_t)0ull;
-    fbe_current_size += Length.fbe_size();
-
-    if ((fbe_current_size + Hash.fbe_size()) <= fbe_struct_size)
-        Hash.get(fbe_value.Hash);
-    else
-        fbe_value.Hash = (uint32_t)0ull;
-    fbe_current_size += Hash.fbe_size();
-
-    if ((fbe_current_size + Message.fbe_size()) <= fbe_struct_size)
-        Message.get(fbe_value.Message);
-    else
-        fbe_value.Message = "";
-    fbe_current_size += Message.fbe_size();
-}
-
-size_t FieldModel<::proto::MessageResponse>::set_begin()
-{
-    assert(((_buffer.offset() + fbe_offset() + fbe_size()) <= _buffer.size()) && "Model is broken!");
-    if ((_buffer.offset() + fbe_offset() + fbe_size()) > _buffer.size())
-        return 0;
-
-    uint32_t fbe_struct_size = (uint32_t)fbe_body();
-    uint32_t fbe_struct_offset = (uint32_t)(_buffer.allocate(fbe_struct_size) - _buffer.offset());
-    assert(((fbe_struct_offset > 0) && ((_buffer.offset() + fbe_struct_offset + fbe_struct_size) <= _buffer.size())) && "Model is broken!");
-    if ((fbe_struct_offset == 0) || ((_buffer.offset() + fbe_struct_offset + fbe_struct_size) > _buffer.size()))
-        return 0;
-
-    *((uint32_t*)(_buffer.data() + _buffer.offset() + fbe_offset())) = fbe_struct_offset;
-    *((uint32_t*)(_buffer.data() + _buffer.offset() + fbe_struct_offset)) = fbe_struct_size;
-    *((uint32_t*)(_buffer.data() + _buffer.offset() + fbe_struct_offset + 4)) = (uint32_t)fbe_type();
-
-    _buffer.shift(fbe_struct_offset);
-    return fbe_struct_offset;
-}
-
-void FieldModel<::proto::MessageResponse>::set_end(size_t fbe_begin)
-{
-    _buffer.unshift(fbe_begin);
-}
-
-void FieldModel<::proto::MessageResponse>::set(const ::proto::MessageResponse& fbe_value) noexcept
-{
-    size_t fbe_begin = set_begin();
-    if (fbe_begin == 0)
-        return;
-
-    set_fields(fbe_value);
-    set_end(fbe_begin);
-}
-
-void FieldModel<::proto::MessageResponse>::set_fields(const ::proto::MessageResponse& fbe_value) noexcept
-{
-    id.set(fbe_value.id);
-    Length.set(fbe_value.Length);
-    Hash.set(fbe_value.Hash);
-    Message.set(fbe_value.Message);
-}
-
-namespace proto {
-
-bool MessageResponseModel::verify()
-{
-    if ((this->buffer().offset() + model.fbe_offset() - 4) > this->buffer().size())
-        return false;
-
-    uint32_t fbe_full_size = *((const uint32_t*)(this->buffer().data() + this->buffer().offset() + model.fbe_offset() - 4));
-    if (fbe_full_size < model.fbe_size())
-        return false;
-
-    return model.verify();
-}
-
-size_t MessageResponseModel::create_begin()
-{
-    size_t fbe_begin = this->buffer().allocate(4 + model.fbe_size());
-    return fbe_begin;
-}
-
-size_t MessageResponseModel::create_end(size_t fbe_begin)
-{
-    size_t fbe_end = this->buffer().size();
-    uint32_t fbe_full_size = (uint32_t)(fbe_end - fbe_begin);
-    *((uint32_t*)(this->buffer().data() + this->buffer().offset() + model.fbe_offset() - 4)) = fbe_full_size;
-    return fbe_full_size;
-}
-
-size_t MessageResponseModel::serialize(const ::proto::MessageResponse& value)
-{
-    size_t fbe_begin = create_begin();
-    model.set(value);
-    size_t fbe_full_size = create_end(fbe_begin);
-    return fbe_full_size;
-}
-
-size_t MessageResponseModel::deserialize(::proto::MessageResponse& value) const noexcept
+size_t OriginMessageModel::deserialize(::proto::OriginMessage& value) const noexcept
 {
     if ((this->buffer().offset() + model.fbe_offset() - 4) > this->buffer().size())
         return 0;
@@ -503,14 +249,14 @@ size_t MessageResponseModel::deserialize(::proto::MessageResponse& value) const 
 
 FieldModel<::proto::MessageReject>::FieldModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
     , id(buffer, 4 + 4)
-    , Error(buffer, id.fbe_offset() + id.fbe_size())
+    , error(buffer, id.fbe_offset() + id.fbe_size())
 {}
 
 size_t FieldModel<::proto::MessageReject>::fbe_body() const noexcept
 {
     size_t fbe_result = 4 + 4
         + id.fbe_size()
-        + Error.fbe_size()
+        + error.fbe_size()
         ;
     return fbe_result;
 }
@@ -528,7 +274,7 @@ size_t FieldModel<::proto::MessageReject>::fbe_extra() const noexcept
 
     size_t fbe_result = fbe_body()
         + id.fbe_extra()
-        + Error.fbe_extra()
+        + error.fbe_extra()
         ;
 
     _buffer.unshift(fbe_struct_offset);
@@ -569,11 +315,11 @@ bool FieldModel<::proto::MessageReject>::verify_fields(size_t fbe_struct_size) c
         return false;
     fbe_current_size += id.fbe_size();
 
-    if ((fbe_current_size + Error.fbe_size()) > fbe_struct_size)
+    if ((fbe_current_size + error.fbe_size()) > fbe_struct_size)
         return true;
-    if (!Error.verify())
+    if (!error.verify())
         return false;
-    fbe_current_size += Error.fbe_size();
+    fbe_current_size += error.fbe_size();
 
     return true;
 }
@@ -623,11 +369,11 @@ void FieldModel<::proto::MessageReject>::get_fields(::proto::MessageReject& fbe_
         fbe_value.id = FBE::uuid_t::sequential();
     fbe_current_size += id.fbe_size();
 
-    if ((fbe_current_size + Error.fbe_size()) <= fbe_struct_size)
-        Error.get(fbe_value.Error);
+    if ((fbe_current_size + error.fbe_size()) <= fbe_struct_size)
+        error.get(fbe_value.error);
     else
-        fbe_value.Error = "";
-    fbe_current_size += Error.fbe_size();
+        fbe_value.error = "";
+    fbe_current_size += error.fbe_size();
 }
 
 size_t FieldModel<::proto::MessageReject>::set_begin()
@@ -668,7 +414,7 @@ void FieldModel<::proto::MessageReject>::set(const ::proto::MessageReject& fbe_v
 void FieldModel<::proto::MessageReject>::set_fields(const ::proto::MessageReject& fbe_value) noexcept
 {
     id.set(fbe_value.id);
-    Error.set(fbe_value.Error);
+    error.set(fbe_value.error);
 }
 
 namespace proto {
@@ -724,13 +470,13 @@ size_t MessageRejectModel::deserialize(::proto::MessageReject& value) const noex
 } // namespace proto
 
 FieldModel<::proto::MessageNotify>::FieldModel(FBEBuffer& buffer, size_t offset) noexcept : _buffer(buffer), _offset(offset)
-    , Notification(buffer, 4 + 4)
+    , notification(buffer, 4 + 4)
 {}
 
 size_t FieldModel<::proto::MessageNotify>::fbe_body() const noexcept
 {
     size_t fbe_result = 4 + 4
-        + Notification.fbe_size()
+        + notification.fbe_size()
         ;
     return fbe_result;
 }
@@ -747,7 +493,7 @@ size_t FieldModel<::proto::MessageNotify>::fbe_extra() const noexcept
     _buffer.shift(fbe_struct_offset);
 
     size_t fbe_result = fbe_body()
-        + Notification.fbe_extra()
+        + notification.fbe_extra()
         ;
 
     _buffer.unshift(fbe_struct_offset);
@@ -782,11 +528,11 @@ bool FieldModel<::proto::MessageNotify>::verify_fields(size_t fbe_struct_size) c
 {
     size_t fbe_current_size = 4 + 4;
 
-    if ((fbe_current_size + Notification.fbe_size()) > fbe_struct_size)
+    if ((fbe_current_size + notification.fbe_size()) > fbe_struct_size)
         return true;
-    if (!Notification.verify())
+    if (!notification.verify())
         return false;
-    fbe_current_size += Notification.fbe_size();
+    fbe_current_size += notification.fbe_size();
 
     return true;
 }
@@ -830,11 +576,11 @@ void FieldModel<::proto::MessageNotify>::get_fields(::proto::MessageNotify& fbe_
 {
     size_t fbe_current_size = 4 + 4;
 
-    if ((fbe_current_size + Notification.fbe_size()) <= fbe_struct_size)
-        Notification.get(fbe_value.Notification);
+    if ((fbe_current_size + notification.fbe_size()) <= fbe_struct_size)
+        notification.get(fbe_value.notification);
     else
-        fbe_value.Notification = "";
-    fbe_current_size += Notification.fbe_size();
+        fbe_value.notification = "";
+    fbe_current_size += notification.fbe_size();
 }
 
 size_t FieldModel<::proto::MessageNotify>::set_begin()
@@ -874,7 +620,7 @@ void FieldModel<::proto::MessageNotify>::set(const ::proto::MessageNotify& fbe_v
 
 void FieldModel<::proto::MessageNotify>::set_fields(const ::proto::MessageNotify& fbe_value) noexcept
 {
-    Notification.set(fbe_value.Notification);
+    notification.set(fbe_value.notification);
 }
 
 namespace proto {

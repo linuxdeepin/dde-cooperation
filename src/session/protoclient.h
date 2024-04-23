@@ -32,7 +32,7 @@ protected:
 
     // Protocol handlers
     void onReceive(const ::proto::DisconnectRequest &request) override;
-    void onReceive(const ::proto::MessageResponse &response) override;
+    void onReceive(const ::proto::OriginMessage &response) override;
     void onReceive(const ::proto::MessageReject &reject) override;
     void onReceive(const ::proto::MessageNotify &notify) override;
 

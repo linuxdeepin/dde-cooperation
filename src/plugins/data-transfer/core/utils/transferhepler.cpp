@@ -36,6 +36,11 @@
 TransferHelper::TransferHelper()
     : QObject()
 {
+    if (!_transferhandle) {
+        _transferhandle = std::make_shared<TransferHandle>();
+        _transferhandle->init();
+    }
+
     initOnlineState();
 #ifndef WIN32
     SettingHelper::instance();
@@ -62,7 +67,7 @@ void TransferHelper::initOnlineState()
             LOG << "Network is" << isConnected;
             online = isConnected;
             Q_EMIT onlineStateChanged(isConnected);
-            if (transferhandle.isTransferring())
+            if (_transferhandle->isTransferring())
                 Q_EMIT interruption();
         }
     });
@@ -97,22 +102,22 @@ bool TransferHelper::getConnectStatus() const
 
 QString TransferHelper::getConnectPassword()
 {
-    return transferhandle.getConnectPassWord();
+    return _transferhandle->getConnectPassWord();
 }
 
 bool TransferHelper::cancelTransferJob()
 {
-    return transferhandle.cancelTransferJob();
+    return _transferhandle->cancelTransferJob();
 }
 
 void TransferHelper::tryConnect(const QString &ip, const QString &password)
 {
-    transferhandle.tryConnect(ip, password);
+    _transferhandle->tryConnect(ip, password);
 }
 
 void TransferHelper::disconnectRemote()
 {
-    transferhandle.disconnectRemote();
+    _transferhandle->disconnectRemote();
 }
 
 QString TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &save)
@@ -150,7 +155,7 @@ void TransferHelper::sendMessage(const QString &type, const QString &message)
 {
     json::Json mes;
     mes.add_member(type.toUtf8().constData(), message.toStdString());
-    transferhandle.sendMessage(mes);
+    _transferhandle->sendMessage(mes);
 }
 
 #ifdef WIN32
@@ -163,7 +168,7 @@ void TransferHelper::startTransfer()
 
     QStringList paths = getTransferFilePath(filePathList, appList, browserList, configList);
     qInfo() << "transferring file list: " << paths;
-    transferhandle.sendFiles(paths);
+    _transferhandle->sendFiles(paths);
 }
 
 QMap<QString, QString> TransferHelper::getAppList(QMap<QString, QString> &noRecommedApplist)
@@ -332,7 +337,7 @@ void TransferHelper::Retransfer(const QString jsonstr)
     qInfo() << "continue last file list: " << paths;
     LOG << "continue last file size:"
         << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
-    transferhandle.sendFiles(paths);
+    _transferhandle->sendFiles(paths);
 
     emit changeWidget(PageName::transferringwidget);
 }

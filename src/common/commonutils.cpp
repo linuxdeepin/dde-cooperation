@@ -14,6 +14,7 @@
 #include <QFileSystemWatcher>
 #include <QTimer>
 #include <QProcess>
+#include <QRandomGenerator>
 
 #include "co/co/sock.h"
 
@@ -292,4 +293,14 @@ bool CommonUitls::isFirstStart()
         WLOG << "FirstStart Failed to create file: " << flagPath.toStdString();
     }
     return true;
+}
+
+QString CommonUitls::generateRandomPassword()
+{
+    QString password;
+    for (int i = 0; i < 6; ++i) {
+        int digit = QRandomGenerator::global()->bounded(10); // 生成0到9之间的随机数字
+        password.append(QString::number(digit));
+    }
+    return password;
 }

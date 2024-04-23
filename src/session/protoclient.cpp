@@ -50,7 +50,7 @@ void ProtoClient::onReceive(const ::proto::DisconnectRequest &request)
     DisconnectAsync();
 }
 
-void ProtoClient::onReceive(const ::proto::MessageResponse &response)
+void ProtoClient::onReceive(const ::proto::OriginMessage &response)
 {
     Client::onReceive(response);
     std::cout << "Received: " << response << std::endl;

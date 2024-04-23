@@ -5,24 +5,36 @@
 #ifndef FILESERVER_H
 #define FILESERVER_H
 
+#include "webbinder.h"
+
 //#include "server/http/https_server.h"
 #include "server/http/http_server.h"
 #include "string/string_utils.h"
-#include "utility/singleton.h"
+#include "syncstatus.h"
 
 #include <iostream>
 #include <map>
 #include <mutex>
 
 class HTTPFileServer;
-class FileServer
+class FileServer : public WebInterface
 {
     friend class HTTPFileServer;
 public:
     FileServer(const std::shared_ptr<CppServer::Asio::Service> &service, int port);
     ~FileServer();
 
-    std::string AddFileContent(const CppCommon::Path &path);
+    bool start();
+    bool stop();
+
+    std::string addFileContent(const CppCommon::Path &path);
+    void setWeb(std::string &token, const std::string &path);
+
+    int webBind(std::string webDir, std::string diskDir);
+    int webUnbind(std::string webDir);
+    void clearBind();
+
+    void clearToken();
 
 protected:
 

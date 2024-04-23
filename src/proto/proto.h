@@ -27,126 +27,52 @@ using namespace ::proto;
 
 namespace proto {
 
-enum class MessageType : uint8_t
+struct OriginMessage;
+
+struct OriginMessage
 {
-    MSG_TYPE_BASE = (uint8_t)0u,
-    MSG_TYPE_LAUNCH = (uint8_t)1u,
-    MSG_TYPE_APP,
-    MSG_TYPE_LAST = (uint8_t)254u,
-    MSG_TYPE_MAX = MSG_TYPE_LAST,
-};
-
-std::ostream& operator<<(std::ostream& stream, MessageType value);
-
-#if defined(FMT_VERSION) && (FMT_VERSION >= 90000)
-} template <> struct fmt::formatter<proto::MessageType> : ostream_formatter {}; namespace proto {
-#endif
-
-#if defined(LOGGING_PROTOCOL)
-CppLogging::Record& operator<<(CppLogging::Record& record, MessageType value);
-#endif
-
-struct MessageResponse;
-
-struct MessageRequest
-{
-    typedef MessageResponse Response;
+    typedef OriginMessage Response;
 
     FBE::uuid_t id;
-    uint8_t type;
-    std::string Message;
+    int32_t mask;
+    std::string json_msg;
 
     size_t fbe_type() const noexcept { return 1; }
 
-    MessageRequest();
-    MessageRequest(const FBE::uuid_t& arg_id, uint8_t arg_type, const std::string& arg_Message);
-    MessageRequest(const MessageRequest& other) = default;
-    MessageRequest(MessageRequest&& other) = default;
-    ~MessageRequest() = default;
+    OriginMessage();
+    OriginMessage(const FBE::uuid_t& arg_id, int32_t arg_mask, const std::string& arg_json_msg);
+    OriginMessage(const OriginMessage& other) = default;
+    OriginMessage(OriginMessage&& other) = default;
+    ~OriginMessage() = default;
 
-    MessageRequest& operator=(const MessageRequest& other) = default;
-    MessageRequest& operator=(MessageRequest&& other) = default;
+    OriginMessage& operator=(const OriginMessage& other) = default;
+    OriginMessage& operator=(OriginMessage&& other) = default;
 
-    bool operator==(const MessageRequest& other) const noexcept;
-    bool operator!=(const MessageRequest& other) const noexcept { return !operator==(other); }
-    bool operator<(const MessageRequest& other) const noexcept;
-    bool operator<=(const MessageRequest& other) const noexcept { return operator<(other) || operator==(other); }
-    bool operator>(const MessageRequest& other) const noexcept { return !operator<=(other); }
-    bool operator>=(const MessageRequest& other) const noexcept { return !operator<(other); }
+    bool operator==(const OriginMessage& other) const noexcept;
+    bool operator!=(const OriginMessage& other) const noexcept { return !operator==(other); }
+    bool operator<(const OriginMessage& other) const noexcept;
+    bool operator<=(const OriginMessage& other) const noexcept { return operator<(other) || operator==(other); }
+    bool operator>(const OriginMessage& other) const noexcept { return !operator<=(other); }
+    bool operator>=(const OriginMessage& other) const noexcept { return !operator<(other); }
 
     std::string string() const { std::stringstream ss; ss << *this; return ss.str(); }
 
-    friend std::ostream& operator<<(std::ostream& stream, const MessageRequest& value);
+    friend std::ostream& operator<<(std::ostream& stream, const OriginMessage& value);
 
-    void swap(MessageRequest& other) noexcept;
-    friend void swap(MessageRequest& value1, MessageRequest& value2) noexcept { value1.swap(value2); }
+    void swap(OriginMessage& other) noexcept;
+    friend void swap(OriginMessage& value1, OriginMessage& value2) noexcept { value1.swap(value2); }
 };
 
 } // namespace proto
 
 #if defined(FMT_VERSION) && (FMT_VERSION >= 90000)
-template <> struct fmt::formatter<proto::MessageRequest> : ostream_formatter {};
+template <> struct fmt::formatter<proto::OriginMessage> : ostream_formatter {};
 #endif
 
 template<>
-struct std::hash<proto::MessageRequest>
+struct std::hash<proto::OriginMessage>
 {
-    typedef proto::MessageRequest argument_type;
-    typedef size_t result_type;
-
-    result_type operator() (const argument_type& value) const
-    {
-        result_type result = 17;
-        result = result * 31 + std::hash<decltype(value.id)>()(value.id);
-        return result;
-    }
-};
-
-namespace proto {
-
-struct MessageResponse
-{
-    FBE::uuid_t id;
-    uint32_t Length;
-    uint32_t Hash;
-    std::string Message;
-
-    size_t fbe_type() const noexcept { return 2; }
-
-    MessageResponse();
-    MessageResponse(const FBE::uuid_t& arg_id, uint32_t arg_Length, uint32_t arg_Hash, const std::string& arg_Message);
-    MessageResponse(const MessageResponse& other) = default;
-    MessageResponse(MessageResponse&& other) = default;
-    ~MessageResponse() = default;
-
-    MessageResponse& operator=(const MessageResponse& other) = default;
-    MessageResponse& operator=(MessageResponse&& other) = default;
-
-    bool operator==(const MessageResponse& other) const noexcept;
-    bool operator!=(const MessageResponse& other) const noexcept { return !operator==(other); }
-    bool operator<(const MessageResponse& other) const noexcept;
-    bool operator<=(const MessageResponse& other) const noexcept { return operator<(other) || operator==(other); }
-    bool operator>(const MessageResponse& other) const noexcept { return !operator<=(other); }
-    bool operator>=(const MessageResponse& other) const noexcept { return !operator<(other); }
-
-    std::string string() const { std::stringstream ss; ss << *this; return ss.str(); }
-
-    friend std::ostream& operator<<(std::ostream& stream, const MessageResponse& value);
-
-    void swap(MessageResponse& other) noexcept;
-    friend void swap(MessageResponse& value1, MessageResponse& value2) noexcept { value1.swap(value2); }
-};
-
-} // namespace proto
-
-#if defined(FMT_VERSION) && (FMT_VERSION >= 90000)
-template <> struct fmt::formatter<proto::MessageResponse> : ostream_formatter {};
-#endif
-
-template<>
-struct std::hash<proto::MessageResponse>
-{
-    typedef proto::MessageResponse argument_type;
+    typedef proto::OriginMessage argument_type;
     typedef size_t result_type;
 
     result_type operator() (const argument_type& value) const
@@ -162,12 +88,12 @@ namespace proto {
 struct MessageReject
 {
     FBE::uuid_t id;
-    std::string Error;
+    std::string error;
 
-    size_t fbe_type() const noexcept { return 3; }
+    size_t fbe_type() const noexcept { return 2; }
 
     MessageReject();
-    MessageReject(const FBE::uuid_t& arg_id, const std::string& arg_Error);
+    MessageReject(const FBE::uuid_t& arg_id, const std::string& arg_error);
     MessageReject(const MessageReject& other) = default;
     MessageReject(MessageReject&& other) = default;
     ~MessageReject() = default;
@@ -214,12 +140,12 @@ namespace proto {
 
 struct MessageNotify
 {
-    std::string Notification;
+    std::string notification;
 
-    size_t fbe_type() const noexcept { return 4; }
+    size_t fbe_type() const noexcept { return 3; }
 
     MessageNotify();
-    explicit MessageNotify(const std::string& arg_Notification);
+    explicit MessageNotify(const std::string& arg_notification);
     MessageNotify(const MessageNotify& other) = default;
     MessageNotify(MessageNotify&& other) = default;
     ~MessageNotify() = default;
@@ -267,7 +193,7 @@ struct DisconnectRequest
 {
     FBE::uuid_t id;
 
-    size_t fbe_type() const noexcept { return 5; }
+    size_t fbe_type() const noexcept { return 4; }
 
     DisconnectRequest();
     explicit DisconnectRequest(const FBE::uuid_t& arg_id);

@@ -16,30 +16,12 @@ namespace FBE {
 
 namespace proto {
 
-size_t Sender::send(const ::proto::MessageRequest& value)
+size_t Sender::send(const ::proto::OriginMessage& value)
 {
     // Serialize the value into the FBE stream
-    size_t serialized = MessageRequestModel.serialize(value);
-    assert((serialized > 0) && "proto::MessageRequest serialization failed!");
-    assert(MessageRequestModel.verify() && "proto::MessageRequest validation failed!");
-
-    // Log the value
-    if (this->_logging)
-    {
-        std::string message = value.string();
-        this->onSendLog(message);
-    }
-
-    // Send the serialized value
-    return this->send_serialized(serialized);
-}
-
-size_t Sender::send(const ::proto::MessageResponse& value)
-{
-    // Serialize the value into the FBE stream
-    size_t serialized = MessageResponseModel.serialize(value);
-    assert((serialized > 0) && "proto::MessageResponse serialization failed!");
-    assert(MessageResponseModel.verify() && "proto::MessageResponse validation failed!");
+    size_t serialized = OriginMessageModel.serialize(value);
+    assert((serialized > 0) && "proto::OriginMessage serialization failed!");
+    assert(OriginMessageModel.verify() && "proto::OriginMessage validation failed!");
 
     // Log the value
     if (this->_logging)
@@ -110,42 +92,23 @@ bool Receiver::onReceive(size_t type, const void* data, size_t size)
 {
     switch (type)
     {
-        case FBE::proto::MessageRequestModel::fbe_type():
+        case FBE::proto::OriginMessageModel::fbe_type():
         {
             // Deserialize the value from the FBE stream
-            MessageRequestModel.attach(data, size);
-            assert(MessageRequestModel.verify() && "proto::MessageRequest validation failed!");
-            [[maybe_unused]] size_t deserialized = MessageRequestModel.deserialize(MessageRequestValue);
-            assert((deserialized > 0) && "proto::MessageRequest deserialization failed!");
+            OriginMessageModel.attach(data, size);
+            assert(OriginMessageModel.verify() && "proto::OriginMessage validation failed!");
+            [[maybe_unused]] size_t deserialized = OriginMessageModel.deserialize(OriginMessageValue);
+            assert((deserialized > 0) && "proto::OriginMessage deserialization failed!");
 
             // Log the value
             if (this->_logging)
             {
-                std::string message = MessageRequestValue.string();
+                std::string message = OriginMessageValue.string();
                 this->onReceiveLog(message);
             }
 
             // Call receive handler with deserialized value
-            onReceive(MessageRequestValue);
-            return true;
-        }
-        case FBE::proto::MessageResponseModel::fbe_type():
-        {
-            // Deserialize the value from the FBE stream
-            MessageResponseModel.attach(data, size);
-            assert(MessageResponseModel.verify() && "proto::MessageResponse validation failed!");
-            [[maybe_unused]] size_t deserialized = MessageResponseModel.deserialize(MessageResponseValue);
-            assert((deserialized > 0) && "proto::MessageResponse deserialization failed!");
-
-            // Log the value
-            if (this->_logging)
-            {
-                std::string message = MessageResponseValue.string();
-                this->onReceiveLog(message);
-            }
-
-            // Call receive handler with deserialized value
-            onReceive(MessageResponseValue);
+            onReceive(OriginMessageValue);
             return true;
         }
         case FBE::proto::MessageRejectModel::fbe_type():
@@ -215,32 +178,18 @@ bool Proxy::onReceive(size_t type, const void* data, size_t size)
 {
     switch (type)
     {
-        case FBE::proto::MessageRequestModel::fbe_type():
+        case FBE::proto::OriginMessageModel::fbe_type():
         {
             // Attach the FBE stream to the proxy model
-            MessageRequestModel.attach(data, size);
-            assert(MessageRequestModel.verify() && "proto::MessageRequest validation failed!");
+            OriginMessageModel.attach(data, size);
+            assert(OriginMessageModel.verify() && "proto::OriginMessage validation failed!");
 
-            size_t fbe_begin = MessageRequestModel.model.get_begin();
+            size_t fbe_begin = OriginMessageModel.model.get_begin();
             if (fbe_begin == 0)
                 return false;
             // Call proxy handler
-            onProxy(MessageRequestModel, type, data, size);
-            MessageRequestModel.model.get_end(fbe_begin);
-            return true;
-        }
-        case FBE::proto::MessageResponseModel::fbe_type():
-        {
-            // Attach the FBE stream to the proxy model
-            MessageResponseModel.attach(data, size);
-            assert(MessageResponseModel.verify() && "proto::MessageResponse validation failed!");
-
-            size_t fbe_begin = MessageResponseModel.model.get_begin();
-            if (fbe_begin == 0)
-                return false;
-            // Call proxy handler
-            onProxy(MessageResponseModel, type, data, size);
-            MessageResponseModel.model.get_end(fbe_begin);
+            onProxy(OriginMessageModel, type, data, size);
+            OriginMessageModel.model.get_end(fbe_begin);
             return true;
         }
         case FBE::proto::MessageRejectModel::fbe_type():
@@ -291,12 +240,12 @@ bool Proxy::onReceive(size_t type, const void* data, size_t size)
     return false;
 }
 
-std::future<::proto::MessageResponse> Client::request(const ::proto::MessageRequest& value, uint64_t timeout)
+std::future<::proto::OriginMessage> Client::request(const ::proto::OriginMessage& value, uint64_t timeout)
 {
     std::scoped_lock locker(this->_lock);
 
-    std::promise<::proto::MessageResponse> promise;
-    std::future<::proto::MessageResponse> future = promise.get_future();
+    std::promise<::proto::OriginMessage> promise;
+    std::future<::proto::OriginMessage> future = promise.get_future();
 
     uint64_t current = utc();
 
@@ -308,9 +257,9 @@ std::future<::proto::MessageResponse> Client::request(const ::proto::MessageRequ
         this->_timestamp = (current <= this->_timestamp) ? this->_timestamp + 1 : current;
 
         // Register the request
-        _requests_by_id_MessageResponse.insert(std::make_pair(value.id, std::make_tuple(this->_timestamp, timeout * 1000000, std::move(promise))));
+        _requests_by_id_OriginMessage.insert(std::make_pair(value.id, std::make_tuple(this->_timestamp, timeout * 1000000, std::move(promise))));
         if (timeout > 0)
-            _requests_by_timestamp_MessageResponse.insert(std::make_pair(this->_timestamp, value.id));
+            _requests_by_timestamp_OriginMessage.insert(std::make_pair(this->_timestamp, value.id));
     }
     else
         promise.set_exception(std::make_exception_ptr(std::runtime_error("Send request failed!")));
@@ -333,19 +282,19 @@ std::future<void> Client::request(const ::proto::DisconnectRequest& value, uint6
     return future;
 }
 
-bool Client::onReceiveResponse(const ::proto::MessageResponse& response)
+bool Client::onReceiveResponse(const ::proto::OriginMessage& response)
 {
     std::scoped_lock locker(this->_lock);
 
-    auto it_MessageResponse = _requests_by_id_MessageResponse.find(response.id);
-    if (it_MessageResponse != _requests_by_id_MessageResponse.end())
+    auto it_OriginMessage = _requests_by_id_OriginMessage.find(response.id);
+    if (it_OriginMessage != _requests_by_id_OriginMessage.end())
     {
-        auto timestamp = std::get<0>(it_MessageResponse->second);
-        [[maybe_unused]] auto timespan = std::get<1>(it_MessageResponse->second);
-        auto& promise = std::get<2>(it_MessageResponse->second);
+        auto timestamp = std::get<0>(it_OriginMessage->second);
+        [[maybe_unused]] auto timespan = std::get<1>(it_OriginMessage->second);
+        auto& promise = std::get<2>(it_OriginMessage->second);
         promise.set_value(response);
-        _requests_by_id_MessageResponse.erase(response.id);
-        _requests_by_timestamp_MessageResponse.erase(timestamp);
+        _requests_by_id_OriginMessage.erase(response.id);
+        _requests_by_timestamp_OriginMessage.erase(timestamp);
         return true;
     }
 
@@ -356,15 +305,15 @@ bool Client::onReceiveReject(const ::proto::MessageReject& reject)
 {
     std::scoped_lock locker(this->_lock);
 
-    auto it_MessageResponse = _requests_by_id_MessageResponse.find(reject.id);
-    if (it_MessageResponse != _requests_by_id_MessageResponse.end())
+    auto it_OriginMessage = _requests_by_id_OriginMessage.find(reject.id);
+    if (it_OriginMessage != _requests_by_id_OriginMessage.end())
     {
-        auto timestamp = std::get<0>(it_MessageResponse->second);
-        [[maybe_unused]] auto timespan = std::get<1>(it_MessageResponse->second);
-        auto& promise = std::get<2>(it_MessageResponse->second);
+        auto timestamp = std::get<0>(it_OriginMessage->second);
+        [[maybe_unused]] auto timespan = std::get<1>(it_OriginMessage->second);
+        auto& promise = std::get<2>(it_OriginMessage->second);
         promise.set_exception(std::make_exception_ptr(std::runtime_error(reject.string())));
-        _requests_by_id_MessageResponse.erase(reject.id);
-        _requests_by_timestamp_MessageResponse.erase(timestamp);
+        _requests_by_id_OriginMessage.erase(reject.id);
+        _requests_by_timestamp_OriginMessage.erase(timestamp);
         return true;
     }
 
@@ -376,28 +325,28 @@ void Client::reset_requests()
     Sender::reset();
     Receiver::reset();
 
-    for (auto& request : _requests_by_id_MessageResponse)
+    for (auto& request : _requests_by_id_OriginMessage)
         std::get<2>(request.second).set_exception(std::make_exception_ptr(std::runtime_error("Reset client!")));
-    _requests_by_id_MessageResponse.clear();
-    _requests_by_timestamp_MessageResponse.clear();
+    _requests_by_id_OriginMessage.clear();
+    _requests_by_timestamp_OriginMessage.clear();
 }
 
 void Client::watchdog_requests(uint64_t utc)
 {
-    auto it_request_by_timestamp_MessageResponse = _requests_by_timestamp_MessageResponse.begin();
-    while (it_request_by_timestamp_MessageResponse != _requests_by_timestamp_MessageResponse.end())
+    auto it_request_by_timestamp_OriginMessage = _requests_by_timestamp_OriginMessage.begin();
+    while (it_request_by_timestamp_OriginMessage != _requests_by_timestamp_OriginMessage.end())
     {
-        auto& it_request_by_id_MessageResponse = _requests_by_id_MessageResponse[it_request_by_timestamp_MessageResponse->second];
-        auto id = it_request_by_timestamp_MessageResponse->second;
-        auto timestamp = std::get<0>(it_request_by_id_MessageResponse);
-        auto timespan = std::get<1>(it_request_by_id_MessageResponse);
+        auto& it_request_by_id_OriginMessage = _requests_by_id_OriginMessage[it_request_by_timestamp_OriginMessage->second];
+        auto id = it_request_by_timestamp_OriginMessage->second;
+        auto timestamp = std::get<0>(it_request_by_id_OriginMessage);
+        auto timespan = std::get<1>(it_request_by_id_OriginMessage);
         if ((timestamp + timespan) <= utc)
         {
-            auto& promise = std::get<2>(it_request_by_id_MessageResponse);
+            auto& promise = std::get<2>(it_request_by_id_OriginMessage);
             promise.set_exception(std::make_exception_ptr(std::runtime_error("Timeout!")));
-            _requests_by_id_MessageResponse.erase(id);
-            _requests_by_timestamp_MessageResponse.erase(timestamp);
-            it_request_by_timestamp_MessageResponse = _requests_by_timestamp_MessageResponse.begin();
+            _requests_by_id_OriginMessage.erase(id);
+            _requests_by_timestamp_OriginMessage.erase(timestamp);
+            it_request_by_timestamp_OriginMessage = _requests_by_timestamp_OriginMessage.begin();
             continue;
         }
         else

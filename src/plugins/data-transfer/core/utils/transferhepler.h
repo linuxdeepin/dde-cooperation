@@ -117,7 +117,7 @@ private:
     QString tempCacheDir();
 
 private:
-    TransferHandle transferhandle;
+    std::shared_ptr<TransferHandle> _transferhandle { nullptr };
     bool online = true;
 };
 

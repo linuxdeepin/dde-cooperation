@@ -37,8 +37,7 @@ class Sender : public virtual FBE::Sender
 {
 public:
     Sender()
-        : MessageRequestModel(this->_buffer)
-        , MessageResponseModel(this->_buffer)
+        : OriginMessageModel(this->_buffer)
         , MessageRejectModel(this->_buffer)
         , MessageNotifyModel(this->_buffer)
         , DisconnectRequestModel(this->_buffer)
@@ -50,16 +49,14 @@ public:
     Sender& operator=(const Sender&) = delete;
     Sender& operator=(Sender&&) noexcept = delete;
 
-    size_t send(const ::proto::MessageRequest& value);
-    size_t send(const ::proto::MessageResponse& value);
+    size_t send(const ::proto::OriginMessage& value);
     size_t send(const ::proto::MessageReject& value);
     size_t send(const ::proto::MessageNotify& value);
     size_t send(const ::proto::DisconnectRequest& value);
 
 public:
     // Sender models accessors
-    FBE::proto::MessageRequestModel MessageRequestModel;
-    FBE::proto::MessageResponseModel MessageResponseModel;
+    FBE::proto::OriginMessageModel OriginMessageModel;
     FBE::proto::MessageRejectModel MessageRejectModel;
     FBE::proto::MessageNotifyModel MessageNotifyModel;
     FBE::proto::DisconnectRequestModel DisconnectRequestModel;
@@ -79,8 +76,7 @@ public:
 
 protected:
     // Receive handlers
-    virtual void onReceive(const ::proto::MessageRequest& value) {}
-    virtual void onReceive(const ::proto::MessageResponse& value) {}
+    virtual void onReceive(const ::proto::OriginMessage& value) {}
     virtual void onReceive(const ::proto::MessageReject& value) {}
     virtual void onReceive(const ::proto::MessageNotify& value) {}
     virtual void onReceive(const ::proto::DisconnectRequest& value) {}
@@ -90,15 +86,13 @@ protected:
 
 private:
     // Receiver values accessors
-    ::proto::MessageRequest MessageRequestValue;
-    ::proto::MessageResponse MessageResponseValue;
+    ::proto::OriginMessage OriginMessageValue;
     ::proto::MessageReject MessageRejectValue;
     ::proto::MessageNotify MessageNotifyValue;
     ::proto::DisconnectRequest DisconnectRequestValue;
 
     // Receiver models accessors
-    FBE::proto::MessageRequestModel MessageRequestModel;
-    FBE::proto::MessageResponseModel MessageResponseModel;
+    FBE::proto::OriginMessageModel OriginMessageModel;
     FBE::proto::MessageRejectModel MessageRejectModel;
     FBE::proto::MessageNotifyModel MessageNotifyModel;
     FBE::proto::DisconnectRequestModel DisconnectRequestModel;
@@ -118,8 +112,7 @@ public:
 
 protected:
     // Proxy handlers
-    virtual void onProxy(FBE::proto::MessageRequestModel& model, size_t type, const void* data, size_t size) {}
-    virtual void onProxy(FBE::proto::MessageResponseModel& model, size_t type, const void* data, size_t size) {}
+    virtual void onProxy(FBE::proto::OriginMessageModel& model, size_t type, const void* data, size_t size) {}
     virtual void onProxy(FBE::proto::MessageRejectModel& model, size_t type, const void* data, size_t size) {}
     virtual void onProxy(FBE::proto::MessageNotifyModel& model, size_t type, const void* data, size_t size) {}
     virtual void onProxy(FBE::proto::DisconnectRequestModel& model, size_t type, const void* data, size_t size) {}
@@ -129,8 +122,7 @@ protected:
 
 private:
     // Proxy models accessors
-    FBE::proto::MessageRequestModel MessageRequestModel;
-    FBE::proto::MessageResponseModel MessageResponseModel;
+    FBE::proto::OriginMessageModel OriginMessageModel;
     FBE::proto::MessageRejectModel MessageRejectModel;
     FBE::proto::MessageNotifyModel MessageNotifyModel;
     FBE::proto::DisconnectRequestModel DisconnectRequestModel;
@@ -154,35 +146,31 @@ public:
     // Watchdog for timeouts
     void watchdog(uint64_t utc) { std::scoped_lock locker(this->_lock); watchdog_requests(utc); }
 
-    std::future<::proto::MessageResponse> request(const ::proto::MessageRequest& value, uint64_t timeout = 0);
+    std::future<::proto::OriginMessage> request(const ::proto::OriginMessage& value, uint64_t timeout = 0);
     std::future<void> request(const ::proto::DisconnectRequest& value, uint64_t timeout = 0);
 
 protected:
     std::mutex _lock;
     uint64_t _timestamp{0};
 
-    virtual bool onReceiveResponse(const ::proto::MessageResponse& response);
+    virtual bool onReceiveResponse(const ::proto::OriginMessage& response);
 
-    virtual bool onReceiveResponse(const ::proto::MessageRequest& response) { return false; }
     virtual bool onReceiveResponse(const ::proto::MessageReject& response) { return false; }
     virtual bool onReceiveResponse(const ::proto::MessageNotify& response) { return false; }
     virtual bool onReceiveResponse(const ::proto::DisconnectRequest& response) { return false; }
 
     virtual bool onReceiveReject(const ::proto::MessageReject& reject);
 
-    virtual bool onReceiveReject(const ::proto::MessageRequest& reject) { return false; }
-    virtual bool onReceiveReject(const ::proto::MessageResponse& reject) { return false; }
+    virtual bool onReceiveReject(const ::proto::OriginMessage& reject) { return false; }
     virtual bool onReceiveReject(const ::proto::MessageNotify& reject) { return false; }
     virtual bool onReceiveReject(const ::proto::DisconnectRequest& reject) { return false; }
 
-    virtual void onReceiveNotify(const ::proto::MessageRequest& notify) {}
-    virtual void onReceiveNotify(const ::proto::MessageResponse& notify) {}
+    virtual void onReceiveNotify(const ::proto::OriginMessage& notify) {}
     virtual void onReceiveNotify(const ::proto::MessageReject& notify) {}
     virtual void onReceiveNotify(const ::proto::MessageNotify& notify) {}
     virtual void onReceiveNotify(const ::proto::DisconnectRequest& notify) {}
 
-    virtual void onReceive(const ::proto::MessageRequest& value) override { if (!onReceiveResponse(value) && !onReceiveReject(value)) onReceiveNotify(value); }
-    virtual void onReceive(const ::proto::MessageResponse& value) override { if (!onReceiveResponse(value) && !onReceiveReject(value)) onReceiveNotify(value); }
+    virtual void onReceive(const ::proto::OriginMessage& value) override { if (!onReceiveResponse(value) && !onReceiveReject(value)) onReceiveNotify(value); }
     virtual void onReceive(const ::proto::MessageReject& value) override { if (!onReceiveResponse(value) && !onReceiveReject(value)) onReceiveNotify(value); }
     virtual void onReceive(const ::proto::MessageNotify& value) override { if (!onReceiveResponse(value) && !onReceiveReject(value)) onReceiveNotify(value); }
     virtual void onReceive(const ::proto::DisconnectRequest& value) override { if (!onReceiveResponse(value) && !onReceiveReject(value)) onReceiveNotify(value); }
@@ -194,8 +182,8 @@ protected:
     virtual void watchdog_requests(uint64_t utc);
 
 private:
-    std::unordered_map<FBE::uuid_t, std::tuple<uint64_t, uint64_t, std::promise<::proto::MessageResponse>>> _requests_by_id_MessageResponse;
-    std::map<uint64_t, FBE::uuid_t> _requests_by_timestamp_MessageResponse;
+    std::unordered_map<FBE::uuid_t, std::tuple<uint64_t, uint64_t, std::promise<::proto::OriginMessage>>> _requests_by_id_OriginMessage;
+    std::map<uint64_t, FBE::uuid_t> _requests_by_timestamp_OriginMessage;
 };
 
 } // namespace proto

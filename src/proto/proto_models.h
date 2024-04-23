@@ -21,17 +21,9 @@
 
 namespace FBE {
 
-// Fast Binary Encoding ::proto::MessageType field model
+// Fast Binary Encoding ::proto::OriginMessage field model
 template <>
-class FieldModel<::proto::MessageType> : public FieldModelBase<::proto::MessageType, uint8_t>
-{
-public:
-    using FieldModelBase<::proto::MessageType, uint8_t>::FieldModelBase;
-};
-
-// Fast Binary Encoding ::proto::MessageRequest field model
-template <>
-class FieldModel<::proto::MessageRequest>
+class FieldModel<::proto::OriginMessage>
 {
 public:
     FieldModel(FBEBuffer& buffer, size_t offset) noexcept;
@@ -63,9 +55,9 @@ public:
     void get_end(size_t fbe_begin) const noexcept;
 
     // Get the struct value
-    void get(::proto::MessageRequest& fbe_value) const noexcept;
+    void get(::proto::OriginMessage& fbe_value) const noexcept;
     // Get the struct fields values
-    void get_fields(::proto::MessageRequest& fbe_value, size_t fbe_struct_size) const noexcept;
+    void get_fields(::proto::OriginMessage& fbe_value, size_t fbe_struct_size) const noexcept;
 
     // Set the struct value (begin phase)
     size_t set_begin();
@@ -73,9 +65,9 @@ public:
     void set_end(size_t fbe_begin);
 
     // Set the struct value
-    void set(const ::proto::MessageRequest& fbe_value) noexcept;
+    void set(const ::proto::OriginMessage& fbe_value) noexcept;
     // Set the struct fields values
-    void set_fields(const ::proto::MessageRequest& fbe_value) noexcept;
+    void set_fields(const ::proto::OriginMessage& fbe_value) noexcept;
 
 private:
     FBEBuffer& _buffer;
@@ -83,23 +75,23 @@ private:
 
 public:
     FieldModel<FBE::uuid_t> id;
-    FieldModel<uint8_t> type;
-    FieldModel<std::string> Message;
+    FieldModel<int32_t> mask;
+    FieldModel<std::string> json_msg;
 };
 
 namespace proto {
 
-// Fast Binary Encoding MessageRequest model
-class MessageRequestModel : public FBE::Model
+// Fast Binary Encoding OriginMessage model
+class OriginMessageModel : public FBE::Model
 {
 public:
-    MessageRequestModel() : model(this->buffer(), 4) {}
-    MessageRequestModel(const std::shared_ptr<FBEBuffer>& buffer) : FBE::Model(buffer), model(this->buffer(), 4) {}
+    OriginMessageModel() : model(this->buffer(), 4) {}
+    OriginMessageModel(const std::shared_ptr<FBEBuffer>& buffer) : FBE::Model(buffer), model(this->buffer(), 4) {}
 
     // Get the model size
     size_t fbe_size() const noexcept { return model.fbe_size() + model.fbe_extra(); }
     // Get the model type
-    static constexpr size_t fbe_type() noexcept { return FieldModel<::proto::MessageRequest>::fbe_type(); }
+    static constexpr size_t fbe_type() noexcept { return FieldModel<::proto::OriginMessage>::fbe_type(); }
 
     // Check if the struct value is valid
     bool verify();
@@ -110,110 +102,15 @@ public:
     size_t create_end(size_t fbe_begin);
 
     // Serialize the struct value
-    size_t serialize(const ::proto::MessageRequest& value);
+    size_t serialize(const ::proto::OriginMessage& value);
     // Deserialize the struct value
-    size_t deserialize(::proto::MessageRequest& value) const noexcept;
+    size_t deserialize(::proto::OriginMessage& value) const noexcept;
 
     // Move to the next struct value
     void next(size_t prev) noexcept { model.fbe_shift(prev); }
 
 public:
-    FieldModel<::proto::MessageRequest> model;
-};
-
-} // namespace proto
-
-// Fast Binary Encoding ::proto::MessageResponse field model
-template <>
-class FieldModel<::proto::MessageResponse>
-{
-public:
-    FieldModel(FBEBuffer& buffer, size_t offset) noexcept;
-
-    // Get the field offset
-    size_t fbe_offset() const noexcept { return _offset; }
-    // Get the field size
-    size_t fbe_size() const noexcept { return 4; }
-    // Get the field body size
-    size_t fbe_body() const noexcept;
-    // Get the field extra size
-    size_t fbe_extra() const noexcept;
-    // Get the field type
-    static constexpr size_t fbe_type() noexcept { return 2; }
-
-    // Shift the current field offset
-    void fbe_shift(size_t size) noexcept { _offset += size; }
-    // Unshift the current field offset
-    void fbe_unshift(size_t size) noexcept { _offset -= size; }
-
-    // Check if the struct value is valid
-    bool verify(bool fbe_verify_type = true) const noexcept;
-    // Check if the struct fields are valid
-    bool verify_fields(size_t fbe_struct_size) const noexcept;
-
-    // Get the struct value (begin phase)
-    size_t get_begin() const noexcept;
-    // Get the struct value (end phase)
-    void get_end(size_t fbe_begin) const noexcept;
-
-    // Get the struct value
-    void get(::proto::MessageResponse& fbe_value) const noexcept;
-    // Get the struct fields values
-    void get_fields(::proto::MessageResponse& fbe_value, size_t fbe_struct_size) const noexcept;
-
-    // Set the struct value (begin phase)
-    size_t set_begin();
-    // Set the struct value (end phase)
-    void set_end(size_t fbe_begin);
-
-    // Set the struct value
-    void set(const ::proto::MessageResponse& fbe_value) noexcept;
-    // Set the struct fields values
-    void set_fields(const ::proto::MessageResponse& fbe_value) noexcept;
-
-private:
-    FBEBuffer& _buffer;
-    size_t _offset;
-
-public:
-    FieldModel<FBE::uuid_t> id;
-    FieldModel<uint32_t> Length;
-    FieldModel<uint32_t> Hash;
-    FieldModel<std::string> Message;
-};
-
-namespace proto {
-
-// Fast Binary Encoding MessageResponse model
-class MessageResponseModel : public FBE::Model
-{
-public:
-    MessageResponseModel() : model(this->buffer(), 4) {}
-    MessageResponseModel(const std::shared_ptr<FBEBuffer>& buffer) : FBE::Model(buffer), model(this->buffer(), 4) {}
-
-    // Get the model size
-    size_t fbe_size() const noexcept { return model.fbe_size() + model.fbe_extra(); }
-    // Get the model type
-    static constexpr size_t fbe_type() noexcept { return FieldModel<::proto::MessageResponse>::fbe_type(); }
-
-    // Check if the struct value is valid
-    bool verify();
-
-    // Create a new model (begin phase)
-    size_t create_begin();
-    // Create a new model (end phase)
-    size_t create_end(size_t fbe_begin);
-
-    // Serialize the struct value
-    size_t serialize(const ::proto::MessageResponse& value);
-    // Deserialize the struct value
-    size_t deserialize(::proto::MessageResponse& value) const noexcept;
-
-    // Move to the next struct value
-    void next(size_t prev) noexcept { model.fbe_shift(prev); }
-
-public:
-    FieldModel<::proto::MessageResponse> model;
+    FieldModel<::proto::OriginMessage> model;
 };
 
 } // namespace proto
@@ -234,7 +131,7 @@ public:
     // Get the field extra size
     size_t fbe_extra() const noexcept;
     // Get the field type
-    static constexpr size_t fbe_type() noexcept { return 3; }
+    static constexpr size_t fbe_type() noexcept { return 2; }
 
     // Shift the current field offset
     void fbe_shift(size_t size) noexcept { _offset += size; }
@@ -272,7 +169,7 @@ private:
 
 public:
     FieldModel<FBE::uuid_t> id;
-    FieldModel<std::string> Error;
+    FieldModel<std::string> error;
 };
 
 namespace proto {
@@ -327,7 +224,7 @@ public:
     // Get the field extra size
     size_t fbe_extra() const noexcept;
     // Get the field type
-    static constexpr size_t fbe_type() noexcept { return 4; }
+    static constexpr size_t fbe_type() noexcept { return 3; }
 
     // Shift the current field offset
     void fbe_shift(size_t size) noexcept { _offset += size; }
@@ -364,7 +261,7 @@ private:
     size_t _offset;
 
 public:
-    FieldModel<std::string> Notification;
+    FieldModel<std::string> notification;
 };
 
 namespace proto {
@@ -419,7 +316,7 @@ public:
     // Get the field extra size
     size_t fbe_extra() const noexcept;
     // Get the field type
-    static constexpr size_t fbe_type() noexcept { return 5; }
+    static constexpr size_t fbe_type() noexcept { return 4; }
 
     // Shift the current field offset
     void fbe_shift(size_t size) noexcept { _offset += size; }

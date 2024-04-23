@@ -30,6 +30,7 @@ public:
 
     static QString tipConfPath();
 
+    static QString generateRandomPassword();
 private:
     static QString logDir();
     static bool detailLog();

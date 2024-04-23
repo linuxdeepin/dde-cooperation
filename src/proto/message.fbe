@@ -14,41 +14,17 @@ package proto
 // Protocol version
 version 1.0
 
-// UInt8 enum declaration
-enum MessageType : uint8
-{
-    MSG_TYPE_BASE = 0;
-    MSG_TYPE_LAUNCH = 1;
-    MSG_TYPE_APP;
-    MSG_TYPE_LAST = 254;
-    MSG_TYPE_MAX = MSG_TYPE_LAST;
-}
-
-// Message request message
+// Origin request message
 [request]
-[response(MessageResponse)]
+[response(OriginMessage)]
 [reject(MessageReject)]
-message MessageRequest
+message OriginMessage
 {
-    // Request Id
     uuid [id] = uuid1;
-    // Request type
-    uint8 type;
-    // Request message
-    string Message;
-}
-
-// Message response
-message MessageResponse
-{
-    // Response Id
-    uuid [id] = uuid1;
-    // Calculated message length
-    uint32 Length;
-    // Calculated message hash
-    uint32 Hash;
-    // Response message
-    string Message;
+    // type or response result
+    int32 mask;
+    // content json message
+    string json_msg;
 }
 
 // Message reject
@@ -57,14 +33,14 @@ message MessageReject
     // Reject Id
     uuid [id] = uuid1;
     // Error message
-    string Error;
+    string error;
 }
 
 // Message notification
 message MessageNotify
 {
     // Server notification
-    string Notification;
+    string notification;
 }
 
 // Disconnect request message

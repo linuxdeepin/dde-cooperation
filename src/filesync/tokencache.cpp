@@ -3,8 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tokencache.h"
+#include "filesystem/path.h"
 
-std::string TokenCache::GetAllCache()
+std::string TokenCache::getAllCache()
 {
     std::scoped_lock locker(_cache_lock);
     std::string result;
@@ -19,7 +20,7 @@ std::string TokenCache::GetAllCache()
     return result;
 }
 
-bool TokenCache::GetCacheValue(std::string_view key, std::string &value)
+bool TokenCache::getCacheValue(std::string_view key, std::string &value)
 {
     std::scoped_lock locker(_cache_lock);
     auto it = _cache.find(key);
@@ -30,7 +31,7 @@ bool TokenCache::GetCacheValue(std::string_view key, std::string &value)
         return false;
 }
 
-void TokenCache::PutCacheValue(std::string_view key, std::string_view value)
+void TokenCache::putCacheValue(std::string_view key, std::string_view value)
 {
     std::scoped_lock locker(_cache_lock);
     auto it = _cache.emplace(key, value);
@@ -38,7 +39,7 @@ void TokenCache::PutCacheValue(std::string_view key, std::string_view value)
         it.first->second = value;
 }
 
-bool TokenCache::DeleteCacheValue(std::string_view key, std::string &value)
+bool TokenCache::deleteCacheValue(std::string_view key, std::string &value)
 {
     std::scoped_lock locker(_cache_lock);
     auto it = _cache.find(key);
@@ -49,3 +50,37 @@ bool TokenCache::DeleteCacheValue(std::string_view key, std::string &value)
     } else
         return false;
 }
+
+void TokenCache::clearCache()
+{
+    _cache.clear();
+}
+
+//bool TokenCache::setMountPoint(const std::string &mount_point, const std::string &dir)
+//{
+//    CppCommon::Path dirpath = dir;
+//    if (dirpath.IsDirectory()) {
+//        std::string mnt = !mount_point.empty() ? mount_point : "/";
+//        if (!mnt.empty() && mnt[0] == '/') {
+//            _base_dirs.push_back({mnt, dir});
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+
+//bool TokenCache::removeMountPoint(const std::string &mount_point)
+//{
+//    for (auto it = _base_dirs.begin(); it != _base_dirs.end(); ++it) {
+//        if (it->mount_point == mount_point) {
+//            _base_dirs.erase(it);
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+
+//std::vector<MountPointEntry> TokenCache::getBaseDir()
+//{
+//    return _base_dirs;
+//}
