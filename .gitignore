@@ -3,8 +3,3 @@
 meson.build.user
 CMakeLists.txt.user
 *.qm
-
-# Modules
-modules/*
-!modules/CMakeLists.txt
-!modules/*.cmake
