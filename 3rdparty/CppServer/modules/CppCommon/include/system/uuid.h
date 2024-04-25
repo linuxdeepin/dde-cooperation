@@ -36,7 +36,7 @@ class UUID
 {
 public:
     //! Default constructor
-    constexpr UUID() : _data() { _data.fill(0); }
+    UUID() : _data() { _data.fill(0); }
     //! Initialize UUID with a given string literal
     /*!
         \param uuid - UUID string literal
@@ -113,7 +113,7 @@ public:
     friend void swap(UUID& uuid1, UUID& uuid2) noexcept;
 
 private:
-    std::array<uint8_t, 16> _data {};
+    std::array<uint8_t, 16> _data{};
 };
 
 /*! \example system_uuid.cpp Universally unique identifier (UUID) example */

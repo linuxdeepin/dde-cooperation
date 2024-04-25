@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags /*flags*/)
 
 MainWindow::~MainWindow() { }
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 void MainWindow::paintEvent(QPaintEvent *event)
 {
     d->paintEvent(event);

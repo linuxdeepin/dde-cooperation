@@ -15,7 +15,7 @@ public:
     explicit MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
     ~MainWindow();
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
     void paintEvent(QPaintEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
 #endif

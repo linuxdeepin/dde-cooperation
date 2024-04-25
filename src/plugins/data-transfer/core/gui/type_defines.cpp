@@ -19,7 +19,7 @@ ButtonLayout::ButtonLayout(QWidget *parent)
     button2 = new CooperationSuggestButton(parent);
     button2->setFixedSize(120, 36);
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
     button1->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::gray));
     button2->setStyleSheet(StyleHelper::buttonStyle(StyleHelper::blue));
 #else

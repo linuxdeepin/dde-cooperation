@@ -25,7 +25,7 @@ private:
 private:
     QPushButton *backButton { nullptr };
 
-#ifndef WIN32
+#ifdef __linux__
 public:
     void cancel();
 #endif

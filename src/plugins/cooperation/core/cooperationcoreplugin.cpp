@@ -14,7 +14,7 @@
 #include "configs/settings/configmanager.h"
 #include "singleton/singleapplication.h"
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #    include "proxy/cooperationproxy.h"
 #else
 #    include "base/reportlog/reportlogmanager.h"

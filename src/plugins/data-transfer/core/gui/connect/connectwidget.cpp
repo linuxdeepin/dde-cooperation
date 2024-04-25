@@ -1,4 +1,4 @@
-﻿#ifndef WIN32
+﻿#ifdef __linux__
 #    include "connectwidget.h"
 #    include "../type_defines.h"
 

@@ -160,7 +160,7 @@ void TransferHandle::onReceivedMessage(const proto::OriginMessage &request, prot
         FreeSpaceMessage req, res;
         req.from_json(v);
 
-        int remainSpace = TransferHelper::getRemainSize(); // xx G
+        int remainSpace = 0;//TransferHelper::getRemainSize(); // xx G
         res.free = remainSpace;
         response->json_msg = res.as_json().serialize();
     }
@@ -180,7 +180,7 @@ void TransferHandle::onReceivedMessage(const proto::OriginMessage &request, prot
         res.id = req.id;
         res.names = req.names;
         res.flag = true;
-        res.size = TransferHelper::getRemainSize();
+        res.size = 0;//TransferHelper::getRemainSize();
         response->json_msg = res.as_json().serialize();
 
         emit notifyTransData(req.names);
@@ -464,7 +464,7 @@ void TransferHandle::handleConnectStatus(int result, QString msg)
     LOG << "connect status: " << result << " msg:" << msg.toStdString();
     if (result > 0) {
         emit TransferHelper::instance()->connectSucceed();
-#ifndef WIN32
+#ifdef __linux__
         json::Json message;
         QString unfinishJson;
         QString ip = msg.split(" ").first();
@@ -500,7 +500,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
     case JOB_TRANS_DOING:
         _job_maps.insert(id, path);
         emit TransferHelper::instance()->transferring();
-#ifndef WIN32
+#ifdef __linux__
         QFile::remove(path + "/" + "transfer.json");
 #endif
         break;
@@ -509,7 +509,7 @@ void TransferHandle::handleTransJobStatus(int id, int result, QString path)
         if (it != _job_maps.end()) {
             _job_maps.erase(it);
         }
-#ifndef WIN32
+#ifdef __linux__
         TransferHelper::instance()->setting(path);
 #endif
         break;
@@ -558,7 +558,7 @@ void TransferHandle::handleFileTransStatus(QString statusstr)
     }
     case FILE_TRANS_END: {
         LOG_IF(FLG_log_detail) << "file receive END: " << filepath.toStdString();
-#ifndef WIN32
+#ifdef __linux__
         TransferHelper::instance()->addFinshedFiles(filepath, param.total);
 #endif
 

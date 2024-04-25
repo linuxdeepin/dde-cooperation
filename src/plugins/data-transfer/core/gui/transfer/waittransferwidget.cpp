@@ -45,7 +45,7 @@ void WaitTransferWidget::initUI()
     buttonLayout->setCount(1);
     backButton = buttonLayout->getButton1();
     backButton->setText(tr("Cancel"));
-#ifndef WIN32
+#ifdef __linux__
     connect(backButton, &QPushButton::clicked, this, &WaitTransferWidget::cancel);
 #endif
 
@@ -71,7 +71,7 @@ void WaitTransferWidget::nextPage()
 }
 void WaitTransferWidget::backPage()
 {
-#ifndef WIN32
+#ifdef __linux__
     emit TransferHelper::instance()->changeWidget(PageName::connectwidget);
 #endif
 }
@@ -87,7 +87,7 @@ void WaitTransferWidget::themeChanged(int theme)
     }
 }
 
-#ifndef WIN32
+#ifdef __linux__
 #    include <DDialog>
 DWIDGET_USE_NAMESPACE
 void WaitTransferWidget::cancel()

@@ -123,7 +123,7 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
 
     for (const QString &path : pluginPaths) {
         QString libSuffix =
-        #ifdef WIN32
+        #if defined(_WIN32) || defined(_WIN64)
                 "*.dll"
         #else
                 "*.so"

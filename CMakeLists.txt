@@ -8,13 +8,28 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -fPIE")
+# CMake module path
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/CppServer/cmake")
+
+# # Compiler features
+# include(SetCompilerFeatures)
+# include(SetCompilerWarnings)
+# include(SetPlatformFeatures)
+# include(SystemInformation)
 
 if (NOT WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -fPIE")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--as-need")
 
     #安全加固
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type")
+
+    #安全加固
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all")
+    if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -z noexecstack -z relro")
+        add_definitions(-D ARCH_MIPSEL)
+    endif()
 endif()
 
 if(MINGW)
@@ -25,14 +40,19 @@ if(MINGW)
     include (cmake/qt-helper.cmake)
 endif()
 
-#安全加固
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all")
-if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -z noexecstack -z relro")
-    add_definitions(-D ARCH_MIPSEL)
-endif()
-
 include(GNUInstallDirs)
+
+if(MSVC)
+    add_compile_options(/fp:fast /EHsc)
+    add_link_options(/SAFESEH:NO)
+    if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+        string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    endif()
+else()
+    add_compile_options(-Wall -O2 -g -Wno-sign-compare -Wno-strict-aliasing)
+endif()
 
 if(NOT DEFINED LIB_INSTALL_DIR)
     set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
@@ -147,30 +167,8 @@ endif()
 # build 3rd party libraries first
 add_subdirectory(3rdparty)
 
-#set(CPPSERVER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/CppServer")
-#include_directories(${CPPSERVER_DIR}/include)
-
 # Modules
-add_subdirectory("modules")
+# add_subdirectory("modules")
 
-# Proto library
-# file(GLOB_RECURSE PROTO_HEADER_FILES "proto/*.h")
-# file(GLOB_RECURSE PROTO_INLINE_FILES "proto/*.inl")
-# file(GLOB_RECURSE PROTO_SOURCE_FILES "proto/*.cpp")
-# add_library(proto ${PROTO_HEADER_FILES} ${PROTO_INLINE_FILES} ${PROTO_SOURCE_FILES})
-# set_target_properties(proto PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}" FOLDER "proto")
-# target_include_directories(proto PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/proto")
-# target_link_libraries(proto ${LINKLIBS})
-# list(APPEND INSTALL_TARGETS proto)
-# list(APPEND LINKLIBS proto)
-
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/proto)
-
-# launcher
-# add_subdirectory("launcher")
-
-# set(CMAKE_AUTOUIC ON)
-# set(CMAKE_AUTOMOC ON)
-# set(CMAKE_AUTORCC ON)
-
+add_compile_options(/utf-8)
 add_subdirectory(src)

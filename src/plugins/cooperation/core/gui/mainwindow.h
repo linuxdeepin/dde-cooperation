@@ -22,7 +22,7 @@ public:
 
     DeviceInfoPointer findDeviceInfo(const QString &ip);
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;

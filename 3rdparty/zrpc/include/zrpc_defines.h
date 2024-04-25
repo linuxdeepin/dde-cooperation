@@ -5,7 +5,7 @@
 #ifndef ZRPC_DEFINES_H
 #define ZRPC_DEFINES_H
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
     #ifdef EXPORT_ZRPC_API
         #define ZRPC_API __declspec(dllexport)
     #else

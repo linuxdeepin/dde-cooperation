@@ -26,7 +26,7 @@
 #include <QStandardPaths>
 #include <QNetworkInterface>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #    include <gui/win/drapwindowsdata.h>
 #else
 #    include "settinghepler.h"
@@ -42,7 +42,7 @@ TransferHelper::TransferHelper()
     }
 
     initOnlineState();
-#ifndef WIN32
+#ifdef __linux__
     SettingHelper::instance();
     connect(this, &TransferHelper::transferFinished, this, [this]() { isSetting = false; });
 #endif
@@ -158,7 +158,7 @@ void TransferHelper::sendMessage(const QString &type, const QString &message)
     _transferhandle->sendMessage(mes);
 }
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 void TransferHelper::startTransfer()
 {
     QStringList filePathList = OptionsManager::instance()->getUserOption(Options::kFile);

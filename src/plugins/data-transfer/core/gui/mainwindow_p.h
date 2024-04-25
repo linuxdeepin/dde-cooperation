@@ -4,7 +4,7 @@
 #include <QStackedLayout>
 #include <QDockWidget>
 #include <QStackedWidget>
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 class QPaintEvent;
 #endif
 
@@ -29,7 +29,7 @@ private slots:
     void handleCurrentChanged(int index);
     void clearWidget();
     void changeAllWidgtText();
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 protected:
     void paintEvent(QPaintEvent *event);
 
@@ -43,7 +43,7 @@ protected:
     QStackedLayout *mainLayout{ nullptr };
     QDockWidget *sidebar{ nullptr };
     QStackedWidget *stackedWidget{ nullptr };
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 protected:
     QHBoxLayout *windowsCentralWidget{ nullptr };
     QHBoxLayout *windowsCentralWidgetContent{ nullptr };

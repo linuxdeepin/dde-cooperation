@@ -31,7 +31,7 @@ private:
     ModeItem *winItem { nullptr };
     ModeItem *packageItem { nullptr };
     QString internetMethodName { tr("From Windows PC") };
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
     QString localFileMethodName { tr("Export to local directory") };
     int selecPage1 = PageName::promptwidget;
     int selecPage2 = PageName::selectmainwidget;

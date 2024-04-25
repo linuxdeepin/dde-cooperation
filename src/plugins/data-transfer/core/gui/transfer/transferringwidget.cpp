@@ -162,7 +162,7 @@ void TransferringWidget::changeProgressLabel(const int &ratio)
 void TransferringWidget::updateProcess(const QString &tpye, const QString &content, int progressbar,
                                        int estimatedtime)
 {
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
     if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
         == TransferMethod::kLocalExport) {
         return;

@@ -1,7 +1,9 @@
 set(CMAKE_CXX_STANDARD 17)
 
-# protobuf.a 需要加“-fPIC”， 否则无法连接到.so
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+if (NOT WIN32)
+  # protobuf.a 需要加“-fPIC”， 否则无法连接到.so
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
 add_subdirectory(protobuf)
 
 # 检查coost目录是否存在 https://github.com/idealvin/coost
@@ -18,8 +20,17 @@ add_subdirectory(protobuf)
 
 # coost 打开SSL和动态库
 # cmake .. -DWITH_LIBCURL=ON -DWITH_OPENSSL=ON -DBUILD_SHARED_LIBS=ON
+if(MINGW AND NOT MSYS)
+  set(OPENSSL_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CppServer/modules/OpenSSL/MinGW")
+  set(OPENSSL_USE_STATIC_LIBS TRUE)
+elseif(MSVC)
+  set(OPENSSL_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CppServer/modules/OpenSSL/VS")
+  set(OPENSSL_USE_STATIC_LIBS TRUE)
+  set(OPENSSL_MSVC_STATIC_RT TRUE)
+endif()
+
 set(WITH_OPENSSL ON CACHE BOOL "build with openssl")
-set(BUILD_SHARED_LIBS ON CACHE BOOL "build shared lib")
+# set(BUILD_SHARED_LIBS ON CACHE BOOL "build shared lib")
 set(BUILD_WITH_SYSTEMD ON CACHE BOOL "Build with systemd")
 add_subdirectory(coost)
 

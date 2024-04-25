@@ -6,6 +6,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Project name
 project(cppserver)
 
+set(CPPSERVER_MODULE Y)
+
 # Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
@@ -71,6 +73,7 @@ file(GLOB_RECURSE LIB_INLINE_FILES "include/*.inl" "source/*.inl")
 file(GLOB_RECURSE LIB_SOURCE_FILES "include/*.cpp" "source/*.cpp")
 add_library(cppserver ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES})
 set_target_properties(cppserver PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}" FOLDER "libraries")
+set_target_properties(cppserver PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
 target_include_directories(cppserver PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(cppserver ${LINKLIBS} asio)
 list(APPEND INSTALL_TARGETS cppserver)

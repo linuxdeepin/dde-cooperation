@@ -6,7 +6,7 @@
 #include <QMap>
 #include <QObject>
 #include "../gui/type_defines.h"
-#ifndef WIN32
+#ifdef __linux__
 #    include <QDBusMessage>
 #endif
 
@@ -38,7 +38,7 @@ public:
     void emitDisconnected();
 
     void sendMessage(const QString &type, const QString &message);
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
     QMap<QString, QString> getAppList(QMap<QString, QString> &noRecommedApplist);
     QMap<QString, QString> getBrowserList();
     QStringList getTransferFilePath(QStringList filePathList, QStringList appList,

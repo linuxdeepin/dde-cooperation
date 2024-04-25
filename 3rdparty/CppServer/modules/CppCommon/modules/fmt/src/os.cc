@@ -189,7 +189,7 @@ int buffered_file::descriptor() const {
 #  endif
   int fd = FMT_POSIX_CALL(fileno(file_));
 #else
-  int fd = fileno(file_);
+  int fd = _fileno(file_);
 #endif
   if (fd == -1)
     FMT_THROW(system_error(errno, FMT_STRING("cannot get file descriptor")));

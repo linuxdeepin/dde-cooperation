@@ -17,7 +17,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
-if (WIN32)
+if (MINGW)
     # 管理员权限
     set (SET_ADMIN "1 24 DISCARDABLE ${CMAKE_CURRENT_SOURCE_DIR}/../uac.manifest")
     # 文件描述信息

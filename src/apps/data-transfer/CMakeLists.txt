@@ -28,7 +28,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components}
 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc)
 
-if (WIN32)
+if (MINGW)
     # 程序图标
     set (SET_ICON "IDI_ICON1 ICON DISCARDABLE ${CMAKE_CURRENT_SOURCE_DIR}/res/win/${PROJ_NAME}.ico")
     # 文件描述信息
@@ -87,7 +87,7 @@ TRANSLATION_GENERATE(QM_FILES ${CMAKE_SOURCE_DIR}/translations/${PROJ_NAME})
 add_custom_target(${PROJ_NAME}_qm_files DEPENDS ${QM_FILES})
 add_dependencies(${PROJ_NAME} ${PROJ_NAME}_qm_files)
 
-if (WIN32)
+if (MINGW)
     # main entry vbs
     file(GLOB SETUPS ${CMAKE_CURRENT_SOURCE_DIR}/res/win/main.vbs)
     file(COPY ${SETUPS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)

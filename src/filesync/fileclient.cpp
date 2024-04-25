@@ -260,7 +260,7 @@ void FileClient::downloadFolder(const std::string &folderName)
     _running = true;
 
     // Step 1: 请求文件夹信息
-    std::string res_body;
+    std::string res_body = {};
     if (getInfo(folderName, &res_body)) {
         std::cout << "Failed to prepare for downloading folder information!" << std::endl;
         return;

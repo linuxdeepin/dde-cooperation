@@ -3,6 +3,9 @@
 meson.build.user
 CMakeLists.txt.user
 *.qm
+/.vs/
+/out/
+CMake*.json
 
 
 # Modules

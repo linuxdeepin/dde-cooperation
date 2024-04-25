@@ -1,6 +1,6 @@
 ﻿#ifndef CONNECTWIDGET_H
 #define CONNECTWIDGET_H
-#ifndef WIN32
+#ifdef __linux__
 #    include <QFrame>
 
 class QLabel;

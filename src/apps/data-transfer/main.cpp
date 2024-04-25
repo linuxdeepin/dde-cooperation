@@ -14,7 +14,7 @@
 
 static constexpr char kPluginInterface[] { "org.deepin.plugin.datatransfer" };
 static constexpr char kPluginCore[] { "data-transfer-core" };
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #define LIB_FILE_NAME(lib_name) QString("%1.dll").arg(#lib_name)
 #else
 #define LIB_FILE_NAME(lib_name) QString("lib%1.so").arg(#lib_name)
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 
     app.closeServer();
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
     // FIXME: windows上使用socket，即使线程资源全释放，进程也无法正常退出
     abort();
 #endif

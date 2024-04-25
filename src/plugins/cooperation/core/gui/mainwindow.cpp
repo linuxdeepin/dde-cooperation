@@ -139,7 +139,7 @@ void MainWindow::onRegistOperations(const QVariantMap &map)
     d->workspaceWidget->addDeviceOperation(map);
 }
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 void MainWindow::paintEvent(QPaintEvent *event)
 {
     d->paintEvent(event);

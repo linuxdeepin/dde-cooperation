@@ -1,7 +1,7 @@
 ﻿#ifndef TYPE_DEFINES_H
 #define TYPE_DEFINES_H
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #    include <QMainWindow>
 #    include <QPushButton>
 typedef QMainWindow CrossMainWindow;
@@ -13,7 +13,7 @@ typedef DTK_WIDGET_NAMESPACE::DMainWindow CrossMainWindow;
 typedef DTK_WIDGET_NAMESPACE::DSuggestButton CooperationSuggestButton;
 #endif
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 enum PageName {
     startwidget = 0,
     choosewidget,
