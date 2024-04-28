@@ -1,10 +1,14 @@
-set(CMAKE_CXX_STANDARD 17)
+﻿set(CMAKE_CXX_STANDARD 17)
 
-if (NOT WIN32)
-  # protobuf.a 需要加“-fPIC”， 否则无法连接到.so
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
+# if (NOT WIN32)
+#   # protobuf.a 需要加“-fPIC”， 否则无法连接到.so
+#   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+# endif()
+
 add_subdirectory(protobuf)
+if(FPIC)
+    set_target_properties(protobuf PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 # 检查coost目录是否存在 https://github.com/idealvin/coost
 #if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/coost")

@@ -44,6 +44,8 @@ endif()
 
 include(GNUInstallDirs)
 
+option(FPIC "build with -fPIC" FALSE)
+
 if(MSVC)
     add_compile_options(/fp:fast /EHsc)
     add_link_options(/SAFESEH:NO)
@@ -54,6 +56,7 @@ if(MSVC)
     endif()
 else()
     add_compile_options(-Wall -O2 -g -Wno-sign-compare -Wno-strict-aliasing)
+    set(FPIC TRUE)
 endif()
 
 if(NOT DEFINED LIB_INSTALL_DIR)
@@ -172,5 +175,7 @@ add_subdirectory("modules")
 # build 3rd party libraries first
 add_subdirectory(3rdparty)
 
-add_compile_options(/utf-8)
+if(WIN32)
+    add_compile_options(/utf-8)
+endif()
 add_subdirectory(src)

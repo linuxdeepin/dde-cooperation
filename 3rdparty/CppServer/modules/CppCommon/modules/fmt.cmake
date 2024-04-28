@@ -13,6 +13,10 @@ if(NOT TARGET fmt)
   target_include_directories(fmt PUBLIC "fmt/include")
   target_link_libraries(fmt)
 
+  if(FPIC)
+    set_target_properties(fmt PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  endif()
+
   # Module folder
   set_target_properties(fmt PROPERTIES FOLDER "modules/fmt")
 
