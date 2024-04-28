@@ -166,12 +166,11 @@ if (CMAKE_SYSTEM MATCHES "Windows")
     include_directories(${QUAZIP_DIR}/quazip)
 endif()
 
-# build 3rd party libraries first
-add_subdirectory(3rdparty)
-
-set(BUILD_SHARED_LIBS ON CACHE BOOL "build shared lib")
 # Modules
 add_subdirectory("modules")
+
+# build 3rd party libraries first
+add_subdirectory(3rdparty)
 
 add_compile_options(/utf-8)
 add_subdirectory(src)

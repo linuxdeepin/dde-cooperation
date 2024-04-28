@@ -1,11 +1,11 @@
 ﻿# protocol library
-# add_subdirectory("proto")
+add_subdirectory("proto")
  
-# # network communication session
-# add_subdirectory("session")
+# network communication session
+add_subdirectory("session")
 
-# # the file sync server and client
-# add_subdirectory("filesync")
+# the file sync server and client
+add_subdirectory("filesync")
 
 # launcher
 # add_subdirectory("launcher")

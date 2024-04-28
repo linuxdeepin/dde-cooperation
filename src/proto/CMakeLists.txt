@@ -9,16 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB_RECURSE PROTO_HEADER_FILES "*.h")
 file(GLOB_RECURSE PROTO_INLINE_FILES "*.inl")
 file(GLOB_RECURSE PROTO_SOURCE_FILES "*.cpp")
-add_library(proto ${PROTO_HEADER_FILES} ${PROTO_INLINE_FILES} ${PROTO_SOURCE_FILES})
+add_library(proto STATIC ${PROTO_HEADER_FILES} ${PROTO_INLINE_FILES} ${PROTO_SOURCE_FILES})
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}" FOLDER "proto")
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-list(APPEND LINKLIBS fmt)
-list(APPEND LINKLIBS cppcommon)
-message(STATUS "Proto library added ${LINKLIBS}")
 
-message(STATUS "bin output dir: ${CMAKE_BINARY_DIR}")
-link_directories("${CMAKE_BINARY_DIR}/output")
-target_link_libraries(${PROJECT_NAME} PRIVATE cppserver)
+target_link_libraries(${PROJECT_NAME} PUBLIC cppcommon)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 

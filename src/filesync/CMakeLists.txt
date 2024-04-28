@@ -5,8 +5,7 @@ FILE(GLOB CPP_SRC
     *.cpp
 )
 
- list(APPEND LINKLIBS cppserver)
-# list(APPEND LINKLIBS proto)
+list(APPEND LINKLIBS cppserver)
 
 # filesync library
 add_library(${PROJECT_NAME} ${CPP_SRC})
