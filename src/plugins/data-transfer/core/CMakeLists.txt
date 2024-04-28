@@ -126,6 +126,6 @@ install(TARGETS
     ${DEEPIN_DATA_TRANS_PLUGIN_DIR}
 )
 
-if (MINGW)
+if (WIN32)
     deployqt_qt_runtime(${PROJECT_NAME} ${qt_required_components})
 endif()

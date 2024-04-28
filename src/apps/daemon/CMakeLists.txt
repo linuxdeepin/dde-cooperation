@@ -17,14 +17,16 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
-if (MINGW)
+if (WIN32)
     # 管理员权限
     set (SET_ADMIN "1 24 DISCARDABLE ${CMAKE_CURRENT_SOURCE_DIR}/../uac.manifest")
     # 文件描述信息
     set (PRODUCT_INFO "Deepin cooperation server")
     set (PRODUCT_NAME "cooperation")
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
-    set (RC_FILES ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+    if (MINGW)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+        set (RC_FILES ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+    endif()
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

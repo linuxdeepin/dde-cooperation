@@ -32,9 +32,11 @@ if (NOT WIN32)
     endif()
 endif()
 
-if(MINGW)
-    # windows7 minGW support
-    add_definitions(-D _WIN32_WINNT=0x0601)
+if(WIN32)
+    if (MINGW)
+        # windows7 minGW support
+        add_definitions(-D _WIN32_WINNT=0x0601)
+    endif()
 
     # windeployqt 依赖
     include (cmake/qt-helper.cmake)
@@ -167,8 +169,9 @@ endif()
 # build 3rd party libraries first
 add_subdirectory(3rdparty)
 
+set(BUILD_SHARED_LIBS ON CACHE BOOL "build shared lib")
 # Modules
-# add_subdirectory("modules")
+add_subdirectory("modules")
 
 add_compile_options(/utf-8)
 add_subdirectory(src)

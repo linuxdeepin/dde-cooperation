@@ -51,7 +51,7 @@ void WorkspaceWidgetPrivate::initUI()
 
     deviceLabel = new QLabel(tr("Nearby Device"));
     deviceLabel->setContentsMargins(20, 0, 10, 0);
-    CooperationGuiHelper::setAutoFont(deviceLabel, 14, 400);
+    CooperationGuiHelper::setAutoFont(deviceLabel, 14, QFont::Normal);
 
     lfdWidget = new LookingForDeviceWidget(q);
     nnWidget = new NoNetworkWidget(q);

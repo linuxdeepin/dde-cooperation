@@ -25,15 +25,18 @@ endif()
 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc)
 
-if (MINGW)
+if (WIN32)
     # 程序图标
     set (SET_ICON "IDI_ICON1 ICON DISCARDABLE ${CMAKE_CURRENT_SOURCE_DIR}/res/win/${PROJ_NAME}.ico")
     # 文件描述信息
     set (PRODUCT_INFO "Deepin cooperation client")
     set (PRODUCT_NAME "deepin-cooperation")
     set (PRODUCT_ID "A3AE65FC-2431-49AE-9A9C-87D3DBC2B7A4")
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
-    set (RC_FILES ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+
+    if (MINGW)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+        set (RC_FILES ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+    endif()
 
 
     # 安装包制作inno脚本
@@ -85,7 +88,7 @@ TRANSLATION_GENERATE(QM_FILES ${CMAKE_SOURCE_DIR}/translations/${PROJ_NAME})
 add_custom_target(${PROJ_NAME}_qm_files DEPENDS ${QM_FILES})
 add_dependencies(${PROJ_NAME} ${PROJ_NAME}_qm_files)
 
-if (MINGW)
+if (WIN32)
     # main entry vbs
     file(GLOB SETUPS ${CMAKE_CURRENT_SOURCE_DIR}/res/win/main.vbs)
     file(COPY ${SETUPS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)

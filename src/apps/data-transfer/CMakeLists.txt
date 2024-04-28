@@ -28,15 +28,18 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components}
 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc)
 
-if (MINGW)
+if (WIN32)
     # 程序图标
     set (SET_ICON "IDI_ICON1 ICON DISCARDABLE ${CMAKE_CURRENT_SOURCE_DIR}/res/win/${PROJ_NAME}.ico")
     # 文件描述信息
     set (PRODUCT_INFO "Deepin data transfer client")
     set (PRODUCT_NAME "deepin-datatransfer")
     set (PRODUCT_ID "636B356F-47E1-491D-B66E-B254233FFCB1")
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
-    set (RC_FILES ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+
+    if (MINGW)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+        set (RC_FILES ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+    endif()
 
     # 安装包制作inno脚本
     configure_file(${CMAKE_SOURCE_DIR}/dist/inno/setup.iss.in ${CMAKE_BINARY_DIR}/${PROJ_NAME}-setup.iss)
@@ -87,7 +90,7 @@ TRANSLATION_GENERATE(QM_FILES ${CMAKE_SOURCE_DIR}/translations/${PROJ_NAME})
 add_custom_target(${PROJ_NAME}_qm_files DEPENDS ${QM_FILES})
 add_dependencies(${PROJ_NAME} ${PROJ_NAME}_qm_files)
 
-if (MINGW)
+if (WIN32)
     # main entry vbs
     file(GLOB SETUPS ${CMAKE_CURRENT_SOURCE_DIR}/res/win/main.vbs)
     file(COPY ${SETUPS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)

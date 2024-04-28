@@ -203,7 +203,7 @@ void NoResultTipWidget::initUI()
 
     titleLabel = new CooperationLabel(tr("Unable to find collaborative device？"));
     titleLabel->setAlignment(Qt::AlignLeft);
-    CooperationGuiHelper::setAutoFont(titleLabel, 14, 450);
+    CooperationGuiHelper::setAutoFont(titleLabel, 14, QFont::Medium);
     titleLabel->setWordWrap(true);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
@@ -459,7 +459,7 @@ void FirstTipWidget::initUI()
 {
     firstTip = new QLabel(tr("Make sure that the person you are collaborating with has the \"Cross Collaboration\" application"
                              " enabled and is connected to the same network as you are."));
-    CooperationGuiHelper::setAutoFont(firstTip, 12, 400);
+    CooperationGuiHelper::setAutoFont(firstTip, 12, QFont::Normal);
     firstTip->setWordWrap(true);
     firstTip->setFixedWidth(480);
     firstTip->setContentsMargins(10, 10, 40, 10);

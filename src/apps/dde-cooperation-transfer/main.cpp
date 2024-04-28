@@ -30,7 +30,7 @@ static bool loadPlugins()
     pluginsDirs << QDir::currentPath() + "/plugins/cooperation";
     pluginsDirs << QDir::currentPath() + "/plugins/cooperation/core";
 #endif
-#if defined(WIN32)
+#if defined(_WIN32) || defined(_WIN64)
     pluginsDirs << QCoreApplication::applicationDirPath();
 #endif
 
