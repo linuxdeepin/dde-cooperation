@@ -1,1 +1,3 @@
-include("CppServer.cmake")
+include("cppserver.cmake")
+include("barrier.cmake")
+include("quazip.cmake")
