@@ -60,6 +60,7 @@ if(WIN32)
   list(APPEND LINKLIBS ${WINSOCK_LIBRARIES})
 endif()
 list(APPEND LINKLIBS cppcommon)
+list(APPEND LINKLIBS cpplogging)
 
 # OpenSSL libraries
 message(STATUS "OpenSSL version: ${OPENSSL_VERSION} ${OPENSSL_INCLUDE_DIR} ${OPENSSL_LIBRARIES}")

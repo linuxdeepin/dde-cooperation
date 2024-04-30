@@ -14,6 +14,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.h"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/logger.h"
+    "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cooperationcoreplugin.h"
@@ -72,6 +74,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network 
 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources/resources.qrc)
 
+list(APPEND LINKLIBS session)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -95,6 +98,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     co
+    ${LINKLIBS}
 )
 
 # 平台相关的库，添加到这里

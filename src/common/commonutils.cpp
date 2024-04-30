@@ -16,7 +16,7 @@
 #include <QProcess>
 #include <QRandomGenerator>
 
-#include "co/co/sock.h"
+#include "logger.h"
 
 using namespace deepin_cross;
 
@@ -128,22 +128,11 @@ void CommonUitls::loadTranslator()
 
 void CommonUitls::initLog()
 {
+    deepin_cross::Logger::init(logDir().toStdString(), qApp->applicationName().toStdString());
 #ifdef QT_DEBUG
-    int level = 0;
-    log::xx::g_minLogLevel = static_cast<log::xx::LogLevel>(level);
-    LOG << "set LogLevel " << level;
+    deepin_cross::g_logLevel = deepin_cross::debug;
+    LOG << "Debug build, set LogLevel " << deepin_cross::g_logLevel;
 #endif
-
-    flag::set_value("rpc_log", "false");   //rpc日志关闭
-    flag::set_value("cout", "true");   //终端日志输出
-    flag::set_value("journal", "true");   //journal日志
-    if (detailLog()) {
-        flag::set_value("log_detail", "true");   //详细日志输出
-    }
-
-    fastring logdir = logDir().toStdString();
-    WLOG << "set logdir: " << logdir.c_str();
-    flag::set_value("log_dir", logdir);   //日志保存目录
 
 #ifdef linux
     QString logConfPath = QString("/usr/share/%1/")
@@ -161,21 +150,24 @@ void CommonUitls::initLog()
 
 #ifndef QT_DEBUG
     int level = settings.value("g_minLogLevel", 2).toInt();
-    WLOG << "set LogLevel " << level;
-    log::xx::g_minLogLevel = static_cast<log::xx::LogLevel>(level);
+    LOG << "Release build, set LogLevel " << level;
+    deepin_cross::g_logLevel = static_cast<deepin_cross::LogLevel>(level);
 
     QTimer *timer = new QTimer();
     QObject::connect(timer, &QTimer::timeout, [configFile] {
         QSettings settings(configFile, QSettings::IniFormat);
         int level = settings.value("g_minLogLevel", 2).toInt();
-        auto logLevel = static_cast<log::xx::LogLevel>(level);
-        if (log::xx::g_minLogLevel != logLevel) {
-            log::xx::g_minLogLevel = logLevel;
-            WLOG << "update LogLevel " << level;
+        auto logLevel = static_cast<deepin_cross::LogLevel>(level);
+        if (deepin_cross::g_logLevel != logLevel) {
+            deepin_cross::g_logLevel = logLevel;
+            LOG << "Release build, update LogLevel " << level;
         }
     });
     timer->start(2000);
 #endif
+    if (detailLog()) {
+        deepin_cross::g_logLevel = deepin_cross::debug; //详细日志输出
+    }
 }
 
 QString CommonUitls::elidedText(const QString &text, Qt::TextElideMode mode, int maxLength)

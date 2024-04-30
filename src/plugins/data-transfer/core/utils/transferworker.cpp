@@ -16,6 +16,8 @@
 
 #include "protoconstants.h"
 
+#include "common/logger.h"
+
 
 #include <QTimer>
 #include <QDebug>

@@ -8,6 +8,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.h"
     "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/logger.h"
+    "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.h"
@@ -29,6 +31,8 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui DBus Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui DBus Network)
 find_package(Dtk COMPONENTS Core REQUIRED)
+
+list(APPEND LINKLIBS session)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -52,6 +56,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Network
     ${DtkCore_LIBRARIES}
     co
+    ${LINKLIBS}
 )
 
 #install library file

@@ -7,9 +7,6 @@
 
 #include <QString>
 
-#include <co/flag.h>
-#include <co/log.h>
-
 namespace deepin_cross {
 class CommonUitls
 {
