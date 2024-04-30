@@ -21,7 +21,9 @@ set(sources
 if (WIN32)
     file(GLOB arch_headers "MSWindows*.h")
     file(GLOB arch_sources "MSWindows*.cpp")
-    list(APPEND sources barrierc.rc)
+    list(APPEND sources
+        barrierc.rc
+        barrierc.exe.manifest)
 elseif (APPLE)
     file(GLOB arch_headers "OSX*.h")
     file(GLOB arch_sources "OSX*.cpp")

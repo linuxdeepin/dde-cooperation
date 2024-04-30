@@ -457,6 +457,6 @@ else()
     message (STATUS "NOT configuring the installer")
 endif()
 
-enable_testing()
+# enable_testing()
 
 add_subdirectory (src)

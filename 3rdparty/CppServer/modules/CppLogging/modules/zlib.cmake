@@ -55,6 +55,10 @@ if(NOT TARGET zlib)
   target_include_directories(zlib PUBLIC "zlib")
   target_link_libraries(zlib)
 
+  if(FPIC)
+    set_target_properties(zlib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  endif()
+
   # Module folder
   set_target_properties(zlib PROPERTIES FOLDER "modules/zlib")
 

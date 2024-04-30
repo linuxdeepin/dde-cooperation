@@ -16,42 +16,41 @@
 */
 
 #include "DataDirectories.h"
-#include <co/path.h>
 
 namespace barrier {
 
-fastring DataDirectories::_profile;
-fastring DataDirectories::_global;
-fastring DataDirectories::_systemconfig;
+fs::path DataDirectories::_profile;
+fs::path DataDirectories::_global;
+fs::path DataDirectories::_systemconfig;
 
 static const char kFingerprintsDirName[] = "SSL/Fingerprints";
 static const char kFingerprintsLocalFilename[] = "Local.txt";
 static const char kFingerprintsTrustedServersFilename[] = "TrustedServers.txt";
 static const char kFingerprintsTrustedClientsFilename[] = "TrustedClients.txt";
 
-fastring DataDirectories::ssl_fingerprints_path()
+fs::path DataDirectories::ssl_fingerprints_path()
 {
-    return path::join(profile(), kFingerprintsDirName);
+    return profile() / kFingerprintsDirName;
 }
 
-fastring DataDirectories::local_ssl_fingerprints_path()
+fs::path DataDirectories::local_ssl_fingerprints_path()
 {
-    return path::join(ssl_fingerprints_path(), kFingerprintsLocalFilename);
+    return ssl_fingerprints_path() / kFingerprintsLocalFilename;
 }
 
-fastring DataDirectories::trusted_servers_ssl_fingerprints_path()
+fs::path DataDirectories::trusted_servers_ssl_fingerprints_path()
 {
-    return path::join(ssl_fingerprints_path(), kFingerprintsTrustedServersFilename);
+    return ssl_fingerprints_path() / kFingerprintsTrustedServersFilename;
 }
 
-fastring DataDirectories::trusted_clients_ssl_fingerprints_path()
+fs::path DataDirectories::trusted_clients_ssl_fingerprints_path()
 {
-    return path::join(ssl_fingerprints_path(), kFingerprintsTrustedClientsFilename);
+    return ssl_fingerprints_path() / kFingerprintsTrustedClientsFilename;
 }
 
-fastring DataDirectories::ssl_certificate_path()
+fs::path DataDirectories::ssl_certificate_path()
 {
-    return path::join(profile(), "SSL/Barrier.pem");
+    return profile() / "SSL" / "Barrier.pem";
 }
 
 } // namespace barrier

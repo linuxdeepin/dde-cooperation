@@ -20,7 +20,8 @@
 
 #include "common/basic_types.h"
 #include "common/stdmap.h"
-#include "common/common.h"
+
+#include <cstddef>
 
 class EventData {
 public:

@@ -24,7 +24,6 @@
 
 // define NULL
 #include <stddef.h>
-#include <cstdint>
 
 // make assert available since we use it a lot
 #include <assert.h>

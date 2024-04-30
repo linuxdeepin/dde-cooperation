@@ -39,7 +39,6 @@
 #include "base/TMethodEventJob.h"
 #include "common/Version.h"
 #include "common/DataDirectories.h"
-#include "co/path.h"
 
 #if SYSAPI_WIN32
 #include "arch/win32/ArchMiscWindows.h"
@@ -128,16 +127,19 @@ ServerApp::help()
 #endif
 
     // refer to custom profile directory even if not saved yet
-    fastring profile_path = argsBase().m_profileDirectory;
+    barrier::fs::path profile_path = argsBase().m_profileDirectory;
     if (profile_path.empty()) {
         profile_path = barrier::DataDirectories::profile();
     }
 
-    auto usr_config_path = path::join(profile_path, USR_CONFIG_NAME);
-    auto sys_config_path = path::join(barrier::DataDirectories::systemconfig(), SYS_CONFIG_NAME);
+    auto usr_config_path = (profile_path / barrier::fs::u8path(USR_CONFIG_NAME)).u8string();
+    auto sys_config_path = (barrier::DataDirectories::systemconfig() /
+                            barrier::fs::u8path(SYS_CONFIG_NAME)).u8string();
 
     std::ostringstream buffer;
-    buffer << "Start the barrier server component.\n"
+    buffer << "Start the barrier server component. The server shares the keyboard &\n"
+           << "mouse of the local machine with the connected clients based on the\n"
+           << "configuration file.\n"
            << "\n"
            << "Usage: " << args().m_exename
            << " [--address <address>]"
@@ -202,24 +204,22 @@ ServerApp::loadConfig()
         auto path = barrier::DataDirectories::profile();
         if (!path.empty()) {
             // complete path
-            path::join(path, USR_CONFIG_NAME);
-//            path /= barrier::fs::u8path(USR_CONFIG_NAME);
+            path /= barrier::fs::u8path(USR_CONFIG_NAME);
 
             // now try loading the user's configuration
-            if (loadConfig(path.c_str())) {
+            if (loadConfig(path.u8string())) {
                 loaded            = true;
-                args().m_configFile = path.c_str();
+                args().m_configFile = path.u8string();
             }
         }
         if (!loaded) {
             // try the system-wide config file
             path = barrier::DataDirectories::systemconfig();
             if (!path.empty()) {
-                path::join(path, SYS_CONFIG_NAME);
-//                path /= barrier::fs::u8path(SYS_CONFIG_NAME);
-                if (loadConfig(path.c_str())) {
+                path /= barrier::fs::u8path(SYS_CONFIG_NAME);
+                if (loadConfig(path.u8string())) {
                     loaded            = true;
-                    args().m_configFile = path.c_str();
+                    args().m_configFile = path.u8string();
                 }
             }
         }

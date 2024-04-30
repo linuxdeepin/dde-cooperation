@@ -64,6 +64,10 @@ target_link_libraries(cpplogging ${LINKLIBS} zlib)
 list(APPEND INSTALL_TARGETS cpplogging)
 list(APPEND LINKLIBS cpplogging)
 
+if(FPIC)
+  set_target_properties(cpplogging PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 # Additional module components: benchmarks, examples, plugins, tests, tools and install
 if(NOT CPPLOGGING_MODULE)
 
