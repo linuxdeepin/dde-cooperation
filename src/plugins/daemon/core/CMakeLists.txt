@@ -51,8 +51,6 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     deepin_cross::framework
     Qt${QT_VERSION_MAJOR}::Network
-    uniapi
-    co
     ${LINKLIBS}
 )
 

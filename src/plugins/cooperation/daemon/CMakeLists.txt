@@ -55,7 +55,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::DBus
     Qt${QT_VERSION_MAJOR}::Network
     ${DtkCore_LIBRARIES}
-    co
     ${LINKLIBS}
 )
 

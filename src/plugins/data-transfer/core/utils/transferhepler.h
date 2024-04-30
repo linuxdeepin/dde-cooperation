@@ -2,6 +2,7 @@
 #define TRANSFERHELPER_H
 
 #include "transferworker.h"
+#include "common/logger.h"
 
 #include <QMap>
 #include <QObject>
@@ -55,11 +56,11 @@ public:
     void setting(const QString &filepath);
     void recordTranferJob(const QString &filepath);
     bool isUnfinishedJob(QString &content);
-    void addFinshedFiles(const QString &filepath, int64 size);
+    void addFinshedFiles(const QString &filepath, int64_t size);
     void setConnectIP(const QString &ip);
 
 private:
-    QMap<QString, int64> finshedFiles;
+    QMap<QString, int64_t> finshedFiles;
     bool isSetting = false;
     QString connectIP;
 #endif

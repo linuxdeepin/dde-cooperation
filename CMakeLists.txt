@@ -8,14 +8,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# CMake module path
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/CppServer/cmake")
-
-# # Compiler features
-# include(SetCompilerFeatures)
-# include(SetCompilerWarnings)
-# include(SetPlatformFeatures)
-# include(SystemInformation)
 
 if (NOT WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -fPIE")
@@ -67,10 +59,6 @@ if (NOT DEFINED DDE_COOPERATION_PLUGIN_ROOT_DIR)
     set(DDE_COOPERATION_PLUGIN_ROOT_DIR ${LIB_INSTALL_DIR}/dde-cooperation/plugins)
 endif()
 
-if (NOT DEFINED DEEPIN_DAEMON_PLUGIN_DIR)
-    set(DEEPIN_DAEMON_PLUGIN_DIR ${DDE_COOPERATION_PLUGIN_ROOT_DIR}/daemon)
-endif()
-
 if (NOT DEFINED DEEPIN_DATA_TRANS_PLUGIN_DIR)
     set(DEEPIN_DATA_TRANS_PLUGIN_DIR ${DDE_COOPERATION_PLUGIN_ROOT_DIR}/data-transfer)
 endif()
@@ -95,14 +83,7 @@ message("   >>> COMPILE ON SYSTEM: ${CMAKE_SYSTEM}")
 
 include_directories(include)
 
-set(PROTOBUF_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/protobuf")
-include_directories(${PROTOBUF_DIR}/src)
-
-# set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_AUTOUIC_SEARCH_PATHS} ${PROJECT_SOURCE_DIR}/ui )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
-
-# The protoc tool not for all platforms, so use the generate out sources.
-set(USE_PROTOBUF_FILES ON)
 
 if (WIN32)
     set(DEPLOY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output")
@@ -115,9 +96,6 @@ if (WIN32)
 
     file(GLOB INNO_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/dist/inno/scripts)
     file(COPY ${INNO_SCRIPTS} DESTINATION ${CMAKE_BINARY_DIR})
-else()
-    # Disable the coroutine in coost.
-    add_definitions(-D DISABLE_GO)
 endif()
 
 ## 如果未设置CMAKE_BUILD_TYPE，则将其设置为Release
@@ -138,42 +116,11 @@ endif()
 # 引入翻译生成
 include(translation-generate)
 
-if (NOT USE_PROTOBUF_FILES)
-	# define and use the local 3rdparty protobuf library
-	if (WIN32)
-		set(PROTOBUF_PROTOC_EXECUTABLE "${PROTOBUF_DIR}/protoc/win32/protoc.exe")
-	else()
-		if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "aarch64")
-			set(PROTOBUF_PROTOC_EXECUTABLE "${PROTOBUF_DIR}/protoc/linux-aarch_64/protoc")
-		else()
-			if("${CMAKE_HOST_SYSTEM_NAME}" MATCHES "Darwin")
-				set(PROTOBUF_PROTOC_EXECUTABLE "${PROTOBUF_DIR}/protoc/Darwin-x86_64/protoc")
-			else()
-				set(PROTOBUF_PROTOC_EXECUTABLE "${PROTOBUF_DIR}/protoc/linux-x86_64/protoc")
-			endif()
-		endif()
-	endif()
-	include(protobuf-generate)
-endif()
-
+# header-only libraries: jwt, picojson
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/include)
-
-set(COOST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/coost")
-include_directories(${COOST_DIR}/include)
-
-set(ZRPC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/zrpc")
-include_directories(${ZRPC_DIR}/include)
-
-if (CMAKE_SYSTEM MATCHES "Windows")
-    set(QUAZIP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/quazip")
-    include_directories(${QUAZIP_DIR}/quazip)
-endif()
 
 # Modules
 add_subdirectory("modules")
-
-# build 3rd party libraries first
-add_subdirectory(3rdparty)
 
 if(WIN32)
     add_compile_options(/utf-8)

@@ -151,12 +151,6 @@ void TransferHelper::emitDisconnected()
         emit disconnected();
 }
 
-void TransferHelper::sendMessage(const QString &type, const QString &message)
-{
-    json::Json mes;
-    mes.add_member(type.toUtf8().constData(), message.toStdString());
-    _transferhandle->sendMessage(mes);
-}
 
 #if defined(_WIN32) || defined(_WIN64)
 void TransferHelper::startTransfer()
@@ -397,7 +391,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
         QJsonArray userFileArray = jsonObj["user_file"].toArray();
         QJsonArray updatedFileList;
         bool ok;
-        int64 userData = jsonObj["user_data"].toString().toLongLong(&ok);
+        int64_t userData = jsonObj["user_data"].toString().toLongLong(&ok);
 
         LOG << "finshedFiles-----" << finshedFiles.size();
 
@@ -473,7 +467,7 @@ bool TransferHelper::isUnfinishedJob(QString &content)
     return true;
 }
 
-void TransferHelper::addFinshedFiles(const QString &filepath, int64 size)
+void TransferHelper::addFinshedFiles(const QString &filepath, int64_t size)
 {
     finshedFiles.insert(filepath, size);
     if (filepath.endsWith("transfer.json"))

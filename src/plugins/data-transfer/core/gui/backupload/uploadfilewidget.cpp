@@ -16,8 +16,6 @@
 
 #include <utils/transferhepler.h>
 
-#pragma execution_character_set("utf-8")
-
 UploadFileWidget::UploadFileWidget(QWidget *parent)
     : QFrame(parent)
 {

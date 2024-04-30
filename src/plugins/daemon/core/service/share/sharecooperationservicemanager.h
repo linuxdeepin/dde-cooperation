@@ -5,9 +5,7 @@
 #ifndef SHARECOOPERATIONSERVICEMANAGER_H
 #define SHARECOOPERATIONSERVICEMANAGER_H
 
-#include <co/fastring.h>
 #include "service/comshare.h"
-#include "common/commonstruct.h"
 
 #include <QObject>
 #include <QProcess>
