@@ -10,11 +10,6 @@
 
 #include "common/constant.h"
 #include "common/commonutils.h"
-#include "ipc/frontendservice.h"
-#include "ipc/proto/frontend.h"
-#include "ipc/proto/comstruct.h"
-#include "ipc/proto/chan.h"
-#include "ipc/proto/backend.h"
 
 #include <QDesktopServices>
 #include <QApplication>
@@ -85,110 +80,65 @@ TransferDialog *TransferHelperPrivate::transDialog()
 
 void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
 {
-    // LOG << "send files: " << fileList.toStdList();
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
+//     LOG << "send files: " << fileList.toStdList();
 
-    co::vector<fastring> fileVector;
-    for (QString path : fileList) {
-        fileVector.push_back(path.toStdString());
-    }
+//    // first try run web, or prompt error
+//    if (!startFileWeb()) {
+//        ELOG << "try start web sever failed!!!";
+//        return;
+//    }
 
-    auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
-    QString deviceName = value.isValid()
-            ? value.toString()
-            : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
+//    _file_server->clearBind();
+//    std::vector<std::string> name_vector;
+//    for (auto path : paths) {
+//        QFileInfo fileInfo(path);
+//        QString name = fileInfo.fileName();
+//        name_vector.push_back(name.toStdString());
+//        _file_server->webBind(name.toStdString(), path.toStdString());
+//    }
 
-    QString saveDir = (deviceName + "(%1)").arg(CooperationUtil::localIPAddress());
-    ipc::TransFilesParam transParam;
-    transParam.session = CooperationUtil::instance()->sessionId().toStdString();
-    transParam.targetSession = CooperRegisterName;   // 发送给后端插件
-    transParam.id = TransferJobStartId;
-    transParam.paths = fileVector;
-    transParam.sub = true;
-    transParam.savedir = saveDir.toStdString();
+//    TransDataMessage req;
+//    req.id = std::to_string(_request_job_id);
+//    req.names = name_vector;
+//    req.token = "gen-temp-token";
+//    req.flag = true; // many folders
+//    req.size = -1; // unkown size
+//    proto::OriginMessage request;
+//    request.json_msg = req.as_json().serialize();
 
-    req = transParam.as_json();
-    req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
-
-    rpcClient.call(req, res);
-    rpcClient.close();
+//    auto response = _client->request(request).get();
+//    if (DO_SUCCESS == response.mask) {
+//        _request_job_id++;
+//    } else {
+//        // emit error!
+//        _file_server->stop();
+//    }
 }
 
 void TransferHelperPrivate::handleApplyTransFiles(int type)
 {
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json res;
     // 获取设备名称
     auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
     QString deviceName = value.isValid()
             ? value.toString()
             : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
 
-    ApplyTransFiles transInfo;
-    transInfo.appname = qApp->applicationName().toStdString();
-    transInfo.type = type;
-    transInfo.tarAppname = CooperRegisterName;   // 发送给后端插件
-    transInfo.machineName = deviceName.toStdString();
-
-    co::Json req = transInfo.as_json();
-    req.add_member("api", "Backend.applyTransFiles");
-    rpcClient.call(req, res);
-    rpcClient.close();
+    LOG << "handle apply file, deviceName= " << deviceName.toStdString();
 }
 
 void TransferHelperPrivate::handleTryConnect(const QString &ip)
 {
     LOG << "connect to " << ip.toStdString();
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
-    fastring targetIp(ip.toStdString());
-    fastring pinCode("");
-
-    ipc::ConnectParam conParam;
-    conParam.appName = qApp->applicationName().toStdString();
-    conParam.host = targetIp;
-    conParam.password = pinCode;
-    conParam.targetAppname = CooperRegisterName;   // 发送给后端插件
-
-    req = conParam.as_json();
-    req.add_member("api", "Backend.tryConnect");
-    rpcClient.call(req, res);
-    rpcClient.close();
 }
 
 void TransferHelperPrivate::handleSearchDevice(const QString &ip)
 {
     LOG << "searching " << ip.toStdString();
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
-    fastring targetIp(ip.toStdString());
-
-    SearchDevice conParam;
-    conParam.app = qApp->applicationName().toStdString();
-    conParam.ip = targetIp;
-
-    req = conParam.as_json();
-    req.add_member("api", "Backend.searchDevice");
-    rpcClient.call(req, res);
-    rpcClient.close();
 }
 
 void TransferHelperPrivate::handleCancelTransfer()
 {
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
-
-    ipc::TransJobParam jobParam;
-    jobParam.session = CooperationUtil::instance()->sessionId().toStdString();
-    jobParam.job_id = TransferJobStartId;
-    jobParam.appname = qApp->applicationName().toStdString();
-
-    req = jobParam.as_json();
-    req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
-    rpcClient.call(req, res);
-    rpcClient.close();
-    LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
+//    LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
 }
 
 void TransferHelperPrivate::transferResult(bool result, const QString &msg)
@@ -277,18 +227,18 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
         return;
     }
 
-    UNIGO([ip, this] {
-        d->handleTryConnect(ip);
-    });
+//    UNIGO([ip, this] {
+//        d->handleTryConnect(ip);
+//    });
 
     waitForConfirm();
 }
 
 void TransferHelper::searchDevice(const QString &ip)
 {
-    UNIGO([ip, this] {
-        d->handleSearchDevice(ip);
-    });
+//    UNIGO([ip, this] {
+//        d->handleSearchDevice(ip);
+//    });
 }
 
 TransferHelper::TransferStatus TransferHelper::transferStatus()
@@ -365,10 +315,9 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
     if (result > 0) {
         if (!isself)
             return;
-        UNIGO([this] {
-            d->status.storeRelease(Confirming);
-            d->handleApplyTransFiles(0);
-        });
+
+        d->status.storeRelease(Confirming);
+        d->handleApplyTransFiles(0);
     } else {
         d->status.storeRelease(Idle);
         d->transferResult(false, tr("Connect to \"%1\" failed").arg(d->sendToWho));
@@ -404,35 +353,35 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
 
 void TransferHelper::onFileTransStatusChanged(const QString &status)
 {
-    DLOG_IF(FLG_log_detail) << "file transfer info: " << status.toStdString();
-    co::Json statusJson;
-    statusJson.parse_from(status.toStdString());
-    ipc::FileStatus param;
-    param.from_json(statusJson);
+    DLOG << "file transfer info: " << status.toStdString();
+//    co::Json statusJson;
+//    statusJson.parse_from(status.toStdString());
+//    ipc::FileStatus param;
+//    param.from_json(statusJson);
 
-    d->transferInfo.totalSize = param.total;
-    d->transferInfo.transferSize = param.current;
-    d->transferInfo.maxTimeMs = param.millisec;
+//    d->transferInfo.totalSize = param.total;
+//    d->transferInfo.transferSize = param.current;
+//    d->transferInfo.maxTimeMs = param.millisec;
 
-    // 计算整体进度和预估剩余时间
-    double value = static_cast<double>(d->transferInfo.transferSize) / d->transferInfo.totalSize;
-    int progressValue = static_cast<int>(value * 100);
-    QTime time(0, 0, 0);
-    int remain_time;
-    if (progressValue <= 0) {
-        return;
-    } else if (progressValue >= 100) {
-        progressValue = 100;
-        remain_time = 0;
-    } else {
-        remain_time = (d->transferInfo.maxTimeMs * 100 / progressValue - d->transferInfo.maxTimeMs) / 1000;
-    }
-    time = time.addSecs(remain_time);
+//    // 计算整体进度和预估剩余时间
+//    double value = static_cast<double>(d->transferInfo.transferSize) / d->transferInfo.totalSize;
+//    int progressValue = static_cast<int>(value * 100);
+//    QTime time(0, 0, 0);
+//    int remain_time;
+//    if (progressValue <= 0) {
+//        return;
+//    } else if (progressValue >= 100) {
+//        progressValue = 100;
+//        remain_time = 0;
+//    } else {
+//        remain_time = (d->transferInfo.maxTimeMs * 100 / progressValue - d->transferInfo.maxTimeMs) / 1000;
+//    }
+//    time = time.addSecs(remain_time);
 
-    LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
-    LOG_IF(FLG_log_detail) << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << d->transferInfo.transferSize;
+//    LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
+//    LOG_IF(FLG_log_detail) << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << d->transferInfo.transferSize;
 
-    d->updateProgress(progressValue, time.toString("hh:mm:ss"));
+//    d->updateProgress(progressValue, time.toString("hh:mm:ss"));
 }
 
 void TransferHelper::waitForConfirm()
@@ -455,9 +404,7 @@ void TransferHelper::accepted()
     }
 
     d->updateProgress(1, tr("calculating"));
-    UNIGO([this] {
-        d->handleSendFiles(d->readyToSendFiles);
-    });
+    d->handleSendFiles(d->readyToSendFiles);
 }
 
 void TransferHelper::rejected()
@@ -469,9 +416,7 @@ void TransferHelper::rejected()
 void TransferHelper::cancelTransfer()
 {
     if (d->status.loadAcquire() == Transfering) {
-        UNIGO([this] {
-            d->handleCancelTransfer();
-        });
+        d->handleCancelTransfer();
     }
 
     d->status.storeRelease(Idle);

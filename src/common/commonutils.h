@@ -5,6 +5,8 @@
 #ifndef COMMONUTILS_H
 #define COMMONUTILS_H
 
+#include "logger.h"
+
 #include <QString>
 
 namespace deepin_cross {

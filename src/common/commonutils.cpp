@@ -16,8 +16,6 @@
 #include <QProcess>
 #include <QRandomGenerator>
 
-#include "logger.h"
-
 using namespace deepin_cross;
 
 static constexpr char kApp1[] { "dde-cooperation" };

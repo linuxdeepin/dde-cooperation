@@ -6,14 +6,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # 插件相关的固定内容，或者公共头文件源文件，添加到这里。
 FILE(GLOB PLUGIN_FILES
-    "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.h"
-    "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/logger.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.h"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../include/cooconstrants.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"

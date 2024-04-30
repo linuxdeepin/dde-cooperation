@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "devicelistwidget.h"
-
-#include "co/co.h"
+#include "common/logger.h"
 
 #include <QScrollBar>
 #include <QVariantMap>

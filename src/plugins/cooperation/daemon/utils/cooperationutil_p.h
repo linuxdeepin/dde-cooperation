@@ -7,9 +7,6 @@
 
 #include "global_defines.h"
 
-#include <co/rpc.h>
-#include <co/co.h>
-
 #include <QObject>
 
 class FrontendService;
@@ -24,16 +21,8 @@ public:
     explicit CooperationUtilPrivate(CooperationUtil *qq);
     ~CooperationUtilPrivate();
 
-    bool pingBackend();
-    void localIPCStart();
-
 public:
     CooperationUtil *q { nullptr };
-
-    FrontendService *frontendIpcSer { nullptr };
-    QString sessionId;
-    bool backendOk { false };
-    bool thisDestruct { false };
 };
 
 }

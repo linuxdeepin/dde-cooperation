@@ -8,7 +8,7 @@
 #include "info/deviceinfo.h"
 #include "cooperationtaskdialog.h"
 
-//#include "ipc/bridge.h"
+#include "../../include/cooconstrants.h"
 
 #ifdef linux
 #include <QDBusInterface>

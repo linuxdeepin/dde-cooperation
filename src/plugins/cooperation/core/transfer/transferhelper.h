@@ -7,6 +7,7 @@
 
 #include "global_defines.h"
 #include "info/deviceinfo.h"
+#include "common/logger.h"
 
 namespace cooperation_core {
 

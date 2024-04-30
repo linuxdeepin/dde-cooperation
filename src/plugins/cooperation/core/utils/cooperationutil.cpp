@@ -12,12 +12,7 @@
 #include "configs/settings/configmanager.h"
 #include "configs/dconfig/dconfigmanager.h"
 #include "common/constant.h"
-#include "common/commonstruct.h"
 #include "common/commonutils.h"
-#include "ipc/frontendservice.h"
-#include "ipc/proto/comstruct.h"
-#include "ipc/proto/backend.h"
-#include "ipc/proto/chan.h"
 
 #include <QJsonDocument>
 #include <QNetworkInterface>
@@ -34,43 +29,16 @@ using namespace cooperation_core;
 CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
     : q(qq)
 {
-    localIPCStart();
-
-    UNIGO([this] {
-        backendOk = pingBackend();
-        LOG << "The result of ping backend is " << backendOk;
-    });
+    // FIXME: 启动不同服务， 根据localIPCStart里处理通信
+    bool onlyTransfer = qApp->property("onlyTransfer").toBool();
+    LOG << "This is only transfer?" << onlyTransfer;
 }
 
 CooperationUtilPrivate::~CooperationUtilPrivate()
 {
 }
 
-bool CooperationUtilPrivate::pingBackend()
-{
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
-    co::Json req, res;
-    bool onlyTransfer = qApp->property("onlyTransfer").toBool();
-    int port = onlyTransfer
-            ? UNI_IPC_FRONTEND_TRANSFER_PORT
-            : UNI_IPC_FRONTEND_COOPERATION_PORT;
-
-    ipc::PingBackParam backParam;
-    backParam.who = qApp->applicationName().toStdString();
-    backParam.version = fastring(UNI_IPC_PROTO);
-    backParam.cb_port = port;
-
-    req = backParam.as_json();
-    req.add_member("api", "Backend.ping");   //BackendImpl::ping
-
-    rpcClient.call(req, res);
-    rpcClient.close();
-    sessionId = res.get("msg").as_string().c_str();   // save the return session.
-
-    //CallResult
-    return res.get("result").as_bool() && !sessionId.isEmpty();
-}
-
+#if 0
 void CooperationUtilPrivate::localIPCStart()
 {
     if (frontendIpcSer) return;
@@ -319,6 +287,7 @@ QList<DeviceInfoPointer> CooperationUtilPrivate::parseDeviceInfo(const co::Json 
 
     return devInfoList;
 }
+#endif
 
 CooperationUtil::CooperationUtil(QObject *parent)
     : QObject(parent),
@@ -328,7 +297,6 @@ CooperationUtil::CooperationUtil(QObject *parent)
 
 CooperationUtil::~CooperationUtil()
 {
-    d->thisDestruct = true;
 }
 
 CooperationUtil *CooperationUtil::instance()
@@ -343,11 +311,6 @@ QWidget *CooperationUtil::mainWindow()
         d->window = new MainWindow;
 
     return d->window;
-}
-
-QString CooperationUtil::sessionId() const
-{
-    return d->sessionId;
 }
 
 DeviceInfoPointer CooperationUtil::findDeviceInfo(const QString &ip)
@@ -372,99 +335,25 @@ void CooperationUtil::registerDeviceOperation(const QVariantMap &map)
 void CooperationUtil::registAppInfo(const QString &infoJson)
 {
     LOG << "regist app info: " << infoJson.toStdString();
-    if (!d->backendOk) {
-        LOG << "The ping backend is false";
-        return;
-    }
-
-    UNIGO([infoJson] {
-        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
-        co::Json req, res;
-
-        AppPeerInfo peerInfo;
-        peerInfo.appname = CooperRegisterName;
-        peerInfo.json = infoJson.toStdString();
-
-        req = peerInfo.as_json();
-        req.add_member("api", "Backend.registerDiscovery");
-        rpcClient.call(req, res);
-        rpcClient.close();
-    });
+    //TODO: ?registerDiscovery
 }
 
 void CooperationUtil::unregistAppInfo()
 {
-    if (!d->backendOk) {
-        LOG << "The ping backend is false";
-        return;
-    }
-
-    UNIGO([] {
-        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
-        co::Json req, res;
-
-        AppPeerInfo peerInfo;
-        peerInfo.appname = CooperRegisterName;
-
-        req = peerInfo.as_json();
-        req.add_member("api", "Backend.unregisterDiscovery");
-        rpcClient.call(req, res);
-        rpcClient.close();
-    });
+    //TODO: ?unregisterDiscovery
 }
 
 void CooperationUtil::asyncDiscoveryDevice()
 {
-    if (!d->backendOk) {
-        LOG << "The ping backend is false";
-        Q_EMIT discoveryFinished({});
-        return;
-    }
-
-    UNIGO([this] {
-        LOG << "start discovery device";
-        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
-        co::Json req, res;
-        req.add_member("api", "Backend.getDiscovery");
-        rpcClient.call(req, res);
-        rpcClient.close();
-
-        QList<DeviceInfoPointer> infoList;
-        bool ok = res.get("result").as_bool();
-        if (!ok) {
-            WLOG << "discovery devices failed!";
-        } else {
-            DLOG << "all device: " << res.get("msg").as_string();
-            co::Json obj;
-            obj.parse_from(res.get("msg").as_string());
-            infoList = d->parseDeviceInfo(obj);
-        }
-
-        Q_EMIT discoveryFinished(infoList);
-    });
+    //TODO: ?getDiscovery then
+//    QList<DeviceInfoPointer> infoList;
+//    infoList = d->parseDeviceInfo(obj);
+//    Q_EMIT discoveryFinished(infoList);
 }
 
 void CooperationUtil::setAppConfig(const QString &key, const QString &value)
 {
-    if (!d->backendOk) {
-        LOG << "The ping backend is false";
-        return;
-    }
-
-    UNIGO([=] {
-        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
-        co::Json req, res;
-
-        req = {
-            { "appname", CooperRegisterName },
-            { "key", key.toStdString() },
-            { "value", value.toStdString() }
-        };
-        req.add_member("api", "Backend.setAppConfig");
-
-        rpcClient.call(req, res);
-        rpcClient.close();
-    });
+    //TODO: ?setAppConfig
 }
 
 QVariantMap CooperationUtil::deviceInfo()

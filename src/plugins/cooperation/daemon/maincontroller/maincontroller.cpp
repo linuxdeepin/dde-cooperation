@@ -9,11 +9,9 @@
 #include "configs/settings/configmanager.h"
 #include "configs/dconfig/dconfigmanager.h"
 
+#include "../../include/cooconstrants.h"
 #include "common/constant.h"
 #include "common/commonutils.h"
-#include "ipc/proto/frontend.h"
-
-#include <co/co.h>
 
 #include <QDir>
 #include <QUrl>
@@ -256,6 +254,7 @@ void MainController::onTransJobStatusChanged(int id, int result, const QString &
 void MainController::onFileTransStatusChanged(const QString &status)
 {
     LOG << "file transfer info: " << status.toStdString();
+#if 0
     co::Json statusJson;
     statusJson.parse_from(status.toStdString());
     ipc::FileStatus param;
@@ -280,10 +279,11 @@ void MainController::onFileTransStatusChanged(const QString &status)
     }
     time = time.addSecs(remain_time);
 
-    LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
-    LOG_IF(FLG_log_detail) << "totalSize: " << transferInfo.totalSize << " transferSize=" << transferInfo.transferSize;
+    DLOG << "progressbar: " << progressValue << " remain_time=" << remain_time;
+    DLOG << "totalSize: " << transferInfo.totalSize << " transferSize=" << transferInfo.transferSize;
 
     updateProgress(progressValue, time.toString("hh:mm:ss"));
+#endif
 }
 
 void MainController::onConfirmTimeout()

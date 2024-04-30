@@ -11,13 +11,7 @@
 
 #include "configs/settings/configmanager.h"
 #include "common/constant.h"
-#include "common/commonstruct.h"
 #include "common/commonutils.h"
-#include "ipc/frontendservice.h"
-#include "ipc/proto/frontend.h"
-#include "ipc/proto/comstruct.h"
-#include "ipc/proto/chan.h"
-#include "ipc/proto/backend.h"
 
 #include <QApplication>
 #include <QStandardPaths>
@@ -72,8 +66,11 @@ CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
 
 void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, QVariant param)
 {
+    //TODO: ?shareEvents
+#if 0
     rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
     co::Json req, res;
+
 
     auto myselfInfo = DeviceInfo::fromVariantMap(CooperationUtil::deviceInfo());
     myselfInfo->setIpAddress(CooperationUtil::localIPAddress());
@@ -175,6 +172,7 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
     rpcClient.call(req, res);
 #endif
     rpcClient.close();
+#endif
 }
 
 CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
@@ -217,8 +215,8 @@ uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &bo
 void CooperationManagerPrivate::stopCooperation()
 {
     if (targetDeviceInfo && targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
-        backendShareEvent(BACK_SHARE_STOP, targetDeviceInfo, 0);
-        backendShareEvent(BACK_SHARE_DISCONNECT);
+//        backendShareEvent(BACK_SHARE_STOP, targetDeviceInfo, 0);
+//        backendShareEvent(BACK_SHARE_DISCONNECT);
 
 #ifdef linux
         static QString body(tr("Coordination with \"%1\" has ended"));
@@ -230,7 +228,7 @@ void CooperationManagerPrivate::stopCooperation()
 void CooperationManagerPrivate::onCancelCooperApply()
 {
     confirmTimer.stop();
-    backendShareEvent(BACK_SHARE_DISAPPLY_CONNECT);
+//    backendShareEvent(BACK_SHARE_DISAPPLY_CONNECT);
     taskDialog()->hide();
 }
 
@@ -271,9 +269,9 @@ void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString
 
     isReplied = true;
     if (action == NotifyRejectAction) {
-        backendShareEvent(BACK_SHARE_CONNECT_REPLY, nullptr, false);
+//        backendShareEvent(BACK_SHARE_CONNECT_REPLY, nullptr, false);
     } else if (action == NotifyAcceptAction) {
-        backendShareEvent(BACK_SHARE_CONNECT_REPLY, nullptr, true);
+//        backendShareEvent(BACK_SHARE_CONNECT_REPLY, nullptr, true);
         auto info = CooperationUtil::instance()->findDeviceInfo(senderDeviceIp);
         if (!info)
             return;
@@ -342,7 +340,7 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
         return;
     }
 
-    d->backendShareEvent(BACK_SHARE_CONNECT, info);
+//    d->backendShareEvent(BACK_SHARE_CONNECT, info);
 
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     d->isRecvMode = false;
@@ -358,8 +356,8 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
 
 void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
 {
-    d->backendShareEvent(BACK_SHARE_STOP, info, 0);
-    d->backendShareEvent(BACK_SHARE_DISCONNECT);
+//    d->backendShareEvent(BACK_SHARE_STOP, info, 0);
+//    d->backendShareEvent(BACK_SHARE_DISCONNECT);
 
     if (d->targetDeviceInfo) {
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
@@ -383,15 +381,15 @@ void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
 
-        if (info->peripheralShared())
-            d->backendShareEvent(BACK_SHARE_START, info);
-        else
-            d->backendShareEvent(BACK_SHARE_STOP, info, 1);
+//        if (info->peripheralShared())
+//            d->backendShareEvent(BACK_SHARE_START, info);
+//        else
+//            d->backendShareEvent(BACK_SHARE_STOP, info, 1);
     } else if (d->targetDeviceInfo->clipboardShared() != info->clipboardShared()) {
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
 
-        d->backendShareEvent(BACK_SHARE_START, info);
+//        d->backendShareEvent(BACK_SHARE_START, info);
     }
 }
 
@@ -466,7 +464,7 @@ void CooperationManager::handleConnectResult(int result)
         MainController::instance()->updateDeviceState({ d->targetDeviceInfo });
         HistoryManager::instance()->writeIntoConnectHistory(d->targetDeviceInfo->ipAddress(), d->targetDeviceInfo->deviceName());
 
-        d->backendShareEvent(BACK_SHARE_START, d->targetDeviceInfo);
+//        d->backendShareEvent(BACK_SHARE_START, d->targetDeviceInfo);
 
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
         d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
