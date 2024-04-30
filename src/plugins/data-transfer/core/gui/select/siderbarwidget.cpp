@@ -3,7 +3,7 @@
 #include "siderbarwidget.h"
 #include "userselectfilesize.h"
 #include <gui/win/devicelistener.h>
-#include <co/log.h>
+#include "common/logger.h"
 
 #include <QPainter>
 #include <QDir>

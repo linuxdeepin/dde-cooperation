@@ -7,6 +7,11 @@ add_subdirectory("session")
 # the file sync server and client
 add_subdirectory("filesync")
 
+if (WIN32)
+    set(QUAZIP_DIR "${PROJECT_SOURCE_DIR}/3rdparty/quazip")
+    include_directories(${QUAZIP_DIR}/quazip)
+endif()
+
 # launcher
 # add_subdirectory("launcher")
 

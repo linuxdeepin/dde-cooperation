@@ -1,6 +1,6 @@
 #include "calculatefilesize.h"
 
-#include <co/log.h>
+#include "common/logger.h"
 
 #include <QThreadPool>
 #include <QListView>

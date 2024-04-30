@@ -12,9 +12,6 @@
 #include "configs/settings/configmanager.h"
 #include "common/constant.h"
 #include "common/commonutils.h"
-#include "ipc/frontendservice.h"
-#include "ipc/proto/comstruct.h"
-#include "ipc/proto/backend.h"
 
 #include <QDir>
 #include <QUrl>
@@ -34,12 +31,7 @@ using namespace cooperation_core;
 CooperationProxy::CooperationProxy(QObject *parent)
     : QObject(parent)
 {
-    localIPCStart();
-
-    UNIGO([this] {
-        backendOk = pingBackend();
-        LOG << "The result of ping backend is " << backendOk;
-    });
+    // localIPCStart();
 
     transTimer.setInterval(10 * 1000);
     transTimer.setSingleShot(true);
@@ -86,69 +78,69 @@ void CooperationProxy::waitForConfirm(const QString &name)
 void CooperationProxy::onTransJobStatusChanged(int id, int result, const QString &msg)
 {
     LOG << "id: " << id << " result: " << result << " msg: " << msg.toStdString();
-    switch (result) {
-    case JOB_TRANS_FAILED:
-        if (msg.contains("::not enough")) {
-            showTransResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
-        } else if (msg.contains("::off line")) {
-            showTransResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
-        } break;
-    case JOB_TRANS_DOING:
-        break;
-    case JOB_TRANS_FINISHED: {
-        // msg: /savePath/deviceName(ip)
-        // 获取存储路径和ip
-        int startPos = msg.lastIndexOf("(");
-        int endPos = msg.lastIndexOf(")");
-        if (startPos != -1 && endPos != -1) {
-            auto ip = msg.mid(startPos + 1, endPos - startPos - 1);
-            recvFilesSavePath = msg;
+    // switch (result) {
+    // case JOB_TRANS_FAILED:
+    //     if (msg.contains("::not enough")) {
+    //         showTransResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
+    //     } else if (msg.contains("::off line")) {
+    //         showTransResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
+    //     } break;
+    // case JOB_TRANS_DOING:
+    //     break;
+    // case JOB_TRANS_FINISHED: {
+    //     // msg: /savePath/deviceName(ip)
+    //     // 获取存储路径和ip
+    //     int startPos = msg.lastIndexOf("(");
+    //     int endPos = msg.lastIndexOf(")");
+    //     if (startPos != -1 && endPos != -1) {
+    //         auto ip = msg.mid(startPos + 1, endPos - startPos - 1);
+    //         recvFilesSavePath = msg;
 
-            transHistory->insert(ip, recvFilesSavePath);
-            HistoryManager::instance()->writeIntoTransHistory(ip, recvFilesSavePath);
-        }
+    //         transHistory->insert(ip, recvFilesSavePath);
+    //         HistoryManager::instance()->writeIntoTransHistory(ip, recvFilesSavePath);
+    //     }
 
-        showTransResult(true, tr("File sent successfully"));
-    } break;
-    case JOB_TRANS_CANCELED:
-        showTransResult(false, tr("The other party has canceled the file transfer"));
-        break;
-    default:
-        break;
-    }
+    //     showTransResult(true, tr("File sent successfully"));
+    // } break;
+    // case JOB_TRANS_CANCELED:
+    //     showTransResult(false, tr("The other party has canceled the file transfer"));
+    //     break;
+    // default:
+    //     break;
+    // }
 }
 
 void CooperationProxy::onFileTransStatusChanged(const QString &status)
 {
     LOG << "file transfer info: " << status.toStdString();
-    co::Json statusJson;
-    statusJson.parse_from(status.toStdString());
-    ipc::FileStatus param;
-    param.from_json(statusJson);
+    // co::Json statusJson;
+    // statusJson.parse_from(status.toStdString());
+    // ipc::FileStatus param;
+    // param.from_json(statusJson);
 
-    transferInfo.totalSize = param.total;
-    transferInfo.transferSize = param.current;
-    transferInfo.maxTimeMs = param.millisec;
+    // transferInfo.totalSize = param.total;
+    // transferInfo.transferSize = param.current;
+    // transferInfo.maxTimeMs = param.millisec;
 
-    // 计算整体进度和预估剩余时间
-    double value = static_cast<double>(transferInfo.transferSize) / transferInfo.totalSize;
-    int progressValue = static_cast<int>(value * 100);
-    QTime time(0, 0, 0);
-    int remain_time;
-    if (progressValue <= 0) {
-        return;
-    } else if (progressValue >= 100) {
-        progressValue = 100;
-        remain_time = 0;
-    } else {
-        remain_time = (transferInfo.maxTimeMs * 100 / progressValue - transferInfo.maxTimeMs) / 1000;
-    }
-    time = time.addSecs(remain_time);
+    // // 计算整体进度和预估剩余时间
+    // double value = static_cast<double>(transferInfo.transferSize) / transferInfo.totalSize;
+    // int progressValue = static_cast<int>(value * 100);
+    // QTime time(0, 0, 0);
+    // int remain_time;
+    // if (progressValue <= 0) {
+    //     return;
+    // } else if (progressValue >= 100) {
+    //     progressValue = 100;
+    //     remain_time = 0;
+    // } else {
+    //     remain_time = (transferInfo.maxTimeMs * 100 / progressValue - transferInfo.maxTimeMs) / 1000;
+    // }
+    // time = time.addSecs(remain_time);
 
-    LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
-    LOG_IF(FLG_log_detail) << "totalSize: " << transferInfo.totalSize << " transferSize=" << transferInfo.transferSize;
+    // LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
+    // LOG_IF(FLG_log_detail) << "totalSize: " << transferInfo.totalSize << " transferSize=" << transferInfo.transferSize;
 
-    updateProgress(progressValue, time.toString("hh:mm:ss"));
+    // updateProgress(progressValue, time.toString("hh:mm:ss"));
 }
 
 void CooperationProxy::onConfirmTimeout()
@@ -160,27 +152,7 @@ void CooperationProxy::onConfirmTimeout()
     showTransResult(false, msg.arg(CommonUitls::elidedText(fromWho, Qt::ElideMiddle, 15)));
 }
 
-bool CooperationProxy::pingBackend()
-{
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
-    co::Json req, res;
-
-    ipc::PingBackParam backParam;
-    backParam.who = CooperRegisterName;
-    backParam.version = fastring(UNI_IPC_PROTO);
-    backParam.cb_port = UNI_IPC_BACKEND_COOPER_PLUGIN_PORT;
-
-    req = backParam.as_json();
-    req.add_member("api", "Backend.ping");   //BackendImpl::ping
-
-    rpcClient.call(req, res);
-    rpcClient.close();
-    sessionId = res.get("msg").as_string().c_str();   // save the return session.
-
-    //CallResult
-    return res.get("result").as_bool() && !sessionId.isEmpty();
-}
-
+#if 0
 void CooperationProxy::localIPCStart()
 {
     if (frontendIpcSer) return;
@@ -297,37 +269,23 @@ void CooperationProxy::replyTransRequest(int type)
         rpcClient.close();
     });
 }
+#endif
 
 void CooperationProxy::onAccepted()
 {
-    replyTransRequest(ApplyTransType::APPLY_TRANS_CONFIRM);
+    // replyTransRequest(ApplyTransType::APPLY_TRANS_CONFIRM);
     cooperationDialog()->hide();
 }
 
 void CooperationProxy::onRejected()
 {
-    replyTransRequest(ApplyTransType::APPLY_TRANS_REFUSED);
+    // replyTransRequest(ApplyTransType::APPLY_TRANS_REFUSED);
     cooperationDialog()->close();
 }
 
 void CooperationProxy::onCanceled()
 {
-    UNIGO([this] {
-        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-        co::Json req, res;
-
-        ipc::TransJobParam jobParam;
-        jobParam.session = sessionId.toStdString();
-        jobParam.job_id = 1000;
-        jobParam.appname = CooperRegisterName;
-
-        req = jobParam.as_json();
-        req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
-        rpcClient.call(req, res);
-        rpcClient.close();
-        LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
-    });
-
+    //TODO: ?cancelTransJob
     cooperationDialog()->close();
 }
 

@@ -51,9 +51,8 @@ private:
     explicit CooperationProxy(QObject *parent = nullptr);
     ~CooperationProxy();
 
-    bool pingBackend();
-    void localIPCStart();
-    void replyTransRequest(int type);
+    // void localIPCStart();
+    // void replyTransRequest(int type);
     CooperationTransDialog *cooperationDialog();
 
     void showTransResult(bool success, const QString &msg);
