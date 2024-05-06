@@ -82,6 +82,8 @@ public:
     virtual void        setSequenceNumber(UInt32);
     virtual bool        isPrimary() const;
 
+    void handleMouseMove(const XMotionEvent&);
+
 protected:
     // IPlatformScreen overrides
     virtual void        handleSystemEvent(const Event&, void*);

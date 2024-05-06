@@ -23,6 +23,7 @@ Build-Depends:
  libx11-dev,
  libice-dev,
  libsm-dev,
+ libdisplayjack-dev
 Standards-Version: 4.1.3
 Section: utils
 Homepage: http://www.deepin.org

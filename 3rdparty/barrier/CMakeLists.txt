@@ -36,6 +36,7 @@ endif()
 
 include (cmake/Version.cmake)
 include (cmake/Package.cmake)
+include (cmake/FindLibDJK.cmake)
 
 # TODO: Find out why we need these, and remove them
 if (COMMAND cmake_policy)
