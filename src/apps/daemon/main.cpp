@@ -143,7 +143,7 @@ bool isActiveUser()
     qApp->setProperty(KEY_CURRENT_ACTIVE_USER, username);
     qCritical() << "active session user:" << username << " current user:" << curUser;
 
-    return (curUser.compare(username) == 0);
+    return (curUser.compare(username) == 0 || curUser.startsWith(username + "@"));
 }
 
 bool portInUse(int port)
