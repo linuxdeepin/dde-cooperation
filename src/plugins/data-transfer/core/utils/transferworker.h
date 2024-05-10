@@ -33,8 +33,8 @@ private:
     file_stats_s _file_stats;
 };
 
-class FrontendService;
-class TransferHandle : public QObject, public ServerCallInterface
+
+class TransferHandle : public QObject, public SessionCallInterface
 {
     Q_OBJECT
     struct file_stats_s {
@@ -90,14 +90,10 @@ private:
     std::shared_ptr<FileServer> _file_server { nullptr };
     std::shared_ptr<FileClient> _file_client { nullptr };
 
-    FrontendService *_frontendIpcService = nullptr;
     bool _backendOK = false;
     // <jobid, jobpath>
     QMap<int, QString> _job_maps;
     int _request_job_id;
-
-    //record transfering files ans calculate the progress rate
-    file_stats_s _file_stats;
 
     bool _this_destruct = false;
 

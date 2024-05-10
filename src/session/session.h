@@ -19,7 +19,7 @@ enum SessionState {
 //using MessageHandler = std::function<bool(const proto::OriginMessage &request, proto::OriginMessage *response)>;
 //using StateHandler = std::function<bool(int state, std::string msg)>;
 
-class ServerCallInterface : public std::enable_shared_from_this<ServerCallInterface>
+class SessionCallInterface : public std::enable_shared_from_this<SessionCallInterface>
 {
 public:
     virtual void onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response) = 0;

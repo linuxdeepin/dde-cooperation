@@ -10,7 +10,7 @@
 
 #include <QObject>
 
-class FrontendService;
+class SessionManager;
 namespace cooperation_core {
 
 class MainWindow;
@@ -25,9 +25,14 @@ public:
 //    void localIPCStart();
 //    QList<DeviceInfoPointer> parseDeviceInfo(const co::Json &obj);
 
+public slots:
+    void handleConnectStatus(int result, QString reason);
+
 public:
     CooperationUtil *q { nullptr };
     MainWindow *window { nullptr };
+
+    SessionManager *sessionManager { nullptr };
 };
 
 }

@@ -6,6 +6,7 @@
 #define PROTOCLIENT_H
 
 #include "asioservice.h"
+#include "session.h"
 
 #include "proto_protocol.h"
 
@@ -21,6 +22,7 @@ class ProtoClient : public CppServer::Asio::TCPClient, public FBE::proto::Client
 public:
     using CppServer::Asio::TCPClient::TCPClient;
 
+    void setCallbacks(std::shared_ptr<SessionCallInterface> callbacks);
     void DisconnectAndStop();
 
 protected:
@@ -28,7 +30,7 @@ protected:
 
     void onDisconnected() override;
 
-    void onError(int error, const std::string &category, const std::string &message);
+    void onError(int error, const std::string &category, const std::string &message) override;
 
     // Protocol handlers
     void onReceive(const ::proto::DisconnectRequest &request) override;
@@ -42,6 +44,8 @@ protected:
 
 private:
     std::atomic<bool> _stop{ false };
+
+    std::shared_ptr<SessionCallInterface> _callbacks { nullptr };
 };
 
 #endif // PROTOCLIENT_H

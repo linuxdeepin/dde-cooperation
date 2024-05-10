@@ -12,7 +12,7 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.h"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../include/cooconstrants.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../share/cooconstrants.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"

@@ -13,7 +13,7 @@ enum WebState {
     WEB_CONNECTED = 2,
 };
 
-class ProgressCallInterface// : public std::enable_shared_from_this<ProgressCallInterface>
+class ProgressCallInterface : public std::enable_shared_from_this<ProgressCallInterface>
 {
 public:
     virtual bool onProgress(const std::string &path, uint64_t current, uint64_t total) = 0;

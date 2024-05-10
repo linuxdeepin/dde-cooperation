@@ -65,114 +65,88 @@ CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
 }
 
 void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, QVariant param)
-{
-    //TODO: ?shareEvents
-#if 0
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
-
-
+{  
     auto myselfInfo = DeviceInfo::fromVariantMap(CooperationUtil::deviceInfo());
     myselfInfo->setIpAddress(CooperationUtil::localIPAddress());
-    ShareEvents event;
-    event.eventType = type;
-    switch (type) {
-    case BACK_SHARE_CONNECT: {
-        ShareConnectApply conEvent;
-        conEvent.appName = MainAppName;
-        conEvent.tarAppname = MainAppName;
-        conEvent.tarIp = devInfo->ipAddress().toStdString();
+//    ShareEvents event;
+//    event.eventType = type;
+//    switch (type) {
+//    case BACK_SHARE_CONNECT: {
+//        ShareConnectApply conEvent;
+//        conEvent.appName = MainAppName;
+//        conEvent.tarAppname = MainAppName;
+//        conEvent.tarIp = devInfo->ipAddress().toStdString();
 
-        QStringList dataInfo({ myselfInfo->deviceName(),
-                               myselfInfo->ipAddress() });
-        conEvent.data = dataInfo.join(',').toStdString();
+//        QStringList dataInfo({ myselfInfo->deviceName(),
+//                               myselfInfo->ipAddress() });
+//        conEvent.data = dataInfo.join(',').toStdString();
 
-        event.data = conEvent.as_json().str();
-        req = event.as_json();
-    } break;
-    case BACK_SHARE_DISCONNECT: {
-        ShareDisConnect disConEvent;
-        disConEvent.appName = MainAppName;
-        disConEvent.tarAppname = MainAppName;
-        disConEvent.msg = myselfInfo->deviceName().toStdString();
+//        event.data = conEvent.as_json().str();
+//    } break;
+//    case BACK_SHARE_DISCONNECT: {
+//        ShareDisConnect disConEvent;
+//        disConEvent.appName = MainAppName;
+//        disConEvent.tarAppname = MainAppName;
+//        disConEvent.msg = myselfInfo->deviceName().toStdString();
 
-        event.data = disConEvent.as_json().str();
-        req = event.as_json();
-    } break;
-    case BACK_SHARE_START: {
-        if (!devInfo->peripheralShared())
-            return;
+//        event.data = disConEvent.as_json().str();
+//    } break;
+//    case BACK_SHARE_START: {
+//        if (!devInfo->peripheralShared())
+//            return;
 
-        ShareServerConfig config;
-        QString serverName = myselfInfo->ipAddress();
-        QString clientName = devInfo->ipAddress();
-        config.server_screen = serverName.toStdString();
-        config.client_screen = clientName.toStdString();
-        switch (myselfInfo->linkMode()) {
-        case DeviceInfo::LinkMode::RightMode:
-            config.screen_left = serverName.toStdString();
-            config.screen_right = clientName.toStdString();
-            break;
-        case DeviceInfo::LinkMode::LeftMode:
-            config.screen_left = clientName.toStdString();
-            config.screen_right = serverName.toStdString();
-            break;
-        }
-        config.clipboardSharing = devInfo->clipboardShared();
+//        ShareServerConfig config;
+//        QString serverName = myselfInfo->ipAddress();
+//        QString clientName = devInfo->ipAddress();
+//        config.server_screen = serverName.toStdString();
+//        config.client_screen = clientName.toStdString();
+//        switch (myselfInfo->linkMode()) {
+//        case DeviceInfo::LinkMode::RightMode:
+//            config.screen_left = serverName.toStdString();
+//            config.screen_right = clientName.toStdString();
+//            break;
+//        case DeviceInfo::LinkMode::LeftMode:
+//            config.screen_left = clientName.toStdString();
+//            config.screen_right = serverName.toStdString();
+//            break;
+//        }
+//        config.clipboardSharing = devInfo->clipboardShared();
 
-        ShareStart startEvent;
-        startEvent.appName = MainAppName;
-        startEvent.config = config;
+//        ShareStart startEvent;
+//        startEvent.appName = MainAppName;
+//        startEvent.config = config;
 
-        event.data = startEvent.as_json().str();
-        req = event.as_json();
-    } break;
-    case BACK_SHARE_STOP: {
-        ShareStop stopEvent;
-        stopEvent.appName = MainAppName;
-        stopEvent.tarAppname = MainAppName;
-        stopEvent.flags = param.toInt();
+//        event.data = startEvent.as_json().str();
+//    } break;
+//    case BACK_SHARE_STOP: {
+//        ShareStop stopEvent;
+//        stopEvent.appName = MainAppName;
+//        stopEvent.tarAppname = MainAppName;
+//        stopEvent.flags = param.toInt();
 
-        event.data = stopEvent.as_json().str();
-        req = event.as_json();
-    } break;
-    case BACK_SHARE_CONNECT_REPLY: {
-        ShareConnectReply replyEvent;
-        replyEvent.appName = MainAppName;
-        replyEvent.tarAppname = MainAppName;
-        replyEvent.reply = param.toBool() ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE;
+//        event.data = stopEvent.as_json().str();
+//    } break;
+//    case BACK_SHARE_CONNECT_REPLY: {
+//        ShareConnectReply replyEvent;
+//        replyEvent.appName = MainAppName;
+//        replyEvent.tarAppname = MainAppName;
+//        replyEvent.reply = param.toBool() ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE;
 
-        event.data = replyEvent.as_json().str();
-        req = event.as_json();
-    } break;
-    case BACK_SHARE_DISAPPLY_CONNECT: {
-        ShareConnectDisApply cancelEvent;
-        cancelEvent.appName = MainAppName;
-        cancelEvent.tarAppname = MainAppName;
-        event.data = cancelEvent.as_json().str();
-        req = event.as_json();
-    } break;
-    default:
-        break;
-    }
+//        event.data = replyEvent.as_json().str();
+//    } break;
+//    case BACK_SHARE_DISAPPLY_CONNECT: {
+//        ShareConnectDisApply cancelEvent;
+//        cancelEvent.appName = MainAppName;
+//        cancelEvent.tarAppname = MainAppName;
+//        event.data = cancelEvent.as_json().str();
+//    } break;
+//    default:
+//        break;
+//    }
 
-    if (req.empty())
-        return;
 
-    req.add_member("api", "Backend.shareEvents");
-#if defined(WIN32)
-    co::wait_group wg;
-    wg.add(1);
-    UNIGO([&rpcClient, &req, &res, wg]() {
-        rpcClient.call(req, res);
-        wg.done();
-    });
-    wg.wait();
-#else
-    rpcClient.call(req, res);
-#endif
-    rpcClient.close();
-#endif
+    QString eventStr = "";//event.as_json();
+    CooperationUtil::instance()->sendShareEvents(type, eventStr);
 }
 
 CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
@@ -563,6 +537,7 @@ void CooperationManager::handleNetworkDismiss(const QString &msg)
 
 void CooperationManager::handleSearchDeviceResult(bool res)
 {
-    if(!res)
-        emit MainController::instance()->discoveryFinished(false);
+    emit MainController::instance()->discoveryFinished(res);
+//    if(!res)
+//        emit MainController::instance()->discoveryFinished(false);
 }

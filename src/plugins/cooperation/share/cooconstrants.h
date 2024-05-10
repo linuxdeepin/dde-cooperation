@@ -52,6 +52,16 @@ typedef enum req_type_t {
     BACK_SEARCH_IP_DEVICE = 224, // 搜索ip目标设备
 } ReqType;
 
+typedef enum apply_type_t {
+    APPLY_INFO = 100, // 设备信息申请
+    APPLY_TRANS = 105, // 传输申请
+    APPLY_TRANS_RESULT = 106, // 传输申请的结果
+    APPLY_SHARE = 109, // 控制申请
+    APPLY_SHARE_RESULT = 110, // 控制申请的结果
+    APPLY_SHARE_STOP = 113, // 收到停止事件
+    APPLY_CANCELED = 114, // 申请被取消
+} ApplyReqType;
+
 typedef enum res_type_t {
     FILE_ENTRY = 500,
     FILE_DIRECTORY = 501,

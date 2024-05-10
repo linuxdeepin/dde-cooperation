@@ -43,9 +43,9 @@ public:
 
     void handleSendFiles(const QStringList &fileList);
     void handleApplyTransFiles(int type);
-    void handleTryConnect(const QString &ip);
+//    void handleTryConnect(const QString &ip);
     void handleCancelTransfer();
-    void handleSearchDevice(const QString &ip);
+//    void handleSearchDevice(const QString &ip);
 
     void transferResult(bool result, const QString &msg);
     void updateProgress(int value, const QString &remainTime);

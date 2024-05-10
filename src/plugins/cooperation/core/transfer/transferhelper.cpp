@@ -126,15 +126,15 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
     LOG << "handle apply file, deviceName= " << deviceName.toStdString();
 }
 
-void TransferHelperPrivate::handleTryConnect(const QString &ip)
-{
-    LOG << "connect to " << ip.toStdString();
-}
+//void TransferHelperPrivate::handleTryConnect(const QString &ip)
+//{
+//    LOG << "connect to " << ip.toStdString();
+//}
 
-void TransferHelperPrivate::handleSearchDevice(const QString &ip)
-{
-    LOG << "searching " << ip.toStdString();
-}
+//void TransferHelperPrivate::handleSearchDevice(const QString &ip)
+//{
+//    LOG << "searching " << ip.toStdString();
+//}
 
 void TransferHelperPrivate::handleCancelTransfer()
 {
@@ -227,18 +227,16 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
         return;
     }
 
-//    UNIGO([ip, this] {
-//        d->handleTryConnect(ip);
-//    });
+    // send the transfer file RPC request
+    CooperationUtil::instance()->sendTransApply(ip);
 
     waitForConfirm();
 }
 
 void TransferHelper::searchDevice(const QString &ip)
 {
-//    UNIGO([ip, this] {
-//        d->handleSearchDevice(ip);
-//    });
+    DLOG << "searching " << ip.toStdString();
+    CooperationUtil::instance()->pingTarget(ip);
 }
 
 TransferHelper::TransferStatus TransferHelper::transferStatus()

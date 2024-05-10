@@ -28,6 +28,12 @@ static bool loadPlugins()
     pluginsDirs.push_back(pluginsDir);
     pluginsDirs.push_back(pluginsDir + "/cooperation");
     pluginsDirs.push_back(pluginsDir + "/cooperation/core");
+
+    const QString &relativeDir { "./plugins" };
+    qInfo() << QString("Load plugins path : %1").arg(relativeDir);
+    pluginsDirs.push_back(relativeDir);
+    pluginsDirs.push_back(relativeDir + "/cooperation");
+    pluginsDirs.push_back(relativeDir + "/cooperation/core");
 #else
     pluginsDirs << QString(DDE_COOPERATION_PLUGIN_ROOT_DIR);
     pluginsDirs << QString(DEEPIN_COOPERATION_PLUGIN_DIR);

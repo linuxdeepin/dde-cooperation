@@ -9,7 +9,7 @@
 #include "configs/settings/configmanager.h"
 #include "configs/dconfig/dconfigmanager.h"
 
-#include "../../include/cooconstrants.h"
+#include "../../share/cooconstrants.h"
 #include "common/constant.h"
 #include "common/commonutils.h"
 

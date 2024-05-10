@@ -25,10 +25,17 @@ public:
     void destroyMainWindow();
     void registerDeviceOperation(const QVariantMap &map);
 
+    void pingTarget(const QString &ip);
+    void sendTransApply(const QString &ip);
+    void sendShareEvents(int type, const QString &jsonMsg);
+
     void registAppInfo(const QString &infoJson);
     void unregistAppInfo();
     void asyncDiscoveryDevice();
     void setAppConfig(const QString &key, const QString &value);
+
+    QString deviceInfoStr();
+    DeviceInfoPointer parseDeviceInfo(const QString &info);
 
     static QVariantMap deviceInfo();
     static QString localIPAddress();
