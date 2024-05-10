@@ -28,13 +28,11 @@ public:
     bool sessionPing(QString ip, int port);
     bool sessionConnect(QString ip, int port, QString password);
     void sessionDisconnect(QString ip);
-    void sendFiles(int port, QStringList paths);
+    void sendFiles(QString &ip, int port, QStringList paths);
     void recvFiles(QString &ip, int port, QString &token, QStringList names);
-    void cancelSyncFile();
+    void cancelSyncFile(QString &ip);
 
-    QString sendRpcRequest(int type, const QString &reqJson);
-
-    std::shared_ptr<AsioService> asio_service { nullptr };
+    QString sendRpcRequest(const QString &target, int type, const QString &reqJson);
 
 signals:
     void notifyTransData(const std::vector<std::string> nameVector);
@@ -43,8 +41,10 @@ signals:
     void notifyDoResult(bool result, QString reason);
 
 public slots:
+    void handleTransData(const QString endpoint, const QStringList nameVector);
 
 private:
+    std::shared_ptr<AsioService> asio_service { nullptr };
 
     // session and transfer worker
     std::shared_ptr<SessionWorker> _session_worker { nullptr };

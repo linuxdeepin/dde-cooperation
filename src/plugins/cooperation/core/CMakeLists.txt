@@ -53,8 +53,6 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/win/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/proxy/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/proxy/*.cpp"
     )
    find_package(Qt5 COMPONENTS Sql REQUIRED)
 elseif (CMAKE_SYSTEM MATCHES "Linux")
@@ -80,6 +78,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources/resources.qrc)
 
 list(APPEND LINKLIBS session)
+list(APPEND LINKLIBS filesync)
 
 add_library(${PROJECT_NAME}
     SHARED

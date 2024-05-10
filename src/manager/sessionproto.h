@@ -30,21 +30,21 @@ enum CallResult {
 };
 
 typedef enum dt_type_t {
-    REQ_LOGIN = 0,
-    REQ_FREE_SPACE = 1,
-    REQ_TRANS_DATAS = 2,
-    REQ_TRANS_CANCLE = 3,
-    CAST_INFO = 4,
+    REQ_LOGIN = 1000,
+    REQ_FREE_SPACE = 1001,
+    REQ_TRANS_DATAS = 1002,
+    REQ_TRANS_CANCLE = 1003,
+    CAST_INFO = 1004,
 } ComType;
 
 typedef enum apply_flag_t {
-    ASK_NEEDCONFIRM = 0x10,
-    ASK_QUIET = 0x12,
-    ASK_CANCELED = 0x14,
-    DO_WAIT = 0x20,
-    DO_DONE = 0x22,
-    REPLY_ACCEPT = 0x30,
-    REPLY_REJECT = 0x32,
+    ASK_NEEDCONFIRM = 10,
+    ASK_QUIET = 12,
+    ASK_CANCELED = 14,
+    DO_WAIT = 20,
+    DO_DONE = 22,
+    REPLY_ACCEPT = 30,
+    REPLY_REJECT = 32,
 } ApplyFlag;
 
 //misc:
@@ -93,14 +93,14 @@ struct FreeSpaceMessage {
 struct TransDataMessage {
     std::string id; // the file serve id.
     std::vector<std::string> names; // the file/dir name list
-    std::string token; // temp access token
+    std::string endpoint; // ip:port:token
     bool flag;  // request: dir or file;  response: ready to receive or error(not enough space)
     int64_t size;  // the space need, total folder size or all file size
 
     void from_json(const picojson::value& _x_) {
         id = _x_.get("id").to_str();
 //        names = _x_.get("names").to_str();
-        token = _x_.get("token").to_str();
+        endpoint = _x_.get("token").to_str();
         flag = _x_.get("flag").get<bool>();
         size = _x_.get("size").get<int64_t>();
 
@@ -117,7 +117,7 @@ struct TransDataMessage {
     picojson::value as_json() const {
         picojson::object obj;
         obj["id"] = picojson::value(id);
-        obj["token"] = picojson::value(token);
+        obj["token"] = picojson::value(endpoint);
         obj["flag"] = picojson::value(flag);
         obj["size"] = picojson::value(size);
 
@@ -151,13 +151,13 @@ struct TransCancelMessage {
 };
 
 struct ApplyMessage {
-    int64_t flag;
+    int64_t flag {0};
     std::string  nick;
     std::string  host;
-    int64_t port;
+    int64_t port {0};
 
     void from_json(const picojson::value& _x_) {
-        flag = _x_.get("type").get<int64_t>();
+        flag = _x_.get("flag").get<int64_t>();
         nick = _x_.get("nick").to_str();
         host = _x_.get("selfIp").to_str();
         port = _x_.get("selfPort").get<int64_t>();
@@ -165,7 +165,7 @@ struct ApplyMessage {
 
     picojson::value as_json() const {
         picojson::object obj;
-        obj["type"] = picojson::value(flag);
+        obj["flag"] = picojson::value(flag);
         obj["nick"] = picojson::value(nick);
         obj["selfIp"] = picojson::value(host);
         obj["selfPort"] = picojson::value(port);

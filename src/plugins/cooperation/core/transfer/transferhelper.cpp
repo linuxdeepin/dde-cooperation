@@ -78,43 +78,6 @@ TransferDialog *TransferHelperPrivate::transDialog()
     return transferDialog;
 }
 
-void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
-{
-//     LOG << "send files: " << fileList.toStdList();
-
-//    // first try run web, or prompt error
-//    if (!startFileWeb()) {
-//        ELOG << "try start web sever failed!!!";
-//        return;
-//    }
-
-//    _file_server->clearBind();
-//    std::vector<std::string> name_vector;
-//    for (auto path : paths) {
-//        QFileInfo fileInfo(path);
-//        QString name = fileInfo.fileName();
-//        name_vector.push_back(name.toStdString());
-//        _file_server->webBind(name.toStdString(), path.toStdString());
-//    }
-
-//    TransDataMessage req;
-//    req.id = std::to_string(_request_job_id);
-//    req.names = name_vector;
-//    req.token = "gen-temp-token";
-//    req.flag = true; // many folders
-//    req.size = -1; // unkown size
-//    proto::OriginMessage request;
-//    request.json_msg = req.as_json().serialize();
-
-//    auto response = _client->request(request).get();
-//    if (DO_SUCCESS == response.mask) {
-//        _request_job_id++;
-//    } else {
-//        // emit error!
-//        _file_server->stop();
-//    }
-}
-
 void TransferHelperPrivate::handleApplyTransFiles(int type)
 {
     // 获取设备名称
@@ -125,16 +88,6 @@ void TransferHelperPrivate::handleApplyTransFiles(int type)
 
     LOG << "handle apply file, deviceName= " << deviceName.toStdString();
 }
-
-//void TransferHelperPrivate::handleTryConnect(const QString &ip)
-//{
-//    LOG << "connect to " << ip.toStdString();
-//}
-
-//void TransferHelperPrivate::handleSearchDevice(const QString &ip)
-//{
-//    LOG << "searching " << ip.toStdString();
-//}
 
 void TransferHelperPrivate::handleCancelTransfer()
 {
@@ -229,6 +182,7 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
 
     // send the transfer file RPC request
     CooperationUtil::instance()->sendTransApply(ip);
+    //d->status.storeRelease(Confirming);
 
     waitForConfirm();
 }
@@ -400,13 +354,13 @@ void TransferHelper::accepted()
         d->status.storeRelease(Idle);
         return;
     }
-
     d->updateProgress(1, tr("calculating"));
-    d->handleSendFiles(d->readyToSendFiles);
+    CooperationUtil::instance()->doSendFiles(d->readyToSendFiles);
 }
 
 void TransferHelper::rejected()
 {
+    DLOG << "file transfer rejected >>> ";
     d->status.storeRelease(Idle);
     d->transferResult(false, tr("The other party rejects your request"));
 }

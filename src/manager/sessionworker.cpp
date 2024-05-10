@@ -26,6 +26,8 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         return;
     }
 
+    DLOG << "onReceivedMessage mask=" << request.mask << " json_msg: " << request.json_msg << std::endl;
+
     // Step 2: 解析响应数据
     picojson::value v;
     std::string err = picojson::parse(v, request.json_msg);
@@ -40,7 +42,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         bool handled = _extMsghandler(request.mask, v, &res_json);
         if (handled) {
             response->id = request.id;
-            response->mask = 1;
+            response->mask = DO_SUCCESS;
             response->json_msg = res_json;
             return;
         }
@@ -81,12 +83,11 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         TransDataMessage req, res;
         req.from_json(v);
 
-//        bool isdir = req.flag;
-//        DLOG << "trans data: " << req.token << " " << isdir;
-//        DLOG << "Names: ";
-//        for (const auto &name : req.names) {
-//            DLOG << name << " ";
-//        }
+        QString endpoint = QString::fromStdString(req.endpoint);
+        QStringList nameList;
+        for (auto name : req.names) {
+            nameList.append(QString::fromStdString(name));
+        }
 
         res.id = req.id;
         res.names = req.names;
@@ -94,7 +95,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         res.size = 0;//TransferHelper::getRemainSize();
         response->json_msg = res.as_json().serialize();
 
-        emit onTransData(req.names);
+        emit onTransData(endpoint, nameList);
     }
     break;
     case REQ_TRANS_CANCLE: {
@@ -120,10 +121,10 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
     }
 
     response->id = request.id;
-    response->mask = 1;
+    response->mask = DO_SUCCESS;
 }
 
-void SessionWorker::onStateChanged(int state, std::string msg)
+bool SessionWorker::onStateChanged(int state, std::string &msg)
 {
 //    RPC_ERROR = -2,
 //    RPC_DISCONNECTED = -1,
@@ -158,6 +159,8 @@ void SessionWorker::onStateChanged(int state, std::string msg)
     }
 
     emit onConnectChanged(state, QString(msg.c_str()));
+
+    return false;
 }
 
 void SessionWorker::setExtMessageHandler(ExtenMessageHandler cb)
@@ -187,6 +190,19 @@ bool SessionWorker::startListen(int port)
     return true;
 }
 
+bool SessionWorker::clientPing(QString &address, int port)
+{
+    bool hasConnected = false;
+    if (_client && _client->hasConnected(address.toStdString())) {
+        hasConnected = _client->IsConnected();
+    }
+
+    if (hasConnected)
+        return true;
+
+    return connect(address, port);
+}
+
 bool SessionWorker::connectRemote(QString ip, int port, QString password)
 {
     if (!connect(ip, port)) {
@@ -204,7 +220,12 @@ bool SessionWorker::connectRemote(QString ip, int port, QString password)
     request.mask = REQ_LOGIN;
     request.json_msg = req.as_json().serialize();
 
-    auto response = _client->request(request).get();
+    auto response = sendRequest(ip, request);
+    if (LOGIN_SUCCESS == response.mask) {
+        _login_hosts.insert(ip, true);
+    } else {
+        _login_hosts.insert(ip, false);
+    }
     return (LOGIN_SUCCESS == response.mask);
 }
 
@@ -215,16 +236,40 @@ void SessionWorker::disconnectRemote()
     _client->DisconnectAsync();
 }
 
-proto::OriginMessage SessionWorker::sendRequest(const proto::OriginMessage &request)
+proto::OriginMessage SessionWorker::sendRequest(const QString &target, const proto::OriginMessage &request)
 {
-//    _server->send(request);
-    auto response = _client->request(request).get();
-    return response;
+    if (_client && _client->hasConnected(target.toStdString())) {
+        return _client->sendRequest(request);
+    }
+
+    if (_server && _server->hasConnected(target.toStdString())) {
+        return _server->sendRequest(target.toStdString(), request);
+    }
+
+    WLOG << "Not found connected session for: " << target.toStdString();
+    proto::OriginMessage nullres;
+    return nullres;
 }
 
 void SessionWorker::updatePincode(QString code)
 {
     _savedPin = code;
+}
+
+bool SessionWorker::isClientLogin(QString &ip)
+{
+    bool foundValue = false;
+    bool hasConnected = false;
+    auto it = _login_hosts.find(ip);
+    if (it != _login_hosts.end()) {
+        foundValue = it.value();
+    }
+
+    if (_client && _client->hasConnected(ip.toStdString())) {
+        hasConnected = _client->IsConnected();
+    }
+
+    return foundValue && hasConnected;
 }
 
 bool SessionWorker::listen(int port)
@@ -265,6 +310,7 @@ bool SessionWorker::connect(QString &address, int port)
     } else {
         if (_connectedAddress.compare(address) == 0) {
             LOG << "This target has been conntectd: " << address.toStdString();
+            return _client->IsConnected() ? true : _client->ConnectAsync();
         } else {
             // different target, create new connection.
             _client->DisconnectAndStop();

@@ -51,7 +51,7 @@ public:
 
     void onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response) override;
 
-    void onStateChanged(int state, std::string msg) override;
+    bool onStateChanged(int state, std::string &msg) override;
 
     bool tryConnect(QString ip, QString password);
     QString getConnectPassWord();

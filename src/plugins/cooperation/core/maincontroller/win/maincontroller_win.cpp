@@ -6,6 +6,7 @@
 #include "utils/cooperationutil.h"
 #include "configs/settings/configmanager.h"
 #include "common/constant.h"
+#include "common/commonutils.h"
 
 #include <QStandardPaths>
 #include <QJsonDocument>
@@ -15,25 +16,24 @@
 
 using namespace cooperation_core;
 
-void MainController::initConnect()
+void MainController::initNotifyConnect()
 {
-    connect(networkMonitorTimer, &QTimer::timeout, this, &MainController::checkNetworkState);
-    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &MainController::onAppAttributeChanged);
-    connect(CooperationUtil::instance(), &CooperationUtil::discoveryFinished, this, &MainController::onDiscoveryFinished, Qt::QueuedConnection);
+    transTimer.setInterval(10 * 1000);
+    transTimer.setSingleShot(true);
+
+    connect(&transTimer, &QTimer::timeout, this, &MainController::onConfirmTimeout);
+    
+    if (!cooperationDlg) {
+        cooperationDlg = new CooperationTransDialog(CooperationUtil::instance()->mainWindow());
+        connect(cooperationDlg, &CooperationTransDialog::accepted, this, &MainController::onAccepted);
+        connect(cooperationDlg, &CooperationTransDialog::rejected, this, &MainController::onRejected);
+        connect(cooperationDlg, &CooperationTransDialog::canceled, this, &MainController::onCanceled);
+        connect(cooperationDlg, &CooperationTransDialog::completed, this, &MainController::onCompleted);
+        connect(cooperationDlg, &CooperationTransDialog::viewed, this, &MainController::onViewed);
+    }
 }
 
-void MainController::onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value)
-{
-    if (group != AppSettings::GenericGroup)
-        return;
-
-    if (key == AppSettings::StoragePathKey)
-        CooperationUtil::instance()->setAppConfig(KEY_APP_STORAGE_DIR, value.toString());
-
-    regist();
-}
-
-void MainController::regist()
+void MainController::registApp()
 {
     auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
     auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
@@ -47,7 +47,34 @@ void MainController::regist()
     CooperationUtil::instance()->registAppInfo(doc.toJson());
 }
 
-void MainController::unregist()
+void MainController::updateProgress(int value, const QString &msg)
 {
-    CooperationUtil::instance()->unregistAppInfo();
+    static QString title(tr("Receiving files from \"%1\""));
+    cooperationDlg->showProgressDialog(
+        title.arg(CommonUitls::elidedText(requestFrom, Qt::ElideMiddle, MID_FRONT)));
+    cooperationDlg->updateProgressData(value, msg);
+}
+
+void MainController::waitForConfirm(const QString &name)
+{
+    isReplied = false;
+    recvFilesSavePath.clear();
+    isRequestTimeout = false;
+    requestFrom = name;
+    transTimer.start();
+
+    cooperationDlg->showConfirmDialog(CommonUitls::elidedText(name, Qt::ElideMiddle, 15));
+    cooperationDlg->show();
+}
+
+void MainController::showToast(bool result, const QString &msg)
+{
+    cooperationDlg->showResultDialog(result, msg);
+}
+
+void MainController::onNetworkMiss()
+{
+    static QString msg(tr("Network not connected, file delivery failed this time.\
+                             Please connect to the network and try again!"));
+    showToast(false, msg);
 }

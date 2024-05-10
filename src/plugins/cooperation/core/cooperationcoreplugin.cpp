@@ -14,12 +14,10 @@
 #include "configs/settings/configmanager.h"
 #include "singleton/singleapplication.h"
 
-#if defined(_WIN32) || defined(_WIN64)
-#    include "proxy/cooperationproxy.h"
-#else
-#    include "base/reportlog/reportlogmanager.h"
-#    include <DFeatureDisplayDialog>
-#    include <QFile>
+#ifdef __linux__
+#include "base/reportlog/reportlogmanager.h"
+#include <DFeatureDisplayDialog>
+#include <QFile>
 DWIDGET_USE_NAMESPACE
 #endif
 
@@ -68,10 +66,6 @@ bool CooperaionCorePlugin::start()
         CooperationUtil::instance()->showFeatureDisplayDialog(dlg);
 #endif
     }
-
-#ifndef linux
-    CooperationProxy::instance();
-#endif
 
     return true;
 }

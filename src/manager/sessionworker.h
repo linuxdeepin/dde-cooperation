@@ -12,8 +12,8 @@
 #include "sessionproto.h"
 
 #include <QObject>
+#include <QMap>
 
-//class SessionManager;
 class SessionWorker : public QObject, public SessionCallInterface
 {
     Q_OBJECT
@@ -22,33 +22,33 @@ public:
 
     void onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response) override;
 
-    void onStateChanged(int state, std::string msg) override;
+    bool onStateChanged(int state, std::string &msg) override;
 
     void setExtMessageHandler(ExtenMessageHandler cb);
 
     void stop();
     bool startListen(int port);
 
-    bool connect(QString &address, int port);
+    bool clientPing(QString &address, int port);
     bool connectRemote(QString ip, int port, QString password);
     void disconnectRemote();
 
-    proto::OriginMessage sendRequest(const proto::OriginMessage &request);
+    proto::OriginMessage sendRequest(const QString &target, const proto::OriginMessage &request);
 
     void updatePincode(QString code);
+    bool isClientLogin(QString &ip);
 
 signals:
-    void onTransData(const std::vector<std::string> nameVector);
+    void onTransData(const QString endpoint, const QStringList nameVector);
     void onCancelJob(const std::string jobid);
     void onConnectChanged(int result, QString reason);
 
 public slots:
 private:
     bool listen(int port);
-//    bool connect(QString &address, int port);
+    bool connect(QString &address, int port);
 
     std::weak_ptr<AsioService> _service;
-//    std::shared_ptr<AsioService> _service { nullptr };
     // rpc service and client
     std::shared_ptr<ProtoServer> _server { nullptr };
     std::shared_ptr<ProtoClient> _client { nullptr };
@@ -57,8 +57,10 @@ private:
 
     QString _savedPin = "";
     QString _accessToken = "";
-//    QString _saveDir = "";
     QString _connectedAddress = "";
+
+    // <ip, login>
+    QMap<QString, bool> _login_hosts;
 };
 
 #endif // SESSIONWORKER_H

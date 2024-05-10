@@ -11,7 +11,6 @@
 
 #include <QObject>
 
-//class SessionManager;
 class TransferWorker : public QObject, public ProgressCallInterface
 {
     Q_OBJECT
@@ -45,14 +44,10 @@ private:
     bool startGet(const std::string &address, int port);
 
     std::weak_ptr<AsioService> _service;
-//    std::shared_ptr<AsioService> _service { nullptr };
 
     // file sync service and client
     std::shared_ptr<FileServer> _file_server { nullptr };
     std::shared_ptr<FileClient> _file_client { nullptr };
-
-    // parent session manager pointer
-//    std::shared_ptr<SessionManager> q { nullptr };
 
     // <jobid, jobpath>
 //    QMap<int, QString> _job_maps;

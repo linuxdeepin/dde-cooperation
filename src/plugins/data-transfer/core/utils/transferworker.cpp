@@ -172,7 +172,7 @@ void TransferHandle::onReceivedMessage(const proto::OriginMessage &request, prot
     response->mask = 1;
 }
 
-void TransferHandle::onStateChanged(int state, std::string msg)
+bool TransferHandle::onStateChanged(int state, std::string &msg)
 {
 //    RPC_ERROR = -2,
 //    RPC_DISCONNECTED = -1,
@@ -199,6 +199,8 @@ void TransferHandle::onStateChanged(int state, std::string msg)
         DLOG << "other handling CONNECTING or DISCONNECTING: " << msg;
         break;
     }
+
+    return false;
 }
 
 void TransferHandle::init()

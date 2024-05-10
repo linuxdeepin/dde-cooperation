@@ -25,6 +25,9 @@ public:
     void setCallbacks(std::shared_ptr<SessionCallInterface> callbacks);
     void DisconnectAndStop();
 
+    bool hasConnected(const std::string &ip);
+    proto::OriginMessage sendRequest(const proto::OriginMessage &msg);
+
 protected:
     void onConnected() override;
 
@@ -43,9 +46,14 @@ protected:
     size_t onSend(const void *data, size_t size) override;
 
 private:
-    std::atomic<bool> _stop{ false };
+    std::atomic<bool> _stop { false };
 
     std::shared_ptr<SessionCallInterface> _callbacks { nullptr };
+
+    std::string _connected_host = { "" };
+
+    //mask self request, default false for remote
+    std::atomic<bool> _self_request { false };
 };
 
 #endif // PROTOCLIENT_H

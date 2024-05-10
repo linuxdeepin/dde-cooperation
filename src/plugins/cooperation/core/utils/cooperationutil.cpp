@@ -16,7 +16,7 @@
 
 #include "manager/sessionmanager.h"
 #include "manager/sessionproto.h"
-#include "cooconstrants.h"
+#include "share/cooconstrants.h"
 
 #include <QJsonDocument>
 #include <QNetworkInterface>
@@ -24,8 +24,10 @@
 #include <QDebug>
 #include <QDir>
 
-#define COO_CORE_SESSION_PORT 51566
-#define COO_CORE_HARD_PIN "515616"
+#define COO_SESSION_PORT 51566
+#define COO_HARD_PIN "515616"
+
+#define COO_WEB_PORT 51568
 
 #ifdef linux
 #    include <DFeatureDisplayDialog>
@@ -36,12 +38,11 @@ using namespace cooperation_core;
 CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
     : q(qq)
 {
-    // FIXME: 启动不同服务， 根据localIPCStart里处理通信
     bool onlyTransfer = qApp->property("onlyTransfer").toBool();
     LOG << "This is only transfer?" << onlyTransfer;
 
     ExtenMessageHandler msg_cb([this](int32_t mask, const picojson::value &json_value, std::string *res_msg) -> bool {
-        // trans_req; share_req; rejected_req; share_interrupt;
+        DLOG << "CooperationUtil >> " << mask <<" msg_cb, json_msg: " << json_value << std::endl;
         switch (mask)
         {
         case APPLY_INFO: {
@@ -67,11 +68,11 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
             req.from_json(json_value);
             res.flag = DO_WAIT;
             *res_msg = res.as_json().serialize();
-            q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
+            q->confirmTargetAddress = QString::fromStdString(req.host);
+            q->metaObject()->invokeMethod(MainController::instance(),
+                                          "waitForConfirm",
                                           Qt::QueuedConnection,
-                                          Q_ARG(int, req.flag),
-                                          Q_ARG(QString, QString(req.host.c_str())),
-                                          Q_ARG(bool, true));
+                                          Q_ARG(QString, QString(req.host.c_str())));
         }
         return true;
         case APPLY_TRANS_RESULT: {
@@ -137,8 +138,9 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
 
     sessionManager = new SessionManager(this);
     sessionManager->setSessionExtCallback(msg_cb);
+    sessionManager->updatePin(COO_HARD_PIN);
 
-    sessionManager->sessionListen(COO_CORE_SESSION_PORT);
+    sessionManager->sessionListen(COO_SESSION_PORT);
 
     connect(sessionManager, &SessionManager::notifyConnection, this, &CooperationUtilPrivate::handleConnectStatus);
 }
@@ -149,290 +151,38 @@ CooperationUtilPrivate::~CooperationUtilPrivate()
 
 void CooperationUtilPrivate::handleConnectStatus(int result, QString reason)
 {
-//    if (result == -2) {
-//        // error hanppend
-//        int code = reason.toInt();
-//        if (code == 113) {
-//            // host unreachable
-//            q->metaObject()->invokeMethod(CooperationManager::instance(),
-//                                                          "handleSearchDeviceResult",
-//                                                          Qt::QueuedConnection,
-//                                                          Q_ARG(bool, true));
-//        }
-//    } else if (result == 2) {
-//        // connected
+    if (result == -2) {
+        // error hanppend
+        int code = reason.toInt();
+        if (code == 113) {
+            // host unreachable
+            q->metaObject()->invokeMethod(CooperationManager::instance(),
+                                                          "handleSearchDeviceResult",
+                                                          Qt::QueuedConnection,
+                                                          Q_ARG(bool, false));
+        }
+
+    } else if (result == -1) {
+        // disconnected
+        // if there are trans or share working, notify network disconnect
+        q->metaObject()->invokeMethod(MainController::instance(),
+                                            "onNetworkMiss",
+                                            Qt::QueuedConnection);
+    } else if (result == 2) {
+        // connected
 //        q->metaObject()->invokeMethod(CooperationManager::instance(),
 //                                                      "handleSearchDeviceResult",
 //                                                      Qt::QueuedConnection,
 //                                                      Q_ARG(bool, true));
-//    }
+    }
 
-    //TODO: request target info for each found nodes. now temp for test.
-    QList<DeviceInfoPointer> infoList;
 
-    auto myselfInfo = DeviceInfo::fromVariantMap(q->deviceInfo());
-    myselfInfo->setIpAddress(q->localIPAddress());
-
-    if (myselfInfo && myselfInfo->isValid() && myselfInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone)
-        infoList << myselfInfo;
-    Q_EMIT q->discoveryFinished(infoList);
 //    q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
 //                                  Qt::QueuedConnection,
 //                                  Q_ARG(int, 0),
 //                                  Q_ARG(QString, reason),
 //                                  Q_ARG(bool, result == 2));
 }
-
-#if 0
-void CooperationUtilPrivate::localIPCStart()
-{
-    if (frontendIpcSer) return;
-
-    frontendIpcSer = new FrontendService(this);
-
-    UNIGO([this]() {
-        while (!thisDestruct) {
-            BridgeJsonData bridge;
-            frontendIpcSer->bridgeChan()->operator>>(bridge);   //300ms超时
-            if (!frontendIpcSer->bridgeChan()->done()) {
-                // timeout, next read
-                continue;
-            }
-            DLOG_IF(FLG_log_detail) << "recv IPC:" << bridge.type << " " << bridge.json;
-
-            co::Json json_obj = json::parse(bridge.json);
-            if (json_obj.is_null()) {
-                WLOG << "parse error from: " << bridge.json.c_str();
-                continue;
-            }
-
-            switch (bridge.type) {
-            case IPC_PING: {
-                ipc::PingFrontParam param;
-                param.from_json(json_obj);
-
-                bool result = false;
-                fastring my_ver(FRONTEND_PROTO_VERSION);
-                // test ping 服务测试用
-
-                if (my_ver.compare(param.version) == 0 && (param.session.compare(sessionId.toStdString()) == 0 || param.session.compare("backendServerOnline") == 0)) {
-                    result = true;
-                } else {
-                    WLOG << param.version.c_str() << " =version not match= " << my_ver.c_str();
-                }
-
-                BridgeJsonData res;
-                res.type = IPC_PING;
-                res.json = result ? param.session : "";   // 成功则返回session，否则为空
-
-                frontendIpcSer->bridgeResult()->operator<<(res);
-            } break;
-            case FRONT_PEER_CB: {
-                ipc::GenericResult param;
-                param.from_json(json_obj);
-
-                LOG << param.result << " peer : " << param.msg.c_str();
-
-                co::Json obj = json::parse(param.msg);
-                NodeInfo nodeInfo;
-                nodeInfo.from_json(obj);
-                if (nodeInfo.apps.empty() && !param.result) {
-                    q->metaObject()->invokeMethod(MainController::instance(),
-                                                  "updateDeviceList",
-                                                  Qt::QueuedConnection,
-                                                  Q_ARG(QString, QString(nodeInfo.os.ipv4.c_str())),
-                                                  Q_ARG(QString, QString("")),
-                                                  Q_ARG(int, nodeInfo.os.os_type),
-                                                  Q_ARG(QString, QString("")),
-                                                  Q_ARG(bool, param.result));
-                    break;
-                }
-
-                for (const auto &appInfo : nodeInfo.apps) {
-                    // 上线，非跨端应用无需处理
-                    if (param.result && appInfo.appname.compare(CooperRegisterName) != 0)
-                        continue;
-
-                    // 下线，跨端应用未下线
-                    if (!param.result && appInfo.appname.compare(CooperRegisterName) == 0)
-                        continue;
-
-                    q->metaObject()->invokeMethod(MainController::instance(),
-                                                  "updateDeviceList",
-                                                  Qt::QueuedConnection,
-                                                  Q_ARG(QString, QString(nodeInfo.os.ipv4.c_str())),
-                                                  Q_ARG(QString, QString(nodeInfo.os.share_connect_ip.c_str())),
-                                                  Q_ARG(int, nodeInfo.os.os_type),
-                                                  Q_ARG(QString, QString(appInfo.json.c_str())),
-                                                  Q_ARG(bool, param.result));
-                }
-            } break;
-            case FRONT_CONNECT_CB: {
-                ipc::GenericResult param;
-                param.from_json(json_obj);
-                QString msg(param.msg.c_str());
-
-                q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
-                                              Qt::QueuedConnection,
-                                              Q_ARG(int, param.result),
-                                              Q_ARG(QString, msg),
-                                              Q_ARG(bool, param.isself));
-            } break;
-            case FRONT_TRANS_STATUS_CB: {
-                ipc::GenericResult param;
-                param.from_json(json_obj);
-                QString msg(param.msg.c_str());   // job path
-
-                q->metaObject()->invokeMethod(TransferHelper::instance(), "onTransJobStatusChanged",
-                                              Qt::QueuedConnection,
-                                              Q_ARG(int, param.id),
-                                              Q_ARG(int, param.result),
-                                              Q_ARG(QString, msg));
-            } break;
-            case FRONT_NOTIFY_FILE_STATUS: {
-                QString objstr(bridge.json.c_str());
-                q->metaObject()->invokeMethod(TransferHelper::instance(),
-                                              "onFileTransStatusChanged",
-                                              Qt::QueuedConnection,
-                                              Q_ARG(QString, objstr));
-            } break;
-            case FRONT_APPLY_TRANS_FILE: {
-                ApplyTransFiles transferInfo;
-                transferInfo.from_json(json_obj);
-                LOG << "apply transfer info: " << json_obj;
-
-                switch (transferInfo.type) {
-                case ApplyTransType::APPLY_TRANS_CONFIRM:
-                    q->metaObject()->invokeMethod(TransferHelper::instance(),
-                                                  "accepted",
-                                                  Qt::QueuedConnection);
-                    break;
-                case ApplyTransType::APPLY_TRANS_REFUSED:
-                    q->metaObject()->invokeMethod(TransferHelper::instance(),
-                                                  "rejected",
-                                                  Qt::QueuedConnection);
-                    break;
-                default:
-                    break;
-                }
-            } break;
-            case FRONT_SERVER_ONLINE:
-                backendOk = pingBackend();
-                q->metaObject()->invokeMethod(MainController::instance(),
-                                              "start",
-                                              Qt::QueuedConnection);
-                break;
-            case FRONT_SHARE_APPLY_CONNECT: {
-                ShareConnectApply conApply;
-                conApply.from_json(json_obj);
-                q->metaObject()->invokeMethod(CooperationManager::instance(),
-                                              "notifyConnectRequest",
-                                              Qt::QueuedConnection,
-                                              Q_ARG(QString, QString(conApply.data.c_str())));
-            } break;
-            case FRONT_SHARE_APPLY_CONNECT_REPLY: {
-                ShareConnectReply conReply;
-                conReply.from_json(json_obj);
-
-                LOG << "share apply connect info: " << json_obj;
-                q->metaObject()->invokeMethod(CooperationManager::instance(),
-                                              "handleConnectResult",
-                                              Qt::QueuedConnection,
-                                              Q_ARG(int, conReply.reply));
-            } break;
-            case FRONT_SHARE_DISCONNECT: {
-                ShareDisConnect disCon;
-                disCon.from_json(json_obj);
-
-                LOG << "share disconnect info: " << json_obj;
-                q->metaObject()->invokeMethod(CooperationManager::instance(),
-                                              "handleDisConnectResult",
-                                              Qt::QueuedConnection,
-                                              Q_ARG(QString, QString(disCon.msg.c_str())));
-            } break;
-            case FRONT_SHARE_DISAPPLY_CONNECT: {
-                ShareConnectDisApply param;
-                param.from_json(json_obj);
-                LOG << "share cancel apply : " << json_obj;
-                q->metaObject()->invokeMethod(CooperationManager::instance(),
-                                              "handleCancelCooperApply",
-                                              Qt::QueuedConnection);
-            } break;
-            case FRONT_SEND_STATUS: {
-                SendStatus param;
-                param.from_json(json_obj);
-                LOG << " FRONT_SEND_STATUS  : " << json_obj;
-                if ((param.curstatus == CURRENT_STATUS_TRAN_FILE_SEN || param.curstatus == CURRENT_STATUS_TRAN_FILE_RCV || param.msg.contains("\"protocolType\":1004"))) {
-                    q->metaObject()->invokeMethod(CooperationManager::instance(),
-                                                  "handleNetworkDismiss",
-                                                  Qt::QueuedConnection,
-                                                  Q_ARG(QString, QString(param.msg.c_str())));
-                }
-                break;
-            }
-            case FRONT_SEARCH_IP_DEVICE_RESULT: {
-                SearchDeviceResult param;
-                param.from_json(json_obj);
-                LOG << "SearchDeviceResult : " << json_obj;
-                q->metaObject()->invokeMethod(CooperationManager::instance(),
-                                              "handleSearchDeviceResult",
-                                              Qt::QueuedConnection,
-                                              Q_ARG(bool, param.result));
-            } break;
-            default:
-                break;
-            }
-        }
-    });
-
-    // start ipc services
-    ipc::FrontendImpl *frontendimp = new ipc::FrontendImpl();
-    frontendimp->setInterface(frontendIpcSer);
-
-    bool onlyTransfer = qApp->property("onlyTransfer").toBool();
-    rpc::Server().add_service(frontendimp).start("0.0.0.0", onlyTransfer ? UNI_IPC_FRONTEND_TRANSFER_PORT : UNI_IPC_FRONTEND_COOPERATION_PORT, "/frontend", "", "");
-}
-
-QList<DeviceInfoPointer> CooperationUtilPrivate::parseDeviceInfo(const co::Json &obj)
-{
-    NodeList nodeList;
-    nodeList.from_json(obj);
-
-    auto lastInfo = nodeList.peers.pop_back();
-    QList<DeviceInfoPointer> devInfoList;
-    for (const auto &node : nodeList.peers) {
-        DeviceInfoPointer devInfo { nullptr };
-        for (const auto &app : node.apps) {
-            if (app.appname != CooperRegisterName)
-                continue;
-
-            QJsonParseError error;
-            auto doc = QJsonDocument::fromJson(app.json.c_str(), &error);
-            if (error.error != QJsonParseError::NoError)
-                continue;
-
-            auto map = doc.toVariant().toMap();
-            if (!map.contains(AppSettings::DeviceNameKey))
-                continue;
-
-            map.insert("IPAddress", node.os.ipv4.c_str());
-            map.insert("OSType", node.os.os_type);
-            devInfo = DeviceInfo::fromVariantMap(map);
-            if (lastInfo.os.share_connect_ip == node.os.ipv4)
-                devInfo->setConnectStatus(DeviceInfo::Connected);
-            else
-                devInfo->setConnectStatus(DeviceInfo::Connectable);
-
-            break;
-        }
-
-        if (devInfo && devInfo->isValid() && devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone)
-            devInfoList << devInfo;
-    }
-
-    return devInfoList;
-}
-#endif
 
 
 CooperationUtil::CooperationUtil(QObject *parent)
@@ -481,7 +231,7 @@ void CooperationUtil::registerDeviceOperation(const QVariantMap &map)
 void CooperationUtil::pingTarget(const QString &ip)
 {
     // session connect and then send rpc request
-    bool pong = d->sessionManager->sessionPing(ip, COO_CORE_SESSION_PORT);
+    bool pong = d->sessionManager->sessionPing(ip, COO_SESSION_PORT);
 //    emit CooperationManager::instance()->handleSearchDeviceResult(pong);
 
     // send info apply, and sync handle
@@ -490,13 +240,23 @@ void CooperationUtil::pingTarget(const QString &ip)
     msg.host = ip.toStdString();
     msg.nick = deviceInfoStr().toStdString();
     QString jsonMsg = msg.as_json().serialize().c_str();
-    QString res = d->sessionManager->sendRpcRequest(APPLY_INFO, jsonMsg);
+    QString res = d->sessionManager->sendRpcRequest(ip, APPLY_INFO, jsonMsg);
     if (res.isEmpty()) {
         // transfer request send exception, it perhaps network error
         WLOG << "Send APPLY_TRANS failed.";
     } else {
+        WLOG << "APPLY_TRANS replay:" << res.toStdString();
+        picojson::value json_value;
+        std::string err = picojson::parse(json_value, res.toStdString());
+        if (!err.empty()) {
+            DLOG << "Failed to parse JSON data: " << err;
+            return;
+        }
+
+        ApplyMessage replay;
+        replay.from_json(json_value);
         // update this device info to discovery list
-        auto devInfo = parseDeviceInfo(res);
+        auto devInfo = parseDeviceInfo(replay.nick.c_str());
         if (devInfo && devInfo->isValid() && devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
             QList<DeviceInfoPointer> devInfoList;
             devInfoList << devInfo;
@@ -508,14 +268,24 @@ void CooperationUtil::pingTarget(const QString &ip)
 void CooperationUtil::sendTransApply(const QString &ip)
 {
     // session connect and then send rpc request
-    bool logind = d->sessionManager->sessionConnect(ip, COO_CORE_SESSION_PORT, COO_CORE_HARD_PIN);
+    bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+
+    metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
+                                    Qt::QueuedConnection,
+                                    Q_ARG(int, logind ? 1 : 0),
+                                    Q_ARG(QString, ip),
+                                    Q_ARG(bool, true));
+
     if (logind) {
+        // update the target address
+        confirmTargetAddress = ip;
+
         // send transfer apply, and async handle in RPC recv
         ApplyMessage msg;
         msg.flag = ASK_NEEDCONFIRM;
-        msg.host = ip.toStdString();
+        msg.host = localIPAddress().toStdString();
         QString jsonMsg = msg.as_json().serialize().c_str();
-        QString res = d->sessionManager->sendRpcRequest(APPLY_TRANS, jsonMsg);
+        QString res = d->sessionManager->sendRpcRequest(ip, APPLY_TRANS, jsonMsg);
         if (res.isEmpty()) {
             // transfer request send exception, it perhaps network error
             WLOG << "Send APPLY_TRANS failed.";
@@ -555,6 +325,36 @@ void CooperationUtil::asyncDiscoveryDevice()
 void CooperationUtil::setAppConfig(const QString &key, const QString &value)
 {
     //TODO: ?setAppConfig
+}
+
+void CooperationUtil::replyTransRequest(bool agree)
+{
+    // send transfer reply, skip result
+    ApplyMessage msg;
+    msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
+    msg.host = localIPAddress().toStdString();
+    QString jsonMsg = msg.as_json().serialize().c_str();
+
+    // _confirmTargetAddress
+    QString res = d->sessionManager->sendRpcRequest(confirmTargetAddress, APPLY_TRANS_RESULT, jsonMsg);
+    if (res.isEmpty()) {
+        // transfer request send exception, it perhaps network error
+        WLOG << "Send APPLY_TRANS_RESULT failed.";
+    }
+}
+
+void CooperationUtil::cancelTrans()
+{
+    d->sessionManager->cancelSyncFile(confirmTargetAddress);
+}
+
+void CooperationUtil::doSendFiles(const QStringList &fileList)
+{
+    if (confirmTargetAddress.isEmpty()) {
+        WLOG << "No confirm address!!!";
+        return;
+    }
+    d->sessionManager->sendFiles(confirmTargetAddress, COO_WEB_PORT, fileList);
 }
 
 QString CooperationUtil::deviceInfoStr()

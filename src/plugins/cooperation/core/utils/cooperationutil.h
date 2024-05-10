@@ -34,6 +34,10 @@ public:
     void asyncDiscoveryDevice();
     void setAppConfig(const QString &key, const QString &value);
 
+    void replyTransRequest(bool agree);
+    void cancelTrans();
+    void doSendFiles(const QStringList &fileList);
+
     QString deviceInfoStr();
     DeviceInfoPointer parseDeviceInfo(const QString &info);
 
@@ -41,6 +45,9 @@ public:
     static QString localIPAddress();
 
     void showFeatureDisplayDialog(QDialog *dlg);
+
+
+    QString confirmTargetAddress = {};
 
 Q_SIGNALS:
     void discoveryFinished(const QList<DeviceInfoPointer> &infoList);

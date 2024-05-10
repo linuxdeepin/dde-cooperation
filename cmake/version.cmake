@@ -1,4 +1,3 @@
-cmake_minimum_required (VERSION 3.4)
 
 set (APP_VERSION_MAJOR 0)
 set (APP_VERSION_MINOR 7)

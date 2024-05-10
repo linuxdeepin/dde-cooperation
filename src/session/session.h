@@ -24,7 +24,7 @@ class SessionCallInterface : public std::enable_shared_from_this<SessionCallInte
 public:
     virtual void onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response) = 0;
 
-    virtual void onStateChanged(int state, std::string msg) = 0;
+    virtual bool onStateChanged(int state, std::string &msg) = 0;
 };
 
 #endif // SESSION_H

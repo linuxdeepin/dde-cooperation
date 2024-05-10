@@ -2,10 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef BRIDGE_H
-#define BRIDGE_H
-
-#include <co/fastring.h>
+#ifndef COO_CONSTRANTS_H
+#define COO_CONSTRANTS_H
 
 typedef enum req_type_t {
     IPC_PING = 10,
@@ -54,6 +52,16 @@ typedef enum req_type_t {
     BACK_SEARCH_IP_DEVICE = 224, // 搜索ip目标设备
 } ReqType;
 
+typedef enum apply_type_t {
+    APPLY_INFO = 100, // 设备信息申请
+    APPLY_TRANS = 101, // 传输申请
+    APPLY_TRANS_RESULT = 102, // 传输申请的结果
+    APPLY_SHARE = 111, // 控制申请
+    APPLY_SHARE_RESULT = 112, // 控制申请的结果
+    APPLY_SHARE_STOP = 113, // 收到停止事件
+    APPLY_CANCELED = 120, // 申请被取消
+} ApplyReqType;
+
 typedef enum res_type_t {
     FILE_ENTRY = 500,
     FILE_DIRECTORY = 501,
@@ -63,9 +71,4 @@ typedef enum res_type_t {
     CONFIG_RESULT = 505,
 } ResType;
 
-struct BridgeJsonData {
-    uint32_t type; // json数据类型：ReqType or ResType
-    fastring json; // json数据结构实例
-};
-
-#endif // BRIDGE_H
+#endif // COO_CONSTRANTS_H

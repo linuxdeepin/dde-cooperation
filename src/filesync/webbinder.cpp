@@ -11,10 +11,15 @@ WebBinder::WebBinder()
 
 int WebBinder::bind(std::string webDir, std::string diskDir)
 {
-    std::regex validateWeb("(\\/((\\w)*|\\*))*"), validateDisk("(\\/)?((\\w)+(\\/)?)*(\\.(\\w)+)?"), isFile("\\S*\\/");
+    // std::regex validateWeb(R"([^\0<>:"/\\|?*]*$)");
+    // std::regex validateDisk(R"((\/)?(?![.]{1,2}($|\/))[\w.-]+(\/[\w.-]+)*(\\.[\w]+)?)");
+    std::regex isFile(R"(\S*\/$)");
 
-    if (!std::regex_match(webDir, validateWeb)) return -2;
-    if (!std::regex_match(diskDir, validateDisk)) return -3;
+    // std::regex validateWeb(R"([^\0<>:"/\\|?*]*$)"), validateDisk("(\\/)?((\\w)+(\\/)?)*(\\.(\\w)+)?"), isFile("\\S*\\/");
+    // std::regex validateWeb("(\\/((\\w)*|\\*))*"), validateDisk("(\\/)?((\\w)+(\\/)?)*(\\.(\\w)+)?"), isFile("\\S*\\/");
+
+    // if (!std::regex_match(webDir, validateWeb)) return -2;
+    // if (!std::regex_match(diskDir, validateDisk)) return -3;
     if (std::regex_match(webDir, isFile) != std::regex_match(diskDir, isFile)) return -4;
 
     for (auto &pair : _binds) if (pair.first.compare(webDir) == 0) return -1;
@@ -38,9 +43,6 @@ int WebBinder::unbind(std::string webDir)
 void WebBinder::clear()
 {
     _binds.clear();
-//    for (size_t i = 0; i < _binds.size(); i++) {
-//        _binds.erase(_binds.begin() + i);
-//    }
 }
 
 std::string WebBinder::getPath(std::string path)

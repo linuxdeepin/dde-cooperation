@@ -50,11 +50,11 @@ bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::
     }
 
     _file_server->clearBind();
-//    std::vector<std::string> name_vector;
     for (auto path : paths) {
         QFileInfo fileInfo(path);
-        QString name = fileInfo.fileName();
+        QString name = "/" + fileInfo.fileName(); //must start /
         nameVector->push_back(name.toStdString());
+        LOG << "web bind (" << name.toStdString() << ") on dir: " << path.toStdString();
         _file_server->webBind(name.toStdString(), path.toStdString());
     }
 
