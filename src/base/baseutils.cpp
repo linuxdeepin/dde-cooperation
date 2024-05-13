@@ -21,6 +21,21 @@ bool BaseUtils::isWayland()
             || WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive));
 }
 
+bool BaseUtils::portInUse(int port)
+{
+    QProcess process;
+    process.start("netstat -ano");
+    process.waitForFinished(3000);
+
+    // 获取命令输出
+    QString output = process.readAllStandardOutput();
+    if (output.contains("0.0.0.0:" + QString::number(port)))
+        return true;
+
+    return false;
+}
+
+
 BaseUtils::OS_TYPE BaseUtils::osType()
 {
 #ifdef _WIN32

@@ -146,20 +146,6 @@ bool isActiveUser()
     return (curUser.compare(username) == 0 || curUser.startsWith(username + "@"));
 }
 
-bool portInUse(int port)
-{
-    QProcess process;
-    process.start("netstat -ano");
-    process.waitForFinished(3000);
-
-    // 获取命令输出
-    QString output = process.readAllStandardOutput();
-    if (output.contains("0.0.0.0:" + QString::number(port)))
-        return true;
-
-    return false;
-}
-
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -182,7 +168,7 @@ int main(int argc, char *argv[])
 
     QString filePath = kfallbackFile;
     QFile file(filePath);
-    bool inUse = portInUse(BASEPROTO_PORT);
+    bool inUse = deepin_cross::BaseUtils::portInUse(BASEPROTO_PORT);
     if (inUse) {
         qCritical() << "exit, network port (" << BASEPROTO_PORT << ") is busing........";
         if (!file.exists()) {

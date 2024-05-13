@@ -13,6 +13,7 @@
 
 #include <signal.h>
 
+#define BASEPROTO_PORT 51597
 static constexpr char kPluginInterface[] { "org.deepin.plugin.cooperation" };
 static constexpr char kPluginCore[] { "cooperation-core" };
 
@@ -95,6 +96,12 @@ int main(int argc, char *argv[])
                                                                "share keys and mice, and share clipboards "
                                                                "between different devices."));
 #endif
+
+    bool inUse = BaseUtils::portInUse(BASEPROTO_PORT);
+    if (inUse) {
+        qCritical() << "exit, network port (" << BASEPROTO_PORT << ") is busing........";
+        return 1;
+    }
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {

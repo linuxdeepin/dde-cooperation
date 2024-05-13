@@ -18,6 +18,7 @@ public:
         kOther
     };
     static OS_TYPE osType();
+    static bool portInUse(int port);
 };
 }
 
