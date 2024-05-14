@@ -1,6 +1,0 @@
-package xx
-
-service HelloAgain {  
-    hello,
-    again,
-}

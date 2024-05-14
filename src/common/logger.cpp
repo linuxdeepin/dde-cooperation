@@ -4,6 +4,8 @@
 
 #include "logger.h"
 
+using namespace deepin_cross;
+
 std::ostringstream& Logger::stream()
 {
     return _buffer;

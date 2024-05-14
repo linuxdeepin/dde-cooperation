@@ -5,7 +5,7 @@
 #ifndef COMMONUTILS_H
 #define COMMONUTILS_H
 
-#include "logger.h"
+#include "log.h"
 
 #include <QString>
 

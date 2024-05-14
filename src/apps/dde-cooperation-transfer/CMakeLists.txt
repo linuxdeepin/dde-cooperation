@@ -1,5 +1,10 @@
 set(PROJ_NAME "dde-cooperation-transfer")
 
+# enable qt build support
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 configure_file(
     "../config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
@@ -12,11 +17,12 @@ FILE(GLOB CPP_SRC
     ${CMAKE_SOURCE_DIR}/src/base/*.cpp
 )
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
-
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Network Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Network Widgets)
-find_package(Dtk COMPONENTS Widget REQUIRED)
+set(qt_required_components Core Gui Network Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
+if (CMAKE_SYSTEM MATCHES "Linux")
+    find_package(Dtk COMPONENTS Widget REQUIRED)
+endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJ_NAME}
@@ -29,6 +35,9 @@ else()
     )
 endif()
 
+target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/lib/cooperation)
+
 target_link_libraries(${PROJ_NAME}
   PRIVATE
   Qt${QT_VERSION_MAJOR}::Core
@@ -36,7 +45,7 @@ target_link_libraries(${PROJ_NAME}
   Qt${QT_VERSION_MAJOR}::Network
   Qt${QT_VERSION_MAJOR}::Widgets
   ${DtkWidget_LIBRARIES}
-  deepin_cross::framework
+  cooperation-core
 )
 
 install(TARGETS ${PROJ_NAME} DESTINATION bin)

@@ -1,5 +1,10 @@
 set(PROJ_NAME "dde-cooperation")
 
+# enable qt build support
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 configure_file(
     "../config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
@@ -13,8 +18,6 @@ FILE(GLOB CPP_SRC
     ${CMAKE_SOURCE_DIR}/src/base/*.h
     ${CMAKE_SOURCE_DIR}/src/base/*.cpp
 )
-
-include_directories(${CMAKE_SOURCE_DIR}/src)
 
 set(qt_required_components Core Gui Network Widgets)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
@@ -61,6 +64,9 @@ else()
     )
 endif()
 
+target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/lib/cooperation)
+
 if (WIN32)
     add_link_options(${PROJ_NAME} PRIVATE -mwindows)
 endif()
@@ -71,7 +77,7 @@ target_link_libraries(${PROJ_NAME}
   Qt${QT_VERSION_MAJOR}::Gui
   Qt${QT_VERSION_MAJOR}::Network
   Qt${QT_VERSION_MAJOR}::Widgets
-  deepin_cross::framework
+  cooperation-core
 )
 
 if (CMAKE_SYSTEM MATCHES "Linux")

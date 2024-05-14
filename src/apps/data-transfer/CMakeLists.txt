@@ -1,5 +1,10 @@
 ﻿set(PROJ_NAME "deepin-data-transfer")
 
+# enable qt build support
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 configure_file(
     "../config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
@@ -11,8 +16,6 @@ FILE(GLOB CPP_SRC
     ${CMAKE_SOURCE_DIR}/src/base/*.h
     ${CMAKE_SOURCE_DIR}/src/base/*.cpp
 )
-
-include_directories(${CMAKE_SOURCE_DIR}/src)
 
 if (CMAKE_SYSTEM MATCHES "Linux")
     find_package(Dtk COMPONENTS Widget REQUIRED)
@@ -63,6 +66,9 @@ else()
     )
 endif()
 
+target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/lib/data-transfer)
+
 if (WIN32)
     add_link_options(${PROJ_NAME} PRIVATE -mwindows)
 endif()
@@ -73,7 +79,7 @@ target_link_libraries(${PROJ_NAME}
   Qt${QT_VERSION_MAJOR}::Gui
   Qt${QT_VERSION_MAJOR}::Network
   Qt${QT_VERSION_MAJOR}::Widgets
-  deepin_cross::framework
+  data-transfer-core
 )
 
 if (CMAKE_SYSTEM MATCHES "Linux")

@@ -1,6 +1,0 @@
-package xx
-
-service HelloWorld {  
-    hello,
-    world,
-}

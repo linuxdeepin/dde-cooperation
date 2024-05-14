@@ -9,4 +9,6 @@ if(NOT TARGET cppserver)
   # Module subdirectory
   add_subdirectory("${CPPSERVER_DIR}" cppserver)
 
+  include_directories("${CPPSERVER_DIR}/modules/CppLogging/include")
+
 endif()
