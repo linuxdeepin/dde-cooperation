@@ -6,6 +6,7 @@
 #include "mainwindow_p.h"
 #include "dialogs/settingdialog.h"
 #include "maincontroller/maincontroller.h"
+#include "discovercontroller/discovercontroller.h"
 
 #include <QScreen>
 #include <QUrl>
@@ -31,6 +32,10 @@ void MainWindowPrivate::initConnect()
     connect(MainController::instance(), &MainController::deviceOffline, q, &MainWindow::removeDevice);
     connect(MainController::instance(), &MainController::discoveryFinished, q, &MainWindow::onDiscoveryFinished);
     connect(MainController::instance(), &MainController::firstStart, q, &MainWindow::setFirstTipVisible);
+
+    connect(DiscoverController::instance(), &DiscoverController::startDiscoveryDevice, q, &MainWindow::onLookingForDevices);
+    connect(DiscoverController::instance(), &DiscoverController::deviceOnline, q, &MainWindow::addDevice);
+    connect(DiscoverController::instance(), &DiscoverController::deviceOffline, q, &MainWindow::removeDevice);
 }
 
 void MainWindowPrivate::moveCenter()

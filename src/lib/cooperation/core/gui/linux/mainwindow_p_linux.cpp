@@ -5,6 +5,7 @@
 #include "../mainwindow.h"
 #include "../mainwindow_p.h"
 #include "maincontroller/maincontroller.h"
+#include "discovercontroller/discovercontroller.h"
 
 #include <DTitlebar>
 #include <DIconButton>
@@ -36,6 +37,7 @@ void MainWindowPrivate::initTitleBar()
     refreshBtn->setToolTip(tr("Re-scan for devices"));
     titleBar->addWidget(refreshBtn, Qt::AlignLeft);
     connect(refreshBtn, &DIconButton::clicked, q, [] { MainController::instance()->start(); });
+    connect(refreshBtn, &DIconButton::clicked, q, [] { DiscoverController::instance()->startDiscover(); });
 
     if (qApp->property("onlyTransfer").toBool()) {
         titleBar->setMenuVisible(false);

@@ -8,9 +8,6 @@
 
 #include <QJsonDocument>
 
-inline constexpr char IPAddress[] { "IPAddress" };
-inline constexpr char OSType[] { "osType" };
-
 using namespace cooperation_core;
 using namespace deepin_cross;
 
@@ -149,8 +146,8 @@ bool DeviceInfo::cooperationEnable() const
 QVariantMap DeviceInfo::toVariantMap()
 {
     QVariantMap map;
-    map.insert(IPAddress, d->ipAddress);
-    map.insert(OSType, d->osType);
+    map.insert(AppSettings::IPAddress, d->ipAddress);
+    map.insert(AppSettings::OSType, d->osType);
     map.insert(AppSettings::DeviceNameKey, d->deviceName);
     map.insert(AppSettings::TransferModeKey, static_cast<int>(d->transMode));
     map.insert(AppSettings::DiscoveryModeKey, static_cast<int>(d->discoveryMode));
@@ -168,7 +165,7 @@ DeviceInfoPointer DeviceInfo::fromVariantMap(const QVariantMap &map)
         return {};
 
     DeviceInfoPointer info = DeviceInfoPointer(new DeviceInfo);
-    info->setIpAddress(map.value(IPAddress).toString());
+    info->setIpAddress(map.value(AppSettings::IPAddress).toString());
     info->setDeviceName(map.value(AppSettings::DeviceNameKey).toString());
     info->setTransMode(static_cast<TransMode>(map.value(AppSettings::TransferModeKey).toInt()));
     info->setDiscoveryMode(static_cast<DiscoveryMode>(map.value(AppSettings::DiscoveryModeKey).toInt()));
@@ -176,7 +173,7 @@ DeviceInfoPointer DeviceInfo::fromVariantMap(const QVariantMap &map)
     info->setClipboardShared(map.value(AppSettings::ClipboardShareKey).toBool());
     info->setPeripheralShared(map.value(AppSettings::PeripheralShareKey).toBool());
     info->setCooperationEnable(map.value(AppSettings::CooperationEnabled).toBool());
-    info->setOsType(static_cast<BaseUtils::OS_TYPE>(map.value(OSType).toInt()));
+    info->setOsType(static_cast<BaseUtils::OS_TYPE>(map.value(AppSettings::OSType).toInt()));
 
     return info;
 }

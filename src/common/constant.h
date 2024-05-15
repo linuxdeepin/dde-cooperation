@@ -7,6 +7,7 @@
 
 #define UNI_RPC_PROTO 1.0
 #define UNI_KEY "UOS-COOPERATION"
+#define UNI_CHANNEL  "_cooperation._udp"
 #define UNI_RPC_PORT_UDP  51595
 #define UNI_RPC_PORT_BASE (UNI_RPC_PORT_UDP + 2)
 #define UNI_RPC_PORT_TRANS (UNI_RPC_PORT_UDP + 4)

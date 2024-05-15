@@ -88,7 +88,7 @@ void MainController::registApp()
     info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : true);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::CooperationEnabled);
-    info.insert(AppSettings::CooperationEnabled, value.isValid() ? value.toBool() : false);
+    info.insert(AppSettings::CooperationEnabled, value.isValid() ? value.toBool() : true);
 
     auto doc = QJsonDocument::fromVariant(info);
     CooperationUtil::instance()->registAppInfo(doc.toJson());

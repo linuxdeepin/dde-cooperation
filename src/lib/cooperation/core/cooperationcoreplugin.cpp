@@ -3,27 +3,27 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cooperationcoreplugin.h"
-#include "common/commonutils.h"
 #include "events/cooperationcoreeventreceiver.h"
 #include "utils/cooperationutil.h"
 #include "maincontroller/maincontroller.h"
+#include "discovercontroller/discovercontroller.h"
 #include "transfer/transferhelper.h"
 #include "cooperation/cooperationmanager.h"
 #include "info/deviceinfo.h"
 
+#include "common/commonutils.h"
 #include "configs/settings/configmanager.h"
 #include "singleton/singleapplication.h"
 
 #ifdef __linux__
-#include "base/reportlog/reportlogmanager.h"
-#include <DFeatureDisplayDialog>
-#include <QFile>
+#    include "base/reportlog/reportlogmanager.h"
+#    include <DFeatureDisplayDialog>
+#    include <QFile>
 DWIDGET_USE_NAMESPACE
 #endif
 
 using namespace cooperation_core;
 using namespace deepin_cross;
-
 
 CooperaionCorePlugin::CooperaionCorePlugin(QObject *parent)
     : QObject(parent)
@@ -58,11 +58,12 @@ void CooperaionCorePlugin::initialize()
 
 bool CooperaionCorePlugin::start()
 {
-    CooperationUtil::instance()->mainWindow()->show();
+    DiscoverController::instance();
     MainController::instance()->regist();
     TransferHelper::instance()->regist();
     CooperationManager::instance()->regist();
     MainController::instance()->start();
+    CooperationUtil::instance()->mainWindow()->show();
 
     if (qApp->property("onlyTransfer").toBool() || !QFile(CommonUitls::tipConfPath()).exists())
         emit MainController::instance()->firstStart();

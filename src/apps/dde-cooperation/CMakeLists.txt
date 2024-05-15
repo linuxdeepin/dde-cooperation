@@ -26,8 +26,6 @@ if (CMAKE_SYSTEM MATCHES "Linux")
     find_package(Dtk COMPONENTS Widget REQUIRED)
 endif()
 
-qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc)
-
 if (WIN32)
     # 程序图标
     set (SET_ICON "IDI_ICON1 ICON DISCARDABLE ${CMAKE_CURRENT_SOURCE_DIR}/res/win/${PROJ_NAME}.ico")
@@ -53,13 +51,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJ_NAME} WIN32
         MANUAL_FINALIZATION
         ${CPP_SRC}
-        ${RESOURCE_FILES}
         ${RC_FILES}
     )
 else()
     add_executable(${PROJ_NAME} WIN32
         ${CPP_SRC}
-        ${RESOURCE_FILES}
         ${RC_FILES}
     )
 endif()

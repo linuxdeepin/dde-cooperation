@@ -42,6 +42,7 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/discovercontroller/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
@@ -99,6 +100,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Concurrent
+    QtZeroConf
     ${LINKLIBS}
 )
 

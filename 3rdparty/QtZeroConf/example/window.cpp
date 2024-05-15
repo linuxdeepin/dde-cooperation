@@ -115,7 +115,7 @@ void mainWindow::appStateChanged(Qt::ApplicationState state)
 		if (publishEnabled && !zeroConf.publishExists())
 			startPublish();
 		if (!zeroConf.browserExists())
-			zeroConf.startBrowser("_qtzeroconf_test._tcp");
+            zeroConf.startBrowser("_cooperation._udp");
 	}
 }
 
@@ -126,7 +126,7 @@ void mainWindow::startPublish()
 	zeroConf.clearServiceTxtRecords();
 	zeroConf.addServiceTxtRecord("Qt", "the best!");
 	zeroConf.addServiceTxtRecord("ZeroConf is nice too");
-	zeroConf.startServicePublish(buildName().toUtf8(), "_qtzeroconf_test._tcp", "local", 11437);
+    zeroConf.startServicePublish(buildName().toUtf8(), "_cooperation._udp", "local", 11437);
 }
 
 void mainWindow::startPublishClicked()

@@ -139,8 +139,19 @@ public:
 
 		QString key = name + QString::number(interface);
 		if (event == AVAHI_RESOLVER_FOUND) {
-			if (ref->pub->services.contains(key))
+            if (ref->pub->services.contains(key)){
 				zcs = ref->pub->services[key];
+                while (txt)	// get txt records
+                {
+                    QByteArray avahiText((const char *)txt->text, txt->size);
+                    const ssize_t pos = avahiText.indexOf('=');
+                    if (pos < 0)
+                        zcs->m_txt[avahiText] = "";
+                    else
+                       zcs->m_txt[avahiText.left(pos)] = avahiText.mid(pos + 1, -1);
+                    txt = txt->next;
+                }
+            }
 			else {
 				zcs = QZeroConfService(new QZeroConfServiceData);
 				newRecord = 1;

@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     app.loadTranslator();
     app.setApplicationDisplayName(app.translate("Application", "Cooperation"));
     app.setApplicationVersion(APP_VERSION);
-    app.setProductIcon(QIcon(":/icons/dde-cooperation.svg"));
+    app.setProductIcon(QIcon::fromTheme("dde-cooperation"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/");
     app.setApplicationDescription(app.translate("Application", "Cooperation is a powerful cross-terminal "
                                                                "office tool that helps you deliver files, "

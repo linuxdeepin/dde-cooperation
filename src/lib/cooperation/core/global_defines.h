@@ -91,6 +91,8 @@ inline constexpr char kClickableCallback[] { "clickable-callback" };
 }
 
 namespace AppSettings {
+inline constexpr char IPAddress[] { "IPAddress" };
+inline constexpr char OSType[] { "osType" };
 inline constexpr char GenericGroup[] { "GenericAttribute" };
 inline constexpr char DeviceNameKey[] { "DeviceName" };
 inline constexpr char DiscoveryModeKey[] { "DiscoveryMode" };

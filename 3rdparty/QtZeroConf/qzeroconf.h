@@ -64,9 +64,14 @@ public:
 	void addServiceTxtRecord(QString name, QString value);
 	void clearServiceTxtRecords();
 
+    QMap<QString, QZeroConfService> getServices() const
+    {
+        return services;
+    }
+
 Q_SIGNALS:
-	void servicePublished(void);
-	void serviceNameChanged(const QString &newName);
+    void servicePublished(void);
+    void serviceNameChanged(const QString &newName);
 	void error(QZeroConf::error_t);
 	void serviceAdded(QZeroConfService);
 	void serviceUpdated(QZeroConfService);
@@ -81,3 +86,5 @@ private:
 };
 
 #endif	// QZEROCONF_H_
+
+
