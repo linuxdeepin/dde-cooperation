@@ -448,7 +448,7 @@ bool SettingDialog::eventFilter(QObject *watched, QEvent *event)
         if ((watched->objectName() == "ContentWidget" || watched->objectName() == "MainWidget")) {
             QColor color(255, 255, 255);
             if (CooperationGuiHelper::isDarkTheme())
-                color.setRgb(41, 41, 41);
+                color.setRgb(24, 24, 24);
             painter.setBrush(color);
 
             if (watched->objectName() == "MainWidget")
