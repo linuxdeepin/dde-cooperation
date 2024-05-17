@@ -5,6 +5,10 @@
 #ifndef SYNCSTATUS_H
 #define SYNCSTATUS_H
 
+#include <memory>
+#include <functional>
+#include <string>
+
 enum WebState {
     WEB_ERROR = -2,
     WEB_DISCONNECTED = -1,

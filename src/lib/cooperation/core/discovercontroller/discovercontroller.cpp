@@ -59,7 +59,7 @@ void DiscoverController::openZeroConfDaemonDailog()
 
     int code = dlg.exec();
     if (code == 0)
-        QProcess::startDetached("systemctl enable avahi-daemon.service");
+        QProcess::startDetached("systemctl start avahi-daemon.service");
 #endif
 }
 
@@ -87,6 +87,7 @@ bool DiscoverController::isZeroConfDaemonActive()
         return false;
     }
 #endif
+    return true;
 }
 
 DeviceInfoPointer DiscoverController::findDeviceByIP(const QString &ip)

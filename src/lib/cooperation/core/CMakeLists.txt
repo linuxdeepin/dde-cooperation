@@ -5,7 +5,10 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-project(cooperation-core)
+# set build as share library
+set(BUILD_SHARED_LIBS ON)
+
+project(cooperation-core VERSION 1.0.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -17,6 +20,7 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/singleton/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.h"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/log.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
@@ -54,6 +58,9 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/win/*.cpp"
     )
    find_package(Qt5 COMPONENTS Sql REQUIRED)
+
+   # 从定位输出目录
+   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/dde-cooperation)
 elseif (CMAKE_SYSTEM MATCHES "Linux")
     FILE(GLOB BUSS_FILES
         "${CMAKE_SOURCE_DIR}/src/base/reportlog/*.h"
@@ -80,11 +87,15 @@ list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS sessionmanager)
 
 add_library(${PROJECT_NAME}
-    SHARED
     ${PLUGIN_FILES}
     ${BUSS_FILES}
     ${RESOURCE_FILES}
 )
+
+if(BUILD_SHARED_LIBS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE QT_BUILD_SHARED)
+    set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 0)
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
@@ -95,18 +106,24 @@ target_include_directories(${PROJECT_NAME}
 
 # 公共依赖库，添加到这里
 target_link_libraries(${PROJECT_NAME}
+    PRIVATE
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Concurrent
     QtZeroConf
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
     ${LINKLIBS}
 )
 
 # 平台相关的库，添加到这里
 if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJECT_NAME}
+        PRIVATE
         ${DtkWidget_LIBRARIES}
     )
 endif()

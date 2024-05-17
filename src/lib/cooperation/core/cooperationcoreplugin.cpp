@@ -58,12 +58,12 @@ void CooperaionCorePlugin::initialize()
 
 bool CooperaionCorePlugin::start()
 {
+    CooperationUtil::instance()->mainWindow()->show();
     DiscoverController::instance();
     MainController::instance()->regist();
     TransferHelper::instance()->regist();
     CooperationManager::instance()->regist();
     MainController::instance()->start();
-    CooperationUtil::instance()->mainWindow()->show();
 
     if (qApp->property("onlyTransfer").toBool() || !QFile(CommonUitls::tipConfPath()).exists())
         emit MainController::instance()->firstStart();

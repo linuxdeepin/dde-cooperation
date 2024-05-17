@@ -2,6 +2,14 @@
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 project(proto)
 
+# CMake module path
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/3rdparty/CppServer/cmake")
+# Compiler features
+include(SetCompilerFeatures)
+include(SetCompilerWarnings)
+include(SetPlatformFeatures)
+include(SystemInformation)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

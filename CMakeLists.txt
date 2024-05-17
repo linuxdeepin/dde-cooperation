@@ -25,10 +25,8 @@ if (NOT WIN32)
 endif()
 
 if(WIN32)
-    if (MINGW)
-        # windows7 minGW support
-        add_definitions(-D _WIN32_WINNT=0x0601)
-    endif()
+    # windows7 support
+    add_definitions(-D_WIN32_WINNT=0x0601)
 
     # windeployqt 依赖
     include (cmake/qt-helper.cmake)

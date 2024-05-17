@@ -5,7 +5,10 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-project(data-transfer-core)
+# set build as share library
+set(BUILD_SHARED_LIBS ON)
+
+project(data-transfer-core VERSION 1.0.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -13,6 +16,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.h"
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/log.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
@@ -45,7 +49,9 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/getbackup/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/getbackup/*.cpp"
     )
-   find_package(Qt5 COMPONENTS Sql REQUIRED)
+    find_package(Qt5 COMPONENTS Sql REQUIRED)
+    # 从定位输出目录
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/data-transfer)
 elseif (CMAKE_SYSTEM MATCHES "Linux")
     FILE(GLOB BUSS_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
@@ -72,15 +78,20 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components}
 
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
 
+list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS session)
 list(APPEND LINKLIBS httpweb)
 
 add_library(${PROJECT_NAME}
-    SHARED
     ${PLUGIN_FILES}
     ${BUSS_FILES}
     ${RESOURCE_FILES}
 )
+
+if(BUILD_SHARED_LIBS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE QT_BUILD_SHARED)
+    set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 0)
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
@@ -91,25 +102,37 @@ target_include_directories(${PROJECT_NAME}
 
 # 公共依赖库，添加到这里
 target_link_libraries(${PROJECT_NAME}
+    PRIVATE
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
+)
+
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
     ${LINKLIBS}
 )
 
 # 平台相关的库，添加到这里
 if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJECT_NAME}
+        PRIVATE
         ${DtkWidget_LIBRARIES}
          PkgConfig::libzip
     )
 endif()
 if (CMAKE_SYSTEM MATCHES "Windows")
     target_link_libraries(${PROJECT_NAME}
+        PRIVATE
         ${QUAZIP_LIB_TARGET_NAME}
         Qt${QT_VERSION_MAJOR}::Sql
         Qt${QT_VERSION_MAJOR}::WinExtras
+    )
+
+    target_include_directories(${PROJECT_NAME}
+        PRIVATE
+        ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip
     )
 endif()
 

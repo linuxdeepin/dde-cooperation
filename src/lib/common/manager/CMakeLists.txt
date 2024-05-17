@@ -15,6 +15,11 @@ if (WIN32)
 endif()
 
 FILE(GLOB SRC_FILES
+    "${CMAKE_SOURCE_DIR}/src/common/log.h"
+    "${CMAKE_SOURCE_DIR}/src/common/logger.h"
+    "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
+    "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     *.h
     *.cpp
     )
@@ -22,13 +27,11 @@ FILE(GLOB SRC_FILES
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Network)
 
+list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS session)
 list(APPEND LINKLIBS httpweb)
 
-add_library(${PROJECT_NAME}
-    SHARED
-    ${SRC_FILES}
-)
+add_library(${PROJECT_NAME} ${SRC_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
@@ -39,6 +42,7 @@ target_include_directories(${PROJECT_NAME}
 
 # 公共依赖库，添加到这里
 target_link_libraries(${PROJECT_NAME}
+    PRIVATE
     Qt${QT_VERSION_MAJOR}::Network
     ${LINKLIBS}
 )

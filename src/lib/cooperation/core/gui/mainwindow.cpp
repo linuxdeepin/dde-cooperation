@@ -90,8 +90,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     d->initWindow();
     d->initTitleBar();
-    d->initConnect();
     d->moveCenter();
+    //d->initConnect();
 }
 
 MainWindow::~MainWindow()

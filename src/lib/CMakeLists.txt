@@ -8,4 +8,4 @@ add_subdirectory(common)
 add_subdirectory(cooperation)
 
 # file transfer gui and business library
-add_subdirectory(data-transfer)
+# add_subdirectory(data-transfer)

@@ -1,12 +1,8 @@
 if(NOT TARGET asio)
 
-  if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-  endif()
-
   # Module library
   file(GLOB SOURCE_FILES "asio/asio/src/*.cpp")
-  add_library(asio STATIC ${SOURCE_FILES})
+  add_library(asio ${SOURCE_FILES})
   if(MSVC)
     set_target_properties(asio PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}")
   else()

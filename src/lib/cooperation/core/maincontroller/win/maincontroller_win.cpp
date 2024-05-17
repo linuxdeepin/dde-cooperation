@@ -51,7 +51,7 @@ void MainController::updateProgress(int value, const QString &msg)
 {
     static QString title(tr("Receiving files from \"%1\""));
     cooperationDlg->showProgressDialog(
-        title.arg(CommonUitls::elidedText(requestFrom, Qt::ElideMiddle, MID_FRONT)));
+        title.arg(deepin_cross::CommonUitls::elidedText(requestFrom, Qt::ElideMiddle, MID_FRONT)));
     cooperationDlg->updateProgressData(value, msg);
 }
 
@@ -63,7 +63,7 @@ void MainController::waitForConfirm(const QString &name)
     requestFrom = name;
     transTimer.start();
 
-    cooperationDlg->showConfirmDialog(CommonUitls::elidedText(name, Qt::ElideMiddle, 15));
+    cooperationDlg->showConfirmDialog(deepin_cross::CommonUitls::elidedText(name, Qt::ElideMiddle, 15));
     cooperationDlg->show();
 }
 

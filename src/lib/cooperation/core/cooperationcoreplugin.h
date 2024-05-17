@@ -5,12 +5,14 @@
 #ifndef COOPERATIONCOREPLUGIN_H
 #define COOPERATIONCOREPLUGIN_H
 
+#include "common/exportglobal.h"
+
 #include <QObject>
 
 namespace cooperation_core {
 
 class MainWindow;
-class CooperaionCorePlugin : public QObject
+class EXPORT_API CooperaionCorePlugin : public QObject
 {
     Q_OBJECT
 

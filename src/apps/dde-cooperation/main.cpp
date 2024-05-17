@@ -10,6 +10,7 @@
 
 #include <QDir>
 #include <QIcon>
+#include <QDebug>
 
 #include <signal.h>
 
@@ -76,9 +77,5 @@ int main(int argc, char *argv[])
     core->stop();
     app.closeServer();
 
-#if defined(_WIN32) || defined(_WIN64)
-    // FIXME: windows上使用socket，即使线程资源全释放，进程也无法正常退出
-    abort();
-#endif
     return ret;
 }

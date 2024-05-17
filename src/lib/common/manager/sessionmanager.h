@@ -6,13 +6,14 @@
 #define SESSIONMANAGER_H
 
 #include "sessionproto.h"
+#include "common/exportglobal.h"
 
 #include <QObject>
 
 class AsioService;
 class SessionWorker;
 class TransferWorker;
-class SessionManager : public QObject
+class EXPORT_API SessionManager : public QObject
 {
     Q_OBJECT
 public:
