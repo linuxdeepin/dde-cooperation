@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
     d->initWindow();
     d->initTitleBar();
     d->moveCenter();
-    //d->initConnect();
+    d->initConnect();
 }
 
 MainWindow::~MainWindow()

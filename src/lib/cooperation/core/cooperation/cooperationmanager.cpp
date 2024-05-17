@@ -152,7 +152,7 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
 CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
 {
     if (!ctDialog) {
-        ctDialog = new CooperationTaskDialog(CooperationUtil::instance()->mainWindow());
+        ctDialog = new CooperationTaskDialog(qApp->activeWindow());
         ctDialog->setModal(true);
         connect(ctDialog, &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
         connect(ctDialog, &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyRejectAction); });

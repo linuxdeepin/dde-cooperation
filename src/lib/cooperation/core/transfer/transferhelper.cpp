@@ -70,7 +70,7 @@ TransferHelperPrivate::~TransferHelperPrivate()
 TransferDialog *TransferHelperPrivate::transDialog()
 {
     if (!transferDialog) {
-        transferDialog = new TransferDialog(CooperationUtil::instance()->mainWindow());
+        transferDialog = new TransferDialog(qApp->activeWindow());
         transferDialog->setModal(true);
         connect(transferDialog, &TransferDialog::cancel, q, &TransferHelper::cancelTransfer);
     }

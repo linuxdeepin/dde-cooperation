@@ -92,9 +92,11 @@ bool DiscoverController::isZeroConfDaemonActive()
 
 DeviceInfoPointer DiscoverController::findDeviceByIP(const QString &ip)
 {
-    for (auto info : onlineDeviceList)
+    for (int i = 0; i < onlineDeviceList.size(); ++i) {
+        auto info = onlineDeviceList[i];
         if (info->ipAddress() == ip)
             return info;
+    }
     return nullptr;
 }
 

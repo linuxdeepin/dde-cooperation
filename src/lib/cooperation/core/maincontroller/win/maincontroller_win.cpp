@@ -24,7 +24,7 @@ void MainController::initNotifyConnect()
     connect(&transTimer, &QTimer::timeout, this, &MainController::onConfirmTimeout);
     
     if (!cooperationDlg) {
-        cooperationDlg = new CooperationTransDialog(CooperationUtil::instance()->mainWindow());
+        cooperationDlg = new CooperationTransDialog(qApp->activeWindow());
         connect(cooperationDlg, &CooperationTransDialog::accepted, this, &MainController::onAccepted);
         connect(cooperationDlg, &CooperationTransDialog::rejected, this, &MainController::onRejected);
         connect(cooperationDlg, &CooperationTransDialog::canceled, this, &MainController::onCanceled);
