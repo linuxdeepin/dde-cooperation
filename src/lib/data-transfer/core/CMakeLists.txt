@@ -88,12 +88,16 @@ add_library(${PROJECT_NAME}
     ${RESOURCE_FILES}
 )
 
+include(GNUInstallDirs)
+
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(${PROJECT_NAME} PRIVATE QT_BUILD_SHARED)
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 0)
 endif()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+if(FPIC)
+    set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -145,11 +149,6 @@ set_target_properties(quazipd PROPERTIES
 
 #install library file
 install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-)
-
-if (WIN32)
-    deployqt_qt_runtime(${PROJECT_NAME} ${qt_required_components})
-endif()
+        RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
+        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
+        LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )

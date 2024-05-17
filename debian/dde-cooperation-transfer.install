@@ -1,6 +1,5 @@
 usr/bin/dde-cooperation-transfer
-usr/lib/*/dde-cooperation/plugins/cooperation/*.so*
-usr/lib/*/dde-cooperation/plugins/daemon/libdaemon-cooperation.so
+usr/lib/*/libcooperation-core.so*
+usr/lib/*/libQtZeroConf.so*
 usr/share/dde-cooperation/translations/*.qm
 usr/share/icons/hicolor/scalable/apps/dde-cooperation.svg
-usr/share/dsg/configs/org.deepin.dde.cooperation/*.json

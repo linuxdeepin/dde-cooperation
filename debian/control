@@ -23,7 +23,7 @@ Build-Depends:
  libx11-dev,
  libice-dev,
  libsm-dev,
- libdisplayjack-dev
+ libdisplayjack-dev | hello
 Standards-Version: 4.1.3
 Section: utils
 Homepage: http://www.deepin.org
@@ -32,31 +32,26 @@ Package: dde-cooperation-dev
 Section: libdevel
 Architecture: any
 Depends: dde-cooperation (= ${binary:Version}), ${misc:Depends}
-Description: Development package for deepin cooperation frontend
+Description: Development package for deepin cooperation application
  This package contains the header files and static libraries
-
-Package: dde-cooperation-daemon
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Deepin cooperation backend
- All cooperation related application's backend server
 
 Package: deepin-data-transfer
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-daemon
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin data transfer frontend
- Deepin Desktop Environment (DDE) - data transfer frontend.
+ Deepin Desktop Environment (DDE) - data transfer application.
 
 Package: dde-cooperation-transfer
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-daemon
-Conflicts: dde-cooperation (<< 0.4.2-1)
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: dde-cooperation (<< 0.8.0)
+Replaces: QtZeroConf
 Description: deepin file transfer frontend
- Deepin Desktop Environment (DDE) - file transfer frontend.
+ Deepin Desktop Environment (DDE) - file transfer application.
 
 Package: dde-cooperation
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-transfer
 Replaces: barrier
 Description: deepin cooperation frontend
- Deepin Desktop Environment (DDE) - cooperation frontend.
+ Deepin Desktop Environment (DDE) - cooperation application.

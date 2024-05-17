@@ -99,7 +99,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/include)
 # Modules
 add_subdirectory("modules")
 
-if(WIN32)
+if(MSVC)
     add_compile_options(/utf-8)
 endif()
 add_subdirectory(src)

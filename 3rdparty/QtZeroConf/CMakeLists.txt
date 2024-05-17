@@ -173,7 +173,7 @@ install(EXPORT QtZeroConfConfig
     DESTINATION ${INSTALL_CMAKEDIR}
 )
 
-set(BUILD_EXAMPLE true)
+set(BUILD_EXAMPLE false)
 if(BUILD_EXAMPLE)
     add_subdirectory(example)
 endif()
