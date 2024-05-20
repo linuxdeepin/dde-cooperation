@@ -4,12 +4,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="89"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="90"/>
         <source>Cooperation</source>
         <translation>تېرمىنال ھالقىپ ھەمكارلىشىش</translation>
     </message>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="93"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="94"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
         <translation>تېرمىنال ھالقىپ ھەمكارلىشىش كۈچلۈك بولغان تېرمىنال ھالقىپ خىزمەت قىلىش قورالى بولۇپ، ئوخشىمىغان ئۈسكۈنىلەر ئارا ھۆججەت يەتكۈزۈش، كۇنۇپكا تاختىسى، مائۇس ۋە چاپلاش تاختىسىنى ئورتاقلىشىشىڭىزغا ياردەم بېرىدۇ.</translation>
     </message>
@@ -17,7 +17,7 @@
 <context>
     <name>cooperation_core::BottomLabel</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="315"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="337"/>
         <source>Local IP: %1</source>
         <translation>IP ئادرېس: %1</translation>
     </message>
@@ -307,17 +307,17 @@
 <context>
     <name>cooperation_core::DeviceItem</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="175"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="176"/>
         <source>connected</source>
         <translation>ھەمكارلىشىۋاتىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="180"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="181"/>
         <source>connectable</source>
         <translation>ئۇلىنىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="186"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="187"/>
         <source>offline</source>
         <translation>توردا يوق</translation>
     </message>
@@ -325,9 +325,44 @@
 <context>
     <name>cooperation_core::FirstTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="430"/>
-        <source>Make sure that the person you are collaborating with has the &quot;Cross Collaboration&quot; application enabled and is connected to the same network as you are.</source>
-        <translation>ھەمكارلىق ئوبيېكتىنىڭ «تېرمىنال ھالقىغان ھەمكارلىق» پىروگراممىسىنى ئاچقانلىقىنى ۋە سىز بىلەن ئوخشاش بىر تورغا ئۇلانغانلىقىنى جەزملەشتۈرۈڭ.</translation>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="503"/>
+        <source>First step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="504"/>
+        <source>The opposite end opens the application and connects to the same network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="505"/>
+        <source>Second step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="507"/>
+        <source>Third step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="568"/>
+        <source>to send the file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="573"/>
+        <source>to connect to the peer device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="506"/>
+        <source>Enter the peer IP in the search box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="508"/>
+        <source>Click</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -352,7 +387,7 @@
 <context>
     <name>cooperation_core::LookingForDeviceWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="74"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="77"/>
         <source>Looking for devices</source>
         <translation>ئۈسكۈنە ئىزدەۋاتىدۇ</translation>
     </message>
@@ -386,7 +421,7 @@
 <context>
     <name>cooperation_core::NoNetworkWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="139"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="142"/>
         <source>Please connect to the network</source>
         <translation>تورغا ئۇلاڭ</translation>
     </message>
@@ -394,32 +429,32 @@
 <context>
     <name>cooperation_core::NoResultTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="172"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="175"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation>1. تېرمىنال ھالقىپ ھەمكارلىشىش دېتالىنى ئېچىڭ، UOS تېرمىنالىدىكى ئەپنى ئەپ بازىرىدىن چۈشۈرگىلى بولىدۇ، Windows تېرمىنالىنى چۈشۈرۈش ئادرېسى: </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="188"/>
         <source>2. On the same LAN as the device</source>
         <translation>2. بۇ ئۈسكۈنە بىلەن ئوخشاش دائىرىلىك تورغا ئۇلاڭ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="190"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="193"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
         <translation>3. ھۆججەت باشقۇرغۇچ-تەڭشەك-ھۆججەت يوللاش-تۆۋەندىكى ئىشلەتكۈچىلەرنىڭ ماڭا ھۆججەت يوللىشىغا يول قويۇش-«ئوخشاش دائىرىلىك توردىكى بارلىق كىشىلەر»</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="192"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="195"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation>3. تەڭشەك-ئاساسىي تەڭشەك-بايقىغىلى بولىدىغانلىرى-«ئوخشاش دائىرىلىك توردىكى بارلىق كىشىگە رۇخسەت قىلىش»</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="198"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="201"/>
         <source>4. Try entering the target device IP in the top search box</source>
         <translation>4. ئۈستىدىكى ئىزدەش رامكىسىغا نىشان ئۈسكۈنىنىڭ IP سىنى كىرگۈزۈپ سىناپ بېقىڭ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="202"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="205"/>
         <source>Unable to find collaborative device？</source>
         <translation>ئۈسكۈنىنى تاپالمىدىمۇ؟</translation>
     </message>
@@ -427,7 +462,7 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="252"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="264"/>
         <source>No device found</source>
         <translation>ھېچقانداق ئۈسكۈنە بايقالمىدى</translation>
     </message>
@@ -464,95 +499,95 @@
 <context>
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="43"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="44"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
         <source>Everyone in the same LAN</source>
         <translation>ئوخشاش دائىرىلىك توردىكى بارلىق كىشى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="45"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="51"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="46"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="52"/>
         <source>Not allow</source>
         <translation>رەت قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="46"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
         <source>Screen right</source>
         <translation>ئېكراننىڭ ئوڭ تەرىپى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="48"/>
         <source>Screen left</source>
         <translation>ئېكراننىڭ سول تەرىپى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="51"/>
         <source>Only those who are collaborating are allowed</source>
         <translation>ھەمكارلىشىۋاتقانلارغىلا رۇخسەت قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="107"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="127"/>
         <source>Basic Settings</source>
         <translation>ئاساسىي تەڭشەك</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="118"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="138"/>
         <source>Discovery mode</source>
         <translation>بايقىغىلى بولىدىغانلىرى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="120"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="140"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
         <translation>باشقا ئۈسكۈنىلەر «تېرمىنال ھالقىپ ھەمكارلىشىش» دېتالى ئارقىلىق سىزنى تاپالايدۇ ھەمدە سىز بىلەن ئۇلىنالايدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="154"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="184"/>
         <source>Device name</source>
         <translation>ئۈسكۈنە نامى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="172"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="202"/>
         <source>Peripheral share</source>
         <translation>سىرتقى ھەمبەھىر</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="174"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="204"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
         <translation>تەسىس قىلىنغان سىرتقى ئۈسكۈنىلەرنىڭ ئۈسكۈنە ھالقىپ ھەمكارلىشىشى بۇ ئۈسكۈنىنىڭ كۇنۇپكا تاختىسى، مائۇس، سېزىمچان كونترول تاختىسى قاتارلىقلارنى كونترول قىلىشىغا يول قويىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="183"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
         <translation>بۇ ئۈسكۈنە ئۇلىغۇچى تەرەپ بولغاندا، مائۇس بۇ ئۈسكۈنىنىڭ ئېكرانىدىن ئۇلىغۇچى تەرەپنىڭ ئورنىغا كىرىپ كېتىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="243"/>
         <source>Connection direction</source>
         <translation>ئۇلىنىش يۆنىلىشى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="232"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="262"/>
         <source>Allows the following users to send files to me</source>
         <translation>تۆۋەندىكى ئىشلەتكۈچىلەرنىڭ ماڭا ھۆججەت يوللىشىغا يول قويسۇن</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="239"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="269"/>
         <source>File save location</source>
         <translation>ھۆججەت ساقلاش ئورنى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="255"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="285"/>
         <source>Share clipboard</source>
         <translation>چاپلاش تاختىسىنى ھەمبەھىرلەش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="257"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="287"/>
         <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
         <translation>مۇلازىمېتىر تېرمىنالى (ئۇلانغان ئۈسكۈنە)  ھەمبەھىرلەشنى ئاچقاندىن كېيىن، ئىككى كومپيۇتېر ئارىسىدا كېسىش-چاپلاش تاختىسى ھەمبەھىرلىنىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="311"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="318"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="341"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="348"/>
         <source>The device name must contain 1 to 63 characters</source>
         <translation>ئۈسكۈنە نامى چوقۇم 1~63 خانىغىچە بولغان ھەرپ بولسۇن</translation>
     </message>
@@ -560,30 +595,30 @@
 <context>
     <name>cooperation_core::TransferDialog</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="46"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="69"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="41"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="64"/>
         <source>File Transfer</source>
         <translation>ھۆججەت يوللاش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="85"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="80"/>
         <source>Wait for confirmation...</source>
         <translation>قارشى تەرەپنىڭ جەزملىشىنى ساقلاۋتىدۇ...</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="171"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="166"/>
         <source>Ok</source>
         <comment>button</comment>
         <translation>جەزملەش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="189"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="184"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>بىكار قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="198"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="193"/>
         <source>Remaining time %1 | %2%</source>
         <translation>يەنە %1 | %2% قالدى</translation>
     </message>
@@ -658,10 +693,6 @@
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="48"/>
-        <source>Please enter the device name or IP</source>
-        <translation>ئۈسكۈنە نامى ياكى IP ئادرېسىنى كىرگۈزۈڭ</translation>
-    </message>
-    <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="49"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>ھەمكارلاشقۇچى ئوبيېكت ئۈسكۈنىنىڭ نامى ياكى IP ئادرېسىنى كىرگۈزۈڭ</translation>

@@ -52,8 +52,8 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     connect(&_userTimer, &QTimer::timeout, this, [this](){
         QString curUser = QDir::home().dirName();
         auto active = qApp->property(KEY_CURRENT_ACTIVE_USER).toString();
-        qCritical() << "active session user:" << active << " current user:" << curUser;
         if (!active.isEmpty() && curUser != active && !curUser.startsWith(active + "@")) {
+            qCritical() << "active session user:" << active << " current user:" << curUser;
             _userTimer.stop();
             qCritical() <<  curUser << active;
             qApp->exit(0);

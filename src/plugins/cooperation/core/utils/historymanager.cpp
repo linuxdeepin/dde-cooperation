@@ -40,6 +40,8 @@ void HistoryManager::onAttributeChanged(const QString &group, const QString &key
 QMap<QString, QString> HistoryManager::getTransHistory()
 {
     QMap<QString, QString> dataMap;
+    if (qApp->property("onlyTransfer").toBool())
+        return dataMap;
 
     const auto &list = ConfigManager::instance()->appAttribute(AppSettings::CacheGroup, AppSettings::TransHistoryKey).toList();
     for (const auto &item : list) {
@@ -99,6 +101,9 @@ void HistoryManager::removeTransHistory(const QString &ip)
 QMap<QString, QString> HistoryManager::getConnectHistory()
 {
     QMap<QString, QString> dataMap;
+
+    if (qApp->property("onlyTransfer").toBool())
+        return dataMap;
 
     const auto &list = ConfigManager::instance()->appAttribute(AppSettings::CacheGroup, AppSettings::ConnectHistoryKey).toList();
     for (const auto &item : list) {

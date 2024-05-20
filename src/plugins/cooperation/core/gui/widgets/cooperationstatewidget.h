@@ -6,11 +6,14 @@
 #define COOPERATIONSTATEWIDGET_H
 
 #include <QWidget>
+
 #include "backgroundwidget.h"
 #include "global_defines.h"
 
+class QGraphicsDropShadowEffect;
 namespace cooperation_core {
 
+class LineWidget;
 class LookingForDeviceWidget : public QWidget
 {
     Q_OBJECT
@@ -100,11 +103,32 @@ public:
     void setVisible(bool visible) override;
     void themeTypeChanged();
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private:
     void initUI();
+    void initbackgroundFrame();
+    void inittipBtn();
 
+    QFrame *backgroundFrame { nullptr };
+
+    QLabel *bannerLabel { nullptr };
+    QLabel *action { nullptr };
+    QGraphicsDropShadowEffect *shadowEffect { nullptr };
+    QList<QLabel *> lineBalls { nullptr };
+    LineWidget *line { nullptr };
     CooperationIconButton *tipBtn { nullptr };
-    QLabel *firstTip { nullptr };
+};
+
+class LineWidget : public QWidget
+{
+public:
+    LineWidget(QWidget *parent = nullptr)
+        : QWidget(parent) {}
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
 };
 
 }   // namespace cooperation_core

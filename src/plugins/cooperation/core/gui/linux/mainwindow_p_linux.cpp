@@ -20,7 +20,8 @@ DWIDGET_USE_NAMESPACE
 void MainWindowPrivate::initWindow()
 {
     q->setObjectName("MainWindow");
-    q->setFixedSize(500, 630);
+//    q->setFixedSize(500, 630);
+    q->setFixedWidth(500);
     q->setWindowIcon(QIcon::fromTheme("dde-cooperation"));
 
     workspaceWidget = new WorkspaceWidget(q);

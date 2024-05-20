@@ -19,6 +19,8 @@
 
 #include <utils/cooperationguihelper.h>
 
+#include <common/commonutils.h>
+
 using namespace cooperation_core;
 
 WorkspaceWidgetPrivate::WorkspaceWidgetPrivate(WorkspaceWidget *qq)
@@ -49,7 +51,7 @@ void WorkspaceWidgetPrivate::initUI()
     searchEdit->setPlaceHolder(tr("Please enter the device ip/name of the collaborator"));
     stackedLayout = new QStackedLayout;
 
-    deviceLabel = new QLabel(tr("Nearby Device"));
+    deviceLabel = new QLabel(tr("Nearby Device"), q);
     deviceLabel->setContentsMargins(20, 0, 10, 0);
     CooperationGuiHelper::setAutoFont(deviceLabel, 14, 400);
 
@@ -182,11 +184,14 @@ void WorkspaceWidget::switchWidget(PageName page)
     else
         d->deviceLabel->setVisible(false);
 
-    if (page == kLookignForDeviceWidget)
+    if (page == kLookignForDeviceWidget) {
+        d->tipWidget->setVisible(false);
         d->lfdWidget->seAnimationtEnabled(true);
-    else
+    } else {
+        if (qApp->property("onlyTransfer").toBool() || !QFile(deepin_cross::CommonUitls::tipConfPath()).exists())
+            d->tipWidget->setVisible(true);
         d->lfdWidget->seAnimationtEnabled(false);
-
+    }
     d->currentPage = page;
     d->stackedLayout->setCurrentIndex(page);
 }

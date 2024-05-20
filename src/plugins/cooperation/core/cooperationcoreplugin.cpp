@@ -57,9 +57,6 @@ bool CooperaionCorePlugin::start()
     CooperationManager::instance()->regist();
     MainController::instance()->start();
 
-    if (qApp->property("onlyTransfer").toBool() || !QFile(CommonUitls::tipConfPath()).exists())
-        emit MainController::instance()->firstStart();
-
     if (CommonUitls::isFirstStart() && !qApp->property("onlyTransfer").toBool()) {
 #ifdef linux
         DFeatureDisplayDialog *dlg = qApp->featureDisplayDialog();

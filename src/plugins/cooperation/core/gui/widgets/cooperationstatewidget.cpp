@@ -25,6 +25,7 @@ DWIDGET_USE_NAMESPACE
 #include <QToolButton>
 #include <QScrollArea>
 #include <QMouseEvent>
+#include <QGraphicsDropShadowEffect>
 
 #include <utils/cooperationutil.h>
 
@@ -290,6 +291,11 @@ void NoResultWidget::initUI()
     QScrollArea *scrollArea = new QScrollArea();
     scrollArea->setWidgetResizable(true);
     scrollArea->setWidget(contentBackgroundWidget);
+
+#ifndef __linux__
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+#endif
+    scrollArea->setWidget(contentBackgroundWidget);
     scrollArea->show();
     scrollArea->setFrameStyle(QFrame::NoFrame);
     vLayout->addWidget(scrollArea);
@@ -429,68 +435,229 @@ void FirstTipWidget::setVisible(bool visible)
     QWidget::setVisible(visible);
     tipBtn->setVisible(visible);
 #ifdef linux
-    tipBtn->setGeometry(450, DSizeModeHelper::element(29, 42) + height() / 2, 30, 30);
+    tipBtn->setEnabledCircle(true);
+    tipBtn->setGeometry(463, 63, 25, 25);
 #    ifdef DTKWIDGET_CLASS_DSizeMode
+    tipBtn->setGeometry(463, DSizeModeHelper::element(53, 63), 25, 25);
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this] {
-        tipBtn->setGeometry(450, DSizeModeHelper::element(29, 42) + height() / 2, 30, 30);
+        tipBtn->setGeometry(463, DSizeModeHelper::element(53, 63), 25, 25);
     });
-#    else
-    tipBtn->setGeometry(450, 42 + height() / 2, 30, 30);
 #    endif
 #else
-    tipBtn->setGeometry(450, 90 + height() / 2, 30, 30);
+    tipBtn->setStyleSheet("background-color: rgba(0, 0, 0, 0.2); "
+                          "border-radius: 9px;");
+    tipBtn->setGeometry(467, 115, 18, 18);
 #endif
 }
 
 void FirstTipWidget::themeTypeChanged()
 {
     if (CooperationGuiHelper::instance()->isDarkTheme()) {
-        firstTip->setStyleSheet("background-color: rgba(255, 255, 255, 0.03); "
-                                "border-radius: 10px;"
-                                "color: rgba(255, 255, 255, 0.6);");
+        backgroundFrame->setStyleSheet(".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(132, 141, 179, 0.24), stop:1 rgba(224, 225, 255, 0.12)); "
+                                       "border-radius: 10px;"
+                                       "color: rgba(0, 0, 0, 0.6);"
+                                       "border: 1px solid rgba(0, 0, 0, 0.05); } ");
+
+        qApp->property("onlyTransfer").toBool() ? action->setStyleSheet("background-color: rgb(0, 129, 255); "
+                                                                        "border-radius: 10px;")
+                                                : action->setStyleSheet("background-color: rgba(255, 255, 255, 0.2); "
+                                                                        "border-radius: 10px;");
+        shadowEffect->setEnabled(false);
+        bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/dark/icons/banner_128px.png").pixmap(234, 158));
+
+        for (auto ball : lineBalls)
+            if (ball)
+                ball->setStyleSheet("background-color: rgb(0, 89, 210); "
+                                    "border-radius: 6px;"
+                                    "border: 1px solid white; ");
     } else {
-        firstTip->setStyleSheet("background-color: white; "
-                                "border-radius: 10px;"
-                                "color: rgba(0, 0, 0, 0.6);");
+        backgroundFrame->setStyleSheet(".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(249, 250, 254), stop:1 rgba(232, 242, 255)); "
+                                       "border-radius: 10px;"
+                                       "color: rgba(0, 0, 0, 0.6);"
+                                       "border: 1px solid rgba(0, 0, 0, 0.05); } ");
+
+        qApp->property("onlyTransfer").toBool() ? action->setStyleSheet("background-color: rgb(0, 129, 255); "
+                                                                        "border-radius: 10px;")
+                                                : action->setStyleSheet("background-color: white;"
+                                                                        "border-radius: 10px;");
+
+        shadowEffect->setEnabled(true);
+        bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.png").pixmap(234, 158));
+
+        for (auto ball : lineBalls)
+            if (ball)
+                ball->setStyleSheet("background-color: rgb(33, 138, 244); "
+                                    "border-radius: 6px;"
+                                    "border: 1px solid white;");
     }
+}
+
+void FirstTipWidget::showEvent(QShowEvent *event)
+{
+    auto ge = lineBalls.last()->geometry();
+
+    line->setGeometry(32, 26, 1, ge.y() - 26);
+    QWidget::showEvent(event);
 }
 
 void FirstTipWidget::initUI()
 {
-    firstTip = new QLabel(tr("Make sure that the person you are collaborating with has the \"Cross Collaboration\" application"
-                             " enabled and is connected to the same network as you are."));
-    CooperationGuiHelper::setAutoFont(firstTip, 12, 400);
-    firstTip->setWordWrap(true);
-    firstTip->setFixedWidth(480);
-    firstTip->setContentsMargins(10, 10, 40, 10);
+    inittipBtn();
+    initbackgroundFrame();
 
-    tipBtn = new CooperationIconButton(dynamic_cast<QWidget *>(parent()));
-#ifdef linux
-    tipBtn->setIcon(DStyle::SP_CloseButton);
-    tipBtn->setFlat(true);
-#else
-    tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/clear.svg"));
-#endif
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(10, 10, 0, 0);
+    mainLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    mainLayout->addWidget(backgroundFrame);
+    setMinimumHeight(170);
 
-    tipBtn->setIconSize(QSize(30, 30));
+    line = new LineWidget(backgroundFrame);
 
+    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, &FirstTipWidget::themeTypeChanged);
     themeTypeChanged();
+}
 
+void FirstTipWidget::initbackgroundFrame()
+{
+    backgroundFrame = new QFrame(this);
+    backgroundFrame->setStyleSheet(".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(249, 250, 254), stop:1 rgba(232, 242, 255)); "
+                                   "border-radius: 10px;"
+                                   "color: rgba(0, 0, 0, 0.6);"
+                                   "border: 1px solid rgba(0, 0, 0, 0.05); } ");
+    backgroundFrame->setFixedWidth(480);
+
+    bannerLabel = new QLabel(this);
+    bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.png").pixmap(234, 158));
+
+    QVBoxLayout *vLayout = new QVBoxLayout;
+    vLayout->setSpacing(0);
+    vLayout->setContentsMargins(26, 13, 0, 13);
+
+    QStringList tips;
+    tips << tr("First step")
+         << tr("The opposite end opens the application and connects to the same network")
+         << tr("Second step")
+         << tr("Enter the peer IP in the search box")
+         << tr("Third step")
+         << tr("Click");
+    //最后一句话有图标单独处理
+
+    for (int i = 0; i < tips.size(); i++) {
+        QLabel *textLabel = new QLabel(tips[i], this);
+        textLabel->setWordWrap(true);
+
+        shadowEffect = new QGraphicsDropShadowEffect(this);
+        shadowEffect->setBlurRadius(10);
+        shadowEffect->setColor(QColor(33, 138, 244));
+        shadowEffect->setOffset(0, 2);
+        if (i % 2 == 0) {
+            CooperationGuiHelper::setAutoFont(textLabel, 11, QFont::Normal);
+            textLabel->setStyleSheet("color: rgba(0, 0, 0, 0.6);");
+
+            QLabel *lineball = new QLabel(this);
+            lineBalls.append(lineball);
+            lineball->setFixedSize(12, 12);
+            lineball->setStyleSheet("background-color: rgb(33, 138, 244); "
+                                    "border-radius: 6px;"
+                                    "border: 1px solid white; } ");
+            lineball->setGraphicsEffect(shadowEffect);
+            QHBoxLayout *lineLayout = new QHBoxLayout;
+            lineLayout->addWidget(lineball);
+            lineLayout->addSpacing(13);
+            lineLayout->addWidget(textLabel);
+            vLayout->addLayout(lineLayout);
+            vLayout->addSpacing(2);
+        } else {
+            CooperationGuiHelper::setAutoFont(textLabel, 12, QFont::Medium);
+            textLabel->setStyleSheet("color: rgba(0, 0, 0, 0.7);");
+
+            QHBoxLayout *lineLayout = new QHBoxLayout;
+            lineLayout->addSpacing(25);
+            lineLayout->addWidget(textLabel);
+            vLayout->addLayout(lineLayout);
+
+            //最后一句话有图标单独处理
+            if (i + 1 == tips.size()) {
+                action = new QLabel(this);
+                action->setAlignment(Qt::AlignCenter);
+                action->setFixedSize(20, 20);
+
+                QString remainTip;
+                if (qApp->property("onlyTransfer").toBool()) {
+                    action->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/texts/send_18px.svg").pixmap(12, 12));
+                    action->setStyleSheet("background-color: rgb(0, 129, 255); "
+                                          "border-radius: 10px;");
+                    remainTip = tr("to send the file");
+                } else {
+#ifdef __linux__
+                    action->setPixmap(QIcon::fromTheme("connect").pixmap(12, 12));
+#else
+                    action->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/texts/connect_18px.svg").pixmap(12, 12));
+#endif
+                    action->setStyleSheet("background-color: white; "
+                                          "border-radius: 10px;");
+                    remainTip = tr("to connect to the peer device");
+                }
+                QLabel *textLabel2 = new QLabel(remainTip, this);
+                textLabel2->setWordWrap(true);
+                CooperationGuiHelper::setAutoFont(textLabel2, 12, QFont::Medium);
+                textLabel2->setStyleSheet("color: rgba(0, 0, 0, 0.7);");
+
+                QVBoxLayout *vlineLayout = new QVBoxLayout;
+                vlineLayout->setAlignment(Qt::AlignCenter);
+                vlineLayout->addWidget(textLabel2);
+
+                lineLayout->addSpacing(6);
+                lineLayout->setAlignment(Qt::AlignLeft);
+                lineLayout->addWidget(action);
+                lineLayout->addSpacing(6);
+                lineLayout->addWidget(textLabel2, Qt::AlignBottom);
+            } else
+                vLayout->addSpacing(10);
+        }
+    }
+
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    hLayout->setSpacing(0);
+    hLayout->setContentsMargins(0, 0, 0, 0);
+    hLayout->setAlignment(Qt::AlignRight);
+    hLayout->addLayout(vLayout, Qt::AlignLeft);
+    hLayout->addWidget(bannerLabel);
+
+    backgroundFrame->setLayout(hLayout);
+}
+
+void FirstTipWidget::inittipBtn()
+{
+    tipBtn = new CooperationIconButton(dynamic_cast<QWidget *>(parent()));
+    tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_white.svg"));
+    tipBtn->setIconSize(QSize(10, 10));
     connect(tipBtn, &QToolButton::clicked, this, [this]() {
         QFile flag(deepin_cross::CommonUitls::tipConfPath());
         if (flag.open(QIODevice::WriteOnly))
             flag.close();
         setVisible(false);
     });
-    QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->setAlignment(Qt::AlignCenter);
-    hLayout->addWidget(firstTip);
+}
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 10, 0, 0);
-    mainLayout->addLayout(hLayout);
-    setLayout(mainLayout);
+void LineWidget::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+    QPainter painter(this);
+    QColor color;
+    if (CooperationGuiHelper::instance()->isDarkTheme())
+        color.setRgb(189, 222, 255);
+    else
+        color.setRgb(33, 138, 244);
+    color.setAlphaF(0.17);
+    painter.setPen(color);
 
-    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, &FirstTipWidget::themeTypeChanged);
+    int x = width() / 2;
+    int y = 0;
+    int dashLength = 4;   // 每段虚线的长度
+    while (y < height()) {
+        painter.drawLine(x, y, x, qMin(y + dashLength, height()));
+        y += 2 * dashLength;   // 虚线间距
+    }
 }
