@@ -22,6 +22,8 @@ public:
 
     void setSessionExtCallback(ExtenMessageHandler cb);
     void updatePin(QString code);
+    void setStorageRoot(const QString &root);
+    void updateSaveFolder(const QString &folder);
 
     void sessionListen(int port);
     bool sessionPing(QString ip, int port);

@@ -49,6 +49,16 @@ void SessionManager::updatePin(QString code)
     _session_worker->updatePincode(code);
 }
 
+void SessionManager::setStorageRoot(const QString &root)
+{
+    _trans_worker->updateSaveRoot(root);
+}
+
+void SessionManager::updateSaveFolder(const QString &folder)
+{
+    _save_dir = QString(folder);
+}
+
 void SessionManager::sessionListen(int port)
 {
     bool success = _session_worker->startListen(port);
@@ -82,7 +92,8 @@ void SessionManager::sessionDisconnect(QString ip)
 void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
 {
     std::vector<std::string> name_vector;
-    bool success = _trans_worker->tryStartSend(paths, port, &name_vector);
+    std::string token;
+    bool success = _trans_worker->tryStartSend(paths, port, &name_vector, &token);
     if (!success) {
         ELOG << "Fail to send size: " << paths.size() << " at:" << port;
         emit notifyDoResult(false, "");
@@ -90,8 +101,9 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
     }
 
     QString localIp = deepin_cross::CommonUitls::getFirstIp().data();
-    QString token = "gen-temp-token";
-    QString endpoint = QString("%1:%2:%3").arg(localIp).arg(port).arg(token);
+    QString accesstoken = QString::fromStdString(token);
+    QString endpoint = QString("%1:%2:%3").arg(localIp).arg(port).arg(accesstoken);
+    WLOG << "endpoint: " << endpoint.toStdString();
 
     TransDataMessage req;
     req.id = std::to_string(_request_job_id);

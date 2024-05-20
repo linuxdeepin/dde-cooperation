@@ -25,7 +25,7 @@ bool TransferWorker::onProgress(const std::string &path, uint64_t current, uint6
 //    LOG_IF(FLG_log_detail) << "progressbar: " << progressbar << " remain_time=" << remain_time;
 //    LOG_IF(FLG_log_detail) << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 //    emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
-    LOG << "path: " << path << " current=" << current << " total=" << total;
+//    LOG << "path: " << path << " current=" << current << " total=" << total;
 
     return false;
 }
@@ -41,7 +41,12 @@ void TransferWorker::stop()
     cancel(false);
 }
 
-bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::string> *nameVector)
+void TransferWorker::updateSaveRoot(const QString &dir)
+{
+    _saveRoot = QString(dir);
+}
+
+bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::string> *nameVector, std::string *token)
 {
     // first try run web, or prompt error
     if (!startWeb(port)) {
@@ -49,31 +54,48 @@ bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::
         return false;
     }
 
+    picojson::array jsonArray;
     _file_server->clearBind();
     for (auto path : paths) {
         QFileInfo fileInfo(path);
-        QString name = "/" + fileInfo.fileName(); //must start /
-        nameVector->push_back(name.toStdString());
-        LOG << "web bind (" << name.toStdString() << ") on dir: " << path.toStdString();
-        _file_server->webBind(name.toStdString(), path.toStdString());
+//        QString name = "/" + fileInfo.fileName(); //must start /
+        std::string name = fileInfo.fileName().toStdString();
+        nameVector->push_back(name);
+        LOG << "web bind (" << name << ") on dir: " << path.toStdString();
+        _file_server->webBind(name, path.toStdString());
+
+        jsonArray.push_back(picojson::value(name));
     }
+
+    // 将picojson对象转换为字符串
+    std::string jsonString = picojson::value(jsonArray).serialize();
+    *token = _file_server->genToken(jsonString);
 
     return true;
 }
 
-bool TransferWorker::tryStartReceive(QStringList names, QString &ip, int port, QString &token, QString &dir)
+bool TransferWorker::tryStartReceive(QStringList names, QString &ip, int port, QString &token, QString &dirname)
 {
     if (!startGet(ip.toStdString(), port)) {
         ELOG << "try to create http Geter failed!!!";
         return false;
     }
 
+    std::string accessToken = token.toStdString();
     _file_client->cancel(false);
-    _file_client->setConfig(token.toStdString(), dir.toStdString());
-    DLOG << "Download Names: ";
-    for (const auto name : names) {
-        _file_client->downloadFolder(name.toStdString());
+    QString savePath = _saveRoot + QDir::separator();
+    if (!dirname.isEmpty()) {
+        savePath += dirname + QDir::separator();
     }
+    _file_client->setConfig(accessToken, savePath.toStdString());
+
+    std::vector<std::string> webs = _file_client->parseWeb(accessToken);
+#ifdef QT_DEBUG
+    for (const auto& web : webs) {
+        DLOG << "Web: " << web;
+    }
+#endif
+    _file_client->startFileDownload(webs);
     return true;
 }
 
@@ -100,11 +122,13 @@ bool TransferWorker::isSyncing()
 
 bool TransferWorker::startWeb(int port)
 {
-    auto asioService = _service.lock();
+    auto asioService = std::make_shared<AsioService>();
+//    auto asioService = _service.lock();
     if (!asioService) {
         WLOG << "weak asio service";
         return false;
     }
+    asioService->Start();
 
     // Create a new file http server
     if (!_file_server) {
@@ -119,11 +143,13 @@ bool TransferWorker::startWeb(int port)
 
 bool TransferWorker::startGet(const std::string &address, int port)
 {
-    auto asioService = _service.lock();
+    auto asioService = std::make_shared<AsioService>();
+//    auto asioService = _service.lock();
     if (!asioService) {
         WLOG << "weak asio service";
         return false;
     }
+    asioService->Start();
 
     // Create a new file http client
     if (!_file_client) {

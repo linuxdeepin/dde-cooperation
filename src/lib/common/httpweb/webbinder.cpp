@@ -48,18 +48,11 @@ void WebBinder::clear()
 std::string WebBinder::getPath(std::string path)
 {
     for (auto &pair : _binds) {
-        std::string regexString(pair.first);
-        replaceAll(regexString, "*", "(\\w)+");
-        replaceAll(regexString, "/", "\\/");
-        std::regex fileRegex(regexString);
-
-        if (std::regex_match(path, fileRegex))
-            return pair.second;
-
-        regexString.append("(\\w)+(\\.(\\w)+)?");
-        std::regex dirRegex(regexString);
-        if (std::regex_match(path, dirRegex))
-            return pair.second + path.substr(path.find_last_of("/") + 1, path.length());
+        const std::string& virtualBind = pair.first;
+        if (path.find(virtualBind) == 0) {
+            std::string rest = path.substr(virtualBind.length()); // 获取虚拟路径中与绑定路径匹配部分之外的部分
+            return pair.second + rest; // 返回对应的物理路径
+        }
     }
 
     return "";

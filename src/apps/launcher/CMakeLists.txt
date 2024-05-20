@@ -2,20 +2,36 @@ set(PROJ_NAME "cooperation-launcher")
 
 # enable qt build support
 set(CMAKE_AUTOUIC OFF)
-set(CMAKE_AUTOMOC OFF)
+set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC OFF)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+# add common library directory to the include path
+include_directories(${CMAKE_SOURCE_DIR}/src/lib/common)
 
 FILE(GLOB CPP_SRC
     *.h
     *.cpp
 )
 
-list(APPEND LINKLIBS cppserver)
-list(APPEND LINKLIBS proto)
+list(APPEND LINKLIBS sessionmanager)
+
+if (WIN32)
+    set(qt_required_components Core Network Widgets Sql WinExtras)
+else()
+    set(qt_required_components Core Network Widgets)
+endif()
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
 
 add_executable(${PROJ_NAME} ${CPP_SRC})
 
-target_link_libraries(${PROJ_NAME} ${LINKLIBS})
+target_link_libraries(${PROJ_NAME}
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Widgets
+    ${LINKLIBS})
 list(APPEND INSTALL_TARGETS ${PROJ_NAME})
 list(APPEND INSTALL_TARGETS_PDB ${PROJ_NAME})
 

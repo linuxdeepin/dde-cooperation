@@ -8,7 +8,8 @@
 #include "server/http/http_client.h"
 #include "syncstatus.h"
 
-//using Progress = std::function<bool(const std::string &path, uint64_t current, uint64_t total)>;
+#include "filesystem/file.h"
+#include "webproto.h"
 
 class HTTPFileClient;
 class FileClient : public WebInterface
@@ -18,25 +19,30 @@ public:
     FileClient(const std::shared_ptr<CppServer::Asio::Service> &service, const std::string &address, int port);
     ~FileClient();
 
-//    void setCallback(std::shared_ptr<ProgressCallInterface> callback);
+    std::vector<std::string> parseWeb(const std::string &token);
+
     void setConfig(const std::string &token, const std::string &savedir);
     void cancel(bool cancel = true);
     bool downloading();
 
-    bool downloadFile(const std::string &name);
-    void downloadFolder(const std::string &folderName);
-//    void walkDownload(const std::string &name, const std::string &token, const std::string &savedir);
+    // start download in new thread
+    void startFileDownload(const std::vector<std::string> &webnames);
 
 private:
-    bool getInfo(const std::string &resource, std::string *body);
+    InfoEntry requestInfo(const std::string &name);
+    std::string getHeadKey(const std::string &headstrs, const std::string &keyfind);
+    bool downloadFile(const std::string &name);
+    void downloadFolder(const std::string &folderName);
+    void walkDownload(const std::vector<std::string> &webnames);
 
-//    std::shared_ptr<ProgressCallInterface> _callback { nullptr };
     std::shared_ptr<HTTPFileClient> _httpClient { nullptr };
 
     std::string _token;
     std::string _savedir;
     bool _cancel { false };
     bool _running { false };
+
+    CppCommon::File tempFile;
 };
 
 #endif // FILECLIENT_H

@@ -136,7 +136,7 @@ void DiscoverController::onAppAttributeChanged(const QString &group, const QStri
         return;
 
     if (key == AppSettings::StoragePathKey)
-        CooperationUtil::instance()->setAppConfig("storagedir", value.toString());
+        CooperationUtil::instance()->setStorageConfig(value.toString());
 
     updatePublish();
 }

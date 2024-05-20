@@ -38,7 +38,7 @@ void MainController::registApp()
     auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
     auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     static std::once_flag flag;
-    std::call_once(flag, [&storagePath] { CooperationUtil::instance()->setAppConfig(KEY_APP_STORAGE_DIR, storagePath); });
+    std::call_once(flag, [&storagePath] { CooperationUtil::instance()->setStorageConfig(storagePath); });
 
     auto info = CooperationUtil::deviceInfo();
     info.insert(AppSettings::CooperationEnabled, true);

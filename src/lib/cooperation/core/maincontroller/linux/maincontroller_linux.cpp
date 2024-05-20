@@ -82,7 +82,7 @@ void MainController::registApp()
     auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     info.insert(AppSettings::StoragePathKey, storagePath);
     static std::once_flag flag;
-    std::call_once(flag, [&storagePath] { CooperationUtil::instance()->setAppConfig(KEY_APP_STORAGE_DIR, storagePath); });
+    std::call_once(flag, [&storagePath] { CooperationUtil::instance()->setStorageConfig(storagePath); });
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
     info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : true);

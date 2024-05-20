@@ -1,6 +1,9 @@
 ﻿project(httpweb)
 
 FILE(GLOB CPP_SRC
+    "${CMAKE_SOURCE_DIR}/src/configs/crypt/cert.h"
+    "${CMAKE_SOURCE_DIR}/src/common/filesystem.h"
+    "${CMAKE_SOURCE_DIR}/src/common/filesystem.cpp"
     *.h
     *.cpp
 )

@@ -159,7 +159,7 @@ void MainController::onAppAttributeChanged(const QString &group, const QString &
         return;
 
     if (key == AppSettings::StoragePathKey)
-        CooperationUtil::instance()->setAppConfig(KEY_APP_STORAGE_DIR, value.toString());
+        CooperationUtil::instance()->setStorageConfig(value.toString());
 
     regist();
 }

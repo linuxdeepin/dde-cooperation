@@ -32,6 +32,12 @@ public:
 
     void clearCache();
 
+    std::string genToken(std::string info);
+
+    bool verifyToken(std::string &token);
+
+    std::vector<std::string> getWebfromToken(const std::string &token);
+
 //    bool setMountPoint(const std::string &mount_point, const std::string &dir);
 
 //    bool removeMountPoint(const std::string &mount_point);

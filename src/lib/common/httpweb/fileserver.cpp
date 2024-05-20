@@ -11,10 +11,8 @@
 
 #include "system/uuid.h"
 
-//#include "cache/filecache.h"
-#include "picojson/picojson.h"
-
-//#include <filesystem>
+//#include "picojson/picojson.h"
+#include "webproto.h"
 
 #define BLOCK_SIZE 4096
 
@@ -24,152 +22,39 @@ public:
     using CppServer::HTTP::HTTPSession::HTTPSession;
 
 protected:
-    void serveFileInfo(const CppCommon::Path &path)
+    InfoEntry putFileInfo(const CppCommon::Path &entry)
     {
-        CppCommon::File temp(path);
-        if (temp.IsFileExists()) {
-            picojson::array arr;
-            picojson::object obj;
-            obj["name"] = picojson::value(temp.filename().string());
-            obj["size"] = picojson::value(std::to_string(temp.size()));
-            arr.push_back(picojson::value(obj));
-
-            picojson::value val(arr);
-            std::string json_str = val.serialize();
-
-            SendResponseAsync(response().MakeGetResponse(json_str, "application/json; charset=UTF-8"));
+        InfoEntry info;
+        auto name = entry.filename().string();
+        info.name = name;
+        if (entry.IsDirectory()) {
+            info.size = -1; // mask as folder flag.
+        } else if (entry.IsRegularFile()) {
+            CppCommon::File temp(entry);
+            info.size = temp.size(); // mask as file flag.
         } else {
-            SendResponseAsync(response().MakeErrorResponse(404, "File not found."));
-        }
-    }
-
-    void serveDirectoryInfo(const CppCommon::Path &path)
-    {
-        picojson::array arr;
-        for (const auto &item : CppCommon::Directory(path)) {
-            const CppCommon::Path entry = item.IsSymlink() ? CppCommon::Symlink(item).target() : item;
-
-            picojson::object obj;
-            arr.push_back(picojson::value(obj));
-
-            auto name = entry.filename().string();
-            if (entry.IsDirectory()) {
-                obj["name"] = picojson::value(std::string(name + "/"));
-                obj["size"] = picojson::value(std::to_string(0)); // mask as folder flag.
-            } else {
-                CppCommon::File temp(entry);
-                temp.Open(true, false);
-                obj["name"] = picojson::value(name);
-                obj["size"] = picojson::value(std::to_string(temp.size())); // mask as file flag.
-                temp.Close();
-            }
-            arr.push_back(picojson::value(obj));
+            std::cout << "this is link file: " << entry.string() << std::endl;
         }
 
-        picojson::value val(arr);
-        std::string json_str = val.serialize();
-
-        // Response with all dir/file values
-        SendResponseAsync(response().MakeGetResponse(json_str, "application/json; charset=UTF-8"));
-    }
-
-    void serveFile(const CppCommon::Path &path)
-    {
-        std::string mediaType = path.extension().string();
-
-        CppCommon::File temp(path);
-        temp.Open(true, false);
-        if (temp.IsFileExists()) {
-            size_t sz = temp.size();
-            temp.Seek(0);
-
-            response().Clear();
-            response().SetBegin(200);
-            response().SetContentType(mediaType);
-            response().SetBodyLength(sz);
-            response().SetHeader("Server: ", "FileServer");
-
-            // send headers
-            // SendResponseAsync();
-            SendResponse(response());
-
-            std::cout << "response header:" << response() << std::endl;
-
-            size_t read_sz = 0;
-            char buff[4096];
-            do {
-                read_sz = temp.Read(buff, sizeof(buff));
-                // std::cout << "read len:" << read_sz << std::endl;
-                SendResponseBody(buff, read_sz);
-            } while (read_sz > 0);
-        } else {
-            SendResponseAsync(response().MakeErrorResponse(404, "File not found."));
-        }
-        temp.Close();
-        std::cout << "response body end:" << std::endl;
-    }
-
-    void serveDirectory(const CppCommon::Path &path)
-    {
-        std::string result;
-        result += "[\n";
-        for (const auto &item : CppCommon::Directory(path)) {
-            const CppCommon::Path entry = item.IsSymlink() ? CppCommon::Symlink(item).target() : item;
-            std::string href;
-
-            auto name = entry.filename().string();
-            if (entry.IsDirectory()) {
-                href = name + "/";
-            } else {
-                href = name;
-            }
-            result += "\"file\": \"" + href + "\",\n";
-        }
-        result += "]\n";
-
-        // Response with all dir/file values
-        SendResponseAsync(response().MakeGetResponse(result, "application/json; charset=UTF-8"));
+        return info;
     }
 
     void serveInfo(const CppCommon::Path &path)
     {
         CppCommon::File info(path);
         if (info.IsExists()) {
-            picojson::array arr;
+            InfoEntry fileInfo = putFileInfo(info);
             if (info.IsDirectory()) {
                 for (const auto &item : CppCommon::Directory(path)) {
                     const CppCommon::Path entry = item.IsSymlink() ? CppCommon::Symlink(item).target() : item;
 
-                    picojson::object obj;
-                    arr.push_back(picojson::value(obj));
-
-                    auto name = entry.filename().string();
-                    obj["name"] = picojson::value(name);
-                    if (entry.IsDirectory()) {
-//                        obj["name"] = picojson::value(std::string(name + "/"));
-                        obj["size"] = picojson::value(std::to_string(0)); // mask as folder flag.
-                    } else {
-                        CppCommon::File temp(entry);
-                        temp.Open(true, false);
-//                        obj["name"] = picojson::value(name);
-                        obj["size"] = picojson::value(std::to_string(temp.size())); // mask as file flag.
-                        temp.Close();
-                    }
-                    arr.push_back(picojson::value(obj));
+                    InfoEntry subInfo = putFileInfo(entry);
+                    fileInfo.datas.push_back(subInfo);
                 }
-            } else if (info.IsRegularFile()){
-                info.Open(true, false);
-                picojson::object obj;
-                obj["name"] = picojson::value(info.filename().string());
-                obj["size"] = picojson::value(std::to_string(info.size())); // mask as file flag.
-                arr.push_back(picojson::value(obj));
-                info.Close();
-            } else {
-                std::cout << "this is link file: " << path.absolute() << std::endl;
             }
 
-            picojson::value val(arr);
-            std::string json_str = val.serialize();
+            std::string json_str = fileInfo.as_json().serialize();
+            std::cout << "serveInfo >>: " << json_str << std::endl;
 
             // Response with all dir/file values
             SendResponseAsync(response().MakeGetResponse(json_str, "application/json; charset=UTF-8"));
@@ -195,11 +80,13 @@ protected:
                 info.Open(true, false);
 
                 size_t sz = info.size();
-                if (offset < sz)
+                if (offset < sz) {
+                    std::cout << "breakpoint continue transfer from:" << offset << std::endl;
                     info.Seek(offset); // seek to offset for breakpoint continue
+                }
 
                 response().SetContentType(info.extension().string());
-                response().SetBodyLength(sz);
+                response().SetBodyLength(sz - offset); // set the remaining size as body lenght
                 response().SetHeader("Flag", "file");
 
                 // send headers first
@@ -211,7 +98,7 @@ protected:
                 char buff[BLOCK_SIZE];
                 do {
                     read_sz = info.Read(buff, sizeof(buff));
-                    // std::cout << "read len:" << read_sz << std::endl;
+//                     std::cout << "read len:" << read_sz << std::endl;
                     SendResponseBody(buff, read_sz);
                 } while (read_sz > 0);
 
@@ -223,37 +110,6 @@ protected:
             SendResponseAsync(response().MakeErrorResponse(404, "Not found."));
         }
 
-        std::string mediaType = path.extension().string();
-
-        CppCommon::File temp(path);
-        temp.Open(true, false);
-        if (temp.IsFileExists()) {
-            size_t sz = temp.size();
-            temp.Seek(0);
-
-            response().Clear();
-            response().SetBegin(200);
-            response().SetContentType(mediaType);
-            response().SetBodyLength(sz);
-            response().SetHeader("Server: ", "FileServer");
-
-            // send headers
-            // SendResponseAsync();
-            SendResponse(response());
-
-            std::cout << "response header:" << response() << std::endl;
-
-            size_t read_sz = 0;
-            char buff[4096];
-            do {
-                read_sz = temp.Read(buff, sizeof(buff));
-                // std::cout << "read len:" << read_sz << std::endl;
-                SendResponseBody(buff, read_sz);
-            } while (read_sz > 0);
-        } else {
-            SendResponseAsync(response().MakeErrorResponse(404, "File not found."));
-        }
-        temp.Close();
         std::cout << "response body end:" << std::endl;
     }
 
@@ -305,21 +161,19 @@ protected:
             std::unordered_map<std::string, std::string> queryParams = parseQueryParams(query);
             std::string name = path.substr(path.find('/') + 1);
             std::string token = queryParams["token"];
-            std::string pathvalue;
 
             std::string method = path.substr(0, path.find('/'));
 
             // 检查token是否正确
-            if (TokenCache::GetInstance().getCacheValue(token, pathvalue)) {
-                CppCommon::Path diskpath = WebBinder::GetInstance().getPath(name); //pathvalue + "/" + name;
+            if (TokenCache::GetInstance().verifyToken(token)) {
+                CppCommon::Path diskpath = WebBinder::GetInstance().getPath(name);
+                std::cout << "request >> name: " << name << " > " << diskpath.string() << std::endl;
                 // 处理predownload或download请求的name
                 if (method.find("info") != std::string::npos) {
                     // 处理predownload请求的name
-                    std::cout << "处理info请求的name: " << name << std::endl;
                     serveInfo(diskpath);
                 } else if (method.find("download") != std::string::npos) {
                     // 处理download请求的name
-                    std::cout << "处理download请求的name: " << name << std::endl;
                     std::string offstr = queryParams["offset"];
                     size_t offset = 0;
                     if (!offstr.empty()) {
@@ -331,7 +185,7 @@ protected:
                     SendResponseAsync(response().MakeErrorResponse("Unsupported HTTP request: " + method));
                 }
             } else {
-                std::cout << "Token不正确" << std::endl;
+                std::cout << "Token invalid" << std::endl;
                 // Response reject
                 SendResponseAsync(response().MakeErrorResponse(404, "Invalid auth token!"));
             }
@@ -424,12 +278,12 @@ void FileServer::setWeb(std::string &token, const std::string &path)
 }
 
 // bind: "/images", "C:/Users/username/Pictures/images"
-// getpath(): resturn
+// getpath(): return
 //    "/images/photo.jpg" -> C:/Users/username/Pictures/images/photo.jpg
 //    "/images/2022/" -> C:/Users/username/Pictures/images/2022/
 
 // bind: "/images/*", "C:/Users/username/Pictures/"
-// getpath(): resturn
+// getpath(): return
 //    "/images/photo.jpg" -> C:/Users/username/Pictures/photo.jpg
 //    "/images/2022/" -> C:/Users/username/Pictures/2022/
 int FileServer::webBind(std::string webDir, std::string diskDir)
@@ -450,6 +304,16 @@ int FileServer::webUnbind(std::string webDir)
 void FileServer::clearBind()
 {
     WebBinder::GetInstance().clear();
+}
+
+std::string FileServer::genToken(std::string info)
+{
+    return TokenCache::GetInstance().genToken(info);
+}
+
+bool FileServer::verifyToken(std::string &token)
+{
+    return TokenCache::GetInstance().verifyToken(token);
 }
 
 void FileServer::clearToken()

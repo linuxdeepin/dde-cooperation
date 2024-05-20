@@ -25,9 +25,9 @@ public:
 protected:
     void onConnected() override
     {
-        //std::cout << "Protocol session with Id " << id() << " connected!" << std::endl;
-        //std::cout << "server:" << server()->address() << ":" << server()->port() << std::endl;
-        //std::cout << "from:" << socket().remote_endpoint() << std::endl;
+        std::cout << "Protocol session with Id " << id() << " connected!" << std::endl;
+        std::cout << "server:" << server()->address() << ":" << server()->port() << std::endl;
+        std::cout << "from:" << socket().remote_endpoint() << std::endl;
         if (_statehandler) {
             std::string addr = socket().remote_endpoint().address().to_string();
             _statehandler(RPC_CONNECTED, addr);
@@ -41,7 +41,7 @@ protected:
 
     void onDisconnected() override
     {
-        //std::cout << "Protocol session with Id " << id() << " disconnected!" << std::endl;
+        std::cout << "Protocol session with Id " << id() << " disconnected!" << std::endl;
         if (_statehandler) {
             std::string addr = socket().remote_endpoint().address().to_string();
             _statehandler(RPC_DISCONNECTED, addr);
@@ -69,7 +69,7 @@ protected:
 
     void onReceive(const ::proto::OriginMessage &request) override
     {
-        //std::cout << "Server Received: " << request << std::endl;
+        std::cout << "Server Received: " << request << std::endl;
 
         // Validate request
         if (request.json_msg.empty()) {

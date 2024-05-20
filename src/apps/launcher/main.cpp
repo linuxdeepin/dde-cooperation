@@ -2,151 +2,52 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "server/asio/tcp_server.h"
+#include "manager/sessionmanager.h"
 
-#include "asioservice.h"
-#include "proto_protocol.h"
-
+#include <unistd.h>
 #include <iostream>
+#include <QStringList>
+#include <QApplication>
+#include <QStandardPaths>
 
-class SimpleProtoSession : public CppServer::Asio::TCPSession, public FBE::proto::Sender, public FBE::proto::Receiver
-{
-public:
-    using CppServer::Asio::TCPSession::TCPSession;
+#define COO_SESSION_PORT 51566
+#define COO_HARD_PIN "515616"
 
-protected:
-    void onConnected() override
-    {
-        std::cout << "Simple protocol session with Id " << id() << " connected!" << std::endl;
-
-        // Send invite notification
-        proto::MessageNotify notify;
-        notify.notification = "Hello from Simple protocol server! Please send a message or '!' to disconnect the client!";
-        send(notify);
-    }
-
-    void onDisconnected() override
-    {
-        std::cout << "Simple protocol session with Id " << id() << " disconnected!" << std::endl;
-    }
-
-    void onError(int error, const std::string& category, const std::string& message) override
-    {
-        std::cout << "Simple protocol session caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
-    }
-
-    // Protocol handlers
-    void onReceive(const ::proto::DisconnectRequest& request) override { Disconnect(); }
-    void onReceive(const ::proto::OriginMessage& request) override
-    {
-        std::cout << "Received: " << request << std::endl;
-
-        // Validate request
-        if (request.json_msg.empty())
-        {
-            // Send reject
-            proto::MessageReject reject;
-            reject.id = request.id;
-            reject.error = "Request message is empty!";
-            send(reject);
-            return;
-        }
-
-//        static std::hash<std::string> hasher;
-
-        // Send response
-        proto::OriginMessage response;
-        response.id = request.id;
-        response.mask = request.mask;
-        response.json_msg = request.json_msg;
-        send(response);
-    }
-
-    // Protocol implementation
-    void onReceived(const void* buffer, size_t size) override { receive(buffer, size); }
-    size_t onSend(const void* data, size_t size) override { return SendAsync(data, size) ? size : 0; }
-};
-
-class SimpleProtoServer : public CppServer::Asio::TCPServer, public FBE::proto::Sender
-{
-public:
-    using CppServer::Asio::TCPServer::TCPServer;
-
-protected:
-    std::shared_ptr<CppServer::Asio::TCPSession> CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer>& server) override
-    {
-        return std::make_shared<SimpleProtoSession>(server);
-    }
-
-protected:
-    void onError(int error, const std::string& category, const std::string& message) override
-    {
-        std::cout << "Simple protocol server caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
-    }
-
-    // Protocol implementation
-    size_t onSend(const void* data, size_t size) override { Multicast(data, size); return size; }
-};
+#define COO_WEB_PORT 51568
 
 int main(int argc, char** argv)
 {
-    // Simple protocol server port
-    int port = 4444;
-    if (argc > 1)
-        port = std::atoi(argv[1]);
+    ExtenMessageHandler msg_cb([](int32_t mask, const picojson::value &json_value, std::string *res_msg) -> bool {
+        std::cout << "Main >> " << mask <<" msg_cb, json_msg: " << json_value << std::endl;
+        return false;
+    });
+    auto sessionManager = new SessionManager();
+    sessionManager->setSessionExtCallback(msg_cb);
+    sessionManager->updatePin(COO_HARD_PIN);
+    sessionManager->sessionListen(COO_SESSION_PORT);
 
-    std::cout << "Simple protocol server port: " << port << std::endl;
+    // 获取下载目录
+    QString downloadDir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    sessionManager->setStorageRoot(downloadDir + "/launcher");
 
-    std::cout << std::endl;
+    std::cout << "start listen........" << COO_SESSION_PORT << std::endl;
 
-    // Create a new Asio service
-    auto service = std::make_shared<AsioService>();
+#if 1
+    QString ip = "10.8.11.52";
+    std::cout << "connect remote " << ip.toStdString() << std::endl;
+    sessionManager->sessionPing(ip, COO_SESSION_PORT);
+    sleep(1);
+    std::cout << "sessionConnect..........." << std::endl;
+    sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    sleep(1);
+    std::cout << "sending file.........." << ip.toStdString() << std::endl;
+    QStringList fileList;
+    fileList << "/home/zero1/Downloads/ss-1.bin";
+    sessionManager->sendFiles(ip, COO_WEB_PORT, fileList);
+#endif
+    QApplication app(argc, argv);
+    app.exec();
 
-    // Start the Asio service
-    std::cout << "Asio service starting...";
-    service->Start();
-    std::cout << "Done!" << std::endl;
-
-    // Create a new proto protocol server
-    auto server = std::make_shared<SimpleProtoServer>(service, port);
-
-    // Start the server
-    std::cout << "Server starting...";
-    server->Start();
-    std::cout << "Done!" << std::endl;
-
-    std::cout << "Press Enter to stop the server or '!' to restart the server..." << std::endl;
-
-    // Perform text input
-    std::string line;
-    while (getline(std::cin, line))
-    {
-        if (line.empty())
-            break;
-
-        // Restart the server
-        if (line == "!")
-        {
-            std::cout << "Server restarting...";
-            server->Restart();
-            std::cout << "Done!" << std::endl;
-            continue;
-        }
-
-        // Multicast admin notification to all sessions
-        proto::MessageNotify notify;
-        notify.notification = "(admin) " + line;
-        server->send(notify);
-    }
-
-    // Stop the server
-    std::cout << "Server stopping...";
-    server->Stop();
-    std::cout << "Done!" << std::endl;
-
-    // Stop the Asio service
-    std::cout << "Asio service stopping...";
-    service->Stop();
     std::cout << "Done!" << std::endl;
 
     return 0;

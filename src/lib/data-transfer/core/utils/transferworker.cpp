@@ -262,10 +262,7 @@ bool TransferHandle::handleDataDownload(const std::vector<std::string> nameVecto
     _file_client->cancel(false);
     _file_client->setConfig(_accessToken.toStdString(), _saveDir.toStdString());
     DLOG << "Download Names: ";
-    for (const auto name : nameVector) {
-        DLOG << name;
-        _file_client->downloadFolder(name);
-    }
+    _file_client->startFileDownload(nameVector);
     return true;
 }
 

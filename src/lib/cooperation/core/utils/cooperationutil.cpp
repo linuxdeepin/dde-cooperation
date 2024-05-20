@@ -68,6 +68,7 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
             res.flag = DO_WAIT;
             *res_msg = res.as_json().serialize();
             q->confirmTargetAddress = QString::fromStdString(req.host);
+            q->storageFolder = QString::fromStdString(req.nick + "(" + req.host + ")");
             q->metaObject()->invokeMethod(MainController::instance(),
                                           "waitForConfirm",
                                           Qt::QueuedConnection,
@@ -279,9 +280,13 @@ void CooperationUtil::sendTransApply(const QString &ip)
         // update the target address
         confirmTargetAddress = ip;
 
+//        auto myselfInfo = DeviceInfo::fromVariantMap(CooperationUtil::deviceInfo());
+        auto deviceName = deviceInfo().value(AppSettings::DeviceNameKey).toString();
+
         // send transfer apply, and async handle in RPC recv
         ApplyMessage msg;
         msg.flag = ASK_NEEDCONFIRM;
+        msg.nick = deviceName.toStdString();// user define nice name
         msg.host = localIPAddress().toStdString();
         QString jsonMsg = msg.as_json().serialize().c_str();
         QString res = d->sessionManager->sendRpcRequest(ip, APPLY_TRANS, jsonMsg);
@@ -345,16 +350,20 @@ void CooperationUtil::asyncDiscoveryDevice()
     //    Q_EMIT discoveryFinished(infoList);
 }
 
-void CooperationUtil::setAppConfig(const QString &key, const QString &value)
+void CooperationUtil::setStorageConfig(const QString &value)
 {
-    //TODO: ?setAppConfig
+    if (d->sessionManager) {
+        d->sessionManager->setStorageRoot(value);
+    }
 }
 
 void CooperationUtil::replyTransRequest(bool agree)
 {
+    auto deviceName = deviceInfo().value(AppSettings::DeviceNameKey).toString();
     // send transfer reply, skip result
     ApplyMessage msg;
     msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
+    msg.nick = deviceName.toStdString();// user define nice name
     msg.host = localIPAddress().toStdString();
     QString jsonMsg = msg.as_json().serialize().c_str();
 
@@ -364,6 +373,8 @@ void CooperationUtil::replyTransRequest(bool agree)
         // transfer request send exception, it perhaps network error
         WLOG << "Send APPLY_TRANS_RESULT failed.";
     }
+
+    d->sessionManager->updateSaveFolder(storageFolder);
 }
 
 void CooperationUtil::replyShareRequest(bool agree)

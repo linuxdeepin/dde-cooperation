@@ -34,6 +34,8 @@ public:
     int webUnbind(std::string webDir);
     void clearBind();
 
+    std::string genToken(std::string info);
+    bool verifyToken(std::string &token);
     void clearToken();
 
 protected:

@@ -29,8 +29,10 @@ public:
 
     void stop();
 
-    bool tryStartSend(QStringList paths, int port, std::vector<std::string> *nameVector);
-    bool tryStartReceive(QStringList names, QString &ip, int port, QString &token, QString &dir);
+    void updateSaveRoot(const QString &dir);
+
+    bool tryStartSend(QStringList paths, int port, std::vector<std::string> *nameVector, std::string *token);
+    bool tryStartReceive(QStringList names, QString &ip, int port, QString &token, QString &dirname);
 
     void cancel(bool send);
     bool isSyncing();
@@ -54,7 +56,7 @@ private:
 //    int _request_job_id;
 
 //    QString _accessToken = "";
-//    QString _saveDir = "";
+    QString _saveRoot = "";
 //    QString _connectedAddress = "";
 };
 

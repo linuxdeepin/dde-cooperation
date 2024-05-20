@@ -34,7 +34,7 @@ public:
     void registAppInfo(const QString &infoJson);
     void unregistAppInfo();
     void asyncDiscoveryDevice();
-    void setAppConfig(const QString &key, const QString &value);
+    void setStorageConfig(const QString &value);
 
     void replyTransRequest(bool agree);
     void replyShareRequest(bool agree);
@@ -51,6 +51,7 @@ public:
     void showFeatureDisplayDialog(QDialog *dlg);
 
     QString confirmTargetAddress = {};
+    QString storageFolder = {};
 
 Q_SIGNALS:
     void discoveryFinished(const QList<DeviceInfoPointer> &infoList);
