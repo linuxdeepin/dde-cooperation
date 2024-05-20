@@ -11,6 +11,7 @@
 #include "global_defines.h"
 
 class QGraphicsDropShadowEffect;
+class QPropertyAnimation;
 namespace cooperation_core {
 
 class LineWidget;
@@ -105,6 +106,7 @@ public:
 
 protected:
     void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 private:
     void initUI();
@@ -112,7 +114,6 @@ private:
     void inittipBtn();
 
     QFrame *backgroundFrame { nullptr };
-
     QLabel *bannerLabel { nullptr };
     QLabel *action { nullptr };
     QGraphicsDropShadowEffect *shadowEffect { nullptr };

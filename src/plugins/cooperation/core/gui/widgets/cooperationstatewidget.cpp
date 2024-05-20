@@ -26,6 +26,7 @@ DWIDGET_USE_NAMESPACE
 #include <QScrollArea>
 #include <QMouseEvent>
 #include <QGraphicsDropShadowEffect>
+#include <QPropertyAnimation>
 
 #include <utils/cooperationutil.h>
 
@@ -453,43 +454,18 @@ void FirstTipWidget::setVisible(bool visible)
 void FirstTipWidget::themeTypeChanged()
 {
     if (CooperationGuiHelper::instance()->isDarkTheme()) {
-        backgroundFrame->setStyleSheet(".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(132, 141, 179, 0.24), stop:1 rgba(224, 225, 255, 0.12)); "
-                                       "border-radius: 10px;"
-                                       "color: rgba(0, 0, 0, 0.6);"
-                                       "border: 1px solid rgba(0, 0, 0, 0.05); } ");
-
-        qApp->property("onlyTransfer").toBool() ? action->setStyleSheet("background-color: rgb(0, 129, 255); "
-                                                                        "border-radius: 10px;")
-                                                : action->setStyleSheet("background-color: rgba(255, 255, 255, 0.2); "
-                                                                        "border-radius: 10px;");
-        shadowEffect->setEnabled(false);
+        shadowEffect->setColor(QColor(122, 192, 255, 128));
         bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/dark/icons/banner_128px.png").pixmap(234, 158));
 
-        for (auto ball : lineBalls)
-            if (ball)
-                ball->setStyleSheet("background-color: rgb(0, 89, 210); "
-                                    "border-radius: 6px;"
-                                    "border: 1px solid white; ");
     } else {
-        backgroundFrame->setStyleSheet(".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(249, 250, 254), stop:1 rgba(232, 242, 255)); "
-                                       "border-radius: 10px;"
-                                       "color: rgba(0, 0, 0, 0.6);"
-                                       "border: 1px solid rgba(0, 0, 0, 0.05); } ");
-
-        qApp->property("onlyTransfer").toBool() ? action->setStyleSheet("background-color: rgb(0, 129, 255); "
-                                                                        "border-radius: 10px;")
-                                                : action->setStyleSheet("background-color: white;"
-                                                                        "border-radius: 10px;");
-
-        shadowEffect->setEnabled(true);
+        shadowEffect->setColor(QColor(10, 57, 99, 128));
         bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.png").pixmap(234, 158));
-
-        for (auto ball : lineBalls)
-            if (ball)
-                ball->setStyleSheet("background-color: rgb(33, 138, 244); "
-                                    "border-radius: 6px;"
-                                    "border: 1px solid white;");
     }
+    if (!qApp->property("onlyTransfer").toBool())
+        action->setPixmap(QIcon::fromTheme("connect").pixmap(12, 12));
+#ifndef __linux__
+    action->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/texts/connect_18px.svg").pixmap(12, 12));
+#endif
 }
 
 void FirstTipWidget::showEvent(QShowEvent *event)
@@ -498,6 +474,11 @@ void FirstTipWidget::showEvent(QShowEvent *event)
 
     line->setGeometry(32, 26, 1, ge.y() - 26);
     QWidget::showEvent(event);
+}
+
+void FirstTipWidget::hideEvent(QHideEvent *event)
+{
+    QWidget::hideEvent(event);
 }
 
 void FirstTipWidget::initUI()
@@ -521,10 +502,15 @@ void FirstTipWidget::initUI()
 void FirstTipWidget::initbackgroundFrame()
 {
     backgroundFrame = new QFrame(this);
-    backgroundFrame->setStyleSheet(".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(249, 250, 254), stop:1 rgba(232, 242, 255)); "
-                                   "border-radius: 10px;"
-                                   "color: rgba(0, 0, 0, 0.6);"
-                                   "border: 1px solid rgba(0, 0, 0, 0.05); } ");
+    QString backlightStyle = ".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(249, 250, 254), stop:1 rgba(232, 242, 255)); "
+                             "border-radius: 10px;"
+                             "color: rgba(0, 0, 0, 0.6);"
+                             "border: 1px solid rgba(0, 0, 0, 0.05); } ";
+    QString backdarkStyle = ".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(132, 141, 179, 0.24), stop:1 rgba(224, 225, 255, 0.12)); "
+                            "border-radius: 10px;"
+                            "color: rgba(0, 0, 0, 0.6);"
+                            "border: 1px solid rgba(0, 0, 0, 0.05); } ";
+    CooperationGuiHelper::initThemeTypeConnect(backgroundFrame, backlightStyle, backdarkStyle);
     backgroundFrame->setFixedWidth(480);
 
     bannerLabel = new QLabel(this);
@@ -548,19 +534,25 @@ void FirstTipWidget::initbackgroundFrame()
         textLabel->setWordWrap(true);
 
         shadowEffect = new QGraphicsDropShadowEffect(this);
-        shadowEffect->setBlurRadius(10);
-        shadowEffect->setColor(QColor(33, 138, 244));
+        shadowEffect->setBlurRadius(4);
+        shadowEffect->setColor(QColor(122, 192, 255, 128));
         shadowEffect->setOffset(0, 2);
         if (i % 2 == 0) {
+            QString lightStyle = "color: rgba(0, 0, 0, 0.6);";
+            QString darkStyle = "color: rgba(255, 255, 255, 0.6);";
+            CooperationGuiHelper::initThemeTypeConnect(textLabel, lightStyle, darkStyle);
             CooperationGuiHelper::setAutoFont(textLabel, 11, QFont::Normal);
-            textLabel->setStyleSheet("color: rgba(0, 0, 0, 0.6);");
 
             QLabel *lineball = new QLabel(this);
             lineBalls.append(lineball);
             lineball->setFixedSize(12, 12);
-            lineball->setStyleSheet("background-color: rgb(33, 138, 244); "
+            QString balllightStyle = "background-color: rgb(33, 138, 244); "
+                                     "border-radius: 6px;"
+                                     "border: 1px solid white;";
+            QString balldarkStyle = "background-color: rgb(0, 89, 210); "
                                     "border-radius: 6px;"
-                                    "border: 1px solid white; } ");
+                                    "border: 1px solid white; ";
+            CooperationGuiHelper::initThemeTypeConnect(lineball, balllightStyle, balldarkStyle);
             lineball->setGraphicsEffect(shadowEffect);
             QHBoxLayout *lineLayout = new QHBoxLayout;
             lineLayout->addWidget(lineball);
@@ -569,8 +561,10 @@ void FirstTipWidget::initbackgroundFrame()
             vLayout->addLayout(lineLayout);
             vLayout->addSpacing(2);
         } else {
+            QString lightStyle = "color: rgba(0, 0, 0, 0.7);";
+            QString darkStyle = "color: rgba(255, 255, 255, 0.7);";
             CooperationGuiHelper::setAutoFont(textLabel, 12, QFont::Medium);
-            textLabel->setStyleSheet("color: rgba(0, 0, 0, 0.7);");
+            CooperationGuiHelper::initThemeTypeConnect(textLabel, lightStyle, darkStyle);
 
             QHBoxLayout *lineLayout = new QHBoxLayout;
             lineLayout->addSpacing(25);
@@ -586,23 +580,24 @@ void FirstTipWidget::initbackgroundFrame()
                 QString remainTip;
                 if (qApp->property("onlyTransfer").toBool()) {
                     action->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/texts/send_18px.svg").pixmap(12, 12));
-                    action->setStyleSheet("background-color: rgb(0, 129, 255); "
-                                          "border-radius: 10px;");
+                    QString lightStyle = "background-color: rgb(0, 129, 255); "
+                                         "border-radius: 10px;";
+                    QString darkStyle = "background-color: rgb(0, 129, 255); "
+                                        "border-radius: 10px;";
+                    CooperationGuiHelper::initThemeTypeConnect(action, lightStyle, darkStyle);
                     remainTip = tr("to send the file");
                 } else {
-#ifdef __linux__
-                    action->setPixmap(QIcon::fromTheme("connect").pixmap(12, 12));
-#else
-                    action->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/texts/connect_18px.svg").pixmap(12, 12));
-#endif
-                    action->setStyleSheet("background-color: white; "
-                                          "border-radius: 10px;");
+                    QString lightStyle = "background-color: white; "
+                                         "border-radius: 10px;";
+                    QString darkStyle = "background-color: rgba(255, 255, 255, 0.2); "
+                                        "border-radius: 10px;";
+                    CooperationGuiHelper::initThemeTypeConnect(action, lightStyle, darkStyle);
                     remainTip = tr("to connect to the peer device");
                 }
                 QLabel *textLabel2 = new QLabel(remainTip, this);
                 textLabel2->setWordWrap(true);
                 CooperationGuiHelper::setAutoFont(textLabel2, 12, QFont::Medium);
-                textLabel2->setStyleSheet("color: rgba(0, 0, 0, 0.7);");
+                CooperationGuiHelper::initThemeTypeConnect(textLabel2, lightStyle, darkStyle);
 
                 QVBoxLayout *vlineLayout = new QVBoxLayout;
                 vlineLayout->setAlignment(Qt::AlignCenter);

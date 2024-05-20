@@ -24,6 +24,7 @@ public:
 
     static void setLabelFont(QLabel *label, int pointSize, int minpointSize, int weight);
     static void setAutoFont(QWidget *widget, int size, int weight);
+    static void initThemeTypeConnect(QWidget *w, const QString &lightstyle, const QString &darkstyle);
 
 Q_SIGNALS:
     void themeTypeChanged();
