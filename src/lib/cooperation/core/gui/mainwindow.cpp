@@ -36,6 +36,7 @@ void MainWindowPrivate::initConnect()
     connect(DiscoverController::instance(), &DiscoverController::startDiscoveryDevice, q, &MainWindow::onLookingForDevices);
     connect(DiscoverController::instance(), &DiscoverController::deviceOnline, q, &MainWindow::addDevice);
     connect(DiscoverController::instance(), &DiscoverController::deviceOffline, q, &MainWindow::removeDevice);
+    connect(DiscoverController::instance(), &DiscoverController::discoveryFinished, q, &MainWindow::onDiscoveryFinished);
 }
 
 void MainWindowPrivate::moveCenter()

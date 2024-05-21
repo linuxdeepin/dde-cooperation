@@ -7,7 +7,9 @@
 #include "common/log.h"
 
 #include <QProcess>
+#include <QMessageBox>
 #include <QTimer>
+#include <QTextCodec>
 #include <common/constant.h>
 #include <configs/dconfig/dconfigmanager.h>
 #include <configs/settings/configmanager.h>
@@ -17,11 +19,13 @@ using namespace cooperation_core;
 DiscoverController::DiscoverController(QObject *parent)
     : QObject(parent)
 {
+    if(!isZeroConfDaemonActive())
+        if(!openZeroConfDaemonDailog())
+            return;
+
     if (!zeroConf.browserExists())
         zeroConf.startBrowser(UNI_CHANNEL);
 
-    if (!isZeroConfDaemonActive())
-        openZeroConfDaemonDailog();
     initConnect();
     publish();
 }
@@ -46,7 +50,7 @@ QList<DeviceInfoPointer> DiscoverController::getOnlineDeviceList() const
     return onlineDeviceList;
 }
 
-void DiscoverController::openZeroConfDaemonDailog()
+bool DiscoverController::openZeroConfDaemonDailog()
 {
 #ifdef __linux__
     CooperationDialog dlg;
@@ -60,6 +64,12 @@ void DiscoverController::openZeroConfDaemonDailog()
     int code = dlg.exec();
     if (code == 0)
         QProcess::startDetached("systemctl start avahi-daemon.service");
+    return true;
+#else
+    int choice = QMessageBox::warning(nullptr, tr("Please click to confirm to enable the LAN discovery service!"),
+                                       tr("Unable to discover and be discovered by other devices when LAN discovery service is not turned on"
+                                          "Right click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service"), QMessageBox::Yes | QMessageBox::No);
+    return false;
 #endif
 }
 
@@ -86,8 +96,19 @@ bool DiscoverController::isZeroConfDaemonActive()
         ELOG << "Error: " << error.toStdString();
         return false;
     }
+
+#else
+    QProcess process;
+    process.start("sc query \"Bonjour Service\"");
+    process.waitForFinished();
+    QByteArray output = process.readAllStandardOutput();
+    QString res = QTextCodec::codecForName("GBK")->toUnicode(output);
+
+    if (res.contains("RUNNING"))
+       return true;
+    else
+       return false;
 #endif
-    return true;
 }
 
 DeviceInfoPointer DiscoverController::findDeviceByIP(const QString &ip)
@@ -216,6 +237,8 @@ void DiscoverController::refresh()
         onlineDeviceList.append(devInfo);
     }
     Q_EMIT deviceOnline({ onlineDeviceList });
+    if(onlineDeviceList.isEmpty())
+       Q_EMIT discoveryFinished(false);
 }
 
 void DiscoverController::startDiscover()

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -29,12 +29,13 @@ public:
     DeviceInfoPointer findDeviceByIP(const QString &ip);
 
     static bool isZeroConfDaemonActive();
-    static void openZeroConfDaemonDailog();
+    static bool openZeroConfDaemonDailog();
 
 Q_SIGNALS:
     void deviceOnline(const QList<DeviceInfoPointer> &infoList);
     void deviceOffline(const QString &ip);
     void startDiscoveryDevice();
+    void discoveryFinished(bool hasFound);
 
 private Q_SLOTS:
     void addService(QZeroConfService zcs);
