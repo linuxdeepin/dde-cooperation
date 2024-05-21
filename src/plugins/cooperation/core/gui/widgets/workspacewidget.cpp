@@ -6,6 +6,7 @@
 #include "workspacewidget_p.h"
 #include "cooperationstatewidget.h"
 #include "devicelistwidget.h"
+#include "firsttipwidget.h"
 
 #include <QMouseEvent>
 #include <QRegularExpression>
