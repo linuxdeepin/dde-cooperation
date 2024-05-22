@@ -4,7 +4,7 @@
 
 #include "manager/sessionmanager.h"
 
-#include <unistd.h>
+//#include <unistd.h>
 #include <iostream>
 #include <QStringList>
 #include <QApplication>
@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 
     std::cout << "start listen........" << COO_SESSION_PORT << std::endl;
 
-#if 1
+#if 0
     QString ip = "10.8.11.52";
     std::cout << "connect remote " << ip.toStdString() << std::endl;
     sessionManager->sessionPing(ip, COO_SESSION_PORT);

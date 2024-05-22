@@ -1,5 +1,4 @@
 #define MyAppName "@PRODUCT_NAME@"
-#define MyAppDaemonName "cooperation-daemon"
 #define MyAppVersion "@APP_VERSION_MAJOR@.@APP_VERSION_MINOR@.@APP_VERSION_PATCH@.@APP_BUILD_NUMBER@"
 #define MyAppTextVersion "@APP_VERSION@"
 #define MyAppPublisher "Uniontech, Inc."
@@ -7,10 +6,9 @@
 #define MyAppCopyright "Copyright (C) 2023-2024 Uniontech Inc."
 #define MyAppExeName "@PROJ_NAME@.exe"
 #define MyAppServiceName "Cooperation"
-#define MyAppServiceExe "cooperation-daemon.exe"
 #define MyAppServiceDesc "Deepin cooperation background processes."
 #define MyAppListenerDesc "Deepin cooperation Listener"
-#define MyAppMainName "main.vbs"
+#define RuntimeDepend "vc_redist.x64.exe"
 
 [Setup]
 AppId={{@PRODUCT_ID@}
@@ -47,24 +45,19 @@ Uninstallable=yes
 #include "scripts\lang\@PRODUCT_NAME@.iss"
 
 [CustomMessages]
-DependenciesDir="redist"
+DependenciesDir=
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
 ; Name: "startupicon"; Description: "{cm:CmAutoStart}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
 
 [Files]
-Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/{#MyAppServiceExe}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@PROJ_NAME@/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@PROJ_NAME@/@CMAKE_BUILD_TYPE@/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{commonprograms}\{cm:CmAppName}"; Filename: "{app}\{#MyAppMainName}"; IconFilename:"{app}\{#MyAppExeName}"
-Name: "{commondesktop}\{cm:CmAppName}"; Filename: "{app}\{#MyAppMainName}"; Tasks: desktopicon; IconFilename:"{app}\{#MyAppExeName}"
-Name: "{group}\{cm:CmAppName}"; Filename: "{app}\{#MyAppMainName}"; IconFilename:"{app}\{#MyAppExeName}"
-; Name: "{group}\{cm:UninstallProgram,{cm:CmAppName}}"; Filename: "{uninstallexe}";
-; Name: "{autodesktop}\{cm:CmAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename:"{app}\{#MyAppExeName}"
-; Name: "{autostartup}\{cm:CmAppName}"; Filename: "{app}\{#MyAppDaemonName}"; Tasks:startupicon; IconFilename:"{app}\{#MyAppExeName}"
+Name: "{group}\{cm:UninstallProgram,{cm:CmAppName}}"; Filename: "{uninstallexe}";
+Name: "{autodesktop}\{cm:CmAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename:"{app}\{#MyAppExeName}"
 
 [Run]
 ; there's no "check if exists" or "insert if not exists" for netsh's firewall commands
@@ -72,17 +65,15 @@ Name: "{group}\{cm:CmAppName}"; Filename: "{app}\{#MyAppMainName}"; IconFilename
 ; Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""{#MyAppListenerDesc}"""; Flags: runhidden
 ; Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall add rule name=""{#MyAppListenerDesc}"" protocol=TCP dir=in localport=51596-51600 action=allow"; Flags: runhidden
 ; Filename: {sys}\sc.exe; Parameters: "delete {#MyAppServiceName}"; Flags: runhidden
-; Filename: {sys}\sc.exe; Parameters: "create {#MyAppServiceName} start= auto binPath= ""\""{app}\{#MyAppServiceExe}\"""""; Flags: runhidden
 ; Filename: {sys}\sc.exe; Parameters: "description {#MyAppServiceName} ""{#MyAppServiceDesc}"""; Flags: runhidden
 ; Filename: {sys}\sc.exe; Parameters: "start {#MyAppServiceName}"; Flags: runhidden
-; Filename: "{app}\{#MyAppServiceExe}"; Description: "{#MyAppServiceName}"; Flags: runhidden nowait
-Filename: "{app}\{#MyAppMainName}"; Description: "{cm:LaunchProgram,{cm:CmAppName}}"; Flags: shellexec nowait postinstall skipifsilent
+; Filename: "{app}\{#RuntimeDepend}"; Parameters: /q; WorkingDir: {app}; StatusMsg: "Install Microsoft Visual C++ 2015-2022 64-Bit Redistributable ..."; Flags: shellexec nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{cm:CmAppName}}"; Flags: shellexec nowait postinstall skipifsilent
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{commonappdata}\#MyAppName"
 
 [UninstallRun]
-Filename: {sys}\taskkill; Parameters: "/im {#MyAppServiceExe} /f /t"; Flags: runhidden
 Filename: {sys}\taskkill; Parameters: "/im {#MyAppExeName} /f /t"; Flags: runhidden
 ;Filename: {sys}\net.exe; Parameters: "stop {#MyAppServiceName}"; Flags: runhidden
 ;Filename: {sys}\sc.exe; Parameters: "delete {#MyAppServiceName}"; Flags: runhidden
@@ -93,15 +84,37 @@ Filename: {sys}\taskkill; Parameters: "/im {#MyAppExeName} /f /t"; Flags: runhid
 #include "scripts\products\stringversion.iss"
 #include "scripts\products\winversion.iss"
 #include "scripts\products\msiproduct.iss"
-#include "scripts\products\vcredist2017.iss"
+#include "scripts\products\vcredist2015-2022.iss"
 
 [Code]
-function InitializeSetup(): boolean;
+const
+	vc_upgradecode = '{65E5BD06-6392-3027-8C26-853107D3CF1A}';
+	vc_upgradecode_x64 = '{36F68A90-239C-34DF-B58C-64B30153CE35}';
+
+procedure checkvcredist(minVersion: string);
+var
+  path: string;
+  ErrorCode: Integer;
 begin
-	// initialize windows version
-	initwinversion();
+	if (not IsIA64()) then begin
+		path := ExpandConstant('{app}{\}') + 'vc_redist.x64.exe';
+		if (not msiproductupgrade(GetString(vc_upgradecode, vc_upgradecode_x64, ''), minVersion)) then
+			if not FileExists(path) then begin
+				vcredist201522(minVersion); // download and install
+			end
+			else begin
+				Exec(path, '/install', '', SW_SHOW, ewWaitUntilTerminated, ErrorCode);
+			end;
+	end;
+end;
 
-	vcredist2017('14'); // min allowed version is 14.0
+  procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssPostInstall then
+    begin
+      // initialize windows version
+      initwinversion();
 
-	Result := true;
+      checkvcredist('14'); // min allowed version is 14.0
+    end;
 end;

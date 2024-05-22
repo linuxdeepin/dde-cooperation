@@ -11,7 +11,7 @@ if(NOT TARGET barrier)
       # 拷贝编译好的版本windows版本
       file(GLOB BARRIER_BINS ${BARRIER_DIR}/bins/*)
       file(COPY ${BARRIER_BINS}
-        DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dde-cooperation)
+        DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dde-cooperation/${CMAKE_BUILD_TYPE})
       message("   >>> copy barrier binary and depends:  ${BARRIER_BINS}")
   endif()
 

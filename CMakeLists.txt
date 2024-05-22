@@ -30,6 +30,10 @@ if(WIN32)
 
     # windeployqt 依赖
     include (cmake/qt-helper.cmake)
+
+    # windows 并行编译选项
+    cmake_host_system_information(RESULT CPU_NUMBER_OF_LOGICAL_CORES QUERY NUMBER_OF_LOGICAL_CORES)
+    add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP${CPU_NUMBER_OF_LOGICAL_CORES}>)
 endif()
 
 include(GNUInstallDirs)
@@ -75,21 +79,15 @@ if (WIN32)
     file(COPY ${INNO_SCRIPTS} DESTINATION ${CMAKE_BINARY_DIR})
 endif()
 
-## 如果未设置CMAKE_BUILD_TYPE，则将其设置为Release
-#if(NOT CMAKE_BUILD_TYPE)
-#    message("Cmake build type is not defined!")
-#    # set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
-#else()
+# 如果未设置CMAKE_BUILD_TYPE，则将其设置为Release
+message("   >>> CMAKE_BUILD_TYPE  ${CMAKE_BUILD_TYPE}")
+if(NOT CMAKE_BUILD_TYPE)
+   message("Cmake build type is not defined!")
+   set(CMAKE_BUILD_TYPE "Release")
+    # 设置环境变量
+   set(ENV{QT_SELECT} "5")
+endif()
 
-#if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-#    # 设置环境变量
-#    set(ENV{QT_SELECT} "5")
-#    # generate qm
-#    execute_process(COMMAND bash "translate_generation.sh"
-#        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
-#endif()
-
-#endif()
 # 引入翻译生成
 include(translation-generate)
 
