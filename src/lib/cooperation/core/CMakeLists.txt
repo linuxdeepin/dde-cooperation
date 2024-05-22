@@ -47,6 +47,7 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/discovercontroller/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sharemanager/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 

@@ -13,6 +13,9 @@
 #include "common/constant.h"
 #include "common/commonutils.h"
 
+#include "sharemanager/sharecooperationservicemanager.h"
+#include "discovercontroller/discovercontroller.h"
+
 #include <QApplication>
 #include <QStandardPaths>
 #include <QDir>
@@ -65,88 +68,87 @@ CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
 }
 
 void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, QVariant param)
-{  
+{
     auto myselfInfo = DeviceInfo::fromVariantMap(CooperationUtil::deviceInfo());
     myselfInfo->setIpAddress(CooperationUtil::localIPAddress());
-//    ShareEvents event;
-//    event.eventType = type;
-//    switch (type) {
-//    case BACK_SHARE_CONNECT: {
-//        ShareConnectApply conEvent;
-//        conEvent.appName = MainAppName;
-//        conEvent.tarAppname = MainAppName;
-//        conEvent.tarIp = devInfo->ipAddress().toStdString();
+    //    ShareEvents event;
+    //    event.eventType = type;
+    //    switch (type) {
+    //    case BACK_SHARE_CONNECT: {
+    //        ShareConnectApply conEvent;
+    //        conEvent.appName = MainAppName;
+    //        conEvent.tarAppname = MainAppName;
+    //        conEvent.tarIp = devInfo->ipAddress().toStdString();
 
-//        QStringList dataInfo({ myselfInfo->deviceName(),
-//                               myselfInfo->ipAddress() });
-//        conEvent.data = dataInfo.join(',').toStdString();
+    //        QStringList dataInfo({ myselfInfo->deviceName(),
+    //                               myselfInfo->ipAddress() });
+    //        conEvent.data = dataInfo.join(',').toStdString();
 
-//        event.data = conEvent.as_json().str();
-//    } break;
-//    case BACK_SHARE_DISCONNECT: {
-//        ShareDisConnect disConEvent;
-//        disConEvent.appName = MainAppName;
-//        disConEvent.tarAppname = MainAppName;
-//        disConEvent.msg = myselfInfo->deviceName().toStdString();
+    //        event.data = conEvent.as_json().str();
+    //    } break;
+    //    case BACK_SHARE_DISCONNECT: {
+    //        ShareDisConnect disConEvent;
+    //        disConEvent.appName = MainAppName;
+    //        disConEvent.tarAppname = MainAppName;
+    //        disConEvent.msg = myselfInfo->deviceName().toStdString();
 
-//        event.data = disConEvent.as_json().str();
-//    } break;
-//    case BACK_SHARE_START: {
-//        if (!devInfo->peripheralShared())
-//            return;
+    //        event.data = disConEvent.as_json().str();
+    //    } break;
+    //    case BACK_SHARE_START: {
+    //        if (!devInfo->peripheralShared())
+    //            return;
 
-//        ShareServerConfig config;
-//        QString serverName = myselfInfo->ipAddress();
-//        QString clientName = devInfo->ipAddress();
-//        config.server_screen = serverName.toStdString();
-//        config.client_screen = clientName.toStdString();
-//        switch (myselfInfo->linkMode()) {
-//        case DeviceInfo::LinkMode::RightMode:
-//            config.screen_left = serverName.toStdString();
-//            config.screen_right = clientName.toStdString();
-//            break;
-//        case DeviceInfo::LinkMode::LeftMode:
-//            config.screen_left = clientName.toStdString();
-//            config.screen_right = serverName.toStdString();
-//            break;
-//        }
-//        config.clipboardSharing = devInfo->clipboardShared();
+    //        ShareServerConfig config;
+    //        QString serverName = myselfInfo->ipAddress();
+    //        QString clientName = devInfo->ipAddress();
+    //        config.server_screen = serverName.toStdString();
+    //        config.client_screen = clientName.toStdString();
+    //        switch (myselfInfo->linkMode()) {
+    //        case DeviceInfo::LinkMode::RightMode:
+    //            config.screen_left = serverName.toStdString();
+    //            config.screen_right = clientName.toStdString();
+    //            break;
+    //        case DeviceInfo::LinkMode::LeftMode:
+    //            config.screen_left = clientName.toStdString();
+    //            config.screen_right = serverName.toStdString();
+    //            break;
+    //        }
+    //        config.clipboardSharing = devInfo->clipboardShared();
 
-//        ShareStart startEvent;
-//        startEvent.appName = MainAppName;
-//        startEvent.config = config;
+    //        ShareStart startEvent;
+    //        startEvent.appName = MainAppName;
+    //        startEvent.config = config;
 
-//        event.data = startEvent.as_json().str();
-//    } break;
-//    case BACK_SHARE_STOP: {
-//        ShareStop stopEvent;
-//        stopEvent.appName = MainAppName;
-//        stopEvent.tarAppname = MainAppName;
-//        stopEvent.flags = param.toInt();
+    //        event.data = startEvent.as_json().str();
+    //    } break;
+    //    case BACK_SHARE_STOP: {
+    //        ShareStop stopEvent;
+    //        stopEvent.appName = MainAppName;
+    //        stopEvent.tarAppname = MainAppName;
+    //        stopEvent.flags = param.toInt();
 
-//        event.data = stopEvent.as_json().str();
-//    } break;
-//    case BACK_SHARE_CONNECT_REPLY: {
-//        ShareConnectReply replyEvent;
-//        replyEvent.appName = MainAppName;
-//        replyEvent.tarAppname = MainAppName;
-//        replyEvent.reply = param.toBool() ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE;
+    //        event.data = stopEvent.as_json().str();
+    //    } break;
+    //    case BACK_SHARE_CONNECT_REPLY: {
+    //        ShareConnectReply replyEvent;
+    //        replyEvent.appName = MainAppName;
+    //        replyEvent.tarAppname = MainAppName;
+    //        replyEvent.reply = param.toBool() ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE;
 
-//        event.data = replyEvent.as_json().str();
-//    } break;
-//    case BACK_SHARE_DISAPPLY_CONNECT: {
-//        ShareConnectDisApply cancelEvent;
-//        cancelEvent.appName = MainAppName;
-//        cancelEvent.tarAppname = MainAppName;
-//        event.data = cancelEvent.as_json().str();
-//    } break;
-//    default:
-//        break;
-//    }
+    //        event.data = replyEvent.as_json().str();
+    //    } break;
+    //    case BACK_SHARE_DISAPPLY_CONNECT: {
+    //        ShareConnectDisApply cancelEvent;
+    //        cancelEvent.appName = MainAppName;
+    //        cancelEvent.tarAppname = MainAppName;
+    //        event.data = cancelEvent.as_json().str();
+    //    } break;
+    //    default:
+    //        break;
+    //    }
 
-
-    QString eventStr = "";//event.as_json();
-    CooperationUtil::instance()->sendShareEvents(type, eventStr);
+    QString eventStr = "";   //event.as_json();
+    //  CooperationUtil::instance()->sendShareEvents(type, eventStr);
 }
 
 CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
@@ -189,8 +191,8 @@ uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &bo
 void CooperationManagerPrivate::stopCooperation()
 {
     if (targetDeviceInfo && targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
-//        backendShareEvent(BACK_SHARE_STOP, targetDeviceInfo, 0);
-//        backendShareEvent(BACK_SHARE_DISCONNECT);
+        //        backendShareEvent(BACK_SHARE_STOP, targetDeviceInfo, 0);
+        //        backendShareEvent(BACK_SHARE_DISCONNECT);
 
 #ifdef linux
         static QString body(tr("Coordination with \"%1\" has ended"));
@@ -202,7 +204,7 @@ void CooperationManagerPrivate::stopCooperation()
 void CooperationManagerPrivate::onCancelCooperApply()
 {
     confirmTimer.stop();
-//    backendShareEvent(BACK_SHARE_DISAPPLY_CONNECT);
+    //    backendShareEvent(BACK_SHARE_DISAPPLY_CONNECT);
     taskDialog()->hide();
 }
 
@@ -243,9 +245,12 @@ void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString
 
     isReplied = true;
     if (action == NotifyRejectAction) {
-//        backendShareEvent(BACK_SHARE_CONNECT_REPLY, nullptr, false);
+        CooperationUtil::instance()->replyShareRequest(false);
     } else if (action == NotifyAcceptAction) {
-//        backendShareEvent(BACK_SHARE_CONNECT_REPLY, nullptr, true);
+        CooperationUtil::instance()->replyShareRequest(true);
+        ShareCooperationServiceManager::instance()->client()->setClientTargetIp(senderDeviceIp);
+        ShareCooperationServiceManager::instance()->client()->startBarrier();
+
         auto info = CooperationUtil::instance()->findDeviceInfo(senderDeviceIp);
         if (!info)
             return;
@@ -313,8 +318,9 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
         d->taskDialog()->show();
         return;
     }
-
-//    d->backendShareEvent(BACK_SHARE_CONNECT, info);
+    DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(CommonUitls::getFirstIp().c_str());
+    ShareCooperationServiceManager::instance()->server()->setServerConfig(selfinfo, info);
+    CooperationUtil::instance()->sendShareEvents(info->ipAddress());
 
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     d->isRecvMode = false;
@@ -330,8 +336,9 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
 
 void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
 {
-//    d->backendShareEvent(BACK_SHARE_STOP, info, 0);
-//    d->backendShareEvent(BACK_SHARE_DISCONNECT);
+    CooperationUtil::instance()->sendDisconnectShareEvents(info->ipAddress());
+
+    ShareCooperationServiceManager::instance()->stop();
 
     if (d->targetDeviceInfo) {
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
@@ -355,15 +362,15 @@ void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
 
-//        if (info->peripheralShared())
-//            d->backendShareEvent(BACK_SHARE_START, info);
-//        else
-//            d->backendShareEvent(BACK_SHARE_STOP, info, 1);
+        //        if (info->peripheralShared())
+        //            d->backendShareEvent(BACK_SHARE_START, info);
+        //        else
+        //            d->backendShareEvent(BACK_SHARE_STOP, info, 1);
     } else if (d->targetDeviceInfo->clipboardShared() != info->clipboardShared()) {
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
 
-//        d->backendShareEvent(BACK_SHARE_START, info);
+        //        d->backendShareEvent(BACK_SHARE_START, info);
     }
 }
 
@@ -410,8 +417,8 @@ void CooperationManager::notifyConnectRequest(const QString &info)
     if (infoList.size() < 2)
         return;
 
-    d->senderDeviceIp = infoList[1];
-    d->targetDevName = infoList[0];
+    d->senderDeviceIp = infoList[0];
+    d->targetDevName = infoList[1];
 
     d->confirmTimer.start();
 #ifdef linux
@@ -431,14 +438,15 @@ void CooperationManager::handleConnectResult(int result)
 
     switch (result) {
     case SHARE_CONNECT_COMFIRM: {
+        //启动 ShareCooperationServic
+        ShareCooperationServiceManager::instance()->server()->restartBarrier();
+
         // 上报埋点数据
         d->reportConnectionData();
 
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
         MainController::instance()->updateDeviceState({ d->targetDeviceInfo });
         HistoryManager::instance()->writeIntoConnectHistory(d->targetDeviceInfo->ipAddress(), d->targetDeviceInfo->deviceName());
-
-//        d->backendShareEvent(BACK_SHARE_START, d->targetDeviceInfo);
 
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
         d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
@@ -471,6 +479,7 @@ void CooperationManager::handleDisConnectResult(const QString &devName)
 {
     if (!d->targetDeviceInfo)
         return;
+    ShareCooperationServiceManager::instance()->stop();
 
     static QString body(tr("Coordination with \"%1\" has ended"));
     d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(devName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
@@ -538,6 +547,6 @@ void CooperationManager::handleNetworkDismiss(const QString &msg)
 void CooperationManager::handleSearchDeviceResult(bool res)
 {
     emit MainController::instance()->discoveryFinished(res);
-//    if(!res)
-//        emit MainController::instance()->discoveryFinished(false);
+    //    if(!res)
+    //        emit MainController::instance()->discoveryFinished(false);
 }

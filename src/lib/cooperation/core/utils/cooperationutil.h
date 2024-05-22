@@ -27,7 +27,9 @@ public:
 
     void pingTarget(const QString &ip);
     void sendTransApply(const QString &ip);
-    void sendShareEvents(int type, const QString &jsonMsg);
+
+    void sendShareEvents(const QString &ip);
+    void sendDisconnectShareEvents(const QString &ip);
 
     void registAppInfo(const QString &infoJson);
     void unregistAppInfo();
@@ -35,6 +37,8 @@ public:
     void setAppConfig(const QString &key, const QString &value);
 
     void replyTransRequest(bool agree);
+    void replyShareRequest(bool agree);
+
     void cancelTrans();
     void doSendFiles(const QStringList &fileList);
 
@@ -45,7 +49,6 @@ public:
     static QString localIPAddress();
 
     void showFeatureDisplayDialog(QDialog *dlg);
-
 
     QString confirmTargetAddress = {};
 

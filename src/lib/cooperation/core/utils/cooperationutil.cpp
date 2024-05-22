@@ -17,7 +17,7 @@
 #include "manager/sessionmanager.h"
 #include "manager/sessionproto.h"
 #include "share/cooconstrants.h"
-
+#include "discovercontroller/discovercontroller.h"
 #include <QJsonDocument>
 #include <QNetworkInterface>
 #include <QStandardPaths>
@@ -42,9 +42,8 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
     LOG << "This is only transfer?" << onlyTransfer;
 
     ExtenMessageHandler msg_cb([this](int32_t mask, const picojson::value &json_value, std::string *res_msg) -> bool {
-        DLOG << "CooperationUtil >> " << mask <<" msg_cb, json_msg: " << json_value << std::endl;
-        switch (mask)
-        {
+        DLOG << "CooperationUtil >> " << mask << " msg_cb, json_msg: " << json_value << std::endl;
+        switch (mask) {
         case APPLY_INFO: {
             ApplyMessage req, res;
             req.from_json(json_value);
@@ -62,7 +61,7 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
                 Q_EMIT q->discoveryFinished(devInfoList);
             }
         }
-        return true;
+            return true;
         case APPLY_TRANS: {
             ApplyMessage req, res;
             req.from_json(json_value);
@@ -74,7 +73,7 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
                                           Qt::QueuedConnection,
                                           Q_ARG(QString, QString(req.host.c_str())));
         }
-        return true;
+            return true;
         case APPLY_TRANS_RESULT: {
             ApplyMessage req, res;
             req.from_json(json_value);
@@ -85,18 +84,20 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
                                           agree ? "accepted" : "rejected",
                                           Qt::QueuedConnection);
         }
-        return true;
+            return true;
         case APPLY_SHARE: {
             ApplyMessage req, res;
             req.from_json(json_value);
             res.flag = DO_WAIT;
+            QString info = QString(req.host.c_str()) + "," + req.nick.c_str();
             *res_msg = res.as_json().serialize();
+            q->confirmTargetAddress = QString::fromStdString(req.host);
             q->metaObject()->invokeMethod(CooperationManager::instance(),
                                           "notifyConnectRequest",
                                           Qt::QueuedConnection,
-                                          Q_ARG(QString, QString(req.host.c_str())));
+                                          Q_ARG(QString, info));
         }
-        return true;
+            return true;
         case APPLY_SHARE_RESULT: {
             ApplyMessage req, res;
             req.from_json(json_value);
@@ -108,7 +109,7 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
                                           Qt::QueuedConnection,
                                           Q_ARG(int, agree ? 1 : 0));
         }
-        return true;
+            return true;
         case APPLY_SHARE_STOP: {
             ApplyMessage req, res;
             req.from_json(json_value);
@@ -119,7 +120,7 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
                                           Qt::QueuedConnection,
                                           Q_ARG(QString, QString(req.host.c_str())));
         }
-        return true;
+            return true;
         case APPLY_CANCELED: {
             ApplyMessage req, res;
             req.from_json(json_value);
@@ -129,7 +130,7 @@ CooperationUtilPrivate::CooperationUtilPrivate(CooperationUtil *qq)
                                           "handleCancelCooperApply",
                                           Qt::QueuedConnection);
         }
-        return true;
+            return true;
         }
 
         // unhandle message
@@ -157,33 +158,31 @@ void CooperationUtilPrivate::handleConnectStatus(int result, QString reason)
         if (code == 113) {
             // host unreachable
             q->metaObject()->invokeMethod(CooperationManager::instance(),
-                                                          "handleSearchDeviceResult",
-                                                          Qt::QueuedConnection,
-                                                          Q_ARG(bool, false));
+                                          "handleSearchDeviceResult",
+                                          Qt::QueuedConnection,
+                                          Q_ARG(bool, false));
         }
 
     } else if (result == -1) {
         // disconnected
         // if there are trans or share working, notify network disconnect
         q->metaObject()->invokeMethod(MainController::instance(),
-                                            "onNetworkMiss",
-                                            Qt::QueuedConnection);
+                                      "onNetworkMiss",
+                                      Qt::QueuedConnection);
     } else if (result == 2) {
         // connected
-//        q->metaObject()->invokeMethod(CooperationManager::instance(),
-//                                                      "handleSearchDeviceResult",
-//                                                      Qt::QueuedConnection,
-//                                                      Q_ARG(bool, true));
+        //        q->metaObject()->invokeMethod(CooperationManager::instance(),
+        //                                                      "handleSearchDeviceResult",
+        //                                                      Qt::QueuedConnection,
+        //                                                      Q_ARG(bool, true));
     }
 
-
-//    q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
-//                                  Qt::QueuedConnection,
-//                                  Q_ARG(int, 0),
-//                                  Q_ARG(QString, reason),
-//                                  Q_ARG(bool, result == 2));
+    //    q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
+    //                                  Qt::QueuedConnection,
+    //                                  Q_ARG(int, 0),
+    //                                  Q_ARG(QString, reason),
+    //                                  Q_ARG(bool, result == 2));
 }
-
 
 CooperationUtil::CooperationUtil(QObject *parent)
     : QObject(parent),
@@ -232,7 +231,7 @@ void CooperationUtil::pingTarget(const QString &ip)
 {
     // session connect and then send rpc request
     bool pong = d->sessionManager->sessionPing(ip, COO_SESSION_PORT);
-//    emit CooperationManager::instance()->handleSearchDeviceResult(pong);
+    //    emit CooperationManager::instance()->handleSearchDeviceResult(pong);
 
     // send info apply, and sync handle
     ApplyMessage msg;
@@ -271,10 +270,10 @@ void CooperationUtil::sendTransApply(const QString &ip)
     bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
 
     metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
-                                    Qt::QueuedConnection,
-                                    Q_ARG(int, logind ? 1 : 0),
-                                    Q_ARG(QString, ip),
-                                    Q_ARG(bool, true));
+                               Qt::QueuedConnection,
+                               Q_ARG(int, logind ? 1 : 0),
+                               Q_ARG(QString, ip),
+                               Q_ARG(bool, true));
 
     if (logind) {
         // update the target address
@@ -293,14 +292,38 @@ void CooperationUtil::sendTransApply(const QString &ip)
     }
 }
 
-void CooperationUtil::sendShareEvents(int type, const QString &jsonMsg)
+void CooperationUtil::sendShareEvents(const QString &ip)
 {
+    bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(localIPAddress());
     // session connect and then send rpc request
-//    bool logind = d->sessionManager->sessionConnect(ip, COO_CORE_SESSION_PORT, COO_CORE_HARD_PIN);
-//    if (logind) {
-//        // send share apply
-//    }
-//    d->sessionManager->sendRpcRequest();
+    ApplyMessage msg;
+    msg.flag = ASK_NEEDCONFIRM;
+    msg.nick = selfinfo->deviceName().toStdString();
+    msg.host = localIPAddress().toStdString();
+    QString jsonMsg = msg.as_json().serialize().c_str();
+    QString res = d->sessionManager->sendRpcRequest(ip, APPLY_SHARE, jsonMsg);
+    if (res.isEmpty()) {
+        // transfer request send exception, it perhaps network error
+        WLOG << "Send ShareEvents failed.";
+    }
+}
+
+void CooperationUtil::sendDisconnectShareEvents(const QString &ip)
+{
+    bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(localIPAddress());
+    // session connect and then send rpc request
+    ApplyMessage msg;
+    msg.flag = ASK_NEEDCONFIRM;
+    msg.nick = selfinfo->deviceName().toStdString();
+    msg.host = localIPAddress().toStdString();
+    QString jsonMsg = msg.as_json().serialize().c_str();
+    QString res = d->sessionManager->sendRpcRequest(ip, APPLY_SHARE_STOP, jsonMsg);
+    if (res.isEmpty()) {
+        // transfer request send exception, it perhaps network error
+        WLOG << "Send ShareEvents failed.";
+    }
 }
 
 void CooperationUtil::registAppInfo(const QString &infoJson)
@@ -317,9 +340,9 @@ void CooperationUtil::unregistAppInfo()
 void CooperationUtil::asyncDiscoveryDevice()
 {
     //TODO: ?getDiscovery then
-//    QList<DeviceInfoPointer> infoList;
-//    infoList = d->parseDeviceInfo(obj);
-//    Q_EMIT discoveryFinished(infoList);
+    //    QList<DeviceInfoPointer> infoList;
+    //    infoList = d->parseDeviceInfo(obj);
+    //    Q_EMIT discoveryFinished(infoList);
 }
 
 void CooperationUtil::setAppConfig(const QString &key, const QString &value)
@@ -340,6 +363,22 @@ void CooperationUtil::replyTransRequest(bool agree)
     if (res.isEmpty()) {
         // transfer request send exception, it perhaps network error
         WLOG << "Send APPLY_TRANS_RESULT failed.";
+    }
+}
+
+void CooperationUtil::replyShareRequest(bool agree)
+{
+    // send transfer reply, skip result
+    ApplyMessage msg;
+    msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
+    msg.host = localIPAddress().toStdString();
+    QString jsonMsg = msg.as_json().serialize().c_str();
+
+    // _confirmTargetAddress
+    QString res = d->sessionManager->sendRpcRequest(confirmTargetAddress, APPLY_SHARE_RESULT, jsonMsg);
+    if (res.isEmpty()) {
+        // transfer request send exception, it perhaps network error
+        WLOG << "Send APPLY_SHARE_RESULT failed.";
     }
 }
 
@@ -379,12 +418,12 @@ DeviceInfoPointer CooperationUtil::parseDeviceInfo(const QString &info)
     }
 
     auto map = doc.toVariant().toMap();
-//    map.insert("IPAddress", req.host.c_str());
-//                map.insert("OSType", req.flag);
+    //    map.insert("IPAddress", req.host.c_str());
+    //                map.insert("OSType", req.flag);
     auto devInfo = DeviceInfo::fromVariantMap(map);
     devInfo->setConnectStatus(DeviceInfo::Connectable);
-//    if (lastInfo.os.share_connect_ip == node.os.ipv4)
-//        devInfo->setConnectStatus(DeviceInfo::Connected);
+    //    if (lastInfo.os.share_connect_ip == node.os.ipv4)
+    //        devInfo->setConnectStatus(DeviceInfo::Connected);
 
     return devInfo;
 }
@@ -405,8 +444,8 @@ QVariantMap CooperationUtil::deviceInfo()
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey);
     info.insert(AppSettings::DeviceNameKey,
                 value.isValid()
-                ? value.toString()
-                : QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName());
+                        ? value.toString()
+                        : QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName());
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey);
     info.insert(AppSettings::PeripheralShareKey, value.isValid() ? value.toBool() : true);
