@@ -274,7 +274,6 @@ void TransferHandle::handleWebCancel(const std::string jobid)
 
     if (_file_server) {
         _file_server->clearBind();
-        _file_server->clearToken();
         _file_server->stop();
     }
 }

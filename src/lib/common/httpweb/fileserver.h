@@ -27,16 +27,12 @@ public:
     bool start();
     bool stop();
 
-    std::string addFileContent(const CppCommon::Path &path);
-    void setWeb(std::string &token, const std::string &path);
-
     int webBind(std::string webDir, std::string diskDir);
     int webUnbind(std::string webDir);
     void clearBind();
 
     std::string genToken(std::string info);
     bool verifyToken(std::string &token);
-    void clearToken();
 
 protected:
 

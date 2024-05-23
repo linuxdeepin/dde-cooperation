@@ -11,7 +11,6 @@
 
 #include "system/uuid.h"
 
-//#include "picojson/picojson.h"
 #include "webproto.h"
 
 #define BLOCK_SIZE 4096
@@ -259,24 +258,6 @@ bool FileServer::stop()
     return false;
 }
 
-std::string FileServer::addFileContent(const CppCommon::Path &path)
-{
-    // genrate token for this path, and save them into TokenCache<token, abspath>
-    // Put the cache value
-    std::string abspath(path.absolute().string());
-    std::string token(CppCommon::UUID::Random().string());
-    TokenCache::GetInstance().putCacheValue(token, abspath);
-
-    return token;
-}
-
-void FileServer::setWeb(std::string &token, const std::string &path)
-{
-    CppCommon::Path web(path);
-    std::string abspath(web.absolute().string());
-    TokenCache::GetInstance().putCacheValue(token, abspath);
-}
-
 // bind: "/images", "C:/Users/username/Pictures/images"
 // getpath(): return
 //    "/images/photo.jpg" -> C:/Users/username/Pictures/images/photo.jpg
@@ -314,9 +295,4 @@ std::string FileServer::genToken(std::string info)
 bool FileServer::verifyToken(std::string &token)
 {
     return TokenCache::GetInstance().verifyToken(token);
-}
-
-void FileServer::clearToken()
-{
-    TokenCache::GetInstance().clearCache();
 }

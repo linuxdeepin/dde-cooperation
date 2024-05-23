@@ -104,7 +104,6 @@ void TransferWorker::cancel(bool send)
     if (send) {
         if (_file_server) {
             _file_server->clearBind();
-            _file_server->clearToken();
             _file_server->stop();
         }
     } else {
