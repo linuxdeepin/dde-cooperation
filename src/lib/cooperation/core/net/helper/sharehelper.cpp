@@ -2,23 +2,26 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "cooperationmanager.h"
-#include "cooperationmanager_p.h"
-#include "utils/cooperationutil.h"
+#include "sharehelper.h"
+#include "sharehelper_p.h"
+#include "net/networkutil.h"
 #include "utils/historymanager.h"
-#include "info/deviceinfo.h"
-#include "maincontroller/maincontroller.h"
+#include "utils/cooperationutil.h"
+#include "discover/deviceinfo.h"
 
 #include "configs/settings/configmanager.h"
 #include "common/constant.h"
 #include "common/commonutils.h"
 
-#include "sharemanager/sharecooperationservicemanager.h"
-#include "discovercontroller/discovercontroller.h"
+#include "share/sharecooperationservicemanager.h"
+#include "discover/discovercontroller.h"
 
 #include <QApplication>
 #include <QStandardPaths>
 #include <QDir>
+#include <QDBusInterface>
+#include <QDBusConnection>
+
 #ifdef linux
 #    include "base/reportlog/reportlogmanager.h"
 #    include <QDBusReply>
@@ -50,7 +53,7 @@ inline constexpr char Kdisconnect[] { ":/icons/deepin/builtin/texts/disconnect_1
 using namespace cooperation_core;
 using namespace deepin_cross;
 
-CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
+ShareHelperPrivate::ShareHelperPrivate(ShareHelper *qq)
     : q(qq)
 {
 #ifdef linux
@@ -63,95 +66,11 @@ CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
 #endif
     confirmTimer.setInterval(10 * 1000);
     confirmTimer.setSingleShot(true);
-    connect(&confirmTimer, &QTimer::timeout, q, &CooperationManager::onVerifyTimeout);
-    connect(qApp, &QApplication::aboutToQuit, this, &CooperationManagerPrivate::stopCooperation);
+    connect(&confirmTimer, &QTimer::timeout, q, &ShareHelper::onVerifyTimeout);
+    connect(qApp, &QApplication::aboutToQuit, this, &ShareHelperPrivate::stopCooperation);
 }
 
-void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, QVariant param)
-{
-    auto myselfInfo = DeviceInfo::fromVariantMap(CooperationUtil::deviceInfo());
-    myselfInfo->setIpAddress(CooperationUtil::localIPAddress());
-    //    ShareEvents event;
-    //    event.eventType = type;
-    //    switch (type) {
-    //    case BACK_SHARE_CONNECT: {
-    //        ShareConnectApply conEvent;
-    //        conEvent.appName = MainAppName;
-    //        conEvent.tarAppname = MainAppName;
-    //        conEvent.tarIp = devInfo->ipAddress().toStdString();
-
-    //        QStringList dataInfo({ myselfInfo->deviceName(),
-    //                               myselfInfo->ipAddress() });
-    //        conEvent.data = dataInfo.join(',').toStdString();
-
-    //        event.data = conEvent.as_json().str();
-    //    } break;
-    //    case BACK_SHARE_DISCONNECT: {
-    //        ShareDisConnect disConEvent;
-    //        disConEvent.appName = MainAppName;
-    //        disConEvent.tarAppname = MainAppName;
-    //        disConEvent.msg = myselfInfo->deviceName().toStdString();
-
-    //        event.data = disConEvent.as_json().str();
-    //    } break;
-    //    case BACK_SHARE_START: {
-    //        if (!devInfo->peripheralShared())
-    //            return;
-
-    //        ShareServerConfig config;
-    //        QString serverName = myselfInfo->ipAddress();
-    //        QString clientName = devInfo->ipAddress();
-    //        config.server_screen = serverName.toStdString();
-    //        config.client_screen = clientName.toStdString();
-    //        switch (myselfInfo->linkMode()) {
-    //        case DeviceInfo::LinkMode::RightMode:
-    //            config.screen_left = serverName.toStdString();
-    //            config.screen_right = clientName.toStdString();
-    //            break;
-    //        case DeviceInfo::LinkMode::LeftMode:
-    //            config.screen_left = clientName.toStdString();
-    //            config.screen_right = serverName.toStdString();
-    //            break;
-    //        }
-    //        config.clipboardSharing = devInfo->clipboardShared();
-
-    //        ShareStart startEvent;
-    //        startEvent.appName = MainAppName;
-    //        startEvent.config = config;
-
-    //        event.data = startEvent.as_json().str();
-    //    } break;
-    //    case BACK_SHARE_STOP: {
-    //        ShareStop stopEvent;
-    //        stopEvent.appName = MainAppName;
-    //        stopEvent.tarAppname = MainAppName;
-    //        stopEvent.flags = param.toInt();
-
-    //        event.data = stopEvent.as_json().str();
-    //    } break;
-    //    case BACK_SHARE_CONNECT_REPLY: {
-    //        ShareConnectReply replyEvent;
-    //        replyEvent.appName = MainAppName;
-    //        replyEvent.tarAppname = MainAppName;
-    //        replyEvent.reply = param.toBool() ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE;
-
-    //        event.data = replyEvent.as_json().str();
-    //    } break;
-    //    case BACK_SHARE_DISAPPLY_CONNECT: {
-    //        ShareConnectDisApply cancelEvent;
-    //        cancelEvent.appName = MainAppName;
-    //        cancelEvent.tarAppname = MainAppName;
-    //        event.data = cancelEvent.as_json().str();
-    //    } break;
-    //    default:
-    //        break;
-    //    }
-
-    QString eventStr = "";   //event.as_json();
-    //  CooperationUtil::instance()->sendShareEvents(type, eventStr);
-}
-
-CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
+CooperationTaskDialog *ShareHelperPrivate::taskDialog()
 {
     if (!ctDialog) {
         ctDialog = new CooperationTaskDialog(qApp->activeWindow());
@@ -159,13 +78,13 @@ CooperationTaskDialog *CooperationManagerPrivate::taskDialog()
         connect(ctDialog, &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
         connect(ctDialog, &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyRejectAction); });
         connect(ctDialog, &CooperationTaskDialog::acceptRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyAcceptAction); });
-        connect(ctDialog, &CooperationTaskDialog::waitCanceled, this, &CooperationManagerPrivate::onCancelCooperApply);
+        connect(ctDialog, &CooperationTaskDialog::waitCanceled, this, &ShareHelperPrivate::onCancelCooperApply);
     }
 
     return ctDialog;
 }
 
-uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
+uint ShareHelperPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
 {
 #ifdef linux
     QDBusReply<uint> reply = notifyIfc->call(QString("Notify"),
@@ -181,14 +100,14 @@ uint CooperationManagerPrivate::notifyMessage(uint replacesId, const QString &bo
     Q_UNUSED(actions)
     Q_UNUSED(expireTimeout)
 
-    CooperationUtil::instance()->mainWindow()->activateWindow();
+    NetworkUtil::instance()->mainWindow()->activateWindow();
     taskDialog()->switchInfomationPage(tr("Cooperation"), body);
     taskDialog()->show();
     return 0;
 #endif
 }
 
-void CooperationManagerPrivate::stopCooperation()
+void ShareHelperPrivate::stopCooperation()
 {
     if (targetDeviceInfo && targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
         //        backendShareEvent(BACK_SHARE_STOP, targetDeviceInfo, 0);
@@ -201,14 +120,14 @@ void CooperationManagerPrivate::stopCooperation()
     }
 }
 
-void CooperationManagerPrivate::onCancelCooperApply()
+void ShareHelperPrivate::onCancelCooperApply()
 {
     confirmTimer.stop();
     //    backendShareEvent(BACK_SHARE_DISAPPLY_CONNECT);
     taskDialog()->hide();
 }
 
-void CooperationManagerPrivate::reportConnectionData()
+void ShareHelperPrivate::reportConnectionData()
 {
 #ifdef linux
     if (!targetDeviceInfo)
@@ -238,27 +157,27 @@ void CooperationManagerPrivate::reportConnectionData()
 #endif
 }
 
-void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString &action)
+void ShareHelperPrivate::onActionTriggered(uint replacesId, const QString &action)
 {
     if (recvReplacesId != replacesId || isTimeout)
         return;
 
     isReplied = true;
     if (action == NotifyRejectAction) {
-        CooperationUtil::instance()->replyShareRequest(false);
+        NetworkUtil::instance()->replyShareRequest(false);
     } else if (action == NotifyAcceptAction) {
-        CooperationUtil::instance()->replyShareRequest(true);
+        NetworkUtil::instance()->replyShareRequest(true);
         ShareCooperationServiceManager::instance()->client()->setClientTargetIp(senderDeviceIp);
         ShareCooperationServiceManager::instance()->client()->startBarrier();
 
-        auto info = CooperationUtil::instance()->findDeviceInfo(senderDeviceIp);
+        auto info = DiscoverController::instance()->findDeviceByIP(senderDeviceIp);
         if (!info)
             return;
 
         // 更新设备列表中的状态
         targetDeviceInfo = DeviceInfoPointer::create(*info.data());
         targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
-        MainController::instance()->updateDeviceState({ targetDeviceInfo });
+        DiscoverController::instance()->updateDeviceState({ targetDeviceInfo });
 
         // 记录
         HistoryManager::instance()->writeIntoConnectHistory(info->ipAddress(), info->deviceName());
@@ -268,27 +187,27 @@ void CooperationManagerPrivate::onActionTriggered(uint replacesId, const QString
     }
 }
 
-CooperationManager::CooperationManager(QObject *parent)
+ShareHelper::ShareHelper(QObject *parent)
     : QObject(parent),
-      d(new CooperationManagerPrivate(this))
+      d(new ShareHelperPrivate(this))
 {
 }
 
-CooperationManager::~CooperationManager()
+ShareHelper::~ShareHelper()
 {
 }
 
-CooperationManager *CooperationManager::instance()
+ShareHelper *ShareHelper::instance()
 {
-    static CooperationManager ins;
+    static ShareHelper ins;
     return &ins;
 }
 
-void CooperationManager::regist()
+void ShareHelper::registConnectBtn()
 {
-    ClickedCallback clickedCb = CooperationManager::buttonClicked;
-    ButtonStateCallback visibleCb = CooperationManager::buttonVisible;
-    QVariantMap historyInfo { { "id", ConnectButtonId },
+    ClickedCallback clickedCb = ShareHelper::buttonClicked;
+    ButtonStateCallback visibleCb = ShareHelper::buttonVisible;
+    QVariantMap ConnectInfo { { "id", ConnectButtonId },
                               { "description", tr("connect") },
                               { "icon-name", Kconnect },
                               { "location", 0 },
@@ -296,19 +215,19 @@ void CooperationManager::regist()
                               { "clicked-callback", QVariant::fromValue(clickedCb) },
                               { "visible-callback", QVariant::fromValue(visibleCb) } };
 
-    QVariantMap transferInfo { { "id", DisconnectButtonId },
-                               { "description", tr("Disconnect") },
-                               { "icon-name", Kdisconnect },
-                               { "location", 1 },
-                               { "button-style", 0 },
-                               { "clicked-callback", QVariant::fromValue(clickedCb) },
-                               { "visible-callback", QVariant::fromValue(visibleCb) } };
+    QVariantMap DisconnectInfo { { "id", DisconnectButtonId },
+                                 { "description", tr("Disconnect") },
+                                 { "icon-name", Kdisconnect },
+                                 { "location", 1 },
+                                 { "button-style", 0 },
+                                 { "clicked-callback", QVariant::fromValue(clickedCb) },
+                                 { "visible-callback", QVariant::fromValue(visibleCb) } };
 
-    CooperationUtil::instance()->registerDeviceOperation(historyInfo);
-    CooperationUtil::instance()->registerDeviceOperation(transferInfo);
+    CooperationUtil::instance()->registerDeviceOperation(ConnectInfo);
+    CooperationUtil::instance()->registerDeviceOperation(DisconnectInfo);
 }
 
-void CooperationManager::connectToDevice(const DeviceInfoPointer info)
+void ShareHelper::connectToDevice(const DeviceInfoPointer info)
 {
     if (d->targetDeviceInfo && d->targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
         static QString title(tr("Unable to collaborate to \"%1\""));
@@ -320,7 +239,7 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
     }
     DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(CommonUitls::getFirstIp().c_str());
     ShareCooperationServiceManager::instance()->server()->setServerConfig(selfinfo, info);
-    CooperationUtil::instance()->sendShareEvents(info->ipAddress());
+    NetworkUtil::instance()->sendShareEvents(info->ipAddress());
 
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     d->isRecvMode = false;
@@ -334,22 +253,22 @@ void CooperationManager::connectToDevice(const DeviceInfoPointer info)
     d->taskDialog()->show();
 }
 
-void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
+void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
 {
-    CooperationUtil::instance()->sendDisconnectShareEvents(info->ipAddress());
+    NetworkUtil::instance()->sendDisconnectShareEvents(info->ipAddress());
 
     ShareCooperationServiceManager::instance()->stop();
 
     if (d->targetDeviceInfo) {
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
-        MainController::instance()->updateDeviceState({ d->targetDeviceInfo });
+        DiscoverController::instance()->updateDeviceState({ d->targetDeviceInfo });
 
         static QString body(tr("Coordination with \"%1\" has ended"));
         d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
     }
 }
 
-void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
+void ShareHelper::checkAndProcessShare(const DeviceInfoPointer info)
 {
     // 未协同、接收端，不进行处理
     if (d->isRecvMode || !d->targetDeviceInfo || d->targetDeviceInfo->connectStatus() != DeviceInfo::Connected)
@@ -374,20 +293,20 @@ void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
     }
 }
 
-void CooperationManager::buttonClicked(const QString &id, const DeviceInfoPointer info)
+void ShareHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
     if (id == ConnectButtonId) {
-        CooperationManager::instance()->connectToDevice(info);
+        ShareHelper::instance()->connectToDevice(info);
         return;
     }
 
     if (id == DisconnectButtonId) {
-        CooperationManager::instance()->disconnectToDevice(info);
+        ShareHelper::instance()->disconnectToDevice(info);
         return;
     }
 }
 
-bool CooperationManager::buttonVisible(const QString &id, const DeviceInfoPointer info)
+bool ShareHelper::buttonVisible(const QString &id, const DeviceInfoPointer info)
 {
     if (qApp->property("onlyTransfer").toBool() || !info->cooperationEnable())
         return false;
@@ -401,7 +320,7 @@ bool CooperationManager::buttonVisible(const QString &id, const DeviceInfoPointe
     return false;
 }
 
-void CooperationManager::notifyConnectRequest(const QString &info)
+void ShareHelper::notifyConnectRequest(const QString &info)
 {
     d->isReplied = false;
     d->isTimeout = false;
@@ -424,13 +343,13 @@ void CooperationManager::notifyConnectRequest(const QString &info)
 #ifdef linux
     d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), actions, 10 * 1000);
 #else
-    CooperationUtil::instance()->mainWindow()->activateWindow();
+    NetworkUtil::instance()->mainWindow()->activateWindow();
     d->taskDialog()->switchConfirmPage(tr("Cooperation"), body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
     d->taskDialog()->show();
 #endif
 }
 
-void CooperationManager::handleConnectResult(int result)
+void ShareHelper::handleConnectResult(int result)
 {
     d->isReplied = true;
     if (!d->targetDeviceInfo)
@@ -445,7 +364,7 @@ void CooperationManager::handleConnectResult(int result)
         d->reportConnectionData();
 
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
-        MainController::instance()->updateDeviceState({ d->targetDeviceInfo });
+        DiscoverController::instance()->updateDeviceState({ d->targetDeviceInfo });
         HistoryManager::instance()->writeIntoConnectHistory(d->targetDeviceInfo->ipAddress(), d->targetDeviceInfo->deviceName());
 
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
@@ -475,7 +394,7 @@ void CooperationManager::handleConnectResult(int result)
     }
 }
 
-void CooperationManager::handleDisConnectResult(const QString &devName)
+void ShareHelper::handleDisConnectResult(const QString &devName)
 {
     if (!d->targetDeviceInfo)
         return;
@@ -485,11 +404,11 @@ void CooperationManager::handleDisConnectResult(const QString &devName)
     d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(devName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
 
     d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
-    MainController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
+    DiscoverController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
     d->targetDeviceInfo.reset();
 }
 
-void CooperationManager::onVerifyTimeout()
+void ShareHelper::onVerifyTimeout()
 {
     d->isTimeout = true;
     if (d->isRecvMode) {
@@ -509,7 +428,7 @@ void CooperationManager::onVerifyTimeout()
     }
 }
 
-void CooperationManager::handleCancelCooperApply()
+void ShareHelper::handleCancelCooperApply()
 {
     d->confirmTimer.stop();
     if (d->isRecvMode) {
@@ -526,7 +445,7 @@ void CooperationManager::handleCancelCooperApply()
     }
 }
 
-void CooperationManager::handleNetworkDismiss(const QString &msg)
+void ShareHelper::handleNetworkDismiss(const QString &msg)
 {
     if (!msg.contains("\"errorType\":-1")) {
         static QString body(tr("Network not connected, file delivery failed this time.\
@@ -544,9 +463,9 @@ void CooperationManager::handleNetworkDismiss(const QString &msg)
     }
 }
 
-void CooperationManager::handleSearchDeviceResult(bool res)
+void ShareHelper::handleSearchDeviceResult(bool res)
 {
-    emit MainController::instance()->discoveryFinished(res);
-    //    if(!res)
-    //        emit MainController::instance()->discoveryFinished(false);
+    //    emit MainController::instance()->discoveryFinished(res);
+    //    //    if(!res)
+    //    //        emit MainController::instance()->discoveryFinished(false);
 }

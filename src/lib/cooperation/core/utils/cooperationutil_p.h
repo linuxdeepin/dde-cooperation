@@ -6,7 +6,7 @@
 #define COOPERATIONUTIL_P_H
 
 #include "global_defines.h"
-#include "info/deviceinfo.h"
+#include "discover/deviceinfo.h"
 
 #include <QObject>
 
@@ -22,17 +22,9 @@ public:
     explicit CooperationUtilPrivate(CooperationUtil *qq);
     ~CooperationUtilPrivate();
 
-//    void localIPCStart();
-//    QList<DeviceInfoPointer> parseDeviceInfo(const co::Json &obj);
-
-public slots:
-    void handleConnectStatus(int result, QString reason);
-
 public:
     CooperationUtil *q { nullptr };
     MainWindow *window { nullptr };
-
-    SessionManager *sessionManager { nullptr };
 };
 
 }

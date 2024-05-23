@@ -6,13 +6,12 @@
 #define DISCOVERYCONTROLLER_H
 
 #include "global_defines.h"
-#include "info/deviceinfo.h"
-
+#include "discover/deviceinfo.h"
 #include <QObject>
 #include "qzeroconf.h"
 
 namespace cooperation_core {
-
+class DiscoverControllerPrivate;
 class DiscoverController : public QObject
 {
     Q_OBJECT
@@ -27,6 +26,7 @@ public:
 
     QList<DeviceInfoPointer> getOnlineDeviceList() const;
     DeviceInfoPointer findDeviceByIP(const QString &ip);
+    void updateDeviceState(const DeviceInfoPointer info);
 
     static bool isZeroConfDaemonActive();
     static bool openZeroConfDaemonDailog();
@@ -52,8 +52,7 @@ private:
     void initConnect();
 
 private:
-    QZeroConf zeroConf;
-    QList<DeviceInfoPointer> onlineDeviceList;
+    QSharedPointer<DiscoverControllerPrivate> d { nullptr };
 };
 
 }   // namespace cooperation_core

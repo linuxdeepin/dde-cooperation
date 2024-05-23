@@ -5,7 +5,7 @@
 #include "settingdialog.h"
 #include "settingdialog_p.h"
 #include "global_defines.h"
-#include "utils/cooperationguihelper.h"
+#include "gui/utils/cooperationguihelper.h"
 #include "configs/settings/configmanager.h"
 #include "configs/dconfig/dconfigmanager.h"
 
@@ -20,7 +20,6 @@
 #include <QToolTip>
 #include <QScrollBar>
 
-#include <info/deviceinfo.h>
 #include <utils/cooperationutil.h>
 #include <base/reportlog/reportlogmanager.h>
 #include <gui/widgets/deviceitem.h>

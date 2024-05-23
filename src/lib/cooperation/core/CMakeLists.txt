@@ -30,8 +30,6 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/global_defines.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/info/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/info/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/transfer/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/transfer/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cooperation/*.h"
@@ -40,14 +38,16 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/dialogs/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/widgets/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/widgets/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/discovercontroller/*"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sharemanager/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/discover/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/share/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/dialogs/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
@@ -56,7 +56,7 @@ if (CMAKE_SYSTEM MATCHES "Windows")
     FILE(GLOB BUSS_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/win/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/win/*.cpp"
     )
    find_package(Qt5 COMPONENTS Sql REQUIRED)
 
@@ -72,7 +72,7 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
         "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/linux/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/linux/*.cpp"
     )
     find_package(Dtk COMPONENTS Widget REQUIRED)
 else()

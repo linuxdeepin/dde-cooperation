@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "discovercontroller.h"
+#include "discovercontroller_p.h"
 #include "utils/cooperationutil.h"
 #include "common/log.h"
 
@@ -16,15 +17,21 @@
 
 using namespace cooperation_core;
 
-DiscoverController::DiscoverController(QObject *parent)
-    : QObject(parent)
+DiscoverControllerPrivate::DiscoverControllerPrivate(DiscoverController *qq)
+    : q(qq)
 {
-    if(!isZeroConfDaemonActive())
-        if(!openZeroConfDaemonDailog())
+}
+
+DiscoverController::DiscoverController(QObject *parent)
+    : QObject(parent),
+      d(new DiscoverControllerPrivate(this))
+{
+    if (!isZeroConfDaemonActive())
+        if (!openZeroConfDaemonDailog())
             return;
 
-    if (!zeroConf.browserExists())
-        zeroConf.startBrowser(UNI_CHANNEL);
+    if (!d->zeroConf.browserExists())
+        d->zeroConf.startBrowser(UNI_CHANNEL);
 
     initConnect();
     publish();
@@ -40,14 +47,14 @@ void DiscoverController::initConnect()
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &DiscoverController::onDConfigValueChanged);
 #endif
     connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &DiscoverController::onAppAttributeChanged);
-    connect(&zeroConf, &QZeroConf::serviceAdded, this, &DiscoverController::addService);
-    connect(&zeroConf, &QZeroConf::serviceRemoved, this, &DiscoverController::removeService);
-    connect(&zeroConf, &QZeroConf::serviceUpdated, this, &DiscoverController::updateService);
+    connect(&d->zeroConf, &QZeroConf::serviceAdded, this, &DiscoverController::addService);
+    connect(&d->zeroConf, &QZeroConf::serviceRemoved, this, &DiscoverController::removeService);
+    connect(&d->zeroConf, &QZeroConf::serviceUpdated, this, &DiscoverController::updateService);
 }
 
 QList<DeviceInfoPointer> DiscoverController::getOnlineDeviceList() const
 {
-    return onlineDeviceList;
+    return d->onlineDeviceList;
 }
 
 bool DiscoverController::openZeroConfDaemonDailog()
@@ -67,8 +74,9 @@ bool DiscoverController::openZeroConfDaemonDailog()
     return true;
 #else
     int choice = QMessageBox::warning(nullptr, tr("Please click to confirm to enable the LAN discovery service!"),
-                                       tr("Unable to discover and be discovered by other devices when LAN discovery service is not turned on"
-                                          "Right click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service"), QMessageBox::Yes | QMessageBox::No);
+                                      tr("Unable to discover and be discovered by other devices when LAN discovery service is not turned on"
+                                         "Right click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service"),
+                                      QMessageBox::Yes | QMessageBox::No);
     return false;
 #endif
 }
@@ -105,20 +113,25 @@ bool DiscoverController::isZeroConfDaemonActive()
     QString res = QTextCodec::codecForName("GBK")->toUnicode(output);
 
     if (res.contains("RUNNING"))
-       return true;
+        return true;
     else
-       return false;
+        return false;
 #endif
 }
 
 DeviceInfoPointer DiscoverController::findDeviceByIP(const QString &ip)
 {
-    for (int i = 0; i < onlineDeviceList.size(); ++i) {
-        auto info = onlineDeviceList[i];
+    for (int i = 0; i < d->onlineDeviceList.size(); ++i) {
+        auto info = d->onlineDeviceList[i];
         if (info->ipAddress() == ip)
             return info;
     }
     return nullptr;
+}
+
+void DiscoverController::updateDeviceState(const DeviceInfoPointer info)
+{
+    Q_EMIT deviceOnline({ info });
 }
 
 void DiscoverController::onDConfigValueChanged(const QString &config, const QString &key)
@@ -151,7 +164,7 @@ void DiscoverController::addService(QZeroConfService zcs)
     if (devInfo->ipAddress().isEmpty())
         return;
 
-    onlineDeviceList.append(devInfo);
+    d->onlineDeviceList.append(devInfo);
     Q_EMIT deviceOnline({ devInfo });
 }
 
@@ -167,8 +180,8 @@ void DiscoverController::updateService(QZeroConfService zcs)
 
     auto oldinfo = findDeviceByIP(devInfo->ipAddress());
     if (oldinfo)
-        onlineDeviceList.removeOne(oldinfo);
-    onlineDeviceList.append(devInfo);
+        d->onlineDeviceList.removeOne(oldinfo);
+    d->onlineDeviceList.append(devInfo);
     Q_EMIT deviceOnline({ devInfo });
 }
 
@@ -184,7 +197,7 @@ void DiscoverController::removeService(QZeroConfService zcs)
 
     auto oldinfo = findDeviceByIP(devInfo->ipAddress());
     if (oldinfo)
-        onlineDeviceList.removeOne(oldinfo);
+        d->onlineDeviceList.removeOne(oldinfo);
     Q_EMIT deviceOffline(devInfo->ipAddress());
 }
 
@@ -196,7 +209,7 @@ DiscoverController *DiscoverController::instance()
 
 void DiscoverController::publish()
 {
-    zeroConf.clearServiceTxtRecords();
+    d->zeroConf.clearServiceTxtRecords();
 
     QVariantMap deviceInfo = CooperationUtil::deviceInfo();
     //设置为局域网不发现
@@ -206,14 +219,14 @@ void DiscoverController::publish()
     deviceInfo.insert(AppSettings::IPAddress, CooperationUtil::localIPAddress());
     qWarning() << "publish:-------" << deviceInfo;
     for (const auto &key : deviceInfo.keys())
-        zeroConf.addServiceTxtRecord(key, deviceInfo.value(key).toString());
+        d->zeroConf.addServiceTxtRecord(key, deviceInfo.value(key).toString());
 
-    zeroConf.startServicePublish(CooperationUtil::localIPAddress().toUtf8(), UNI_CHANNEL, "local", UNI_RPC_PORT_UDP);
+    d->zeroConf.startServicePublish(CooperationUtil::localIPAddress().toUtf8(), UNI_CHANNEL, "local", UNI_RPC_PORT_UDP);
 }
 
 void DiscoverController::unpublish()
 {
-    zeroConf.stopServicePublish();
+    d->zeroConf.stopServicePublish();
 }
 
 void DiscoverController::updatePublish()
@@ -224,8 +237,8 @@ void DiscoverController::updatePublish()
 
 void DiscoverController::refresh()
 {
-    onlineDeviceList.clear();
-    auto allServices = zeroConf.getServices();
+    d->onlineDeviceList.clear();
+    auto allServices = d->zeroConf.getServices();
 
     for (const auto &key : allServices.keys()) {
         QVariantMap infomap;
@@ -234,11 +247,11 @@ void DiscoverController::refresh()
             infomap.insert(key, zcs->txt().value(key));
 
         auto devInfo = DeviceInfo::fromVariantMap(infomap);
-        onlineDeviceList.append(devInfo);
+        d->onlineDeviceList.append(devInfo);
     }
-    Q_EMIT deviceOnline({ onlineDeviceList });
-    if(onlineDeviceList.isEmpty())
-       Q_EMIT discoveryFinished(false);
+    Q_EMIT deviceOnline({ d->onlineDeviceList });
+    if (d->onlineDeviceList.isEmpty())
+        Q_EMIT discoveryFinished(false);
 }
 
 void DiscoverController::startDiscover()

@@ -4,7 +4,7 @@
 
 #include "deviceitem.h"
 #include "buttonboxwidget.h"
-#include "utils/cooperationguihelper.h"
+#include "gui/utils/cooperationguihelper.h"
 
 #ifdef linux
 #    include <DPalette>

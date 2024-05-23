@@ -6,7 +6,7 @@
 #define MAINWINDOW_H
 
 #include "global_defines.h"
-#include "info/deviceinfo.h"
+#include "discover/deviceinfo.h"
 
 #include <QScopedPointer>
 

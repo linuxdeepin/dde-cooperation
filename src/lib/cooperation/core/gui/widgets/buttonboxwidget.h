@@ -27,7 +27,6 @@ public:
     QAbstractButton *button(int index);
     void setButtonVisible(int index, bool visible);
     void setButtonClickable(int index, bool clickable);
-
     void clear();
 
 Q_SIGNALS:

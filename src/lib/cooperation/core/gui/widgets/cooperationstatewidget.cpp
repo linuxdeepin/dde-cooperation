@@ -5,7 +5,7 @@
 #include "cooperationstatewidget.h"
 #include "backgroundwidget.h"
 #include "global_defines.h"
-#include "utils/cooperationguihelper.h"
+#include "gui/utils/cooperationguihelper.h"
 
 #ifdef linux
 #    include <DPalette>

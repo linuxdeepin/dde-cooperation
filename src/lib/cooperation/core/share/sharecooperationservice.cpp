@@ -5,7 +5,7 @@
 #include "cooconfig.h"
 #include "sharecooperationservice.h"
 #include "common/log.h"
-#include "info/deviceinfo.h"
+#include "discover/deviceinfo.h"
 
 #include <common/constant.h>
 #include <common/commonutils.h>

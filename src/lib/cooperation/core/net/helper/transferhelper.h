@@ -6,7 +6,7 @@
 #define TRANSFERHELPER_H
 
 #include "global_defines.h"
-#include "info/deviceinfo.h"
+#include "discover/deviceinfo.h"
 #include "common/log.h"
 
 namespace cooperation_core {
@@ -26,7 +26,7 @@ public:
 
     static TransferHelper *instance();
 
-    void regist();
+    void registBtn();
     void sendFiles(const QString &ip, const QString &devName, const QStringList &fileList);
     void searchDevice(const QString &ip);
     TransferStatus transferStatus();

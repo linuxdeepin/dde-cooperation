@@ -2,22 +2,22 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef COOPERATIONMANAGER_H
-#define COOPERATIONMANAGER_H
+#ifndef SHAREHELPER_H
+#define SHAREHELPER_H
 
-#include "info/deviceinfo.h"
+#include "discover/deviceinfo.h"
 
 namespace cooperation_core {
 
-class CooperationManagerPrivate;
-class CooperationManager : public QObject
+class ShareHelperPrivate;
+class ShareHelper : public QObject
 {
     Q_OBJECT
 
 public:
-    static CooperationManager *instance();
+    static ShareHelper *instance();
 
-    void regist();
+    void registConnectBtn();
 
     void checkAndProcessShare(const DeviceInfoPointer info);
 
@@ -28,20 +28,21 @@ public Q_SLOTS:
     void connectToDevice(const DeviceInfoPointer info);
     void disconnectToDevice(const DeviceInfoPointer info);
     void notifyConnectRequest(const QString &info);
+    void onVerifyTimeout();
+
     void handleConnectResult(int result);
     void handleDisConnectResult(const QString &devName);
-    void onVerifyTimeout();
     void handleCancelCooperApply();
     void handleNetworkDismiss(const QString &msg);
     void handleSearchDeviceResult(bool res);
 
 private:
-    explicit CooperationManager(QObject *parent = nullptr);
-    ~CooperationManager();
+    explicit ShareHelper(QObject *parent = nullptr);
+    ~ShareHelper();
 
-    QSharedPointer<CooperationManagerPrivate> d { nullptr };
+    QSharedPointer<ShareHelperPrivate> d { nullptr };
 };
 
 }   // namespace cooperation_core
 
-#endif   // COOPERATIONMANAGER_H
+#endif   // SHAREHELPER_H

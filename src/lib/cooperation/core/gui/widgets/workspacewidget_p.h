@@ -7,7 +7,7 @@
 
 #include "global_defines.h"
 #include "workspacewidget.h"
-#include "utils/sortfilterworker.h"
+#include "gui/utils/sortfilterworker.h"
 
 #include <QStackedLayout>
 #include <QThread>

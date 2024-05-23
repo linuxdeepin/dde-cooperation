@@ -13,11 +13,7 @@
 #include <QToolButton>
 #include <QToolTip>
 
-#include <transfer/transferhelper.h>
-
-#include <maincontroller/maincontroller.h>
-
-#include <utils/cooperationguihelper.h>
+#include <gui/utils/cooperationguihelper.h>
 
 using namespace cooperation_core;
 
@@ -119,7 +115,7 @@ void WorkspaceWidgetPrivate::onSearchDevice()
 
     q->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
     QTimer::singleShot(500, this, [ip] {
-        TransferHelper::instance()->searchDevice(ip);
+     //   TransferHelper::instance()->searchDevice(ip);
     });
 }
 

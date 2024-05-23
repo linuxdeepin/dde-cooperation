@@ -7,6 +7,7 @@
 #include "configs/settings/configmanager.h"
 #include "utils/cooperationutil.h"
 #include "utils/historymanager.h"
+#include "net/networkutil.h"
 
 #include "common/constant.h"
 #include "common/commonutils.h"
@@ -141,7 +142,7 @@ TransferHelper *TransferHelper::instance()
     return &ins;
 }
 
-void TransferHelper::regist()
+void TransferHelper::registBtn()
 {
     ClickedCallback clickedCb = TransferHelper::buttonClicked;
     ButtonStateCallback visibleCb = TransferHelper::buttonVisible;
@@ -181,7 +182,7 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
     }
 
     // send the transfer file RPC request
-    CooperationUtil::instance()->sendTransApply(ip);
+    NetworkUtil::instance()->sendTransApply(ip);
     //d->status.storeRelease(Confirming);
 
     waitForConfirm();
@@ -190,7 +191,7 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
 void TransferHelper::searchDevice(const QString &ip)
 {
     DLOG << "searching " << ip.toStdString();
-    CooperationUtil::instance()->pingTarget(ip);
+    NetworkUtil::instance()->pingTarget(ip);
 }
 
 TransferHelper::TransferStatus TransferHelper::transferStatus()
@@ -355,7 +356,7 @@ void TransferHelper::accepted()
         return;
     }
     d->updateProgress(1, tr("calculating"));
-    CooperationUtil::instance()->doSendFiles(d->readyToSendFiles);
+    NetworkUtil::instance()->doSendFiles(d->readyToSendFiles);
 }
 
 void TransferHelper::rejected()

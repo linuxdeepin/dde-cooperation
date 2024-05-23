@@ -5,10 +5,10 @@
 #ifndef COOPERATIONMANAGER_P_H
 #define COOPERATIONMANAGER_P_H
 
-#include "info/deviceinfo.h"
-#include "cooperationtaskdialog.h"
+#include "discover/deviceinfo.h"
+#include "dialogs/cooperationtaskdialog.h"
 
-#include "share/cooconstrants.h"
+#include "net/cooconstrants.h"
 
 #ifdef linux
 #include <QDBusInterface>
@@ -17,14 +17,13 @@
 
 namespace cooperation_core {
 
-class CooperationManager;
-class CooperationManagerPrivate : public QObject
+class ShareHelper;
+class ShareHelperPrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit CooperationManagerPrivate(CooperationManager *qq);
+    explicit ShareHelperPrivate(ShareHelper *qq);
 
-    void backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo = nullptr, QVariant param = QVariant());
     CooperationTaskDialog *taskDialog();
     uint notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout);
     void reportConnectionData();
@@ -35,7 +34,7 @@ public Q_SLOTS:
     void onCancelCooperApply();
 
 public:
-    CooperationManager *q;
+    ShareHelper *q;
 #ifdef linux
     QDBusInterface *notifyIfc { nullptr };
 #endif

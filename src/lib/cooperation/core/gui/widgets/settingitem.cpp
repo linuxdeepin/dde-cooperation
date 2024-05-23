@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "settingitem.h"
-#include "utils/cooperationguihelper.h"
+#include "gui/utils/cooperationguihelper.h"
 #include "global_defines.h"
 
 #include <QPainter>

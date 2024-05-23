@@ -9,7 +9,7 @@
 #include <QProcess>
 #include <QSettings>
 #include <QTextStream>
-#include "info/deviceinfo.h"
+#include "discover/deviceinfo.h"
 
 typedef enum barrier_type_t {
     Server = 555,

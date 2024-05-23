@@ -6,7 +6,7 @@
 #define TRANSFERHELPER_P_H
 
 #include "transferhelper.h"
-#include "gui/dialogs/transferdialog.h"
+#include "dialogs/transferdialog.h"
 
 #include <QTimer>
 #include <QMap>

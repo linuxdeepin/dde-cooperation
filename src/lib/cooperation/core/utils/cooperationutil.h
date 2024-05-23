@@ -6,7 +6,7 @@
 #define COOPERATIONUTIL_H
 
 #include "global_defines.h"
-#include "info/deviceinfo.h"
+#include "discover/deviceinfo.h"
 
 #include <QWidget>
 #include <QDialog>
@@ -21,40 +21,19 @@ public:
     static CooperationUtil *instance();
 
     QWidget *mainWindow();
+
     DeviceInfoPointer findDeviceInfo(const QString &ip);
+
     void destroyMainWindow();
+
     void registerDeviceOperation(const QVariantMap &map);
 
-    void pingTarget(const QString &ip);
-    void sendTransApply(const QString &ip);
-
-    void sendShareEvents(const QString &ip);
-    void sendDisconnectShareEvents(const QString &ip);
-
-    void registAppInfo(const QString &infoJson);
-    void unregistAppInfo();
-    void asyncDiscoveryDevice();
     void setStorageConfig(const QString &value);
-
-    void replyTransRequest(bool agree);
-    void replyShareRequest(bool agree);
-
-    void cancelTrans();
-    void doSendFiles(const QStringList &fileList);
-
-    QString deviceInfoStr();
-    DeviceInfoPointer parseDeviceInfo(const QString &info);
-
-    static QVariantMap deviceInfo();
-    static QString localIPAddress();
 
     void showFeatureDisplayDialog(QDialog *dlg);
 
-    QString confirmTargetAddress = {};
-    QString storageFolder = {};
-
-Q_SIGNALS:
-    void discoveryFinished(const QList<DeviceInfoPointer> &infoList);
+    static QVariantMap deviceInfo();
+    static QString localIPAddress();
 
 private:
     explicit CooperationUtil(QObject *parent = nullptr);

@@ -3,13 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cooperationcoreplugin.h"
-#include "events/cooperationcoreeventreceiver.h"
 #include "utils/cooperationutil.h"
-#include "maincontroller/maincontroller.h"
-#include "discovercontroller/discovercontroller.h"
-#include "transfer/transferhelper.h"
-#include "cooperation/cooperationmanager.h"
-#include "info/deviceinfo.h"
+#include "discover/discovercontroller.h"
+#include "net/helper/transferhelper.h"
+#include "net/helper/sharehelper.h"
+#include "discover/deviceinfo.h"
 
 #include "common/commonutils.h"
 #include "configs/settings/configmanager.h"
@@ -60,13 +58,8 @@ bool CooperaionCorePlugin::start()
 {
     CooperationUtil::instance()->mainWindow()->show();
     DiscoverController::instance();
-    MainController::instance()->regist();
-    TransferHelper::instance()->regist();
-    CooperationManager::instance()->regist();
-    MainController::instance()->start();
-
-    if (qApp->property("onlyTransfer").toBool() || !QFile(CommonUitls::tipConfPath()).exists())
-        emit MainController::instance()->firstStart();
+    TransferHelper::instance()->registBtn();
+    ShareHelper::instance()->registConnectBtn();
 
     if (CommonUitls::isFirstStart() && !qApp->property("onlyTransfer").toBool()) {
 #ifdef linux
@@ -83,6 +76,4 @@ bool CooperaionCorePlugin::start()
 void CooperaionCorePlugin::stop()
 {
     CooperationUtil::instance()->destroyMainWindow();
-    MainController::instance()->unregist();
-    MainController::instance()->stop();
 }
