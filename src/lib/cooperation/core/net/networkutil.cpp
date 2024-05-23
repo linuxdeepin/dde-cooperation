@@ -53,8 +53,9 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             res.flag = DO_WAIT;
             *res_msg = res.as_json().serialize();
             confirmTargetAddress = QString::fromStdString(req.host);
+            storageFolder = QString::fromStdString(req.nick + "(" + req.host + ")");
             q->metaObject()->invokeMethod(TransferHelper::instance(),
-                                          "waitForConfirm",
+                                          "notifyTransferRequest",
                                           Qt::QueuedConnection,
                                           Q_ARG(QString, QString(req.host.c_str())));
         }
@@ -185,12 +186,20 @@ NetworkUtil *NetworkUtil::instance()
     return &ins;
 }
 
+void NetworkUtil::updateStorageConfig(const QString &value)
+{
+    d->sessionManager->setStorageRoot(value);
+}
+
 void NetworkUtil::pingTarget(const QString &ip)
 {
-    // session connect and then send rpc request
-    bool pong = d->sessionManager->sessionPing(ip, COO_SESSION_PORT);
+    // session connect by async, handle status in callback
+    d->sessionManager->sessionPing(ip, COO_SESSION_PORT);
     //    emit CooperationManager::instance()->handleSearchDeviceResult(pong);
+}
 
+void NetworkUtil::reqTargetInfo(const QString &ip)
+{
     // send info apply, and sync handle
     ApplyMessage msg;
     msg.flag = ASK_QUIET;
@@ -237,9 +246,12 @@ void NetworkUtil::sendTransApply(const QString &ip)
         // update the target address
         d->confirmTargetAddress = ip;
 
+        auto deviceName = CooperationUtil::deviceInfo().value(AppSettings::DeviceNameKey).toString();
+
         // send transfer apply, and async handle in RPC recv
         ApplyMessage msg;
         msg.flag = ASK_NEEDCONFIRM;
+        msg.nick = deviceName.toStdString();// user define nice name
         msg.host = CooperationUtil::localIPAddress().toStdString();
         QString jsonMsg = msg.as_json().serialize().c_str();
         QString res = d->sessionManager->sendRpcRequest(ip, APPLY_TRANS, jsonMsg);
@@ -252,7 +264,7 @@ void NetworkUtil::sendTransApply(const QString &ip)
 
 void NetworkUtil::sendShareEvents(const QString &ip)
 {
-    bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
     DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(CooperationUtil::localIPAddress());
     // session connect and then send rpc request
     ApplyMessage msg;
@@ -269,7 +281,7 @@ void NetworkUtil::sendShareEvents(const QString &ip)
 
 void NetworkUtil::sendDisconnectShareEvents(const QString &ip)
 {
-    bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
     DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(CooperationUtil::localIPAddress());
     // session connect and then send rpc request
     ApplyMessage msg;
@@ -298,6 +310,8 @@ void NetworkUtil::replyTransRequest(bool agree)
         // transfer request send exception, it perhaps network error
         WLOG << "Send APPLY_TRANS_RESULT failed.";
     }
+
+    d->sessionManager->updateSaveFolder(d->storageFolder);
 }
 
 void NetworkUtil::replyShareRequest(bool agree)

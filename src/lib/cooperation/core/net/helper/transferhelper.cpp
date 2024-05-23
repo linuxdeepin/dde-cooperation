@@ -192,6 +192,7 @@ void TransferHelper::searchDevice(const QString &ip)
 {
     DLOG << "searching " << ip.toStdString();
     NetworkUtil::instance()->pingTarget(ip);
+    NetworkUtil::instance()->reqTargetInfo(ip);
 }
 
 TransferHelper::TransferStatus TransferHelper::transferStatus()
@@ -201,11 +202,18 @@ TransferHelper::TransferStatus TransferHelper::transferStatus()
 
 void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
+    QString ip = info->ipAddress();
+    QString name = info->deviceName();
     LOG << "button clicked, button id: " << id.toStdString()
-        << " ip: " << info->ipAddress().toStdString()
-        << " device name: " << info->deviceName().toStdString();
+        << " ip: " << ip.toStdString()
+        << " device name: " << name.toStdString();
+
 
     if (id == TransferButtonId) {
+
+        // connect remote to prepare transfer
+        NetworkUtil::instance()->pingTarget(ip);
+
         QStringList selectedFiles = qApp->property("sendFiles").toStringList();
         if (selectedFiles.isEmpty())
             selectedFiles = QFileDialog::getOpenFileNames(qApp->activeWindow());
@@ -213,12 +221,12 @@ void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer in
         if (selectedFiles.isEmpty())
             return;
 
-        TransferHelper::instance()->sendFiles(info->ipAddress(), info->deviceName(), selectedFiles);
+        TransferHelper::instance()->sendFiles(ip, name, selectedFiles);
     } else if (id == HistoryButtonId) {
-        if (!transHistory->contains(info->ipAddress()))
+        if (!transHistory->contains(ip))
             return;
 
-        QDesktopServices::openUrl(QUrl::fromLocalFile(transHistory->value(info->ipAddress())));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(transHistory->value(ip)));
     }
 }
 
@@ -260,6 +268,12 @@ bool TransferHelper::buttonClickable(const QString &id, const DeviceInfoPointer 
         return TransferHelper::instance()->transferStatus() == Idle;
 
     return true;
+}
+
+void TransferHelper::notifyTransferRequest(const QString &info)
+{
+    DLOG << "notifyTransferRequest info: " << info.toStdString();
+    NetworkUtil::instance()->replyTransRequest(true);
 }
 
 void TransferHelper::onConnectStatusChanged(int result, const QString &msg, const bool isself)

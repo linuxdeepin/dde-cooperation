@@ -18,7 +18,11 @@ class NetworkUtil : public QObject
 public:
     static NetworkUtil *instance();
 
+    // setting
+    void updateStorageConfig(const QString &value);
+
     void pingTarget(const QString &ip);
+    void reqTargetInfo(const QString &ip);
 
     //transfer
     void sendTransApply(const QString &ip);

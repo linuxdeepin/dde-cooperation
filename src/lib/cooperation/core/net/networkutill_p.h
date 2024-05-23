@@ -24,9 +24,11 @@ public:
 
 private:
     NetworkUtil *q { nullptr };
-    QString confirmTargetAddress {};
     SessionManager *sessionManager { nullptr };
     void handleConnectStatus(int result, QString reason);
+
+    QString confirmTargetAddress {}; // remote ip address
+    QString storageFolder = {}; //sub folder under storage dir config
 };
 
 }

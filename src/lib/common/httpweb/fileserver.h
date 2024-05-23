@@ -16,13 +16,11 @@
 #include <map>
 #include <mutex>
 
-class HTTPFileServer;
-class FileServer : public WebInterface
+class FileServer : public WebInterface, public CppServer::HTTP::HTTPServer
 {
-    friend class HTTPFileServer;
+    using CppServer::HTTP::HTTPServer::HTTPServer;
+
 public:
-    FileServer(const std::shared_ptr<CppServer::Asio::Service> &service, int port);
-    ~FileServer();
 
     bool start();
     bool stop();
@@ -35,9 +33,11 @@ public:
     bool verifyToken(std::string &token);
 
 protected:
+    std::shared_ptr<CppServer::Asio::TCPSession> CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server) override;
+    void onError(int error, const std::string &category, const std::string &message) override;
 
 private:
-    std::shared_ptr<HTTPFileServer> _httpServer { nullptr };
+
 };
 
 #endif // FILESERVER_H

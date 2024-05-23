@@ -17,7 +17,7 @@ enum WebState {
     WEB_CONNECTED = 2,
 };
 
-struct file_stats_s {
+struct sync_stats_s {
     int64_t all_total_size;   // 总量
     int64_t all_current_size;   // 当前已接收量
     int64_t cast_time_ms;   // 最大已用时间
@@ -40,12 +40,8 @@ public:
         _callback = callback;
     }
 
-    void setCallbackA(const std::function<bool(const std::string &path, uint64_t current, uint64_t total)> &cb) {
-        callback = cb;
-    }
 protected:
     std::shared_ptr<ProgressCallInterface> _callback { nullptr };
-    std::function<bool(const std::string &path, uint64_t current, uint64_t total)> callback;
 };
 
 

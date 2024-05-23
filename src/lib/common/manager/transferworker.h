@@ -10,14 +10,16 @@
 #include "httpweb/fileclient.h"
 
 #include <QObject>
+#include <QTimer>
 
 class TransferWorker : public QObject, public ProgressCallInterface
 {
     Q_OBJECT
     struct file_stats_s {
-        int64_t all_total_size;   // 总量
-        int64_t all_current_size;   // 当前已接收量
-        int64_t cast_time_ms;   // 最大已用时间
+        std::string path;
+        int64_t total {0};   // 总量
+        int64_t current {-1};   // 当前已接收量
+        int64_t second {0};   // 最大已用时间
     };
 
 public:
@@ -40,6 +42,7 @@ public:
 signals:
 
 public slots:
+    void calculateSpeed();
 
 private:
     bool startWeb(int port);
@@ -58,6 +61,10 @@ private:
 //    QString _accessToken = "";
     QString _saveRoot = "";
 //    QString _connectedAddress = "";
+    QTimer _speedTimer;
+
+    file_stats_s _status;
+    bool _startTrans { false };
 };
 
 #endif // TRANSFERWORKER_H

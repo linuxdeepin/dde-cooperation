@@ -47,6 +47,7 @@ public slots:
 private:
     bool listen(int port);
     bool connect(QString &address, int port);
+    size_t getDirectorySize(const std::string& path);
 
     std::weak_ptr<AsioService> _service;
     // rpc service and client

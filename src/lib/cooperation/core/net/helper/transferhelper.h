@@ -36,6 +36,8 @@ public:
     static bool buttonClickable(const QString &id, const DeviceInfoPointer info);
 
 public Q_SLOTS:
+    void notifyTransferRequest(const QString &info);
+
     void onConnectStatusChanged(int result, const QString &msg, const bool isself);
     void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onFileTransStatusChanged(const QString &status);

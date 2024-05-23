@@ -11,12 +11,15 @@
 #include "common/constant.h"
 #include "common/commonutils.h"
 #include "discover/discovercontroller.h"
+#include "net/networkutil.h"
 
 #include <QJsonDocument>
 #include <QNetworkInterface>
 #include <QStandardPaths>
 #include <QDebug>
 #include <QDir>
+
+#include <mutex>
 
 #ifdef linux
 #    include <DFeatureDisplayDialog>
@@ -78,6 +81,7 @@ void CooperationUtil::registerDeviceOperation(const QVariantMap &map)
 
 void CooperationUtil::setStorageConfig(const QString &value)
 {
+    NetworkUtil::instance()->updateStorageConfig(value);
 }
 
 QVariantMap CooperationUtil::deviceInfo()
@@ -118,6 +122,8 @@ QVariantMap CooperationUtil::deviceInfo()
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
     auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     info.insert(AppSettings::StoragePathKey, storagePath);
+    static std::once_flag flag;
+    std::call_once(flag, [&storagePath] { CooperationUtil::instance()->setStorageConfig(storagePath); });
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey);
     info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : true);

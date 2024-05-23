@@ -295,6 +295,9 @@ void ShareHelper::checkAndProcessShare(const DeviceInfoPointer info)
 
 void ShareHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
+    // connect remote to prepare share
+    NetworkUtil::instance()->pingTarget(info->ipAddress());
+
     if (id == ConnectButtonId) {
         ShareHelper::instance()->connectToDevice(info);
         return;

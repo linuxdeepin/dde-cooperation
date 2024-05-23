@@ -5,6 +5,7 @@
 #include "cooperationcoreplugin.h"
 #include "utils/cooperationutil.h"
 #include "discover/discovercontroller.h"
+#include "net/networkutil.h"
 #include "net/helper/transferhelper.h"
 #include "net/helper/sharehelper.h"
 #include "discover/deviceinfo.h"
@@ -58,6 +59,7 @@ bool CooperaionCorePlugin::start()
 {
     CooperationUtil::instance()->mainWindow()->show();
     DiscoverController::instance();
+    NetworkUtil::instance();
     TransferHelper::instance()->registBtn();
     ShareHelper::instance()->registConnectBtn();
 

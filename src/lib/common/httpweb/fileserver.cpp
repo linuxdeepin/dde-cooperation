@@ -15,10 +15,23 @@
 
 #define BLOCK_SIZE 4096
 
+using ResponseHandler = std::function<bool(int status, const std::string &path, uint64_t current, uint64_t total)>;
+
+enum HandleResult {
+    RES_UPLOAD = 100,
+    RES_ERROR = 110,
+    RES_DISCONECT = 112,
+};
+
 class HTTPFileSession : public CppServer::HTTP::HTTPSession
 {
 public:
     using CppServer::HTTP::HTTPSession::HTTPSession;
+
+    void setResponseHandler(ResponseHandler cb)
+    {
+        _handler = std::move(cb);
+    }
 
 protected:
     InfoEntry putFileInfo(const CppCommon::Path &entry)
@@ -77,6 +90,7 @@ protected:
                 SendResponseAsync(response());
             } else if (info.IsRegularFile()){
                 info.Open(true, false);
+                uint64_t current = 0, total = 0;
 
                 size_t sz = info.size();
                 if (offset < sz) {
@@ -88,17 +102,28 @@ protected:
                 response().SetBodyLength(sz - offset); // set the remaining size as body lenght
                 response().SetHeader("Flag", "file");
 
+                total = response().body_length();
+
                 // send headers first
                 SendResponse(response());
 
                 std::cout << "response header:" << response() << std::endl;
 
+                bool cancel = false;
                 size_t read_sz = 0;
                 char buff[BLOCK_SIZE];
                 do {
                     read_sz = info.Read(buff, sizeof(buff));
-//                     std::cout << "read len:" << read_sz << std::endl;
                     SendResponseBody(buff, read_sz);
+                    current += read_sz;
+                    // notify progress：current total
+                    if (_handler) {
+                        // return true to cancel download from outside.
+                        cancel = _handler(RES_UPLOAD, info.string(), current, total);
+                    }
+                    if (cancel) {
+                        break;
+                    }
                 } while (read_sz > 0);
 
                 info.Close();
@@ -201,61 +226,55 @@ protected:
     {
         std::cout << "HTTP session caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
     }
+
+private:
+    ResponseHandler _handler { nullptr };
 };
 
-class HTTPFileServer : public CppServer::HTTP::HTTPServer
+std::shared_ptr<CppServer::Asio::TCPSession>
+FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server)
 {
-public:
-    using CppServer::HTTP::HTTPServer::HTTPServer;
+    ResponseHandler cb([this](int status, const std::string &path, uint64_t current, uint64_t total) -> bool {
+        if (_callback) {
+            // return true to canceled from outside.
+            return _callback->onProgress(path, current, total);
+        }
+        return false;
+    });
 
-protected:
-    std::shared_ptr<CppServer::Asio::TCPSession> CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server) override
-    {
-        return std::make_shared<HTTPFileSession>(std::dynamic_pointer_cast<CppServer::HTTP::HTTPServer>(server));
-    }
-
-protected:
-    void onError(int error, const std::string &category, const std::string &message) override
-    {
-        std::cout << "HTTP server caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
-    }
-};
-
-FileServer::FileServer(const std::shared_ptr<CppServer::Asio::Service> &service, int port)
-{
-    // Create HTTP client if the current one is empty
-    if (!_httpServer) {
-        _httpServer = std::make_shared<HTTPFileServer>(service, port);
-        _httpServer->SetupReuseAddress(true);
-        _httpServer->SetupReusePort(true);
-    }
+    auto session = std::make_shared<HTTPFileSession>(std::dynamic_pointer_cast<CppServer::HTTP::HTTPServer>(server));
+    session->setResponseHandler(std::move(cb));
+    return session;
 }
 
-FileServer::~FileServer()
+void FileServer::onError(int error, const std::string &category, const std::string &message)
 {
-    if (_httpServer) {
-        _httpServer->DisconnectAll();
-        _httpServer->Stop();
-        _httpServer = nullptr;
-    }
+    std::cout << "HTTP server caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
 }
 
 bool FileServer::start()
 {
-    if (_httpServer) {
-        return _httpServer->IsStarted() ? _httpServer->Restart() : _httpServer->Start();
-    }
+    SetupReuseAddress(true);
+    SetupReusePort(true);
+    return IsStarted() ? Restart() : Start();
 
-    return false;
+//    if (_httpServer) {
+
+//        _httpServer->setResponseHandler(std::move(cb));
+//        return _httpServer->IsStarted() ? _httpServer->Restart() : _httpServer->Start();
+//    }
+
+//    return false;
 }
 
 bool FileServer::stop()
 {
-    if (_httpServer) {
-        return _httpServer->Stop();
-    }
+    return Stop();
+//    if (_httpServer) {
+//        return _httpServer->Stop();
+//    }
 
-    return false;
+//    return false;
 }
 
 // bind: "/images", "C:/Users/username/Pictures/images"

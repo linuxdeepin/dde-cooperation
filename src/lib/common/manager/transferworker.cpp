@@ -14,7 +14,7 @@ TransferWorker::TransferWorker(const std::shared_ptr<AsioService> &service, QObj
     : QObject(parent)
     , _service(service)
 {
-
+    connect(&_speedTimer, &QTimer::timeout, this, &TransferWorker::calculateSpeed);
 }
 
 
@@ -26,6 +26,9 @@ bool TransferWorker::onProgress(const std::string &path, uint64_t current, uint6
 //    LOG_IF(FLG_log_detail) << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
 //    emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
 //    LOG << "path: " << path << " current=" << current << " total=" << total;
+    _status.path = path;
+    _status.total = total;
+    _status.current = current;
 
     return false;
 }
@@ -71,6 +74,8 @@ bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::
     std::string jsonString = picojson::value(jsonArray).serialize();
     *token = _file_server->genToken(jsonString);
 
+    _speedTimer.start(1000);
+
     return true;
 }
 
@@ -96,6 +101,8 @@ bool TransferWorker::tryStartReceive(QStringList names, QString &ip, int port, Q
     }
 #endif
     _file_client->startFileDownload(webs);
+    _speedTimer.start(1000);
+
     return true;
 }
 
@@ -118,16 +125,33 @@ bool TransferWorker::isSyncing()
     return true;
 }
 
+void TransferWorker::calculateSpeed()
+{
+    ++_status.second;
+
+    if (_status.current < 0 && _status.second > 3) {
+        // 3秒都没有更新，应该是异常了，停止
+        _speedTimer.stop();
+        return;
+    }
+
+    double speed = (static_cast<double>(_status.current)) / (_status.second * 1024 * 1024); // 计算下载速度，单位为兆字节/秒
+    QString formattedSpeed = QString::number(speed, 'f', 2); // 格式化速度为保留两位小数的字符串
+    DLOG << "Transfer speed: " << formattedSpeed.toStdString() << " M/s";
+
+    if (_status.current >= _status.total) {
+        _speedTimer.stop();
+    }
+}
+
 
 bool TransferWorker::startWeb(int port)
 {
-    auto asioService = std::make_shared<AsioService>();
-//    auto asioService = _service.lock();
+    auto asioService = _service.lock();
     if (!asioService) {
         WLOG << "weak asio service";
         return false;
     }
-    asioService->Start();
 
     // Create a new file http server
     if (!_file_server) {
@@ -142,13 +166,11 @@ bool TransferWorker::startWeb(int port)
 
 bool TransferWorker::startGet(const std::string &address, int port)
 {
-    auto asioService = std::make_shared<AsioService>();
-//    auto asioService = _service.lock();
+    auto asioService = _service.lock();
     if (!asioService) {
         WLOG << "weak asio service";
         return false;
     }
-    asioService->Start();
 
     // Create a new file http client
     if (!_file_client) {

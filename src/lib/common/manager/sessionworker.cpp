@@ -138,12 +138,15 @@ bool SessionWorker::onStateChanged(int state, std::string &msg)
         _connectedAddress = QString(msg.c_str());
         DLOG << "connected remote: " << msg;
         result = true;
-        // update save dir
-//        _saveDir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + QDir::separator() + _connectedAddress;
     }
     break;
     case RPC_DISCONNECTED: {
-        DLOG << "disconnected remote: " << msg;
+        if (msg.empty()) {
+            DLOG << "first connect remote, retry...";
+            return true;
+        } else {
+            DLOG << "disconnected remote: " << msg;
+        }
     }
     break;
     case RPC_ERROR: {
@@ -161,7 +164,7 @@ bool SessionWorker::onStateChanged(int state, std::string &msg)
 
     emit onConnectChanged(state, QString(msg.c_str()));
 
-    return false;
+    return result;
 }
 
 void SessionWorker::setExtMessageHandler(ExtenMessageHandler cb)
@@ -324,4 +327,41 @@ bool SessionWorker::connect(QString &address, int port)
     _client->ConnectAsync();
 
     return _client->IsConnected();
+}
+
+
+// 递归函数来获取目录下所有文件的大小，包括子目录
+size_t SessionWorker::getDirectorySize(const std::string& path) {
+    size_t totalSize = 0;
+
+    CppCommon::Directory dir = CppCommon::Directory(path);
+    std::vector<CppCommon::Path> subEntrys;
+    try {
+        subEntrys = dir.GetEntriesRecursive();
+    } catch (const CppCommon::FileSystemException& ex) {
+        std::cout << "Error: " << ex.what() << std::endl;
+        return totalSize;
+    }
+
+    // 遍历目录
+    for (int i = 0; i < subEntrys.size(); ++i) {
+        const auto entry = subEntrys[i];
+        if (entry.IsDirectory()) {
+            // 递归处理子目录
+            totalSize += getDirectorySize(entry.string());
+        } else if (entry.IsRegularFile()) {
+            try {
+                CppCommon::File temp(entry);
+                // 获取文件大小并累加到总大小中
+                totalSize += temp.size(); // mask as file flag.
+            } catch (const CppCommon::FileSystemException& ex) {
+                std::cout << "Error: " << ex.what() << std::endl;
+                return totalSize;
+            }
+        } else {
+            std::cout << "skip the link file: " << entry.string() << std::endl;
+        }
+    }
+
+    return totalSize;
 }

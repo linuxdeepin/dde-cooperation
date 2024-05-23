@@ -37,6 +37,17 @@ public:
     }
 
 protected:
+    void onConnected() override
+    {
+        // must invoke supper fun, or cause canot connect server.
+        HTTPClientEx::onConnected();
+    }
+
+    void onDisconnected() override
+    {
+        HTTPClientEx::onDisconnected();
+    }
+
     void onReceivedResponseHeader(const HTTPResponse &response) override
     {
 //        std::cout << "Response status: " << response.status() << std::endl;
@@ -340,8 +351,7 @@ bool FileClient::downloadFile(const std::string &name)
 
         bool cancel = false;
         // notify downloading：current total
-        if (_callback)
-        {
+        if (_callback) {
             // return true to cancel download from outside.
             cancel = _callback->onProgress(tempFile.string(), current, total);
         }
