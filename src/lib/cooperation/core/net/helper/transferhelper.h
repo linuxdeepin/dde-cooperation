@@ -37,7 +37,9 @@ public Q_SLOTS:
     TransferStatus transferStatus();
     void onConnectStatusChanged(int result, const QString &msg, const bool isself);
     void onTransJobStatusChanged(int id, int result, const QString &msg);
-    void onFileTransStatusChanged(const QString &status);
+
+    void onTransChanged(int status, const QString &path, quint64 size);
+
     void waitForConfirm();
     void accepted();
     void rejected();
@@ -57,6 +59,8 @@ public Q_SLOTS:
 private:
     explicit TransferHelper(QObject *parent = nullptr);
     ~TransferHelper();
+
+    void updateTransProgress(uint64_t current);
 
 private:
     QSharedPointer<TransferHelperPrivate> d { nullptr };

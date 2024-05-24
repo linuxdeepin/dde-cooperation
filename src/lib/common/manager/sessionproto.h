@@ -35,6 +35,7 @@ typedef enum dt_type_t {
     REQ_TRANS_DATAS = 1002,
     REQ_TRANS_CANCLE = 1003,
     CAST_INFO = 1004,
+    INFO_TRANS_COUNT = 1005,
 } ComType;
 
 typedef enum apply_flag_t {
@@ -47,12 +48,6 @@ typedef enum apply_flag_t {
     REPLY_REJECT = 32,
 } ApplyFlag;
 
-//misc:
-//unfinish_json
-//remaining_space
-//add_result
-//change_page
-//transfer_content
 
 using ExtenMessageHandler = std::function<bool(int32_t mask, const picojson::value &json_value, std::string *res_msg)>;
 
@@ -198,88 +193,5 @@ struct MyInfoMessage {
         return picojson::value(obj);
     }
 };
-
-// struct ShareServerConfig {
-//     fastring server_screen{ "" };
-//     fastring client_screen{ "" };
-//     fastring screen_left{ "" };
-//     fastring screen_right{ "" };
-//     bool left_halfDuplexCapsLock{ false };
-//     bool left_halfDuplexNumLock{ false };
-//     bool left_halfDuplexScrollLock{ false };
-//     bool left_xtestIsXineramaUnaware{ false };
-//     bool left_preserveFocus{ false };
-//     fastring left_switchCorners{ "none" };
-//     int32 left_switchCornerSize{ 0 };
-//     bool right_halfDuplexCapsLock{ false };
-//     bool right_halfDuplexNumLock{ false };
-//     bool right_halfDuplexScrollLock{ false };
-//     bool right_xtestIsXineramaUnaware{ false };
-//     bool right_preserveFocus{ false };
-//     fastring right_switchCorners{ "none" };
-//     int32 right_switchCornerSize{ 0 };
-//     bool relativeMouseMoves{ false };
-//     bool screenSaverSync{ true };
-//     bool win32KeepForeground{ false };
-//     bool clipboardSharing{ false };
-//     fastring switchCorners{ "none" };
-//     int32 switchCornerSize{ 0 };
-
-//     void from_json(const co::Json& _x_) {
-//         server_screen = _x_.get("server_screen").as_c_str();
-//         client_screen = _x_.get("client_screen").as_c_str();
-//         screen_left = _x_.get("screen_left").as_c_str();
-//         screen_right = _x_.get("screen_right").as_c_str();
-//         left_halfDuplexCapsLock = _x_.get("left_halfDuplexCapsLock").as_bool();
-//         left_halfDuplexNumLock = _x_.get("left_halfDuplexNumLock").as_bool();
-//         left_halfDuplexScrollLock = _x_.get("left_halfDuplexScrollLock").as_bool();
-//         left_xtestIsXineramaUnaware = _x_.get("left_xtestIsXineramaUnaware").as_bool();
-//         left_preserveFocus = _x_.get("left_preserveFocus").as_bool();
-//         left_switchCorners = _x_.get("left_switchCorners").as_c_str();
-//         left_switchCornerSize = (int32)_x_.get("left_switchCornerSize").as_int64();
-//         right_halfDuplexCapsLock = _x_.get("right_halfDuplexCapsLock").as_bool();
-//         right_halfDuplexNumLock = _x_.get("right_halfDuplexNumLock").as_bool();
-//         right_halfDuplexScrollLock = _x_.get("right_halfDuplexScrollLock").as_bool();
-//         right_xtestIsXineramaUnaware = _x_.get("right_xtestIsXineramaUnaware").as_bool();
-//         right_preserveFocus = _x_.get("right_preserveFocus").as_bool();
-//         right_switchCorners = _x_.get("right_switchCorners").as_c_str();
-//         right_switchCornerSize = (int32)_x_.get("right_switchCornerSize").as_int64();
-//         relativeMouseMoves = _x_.get("relativeMouseMoves").as_bool();
-//         screenSaverSync = _x_.get("screenSaverSync").as_bool();
-//         win32KeepForeground = _x_.get("win32KeepForeground").as_bool();
-//         clipboardSharing = _x_.get("clipboardSharing").as_bool();
-//         switchCorners = _x_.get("switchCorners").as_c_str();
-//         switchCornerSize = (int32)_x_.get("switchCornerSize").as_int64();
-//     }
-
-//     co::Json as_json() const {
-//         co::Json _x_;
-//         _x_.add_member("server_screen", server_screen);
-//         _x_.add_member("client_screen", client_screen);
-//         _x_.add_member("screen_left", screen_left);
-//         _x_.add_member("screen_right", screen_right);
-//         _x_.add_member("left_halfDuplexCapsLock", left_halfDuplexCapsLock);
-//         _x_.add_member("left_halfDuplexNumLock", left_halfDuplexNumLock);
-//         _x_.add_member("left_halfDuplexScrollLock", left_halfDuplexScrollLock);
-//         _x_.add_member("left_xtestIsXineramaUnaware", left_xtestIsXineramaUnaware);
-//         _x_.add_member("left_preserveFocus", left_preserveFocus);
-//         _x_.add_member("left_switchCorners", left_switchCorners);
-//         _x_.add_member("left_switchCornerSize", left_switchCornerSize);
-//         _x_.add_member("right_halfDuplexCapsLock", right_halfDuplexCapsLock);
-//         _x_.add_member("right_halfDuplexNumLock", right_halfDuplexNumLock);
-//         _x_.add_member("right_halfDuplexScrollLock", right_halfDuplexScrollLock);
-//         _x_.add_member("right_xtestIsXineramaUnaware", right_xtestIsXineramaUnaware);
-//         _x_.add_member("right_preserveFocus", right_preserveFocus);
-//         _x_.add_member("right_switchCorners", right_switchCorners);
-//         _x_.add_member("right_switchCornerSize", right_switchCornerSize);
-//         _x_.add_member("relativeMouseMoves", relativeMouseMoves);
-//         _x_.add_member("screenSaverSync", screenSaverSync);
-//         _x_.add_member("win32KeepForeground", win32KeepForeground);
-//         _x_.add_member("clipboardSharing", clipboardSharing);
-//         _x_.add_member("switchCorners", switchCorners);
-//         _x_.add_member("switchCornerSize", switchCornerSize);
-//         return _x_;
-//     }
-// };
 
 #endif // SESSIONPROTO_H

@@ -17,17 +17,16 @@ class TransferWorker : public QObject, public ProgressCallInterface
     Q_OBJECT
     struct file_stats_s {
         std::string path;
-        int64_t total {0};   // 总量
-        int64_t current {-1};   // 当前已接收量
-        int64_t second {0};   // 最大已用时间
+        uint64_t total {0};   // 总量
+        std::atomic<uint64_t> secsize {0};   // 每秒传输量
     };
 
 public:
     explicit TransferWorker(const std::shared_ptr<AsioService> &service, QObject *parent = nullptr);
 
-    bool onProgress(const std::string &path, uint64_t current, uint64_t total) override;
+    bool onProgress(uint64_t size) override;
 
-    void onWebChanged(int state, std::string msg) override;
+    void onWebChanged(int state, std::string msg = "", uint64_t size = 0) override;
 
     void stop();
 
@@ -40,9 +39,13 @@ public:
     bool isSyncing();
 
 signals:
+    void notifyChanged(int status, const QString &path = "", quint64 size = 0);
+
+    void speedTimerTick(bool stop = false);
 
 public slots:
-    void calculateSpeed();
+    void handleTimerTick(bool stop);
+    void doCalculateSpeed();
 
 private:
     bool startWeb(int port);
@@ -62,9 +65,11 @@ private:
     QString _saveRoot = "";
 //    QString _connectedAddress = "";
     QTimer _speedTimer;
+    int _noDataCount = 0;
 
     file_stats_s _status;
-    bool _startTrans { false };
+    bool _canceled { false };
+    bool _singleFile { false }; //send single file
 };
 
 #endif // TRANSFERWORKER_H

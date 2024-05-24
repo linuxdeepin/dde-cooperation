@@ -13,18 +13,8 @@
 #include <iostream>
 #include <regex>
 
-using ResponseHandler = std::function<bool(int status, const char *buffer, size_t size)>;
-
 using CppServer::HTTP::HTTPRequest;
 using CppServer::HTTP::HTTPResponse;
-
-enum HandleResult {
-    RES_OKHEADER = 200,
-    RES_NOTFOUND = 404,
-    RES_ERROR = 444,
-    RES_BODY = 555,
-    RES_FINISH = 666,
-};
 
 class HTTPFileClient : public CppServer::HTTP::HTTPClientEx
 {
@@ -275,6 +265,7 @@ bool FileClient::downloadFile(const std::string &name)
 
     ResponseHandler cb([this, &current, &total, &offset, &exitPromise](int status, const char *buffer, size_t size) -> bool {
         bool shouldExit = false;
+        bool cancel = false;
         switch (status)
         {
         case RES_NOTFOUND: {
@@ -285,6 +276,7 @@ bool FileClient::downloadFile(const std::string &name)
             // error：not found
             total = -1;
             shouldExit = true;
+            _callback->onWebChanged(WEB_NOT_FOUND, tempFile.string());
         }
         break;
         case RES_OKHEADER: {
@@ -303,6 +295,7 @@ bool FileClient::downloadFile(const std::string &name)
                 tempFile.Seek(cur_off);
             }
             total = size;
+            _callback->onWebChanged(WEB_FILE_BEGIN, tempFile.string(), total);
         }
         break;
         case RES_BODY: {
@@ -311,7 +304,12 @@ bool FileClient::downloadFile(const std::string &name)
                 // 实现层已循环写全部
                 size_t wr = tempFile.Write(buffer, size);
                 if (wr != size)
-                    std::cout << "!!!!!!!!! write offset=: " << tempFile.offset() << " size=" << size << " wr=" << wr << std::endl;
+                    std::cout << "write offset=: " << tempFile.offset() << " size=" << size << " wr=" << wr << std::endl;
+
+                if (_callback) {
+                    // return true to cancel download from outside.
+                    cancel = _callback->onProgress(size);
+                }
             }
         }
         break;
@@ -321,6 +319,8 @@ bool FileClient::downloadFile(const std::string &name)
             // error：break off
             current = -1;
             shouldExit = true;
+
+            _callback->onWebChanged(WEB_IO_ERROR);
         }
         break;
         case RES_FINISH: {
@@ -341,6 +341,7 @@ bool FileClient::downloadFile(const std::string &name)
                 tempFile.Clear();
             }
             shouldExit = true;
+            _callback->onWebChanged(WEB_FILE_END, tempFile.string(), total);
         }
         break;
 
@@ -349,12 +350,6 @@ bool FileClient::downloadFile(const std::string &name)
             break;
         }
 
-        bool cancel = false;
-        // notify downloading：current total
-        if (_callback) {
-            // return true to cancel download from outside.
-            cancel = _callback->onProgress(tempFile.string(), current, total);
-        }
         if (cancel || shouldExit) {
             exitPromise.set_value(true);
         }
@@ -363,7 +358,7 @@ bool FileClient::downloadFile(const std::string &name)
     });
 
     _httpClient->setResponseHandler(std::move(cb));
-    auto res = _httpClient->SendGetRequest(url).get(); // use get to sync download one by one
+    _httpClient->SendGetRequest(url).get(); // use get to sync download one by one
 
     exitFuture.get();  // 等待下载完成
 
@@ -407,8 +402,12 @@ void FileClient::downloadFolder(const std::string &folderName)
 
 void FileClient::walkDownload(const std::vector<std::string> &webnames)
 {
+    _callback->onWebChanged(WEB_TRANS_START);
+
     for (const auto& name : webnames) {
-        std::cout << "start download web: " << name << std::endl;
+        //std::cout << "start download web: " << name << std::endl;
+
+        _callback->onWebChanged(WEB_INDEX_BEGIN, name);
 
         // do not sure the file type: floder or file
         InfoEntry info = requestInfo(name);
@@ -423,7 +422,10 @@ void FileClient::walkDownload(const std::vector<std::string> &webnames)
         } else {
             downloadFolder(name);
         }
+        _callback->onWebChanged(WEB_INDEX_END, name);
     }
     _running = false;
-    std::cout << "whole download finished!" << std::endl;
+    //std::cout << "whole download finished!" << std::endl;
+
+    _callback->onWebChanged(WEB_TRANS_FINISH);
 }

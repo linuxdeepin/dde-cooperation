@@ -9,6 +9,9 @@
 #include "sessionproto.h"
 #include "sessionworker.h"
 #include "transferworker.h"
+#include "filesizecounter.h"
+
+#include <QDir>
 
 SessionManager::SessionManager(QObject *parent) : QObject(parent)
 {
@@ -25,6 +28,13 @@ SessionManager::SessionManager(QObject *parent) : QObject(parent)
 
     connect(_session_worker.get(), &SessionWorker::onConnectChanged, this, &SessionManager::notifyConnection);
     connect(_session_worker.get(), &SessionWorker::onTransData, this, &SessionManager::handleTransData);
+    connect(_session_worker.get(), &SessionWorker::onTransCount, this, &SessionManager::handleTransCount);
+
+    connect(_trans_worker.get(), &TransferWorker::notifyChanged, this, &SessionManager::notifyTransChanged);
+
+
+    _file_counter = std::make_shared<FileSizeCounter>(this);
+    connect(_file_counter.get(), &FileSizeCounter::onCountFinish, this, &SessionManager::handleFileCounted);
 }
 
 SessionManager::~SessionManager()
@@ -89,6 +99,85 @@ void SessionManager::sessionDisconnect(QString ip)
     _session_worker->disconnectRemote();
 }
 
+void SessionManager::calculateTotalSize(const QStringList &paths, std::function<void(qint64)> onFinish)
+{
+    qint64 totalSize = 0;
+
+    std::function<void(const QString &)> calculateSizeRecursively = [&](const QString &currentPath) {
+        QDir dir(currentPath);
+        if (!dir.exists()) {
+            WLOG << "directory not exist: " << currentPath.toStdString();
+            return;
+        }
+
+        QFileInfoList fileList = dir.entryInfoList(QDir::Files);
+        for (const QFileInfo &fileInfo : fileList) {
+            totalSize += fileInfo.size();
+        }
+
+        QFileInfoList dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        for (const QFileInfo &subDirInfo : dirList) {
+            calculateSizeRecursively(subDirInfo.filePath());
+        }
+    };
+
+    for (const QString &path : paths) {
+        calculateSizeRecursively(path);
+    }
+
+    onFinish(totalSize);
+}
+
+void SessionManager::calculateTotalSizeWithTimeout(const QStringList &paths, std::function<void(qint64)> onFinish)
+{
+    qint64 totalSize = 0;
+
+    // 创建定时器，超时时间为 200 毫秒
+    QTimer timer;
+    timer.setSingleShot(true);
+    timer.start(200);
+
+    // 定义超时处理函数
+    QObject::connect(&timer, &QTimer::timeout, [&]() {
+        timer.stop();
+        onFinish(0);  // 如果超时，则返回大小为 0
+    });
+
+    // 正常计算文件大小的逻辑
+    std::function<void(const QString &)> calculateSizeRecursively = [&](const QString &currentPath) {
+        QFileInfo fileInfo(currentPath);
+        if (fileInfo.isFile()) {
+            totalSize += fileInfo.size();
+            return;
+        }
+
+        QDir dir(currentPath);
+        if (!dir.exists()) {
+            WLOG << "directory not exist: " << currentPath.toStdString();
+            return;
+        }
+
+        QFileInfoList fileList = dir.entryInfoList(QDir::Files);
+        for (const QFileInfo &fileInfo : fileList) {
+            totalSize += fileInfo.size();
+        }
+
+        QFileInfoList dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        for (const QFileInfo &subDirInfo : dirList) {
+            calculateSizeRecursively(subDirInfo.filePath());
+        }
+    };
+
+    for (const QString &path : paths) {
+        calculateSizeRecursively(path);
+    }
+
+    // 运行完成后停止定时器，并返回计算结果
+    QObject::connect(&timer, &QTimer::timeout, [&]() {
+        onFinish(totalSize);
+    });
+}
+
 void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
 {
     std::vector<std::string> name_vector;
@@ -103,14 +192,15 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
     QString localIp = deepin_cross::CommonUitls::getFirstIp().data();
     QString accesstoken = QString::fromStdString(token);
     QString endpoint = QString("%1:%2:%3").arg(localIp).arg(port).arg(accesstoken);
-    WLOG << "endpoint: " << endpoint.toStdString();
+    int64_t total = _file_counter->countFiles(ip, paths);
+    bool needCount = total == 0;
 
     TransDataMessage req;
     req.id = std::to_string(_request_job_id);
     req.names = name_vector;
     req.endpoint = endpoint.toStdString();
-    req.flag = true; // many folders
-    req.size = -1; // unkown size
+    req.flag = needCount; // many folders
+    req.size = total; // unkown size
 
     QString jsonMsg = req.as_json().serialize().c_str();
     QString res = sendRpcRequest(ip, REQ_TRANS_DATAS, jsonMsg);
@@ -121,6 +211,11 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
         _send_task = true;
         _request_job_id++;
         emit notifyDoResult(true, "");
+    }
+
+    if (total > 0) {
+        QString oneName = paths.join(";");
+        handleTransCount(oneName, total);
     }
 }
 
@@ -186,4 +281,41 @@ void SessionManager::handleTransData(const QString endpoint, const QStringList n
         // 错误处理，确保parts包含了3个元素
         WLOG << "endpoint format should be: ip:port:token";
     }
+}
+
+void SessionManager::handleTransCount(const QString names, quint64 size)
+{
+    // TRANS_COUNT_SIZE = 50
+    emit notifyTransChanged(50, names, size);
+}
+
+void SessionManager::handleFileCounted(const QString ip, const QStringList paths, quint64 totalSize)
+{
+    if (ip.isEmpty()) {
+        WLOG << "empty target address for file counted.";
+        return;
+    }
+    std::vector<std::string> nameVector;
+    for (auto path : paths) {
+        QFileInfo fileInfo(path);
+        std::string name = fileInfo.fileName().toStdString();
+        nameVector.push_back(name);
+    }
+
+    TransDataMessage req;
+    req.id = std::to_string(_request_job_id);
+    req.names = nameVector;
+    req.endpoint = "::";
+    req.flag = false; // no need count
+    req.size = totalSize;
+
+    QString jsonMsg = req.as_json().serialize().c_str();
+    QString res = sendRpcRequest(ip, INFO_TRANS_COUNT, jsonMsg);
+    if (res.isEmpty()) {
+        ELOG << "send INFO_TRANS_COUNT failed.";
+    }
+
+    // notify local
+    QString oneName = paths.join(";");
+    handleTransCount(oneName, totalSize);
 }

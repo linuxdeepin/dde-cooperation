@@ -58,6 +58,29 @@ std::string WebBinder::getPath(std::string path)
     return "";
 }
 
+bool WebBinder::containWeb(const std::string &name)
+{
+    for (auto &pair : _binds) {
+        if (name.find(pair.first) != std::string::npos) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool WebBinder::lastWeb(const std::string &name)
+{
+    if (!_binds.empty()) {
+        auto lastElement = _binds.back();
+        if (name.find(lastElement.first) != std::string::npos) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 //source: https://stackoverflow.com/questions/3418231/replace-part-of-a-string-with-another-string
 void WebBinder::replaceAll(std::string &str, const std::string &from, const std::string &to)
 {

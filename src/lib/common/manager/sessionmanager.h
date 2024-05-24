@@ -13,6 +13,7 @@
 class AsioService;
 class SessionWorker;
 class TransferWorker;
+class FileSizeCounter;
 class EXPORT_API SessionManager : public QObject
 {
     Q_OBJECT
@@ -41,8 +42,17 @@ signals:
     void notifyConnection(int result, QString reason);
     void notifyDoResult(bool result, QString reason);
 
+    // transfer status
+    void notifyTransChanged(int status, const QString &path, quint64 size);
+
 public slots:
     void handleTransData(const QString endpoint, const QStringList nameVector);
+    void handleTransCount(const QString names, quint64 size);
+    void handleFileCounted(const QString ip, const QStringList paths, quint64 totalSize);
+
+private:
+    void calculateTotalSize(const QStringList &paths, std::function<void(qint64)> onFinish);
+    void calculateTotalSizeWithTimeout(const QStringList &paths, std::function<void(qint64)> onFinish);
 
 private:
     std::shared_ptr<AsioService> asio_service { nullptr };
@@ -50,6 +60,8 @@ private:
     // session and transfer worker
     std::shared_ptr<SessionWorker> _session_worker { nullptr };
     std::shared_ptr<TransferWorker> _trans_worker { nullptr };
+
+    std::shared_ptr<FileSizeCounter> _file_counter { nullptr };
 
     bool _send_task { false };
     int _request_job_id;

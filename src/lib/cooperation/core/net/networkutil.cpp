@@ -130,6 +130,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
     sessionManager->sessionListen(COO_SESSION_PORT);
 
     connect(sessionManager, &SessionManager::notifyConnection, this, &NetworkUtilPrivate::handleConnectStatus);
+    connect(sessionManager, &SessionManager::notifyTransChanged, this, &NetworkUtilPrivate::handleTransChanged);
 }
 
 NetworkUtilPrivate::~NetworkUtilPrivate()
@@ -168,6 +169,16 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
     //                                  Q_ARG(int, 0),
     //                                  Q_ARG(QString, reason),
     //                                  Q_ARG(bool, result == 2));
+}
+
+void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, quint64 size)
+{
+    q->metaObject()->invokeMethod(TransferHelper::instance(),
+                                  "onTransChanged",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(int, status),
+                                  Q_ARG(QString, path),
+                                  Q_ARG(quint64, size));
 }
 
 NetworkUtil::NetworkUtil(QObject *parent)

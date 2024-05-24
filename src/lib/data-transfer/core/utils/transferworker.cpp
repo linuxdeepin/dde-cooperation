@@ -17,43 +17,10 @@
 #include <QStorageInfo>
 #include <QStandardPaths>
 
-TransferStatus::TransferStatus()
-    : QObject()
-{
-
-}
-
-TransferStatus::~TransferStatus()
-{
-}
-
-// return true -> cancel
-bool TransferStatus::onProgress(const std::string &path, uint64_t current, uint64_t total)
-{
-//    LOG_IF(FLG_log_detail) << "progressbar: " << progressbar << " remain_time=" << remain_time;
-//    LOG_IF(FLG_log_detail) << "all_total_size: " << _file_stats.all_total_size << " all_current_size=" << _file_stats.all_current_size;
-//    emit TransferHelper::instance()->transferContent(tr("Transfering"), filepath, progressbar, remain_time);
-    LOG << "path: " << path << " current=" << current << " total=" << total;
-
-    return false;
-}
-
-void TransferStatus::onWebChanged(int state, std::string msg)
-{
-
-}
-
-
-//-------------------------------------
-
 TransferHandle::TransferHandle()
     : QObject()
 {
     _this_destruct = false;
-
-    if (!_statusRecorder) {
-        _statusRecorder = std::make_shared<TransferStatus>();
-    }
 
     connect(this, &TransferHandle::notifyTransData, this, &TransferHandle::handleDataDownload, Qt::QueuedConnection);
     connect(this, &TransferHandle::notifyCancelWeb, this, &TransferHandle::handleWebCancel, Qt::QueuedConnection);
@@ -240,10 +207,6 @@ bool TransferHandle::startFileWeb()
     // Create a new file http server
     if (!_file_server) {
         _file_server = std::make_shared<FileServer>(_service, WEB_TCP_PORT);
-//        std::shared_ptr<TransferStatus> recorder = std::make_shared<TransferStatus>();;
-        if (_statusRecorder) {
-            _file_server->setCallback(_statusRecorder);
-        }
     }
 
     return _file_server->start();
@@ -254,9 +217,6 @@ bool TransferHandle::handleDataDownload(const std::vector<std::string> nameVecto
     // Create a new file http client
     if (!_file_client) {
         _file_client = std::make_shared<FileClient>(_service, _connectedAddress.toStdString(), WEB_TCP_PORT); //service, address, port
-        if (_statusRecorder) {
-            _file_client->setCallback(_statusRecorder);
-        }
     }
 
     _file_client->cancel(false);

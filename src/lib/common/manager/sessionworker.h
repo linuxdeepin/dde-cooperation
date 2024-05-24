@@ -40,6 +40,7 @@ public:
 
 signals:
     void onTransData(const QString endpoint, const QStringList nameVector);
+    void onTransCount(const QString names, quint64 size);
     void onCancelJob(const std::string jobid);
     void onConnectChanged(int result, QString reason);
 

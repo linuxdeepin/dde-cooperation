@@ -11,29 +11,6 @@
 #include "httpweb/fileserver.h"
 #include "httpweb/fileclient.h"
 
-class TransferStatus : public QObject, public ProgressCallInterface
-{
-    Q_OBJECT
-    struct file_stats_s {
-        int64_t all_total_size;   // 总量
-        int64_t all_current_size;   // 当前已接收量
-        int64_t cast_time_ms;   // 最大已用时间
-    };
-
-public:
-    TransferStatus();
-    ~TransferStatus();
-
-    bool onProgress(const std::string &path, uint64_t current, uint64_t total);
-
-    void onWebChanged(int state, std::string msg);
-private:
-
-    //record transfering files ans calculate the progress rate
-    file_stats_s _file_stats;
-};
-
-
 class TransferHandle : public QObject, public SessionCallInterface
 {
     Q_OBJECT
@@ -78,8 +55,6 @@ private:
     void connectRemote(QString &address);
 
     bool startFileWeb();
-
-    std::shared_ptr<TransferStatus> _statusRecorder { nullptr };
 
     std::shared_ptr<AsioService> _service { nullptr };
     // rpc service and client

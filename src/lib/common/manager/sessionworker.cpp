@@ -97,6 +97,12 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         response->json_msg = res.as_json().serialize();
 
         emit onTransData(endpoint, nameList);
+
+        uint64_t total = req.size;
+        if (total > 0) {
+            QString oneName = nameList.join(";");
+            emit onTransCount(oneName, total);
+        }
     }
     break;
     case REQ_TRANS_CANCLE: {
@@ -116,6 +122,25 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
     case CAST_INFO: {
     }
     break;
+    case INFO_TRANS_COUNT: {
+        TransDataMessage req, res;
+        req.from_json(v);
+
+        QStringList nameList;
+        for (auto name : req.names) {
+            nameList.append(QString::fromStdString(name));
+        }
+        QString oneName = nameList.join(";");
+        uint64_t total = req.size;
+
+        res.id = req.id;
+        res.names = req.names;
+        res.flag = req.flag;
+        res.size = total;
+        response->json_msg = res.as_json().serialize();
+
+        emit onTransCount(oneName, total);
+    }
     default:
         DLOG << "unkown type: " << type;
         break;

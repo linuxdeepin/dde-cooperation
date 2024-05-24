@@ -16,6 +16,7 @@ endif()
 
 FILE(GLOB SRC_FILES
     "${CMAKE_SOURCE_DIR}/src/common/log.h"
+    "${CMAKE_SOURCE_DIR}/src/common/constant.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"

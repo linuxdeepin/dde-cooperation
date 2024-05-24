@@ -371,37 +371,82 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
     }
 }
 
-void TransferHelper::onFileTransStatusChanged(const QString &status)
+void TransferHelper::onTransChanged(int status, const QString &path, quint64 size)
 {
-    DLOG << "file transfer info: " << status.toStdString();
-    //    co::Json statusJson;
-    //    statusJson.parse_from(status.toStdString());
-    //    ipc::FileStatus param;
-    //    param.from_json(statusJson);
+    DLOG << "status: " << status << " path=" << path.toStdString();
+    switch(status) {
+    case TRANS_CANCELED:
+        transferResult(false, tr("The other party has canceled the file transfer"));
+        break;
+    case TRANS_EXCEPTION:
+        //TODO: notify show exception UI
+        transferResult(false, tr("File read/write exception"));
+        if (size == 0) {
+            transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
+        } else if (size == 404) {
+            transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
+        } else {
+            transferResult(false, tr("File read/write exception"));
+        }
+        break;
+    case TRANS_COUNT_SIZE:
+        // only update the total size while rpc notice
+        d->transferInfo.totalSize = size;
+    case TRANS_WHOLE_START:
+        updateTransProgress(0);
+        break;
+    case TRANS_WHOLE_FINISH:
+        d->status.storeRelease(Idle);
+        transferResult(true, tr("File sent successfully"));
+        break;
+    case TRANS_INDEX_CHANGE:
+        break;
+    case TRANS_FILE_CHANGE:
+        break;
+    case TRANS_FILE_SPEED: {
+        d->transferInfo.transferSize += size;
+        d->transferInfo.maxTimeS += 1; // 每1秒收到此信息
+        updateTransProgress(d->transferInfo.transferSize);
 
-    //    d->transferInfo.totalSize = param.total;
-    //    d->transferInfo.transferSize = param.current;
-    //    d->transferInfo.maxTimeMs = param.millisec;
+//        double speed = (static_cast<double>(size)) / (1024 * 1024); // 计算下载速度，单位为兆字节/秒
+//        QString formattedSpeed = QString::number(speed, 'f', 2); // 格式化速度为保留两位小数的字符串
+//        DLOG << "Transfer speed: " << formattedSpeed.toStdString() << " M/s";
+    }
+        break;
+    case TRANS_FILE_DONE:
+        break;
 
-    //    // 计算整体进度和预估剩余时间
-    //    double value = static_cast<double>(d->transferInfo.transferSize) / d->transferInfo.totalSize;
-    //    int progressValue = static_cast<int>(value * 100);
-    //    QTime time(0, 0, 0);
-    //    int remain_time;
-    //    if (progressValue <= 0) {
-    //        return;
-    //    } else if (progressValue >= 100) {
-    //        progressValue = 100;
-    //        remain_time = 0;
-    //    } else {
-    //        remain_time = (d->transferInfo.maxTimeMs * 100 / progressValue - d->transferInfo.maxTimeMs) / 1000;
-    //    }
-    //    time = time.addSecs(remain_time);
+    }
+}
 
-    //    LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
-    //    LOG_IF(FLG_log_detail) << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << d->transferInfo.transferSize;
+void TransferHelper::updateTransProgress(uint64_t current)
+{
+    QTime time(0, 0, 0);
+    if (d->transferInfo.totalSize < 1) {
+        // the total has not been set.
+        updateProgress(0, time.toString("hh:mm:ss"));
+        return;
+    }
 
-    //    d->updateProgress(progressValue, time.toString("hh:mm:ss"));
+    // 计算整体进度和预估剩余时间
+    double value = static_cast<double>(current) / d->transferInfo.totalSize;
+    int progressValue = static_cast<int>(value * 100);
+
+    int remain_time;
+    if (progressValue <= 0) {
+        return;
+    } else if (progressValue >= 100) {
+        progressValue = 100;
+        remain_time = 0;
+    } else {
+        remain_time = (d->transferInfo.maxTimeS * 100 / progressValue - d->transferInfo.maxTimeS);
+    }
+    time = time.addSecs(remain_time);
+
+    DLOG << "progressbar: " << progressValue << " remain_time=" << remain_time;
+    DLOG << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << current;
+
+    updateProgress(progressValue, time.toString("hh:mm:ss"));
 }
 
 void TransferHelper::waitForConfirm()

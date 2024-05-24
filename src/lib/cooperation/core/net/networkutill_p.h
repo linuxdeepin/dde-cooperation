@@ -22,10 +22,13 @@ public:
     explicit NetworkUtilPrivate(NetworkUtil *qq);
     ~NetworkUtilPrivate();
 
+public Q_SLOTS:
+    void handleConnectStatus(int result, QString reason);
+    void handleTransChanged(int status, const QString &path, quint64 size);
+
 private:
     NetworkUtil *q { nullptr };
     SessionManager *sessionManager { nullptr };
-    void handleConnectStatus(int result, QString reason);
 
     QString confirmTargetAddress {}; // remote ip address
     QString storageFolder = {}; //sub folder under storage dir config

@@ -13,16 +13,6 @@
 
 #include "webproto.h"
 
-#define BLOCK_SIZE 4096
-
-using ResponseHandler = std::function<bool(int status, const std::string &path, uint64_t current, uint64_t total)>;
-
-enum HandleResult {
-    RES_UPLOAD = 100,
-    RES_ERROR = 110,
-    RES_DISCONECT = 112,
-};
-
 class HTTPFileSession : public CppServer::HTTP::HTTPSession
 {
 public:
@@ -90,7 +80,7 @@ protected:
                 SendResponseAsync(response());
             } else if (info.IsRegularFile()){
                 info.Open(true, false);
-                uint64_t current = 0, total = 0;
+                uint64_t total = 0;
 
                 size_t sz = info.size();
                 if (offset < sz) {
@@ -107,6 +97,8 @@ protected:
                 // send headers first
                 SendResponse(response());
 
+                _handler(RES_OKHEADER, info.string().data(), total);
+
                 std::cout << "response header:" << response() << std::endl;
 
                 bool cancel = false;
@@ -115,23 +107,23 @@ protected:
                 do {
                     read_sz = info.Read(buff, sizeof(buff));
                     SendResponseBody(buff, read_sz);
-                    current += read_sz;
-                    // notify progress：current total
-                    if (_handler) {
-                        // return true to cancel download from outside.
-                        cancel = _handler(RES_UPLOAD, info.string(), current, total);
-                    }
+                    // notify progress：size total
+                    // return true to cancel download from outside.
+                    cancel = _handler(RES_BODY, nullptr, read_sz);
                     if (cancel) {
                         break;
                     }
                 } while (read_sz > 0);
 
                 info.Close();
+
+                _handler(RES_FINISH, info.string().data(), total);
             } else {
                 std::cout << "this is link file: " << path.absolute() << std::endl;
             }
         } else {
             SendResponseAsync(response().MakeErrorResponse(404, "Not found."));
+            _handler(RES_NOTFOUND, info.string().data(), 0);
         }
 
         std::cout << "response body end:" << std::endl;
@@ -191,9 +183,21 @@ protected:
             // 检查token是否正确
             if (TokenCache::GetInstance().verifyToken(token)) {
                 CppCommon::Path diskpath = WebBinder::GetInstance().getPath(name);
-                std::cout << "request >> name: " << name << " > " << diskpath.string() << std::endl;
+
+                if (diskpath.empty()) {
+                    std::cout << "request >> name: " << name << " > " << diskpath.string() << std::endl;
+                    SendResponseAsync(response().MakeErrorResponse(404, "Not found."));
+                    return;
+                }
+
+                bool found = WebBinder::GetInstance().containWeb(name);
+
                 // 处理predownload或download请求的name
                 if (method.find("info") != std::string::npos) {
+                    if (found) {
+                        // this web index changed
+                        _handler(RES_INDEX_CHANGE, diskpath.string().data(), 0);
+                    }
                     // 处理predownload请求的name
                     serveInfo(diskpath);
                 } else if (method.find("download") != std::string::npos) {
@@ -220,11 +224,13 @@ protected:
     void onReceivedRequestError(const CppServer::HTTP::HTTPRequest &request, const std::string &error) override
     {
         std::cout << "Request error: " << error << std::endl;
+        _handler(RES_ERROR, nullptr, 0);
     }
 
     void onError(int error, const std::string &category, const std::string &message) override
     {
         std::cout << "HTTP session caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
+        _handler(RES_ERROR, nullptr, 0);
     }
 
 private:
@@ -234,10 +240,26 @@ private:
 std::shared_ptr<CppServer::Asio::TCPSession>
 FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server)
 {
-    ResponseHandler cb([this](int status, const std::string &path, uint64_t current, uint64_t total) -> bool {
+    ResponseHandler cb([this](int status, const char *buffer, uint64_t size) -> bool {
         if (_callback) {
-            // return true to canceled from outside.
-            return _callback->onProgress(path, current, total);
+            if (RES_OKHEADER == status) {
+                std::string path(buffer);
+                _callback->onWebChanged(WEB_FILE_BEGIN, path, size);
+            } else if (RES_BODY == status) {
+                // return true to canceled from outside.
+                return _callback->onProgress(size);
+            } else if (RES_FINISH == status) {
+                std::string path(buffer);
+                _callback->onWebChanged(WEB_FILE_END, path, size);
+            } else if (RES_NOTFOUND == status) {
+                std::string path(buffer);
+                _callback->onWebChanged(WEB_NOT_FOUND, path);
+            } else if (RES_ERROR == status) {
+                _callback->onWebChanged(WEB_IO_ERROR);
+            } else if (RES_INDEX_CHANGE == status) {
+                std::string path(buffer);
+                _callback->onWebChanged(WEB_INDEX_BEGIN, path);
+            }
         }
         return false;
     });
@@ -257,24 +279,11 @@ bool FileServer::start()
     SetupReuseAddress(true);
     SetupReusePort(true);
     return IsStarted() ? Restart() : Start();
-
-//    if (_httpServer) {
-
-//        _httpServer->setResponseHandler(std::move(cb));
-//        return _httpServer->IsStarted() ? _httpServer->Restart() : _httpServer->Start();
-//    }
-
-//    return false;
 }
 
 bool FileServer::stop()
 {
     return Stop();
-//    if (_httpServer) {
-//        return _httpServer->Stop();
-//    }
-
-//    return false;
 }
 
 // bind: "/images", "C:/Users/username/Pictures/images"
@@ -308,6 +317,8 @@ void FileServer::clearBind()
 
 std::string FileServer::genToken(std::string info)
 {
+    _callback->onWebChanged(WEB_TRANS_START);
+
     return TokenCache::GetInstance().genToken(info);
 }
 
