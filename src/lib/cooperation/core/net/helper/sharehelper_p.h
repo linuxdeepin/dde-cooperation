@@ -11,9 +11,11 @@
 #include "net/cooconstrants.h"
 
 #ifdef linux
-#include <QDBusInterface>
+#    include <QDBusInterface>
 #endif
 #include <QTimer>
+
+#include <net/noticeutil.h>
 
 namespace cooperation_core {
 
@@ -25,25 +27,21 @@ public:
     explicit ShareHelperPrivate(ShareHelper *qq);
 
     CooperationTaskDialog *taskDialog();
-    uint notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout);
+    void initConnect();
+    void notifyMessage(const QString &body, const QStringList &actions, int expireTimeout);
     void reportConnectionData();
 
 public Q_SLOTS:
-    void onActionTriggered(uint replacesId, const QString &action);
+    void onActionTriggered(const QString &action);
     void stopCooperation();
-    void onCancelCooperApply();
 
 public:
     ShareHelper *q;
-#ifdef linux
-    QDBusInterface *notifyIfc { nullptr };
-#endif
-    CooperationTaskDialog *ctDialog { nullptr };
-    uint recvReplacesId { 0 };
+    NoticeUtil *notice { nullptr };
+
     bool isRecvMode { true };
     bool isReplied { false };
     bool isTimeout { false };
-    QTimer confirmTimer;
 
     // 作为接收方时，发送方的ip
     QString senderDeviceIp;

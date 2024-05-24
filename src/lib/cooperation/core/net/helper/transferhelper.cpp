@@ -17,7 +17,7 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QTime>
-#include <QTimer>
+#include <QProcess>
 
 #ifdef linux
 #    include "base/reportlog/reportlogmanager.h"
@@ -35,6 +35,12 @@ inline constexpr int TransferJobStartId = 1000;
 
 inline constexpr char HistoryButtonId[] { "history-button" };
 inline constexpr char TransferButtonId[] { "transfer-button" };
+
+inline constexpr char NotifyCancelAction[] { "cancel" };
+inline constexpr char NotifyRejectAction[] { "reject" };
+inline constexpr char NotifyAcceptAction[] { "accept" };
+inline constexpr char NotifyCloseAction[] { "close" };
+inline constexpr char NotifyViewAction[] { "view" };
 
 using TransHistoryInfo = QMap<QString, QString>;
 Q_GLOBAL_STATIC(TransHistoryInfo, transHistory)
@@ -59,13 +65,18 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
             [] {
                 *transHistory = HistoryManager::instance()->getTransHistory();
             });
-
-    confirmTimer.setInterval(10 * 1000);
-    connect(&confirmTimer, &QTimer::timeout, this, &TransferHelperPrivate::onVerifyTimeout);
+    notice = new NoticeUtil(q);
+    initConnect();
 }
 
 TransferHelperPrivate::~TransferHelperPrivate()
 {
+}
+
+void TransferHelperPrivate::initConnect()
+{
+    connect(notice, &NoticeUtil::onConfirmTimeout, q, &TransferHelper::onVerifyTimeout);
+    connect(notice, &NoticeUtil::ActionInvoked, q, &TransferHelper::onActionTriggered);
 }
 
 TransferDialog *TransferHelperPrivate::transDialog()
@@ -79,35 +90,6 @@ TransferDialog *TransferHelperPrivate::transDialog()
     return transferDialog;
 }
 
-void TransferHelperPrivate::handleApplyTransFiles(int type)
-{
-    // 获取设备名称
-    auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
-    QString deviceName = value.isValid()
-            ? value.toString()
-            : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
-
-    LOG << "handle apply file, deviceName= " << deviceName.toStdString();
-}
-
-void TransferHelperPrivate::handleCancelTransfer()
-{
-//    LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
-}
-
-void TransferHelperPrivate::transferResult(bool result, const QString &msg)
-{
-    transDialog()->switchResultPage(result, msg);
-    reportTransferResult(result);
-}
-
-void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
-{
-    QString title = tr("Sending files to \"%1\"").arg(CommonUitls::elidedText(sendToWho, Qt::ElideMiddle, 15));
-    transDialog()->switchProgressPage(title);
-    transDialog()->updateProgress(value, remainTime);
-}
-
 void TransferHelperPrivate::reportTransferResult(bool result)
 {
 #ifdef linux
@@ -117,13 +99,9 @@ void TransferHelperPrivate::reportTransferResult(bool result)
 #endif
 }
 
-void TransferHelperPrivate::onVerifyTimeout()
+void TransferHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout)
 {
-    isTransTimeout = true;
-    if (status.loadAcquire() != TransferHelper::Confirming)
-        return;
-
-    transDialog()->switchResultPage(false, tr("The other party did not receive, the files failed to send"));
+    notice->notifyMessage(tr("File transfer"), body, actions, QVariantMap(), expireTimeout);
 }
 
 TransferHelper::TransferHelper(QObject *parent)
@@ -188,13 +166,6 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
     waitForConfirm();
 }
 
-void TransferHelper::searchDevice(const QString &ip)
-{
-    DLOG << "searching " << ip.toStdString();
-    NetworkUtil::instance()->pingTarget(ip);
-    NetworkUtil::instance()->reqTargetInfo(ip);
-}
-
 TransferHelper::TransferStatus TransferHelper::transferStatus()
 {
     return static_cast<TransferStatus>(d->status.loadAcquire());
@@ -207,7 +178,6 @@ void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer in
     LOG << "button clicked, button id: " << id.toStdString()
         << " ip: " << ip.toStdString()
         << " device name: " << name.toStdString();
-
 
     if (id == TransferButtonId) {
 
@@ -270,10 +240,87 @@ bool TransferHelper::buttonClickable(const QString &id, const DeviceInfoPointer 
     return true;
 }
 
+void TransferHelper::handleApplyTransFiles(int type)
+{
+    // 获取设备名称
+    auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
+    QString deviceName = value.isValid()
+            ? value.toString()
+            : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
+
+    LOG << "handle apply file, deviceName= " << deviceName.toStdString();
+}
+
+void TransferHelper::onVerifyTimeout()
+{
+    d->isTransTimeout = true;
+    if (d->status.loadAcquire() != TransferHelper::Confirming)
+        return;
+
+    d->transDialog()->switchResultPage(false, tr("The other party did not receive, the files failed to send"));
+}
+
+void TransferHelper::handleCancelTransfer()
+{
+    //    LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
+}
+
+void TransferHelper::transferResult(bool result, const QString &msg)
+{
+    d->transDialog()->switchResultPage(result, msg);
+    d->reportTransferResult(result);
+}
+
+void TransferHelper::updateProgress(int value, const QString &remainTime)
+{
+    QString title = tr("Sending files to \"%1\"").arg(CommonUitls::elidedText(d->sendToWho, Qt::ElideMiddle, 15));
+    d->transDialog()->switchProgressPage(title);
+    d->transDialog()->updateProgress(value, remainTime);
+}
+
+void TransferHelper::onActionTriggered(const QString &action)
+{
+    if (action == NotifyCancelAction) {
+        NetworkUtil::instance()->cancelTrans();
+    } else if (action == NotifyRejectAction) {
+        NetworkUtil::instance()->replyTransRequest(false);
+    } else if (action == NotifyAcceptAction) {
+        NetworkUtil::instance()->replyTransRequest(true);
+    } else if (action == NotifyCloseAction) {
+        d->notice->closeNotification();
+    } else if (action == NotifyViewAction) {
+        if (d->recvFilesSavePath.isEmpty()) {
+            auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
+            auto defaultSavePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+        }
+
+        openFileLocation(d->recvFilesSavePath);
+    }
+}
+
+void TransferHelper::openFileLocation(const QString &path)
+{
+    QProcess::execute("dde-file-manager", QStringList() << path);
+}
+
 void TransferHelper::notifyTransferRequest(const QString &info)
 {
     DLOG << "notifyTransferRequest info: " << info.toStdString();
-    NetworkUtil::instance()->replyTransRequest(true);
+    QStringList actions { NotifyRejectAction, tr("Reject"),
+                          NotifyAcceptAction, tr("Accept"),
+                          NotifyCloseAction, tr("Close") };
+    static QString msg(tr("\"%1\" send some files to you"));
+
+    d->notifyMessage(msg.arg(CommonUitls::elidedText(info, Qt::ElideMiddle, 25)), actions, 10 * 1000);
+}
+
+void TransferHelper::notifyTransferRescult(bool result, const QString &msg)
+{
+    QStringList actions;
+    if (result)
+        actions << NotifyViewAction << tr("View");
+
+    d->notifyMessage(msg, actions, 3 * 1000);
 }
 
 void TransferHelper::onConnectStatusChanged(int result, const QString &msg, const bool isself)
@@ -284,10 +331,10 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
             return;
 
         d->status.storeRelease(Confirming);
-        d->handleApplyTransFiles(0);
+        handleApplyTransFiles(0);
     } else {
         d->status.storeRelease(Idle);
-        d->transferResult(false, tr("Connect to \"%1\" failed").arg(d->sendToWho));
+        transferResult(false, tr("Connect to \"%1\" failed").arg(d->sendToWho));
     }
 }
 
@@ -297,21 +344,21 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
     switch (result) {
     case JOB_TRANS_FAILED:
         if (msg.contains("::not enough")) {
-            d->transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
+            transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
         } else if (msg.contains("::off line")) {
-            d->transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
+            transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
         } else {
-            d->transferResult(false, tr("File read/write exception"));
+            transferResult(false, tr("File read/write exception"));
         }
         break;
     case JOB_TRANS_DOING:
         break;
     case JOB_TRANS_FINISHED: {
         d->status.storeRelease(Idle);
-        d->transferResult(true, tr("File sent successfully"));
+        transferResult(true, tr("File sent successfully"));
     } break;
     case JOB_TRANS_CANCELED:
-        d->transferResult(false, tr("The other party has canceled the file transfer"));
+        transferResult(false, tr("The other party has canceled the file transfer"));
         break;
     default:
         break;
@@ -321,34 +368,34 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
 void TransferHelper::onFileTransStatusChanged(const QString &status)
 {
     DLOG << "file transfer info: " << status.toStdString();
-//    co::Json statusJson;
-//    statusJson.parse_from(status.toStdString());
-//    ipc::FileStatus param;
-//    param.from_json(statusJson);
+    //    co::Json statusJson;
+    //    statusJson.parse_from(status.toStdString());
+    //    ipc::FileStatus param;
+    //    param.from_json(statusJson);
 
-//    d->transferInfo.totalSize = param.total;
-//    d->transferInfo.transferSize = param.current;
-//    d->transferInfo.maxTimeMs = param.millisec;
+    //    d->transferInfo.totalSize = param.total;
+    //    d->transferInfo.transferSize = param.current;
+    //    d->transferInfo.maxTimeMs = param.millisec;
 
-//    // 计算整体进度和预估剩余时间
-//    double value = static_cast<double>(d->transferInfo.transferSize) / d->transferInfo.totalSize;
-//    int progressValue = static_cast<int>(value * 100);
-//    QTime time(0, 0, 0);
-//    int remain_time;
-//    if (progressValue <= 0) {
-//        return;
-//    } else if (progressValue >= 100) {
-//        progressValue = 100;
-//        remain_time = 0;
-//    } else {
-//        remain_time = (d->transferInfo.maxTimeMs * 100 / progressValue - d->transferInfo.maxTimeMs) / 1000;
-//    }
-//    time = time.addSecs(remain_time);
+    //    // 计算整体进度和预估剩余时间
+    //    double value = static_cast<double>(d->transferInfo.transferSize) / d->transferInfo.totalSize;
+    //    int progressValue = static_cast<int>(value * 100);
+    //    QTime time(0, 0, 0);
+    //    int remain_time;
+    //    if (progressValue <= 0) {
+    //        return;
+    //    } else if (progressValue >= 100) {
+    //        progressValue = 100;
+    //        remain_time = 0;
+    //    } else {
+    //        remain_time = (d->transferInfo.maxTimeMs * 100 / progressValue - d->transferInfo.maxTimeMs) / 1000;
+    //    }
+    //    time = time.addSecs(remain_time);
 
-//    LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
-//    LOG_IF(FLG_log_detail) << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << d->transferInfo.transferSize;
+    //    LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
+    //    LOG_IF(FLG_log_detail) << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << d->transferInfo.transferSize;
 
-//    d->updateProgress(progressValue, time.toString("hh:mm:ss"));
+    //    d->updateProgress(progressValue, time.toString("hh:mm:ss"));
 }
 
 void TransferHelper::waitForConfirm()
@@ -358,7 +405,7 @@ void TransferHelper::waitForConfirm()
     d->recvFilesSavePath.clear();
 
     // 超时处理
-    d->confirmTimer.start();
+    // d->confirmTimer.start();
     d->transDialog()->switchWaitConfirmPage();
     d->transDialog()->show();
 }
@@ -369,7 +416,7 @@ void TransferHelper::accepted()
         d->status.storeRelease(Idle);
         return;
     }
-    d->updateProgress(1, tr("calculating"));
+    updateProgress(1, tr("calculating"));
     NetworkUtil::instance()->doSendFiles(d->readyToSendFiles);
 }
 
@@ -377,13 +424,13 @@ void TransferHelper::rejected()
 {
     DLOG << "file transfer rejected >>> ";
     d->status.storeRelease(Idle);
-    d->transferResult(false, tr("The other party rejects your request"));
+    transferResult(false, tr("The other party rejects your request"));
 }
 
 void TransferHelper::cancelTransfer()
 {
     if (d->status.loadAcquire() == Transfering) {
-        d->handleCancelTransfer();
+        handleCancelTransfer();
     }
 
     d->status.storeRelease(Idle);

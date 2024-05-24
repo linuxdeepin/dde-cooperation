@@ -57,7 +57,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             q->metaObject()->invokeMethod(TransferHelper::instance(),
                                           "notifyTransferRequest",
                                           Qt::QueuedConnection,
-                                          Q_ARG(QString, QString(req.host.c_str())));
+                                          Q_ARG(QString, QString(req.nick.c_str())));
         }
             return true;
         case APPLY_TRANS_RESULT: {
@@ -152,9 +152,9 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
     } else if (result == -1) {
         // disconnected
         // if there are trans or share working, notify network disconnect
-//        q->metaObject()->invokeMethod(MainController::instance(),
-//                                      "onNetworkMiss",
-//                                      Qt::QueuedConnection);
+        //        q->metaObject()->invokeMethod(MainController::instance(),
+        //                                      "onNetworkMiss",
+        //                                      Qt::QueuedConnection);
     } else if (result == 2) {
         // connected
         //        q->metaObject()->invokeMethod(CooperationManager::instance(),
@@ -189,6 +189,13 @@ NetworkUtil *NetworkUtil::instance()
 void NetworkUtil::updateStorageConfig(const QString &value)
 {
     d->sessionManager->setStorageRoot(value);
+}
+
+void NetworkUtil::searchDevice(const QString &ip)
+{
+    DLOG << "searching " << ip.toStdString();
+    pingTarget(ip);
+    reqTargetInfo(ip);
 }
 
 void NetworkUtil::pingTarget(const QString &ip)
@@ -251,7 +258,7 @@ void NetworkUtil::sendTransApply(const QString &ip)
         // send transfer apply, and async handle in RPC recv
         ApplyMessage msg;
         msg.flag = ASK_NEEDCONFIRM;
-        msg.nick = deviceName.toStdString();// user define nice name
+        msg.nick = deviceName.toStdString();   // user define nice name
         msg.host = CooperationUtil::localIPAddress().toStdString();
         QString jsonMsg = msg.as_json().serialize().c_str();
         QString res = d->sessionManager->sendRpcRequest(ip, APPLY_TRANS, jsonMsg);

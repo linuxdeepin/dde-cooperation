@@ -56,51 +56,37 @@ using namespace deepin_cross;
 ShareHelperPrivate::ShareHelperPrivate(ShareHelper *qq)
     : q(qq)
 {
-#ifdef linux
-    notifyIfc = new QDBusInterface(NotifyServerName,
-                                   NotifyServerPath,
-                                   NotifyServerIfce,
-                                   QDBusConnection::sessionBus(), this);
-    QDBusConnection::sessionBus().connect(NotifyServerName, NotifyServerPath, NotifyServerIfce, "ActionInvoked",
-                                          this, SLOT(onActionTriggered(uint, const QString &)));
-#endif
-    confirmTimer.setInterval(10 * 1000);
-    confirmTimer.setSingleShot(true);
-    connect(&confirmTimer, &QTimer::timeout, q, &ShareHelper::onVerifyTimeout);
-    connect(qApp, &QApplication::aboutToQuit, this, &ShareHelperPrivate::stopCooperation);
+    notice = new NoticeUtil(q);
+    initConnect();
 }
 
 CooperationTaskDialog *ShareHelperPrivate::taskDialog()
 {
-    if (!ctDialog) {
-        ctDialog = new CooperationTaskDialog(qApp->activeWindow());
-        ctDialog->setModal(true);
-        connect(ctDialog, &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
-        connect(ctDialog, &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyRejectAction); });
-        connect(ctDialog, &CooperationTaskDialog::acceptRequest, this, [this] { onActionTriggered(recvReplacesId, NotifyAcceptAction); });
-        connect(ctDialog, &CooperationTaskDialog::waitCanceled, this, &ShareHelperPrivate::onCancelCooperApply);
-    }
-
-    return ctDialog;
+    return notice->taskDialog();
 }
 
-uint ShareHelperPrivate::notifyMessage(uint replacesId, const QString &body, const QStringList &actions, int expireTimeout)
+void ShareHelperPrivate::initConnect()
 {
-#ifdef linux
-    QDBusReply<uint> reply = notifyIfc->call(QString("Notify"),
-                                             MainAppName,   // appname
-                                             replacesId,
-                                             QString("dde-cooperation"),   // icon
-                                             tr("Cooperation"),   // title
-                                             body, actions, QVariantMap(), expireTimeout);
+    connect(notice, &NoticeUtil::onConfirmTimeout, q, &ShareHelper::onVerifyTimeout);
+    connect(notice, &NoticeUtil::ActionInvoked, this, &ShareHelperPrivate::onActionTriggered);
 
-    return reply.isValid() ? reply.value() : replacesId;
+    connect(taskDialog(), &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
+    connect(taskDialog(), &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(NotifyRejectAction); });
+    connect(taskDialog(), &CooperationTaskDialog::acceptRequest, this, [this] { onActionTriggered(NotifyAcceptAction); });
+    connect(taskDialog(), &CooperationTaskDialog::waitCanceled, taskDialog(), &CooperationTaskDialog::hide);
+
+    connect(qApp, &QApplication::aboutToQuit, this, &ShareHelperPrivate::stopCooperation);
+}
+
+void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout)
+{
+#ifdef __linux__
+    notice->notifyMessage(tr("Cooperation"), body, actions, QVariantMap(), expireTimeout);
 #else
-    Q_UNUSED(replacesId)
     Q_UNUSED(actions)
     Q_UNUSED(expireTimeout)
 
-    NetworkUtil::instance()->mainWindow()->activateWindow();
+    CoopetationUtil::instance()->mainWindow()->activateWindow();
     taskDialog()->switchInfomationPage(tr("Cooperation"), body);
     taskDialog()->show();
     return 0;
@@ -110,21 +96,11 @@ uint ShareHelperPrivate::notifyMessage(uint replacesId, const QString &body, con
 void ShareHelperPrivate::stopCooperation()
 {
     if (targetDeviceInfo && targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
-        //        backendShareEvent(BACK_SHARE_STOP, targetDeviceInfo, 0);
-        //        backendShareEvent(BACK_SHARE_DISCONNECT);
-
 #ifdef linux
         static QString body(tr("Coordination with \"%1\" has ended"));
-        notifyMessage(recvReplacesId, body.arg(CommonUitls::elidedText(targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+        notifyMessage(body.arg(CommonUitls::elidedText(targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
 #endif
     }
-}
-
-void ShareHelperPrivate::onCancelCooperApply()
-{
-    confirmTimer.stop();
-    //    backendShareEvent(BACK_SHARE_DISAPPLY_CONNECT);
-    taskDialog()->hide();
 }
 
 void ShareHelperPrivate::reportConnectionData()
@@ -157,11 +133,8 @@ void ShareHelperPrivate::reportConnectionData()
 #endif
 }
 
-void ShareHelperPrivate::onActionTriggered(uint replacesId, const QString &action)
+void ShareHelperPrivate::onActionTriggered(const QString &action)
 {
-    if (recvReplacesId != replacesId || isTimeout)
-        return;
-
     isReplied = true;
     if (action == NotifyRejectAction) {
         NetworkUtil::instance()->replyShareRequest(false);
@@ -183,7 +156,7 @@ void ShareHelperPrivate::onActionTriggered(uint replacesId, const QString &actio
         HistoryManager::instance()->writeIntoConnectHistory(info->ipAddress(), info->deviceName());
 
         static QString body(tr("Connection successful, coordinating with \"%1\""));
-        notifyMessage(recvReplacesId, body.arg(CommonUitls::elidedText(info->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+        notifyMessage(body.arg(CommonUitls::elidedText(info->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
     }
 }
 
@@ -247,7 +220,6 @@ void ShareHelper::connectToDevice(const DeviceInfoPointer info)
     d->isTimeout = false;
     d->targetDevName = info->deviceName();
 
-    d->confirmTimer.start();
     static QString title(tr("Requesting collaborate to \"%1\""));
     d->taskDialog()->switchWaitPage(title.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
     d->taskDialog()->show();
@@ -264,34 +236,10 @@ void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
         DiscoverController::instance()->updateDeviceState({ d->targetDeviceInfo });
 
         static QString body(tr("Coordination with \"%1\" has ended"));
-        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+        d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
     }
 }
 
-void ShareHelper::checkAndProcessShare(const DeviceInfoPointer info)
-{
-    // 未协同、接收端，不进行处理
-    if (d->isRecvMode || !d->targetDeviceInfo || d->targetDeviceInfo->connectStatus() != DeviceInfo::Connected)
-        return;
-
-    if (d->targetDeviceInfo->ipAddress() != info->ipAddress())
-        return;
-
-    if (d->targetDeviceInfo->peripheralShared() != info->peripheralShared()) {
-        d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
-        d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
-
-        //        if (info->peripheralShared())
-        //            d->backendShareEvent(BACK_SHARE_START, info);
-        //        else
-        //            d->backendShareEvent(BACK_SHARE_STOP, info, 1);
-    } else if (d->targetDeviceInfo->clipboardShared() != info->clipboardShared()) {
-        d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
-        d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
-
-        //        d->backendShareEvent(BACK_SHARE_START, info);
-    }
-}
 
 void ShareHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
@@ -328,7 +276,6 @@ void ShareHelper::notifyConnectRequest(const QString &info)
     d->isReplied = false;
     d->isTimeout = false;
     d->isRecvMode = true;
-    d->recvReplacesId = 0;
     d->senderDeviceIp.clear();
 
     static QString body(tr("A cross-end collaboration request was received from \"%1\""));
@@ -342,11 +289,10 @@ void ShareHelper::notifyConnectRequest(const QString &info)
     d->senderDeviceIp = infoList[0];
     d->targetDevName = infoList[1];
 
-    d->confirmTimer.start();
 #ifdef linux
-    d->recvReplacesId = d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), actions, 10 * 1000);
+    d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), actions, 10 * 1000);
 #else
-    NetworkUtil::instance()->mainWindow()->activateWindow();
+    CooperationUtil::instance()->mainWindow()->activateWindow();
     d->taskDialog()->switchConfirmPage(tr("Cooperation"), body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
     d->taskDialog()->show();
 #endif
@@ -371,7 +317,7 @@ void ShareHelper::handleConnectResult(int result)
         HistoryManager::instance()->writeIntoConnectHistory(d->targetDeviceInfo->ipAddress(), d->targetDeviceInfo->deviceName());
 
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
-        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+        d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
         d->taskDialog()->close();
     } break;
     case SHARE_CONNECT_REFUSE: {
@@ -404,7 +350,7 @@ void ShareHelper::handleDisConnectResult(const QString &devName)
     ShareCooperationServiceManager::instance()->stop();
 
     static QString body(tr("Coordination with \"%1\" has ended"));
-    d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(devName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
+    d->notifyMessage(body.arg(CommonUitls::elidedText(devName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
 
     d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
     DiscoverController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
@@ -419,7 +365,7 @@ void ShareHelper::onVerifyTimeout()
             return;
 
         static QString body(tr("The connection request sent to you by \"%1\" was interrupted due to a timeout"));
-        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
+        d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
     } else {
         if (!d->taskDialog()->isVisible() || d->isReplied)
             return;
@@ -433,13 +379,12 @@ void ShareHelper::onVerifyTimeout()
 
 void ShareHelper::handleCancelCooperApply()
 {
-    d->confirmTimer.stop();
     if (d->isRecvMode) {
         if (d->isReplied)
             return;
         static QString body(tr("The other party has cancelled the connection request !"));
 #ifdef linux
-        d->notifyMessage(d->recvReplacesId, body, {}, 3 * 1000);
+        d->notifyMessage(body, {}, 3 * 1000);
 #else
         static QString title(tr("connect failed"));
         d->taskDialog()->switchInfomationPage(title, body);
@@ -453,7 +398,7 @@ void ShareHelper::handleNetworkDismiss(const QString &msg)
     if (!msg.contains("\"errorType\":-1")) {
         static QString body(tr("Network not connected, file delivery failed this time.\
                                Please connect to the network and try again!"));
-        d->notifyMessage(d->recvReplacesId, body, {}, 5 * 1000);
+        d->notifyMessage(body, {}, 5 * 1000);
     } else {
         if (!d->taskDialog()->isVisible())
             return;
@@ -464,11 +409,4 @@ void ShareHelper::handleNetworkDismiss(const QString &msg)
                                            Please connect to the network and try again!"),
                                         true);
     }
-}
-
-void ShareHelper::handleSearchDeviceResult(bool res)
-{
-    //    emit MainController::instance()->discoveryFinished(res);
-    //    //    if(!res)
-    //    //        emit MainController::instance()->discoveryFinished(false);
 }

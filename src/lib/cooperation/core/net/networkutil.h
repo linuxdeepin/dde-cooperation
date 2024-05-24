@@ -21,6 +21,7 @@ public:
     // setting
     void updateStorageConfig(const QString &value);
 
+    void searchDevice(const QString &ip);
     void pingTarget(const QString &ip);
     void reqTargetInfo(const QString &ip);
 

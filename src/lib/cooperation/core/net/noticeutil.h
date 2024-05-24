@@ -8,6 +8,8 @@
 #include <QObject>
 #include <QTimer>
 
+#include <net/helper/dialogs/cooperationtaskdialog.h>
+
 class QDBusInterface;
 namespace cooperation_core {
 
@@ -19,7 +21,10 @@ public:
     explicit NoticeUtil(QObject *parent = nullptr);
     ~NoticeUtil();
 
-    void notifyMessage(uint replacesId, const QString &title, const QString &body, const QStringList &actions, QVariantMap hitMap, int expireTimeout);
+    CooperationTaskDialog *taskDialog();
+
+    void notifyMessage(const QString &title, const QString &body, const QStringList &actions, QVariantMap hitMap, int expireTimeout);
+    void closeNotification();
 
 Q_SIGNALS:
     void ActionInvoked(const QString &action);
@@ -34,14 +39,11 @@ private Q_SLOTS:
 #endif
 
 private:
-    QTimer transTimer;
+    QTimer confirmTimer;
+    CooperationTaskDialog *ctDialog { nullptr };
 #ifdef __linux__
     QDBusInterface *notifyIfc { nullptr };
     uint recvNotifyId { 0 };
-
-#elif defined(_WIN32) || defined(_WIN64)
-    // Windows support
-    CooperationTransDialog *cooperationDlg { nullptr };
 #endif
 };
 

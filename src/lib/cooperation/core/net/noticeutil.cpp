@@ -12,18 +12,29 @@ using namespace cooperation_core;
 NoticeUtil::NoticeUtil(QObject *parent)
     : QObject(parent)
 {
+    initNotifyConnect();
 }
 
 NoticeUtil::~NoticeUtil()
 {
 }
 
+CooperationTaskDialog *NoticeUtil::taskDialog()
+{
+    if (!ctDialog) {
+        ctDialog = new CooperationTaskDialog(qApp->activeWindow());
+        ctDialog->setModal(true);
+    }
+
+    return ctDialog;
+}
+
 void NoticeUtil::initNotifyConnect()
 {
-    transTimer.setInterval(10 * 1000);
-    transTimer.setSingleShot(true);
+    confirmTimer.setInterval(10 * 1000);
+    confirmTimer.setSingleShot(true);
 
-    connect(&transTimer, &QTimer::timeout, this, &NoticeUtil::onConfirmTimeout);
+    connect(&confirmTimer, &QTimer::timeout, this, &NoticeUtil::onConfirmTimeout);
 
     notifyIfc = new QDBusInterface(NotifyServerName,
                                    NotifyServerPath,
@@ -41,12 +52,17 @@ void NoticeUtil::onActionTriggered(uint replacesId, const QString &action)
     emit ActionInvoked(action);
 }
 
-void NoticeUtil::notifyMessage(uint replacesId, const QString &title, const QString &body, const QStringList &actions, QVariantMap hitMap, int expireTimeout)
+void NoticeUtil::notifyMessage(const QString &title, const QString &body, const QStringList &actions, QVariantMap hitMap, int expireTimeout)
 {
     recvNotifyId = 0;
-    QDBusReply<uint> reply = notifyIfc->call("Notify", "dde-cooperation", replacesId,
-                                             "dde-cooperation", title, body,
+    QDBusReply<uint> reply = notifyIfc->call(QString("Notify"), QString("dde-cooperation"), recvNotifyId,
+                                             QString("dde-cooperation"), title, body,
                                              actions, hitMap, expireTimeout);
 
-    recvNotifyId = reply.isValid() ? reply.value() : replacesId;
+    recvNotifyId = reply.isValid() ? reply.value() : recvNotifyId;
+}
+
+void NoticeUtil::closeNotification()
+{
+    notifyIfc->call("CloseNotification", recvNotifyId);
 }

@@ -11,6 +11,8 @@
 #include <QTimer>
 #include <QMap>
 
+#include <net/noticeutil.h>
+
 class QDBusInterface;
 class FrontendService;
 namespace cooperation_core {
@@ -41,19 +43,14 @@ public:
 
     TransferDialog *transDialog();
 
-    void handleApplyTransFiles(int type);
-    void handleCancelTransfer();
-
-    void transferResult(bool result, const QString &msg);
-    void updateProgress(int value, const QString &remainTime);
-
     void reportTransferResult(bool result);
-
-public Q_SLOTS:
-    void onVerifyTimeout();
+    void notifyMessage(const QString &body, const QStringList &actions, int expireTimeout);
+    void initConnect();
 
 private:
     TransferHelper *q;
+
+    NoticeUtil *notice { nullptr };
 
     QStringList readyToSendFiles;
     QString sendToWho;
@@ -61,9 +58,7 @@ private:
     QAtomicInt status { TransferHelper::Idle };
     TransferInfo transferInfo;
     TransferDialog *transferDialog { nullptr };
-    uint recvNotifyId { 0 };
 
-    QTimer confirmTimer;
     bool isTransTimeout = false;
     QString recvFilesSavePath;
 };
