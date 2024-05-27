@@ -121,3 +121,17 @@ void CooperationGuiHelper::setAutoFont(QWidget *widget, int size, int weight)
     widget->setFont(font);
 #endif
 }
+
+void CooperationGuiHelper::initThemeTypeConnect(QWidget *w, const QString &lightstyle, const QString &darkstyle)
+{
+    if (CooperationGuiHelper::instance()->isDarkTheme())
+        w->setStyleSheet(darkstyle);
+    else
+        w->setStyleSheet(lightstyle);
+    connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, w, [w, lightstyle, darkstyle] {
+        if (CooperationGuiHelper::instance()->isDarkTheme())
+            w->setStyleSheet(darkstyle);
+        else
+            w->setStyleSheet(lightstyle);
+    });
+}

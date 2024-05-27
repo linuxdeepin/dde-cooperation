@@ -36,5 +36,9 @@
         <file>icons/deepin/builtin/icons/tip_more.png</file>
         <file>icons/deepin/builtin/dark/icons/tab_close_normal.svg</file>
         <file>icons/deepin/builtin/icons/clear.svg</file>
+        <file>icons/deepin/builtin/dark/icons/banner_128px.png</file>
+        <file>icons/deepin/builtin/light/icons/banner_128px.png</file>
+        <file>icons/deepin/builtin/icons/close_white.svg</file>
+        <file>icons/deepin/builtin/icons/close.svg</file>
     </qresource>
 </RCC>

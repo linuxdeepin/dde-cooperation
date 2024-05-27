@@ -110,7 +110,7 @@ DeviceInfoPointer DeviceItem::deviceInfo() const
 
 void DeviceItem::initUI()
 {
-    setFixedSize(480, 90);
+    setFixedSize(480, qApp->property("onlyTransfer").toBool() ? 72 : 90);
     setBackground(8, NoType, TopAndBottom);
 
     iconLabel = new CooperationLabel(this);
@@ -124,7 +124,7 @@ void DeviceItem::initUI()
     ipLabel->setForegroundRole(DTK_GUI_NAMESPACE::DPalette::TextTips);
 #endif
 
-    stateLabel = new StateLabel(this);
+    stateLabel = new StateLabel();
     stateLabel->setContentsMargins(8, 2, 8, 2);
     CooperationGuiHelper::setAutoFont(stateLabel, 11, QFont::Medium);
 
@@ -136,7 +136,8 @@ void DeviceItem::initUI()
 
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setContentsMargins(0, 0, 0, 0);
-    hLayout->addWidget(stateLabel);
+    if (!qApp->property("onlyTransfer").toBool())
+        hLayout->addWidget(stateLabel);
     hLayout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding));
     vLayout->addLayout(hLayout);
 

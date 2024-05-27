@@ -6,6 +6,8 @@
 #include "workspacewidget_p.h"
 #include "cooperationstatewidget.h"
 #include "devicelistwidget.h"
+#include "firsttipwidget.h"
+#include "common/commonutils.h"
 
 #include <QMouseEvent>
 #include <QRegularExpression>
@@ -178,10 +180,14 @@ void WorkspaceWidget::switchWidget(PageName page)
     else
         d->deviceLabel->setVisible(false);
 
-    if (page == kLookignForDeviceWidget)
+    if (page == kLookignForDeviceWidget) {
         d->lfdWidget->seAnimationtEnabled(true);
-    else
+        d->tipWidget->setVisible(false);
+    } else {
+        if (qApp->property("onlyTransfer").toBool() || !QFile(deepin_cross::CommonUitls::tipConfPath()).exists())
+            d->tipWidget->setVisible(true);
         d->lfdWidget->seAnimationtEnabled(false);
+    }
 
     d->currentPage = page;
     d->stackedLayout->setCurrentIndex(page);
