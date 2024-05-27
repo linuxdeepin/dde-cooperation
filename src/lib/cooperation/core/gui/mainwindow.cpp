@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include "mainwindow_p.h"
 #include "dialogs/settingdialog.h"
+#include "utils/cooperationutil.h"
 #include "discover/discovercontroller.h"
 
 #include <QScreen>
@@ -25,6 +26,8 @@ MainWindowPrivate::~MainWindowPrivate()
 
 void MainWindowPrivate::initConnect()
 {
+    connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, q, &MainWindow::onlineStateChanged);
+
     connect(DiscoverController::instance(), &DiscoverController::startDiscoveryDevice, q, &MainWindow::onLookingForDevices);
     connect(DiscoverController::instance(), &DiscoverController::deviceOnline, q, &MainWindow::addDevice);
     connect(DiscoverController::instance(), &DiscoverController::deviceOffline, q, &MainWindow::removeDevice);
@@ -96,11 +99,15 @@ DeviceInfoPointer MainWindow::findDeviceInfo(const QString &ip)
     return d->workspaceWidget->findDeviceInfo(ip);
 }
 
-void MainWindow::onlineStateChanged(bool isOnline)
+void MainWindow::onlineStateChanged(const QString &validIP)
 {
-    if (!isOnline) {
+    bool offline = validIP.isEmpty();
+    if (offline) {
         d->workspaceWidget->clear();
         d->workspaceWidget->switchWidget(WorkspaceWidget::kNoNetworkWidget);
+        d->workspaceWidget->setBottomIp("---");
+    } else {
+        d->workspaceWidget->setBottomIp(validIP);
     }
 }
 

@@ -24,6 +24,7 @@ class NoNetworkWidget;
 class NoResultWidget;
 class DeviceListWidget;
 class FirstTipWidget;
+class BottomLabel;
 class WorkspaceWidgetPrivate : public QObject
 {
     Q_OBJECT
@@ -55,6 +56,7 @@ public:
     QLabel *deviceLabel { nullptr };
     CooperationSearchEdit *searchEdit { nullptr };
     FirstTipWidget *tipWidget { nullptr };
+    BottomLabel *bottomLabel { nullptr };
     LookingForDeviceWidget *lfdWidget { nullptr };
     NoNetworkWidget *nnWidget { nullptr };
     NoResultWidget *nrWidget { nullptr };

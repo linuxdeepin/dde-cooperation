@@ -12,10 +12,9 @@
 
 #ifdef linux
 #    include <QDBusInterface>
+#    include <net/linux/noticeutil.h>
 #endif
 #include <QTimer>
-
-#include <net/noticeutil.h>
 
 namespace cooperation_core {
 
@@ -37,7 +36,8 @@ public Q_SLOTS:
 
 public:
     ShareHelper *q;
-    NoticeUtil *notice { nullptr };
+
+    CooperationTaskDialog *ctDialog { nullptr };
 
     bool isRecvMode { true };
     bool isReplied { false };
@@ -48,6 +48,10 @@ public:
     // 作为发送方时，为接收方设备信息；作为接收方时，为发送方设备信息
     DeviceInfoPointer targetDeviceInfo { nullptr };
     QString targetDevName;
+
+#ifdef __linux__
+    NoticeUtil *notice { nullptr };
+#endif
 };
 
 }   // namespace cooperation_core

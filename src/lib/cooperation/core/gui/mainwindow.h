@@ -32,7 +32,7 @@ public:
 
 public Q_SLOTS:
     void setFirstTipVisible();
-    void onlineStateChanged(bool isOnline);
+    void onlineStateChanged(const QString &validIP);
     void onLookingForDevices();
     void onDiscoveryFinished(bool hasFound);
     void addDevice(const QList<DeviceInfoPointer> &infoList);

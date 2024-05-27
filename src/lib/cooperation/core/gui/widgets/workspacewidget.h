@@ -38,6 +38,7 @@ public:
 
     void clear();
     void setFirstStartTip(bool visible);
+    void setBottomIp(const QString &ip);
 
 protected:
     bool event(QEvent *event) override;

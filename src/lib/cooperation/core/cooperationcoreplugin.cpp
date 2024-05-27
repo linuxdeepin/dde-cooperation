@@ -62,6 +62,8 @@ bool CooperaionCorePlugin::start()
     NetworkUtil::instance();
     TransferHelper::instance()->registBtn();
     ShareHelper::instance()->registConnectBtn();
+    CooperationUtil::instance()->initNetworkListener();
+    CooperationUtil::instance()->initHistory();
 
     if (CommonUitls::isFirstStart() && !qApp->property("onlyTransfer").toBool()) {
 #ifdef linux

@@ -21,6 +21,7 @@ public:
 
     QMap<QString, QString> getConnectHistory();
     void writeIntoConnectHistory(const QString &ip, const QString &devName);
+    void refreshHistory();
 
 Q_SIGNALS:
     void transHistoryUpdated();

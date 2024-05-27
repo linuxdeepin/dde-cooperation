@@ -4,8 +4,9 @@
 
 #include "global_defines.h"
 #include "historymanager.h"
-
 #include "configs/settings/configmanager.h"
+
+#include "discover/discovercontroller.h"
 
 using namespace cooperation_core;
 
@@ -53,6 +54,24 @@ QMap<QString, QString> HistoryManager::getTransHistory()
     }
 
     return dataMap;
+}
+
+void HistoryManager::refreshHistory()
+{
+    QList<DeviceInfoPointer> offlineDevList;
+    auto connectHistory = getConnectHistory();
+    auto iter = connectHistory.begin();
+    for (; iter != connectHistory.end(); ++iter) {
+        if (DiscoverController::instance()->findDeviceByIP(iter.key()))
+            continue;
+
+        DeviceInfoPointer info(new DeviceInfo(iter.key(), iter.value()));
+        info->setConnectStatus(DeviceInfo::Offline);
+        offlineDevList << info;
+    }
+
+    if (!offlineDevList.isEmpty())
+        emit DiscoverController::instance()->deviceOnline(offlineDevList);
 }
 
 void HistoryManager::writeIntoTransHistory(const QString &ip, const QString &savePath)

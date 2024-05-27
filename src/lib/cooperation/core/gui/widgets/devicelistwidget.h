@@ -28,6 +28,8 @@ public:
     DeviceInfoPointer findDeviceInfo(const QString &ipStr);
     int itemCount();
 
+    void groupItem(int index, const DeviceInfoPointer info);
+
     void addItemOperation(const QVariantMap &map);
 
     void clear();

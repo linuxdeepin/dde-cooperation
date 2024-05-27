@@ -306,6 +306,12 @@ BottomLabel::BottomLabel(QWidget *parent)
     dialog->installEventFilter(this);
 }
 
+void BottomLabel::setIp(const QString &ip)
+{
+    QString iptext = QString(tr("Local IP: %1").arg(ip));
+    ipLabel->setText(iptext);
+}
+
 void BottomLabel::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);

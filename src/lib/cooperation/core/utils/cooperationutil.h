@@ -32,12 +32,21 @@ public:
 
     void showFeatureDisplayDialog(QDialog *dlg);
 
+    void initNetworkListener();
+
+    void initHistory();
+
     static QVariantMap deviceInfo();
     static QString localIPAddress();
+
+Q_SIGNALS:
+    void onlineStateChanged(const QString &validIP);
 
 private:
     explicit CooperationUtil(QObject *parent = nullptr);
     ~CooperationUtil();
+
+    void checkNetworkState();
 
 private:
     QSharedPointer<CooperationUtilPrivate> d { nullptr };

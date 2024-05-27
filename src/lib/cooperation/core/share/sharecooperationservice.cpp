@@ -408,11 +408,7 @@ void ShareCooperationService::barrierFinished(int exitCode, QProcess::ExitStatus
     // auto restart if expect keep running
     if (_expectedRunning) {
 #if defined(Q_OS_WIN)
-        co::Tasked s;
-        s.run_in([this]() {
-            restartBarrier();
-        },
-                 1);
+        restartBarrier();
 #else
         QTimer::singleShot(1000, this, SLOT(restartBarrier()));
 #endif

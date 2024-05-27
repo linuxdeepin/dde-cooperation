@@ -250,8 +250,8 @@ void DiscoverController::refresh()
         d->onlineDeviceList.append(devInfo);
     }
     Q_EMIT deviceOnline({ d->onlineDeviceList });
-    if (d->onlineDeviceList.isEmpty())
-        Q_EMIT discoveryFinished(false);
+    bool hasFound = d->onlineDeviceList.isEmpty();
+    Q_EMIT discoveryFinished(hasFound);
 }
 
 void DiscoverController::startDiscover()

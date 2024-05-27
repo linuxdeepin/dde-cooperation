@@ -25,6 +25,7 @@ public:
 public:
     CooperationUtil *q { nullptr };
     MainWindow *window { nullptr };
+    bool isOnline { true };
 };
 
 }

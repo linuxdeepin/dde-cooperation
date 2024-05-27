@@ -4,8 +4,7 @@
 
 #include "../mainwindow.h"
 #include "../mainwindow_p.h"
-#include "maincontroller/maincontroller.h"
-#include "discovercontroller/discovercontroller.h"
+#include "discover/discovercontroller.h"
 
 #include <QVBoxLayout>
 #include <QApplication>

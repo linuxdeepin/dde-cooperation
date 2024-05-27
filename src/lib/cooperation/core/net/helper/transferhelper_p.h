@@ -11,10 +11,10 @@
 #include <QTimer>
 #include <QMap>
 
-#include <net/noticeutil.h>
+#ifdef __linux__
+#    include <net/linux/noticeutil.h>
+#endif
 
-class QDBusInterface;
-class FrontendService;
 namespace cooperation_core {
 
 class TransferHelper;
@@ -50,17 +50,18 @@ public:
 private:
     TransferHelper *q;
 
-    NoticeUtil *notice { nullptr };
+    TransferDialog *transferDialog { nullptr };
 
     QStringList readyToSendFiles;
     QString sendToWho;
-
     QAtomicInt status { TransferHelper::Idle };
     TransferInfo transferInfo;
-    TransferDialog *transferDialog { nullptr };
-
     bool isTransTimeout = false;
     QString recvFilesSavePath;
+
+#ifdef __linux__
+    NoticeUtil *notice { nullptr };
+#endif
 };
 
 }   // namespace cooperation_core

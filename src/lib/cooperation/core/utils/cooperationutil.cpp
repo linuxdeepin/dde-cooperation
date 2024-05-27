@@ -12,12 +12,14 @@
 #include "common/commonutils.h"
 #include "discover/discovercontroller.h"
 #include "net/networkutil.h"
+#include "historymanager.h"
 
 #include <QJsonDocument>
 #include <QNetworkInterface>
 #include <QStandardPaths>
 #include <QDebug>
 #include <QDir>
+#include <QTimer>
 
 #include <mutex>
 
@@ -142,6 +144,35 @@ QString CooperationUtil::localIPAddress()
     QString ip;
     ip = deepin_cross::CommonUitls::getFirstIp().data();
     return ip;
+}
+
+void CooperationUtil::initNetworkListener()
+{
+    QTimer *networkMonitorTimer = new QTimer(this);
+    networkMonitorTimer->setInterval(1000);
+    connect(networkMonitorTimer, &QTimer::timeout, this, &CooperationUtil::checkNetworkState);
+    networkMonitorTimer->start();
+}
+
+void CooperationUtil::initHistory()
+{
+    HistoryManager::instance()->refreshHistory();
+
+    connect(DiscoverController::instance(), &DiscoverController::discoveryFinished, this, [](bool hasFound) {
+        Q_UNUSED(hasFound);
+        HistoryManager::instance()->refreshHistory();
+    });
+}
+
+void CooperationUtil::checkNetworkState()
+{
+    // 网络状态检测
+    bool isConnected = deepin_cross::CommonUitls::getFirstIp().size() > 0;
+
+    if (isConnected != d->isOnline) {
+        d->isOnline = isConnected;
+        Q_EMIT onlineStateChanged(deepin_cross::CommonUitls::getFirstIp().c_str());
+    }
 }
 
 void CooperationUtil::showFeatureDisplayDialog(QDialog *dlg1)

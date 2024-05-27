@@ -19,16 +19,6 @@ NoticeUtil::~NoticeUtil()
 {
 }
 
-CooperationTaskDialog *NoticeUtil::taskDialog()
-{
-    if (!ctDialog) {
-        ctDialog = new CooperationTaskDialog(qApp->activeWindow());
-        ctDialog->setModal(true);
-    }
-
-    return ctDialog;
-}
-
 void NoticeUtil::initNotifyConnect()
 {
     confirmTimer.setInterval(10 * 1000);

@@ -72,6 +72,7 @@ class BottomLabel : public QWidget
 public:
     explicit BottomLabel(QWidget *parent = nullptr);
 
+    void setIp(const QString &ip);
     void showDialog() const;
 
 protected:

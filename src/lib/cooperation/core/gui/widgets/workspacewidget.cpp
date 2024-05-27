@@ -71,7 +71,7 @@ void WorkspaceWidgetPrivate::initUI()
 #else
     mainLayout->addWidget(searchEdit);
 #endif
-    BottomLabel *bottomLabel = new BottomLabel(q);
+    bottomLabel = new BottomLabel(q);
 
     mainLayout->addWidget(tipWidget);
     mainLayout->addSpacing(10);
@@ -115,7 +115,7 @@ void WorkspaceWidgetPrivate::onSearchDevice()
 
     q->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
     QTimer::singleShot(500, this, [ip] {
-     //   TransferHelper::instance()->searchDevice(ip);
+        //   TransferHelper::instance()->searchDevice(ip);
     });
 }
 
@@ -216,6 +216,11 @@ void WorkspaceWidget::clear()
 void WorkspaceWidget::setFirstStartTip(bool visible)
 {
     d->tipWidget->setVisible(visible);
+}
+
+void WorkspaceWidget::setBottomIp(const QString &ip)
+{
+    d->bottomLabel->setIp(ip);
 }
 
 bool WorkspaceWidget::event(QEvent *event)

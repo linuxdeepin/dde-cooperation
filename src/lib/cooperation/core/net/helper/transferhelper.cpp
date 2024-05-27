@@ -21,7 +21,6 @@
 
 #ifdef linux
 #    include "base/reportlog/reportlogmanager.h"
-
 #    include <QDBusInterface>
 #    include <QDBusReply>
 #endif
@@ -65,7 +64,7 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
             [] {
                 *transHistory = HistoryManager::instance()->getTransHistory();
             });
-    notice = new NoticeUtil(q);
+
     initConnect();
 }
 
@@ -75,8 +74,11 @@ TransferHelperPrivate::~TransferHelperPrivate()
 
 void TransferHelperPrivate::initConnect()
 {
+#ifdef __linux__
+    notice = new NoticeUtil(q);
     connect(notice, &NoticeUtil::onConfirmTimeout, q, &TransferHelper::onVerifyTimeout);
     connect(notice, &NoticeUtil::ActionInvoked, q, &TransferHelper::onActionTriggered);
+#endif
 }
 
 TransferDialog *TransferHelperPrivate::transDialog()
@@ -92,7 +94,7 @@ TransferDialog *TransferHelperPrivate::transDialog()
 
 void TransferHelperPrivate::reportTransferResult(bool result)
 {
-#ifdef linux
+#ifdef __linux__
     QVariantMap map;
     map.insert("deliveryResult", result);
     ReportLogManager::instance()->commit(ReportAttribute::FileDelivery, map);
@@ -101,7 +103,9 @@ void TransferHelperPrivate::reportTransferResult(bool result)
 
 void TransferHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout)
 {
+#ifdef __linux__
     notice->notifyMessage(tr("File transfer"), body, actions, QVariantMap(), expireTimeout);
+#endif
 }
 
 TransferHelper::TransferHelper(QObject *parent)
@@ -287,7 +291,9 @@ void TransferHelper::onActionTriggered(const QString &action)
     } else if (action == NotifyAcceptAction) {
         NetworkUtil::instance()->replyTransRequest(true);
     } else if (action == NotifyCloseAction) {
+#ifdef __linux__
         d->notice->closeNotification();
+#endif
     } else if (action == NotifyViewAction) {
         if (d->recvFilesSavePath.isEmpty()) {
             auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);

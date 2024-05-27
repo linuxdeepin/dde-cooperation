@@ -19,12 +19,9 @@
 #include <QApplication>
 #include <QStandardPaths>
 #include <QDir>
-#include <QDBusInterface>
-#include <QDBusConnection>
 
 #ifdef linux
 #    include "base/reportlog/reportlogmanager.h"
-#    include <QDBusReply>
 #endif
 
 using ButtonStateCallback = std::function<bool(const QString &, const DeviceInfoPointer)>;
@@ -56,19 +53,26 @@ using namespace deepin_cross;
 ShareHelperPrivate::ShareHelperPrivate(ShareHelper *qq)
     : q(qq)
 {
-    notice = new NoticeUtil(q);
+
     initConnect();
 }
 
 CooperationTaskDialog *ShareHelperPrivate::taskDialog()
 {
-    return notice->taskDialog();
+    if (!ctDialog) {
+        ctDialog = new CooperationTaskDialog(qApp->activeWindow());
+        ctDialog->setModal(true);
+    }
+    return ctDialog;
 }
 
 void ShareHelperPrivate::initConnect()
 {
+#ifdef __linux__
+    notice = new NoticeUtil(q);
     connect(notice, &NoticeUtil::onConfirmTimeout, q, &ShareHelper::onVerifyTimeout);
     connect(notice, &NoticeUtil::ActionInvoked, this, &ShareHelperPrivate::onActionTriggered);
+#endif
 
     connect(taskDialog(), &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
     connect(taskDialog(), &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(NotifyRejectAction); });
@@ -86,10 +90,9 @@ void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &a
     Q_UNUSED(actions)
     Q_UNUSED(expireTimeout)
 
-    CoopetationUtil::instance()->mainWindow()->activateWindow();
+    CooperationUtil::instance()->mainWindow()->activateWindow();
     taskDialog()->switchInfomationPage(tr("Cooperation"), body);
     taskDialog()->show();
-    return 0;
 #endif
 }
 
@@ -239,7 +242,6 @@ void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
         d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
     }
 }
-
 
 void ShareHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
