@@ -44,11 +44,14 @@ signals:
     void onCancelJob(const std::string jobid);
     void onConnectChanged(int result, QString reason);
 
+    // local signals which emit from RPC
+    void onRemoteDisconnected(const QString &remote);
 public slots:
+    void handleRemoteDisconnected(const QString &remote);
+
 private:
     bool listen(int port);
     bool connect(QString &address, int port);
-    size_t getDirectorySize(const std::string& path);
 
     std::weak_ptr<AsioService> _service;
     // rpc service and client

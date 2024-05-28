@@ -57,13 +57,7 @@ private:
     std::shared_ptr<FileServer> _file_server { nullptr };
     std::shared_ptr<FileClient> _file_client { nullptr };
 
-    // <jobid, jobpath>
-//    QMap<int, QString> _job_maps;
-//    int _request_job_id;
-
-//    QString _accessToken = "";
     QString _saveRoot = "";
-//    QString _connectedAddress = "";
     QTimer _speedTimer;
     int _noDataCount = 0;
 

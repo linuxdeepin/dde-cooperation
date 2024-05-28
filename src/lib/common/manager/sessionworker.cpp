@@ -17,6 +17,7 @@ SessionWorker::SessionWorker(const std::shared_ptr<AsioService> &service, QObjec
     : QObject(parent)
     , _service(service)
 {
+    QObject::connect(this, &SessionWorker::onRemoteDisconnected, this, &SessionWorker::handleRemoteDisconnected, Qt::QueuedConnection);
 }
 
 void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response)
@@ -28,7 +29,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
 
     DLOG << "onReceivedMessage mask=" << request.mask << " json_msg: " << request.json_msg << std::endl;
 
-    // Step 2: 解析响应数据
+    // Frist: 解析响应数据
     picojson::value v;
     std::string err = picojson::parse(v, request.json_msg);
     if (!err.empty()) {
@@ -48,7 +49,6 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         }
     }
 
-//    picojson::array files = v.get("files").get<picojson::array>();
     int type = request.mask;
     switch (type) {
     case REQ_LOGIN: {
@@ -158,19 +158,22 @@ bool SessionWorker::onStateChanged(int state, std::string &msg)
 //    RPC_CONNECTING = 1,
 //    RPC_CONNECTED = 2,
     bool result = false;
+    QString addr = QString::fromStdString(msg);
+
     switch (state) {
     case RPC_CONNECTED: {
-        _connectedAddress = QString(msg.c_str());
+        _connectedAddress = addr;
         DLOG << "connected remote: " << msg;
         result = true;
     }
     break;
     case RPC_DISCONNECTED: {
-        if (msg.empty()) {
+        if (addr.isEmpty()) {
             DLOG << "first connect remote, retry...";
             return true;
         } else {
             DLOG << "disconnected remote: " << msg;
+            emit onRemoteDisconnected(addr);
         }
     }
     break;
@@ -187,7 +190,7 @@ bool SessionWorker::onStateChanged(int state, std::string &msg)
         break;
     }
 
-    emit onConnectChanged(state, QString(msg.c_str()));
+    emit onConnectChanged(state, addr);
 
     return result;
 }
@@ -355,38 +358,13 @@ bool SessionWorker::connect(QString &address, int port)
 }
 
 
-// 递归函数来获取目录下所有文件的大小，包括子目录
-size_t SessionWorker::getDirectorySize(const std::string& path) {
-    size_t totalSize = 0;
-
-    CppCommon::Directory dir = CppCommon::Directory(path);
-    std::vector<CppCommon::Path> subEntrys;
-    try {
-        subEntrys = dir.GetEntriesRecursive();
-    } catch (const CppCommon::FileSystemException& ex) {
-        std::cout << "Error: " << ex.what() << std::endl;
-        return totalSize;
+void SessionWorker::handleRemoteDisconnected(const QString &remote)
+{
+    if (_connectedAddress == remote) {
+        _connectedAddress = "";
     }
-
-    // 遍历目录
-    for (int i = 0; i < subEntrys.size(); ++i) {
-        const auto entry = subEntrys[i];
-        if (entry.IsDirectory()) {
-            // 递归处理子目录
-            totalSize += getDirectorySize(entry.string());
-        } else if (entry.IsRegularFile()) {
-            try {
-                CppCommon::File temp(entry);
-                // 获取文件大小并累加到总大小中
-                totalSize += temp.size(); // mask as file flag.
-            } catch (const CppCommon::FileSystemException& ex) {
-                std::cout << "Error: " << ex.what() << std::endl;
-                return totalSize;
-            }
-        } else {
-            std::cout << "skip the link file: " << entry.string() << std::endl;
-        }
+    auto it = _login_hosts.find(remote);
+    if (it != _login_hosts.end()) {
+        _login_hosts.erase(it);
     }
-
-    return totalSize;
 }

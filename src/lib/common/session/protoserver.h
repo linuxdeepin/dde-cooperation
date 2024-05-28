@@ -17,7 +17,6 @@ class ProtoServer : public CppServer::Asio::TCPServer, public FBE::proto::Client
 public:
     using CppServer::Asio::TCPServer::TCPServer;
 
-    //    ProtoServer();
     void setCallbacks(std::shared_ptr<SessionCallInterface> callbacks);
 
     bool hasConnected(const std::string &ip);

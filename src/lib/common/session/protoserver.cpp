@@ -5,7 +5,6 @@
 #include "protoserver.h"
 
 using MessageHandler = std::function<void(const proto::OriginMessage &request, proto::OriginMessage *response)>;
-using StateHandler = std::function<void(int state, std::string msg)>;
 
 class ProtoSession : public CppServer::Asio::TCPSession, public FBE::proto::Sender, public FBE::proto::Receiver
 {
@@ -17,59 +16,19 @@ public:
         _msghandler = std::move(cb);
     }
 
-    void setStateHandler(StateHandler cb)
-    {
-        _statehandler = std::move(cb);
-    }
-
 protected:
-    void onConnected() override
-    {
-        std::cout << "Protocol session with Id " << id() << " connected!" << std::endl;
-        std::cout << "server:" << server()->address() << ":" << server()->port() << std::endl;
-        std::cout << "from:" << socket().remote_endpoint() << std::endl;
-        if (_statehandler) {
-            std::string addr = socket().remote_endpoint().address().to_string();
-            _statehandler(RPC_CONNECTED, addr);
-        }
-
-        // Send invite notification
-//        proto::MessageNotify notify;
-//        notify.notification = "Hello from protocol server!";
-//        send(notify);
-    }
-
-    void onDisconnected() override
-    {
-        std::cout << "Protocol session with Id " << id() << " disconnected!" << std::endl;
-        if (_statehandler) {
-            std::string addr = socket().remote_endpoint().address().to_string();
-            _statehandler(RPC_DISCONNECTED, addr);
-        }
-    }
-
-    void onError(int error, const std::string &category, const std::string &message) override
-    {
-        std::cout << "Protocol session caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
-        if (_statehandler) {
-            std::string err(message);
-            _statehandler(RPC_ERROR, err);
-        }
-    }
 
     // Protocol handlers
     void onReceive(const ::proto::DisconnectRequest &request) override
     {
-        if (_statehandler) {
-            std::string addr = socket().remote_endpoint().address().to_string();
-            _statehandler(RPC_DISCONNECTING, addr);
-        }
+        std::cout << "DisconnectRequest: " <<  request << std::endl;
+
         Disconnect();
     }
 
     void onReceive(const ::proto::OriginMessage &request) override
     {
-        std::cout << "Server Received: " << request << std::endl;
+        //std::cout << "Server Received: " << request << std::endl;
 
         // Validate request
         if (request.json_msg.empty()) {
@@ -109,13 +68,8 @@ protected:
 
 private:
     MessageHandler _msghandler { nullptr };
-    StateHandler _statehandler { nullptr };
 };
 
-//ProtoServer::ProtoServer()
-//{
-
-//}
 
 void ProtoServer::setCallbacks(std::shared_ptr<SessionCallInterface> callbacks)
 {
@@ -152,17 +106,12 @@ ProtoServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &se
             Client::onReceiveResponse(request);
             return;
         }
-        if (_callbacks)
-            _callbacks->onReceivedMessage(request, response);
-    });
-    StateHandler state_cb([this](int state, std::string msg) {
-        if (_callbacks)
-            _callbacks->onStateChanged(state, msg);
+
+        _callbacks->onReceivedMessage(request, response);
     });
 
     auto session = std::make_shared<ProtoSession>(server);
     session->setMessageHandler(msg_cb);
-    session->setStateHandler(state_cb);
 
     return session;
 }
@@ -170,6 +119,9 @@ ProtoServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &se
 void ProtoServer::onError(int error, const std::string &category, const std::string &message)
 {
     std::cout << "Protocol server caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
+
+    std::string err(message);
+    _callbacks->onStateChanged(RPC_ERROR, err);
 }
 
 void ProtoServer::onConnected(std::shared_ptr<CppServer::Asio::TCPSession>& session)
@@ -178,18 +130,30 @@ void ProtoServer::onConnected(std::shared_ptr<CppServer::Asio::TCPSession>& sess
     std::string addr = session->socket().remote_endpoint().address().to_string();
     std::shared_lock<std::shared_mutex> locker(_sessionids_lock);
     _session_ids.insert(std::make_pair(addr, session->id()));
+
+    _callbacks->onStateChanged(RPC_CONNECTED, addr);
 }
 
 void ProtoServer::onDisconnected(std::shared_ptr<CppServer::Asio::TCPSession>& session)
 {
-    //std::cout << "onDisconnected from:" << session->socket().remote_endpoint() << std::endl;
-    std::string addr = session->socket().remote_endpoint().address().to_string();
-    std::shared_lock<std::shared_mutex> locker(_sessionids_lock);
-    auto it = _session_ids.find(addr);
-    if (it != _session_ids.end())
-    {
+    //std::cout << "onDisconnected from: id: " << session->id() << std::endl;
+
+    auto search_uuid = session->id();
+    auto it = std::find_if(_session_ids.begin(), _session_ids.end(), [search_uuid](const std::pair<std::string, CppCommon::UUID>& pair) {
+        return pair.second == search_uuid;
+    });
+
+    std::string addr = "";
+    if (it != _session_ids.end()) {
+        //std::cout << "find connected by uuid, ip：" << it->first << std::endl;
+        addr = it->first;
         _session_ids.erase(it);
+    } else {
+        std::cout << "did not find connected id:" << search_uuid << std::endl;
+        return;
     }
+
+    _callbacks->onStateChanged(RPC_DISCONNECTED, addr);
 }
 
 // Protocol implementation

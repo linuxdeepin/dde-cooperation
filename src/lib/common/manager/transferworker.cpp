@@ -17,8 +17,8 @@ TransferWorker::TransferWorker(const std::shared_ptr<AsioService> &service, QObj
     : QObject(parent)
     , _service(service)
 {
-    connect(this, &TransferWorker::speedTimerTick, this, &TransferWorker::handleTimerTick, Qt::QueuedConnection);
-    connect(&_speedTimer, &QTimer::timeout, this, &TransferWorker::doCalculateSpeed, Qt::QueuedConnection);
+    QObject::connect(this, &TransferWorker::speedTimerTick, this, &TransferWorker::handleTimerTick, Qt::QueuedConnection);
+    QObject::connect(&_speedTimer, &QTimer::timeout, this, &TransferWorker::doCalculateSpeed, Qt::QueuedConnection);
 }
 
 
