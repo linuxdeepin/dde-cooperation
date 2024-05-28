@@ -86,7 +86,11 @@ uint64_t utc()
     return (timestamp.tv_sec * 1000000000) + timestamp.tv_nsec;
 #elif defined(_WIN32) || defined(_WIN64)
     FILETIME ft;
+#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
     GetSystemTimePreciseAsFileTime(&ft);
+#else
+    GetSystemTimeAsFileTime(&ft);
+#endif
 
     ULARGE_INTEGER result;
     result.LowPart = ft.dwLowDateTime;

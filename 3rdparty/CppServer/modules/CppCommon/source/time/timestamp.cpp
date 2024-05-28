@@ -111,7 +111,11 @@ uint64_t Timestamp::utc()
     return (timestamp.tv_sec * 1000000000) + timestamp.tv_nsec;
 #elif defined(_WIN32) || defined(_WIN64)
     FILETIME ft;
+#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
     GetSystemTimePreciseAsFileTime(&ft);
+#else
+    GetSystemTimeAsFileTime(&ft);
+#endif
 
     ULARGE_INTEGER result;
     result.LowPart = ft.dwLowDateTime;
@@ -171,12 +175,15 @@ uint64_t Timestamp::nano()
     if (!initialized)
     {
         // Calculate timestamp offset
-        FILETIME timestamp;
-        GetSystemTimePreciseAsFileTime(&timestamp);
-
+        FILETIME ft;
+#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
+        GetSystemTimePreciseAsFileTime(&ft);
+#else
+        GetSystemTimeAsFileTime(&ft);
+#endif
         ULARGE_INTEGER result;
-        result.LowPart = timestamp.dwLowDateTime;
-        result.HighPart = timestamp.dwHighDateTime;
+        result.LowPart = ft.dwLowDateTime;
+        result.HighPart = ft.dwHighDateTime;
 
         // Convert 01.01.1601 to 01.01.1970
         result.QuadPart -= 116444736000000000ll;

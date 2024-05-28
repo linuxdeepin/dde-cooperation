@@ -19,8 +19,8 @@ elseif(WIN32)
   # Disable C++17 deprecation warnings
   add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
 
-  # Windows 10
-  add_definitions(-D_WIN32_WINNT=0x0A00)
+  # Windows 7
+  add_definitions(-D_WIN32_WINNT=0x0601)
 
   # Windows SDK
   if(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION AND NOT MINGW)

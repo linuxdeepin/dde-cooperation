@@ -30,7 +30,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
 
 #加快qrc编译
-qt_add_big_resources(QRC_RESOURCES resources.qrc)
+qt5_add_resources(QRC_RESOURCES resources.qrc)
 list(APPEND QRC_RESOURCES resources.qrc)
 set_property(SOURCE resources.qrc PROPERTY SKIP_AUTORCC ON)
 list(APPEND RESOURCE_FILES ${QRC_RESOURCES})
