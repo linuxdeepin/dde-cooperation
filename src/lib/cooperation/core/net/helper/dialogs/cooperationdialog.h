@@ -63,6 +63,8 @@ public:
 
     void setResult(bool success, const QString &msg);
 
+    bool getResult() const;
+
 Q_SIGNALS:
     void completed();
     void viewed();
@@ -74,32 +76,53 @@ private:
     CooperationLabel *msgLabel { nullptr };
     QPushButton *okBtn { nullptr };
     QPushButton *viewBtn { nullptr };
+    bool res;
 };
 
-class CooperationTransDialog : public QDialog
+class WaitConfirmWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit WaitConfirmWidget(QWidget *parent = nullptr);
+
+    void startMovie();
+
+Q_SIGNALS:
+    void canceled();
+
+private:
+    void init();
+
+    CooperationSpinner *spinner { nullptr };
+};
+
+class CooperationTransDialog : public CooperationDialog
 {
     Q_OBJECT
 public:
     explicit CooperationTransDialog(QWidget *parent = nullptr);
 
     void showConfirmDialog(const QString &name);
+    void showWaitConfirmDialog();
     void showResultDialog(bool success, const QString &msg);
     void showProgressDialog(const QString &title);
-    void updateProgressData(int value, const QString &msg);
+
+    void updateProgress(int value, const QString &msg);
 
 protected:
     void closeEvent(QCloseEvent *e) override;
 
 Q_SIGNALS:
-    void canceled();
-    void completed();
+    void cancel();
     void viewed();
+    void retry();
 
 private:
     void init();
 
     QStackedLayout *mainLayout { nullptr };
     ConfirmWidget *confirmWidget { nullptr };
+    WaitConfirmWidget *waitconfirmWidget { nullptr };
     ProgressWidget *progressWidget { nullptr };
     ResultWidget *resultWidget { nullptr };
 };

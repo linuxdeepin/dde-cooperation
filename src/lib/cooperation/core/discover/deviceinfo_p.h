@@ -21,7 +21,7 @@ public:
     deepin_cross::BaseUtils::OS_TYPE osType { deepin_cross::BaseUtils::kOther };
     bool isClipboardShared { false };
     bool isPeripheralShared { false };
-    bool cooperationEnabled { false };
+    bool cooperationEnabled { true };
     DeviceInfo::ConnectStatus conStatus { DeviceInfo::ConnectStatus::Unknown };
     DeviceInfo::TransMode transMode { DeviceInfo::TransMode::Everyone };
     DeviceInfo::DiscoveryMode discoveryMode { DeviceInfo::DiscoveryMode::Everyone };

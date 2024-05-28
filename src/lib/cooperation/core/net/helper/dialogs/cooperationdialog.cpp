@@ -6,6 +6,7 @@
 
 #include <QHBoxLayout>
 #include <QCloseEvent>
+#include <QMovie>
 
 using namespace cooperation_core;
 
@@ -37,6 +38,55 @@ void ConfirmWidget::init()
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(msgLabel, 1, Qt::AlignHCenter);
     mainLayout->addLayout(btnLayout, 1);
+}
+
+WaitConfirmWidget::WaitConfirmWidget(QWidget *parent)
+    : QWidget(parent)
+{
+    init();
+}
+
+void WaitConfirmWidget::startMovie()
+{
+#ifdef linux
+    spinner->start();
+#else
+    spinner->movie()->start();
+#endif
+}
+
+void WaitConfirmWidget::init()
+{
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+
+    spinner = new CooperationSpinner(this);
+    spinner->setFixedSize(48, 48);
+    spinner->setAttribute(Qt::WA_TransparentForMouseEvents);
+    spinner->setFocusPolicy(Qt::NoFocus);
+#ifndef linux
+    QLabel *titleLabel = new QLabel(tr("File Transfer"), this);
+    QFont font;
+    font.setWeight(QFont::DemiBold);
+    font.setPixelSize(18);
+    titleLabel->setFont(font);
+    titleLabel->setAlignment(Qt::AlignHCenter);
+
+    vLayout->addSpacing(30);
+    vLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
+    vLayout->addSpacing(50);
+
+    QMovie *movie = new QMovie(":/icons/deepin/builtin/icons/spinner.gif");
+    spinner->setMovie(movie);
+    movie->setSpeed(180);
+#endif
+
+    CooperationLabel *label = new CooperationLabel(tr("Wait for confirmation..."), this);
+    label->setAlignment(Qt::AlignHCenter);
+    vLayout->addSpacing(20);
+    vLayout->addWidget(spinner, 0, Qt::AlignHCenter);
+    vLayout->addSpacing(15);
+    vLayout->addWidget(label, 0, Qt::AlignHCenter);
+    vLayout->addSpacerItem(new QSpacerItem(1, 80, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 ProgressWidget::ProgressWidget(QWidget *parent)
@@ -85,10 +135,13 @@ ResultWidget::ResultWidget(QWidget *parent)
 
 void ResultWidget::setResult(bool success, const QString &msg)
 {
+    res = success;
     if (success) {
         QIcon icon(":/icons/deepin/builtin/icons/transfer_success_128px.svg");
         iconLabel->setPixmap(icon.pixmap(48, 48));
+#ifndef __linux__
         viewBtn->setVisible(true);
+#endif
     } else {
         QIcon icon(":/icons/deepin/builtin/icons/transfer_fail_128px.svg");
         iconLabel->setPixmap(icon.pixmap(48, 48));
@@ -122,8 +175,13 @@ void ResultWidget::init()
     mainLayout->addLayout(btnLayout, 1);
 }
 
+bool ResultWidget::getResult() const
+{
+    return res;
+}
+
 CooperationTransDialog::CooperationTransDialog(QWidget *parent)
-    : QDialog(parent)
+    : CooperationDialog(parent)
 {
     init();
 }
@@ -132,6 +190,14 @@ void CooperationTransDialog::showConfirmDialog(const QString &name)
 {
     confirmWidget->setDeviceName(name);
     mainLayout->setCurrentWidget(confirmWidget);
+    setHidden(false);
+}
+
+void CooperationTransDialog::showWaitConfirmDialog()
+{
+    waitconfirmWidget->startMovie();
+    mainLayout->setCurrentWidget(waitconfirmWidget);
+    setHidden(false);
 }
 
 void CooperationTransDialog::showResultDialog(bool success, const QString &msg)
@@ -151,7 +217,7 @@ void CooperationTransDialog::showProgressDialog(const QString &title)
     setHidden(false);
 }
 
-void CooperationTransDialog::updateProgressData(int value, const QString &msg)
+void CooperationTransDialog::updateProgress(int value, const QString &msg)
 {
     progressWidget->setProgress(value, msg);
 }
@@ -164,30 +230,50 @@ void CooperationTransDialog::closeEvent(QCloseEvent *e)
     if (mainLayout->currentWidget() == confirmWidget) {
         Q_EMIT rejected();
     } else if (mainLayout->currentWidget() == progressWidget) {
-        Q_EMIT canceled();
+        Q_EMIT cancel();
+    } else if (mainLayout->currentWidget() == resultWidget) {
+        if (qApp->property("onlyTransfer").toBool() && resultWidget->getResult())
+            qApp->exit();
+        Q_EMIT cancel();
     }
 }
 
 void CooperationTransDialog::init()
 {
+    QWidget *contentWidget = new QWidget(this);
+    mainLayout = new QStackedLayout(this);
+
+    QVBoxLayout *vLayout = new QVBoxLayout(contentWidget);
+    vLayout->setMargin(0);
+    vLayout->addLayout(mainLayout);
+
+#ifdef linux
+    setIcon(QIcon::fromTheme("dde-cooperation"));
+    setTitle(tr("File Transfer"));
+    addContent(contentWidget);
+#else
     setWindowTitle(tr("File transfer"));
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowIcon(QIcon(":/icons/deepin/builtin/icons/dde-cooperation_128px.svg"));
     setFixedWidth(380);
+#endif
 
-    mainLayout = new QStackedLayout(this);
     confirmWidget = new ConfirmWidget(this);
     connect(confirmWidget, &ConfirmWidget::rejected, this, &CooperationTransDialog::rejected);
     connect(confirmWidget, &ConfirmWidget::accepted, this, &CooperationTransDialog::accepted);
 
     progressWidget = new ProgressWidget(this);
-    connect(progressWidget, &ProgressWidget::canceled, this, &CooperationTransDialog::canceled);
+    connect(progressWidget, &ProgressWidget::canceled, this, &CooperationTransDialog::cancel);
+
+    waitconfirmWidget = new WaitConfirmWidget(this);
+    connect(waitconfirmWidget, &WaitConfirmWidget::canceled, this, &CooperationTransDialog::cancel);
 
     resultWidget = new ResultWidget(this);
-    connect(resultWidget, &ResultWidget::completed, this, &CooperationTransDialog::completed);
     connect(resultWidget, &ResultWidget::viewed, this, &CooperationTransDialog::viewed);
+    connect(resultWidget, &ResultWidget::completed, this, &CooperationTransDialog::close);
 
     mainLayout->addWidget(confirmWidget);
+    mainLayout->addWidget(waitconfirmWidget);
     mainLayout->addWidget(progressWidget);
     mainLayout->addWidget(resultWidget);
 }

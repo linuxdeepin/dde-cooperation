@@ -79,17 +79,24 @@ void TransferHelperPrivate::initConnect()
     connect(notice, &NoticeUtil::onConfirmTimeout, q, &TransferHelper::onVerifyTimeout);
     connect(notice, &NoticeUtil::ActionInvoked, q, &TransferHelper::onActionTriggered);
 #endif
+
+    confirmTimer.setInterval(10 * 1000);
+    confirmTimer.setSingleShot(true);
+    connect(&confirmTimer, &QTimer::timeout, q, &TransferHelper::onVerifyTimeout);
 }
 
-TransferDialog *TransferHelperPrivate::transDialog()
+CooperationTransDialog *TransferHelperPrivate::transDialog()
 {
-    if (!transferDialog) {
-        transferDialog = new TransferDialog(qApp->activeWindow());
-        transferDialog->setModal(true);
-        connect(transferDialog, &TransferDialog::cancel, q, &TransferHelper::cancelTransfer);
+    if (!dialog) {
+        dialog = new CooperationTransDialog(qApp->activeWindow());
+        dialog->setModal(true);
+        connect(dialog, &CooperationTransDialog::cancel, q, &TransferHelper::cancelTransfer);
+        connect(dialog, &CooperationTransDialog::rejected, q, [this] { q->onActionTriggered(NotifyRejectAction); });
+        connect(dialog, &CooperationTransDialog::accepted, q, [this] { q->onActionTriggered(NotifyAcceptAction); });
+        connect(dialog, &CooperationTransDialog::viewed, q, [this] { q->onActionTriggered(NotifyViewAction); });
     }
 
-    return transferDialog;
+    return dialog;
 }
 
 void TransferHelperPrivate::reportTransferResult(bool result)
@@ -153,7 +160,7 @@ void TransferHelper::registBtn()
 
 void TransferHelper::sendFiles(const QString &ip, const QString &devName, const QStringList &fileList)
 {
-    d->sendToWho = devName;
+    d->who = devName;
     d->readyToSendFiles = fileList;
     if (fileList.isEmpty())
         return;
@@ -261,7 +268,7 @@ void TransferHelper::onVerifyTimeout()
     if (d->status.loadAcquire() != TransferHelper::Confirming)
         return;
 
-    d->transDialog()->switchResultPage(false, tr("The other party did not receive, the files failed to send"));
+    d->transDialog()->showResultDialog(false, tr("The other party did not receive, the files failed to send"));
 }
 
 void TransferHelper::handleCancelTransfer()
@@ -271,14 +278,39 @@ void TransferHelper::handleCancelTransfer()
 
 void TransferHelper::transferResult(bool result, const QString &msg)
 {
-    d->transDialog()->switchResultPage(result, msg);
+#ifdef __linux__
+    if (d->role != Server) {
+        QStringList actions;
+        if (result)
+            actions << NotifyViewAction << tr("View");
+        d->notifyMessage(msg, actions, 3 * 1000);
+        return;
+    }
+#endif
+
+    d->transDialog()->showResultDialog(result, msg);
     d->reportTransferResult(result);
 }
 
 void TransferHelper::updateProgress(int value, const QString &remainTime)
 {
-    QString title = tr("Sending files to \"%1\"").arg(CommonUitls::elidedText(d->sendToWho, Qt::ElideMiddle, 15));
-    d->transDialog()->switchProgressPage(title);
+#ifdef __linux__
+    if (d->role != Server) {
+        // 在通知中心中，如果通知内容包含“%”且actions中存在“cancel”，则不会在通知中心显示
+        QStringList actions { NotifyCancelAction, tr("Cancel") };
+        // dde-session-ui 5.7.2.2 版本后，支持设置该属性使消息不进通知中心
+        QVariantMap hitMap { { "x-deepin-ShowInNotifyCenter", false } };
+        QString msg(tr("File receiving %1% | Remaining time %2").arg(QString::number(value), remainTime));
+
+        d->notifyMessage(msg, actions, 15 * 1000);
+        return;
+    }
+#endif
+
+    QString title = d->role == Server ? tr("Sending files to \"%1\"") : tr("Receiving files from \"%1\"");
+
+    title = title.arg(CommonUitls::elidedText(d->who, Qt::ElideMiddle, 15));
+    d->transDialog()->showProgressDialog(title);
     d->transDialog()->updateProgress(value, remainTime);
 }
 
@@ -289,6 +321,7 @@ void TransferHelper::onActionTriggered(const QString &action)
     } else if (action == NotifyRejectAction) {
         NetworkUtil::instance()->replyTransRequest(false);
     } else if (action == NotifyAcceptAction) {
+        d->role = Client;
         NetworkUtil::instance()->replyTransRequest(true);
     } else if (action == NotifyCloseAction) {
 #ifdef __linux__
@@ -306,21 +339,32 @@ void TransferHelper::onActionTriggered(const QString &action)
 
 void TransferHelper::openFileLocation(const QString &path)
 {
+#ifdef __linux__
     QProcess::execute("dde-file-manager", QStringList() << path);
+#else
+    QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    d->transDialog()->close();
+#endif
 }
 
 void TransferHelper::notifyTransferRequest(const QString &info)
 {
     DLOG << "notifyTransferRequest info: " << info.toStdString();
+    static QString msg(tr("\"%1\" send some files to you"));
+    d->who = info;
+#ifdef __linux__
+
     QStringList actions { NotifyRejectAction, tr("Reject"),
                           NotifyAcceptAction, tr("Accept"),
                           NotifyCloseAction, tr("Close") };
-    static QString msg(tr("\"%1\" send some files to you"));
 
     d->notifyMessage(msg.arg(CommonUitls::elidedText(info, Qt::ElideMiddle, 25)), actions, 10 * 1000);
+#else
+    d->transDialog()->showConfirmDialog(info);
+#endif
 }
 
-void TransferHelper::notifyTransferRescult(bool result, const QString &msg)
+void TransferHelper::notifyTransferResult(bool result, const QString &msg)
 {
     QStringList actions;
     if (result)
@@ -340,7 +384,7 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
         handleApplyTransFiles(0);
     } else {
         d->status.storeRelease(Idle);
-        transferResult(false, tr("Connect to \"%1\" failed").arg(d->sendToWho));
+        transferResult(false, tr("Connect to \"%1\" failed").arg(d->who));
     }
 }
 
@@ -374,7 +418,7 @@ void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &
 void TransferHelper::onTransChanged(int status, const QString &path, quint64 size)
 {
     DLOG << "status: " << status << " path=" << path.toStdString();
-    switch(status) {
+    switch (status) {
     case TRANS_CANCELED:
         transferResult(false, tr("The other party has canceled the file transfer"));
         break;
@@ -392,11 +436,16 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
     case TRANS_COUNT_SIZE:
         // only update the total size while rpc notice
         d->transferInfo.totalSize = size;
+        break;
     case TRANS_WHOLE_START:
         updateTransProgress(0);
         break;
     case TRANS_WHOLE_FINISH:
         d->status.storeRelease(Idle);
+        if (d->role == Client) {
+            d->recvFilesSavePath = NetworkUtil::instance()->getStorageFolder();
+            HistoryManager::instance()->writeIntoTransHistory(NetworkUtil::instance()->getConfirmTargetAddress(), d->recvFilesSavePath);
+        }
         transferResult(true, tr("File sent successfully"));
         break;
     case TRANS_INDEX_CHANGE:
@@ -405,17 +454,15 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
         break;
     case TRANS_FILE_SPEED: {
         d->transferInfo.transferSize += size;
-        d->transferInfo.maxTimeS += 1; // 每1秒收到此信息
+        d->transferInfo.maxTimeS += 1;   // 每1秒收到此信息
         updateTransProgress(d->transferInfo.transferSize);
 
-//        double speed = (static_cast<double>(size)) / (1024 * 1024); // 计算下载速度，单位为兆字节/秒
-//        QString formattedSpeed = QString::number(speed, 'f', 2); // 格式化速度为保留两位小数的字符串
-//        DLOG << "Transfer speed: " << formattedSpeed.toStdString() << " M/s";
-    }
-        break;
+        //        double speed = (static_cast<double>(size)) / (1024 * 1024); // 计算下载速度，单位为兆字节/秒
+        //        QString formattedSpeed = QString::number(speed, 'f', 2); // 格式化速度为保留两位小数的字符串
+        //        DLOG << "Transfer speed: " << formattedSpeed.toStdString() << " M/s";
+    } break;
     case TRANS_FILE_DONE:
         break;
-
     }
 }
 
@@ -456,9 +503,8 @@ void TransferHelper::waitForConfirm()
     d->recvFilesSavePath.clear();
 
     // 超时处理
-    // d->confirmTimer.start();
-    d->transDialog()->switchWaitConfirmPage();
-    d->transDialog()->show();
+    d->confirmTimer.start();
+    d->transDialog()->showWaitConfirmDialog();
 }
 
 void TransferHelper::accepted()
@@ -467,6 +513,7 @@ void TransferHelper::accepted()
         d->status.storeRelease(Idle);
         return;
     }
+    d->role = Server;
     updateProgress(1, tr("calculating"));
     NetworkUtil::instance()->doSendFiles(d->readyToSendFiles);
 }

@@ -6,7 +6,7 @@
 #define TRANSFERHELPER_P_H
 
 #include "transferhelper.h"
-#include "dialogs/transferdialog.h"
+#include "dialogs/cooperationdialog.h"
 
 #include <QTimer>
 #include <QMap>
@@ -41,7 +41,7 @@ public:
     explicit TransferHelperPrivate(TransferHelper *qq);
     ~TransferHelperPrivate();
 
-    TransferDialog *transDialog();
+    CooperationTransDialog *transDialog();
 
     void reportTransferResult(bool result);
     void notifyMessage(const QString &body, const QStringList &actions, int expireTimeout);
@@ -50,15 +50,19 @@ public:
 private:
     TransferHelper *q;
 
-    TransferDialog *transferDialog { nullptr };
+    CooperationTransDialog *dialog { nullptr };
 
     QStringList readyToSendFiles;
-    QString sendToWho;
+
+    TransferHelper::TransferType role;
+    QString who;
 
     QAtomicInt status { TransferHelper::Idle };
     TransferInfo transferInfo;
     bool isTransTimeout = false;
     QString recvFilesSavePath;
+
+    QTimer confirmTimer;
 
 #ifdef __linux__
     NoticeUtil *notice { nullptr };

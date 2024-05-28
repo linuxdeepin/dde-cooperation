@@ -20,6 +20,8 @@ public:
 
     // setting
     void updateStorageConfig(const QString &value);
+    QString getStorageFolder() const;
+    QString getConfirmTargetAddress() const;
 
     void searchDevice(const QString &ip);
     void pingTarget(const QString &ip);

@@ -200,6 +200,17 @@ NetworkUtil *NetworkUtil::instance()
 void NetworkUtil::updateStorageConfig(const QString &value)
 {
     d->sessionManager->setStorageRoot(value);
+    d->storageRoot = value;
+}
+
+QString NetworkUtil::getStorageFolder() const
+{
+    return d->storageRoot + QDir::separator() + d->storageFolder;
+}
+
+QString NetworkUtil::getConfirmTargetAddress() const
+{
+    return d->confirmTargetAddress;
 }
 
 void NetworkUtil::searchDevice(const QString &ip)
