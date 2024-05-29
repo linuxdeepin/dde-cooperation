@@ -26,8 +26,6 @@ DWIDGET_USE_NAMESPACE
 #include <QScrollArea>
 #include <QMouseEvent>
 
-#include <utils/cooperationutil.h>
-
 #include <common/commonutils.h>
 
 using namespace cooperation_core;
@@ -339,7 +337,7 @@ bool BottomLabel::eventFilter(QObject *obj, QEvent *event)
 
 void BottomLabel::initUI()
 {
-    QString ip = QString(tr("Local IP: %1").arg(CooperationUtil::localIPAddress()));
+    QString ip = QString(tr("Local IP: %1").arg("---"));
     ipLabel = new QLabel(ip);
     ipLabel->setAlignment(Qt::AlignHCenter);
     ipLabel->setFixedHeight(30);

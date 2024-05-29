@@ -19,6 +19,7 @@ public:
     explicit SortFilterWorker(QObject *parent = nullptr);
 
     void stop();
+    void setSelfip(const QString &value);
 
 public Q_SLOTS:
     void addDevice(const QList<DeviceInfoPointer> &infoList);
@@ -48,6 +49,7 @@ private:
     QList<DeviceInfoPointer> visibleDeviceList;
     QList<DeviceInfoPointer> allDeviceList;
     QString filterText;
+    QString selfip;
     std::atomic_bool isStoped { false };
 };
 

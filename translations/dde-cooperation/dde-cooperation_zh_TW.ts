@@ -26,18 +26,18 @@
 <context>
     <name>cooperation_core::ConfirmWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/win/cooperationdialog.cpp" line="20"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="21"/>
         <source>&quot;%1&quot; send some files to you</source>
         <translation>“%1”向你發送一封文件</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/win/cooperationdialog.cpp" line="27"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="28"/>
         <source>Reject</source>
         <comment>button</comment>
         <translation>拒絕</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/win/cooperationdialog.cpp" line="28"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="29"/>
         <source>Accept</source>
         <comment>button</comment>
         <translation>接受</translation>
@@ -88,7 +88,12 @@
 <context>
     <name>cooperation_core::CooperationTransDialog</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/win/cooperationdialog.cpp" line="173"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="252"/>
+        <source>File Transfer</source>
+        <translation type="unfinished">文件投送</translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="255"/>
         <source>File transfer</source>
         <translation>文件投送</translation>
     </message>
@@ -167,28 +172,28 @@
 <context>
     <name>cooperation_core::DiscoverController</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="65"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="82"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="66"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="83"/>
         <source>Close</source>
         <translation type="unfinished">關閉</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="68"/>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="76"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="85"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="93"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="69"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="86"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned on</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="77"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="94"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
         <translation type="unfinished"></translation>
     </message>
@@ -341,12 +346,12 @@
 <context>
     <name>cooperation_core::ProgressWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/win/cooperationdialog.cpp" line="56"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="106"/>
         <source>Remaining time %1 | %2%</source>
         <translation>剩餘時間 %1 | %2%</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/win/cooperationdialog.cpp" line="70"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="120"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取消</translation>
@@ -355,13 +360,13 @@
 <context>
     <name>cooperation_core::ResultWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/win/cooperationdialog.cpp" line="108"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="161"/>
         <source>Ok</source>
         <comment>button</comment>
         <translation>確定</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/win/cooperationdialog.cpp" line="111"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="164"/>
         <source>View</source>
         <comment>button</comment>
         <translation>查看</translation>
@@ -477,9 +482,9 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="209"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="326"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="335"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="375"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="323"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="332"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="372"/>
         <source>Unable to collaborate to &quot;%1&quot;</source>
         <translation type="unfinished">無法協同至“%1”</translation>
     </message>
@@ -495,77 +500,77 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="241"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="351"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
         <translation type="unfinished">與“%1”的協同已結束</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="283"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
         <translation type="unfinished">接收到“%1”的協同連接請求</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="284"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="281"/>
         <source>Reject</source>
         <translation type="unfinished">拒絕</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="285"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="282"/>
         <source>Accept</source>
         <translation type="unfinished">接受</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="298"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="295"/>
         <source>Cooperation</source>
         <translation type="unfinished">跨端協同</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="321"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="318"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
         <translation type="unfinished">連線成功，正在與“%1”進行協同</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="327"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="324"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
         <translation type="unfinished">“%1”已拒絕您的協同請求</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="336"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="333"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
         <translation type="unfinished">“%1”正在與其他裝置協同</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="369"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="366"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
         <translation type="unfinished">“%1”向您發起連接請求因超時中斷</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="377"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
         <source>The other party does not confirm, please try again later</source>
         <translation type="unfinished">對方未確認，請稍後再發起連接</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="387"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="384"/>
         <source>The other party has cancelled the connection request !</source>
         <translation type="unfinished">對方取消了連接請求！</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="391"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="388"/>
         <source>connect failed</source>
         <translation type="unfinished">連線失敗</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="401"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="398"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
         <translation type="unfinished">網路未連接，文件發送失敗。&#xa0;&#xa0; 請連接網路並重試！</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="408"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="405"/>
         <source>File transfer failed</source>
         <translation type="unfinished">文件傳輸失敗</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="410"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="407"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
         <translation type="unfinished">絡未連接，文件發送失敗。請連接網路並重試！</translation>
     </message>
@@ -590,120 +595,111 @@
     </message>
 </context>
 <context>
-    <name>cooperation_core::TransferDialog</name>
-    <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/transferdialog.cpp" line="41"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/transferdialog.cpp" line="64"/>
-        <source>File Transfer</source>
-        <translation>文件投送</translation>
-    </message>
-    <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/transferdialog.cpp" line="80"/>
-        <source>Wait for confirmation...</source>
-        <translation>等待對方確認...</translation>
-    </message>
-    <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/transferdialog.cpp" line="166"/>
-        <source>Ok</source>
-        <comment>button</comment>
-        <translation>確定</translation>
-    </message>
-    <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/transferdialog.cpp" line="184"/>
-        <source>Cancel</source>
-        <comment>button</comment>
-        <translation>取消</translation>
-    </message>
-    <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/transferdialog.cpp" line="193"/>
-        <source>Remaining time %1 | %2%</source>
-        <translation>剩餘時間 %1 | %2%</translation>
-    </message>
-</context>
-<context>
     <name>cooperation_core::TransferHelper</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="343"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="383"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation>連接到“%1”失敗</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="357"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="397"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="423"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="429"/>
         <source>File read/write exception</source>
         <translation>文件讀寫發生異常</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="367"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="407"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="419"/>
         <source>The other party has canceled the file transfer</source>
         <translation>對方已取消文件投送</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="364"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="404"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="445"/>
         <source>File sent successfully</source>
         <translation>文件投送成功</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="133"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="140"/>
         <source>View transfer history</source>
         <translation>查看文件投送記錄</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="142"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="149"/>
         <source>Send files</source>
         <translation>發送文件</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="264"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="267"/>
         <source>The other party did not receive, the files failed to send</source>
         <translation type="unfinished">對方未接收，文件發送失敗</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="280"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="296"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="299"/>
+        <source>File receiving %1% | Remaining time %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="306"/>
         <source>Sending files to &quot;%1&quot;</source>
         <translation type="unfinished">正在向“%1”投送文件</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="315"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="306"/>
+        <source>Receiving files from &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="353"/>
         <source>Reject</source>
         <translation type="unfinished">拒絕</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="316"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="354"/>
         <source>Accept</source>
         <translation type="unfinished">接受</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="317"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="355"/>
         <source>Close</source>
         <translation type="unfinished">關閉</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="318"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="349"/>
         <source>&quot;%1&quot; send some files to you</source>
         <translation type="unfinished">“%1”向你發送一封文件</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="327"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="281"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="367"/>
         <source>View</source>
         <translation type="unfinished">查看</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="353"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="393"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="425"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
         <translation>儲存空間不足，文件發送失敗。請清理磁碟空間並重試！</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="355"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="395"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="427"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
         <translation>網路未連接，文件發送失敗。請連接網路並重試！</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="425"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="513"/>
         <source>calculating</source>
         <translation>計算中</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="521"/>
         <source>The other party rejects your request</source>
         <translation>對方已拒絕您的請求</translation>
     </message>
@@ -711,21 +707,34 @@
 <context>
     <name>cooperation_core::TransferHelperPrivate</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="107"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="114"/>
         <source>File transfer</source>
         <translation type="unfinished">文件投送</translation>
     </message>
 </context>
 <context>
+    <name>cooperation_core::WaitConfirmWidget</name>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="67"/>
+        <source>File Transfer</source>
+        <translation type="unfinished">文件投送</translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="83"/>
+        <source>Wait for confirmation...</source>
+        <translation type="unfinished">等待對方確認...</translation>
+    </message>
+</context>
+<context>
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="46"/>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="47"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="49"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="50"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>請輸入協同物件的裝置IP/暱稱</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="50"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Nearby Device</source>
         <translation>附近的裝置</translation>
     </message>

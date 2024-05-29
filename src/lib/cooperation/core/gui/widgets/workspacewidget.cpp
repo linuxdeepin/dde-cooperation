@@ -8,6 +8,7 @@
 #include "devicelistwidget.h"
 #include "firsttipwidget.h"
 #include "common/commonutils.h"
+#include "net/networkutil.h"
 
 #include <QMouseEvent>
 #include <QRegularExpression>
@@ -229,6 +230,7 @@ void WorkspaceWidget::setFirstStartTip(bool visible)
 void WorkspaceWidget::setBottomIp(const QString &ip)
 {
     d->bottomLabel->setIp(ip);
+    d->sortFilterWorker.data()->setSelfip(ip);
 }
 
 bool WorkspaceWidget::event(QEvent *event)

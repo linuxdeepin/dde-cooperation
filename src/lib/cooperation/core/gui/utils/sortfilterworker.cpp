@@ -63,6 +63,8 @@ void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
     for (auto info : infoList) {
         if (isStoped)
             return;
+        if (info->ipAddress() == selfip)
+            continue;
 
         // 分别进行更新
         if (contains(allDeviceList, info)) {
@@ -218,4 +220,9 @@ int SortFilterWorker::indexOf(const QList<DeviceInfoPointer> &list, const Device
         return -1;
 
     return index;
+}
+
+void SortFilterWorker::setSelfip(const QString &value)
+{
+    selfip = value;
 }

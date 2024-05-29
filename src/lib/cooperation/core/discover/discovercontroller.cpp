@@ -63,12 +63,8 @@ DeviceInfoPointer DiscoverController::parseDeviceInfo(const QString &info)
     }
 
     auto map = doc.toVariant().toMap();
-//    map.insert("IPAddress", req.host.c_str());
-//                map.insert("OSType", req.flag);
     auto devInfo = DeviceInfo::fromVariantMap(map);
     devInfo->setConnectStatus(DeviceInfo::Connectable);
-//    if (lastInfo.os.share_connect_ip == node.os.ipv4)
-//        devInfo->setConnectStatus(DeviceInfo::Connected);
 
     return devInfo;
 }
@@ -175,14 +171,6 @@ void DiscoverController::onAppAttributeChanged(const QString &group, const QStri
     updatePublish();
 }
 
-void DiscoverController::updateDeviceInfo(const QString &info)
-{
-    auto devInfo = parseDeviceInfo(info);
-    if (!devInfo)
-        return;
-    updateDeviceState(devInfo);
-}
-
 void DiscoverController::addService(QZeroConfService zcs)
 {
     QVariantMap infomap;
@@ -278,9 +266,20 @@ void DiscoverController::refresh()
         auto devInfo = DeviceInfo::fromVariantMap(infomap);
         d->onlineDeviceList.append(devInfo);
     }
+    if (d->searchDevice)
+        d->onlineDeviceList.append(d->searchDevice);
+
     Q_EMIT deviceOnline({ d->onlineDeviceList });
     bool hasFound = d->onlineDeviceList.isEmpty();
     Q_EMIT discoveryFinished(hasFound);
+}
+
+void DiscoverController::addSearchDeivce(const QString &info)
+{
+    auto devInfo = parseDeviceInfo(info);
+    d->searchDevice = devInfo;
+    if (devInfo->isValid())
+        Q_EMIT deviceOnline({ d->searchDevice });
 }
 
 void DiscoverController::startDiscover()

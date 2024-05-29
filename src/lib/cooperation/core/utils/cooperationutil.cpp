@@ -152,6 +152,7 @@ void CooperationUtil::initNetworkListener()
     networkMonitorTimer->setInterval(1000);
     connect(networkMonitorTimer, &QTimer::timeout, this, &CooperationUtil::checkNetworkState);
     networkMonitorTimer->start();
+    emit onlineStateChanged(deepin_cross::CommonUitls::getFirstIp().c_str());
 }
 
 void CooperationUtil::initHistory()

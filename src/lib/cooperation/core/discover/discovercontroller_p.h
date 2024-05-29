@@ -21,6 +21,7 @@ private:
     DiscoverController *q;
     QZeroConf zeroConf;
     QList<DeviceInfoPointer> onlineDeviceList;
+    DeviceInfoPointer searchDevice;
 };
 
 }   // namespace cooperation_core

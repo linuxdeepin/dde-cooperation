@@ -45,8 +45,7 @@ private Q_SLOTS:
     void onDConfigValueChanged(const QString &config, const QString &key);
     void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 
-    // update device info into discovery list.
-    void updateDeviceInfo(const QString &info);
+    void addSearchDeivce(const QString &info);
 
 private:
     explicit DiscoverController(QObject *parent = nullptr);

@@ -40,7 +40,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
 
             // update this device info to discovery list
             q->metaObject()->invokeMethod(DiscoverController::instance(),
-                                          "updateDeviceInfo",
+                                          "addSearchDeivce",
                                           Qt::QueuedConnection,
                                           Q_ARG(QString, QString(req.nick.c_str())));
         }
@@ -248,13 +248,13 @@ void NetworkUtil::reqTargetInfo(const QString &ip)
             return;
         }
 
-        ApplyMessage replay;
-        replay.from_json(json_value);
+        ApplyMessage reply;
+        reply.from_json(json_value);
         // update this device info to discovery list
         metaObject()->invokeMethod(DiscoverController::instance(),
-                                   "updateDeviceInfo",
+                                   "addSearchDeivce",
                                    Qt::QueuedConnection,
-                                   Q_ARG(QString, QString(replay.nick.c_str())));
+                                   Q_ARG(QString, QString(reply.nick.c_str())));
     }
 }
 
