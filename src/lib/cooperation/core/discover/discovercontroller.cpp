@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QTextCodec>
+#include <QJsonDocument>
 #include <common/constant.h>
 #include <configs/dconfig/dconfigmanager.h>
 #include <configs/settings/configmanager.h>
@@ -50,6 +51,26 @@ void DiscoverController::initConnect()
     connect(&d->zeroConf, &QZeroConf::serviceAdded, this, &DiscoverController::addService);
     connect(&d->zeroConf, &QZeroConf::serviceRemoved, this, &DiscoverController::removeService);
     connect(&d->zeroConf, &QZeroConf::serviceUpdated, this, &DiscoverController::updateService);
+}
+
+DeviceInfoPointer DiscoverController::parseDeviceInfo(const QString &info)
+{
+    QJsonParseError error;
+    auto doc = QJsonDocument::fromJson(info.toUtf8(), &error);
+    if (error.error != QJsonParseError::NoError) {
+        ELOG << "parse device info error";
+        return nullptr;
+    }
+
+    auto map = doc.toVariant().toMap();
+//    map.insert("IPAddress", req.host.c_str());
+//                map.insert("OSType", req.flag);
+    auto devInfo = DeviceInfo::fromVariantMap(map);
+    devInfo->setConnectStatus(DeviceInfo::Connectable);
+//    if (lastInfo.os.share_connect_ip == node.os.ipv4)
+//        devInfo->setConnectStatus(DeviceInfo::Connected);
+
+    return devInfo;
 }
 
 QList<DeviceInfoPointer> DiscoverController::getOnlineDeviceList() const
@@ -152,6 +173,14 @@ void DiscoverController::onAppAttributeChanged(const QString &group, const QStri
         CooperationUtil::instance()->setStorageConfig(value.toString());
 
     updatePublish();
+}
+
+void DiscoverController::updateDeviceInfo(const QString &info)
+{
+    auto devInfo = parseDeviceInfo(info);
+    if (!devInfo)
+        return;
+    updateDeviceState(devInfo);
 }
 
 void DiscoverController::addService(QZeroConfService zcs)

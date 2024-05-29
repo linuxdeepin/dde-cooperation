@@ -26,6 +26,7 @@ public:
     void DisconnectAndStop();
 
     bool hasConnected(const std::string &ip);
+    bool connectReplyed();
     proto::OriginMessage sendRequest(const proto::OriginMessage &msg);
 
 protected:
@@ -47,6 +48,7 @@ protected:
 
 private:
     std::atomic<bool> _stop { false };
+    std::atomic<bool> _connect_replay { false };
 
     std::shared_ptr<SessionCallInterface> _callbacks { nullptr };
 

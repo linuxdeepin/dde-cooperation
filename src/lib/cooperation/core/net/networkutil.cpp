@@ -39,12 +39,10 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             *res_msg = res.as_json().serialize();
 
             // update this device info to discovery list
-            //            auto devInfo = q->parseDeviceInfo(QString(req.nick.c_str()));
-            //            if (devInfo && devInfo->isValid() && devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
-            //                QList<DeviceInfoPointer> devInfoList;
-            //                devInfoList << devInfo;
-            //                Q_EMIT q->discoveryFinished(devInfoList);
-            //            }
+            q->metaObject()->invokeMethod(DiscoverController::instance(),
+                                          "updateDeviceInfo",
+                                          Qt::QueuedConnection,
+                                          Q_ARG(QString, QString(req.nick.c_str())));
         }
             return true;
         case APPLY_TRANS: {
@@ -205,15 +203,18 @@ void NetworkUtil::updateStorageConfig(const QString &value)
 void NetworkUtil::searchDevice(const QString &ip)
 {
     DLOG << "searching " << ip.toStdString();
-    pingTarget(ip);
-    reqTargetInfo(ip);
+
+    // session connect and then send rpc request
+    bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    if (logind) {
+        reqTargetInfo(ip);
+    }
 }
 
 void NetworkUtil::pingTarget(const QString &ip)
 {
     // session connect by async, handle status in callback
     d->sessionManager->sessionPing(ip, COO_SESSION_PORT);
-    //    emit CooperationManager::instance()->handleSearchDeviceResult(pong);
 }
 
 void NetworkUtil::reqTargetInfo(const QString &ip)
@@ -229,7 +230,6 @@ void NetworkUtil::reqTargetInfo(const QString &ip)
         // transfer request send exception, it perhaps network error
         WLOG << "Send APPLY_TRANS failed.";
     } else {
-        WLOG << "APPLY_TRANS replay:" << res.toStdString();
         picojson::value json_value;
         std::string err = picojson::parse(json_value, res.toStdString());
         if (!err.empty()) {
@@ -240,12 +240,10 @@ void NetworkUtil::reqTargetInfo(const QString &ip)
         ApplyMessage replay;
         replay.from_json(json_value);
         // update this device info to discovery list
-        //        auto devInfo = parseDeviceInfo(replay.nick.c_str());
-        //        if (devInfo && devInfo->isValid() && devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
-        //            QList<DeviceInfoPointer> devInfoList;
-        //            devInfoList << devInfo;
-        //            Q_EMIT discoveryFinished(devInfoList);
-        //        }
+        metaObject()->invokeMethod(DiscoverController::instance(),
+                                   "updateDeviceInfo",
+                                   Qt::QueuedConnection,
+                                   Q_ARG(QString, QString(replay.nick.c_str())));
     }
 }
 
@@ -282,7 +280,12 @@ void NetworkUtil::sendTransApply(const QString &ip)
 
 void NetworkUtil::sendShareEvents(const QString &ip)
 {
-    d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    if (!logind) {
+        WLOG << "fail to login: " << ip.toStdString() << " pls try again.";
+        return;
+    }
+
     DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(CooperationUtil::localIPAddress());
     // session connect and then send rpc request
     ApplyMessage msg;
@@ -299,7 +302,12 @@ void NetworkUtil::sendShareEvents(const QString &ip)
 
 void NetworkUtil::sendDisconnectShareEvents(const QString &ip)
 {
-    d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
+    if (!logind) {
+        WLOG << "fail to login: " << ip.toStdString() << " pls try again.";
+        return;
+    }
+
     DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(CooperationUtil::localIPAddress());
     // session connect and then send rpc request
     ApplyMessage msg;

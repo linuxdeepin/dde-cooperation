@@ -184,10 +184,6 @@ void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer in
         << " device name: " << name.toStdString();
 
     if (id == TransferButtonId) {
-
-        // connect remote to prepare transfer
-        NetworkUtil::instance()->pingTarget(ip);
-
         QStringList selectedFiles = qApp->property("sendFiles").toStringList();
         if (selectedFiles.isEmpty())
             selectedFiles = QFileDialog::getOpenFileNames(qApp->activeWindow());

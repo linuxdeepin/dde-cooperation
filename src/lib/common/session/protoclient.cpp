@@ -16,6 +16,7 @@ void ProtoClient::setCallbacks(std::shared_ptr<SessionCallInterface> callbacks) 
 void ProtoClient::DisconnectAndStop()
 {
     _stop = true;
+    _connect_replay = false;
     DisconnectAsync();
     while (IsConnected())
         CppCommon::Thread::Yield();
@@ -24,6 +25,11 @@ void ProtoClient::DisconnectAndStop()
 bool ProtoClient::hasConnected(const std::string &ip)
 {
     return ip == _connected_host;
+}
+
+bool ProtoClient::connectReplyed()
+{
+    return _connect_replay;
 }
 
 proto::OriginMessage ProtoClient::sendRequest(const proto::OriginMessage &msg)
@@ -37,6 +43,7 @@ proto::OriginMessage ProtoClient::sendRequest(const proto::OriginMessage &msg)
 void ProtoClient::onConnected()
 {
 //    std::cout << "Protocol client connected a new session with Id " << id() << " ip:" << address() << std::endl;
+    _connect_replay = true;
 
     // Reset FBE protocol buffers
     reset();
@@ -50,6 +57,7 @@ void ProtoClient::onConnected()
 void ProtoClient::onDisconnected()
 {
 //    std::cout << "Protocol client disconnected a session with Id " << id() << std::endl;
+    _connect_replay = true;
 
     bool retry = true;
     if (_callbacks) {
@@ -71,6 +79,7 @@ void ProtoClient::onDisconnected()
 void ProtoClient::onError(int error, const std::string &category, const std::string &message)
 {
     std::cout << "Protocol client caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
+    _connect_replay = true;
     if (_callbacks) {
         std::string err = std::to_string(error);
         _callbacks->onStateChanged(RPC_ERROR, err);

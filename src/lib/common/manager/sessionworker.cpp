@@ -352,7 +352,12 @@ bool SessionWorker::connect(QString &address, int port)
             _client->setCallbacks(self);
         }
     }
+
     _client->ConnectAsync();
+    // wait until has reply.
+    while (!_client->connectReplyed()) {
+        CppCommon::Thread::Yield();
+    };
 
     return _client->IsConnected();
 }

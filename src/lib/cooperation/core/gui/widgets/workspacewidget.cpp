@@ -17,6 +17,8 @@
 
 #include <gui/utils/cooperationguihelper.h>
 
+#include <net/networkutil.h>
+
 using namespace cooperation_core;
 
 WorkspaceWidgetPrivate::WorkspaceWidgetPrivate(WorkspaceWidget *qq)
@@ -117,7 +119,7 @@ void WorkspaceWidgetPrivate::onSearchDevice()
 
     q->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
     QTimer::singleShot(500, this, [ip] {
-        //   TransferHelper::instance()->searchDevice(ip);
+        NetworkUtil::instance()->searchDevice(ip);
     });
 }
 
