@@ -8,7 +8,7 @@
 #include <QStackedWidget>
 #include <QCheckBox>
 #include <QTextBrowser>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 
 PromptWidget::PromptWidget(QWidget *parent)
     : QFrame(parent)

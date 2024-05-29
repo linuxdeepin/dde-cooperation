@@ -8,7 +8,7 @@
 #include <QTextBrowser>
 #include <QTimer>
 #include <QStackedWidget>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 
 ResultDisplayWidget::ResultDisplayWidget(QWidget *parent)
     : QFrame(parent)

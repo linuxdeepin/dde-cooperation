@@ -1,5 +1,8 @@
 ﻿#include "settinghepler.h"
-#include "transferhepler.h"
+
+#include "common/log.h"
+
+#include <net/helper/transferhepler.h>
 
 #include <QDebug>
 #include <QJsonObject>

@@ -6,8 +6,7 @@
 #include "common/commonutils.h"
 #include "gui/mainwindow.h"
 
-#include <utils/transferhepler.h>
-#include <utils/transferworker.h>
+#include <net/helper/transferhepler.h>
 
 using namespace data_transfer_core;
 using namespace deepin_cross;

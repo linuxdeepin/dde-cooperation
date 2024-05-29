@@ -20,7 +20,7 @@
 #include <gui/transfer/resultdisplay.h>
 #include <gui/transfer/waittransferwidget.h>
 
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 
 DWIDGET_USE_NAMESPACE
 DTK_USE_NAMESPACE

@@ -29,12 +29,6 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
 
-#加快qrc编译
-qt5_add_resources(QRC_RESOURCES resources.qrc)
-list(APPEND QRC_RESOURCES resources.qrc)
-set_property(SOURCE resources.qrc PROPERTY SKIP_AUTORCC ON)
-list(APPEND RESOURCE_FILES ${QRC_RESOURCES})
-
 #如果是Windows平台，则生成rc文件，还有inno setup脚本文件
 set(VERSION_RC_PATH "")
 if (WIN32)

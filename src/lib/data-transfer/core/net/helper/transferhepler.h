@@ -1,12 +1,12 @@
 ﻿#ifndef TRANSFERHELPER_H
 #define TRANSFERHELPER_H
 
-#include "transferworker.h"
 #include "common/log.h"
 
 #include <QMap>
 #include <QObject>
-#include "../gui/type_defines.h"
+#include "gui/type_defines.h"
+
 #ifdef __linux__
 #    include <QDBusMessage>
 #endif
@@ -24,22 +24,17 @@ public:
 
     static TransferHelper *instance();
 
-    QString getConnectPassword();
-    bool getOnlineState() const;
-    bool getConnectStatus() const;
-
+    QString updateConnectPassword();
     void tryConnect(const QString &ip, const QString &password);
 
     void disconnectRemote();
-
     QString getJsonfile(const QJsonObject &jsonData, const QString &save);
-
     bool cancelTransferJob();
-
     void emitDisconnected();
-
     void sendMessage(const QString &type, const QString &message);
-#if defined(_WIN32) || defined(_WIN64)
+
+#ifndef __linux__
+
     QMap<QString, QString> getAppList(QMap<QString, QString> &noRecommedApplist);
     QMap<QString, QString> getBrowserList();
     QStringList getTransferFilePath(QStringList filePathList, QStringList appList,
@@ -49,10 +44,9 @@ public:
                             QString bookmarksName, QString wallPaperName, QString tempSavePath);
     void Retransfer(const QString jsonstr);
     QString defaultBackupFileName();
-#else
+#endif
+
 public:
-    static int getRemainSize();
-    bool checkSize(const QString &filepath);
     void setting(const QString &filepath);
     void recordTranferJob(const QString &filepath);
     bool isUnfinishedJob(QString &content);
@@ -63,7 +57,6 @@ private:
     QMap<QString, int64_t> finshedFiles;
     bool isSetting = false;
     QString connectIP;
-#endif
 
 Q_SIGNALS:
     // transfer state
@@ -114,12 +107,6 @@ Q_SIGNALS:
     void remoteRemainSpace(int size);
 
 private:
-    void initOnlineState();
-    QString tempCacheDir();
-
-private:
-    std::shared_ptr<TransferHandle> _transferhandle { nullptr };
     bool online = true;
 };
-
 #endif

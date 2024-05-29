@@ -1,47 +1,28 @@
-﻿#include "optionsmanager.h"
+﻿#include "transferhepler.h"
 
-#include "transferhepler.h"
+#include "utils/optionsmanager.h"
+#include "utils/settinghepler.h"
+#include "utils/transferutil.h"
 #include "common/commonutils.h"
 
-#include <QDateTime>
-#include <QRandomGenerator>
+#include "net/networkutil.h"
+
 #include <QDebug>
-#include <QDir>
-#include <QStorageInfo>
-#include <QCoreApplication>
 #include <QTimer>
 #include <QJsonDocument>
-
 #include <QJsonObject>
-#include <QGuiApplication>
 #include <QJsonArray>
-#include <QJsonObject>
-
-#include <QTextCodec>
-#include <QScreen>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QProcess>
-#include <QJsonArray>
-#include <QStandardPaths>
-#include <QNetworkInterface>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
 
 #if defined(_WIN32) || defined(_WIN64)
 #    include <gui/win/drapwindowsdata.h>
-#else
-#    include "settinghepler.h"
 #endif
 
-//#pragma execution_character_set("utf-8")
 TransferHelper::TransferHelper()
     : QObject()
 {
-    if (!_transferhandle) {
-        _transferhandle = std::make_shared<TransferHandle>();
-        _transferhandle->init();
-    }
-
-    initOnlineState();
 #ifdef __linux__
     SettingHelper::instance();
     connect(this, &TransferHelper::transferFinished, this, [this]() { isSetting = false; });
@@ -56,91 +37,28 @@ TransferHelper *TransferHelper::instance()
     return &ins;
 }
 
-void TransferHelper::initOnlineState()
+QString TransferHelper::updateConnectPassword()
 {
-    //初始化网络监控
-    QTimer *timer = new QTimer(this);
-    QObject::connect(timer, &QTimer::timeout, [this]() {
-        // 网络状态检测
-        bool isConnected = deepin_cross::CommonUitls::getFirstIp().size() > 0;
-        if (isConnected != online) {
-            LOG << "Network is" << isConnected;
-            online = isConnected;
-            Q_EMIT onlineStateChanged(isConnected);
-            if (_transferhandle->isTransferring())
-                Q_EMIT interruption();
-        }
-    });
+    QString password = TransferUtil::generateRandomNumber();
 
-    timer->start(1000);
-}
-
-QString TransferHelper::tempCacheDir()
-{
-    QString savePath =
-            QString("%1/%2/%3/")
-                    .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
-                    .arg(qApp->organizationName())
-                    .arg(qApp->applicationName());   //~/.cache/deepin/xx
-
-    QDir cacheDir(savePath);
-    if (!cacheDir.exists())
-        QDir().mkpath(savePath);
-
-    return savePath;
-}
-
-bool TransferHelper::getOnlineState() const
-{
-    return online;
-}
-
-bool TransferHelper::getConnectStatus() const
-{
-    return true;
-}
-
-QString TransferHelper::getConnectPassword()
-{
-    return _transferhandle->getConnectPassWord();
-}
-
-bool TransferHelper::cancelTransferJob()
-{
-    return _transferhandle->cancelTransferJob();
+    NetworkUtil::instance()->updatePassword(password);
+    return password;
 }
 
 void TransferHelper::tryConnect(const QString &ip, const QString &password)
 {
-    _transferhandle->tryConnect(ip, password);
+    NetworkUtil::instance()->doConnect(ip, password);
+}
+
+bool TransferHelper::cancelTransferJob()
+{
+    // return _transferhandle->cancelTransferJob();
+    return true;
 }
 
 void TransferHelper::disconnectRemote()
 {
-    _transferhandle->disconnectRemote();
-}
-
-QString TransferHelper::getJsonfile(const QJsonObject &jsonData, const QString &save)
-{
-    QString savePath = save;
-    QJsonDocument jsonDoc(jsonData);
-
-    if (savePath.isEmpty()) {
-        savePath = QString("./transfer.json");
-    } else {
-        savePath += "/transfer.json";
-    }
-
-    QFile file(savePath);
-    if (file.open(QIODevice::WriteOnly)) {
-        file.write(jsonDoc.toJson());
-        file.close();
-        DLOG << "JSON data exported to transfer.json";
-        return savePath;
-    } else {
-        DLOG << "Failed to open file for writing.";
-        return QString();
-    }
+    //  _transferhandle->disconnectRemote();
 }
 
 void TransferHelper::emitDisconnected()
@@ -150,9 +68,8 @@ void TransferHelper::emitDisconnected()
 #endif
         emit disconnected();
 }
+#ifndef __linux__
 
-
-#if defined(_WIN32) || defined(_WIN64)
 void TransferHelper::startTransfer()
 {
     QStringList filePathList = OptionsManager::instance()->getUserOption(Options::kFile);
@@ -238,46 +155,6 @@ QStringList TransferHelper::getTransferFilePath(QStringList filePathList, QStrin
 
     return transferFilePathList;
 }
-QString TransferHelper::getTransferJson(QStringList appList, QStringList fileList,
-                                        QStringList browserList, QString bookmarksName,
-                                        QString wallPaperName, QString tempSavePath)
-{
-    // add app
-    QJsonArray appArray;
-    for (auto app : appList) {
-        appArray.append(app);
-    }
-    // add file
-    QJsonArray fileArray;
-    LOG << "home_path:" << QDir::homePath().toStdString();
-    for (QString file : fileList) {
-        if (file.contains(QDir::homePath()))
-            file.replace(QDir::homePath() + "/", "");
-        fileArray.append(file);
-    }
-    // add browser
-    QJsonArray browserArray;
-    for (QString browser : browserList) {
-        browserArray.append(browser);
-    }
-
-    QJsonObject jsonObject;
-    QString userData = OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0];
-    jsonObject["user_data"] = userData;
-    jsonObject["user_file"] = fileArray;
-    if (!appArray.isEmpty())
-        jsonObject["app"] = appArray;
-    if (!wallPaperName.isEmpty())
-        jsonObject["wallpapers"] = wallPaperName;
-    if (!bookmarksName.isEmpty())
-        jsonObject["browserbookmark"] = bookmarksName;
-    if (!browserList.isEmpty())
-        jsonObject["browsersName"] = browserArray;
-
-    QString jsonfilePath = getJsonfile(jsonObject, QString(tempSavePath));
-    LOG << "transfer.json save path:" << jsonfilePath.toStdString();
-    return jsonfilePath;
-}
 
 void TransferHelper::Retransfer(const QString jsonstr)
 {
@@ -344,35 +221,14 @@ QString TransferHelper::defaultBackupFileName()
     return QString(DrapWindowsData::instance()->getUserName() + "_"
                    + DrapWindowsData::instance()->getIP() + "_" + formattedDateTime);
 }
-
-#else
-
-bool TransferHelper::checkSize(const QString &filepath)
-{
-    QJsonObject jsonObj = SettingHelper::ParseJson(filepath);
-    if (jsonObj.isEmpty())
-        return false;
-    auto sizestr = jsonObj["user_data"].toString();
-    auto size = static_cast<int>(QVariant(sizestr).toLongLong() / 1024 / 1024 / 1024) * 2;
-    LOG << "The actual size is " << sizestr.toStdString() << "B "
-        << "Two times the space needs to be reserved" << size << "G";
-    int remainSize = getRemainSize();
-    if (size >= remainSize) {
-        LOG << "outOfStorage" << size;
-        emit outOfStorage(size);
-        cancelTransferJob();
-        disconnectRemote();
-        return false;
-    }
-    return true;
-}
+#endif
 
 void TransferHelper::recordTranferJob(const QString &filepath)
 {
     // 1.copy transferjson to temp
     QFile jsonfile(filepath);
     QFileInfo info(jsonfile);
-    QString tempPath(tempCacheDir() + connectIP + "transfer-temp.json");
+    QString tempPath(TransferUtil::tempCacheDir() + connectIP + "transfer-temp.json");
     QFile tempfile(tempPath);
     if (tempfile.exists())
         tempfile.remove();
@@ -449,24 +305,6 @@ void TransferHelper::recordTranferJob(const QString &filepath)
     });
 }
 
-bool TransferHelper::isUnfinishedJob(QString &content)
-{
-    QString transtempPath(tempCacheDir() + connectIP + "transfer-temp.json");
-    QFile f(transtempPath);
-    if (!f.exists())
-        return false;
-    LOG << "has UnfinishedJob: " << transtempPath.toStdString();
-    if (!f.open(QIODevice::ReadOnly)) {
-        WLOG << "could not open file";
-        return false;
-    }
-    QByteArray bytes = f.readAll();
-    content = QString(bytes.data());
-    f.close();
-
-    return true;
-}
-
 void TransferHelper::addFinshedFiles(const QString &filepath, int64_t size)
 {
     finshedFiles.insert(filepath, size);
@@ -484,11 +322,3 @@ void TransferHelper::setting(const QString &filepath)
     isSetting = true;
     SettingHelper::instance()->handleDataConfiguration(filepath);
 }
-
-int TransferHelper::getRemainSize()
-{
-    QStorageInfo storage("/home");
-    auto remainSize = storage.bytesAvailable() / 1024 / 1024 / 1024;
-    return static_cast<int>(remainSize);
-}
-#endif

@@ -8,7 +8,7 @@
 #include <QStackedWidget>
 #include <QMovie>
 
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 
 WaitTransferWidget::WaitTransferWidget(QWidget *parent)
     : QFrame(parent)

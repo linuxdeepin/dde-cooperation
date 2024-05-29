@@ -6,7 +6,7 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include "../type_defines.h"
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 NetworkDisconnectionWidget::NetworkDisconnectionWidget(QWidget *parent)
     : QFrame(parent)
 {

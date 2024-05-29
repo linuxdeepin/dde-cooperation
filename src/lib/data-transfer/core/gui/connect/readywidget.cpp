@@ -11,7 +11,7 @@
 #include <QRegularExpressionValidator>
 #include <QTimer>
 
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 
 ReadyWidget::ReadyWidget(QWidget *parent)
     : QFrame(parent)

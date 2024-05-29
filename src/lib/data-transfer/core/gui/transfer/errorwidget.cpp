@@ -7,7 +7,7 @@
 #include <QVBoxLayout>
 #include <QStackedWidget>
 #include <QDebug>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 
 ErrorWidget::ErrorWidget(QWidget *parent)
     : QFrame(parent)

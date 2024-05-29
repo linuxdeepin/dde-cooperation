@@ -12,7 +12,7 @@
 #    include <QNetworkInterface>
 #    include <QDesktopServices>
 
-#    include <utils/transferhepler.h>
+#    include <net/helper/transferhepler.h>
 
 ConnectWidget::ConnectWidget(QWidget *parent)
     : QFrame(parent)
@@ -135,7 +135,7 @@ void ConnectWidget::initConnectLayout()
     ipVLayout->setAlignment(Qt::AlignCenter);
 
     //passwordLayout
-    QString password = TransferHelper::instance()->getConnectPassword();
+    QString password = TransferHelper::instance()->updateConnectPassword();
     remainingTime = 300;
 
     QHBoxLayout *passwordHLayout = new QHBoxLayout();
@@ -181,7 +181,7 @@ void ConnectWidget::initConnectLayout()
     });
     timer->start(1000);
     connect(refreshLabel, &QLabel::linkActivated, this, [this, timer, passwordLabel, tipLabel, nullLabel] {
-        QString password = TransferHelper::instance()->getConnectPassword();
+        QString password = TransferHelper::instance()->updateConnectPassword();
         passwordLabel->setText(password);
         tipLabel->setVisible(true);
         passwordLabel->setVisible(true);

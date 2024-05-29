@@ -30,12 +30,14 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/connect/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferhepler.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferhepler.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferworker.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferworker.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/optionsmanager.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/optionsmanager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferutil.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferutil.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
@@ -79,8 +81,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components}
 qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
 
 list(APPEND LINKLIBS cpplogging)
-list(APPEND LINKLIBS session)
-list(APPEND LINKLIBS httpweb)
+list(APPEND LINKLIBS sessionmanager)
 
 add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}

@@ -7,7 +7,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDir>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
+#include <utils/transferutil.h>
 
 #include <QTimer>
 #include <zip.h>
@@ -101,7 +102,7 @@ bool UnzipWorker::isValid(QString filepath)
     fclose(outputFile);
 
     zip_close(z);
-    bool res = TransferHelper::instance()->checkSize(tempfile);
+    bool res = TransferUtil::checkSize(tempfile);
     QFile::remove(tempfile);
     return res;
 }

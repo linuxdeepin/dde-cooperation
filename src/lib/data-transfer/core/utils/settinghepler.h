@@ -3,9 +3,9 @@
 
 #include <QMap>
 #include <QObject>
-#include <QDBusMessage>
 #include <QUrl>
 
+class QDBusMessage;
 class SettingHelper : public QObject
 {
     Q_OBJECT

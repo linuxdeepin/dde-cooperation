@@ -14,7 +14,7 @@
 #include <QMimeData>
 #include <QUrl>
 
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 
 UploadFileWidget::UploadFileWidget(QWidget *parent)
     : QFrame(parent)
@@ -126,11 +126,11 @@ bool UploadFileWidget::checkBackupFile(const QString &filePath)
     QFileInfo info(filePath);
     LOG << "checkBackupFile .size();" << info.size();
     int size = static_cast<int>(info.size() / 1024 / 1024 / 1024) * 2;
-    if (size >= TransferHelper::getRemainSize()) {
-        tipLabel->setVisible(true);
-        tipLabel->setText(tr("Insufficient space on UOS. Please reserve at least %1G of space and try again.").arg(size));
-        return false;
-    }
+//    if (size >= TransferHelper::getRemainSize()) {
+//        tipLabel->setVisible(true);
+//        tipLabel->setText(tr("Insufficient space on UOS. Please reserve at least %1G of space and try again.").arg(size));
+//        return false;
+//    }
     return true;
 }
 

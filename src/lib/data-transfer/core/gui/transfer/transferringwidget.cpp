@@ -13,7 +13,7 @@
 #include <QMovie>
 #include <QStandardItemModel>
 
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 #include <utils/optionsmanager.h>
 #include <common/commonutils.h>
 
@@ -169,7 +169,7 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     }
 #else
     if (tpye == tr("Transfering") && content.contains("transfer.json"))
-        TransferHelper::instance()->checkSize(content);
+        //TransferHelper::instance()->checkSize(content);
 #endif
 
     if (estimatedtime == -1)
