@@ -22,6 +22,10 @@ private:
     QZeroConf zeroConf;
     QList<DeviceInfoPointer> onlineDeviceList;
     DeviceInfoPointer searchDevice;
+    //过滤非同子网段
+    QString ipfilter;
+    //发现服务名，需要为局域网唯一
+    QString zeroconfname;
 };
 
 }   // namespace cooperation_core

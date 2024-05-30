@@ -8,6 +8,8 @@
 #include <QCloseEvent>
 #include <QMovie>
 
+#include "gui/utils/cooperationguihelper.h"
+
 using namespace cooperation_core;
 
 ConfirmWidget::ConfirmWidget(QWidget *parent)
@@ -25,6 +27,7 @@ void ConfirmWidget::setDeviceName(const QString &name)
 void ConfirmWidget::init()
 {
     msgLabel = new CooperationLabel(this);
+    msgLabel->setWordWrap(true);
     rejectBtn = new QPushButton(tr("Reject", "button"), this);
     acceptBtn = new QPushButton(tr("Accept", "button"), this);
 
@@ -36,7 +39,8 @@ void ConfirmWidget::init()
     btnLayout->addWidget(acceptBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(msgLabel, 1, Qt::AlignHCenter);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->addWidget(msgLabel, 1, Qt::AlignCenter);
     mainLayout->addLayout(btnLayout, 1);
 }
 
@@ -112,6 +116,10 @@ void ProgressWidget::init()
     titleLabel = new CooperationLabel(this);
     msgLabel = new CooperationLabel(this);
 
+    CooperationGuiHelper::setAutoFont(msgLabel, 12, QFont::Normal);
+    QColor color(0, 0, 0, 180);
+    CooperationGuiHelper::setFontColor(msgLabel, color);
+
     progressBar = new QProgressBar(this);
     progressBar->setRange(0, 100);
     progressBar->setTextVisible(false);
@@ -121,10 +129,13 @@ void ProgressWidget::init()
     connect(cancelBtn, &QPushButton::clicked, this, &ProgressWidget::canceled);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
     mainLayout->addWidget(titleLabel, 1, Qt::AlignHCenter);
     mainLayout->addWidget(progressBar, 1);
     mainLayout->addWidget(msgLabel, 1, Qt::AlignHCenter);
     mainLayout->addWidget(cancelBtn, 1);
+    setFixedHeight(150);
 }
 
 ResultWidget::ResultWidget(QWidget *parent)
@@ -170,8 +181,9 @@ void ResultWidget::init()
     btnLayout->addWidget(viewBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(0, 5, 0, 0);
     mainLayout->addWidget(iconLabel, 1, Qt::AlignHCenter);
-    mainLayout->addWidget(msgLabel, 1);
+    mainLayout->addWidget(msgLabel, 1, Qt::AlignCenter);
     mainLayout->addLayout(btnLayout, 1);
 }
 
@@ -197,6 +209,7 @@ void CooperationTransDialog::showWaitConfirmDialog()
 {
     waitconfirmWidget->startMovie();
     mainLayout->setCurrentWidget(waitconfirmWidget);
+    setFixedHeight(234);
     setHidden(false);
 }
 
@@ -213,6 +226,7 @@ void CooperationTransDialog::showProgressDialog(const QString &title)
         return;
 
     progressWidget->setTitle(title);
+    setFixedHeight(223);
     mainLayout->setCurrentWidget(progressWidget);
     setHidden(false);
 }

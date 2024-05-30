@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QTextCodec>
 #include <QJsonDocument>
+
 #include <common/constant.h>
 #include <configs/dconfig/dconfigmanager.h>
 #include <configs/settings/configmanager.h>
@@ -34,8 +35,10 @@ DiscoverController::DiscoverController(QObject *parent)
     if (!d->zeroConf.browserExists())
         d->zeroConf.startBrowser(UNI_CHANNEL);
 
-    initConnect();
     publish();
+    initConnect();
+    QString machineUniqueId = QSysInfo::machineUniqueId();
+    d->zeroconfname = machineUniqueId;
 }
 
 DiscoverController::~DiscoverController()
@@ -44,6 +47,10 @@ DiscoverController::~DiscoverController()
 
 void DiscoverController::initConnect()
 {
+    connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, this, [this] {
+        updatePublish();
+        refresh();
+    });
 #ifdef linux
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &DiscoverController::onDConfigValueChanged);
 #endif
@@ -51,6 +58,14 @@ void DiscoverController::initConnect()
     connect(&d->zeroConf, &QZeroConf::serviceAdded, this, &DiscoverController::addService);
     connect(&d->zeroConf, &QZeroConf::serviceRemoved, this, &DiscoverController::removeService);
     connect(&d->zeroConf, &QZeroConf::serviceUpdated, this, &DiscoverController::updateService);
+}
+
+bool DiscoverController::isVaildDevice(const DeviceInfoPointer info)
+{
+    if (info->ipAddress().isEmpty() || !info->ipAddress().startsWith(d->ipfilter))
+        return false;
+    else
+        return true;
 }
 
 DeviceInfoPointer DiscoverController::parseDeviceInfo(const QString &info)
@@ -178,7 +193,7 @@ void DiscoverController::addService(QZeroConfService zcs)
         infomap.insert(key, zcs->txt().value(key));
 
     auto devInfo = DeviceInfo::fromVariantMap(infomap);
-    if (devInfo->ipAddress().isEmpty())
+    if (!isVaildDevice(devInfo))
         return;
 
     d->onlineDeviceList.append(devInfo);
@@ -192,7 +207,7 @@ void DiscoverController::updateService(QZeroConfService zcs)
         infomap.insert(key, zcs->txt().value(key));
 
     auto devInfo = DeviceInfo::fromVariantMap(infomap);
-    if (devInfo->ipAddress().isEmpty())
+    if (!isVaildDevice(devInfo))
         return;
 
     auto oldinfo = findDeviceByIP(devInfo->ipAddress());
@@ -209,7 +224,7 @@ void DiscoverController::removeService(QZeroConfService zcs)
         infomap.insert(key, zcs->txt().value(key));
 
     auto devInfo = DeviceInfo::fromVariantMap(infomap);
-    if (devInfo->ipAddress().isEmpty())
+    if (!isVaildDevice(devInfo))
         return;
 
     auto oldinfo = findDeviceByIP(devInfo->ipAddress());
@@ -233,12 +248,15 @@ void DiscoverController::publish()
     if (deviceInfo.value(AppSettings::DiscoveryModeKey) == 1)
         return;
 
-    deviceInfo.insert(AppSettings::IPAddress, CooperationUtil::localIPAddress());
-    qWarning() << "publish:-------" << deviceInfo;
+    QString selfIP = CooperationUtil::localIPAddress();
+    d->ipfilter = selfIP.lastIndexOf(".") != -1 ? selfIP.left(selfIP.lastIndexOf(".")) : "";
+
+    deviceInfo.insert(AppSettings::IPAddress, selfIP);
+    qInfo() << "publish:-------" << deviceInfo;
     for (const auto &key : deviceInfo.keys())
         d->zeroConf.addServiceTxtRecord(key, deviceInfo.value(key).toString());
 
-    d->zeroConf.startServicePublish(CooperationUtil::localIPAddress().toUtf8(), UNI_CHANNEL, "local", UNI_RPC_PORT_UDP);
+    d->zeroConf.startServicePublish(d->zeroconfname.toUtf8(), UNI_CHANNEL, "local", UNI_RPC_PORT_UDP);
 }
 
 void DiscoverController::unpublish()
@@ -264,7 +282,8 @@ void DiscoverController::refresh()
             infomap.insert(key, zcs->txt().value(key));
 
         auto devInfo = DeviceInfo::fromVariantMap(infomap);
-        d->onlineDeviceList.append(devInfo);
+        if (isVaildDevice(devInfo))
+            d->onlineDeviceList.append(devInfo);
     }
     if (d->searchDevice)
         d->onlineDeviceList.append(d->searchDevice);

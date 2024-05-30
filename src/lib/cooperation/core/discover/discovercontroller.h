@@ -52,7 +52,7 @@ private:
     ~DiscoverController();
 
     void initConnect();
-
+    bool isVaildDevice(const DeviceInfoPointer info);
     DeviceInfoPointer parseDeviceInfo(const QString &info);
 
 private:
