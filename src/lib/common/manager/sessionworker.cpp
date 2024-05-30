@@ -172,13 +172,14 @@ bool SessionWorker::onStateChanged(int state, std::string &msg)
     case RPC_CONNECTED: {
         _connectedAddress = addr;
         DLOG << "connected remote: " << msg;
+        _tryConnect = true;
         result = true;
     }
     break;
     case RPC_DISCONNECTED: {
         if (addr.isEmpty()) {
-            DLOG << "first connect remote, retry...";
-            return true;
+            DLOG << "disconnect with NULL, retry? " << _tryConnect;
+            return _tryConnect;
         } else {
             DLOG << "disconnected remote: " << msg;
             emit onRemoteDisconnected(addr);
@@ -186,10 +187,14 @@ bool SessionWorker::onStateChanged(int state, std::string &msg)
     }
     break;
     case RPC_ERROR: {
+        // code = 110: timeout, unabled ping
         DLOG << "error remote code: " << msg;
         int code = std::stoi(msg);
-        if (asio::error::host_unreachable == code) {
-            DLOG << "ping failed: " << msg;
+        if (asio::error::host_unreachable == code
+            || asio::error::timed_out == code) {
+            DLOG << "ping failed or timeout: " << msg;
+            emit onConnectChanged(code, addr);
+            return false;
         }
     }
     break;
@@ -349,10 +354,15 @@ bool SessionWorker::connect(QString &address, int port)
         }
     }
 
+    int wait_cout = 0;
+    _tryConnect = false;
     _client->ConnectAsync();
     // wait until has reply.
     while (!_client->connectReplyed()) {
+        if (wait_cout > 50000)
+            break;
         CppCommon::Thread::Yield();
+        wait_cout++;
     };
 
     return _client->IsConnected();

@@ -90,7 +90,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             q->metaObject()->invokeMethod(ShareHelper::instance(),
                                           "handleConnectResult",
                                           Qt::QueuedConnection,
-                                          Q_ARG(int, agree ? 1 : 0));
+                                          Q_ARG(int, agree ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE));
         }
             return true;
         case APPLY_SHARE_STOP: {
@@ -136,36 +136,28 @@ NetworkUtilPrivate::~NetworkUtilPrivate()
 
 void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
 {
+    DLOG << " connect status: " << result << " " << reason.toStdString();
+    if (result == 113 || result == 110) {
+        // host unreachable or timeout
+        metaObject()->invokeMethod(DiscoverController::instance(),
+                                   "addSearchDeivce",
+                                   Qt::QueuedConnection,
+                                   Q_ARG(QString, ""));
+        return;
+    }
     if (result == -2) {
         // error hanppend
-        int code = reason.toInt();
-        if (code == 113) {
-            // host unreachable
-            q->metaObject()->invokeMethod(ShareHelper::instance(),
-                                          "handleSearchDeviceResult",
-                                          Qt::QueuedConnection,
-                                          Q_ARG(bool, false));
-        }
-
+        DLOG << "connect error, reason = " << reason.toStdString();
     } else if (result == -1) {
         // disconnected
-        // if there are trans or share working, notify network disconnect
-        //        q->metaObject()->invokeMethod(MainController::instance(),
-        //                                      "onNetworkMiss",
-        //                                      Qt::QueuedConnection);
+        q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, 0),
+                                      Q_ARG(QString, reason),
+                                      Q_ARG(bool, false));
     } else if (result == 2) {
         // connected
-        //        q->metaObject()->invokeMethod(CooperationManager::instance(),
-        //                                                      "handleSearchDeviceResult",
-        //                                                      Qt::QueuedConnection,
-        //                                                      Q_ARG(bool, true));
     }
-
-    //    q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
-    //                                  Qt::QueuedConnection,
-    //                                  Q_ARG(int, 0),
-    //                                  Q_ARG(QString, reason),
-    //                                  Q_ARG(bool, result == 2));
 }
 
 void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, quint64 size)
@@ -293,6 +285,10 @@ void NetworkUtil::sendShareEvents(const QString &ip)
     bool logind = d->sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
     if (!logind) {
         WLOG << "fail to login: " << ip.toStdString() << " pls try again.";
+        metaObject()->invokeMethod(ShareHelper::instance(),
+                                      "handleConnectResult",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, SHARE_CONNECT_UNABLE));
         return;
     }
 

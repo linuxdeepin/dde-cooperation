@@ -364,8 +364,14 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
 
         d->status.storeRelease(Confirming);
     } else {
+        // 如果未在确认和传输状态，则不处理
+        if (d->status.loadAcquire() != TransferHelper::Confirming ||
+            d->status.loadAcquire() != TransferHelper::Transfering) {
+            return;
+        }
+
         d->status.storeRelease(Idle);
-        transferResult(false, tr("Connect to \"%1\" failed").arg(d->who));
+        transferResult(false, tr("Connect to \"%1\" failed").arg(msg));
     }
 }
 

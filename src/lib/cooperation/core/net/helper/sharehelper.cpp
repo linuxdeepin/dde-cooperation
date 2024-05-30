@@ -10,7 +10,6 @@
 #include "discover/deviceinfo.h"
 
 #include "configs/settings/configmanager.h"
-#include "common/constant.h"
 #include "common/commonutils.h"
 
 #include "share/sharecooperationservicemanager.h"
@@ -311,6 +310,15 @@ void ShareHelper::handleConnectResult(int result)
         return;
 
     switch (result) {
+    case SHARE_CONNECT_UNABLE: {
+        static QString title(tr("Unable to collaborate to \"%1\""));
+        static QString msg(tr("Connect to \"%1\" failed"));
+        d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
+                                        msg.arg(CommonUitls::elidedText(d->targetDeviceInfo->ipAddress(), Qt::ElideMiddle, 15)),
+                                        false);
+        d->taskDialog()->show();
+        d->targetDeviceInfo.reset();
+    } break;
     case SHARE_CONNECT_COMFIRM: {
         //启动 ShareCooperationServic
         ShareCooperationServiceManager::instance()->server()->restartBarrier();

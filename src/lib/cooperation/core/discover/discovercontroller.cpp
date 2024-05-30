@@ -296,6 +296,10 @@ void DiscoverController::refresh()
 void DiscoverController::addSearchDeivce(const QString &info)
 {
     auto devInfo = parseDeviceInfo(info);
+    if (!devInfo) {
+        Q_EMIT discoveryFinished(false);
+        return;
+    }
     d->searchDevice = devInfo;
     if (devInfo->isValid())
         Q_EMIT deviceOnline({ d->searchDevice });

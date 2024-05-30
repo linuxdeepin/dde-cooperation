@@ -64,6 +64,9 @@ private:
     QString _accessToken = "";
     QString _connectedAddress = "";
 
+    // mark the connection need to retry after disconneted.
+    bool _tryConnect { false };
+
     // <ip, login>
     QMap<QString, bool> _login_hosts;
 };

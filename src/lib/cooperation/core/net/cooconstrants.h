@@ -20,4 +20,11 @@ typedef enum apply_type_t {
     APPLY_CANCELED = 120,   // 申请被取消
 } ApplyReqType;
 
+enum ShareConnectReplyCode {
+    SHARE_CONNECT_UNABLE = -1, // 无法连接远端
+    SHARE_CONNECT_REFUSE = 0, // 拒绝连接申请
+    SHARE_CONNECT_COMFIRM = 1, // 接受连接申请
+    SHARE_CONNECT_ERR_CONNECTED = 2, // 连接错误已连接
+};
+
 #endif   // COO_CONSTRANTS_H
