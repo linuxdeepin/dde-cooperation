@@ -366,6 +366,13 @@ void NetworkUtil::replyShareRequest(bool agree)
     }
 }
 
+void NetworkUtil::cancelShare(const QString &ip)
+{
+    ApplyMessage msg;
+    QString jsonMsg = msg.as_json().serialize().c_str();
+    d->sessionManager->sendRpcRequest(ip, APPLY_CANCELED, jsonMsg);
+}
+
 void NetworkUtil::cancelTrans()
 {
     d->sessionManager->cancelSyncFile(d->confirmTargetAddress);

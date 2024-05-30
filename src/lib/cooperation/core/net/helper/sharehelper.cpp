@@ -70,14 +70,20 @@ void ShareHelperPrivate::initConnect()
 {
 #ifdef __linux__
     notice = new NoticeUtil(q);
-    connect(notice, &NoticeUtil::onConfirmTimeout, q, &ShareHelper::onVerifyTimeout);
     connect(notice, &NoticeUtil::ActionInvoked, this, &ShareHelperPrivate::onActionTriggered);
 #endif
+
+    confirmTimer.setInterval(10 * 1000);
+    confirmTimer.setSingleShot(true);
+    connect(&confirmTimer, &QTimer::timeout, q, &ShareHelper::onVerifyTimeout);
 
     connect(taskDialog(), &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
     connect(taskDialog(), &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(NotifyRejectAction); });
     connect(taskDialog(), &CooperationTaskDialog::acceptRequest, this, [this] { onActionTriggered(NotifyAcceptAction); });
-    connect(taskDialog(), &CooperationTaskDialog::waitCanceled, taskDialog(), &CooperationTaskDialog::hide);
+    connect(taskDialog(), &CooperationTaskDialog::waitCanceled, this, [this] {
+        taskDialog()->hide();
+        NetworkUtil::instance()->cancelShare(targetDeviceInfo->ipAddress());
+    });
 
     connect(qApp, &QApplication::aboutToQuit, this, &ShareHelperPrivate::stopCooperation);
 }
@@ -226,6 +232,7 @@ void ShareHelper::connectToDevice(const DeviceInfoPointer info)
     static QString title(tr("Requesting collaborate to \"%1\""));
     d->taskDialog()->switchWaitPage(title.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
     d->taskDialog()->show();
+    d->confirmTimer.start();
 }
 
 void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
@@ -300,7 +307,7 @@ void ShareHelper::notifyConnectRequest(const QString &info)
 void ShareHelper::handleConnectResult(int result)
 {
     d->isReplied = true;
-    if (!d->targetDeviceInfo)
+    if (!d->targetDeviceInfo || d->isTimeout)
         return;
 
     switch (result) {
