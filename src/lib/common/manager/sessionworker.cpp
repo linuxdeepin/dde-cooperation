@@ -13,10 +13,17 @@
 #include <QCoreApplication>
 #include <QStorageInfo>
 
-SessionWorker::SessionWorker(const std::shared_ptr<AsioService> &service, QObject *parent)
+SessionWorker::SessionWorker(QObject *parent)
     : QObject(parent)
-    , _service(service)
 {
+    // create own asio service
+    _asioService = std::make_shared<AsioService>();
+    if (!_asioService) {
+        ELOG << "carete ASIO for session worker ERROR!";
+        return;
+    }
+    _asioService->Start();
+
     QObject::connect(this, &SessionWorker::onRemoteDisconnected, this, &SessionWorker::handleRemoteDisconnected, Qt::QueuedConnection);
 }
 
@@ -109,14 +116,15 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         TransCancelMessage req, res;
         req.from_json(v);
 
-        DLOG << "cancel name: " << req.name << " " << req.reason;
+        DLOG << "recv cancel id: " << req.id << " " << req.reason;
 
         res.id = req.id;
         res.name = req.name;
         res.reason = "";
         response->json_msg = res.as_json().serialize();
 
-        emit onCancelJob(req.id);
+        QString jobid = QString::fromStdString(req.id);
+        emit onCancelJob(jobid);
     }
     break;
     case CAST_INFO: {
@@ -306,15 +314,9 @@ bool SessionWorker::isClientLogin(QString &ip)
 
 bool SessionWorker::listen(int port)
 {
-    auto asioService = _service.lock();
-    if (!asioService) {
-        WLOG << "weak asio service";
-        return false;
-    }
-
     // Create a new proto protocol server
     if (!_server) {
-        _server = std::make_shared<ProtoServer>(asioService, port);
+        _server = std::make_shared<ProtoServer>(_asioService, port);
         _server->SetupReuseAddress(true);
         _server->SetupReusePort(true);
 
@@ -328,14 +330,8 @@ bool SessionWorker::listen(int port)
 
 bool SessionWorker::connect(QString &address, int port)
 {
-    auto asioService = _service.lock();
-    if (!asioService) {
-        WLOG << "weak asio service";
-        return false;
-    }
-
     if (!_client) {
-        _client = std::make_shared<ProtoClient>(asioService, address.toStdString(), port);
+        _client = std::make_shared<ProtoClient>(_asioService, address.toStdString(), port);
 
         auto self(this->shared_from_this());
         _client->setCallbacks(self);
@@ -346,7 +342,7 @@ bool SessionWorker::connect(QString &address, int port)
         } else {
             // different target, create new connection.
             _client->DisconnectAndStop();
-            _client = std::make_shared<ProtoClient>(asioService, address.toStdString(), port);
+            _client = std::make_shared<ProtoClient>(_asioService, address.toStdString(), port);
 
             auto self(this->shared_from_this());
             _client->setCallbacks(self);

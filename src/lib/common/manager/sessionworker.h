@@ -18,7 +18,7 @@ class SessionWorker : public QObject, public SessionCallInterface
 {
     Q_OBJECT
 public:
-    explicit SessionWorker(const std::shared_ptr<AsioService> &service, QObject *parent = nullptr);
+    explicit SessionWorker(QObject *parent = nullptr);
 
     void onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response) override;
 
@@ -41,7 +41,7 @@ public:
 signals:
     void onTransData(const QString endpoint, const QStringList nameVector);
     void onTransCount(const QString names, quint64 size);
-    void onCancelJob(const std::string jobid);
+    void onCancelJob(const QString jobid);
     void onConnectChanged(int result, QString reason);
 
     // local signals which emit from RPC
@@ -53,7 +53,7 @@ private:
     bool listen(int port);
     bool connect(QString &address, int port);
 
-    std::weak_ptr<AsioService> _service;
+    std::shared_ptr<AsioService> _asioService;
     // rpc service and client
     std::shared_ptr<ProtoServer> _server { nullptr };
     std::shared_ptr<ProtoClient> _client { nullptr };

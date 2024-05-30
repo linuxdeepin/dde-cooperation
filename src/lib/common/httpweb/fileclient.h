@@ -22,8 +22,7 @@ public:
     std::vector<std::string> parseWeb(const std::string &token);
 
     void setConfig(const std::string &token, const std::string &savedir);
-    void cancel(bool cancel = true);
-    bool downloading();
+    void stop();
 
     // start download in new thread
     void startFileDownload(const std::vector<std::string> &webnames);
@@ -39,8 +38,7 @@ private:
 
     std::string _token;
     std::string _savedir;
-    bool _cancel { false };
-    bool _running { false };
+    std::atomic<bool> _stop { false };
 
     CppCommon::File tempFile;
 };

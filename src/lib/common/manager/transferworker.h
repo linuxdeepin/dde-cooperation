@@ -22,7 +22,7 @@ class TransferWorker : public QObject, public ProgressCallInterface
     };
 
 public:
-    explicit TransferWorker(const std::shared_ptr<AsioService> &service, QObject *parent = nullptr);
+    explicit TransferWorker(QObject *parent = nullptr);
 
     bool onProgress(uint64_t size) override;
 
@@ -30,12 +30,9 @@ public:
 
     void stop();
 
-    void updateSaveRoot(const QString &dir);
-
     bool tryStartSend(QStringList paths, int port, std::vector<std::string> *nameVector, std::string *token);
     bool tryStartReceive(QStringList names, QString &ip, int port, QString &token, QString &dirname);
 
-    void cancel(bool send);
     bool isSyncing();
 
 signals:
@@ -51,13 +48,14 @@ private:
     bool startWeb(int port);
     bool startGet(const std::string &address, int port);
 
-    std::weak_ptr<AsioService> _service;
+    void sendTranEndNotify();
+
+    std::shared_ptr<AsioService> _asioService;
 
     // file sync service and client
     std::shared_ptr<FileServer> _file_server { nullptr };
     std::shared_ptr<FileClient> _file_client { nullptr };
 
-    QString _saveRoot = "";
     QTimer _speedTimer;
     int _noDataCount = 0;
 

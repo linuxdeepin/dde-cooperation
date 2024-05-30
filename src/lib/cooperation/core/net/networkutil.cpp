@@ -15,7 +15,6 @@
 #include "utils/cooperationutil.h"
 
 #include <QJsonDocument>
-#include <QStandardPaths>
 #include <QDebug>
 #include <QDir>
 

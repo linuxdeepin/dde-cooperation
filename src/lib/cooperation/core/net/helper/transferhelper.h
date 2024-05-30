@@ -40,7 +40,6 @@ public Q_SLOTS:
     //common
     void transferResult(bool result, const QString &msg);
     void updateProgress(int value, const QString &remainTime);
-    void onTransJobStatusChanged(int id, int result, const QString &msg);
     void onTransChanged(int status, const QString &path, quint64 size);
 
     //sever
@@ -50,9 +49,7 @@ public Q_SLOTS:
     void waitForConfirm();
     void accepted();
     void rejected();
-    void cancelTransfer();
-    void handleApplyTransFiles(int type);
-    void handleCancelTransfer();
+    void cancelTransfer(bool sender);
     void onVerifyTimeout();
 
     //client

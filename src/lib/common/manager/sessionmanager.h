@@ -37,8 +37,7 @@ public:
     QString sendRpcRequest(const QString &target, int type, const QString &reqJson);
 
 signals:
-    void notifyTransData(const std::vector<std::string> nameVector);
-    void notifyCancelWeb(const std::string jobid);
+    void notifyCancelWeb();
     void notifyConnection(int result, QString reason);
     void notifyDoResult(bool result, QString reason);
 
@@ -48,23 +47,25 @@ signals:
 public slots:
     void handleTransData(const QString endpoint, const QStringList nameVector);
     void handleTransCount(const QString names, quint64 size);
+    void handleCancelTrans(const QString jobid);
     void handleFileCounted(const QString ip, const QStringList paths, quint64 totalSize);
 
 private:
-    void calculateTotalSize(const QStringList &paths, std::function<void(qint64)> onFinish);
-    void calculateTotalSizeWithTimeout(const QStringList &paths, std::function<void(qint64)> onFinish);
+    void createTransWorker();
 
 private:
-    std::shared_ptr<AsioService> asio_service { nullptr };
-
-    // session and transfer worker
+    // session worker
     std::shared_ptr<SessionWorker> _session_worker { nullptr };
-    std::shared_ptr<TransferWorker> _trans_worker { nullptr };
 
+    // new thread to count all sub files size of directory
     std::shared_ptr<FileSizeCounter> _file_counter { nullptr };
+
+    // transfer worker, it will be release after stop.
+    std::shared_ptr<TransferWorker> _trans_worker { nullptr };
 
     bool _send_task { false };
     int _request_job_id;
+    QString _save_root = "";
     QString _save_dir = "";
 };
 

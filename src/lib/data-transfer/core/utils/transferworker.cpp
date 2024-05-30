@@ -219,7 +219,6 @@ bool TransferHandle::handleDataDownload(const std::vector<std::string> nameVecto
         _file_client = std::make_shared<FileClient>(_service, _connectedAddress.toStdString(), WEB_TCP_PORT); //service, address, port
     }
 
-    _file_client->cancel(false);
     _file_client->setConfig(_accessToken.toStdString(), _saveDir.toStdString());
     DLOG << "Download Names: ";
     _file_client->startFileDownload(nameVector);
@@ -228,8 +227,8 @@ bool TransferHandle::handleDataDownload(const std::vector<std::string> nameVecto
 
 void TransferHandle::handleWebCancel(const std::string jobid)
 {
-    if (_file_client && _file_client->downloading()) {
-        _file_client->cancel();
+    if (_file_client) {
+        _file_client->stop();
     }
 
     if (_file_server) {

@@ -229,7 +229,7 @@ protected:
 
     void onError(int error, const std::string &category, const std::string &message) override
     {
-        std::cout << "HTTP session caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
+//        std::cout << "HTTP session caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
         _handler(RES_ERROR, nullptr, 0);
     }
 
@@ -261,7 +261,7 @@ FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &ser
                 _callback->onWebChanged(WEB_INDEX_BEGIN, path);
             }
         }
-        return false;
+        return _stop;
     });
 
     auto session = std::make_shared<HTTPFileSession>(std::dynamic_pointer_cast<CppServer::HTTP::HTTPServer>(server));
@@ -276,6 +276,7 @@ void FileServer::onError(int error, const std::string &category, const std::stri
 
 bool FileServer::start()
 {
+    _stop = false;
     SetupReuseAddress(true);
     SetupReusePort(true);
     return IsStarted() ? Restart() : Start();
@@ -283,6 +284,7 @@ bool FileServer::start()
 
 bool FileServer::stop()
 {
+    _stop = true;
     return Stop();
 }
 

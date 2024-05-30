@@ -37,7 +37,7 @@ protected:
     void onError(int error, const std::string &category, const std::string &message) override;
 
 private:
-
+    std::atomic<bool> _stop { false };
 };
 
 #endif // FILESERVER_H

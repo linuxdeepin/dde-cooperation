@@ -62,6 +62,8 @@ protected:
     void onReceivedResponse(const HTTPResponse &response) override
     {
         std::cout << "Response done! data len:" << response.body_length() << std::endl;
+        if (_canceled)
+            return;
 
         if (_handler) {
             std::string cache = response.cache();
@@ -84,6 +86,7 @@ protected:
             std::string cache = response.cache();
             size_t size = cache.size();
             if (_handler(RES_BODY, cache.data(), size)) {
+                _canceled = true;
                 // cancel
                 DisconnectAsync();
             }
@@ -103,6 +106,7 @@ protected:
 
 private:
     ResponseHandler _handler { nullptr };
+    std::atomic<bool> _canceled { false };
 };
 
 FileClient::FileClient(const std::shared_ptr<CppServer::Asio::Service> &service, const std::string &address, int port)
@@ -136,31 +140,20 @@ void FileClient::setConfig(const std::string &token, const std::string &savedir)
     _savedir = savedir;
 }
 
-void FileClient::cancel(bool cancel)
+void FileClient::stop()
 {
-    _cancel = cancel;
-//    _running = !_cancel;
-}
-
-bool FileClient::downloading()
-{
-//    return _httpClient->IsConnected();
-    return _running;
+    _stop = true;
+    _httpClient->DisconnectAsync();
 }
 
 void FileClient::startFileDownload(const std::vector<std::string> &webnames)
 {
-    if (_running) {
-        std::cout << "there is thread downloading..";
-        return;
-    }
     if (_token.empty() || _savedir.empty()) {
         std::cout << "Must setConfig first!" << std::endl;
         return;
     }
 
-    _cancel = false;
-    _running = true;
+    _stop = false;
 
     // 创建新线程来运行walkDownload函数
     std::thread downloadThread(&FileClient::walkDownload, this, webnames);
@@ -238,8 +231,9 @@ bool FileClient::downloadFile(const std::string &name)
         return false;
     }
 
-    std::promise<bool> exitPromise;  // 创建一个 promise 用于给 cb 函数设置标志
-    std::future<bool> exitFuture = exitPromise.get_future();  // 获取与 promise 关联的 future
+    // use smart pointer in order to wait all free while client stop.
+    std::shared_ptr<std::promise<bool>> exitPromisePtr = std::make_shared<std::promise<bool>>();
+    std::future<bool> exitFuture = exitPromisePtr->get_future();  // 获取与 promise 关联的 future
 
     uint64_t current = 0, total = 0;
     uint64_t offset = 0;
@@ -263,9 +257,14 @@ bool FileClient::downloadFile(const std::string &name)
     url.append("&token=").append(_token);
     url.append("&offset=").append(std::to_string(offset));
 
-    ResponseHandler cb([this, &current, &total, &offset, &exitPromise](int status, const char *buffer, size_t size) -> bool {
+    ResponseHandler cb([exitPromisePtr, this, &current, &total, &offset](int status, const char *buffer, size_t size) -> bool {
+        if (_stop) {
+            std::cout << "has been canceled from outside!" << std::endl;
+            exitPromisePtr->set_exception(std::make_exception_ptr(std::runtime_error("Download stopped")));
+            return true;
+        }
+
         bool shouldExit = false;
-        bool cancel = false;
         switch (status)
         {
         case RES_NOTFOUND: {
@@ -306,10 +305,7 @@ bool FileClient::downloadFile(const std::string &name)
                 if (wr != size)
                     std::cout << "write offset=: " << tempFile.offset() << " size=" << size << " wr=" << wr << std::endl;
 
-                if (_callback) {
-                    // return true to cancel download from outside.
-                    cancel = _callback->onProgress(size);
-                }
+                shouldExit = _callback->onProgress(size);
             }
         }
         break;
@@ -350,19 +346,24 @@ bool FileClient::downloadFile(const std::string &name)
             break;
         }
 
-        if (cancel || shouldExit) {
-            exitPromise.set_value(true);
+        if (shouldExit) {
+            exitPromisePtr->set_value(true);
         }
 
-        return cancel;
+        return shouldExit;
     });
 
     _httpClient->setResponseHandler(std::move(cb));
     _httpClient->SendGetRequest(url).get(); // use get to sync download one by one
 
-    exitFuture.get();  // 等待下载完成
-
-    return true;
+    bool result = false;
+    try {
+        result = exitFuture.get();  // 等待下载完成
+    } catch (const std::exception &ex) {
+        // 捕获并处理异常
+        std::cout << "throw exception: " << ex.what() << std::endl;
+    }
+    return result;
 }
 
 void FileClient::downloadFolder(const std::string &folderName)
@@ -376,7 +377,7 @@ void FileClient::downloadFolder(const std::string &folderName)
 
     // 循环处理文件夹内文件
     for (const auto &entry : info.datas) {
-        if (_cancel)
+        if (_stop)
             break;
 
         std::string name = entry.name;
@@ -424,7 +425,6 @@ void FileClient::walkDownload(const std::vector<std::string> &webnames)
         }
         _callback->onWebChanged(WEB_INDEX_END, name);
     }
-    _running = false;
     //std::cout << "whole download finished!" << std::endl;
 
     _callback->onWebChanged(WEB_TRANS_FINISH);

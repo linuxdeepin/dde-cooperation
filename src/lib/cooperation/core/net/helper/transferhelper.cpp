@@ -90,7 +90,8 @@ CooperationTransDialog *TransferHelperPrivate::transDialog()
     if (!dialog) {
         dialog = new CooperationTransDialog(qApp->activeWindow());
         dialog->setModal(true);
-        connect(dialog, &CooperationTransDialog::cancel, q, &TransferHelper::cancelTransfer);
+
+        connect(dialog, &CooperationTransDialog::cancel, q, [this] { q->onActionTriggered(NotifyCancelAction); });
         connect(dialog, &CooperationTransDialog::rejected, q, [this] { q->onActionTriggered(NotifyRejectAction); });
         connect(dialog, &CooperationTransDialog::accepted, q, [this] { q->onActionTriggered(NotifyAcceptAction); });
         connect(dialog, &CooperationTransDialog::viewed, q, [this] { q->onActionTriggered(NotifyViewAction); });
@@ -247,17 +248,6 @@ bool TransferHelper::buttonClickable(const QString &id, const DeviceInfoPointer 
     return true;
 }
 
-void TransferHelper::handleApplyTransFiles(int type)
-{
-    // 获取设备名称
-    auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
-    QString deviceName = value.isValid()
-            ? value.toString()
-            : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
-
-    LOG << "handle apply file, deviceName= " << deviceName.toStdString();
-}
-
 void TransferHelper::onVerifyTimeout()
 {
     d->isTransTimeout = true;
@@ -265,11 +255,6 @@ void TransferHelper::onVerifyTimeout()
         return;
 
     d->transDialog()->showResultDialog(false, tr("The other party did not receive, the files failed to send"));
-}
-
-void TransferHelper::handleCancelTransfer()
-{
-    //    LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
 }
 
 void TransferHelper::transferResult(bool result, const QString &msg)
@@ -314,6 +299,7 @@ void TransferHelper::onActionTriggered(const QString &action)
 {
     if (action == NotifyCancelAction) {
         NetworkUtil::instance()->cancelTrans();
+        d->isClicked = true;
     } else if (action == NotifyRejectAction) {
         NetworkUtil::instance()->replyTransRequest(false);
     } else if (action == NotifyAcceptAction) {
@@ -377,37 +363,9 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
             return;
 
         d->status.storeRelease(Confirming);
-        handleApplyTransFiles(0);
     } else {
         d->status.storeRelease(Idle);
         transferResult(false, tr("Connect to \"%1\" failed").arg(d->who));
-    }
-}
-
-void TransferHelper::onTransJobStatusChanged(int id, int result, const QString &msg)
-{
-    LOG << "id: " << id << " result: " << result << " msg: " << msg.toStdString();
-    switch (result) {
-    case JOB_TRANS_FAILED:
-        if (msg.contains("::not enough")) {
-            transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
-        } else if (msg.contains("::off line")) {
-            transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
-        } else {
-            transferResult(false, tr("File read/write exception"));
-        }
-        break;
-    case JOB_TRANS_DOING:
-        break;
-    case JOB_TRANS_FINISHED: {
-        d->status.storeRelease(Idle);
-        transferResult(true, tr("File sent successfully"));
-    } break;
-    case JOB_TRANS_CANCELED:
-        transferResult(false, tr("The other party has canceled the file transfer"));
-        break;
-    default:
-        break;
     }
 }
 
@@ -416,7 +374,7 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
     DLOG << "status: " << status << " path=" << path.toStdString();
     switch (status) {
     case TRANS_CANCELED:
-        transferResult(false, tr("The other party has canceled the file transfer"));
+        cancelTransfer(path.compare("im_sender") == 0);
         break;
     case TRANS_EXCEPTION:
         //TODO: notify show exception UI
@@ -521,11 +479,14 @@ void TransferHelper::rejected()
     transferResult(false, tr("The other party rejects your request"));
 }
 
-void TransferHelper::cancelTransfer()
+void TransferHelper::cancelTransfer(bool sender)
 {
-    if (d->status.loadAcquire() == Transfering) {
-        handleCancelTransfer();
-    }
-
     d->status.storeRelease(Idle);
+    if (d->isClicked) {
+        d->transDialog()->hide();
+    } else {
+        transferResult(false, tr("The other party has canceled the file transfer"));
+    }
+    // reset
+    d->isClicked = false;
 }

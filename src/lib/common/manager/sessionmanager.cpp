@@ -12,26 +12,16 @@
 #include "filesizecounter.h"
 
 #include <QDir>
+#include <QStandardPaths>
 
 SessionManager::SessionManager(QObject *parent) : QObject(parent)
 {
-
-    // Create a new Asio service
-    asio_service = std::make_shared<AsioService>();
-
-    // Start the Asio service
-    asio_service->Start();
-
     // Create session and transfer worker
-    _session_worker = std::make_shared<SessionWorker>(asio_service);
-    _trans_worker = std::make_shared<TransferWorker>(asio_service);
-
+    _session_worker = std::make_shared<SessionWorker>();
     connect(_session_worker.get(), &SessionWorker::onConnectChanged, this, &SessionManager::notifyConnection);
     connect(_session_worker.get(), &SessionWorker::onTransData, this, &SessionManager::handleTransData);
     connect(_session_worker.get(), &SessionWorker::onTransCount, this, &SessionManager::handleTransCount);
-
-    connect(_trans_worker.get(), &TransferWorker::notifyChanged, this, &SessionManager::notifyTransChanged);
-
+    connect(_session_worker.get(), &SessionWorker::onCancelJob, this, &SessionManager::handleCancelTrans);
 
     _file_counter = std::make_shared<FileSizeCounter>(this);
     connect(_file_counter.get(), &FileSizeCounter::onCountFinish, this, &SessionManager::handleFileCounted);
@@ -42,11 +32,6 @@ SessionManager::~SessionManager()
     //FIXME: abort if stop them
     //_session_worker->stop();
     //_trans_worker->stop();
-
-    if (!asio_service) {
-        // Stop the Asio service
-        asio_service->Stop();
-    }
 }
 
 void SessionManager::setSessionExtCallback(ExtenMessageHandler cb)
@@ -61,12 +46,18 @@ void SessionManager::updatePin(QString code)
 
 void SessionManager::setStorageRoot(const QString &root)
 {
-    _trans_worker->updateSaveRoot(root);
+    _save_root = QString(root);
 }
 
 void SessionManager::updateSaveFolder(const QString &folder)
 {
-    _save_dir = QString(folder);
+    if (_save_root.isEmpty()) {
+        _save_root = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    }
+    _save_dir = _save_root + QDir::separator();
+    if (!folder.isEmpty()) {
+        _save_dir += folder + QDir::separator();
+    }
 }
 
 void SessionManager::sessionListen(int port)
@@ -99,89 +90,20 @@ void SessionManager::sessionDisconnect(QString ip)
     _session_worker->disconnectRemote();
 }
 
-void SessionManager::calculateTotalSize(const QStringList &paths, std::function<void(qint64)> onFinish)
+void SessionManager::createTransWorker()
 {
-    qint64 totalSize = 0;
-
-    std::function<void(const QString &)> calculateSizeRecursively = [&](const QString &currentPath) {
-        QDir dir(currentPath);
-        if (!dir.exists()) {
-            WLOG << "directory not exist: " << currentPath.toStdString();
-            return;
-        }
-
-        QFileInfoList fileList = dir.entryInfoList(QDir::Files);
-        for (const QFileInfo &fileInfo : fileList) {
-            totalSize += fileInfo.size();
-        }
-
-        QFileInfoList dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-        for (const QFileInfo &subDirInfo : dirList) {
-            calculateSizeRecursively(subDirInfo.filePath());
-        }
-    };
-
-    for (const QString &path : paths) {
-        calculateSizeRecursively(path);
+    if (!_trans_worker) {
+        _trans_worker = std::make_shared<TransferWorker>();
+        connect(_trans_worker.get(), &TransferWorker::notifyChanged, this, &SessionManager::notifyTransChanged);
     }
-
-    onFinish(totalSize);
-}
-
-void SessionManager::calculateTotalSizeWithTimeout(const QStringList &paths, std::function<void(qint64)> onFinish)
-{
-    qint64 totalSize = 0;
-
-    // 创建定时器，超时时间为 200 毫秒
-    QTimer timer;
-    timer.setSingleShot(true);
-    timer.start(200);
-
-    // 定义超时处理函数
-    QObject::connect(&timer, &QTimer::timeout, [&]() {
-        timer.stop();
-        onFinish(0);  // 如果超时，则返回大小为 0
-    });
-
-    // 正常计算文件大小的逻辑
-    std::function<void(const QString &)> calculateSizeRecursively = [&](const QString &currentPath) {
-        QFileInfo fileInfo(currentPath);
-        if (fileInfo.isFile()) {
-            totalSize += fileInfo.size();
-            return;
-        }
-
-        QDir dir(currentPath);
-        if (!dir.exists()) {
-            WLOG << "directory not exist: " << currentPath.toStdString();
-            return;
-        }
-
-        QFileInfoList fileList = dir.entryInfoList(QDir::Files);
-        for (const QFileInfo &fileInfo : fileList) {
-            totalSize += fileInfo.size();
-        }
-
-        QFileInfoList dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-        for (const QFileInfo &subDirInfo : dirList) {
-            calculateSizeRecursively(subDirInfo.filePath());
-        }
-    };
-
-    for (const QString &path : paths) {
-        calculateSizeRecursively(path);
-    }
-
-    // 运行完成后停止定时器，并返回计算结果
-    QObject::connect(&timer, &QTimer::timeout, [&]() {
-        onFinish(totalSize);
-    });
 }
 
 void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
 {
     std::vector<std::string> name_vector;
     std::string token;
+
+    createTransWorker();
     bool success = _trans_worker->tryStartSend(paths, port, &name_vector, &token);
     if (!success) {
         ELOG << "Fail to send size: " << paths.size() << " at:" << port;
@@ -221,6 +143,7 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
 
 void SessionManager::recvFiles(QString &ip, int port, QString &token, QStringList names)
 {
+    createTransWorker();
     bool success = _trans_worker->tryStartReceive(names, ip, port, token, _save_dir);
     if (!success) {
         ELOG << "Fail to recv name size: " << names.size() << " at:" << ip.toStdString();
@@ -233,15 +156,15 @@ void SessionManager::recvFiles(QString &ip, int port, QString &token, QStringLis
 
 void SessionManager::cancelSyncFile(QString &ip)
 {
-    DLOG << "cancelSyncFile is send?" << _send_task;
-    _trans_worker->cancel(_send_task);
+    DLOG << "cancelSyncFile to: " << ip.toStdString();
 
+    // first: send cancel rpc
     TransCancelMessage req;
-    req.id = _request_job_id;
+    req.id = std::to_string(_request_job_id);
     req.name = "all";
     req.reason = "";
 
-    DLOG << "cancel name: " << req.name << " " << req.reason;
+    DLOG << "send cancel id: " << req.id << " " << req.reason;
 
     QString jsonMsg = req.as_json().serialize().c_str();
     QString res = sendRpcRequest(ip, REQ_TRANS_CANCLE, jsonMsg);
@@ -251,6 +174,9 @@ void SessionManager::cancelSyncFile(QString &ip)
     } else {
         emit notifyDoResult(true, "");
     }
+
+    // then: stop local worker
+    handleCancelTrans(QString::fromStdString(req.id));
 }
 
 QString SessionManager::sendRpcRequest(const QString &ip, int type, const QString &reqJson)
@@ -287,6 +213,15 @@ void SessionManager::handleTransCount(const QString names, quint64 size)
 {
     // TRANS_COUNT_SIZE = 50
     emit notifyTransChanged(50, names, size);
+}
+
+void SessionManager::handleCancelTrans(const QString jobid)
+{
+    // stop all local transfer, which will send TRANS_CANCELED: 48
+    if (_trans_worker) {
+        _trans_worker->stop();
+        _trans_worker = nullptr;
+    }
 }
 
 void SessionManager::handleFileCounted(const QString ip, const QStringList paths, quint64 totalSize)

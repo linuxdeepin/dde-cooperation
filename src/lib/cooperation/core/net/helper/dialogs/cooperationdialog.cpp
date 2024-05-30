@@ -234,7 +234,6 @@ void CooperationTransDialog::closeEvent(QCloseEvent *e)
     } else if (mainLayout->currentWidget() == resultWidget) {
         if (qApp->property("onlyTransfer").toBool() && resultWidget->getResult())
             qApp->exit();
-        Q_EMIT cancel();
     }
 }
 
