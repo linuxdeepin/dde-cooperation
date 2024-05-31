@@ -16,12 +16,18 @@ namespace CppCommon {
 
 uint64_t Math::MulDiv64(uint64_t operant, uint64_t multiplier, uint64_t divider)
 {
-#if defined(__GNUC__) && defined(__SIZEOF_INT128__)
+#if defined(__GNUC__)
+#if defined(__SIZEOF_INT128__)
     __uint128_t a = operant;
     __uint128_t b = multiplier;
     __uint128_t c = divider;
 
     return (uint64_t)(a * b / c);
+#else
+    uint64_t q = operant / divider;
+    uint64_t r = operant % divider;
+    return q * multiplier + r * multiplier / divider;
+#endif
 #elif defined(_MSC_VER)
 #if defined(_M_IX86)
     // Declare 128bit storage

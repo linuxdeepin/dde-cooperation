@@ -18,6 +18,7 @@
 #include <time.h>
 #elif defined(unix) || defined(__unix) || defined(__unix__)
 #include <time.h>
+#include <sys/time.h>     // for gettimeofday
 #elif defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #endif
@@ -291,7 +292,7 @@ uint64_t Timestamp::rdts()
     struct timeval tv;
     gettimeofday(&tv, nullptr);
     return static_cast<int64_t>(tv.tv_sec) * 1000000 + tv.tv_usec;
-#elif defined(__mips__)
+#elif defined(__mips__) || defined(__loongarch__) || defined(__sw_64__)
     // mips apparently only allows rdtsc for superusers, so we fall back to gettimeofday.
     // It's possible clock_gettime would be better.
     struct timeval tv;
