@@ -33,6 +33,7 @@ public:
 public Q_SLOTS:
     void onActionTriggered(const QString &action);
     void stopCooperation();
+    void cancelShareApply();
 
 public:
     ShareHelper *q;

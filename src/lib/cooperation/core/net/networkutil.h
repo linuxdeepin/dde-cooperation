@@ -37,7 +37,7 @@ public:
     void sendShareEvents(const QString &ip);
     void sendDisconnectShareEvents(const QString &ip);
     void replyShareRequest(bool agree);
-    void cancelShare(const QString &ip);
+    void cancelApply(const QString &type);
 
     QString deviceInfoStr();
 

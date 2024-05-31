@@ -245,6 +245,8 @@ void CooperationTransDialog::closeEvent(QCloseEvent *e)
         Q_EMIT rejected();
     } else if (mainLayout->currentWidget() == progressWidget) {
         Q_EMIT cancel();
+    } else if (mainLayout->currentWidget() == waitconfirmWidget) {
+        Q_EMIT cancelApply();
     } else if (mainLayout->currentWidget() == resultWidget) {
         if (qApp->property("onlyTransfer").toBool() && resultWidget->getResult())
             qApp->exit();

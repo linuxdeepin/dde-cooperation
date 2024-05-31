@@ -114,6 +114,7 @@ protected:
 
 Q_SIGNALS:
     void cancel();
+    void cancelApply();
     void viewed();
     void retry();
 

@@ -79,12 +79,15 @@ void ShareHelperPrivate::initConnect()
     connect(taskDialog(), &CooperationTaskDialog::retryConnected, q, [this] { q->connectToDevice(targetDeviceInfo); });
     connect(taskDialog(), &CooperationTaskDialog::rejectRequest, this, [this] { onActionTriggered(NotifyRejectAction); });
     connect(taskDialog(), &CooperationTaskDialog::acceptRequest, this, [this] { onActionTriggered(NotifyAcceptAction); });
-    connect(taskDialog(), &CooperationTaskDialog::waitCanceled, this, [this] {
-        taskDialog()->hide();
-        NetworkUtil::instance()->cancelShare(targetDeviceInfo->ipAddress());
-    });
+    connect(taskDialog(), &CooperationTaskDialog::waitCanceled, this, &ShareHelperPrivate::cancelShareApply);
 
     connect(qApp, &QApplication::aboutToQuit, this, &ShareHelperPrivate::stopCooperation);
+}
+
+void ShareHelperPrivate::cancelShareApply()
+{
+    taskDialog()->hide();
+    NetworkUtil::instance()->cancelApply("share");
 }
 
 void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout)

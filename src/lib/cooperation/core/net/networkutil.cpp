@@ -109,9 +109,14 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             req.from_json(json_value);
             res.flag = DO_DONE;
             *res_msg = res.as_json().serialize();
-            q->metaObject()->invokeMethod(ShareHelper::instance(),
-                                          "handleCancelCooperApply",
-                                          Qt::QueuedConnection);
+            if (req.nick == "share")
+                q->metaObject()->invokeMethod(ShareHelper::instance(),
+                                              "handleCancelCooperApply",
+                                              Qt::QueuedConnection);
+            else if (req.nick == "transfer")
+                q->metaObject()->invokeMethod(TransferHelper::instance(),
+                                              "handleCancelTransferApply",
+                                              Qt::QueuedConnection);
         }
             return true;
         }
@@ -286,9 +291,9 @@ void NetworkUtil::sendShareEvents(const QString &ip)
     if (!logind) {
         WLOG << "fail to login: " << ip.toStdString() << " pls try again.";
         metaObject()->invokeMethod(ShareHelper::instance(),
-                                      "handleConnectResult",
-                                      Qt::QueuedConnection,
-                                      Q_ARG(int, SHARE_CONNECT_UNABLE));
+                                   "handleConnectResult",
+                                   Qt::QueuedConnection,
+                                   Q_ARG(int, SHARE_CONNECT_UNABLE));
         return;
     }
 
@@ -362,11 +367,12 @@ void NetworkUtil::replyShareRequest(bool agree)
     }
 }
 
-void NetworkUtil::cancelShare(const QString &ip)
+void NetworkUtil::cancelApply(const QString &type)
 {
     ApplyMessage msg;
+    msg.nick = type.toStdString();
     QString jsonMsg = msg.as_json().serialize().c_str();
-    d->sessionManager->sendRpcRequest(ip, APPLY_CANCELED, jsonMsg);
+    d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_CANCELED, jsonMsg);
 }
 
 void NetworkUtil::cancelTrans()

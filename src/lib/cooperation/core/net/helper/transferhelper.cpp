@@ -91,6 +91,7 @@ CooperationTransDialog *TransferHelperPrivate::transDialog()
         dialog = new CooperationTransDialog(qApp->activeWindow());
         dialog->setModal(true);
 
+        connect(dialog, &CooperationTransDialog::cancelApply, q, &TransferHelper::cancelTransferApply);
         connect(dialog, &CooperationTransDialog::cancel, q, [this] { q->onActionTriggered(NotifyCancelAction); });
         connect(dialog, &CooperationTransDialog::rejected, q, [this] { q->onActionTriggered(NotifyRejectAction); });
         connect(dialog, &CooperationTransDialog::accepted, q, [this] { q->onActionTriggered(NotifyAcceptAction); });
@@ -254,6 +255,7 @@ void TransferHelper::onVerifyTimeout()
     if (d->status.loadAcquire() != TransferHelper::Confirming)
         return;
 
+    d->status.storeRelease(Idle);
     d->transDialog()->showResultDialog(false, tr("The other party did not receive, the files failed to send"));
 }
 
@@ -355,6 +357,16 @@ void TransferHelper::notifyTransferResult(bool result, const QString &msg)
     d->notifyMessage(msg, actions, 3 * 1000);
 }
 
+void TransferHelper::handleCancelTransferApply()
+{
+    static QString body(tr("The other party has cancelled the transfer request !"));
+#ifdef __linux__
+    d->notifyMessage(body, {}, 3 * 1000);
+#else
+    d->transDialog()->showResultDialog(false, body);
+#endif
+}
+
 void TransferHelper::onConnectStatusChanged(int result, const QString &msg, const bool isself)
 {
     LOG << "connect status: " << result << " msg:" << msg.toStdString();
@@ -365,8 +377,7 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
         d->status.storeRelease(Confirming);
     } else {
         // 如果未在确认和传输状态，则不处理
-        if (d->status.loadAcquire() != TransferHelper::Confirming ||
-            d->status.loadAcquire() != TransferHelper::Transfering) {
+        if (d->status.loadAcquire() != TransferHelper::Confirming || d->status.loadAcquire() != TransferHelper::Transfering) {
             return;
         }
 
@@ -495,4 +506,12 @@ void TransferHelper::cancelTransfer(bool sender)
     }
     // reset
     d->isClicked = false;
+}
+
+void TransferHelper::cancelTransferApply()
+{
+    d->status.storeRelease(Idle);
+    d->confirmTimer.stop();
+    d->transDialog()->hide();
+    NetworkUtil::instance()->cancelApply("transfer");
 }
