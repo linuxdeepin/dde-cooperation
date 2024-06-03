@@ -1,6 +1,6 @@
 ﻿#include "zipfileprocessresultwidget.h"
 #include <utils/optionsmanager.h>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 #include <common/commonutils.h>
 #include "../type_defines.h"
 

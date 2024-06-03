@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -61,19 +61,20 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
     case REQ_LOGIN: {
         LoginMessage req, res;
         req.from_json(v);
-        DLOG << "Login: " << req.name << " " << req.auth;
+
         std::hash<std::string> hasher;
         uint32_t pinHash = (uint32_t)hasher(_savedPin.toStdString());
         uint32_t pwdnumber = std::stoul(req.auth);
-        if (pinHash == pwdnumber) {
+        if (req.auth == _savedPin.toStdString()) {
             res.auth = "thatsgood";
             response->mask = LOGIN_SUCCESS;
+            emit onConnectChanged(666, "111");
         } else {
             // return empty auth token.
             res.auth = "";
             response->mask = LOGIN_DENIED;
         }
-
+        DLOG << "Login: " << req.name << " " << res.auth;
         res.name = QHostInfo::localHostName().toStdString();
         response->json_msg = res.as_json().serialize();
     }
@@ -255,12 +256,13 @@ bool SessionWorker::connectRemote(QString ip, int port, QString password)
         return false;
     }
 
-    std::hash<std::string> hasher;
-    uint32_t pinHash = (uint32_t)hasher(password.toStdString());
+    //std::hash<std::string> hasher;
+   // uint32_t pinHash = (uint32_t)hasher(password.toStdString());
 
+    //std::cout << "-----------" << password.toStdString() <<"----------"<< pinHash <<std::endl;
     LoginMessage req;
     req.name = qApp->applicationName().toStdString();
-    req.auth = std::to_string(pinHash);
+    req.auth = password.toStdString();
     proto::OriginMessage request;
     request.mask = REQ_LOGIN;
     request.json_msg = req.as_json().serialize();

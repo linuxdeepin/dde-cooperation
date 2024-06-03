@@ -40,35 +40,34 @@ private:
 #endif
 
 protected:
-    MainWindow *q{ nullptr };
-    QStackedLayout *mainLayout{ nullptr };
-    QDockWidget *sidebar{ nullptr };
-    QStackedWidget *stackedWidget{ nullptr };
+    MainWindow *q { nullptr };
+    QStackedLayout *mainLayout { nullptr };
+    QDockWidget *sidebar { nullptr };
+    QStackedWidget *stackedWidget { nullptr };
 #if defined(_WIN32) || defined(_WIN64)
 protected:
-    QHBoxLayout *windowsCentralWidget{ nullptr };
-    QHBoxLayout *windowsCentralWidgetContent{ nullptr };
-    QHBoxLayout *windowsCentralWidgetSidebar{ nullptr };
-};
-
-class MoveFilter : public QObject
-{
-    Q_OBJECT
-
-public:
-    explicit MoveFilter(MainWindow *qq);
-
-protected:
-    bool eventFilter(QObject* obj, QEvent* event) override;
-
-protected:
-    MainWindow *q{ nullptr };
-    QPoint lastPosition;
-    bool leftButtonPressed{ false };
-
+    QHBoxLayout *windowsCentralWidget { nullptr };
+    QHBoxLayout *windowsCentralWidgetContent { nullptr };
+    QHBoxLayout *windowsCentralWidgetSidebar { nullptr };
 #endif
 };
 
+//class MoveFilter : public QObject
+//{
+//    Q_OBJECT
 
-} // namespace data_transfer_core
-#endif // MAINWINDOW_P_H
+//public:
+//    explicit MoveFilter(MainWindow *qq);
+
+//protected:
+//    bool eventFilter(QObject* obj, QEvent* event) override;
+
+//protected:
+//    MainWindow *q{ nullptr };
+//    QPoint lastPosition;
+//    bool leftButtonPressed{ false };
+
+//};
+
+};   // namespace data_transfer_core
+#endif   // MAINWINDOW_P_H

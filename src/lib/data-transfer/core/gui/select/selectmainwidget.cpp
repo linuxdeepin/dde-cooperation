@@ -10,7 +10,7 @@
 #include <QPainterPath>
 #include <gui/connect/choosewidget.h>
 #include <gui/mainwindow_p.h>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 #include <utils/optionsmanager.h>
 
 SelectMainWidget::SelectMainWidget(QWidget *parent) : QFrame(parent)

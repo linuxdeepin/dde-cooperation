@@ -44,7 +44,7 @@ if (WIN32)
     configure_file(${CMAKE_SOURCE_DIR}/dist/inno/setup.iss.in ${CMAKE_BINARY_DIR}/${PROJ_NAME}-setup.iss)
 
     # 从定位输出目录
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/${PROJ_NAME})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/data-transfer)
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -68,7 +68,7 @@ target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/lib/data-
 if (WIN32)
     # add_link_options(${PROJ_NAME} PRIVATE -mwindows)
     #设置属性
-    set_target_properties(${PROJECT_NAME} PROPERTIES
+    set_target_properties(${PROJ_NAME} PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER www.deepin.org
         MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
         MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -109,7 +109,7 @@ if (WIN32)
     )
 
     # copy common share libs
-    file(GLOB DLLS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../*.dll)
+    file(GLOB DLLS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../quazip5d.*)
     file(COPY ${DLLS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
 
     deployqt_qt_runtime(${PROJ_NAME} ${qt_required_components})

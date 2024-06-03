@@ -12,7 +12,7 @@ if(NOT TARGET QtZeroConf)
 if(MSVC)
 message("   >>> QtZeroConf build type: ${CMAKE_BUILD_TYPE}")
 message("   >>> QtZeroConf runtime output directory: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-  # 拷贝编译好的版本windows版本
+  # 拷贝输出文件到应用
   file(GLOB OUTPUTS ${CMAKE_INSTALL_LIBDIR}/QtZeroConf.*)
   file(COPY ${OUTPUTS}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dde-cooperation/${CMAKE_BUILD_TYPE})

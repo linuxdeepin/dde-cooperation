@@ -11,7 +11,7 @@
 #include <QStackedWidget>
 
 #include <gui/connect/choosewidget.h>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 #include <utils/optionsmanager.h>
 #include <common/commonutils.h>
 

@@ -1,6 +1,6 @@
 ﻿#include "drapwindowsdata.h"
-#include "common/log.h"
-#include "common/commonutils.h"
+//#include "common/log.h"
+//#include "common/commonutils.h"
 
 #include <tchar.h>
 #include <QDebug>
@@ -106,7 +106,7 @@ void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
         out << htmlContent;
         outputFile.close();
     } else {
-        DLOG << "Failed to open file";
+//        DLOG << "Failed to open file";
         return;
     }
 }
@@ -116,9 +116,9 @@ QList<WinApp> DrapWindowsData::getApplianceList()
     if (applianceList.isEmpty())
         getApplianceListInfo();
 
-    for (auto value : applianceList)
-        LOG << "app name:" << value.name.toStdString();
-    LOG << "applianceList.size:" << applianceList.size();
+//    for (auto value : applianceList)
+//        LOG << "app name:" << value.name.toStdString();
+//    LOG << "applianceList.size:" << applianceList.size();
     return applianceList;
 }
 
@@ -162,7 +162,7 @@ void DrapWindowsData::readMicrosoftEdgeAndGoogleChromeBookmark(const QString &js
 {
     QFile file(jsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        ELOG << "Failed to open file :" << jsonPath.toStdString();
+//        ELOG << "Failed to open file :" << jsonPath.toStdString();
         return;
     }
 
@@ -223,7 +223,7 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
             }
             file.close();
         } else {
-            DLOG << "Can not open file:" << installIni.toStdString();
+//            DLOG << "Can not open file:" << installIni.toStdString();
         }
 
         if (!bookMarkPath.isEmpty()) {
@@ -231,7 +231,7 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
             auto bookMark = QPair<QString, QString>(BrowserName::MozillaFirefox, path);
             browserBookmarkPath.push_back(bookMark);
         } else {
-            DLOG << "Can not find bookMark path in installs.ini";
+//            DLOG << "Can not find bookMark path in installs.ini";
         }
     }
 }
@@ -320,10 +320,10 @@ QString DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
         stream.setCodec("UTF-8");
         stream << doc.toJson();
         file.close();
-        DLOG << "JSON file saved successfully.";
+//        DLOG << "JSON file saved successfully.";
         return jsonfilePath;
     } else {
-        WLOG << "Failed to save JSON file.";
+//        WLOG << "Failed to save JSON file.";
         return QString();
     }
 }
@@ -335,7 +335,7 @@ QString DrapWindowsData::getUserName()
     QFileInfo fileInfo(userDir);
     QString userName = fileInfo.fileName();
 
-    DLOG << "User Name: " << userName.toStdString();
+//    DLOG << "User Name: " << userName.toStdString();
     return userName;
 }
 
@@ -343,7 +343,7 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 {
     QFile file(":/fileResource/apps.json");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        WLOG << "can not open app json";
+//        WLOG << "can not open app json";
         return;
     }
 
@@ -352,7 +352,7 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
-        WLOG << "app json Parsing failed";
+//        WLOG << "app json Parsing failed";
         return;
     }
 
@@ -380,11 +380,11 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
     return;
 }
 
-QString DrapWindowsData::getIP()
-{
-    QString ip = deepin_cross::CommonUitls::getFirstIp().data();
-    return ip;
-}
+//QString DrapWindowsData::getIP()
+//{
+//    QString ip = deepin_cross::CommonUitls::getFirstIp().data();
+//    return ip;
+//}
 
 void DrapWindowsData::getApplianceListInfo()
 {
@@ -436,19 +436,19 @@ void DrapWindowsData::getBrowserListInfo()
                         browserList.push_back(name);
                     }
                 } else {
-                    DLOG << "Failed to read brower name on registry. error code:" << status;
+//                    DLOG << "Failed to read brower name on registry. error code:" << status;
                 }
             } else {
-                DLOG << "Failed to open registry HKEY_LOCAL_MACHINE\\" << strMidReglpcstr
-                         << " error code:" << status;
+//                DLOG << "Failed to open registry HKEY_LOCAL_MACHINE\\" << strMidReglpcstr
+//                         << " error code:" << status;
             }
             index++;
             subKeyNameSize = sizeof(subKeyName);
         }
         RegCloseKey(hKey);
     } else {
-        DLOG << "Failed to open registry HKEY_LOCAL_MACHINE\\" << lpSubKey
-                 << " error code:" << queryStatus;
+//        DLOG << "Failed to open registry HKEY_LOCAL_MACHINE\\" << lpSubKey
+//                 << " error code:" << queryStatus;
     }
 }
 
@@ -459,13 +459,13 @@ void DrapWindowsData::getDesktopWallpaperPathRegistInfo()
         QString wallpaperPathStr = QString::fromWCharArray(wallpaperPath);
         QFileInfo fileInfo(wallpaperPathStr);
         if (fileInfo.exists()) {
-            DLOG << "Current wallpaper path: " << wallpaperPathStr.toStdString();
+//            DLOG << "Current wallpaper path: " << wallpaperPathStr.toStdString();
             desktopWallpaperPath = wallpaperPathStr;
         } else {
-            DLOG << "Wallpaper file does not exist.";
+//            DLOG << "Wallpaper file does not exist.";
         }
     } else {
-        DLOG << "Failed to retrieve wallpaper path.";
+//        DLOG << "Failed to retrieve wallpaper path.";
     }
 }
 
@@ -479,13 +479,13 @@ void DrapWindowsData::getDesktopWallpaperPathAbsolutePathInfo()
         QImage wallpaperImage = wallpaperPixmap.toImage();
         QString wallpaperPathStr = QDir::tempPath() + "/ConvertedWallpaper.png";
         if (wallpaperImage.save(wallpaperPathStr, "PNG")) {
-            DLOG << "TranscodedWallpaper converted and saved as PNG to: " << wallpaperPathStr.toStdString();
+//            DLOG << "TranscodedWallpaper converted and saved as PNG to: " << wallpaperPathStr.toStdString();
             desktopWallpaperPath = wallpaperPathStr;
         } else {
-            DLOG << "Failed to save the converted wallpaper.";
+//            DLOG << "Failed to save the converted wallpaper.";
         }
     } else {
-        DLOG << "Failed to load TranscodedWallpaper as QPixmap.";
+//        DLOG << "Failed to load TranscodedWallpaper as QPixmap.";
     }
 }
 

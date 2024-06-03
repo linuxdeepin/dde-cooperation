@@ -1,4 +1,4 @@
-set(PROJ_NAME "dde-cooperation")
+﻿set(PROJ_NAME "dde-cooperation")
 
 # enable qt build support
 set(CMAKE_AUTOUIC ON)
@@ -63,7 +63,7 @@ target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/lib/coope
 if (WIN32)
     # add_link_options(${PROJ_NAME} PRIVATE -mwindows)
     #设置属性
-    set_target_properties(${PROJECT_NAME} PROPERTIES
+    set_target_properties(${PROJ_NAME} PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER www.deepin.org
         MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
         MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -104,7 +104,7 @@ if (WIN32)
     )
 
     # copy common share libs
-    file(GLOB DLLS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../*.dll)
+    file(GLOB DLLS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../QtZeroConf.*)
     file(COPY ${DLLS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
 
     deployqt_qt_runtime(${PROJ_NAME} ${qt_required_components})

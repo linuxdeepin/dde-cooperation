@@ -44,7 +44,7 @@ public:
     QString getBrowserBookmarkJSON(QString &jsonPath);
 
     QString getUserName();
-    QString getIP();
+//    QString getIP();
 
     void getLinuxApplist(QList<UosApp> &list);
     QMap<QString, QString>

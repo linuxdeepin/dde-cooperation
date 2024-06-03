@@ -6,7 +6,7 @@
 #include "../type_defines.h"
 
 #include <utils/optionsmanager.h>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>

@@ -1,7 +1,6 @@
 ﻿#include "transferhepler.h"
 
 #include "utils/optionsmanager.h"
-#include "utils/settinghepler.h"
 #include "utils/transferutil.h"
 #include "common/commonutils.h"
 
@@ -18,6 +17,8 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #    include <gui/win/drapwindowsdata.h>
+#else
+#    include "utils/settinghepler.h"
 #endif
 
 TransferHelper::TransferHelper()
@@ -47,7 +48,9 @@ QString TransferHelper::updateConnectPassword()
 
 void TransferHelper::tryConnect(const QString &ip, const QString &password)
 {
-    NetworkUtil::instance()->doConnect(ip, password);
+    bool res = NetworkUtil::instance()->doConnect(ip, password);
+    if(res)
+        emit connectSucceed();
 }
 
 bool TransferHelper::cancelTransferJob()
@@ -79,7 +82,7 @@ void TransferHelper::startTransfer()
 
     QStringList paths = getTransferFilePath(filePathList, appList, browserList, configList);
     qInfo() << "transferring file list: " << paths;
-    _transferhandle->sendFiles(paths);
+    //_transferhandle->sendFiles(paths);
 }
 
 QMap<QString, QString> TransferHelper::getAppList(QMap<QString, QString> &noRecommedApplist)
@@ -145,8 +148,8 @@ QStringList TransferHelper::getTransferFilePath(QStringList filePathList, QStrin
     }
 
     // add transfer.json
-    QString jsonfilePath = getTransferJson(appList, filePathList, browserList, bookmarksName,
-                                           wallpaperName, tempSavePath);
+    QString jsonfilePath = TransferUtil::getTransferJson(appList, filePathList, browserList, bookmarksName,
+                                                         wallpaperName, tempSavePath);
 
     transferFilePathList.prepend(jsonfilePath);
     OptionsManager::instance()->addUserOption(Options::KUserDataInfoJsonPath, { jsonfilePath });
@@ -208,7 +211,7 @@ void TransferHelper::Retransfer(const QString jsonstr)
     qInfo() << "continue last file list: " << paths;
     LOG << "continue last file size:"
         << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
-    _transferhandle->sendFiles(paths);
+    //_transferhandle->sendFiles(paths);
 
     emit changeWidget(PageName::transferringwidget);
 }
@@ -219,9 +222,9 @@ QString TransferHelper::defaultBackupFileName()
     QString formattedDateTime = currentDateTime.toString("yyyyMMddhhmm");
 
     return QString(DrapWindowsData::instance()->getUserName() + "_"
-                   + DrapWindowsData::instance()->getIP() + "_" + formattedDateTime);
+                   + deepin_cross::CommonUitls::getFirstIp().data() + "_" + formattedDateTime);
 }
-#endif
+#else
 
 void TransferHelper::recordTranferJob(const QString &filepath)
 {
@@ -322,3 +325,4 @@ void TransferHelper::setting(const QString &filepath)
     isSetting = true;
     SettingHelper::instance()->handleDataConfiguration(filepath);
 }
+#endif

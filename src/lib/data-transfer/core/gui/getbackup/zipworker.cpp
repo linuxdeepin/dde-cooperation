@@ -1,5 +1,5 @@
 ﻿#include <utils/optionsmanager.h>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 
 #include "zipworker.h"
 #include "../win/drapwindowsdata.h"
@@ -247,8 +247,8 @@ void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &time
         }
     }
 
-    needTime = std::max(std::min(needTime, 3600), 1);
-    int iprogress = std::max(std::min((int)progress, 100), 0);
+    needTime = max(min(needTime, 3600), 1);
+    int iprogress = max(min((int)progress, 100), 0);
 
     emit backupFileProcessSingal(filePath, iprogress, needTime);
 }

@@ -6,14 +6,8 @@
 #include <QMap>
 #include <QObject>
 #include "gui/type_defines.h"
-
-#ifdef __linux__
-#    include <QDBusMessage>
-#endif
-
 #include <QUrl>
 
-class WinApp;
 class TransferHelper : public QObject
 {
     Q_OBJECT
@@ -40,13 +34,11 @@ public:
     QStringList getTransferFilePath(QStringList filePathList, QStringList appList,
                                     QStringList browserList, QStringList configList);
     void startTransfer();
-    QString getTransferJson(QStringList appList, QStringList fileList, QStringList browserList,
-                            QString bookmarksName, QString wallPaperName, QString tempSavePath);
+
     void Retransfer(const QString jsonstr);
     QString defaultBackupFileName();
-#endif
 
-public:
+#else
     void setting(const QString &filepath);
     void recordTranferJob(const QString &filepath);
     bool isUnfinishedJob(QString &content);
@@ -57,6 +49,7 @@ private:
     QMap<QString, int64_t> finshedFiles;
     bool isSetting = false;
     QString connectIP;
+#endif
 
 Q_SIGNALS:
     // transfer state

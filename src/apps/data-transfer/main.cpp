@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {
-        qInfo() << "single application is already running.";
+        //qInfo() << "single application is already running.";
         return 0;
     }
 

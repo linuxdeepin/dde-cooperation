@@ -12,7 +12,7 @@
 #include <QListView>
 
 #include <utils/optionsmanager.h>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 #include <gui/mainwindow_p.h>
 
 ConfigSelectWidget::ConfigSelectWidget(QWidget *parent) : QFrame(parent)

@@ -15,7 +15,7 @@
 
 #include <gui/transfer/transferringwidget.h>
 #include <utils/optionsmanager.h>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 SidebarWidget::SidebarWidget(QWidget *parent) : QListView(parent)
 {
     UserPath[tr("Videos")] = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);

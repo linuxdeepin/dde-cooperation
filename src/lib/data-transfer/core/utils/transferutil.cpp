@@ -120,6 +120,7 @@ bool TransferUtil::isUnfinishedJob(QString &content, const QString &connectIP)
 
 bool TransferUtil::checkSize(const QString &filepath)
 {
+#ifdef __linux__
     QJsonObject jsonObj = SettingHelper::ParseJson(filepath);
     if (jsonObj.isEmpty())
         return false;
@@ -135,6 +136,7 @@ bool TransferUtil::checkSize(const QString &filepath)
         //disconnectRemote();
         return false;
     }
+#endif
     return true;
 }
 

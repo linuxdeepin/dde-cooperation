@@ -78,16 +78,24 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
 
     sessionManager = new SessionManager(this);
     sessionManager->setSessionExtCallback(msg_cb);
-    sessionManager->updatePin(DATA_HARD_PIN);
 
     sessionManager->sessionListen(DATA_SESSION_PORT);
 
-    // connect(sessionManager, &SessionManager::notifyConnection, this, &NetworkUtilPrivate::handleConnectStatus);
+    connect(sessionManager, &SessionManager::notifyConnection, this, &NetworkUtilPrivate::handleConnectStatus);
     connect(sessionManager, &SessionManager::notifyTransChanged, this, &NetworkUtilPrivate::handleTransChanged);
 }
 
 NetworkUtilPrivate::~NetworkUtilPrivate()
 {
+}
+
+void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
+{
+    DLOG << " connect status: " << result << " " << reason.toStdString();
+    if (result == 666) {
+        emit TransferHelper::instance()->connectSucceed();
+        return;
+    }
 }
 
 void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, quint64 size)

@@ -21,7 +21,7 @@
 #include <gui/connect/choosewidget.h>
 #include <gui/mainwindow_p.h>
 #include <utils/optionsmanager.h>
-#include <utils/transferhepler.h>
+#include <net/helper/transferhepler.h>
 
 CreateBackupFileWidget::CreateBackupFileWidget(QWidget *parent) : QFrame(parent)
 {

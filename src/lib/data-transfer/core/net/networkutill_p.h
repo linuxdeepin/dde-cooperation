@@ -18,7 +18,7 @@ public:
     ~NetworkUtilPrivate();
 
 public Q_SLOTS:
-    // void handleConnectStatus(int result, QString reason);
+    void handleConnectStatus(int result, QString reason);
     void handleTransChanged(int status, const QString &path, quint64 size);
 
 private:
