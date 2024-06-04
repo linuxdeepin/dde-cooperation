@@ -25,7 +25,11 @@ public:
     QString getJsonfile(const QJsonObject &jsonData, const QString &save);
     bool cancelTransferJob();
     void emitDisconnected();
+
     void sendMessage(const QString &type, const QString &message);
+
+public Q_SLOTS:
+    void handleMessage(QString jsonmsg);
 
 #ifndef __linux__
 
@@ -41,7 +45,6 @@ public:
 #else
     void setting(const QString &filepath);
     void recordTranferJob(const QString &filepath);
-    bool isUnfinishedJob(QString &content);
     void addFinshedFiles(const QString &filepath, int64_t size);
     void setConnectIP(const QString &ip);
 
@@ -98,8 +101,5 @@ Q_SIGNALS:
 
     //remote remainspace
     void remoteRemainSpace(int size);
-
-private:
-    bool online = true;
 };
 #endif

@@ -20,6 +20,7 @@ public:
     static int getRemainSize();
     static bool isUnfinishedJob(QString &content, const QString &connectIP);
     static bool checkSize(const QString &filepath);
+    static QString DownLoadDir();
 
     //win
     static QString getTransferJson(QStringList appList, QStringList fileList, QStringList browserList, QString bookmarksName, QString wallPaperName, QString tempSavePath);

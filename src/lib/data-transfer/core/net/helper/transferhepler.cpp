@@ -3,7 +3,6 @@
 #include "utils/optionsmanager.h"
 #include "utils/transferutil.h"
 #include "common/commonutils.h"
-
 #include "net/networkutil.h"
 
 #include <QDebug>
@@ -49,19 +48,90 @@ QString TransferHelper::updateConnectPassword()
 void TransferHelper::tryConnect(const QString &ip, const QString &password)
 {
     bool res = NetworkUtil::instance()->doConnect(ip, password);
-    if(res)
+    if (res)
         emit connectSucceed();
 }
 
 bool TransferHelper::cancelTransferJob()
 {
-    // return _transferhandle->cancelTransferJob();
+    NetworkUtil::instance()->cancelTrans();
     return true;
 }
 
 void TransferHelper::disconnectRemote()
 {
     //  _transferhandle->disconnectRemote();
+}
+
+void TransferHelper::sendMessage(const QString &type, const QString &message)
+{
+    QJsonObject jsonObj;
+    jsonObj[type] = message;
+
+    QJsonDocument jsonDoc(jsonObj);
+    QByteArray jsonData = jsonDoc.toJson();
+    NetworkUtil::instance()->sendMessage(jsonData);
+}
+
+void TransferHelper::handleMessage(QString jsonmsg)
+{
+    QJsonParseError error;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonmsg.toUtf8(), &error);
+
+    if (error.error != QJsonParseError::NoError || !jsonDoc.isObject()) {
+        qDebug() << "Error parsing JSON: " << error.errorString();
+        return;
+    }
+    QJsonObject jsonObj = jsonDoc.object();
+
+    if (jsonObj.contains("unfinish_json")) {
+        // 前次迁移未完成信息
+        QString undoneJsonstr = jsonObj.value("unfinish_json").toString();
+        emit TransferHelper::instance()->unfinishedJob(undoneJsonstr);
+    }
+
+    if (jsonObj.contains("remaining_space")) {
+        int remainSpace = jsonObj.value("remaining_space").toString().toInt();
+        LOG << "remaining_space " << remainSpace << "G";
+        emit TransferHelper::instance()->remoteRemainSpace(remainSpace);
+    }
+
+    if (jsonObj.contains("add_result")) {
+        QString result = jsonObj.value("add_result").toString();
+        LOG << "add_result" << result.data();
+        for (QString str : result.split(";")) {
+            auto res = str.split(" ");
+            if (res.size() != 3)
+                continue;
+            emit TransferHelper::instance()->addResult(res.at(0), res.at(1) == "true", res.at(2));
+        }
+        emit TransferHelper::instance()->transferFinished();
+    }
+
+    if (jsonObj.contains("change_page")) {
+        QString result = jsonObj.value("change_page").toString();
+        LOG << "change_page" << result.data();
+        if (!result.endsWith("_cb"))
+            TransferHelper::instance()->sendMessage("change_page", result + "_cb");
+        if (result.startsWith("startTransfer")) {
+#ifdef linux
+            emit TransferHelper::instance()->changeWidget(PageName::waitwidget);
+#else
+            emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
+#endif
+            emit TransferHelper::instance()->clearWidget();
+        }
+    }
+
+    if (jsonObj.contains("transfer_content")) {
+        QString result = jsonObj.value("transfer_content").toString();
+        for (QString str : result.split(";")) {
+            auto res = str.split(" ");
+            if (res.size() != 4)
+                continue;
+            emit TransferHelper::instance()->transferContent(res.at(0), res.at(1), res.at(2).toInt(), res.at(3).toInt());
+        }
+    }
 }
 
 void TransferHelper::emitDisconnected()
@@ -71,6 +141,7 @@ void TransferHelper::emitDisconnected()
 #endif
         emit disconnected();
 }
+
 #ifndef __linux__
 
 void TransferHelper::startTransfer()
@@ -82,7 +153,7 @@ void TransferHelper::startTransfer()
 
     QStringList paths = getTransferFilePath(filePathList, appList, browserList, configList);
     qInfo() << "transferring file list: " << paths;
-    //_transferhandle->sendFiles(paths);
+    NetworkUtil::instance()->doSendFiles(paths);
 }
 
 QMap<QString, QString> TransferHelper::getAppList(QMap<QString, QString> &noRecommedApplist)

@@ -89,7 +89,7 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     }
     addTaskcounter(-1);
     //remove dir
-    QDir(filepath).removeRecursively();
+   // QDir(filepath).removeRecursively();
     return true;
 }
 

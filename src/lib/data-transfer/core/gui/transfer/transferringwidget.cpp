@@ -15,6 +15,7 @@
 
 #include <net/helper/transferhepler.h>
 #include <utils/optionsmanager.h>
+#include <utils/transferutil.h>
 #include <common/commonutils.h>
 
 TransferringWidget::TransferringWidget(QWidget *parent)
@@ -169,7 +170,7 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     }
 #else
     if (tpye == tr("Transfering") && content.contains("transfer.json"))
-        //TransferHelper::instance()->checkSize(content);
+         TransferUtil::checkSize(content);
 #endif
 
     if (estimatedtime == -1)
@@ -204,7 +205,7 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
         //通知对方进程情况
         QString mes = tpye + " " + content + " " + QString::number(progressbar) + " "
                 + QString::number(estimatedtime) + ";";
-        // TransferHelper::instance()->sendMessage("transfer_content", mes);
+        TransferHelper::instance()->sendMessage("transfer_content", mes);
 #endif
     }
 }

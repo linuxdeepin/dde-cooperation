@@ -67,14 +67,14 @@ void ResultDisplayWidget::initUI()
             &ResultDisplayWidget::addResult);
 #ifdef __linux__
     connect(TransferHelper::instance(), &TransferHelper::transferFinished, this, [this] {
-        // TransferHelper::instance()->sendMessage("add_result", processText);
+        TransferHelper::instance()->sendMessage("add_result", processText);
     });
 #endif
 }
 
 void ResultDisplayWidget::nextPage()
 {
-    // TransferHelper::instance()->sendMessage("change_page", "startTransfer");
+    TransferHelper::instance()->sendMessage("change_page", "startTransfer");
     QTimer::singleShot(1000, this, [this] {
         QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
         if (stackedWidget) {

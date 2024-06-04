@@ -8,6 +8,8 @@
 
 #include <net/helper/transferhepler.h>
 
+#include <utils/transferutil.h>
+
 using namespace data_transfer_core;
 using namespace deepin_cross;
 
@@ -29,6 +31,7 @@ void DataTransferCorePlugin::initialize()
 
 bool DataTransferCorePlugin::start()
 {
+    TransferUtil::instance();
     TransferHelper::instance();
     return loadMainPage();
 }

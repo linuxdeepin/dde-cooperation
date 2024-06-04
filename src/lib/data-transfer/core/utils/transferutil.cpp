@@ -3,6 +3,7 @@
 #include "settinghepler.h"
 #include "optionsmanager.h"
 #include "common/commonutils.h"
+#include "net/helper/transferhepler.h"
 
 #include <QDir>
 #include <QStandardPaths>
@@ -38,7 +39,7 @@ void TransferUtil::initOnlineState()
         if (isConnected != online) {
             LOG << "Network is" << isConnected;
             online = isConnected;
-            //Q_EMIT onlineStateChanged(isConnected);
+            Q_EMIT TransferHelper::instance()->onlineStateChanged(isConnected);
         }
     });
 
@@ -93,6 +94,11 @@ QString TransferUtil::getJsonfile(const QJsonObject &jsonData, const QString &sa
     }
 }
 
+QString TransferUtil::DownLoadDir()
+{
+    return QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/Downloads";
+}
+
 int TransferUtil::getRemainSize()
 {
     QStorageInfo storage("/home");
@@ -131,9 +137,9 @@ bool TransferUtil::checkSize(const QString &filepath)
     int remainSize = getRemainSize();
     if (size >= remainSize) {
         LOG << "outOfStorage" << size;
-        //emit outOfStorage(size);
-        //cancelTransferJob();
-        //disconnectRemote();
+        emit TransferHelper::instance()->outOfStorage(size);
+        TransferHelper::instance()->cancelTransferJob();
+        TransferHelper::instance()->disconnectRemote();
         return false;
     }
 #endif

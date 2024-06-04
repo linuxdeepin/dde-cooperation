@@ -19,11 +19,10 @@ public:
     // setting
     bool doConnect(const QString &ip, const QString &password);
     void updatePassword(const QString &code);
-    void updateStorageConfig(const QString &value);
+    void updateStorageConfig();
+    bool sendMessage(const QString &msg);
 
     //transfer
-    void sendTransApply(const QString &ip);
-    void replyTransRequest(bool agree);
     void cancelTrans();
     void doSendFiles(const QStringList &fileList);
 
