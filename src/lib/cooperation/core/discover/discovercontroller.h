@@ -26,6 +26,8 @@ public:
 
     QList<DeviceInfoPointer> getOnlineDeviceList() const;
     DeviceInfoPointer findDeviceByIP(const QString &ip);
+    static DeviceInfoPointer selfInfo();
+
     void updateDeviceState(const DeviceInfoPointer info);
 
     static bool isZeroConfDaemonActive();
@@ -53,7 +55,8 @@ private:
 
     void initConnect();
     bool isVaildDevice(const DeviceInfoPointer info);
-    DeviceInfoPointer parseDeviceInfo(const QString &info);
+    DeviceInfoPointer parseDeviceJson(const QString &info);
+    DeviceInfoPointer parseDeviceService(QZeroConfService zcs);
 
 private:
     QSharedPointer<DiscoverControllerPrivate> d { nullptr };

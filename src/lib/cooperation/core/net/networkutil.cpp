@@ -297,7 +297,7 @@ void NetworkUtil::sendShareEvents(const QString &ip)
         return;
     }
 
-    DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(CooperationUtil::localIPAddress());
+    DeviceInfoPointer selfinfo = DiscoverController::selfInfo();
     // session connect and then send rpc request
     ApplyMessage msg;
     msg.flag = ASK_NEEDCONFIRM;
@@ -319,7 +319,7 @@ void NetworkUtil::sendDisconnectShareEvents(const QString &ip)
         return;
     }
 
-    DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(CooperationUtil::localIPAddress());
+    DeviceInfoPointer selfinfo = DiscoverController::selfInfo();
     // session connect and then send rpc request
     ApplyMessage msg;
     msg.flag = ASK_NEEDCONFIRM;

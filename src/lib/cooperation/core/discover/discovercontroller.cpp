@@ -62,13 +62,13 @@ void DiscoverController::initConnect()
 
 bool DiscoverController::isVaildDevice(const DeviceInfoPointer info)
 {
-    if (info->ipAddress().isEmpty() || !info->ipAddress().startsWith(d->ipfilter))
+    if (!info || info->ipAddress().isEmpty() || !info->ipAddress().startsWith(d->ipfilter))
         return false;
     else
         return true;
 }
 
-DeviceInfoPointer DiscoverController::parseDeviceInfo(const QString &info)
+DeviceInfoPointer DiscoverController::parseDeviceJson(const QString &info)
 {
     QJsonParseError error;
     auto doc = QJsonDocument::fromJson(info.toUtf8(), &error);
@@ -81,6 +81,18 @@ DeviceInfoPointer DiscoverController::parseDeviceInfo(const QString &info)
     auto devInfo = DeviceInfo::fromVariantMap(map);
     devInfo->setConnectStatus(DeviceInfo::Connectable);
 
+    return devInfo;
+}
+
+DeviceInfoPointer DiscoverController::parseDeviceService(QZeroConfService zcs)
+{
+    QVariantMap infomap;
+    for (const auto &key : zcs->txt().keys())
+        infomap.insert(key, QString::fromUtf8(QByteArray::fromBase64(zcs->txt().value(key))));
+
+    auto devInfo = DeviceInfo::fromVariantMap(infomap);
+    if (!isVaildDevice(devInfo))
+        return nullptr;
     return devInfo;
 }
 
@@ -161,6 +173,11 @@ DeviceInfoPointer DiscoverController::findDeviceByIP(const QString &ip)
     return nullptr;
 }
 
+DeviceInfoPointer DiscoverController::selfInfo()
+{
+    return DeviceInfo::fromVariantMap(CooperationUtil::deviceInfo());
+}
+
 void DiscoverController::updateDeviceState(const DeviceInfoPointer info)
 {
     Q_EMIT deviceOnline({ info });
@@ -188,12 +205,9 @@ void DiscoverController::onAppAttributeChanged(const QString &group, const QStri
 
 void DiscoverController::addService(QZeroConfService zcs)
 {
-    QVariantMap infomap;
-    for (const auto &key : zcs->txt().keys())
-        infomap.insert(key, zcs->txt().value(key));
+    auto devInfo = parseDeviceService(zcs);
 
-    auto devInfo = DeviceInfo::fromVariantMap(infomap);
-    if (!isVaildDevice(devInfo))
+    if (!devInfo)
         return;
 
     d->onlineDeviceList.append(devInfo);
@@ -202,12 +216,9 @@ void DiscoverController::addService(QZeroConfService zcs)
 
 void DiscoverController::updateService(QZeroConfService zcs)
 {
-    QVariantMap infomap;
-    for (const auto &key : zcs->txt().keys())
-        infomap.insert(key, zcs->txt().value(key));
+    auto devInfo = parseDeviceService(zcs);
 
-    auto devInfo = DeviceInfo::fromVariantMap(infomap);
-    if (!isVaildDevice(devInfo))
+    if (!devInfo)
         return;
 
     auto oldinfo = findDeviceByIP(devInfo->ipAddress());
@@ -219,12 +230,9 @@ void DiscoverController::updateService(QZeroConfService zcs)
 
 void DiscoverController::removeService(QZeroConfService zcs)
 {
-    QVariantMap infomap;
-    for (const auto &key : zcs->txt().keys())
-        infomap.insert(key, zcs->txt().value(key));
+    auto devInfo = parseDeviceService(zcs);
 
-    auto devInfo = DeviceInfo::fromVariantMap(infomap);
-    if (!isVaildDevice(devInfo))
+    if (!devInfo)
         return;
 
     auto oldinfo = findDeviceByIP(devInfo->ipAddress());
@@ -254,7 +262,7 @@ void DiscoverController::publish()
     deviceInfo.insert(AppSettings::IPAddress, selfIP);
     qInfo() << "publish:-------" << deviceInfo;
     for (const auto &key : deviceInfo.keys())
-        d->zeroConf.addServiceTxtRecord(key, deviceInfo.value(key).toString());
+        d->zeroConf.addServiceTxtRecord(key, deviceInfo.value(key).toString().toUtf8().toBase64());
 
     d->zeroConf.startServicePublish(d->zeroconfname.toUtf8(), UNI_CHANNEL, "local", UNI_RPC_PORT_UDP);
 }
@@ -276,13 +284,10 @@ void DiscoverController::refresh()
     auto allServices = d->zeroConf.getServices();
 
     for (const auto &key : allServices.keys()) {
-        QVariantMap infomap;
         QZeroConfService zcs = allServices.value(key);
-        for (const auto &key : zcs->txt().keys())
-            infomap.insert(key, zcs->txt().value(key));
+        auto devInfo = parseDeviceService(zcs);
 
-        auto devInfo = DeviceInfo::fromVariantMap(infomap);
-        if (isVaildDevice(devInfo))
+        if (devInfo)
             d->onlineDeviceList.append(devInfo);
     }
     if (d->searchDevice)
@@ -295,7 +300,7 @@ void DiscoverController::refresh()
 
 void DiscoverController::addSearchDeivce(const QString &info)
 {
-    auto devInfo = parseDeviceInfo(info);
+    auto devInfo = parseDeviceJson(info);
     if (!devInfo) {
         Q_EMIT discoveryFinished(false);
         return;

@@ -221,7 +221,7 @@ void ShareHelper::connectToDevice(const DeviceInfoPointer info)
         d->taskDialog()->show();
         return;
     }
-    DeviceInfoPointer selfinfo = DiscoverController::instance()->findDeviceByIP(CommonUitls::getFirstIp().c_str());
+    DeviceInfoPointer selfinfo = DiscoverController::selfInfo();
     ShareCooperationServiceManager::instance()->server()->setServerConfig(selfinfo, info);
     NetworkUtil::instance()->sendShareEvents(info->ipAddress());
 
