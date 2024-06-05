@@ -44,30 +44,30 @@ protected:
     QStackedLayout *mainLayout { nullptr };
     QDockWidget *sidebar { nullptr };
     QStackedWidget *stackedWidget { nullptr };
-#if defined(_WIN32) || defined(_WIN64)
+
 protected:
     QHBoxLayout *windowsCentralWidget { nullptr };
     QHBoxLayout *windowsCentralWidgetContent { nullptr };
     QHBoxLayout *windowsCentralWidgetSidebar { nullptr };
-#endif
 };
 
-//class MoveFilter : public QObject
-//{
-//    Q_OBJECT
+#ifndef __linux__
+class MoveFilter : public QObject
+{
+    Q_OBJECT
 
-//public:
-//    explicit MoveFilter(MainWindow *qq);
+public:
+    explicit MoveFilter(MainWindow *qq);
 
-//protected:
-//    bool eventFilter(QObject* obj, QEvent* event) override;
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
-//protected:
-//    MainWindow *q{ nullptr };
-//    QPoint lastPosition;
-//    bool leftButtonPressed{ false };
-
-//};
+protected:
+    MainWindow *q { nullptr };
+    QPoint lastPosition;
+    bool leftButtonPressed { false };
+};
+#endif
 
 };   // namespace data_transfer_core
 #endif   // MAINWINDOW_P_H

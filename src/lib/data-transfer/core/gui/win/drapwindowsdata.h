@@ -3,7 +3,6 @@
 
 #include <QList>
 #include <QString>
-#include <Windows.h>
 
 class QSettings;
 class QJsonObject;

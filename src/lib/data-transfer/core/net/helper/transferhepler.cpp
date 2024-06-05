@@ -60,7 +60,7 @@ bool TransferHelper::cancelTransferJob()
 
 void TransferHelper::disconnectRemote()
 {
-    //  _transferhandle->disconnectRemote();
+    NetworkUtil::instance()->disConnect();
 }
 
 void TransferHelper::sendMessage(const QString &type, const QString &message)

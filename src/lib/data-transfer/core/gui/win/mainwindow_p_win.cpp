@@ -204,8 +204,8 @@ void MainWindowPrivate::initSideBar()
 void MainWindowPrivate::initTitleBar()
 {
     QWidget *titleBar = new QWidget(q->centralWidget());
-//    MoveFilter *filter = new MoveFilter(q);
-//    titleBar->installEventFilter(filter);
+    MoveFilter *filter = new MoveFilter(q);
+    titleBar->installEventFilter(filter);
     titleBar->setFixedHeight(50);
     titleBar->setStyleSheet("background-color: white;"
                             "border-top-left-radius: 20px;"
@@ -289,29 +289,30 @@ void MainWindowPrivate::changeAllWidgtText()
     qobject_cast<SidebarWidget *>(sidebar->widget())->changeUI();
 }
 
-//MoveFilter::MoveFilter(MainWindow *qq) : q(qq) { }
+MoveFilter::MoveFilter(MainWindow *qq)
+    : q(qq) {}
 
-//bool MoveFilter::eventFilter(QObject *obj, QEvent *event)
-//{
-//    if (event->type() == QEvent::MouseButtonPress) {
-//        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-//        if (mouseEvent->buttons() == Qt::LeftButton) {
-//            leftButtonPressed = true;
-//            lastPosition = mouseEvent->globalPos() - q->pos();
-//        }
-//        return true;
-//    }
-//    if (event->type() == QEvent::MouseButtonRelease) {
-//        leftButtonPressed = false;
-//        return true;
-//    }
-//    if (event->type() == QEvent::MouseMove) {
-//        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-//        if ((mouseEvent->buttons() == Qt::LeftButton) && leftButtonPressed) {
-//            q->move(mouseEvent->globalPos() - lastPosition);
-//        }
-//        return true;
-//    }
+bool MoveFilter::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->buttons() == Qt::LeftButton) {
+            leftButtonPressed = true;
+            lastPosition = mouseEvent->globalPos() - q->pos();
+        }
+        return true;
+    }
+    if (event->type() == QEvent::MouseButtonRelease) {
+        leftButtonPressed = false;
+        return true;
+    }
+    if (event->type() == QEvent::MouseMove) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if ((mouseEvent->buttons() == Qt::LeftButton) && leftButtonPressed) {
+            q->move(mouseEvent->globalPos() - lastPosition);
+        }
+        return true;
+    }
 
-//    return QObject::eventFilter(obj, event);
-//}
+    return QObject::eventFilter(obj, event);
+}

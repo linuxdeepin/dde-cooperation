@@ -18,6 +18,7 @@ public:
 
     // setting
     bool doConnect(const QString &ip, const QString &password);
+    void disConnect();
     void updatePassword(const QString &code);
     void updateStorageConfig();
     bool sendMessage(const QString &msg);

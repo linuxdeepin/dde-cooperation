@@ -66,6 +66,9 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
     if (result == 2)
         confirmTargetAddress = reason;
 
+    if (result == -1 && confirmTargetAddress == reason)
+        TransferHelper::instance()->emitDisconnected();
+
     if (result == LOGIN_SUCCESS) {
         QString unfinishJson;
         int remainSpace = TransferUtil::getRemainSize();
@@ -173,15 +176,18 @@ void NetworkUtil::updatePassword(const QString &code)
 
 bool NetworkUtil::doConnect(const QString &ip, const QString &password)
 {
-    // session connect by async, handle status in callback
-    d->sessionManager->sessionPing(ip, DATA_SESSION_PORT);
-
     bool logind = d->sessionManager->sessionConnect(ip, DATA_SESSION_PORT, password);
     if (logind) {
         d->confirmTargetAddress = ip;
         return true;
     }
     return false;
+}
+
+void NetworkUtil::disConnect()
+{
+    if (!d->confirmTargetAddress.isEmpty())
+        d->sessionManager->sessionDisconnect(d->confirmTargetAddress);
 }
 
 bool NetworkUtil::sendMessage(const QString &message)

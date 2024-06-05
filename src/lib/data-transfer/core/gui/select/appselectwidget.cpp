@@ -13,7 +13,7 @@
 #include <QListView>
 
 #include <utils/optionsmanager.h>
-//#include <net/helper/transferhepler.h>
+#include <net/helper/transferhepler.h>
 #include <gui/mainwindow_p.h>
 
 AppSelectWidget::AppSelectWidget(QWidget *parent) : QFrame(parent)
@@ -94,7 +94,7 @@ void AppSelectWidget::initSelectFrame()
     appView->setItemDelegate(new ItemDelegate(84, 250, 376, 100, 40, QPoint(52, 6), QPoint(10, 9)));
 
     QMap<QString, QString> noRecommendList;
-    QMap<QString, QString> appList;// = TransferHelper::instance()->getAppList(noRecommendList);
+    QMap<QString, QString> appList = TransferHelper::instance()->getAppList(noRecommendList);
     appView->setAllSize(appList.size());
     for (auto iterator = appList.begin(); iterator != appList.end(); ++iterator) {
         QStandardItem *item = new QStandardItem();
@@ -199,12 +199,12 @@ void AppSelectWidget::nextPage()
     sendOptions();
 
     // nextpage
-//    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }
 void AppSelectWidget::backPage()
 {
     // delete Options
     delOptions();
     // backpage
-//    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
+    emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }
