@@ -20,8 +20,8 @@
 #define WEB_TCP_PORT  SESSION_TCP_PORT + 2
 
 enum LoginStatus {
-    LOGIN_SUCCESS,
-    LOGIN_DENIED
+    LOGIN_SUCCESS = 666,
+    LOGIN_DENIED = 444
 };
 
 enum CallResult {

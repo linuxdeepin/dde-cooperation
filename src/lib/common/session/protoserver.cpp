@@ -95,6 +95,11 @@ proto::OriginMessage ProtoServer::sendRequest(const std::string &target, const p
     return response;
 }
 
+void ProtoServer::sendRequest(const proto::DisconnectRequest &msg)
+{
+    Client::request(msg);
+}
+
 std::shared_ptr<CppServer::Asio::TCPSession>
 ProtoServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server)
 {

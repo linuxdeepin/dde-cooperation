@@ -297,6 +297,9 @@ void NetworkUtil::sendShareEvents(const QString &ip)
         return;
     }
 
+    // update the target address
+    d->confirmTargetAddress = ip;
+
     DeviceInfoPointer selfinfo = DiscoverController::selfInfo();
     // session connect and then send rpc request
     ApplyMessage msg;
@@ -369,6 +372,10 @@ void NetworkUtil::replyShareRequest(bool agree)
 
 void NetworkUtil::cancelApply(const QString &type)
 {
+    if (d->confirmTargetAddress.isEmpty()) {
+        WLOG << "No confirm address!!!";
+        return;
+    }
     ApplyMessage msg;
     msg.nick = type.toStdString();
     QString jsonMsg = msg.as_json().serialize().c_str();
@@ -377,6 +384,10 @@ void NetworkUtil::cancelApply(const QString &type)
 
 void NetworkUtil::cancelTrans()
 {
+    if (d->confirmTargetAddress.isEmpty()) {
+        WLOG << "No confirm address!!!";
+        return;
+    }
     d->sessionManager->cancelSyncFile(d->confirmTargetAddress);
 }
 

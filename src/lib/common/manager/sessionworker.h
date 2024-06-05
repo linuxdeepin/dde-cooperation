@@ -46,8 +46,12 @@ signals:
 
     // local signals which emit from RPC
     void onRemoteDisconnected(const QString &remote);
+
+    void onRejectConnection();
 public slots:
     void handleRemoteDisconnected(const QString &remote);
+
+    void handleRejectConnection();
 
 private:
     bool listen(int port);

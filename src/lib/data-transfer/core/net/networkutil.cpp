@@ -66,7 +66,7 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
     if (result == 2)
         confirmTargetAddress = reason;
 
-    if (result == 666) {
+    if (result == LOGIN_SUCCESS) {
         QString unfinishJson;
         int remainSpace = TransferUtil::getRemainSize();
         bool unfinish = TransferUtil::isUnfinishedJob(unfinishJson, confirmTargetAddress);

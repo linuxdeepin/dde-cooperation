@@ -21,6 +21,7 @@ public:
 
     bool hasConnected(const std::string &ip);
     proto::OriginMessage sendRequest(const std::string &target, const proto::OriginMessage &msg);
+    void sendRequest(const proto::DisconnectRequest &msg);
 
 protected:
     std::shared_ptr<CppServer::Asio::TCPSession> CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server) override;

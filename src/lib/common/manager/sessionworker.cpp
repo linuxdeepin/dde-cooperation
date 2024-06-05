@@ -25,6 +25,7 @@ SessionWorker::SessionWorker(QObject *parent)
     _asioService->Start();
 
     QObject::connect(this, &SessionWorker::onRemoteDisconnected, this, &SessionWorker::handleRemoteDisconnected, Qt::QueuedConnection);
+    QObject::connect(this, &SessionWorker::onRejectConnection, this, &SessionWorker::handleRejectConnection, Qt::QueuedConnection);
 }
 
 void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response)
@@ -61,20 +62,23 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
     case REQ_LOGIN: {
         LoginMessage req, res;
         req.from_json(v);
+        DLOG << "Login: " << req.name << " " << res.auth;
 
-        std::hash<std::string> hasher;
-        uint32_t pinHash = (uint32_t)hasher(_savedPin.toStdString());
-        uint32_t pwdnumber = std::stoul(req.auth);
-        if (req.auth == _savedPin.toStdString()) {
+//        QByteArray pinHash = _savedPin.toUtf8().toBase64();
+        QString nice = QString::fromStdString(req.name);
+        QByteArray pinByte = QByteArray::fromStdString(req.auth);
+        QString dePin = QString::fromUtf8(QByteArray::fromBase64(pinByte));
+        if (dePin == _savedPin) {
             res.auth = "thatsgood";
-            response->mask = LOGIN_SUCCESS;
-            emit onConnectChanged(666, "111");
+            emit onConnectChanged(LOGIN_SUCCESS, nice);
         } else {
             // return empty auth token.
             res.auth = "";
-            response->mask = LOGIN_DENIED;
+            emit onConnectChanged(LOGIN_DENIED, nice);
+
+            emit onRejectConnection();
         }
-        DLOG << "Login: " << req.name << " " << res.auth;
+
         res.name = QHostInfo::localHostName().toStdString();
         response->json_msg = res.as_json().serialize();
     }
@@ -257,24 +261,33 @@ bool SessionWorker::connectRemote(QString ip, int port, QString password)
         return false;
     }
 
-    //std::hash<std::string> hasher;
-   // uint32_t pinHash = (uint32_t)hasher(password.toStdString());
+    QByteArray pinHash = password.toUtf8().toBase64();
+    std::string pinString(pinHash.constData(), pinHash.size());
 
     //std::cout << "-----------" << password.toStdString() <<"----------"<< pinHash <<std::endl;
-    LoginMessage req;
+    LoginMessage req, res;
     req.name = qApp->applicationName().toStdString();
-    req.auth = password.toStdString();
+    req.auth = pinString;
     proto::OriginMessage request;
     request.mask = REQ_LOGIN;
     request.json_msg = req.as_json().serialize();
 
     auto response = sendRequest(ip, request);
-    if (LOGIN_SUCCESS == response.mask) {
-        _login_hosts.insert(ip, true);
-    } else {
-        _login_hosts.insert(ip, false);
+    picojson::value v;
+    std::string err = picojson::parse(v, response.json_msg);
+    if (!err.empty()) {
+        DLOG << "Failed to parse LoginMessage JSON data: " << err;
+        return false;
     }
-    return (LOGIN_SUCCESS == response.mask);
+    res.from_json(v);
+    DLOG << "Login return: " << res.name << " " << res.auth;
+
+    if (res.auth.empty()) {
+        _login_hosts.insert(ip, false);
+    } else {
+        _login_hosts.insert(ip, true);
+    }
+    return true;
 }
 
 void SessionWorker::disconnectRemote()
@@ -286,6 +299,10 @@ void SessionWorker::disconnectRemote()
 
 proto::OriginMessage SessionWorker::sendRequest(const QString &target, const proto::OriginMessage &request)
 {
+    // Sleep for release something
+    CppCommon::Thread::Yield();
+    CppCommon::Thread::Sleep(1);
+
     if (_client && _client->hasConnected(target.toStdString())) {
         return _client->sendRequest(request);
     }
@@ -380,5 +397,14 @@ void SessionWorker::handleRemoteDisconnected(const QString &remote)
     auto it = _login_hosts.find(remote);
     if (it != _login_hosts.end()) {
         _login_hosts.erase(it);
+    }
+}
+
+void SessionWorker::handleRejectConnection()
+{
+    if (_server) {
+        // Send disconnect
+        proto::DisconnectRequest dis;
+        return _server->sendRequest(dis);
     }
 }
