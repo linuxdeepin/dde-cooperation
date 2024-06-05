@@ -9,6 +9,8 @@
 #include <QStringList>
 #include <QApplication>
 #include <QStandardPaths>
+#include <QCryptographicHash>
+#include <QThread>
 
 #define COO_SESSION_PORT 51566
 #define COO_HARD_PIN "515616"
@@ -28,18 +30,21 @@ int main(int argc, char** argv)
 
     // 获取下载目录
     QString downloadDir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    sessionManager->setStorageRoot(downloadDir + "/launcher");
+    sessionManager->setStorageRoot(downloadDir);
+    sessionManager->updateSaveFolder("launcher");
 
     std::cout << "start listen........" << COO_SESSION_PORT << std::endl;
+
+    qputenv("QT_LOGGING_RULES", "cooperation-launcher.debug=true");
 
 #if 0
     QString ip = "10.8.11.52";
     std::cout << "connect remote " << ip.toStdString() << std::endl;
     sessionManager->sessionPing(ip, COO_SESSION_PORT);
-    sleep(1);
+    QThread::msleep(100);
     std::cout << "sessionConnect..........." << std::endl;
     sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
-    sleep(1);
+    QThread::msleep(100);
     std::cout << "sending file.........." << ip.toStdString() << std::endl;
     QStringList fileList;
     fileList << "/home/zero1/Downloads/ss-1.bin";

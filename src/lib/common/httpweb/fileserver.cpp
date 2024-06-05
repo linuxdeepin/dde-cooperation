@@ -155,7 +155,7 @@ protected:
         return params;
     }
 
-    void onReceivedRequest(const CppServer::HTTP::HTTPRequest &request)
+    void onReceivedRequest(const CppServer::HTTP::HTTPRequest &request) override
     {
         // Show HTTP request content
         std::cout << std::endl << request;

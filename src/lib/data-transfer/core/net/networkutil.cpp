@@ -80,7 +80,6 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
 
 void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, quint64 size)
 {
-    DLOG << "status: " << status << " path=" << path.toStdString();
     switch (status) {
     case TRANS_CANCELED:
         //cancelTransfer(path.compare("im_sender") == 0);

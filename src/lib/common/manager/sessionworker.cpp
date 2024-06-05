@@ -150,6 +150,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
 
         emit onTransCount(oneName, total);
     }
+    break;
     default:
         DLOG << "unkown type: " << type;
         break;

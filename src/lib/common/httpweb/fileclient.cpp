@@ -117,8 +117,6 @@ FileClient::FileClient(const std::shared_ptr<CppServer::Asio::Service> &service,
     }
     // Create HTTP client if the current one is empty
     _httpClient = std::make_shared<HTTPFileClient>(service, address, port);
-
-    //_httpClient->IsConnected() ? _httpClient->ReconnectAsync() : _httpClient->ConnectAsync();
 }
 
 FileClient::~FileClient()
@@ -178,6 +176,9 @@ InfoEntry FileClient::requestInfo(const std::string &name)
     url.append("&token=").append(_token);
 
     _httpClient->setResponseHandler(nullptr);
+    // Must sleep for release something, or it will be blocked in request
+    CppCommon::Thread::Yield();
+    CppCommon::Thread::Sleep(1);
 
     auto response = _httpClient->SendGetRequest(url).get();
     if (response.status() == 404) {
@@ -363,6 +364,9 @@ bool FileClient::downloadFile(const std::string &name)
         // 捕获并处理异常
         std::cout << "throw exception: " << ex.what() << std::endl;
     }
+    // Must sleep for release something, or it will be blocked in request
+    CppCommon::Thread::Yield();
+    CppCommon::Thread::Sleep(1);
     return result;
 }
 
@@ -414,7 +418,7 @@ void FileClient::walkDownload(const std::vector<std::string> &webnames)
         InfoEntry info = requestInfo(name);
         if (info.size == 0) {
             std::cout << name << " walkDownload requestInfo return NULL! " << std::endl;
-            return;
+            continue;
         }
 
         // file: size > 0; dir: size < 0; default size = 0
