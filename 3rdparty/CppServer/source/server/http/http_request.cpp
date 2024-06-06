@@ -79,7 +79,7 @@ HTTPRequest& HTTPRequest::SetBegin(std::string_view method, std::string_view url
     _url_index = index;
     _url_size = url.size();
 
-    _cache.append(" ");
+    _cache.append("\r\n");
     index = _cache.size();
 
     // Append the HTTP request protocol version
@@ -315,7 +315,7 @@ bool HTTPRequest::ReceiveHeader(const void* buffer, size_t size)
             // Parse URL
             _url_index = index;
             _url_size = 0;
-            while (_cache[index] != ' ')
+            while (_cache[index] != '\r')
             {
                 ++_url_size;
                 ++index;

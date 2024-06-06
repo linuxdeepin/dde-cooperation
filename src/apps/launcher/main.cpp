@@ -12,7 +12,7 @@
 #include <QCryptographicHash>
 #include <QThread>
 
-#define COO_SESSION_PORT 51566
+#define COO_SESSION_PORT 51588
 #define COO_HARD_PIN "515616"
 
 #define COO_WEB_PORT 51568
@@ -38,16 +38,14 @@ int main(int argc, char** argv)
     qputenv("QT_LOGGING_RULES", "cooperation-launcher.debug=true");
 
 #if 0
-    QString ip = "10.8.11.52";
+    QString ip = "10.8.11.98";
     std::cout << "connect remote " << ip.toStdString() << std::endl;
-    sessionManager->sessionPing(ip, COO_SESSION_PORT);
-    QThread::msleep(100);
-    std::cout << "sessionConnect..........." << std::endl;
     sessionManager->sessionConnect(ip, COO_SESSION_PORT, COO_HARD_PIN);
     QThread::msleep(100);
     std::cout << "sending file.........." << ip.toStdString() << std::endl;
     QStringList fileList;
-    fileList << "/home/zero1/Downloads/ss-1.bin";
+    fileList << "/home/doll/Downloads/launcher/Fuck floder";
+    fileList << "/home/doll/Downloads/launcher/【成研】跨端冒烟测试1.xlsx";
     sessionManager->sendFiles(ip, COO_WEB_PORT, fileList);
 #endif
     QApplication app(argc, argv);

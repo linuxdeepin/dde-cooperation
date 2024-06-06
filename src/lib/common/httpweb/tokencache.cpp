@@ -33,9 +33,8 @@ bool TokenCache::verifyToken(std::string &token)
                           .allow_algorithm(jwt::algorithm::es256k(es256k_pub_key, es256k_priv_key, "", ""))
                           .with_issuer("deepin");
 
-    auto decoded = jwt::decode(token);
-
     try {
+        auto decoded = jwt::decode(token);
         verifier.verify(decoded);
         std::cout << "Token verify success!" << std::endl;
     } catch (const std::exception& ex) {
