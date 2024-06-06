@@ -13,6 +13,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
+#include <QCoreApplication>
 
 #if defined(_WIN32) || defined(_WIN64)
 #    include <gui/win/drapwindowsdata.h>
@@ -27,6 +28,10 @@ TransferHelper::TransferHelper()
     SettingHelper::instance();
     connect(this, &TransferHelper::transferFinished, this, [this]() { isSetting = false; });
 #endif
+    connect(qApp, &QCoreApplication::aboutToQuit, [this]() {
+        DLOG << "App exit, exit ipc server";
+        emit interruption();
+    });
 }
 
 TransferHelper::~TransferHelper() {}
@@ -282,7 +287,7 @@ void TransferHelper::Retransfer(const QString jsonstr)
     qInfo() << "continue last file list: " << paths;
     LOG << "continue last file size:"
         << OptionsManager::instance()->getUserOption(Options::KSelectFileSize)[0].toStdString();
-    //_transferhandle->sendFiles(paths);
+    NetworkUtil::instance()->doSendFiles(paths);
 
     emit changeWidget(PageName::transferringwidget);
 }
@@ -327,7 +332,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
 
         foreach (const QJsonValue &fileValue, userFileArray) {
             QString file = fileValue.toString();
-            QString filename = file.mid(file.indexOf('/'));
+            QString filename = file.mid(file.indexOf('/') + 1);
 
             // skip finished files
             bool isend = false;
@@ -343,7 +348,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
             if (isend) {
                 //Move completed files first
                 QString targetFile = QDir::homePath() + "/" + file;
-                QString originfile = fileDir + filename;
+                QString originfile = fileDir + "/" + filename;
                 QFileInfo info = QFileInfo(targetFile);
                 auto dir = info.dir();
                 if (!dir.exists())
@@ -365,6 +370,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
             WLOG << "Failed to open JSON file for writing";
         tempfile.write(jsonDoc.toJson());
         tempfile.close();
+        LOG << "record unfinish Tranfer file " + tempfile.fileName().toStdString();
         // remove transfer dir
         QDir dir(fileDir);
         if (!dir.removeRecursively()) {
@@ -381,9 +387,11 @@ void TransferHelper::recordTranferJob(const QString &filepath)
 
 void TransferHelper::addFinshedFiles(const QString &filepath, int64_t size)
 {
+    if (filepath.isEmpty())
+        return;
     finshedFiles.insert(filepath, size);
     if (filepath.endsWith("transfer.json"))
-        TransferHelper::instance()->recordTranferJob(filepath);
+        TransferHelper::instance()->recordTranferJob(TransferUtil::DownLoadDir(true) + filepath);
 }
 
 void TransferHelper::setConnectIP(const QString &ip)

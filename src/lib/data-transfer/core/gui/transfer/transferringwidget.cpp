@@ -170,11 +170,8 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     }
 #else
     if (tpye == tr("Transfering") && content.contains("transfer.json"))
-         TransferUtil::checkSize(content);
+        TransferUtil::checkSize(content);
 #endif
-
-    if (estimatedtime == -1)
-        return;
 
     //处理过程内容，只显示一级目录文件
     QString str = resetContent(tpye, content);
@@ -186,6 +183,9 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
                 QString("<font>%1 %2<font style='color: rgba(0, 0, 0, 0.6);'>&nbsp;&nbsp;&nbsp;")
                         .arg(tpye, str));
     }
+
+    if (estimatedtime == -1)
+        return;
 
     progressLabel->setProgress(progressbar);
 
@@ -201,13 +201,14 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
     }
     if (estimatedtime == -2) {
         timeLabel->setText(QString(tr("Transfer will be completed in --")));
-#ifdef __linux__
-        //通知对方进程情况
-        QString mes = tpye + " " + content + " " + QString::number(progressbar) + " "
-                + QString::number(estimatedtime) + ";";
-        TransferHelper::instance()->sendMessage("transfer_content", mes);
-#endif
     }
+
+#ifdef __linux__
+    //通知对方进程情况
+    QString mes = tpye + " " + content + " " + QString::number(progressbar) + " "
+            + QString::number(estimatedtime) + ";";
+    TransferHelper::instance()->sendMessage("transfer_content", mes);
+#endif
 }
 
 void TransferringWidget::themeChanged(int theme)
@@ -235,7 +236,7 @@ void TransferringWidget::clear()
 
 QString TransferringWidget::resetContent(const QString &type, const QString &content)
 {
-    if (!type.startsWith(tr("Decompressing")) && !type.startsWith(tr("Transfering")))
+    if (!type.startsWith(tr("Decompressing")))
         return content;
 
     QString res = content;

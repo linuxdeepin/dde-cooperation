@@ -94,9 +94,12 @@ QString TransferUtil::getJsonfile(const QJsonObject &jsonData, const QString &sa
     }
 }
 
-QString TransferUtil::DownLoadDir()
+QString TransferUtil::DownLoadDir(bool isComplete)
 {
-    return QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/Downloads";
+    if (isComplete)
+        return QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) +"/deepin-data-transfer-temp/";
+    else
+        return "deepin-data-transfer-temp";
 }
 
 int TransferUtil::getRemainSize()

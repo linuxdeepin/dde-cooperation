@@ -40,6 +40,7 @@ private:
     NetworkUtil *q { nullptr };
     SessionManager *sessionManager { nullptr };
     TransferInfo transferInfo;
+    QString finishfile;
     QString confirmTargetAddress {};   // remote ip address
     QString storageFolder = {};   //sub folder under storage dir config
 };

@@ -73,6 +73,10 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
         QString unfinishJson;
         int remainSpace = TransferUtil::getRemainSize();
         bool unfinish = TransferUtil::isUnfinishedJob(unfinishJson, confirmTargetAddress);
+#ifdef __linux__
+        TransferHelper::instance()->setConnectIP(confirmTargetAddress);
+#endif
+
         if (unfinish)
             TransferHelper::instance()->sendMessage("unfinish_json", unfinishJson);
         TransferHelper::instance()->sendMessage("remaining_space", QString::number(remainSpace));
@@ -83,6 +87,10 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
 
 void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, quint64 size)
 {
+#ifndef __linux__
+    return;
+#else
+    //DLOG << "handleTransChanged" << status << " " << path.toStdString();
     switch (status) {
     case TRANS_CANCELED:
         //cancelTransfer(path.compare("im_sender") == 0);
@@ -98,23 +106,24 @@ void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, qui
         emit TransferHelper::instance()->transferring();
         break;
     case TRANS_WHOLE_FINISH:
-#ifdef __linux__
-        TransferHelper::instance()->setting(TransferUtil::DownLoadDir());
-#endif
+        TransferHelper::instance()->setting(path);
         break;
-    case TRANS_INDEX_CHANGE:
-        break;
+    case TRANS_INDEX_CHANGE: {
+        TransferHelper::instance()->addFinshedFiles(finishfile, 0);
+        finishfile = path;
+        emit TransferHelper::instance()->transferContent(tr("Transfering"), path, -2, -2);
+    } break;
     case TRANS_FILE_CHANGE:
         break;
     case TRANS_FILE_SPEED: {
         transferInfo.transferSize += size;
         transferInfo.maxTimeS += 1;   // 每1秒收到此信息
-        updateTransProgress(transferInfo.transferSize, path);
-
+        updateTransProgress(transferInfo.transferSize, "");
     } break;
     case TRANS_FILE_DONE:
         break;
     }
+#endif
 }
 
 void NetworkUtilPrivate::updateTransProgress(uint64_t current, const QString &path)
@@ -141,6 +150,7 @@ void NetworkUtilPrivate::updateTransProgress(uint64_t current, const QString &pa
     }
     time = time.addSecs(remain_time);
 
+    DLOG << "path-----------" << path.toStdString();
     DLOG << "progressbar: " << progressValue << " remain_time=" << remain_time;
     DLOG << "totalSize: " << transferInfo.totalSize << " transferSize=" << current;
 
@@ -166,7 +176,7 @@ NetworkUtil *NetworkUtil::instance()
 
 void NetworkUtil::updateStorageConfig()
 {
-    d->sessionManager->updateSaveFolder("/Downloads");
+    d->sessionManager->updateSaveFolder(TransferUtil::DownLoadDir(false));
 }
 
 void NetworkUtil::updatePassword(const QString &code)

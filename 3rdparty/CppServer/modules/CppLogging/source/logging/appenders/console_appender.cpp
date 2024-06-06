@@ -39,7 +39,7 @@ void ConsoleAppender::AppendRecord(Record& record)
             CppCommon::Console::SetColor(CppCommon::Color::WHITE);
             break;
         case Level::DEBUG:
-            CppCommon::Console::SetColor(CppCommon::Color::LIGHTMAGENTA);
+            CppCommon::Console::SetColor(CppCommon::Color::WHITE);
             break;
         case Level::ALL:
             CppCommon::Console::SetColor(CppCommon::Color::GREY);

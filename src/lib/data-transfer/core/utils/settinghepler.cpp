@@ -59,7 +59,7 @@ QJsonObject SettingHelper::ParseJson(const QString &filepath)
 bool SettingHelper::handleDataConfiguration(const QString &filepath)
 {
     addTaskcounter(1);
-    QJsonObject jsonObj = ParseJson(filepath + "/" + "transfer.json");
+    QJsonObject jsonObj = ParseJson(filepath + "transfer.json");
     if (jsonObj.isEmpty()) {
         addTaskcounter(-1);
         WLOG << "transfer.json is invaild";
@@ -71,13 +71,13 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     setFile(jsonObj, filepath);
 
     // Configure desktop wallpaper
-    QString image = filepath + "/" + jsonObj["wallpapers"].toString();
+    QString image = filepath + jsonObj["wallpapers"].toString();
     if (!jsonObj["wallpapers"].isNull())
         setWallpaper(image);
 
     //setBrowserBookMark
     if (!jsonObj["browserbookmark"].toString().isEmpty())
-        setBrowserBookMark(filepath + "/" + jsonObj["browserbookmark"].toString());
+        setBrowserBookMark(filepath + jsonObj["browserbookmark"].toString());
 
     //installApps
     QJsonValue userFileValue = jsonObj["app"];
@@ -89,7 +89,7 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     }
     addTaskcounter(-1);
     //remove dir
-   // QDir(filepath).removeRecursively();
+    QDir(filepath).removeRecursively();
     return true;
 }
 
@@ -248,10 +248,8 @@ void SettingHelper::addTaskcounter(int value)
 {
     taskcounter += value;
 
-    if (taskcounter == 0) {
-        emit TransferHelper::instance()->transferContent("", tr("Transfer Complete"), 100, -1);
+    if (taskcounter == 0)
         emit TransferHelper::instance()->transferFinished();
-    }
 }
 
 bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
@@ -262,7 +260,7 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
         for (const auto &value : userFileArray) {
             QString filename = value.toString();
             QString targetFile = QDir::homePath() + "/" + filename;
-            QString file = filepath + filename.mid(filename.indexOf('/'));
+            QString file = filepath + filename.mid(filename.indexOf('/') + 1);
             QFileInfo info = QFileInfo(targetFile);
             auto dir = info.dir();
             if (!dir.exists())
@@ -292,7 +290,7 @@ bool SettingHelper::moveFile(const QString &src, QString &dst)
         baseName = fileName.remove(suffix);
 
         while (QFile::exists(dst)) {
-            dst = dstDir + "/" + baseName + "(" + QString::number(i) + ")" + suffix;
+            dst = dstDir + baseName + "(" + QString::number(i) + ")" + suffix;
             i++;
         }
     }
