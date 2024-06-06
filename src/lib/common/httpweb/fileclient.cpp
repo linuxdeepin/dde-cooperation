@@ -61,7 +61,7 @@ protected:
     // it has been marked response arrived when geting its header. Mark all done and clear
     void onReceivedResponse(const HTTPResponse &response) override
     {
-        std::cout << "Response done! data len:" << response.body_length() << std::endl;
+        //std::cout << "Response done! data len:" << response.body_length() << std::endl;
         if (_canceled)
             return;
 
@@ -247,12 +247,12 @@ bool FileClient::downloadFile(const std::string &name)
     if (tempFile.IsFileExists()) {
         // get current file lenght and continue download.
         offset = tempFile.size();
-        std::cout << "tempFile exist size=: " << offset << std::endl;
+        //std::cout << "tempFile exist size=: " << offset << std::endl;
     } else {
         CppCommon::File::WriteEmpty(tempFile);
-        std::cout << "tempFile created: " << offset << std::endl;
+        //std::cout << "tempFile created: " << offset << std::endl;
     }
-    std::cout << "tempFile: " << tempFile.absolute().string() << std::endl;
+    //std::cout << "tempFile: " << tempFile.absolute().string() << std::endl;
 
 
     url.append("&token=").append(_token);
@@ -280,14 +280,14 @@ bool FileClient::downloadFile(const std::string &name)
         }
         break;
         case RES_OKHEADER: {
-            std::string flag = this->getHeadKey(buffer, "Flag");
-            std::cout << "head flag: " << flag << std::endl;
+            //std::string flag = this->getHeadKey(buffer, "Flag");
+            //std::cout << "head flag: " << flag << std::endl;
 
             if (!tempFile.IsFileWriteOpened()) {
                 size_t cur_off = 0;
                 if (tempFile.IsFileExists()) {
                     cur_off = tempFile.size();
-                    std::cout << "Exists seek=: " << offset  << " cur_off=" << cur_off << std::endl;
+                    //std::cout << "Exists seek=: " << offset  << " cur_off=" << cur_off << std::endl;
                 }
                 tempFile.OpenOrCreate(false, true, true);
 
@@ -302,9 +302,7 @@ bool FileClient::downloadFile(const std::string &name)
             if (tempFile.IsFileWriteOpened() && buffer && size > 0) {
                 current += size;
                 // 实现层已循环写全部
-                size_t wr = tempFile.Write(buffer, size);
-                if (wr != size)
-                    std::cout << "write offset=: " << tempFile.offset() << " size=" << size << " wr=" << wr << std::endl;
+                tempFile.Write(buffer, size);
 
                 shouldExit = _callback->onProgress(size);
             }
@@ -328,11 +326,11 @@ bool FileClient::downloadFile(const std::string &name)
 //                tempFile.Flush();
                 tempFile.Close();
             }
-            std::cout << "RES_FINISH, current=" << current << " total:" << total << std::endl;
+            //std::cout << "RES_FINISH, current=" << current << " total:" << total << std::endl;
 
             // rename only for finished
             if (current >= total) {
-                std::cout << "File path:" << tempFile.absolute().RemoveExtension() << std::endl;
+                //std::cout << "File path:" << tempFile.absolute().RemoveExtension() << std::endl;
 
                 CppCommon::Path::Rename(tempFile.absolute(), tempFile.absolute().RemoveExtension());
                 tempFile.Clear();

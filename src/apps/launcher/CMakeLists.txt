@@ -11,10 +11,16 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(${CMAKE_SOURCE_DIR}/src/lib/common)
 
 FILE(GLOB CPP_SRC
+    "${CMAKE_SOURCE_DIR}/src/common/log.h"
+    "${CMAKE_SOURCE_DIR}/src/common/logger.h"
+    "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
+    "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     *.h
     *.cpp
 )
 
+list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS sessionmanager)
 
 if (WIN32)

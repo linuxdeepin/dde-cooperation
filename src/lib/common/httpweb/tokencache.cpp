@@ -36,7 +36,7 @@ bool TokenCache::verifyToken(std::string &token)
     try {
         auto decoded = jwt::decode(token);
         verifier.verify(decoded);
-        std::cout << "Token verify success!" << std::endl;
+        //std::cout << "Token verify success!" << std::endl;
     } catch (const std::exception& ex) {
         std::cout << "Error: " << ex.what() << std::endl;
         return false;

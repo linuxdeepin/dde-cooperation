@@ -56,7 +56,7 @@ protected:
             }
 
             std::string json_str = fileInfo.as_json().serialize();
-            std::cout << "serveInfo >>: " << json_str << std::endl;
+            //std::cout << "serveInfo >>: " << json_str << std::endl;
 
             // Response with all dir/file values
             SendResponseAsync(response().MakeGetResponse(json_str, "application/json; charset=UTF-8"));
@@ -83,8 +83,8 @@ protected:
                 uint64_t total = 0;
 
                 size_t sz = info.size();
-                if (offset < sz) {
-                    std::cout << "breakpoint continue transfer from:" << offset << std::endl;
+                if (offset > 0 && offset < sz) {
+                    //std::cout << "breakpoint continue transfer from:" << offset << std::endl;
                     info.Seek(offset); // seek to offset for breakpoint continue
                 }
 
@@ -98,8 +98,6 @@ protected:
                 SendResponse(response());
 
                 _handler(RES_OKHEADER, info.string().data(), total);
-
-                std::cout << "response header:" << response() << std::endl;
 
                 bool cancel = false;
                 size_t read_sz = 0;
@@ -126,7 +124,7 @@ protected:
             _handler(RES_NOTFOUND, info.string().data(), 0);
         }
 
-        std::cout << "response body end:" << std::endl;
+        //std::cout << "response body end:" << total << std::endl;
     }
 
     // 解析URL中的query参数
@@ -158,7 +156,7 @@ protected:
     void onReceivedRequest(const CppServer::HTTP::HTTPRequest &request) override
     {
         // Show HTTP request content
-        std::cout << std::endl << request;
+        //std::cout << std::endl << request;
 
         // Process HTTP request methods
         if (request.method() == "HEAD")
