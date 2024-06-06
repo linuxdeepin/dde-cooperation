@@ -39,6 +39,8 @@ private:
     std::string _token;
     std::string _savedir;
     std::atomic<bool> _stop { false };
+    // download sync, promise value flag
+    std::atomic<bool> _promised { false };
 
     CppCommon::File tempFile;
 };

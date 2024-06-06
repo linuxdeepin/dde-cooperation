@@ -34,6 +34,7 @@ public:
     bool tryStartReceive(QStringList names, QString &ip, int port, QString &token, QString &dirname);
 
     bool isSyncing();
+    void setEveryFileNotify(bool every);
 
 signals:
     void notifyChanged(int status, const QString &path = "", quint64 size = 0);
@@ -62,6 +63,12 @@ private:
     file_stats_s _status;
     bool _canceled { false };
     bool _singleFile { false }; //send single file
+
+    // notify process for every file
+    bool _everyNotify { false };
+
+    // files receive path
+    QString _recvPath { "" };
 };
 
 #endif // TRANSFERWORKER_H

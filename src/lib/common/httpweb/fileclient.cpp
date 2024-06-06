@@ -235,6 +235,7 @@ bool FileClient::downloadFile(const std::string &name)
     // use smart pointer in order to wait all free while client stop.
     std::shared_ptr<std::promise<bool>> exitPromisePtr = std::make_shared<std::promise<bool>>();
     std::future<bool> exitFuture = exitPromisePtr->get_future();  // 获取与 promise 关联的 future
+    _promised.store(false, std::memory_order_relaxed); // reset flag
 
     uint64_t current = 0, total = 0;
     uint64_t offset = 0;
@@ -282,6 +283,7 @@ bool FileClient::downloadFile(const std::string &name)
         case RES_OKHEADER: {
             //std::string flag = this->getHeadKey(buffer, "Flag");
             //std::cout << "head flag: " << flag << std::endl;
+            CppCommon::Path file_path = tempFile.absolute().RemoveExtension();
 
             if (!tempFile.IsFileWriteOpened()) {
                 size_t cur_off = 0;
@@ -295,7 +297,7 @@ bool FileClient::downloadFile(const std::string &name)
                 tempFile.Seek(cur_off);
             }
             total = size;
-            _callback->onWebChanged(WEB_FILE_BEGIN, tempFile.string(), total);
+            _callback->onWebChanged(WEB_FILE_BEGIN, file_path.string(), total);
         }
         break;
         case RES_BODY: {
@@ -327,16 +329,17 @@ bool FileClient::downloadFile(const std::string &name)
                 tempFile.Close();
             }
             //std::cout << "RES_FINISH, current=" << current << " total:" << total << std::endl;
+            CppCommon::Path file_path = tempFile.absolute().RemoveExtension();
 
             // rename only for finished
             if (current >= total) {
                 //std::cout << "File path:" << tempFile.absolute().RemoveExtension() << std::endl;
 
-                CppCommon::Path::Rename(tempFile.absolute(), tempFile.absolute().RemoveExtension());
+                CppCommon::Path::Rename(tempFile.absolute(), file_path);
                 tempFile.Clear();
             }
             shouldExit = true;
-            _callback->onWebChanged(WEB_FILE_END, tempFile.string(), total);
+            _callback->onWebChanged(WEB_FILE_END, file_path.string(), total);
         }
         break;
 
@@ -345,8 +348,9 @@ bool FileClient::downloadFile(const std::string &name)
             break;
         }
 
-        if (shouldExit) {
+        if (shouldExit && !_promised.load(std::memory_order_relaxed)) {
             exitPromisePtr->set_value(true);
+            _promised.store(true, std::memory_order_relaxed);
         }
 
         return shouldExit;

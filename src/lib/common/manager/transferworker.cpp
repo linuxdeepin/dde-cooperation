@@ -72,15 +72,21 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
     case WEB_FILE_BEGIN: {
         _status.path = msg;
         _status.total = size;
-        QString path = QString::fromStdString(msg);
-        emit notifyChanged(TRANS_FILE_CHANGE, path, size);
+        if (_everyNotify) {
+            DLOG << "notify file begin: " << msg;
+            QString path = QString::fromStdString(msg);
+            emit notifyChanged(TRANS_FILE_CHANGE, path, size);
+        }
     }
         break;
     case WEB_FILE_END: {
         _status.path = msg;
         _status.total = size;
-        QString path = QString::fromStdString(msg);
-        emit notifyChanged(TRANS_FILE_DONE, path, size);
+        if (_everyNotify) {
+            DLOG << "notify file end: " << msg;
+            QString path = QString::fromStdString(msg);
+            emit notifyChanged(TRANS_FILE_DONE, path, size);
+        }
 
         if (_singleFile) {
             // for signal file transfer
@@ -146,6 +152,8 @@ bool TransferWorker::tryStartReceive(QStringList names, QString &ip, int port, Q
         ELOG << "try to create http Geter failed!!!";
         return false;
     }
+    // update receive path, while will be notify after whole finish.
+    _recvPath = QString(dirname);
 
     std::string accessToken = token.toStdString();
     std::string savePath = dirname.toStdString();
@@ -168,6 +176,11 @@ bool TransferWorker::isSyncing()
     return !_canceled;
 }
 
+void TransferWorker::setEveryFileNotify(bool every)
+{
+    _everyNotify = every;
+}
+
 void TransferWorker::handleTimerTick(bool stop)
 {
     if (stop) {
@@ -183,10 +196,10 @@ void TransferWorker::doCalculateSpeed()
     int64_t bytesize = _status.secsize.load();
     _status.secsize.store(0); // reset every second
 
-    if (_noDataCount > 3) {
-        // 3 seconds did not receive any data.
+    if (_noDataCount > 10) {
+        DLOG << "10s no data transfer, whole finished!";
+        // 10 seconds did not receive any data.
         sendTranEndNotify();
-
         return;
     }
     if (bytesize > 0) {
@@ -212,7 +225,7 @@ void TransferWorker::sendTranEndNotify()
             from = "im_recver";
         emit notifyChanged(TRANS_CANCELED, from);
     } else {
-        emit notifyChanged(TRANS_WHOLE_FINISH);
+        emit notifyChanged(TRANS_WHOLE_FINISH, _recvPath);
     }
 }
 

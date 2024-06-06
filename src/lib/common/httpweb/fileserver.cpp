@@ -188,10 +188,9 @@ protected:
                     return;
                 }
 
-                bool found = WebBinder::GetInstance().containWeb(name);
-
                 // 处理predownload或download请求的name
                 if (method.find("info") != std::string::npos) {
+                    bool found = WebBinder::GetInstance().containWeb(name);
                     if (found) {
                         // this web index changed
                         _handler(RES_INDEX_CHANGE, diskpath.string().data(), 0);

@@ -61,7 +61,7 @@ std::string WebBinder::getPath(std::string path)
 bool WebBinder::containWeb(const std::string &name)
 {
     for (auto &pair : _binds) {
-        if (name.find(pair.first) != std::string::npos) {
+        if (pair.first.find(name) != std::string::npos) {
             return true;
         }
     }
