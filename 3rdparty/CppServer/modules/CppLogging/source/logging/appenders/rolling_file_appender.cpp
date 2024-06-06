@@ -480,6 +480,7 @@ private:
 
             // 8. Open or create the rolling file
             _file.OpenOrCreate(false, true, _truncate);
+            _file.Seek(_file.size());
 
             // 9. Reset the written bytes counter
             _written = 0;
@@ -1096,6 +1097,7 @@ private:
 
             // 6. Open or create the rolling file
             _file.OpenOrCreate(false, true, _truncate);
+            _file.Seek(_file.size());
 
             // 7. Reset the written bytes counter
             _written = 0;

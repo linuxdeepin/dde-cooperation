@@ -34,10 +34,11 @@ void Logger::init(const std::string &logpath, const std::string &logname) {
     sink->appenders().push_back(std::make_shared<CppLogging::SyslogAppender>());
 
     // Add file appender
-    // sink->appenders().push_back(std::make_shared<CppLogging::FileAppender>("file_text.log"));
+    //CppCommon::Path logfile = logpath + "/" + logname + ".log";
+    //sink->appenders().push_back(std::make_shared<CppLogging::FileAppender>(logfile));
 
     // Add file appender with time-based rolling policy and archivation
-    // sink->appenders().push_back(std::make_shared<CppLogging::RollingFileAppender>(".", CppLogging::TimeRollingPolicy::DAY, "{UtcDateTime}.log", true));
+    // sink->appenders().push_back(std::make_shared<CppLogging::RollingFileAppender>(savepath, CppLogging::TimeRollingPolicy::DAY, logname + "_{LocalDate}.log", true));
 
     // Add rolling file appender which rolls after append 100MB of logs and will keep only 5 recent archives
     sink->appenders().push_back(std::make_shared<CppLogging::RollingFileAppender>(savepath, logname, "log", 104857600, 5, true));

@@ -105,6 +105,7 @@ bool FileAppender::PrepareFile()
 
         // 4. Open the file for writing
         _file.OpenOrCreate(false, true, _truncate);
+        _file.Seek(_file.size());
 
         // 5. Reset the the retry timestamp
         _retry = 0;
