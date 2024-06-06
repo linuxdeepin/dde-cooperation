@@ -10,7 +10,6 @@
 
 #include <QHostInfo>
 #include <QStandardPaths>
-#include <QCoreApplication>
 #include <QStorageInfo>
 
 SessionWorker::SessionWorker(QObject *parent)
@@ -241,7 +240,7 @@ bool SessionWorker::startListen(int port)
     return true;
 }
 
-bool SessionWorker::clientPing(QString &address, int port)
+bool SessionWorker::netTouch(QString &address, int port)
 {
     bool hasConnected = false;
     if (_client && _client->hasConnected(address.toStdString())) {
@@ -252,42 +251,6 @@ bool SessionWorker::clientPing(QString &address, int port)
         return true;
 
     return connect(address, port);
-}
-
-bool SessionWorker::connectRemote(QString ip, int port, QString password)
-{
-    if (!connect(ip, port)) {
-        ELOG << "Fail to connect remote:" << ip.toStdString();
-        return false;
-    }
-
-    QByteArray pinHash = password.toUtf8().toBase64();
-    std::string pinString(pinHash.constData(), pinHash.size());
-
-    //std::cout << "-----------" << password.toStdString() <<"----------"<< pinHash <<std::endl;
-    LoginMessage req, res;
-    req.name = qApp->applicationName().toStdString();
-    req.auth = pinString;
-    proto::OriginMessage request;
-    request.mask = REQ_LOGIN;
-    request.json_msg = req.as_json().serialize();
-
-    auto response = sendRequest(ip, request);
-    picojson::value v;
-    std::string err = picojson::parse(v, response.json_msg);
-    if (!err.empty()) {
-        DLOG << "Failed to parse LoginMessage JSON data: " << err;
-        return false;
-    }
-    res.from_json(v);
-    DLOG << "Login return: " << res.name << " " << res.auth;
-
-    if (res.auth.empty()) {
-        _login_hosts.insert(ip, false);
-    } else {
-        _login_hosts.insert(ip, true);
-    }
-    return true;
 }
 
 void SessionWorker::disconnectRemote()
@@ -319,6 +282,11 @@ proto::OriginMessage SessionWorker::sendRequest(const QString &target, const pro
 void SessionWorker::updatePincode(QString code)
 {
     _savedPin = code;
+}
+
+void SessionWorker::updateLogin(QString ip, bool logined)
+{
+    _login_hosts.insert(ip, logined);
 }
 
 bool SessionWorker::isClientLogin(QString &ip)
@@ -377,10 +345,11 @@ bool SessionWorker::connect(QString &address, int port)
     int wait_cout = 0;
     _tryConnect = false;
     _client->ConnectAsync();
-    // wait until has reply.
+    // wait until has reply, total 1s timeout
     while (!_client->connectReplyed()) {
-        if (wait_cout > 50000)
+        if (wait_cout > 1000)
             break;
+        CppCommon::Thread::Sleep(1);
         CppCommon::Thread::Yield();
         wait_cout++;
     };

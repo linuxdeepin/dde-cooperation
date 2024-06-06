@@ -13,15 +13,16 @@
 
 #include <QDir>
 #include <QStandardPaths>
+#include <QCoreApplication>
 
 SessionManager::SessionManager(QObject *parent) : QObject(parent)
 {
     // Create session and transfer worker
     _session_worker = std::make_shared<SessionWorker>();
-    connect(_session_worker.get(), &SessionWorker::onConnectChanged, this, &SessionManager::notifyConnection);
-    connect(_session_worker.get(), &SessionWorker::onTransData, this, &SessionManager::handleTransData);
-    connect(_session_worker.get(), &SessionWorker::onTransCount, this, &SessionManager::handleTransCount);
-    connect(_session_worker.get(), &SessionWorker::onCancelJob, this, &SessionManager::handleCancelTrans);
+    connect(_session_worker.get(), &SessionWorker::onConnectChanged, this, &SessionManager::notifyConnection, Qt::QueuedConnection);
+    connect(_session_worker.get(), &SessionWorker::onTransData, this, &SessionManager::handleTransData, Qt::QueuedConnection);
+    connect(_session_worker.get(), &SessionWorker::onTransCount, this, &SessionManager::handleTransCount, Qt::QueuedConnection);
+    connect(_session_worker.get(), &SessionWorker::onCancelJob, this, &SessionManager::handleCancelTrans, Qt::QueuedConnection);
 
     _file_counter = std::make_shared<FileSizeCounter>(this);
     connect(_file_counter.get(), &FileSizeCounter::onCountFinish, this, &SessionManager::handleFileCounted);
@@ -73,7 +74,7 @@ void SessionManager::sessionListen(int port)
 bool SessionManager::sessionPing(QString ip, int port)
 {
     LOG << "sessionPing: " << ip.toStdString();
-    return _session_worker->clientPing(ip, port);
+    return _session_worker->netTouch(ip, port);
 }
 
 bool SessionManager::sessionConnect(QString ip, int port, QString password)
@@ -81,7 +82,38 @@ bool SessionManager::sessionConnect(QString ip, int port, QString password)
     LOG << "sessionConnect: " << ip.toStdString();
     if (_session_worker->isClientLogin(ip))
         return true;
-    return _session_worker->connectRemote(ip, port, password);
+    if (!_session_worker->netTouch(ip, port)) {
+        ELOG << "Fail to connect remote:" << ip.toStdString();
+        return false;
+    }
+
+    // base64 the pwd
+    QByteArray pinHash = password.toUtf8().toBase64();
+    std::string pinString(pinHash.constData(), pinHash.size());
+
+    LoginMessage req, res;
+    req.name = qApp->applicationName().toStdString();
+    req.auth = pinString;
+
+    QString jsonMsg = req.as_json().serialize().c_str();
+    QString response = sendRpcRequest(ip, REQ_LOGIN, jsonMsg);
+    if (response.isEmpty()) {
+        ELOG << "send REQ_LOGIN failed.";
+        return false;
+    }
+
+    picojson::value v;
+    std::string err = picojson::parse(v, response.toStdString());
+    if (!err.empty()) {
+        DLOG << "Failed to parse LoginMessage JSON data: " << err;
+        return false;
+    }
+    res.from_json(v);
+    DLOG << "Login return: " << res.name << " " << res.auth;
+
+    bool logined = !res.auth.empty();
+    _session_worker->updateLogin(ip, logined);
+    return logined;
 }
 
 void SessionManager::sessionDisconnect(QString ip)

@@ -29,13 +29,13 @@ public:
     void stop();
     bool startListen(int port);
 
-    bool clientPing(QString &address, int port);
-    bool connectRemote(QString ip, int port, QString password);
+    bool netTouch(QString &address, int port);
     void disconnectRemote();
 
     proto::OriginMessage sendRequest(const QString &target, const proto::OriginMessage &request);
 
     void updatePincode(QString code);
+    void updateLogin(QString ip, bool logined);
     bool isClientLogin(QString &ip);
 
 signals:
