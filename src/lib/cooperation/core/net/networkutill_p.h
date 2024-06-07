@@ -29,6 +29,7 @@ public:
 public Q_SLOTS:
     void handleConnectStatus(int result, QString reason);
     void handleTransChanged(int status, const QString &path, quint64 size);
+    void handleAsyncRpcResult(int32_t type, const QString response);
 
 private:
     NetworkUtil *q { nullptr };

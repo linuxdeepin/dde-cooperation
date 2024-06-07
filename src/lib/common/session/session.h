@@ -16,9 +16,6 @@ enum SessionState {
     RPC_CONNECTED = 2,
 };
 
-//using MessageHandler = std::function<bool(const proto::OriginMessage &request, proto::OriginMessage *response)>;
-//using StateHandler = std::function<bool(int state, std::string msg)>;
-
 class SessionCallInterface : public std::enable_shared_from_this<SessionCallInterface>
 {
 public:

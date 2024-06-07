@@ -205,11 +205,8 @@ bool NetworkUtil::sendMessage(const QString &message)
     ApplyMessage msg;
     msg.nick = message.toStdString();
     QString jsonMsg = msg.as_json().serialize().c_str();
-    QString res = d->sessionManager->sendRpcRequest(d->confirmTargetAddress, SESSION_MESSAGE, jsonMsg);
-    if (res.isEmpty()) {
-        // transfer request send exception, it perhaps network error
-        WLOG << "Send SESSION_MESSAGE failed.";
-    }
+    d->sessionManager->sendRpcRequest(d->confirmTargetAddress, SESSION_MESSAGE, jsonMsg);
+
     return true;
 }
 

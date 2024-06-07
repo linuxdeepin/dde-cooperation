@@ -10,6 +10,7 @@
 
 #include <QHostInfo>
 #include <QStandardPaths>
+#include <QCoreApplication>
 #include <QStorageInfo>
 
 SessionWorker::SessionWorker(QObject *parent)
@@ -63,7 +64,6 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         req.from_json(v);
         DLOG << "Login: " << req.name << " " << res.auth;
 
-//        QByteArray pinHash = _savedPin.toUtf8().toBase64();
         QString nice = QString::fromStdString(req.name);
         QByteArray pinByte = QByteArray::fromStdString(req.auth);
         QString dePin = QString::fromUtf8(QByteArray::fromBase64(pinByte));
@@ -260,23 +260,47 @@ void SessionWorker::disconnectRemote()
     _client->DisconnectAsync();
 }
 
-proto::OriginMessage SessionWorker::sendRequest(const QString &target, const proto::OriginMessage &request)
+QString SessionWorker::sendRequest(const QString &target, const proto::OriginMessage &request)
 {
+    QString jsonContent = "";
+
+    if (_client && _client->hasConnected(target.toStdString())) {
+        auto res = _client->syncRequest(target.toStdString(), request);
+        jsonContent = QString::fromStdString(res.json_msg);
+        return jsonContent;
+    }
+
+    if (_server && _server->hasConnected(target.toStdString())) {
+        auto res = _server->syncRequest(target.toStdString(), request);
+        jsonContent = QString::fromStdString(res.json_msg);
+        return jsonContent;
+    }
+
+    WLOG << "Not found connected session for: " << target.toStdString();
+    return jsonContent;
+}
+
+bool SessionWorker::sendAsyncRequest(const QString &target, const proto::OriginMessage &request)
+{
+    if (target.isEmpty()) {
+        ELOG << "empty target ip!!!";
+        return false;
+    }
+
     // Sleep for release something
     CppCommon::Thread::Yield();
     CppCommon::Thread::Sleep(1);
 
-    if (_client && _client->hasConnected(target.toStdString())) {
-        return _client->sendRequest(request);
+    std::string ip = target.toStdString();
+    if (doAsyncRequest(_client.get(), ip, request)) {
+        return true;
     }
 
-    if (_server && _server->hasConnected(target.toStdString())) {
-        return _server->sendRequest(target.toStdString(), request);
+    if (doAsyncRequest(_server.get(), ip, request)) {
+        return true;
     }
 
-    WLOG << "Not found connected session for: " << target.toStdString();
-    proto::OriginMessage nullres;
-    return nullres;
+    return false;
 }
 
 void SessionWorker::updatePincode(QString code)
@@ -357,6 +381,19 @@ bool SessionWorker::connect(QString &address, int port)
     return _client->IsConnected();
 }
 
+template<typename T>
+bool SessionWorker::doAsyncRequest(T *endpoint, const std::string& target, const proto::OriginMessage &request)
+{
+    if (endpoint && endpoint->hasConnected(target)) {
+        endpoint->asyncRequestWithHandler(target, request, [this](int32_t type, const std::string &response) {
+            QString res = QString::fromStdString(response);
+            emit onRpcResult(type, res);
+        });
+        return true;
+    }
+    return false;
+}
+
 
 void SessionWorker::handleRemoteDisconnected(const QString &remote)
 {
@@ -373,7 +410,6 @@ void SessionWorker::handleRejectConnection()
 {
     if (_server) {
         // Send disconnect
-        proto::DisconnectRequest dis;
-        return _server->sendRequest(dis);
+        _server->sendDisRequest();
     }
 }

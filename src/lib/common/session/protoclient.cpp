@@ -4,15 +4,6 @@
 
 #include "protoclient.h"
 
-//ProtoClient::ProtoClient()
-//{
-
-//}
-
-void ProtoClient::setCallbacks(std::shared_ptr<SessionCallInterface> callbacks) {
-    _callbacks = callbacks;
-}
-
 void ProtoClient::DisconnectAndStop()
 {
     _stop = true;
@@ -30,14 +21,6 @@ bool ProtoClient::hasConnected(const std::string &ip)
 bool ProtoClient::connectReplyed()
 {
     return _connect_replay;
-}
-
-proto::OriginMessage ProtoClient::sendRequest(const proto::OriginMessage &msg)
-{
-    _self_request.store(true, std::memory_order_relaxed);
-    auto response = Client::request(msg).get();
-    //std::cout << "ProtoClient::sendRequest response: " << response << std::endl;
-    return response;
 }
 
 void ProtoClient::onConnected()

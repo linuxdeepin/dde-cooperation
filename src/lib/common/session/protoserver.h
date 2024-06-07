@@ -6,22 +6,16 @@
 #define PROTOSERVER_H
 
 #include "asioservice.h"
-#include "session.h"
+#include "protoendpoint.h"
 
 #include "server/asio/tcp_server.h"
 
-#include <iostream>
-
-class ProtoServer : public CppServer::Asio::TCPServer, public FBE::proto::Client
+class ProtoServer : public CppServer::Asio::TCPServer, public ProtoEndpoint
 {
 public:
     using CppServer::Asio::TCPServer::TCPServer;
 
-    void setCallbacks(std::shared_ptr<SessionCallInterface> callbacks);
-
-    bool hasConnected(const std::string &ip);
-    proto::OriginMessage sendRequest(const std::string &target, const proto::OriginMessage &msg);
-    void sendRequest(const proto::DisconnectRequest &msg);
+    bool hasConnected(const std::string &ip) override;
 
 protected:
     std::shared_ptr<CppServer::Asio::TCPSession> CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server) override;
@@ -37,15 +31,9 @@ protected:
     size_t onSend(const void *data, size_t size) override;
 
 private:
-    std::shared_ptr<SessionCallInterface> _callbacks { nullptr };
-
     // <ip, sessionid>
     std::shared_mutex _sessionids_lock;
     std::map<std::string, CppCommon::UUID> _session_ids;
-    std::string _active_traget = { "" };
-
-    //mask this is request for the server
-    std::atomic<bool> _self_request { false };
 };
 
 #endif // PROTOSERVER_H

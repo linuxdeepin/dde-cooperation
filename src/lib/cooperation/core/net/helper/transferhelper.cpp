@@ -174,7 +174,6 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
 
     // send the transfer file RPC request
     NetworkUtil::instance()->sendTransApply(ip);
-    //d->status.storeRelease(Confirming);
 
     waitForConfirm();
 }
@@ -376,11 +375,6 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
 
         d->status.storeRelease(Confirming);
     } else {
-        // 如果未在确认和传输状态，则不处理
-        if (d->status.loadAcquire() != TransferHelper::Confirming || d->status.loadAcquire() != TransferHelper::Transfering) {
-            return;
-        }
-
         d->status.storeRelease(Idle);
         transferResult(false, tr("Connect to \"%1\" failed").arg(msg));
     }

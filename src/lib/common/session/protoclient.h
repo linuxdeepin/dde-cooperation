@@ -6,28 +6,22 @@
 #define PROTOCLIENT_H
 
 #include "asioservice.h"
-#include "session.h"
-
-#include "proto_protocol.h"
+#include "protoendpoint.h"
 
 #include "server/asio/tcp_client.h"
 #include "string/format.h"
 #include "threads/thread.h"
 
-#include <atomic>
-#include <iostream>
-
-class ProtoClient : public CppServer::Asio::TCPClient, public FBE::proto::Client
+class ProtoClient : public CppServer::Asio::TCPClient, public ProtoEndpoint
 {
 public:
     using CppServer::Asio::TCPClient::TCPClient;
 
-    void setCallbacks(std::shared_ptr<SessionCallInterface> callbacks);
     void DisconnectAndStop();
 
-    bool hasConnected(const std::string &ip);
     bool connectReplyed();
-    proto::OriginMessage sendRequest(const proto::OriginMessage &msg);
+
+    bool hasConnected(const std::string &ip) override;
 
 protected:
     void onConnected() override;
@@ -50,12 +44,7 @@ private:
     std::atomic<bool> _stop { false };
     std::atomic<bool> _connect_replay { false };
 
-    std::shared_ptr<SessionCallInterface> _callbacks { nullptr };
-
     std::string _connected_host = { "" };
-
-    //mask self request, default false for remote
-    std::atomic<bool> _self_request { false };
 };
 
 #endif // PROTOCLIENT_H

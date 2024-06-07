@@ -133,6 +133,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
 
     connect(sessionManager, &SessionManager::notifyConnection, this, &NetworkUtilPrivate::handleConnectStatus);
     connect(sessionManager, &SessionManager::notifyTransChanged, this, &NetworkUtilPrivate::handleTransChanged);
+    connect(sessionManager, &SessionManager::notifyAsyncRpcResult, this, &NetworkUtilPrivate::handleAsyncRpcResult);
 }
 
 NetworkUtilPrivate::~NetworkUtilPrivate()
@@ -173,6 +174,47 @@ void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, qui
                                   Q_ARG(int, status),
                                   Q_ARG(QString, path),
                                   Q_ARG(quint64, size));
+}
+
+void NetworkUtilPrivate::handleAsyncRpcResult(int32_t type, const QString response)
+{
+    // handle failed result
+    if (response.isEmpty()) {
+        WLOG << "FAIL to RPC: " << type;
+
+        if (APPLY_SHARE == type) {
+            q->metaObject()->invokeMethod(ShareHelper::instance(),
+                                          "handleConnectResult",
+                                          Qt::QueuedConnection,
+                                          Q_ARG(int, SHARE_CONNECT_UNABLE));
+        } else if (APPLY_TRANS == type) {
+            q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
+                                          Qt::QueuedConnection,
+                                          Q_ARG(int, 0),
+                                          Q_ARG(QString, confirmTargetAddress),
+                                          Q_ARG(bool, true));
+        }
+
+        return;
+    }
+
+    // handle success result
+    if (APPLY_INFO == type) {
+        picojson::value json_value;
+        std::string err = picojson::parse(json_value, response.toStdString());
+        if (!err.empty()) {
+            DLOG << "Failed to parse JSON data: " << err;
+            return;
+        }
+
+        ApplyMessage reply;
+        reply.from_json(json_value);
+        // update this device info to discovery list
+        q->metaObject()->invokeMethod(DiscoverController::instance(),
+                                      "addSearchDeivce",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(QString, QString(reply.nick.c_str())));
+    }
 }
 
 NetworkUtil::NetworkUtil(QObject *parent)
@@ -232,26 +274,8 @@ void NetworkUtil::reqTargetInfo(const QString &ip)
     msg.host = ip.toStdString();
     msg.nick = deviceInfoStr().toStdString();
     QString jsonMsg = msg.as_json().serialize().c_str();
-    QString res = d->sessionManager->sendRpcRequest(ip, APPLY_INFO, jsonMsg);
-    if (res.isEmpty()) {
-        // transfer request send exception, it perhaps network error
-        WLOG << "Send APPLY_TRANS failed.";
-    } else {
-        picojson::value json_value;
-        std::string err = picojson::parse(json_value, res.toStdString());
-        if (!err.empty()) {
-            DLOG << "Failed to parse JSON data: " << err;
-            return;
-        }
-
-        ApplyMessage reply;
-        reply.from_json(json_value);
-        // update this device info to discovery list
-        metaObject()->invokeMethod(DiscoverController::instance(),
-                                   "addSearchDeivce",
-                                   Qt::QueuedConnection,
-                                   Q_ARG(QString, QString(reply.nick.c_str())));
-    }
+    d->sessionManager->sendRpcRequest(ip, APPLY_INFO, jsonMsg);
+    // handle callback result in handleAsyncRpcResult
 }
 
 void NetworkUtil::sendTransApply(const QString &ip)
@@ -277,11 +301,7 @@ void NetworkUtil::sendTransApply(const QString &ip)
         msg.nick = deviceName.toStdString();   // user define nice name
         msg.host = CooperationUtil::localIPAddress().toStdString();
         QString jsonMsg = msg.as_json().serialize().c_str();
-        QString res = d->sessionManager->sendRpcRequest(ip, APPLY_TRANS, jsonMsg);
-        if (res.isEmpty()) {
-            // transfer request send exception, it perhaps network error
-            WLOG << "Send APPLY_TRANS failed.";
-        }
+        d->sessionManager->sendRpcRequest(ip, APPLY_TRANS, jsonMsg);
     }
 }
 
@@ -307,11 +327,7 @@ void NetworkUtil::sendShareEvents(const QString &ip)
     msg.nick = selfinfo->deviceName().toStdString();
     msg.host = CooperationUtil::localIPAddress().toStdString();
     QString jsonMsg = msg.as_json().serialize().c_str();
-    QString res = d->sessionManager->sendRpcRequest(ip, APPLY_SHARE, jsonMsg);
-    if (res.isEmpty()) {
-        // transfer request send exception, it perhaps network error
-        WLOG << "Send ShareEvents failed.";
-    }
+    d->sessionManager->sendRpcRequest(ip, APPLY_SHARE, jsonMsg);
 }
 
 void NetworkUtil::sendDisconnectShareEvents(const QString &ip)
@@ -329,11 +345,7 @@ void NetworkUtil::sendDisconnectShareEvents(const QString &ip)
     msg.nick = selfinfo->deviceName().toStdString();
     msg.host = CooperationUtil::localIPAddress().toStdString();
     QString jsonMsg = msg.as_json().serialize().c_str();
-    QString res = d->sessionManager->sendRpcRequest(ip, APPLY_SHARE_STOP, jsonMsg);
-    if (res.isEmpty()) {
-        // transfer request send exception, it perhaps network error
-        WLOG << "Send ShareEvents failed.";
-    }
+    d->sessionManager->sendRpcRequest(ip, APPLY_SHARE_STOP, jsonMsg);
 }
 
 void NetworkUtil::replyTransRequest(bool agree)
@@ -345,11 +357,7 @@ void NetworkUtil::replyTransRequest(bool agree)
     QString jsonMsg = msg.as_json().serialize().c_str();
 
     // _confirmTargetAddress
-    QString res = d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_TRANS_RESULT, jsonMsg);
-    if (res.isEmpty()) {
-        // transfer request send exception, it perhaps network error
-        WLOG << "Send APPLY_TRANS_RESULT failed.";
-    }
+    d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_TRANS_RESULT, jsonMsg);
 
     d->sessionManager->updateSaveFolder(d->storageFolder);
 }
@@ -363,11 +371,7 @@ void NetworkUtil::replyShareRequest(bool agree)
     QString jsonMsg = msg.as_json().serialize().c_str();
 
     // _confirmTargetAddress
-    QString res = d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_SHARE_RESULT, jsonMsg);
-    if (res.isEmpty()) {
-        // transfer request send exception, it perhaps network error
-        WLOG << "Send APPLY_SHARE_RESULT failed.";
-    }
+    d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_SHARE_RESULT, jsonMsg);
 }
 
 void NetworkUtil::cancelApply(const QString &type)

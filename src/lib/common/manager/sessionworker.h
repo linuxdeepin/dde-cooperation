@@ -32,7 +32,8 @@ public:
     bool netTouch(QString &address, int port);
     void disconnectRemote();
 
-    proto::OriginMessage sendRequest(const QString &target, const proto::OriginMessage &request);
+    QString sendRequest(const QString &target, const proto::OriginMessage &request);
+    bool sendAsyncRequest(const QString &target, const proto::OriginMessage &request);
 
     void updatePincode(QString code);
     void updateLogin(QString ip, bool logined);
@@ -48,6 +49,9 @@ signals:
     void onRemoteDisconnected(const QString &remote);
 
     void onRejectConnection();
+
+    // rpc async call result
+    void onRpcResult(int32_t type, const QString &response);
 public slots:
     void handleRemoteDisconnected(const QString &remote);
 
@@ -56,6 +60,9 @@ public slots:
 private:
     bool listen(int port);
     bool connect(QString &address, int port);
+
+    template<typename T>
+    bool doAsyncRequest(T *endpoint, const std::string &target, const proto::OriginMessage &request);
 
     std::shared_ptr<AsioService> _asioService;
     // rpc service and client

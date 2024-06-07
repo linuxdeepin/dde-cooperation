@@ -34,12 +34,12 @@ public:
     void recvFiles(QString &ip, int port, QString &token, QStringList names);
     void cancelSyncFile(QString &ip);
 
-    QString sendRpcRequest(const QString &target, int type, const QString &reqJson);
+    void sendRpcRequest(const QString &target, int type, const QString &reqJson);
 
 signals:
     void notifyCancelWeb();
     void notifyConnection(int result, QString reason);
-    void notifyDoResult(bool result, QString reason);
+    void notifyAsyncRpcResult(int32_t type, const QString response);
 
     // transfer status
     void notifyTransChanged(int status, const QString &path, quint64 size);
@@ -49,6 +49,7 @@ public slots:
     void handleTransCount(const QString names, quint64 size);
     void handleCancelTrans(const QString jobid);
     void handleFileCounted(const QString ip, const QStringList paths, quint64 totalSize);
+    void handleRpcResult(int32_t type, const QString &response);
 
 private:
     void createTransWorker();

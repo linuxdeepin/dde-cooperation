@@ -223,7 +223,6 @@ void ShareHelper::connectToDevice(const DeviceInfoPointer info)
     }
     DeviceInfoPointer selfinfo = DiscoverController::selfInfo();
     ShareCooperationServiceManager::instance()->server()->setServerConfig(selfinfo, info);
-    NetworkUtil::instance()->sendShareEvents(info->ipAddress());
 
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     d->isRecvMode = false;
@@ -235,6 +234,8 @@ void ShareHelper::connectToDevice(const DeviceInfoPointer info)
     d->taskDialog()->switchWaitPage(title.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
     d->taskDialog()->show();
     d->confirmTimer.start();
+
+    NetworkUtil::instance()->sendShareEvents(info->ipAddress());
 }
 
 void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)

@@ -71,11 +71,6 @@ private:
 };
 
 
-void ProtoServer::setCallbacks(std::shared_ptr<SessionCallInterface> callbacks)
-{
-    _callbacks = callbacks;
-}
-
 bool ProtoServer::hasConnected(const std::string &ip)
 {
     // Try to find the required ip
@@ -84,20 +79,6 @@ bool ProtoServer::hasConnected(const std::string &ip)
         return true;
     }
     return false;
-}
-
-proto::OriginMessage ProtoServer::sendRequest(const std::string &target, const proto::OriginMessage &msg)
-{
-    _active_traget = target;
-    _self_request.store(true, std::memory_order_relaxed);
-    auto response = Client::request(msg).get();
-    //std::cout << "ProtoServer::sendRequest response: " << response << std::endl;
-    return response;
-}
-
-void ProtoServer::sendRequest(const proto::DisconnectRequest &msg)
-{
-    Client::request(msg);
 }
 
 std::shared_ptr<CppServer::Asio::TCPSession>

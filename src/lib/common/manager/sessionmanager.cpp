@@ -23,6 +23,7 @@ SessionManager::SessionManager(QObject *parent) : QObject(parent)
     connect(_session_worker.get(), &SessionWorker::onTransData, this, &SessionManager::handleTransData, Qt::QueuedConnection);
     connect(_session_worker.get(), &SessionWorker::onTransCount, this, &SessionManager::handleTransCount, Qt::QueuedConnection);
     connect(_session_worker.get(), &SessionWorker::onCancelJob, this, &SessionManager::handleCancelTrans, Qt::QueuedConnection);
+    connect(_session_worker.get(), &SessionWorker::onRpcResult, this, &SessionManager::handleRpcResult, Qt::QueuedConnection);
 
     _file_counter = std::make_shared<FileSizeCounter>(this);
     connect(_file_counter.get(), &FileSizeCounter::onCountFinish, this, &SessionManager::handleFileCounted);
@@ -95,12 +96,12 @@ bool SessionManager::sessionConnect(QString ip, int port, QString password)
     req.name = qApp->applicationName().toStdString();
     req.auth = pinString;
 
-    QString jsonMsg = req.as_json().serialize().c_str();
-    QString response = sendRpcRequest(ip, REQ_LOGIN, jsonMsg);
-    if (response.isEmpty()) {
-        ELOG << "send REQ_LOGIN failed.";
-        return false;
-    }
+    proto::OriginMessage request;
+    request.mask = REQ_LOGIN;
+    request.json_msg = req.as_json().serialize();
+
+    // have connected first, and then rpc can return immediately, so call sync rpc
+    auto response = _session_worker->sendRequest(ip, request);
 
     picojson::value v;
     std::string err = picojson::parse(v, response.toStdString());
@@ -139,7 +140,6 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
     bool success = _trans_worker->tryStartSend(paths, port, &name_vector, &token);
     if (!success) {
         ELOG << "Fail to send size: " << paths.size() << " at:" << port;
-        emit notifyDoResult(false, "");
         return;
     }
 
@@ -157,15 +157,7 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
     req.size = total; // unkown size
 
     QString jsonMsg = req.as_json().serialize().c_str();
-    QString res = sendRpcRequest(ip, REQ_TRANS_DATAS, jsonMsg);
-    if (res.isEmpty()) {
-        ELOG << "send REQ_TRANS_DATAS failed.";
-        emit notifyDoResult(false, "");
-    } else {
-        _send_task = true;
-        _request_job_id++;
-        emit notifyDoResult(true, "");
-    }
+    sendRpcRequest(ip, REQ_TRANS_DATAS, jsonMsg);
 
     if (total > 0) {
         QString oneName = paths.join(";");
@@ -179,11 +171,7 @@ void SessionManager::recvFiles(QString &ip, int port, QString &token, QStringLis
     bool success = _trans_worker->tryStartReceive(names, ip, port, token, _save_dir);
     if (!success) {
         ELOG << "Fail to recv name size: " << names.size() << " at:" << ip.toStdString();
-        emit notifyDoResult(false, "");
-        return;
     }
-
-    emit notifyDoResult(true, "");
 }
 
 void SessionManager::cancelSyncFile(QString &ip)
@@ -196,37 +184,22 @@ void SessionManager::cancelSyncFile(QString &ip)
     req.name = "all";
     req.reason = "";
 
-    DLOG << "send cancel id: " << req.id << " " << req.reason;
-
     QString jsonMsg = req.as_json().serialize().c_str();
-    QString res = sendRpcRequest(ip, REQ_TRANS_CANCLE, jsonMsg);
-    if (res.isEmpty()) {
-        ELOG << "send REQ_TRANS_CANCLE failed.";
-        emit notifyDoResult(false, "");
-    } else {
-        emit notifyDoResult(true, "");
-    }
+    sendRpcRequest(ip, REQ_TRANS_CANCLE, jsonMsg);
 
     // then: stop local worker
     handleCancelTrans(QString::fromStdString(req.id));
 }
 
-QString SessionManager::sendRpcRequest(const QString &ip, int type, const QString &reqJson)
+void SessionManager::sendRpcRequest(const QString &ip, int type, const QString &reqJson)
 {
     proto::OriginMessage request;
     request.mask = type;
-    request.json_msg = reqJson.toStdString(); //req.as_json().serialize();
-
+    request.json_msg = reqJson.toStdString();
+#ifdef QT_DEBUG
     DLOG << "sendRpcRequest " << request;
-
-    auto response = _session_worker->sendRequest(ip, request);
-    if (DO_SUCCESS == response.mask) {
-        QString res = QString(response.json_msg.c_str());
-        return res;
-    } else {
-        // return empty msg if failed.
-        return "";
-    }
+#endif
+    _session_worker->sendAsyncRequest(ip, request);
 }
 
 void SessionManager::handleTransData(const QString endpoint, const QStringList nameVector)
@@ -277,12 +250,26 @@ void SessionManager::handleFileCounted(const QString ip, const QStringList paths
     req.size = totalSize;
 
     QString jsonMsg = req.as_json().serialize().c_str();
-    QString res = sendRpcRequest(ip, INFO_TRANS_COUNT, jsonMsg);
-    if (res.isEmpty()) {
-        ELOG << "send INFO_TRANS_COUNT failed.";
-    }
+    sendRpcRequest(ip, INFO_TRANS_COUNT, jsonMsg);
 
     // notify local
     QString oneName = paths.join(";");
     handleTransCount(oneName, totalSize);
+}
+
+
+void SessionManager::handleRpcResult(int32_t type, const QString &response)
+{
+#ifdef QT_DEBUG
+    DLOG << "RPC Result type=" << type << " response: " << response.toStdString();
+#endif
+    if (REQ_TRANS_DATAS == type) {
+        if (!response.isEmpty()) {
+            _send_task = true;
+            _request_job_id++;
+        }
+    } else {
+        // notify the result to upper caller
+        emit notifyAsyncRpcResult(type, response);
+    }
 }
