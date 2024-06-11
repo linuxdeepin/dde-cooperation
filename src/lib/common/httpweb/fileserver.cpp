@@ -166,14 +166,16 @@ protected:
             // std::string url = "download/pathname&token=xxx&offset=xxx";
             std::string url = std::string(request.url());
 
-            size_t pathEnd = url.find('&');
+            size_t pathEnd = url.find("&token");
             std::string path = url.substr(0, pathEnd);
 
-            size_t queryStart = url.find('&') + 1;
+            size_t queryStart = url.find("&token") + 1;
             std::string query = url.substr(queryStart);
 
             std::unordered_map<std::string, std::string> queryParams = parseQueryParams(query);
-            std::string name = path.substr(path.find('/') + 1);
+            std::string ename = path.substr(path.find('/') + 1);
+            // dcode realname from base64, which may include '&'
+            std::string name = CppCommon::Encoding::Base64Decode(ename);
             std::string token = queryParams["token"];
 
             std::string method = path.substr(0, path.find('/'));

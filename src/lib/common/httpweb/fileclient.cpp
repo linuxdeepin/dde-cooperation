@@ -172,7 +172,9 @@ InfoEntry FileClient::requestInfo(const std::string &name)
     // request the dir/file info
     // [GET]info/<name>&token
     std::string url = "info/";
-    url.append(name);
+    // base64 the file name in order to keep original name, which may include '&'
+    std::string ename = CppCommon::Encoding::Base64Encode(name);
+    url.append(ename);
     url.append("&token=").append(_token);
 
     _httpClient->setResponseHandler(nullptr);
@@ -240,7 +242,9 @@ bool FileClient::downloadFile(const std::string &name)
     uint64_t current = 0, total = 0;
     uint64_t offset = 0;
     std::string url = "download/";
-    url.append(name);
+    // base64 the file name in order to keep original name, which may include '&'
+    std::string ename = CppCommon::Encoding::Base64Encode(name);
+    url.append(ename);
 
     CppCommon::Path savepath = _savedir + name;
     CppCommon::Directory::CreateTree(savepath.parent());
@@ -377,7 +381,11 @@ void FileClient::downloadFolder(const std::string &folderName)
     // request get sub files's info
     InfoEntry info = requestInfo(folderName);
     if (info.datas.empty()) {
-        std::cout << folderName << " downloadFolder requestInfo return NULL! " << std::endl;
+        //std::cout << folderName << " downloadFolder requestInfo return NULL! " << std::endl;
+        // 创建空文件夹
+        CppCommon::Path folderPath = CppCommon::Path(_savedir) / folderName;
+        if (!folderPath.IsExists())
+            CppCommon::Directory::CreateTree(folderPath);
         return;
     }
 
@@ -400,7 +408,7 @@ void FileClient::downloadFolder(const std::string &folderName)
         } else {
             // 文件夹, 创建
             CppCommon::Path folderPath = CppCommon::Path(_savedir) / folderName;
-            if (!folderPath.IsExists() && folderPath.IsDirectory())
+            if (!folderPath.IsExists())
                 CppCommon::Directory::CreateTree(folderPath);
             downloadFolder(relName); // 递归下载文件夹
         }

@@ -30,6 +30,10 @@ SessionWorker::SessionWorker(QObject *parent)
 
 void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response)
 {
+    // mark this rpc has received.
+    response->id = request.id;
+    response->mask = DO_SUCCESS;
+
     if (request.json_msg.empty()) {
         DLOG << "empty json message: ";
         return;
@@ -50,8 +54,6 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         std::string res_json;
         bool handled = _extMsghandler(request.mask, v, &res_json);
         if (handled) {
-            response->id = request.id;
-            response->mask = DO_SUCCESS;
             response->json_msg = res_json;
             return;
         }
@@ -80,6 +82,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
 
         res.name = QHostInfo::localHostName().toStdString();
         response->json_msg = res.as_json().serialize();
+        return;
     }
     break;
     case REQ_FREE_SPACE: {
@@ -114,6 +117,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
             QString oneName = nameList.join(";");
             emit onTransCount(oneName, total);
         }
+        return;
     }
     break;
     case REQ_TRANS_CANCLE: {
@@ -129,6 +133,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
 
         QString jobid = QString::fromStdString(req.id);
         emit onCancelJob(jobid);
+        return;
     }
     break;
     case CAST_INFO: {
@@ -152,15 +157,13 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         response->json_msg = res.as_json().serialize();
 
         emit onTransCount(oneName, total);
+        return;
     }
     break;
     default:
         DLOG << "unkown type: " << type;
         break;
     }
-
-    response->id = request.id;
-    response->mask = DO_SUCCESS;
 }
 
 bool SessionWorker::onStateChanged(int state, std::string &msg)
