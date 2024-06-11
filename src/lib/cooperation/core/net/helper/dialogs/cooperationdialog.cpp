@@ -135,7 +135,6 @@ void ProgressWidget::init()
     mainLayout->addWidget(progressBar, 1);
     mainLayout->addWidget(msgLabel, 1, Qt::AlignHCenter);
     mainLayout->addWidget(cancelBtn, 1);
-    setFixedHeight(150);
 }
 
 ResultWidget::ResultWidget(QWidget *parent)

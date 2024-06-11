@@ -334,10 +334,10 @@ void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 void SettingDialogPrivate::checkNameValid()
 {
     int length = nameEdit->text().length();
-    if (length < 1 || length > 63) {
+    if (length < 1 || length > 20) {
 #ifdef linux
         nameEdit->setAlert(true);
-        nameEdit->showAlertMessage(tr("The device name must contain 1 to 63 characters"));
+        nameEdit->showAlertMessage(tr("The device name must contain 1 to 20 characters"));
         nameEdit->setFocus();
         return;
 

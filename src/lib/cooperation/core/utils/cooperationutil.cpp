@@ -131,7 +131,7 @@ QVariantMap CooperationUtil::deviceInfo()
     info.insert(AppSettings::ClipboardShareKey, value.isValid() ? value.toBool() : true);
 
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::CooperationEnabled);
-    info.insert(AppSettings::CooperationEnabled, value.isValid() ? value.toBool() : true);
+    info.insert(AppSettings::CooperationEnabled, true);
 
     value = deepin_cross::BaseUtils::osType();
     info.insert(AppSettings::OSType, value);
