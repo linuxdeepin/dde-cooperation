@@ -52,7 +52,7 @@ std::vector<std::string> TokenCache::getWebfromToken(const std::string &token)
 
     try {
         const auto web_array = decoded.get_payload_claim("web").as_string();
-        std::cout << "web = " << web_array << std::endl;
+        //std::cout << "web = " << web_array << std::endl;
 
         picojson::value v;
         std::string err = picojson::parse(v, web_array);
@@ -64,7 +64,7 @@ std::vector<std::string> TokenCache::getWebfromToken(const std::string &token)
         // Assuming web_array is an array of strings
         for(const auto& name : v.get<picojson::array>()) {
             web_vector.push_back(name.get<std::string>());
-            std::cout << "Name: " << name.get<std::string>() << std::endl;
+            //std::cout << "Name: " << name.get<std::string>() << std::endl;
         }
     } catch (const std::exception& ex) {
         std::cout << "Error: " << ex.what() << std::endl;

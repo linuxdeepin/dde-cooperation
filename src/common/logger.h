@@ -32,17 +32,22 @@ constexpr int path_base_len(const char(&s)[N], int i = N - 1) {
     return (s[i] == '/' || s[i] == '\\') ? (N - 2 - i) : (i == 0 ? N-1 : path_base_len(s, i - 1));
 }
 
-class Logger
+class Logger : public CppCommon::Singleton<Logger>
 {
+    friend CppCommon::Singleton<Logger>;
 public:
-    static void init(const std::string &logpath, const std::string &logname);
+    Logger();
 
-    Logger(const char* fname, unsigned line, int level);
     ~Logger();
 
-    std::ostringstream& stream();
+    void init(const std::string &logpath, const std::string &logname);
+
+    std::ostringstream& stream(const char* fname, unsigned line, int level);
 
 private:
+    void logout();
+
+    static const char *_levels[];
     CppLogging::Logger _logger;
     std::ostringstream _buffer;
     int _lv;

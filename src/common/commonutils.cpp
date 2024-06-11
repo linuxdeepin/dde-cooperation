@@ -99,7 +99,7 @@ void CommonUitls::loadTranslator()
 
 void CommonUitls::initLog()
 {
-    deepin_cross::Logger::init(logDir().toStdString(), qApp->applicationName().toStdString());
+    deepin_cross::Logger::GetInstance().init(logDir().toStdString(), qApp->applicationName().toStdString());
 #ifdef QT_DEBUG
     deepin_cross::g_logLevel = deepin_cross::debug;
     LOG << "Debug build, set LogLevel " << deepin_cross::g_logLevel;

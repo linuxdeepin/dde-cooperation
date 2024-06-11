@@ -38,9 +38,9 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         DLOG << "empty json message: ";
         return;
     }
-
+#ifdef QT_DEBUG
     DLOG << "onReceivedMessage mask=" << request.mask << " json_msg: " << request.json_msg << std::endl;
-
+#endif
     // Frist: 解析响应数据
     picojson::value v;
     std::string err = picojson::parse(v, request.json_msg);

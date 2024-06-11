@@ -62,7 +62,9 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
     }
         break;
     case WEB_INDEX_BEGIN: {
+#ifdef QT_DEBUG
         DLOG << "notify web index: " << msg;
+#endif
         QString name = QString::fromStdString(msg);
         emit notifyChanged(TRANS_INDEX_CHANGE, name);
     }
@@ -127,7 +129,6 @@ bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::
         QFileInfo fileInfo(path);
         std::string name = fileInfo.fileName().toStdString();
         nameVector->push_back(name);
-        LOG << "web bind (" << name << ") on dir: " << path.toStdString();
         _file_server->webBind(name, path.toStdString());
 
         jsonArray.push_back(picojson::value(name));
@@ -135,6 +136,10 @@ bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::
         if (paths.size() == 1 && fileInfo.isFile()) {
             _singleFile = true;
         }
+
+#ifdef QT_DEBUG
+        DLOG << "web bind (" << name << ") on dir: " << path.toStdString();
+#endif
     }
 
     // 将picojson对象转换为字符串

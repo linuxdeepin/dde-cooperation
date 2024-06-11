@@ -6,16 +6,29 @@
 
 using namespace deepin_cross;
 
-std::ostringstream& Logger::stream()
+const char *Logger::_levels[] = {"Debug  ", "Info   ", "Warning", "Error  ", "Fatal  "};
+
+Logger::Logger()
 {
-    return _buffer;
 }
 
-Logger::Logger(const char* fname, unsigned line, int level)
+Logger::~Logger()
 {
+    CppLogging::Config::Shutdown();
+}
+
+std::ostringstream& Logger::stream(const char* fname, unsigned line, int level)
+{
+    logout();
     _lv = level;
-    const char *levels[] = {"Debug  ", "Info   ", "Warning", "Error  ", "Fatal  "};
-    _buffer << "["<< levels[level] << "]" << " [" << fname << ':' << line << "] ";
+    _buffer.str(""); // clear
+    _buffer << "["<< _levels[level] << "]" << " [" << fname << ':' << line << "] ";
+//    std::thread t([this](){
+//        std::this_thread::sleep_for(std::chrono::microseconds(10));
+//        logout();
+//    });
+//    t.detach();  // 分离线程，使其在后台独立运行
+    return _buffer;
 }
 
 void Logger::init(const std::string &logpath, const std::string &logname) {
@@ -44,28 +57,31 @@ void Logger::init(const std::string &logpath, const std::string &logname) {
     sink->appenders().push_back(std::make_shared<CppLogging::RollingFileAppender>(savepath, logname, "log", 104857600, 5, true));
 
     // Configure example logger
-    CppLogging::Config::ConfigLogger(sink);
+    CppLogging::Config::ConfigLogger("dde-cooperation", sink);
 
     // Startup the logging infrastructure
     CppLogging::Config::Startup();
+
+    // last: get the configed logger
+    _logger = CppLogging::Config::CreateLogger("dde-cooperation");
 }
 
-Logger::~Logger()
+void Logger::logout()
 {
     switch (_lv) {
-    case 0:
+    case debug:
         _logger.Debug(_buffer.str());
         break;
-    case 1:
+    case info:
         _logger.Info(_buffer.str());
         break;
-    case 2:
+    case warning:
         _logger.Warn(_buffer.str());
         break;
-    case 3:
+    case error:
         _logger.Error(_buffer.str());
         break;
-    case 4:
+    case fatal:
         _logger.Fatal(_buffer.str());
         break;
     default:

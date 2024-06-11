@@ -26,7 +26,9 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
     LOG << "This is only transfer?" << onlyTransfer;
 
     ExtenMessageHandler msg_cb([this](int32_t mask, const picojson::value &json_value, std::string *res_msg) -> bool {
+#ifdef QT_DEBUG
         DLOG << "NetworkUtil >> " << mask << " msg_cb, json_msg: " << json_value << std::endl;
+#endif
         switch (mask) {
         case APPLY_INFO: {
             ApplyMessage req, res;
