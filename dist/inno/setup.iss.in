@@ -23,7 +23,7 @@ DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={cm:CmAppName}
 DisableProgramGroupPage=yes
 LicenseFile=@CMAKE_SOURCE_DIR@/dist/License.rtf
-OutputDir=@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/../installer-inno
+OutputDir=@CMAKE_BINARY_DIR@/installer-inno
 OutputBaseFilename={#MyAppName}-{#MyAppTextVersion}-setup
 SetupIconFile=@CMAKE_CURRENT_SOURCE_DIR@/res/win/@PROJ_NAME@.ico
 VersionInfoProductTextVersion={#MyAppTextVersion}
@@ -35,7 +35,7 @@ VersionInfoCopyright={#MyAppCopyright}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesInstallIn64BitMode=x64 ia64
+ArchitecturesInstallIn64BitMode=x64
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName={cm:CmAppName}
 Uninstallable=yes
@@ -52,7 +52,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ; Name: "startupicon"; Description: "{cm:CmAutoStart}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
 
 [Files]
-Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@PROJ_NAME@/@CMAKE_BUILD_TYPE@/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

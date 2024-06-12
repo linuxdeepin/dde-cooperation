@@ -14,11 +14,11 @@ if(NOT TARGET quazip)
     add_subdirectory("${QUAZIP_DIR}" quazip)
     include_directories(${QUAZIP_DIR}/quazip)
 
-    # ¿½±´Êä³öÎÄ¼þµ½Ó¦ÓÃ
-    file(GLOB OUTPUTS ${CMAKE_INSTALL_LIBDIR}/quazip5d.*)
+    # æ‹·è´è¾“å‡ºæ–‡ä»¶åˆ°åº”ç”¨
+    file(GLOB OUTPUTS ${CMAKE_INSTALL_LIBDIR}/quazip*)
     file(COPY ${OUTPUTS}
       DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/data-transfer/${CMAKE_BUILD_TYPE})
-    message("   >>> copy QtZeroConf output libraries:  ${OUTPUTS}")
+    message("   >>> copy quazip output libraries:  ${OUTPUTS}")
   endif()
 
 endif()

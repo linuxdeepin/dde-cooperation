@@ -83,7 +83,7 @@ endif()
 message("   >>> CMAKE_BUILD_TYPE  ${CMAKE_BUILD_TYPE}")
 if(NOT CMAKE_BUILD_TYPE)
    message("Cmake build type is not defined!")
-   set(CMAKE_BUILD_TYPE "Release")
+   set(CMAKE_BUILD_TYPE "Debug")
     # 设置环境变量
    set(ENV{QT_SELECT} "5")
 endif()

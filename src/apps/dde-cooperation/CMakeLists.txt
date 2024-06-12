@@ -1,4 +1,5 @@
 ﻿set(PROJ_NAME "dde-cooperation")
+set(PKG_NAME "dde-cooperation")
 
 # enable qt build support
 set(CMAKE_AUTOUIC ON)
@@ -28,20 +29,23 @@ endif()
 
 #如果是Windows平台，则生成rc文件，还有inno setup脚本文件
 set(VERSION_RC_PATH "")
+set(MANIFEST "")
 if (WIN32)
     # 文件描述信息
     set (PRODUCT_INFO "Deepin cooperation")
     set (PRODUCT_NAME "deepin-cooperation")
     set (PRODUCT_ID "A3AE65FC-2431-49AE-9A9C-87D3DBC2B7A4")
 
-    set(VERSION_RC_PATH ${CMAKE_CURRENT_BINARY_DIR}/version_${PROJECT_NAME}.rc)
+    set(VERSION_RC_PATH ${CMAKE_CURRENT_BINARY_DIR}/version_${PROJ_NAME}.rc)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../version.rc.in ${VERSION_RC_PATH})
+
+    set(MANIFEST ${CMAKE_CURRENT_SOURCE_DIR}/../app.manifest)
+
+    # 从定位输出目录
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/${PKG_NAME})
 
     # 安装包制作inno脚本
     configure_file(${CMAKE_SOURCE_DIR}/dist/inno/setup.iss.in ${CMAKE_BINARY_DIR}/${PROJ_NAME}-setup.iss)
-
-    # 从定位输出目录
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/${PROJ_NAME})
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -49,11 +53,13 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${CPP_SRC}
         ${VERSION_RC_PATH}
+        ${MANIFEST}
     )
 else()
     add_executable(${PROJ_NAME}
         ${CPP_SRC}
         ${VERSION_RC_PATH}
+        ${MANIFEST}
     )
 endif()
 
@@ -102,10 +108,6 @@ if (WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy ${QM_FILES} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}/translations
         COMMENT "Copying translation files to output directory"
     )
-
-    # copy common share libs
-    file(GLOB DLLS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../QtZeroConf.*)
-    file(COPY ${DLLS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/)
 
     deployqt_qt_runtime(${PROJ_NAME} ${qt_required_components})
 else()
