@@ -85,36 +85,16 @@ Filename: {sys}\taskkill; Parameters: "/im {#MyAppExeName} /f /t"; Flags: runhid
 #include "scripts\products\winversion.iss"
 #include "scripts\products\msiproduct.iss"
 #include "scripts\products\vcredist2015-2022.iss"
+#include "scripts\products\bonjour.iss"
 
 [Code]
-const
-	vc_upgradecode = '{65E5BD06-6392-3027-8C26-853107D3CF1A}';
-	vc_upgradecode_x64 = '{36F68A90-239C-34DF-B58C-64B30153CE35}';
-
-procedure checkvcredist(minVersion: string);
-var
-  path: string;
-  ErrorCode: Integer;
+function InitializeSetup(): boolean;
 begin
-	if (not IsIA64()) then begin
-		path := ExpandConstant('{app}{\}') + 'vc_redist.x64.exe';
-		if (not msiproductupgrade(GetString(vc_upgradecode, vc_upgradecode_x64, ''), minVersion)) then
-			if not FileExists(path) then begin
-				vcredist201522(minVersion); // download and install
-			end
-			else begin
-				Exec(path, '/install', '', SW_SHOW, ewWaitUntilTerminated, ErrorCode);
-			end;
-	end;
-end;
+	// initialize windows version
+	initwinversion();
 
-  procedure CurStepChanged(CurStep: TSetupStep);
-begin
-  if CurStep = ssPostInstall then
-    begin
-      // initialize windows version
-      initwinversion();
+	vcredist201522('14'); // min allowed version is 14.0
+	bonjour('3') // 3.0.0.10
 
-      checkvcredist('14'); // min allowed version is 14.0
-    end;
+	Result := true;
 end;

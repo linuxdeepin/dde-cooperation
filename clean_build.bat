@@ -13,7 +13,7 @@ set B_BUILD_TYPE=Release
 set B_QT_ROOT=C:\Qt
 set B_QT_VER=5.15.2
 set B_QT_MSVC=msvc2019_64
-set B_BONJOUR=3rdparty\ext\BonjourSDKLike
+set B_BONJOUR=%~dp0\3rdparty\ext\BonjourSDK
 
 if "%OPENSSL_ROOT_DIR%"=="" (
     set OPENSSL_ROOT_DIR=C:\Program Files\OpenSSL-Win64
@@ -36,13 +36,9 @@ if "%VisualStudioVersion%"=="15.0" (
 
 if exist build_env.bat call build_env.bat
 
-REM needed by cmake to set bonjour include dir
-set BONJOUR_SDK_HOME=%B_BONJOUR%
-
 REM full path to Qt stuff we need
 set B_QT_FULLPATH=%B_QT_ROOT%\%B_QT_VER%\%B_QT_MSVC%
 
-echo Bonjour: %BONJOUR_SDK_HOME%
 echo Qt: %B_QT_FULLPATH%
 
 git submodule update --init --recursive
@@ -51,10 +47,11 @@ rmdir /q /s build
 mkdir build
 if ERRORLEVEL 1 goto failed
 cd build
+mkdir installer-inno
 
 echo ------------starting cmake------------
 
-cmake -G "%cmake_gen%" -A x64 -D CMAKE_BUILD_TYPE=%B_BUILD_TYPE% -D CMAKE_PREFIX_PATH="%B_QT_FULLPATH%" -D DNSSD_LIB="%B_BONJOUR%\Lib\x64\dnssd.lib" -D QT_VERSION=%B_QT_VER% ..
+cmake -G "%cmake_gen%" -A x64 -D CMAKE_BUILD_TYPE=%B_BUILD_TYPE% -D CMAKE_PREFIX_PATH="%B_QT_FULLPATH%" -D QT_VERSION=%B_QT_VER% ..
 if ERRORLEVEL 1 goto failed
 cmake --build . --config %B_BUILD_TYPE%
 if ERRORLEVEL 1 goto failed
@@ -66,6 +63,8 @@ if exist output\Debug (
     copy output\Release\QtZeroConf.dll output\dde-cooperation\Release\ > NUL
     copy "%OPENSSL_ROOT_DIR%\libcrypto-1_1-x64.dll" output\dde-cooperation\Release\ > NUL
     copy "%OPENSSL_ROOT_DIR%\libssl-1_1-x64.dll" output\dde-cooperation\Release\ > NUL
+    copy "%B_BONJOUR%\Bonjour64.msi" installer-inno\ > NUL
+    move output\dde-cooperation\Release\vc_redist.x64.exe installer-inno\ > NUL
 ) else (
     echo Remember to copy supporting binaries and configuration files!
 )
@@ -73,7 +72,7 @@ if exist output\Debug (
 echo Build completed successfully
 
 @REM echo ------------cmake again forgenerate sources------------
-@REM cmake -G "%cmake_gen%" -A x64 -D CMAKE_BUILD_TYPE=%B_BUILD_TYPE% -D CMAKE_PREFIX_PATH="%B_QT_FULLPATH%" -D DNSSD_LIB="%B_BONJOUR%\Lib\x64\dnssd.lib" -D QT_VERSION=%B_QT_VER% ..
+@REM cmake -G "%cmake_gen%" -A x64 -D CMAKE_BUILD_TYPE=%B_BUILD_TYPE% -D CMAKE_PREFIX_PATH="%B_QT_FULLPATH%" -D QT_VERSION=%B_QT_VER% ..
 
 set BUILD_FAILED=0
 goto done
@@ -90,7 +89,6 @@ set B_QT_ROOT=
 set B_QT_VER=
 set B_QT_MSVC=
 set B_BONJOUR=
-set BONJOUR_SDK_HOME=
 set B_QT_FULLPATH=
 set savedir=
 set cmake_gen=
