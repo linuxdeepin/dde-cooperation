@@ -365,7 +365,7 @@ void WebSocket::PrepareReceiveFrame(const void* buffer, size_t size)
 #if defined(__i386__)
             //32 bit support
             payload = (((size_t)_ws_receive_frame_buffer[2] << 24) | ((size_t)_ws_receive_frame_buffer[3] << 16) | ((size_t)_ws_receive_frame_buffer[4] << 8) | ((size_t)_ws_receive_frame_buffer[5] << 0));
-            payload = (payload << 32) | (((size_t)_ws_receive_frame_buffer[6] << 24) | ((size_t)_ws_receive_frame_buffer[7] << 16) | ((size_t)_ws_receive_frame_buffer[8] << 8) | ((size_t)_ws_receive_frame_buffer[9] << 0));
+            payload |= (((size_t)_ws_receive_frame_buffer[6] << 24) | ((size_t)_ws_receive_frame_buffer[7] << 16) | ((size_t)_ws_receive_frame_buffer[8] << 8) | ((size_t)_ws_receive_frame_buffer[9] << 0));
 #else
             //64 bit support
             payload = (((size_t)_ws_receive_frame_buffer[2] << 56) | ((size_t)_ws_receive_frame_buffer[3] << 48) | ((size_t)_ws_receive_frame_buffer[4] << 40) | ((size_t)_ws_receive_frame_buffer[5] << 32) | ((size_t)_ws_receive_frame_buffer[6] << 24) | ((size_t)_ws_receive_frame_buffer[7] << 16) | ((size_t)_ws_receive_frame_buffer[8] << 8) | ((size_t)_ws_receive_frame_buffer[9] << 0));
