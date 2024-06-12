@@ -104,8 +104,9 @@ else()
     install(FILES ${QM_FILES} DESTINATION share/${PROJ_NAME}/translations)
 
     # icons
-    FILE(GLOB ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/res/linux/*.svg)
-    install(FILES ${ICON_FILES} DESTINATION share/icons/hicolor/scalable/apps)
+    # FILE(GLOB ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/res/linux/*.svg)
+    # install(FILES ${ICON_FILES} DESTINATION share/icons/hicolor/scalable/apps)
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/misc/icons DESTINATION share)
 
     # desktop
     install(FILES res/linux/dde-cooperation.desktop DESTINATION share/applications)
