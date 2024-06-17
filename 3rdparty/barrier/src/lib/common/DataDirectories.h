@@ -25,24 +25,24 @@ namespace barrier {
 class DataDirectories
 {
 public:
-    static const fs::path& profile();
-    static const fs::path& profile(const fs::path& path);
+    static const fastring& profile();
+    static const fastring& profile(const fastring& path);
 
-    static const fs::path& global();
-    static const fs::path& global(const fs::path& path);
+    static const fastring& global();
+    static const fastring& global(const fastring& path);
 
-    static const fs::path& systemconfig();
-    static const fs::path& systemconfig(const fs::path& path);
+    static const fastring& systemconfig();
+    static const fastring& systemconfig(const fastring& path);
 
-    static fs::path ssl_fingerprints_path();
-    static fs::path local_ssl_fingerprints_path();
-    static fs::path trusted_servers_ssl_fingerprints_path();
-    static fs::path trusted_clients_ssl_fingerprints_path();
-    static fs::path ssl_certificate_path();
+    static fastring ssl_fingerprints_path();
+    static fastring local_ssl_fingerprints_path();
+    static fastring trusted_servers_ssl_fingerprints_path();
+    static fastring trusted_clients_ssl_fingerprints_path();
+    static fastring ssl_certificate_path();
 private:
-    static fs::path _profile;
-    static fs::path _global;
-    static fs::path _systemconfig;
+    static fastring _profile;
+    static fastring _global;
+    static fastring _systemconfig;
 };
 
 } // namespace barrier

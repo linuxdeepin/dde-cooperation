@@ -1,6 +1,7 @@
+cmake_minimum_required (VERSION 3.4)
 
 set (APP_VERSION_MAJOR 0)
-set (APP_VERSION_MINOR 8)
+set (APP_VERSION_MINOR 7)
 set (APP_VERSION_PATCH 1)
 set (APP_VERSION_STAGE "release")
 

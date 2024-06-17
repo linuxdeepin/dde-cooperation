@@ -290,10 +290,10 @@ ArgParser::parseGenericArgs(int argc, const char* const* argv, int& i)
         argsBase().m_enableCrypto = false;
     }
     else if (isArg(i, argc, argv, NULL, "--profile-dir", 1)) {
-        argsBase().m_profileDirectory = barrier::fs::u8path(argv[++i]);
+        argsBase().m_profileDirectory = fastring(argv[++i]);
     }
     else if (isArg(i, argc, argv, NULL, "--plugin-dir", 1)) {
-        argsBase().m_pluginDirectory = barrier::fs::u8path(argv[++i]);
+        argsBase().m_pluginDirectory = fastring(argv[++i]);
     }
     else {
         // option not supported here
@@ -495,7 +495,7 @@ ArgParser::updateCommonArgs(const char* const* argv)
 std::string ArgParser::parse_exename(const char* arg)
 {
     // FIXME: we assume UTF-8 encoding, but on Windows this is not correct
-    return barrier::fs::u8path(arg).filename().u8string();
+    return fastring(arg).c_str();
 }
 
 bool

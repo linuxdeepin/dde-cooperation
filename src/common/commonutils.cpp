@@ -14,7 +14,8 @@
 #include <QFileSystemWatcher>
 #include <QTimer>
 #include <QProcess>
-#include <QRandomGenerator>
+
+#include "co/co/sock.h"
 
 using namespace deepin_cross;
 
@@ -54,6 +55,33 @@ std::string CommonUitls::getFirstIp()
         }
     }
     return ip.toStdString();
+}
+
+bool CommonUitls::isPortInUse(int port)
+{
+    sock_t sockfd = co::socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        WLOG << "socket failed";
+        return false;
+    }
+
+    bool inUse = false;
+    struct sockaddr_in addr;
+    bool init = co::init_addr(&addr, "0.0.0.0", port);
+    if (init) {
+        int res = co::bind(sockfd, &addr, sizeof(addr));
+        if (res < 0) {
+            ELOG << "Failed to bind address";
+            inUse = true;
+        }
+    } else {
+        ELOG << "Failed to init address";
+        co::close(sockfd);
+        inUse = true;
+    }
+
+    co::close(sockfd);
+    return inUse;
 }
 
 void CommonUitls::loadTranslator()
@@ -99,11 +127,22 @@ void CommonUitls::loadTranslator()
 
 void CommonUitls::initLog()
 {
-    deepin_cross::Logger::GetInstance().init(logDir().toStdString(), qApp->applicationName().toStdString());
 #ifdef QT_DEBUG
-    deepin_cross::g_logLevel = deepin_cross::debug;
-    LOG << "Debug build, set LogLevel " << deepin_cross::g_logLevel;
+    int level = 0;
+    log::xx::g_minLogLevel = static_cast<log::xx::LogLevel>(level);
+    LOG << "set LogLevel " << level;
 #endif
+
+    flag::set_value("rpc_log", "false");   //rpc日志关闭
+    flag::set_value("cout", "true");   //终端日志输出
+    flag::set_value("journal", "true");   //journal日志
+    if (detailLog()) {
+        flag::set_value("log_detail", "true");   //详细日志输出
+    }
+
+    fastring logdir = logDir().toStdString();
+    WLOG << "set logdir: " << logdir.c_str();
+    flag::set_value("log_dir", logdir);   //日志保存目录
 
 #ifdef linux
     QString logConfPath = QString("/usr/share/%1/")
@@ -121,24 +160,21 @@ void CommonUitls::initLog()
 
 #ifndef QT_DEBUG
     int level = settings.value("g_minLogLevel", 2).toInt();
-    LOG << "Release build, set LogLevel " << level;
-    deepin_cross::g_logLevel = static_cast<deepin_cross::LogLevel>(level);
+    WLOG << "set LogLevel " << level;
+    log::xx::g_minLogLevel = static_cast<log::xx::LogLevel>(level);
 
     QTimer *timer = new QTimer();
     QObject::connect(timer, &QTimer::timeout, [configFile] {
         QSettings settings(configFile, QSettings::IniFormat);
         int level = settings.value("g_minLogLevel", 2).toInt();
-        auto logLevel = static_cast<deepin_cross::LogLevel>(level);
-        if (deepin_cross::g_logLevel != logLevel) {
-            deepin_cross::g_logLevel = logLevel;
-            LOG << "Release build, update LogLevel " << level;
+        auto logLevel = static_cast<log::xx::LogLevel>(level);
+        if (log::xx::g_minLogLevel != logLevel) {
+            log::xx::g_minLogLevel = logLevel;
+            WLOG << "update LogLevel " << level;
         }
     });
     timer->start(2000);
 #endif
-    if (detailLog()) {
-        deepin_cross::g_logLevel = deepin_cross::debug; //详细日志输出
-    }
 }
 
 QString CommonUitls::elidedText(const QString &text, Qt::TextElideMode mode, int maxLength)
@@ -256,14 +292,4 @@ bool CommonUitls::isFirstStart()
         WLOG << "FirstStart Failed to create file: " << flagPath.toStdString();
     }
     return true;
-}
-
-QString CommonUitls::generateRandomPassword()
-{
-    QString password;
-    for (int i = 0; i < 6; ++i) {
-        int digit = QRandomGenerator::global()->bounded(10); // 生成0到9之间的随机数字
-        password.append(QString::number(digit));
-    }
-    return password;
 }

@@ -1,6 +1,5 @@
-﻿cmake_minimum_required(VERSION 3.13)
-
-project(QuaZip)
+﻿project(QuaZip)
+cmake_minimum_required(VERSION 2.6)
 
 # CMP0042: Explicitly acknowledge MACOSX_RPATH
 # (introduced in CMake 2.8.12, enabled by default in CMake 3.0,
@@ -44,11 +43,11 @@ endif()
 if(UNIX OR MINGW)
     find_package(ZLIB REQUIRED)
 else(UNIX OR MINGW)
-    # set(ZLIB_INCLUDE_DIRS "${QT_ROOT}/src/3rdparty/zlib" CACHE STRING "Path to ZLIB headers of Qt")
-    # set(ZLIB_LIBRARIES "")
-    # if(NOT EXISTS "${ZLIB_INCLUDE_DIRS}/zlib.h")
-    #     message("Please specify a valid zlib include dir")
-    # endif(NOT EXISTS "${ZLIB_INCLUDE_DIRS}/zlib.h")
+    set(ZLIB_INCLUDE_DIRS "${QT_ROOT}/src/3rdparty/zlib" CACHE STRING "Path to ZLIB headers of Qt")
+    set(ZLIB_LIBRARIES "")
+    if(NOT EXISTS "${ZLIB_INCLUDE_DIRS}/zlib.h")
+        message("Please specify a valid zlib include dir")
+    endif(NOT EXISTS "${ZLIB_INCLUDE_DIRS}/zlib.h")
 endif(UNIX OR MINGW)
 
 # All build libraries are moved to this directory

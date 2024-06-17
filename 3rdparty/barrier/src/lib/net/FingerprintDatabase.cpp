@@ -23,14 +23,14 @@
 
 namespace barrier {
 
-void FingerprintDatabase::read(const fs::path& path)
+void FingerprintDatabase::read(const fastring& path)
 {
     std::ifstream file;
     open_utf8_path(file, path, std::ios_base::in);
     read_stream(file);
 }
 
-void FingerprintDatabase::write(const fs::path& path)
+void FingerprintDatabase::write(const fastring& path)
 {
     std::ofstream file;
     open_utf8_path(file, path, std::ios_base::out);

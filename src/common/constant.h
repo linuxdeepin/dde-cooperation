@@ -7,7 +7,6 @@
 
 #define UNI_RPC_PROTO 1.0
 #define UNI_KEY "UOS-COOPERATION"
-#define UNI_CHANNEL  "_cooperation._udp"
 #define UNI_RPC_PORT_UDP  51595
 #define UNI_RPC_PORT_BASE (UNI_RPC_PORT_UDP + 2)
 #define UNI_RPC_PORT_TRANS (UNI_RPC_PORT_UDP + 4)
@@ -43,6 +42,8 @@
 
 #define UNI_IPC_BACKEND_COOPER_PLUGIN_PORT (UNI_IPC_FRONTEND_PORT + 50)
 #define UNI_SHARE_SERVER_PORT 24802
+
+#define BLOCK_SIZE 1*1024*1024
 
 const int LOGIN_CONFIRM_TIMEOUT = 30000; // 5 minutes
 
@@ -209,18 +210,6 @@ enum CurrentStatus {
     CURRENT_STATUS_SHARE_CONNECT = 5, // 5键鼠共享连接
     CURRENT_STATUS_SHARE_START = 6, // 5键鼠共享中
 };
-
-typedef enum trans_result_t {
-    TRANS_CANCELED = 48,
-    TRANS_EXCEPTION = 49,
-    TRANS_COUNT_SIZE = 50,
-    TRANS_WHOLE_START = 51,
-    TRANS_WHOLE_FINISH = 52,
-    TRANS_INDEX_CHANGE = 53,
-    TRANS_FILE_CHANGE = 54,
-    TRANS_FILE_SPEED = 55,
-    TRANS_FILE_DONE = 56,
-} TransResult;
 
 // use thread replace the coroutine
 #if defined(DISABLE_GO)

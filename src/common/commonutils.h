@@ -5,15 +5,18 @@
 #ifndef COMMONUTILS_H
 #define COMMONUTILS_H
 
-#include "log.h"
-
 #include <QString>
+
+#include <co/flag.h>
+#include <co/log.h>
 
 namespace deepin_cross {
 class CommonUitls
 {
 public:
     static std::string getFirstIp();
+
+    static bool isPortInUse(int port);
 
     static void loadTranslator();
 
@@ -27,7 +30,6 @@ public:
 
     static QString tipConfPath();
 
-    static QString generateRandomPassword();
 private:
     static QString logDir();
     static bool detailLog();

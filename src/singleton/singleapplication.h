@@ -5,7 +5,7 @@
 #ifndef SINGLEAPPLICATION_H
 #define SINGLEAPPLICATION_H
 
-#if defined(_WIN32) || defined(_WIN64)
+#ifdef WIN32
 #    include <QApplication>
 typedef QApplication CrossApplication;
 #else

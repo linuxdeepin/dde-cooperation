@@ -1,0 +1,116 @@
+name: Windows MinGW Release
+on: 
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build_and_release:
+    strategy:
+      matrix:
+        include:
+          - name: win64_mingw
+            os: windows-2019
+            build_type: Release
+            compiler_type: mingw730_64
+            compiler_version: 7.30.0
+            qt_arch: win64_mingw73
+            qt_version: 5.14.2
+            qt_target: desktop
+            qt_tools: "tools_mingw,qt.tools.win64_mingw730"
+            qt_tools_mingw_install: mingw730_64
+    runs-on: ${{ matrix.os }}
+    env:
+      BUILD_TYPE: ${{ matrix.build_type }}
+      COMPILER_TYPE: ${{ matrix.compiler_type }}
+      QT_VERSION: ${{ matrix.qt_version }}
+      OPENSSL_ROOT_DIR: "/c/Program Files/OpenSSL"
+    steps:
+      # - name: '⚙️ Cache Qt'
+      #   id: cache-qt
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ../Qt
+      #     key: Windows-QtCache-${{ env.QT_VERSION }}
+
+      - name: Install Qt ${{ env.QT_VERSION }}
+        uses: jurplel/install-qt-action@v3
+        with:
+          aqtversion: '==3.1.*'
+          version: ${{ env.QT_VERSION }}
+          target: ${{ matrix.qt_target }}
+          arch: ${{ matrix.qt_arch }}
+          tools: ${{ matrix.qt_tools }}
+          cached: 'false'
+          # cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
+      # 3.20.0 版本，高版本无法找到ZLIB
+      - name: Setup cmake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: 3.20.0
+          ninjaVersion: 1.11.1
+
+      # - name: Setup ninja
+      #   uses: seanmiddleditch/gha-setup-ninja@v3
+
+      # - name: Update ccache
+      #   if: runner.os == 'Windows'
+      #   shell: bash
+      #   run: |
+      #     choco.exe upgrade ccache
+      #     ccache.exe --version
+      #     echo "CCACHE_CONFIGPATH=C:/Users/runneradmin/AppData/Roaming/ccache/ccache.conf" >> $GITHUB_ENV
+
+      # - name: Set up ccache
+      #   uses: hendrikmuhs/ccache-action@v1
+      #   with:
+      #     key: ${{ matrix.name }}_${{ matrix.qt_version }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: source
+          fetch-depth: 0
+
+      - name: Qt 5 environment configuration
+        if: ${{ startsWith( matrix.qt_version, 5 ) }}
+        shell: pwsh
+        run: |
+          Write-Output "${{ env.Qt5_DIR }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          Write-Output "${{ env.Qt5_DIR }}/../../Tools/${{ matrix.qt_tools_mingw_install }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: mingw-build
+        id: build
+        shell: bash
+        run: |
+          echo "$PATH"
+          mkdir build && cd build
+          cmake.exe ../source/ \
+            -G"Ninja" \
+            -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+            -DAPP_VERSION="${{ github.ref_name }}"
+          cmake.exe --build . --target all --config Release --parallel
+          cmake.exe ../source/
+
+      - name: Inno Setup data-transfer
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.3
+        with:
+          path: build/deepin-data-transfer-setup.iss
+          options: /O+
+
+      - name: Inno Setup cooperation
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.3
+        with:
+          path: build/dde-cooperation-setup.iss
+          options: /O+
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: build/installer-inno/*.exe
+          generate_release_notes: true
+          draft: true
