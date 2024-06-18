@@ -24,7 +24,7 @@
 #include <base/reportlog/reportlogmanager.h>
 #include <gui/widgets/deviceitem.h>
 
-#ifdef linux
+#ifdef __linux__
 static const char *Kdisplay_right = "display_right";
 static const char *Kdisplay_left = "display_left";
 #else

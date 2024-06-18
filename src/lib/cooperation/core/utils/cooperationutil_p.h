@@ -11,6 +11,7 @@
 #include <QObject>
 
 class SessionManager;
+class QSystemTrayIcon;
 namespace cooperation_core {
 
 class MainWindow;
@@ -25,6 +26,7 @@ public:
 public:
     CooperationUtil *q { nullptr };
     MainWindow *window { nullptr };
+    QSystemTrayIcon *trayIcon { nullptr };
     bool isOnline { true };
 };
 

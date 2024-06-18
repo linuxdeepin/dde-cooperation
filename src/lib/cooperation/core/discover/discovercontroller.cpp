@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QTextCodec>
 #include <QJsonDocument>
+#include <QDesktopServices>
 
 #include <common/constant.h>
 #include <configs/dconfig/dconfigmanager.h>
@@ -28,21 +29,36 @@ DiscoverController::DiscoverController(QObject *parent)
     : QObject(parent),
       d(new DiscoverControllerPrivate(this))
 {
-    if (!isZeroConfDaemonActive())
-        if (!openZeroConfDaemonDailog())
-            return;
+    if (isZeroConfDaemonActive()) {
+        initZeroConf();
+        return;
+    }
 
-    if (!d->zeroConf.browserExists())
-        d->zeroConf.startBrowser(UNI_CHANNEL);
-
-    publish();
-    initConnect();
-    QString machineUniqueId = QSysInfo::machineUniqueId();
-    d->zeroconfname = machineUniqueId;
+    openZeroConfDaemonDailog();
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [timer, this] {
+        if (isZeroConfDaemonActive()) {
+            initZeroConf();
+            timer->stop();
+        }
+    });
+    timer->start(5000);
 }
 
 DiscoverController::~DiscoverController()
 {
+}
+
+void DiscoverController::initZeroConf()
+{
+    d->zeroConf = new QZeroConf();
+    d->zeroconfname = QSysInfo::machineUniqueId();
+
+    publish();
+    initConnect();
+    // connect signal should before  browser
+    if (!d->zeroConf->browserExists())
+        d->zeroConf->startBrowser(UNI_CHANNEL);
 }
 
 void DiscoverController::initConnect()
@@ -55,9 +71,9 @@ void DiscoverController::initConnect()
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &DiscoverController::onDConfigValueChanged);
 #endif
     connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &DiscoverController::onAppAttributeChanged);
-    connect(&d->zeroConf, &QZeroConf::serviceAdded, this, &DiscoverController::addService);
-    connect(&d->zeroConf, &QZeroConf::serviceRemoved, this, &DiscoverController::removeService);
-    connect(&d->zeroConf, &QZeroConf::serviceUpdated, this, &DiscoverController::updateService);
+    connect(d->zeroConf, &QZeroConf::serviceAdded, this, &DiscoverController::addService);
+    connect(d->zeroConf, &QZeroConf::serviceRemoved, this, &DiscoverController::removeService);
+    connect(d->zeroConf, &QZeroConf::serviceUpdated, this, &DiscoverController::updateService);
 }
 
 bool DiscoverController::isVaildDevice(const DeviceInfoPointer info)
@@ -120,7 +136,8 @@ bool DiscoverController::openZeroConfDaemonDailog()
     int choice = QMessageBox::warning(nullptr, tr("Please click to confirm to enable the LAN discovery service!"),
                                       tr("Unable to discover and be discovered by other devices when LAN discovery service is not turned on"
                                          "Right click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service"),
-                                      QMessageBox::Yes | QMessageBox::No);
+                                      QMessageBox::Ok);
+    QDesktopServices::openUrl(QUrl("services.msc"));
     return false;
 #endif
 }
@@ -249,7 +266,7 @@ DiscoverController *DiscoverController::instance()
 
 void DiscoverController::publish()
 {
-    d->zeroConf.clearServiceTxtRecords();
+    d->zeroConf->clearServiceTxtRecords();
 
     QVariantMap deviceInfo = CooperationUtil::deviceInfo();
     //设置为局域网不发现
@@ -259,28 +276,34 @@ void DiscoverController::publish()
     QString selfIP = deviceInfo.value(AppSettings::IPAddress).toString();
     d->ipfilter = selfIP.lastIndexOf(".") != -1 ? selfIP.left(selfIP.lastIndexOf(".")) : "";
 
-    qInfo() << "publish:-------" << deviceInfo;
+    LOG << "publish:-------------------------------------------";
     for (const auto &key : deviceInfo.keys())
-        d->zeroConf.addServiceTxtRecord(key, deviceInfo.value(key).toString().toUtf8().toBase64());
+        d->zeroConf->addServiceTxtRecord(key, deviceInfo.value(key).toString().toUtf8().toBase64());
 
-    d->zeroConf.startServicePublish(d->zeroconfname.toUtf8(), UNI_CHANNEL, "local", UNI_RPC_PORT_UDP);
+    d->zeroConf->startServicePublish(d->zeroconfname.toUtf8(), UNI_CHANNEL, "local", UNI_RPC_PORT_UDP);
 }
 
 void DiscoverController::unpublish()
 {
-    d->zeroConf.stopServicePublish();
+    d->zeroConf->stopServicePublish();
 }
 
 void DiscoverController::updatePublish()
 {
+    if (!d->zeroConf)
+        return;
+
     unpublish();
     publish();
 }
 
 void DiscoverController::refresh()
 {
+    if (!d->zeroConf)
+        return;
+
     d->onlineDeviceList.clear();
-    auto allServices = d->zeroConf.getServices();
+    auto allServices = d->zeroConf->getServices();
 
     for (const auto &key : allServices.keys()) {
         QZeroConfService zcs = allServices.value(key);
@@ -311,6 +334,9 @@ void DiscoverController::addSearchDeivce(const QString &info)
 
 void DiscoverController::startDiscover()
 {
+    if (!d->zeroConf)
+        return;
+
     Q_EMIT startDiscoveryDevice();
 
     // 延迟1s，为了展示发现界面

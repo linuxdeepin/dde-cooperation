@@ -19,7 +19,7 @@ public:
 
 private:
     DiscoverController *q;
-    QZeroConf zeroConf;
+    QZeroConf *zeroConf = { nullptr };
     QList<DeviceInfoPointer> onlineDeviceList;
     DeviceInfoPointer searchDevice;
     //过滤非同子网段

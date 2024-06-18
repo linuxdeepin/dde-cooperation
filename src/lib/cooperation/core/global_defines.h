@@ -106,6 +106,7 @@ inline constexpr char CooperationEnabled[] { "CooperationEnabled" };
 inline constexpr char CacheGroup[] { "Cache" };
 inline constexpr char TransHistoryKey[] { "TransHistory" };
 inline constexpr char ConnectHistoryKey[] { "ConnectHistory" };
+inline constexpr char CloseOptionKey[] { "CloseOption" };
 }
 
 // 组策略

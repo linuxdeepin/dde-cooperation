@@ -36,6 +36,10 @@ public:
 
     void initHistory();
 
+    void showCloseDialog();
+
+    void minimizedAPP();
+
     static QVariantMap deviceInfo();
     static QString localIPAddress();
 

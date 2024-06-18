@@ -27,8 +27,8 @@ public:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
-    void closeEvent(QCloseEvent *event) override;
 #endif
+    void closeEvent(QCloseEvent *event) override;
 
 public Q_SLOTS:
     void setFirstTipVisible();

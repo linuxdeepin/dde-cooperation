@@ -53,6 +53,7 @@ private:
     explicit DiscoverController(QObject *parent = nullptr);
     ~DiscoverController();
 
+    void initZeroConf();
     void initConnect();
     bool isVaildDevice(const DeviceInfoPointer info);
     DeviceInfoPointer parseDeviceJson(const QString &info);

@@ -133,7 +133,7 @@ void MainWindowPrivate::initTitleBar()
             handleSettingMenuTriggered(val);
     });
 
-    QObject::connect(closeButton, &QToolButton::clicked, q, [] { QCoreApplication::quit(); });
+    QObject::connect(closeButton, &QToolButton::clicked, q, &MainWindow::close);
     QObject::connect(minButton, &QToolButton::clicked, q, &MainWindow::showMinimized);
 
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);

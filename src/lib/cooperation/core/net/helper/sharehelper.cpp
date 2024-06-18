@@ -107,6 +107,7 @@ void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &a
 void ShareHelperPrivate::stopCooperation()
 {
     if (targetDeviceInfo && targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
+        ShareHelper::instance()->disconnectToDevice(targetDeviceInfo);
 #ifdef linux
         static QString body(tr("Coordination with \"%1\" has ended"));
         notifyMessage(body.arg(CommonUitls::elidedText(targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);

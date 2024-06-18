@@ -99,6 +99,12 @@ DeviceInfoPointer MainWindow::findDeviceInfo(const QString &ip)
     return d->workspaceWidget->findDeviceInfo(ip);
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    CooperationUtil::instance()->showCloseDialog();
+    event->ignore();
+}
+
 void MainWindow::onlineStateChanged(const QString &validIP)
 {
     bool offline = validIP.isEmpty();
@@ -163,10 +169,5 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     d->mousePressEvent(event);
-}
-
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-    QApplication::quit();
 }
 #endif
