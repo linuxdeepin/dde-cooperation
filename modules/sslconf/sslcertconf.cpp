@@ -43,7 +43,7 @@ bool SslCertConf::generateCertificate(const std::string &profile)
             return false;
         }
 
-        std::cout << "SSL certificate generated." << std::endl;
+        //std::cout << "SSL certificate generated." << std::endl;
     }
 
     // gen the fingerprint by cert.
@@ -69,11 +69,6 @@ void SslCertConf::writeTrustPrint(bool server, const std::string &print)
     }
 
     barrier::FingerprintDatabase db;
-//    std::vector<std::uint8_t> digest_vec;
-//    digest_vec.reserve(print.size());
-//    std::copy(print.begin(), print.end(), std::back_inserter(digest_vec));
-//    digest_vec.assign(reinterpret_cast<std::uint8_t*>(digest),
-//                      reinterpret_cast<std::uint8_t*>(digest) + digest_length);
     auto sha256 = db.parse_db_line(print);
     db.add_trusted(sha256);
     db.write(trust_path);
@@ -86,24 +81,13 @@ SslCertConf::SslCertConf()
 bool SslCertConf::generate_fingerprint(const gfs::path &cert_path)
 {
     try {
-//        auto local_path = barrier::DataDirectories::local_ssl_fingerprints_path();
-//        auto local_dir = local_path.parent_path();
-//        if (!barrier::fs::exists(local_dir)) {
-//            barrier::fs::create_directories(local_dir);
-//        }
-
         barrier::FingerprintDatabase db;
-        // deprecated the older SHA1
-        //db.add_trusted(barrier::get_pem_file_cert_fingerprint(cert_path.u8string(),
-        //                                                      barrier::FingerprintType::SHA1));
         auto sha256 = barrier::get_pem_file_cert_fingerprint(cert_path.u8string(),
                                                              barrier::FingerprintType::SHA256);
-//        db.add_trusted(sha256);
-//        db.write(local_path);
 
         _fingerPrint = db.to_db_line(sha256);
 
-        std::cout << "SSL fingerprint generated: " << _fingerPrint << std::endl;
+        //std::cout << "SSL fingerprint generated: " << _fingerPrint << std::endl;
 
     } catch (const std::exception &e) {
         std::cout << "Failed to find SSL fingerprint. " << e.what() << std::endl;

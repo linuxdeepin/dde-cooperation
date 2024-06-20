@@ -14,6 +14,14 @@
 
 #include <signal.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+// Fix no OPENSSL_Applink crash issue.
+extern "C"
+{
+#include <openssl/applink.c>
+}
+#endif
+
 #define BASEPROTO_PORT 51597
 
 using namespace deepin_cross;
