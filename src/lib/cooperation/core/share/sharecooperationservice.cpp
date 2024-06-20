@@ -23,8 +23,15 @@ ShareCooperationService::ShareCooperationService(QObject *parent)
     _expectedRunning = false;
     _brrierType = BarrierType::Server;   // default start as server.
 
+    // init some config for barrier
     QSettings *settings = new QSettings();
     _cooConfig = new CooConfig(settings);
+    QString ipName = QString::fromStdString(deepin_cross::CommonUitls::getFirstIp());
+    _cooConfig->setScreenName(ipName);
+
+    // default profile dir for barrier.
+    QString profile = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    setBarrierProfile(profile);
 }
 
 ShareCooperationService::~ShareCooperationService()
@@ -64,15 +71,14 @@ bool ShareCooperationService::restartBarrier()
 
 bool ShareCooperationService::setServerConfig(const ShareServerConfig &config)
 {
-    if (!config.server_screen.isEmpty())
-        _cooConfig->setScreenName(config.server_screen);
     if (BarrierType::Server != _brrierType) {
         ELOG << "not the brrier server !!!!!!!";
         return false;
     }
-    auto path = checkParam(config);
-    if (path.isEmpty())
+
+    if (!checkParam(config))
         return false;
+    auto path = configFilename();
     QFile file(path);
     if (!file.open(QFileDevice::OpenModeFlag::Truncate | QFileDevice::OpenModeFlag::WriteOnly)) {
         ELOG << "open server config error, path = " << path.toStdString() << ", case : "
@@ -111,8 +117,7 @@ bool ShareCooperationService::setClientTargetIp(const QString &screen, const QSt
              << " ip = " << ip.toStdString() << ":" << port;
         return false;
     }
-    if (!screen.isEmpty())
-        _cooConfig->setScreenName(screen);
+
     _cooConfig->setServerIp(ip);
     _cooConfig->setPort(port == 0 ? UNI_SHARE_SERVER_PORT : port);
     return true;
@@ -134,10 +139,26 @@ bool ShareCooperationService::setClientTargetIp(const QString &ip)
              << " ip = " << ip.toStdString() << ":" << UNI_SHARE_SERVER_PORT;
         return false;
     }
-    _cooConfig->setScreenName(ip);
+
     _cooConfig->setServerIp(ip);
     _cooConfig->setPort(UNI_SHARE_SERVER_PORT);
     return true;
+}
+
+void ShareCooperationService::setEnableCrypto(bool enable)
+{
+    cooConfig().setCryptoEnabled(enable);
+}
+
+void ShareCooperationService::setBarrierProfile(const QString &dir)
+{
+    // check and create
+    QDir pdir(dir);
+    if (!pdir.exists()) {
+        pdir.mkpath(pdir.absolutePath());
+    }
+
+    _cooConfig->setProfileDir(dir);
 }
 
 bool ShareCooperationService::startBarrier()
@@ -152,9 +173,20 @@ bool ShareCooperationService::startBarrier()
          << "--no-tray"
          << "--debug" << cooConfig().logLevelText();
 
-    args << "--name" << getScreenName();
+    args << "--name" << cooConfig().screenName();
 
-    args << "--disable-crypto";
+    // set customize profile dir, which will include config and ssl ...
+    QString profileDir = cooConfig().profileDir();
+#if defined(Q_OS_WIN)
+    // wrap in quotes in case username contains spaces.
+    profileDir = QString("\"%1\"").arg(profileDir);
+#endif
+    args << "--profile-dir" << profileDir;
+
+    if (!cooConfig().getCryptoEnabled()) {
+        // default: false
+        args << "--disable-crypto";
+    }
 
     if ((barrierType() == BarrierType::Client && !clientArgs(args, app))
         || (barrierType() == BarrierType::Server && !serverArgs(args, app))) {
@@ -170,7 +202,6 @@ bool ShareCooperationService::startBarrier()
     LOG << "starting " << QString(barrierType() == BarrierType::Server ? "server" : "client").toStdString();
     LOG << QString("command: %1 %2").arg(app, args.join(" ")).toStdString();
 
-    LOG << "config file: " << this->configFilename().toStdString();
     LOG << "log level: " << cooConfig().logLevelText().toStdString();
 #if defined(Q_OS_WIN)
     QString winarg = args.join(" ");
@@ -242,36 +273,20 @@ bool ShareCooperationService::serverArgs(QStringList &args, QString &app)
     app = QString("\"%1\"").arg(app);
 #endif
 
-    QString configFilename = this->configFilename();
-#if defined(Q_OS_WIN)
-    // wrap in quotes in case username contains spaces.
-    configFilename = QString("\"%1\"").arg(configFilename);
-#endif
-    args << "-c" << configFilename << "--address" << address();
+    args << "--address" << address();
 
     return true;
 }
 
-QString ShareCooperationService::checkParam(const ShareServerConfig &config)
+bool ShareCooperationService::checkParam(const ShareServerConfig &config)
 {
-    auto path = configFilename();
-    if (config.screen_left.isEmpty()) {
-        ELOG << " config's screen left  empty ===== ";
-        return "";
+
+    if (config.screen_left.isEmpty() || config.screen_right.isEmpty()) {
+        WLOG << " config's screen left|right  empty!";
+        return false;
     }
 
-    if (config.screen_right.isEmpty()) {
-        ELOG << " config's screen right  empty ===== ";
-        return "";
-    }
-
-    if (path.isEmpty()) {
-        ELOG << " config path is empty ===== js = "
-             << "\n path = " << path.toStdString();
-        return "";
-    }
-
-    return path;
+    return true;
 }
 
 void ShareCooperationService::setScreen(const ShareServerConfig &config, QTextStream *stream)
@@ -369,18 +384,8 @@ void ShareCooperationService::setScreenOptions(const ShareServerConfig &config, 
 
 QString ShareCooperationService::configFilename()
 {
-    QDir winInfoPath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
-    if (!winInfoPath.exists()) {
-        winInfoPath.mkpath(winInfoPath.absolutePath());
-    }
-
-    QString winInfoFilePath(winInfoPath.filePath("cooperation-barrier.conf"));
-    return winInfoFilePath;
-}
-
-QString ShareCooperationService::getScreenName()
-{
-    return deepin_cross::CommonUitls::getFirstIp().c_str();
+    QString configPath = cooConfig().profileDir() + "/" + cooConfig().configName();
+    return configPath;
 }
 
 QString ShareCooperationService::address()

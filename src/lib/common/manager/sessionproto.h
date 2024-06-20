@@ -150,12 +150,17 @@ struct ApplyMessage {
     std::string  nick;
     std::string  host;
     int64_t port {0};
+    std::string  fingerprint {""};
 
     void from_json(const picojson::value& _x_) {
         flag = _x_.get("flag").get<int64_t>();
         nick = _x_.get("nick").to_str();
         host = _x_.get("selfIp").to_str();
         port = _x_.get("selfPort").get<int64_t>();
+        if (_x_.contains("fingerprint"))
+            fingerprint = _x_.get("fingerprint").to_str();
+        else
+            fingerprint = "";
     }
 
     picojson::value as_json() const {
@@ -164,6 +169,7 @@ struct ApplyMessage {
         obj["nick"] = picojson::value(nick);
         obj["selfIp"] = picojson::value(host);
         obj["selfPort"] = picojson::value(port);
+        obj["fingerprint"] = picojson::value(fingerprint);
         return picojson::value(obj);
     }
 };

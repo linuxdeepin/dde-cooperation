@@ -27,8 +27,6 @@
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/x509.h>
-#include <co/fs.h>
-#include <co/path.h>
 
 SslCertificate::SslCertificate(QObject *parent) :
     QObject(parent)
@@ -42,14 +40,14 @@ void SslCertificate::generateCertificate()
 {
     auto cert_path = barrier::DataDirectories::ssl_certificate_path();
 
-    if (!fs::exists(cert_path) || !is_certificate_valid(cert_path)) {
+    if (!barrier::fs::exists(cert_path) || !is_certificate_valid(cert_path)) {
         try {
-            auto cert_dir = path::dir(cert_path);
-            if (!fs::exists(cert_dir)) {
-                fs::mkdir(cert_dir, true);
+            auto cert_dir = cert_path.parent_path();
+            if (!barrier::fs::exists(cert_dir)) {
+                barrier::fs::create_directories(cert_dir);
             }
 
-            barrier::generate_pem_self_signed_cert(cert_path.c_str());
+            barrier::generate_pem_self_signed_cert(cert_path.u8string());
         }  catch (const std::exception& e) {
             emit error(QString("SSL tool failed: %1").arg(e.what()));
             return;
@@ -63,19 +61,19 @@ void SslCertificate::generateCertificate()
     emit generateFinished();
 }
 
-void SslCertificate::generate_fingerprint(const fastring& cert_path)
+void SslCertificate::generate_fingerprint(const barrier::fs::path& cert_path)
 {
     try {
         auto local_path = barrier::DataDirectories::local_ssl_fingerprints_path();
-        auto local_dir = path::dir(local_path);
-        if (!fs::exists(local_dir)) {
-            fs::mkdir(local_dir, true);
+        auto local_dir = local_path.parent_path();
+        if (!barrier::fs::exists(local_dir)) {
+            barrier::fs::create_directories(local_dir);
         }
 
         barrier::FingerprintDatabase db;
-        db.add_trusted(barrier::get_pem_file_cert_fingerprint(cert_path.c_str(),
+        db.add_trusted(barrier::get_pem_file_cert_fingerprint(cert_path.u8string(),
                                                               barrier::FingerprintType::SHA1));
-        db.add_trusted(barrier::get_pem_file_cert_fingerprint(cert_path.c_str(),
+        db.add_trusted(barrier::get_pem_file_cert_fingerprint(cert_path.u8string(),
                                                               barrier::FingerprintType::SHA256));
         db.write(local_path);
 
@@ -85,7 +83,7 @@ void SslCertificate::generate_fingerprint(const fastring& cert_path)
     }
 }
 
-bool SslCertificate::is_certificate_valid(const fastring& path)
+bool SslCertificate::is_certificate_valid(const barrier::fs::path& path)
 {
     OpenSSL_add_all_algorithms();
     ERR_load_crypto_strings();

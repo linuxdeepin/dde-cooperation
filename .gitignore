@@ -12,3 +12,4 @@ CMake*.json
 modules/*
 !modules/CMakeLists.txt
 !modules/*.cmake
+!modules/sslconf

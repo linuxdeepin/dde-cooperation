@@ -29,7 +29,7 @@ public Q_SLOTS:
     void onVerifyTimeout();
 
     //client
-    void handleConnectResult(int result);
+    void handleConnectResult(int result, bool crypto = false);
     void handleDisConnectResult(const QString &devName);
     void handleCancelCooperApply();
     void handleNetworkDismiss(const QString &msg);

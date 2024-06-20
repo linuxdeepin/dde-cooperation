@@ -154,7 +154,6 @@ if (HAVE_X11)
 endif()
 
 target_link_libraries (barrier common)
-target_link_libraries (barrier)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     install (TARGETS barrier DESTINATION ${BARRIER_BUNDLE_BINARY_DIR})

@@ -153,9 +153,14 @@ QVariantMap CooperationUtil::deviceInfo()
 
 QString CooperationUtil::localIPAddress()
 {
-    QString ip;
-    ip = deepin_cross::CommonUitls::getFirstIp().data();
+    QString ip = deepin_cross::CommonUitls::getFirstIp().data();
     return ip;
+}
+
+QString CooperationUtil::barrierProfile()
+{
+    QString profileDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    return profileDir;
 }
 
 void CooperationUtil::initNetworkListener()

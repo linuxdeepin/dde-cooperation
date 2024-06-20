@@ -29,12 +29,13 @@ public:
     QString barriersName() const;
     QString barriercName() const;
     QString barrierProgramDir() const;
+    QString configName() const;
+
+    QString profileDir() const;
+    void setProfileDir(const QString &s);
 
     void setCryptoEnabled(bool e);
     bool getCryptoEnabled() const;
-
-    void setAutoConnect(bool b);
-    bool getAutoConnect();
 
     void saveSettings();
     void setPort(int i);
@@ -46,8 +47,6 @@ protected:
 
     void setNetworkInterface(const QString &s);
     void setLogLevel(int i);
-    void setLogToFile(bool b);
-    void setLogFilename(const QString &s);
     void loadSettings();
 
 private:
@@ -57,13 +56,13 @@ private:
     QString m_TargetServerIp;
     QString m_Interface;
     int m_LogLevel;
-    //        bool m_LogToFile;
-    //        QString m_LogFilename;
+    QString m_ProfileDir;
+
     bool m_CryptoEnabled;
 
     static const char m_BarriersName[];
     static const char m_BarriercName[];
-    //        static const char m_BarrierLogDir[];
+    static const char m_ConfigName[];
 };
 
 #endif

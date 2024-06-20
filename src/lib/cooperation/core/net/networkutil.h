@@ -47,6 +47,8 @@ private:
 
 private:
     QSharedPointer<NetworkUtilPrivate> d { nullptr };
+
+    QString _selfFingerPrint { "" };
 };
 
 }   // namespace cooperation_core

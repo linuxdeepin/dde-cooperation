@@ -61,6 +61,8 @@ public:
 
     bool setClientTargetIp(const QString &screen, const QString &ip, const int &port);
     bool setClientTargetIp(const QString &ip);
+
+    void setEnableCrypto(bool enable);
 public slots:
     bool restartBarrier();
     bool startBarrier();
@@ -81,17 +83,17 @@ protected:
     void setBarrierProcess(QProcess *p) { _pBarrier = p; }
 
     QString configFilename();
-    QString getScreenName();
     QString address();
     QString appPath(const QString &name);
 
     bool clientArgs(QStringList &args, QString &app);
     bool serverArgs(QStringList &args, QString &app);
-    QString checkParam(const ShareServerConfig &config);
+    bool checkParam(const ShareServerConfig &config);
     void setScreen(const ShareServerConfig &config, QTextStream *stream);
     void setScreenLink(const ShareServerConfig &config, QTextStream *stream);
     void setScreenOptions(const ShareServerConfig &config, QTextStream *stream);
 
+    void setBarrierProfile(const QString &dir);
 private:
     CooConfig *_cooConfig { nullptr };
     QProcess *_pBarrier { nullptr };

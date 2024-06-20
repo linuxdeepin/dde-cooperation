@@ -11,8 +11,8 @@ bonjour_size_x64=2.56 MB
 ;http://download.info.apple.com/Mac_OS_X/061-8098.20100603.gthyu/BonjourPSSetup.exe
 [Code]
 const
-	bonjour_url = 'http://raw.githubusercontent.com/G-P-S/bonjour-win-sdk/blob/master/Installer/Bonjour.msi';
-	bonjour_url_x64 = 'http://raw.githubusercontent.com/G-P-S/bonjour-win-sdk/master/Installer/Bonjour64.msi';
+	bonjour_url = 'http://binaries.symless.com/bonjour/Bonjour.msi';
+	bonjour_url_x64 = 'http://binaries.symless.com/bonjour/Bonjour64.msi';
 
 	bonjour_upgradecode = '{B91110FB-33B4-468B-90C2-4D5E8AE3FAE1}';
 	bonjour_upgradecode_x64 = '{46AE3251-43D6-41CF-8CDF-E902C38516D1}';

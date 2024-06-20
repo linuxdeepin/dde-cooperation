@@ -127,3 +127,6 @@ else()
     # 日志收集配置
     install(FILES res/linux/dde-cooperation.json DESTINATION share/deepin-log-viewer/deepin-log.conf.d)
 endif()
+
+include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+INSTALL_DCONFIG("org.deepin.dde.cooperation.json")

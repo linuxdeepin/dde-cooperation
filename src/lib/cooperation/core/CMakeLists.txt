@@ -86,10 +86,12 @@ qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources/resou
 
 list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS sessionmanager)
+list(APPEND LINKLIBS sslconf)
 
 add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}
     ${BUSS_FILES}
+    ${BARRIER_CONFIG_FILES}
     ${RESOURCE_FILES}
 )
 
@@ -108,6 +110,11 @@ endif()
 target_include_directories(${PROJECT_NAME}
     PUBLIC
     ${CMAKE_SOURCE_DIR}/src/
+)
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    ${CMAKE_SOURCE_DIR}/modules/sslconf/
 )
 
 # 公共依赖库，添加到这里

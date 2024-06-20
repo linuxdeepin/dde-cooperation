@@ -14,6 +14,8 @@
 #include "helper/sharehelper.h"
 #include "utils/cooperationutil.h"
 
+#include "sslcertconf.h"
+
 #include <QJsonDocument>
 #include <QDebug>
 #include <QDir>
@@ -77,6 +79,10 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             QString info = QString(req.host.c_str()) + "," + req.nick.c_str();
             *res_msg = res.as_json().serialize();
             confirmTargetAddress = QString::fromStdString(req.host);
+
+            // save fingerprint if server request with it.
+            recvFingerPrint = QString::fromStdString(req.fingerprint);
+            info.append("," + recvFingerPrint);
             q->metaObject()->invokeMethod(ShareHelper::instance(),
                                           "notifyConnectRequest",
                                           Qt::QueuedConnection,
@@ -87,12 +93,19 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             ApplyMessage req, res;
             req.from_json(json_value);
             bool agree = (req.flag == REPLY_ACCEPT);
+            bool crypto = false;
+            if (agree && !req.fingerprint.empty()) {
+                // write its fingerprint into trust client file.
+                SslCertConf::ins()->writeTrustPrint(false, req.fingerprint);
+                crypto = true;
+            }
             res.flag = DO_DONE;
             *res_msg = res.as_json().serialize();
             q->metaObject()->invokeMethod(ShareHelper::instance(),
                                           "handleConnectResult",
                                           Qt::QueuedConnection,
-                                          Q_ARG(int, agree ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE));
+                                          Q_ARG(int, agree ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE),
+                                          Q_ARG(bool, crypto));
         }
             return true;
         case APPLY_SHARE_STOP: {
@@ -111,14 +124,16 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             req.from_json(json_value);
             res.flag = DO_DONE;
             *res_msg = res.as_json().serialize();
-            if (req.nick == "share")
+            if (req.nick == "share") {
+                recvFingerPrint = ""; // clear fingerprint
                 q->metaObject()->invokeMethod(ShareHelper::instance(),
                                               "handleCancelCooperApply",
                                               Qt::QueuedConnection);
-            else if (req.nick == "transfer")
+            } else if (req.nick == "transfer") {
                 q->metaObject()->invokeMethod(TransferHelper::instance(),
                                               "handleCancelTransferApply",
                                               Qt::QueuedConnection);
+            }
         }
             return true;
         }
@@ -223,6 +238,10 @@ NetworkUtil::NetworkUtil(QObject *parent)
     : QObject(parent),
       d(new NetworkUtilPrivate(this))
 {
+    // the certificate profile will set to barrier using.
+    std::string profile = CooperationUtil::barrierProfile().toStdString();
+    SslCertConf::ins()->generateCertificate(profile);
+    _selfFingerPrint = QString::fromStdString(SslCertConf::ins()->getFingerPrint());
 }
 
 NetworkUtil::~NetworkUtil()
@@ -328,6 +347,7 @@ void NetworkUtil::sendShareEvents(const QString &ip)
     msg.flag = ASK_NEEDCONFIRM;
     msg.nick = selfinfo->deviceName().toStdString();
     msg.host = CooperationUtil::localIPAddress().toStdString();
+    msg.fingerprint = _selfFingerPrint.toStdString(); // send self fingerprint
     QString jsonMsg = msg.as_json().serialize().c_str();
     d->sessionManager->sendRpcRequest(ip, APPLY_SHARE, jsonMsg);
 }
@@ -366,10 +386,18 @@ void NetworkUtil::replyTransRequest(bool agree)
 
 void NetworkUtil::replyShareRequest(bool agree)
 {
+    if (agree && !d->recvFingerPrint.isEmpty()) {
+        // write its fingerprint into trust server file.
+        SslCertConf::ins()->writeTrustPrint(true, d->recvFingerPrint.toStdString());
+    }
+    // reset fingerprint info for next request.
+    d->recvFingerPrint = "";
+
     // send transfer reply, skip result
     ApplyMessage msg;
     msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
     msg.host = CooperationUtil::localIPAddress().toStdString();
+    msg.fingerprint = _selfFingerPrint.toStdString(); // send self fingerprint
     QString jsonMsg = msg.as_json().serialize().c_str();
 
     // _confirmTargetAddress

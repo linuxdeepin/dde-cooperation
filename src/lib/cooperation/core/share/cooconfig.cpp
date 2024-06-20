@@ -11,11 +11,11 @@
 #if defined(Q_OS_WIN)
 const char CooConfig::m_BarriersName[] = "barriers.exe";
 const char CooConfig::m_BarriercName[] = "barrierc.exe";
-//const char CooConfig::m_BarrierLogDir[] = "log/";
+const char CooConfig::m_ConfigName[] = "barrier.sgc";
 #else
 const char CooConfig::m_BarriersName[] = "barriers";
 const char CooConfig::m_BarriercName[] = "barrierc";
-//const char CooConfig::m_BarrierLogDir[] = "/var/log/";
+const char CooConfig::m_ConfigName[] = ".barrier.conf"; // default config name under profile()
 #endif
 
 static const char *logLevelNames[] = {
@@ -93,8 +93,6 @@ void CooConfig::loadSettings()
     m_TargetServerIp = settings().value("serverIp").toString();
     m_Interface = settings().value("interface").toString();
     m_LogLevel = settings().value("logLevel", 3).toInt();   // level 3: INFO
-    //    m_LogToFile = settings().value("logToFile", false).toBool();
-    //    m_LogFilename = settings().value("logFilename", barrierLogDir() + "barrier.log").toString();
     m_CryptoEnabled = settings().value("cryptoEnabled", true).toBool();
 
     settings().endGroup();
@@ -110,8 +108,6 @@ void CooConfig::saveSettings()
     settings().setValue("serverIp", m_TargetServerIp);
     settings().setValue("interface", m_Interface);
     settings().setValue("logLevel", m_LogLevel);
-    //    settings().setValue("logToFile", m_LogToFile);
-    //    settings().setValue("logFilename", m_LogFilename);
     settings().setValue("cryptoEnabled", m_CryptoEnabled);
 
     settings().endGroup();
@@ -156,6 +152,21 @@ QString CooConfig::barriersName() const
 QString CooConfig::barriercName() const
 {
     return m_BarriercName;
+}
+
+QString CooConfig::configName() const
+{
+    return m_ConfigName;
+}
+
+QString CooConfig::profileDir() const
+{
+    return m_ProfileDir;
+}
+
+void CooConfig::setProfileDir(const QString &s)
+{
+    m_ProfileDir = s;
 }
 
 void CooConfig::setCryptoEnabled(bool e)
