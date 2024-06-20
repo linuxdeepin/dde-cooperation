@@ -56,9 +56,12 @@ QJsonObject SettingHelper::ParseJson(const QString &filepath)
     return jsonObj;
 }
 
-bool SettingHelper::handleDataConfiguration(const QString &filepath)
+bool SettingHelper::handleDataConfiguration(const QString &path)
 {
     addTaskcounter(1);
+
+    QDir pdir(path);
+    QString filepath = pdir.absolutePath() + "/";
     QJsonObject jsonObj = ParseJson(filepath + "transfer.json");
     if (jsonObj.isEmpty()) {
         addTaskcounter(-1);
@@ -89,7 +92,7 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
     }
     addTaskcounter(-1);
     //remove dir
-    QDir(filepath).removeRecursively();
+    pdir.removeRecursively();
     return true;
 }
 

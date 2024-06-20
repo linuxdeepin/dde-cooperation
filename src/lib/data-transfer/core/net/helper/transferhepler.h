@@ -47,6 +47,7 @@ public Q_SLOTS:
     void recordTranferJob(const QString &filepath);
     void addFinshedFiles(const QString &filepath, int64_t size);
     void setConnectIP(const QString &ip);
+    QString getConnectIP() const;
 
 private:
     QMap<QString, int64_t> finshedFiles;

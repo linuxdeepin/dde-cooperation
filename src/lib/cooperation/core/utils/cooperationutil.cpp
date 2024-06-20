@@ -211,7 +211,7 @@ void CooperationUtil::showCloseDialog()
 {
     QString option = ConfigManager::instance()->appAttribute(AppSettings::CacheGroup, AppSettings::CloseOptionKey).toString();
     if (option == "Minimise") {
-        mainWindow()->showMinimized();
+        minimizedAPP();
         return;
     }
     if (option == "Exit")

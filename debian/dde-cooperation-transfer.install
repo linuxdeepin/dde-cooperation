@@ -3,3 +3,4 @@ usr/lib/*/libcooperation-core.so*
 usr/lib/*/libQtZeroConf.so*
 usr/share/dde-cooperation/translations/*.qm
 usr/share/icons/hicolor/scalable/apps/dde-cooperation.svg
+usr/share/dsg/configs/org.deepin.dde.cooperation/*.json

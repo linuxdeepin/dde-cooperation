@@ -101,6 +101,9 @@ DeviceInfoPointer MainWindow::findDeviceInfo(const QString &ip)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    if (qApp->property("onlyTransfer").toBool())
+        QApplication::quit();
+
     CooperationUtil::instance()->showCloseDialog();
     event->ignore();
 }

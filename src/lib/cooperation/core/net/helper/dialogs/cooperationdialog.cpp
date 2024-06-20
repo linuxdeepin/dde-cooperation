@@ -143,14 +143,14 @@ ResultWidget::ResultWidget(QWidget *parent)
     init();
 }
 
-void ResultWidget::setResult(bool success, const QString &msg)
+void ResultWidget::setResult(bool success, const QString &msg, bool view)
 {
     res = success;
     if (success) {
         QIcon icon(":/icons/deepin/builtin/icons/transfer_success_128px.svg");
         iconLabel->setPixmap(icon.pixmap(48, 48));
 #ifndef __linux__
-        viewBtn->setVisible(true);
+        viewBtn->setVisible(view);
 #endif
     } else {
         QIcon icon(":/icons/deepin/builtin/icons/transfer_fail_128px.svg");
@@ -184,6 +184,7 @@ void ResultWidget::init()
     mainLayout->addWidget(iconLabel, 1, Qt::AlignHCenter);
     mainLayout->addWidget(msgLabel, 1, Qt::AlignCenter);
     mainLayout->addLayout(btnLayout, 1);
+    setMinimumHeight(150);
 }
 
 bool ResultWidget::getResult() const
@@ -212,10 +213,11 @@ void CooperationTransDialog::showWaitConfirmDialog()
     setHidden(false);
 }
 
-void CooperationTransDialog::showResultDialog(bool success, const QString &msg)
+void CooperationTransDialog::showResultDialog(bool success, const QString &msg, bool view)
 {
-    resultWidget->setResult(success, msg);
+    resultWidget->setResult(success, msg, view);
     mainLayout->setCurrentWidget(resultWidget);
+    setFixedHeight(250);
     setHidden(false);
 }
 
@@ -274,6 +276,7 @@ void CooperationTransDialog::init()
 
     confirmWidget = new ConfirmWidget(this);
     connect(confirmWidget, &ConfirmWidget::rejected, this, &CooperationTransDialog::rejected);
+    connect(confirmWidget, &ConfirmWidget::rejected, this, &CooperationTransDialog::close);
     connect(confirmWidget, &ConfirmWidget::accepted, this, &CooperationTransDialog::accepted);
 
     progressWidget = new ProgressWidget(this);

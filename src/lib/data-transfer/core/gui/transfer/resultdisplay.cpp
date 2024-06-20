@@ -108,7 +108,7 @@ void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
 
     resultWindow->updateContent(name, reason, success);
     QString res = success ? "true" : "false";
-    processText.append(name + " " + res + " " + reason + ";");
+    processText.append(name + "/" + res + "/" + reason + ";");
 }
 
 void ResultDisplayWidget::clear()

@@ -158,11 +158,11 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
         DLOG << "connect error, reason = " << reason.toStdString();
     } else if (result == -1) {
         // disconnected
-        q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
-                                      Qt::QueuedConnection,
-                                      Q_ARG(int, 0),
-                                      Q_ARG(QString, reason),
-                                      Q_ARG(bool, false));
+        //        q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
+        //                                      Qt::QueuedConnection,
+        //                                      Q_ARG(int, 0),
+        //                                      Q_ARG(QString, reason),
+        //                                      Q_ARG(bool, false));
     } else if (result == 2) {
         // connected
     }

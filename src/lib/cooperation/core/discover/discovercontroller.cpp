@@ -63,7 +63,9 @@ void DiscoverController::initZeroConf()
 
 void DiscoverController::initConnect()
 {
-    connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, this, [this] {
+    connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, this, [this](const QString &validIP) {
+        if (validIP.isEmpty())
+            return;
         updatePublish();
         refresh();
     });
@@ -270,8 +272,10 @@ void DiscoverController::publish()
 
     QVariantMap deviceInfo = CooperationUtil::deviceInfo();
     //设置为局域网不发现
-    if (deviceInfo.value(AppSettings::DiscoveryModeKey) == 1)
+    if (deviceInfo.value(AppSettings::DiscoveryModeKey) == 1) {
+        unpublish();
         return;
+    }
 
     QString selfIP = deviceInfo.value(AppSettings::IPAddress).toString();
     d->ipfilter = selfIP.lastIndexOf(".") != -1 ? selfIP.left(selfIP.lastIndexOf(".")) : "";

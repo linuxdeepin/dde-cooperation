@@ -49,3 +49,5 @@ target_link_libraries(${PROJ_NAME}
 )
 
 install(TARGETS ${PROJ_NAME} DESTINATION bin)
+include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+INSTALL_DCONFIG("org.deepin.dde.cooperation.json")

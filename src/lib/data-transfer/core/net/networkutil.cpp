@@ -105,9 +105,10 @@ void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, qui
     case TRANS_WHOLE_START:
         emit TransferHelper::instance()->transferring();
         break;
-    case TRANS_WHOLE_FINISH:
-        TransferHelper::instance()->setting(path);
-        break;
+    case TRANS_WHOLE_FINISH: {
+        if (!TransferHelper::instance()->getConnectIP().isEmpty())
+            TransferHelper::instance()->setting(path);
+    } break;
     case TRANS_INDEX_CHANGE: {
         TransferHelper::instance()->addFinshedFiles(finishfile, 0);
         finishfile = path;

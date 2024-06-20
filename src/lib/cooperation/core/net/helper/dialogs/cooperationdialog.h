@@ -61,7 +61,7 @@ class ResultWidget : public QWidget
 public:
     explicit ResultWidget(QWidget *parent = nullptr);
 
-    void setResult(bool success, const QString &msg);
+    void setResult(bool success, const QString &msg, bool view = true);
 
     bool getResult() const;
 
@@ -104,7 +104,7 @@ public:
 
     void showConfirmDialog(const QString &name);
     void showWaitConfirmDialog();
-    void showResultDialog(bool success, const QString &msg);
+    void showResultDialog(bool success, const QString &msg, bool view = true);
     void showProgressDialog(const QString &title);
 
     void updateProgress(int value, const QString &msg);

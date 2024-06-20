@@ -270,7 +270,7 @@ void TransferHelper::transferResult(bool result, const QString &msg)
     }
 #endif
 
-    d->transDialog()->showResultDialog(result, msg);
+    d->transDialog()->showResultDialog(result, msg, d->role != Server);
     d->reportTransferResult(result);
 }
 
@@ -489,7 +489,8 @@ void TransferHelper::rejected()
 {
     DLOG << "file transfer rejected >>> ";
     d->status.storeRelease(Idle);
-    transferResult(false, tr("The other party rejects your request"));
+    if (!d->isTransTimeout)
+        transferResult(false, tr("The other party rejects your request"));
 }
 
 void TransferHelper::cancelTransfer(bool sender)

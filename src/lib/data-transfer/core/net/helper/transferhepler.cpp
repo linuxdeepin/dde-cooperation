@@ -105,7 +105,7 @@ void TransferHelper::handleMessage(QString jsonmsg)
         QString result = jsonObj.value("add_result").toString();
         LOG << "add_result" << result.data();
         for (QString str : result.split(";")) {
-            auto res = str.split(" ");
+            auto res = str.split("/");
             if (res.size() != 3)
                 continue;
             emit TransferHelper::instance()->addResult(res.at(0), res.at(1) == "true", res.at(2));
@@ -145,6 +145,7 @@ void TransferHelper::emitDisconnected()
     if (!isSetting)
 #endif
         emit disconnected();
+    connectIP = "";
 }
 
 #ifndef __linux__
@@ -397,6 +398,11 @@ void TransferHelper::addFinshedFiles(const QString &filepath, int64_t size)
 void TransferHelper::setConnectIP(const QString &ip)
 {
     connectIP = ip;
+}
+
+QString TransferHelper::getConnectIP() const
+{
+    return connectIP;
 }
 
 void TransferHelper::setting(const QString &filepath)

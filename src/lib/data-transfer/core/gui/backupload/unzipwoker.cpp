@@ -44,7 +44,7 @@ void UnzipWorker::run()
     extract();
 
     //configuration
-    TransferHelper::instance()->setting(targetDir);
+    TransferHelper::instance()->setting(targetDir + "/");
 }
 
 int UnzipWorker::getNumFiles(QString filepath)
