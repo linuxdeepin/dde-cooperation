@@ -42,7 +42,6 @@ public:
 
     static QVariantMap deviceInfo();
     static QString localIPAddress();
-    static QString barrierProfile();
 
 Q_SIGNALS:
     void onlineStateChanged(const QString &validIP);

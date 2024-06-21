@@ -34,9 +34,9 @@ public:
     void doSendFiles(const QStringList &fileList);
 
     //Keymouse sharing
-    void sendShareEvents(const QString &ip);
+    void sendShareEvents(const QString &ip, const QString &selfprint);
     void sendDisconnectShareEvents(const QString &ip);
-    void replyShareRequest(bool agree);
+    void replyShareRequest(bool agree, const QString &selfprint);
     void cancelApply(const QString &type);
 
     QString deviceInfoStr();
@@ -47,8 +47,6 @@ private:
 
 private:
     QSharedPointer<NetworkUtilPrivate> d { nullptr };
-
-    QString _selfFingerPrint { "" };
 };
 
 }   // namespace cooperation_core

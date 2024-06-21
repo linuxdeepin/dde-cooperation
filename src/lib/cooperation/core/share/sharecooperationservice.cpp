@@ -28,10 +28,6 @@ ShareCooperationService::ShareCooperationService(QObject *parent)
     _cooConfig = new CooConfig(settings);
     QString ipName = QString::fromStdString(deepin_cross::CommonUitls::getFirstIp());
     _cooConfig->setScreenName(ipName);
-
-    // default profile dir for barrier.
-    QString profile = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-    setBarrierProfile(profile);
 }
 
 ShareCooperationService::~ShareCooperationService()

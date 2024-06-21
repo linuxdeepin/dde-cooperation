@@ -142,10 +142,10 @@ void TransferHelper::handleMessage(QString jsonmsg)
 void TransferHelper::emitDisconnected()
 {
 #ifdef linux
+    connectIP = "";
     if (!isSetting)
 #endif
         emit disconnected();
-    connectIP = "";
 }
 
 #ifndef __linux__

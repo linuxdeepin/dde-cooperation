@@ -157,12 +157,6 @@ QString CooperationUtil::localIPAddress()
     return ip;
 }
 
-QString CooperationUtil::barrierProfile()
-{
-    QString profileDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-    return profileDir;
-}
-
 void CooperationUtil::initNetworkListener()
 {
     QTimer *networkMonitorTimer = new QTimer(this);

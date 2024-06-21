@@ -15,6 +15,8 @@
 #include "share/sharecooperationservicemanager.h"
 #include "discover/discovercontroller.h"
 
+#include "sslcertconf.h"
+
 #include <QApplication>
 #include <QStandardPaths>
 #include <QDir>
@@ -149,13 +151,17 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
 {
     isReplied = true;
     if (action == NotifyRejectAction) {
-        NetworkUtil::instance()->replyShareRequest(false);
+        NetworkUtil::instance()->replyShareRequest(false, selfFingerPrint);
     } else if (action == NotifyAcceptAction) {
-        NetworkUtil::instance()->replyShareRequest(true);
+        NetworkUtil::instance()->replyShareRequest(true, selfFingerPrint);
 
         // remove "--disable-crypto" if receive server has fingerprint.
-        bool enable = !targetFingerPrint.isEmpty();
+        bool enable = !recvServerPrint.isEmpty();
         ShareCooperationServiceManager::instance()->client()->setEnableCrypto(enable);
+        if (enable) {
+            // write server's fingerprint into trust server file.
+            SslCertConf::ins()->writeTrustPrint(true, recvServerPrint.toStdString());
+        }
 
         ShareCooperationServiceManager::instance()->client()->setClientTargetIp(senderDeviceIp);
         ShareCooperationServiceManager::instance()->client()->startBarrier();
@@ -175,13 +181,17 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
         static QString body(tr("Connection successful, coordinating with \"%1\""));
         notifyMessage(body.arg(CommonUitls::elidedText(info->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
     }
-    targetFingerPrint = ""; // clear received server's ingerprint
+    recvServerPrint = ""; // clear received server's ingerprint
 }
 
 ShareHelper::ShareHelper(QObject *parent)
     : QObject(parent),
       d(new ShareHelperPrivate(this))
 {
+    // the certificate profile will set to barrier using.
+    std::string profile = ShareCooperationServiceManager::instance()->barrierProfile().toStdString();
+    SslCertConf::ins()->generateCertificate(profile);
+    d->selfFingerPrint = QString::fromStdString(SslCertConf::ins()->getFingerPrint());
 }
 
 ShareHelper::~ShareHelper()
@@ -242,7 +252,7 @@ void ShareHelper::connectToDevice(const DeviceInfoPointer info)
     d->taskDialog()->show();
     d->confirmTimer.start();
 
-    NetworkUtil::instance()->sendShareEvents(info->ipAddress());
+    NetworkUtil::instance()->sendShareEvents(info->ipAddress(), d->selfFingerPrint);
 }
 
 void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
@@ -306,7 +316,7 @@ void ShareHelper::notifyConnectRequest(const QString &info)
     d->targetDevName = infoList[1];
 
     if (infoList.size() >= 3) {
-        d->targetFingerPrint = infoList[2];
+        d->recvServerPrint = infoList[2];
     }
 
 #ifdef linux
@@ -318,7 +328,7 @@ void ShareHelper::notifyConnectRequest(const QString &info)
 #endif
 }
 
-void ShareHelper::handleConnectResult(int result, bool crypto)
+void ShareHelper::handleConnectResult(int result, const QString &clientprint)
 {
     d->isReplied = true;
     if (!d->targetDeviceInfo || d->isTimeout)
@@ -335,8 +345,13 @@ void ShareHelper::handleConnectResult(int result, bool crypto)
         d->targetDeviceInfo.reset();
     } break;
     case SHARE_CONNECT_COMFIRM: {
+        bool crypto = !clientprint.isEmpty();
         // remove "--disable-crypto" if receive client has fingerprint.
         ShareCooperationServiceManager::instance()->server()->setEnableCrypto(crypto);
+        if (crypto) {
+            // write its fingerprint into trust client file.
+            SslCertConf::ins()->writeTrustPrint(false, clientprint.toStdString());
+        }
 
         //启动 ShareCooperationServic
         ShareCooperationServiceManager::instance()->server()->restartBarrier();
@@ -373,8 +388,6 @@ void ShareHelper::handleConnectResult(int result, bool crypto)
     default:
         break;
     }
-    // clear received client's fingerprint whatever agree or reject
-    d->targetFingerPrint = "";
 }
 
 void ShareHelper::handleDisConnectResult(const QString &devName)
@@ -393,12 +406,12 @@ void ShareHelper::handleDisConnectResult(const QString &devName)
 
 void ShareHelper::onVerifyTimeout()
 {
+    d->recvServerPrint = ""; // clear received nserver fingerprint when timeout
     d->isTimeout = true;
     if (d->isRecvMode) {
         if (d->isReplied)
             return;
 
-        d->targetFingerPrint = ""; // clear received fingerprint
         static QString body(tr("The connection request sent to you by \"%1\" was interrupted due to a timeout"));
         d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
     } else {
@@ -414,6 +427,7 @@ void ShareHelper::onVerifyTimeout()
 
 void ShareHelper::handleCancelCooperApply()
 {
+    d->recvServerPrint = ""; //reset if server has canceled.
     if (d->isRecvMode) {
         if (d->isReplied)
             return;

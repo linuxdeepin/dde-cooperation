@@ -24,11 +24,10 @@ public:
     QSharedPointer<ShareCooperationService> server();
     void stop();
     bool startServer(const QString &msg);
-    bool stopServer()
-    {
-        emit stopShareServer();
-        return true;
-    }
+    bool stopServer();
+
+    QString barrierProfile();
+
 signals:
     void startShareServer(const QString msg);
     void stopShareServer();

@@ -50,7 +50,8 @@ public:
     // 作为发送方时，为接收方设备信息；作为接收方时，为发送方设备信息
     DeviceInfoPointer targetDeviceInfo { nullptr };
     QString targetDevName;
-    QString targetFingerPrint = "";
+    QString recvServerPrint { "" };
+    QString selfFingerPrint { "" };
 
 #ifdef __linux__
     NoticeUtil *notice { nullptr };

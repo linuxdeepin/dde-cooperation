@@ -7,14 +7,17 @@
 
 #include <QFile>
 #include <QTimer>
+#include <QStandardPaths>
 
 ShareCooperationServiceManager::ShareCooperationServiceManager(QObject *parent)
     : QObject(parent)
 {
     _client.reset(new ShareCooperationService);
     _client->setBarrierType(BarrierType::Client);
+    _client->setBarrierProfile(barrierProfile());
     _server.reset(new ShareCooperationService);
     _server->setBarrierType(BarrierType::Server);
+    _server->setBarrierProfile(barrierProfile());
     connect(this, &ShareCooperationServiceManager::startShareServer, this, &ShareCooperationServiceManager::handleStartShareSever, Qt::QueuedConnection);
     connect(this, &ShareCooperationServiceManager::stopShareServer, this, &ShareCooperationServiceManager::handleStopShareSever, Qt::QueuedConnection);
 }
@@ -52,6 +55,12 @@ bool ShareCooperationServiceManager::startServer(const QString &msg)
     return true;
 }
 
+bool ShareCooperationServiceManager::stopServer()
+{
+    emit stopShareServer();
+    return true;
+}
+
 void ShareCooperationServiceManager::handleStartShareSever(const QString msg)
 {
     if (_server.isNull())
@@ -65,4 +74,10 @@ void ShareCooperationServiceManager::handleStopShareSever()
     if (_server.isNull())
         return;
     _server->stopBarrier();
+}
+
+QString ShareCooperationServiceManager::barrierProfile()
+{
+    QString profileDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    return profileDir;
 }
