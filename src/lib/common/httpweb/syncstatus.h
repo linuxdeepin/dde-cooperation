@@ -11,6 +11,15 @@
 
 #define BLOCK_SIZE 4096
 
+static const std::string s_headerInfos[] = {"webstart", "webfinish", "webindex"};
+
+enum INFOHEAD {
+    INFO_WEB_START = 0,
+    INFO_WEB_FINISH = 1,
+    INFO_WEB_INDEX = 2,
+    INFO_WEB_MAX = 3,
+};
+
 enum HandleResult {
     RES_OKHEADER = 200,
     RES_NOTFOUND = 404,
@@ -18,6 +27,8 @@ enum HandleResult {
     RES_BODY = 555,
     RES_FINISH = 666,
     RES_INDEX_CHANGE = 668,
+    RES_WEB_START = 669,
+    RES_WEB_FINISH = 670,
 };
 
 using ResponseHandler = std::function<bool(int status, const char *buffer, size_t size)>;

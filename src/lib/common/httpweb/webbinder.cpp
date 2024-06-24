@@ -47,6 +47,9 @@ void WebBinder::clear()
 
 std::string WebBinder::getPath(std::string path)
 {
+    if (path.empty()) {
+        return "";
+    }
     for (auto &pair : _binds) {
         const std::string& virtualBind = pair.first;
         if (path.find(virtualBind) == 0) {

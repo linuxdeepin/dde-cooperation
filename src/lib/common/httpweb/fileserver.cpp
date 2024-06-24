@@ -74,7 +74,6 @@ protected:
 
             if (info.IsDirectory()) {
                 response().SetBodyLength(0);
-                response().SetHeader("Flag", "dir");
                 response().SetBody("");
 
                 SendResponseAsync(response());
@@ -90,7 +89,6 @@ protected:
 
                 response().SetContentType(info.extension().string());
                 response().SetBodyLength(sz - offset); // set the remaining size as body lenght
-                response().SetHeader("Flag", "file");
 
                 total = response().body_length();
 
@@ -102,16 +100,17 @@ protected:
                 bool cancel = false;
                 size_t read_sz = 0;
                 char buff[BLOCK_SIZE];
-                do {
+                while (!cancel) {
+                    memset(buff, 0, BLOCK_SIZE);
                     read_sz = info.Read(buff, sizeof(buff));
+                    if (read_sz <= 0) {
+                        break;
+                    }
                     SendResponseBody(buff, read_sz);
                     // notify progress：size total
                     // return true to cancel download from outside.
                     cancel = _handler(RES_BODY, nullptr, read_sz);
-                    if (cancel) {
-                        break;
-                    }
-                } while (read_sz > 0);
+                };
 
                 info.Close();
 
@@ -159,9 +158,42 @@ protected:
         //std::cout << std::endl << request;
 
         // Process HTTP request methods
-        if (request.method() == "HEAD")
+        if (request.method() == "HEAD") {
+            // [HEAD]webstart>|webfinish>|webindex><name>
+            std::string key = std::string(request.url());
+            std::cout << "------------HEADER:" << key << std::endl;
+
+            size_t dePos = key.find('>');
+            if (dePos == std::string::npos || dePos + 1 > key.size()) {
+                std::cout << "------------HEADER:" << key << " size:" << dePos + 1 << std::endl;
+                // error format request!
+                SendResponseAsync(response().MakeHeadResponse());
+                return;
+            }
+
+            std::string method = key.substr(0, dePos);
+            if (method == s_headerInfos[INFO_WEB_START]) {
+                _handler(RES_WEB_START, nullptr, 0);
+            } else if (method == s_headerInfos[INFO_WEB_FINISH]) {
+                _handler(RES_WEB_FINISH, nullptr, 0);
+            } else if (method == s_headerInfos[INFO_WEB_INDEX]) {
+                std::string name = key.substr(dePos + 1);
+                CppCommon::Path diskpath = WebBinder::GetInstance().getPath(name);
+                if (diskpath.empty()) {
+                    std::cout << "webindex : " << name << " > " << diskpath.string() << std::endl;
+                    SendResponseAsync(response().MakeErrorResponse(404, "Not found."));
+                    return;
+                }
+
+                bool found = WebBinder::GetInstance().containWeb(key);
+                if (found) {
+                    // this web index changed
+                    _handler(RES_INDEX_CHANGE, diskpath.string().data(), 0);
+                }
+            }
+
             SendResponseAsync(response().MakeHeadResponse());
-        else if (request.method() == "GET") {
+        } else if (request.method() == "GET") {
             // std::string url = "info/pathname&token=xxx";
             // std::string url = "download/pathname&token=xxx&offset=xxx";
             std::string url = std::string(request.url());
@@ -192,11 +224,6 @@ protected:
 
                 // 处理predownload或download请求的name
                 if (method.find("info") != std::string::npos) {
-                    bool found = WebBinder::GetInstance().containWeb(name);
-                    if (found) {
-                        // this web index changed
-                        _handler(RES_INDEX_CHANGE, diskpath.string().data(), 0);
-                    }
                     // 处理predownload请求的name
                     serveInfo(diskpath);
                 } else if (method.find("download") != std::string::npos) {
@@ -258,6 +285,10 @@ FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &ser
             } else if (RES_INDEX_CHANGE == status) {
                 std::string path(buffer);
                 _callback->onWebChanged(WEB_INDEX_BEGIN, path);
+            } else if (RES_WEB_START == status) {
+                _callback->onWebChanged(WEB_TRANS_START);
+            } else if (RES_WEB_FINISH == status) {
+                _callback->onWebChanged(WEB_TRANS_FINISH);
             }
         }
         return _stop;
@@ -318,8 +349,6 @@ void FileServer::clearBind()
 
 std::string FileServer::genToken(std::string info)
 {
-    _callback->onWebChanged(WEB_TRANS_START);
-
     return TokenCache::GetInstance().genToken(info);
 }
 

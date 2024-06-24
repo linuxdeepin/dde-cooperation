@@ -8,7 +8,6 @@
 #include "server/http/http_client.h"
 #include "syncstatus.h"
 
-#include "filesystem/file.h"
 #include "webproto.h"
 
 class HTTPFileClient;
@@ -28,11 +27,15 @@ public:
     void startFileDownload(const std::vector<std::string> &webnames);
 
 private:
+    void sendInfobyHeader(uint8_t mask, const std::string &name = "");
     InfoEntry requestInfo(const std::string &name);
     std::string getHeadKey(const std::string &headstrs, const std::string &keyfind);
-    bool downloadFile(const std::string &name);
-    void downloadFolder(const std::string &folderName);
+    bool downloadFile(const std::string &name, const std::string &rename = "");
+    void downloadFolder(const std::string &foldername, const std::string &refoldername = "");
     void walkDownload(const std::vector<std::string> &webnames);
+    bool createNotExistPath(const std::string &abspath, bool isfile);
+    std::string createNextAvailableName(const std::string &name, bool isfile);
+
 
     std::shared_ptr<HTTPFileClient> _httpClient { nullptr };
 
@@ -41,8 +44,6 @@ private:
     std::atomic<bool> _stop { false };
     // download sync, promise value flag
     std::atomic<bool> _promised { false };
-
-    CppCommon::File tempFile;
 };
 
 #endif // FILECLIENT_H

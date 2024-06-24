@@ -90,10 +90,10 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
             emit notifyChanged(TRANS_FILE_DONE, path, size);
         }
 
-        if (_singleFile) {
-            // for signal file transfer
-            sendTranEndNotify();
-        }
+//        if (_singleFile) {
+//            // for signal file transfer
+//            sendTranEndNotify();
+//        }
     }
         break;
     }
@@ -201,12 +201,12 @@ void TransferWorker::doCalculateSpeed()
     int64_t bytesize = _status.secsize.load();
     _status.secsize.store(0); // reset every second
 
-    if (_noDataCount > 10) {
-        DLOG << "10s no data transfer, whole finished!";
-        // 10 seconds did not receive any data.
-        sendTranEndNotify();
-        return;
-    }
+//    if (_noDataCount > 10) {
+//        DLOG << "10s no data transfer, whole finished!";
+//        // 10 seconds did not receive any data.
+//        sendTranEndNotify();
+//        return;
+//    }
     if (bytesize > 0) {
         _noDataCount = 0;
     } else {
