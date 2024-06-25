@@ -37,6 +37,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/discover/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/discover/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
@@ -95,6 +97,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     co
+    QtZeroConf
 )
 
 # 平台相关的库，添加到这里

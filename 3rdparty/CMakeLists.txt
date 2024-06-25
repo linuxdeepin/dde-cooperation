@@ -25,6 +25,7 @@ set(BUILD_WITH_SYSTEMD ON CACHE BOOL "Build with systemd")
 add_subdirectory(coost)
 
 add_subdirectory(zrpc)
+add_subdirectory(QtZeroConf)
 
 
 if (CMAKE_SYSTEM MATCHES "Windows")

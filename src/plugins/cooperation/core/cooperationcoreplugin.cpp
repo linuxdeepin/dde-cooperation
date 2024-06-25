@@ -20,6 +20,7 @@
 #    include "base/reportlog/reportlogmanager.h"
 #    include <DFeatureDisplayDialog>
 #    include <QFile>
+#    include <discover/discovercontroller.h>
 DWIDGET_USE_NAMESPACE
 #endif
 
@@ -68,6 +69,8 @@ bool CooperaionCorePlugin::start()
 
 #ifndef linux
     CooperationProxy::instance();
+#else
+    DiscoverController::instance();
 #endif
 
     return true;

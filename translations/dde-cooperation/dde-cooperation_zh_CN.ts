@@ -17,7 +17,7 @@
 <context>
     <name>cooperation_core::BottomLabel</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="337"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="339"/>
         <source>Local IP: %1</source>
         <translation>本机IP：%1</translation>
     </message>
@@ -323,44 +323,67 @@
     </message>
 </context>
 <context>
+    <name>cooperation_core::DiscoverController</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="147"/>
+        <source>Confirm</source>
+        <translation>确认</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="148"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="153"/>
+        <source>Please click to confirm to enable the LAN discovery service!</source>
+        <translation>请点击确认开启局域网发现服务！</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="154"/>
+        <source>If you want discovery through the mdns service, you need to enable the avahi service</source>
+        <translation>如果您希望通过mdns服务发现，则需要开启avahi服务进程</translation>
+    </message>
+</context>
+<context>
     <name>cooperation_core::FirstTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="503"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="96"/>
         <source>First step</source>
         <translation>第1步</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="504"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="97"/>
         <source>The opposite end opens the application and connects to the same network</source>
         <translation>对端开启应用，并连接同一网络</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="505"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="98"/>
         <source>Second step</source>
         <translation>第2步</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="507"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="100"/>
         <source>Third step</source>
         <translation>第3步</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="568"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="159"/>
         <source>to send the file</source>
         <translation>发送文件</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="573"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="166"/>
         <source>to connect to the peer device</source>
         <translation>连接对端设备</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="506"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="99"/>
         <source>Enter the peer IP in the search box</source>
         <translation>在搜索框输入对端IP</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="508"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="101"/>
         <source>Click</source>
         <translation>点击</translation>
     </message>
@@ -387,7 +410,7 @@
 <context>
     <name>cooperation_core::LookingForDeviceWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="77"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="74"/>
         <source>Looking for devices</source>
         <translation>正在寻找设备</translation>
     </message>
@@ -421,7 +444,7 @@
 <context>
     <name>cooperation_core::NoNetworkWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="142"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="139"/>
         <source>Please connect to the network</source>
         <translation>请连接网络</translation>
     </message>
@@ -429,32 +452,32 @@
 <context>
     <name>cooperation_core::NoResultTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="175"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="172"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation>1. 开启跨端协同应用，UOS端应用可在应用商店下载，Windows端下载地址:</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="188"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
         <source>2. On the same LAN as the device</source>
         <translation>2. 与本设备在同一局域网</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="193"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="190"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
         <translation>3. 文件管理器-设置-文件投送-允许以下用户向我投送文件-“同一局域网下的所有人”</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="195"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="192"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation>3. 设置-基础设置-可被发现-“允许同一局域网下的所有人”</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="201"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="198"/>
         <source>4. Try entering the target device IP in the top search box</source>
         <translation>4. 尝试在顶部搜索框输入目标设备IP</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="205"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="202"/>
         <source>Unable to find collaborative device？</source>
         <translation>找不到协同设备？</translation>
     </message>
@@ -462,7 +485,7 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="264"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="261"/>
         <source>No device found</source>
         <translation>未搜寻到任何设备</translation>
     </message>
@@ -692,13 +715,13 @@
 <context>
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="48"/>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="49"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="51"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>请输入协同对象的设备IP/昵称</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="55"/>
         <source>Nearby Device</source>
         <translation>附近的设备</translation>
     </message>

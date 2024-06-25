@@ -1,0 +1,1 @@
+/home/ljc/project/dde-cooperation/dde-cooperation/3rdparty/QtZeroConf/example/android/src/QZeroConfNsdManager.java
