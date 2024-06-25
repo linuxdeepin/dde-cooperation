@@ -94,16 +94,14 @@ jobs:
           cmake.exe ../source/
 
       - name: Inno Setup data-transfer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.3
+        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
         with:
-          path: build/deepin-data-transfer-setup.iss
-          options: /O+
+          filepath: build/deepin-data-transfer-setup.iss
 
       - name: Inno Setup cooperation
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.3
+        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
         with:
-          path: build/dde-cooperation-setup.iss
-          options: /O+
+          filepath: build/dde-cooperation-setup.iss
 
       - name: Create Release
         uses: softprops/action-gh-release@v1

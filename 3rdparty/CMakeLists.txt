@@ -25,7 +25,6 @@ set(BUILD_WITH_SYSTEMD ON CACHE BOOL "Build with systemd")
 add_subdirectory(coost)
 
 add_subdirectory(zrpc)
-add_subdirectory(QtZeroConf)
 
 
 if (CMAKE_SYSTEM MATCHES "Windows")
@@ -50,6 +49,7 @@ message("   >> include barrier...")
 # barrier v2.4.0 release, upstream: https://github.com/debauchee/barrier
 if (UNIX)
     add_subdirectory(barrier)
+    add_subdirectory(QtZeroConf)
 else()
     # 拷贝编译好的版本windows版本
     file(GLOB BARRIER_BINS ${CMAKE_CURRENT_SOURCE_DIR}/barrier/bins/*)

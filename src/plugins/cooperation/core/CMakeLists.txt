@@ -37,8 +37,6 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/discover/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/discover/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
@@ -62,6 +60,8 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
         "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/discover/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/discover/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/maincontroller/linux/*.cpp"
     )
     find_package(Dtk COMPONENTS Widget REQUIRED)
@@ -97,13 +97,13 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     co
-    QtZeroConf
 )
 
 # 平台相关的库，添加到这里
 if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJECT_NAME}
         ${DtkWidget_LIBRARIES}
+        QtZeroConf
     )
 endif()
 if (CMAKE_SYSTEM MATCHES "Windows")
