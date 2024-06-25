@@ -1,3 +1,10 @@
+dde-cooperation (0.8.5) unstable; urgency=medium
+
+  * v0.8.5 release override other incompatible version.
+  * fix some UI issues.
+
+ -- re2zero <yangwu@uniontech.com>  Tue, 25 Jun 2024 10:25:16 +0800
+
 dde-cooperation (0.7.11) unstable; urgency=medium
 
   * v0.7.11 release version.

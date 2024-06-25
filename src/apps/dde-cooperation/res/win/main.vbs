@@ -1,6 +1,9 @@
 kill = False
 Set shell = Wscript.createobject("wscript.shell")
 Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
+
+b = shell.run(".\dde-cooperation.exe",0)
+Wscript.Sleep 500
 Set backProcess = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'cooperation-daemon.exe'")
 if backProcess.Count = 0 Then
     Set bsProcesses = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'barriers.exe'")
@@ -26,8 +29,7 @@ else
     ' Wscript.Echo "backend daemon is already running."
 end if
 
-b = shell.run(".\dde-cooperation.exe",0)
-
+Wscript.Sleep 500
 ' 检测自身进程退出，如果是自己拉起来的后端，则杀掉
 Do While True
     Set colProcess = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'dde-cooperation.exe'")
