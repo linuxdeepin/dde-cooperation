@@ -75,6 +75,36 @@ static void appExitHandler(int sig)
     qApp->quit();
 }
 
+static QString lockFilePath()
+{
+    return QDir::tempPath() + "/dde-cooperation.lock";
+}
+
+static bool checkLockFile()
+{
+    QFile lockFile(lockFilePath());
+    return !lockFile.exists();
+}
+
+static void createLockFile()
+{
+    QFile lockFile(lockFilePath());
+    if (lockFile.open(QIODevice::WriteOnly)) {
+        lockFile.close();
+    } else {
+        qDebug() << "Failed to create lock file.";
+        exit(1);
+    }
+}
+
+static void removeLockFile()
+{
+    QFile lockFile(lockFilePath());
+    if (lockFile.exists()) {
+        lockFile.remove();
+    }
+}
+
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -97,11 +127,11 @@ int main(int argc, char *argv[])
                                                                "between different devices."));
 #endif
 
-    bool inUse = BaseUtils::portInUse(BASEPROTO_PORT);
-    if (inUse) {
-        qCritical() << "exit, network port (" << BASEPROTO_PORT << ") is busing........";
+    if (!checkLockFile()) {
+        qCritical() << "Another user has already started the application.";
         return 1;
     }
+    createLockFile();
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {
@@ -128,6 +158,7 @@ int main(int argc, char *argv[])
     DPF_NAMESPACE::LifeCycle::shutdownPlugins();
 
     app.closeServer();
+    removeLockFile();
 
 #ifdef WIN32
     // FIXME: windows上使用socket，即使线程资源全释放，进程也无法正常退出

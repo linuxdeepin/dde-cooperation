@@ -168,6 +168,8 @@ void DeviceItem::setDeviceName(const QString &name)
 
 void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
 {
+    if (qApp->property("onlyTransfer").toBool() && status == DeviceInfo::Connected)
+        status = DeviceInfo::Connectable;
     stateLabel->setState(status);
     switch (status) {
     case DeviceInfo::Connected: {
