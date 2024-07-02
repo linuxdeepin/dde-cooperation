@@ -90,7 +90,7 @@ void CooperationGuiHelper::setLabelFont(QLabel *label, int pointSize, int minpoi
 #endif
 
     font.setPixelSize(size);
-    font.setWeight(weight);
+    font.setWeight((QFont::Weight)weight);
 
     label->setFont(font);
 }

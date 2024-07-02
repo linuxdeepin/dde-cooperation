@@ -160,7 +160,7 @@ void InformationDialog::initUI()
     QIcon icon(QString(":/icons/deepin/builtin/icons/transfer_fail_128px.svg"));
     iconLabel->setPixmap(icon.pixmap(48, 48));
     QVBoxLayout *vLayout = new QVBoxLayout(contentWidget);
-    vLayout->setMargin(0);
+    vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->addWidget(titleLabel, Qt::AlignTop);
     vLayout->addWidget(iconLabel);
     vLayout->addWidget(msgLabel, Qt::AlignVCenter);

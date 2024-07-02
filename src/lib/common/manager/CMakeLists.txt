@@ -48,6 +48,10 @@ target_link_libraries(${PROJECT_NAME}
     ${LINKLIBS}
 )
 
+if(FPIC)
+    set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 # #install library file
 # install(TARGETS ${PROJECT_NAME}
 #         RUNTIME DESTINATION "${INSTALL_BIN_DIR}"

@@ -7,6 +7,7 @@
 
 #include "base/baseutils.h"
 
+#include <QObject>
 #include <QMetaType>
 #include <QSharedPointer>
 

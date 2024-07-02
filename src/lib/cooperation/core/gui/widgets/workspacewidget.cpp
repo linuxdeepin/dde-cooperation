@@ -15,6 +15,7 @@
 #include <QTimer>
 #include <QToolButton>
 #include <QToolTip>
+#include <QFile>
 
 #include <gui/utils/cooperationguihelper.h>
 

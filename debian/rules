@@ -1,6 +1,19 @@
 #!/usr/bin/make -f
 include /usr/share/dpkg/default.mk
-export QT_SELECT=5
+
+# 检测当前安装的Qt版本并设置QT_SELECT环境变量
+define detect_qt_version
+ifneq (,$(shell which qmake6 2>/dev/null))
+    $(shell qtchooser -install qt6 $(shell which qmake6))
+    export QT_SELECT=qt6
+else
+    export QT_SELECT=qt5
+endif
+endef
+
+# 调用检测Qt版本的命令
+$(eval $(call detect_qt_version))
+
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 %:

@@ -21,8 +21,6 @@ public:
 
     static QString elidedText(const QString &text, Qt::TextElideMode mode, int maxLength);
 
-    static void manageDaemonProcess(const QString &side);
-
     static bool isFirstStart();
 
     static QString tipConfPath();

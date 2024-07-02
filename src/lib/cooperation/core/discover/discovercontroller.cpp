@@ -10,7 +10,6 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QTimer>
-#include <QTextCodec>
 #include <QJsonDocument>
 #include <QDesktopServices>
 
@@ -173,7 +172,7 @@ bool DiscoverController::isZeroConfDaemonActive()
     process.start("sc query \"Bonjour Service\"");
     process.waitForFinished();
     QByteArray output = process.readAllStandardOutput();
-    QString res = QTextCodec::codecForName("GBK")->toUnicode(output);
+    QString res = QString::fromLocal8Bit(output);
 
     if (res.contains("RUNNING"))
         return true;

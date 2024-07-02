@@ -21,7 +21,7 @@ set(qt_required_components Core Gui Network Widgets)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
 if (CMAKE_SYSTEM MATCHES "Linux")
-    find_package(Dtk COMPONENTS Widget REQUIRED)
+    find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -44,10 +44,10 @@ target_link_libraries(${PROJ_NAME}
   Qt${QT_VERSION_MAJOR}::Gui
   Qt${QT_VERSION_MAJOR}::Network
   Qt${QT_VERSION_MAJOR}::Widgets
-  ${DtkWidget_LIBRARIES}
+  Dtk${DTK_VERSION_MAJOR}::Widget
   cooperation-core
 )
 
 install(TARGETS ${PROJ_NAME} DESTINATION bin)
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+include(install_dconfig)
 INSTALL_DCONFIG("org.deepin.dde.cooperation.json")

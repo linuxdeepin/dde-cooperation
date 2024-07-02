@@ -10,9 +10,15 @@ function(INSTALL_DCONFIG CONFIG_NAME)
         message("---- AppId: ${CooperationAppId}")
         message("---- Base: ${DConfigPath}")
         message("---- Files: ${DConfigPath}/${ConfigName}")
-        dconfig_meta_files(APPID ${CooperationAppId}
-            BASE ${DConfigPath}
-            FILES ${DConfigPath}/${ConfigName})
+        if (DTK_VERSION_MAJOR EQUAL "6")
+            dtk_add_config_meta_files(APPID ${CooperationAppId}
+                BASE ${DConfigPath}
+                FILES ${DConfigPath}/${ConfigName})
+        else()
+            dconfig_meta_files(APPID ${CooperationAppId}
+                BASE ${DConfigPath}
+                FILES ${DConfigPath}/${ConfigName})
+        endif()
     else()
         set(DSG_DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/dsg)
         message("-- DConfig is NOT supported by DTK, install files into target path")

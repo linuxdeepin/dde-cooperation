@@ -8,6 +8,7 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QDebug>
+#include <QVariant>
 
 CommandParser &CommandParser::instance()
 {
@@ -66,7 +67,7 @@ void CommandParser::addOption(const QCommandLineOption &option)
 void CommandParser::setSendFiles()
 {
     const auto &sendFiles = commandParser->positionalArguments();
-    qApp->setProperty("sendFiles", sendFiles);
+    qApp->setProperty("sendFiles", QVariant::fromValue(sendFiles));
 }
 
 CommandParser::CommandParser(QObject *parent)

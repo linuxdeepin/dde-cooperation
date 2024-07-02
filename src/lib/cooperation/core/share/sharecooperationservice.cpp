@@ -5,6 +5,7 @@
 #include "cooconfig.h"
 #include "sharecooperationservice.h"
 #include "common/log.h"
+#include "common/qtcompat.h"
 #include "discover/deviceinfo.h"
 
 #include <common/constant.h>
@@ -14,6 +15,10 @@
 #include <QHostInfo>
 #include <QStandardPaths>
 #include <QTimer>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QRegularExpression>
+#endif
 
 ShareCooperationService::ShareCooperationService(QObject *parent)
     : QObject(parent)
@@ -288,94 +293,94 @@ bool ShareCooperationService::checkParam(const ShareServerConfig &config)
 void ShareCooperationService::setScreen(const ShareServerConfig &config, QTextStream *stream)
 {
     // 设置screen
-    *stream << "section: screens" << endl;
-    *stream << "\t" << config.screen_left << ":" << endl;
+    *stream << "section: screens" << QT_ENDL;
+    *stream << "\t" << config.screen_left << ":" << QT_ENDL;
     // 设置左边
     *stream << "\t\t"
             << "halfDuplexCapsLock = "
-            << (config.left_halfDuplexCapsLock ? "true" : "false") << endl;
+            << (config.left_halfDuplexCapsLock ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "halfDuplexNumLock = "
-            << (config.left_halfDuplexNumLock ? "true" : "false") << endl;
+            << (config.left_halfDuplexNumLock ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "halfDuplexScrollLock = "
-            << (config.left_halfDuplexScrollLock ? "true" : "false") << endl;
+            << (config.left_halfDuplexScrollLock ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "xtestIsXineramaUnaware = "
-            << (config.left_xtestIsXineramaUnaware ? "true" : "false") << endl;
+            << (config.left_xtestIsXineramaUnaware ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "preserveFocus = "
-            << (config.left_preserveFocus ? "true" : "false") << endl;
+            << (config.left_preserveFocus ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "switchCorners = "
-            << (config.left_switchCorners.isEmpty() ? "none" : config.left_switchCorners) << endl;
+            << (config.left_switchCorners.isEmpty() ? "none" : config.left_switchCorners) << QT_ENDL;
     *stream << "\t\t"
-            << "switchCornerSize = " << config.left_switchCornerSize << endl;
+            << "switchCornerSize = " << config.left_switchCornerSize << QT_ENDL;
     // 设置右边
-    *stream << "\t" << config.screen_right << ":" << endl;
+    *stream << "\t" << config.screen_right << ":" << QT_ENDL;
     *stream << "\t\t"
             << "halfDuplexCapsLock = "
-            << (config.right_halfDuplexCapsLock ? "true" : "false") << endl;
+            << (config.right_halfDuplexCapsLock ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "halfDuplexNumLock = "
-            << (config.right_halfDuplexNumLock ? "true" : "false") << endl;
+            << (config.right_halfDuplexNumLock ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "halfDuplexScrollLock = "
-            << (config.right_halfDuplexScrollLock ? "true" : "false") << endl;
+            << (config.right_halfDuplexScrollLock ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "xtestIsXineramaUnaware = "
-            << (config.right_xtestIsXineramaUnaware ? "true" : "false") << endl;
+            << (config.right_xtestIsXineramaUnaware ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "preserveFocus = "
-            << (config.right_preserveFocus ? "true" : "false") << endl;
+            << (config.right_preserveFocus ? "true" : "false") << QT_ENDL;
     *stream << "\t\t"
             << "switchCorners = "
-            << (config.right_switchCorners.isEmpty() ? "none" : config.right_switchCorners) << endl;
+            << (config.right_switchCorners.isEmpty() ? "none" : config.right_switchCorners) << QT_ENDL;
     *stream << "\t\t"
-            << "switchCornerSize = " << config.right_switchCornerSize << endl;
-    *stream << "end" << endl
-            << endl;
+            << "switchCornerSize = " << config.right_switchCornerSize << QT_ENDL;
+    *stream << "end" << QT_ENDL
+            << QT_ENDL;
 
-    *stream << "section: aliases" << endl;
-    *stream << "end" << endl
-            << endl;
+    *stream << "section: aliases" << QT_ENDL;
+    *stream << "end" << QT_ENDL
+            << QT_ENDL;
 }
 
 void ShareCooperationService::setScreenLink(const ShareServerConfig &config, QTextStream *stream)
 {
-    *stream << "section: links" << endl;
-    *stream << "\t" << config.screen_left << ":" << endl;
+    *stream << "section: links" << QT_ENDL;
+    *stream << "\t" << config.screen_left << ":" << QT_ENDL;
     *stream << "\t\t"
-            << "right = " << config.screen_right << endl;
-    *stream << "\t" << config.screen_right << ":" << endl;
+            << "right = " << config.screen_right << QT_ENDL;
+    *stream << "\t" << config.screen_right << ":" << QT_ENDL;
     *stream << "\t\t"
-            << "left = " << config.screen_left << endl;
-    *stream << "end" << endl
-            << endl;
+            << "left = " << config.screen_left << QT_ENDL;
+    *stream << "end" << QT_ENDL
+            << QT_ENDL;
 }
 
 void ShareCooperationService::setScreenOptions(const ShareServerConfig &config, QTextStream *stream)
 {
-    *stream << "section: options" << endl;
+    *stream << "section: options" << QT_ENDL;
     *stream << "\t"
             << "relativeMouseMoves = "
-            << (config.relativeMouseMoves ? "true" : "false") << endl;
+            << (config.relativeMouseMoves ? "true" : "false") << QT_ENDL;
     *stream << "\t"
             << "screenSaverSync = "
-            << (config.screenSaverSync ? "true" : "false") << endl;
+            << (config.screenSaverSync ? "true" : "false") << QT_ENDL;
     *stream << "\t"
             << "win32KeepForeground = "
-            << (config.win32KeepForeground ? "true" : "false") << endl;
+            << (config.win32KeepForeground ? "true" : "false") << QT_ENDL;
     *stream << "\t"
             << "clipboardSharing = "
-            << (config.clipboardSharing ? "true" : "false") << endl;
+            << (config.clipboardSharing ? "true" : "false") << QT_ENDL;
     *stream << "\t"
             << "switchCorners = "
-            << (config.switchCorners.isEmpty() ? "none" : config.switchCorners) << endl;
+            << (config.switchCorners.isEmpty() ? "none" : config.switchCorners) << QT_ENDL;
     *stream << "\t"
-            << "switchCornerSize = " << config.switchCornerSize << endl;
-    *stream << "end" << endl
-            << endl;
+            << "switchCornerSize = " << config.switchCornerSize << QT_ENDL;
+    *stream << "end" << QT_ENDL
+            << QT_ENDL;
 }
 
 QString ShareCooperationService::configFilename()
@@ -419,7 +424,12 @@ void ShareCooperationService::barrierFinished(int exitCode, QProcess::ExitStatus
 
 void ShareCooperationService::appendLogRaw(const QString &text, bool error)
 {
-    for (QString line : text.split(QRegExp("\r|\n|\r\n"))) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QRegularExpression regExp("\r|\n|\r\n");
+#else
+    QRegExp regExp("\r|\n|\r\n");
+#endif
+    for (QString line : text.split(regExp)) {
         if (!line.isEmpty()) {
             if (error) {
                 ELOG << line.toStdString();

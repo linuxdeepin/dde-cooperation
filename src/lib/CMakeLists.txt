@@ -9,6 +9,3 @@ add_subdirectory(data-transfer)
 
 # cooperation gui and business library
 add_subdirectory(cooperation)
-
-## file transfer gui and business library
-#add_subdirectory(data-transfer)

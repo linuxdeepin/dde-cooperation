@@ -1,6 +1,8 @@
 ﻿#ifndef SELECTMAINWIDGET_H
 #define SELECTMAINWIDGET_H
 
+#include "common/qtcompat.h"
+
 #include <QFrame>
 #include <QCheckBox>
 class QLabel;
@@ -8,6 +10,7 @@ class SidebarWidget;
 class QPushButton;
 class IndexLabel;
 enum SelectItemName { FILES, APP, CONFIG };
+
 class SelectItem : public QFrame
 {
     Q_OBJECT
@@ -18,7 +21,7 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-    void enterEvent(QEvent *event) override;
+    void enterEvent(EnterEvent *event) override;
     void leaveEvent(QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 

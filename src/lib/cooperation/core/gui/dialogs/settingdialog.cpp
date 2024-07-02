@@ -19,6 +19,9 @@
 #include <QStandardPaths>
 #include <QToolTip>
 #include <QScrollBar>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QRegularExpression>
+#endif
 
 #include <utils/cooperationutil.h>
 #include <base/reportlog/reportlogmanager.h>
@@ -155,8 +158,14 @@ void SettingDialogPrivate::createBasicWidget()
 
     nameEdit = new CooperationLineEdit(q);
     nameEdit->installEventFilter(q);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QRegularExpression regExp("^[a-zA-Z0-9\u4e00-\u9fa5-]+$");   // 正则表达式定义允许的字符范围
+    QRegularExpressionValidator *validator = new QRegularExpressionValidator(regExp, nameEdit);
+#else
     QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5-]+$");   // 正则表达式定义允许的字符范围
     QRegExpValidator *validator = new QRegExpValidator(regExp, nameEdit);
+#endif
 #ifdef linux
     nameEdit->lineEdit()->setValidator(validator);
     nameEdit->setClearButtonEnabled(false);

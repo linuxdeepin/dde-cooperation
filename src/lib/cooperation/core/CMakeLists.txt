@@ -23,6 +23,7 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/common/log.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/qtcompat.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cooperationcoreplugin.h"
@@ -74,7 +75,7 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/net/linux/*.cpp"
     )
-    find_package(Dtk COMPONENTS Widget REQUIRED)
+    find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 else()
     message (FATAL_ERROR "not support on ${CMAKE_SYSTEM} yet.")
 endif()
@@ -82,7 +83,12 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Network DBus Concurrent)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network DBus Concurrent)
 
-qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources/resources.qrc)
+# 根据Qt版本选择合适的命令
+if (QT_VERSION VERSION_GREATER_EQUAL "6.0")
+    qt_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources/resources.qrc)
+else()
+    qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources/resources.qrc)
+endif()
 
 list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS sessionmanager)
@@ -137,7 +143,7 @@ target_link_libraries(${PROJECT_NAME}
 if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        ${DtkWidget_LIBRARIES}
+        Dtk${DTK_VERSION_MAJOR}::Widget
     )
 endif()
 if (CMAKE_SYSTEM MATCHES "Windows")

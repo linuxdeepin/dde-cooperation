@@ -249,7 +249,7 @@ void SelectItem::mousePressEvent(QMouseEvent *event)
     emit changePage();
 }
 
-void SelectItem::enterEvent(QEvent *event)
+void SelectItem::enterEvent(EnterEvent *event)
 {
     Q_UNUSED(event)
     editFrame->show();

@@ -260,7 +260,7 @@ void CooperationTransDialog::init()
     mainLayout = new QStackedLayout(this);
 
     QVBoxLayout *vLayout = new QVBoxLayout(contentWidget);
-    vLayout->setMargin(0);
+    vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->addLayout(mainLayout);
 
 #ifdef linux

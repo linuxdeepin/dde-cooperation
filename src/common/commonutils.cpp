@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "commonutils.h"
+#include "qtcompat.h"
 
 #include <QNetworkInterface>
 #include <QCoreApplication>
@@ -21,7 +22,6 @@ using namespace deepin_cross;
 static constexpr char kApp1[] { "dde-cooperation" };
 static constexpr char kApp2[] { "dde-cooperation-transfer" };
 static constexpr char kApp3[] { "deepin-data-transfer" };
-static constexpr char kDaemon[] { "cooperation-daemon" };
 
 std::string CommonUitls::getFirstIp()
 {
@@ -71,7 +71,7 @@ void CommonUitls::loadTranslator()
     auto locale = QLocale::system();
     QStringList missingQmfiles;
     QStringList translateFilenames { QString("%1_%2").arg(qApp->applicationName()).arg(QLocale::system().name()) };
-    const QStringList parseLocalNameList = locale.name().split("_", QString::SkipEmptyParts);
+    const QStringList parseLocalNameList = locale.name().split("_", SKIP_EMPTY_PARTS);
     if (parseLocalNameList.length() > 0)
         translateFilenames << QString("%1_%2").arg(qApp->applicationName()).arg(parseLocalNameList.at(0));
 
@@ -212,30 +212,6 @@ bool CommonUitls::isProcessRunning(const QString &processName)
     ps.start("pidof", QStringList() << processName);
     ps.waitForFinished();
     return ps.exitCode() == 0;
-}
-
-void CommonUitls::manageDaemonProcess(const QString &side)
-{
-#ifndef linux
-    return;
-#endif
-    if (side == "front") {
-        if (!isProcessRunning(kDaemon))
-            QProcess::startDetached(kDaemon, QStringList());
-        return;
-    }
-    QTimer *timer = new QTimer();
-    QObject::connect(timer, &QTimer::timeout, [] {
-        bool exist = isProcessRunning(kApp1) || isProcessRunning(kApp2) || isProcessRunning(kApp3);
-        if (exist) {
-            return;
-        } else {
-            LOG << "no front-end processes, backend shut down";
-            QString cmd = "killall " + QString::fromUtf8(kDaemon);
-            QProcess::execute(cmd);
-        }
-    });
-    timer->start(10000);
 }
 
 bool CommonUitls::isFirstStart()

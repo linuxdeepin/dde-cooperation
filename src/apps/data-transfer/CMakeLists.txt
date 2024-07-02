@@ -19,7 +19,7 @@ FILE(GLOB CPP_SRC
 )
 
 if (CMAKE_SYSTEM MATCHES "Linux")
-    find_package(Dtk COMPONENTS Widget REQUIRED)
+    find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 endif()
 
 if (WIN32)
@@ -92,8 +92,8 @@ target_link_libraries(${PROJ_NAME}
 
 if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJ_NAME}
-          PRIVATE
-        ${DtkWidget_LIBRARIES}
+        PRIVATE
+        Dtk${DTK_VERSION_MAJOR}::Widget
     )
 endif()
 

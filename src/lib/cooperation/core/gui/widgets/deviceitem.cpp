@@ -194,13 +194,13 @@ void DeviceItem::setOperations(const QList<Operation> &operations)
     auto tmpOperaList = operations;
     tmpOperaList << indexOperaMap.values();
 
-    qSort(tmpOperaList.begin(), tmpOperaList.end(),
-          [](const Operation &op1, const Operation &op2) {
-              if (op1.location < op2.location)
-                  return true;
+    std::sort(tmpOperaList.begin(), tmpOperaList.end(),
+            [](const Operation &op1, const Operation &op2) {
+                  if (op1.location < op2.location)
+                      return true;
 
-              return false;
-          });
+                  return false;
+            });
 
     for (auto op : tmpOperaList) {
         int index = btnBoxWidget->addButton(QIcon::fromTheme(op.icon), op.description,
@@ -238,7 +238,7 @@ void DeviceItem::onButtonClicked(int index)
     updateOperations();
 }
 
-void DeviceItem::enterEvent(QEvent *event)
+void DeviceItem::enterEvent(EnterEvent *event)
 {
     updateOperations();
     btnBoxWidget->setVisible(true);
@@ -269,7 +269,7 @@ bool DeviceItem::eventFilter(QObject *watched, QEvent *event)
         QPainter painter(nameLabel);
         QLinearGradient lg(nameLabel->rect().topLeft(), nameLabel->rect().bottomRight());
         lg.setColorAt(0.8, nameLabel->palette().windowText().color());
-        lg.setColorAt(1, nameLabel->palette().background().color());
+        lg.setColorAt(1, nameLabel->palette().window().color());
         painter.setPen(QPen(lg, nameLabel->font().weight()));
 
         painter.drawText(nameLabel->rect(), static_cast<int>(nameLabel->alignment()), nameLabel->text());

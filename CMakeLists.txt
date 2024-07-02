@@ -84,8 +84,20 @@ message("   >>> CMAKE_BUILD_TYPE  ${CMAKE_BUILD_TYPE}")
 if(NOT CMAKE_BUILD_TYPE)
    message("Cmake build type is not defined!")
    set(CMAKE_BUILD_TYPE "Debug")
-    # 设置环境变量
-   set(ENV{QT_SELECT} "5")
+endif()
+
+# Find Qt version
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+# 检查并设置环境变量
+if(NOT DEFINED ENV{QT_SELECT})
+    set(ENV{QT_SELECT} "qt${QT_VERSION_MAJOR}")
+endif()
+message("   >>> Build with Qt version: $ENV{QT_SELECT}")
+
+if (QT_VERSION_MAJOR EQUAL "6")
+    set(DTK_VERSION_MAJOR 6)
+else()
+    set(DTK_VERSION_MAJOR "")
 endif()
 
 # 引入翻译生成

@@ -19,6 +19,7 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/common/log.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.h"
     "${CMAKE_SOURCE_DIR}/src/common/logger.cpp"
+    "${CMAKE_SOURCE_DIR}/src/common/qtcompat.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/datatransfercoreplugin.h"
@@ -51,7 +52,7 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/getbackup/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/getbackup/*.cpp"
     )
-    find_package(Qt5 COMPONENTS Sql REQUIRED)
+
     # 从定位输出目录
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/data-transfer)
 elseif (CMAKE_SYSTEM MATCHES "Linux")
@@ -63,7 +64,7 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
         "${CMAKE_CURRENT_SOURCE_DIR}/utils/settinghepler.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/utils/settinghepler.cpp"
     )
-    find_package(Dtk COMPONENTS Widget REQUIRED)
+    find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(libzip REQUIRED IMPORTED_TARGET libzip)
 else()
@@ -71,14 +72,19 @@ else()
 endif()
 
 if (WIN32)
-    set(qt_required_components Core Gui Network Widgets  Sql WinExtras)
+    set(qt_required_components Core Gui Network Widgets Sql WinExtras)
 else()
     set(qt_required_components Core Gui Network Widgets DBus)
 endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
 
-qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
+# 根据Qt版本选择合适的命令
+if (QT_VERSION VERSION_GREATER_EQUAL "6.0")
+    qt_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
+else()
+    qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
+endif()
 
 list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS sessionmanager)
@@ -124,8 +130,8 @@ target_link_libraries(${PROJECT_NAME}
 if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        ${DtkWidget_LIBRARIES}
-         PkgConfig::libzip
+        Dtk${DTK_VERSION_MAJOR}::Widget
+        PkgConfig::libzip
     )
 endif()
 if (CMAKE_SYSTEM MATCHES "Windows")

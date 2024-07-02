@@ -8,6 +8,7 @@
 #include "global_defines.h"
 #include "discover/deviceinfo.h"
 #include "backgroundwidget.h"
+#include "common/qtcompat.h"
 
 #include <QIcon>
 #include <QMap>
@@ -62,7 +63,7 @@ public Q_SLOTS:
     void onButtonClicked(int index);
 
 protected:
-    void enterEvent(QEvent *event) override;
+    void enterEvent(EnterEvent *event) override;
     void leaveEvent(QEvent *event) override;
     void showEvent(QShowEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;

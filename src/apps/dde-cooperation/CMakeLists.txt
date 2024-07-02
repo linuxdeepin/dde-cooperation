@@ -24,7 +24,7 @@ set(qt_required_components Core Gui Network Widgets)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
 if (CMAKE_SYSTEM MATCHES "Linux")
-    find_package(Dtk COMPONENTS Widget REQUIRED)
+    find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 endif()
 
 #如果是Windows平台，则生成rc文件，还有inno setup脚本文件
@@ -90,7 +90,7 @@ target_link_libraries(${PROJ_NAME}
 if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJ_NAME}
         PRIVATE
-        ${DtkWidget_LIBRARIES}
+        Dtk${DTK_VERSION_MAJOR}::Widget
     )
 endif()
 

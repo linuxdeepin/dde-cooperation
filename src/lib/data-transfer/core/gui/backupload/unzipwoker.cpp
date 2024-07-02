@@ -119,7 +119,11 @@ bool UnzipWorker::extract()
 
     QProcess process;
     process.setReadChannel(QProcess::StandardOutput);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    process.setProcessChannelMode(QProcess::SeparateChannels);
+#else
     process.setReadChannelMode(QProcess::SeparateChannels);
+#endif
     process.start("unzip", arguments);
 
     //    LOG << process.arguments().toStdList();

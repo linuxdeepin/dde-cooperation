@@ -124,7 +124,7 @@ void ConnectWidget::initConnectLayout()
     ipHLayout->addWidget(ipLabel);
     ipHLayout->setSpacing(8);
     ipHLayout->addSpacing(26);
-    ipHLayout->setMargin(0);
+    ipHLayout->setContentsMargins(0, 0, 0, 0);
 
     iconLabel->setAlignment(Qt::AlignCenter);
     nameLabel->setAlignment(Qt::AlignCenter);
