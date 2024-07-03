@@ -1,13 +1,15 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="bo">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="bo">
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="89"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="120"/>
         <source>Cooperation</source>
         <translation>མཉམ་སྒྲུབ།</translation>
     </message>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="93"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="124"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
         <translation>མཉམ་སྒྲུབ་ནི་མཐུད་སྣེ་བརྒལ་བའི་ལས་སྒྲུབ་ཡོ་བྱད་རྩེ་གྲ་ཞིག་རེད། དེས་སྐུ་ཉིད་ལ་སྒྲིག་ཆས་མི་འདྲ་བའི་དབར་ཕན་ཚུན་ཡིག་ཆ་བསྐུར་བ་དང་། མཐེབ་གཞོང་མཉམ་སྤྱོད། དྲས་སྦྱར་པང་མཉམ་སྤྱོད་བྱེད་པར་རོགས་རམ་བྱེད་ཐུབ།</translation>
     </message>
@@ -15,7 +17,7 @@
 <context>
     <name>cooperation_core::BottomLabel</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="315"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="339"/>
         <source>Local IP: %1</source>
         <translation>རང་འཕྲུལ་འཁོར་IP %1</translation>
     </message>
@@ -305,27 +307,85 @@
 <context>
     <name>cooperation_core::DeviceItem</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="175"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="178"/>
         <source>connected</source>
         <translation>མཉམ་དུ་སྒྲུབ་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="180"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="183"/>
         <source>connectable</source>
         <translation>སྦྲེལ་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="186"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="189"/>
         <source>offline</source>
         <translation>དྲ་རྒྱ་མེད་པ།</translation>
     </message>
 </context>
 <context>
+    <name>cooperation_core::DiscoverController</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="147"/>
+        <source>Confirm</source>
+        <translation>确认</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="148"/>
+        <source>Close</source>
+        <translation>སྒོ་རྒྱག</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="153"/>
+        <source>Please click to confirm to enable the LAN discovery service!</source>
+        <translation>请点击确认以开启局域网发现！</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="154"/>
+        <source>If you want discovery through the mdns service, you need to enable the avahi service</source>
+        <translation>如果您希望通过mdns服务发现，您需要打开avahi服务</translation>
+    </message>
+</context>
+<context>
     <name>cooperation_core::FirstTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="430"/>
-        <source>Make sure that the person you are collaborating with has the &quot;Cross Collaboration&quot; application enabled and is connected to the same network as you are.</source>
-        <translation>མཐུན་སྦྱོར་བྱ་ཡུལ་གྱིས་“སྣེ་བརྒལ་མཐུན་སྦྱོར་”ཉེར་སྤྱོད་ཕྱེ་ཡོད་མེད་གཏན་ཁེལ་བྱེད་པ་མ་ཟད། ཁྱེད་དང་དྲ་བ་གཅིག་ཡིན་མིན་གཏན་ཁེལ་བྱོས།</translation>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="96"/>
+        <source>First step</source>
+        <translation>第1步</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="97"/>
+        <source>The opposite end opens the application and connects to the same network</source>
+        <translation>对端开启应用，并连接同一网络</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="98"/>
+        <source>Second step</source>
+        <translation>第2步</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="99"/>
+        <source>Enter the peer IP in the search box</source>
+        <translation>在搜索框输入对端IP</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="100"/>
+        <source>Third step</source>
+        <translation>第3步</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="101"/>
+        <source>Click</source>
+        <translation>点击</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="159"/>
+        <source>to send the file</source>
+        <translation>发送文件</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="166"/>
+        <source>to connect to the peer device</source>
+        <translation>连接对端设备</translation>
     </message>
 </context>
 <context>
@@ -425,7 +485,7 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="252"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="261"/>
         <source>No device found</source>
         <translation>སྒྲིག་ཆས་གང་ཡང་ཪྙེད་མ་སོང་།</translation>
     </message>
@@ -462,95 +522,95 @@
 <context>
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="43"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="44"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
         <source>Everyone in the same LAN</source>
         <translation>དྲ་རྒྱ་གཅིག་པའི་སྤྱོད་མཁན་ཚང་མ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="45"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="51"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="46"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="52"/>
         <source>Not allow</source>
         <translation>མི་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="46"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
         <source>Screen right</source>
         <translation>བཪྙན་ཡོལ་གཡས་ངོས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="48"/>
         <source>Screen left</source>
         <translation>བཪྙན་ཡོལ་གཡོན་ངོས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="51"/>
         <source>Only those who are collaborating are allowed</source>
         <translation>མཉམ་སྒྲུབ་བྱེད་བཞིན་པའི་སྤྱོད་མཁན་གཅིག་པུས་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="107"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="127"/>
         <source>Basic Settings</source>
         <translation>རྨང་གཞིའི་སྒྲིག་བཀོད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="118"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="138"/>
         <source>Discovery mode</source>
         <translation>མཐོང་རུང་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="120"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="140"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
         <translation>སྒྲིག་ཆས་གཞན་དག་རྣམས་“མཉམ་སྒྲུབ་”ཉེར་སྤྱོད་བརྒྱུད་ནས་སྐུ་ཉིད་ཪྙེད་པ་མ་ཟད།  ཁྱེད་དང་སྦྲེལ་མཐུད་བྱས་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="154"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="184"/>
         <source>Device name</source>
         <translation>སྒྲིག་ཆས་ཀྱི་མིང་།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="172"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="202"/>
         <source>Peripheral share</source>
         <translation>ཕྱིར་བཀོད་མཉམ་སྤྱོད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="174"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="204"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
         <translation>མཉམ་སྒྲུབ་སྦྲེལ་མཐུད་བྱས་པའི་སྒྲིག་ཆས་ཀྱིས་སྒྲིག་ཆས་འདིའི་མཐེབ་གཞོང་དང་། ཙི་གུ། རེག་འཛིན་པང་སོགས་བཀོལ་སྤྱོད་བྱ་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="183"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
         <translation>སྒིག་ཆས་འདི་སྦྲེལ་མཁན་ཕྱོགས་ཡིན་སྐབས། ཙི་གུས་སྒྲིག་ཆས་འདི་ནས་སྒྲིག་ཆས་གཞན་དེ་བཀོལ་སྤྱོད་བྱས་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="243"/>
         <source>Connection direction</source>
         <translation>སྦྲེལ་མཐུད་བྱེད་ཕྱོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="232"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="262"/>
         <source>Allows the following users to send files to me</source>
         <translation>གཤམ་གྱི་སྤྱོད་མཁན་གྱིས་ང་ལ་ཡིག་ཆ་བསྐུར་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="239"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="269"/>
         <source>File save location</source>
         <translation>ཡིག་ཆ་ཉར་ཚགས་བྱེད་ཡུལ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="255"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="285"/>
         <source>Share clipboard</source>
         <translation>དྲས་སྦྱར་པང་མཉམ་སྤྱོད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="257"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="287"/>
         <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
         <translation>ཞབས་ཞུ་སྣེ་（སྦྲེལ་ཡུལ་）མཉམ་སྤྱོད་ཕྱེ་ཡོད་སྐབས། གློག་ཀླད་གཉིས་པོའི་བར་དྲས་སྦྱར་པང་མཉམ་སྤྱོད་བྱས་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="311"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="318"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="341"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="348"/>
         <source>The device name must contain 1 to 63 characters</source>
         <translation>སྒྲིག་ཆས་ཀྱི་མིང་ངེས་པར་དུ་ཡིག་རྟགས་1-63བར་ཡིན་དགོས།</translation>
     </message>
@@ -558,30 +618,30 @@
 <context>
     <name>cooperation_core::TransferDialog</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="46"/>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="69"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="41"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="64"/>
         <source>File Transfer</source>
         <translation>ཡིག་ཆ་བསྐུར་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="85"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="80"/>
         <source>Wait for confirmation...</source>
         <translation>ཕ་རོལ་དང་ལེན་སྒུག་བཞིན་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="171"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="166"/>
         <source>Ok</source>
         <comment>button</comment>
         <translation>གཏན་ཁེལ། </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="189"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="184"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>འདོར་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="198"/>
+        <location filename="../../src/plugins/cooperation/core/gui/dialogs/transferdialog.cpp" line="193"/>
         <source>Remaining time %1 | %2%</source>
         <translation>ལྷག་པའི་དུས་ཚོད་ %1 | %2%</translation>
     </message>
@@ -655,17 +715,13 @@
 <context>
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="48"/>
-        <source>Please enter the device name or IP</source>
-        <translation>སྒྲིག་ཆས་ཀྱི་མིང་/IPའཇུག་རོགས།</translation>
-    </message>
-    <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="49"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="51"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>མཐུན་སྦྱོར་བྱ་ཡུལ་སྒྲིག་ཆས་ཀྱི་IP/མིང་འབྲི་རོགས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/workspacewidget.cpp" line="55"/>
         <source>Nearby Device</source>
         <translation>ཉེ་འགྲམ་གྱི་སྒྲིག་ཆས།</translation>
     </message>
@@ -691,7 +747,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="97"/>
         <source>File receiving %1% | Remaining time %2</source>
-        <translation>ཡིག་ཆ་ལེན་བཞིན་པ།%1% |  དུས་ཚོད་ལྷག་མ།%2</translation>
+        <translation>ཡིག་ཆ་ལེན་བཞིན་པ།%1% |&#xa0; དུས་ཚོད་ལྷག་མ།%2</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/daemon/maincontroller/maincontroller.cpp" line="184"/>

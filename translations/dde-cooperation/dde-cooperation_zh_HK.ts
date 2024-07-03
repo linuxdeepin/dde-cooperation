@@ -4,12 +4,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="90"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="120"/>
         <source>Cooperation</source>
         <translation>跨端協同</translation>
     </message>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="94"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="124"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
         <translation>跨端協同是一款強大的跨終端辦公工具，可幫助您在不同設備之間實現文件投送、共享鍵鼠、共享剪貼板。</translation>
     </message>
@@ -307,17 +307,17 @@
 <context>
     <name>cooperation_core::DeviceItem</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="176"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="178"/>
         <source>connected</source>
         <translation>協同中</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="181"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="183"/>
         <source>connectable</source>
         <translation>可連</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="187"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/deviceitem.cpp" line="189"/>
         <source>offline</source>
         <translation>離線</translation>
     </message>
@@ -327,22 +327,22 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="147"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>确认</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="148"/>
         <source>Close</source>
-        <translation type="unfinished">關閉</translation>
+        <translation>關閉</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="153"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
-        <translation type="unfinished"></translation>
+        <translation>请点击确认开启局域网发现服务！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="154"/>
         <source>If you want discovery through the mdns service, you need to enable the avahi service</source>
-        <translation type="unfinished"></translation>
+        <translation>如果您希望通过mdns服务发现，则需要开启avahi服务进程</translation>
     </message>
 </context>
 <context>
