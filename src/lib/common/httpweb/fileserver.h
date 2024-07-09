@@ -8,7 +8,7 @@
 #include "webbinder.h"
 
 //#include "server/http/https_server.h"
-#include "server/http/http_server.h"
+#include "server/http/https_server.h"
 #include "string/string_utils.h"
 #include "syncstatus.h"
 
@@ -16,9 +16,9 @@
 #include <map>
 #include <mutex>
 
-class FileServer : public WebInterface, public CppServer::HTTP::HTTPServer
+class FileServer : public WebInterface, public CppServer::HTTP::HTTPSServer
 {
-    using CppServer::HTTP::HTTPServer::HTTPServer;
+    using CppServer::HTTP::HTTPSServer::HTTPSServer;
 
 public:
 
@@ -33,7 +33,7 @@ public:
     bool verifyToken(std::string &token);
 
 protected:
-    std::shared_ptr<CppServer::Asio::TCPSession> CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server) override;
+    std::shared_ptr<CppServer::Asio::SSLSession> CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &server) override;
     void onError(int error, const std::string &category, const std::string &message) override;
 
 private:

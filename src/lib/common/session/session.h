@@ -5,7 +5,7 @@
 #ifndef SESSION_H
 #define SESSION_H
 
-#include "proto_protocol.h"
+#include "proto_final_protocol.h"
 #include <iostream>
 
 enum SessionState {

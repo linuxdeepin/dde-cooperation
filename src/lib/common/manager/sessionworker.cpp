@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "sessionworker.h"
-
+#include "secureconfig.h"
 #include "sessionmanager.h"
 
 #include "common/log.h"
@@ -332,11 +332,14 @@ bool SessionWorker::isClientLogin(QString &ip)
     return foundValue && hasConnected;
 }
 
+
 bool SessionWorker::listen(int port)
 {
     // Create a new proto protocol server
     if (!_server) {
-        _server = std::make_shared<ProtoServer>(_asioService, port);
+        auto context = SecureConfig::serverContext();
+
+        _server = std::make_shared<ProtoServer>(_asioService, context, port);
         _server->SetupReuseAddress(true);
         _server->SetupReusePort(true);
 
@@ -350,8 +353,10 @@ bool SessionWorker::listen(int port)
 
 bool SessionWorker::connect(QString &address, int port)
 {
+    auto context = SecureConfig::clientContext();
+
     if (!_client) {
-        _client = std::make_shared<ProtoClient>(_asioService, address.toStdString(), port);
+        _client = std::make_shared<ProtoClient>(_asioService, context, address.toStdString(), port);
 
         auto self(this->shared_from_this());
         _client->setCallbacks(self);
@@ -362,7 +367,7 @@ bool SessionWorker::connect(QString &address, int port)
         } else {
             // different target, create new connection.
             _client->DisconnectAndStop();
-            _client = std::make_shared<ProtoClient>(_asioService, address.toStdString(), port);
+            _client = std::make_shared<ProtoClient>(_asioService, context, address.toStdString(), port);
 
             auto self(this->shared_from_this());
             _client->setCallbacks(self);
@@ -374,7 +379,7 @@ bool SessionWorker::connect(QString &address, int port)
     _client->ConnectAsync();
     // wait until has reply, total 1s timeout
     while (!_client->connectReplyed()) {
-        if (wait_cout > 1000)
+        if (wait_cout > 2000)
             break;
         CppCommon::Thread::Sleep(1);
         CppCommon::Thread::Yield();

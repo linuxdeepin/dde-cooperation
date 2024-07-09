@@ -12,7 +12,7 @@
 
 using RpcHandler = std::function<void(int32_t type, const std::string &response)>;
 
-class ProtoEndpoint: public FBE::proto::Client
+class ProtoEndpoint: public FBE::proto::FinalClient
 {
 public:
 

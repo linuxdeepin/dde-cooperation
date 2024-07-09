@@ -8,24 +8,24 @@
 #include "asioservice.h"
 #include "protoendpoint.h"
 
-#include "server/asio/tcp_server.h"
+#include "server/asio/ssl_server.h"
 
-class ProtoServer : public CppServer::Asio::TCPServer, public ProtoEndpoint
+class ProtoServer : public CppServer::Asio::SSLServer, public ProtoEndpoint
 {
 public:
-    using CppServer::Asio::TCPServer::TCPServer;
+    using CppServer::Asio::SSLServer::SSLServer;
 
     bool hasConnected(const std::string &ip) override;
 
 protected:
-    std::shared_ptr<CppServer::Asio::TCPSession> CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server) override;
+    std::shared_ptr<CppServer::Asio::SSLSession> CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &server) override;
 
 protected:
     void onError(int error, const std::string &category, const std::string &message) override;
 
-    void onConnected(std::shared_ptr<CppServer::Asio::TCPSession>& session) override;
+    void onConnected(std::shared_ptr<CppServer::Asio::SSLSession>& session) override;
 
-    void onDisconnected(std::shared_ptr<CppServer::Asio::TCPSession>& session) override;
+    void onDisconnected(std::shared_ptr<CppServer::Asio::SSLSession>& session) override;
 
     // Protocol implementation
     size_t onSend(const void *data, size_t size) override;

@@ -6,10 +6,10 @@
 
 using MessageHandler = std::function<void(const proto::OriginMessage &request, proto::OriginMessage *response)>;
 
-class ProtoSession : public CppServer::Asio::TCPSession, public FBE::proto::Sender, public FBE::proto::Receiver
+class ProtoSession : public CppServer::Asio::SSLSession, public FBE::proto::FinalClient
 {
 public:
-    using CppServer::Asio::TCPSession::TCPSession;
+    using CppServer::Asio::SSLSession::SSLSession;
 
     void setMessageHandler(MessageHandler cb)
     {
@@ -17,6 +17,14 @@ public:
     }
 
 protected:
+    void onHandshaked() override
+    {
+        // std::cout << "Proto SSL session with Id " << id() << " handshaked!" << std::endl;
+
+        // Don't send anything message for proto at here
+        // std::string message("Hello from SSL server!");
+        // SendAsync(message.data(), message.size());
+    }
 
     // Protocol handlers
     void onReceive(const ::proto::DisconnectRequest &request) override
@@ -81,15 +89,15 @@ bool ProtoServer::hasConnected(const std::string &ip)
     return false;
 }
 
-std::shared_ptr<CppServer::Asio::TCPSession>
-ProtoServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server)
+std::shared_ptr<CppServer::Asio::SSLSession>
+ProtoServer::CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &server)
 {
     // data and state handle callback
     MessageHandler msg_cb([this](const proto::OriginMessage &request, proto::OriginMessage *response) {
         // rpc from server, notify the response to request.get()
         if (_self_request.load(std::memory_order_relaxed)) {
             _self_request.store(false, std::memory_order_relaxed);
-            Client::onReceiveResponse(request);
+            FinalClient::onReceiveResponse(request);
             return;
         }
 
@@ -104,15 +112,15 @@ ProtoServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &se
 
 void ProtoServer::onError(int error, const std::string &category, const std::string &message)
 {
-    std::cout << "Protocol server caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
+    // std::cout << "Protocol server caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
 
     std::string err(message);
     _callbacks->onStateChanged(RPC_ERROR, err);
 }
 
-void ProtoServer::onConnected(std::shared_ptr<CppServer::Asio::TCPSession>& session)
+void ProtoServer::onConnected(std::shared_ptr<CppServer::Asio::SSLSession>& session)
 {
-    //std::cout << "onConnected from:" << session->socket().remote_endpoint() << std::endl;
+    // std::cout << "onConnected from:" << session->socket().remote_endpoint() << std::endl;
     std::string addr = session->socket().remote_endpoint().address().to_string();
     std::shared_lock<std::shared_mutex> locker(_sessionids_lock);
     _session_ids.insert(std::make_pair(addr, session->id()));
@@ -120,7 +128,7 @@ void ProtoServer::onConnected(std::shared_ptr<CppServer::Asio::TCPSession>& sess
     _callbacks->onStateChanged(RPC_CONNECTED, addr);
 }
 
-void ProtoServer::onDisconnected(std::shared_ptr<CppServer::Asio::TCPSession>& session)
+void ProtoServer::onDisconnected(std::shared_ptr<CppServer::Asio::SSLSession>& session)
 {
     //std::cout << "onDisconnected from: id: " << session->id() << std::endl;
 

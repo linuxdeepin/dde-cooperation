@@ -33,6 +33,16 @@ public:
         return fullpath;
     }
 
+    std::string getRSAKey()
+    {
+        return rsa_key;
+    }
+
+    std::string getRSACrt()
+    {
+        return rsa_crt;
+    }
+
     std::string getPriEs256k()
     {
         return es256k_priv_key;
@@ -47,7 +57,7 @@ private:
     Cert() {};
     ~Cert() {};
 
-#if 0
+
     const std::string rsa_key = R"(-----BEGIN RSA PRIVATE KEY-----
 MIIJKgIBAAKCAgEAwOoVS5YiF+iOPxFEMdNcxq2iXgrqrdlrlLmZj4yQG9WMflEO
 h35lhqsDLQm8w2BlfeqzvdgJEQgIZ87EqO+edJUQtPalAIHCxr1y7fRHV5zQGHCJ
@@ -131,7 +141,6 @@ yi2axFXuIs/QPngG3zWjxtTYC9S1/1LJ3cZyxnvtyu619RcR+Kn8rz5fj3v31p9m
 o5TokWkbUodYfRhI8NtDmWalKpmplryTsLryMhKh7+z38RroTTQqNyD/6tnD7TjR
 rCU2DxAi+Ukq3fQ75WmKilcOvVkWmLHWZ0865eGAf1hXGa/Nhg==
 -----END CERTIFICATE-----)";
-#endif
 
     // openssl ecparam -name secp256k1 -genkey -noout -out ec-secp256k1-priv-key.pem
     const std::string es256k_priv_key = R"(-----BEGIN EC PRIVATE KEY-----

@@ -25,7 +25,13 @@ bool ProtoClient::connectReplyed()
 
 void ProtoClient::onConnected()
 {
-//    std::cout << "Protocol client connected a new session with Id " << id() << " ip:" << address() << std::endl;
+    // std::cout << "Protocol client connected a new session with Id " << id() << " ip:" << address() << std::endl;
+    // For SSL: must wait handshake completed, so move into handshaked
+}
+
+void ProtoClient::onHandshaked()
+{
+    // std::cout << "Proto SSL client handshaked a new session with Id " << id() << std::endl;
     _connect_replay = true;
 
     // Reset FBE protocol buffers
@@ -39,7 +45,7 @@ void ProtoClient::onConnected()
 
 void ProtoClient::onDisconnected()
 {
-//    std::cout << "Protocol client disconnected a session with Id " << id() << std::endl;
+    // std::cout << "Protocol client disconnected a session with Id " << id() << std::endl;
     _connect_replay = true;
 
     bool retry = true;
@@ -61,7 +67,7 @@ void ProtoClient::onDisconnected()
 
 void ProtoClient::onError(int error, const std::string &category, const std::string &message)
 {
-    std::cout << "Protocol client caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
+    // std::cout << "Protocol client caught an error with code " << error << " and category '" << category << "': " << message << std::endl;
     _connect_replay = true;
     if (_callbacks) {
         std::string err = std::to_string(error);
@@ -72,7 +78,7 @@ void ProtoClient::onError(int error, const std::string &category, const std::str
 // Protocol handlers
 void ProtoClient::onReceive(const ::proto::DisconnectRequest &request)
 {
-    Client::onReceive(request);
+    FinalClient::onReceive(request);
     //std::cout << "Received disconnect: " << request << std::endl;
     if (_callbacks) {
         std::string addr = socket().remote_endpoint().address().to_string();
@@ -86,7 +92,7 @@ void ProtoClient::onReceive(const ::proto::OriginMessage &response)
     // notify response if the request from myself, request.get()
     if (_self_request.load(std::memory_order_relaxed)) {
         _self_request.store(false, std::memory_order_relaxed);
-        Client::onReceiveResponse(response);
+        FinalClient::onReceiveResponse(response);
         return;
     }
 
@@ -107,13 +113,13 @@ void ProtoClient::onReceive(const ::proto::OriginMessage &response)
 
 void ProtoClient::onReceive(const ::proto::MessageReject &reject)
 {
-    Client::onReceive(reject);
+    FinalClient::onReceive(reject);
     //std::cout << "Received reject: " << reject << std::endl;
 }
 
 void ProtoClient::onReceive(const ::proto::MessageNotify &notify)
 {
-    Client::onReceive(notify);
+    FinalClient::onReceive(notify);
     //std::cout << "Received notify: " << notify << std::endl;
 }
 

@@ -8,14 +8,14 @@
 #include "asioservice.h"
 #include "protoendpoint.h"
 
-#include "server/asio/tcp_client.h"
+#include "server/asio/ssl_client.h"
 #include "string/format.h"
 #include "threads/thread.h"
 
-class ProtoClient : public CppServer::Asio::TCPClient, public ProtoEndpoint
+class ProtoClient : public CppServer::Asio::SSLClient, public ProtoEndpoint
 {
 public:
-    using CppServer::Asio::TCPClient::TCPClient;
+    using CppServer::Asio::SSLClient::SSLClient;
 
     void DisconnectAndStop();
 
@@ -25,6 +25,8 @@ public:
 
 protected:
     void onConnected() override;
+
+    void onHandshaked() override;
 
     void onDisconnected() override;
 

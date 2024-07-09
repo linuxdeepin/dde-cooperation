@@ -16,10 +16,10 @@
 using CppServer::HTTP::HTTPRequest;
 using CppServer::HTTP::HTTPResponse;
 
-class HTTPFileClient : public CppServer::HTTP::HTTPClientEx
+class HTTPFileClient : public CppServer::HTTP::HTTPSClientEx
 {
 public:
-    using CppServer::HTTP::HTTPClientEx::HTTPClientEx;
+    using CppServer::HTTP::HTTPSClientEx::HTTPSClientEx;
 
     void setResponseHandler(ResponseHandler cb)
     {
@@ -30,12 +30,12 @@ protected:
     void onConnected() override
     {
         // must invoke supper fun, or cause canot connect server.
-        HTTPClientEx::onConnected();
+        HTTPSClientEx::onConnected();
     }
 
     void onDisconnected() override
     {
-        HTTPClientEx::onDisconnected();
+        HTTPSClientEx::onDisconnected();
     }
 
     void onReceivedResponseHeader(const HTTPResponse &response) override
@@ -48,7 +48,7 @@ protected:
 
         if (_handler) {
             // get body by stream, so mark response arrived.
-            HTTPClientEx::onReceivedResponse(response);
+            HTTPSClientEx::onReceivedResponse(response);
 
             if (_handler(response.status() == 200 ? RES_OKHEADER : RES_NOTFOUND, response.string().data(), response.body_length())) {
                 // cancel
@@ -75,7 +75,7 @@ protected:
             _response.Clear();
             // donot disconnect at here, this connection may be continue to downlad other.
         } else {
-            HTTPClientEx::onReceivedResponse(response);
+            HTTPSClientEx::onReceivedResponse(response);
         }
     }
 
@@ -109,14 +109,14 @@ private:
     std::atomic<bool> _canceled { false };
 };
 
-FileClient::FileClient(const std::shared_ptr<CppServer::Asio::Service> &service, const std::string &address, int port)
+FileClient::FileClient(const std::shared_ptr<CppServer::Asio::Service> &service, const std::shared_ptr<CppServer::Asio::SSLContext>& context, const std::string &address, int port)
 {
     if (_httpClient) {
         //discontect current one
         _httpClient->DisconnectAsync();
     }
     // Create HTTP client if the current one is empty
-    _httpClient = std::make_shared<HTTPFileClient>(service, address, port);
+    _httpClient = std::make_shared<HTTPFileClient>(service, context, address, port);
 }
 
 FileClient::~FileClient()

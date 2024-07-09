@@ -6,17 +6,17 @@
 #include "tokencache.h"
 
 //#include "server/http/https_session.h"
-#include "server/http/http_session.h"
+#include "server/http/https_session.h"
 #include "server/http/http_response.h"
 
 #include "system/uuid.h"
 
 #include "webproto.h"
 
-class HTTPFileSession : public CppServer::HTTP::HTTPSession
+class HTTPFileSession : public CppServer::HTTP::HTTPSSession
 {
 public:
-    using CppServer::HTTP::HTTPSession::HTTPSession;
+    using CppServer::HTTP::HTTPSSession::HTTPSSession;
 
     void setResponseHandler(ResponseHandler cb)
     {
@@ -161,11 +161,11 @@ protected:
         if (request.method() == "HEAD") {
             // [HEAD]webstart>|webfinish>|webindex><name>
             std::string key = std::string(request.url());
-            std::cout << "------------HEADER:" << key << std::endl;
+            // std::cout << "------------HEADER:" << key << std::endl;
 
             size_t dePos = key.find('>');
             if (dePos == std::string::npos || dePos + 1 > key.size()) {
-                std::cout << "------------HEADER:" << key << " size:" << dePos + 1 << std::endl;
+                // std::cout << "------------HEADER:" << key << " size:" << dePos + 1 << std::endl;
                 // error format request!
                 SendResponseAsync(response().MakeHeadResponse());
                 return;
@@ -263,8 +263,8 @@ private:
     ResponseHandler _handler { nullptr };
 };
 
-std::shared_ptr<CppServer::Asio::TCPSession>
-FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &server)
+std::shared_ptr<CppServer::Asio::SSLSession>
+FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &server)
 {
     ResponseHandler cb([this](int status, const char *buffer, uint64_t size) -> bool {
         if (_callback) {
@@ -294,7 +294,7 @@ FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::TCPServer> &ser
         return _stop;
     });
 
-    auto session = std::make_shared<HTTPFileSession>(std::dynamic_pointer_cast<CppServer::HTTP::HTTPServer>(server));
+    auto session = std::make_shared<HTTPFileSession>(std::dynamic_pointer_cast<CppServer::HTTP::HTTPSServer>(server));
     session->setResponseHandler(std::move(cb));
     return session;
 }

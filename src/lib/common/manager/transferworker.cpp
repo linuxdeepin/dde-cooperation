@@ -4,6 +4,7 @@
 
 #include "transferworker.h"
 #include "sessionmanager.h"
+#include "secureconfig.h"
 
 #include "common/log.h"
 #include "common/constant.h"
@@ -89,11 +90,6 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
             QString path = QString::fromStdString(msg);
             emit notifyChanged(TRANS_FILE_DONE, path, size);
         }
-
-//        if (_singleFile) {
-//            // for signal file transfer
-//            sendTranEndNotify();
-//        }
     }
         break;
     }
@@ -239,7 +235,9 @@ bool TransferWorker::startWeb(int port)
 {
     // Create a new file http server
     if (!_file_server) {
-        _file_server = std::make_shared<FileServer>(_asioService, port);
+        auto context = SecureConfig::serverContext();
+
+        _file_server = std::make_shared<FileServer>(_asioService, context, port);
 
         auto self(this->shared_from_this());
         _file_server->setCallback(self);
@@ -252,7 +250,9 @@ bool TransferWorker::startGet(const std::string &address, int port)
 {
     // Create a new file http client
     if (!_file_client) {
-        _file_client = std::make_shared<FileClient>(_asioService, address, port); //service, address, port
+        auto context = SecureConfig::clientContext();
+
+        _file_client = std::make_shared<FileClient>(_asioService, context, address, port);
 
         auto self(this->shared_from_this());
         _file_client->setCallback(self);
