@@ -6,4 +6,4 @@ if (CMAKE_SYSTEM MATCHES "Linux")
 endif()
 
 # launcher
-add_subdirectory("launcher")
+# add_subdirectory("launcher")

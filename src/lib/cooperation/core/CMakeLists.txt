@@ -146,13 +146,7 @@ if (CMAKE_SYSTEM MATCHES "Linux")
         Dtk${DTK_VERSION_MAJOR}::Widget
     )
 endif()
-if (CMAKE_SYSTEM MATCHES "Windows")
-    #target_link_libraries(${PROJECT_NAME}
-    #    Qt5::Sql
-    #)
-endif()
+
 #install library file
 install(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-        LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
+        LIBRARY DESTINATION ${LIB_INSTALL_DIR})

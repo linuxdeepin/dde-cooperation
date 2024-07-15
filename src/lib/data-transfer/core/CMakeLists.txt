@@ -151,12 +151,9 @@ endif()
 
 add_library(quazipd SHARED IMPORTED)
 set_target_properties(quazipd PROPERTIES
-
-   IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/quazipd.lib
+    IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/quazipd.lib
 )
 
 #install library file
 install(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-        LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
+        LIBRARY DESTINATION ${LIB_INSTALL_DIR})
