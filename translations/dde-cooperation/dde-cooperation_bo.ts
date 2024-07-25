@@ -327,7 +327,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="147"/>
         <source>Confirm</source>
-        <translation>确认</translation>
+        <translation>བདེན་དཔང་</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="148"/>
@@ -337,12 +337,12 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="153"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
-        <translation>请点击确认以开启局域网发现！</translation>
+        <translation>LAN འཚོལ་ཞིབ་བྱེད་ཐུབ་པའི་ཆེད་དུ་གཏན་འཁེལ་ལ་སྣུན་རོགས།!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="154"/>
         <source>If you want discovery through the mdns service, you need to enable the avahi service</source>
-        <translation>如果您希望通过mdns服务发现，您需要打开avahi服务</translation>
+        <translation>གལ་ཏེ་ཁྱེད་ཀྱིས་mdnsཞབས་ཞུ་བརྒྱུད་ནས་འཚོལ་ཞིབ་བྱེད་འདོད་ན། ཁྱེད་ཀྱིས་avahiཞབས་ཞུའི་བྱ་རིམ་ཁ་ཕྱེ་དགོས།</translation>
     </message>
 </context>
 <context>
@@ -350,42 +350,42 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="96"/>
         <source>First step</source>
-        <translation>第1步</translation>
+        <translation>གོམ་པ་དང་པོ།</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="97"/>
         <source>The opposite end opens the application and connects to the same network</source>
-        <translation>对端开启应用，并连接同一网络</translation>
+        <translation>མཉེན་ཆས་དེའི་སྣེ་གཞན་ཞིག་ནས་ཁ་ཕྱེས་ནས་དྲ་རྒྱ་གཅིག་པ་དེ་ལ་མཐུད་དགོས།</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="98"/>
         <source>Second step</source>
-        <translation>第2步</translation>
+        <translation>གོམ་པ་གཉིས་པ།</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="99"/>
         <source>Enter the peer IP in the search box</source>
-        <translation>在搜索框输入对端IP</translation>
+        <translation>འཚོལ་ཞིབ་སྒྲོམ་ནང་མཉམ་པའི་IPབླུགས།</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="100"/>
         <source>Third step</source>
-        <translation>第3步</translation>
+        <translation>གོམ་པ་གསུམ་པ།</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="101"/>
         <source>Click</source>
-        <translation>点击</translation>
+        <translation>རྡེབ།</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="159"/>
         <source>to send the file</source>
-        <translation>发送文件</translation>
+        <translation>ཡིག་ཆ་བསྐུར།</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="166"/>
         <source>to connect to the peer device</source>
-        <translation>连接对端设备</translation>
+        <translation>མཉམ་པའི་སྒྲིག་ཆས་ལ་མཐུད་པ།</translation>
     </message>
 </context>
 <context>

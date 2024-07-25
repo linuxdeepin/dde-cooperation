@@ -327,7 +327,7 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="147"/>
         <source>Confirm</source>
-        <translation>确认</translation>
+        <translation>جەزملەشتۈرۈڭ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="148"/>
@@ -337,12 +337,12 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="153"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
-        <translation>请点击确认开启局域网发现服务！</translation>
+        <translation>LAN بايقاش مۇلازىمىتىنى قوزغىتىش ئۈچۈن «جەزملەشتۈرۈش» نى چېكىڭ！</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/discover/discovercontroller.cpp" line="154"/>
         <source>If you want discovery through the mdns service, you need to enable the avahi service</source>
-        <translation>如果您希望通过mdns服务发现，则需要开启avahi服务进程</translation>
+        <translation>ئەگەر mdns مۇلازىمىتى ئارقىلىق بايقىماقچى بولسىڭىز ، avahi مۇلازىمەت جەريانىنى ئېچىشىڭىز كېرەك</translation>
     </message>
 </context>
 <context>
@@ -350,42 +350,42 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="96"/>
         <source>First step</source>
-        <translation>第1步</translation>
+        <translation>بىرىنچى قەدەم</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="97"/>
         <source>The opposite end opens the application and connects to the same network</source>
-        <translation>对端开启应用，并连接同一网络</translation>
+        <translation>پروگراممىنى يەنە بىر تەرىپىگە ئېچىڭ ھەمدە ئوخشاش تورغا ئۇلاڭ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="98"/>
         <source>Second step</source>
-        <translation>第2步</translation>
+        <translation>ئىككىنچى قەدەم</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="100"/>
         <source>Third step</source>
-        <translation>第3步</translation>
+        <translation>ئۈچىنچى قەدەم</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="159"/>
         <source>to send the file</source>
-        <translation>发送文件</translation>
+        <translation>ھۆججەت ئەۋەتىڭ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="166"/>
         <source>to connect to the peer device</source>
-        <translation>连接对端设备</translation>
+        <translation>تورداشلارغا ئۇلاڭ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="99"/>
         <source>Enter the peer IP in the search box</source>
-        <translation>在搜索框输入对端IP</translation>
+        <translation>ئىزدەش رامكىسىغا تورداش IP نى كىرگۈزۈڭ</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/widgets/firsttipwidget.cpp" line="101"/>
         <source>Click</source>
-        <translation>点击</translation>
+        <translation>چېكىڭ</translation>
     </message>
 </context>
 <context>
