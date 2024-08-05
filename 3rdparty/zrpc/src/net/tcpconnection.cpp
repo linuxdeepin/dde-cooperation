@@ -197,7 +197,7 @@ bool TcpConnection::input()
         //      << " rd=" << m_read_buffer->readIndex() << " wd=" << m_read_buffer->writeIndex();
 
         if (rt <= 0) {
-            DLOG << "rt <= 0 >>> " << rt << " count=" << count;
+            // DLOG << "rt <= 0 >>> " << rt << " count=" << count;
             //             ELOG << "read empty while occur read event, because of peer close, sys error="
             //                  << strerror(errno) << ", now to clear tcp connection";
             //            // this cor can destroy

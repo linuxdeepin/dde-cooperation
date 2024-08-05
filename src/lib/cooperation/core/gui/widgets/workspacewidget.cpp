@@ -121,7 +121,7 @@ void WorkspaceWidgetPrivate::onSearchDevice()
 
     q->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
     QTimer::singleShot(500, this, [ip] {
-        NetworkUtil::instance()->searchDevice(ip);
+        NetworkUtil::instance()->trySearchDevice(ip);
     });
 }
 

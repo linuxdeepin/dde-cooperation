@@ -9,7 +9,8 @@
 #include "service/share/sharecooperationservicemanager.h"
 #include "ipc/proto/chan.h"
 #include "ipc/proto/comstruct.h"
-#include "ipc/backendservice.h"
+#include "ipc/proto/backend.h"
+#include "ipc/bridge.h"
 #include "common/constant.h"
 #include "common/commonstruct.h"
 #include "service/comshare.h"
@@ -21,223 +22,296 @@
 #include <QPointer>
 
 HandleIpcService::HandleIpcService(QObject *parent)
-    : QObject(parent)
+    : CuteIPCService(parent)
 {
-    // init and start backend IPC
-    ipcServiceStart();
 }
 
 HandleIpcService::~HandleIpcService()
 {
 }
 
-void HandleIpcService::ipcServiceStart()
+QString HandleIpcService::bindSignal(const QString& appname, const QString& signalname)
 {
-    createIpcBackend(UNI_IPC_BACKEND_PORT);
-    createIpcBackend(UNI_IPC_BACKEND_COOPER_TRAN_PORT);
-    createIpcBackend(UNI_IPC_BACKEND_DATA_TRAN_PORT);
-}
-
-void HandleIpcService::createIpcBackend(const quint16 port)
-{
-    if (_backendIpcServices.contains(port)) {
-        ELOG << "this port has backend!!!!!! port = " << port;
-        return;
-    }
-    QSharedPointer<BackendService> _backendIpcService(new BackendService);
-    _backendIpcServices.insert(port, _backendIpcService);
-
-    QPointer<HandleIpcService> self = this;
-    UNIGO([self, _backendIpcService]() {
-        while(!self.isNull()) {
-            BridgeJsonData bridge;
-            _backendIpcService->bridgeChan()->operator>>(bridge); //300ms超时
-            if (!_backendIpcService->bridgeChan()->done()) {
-                // timeout, next read
-                continue;
-            }
-
-            LOG_IF(FLG_log_detail) << "HandleIpcService get bridge json: " << bridge.type << " json:" << bridge.json;
-            co::Json json_obj = json::parse(bridge.json);
-            if (json_obj.is_null()) {
-                ELOG << "parse error from: " << bridge.json;
-                continue;
-            }
-            self->handleAllMsg(_backendIpcService, bridge.type, json_obj);
-        }
-    });
-
-    connect(this, &HandleIpcService::connectClosed, this, &HandleIpcService::handleConnectClosed);
-    // start ipc services
-    ipc::BackendImpl *backendimp = new ipc::BackendImpl();
-    backendimp->setInterface(_backendIpcService.data());
-    rpc::Server().add_service(backendimp, [this](int type, const fastring &ip, const uint16 port){
-        Q_UNUSED(ip);
-        if (type == 0)
-            emit this->connectClosed(port);
-    }).start("0.0.0.0", port, "/backend",
-             QString::number(quintptr(_backendIpcService.data())).toStdString().c_str(), "");
-}
-
-void HandleIpcService::handleAllMsg(const QSharedPointer<BackendService> backend, const uint type, co::Json &msg)
-{
-    switch (type) {
-    case IPC_PING:
-    {
-        BridgeJsonData res;
-        res.type = IPC_PING;
-        res.json = handlePing(msg).toStdString();
-
-        backend->bridgeResult()->operator<<(res);
-        break;
-    }
-    case MISC_MSG:
-    {
-        MiscJsonCall call;
-        call.from_json(msg);
-        SendRpcService::instance()->doSendProtoMsg(MISC, call.app.c_str(), msg.str().c_str());
-        break;
-    }
-    case BACK_TRY_CONNECT:
-    {
-        handleTryConnect(msg);
-        break;
-    }
-    case BACK_TRY_TRANS_FILES:
-    {
-        ipc::TransFilesParam param;
-        param.from_json(msg);
-        QString session = QString(param.session.c_str());
-        QString savedir = QString(param.savedir.c_str());
-        QStringList paths;
-        for (uint32 i = 0; i < param.paths.size(); i++) {
-            paths << param.paths[i].c_str();
-        }
-
-        newTransSendJob(session, param.targetSession.c_str(), param.id, paths, param.sub, savedir);
-        break;
-    }
-    case BACK_RESUME_JOB:
-    case BACK_CANCEL_JOB:
-    {
-        bool ok = handleJobActions(type, msg);
-        co::Json resjson = {
-            { "result", ok },
-            { "msg", msg.str() }
-        };
-
-        BridgeJsonData res;
-        res.type = type;
-        res.json = resjson.str();
-
-        backend->bridgeResult()->operator<<(res);
-        break;
-    }
-    case BACK_GET_DISCOVERY:
-    {
-        handleGetAllNodes(backend);
-        break;
-    }
-    case BACK_GET_PEER:
-    {
-        break;
-    }
-    case BACK_FS_CREATE:
-    {
-        break;
-    }
-    case BACK_FS_DELETE:
-    {
-        break;
-    }
-    case BACK_FS_RENAME:
-    {
-        break;
-    }
-    case BACK_FS_PULL:
-    {
-        break;
-    }
-    case BACK_DISC_REGISTER:
-    {
-        handleNodeRegister(false, msg);
-        break;
-    }
-    case BACK_DISC_UNREGISTER:
-    {
-        handleNodeRegister(true, msg);
-        break;
-    }
-    case BACK_APPLY_TRANS_FILES:
-    {
-        handleBackApplyTransFiles(msg);
-        break;
-    }
-    case BACK_SHARE_CONNECT:
-    {
-        // 发送连接请求到被控制端
-        handleShareConnect(msg);
-        break;
-    }
-    case BACK_SHARE_DISCONNECT: {
-        handleShareDisConnect(msg);
-        break;
-    }
-    case BACK_SHARE_CONNECT_REPLY:
-    {
-        // 回复控制端接受控制还是拒绝控制
-        handleShareConnectReply(msg);
-        break;
-    }
-    case BACK_SHARE_START:
-    {
-        // 客户端发送配置文件到后端
-        // 后端启动键鼠共享
-        // 发送ip信息到被控制端告诉被控制端启动连接
-        handleShareStart(msg);
-        break;
-    }
-    case BACK_SHARE_STOP: {
-        // 两端都可以共享，通知远端，在停止自己
-        handleShareStop(msg);
-        break;
-    }
-    case BACK_DISCONNECT_CB: {
-        handleDisConnectCb(msg);
-        break;
-    }
-    case BACK_SHARE_DISAPPLY_CONNECT: {
-        handleShareConnectDisApply(msg);
-        break;
-    }
-    case BACK_SEARCH_IP_DEVICE: { // 搜索设备
-        handleSearchDevice(msg);
-        break;
-    }
-    default:
-        break;
-    }
-}
-
-QString HandleIpcService::handlePing(const co::Json &msg)
-{
-    //check session or gen new one
-    ipc::PingBackParam param;
-    param.from_json(msg);
-
-    fastring my_ver(BACKEND_PROTO_VERSION);
-    if (my_ver.compare(param.version) != 0) {
-        DLOG << param.version << " =version not match= " << my_ver;
-        return QString();
-    }
-    QString appName = param.who.c_str();
     // gen new one
-    QString sesid = co::randstr(appName.toStdString().c_str(), 8).c_str(); // 长度为8的16进制字符串
-    _sessionIDs.insert(appName, sesid);
+    QString sesid = co::randstr(appname.toStdString().c_str(), 8).c_str(); // 长度为8的16进制字符串
+    _sessionIDs.insert(appname, sesid);
     // 创建新的sessionid
-    SendIpcService::instance()->handleSaveSession(appName, sesid, static_cast<uint16>(param.cb_port));
+    SendIpcService::instance()->handleSaveSession(appname, sesid, signalname);
     return sesid;
 }
+
+void HandleIpcService::registerDiscovery(bool unreg, const QString& name, const QString& info)
+{
+    AppPeerInfo appPeer;
+    appPeer.appname = name.toStdString();
+    appPeer.json = info.toStdString();
+
+    handleNodeRegister(unreg, appPeer.as_json());
+}
+
+QString HandleIpcService::getDiscovery()
+{
+    auto nodes = DiscoveryJob::instance()->getNodes();
+    NodeList nodeInfos;
+    for (const auto &node : nodes) {
+        co::Json nodejs;
+        nodejs.parse_from(node);
+        NodeInfo info;
+        info.from_json(nodejs);
+        nodeInfos.peers.push_back(info);
+    }
+    auto _base = DiscoveryJob::instance()->baseInfo();
+    co::Json _base_json;
+    if (_base_json.parse_from(_base)) {
+        NodePeerInfo _info;
+        _info.from_json(_base_json);
+        NodeInfo info;
+        info.os = _info;
+        nodeInfos.peers.push_back(info);
+    }
+
+    QString nodeStr = QString(nodeInfos.as_json().str().c_str());
+    return nodeStr;
+}
+
+void HandleIpcService::saveAppConfig(const QString& name, const QString &key, const QString &value)
+{
+    DaemonConfig::instance()->setAppConfig(name.toStdString(), key.toStdString(), value.toStdString());
+}
+
+void HandleIpcService::setAuthPassword(const QString& password)
+{
+    if (password.isEmpty()) {
+        //refresh as random password
+        DaemonConfig::instance()->refreshPin();
+    } else {
+        fastring pwd = password.toStdString();
+        DaemonConfig::instance()->setPin(pwd);
+    }
+}
+
+QString HandleIpcService::getAuthPassword()
+{
+    QString pin = DaemonConfig::instance()->getPin().c_str();
+    return pin;
+}
+
+void HandleIpcService::sendMiscMessage(const QString& appname, const QString &jsonmsg)
+{
+    MiscJsonCall misc;
+    misc.app = appname.toStdString();
+    misc.json = jsonmsg.toStdString();
+
+    QString msg = misc.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(MISC, appname, msg);
+}
+
+void HandleIpcService::doTryConnect(const QString& appname, const QString& targetname, const QString &host, const QString &pwd)
+{
+    _ips.remove(appname);
+    _ips.insert(appname, host);
+
+    QString targetAppname = targetname.isEmpty() ? appname : targetname;
+    QByteArray byteArray = pwd.toUtf8();
+    UserLoginInfo login;
+
+    // 使用base64加密auth
+    login.name = appname.toStdString();
+    login.auth = Util::encodeBase64(byteArray.data());
+
+    std::string uuid = Util::genUUID();
+    login.my_uid = uuid;
+    login.my_name = Util::getHostname();
+    login.selfappName = appname.toStdString();
+    login.appName = targetAppname.toStdString();
+
+    login.session_id = uuid;
+    login.version = UNIAPI_VERSION;
+    login.ip = Util::getFirstIp();
+    LOG << " rcv client connet to " << host.toStdString() << appname.toStdString();
+
+    QString jsonData = login.as_json().str().c_str();
+    // 创建远程发送的work
+    SendRpcService::instance()->createRpcSender(appname, host, UNI_RPC_PORT_BASE);
+    SendRpcService::instance()->setTargetAppName(appname, targetAppname);
+    SendRpcService::instance()->doSendProtoMsg(LOGIN_INFO, appname, jsonData);
+}
+
+void HandleIpcService::doTransferFile(const QString& session, const QString &targetsession, const int jobid,
+                                const QStringList paths, const bool hassub, const QString savedir)
+{
+    newTransSendJob(session, targetsession, jobid, paths, hassub, savedir);
+}
+
+bool HandleIpcService::doOperateJob(const int action, const int jobid, const QString &appname)
+{
+    //action: TRANS_RESUME TRANS_CANCEL TRANS_PAUSE
+
+    FileTransJobAction jobAction;
+    jobAction.job_id = (jobid);
+    jobAction.appname = (appname.toStdString());
+    jobAction.type = (action);
+
+    QString jsonData = jobAction.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(action, appname, jsonData);
+
+    return JobManager::instance()->doJobAction(action, jobid);
+}
+
+void HandleIpcService::doApplyTransfer(const QString &appname, const QString& targetname, const QString& machinename)
+{
+    ApplyTransFiles transInfo;
+    transInfo.appname = appname.toStdString();
+    transInfo.type = ApplyTransType::APPLY_TRANS_APPLY;
+    transInfo.tarAppname = targetname.toStdString();
+    transInfo.machineName = machinename.toStdString();
+    transInfo.selfIp = Util::getFirstIp();
+    transInfo.selfPort = UNI_RPC_PORT_BASE;
+                                                                                                                                                                               // 远程发送
+    QString jsonData = transInfo.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(TRANS_APPLY, appname, jsonData);
+}
+
+void HandleIpcService::doReplyTransfer(const QString &appname, const QString& targetname, const QString& machinename, bool agree)
+{
+    ApplyTransFiles transInfo;
+    transInfo.appname = appname.toStdString();
+    transInfo.type = agree ? ApplyTransType::APPLY_TRANS_CONFIRM : ApplyTransType::APPLY_TRANS_REFUSED;;
+    transInfo.tarAppname = targetname.toStdString();
+    transInfo.machineName = machinename.toStdString();
+    transInfo.selfIp = Util::getFirstIp();
+    transInfo.selfPort = UNI_RPC_PORT_BASE;
+                                            // 远程发送
+    QString jsonData = transInfo.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(TRANS_APPLY, appname, jsonData);
+}
+
+void HandleIpcService::doApplyShare(const QString& appname, const QString &targetname, const QString &targetip, const QString &data)
+{
+    _ips.remove(appname);
+    _ips.insert(appname, targetip);
+
+    ShareConnectApply conEvent;
+    conEvent.appName = appname.toStdString();
+    conEvent.tarAppname = targetname.toStdString();
+    conEvent.tarIp = targetip.toStdString();
+    conEvent.ip = Util::getFirstIp();
+    conEvent.data = data.toStdString();
+
+    LOG << " rcv share connet to " << targetip.toStdString() << " "<< appname.toStdString();
+    // 创建远程发送的work
+    SendRpcService::instance()->createRpcSender(appname, targetip, UNI_RPC_PORT_BASE);
+    // 发送给被控制端请求共享连接
+    QString jsonData = conEvent.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT, appname, jsonData);
+    Comshare::instance()->updateStatus(CURRENT_STATUS_SHARE_CONNECT);
+}
+
+void HandleIpcService::doDisconnectShare(const QString& appname, const QString &targetname, const QString &msg)
+{
+    ShareDisConnect disConEvent;
+    disConEvent.appName = appname.toStdString();
+    disConEvent.tarAppname = targetname.toStdString();
+    disConEvent.msg = msg.toStdString();
+
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
+    DiscoveryJob::instance()->updateAnnouncShare(true);
+
+    QString jsonData = disConEvent.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_DISCONNECT, appname, jsonData);
+}
+
+void HandleIpcService::doReplyShare(const QString& appname, const QString &targetname, const int reply)
+{
+    ShareConnectReply replyEvent;
+    replyEvent.appName = appname.toStdString();
+    replyEvent.tarAppname = targetname.toStdString();
+    replyEvent.reply = reply;
+
+    if (reply == SHARE_CONNECT_REFUSE)
+        Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
+    // 回复控制端连接结果
+    QString jsonData = replyEvent.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT_RES, appname, jsonData);
+}
+
+void HandleIpcService::doStartShare(const QString& appname, const QString &screenname)
+{
+    ShareServerConfig config;
+    config.client_screen = screenname.toStdString(); // set client's name in server config.
+
+    ShareStart startEvent;
+    startEvent.appName = appname.toStdString();
+    startEvent.config = config;
+
+    startEvent.ip = Util::getFirstIp();
+    startEvent.port = UNI_SHARE_SERVER_PORT;
+    startEvent.tarAppname = appname.toStdString();
+
+    Comshare::instance()->updateStatus(CURRENT_STATUS_SHARE_START);
+    // 通知远端启动客户端连接到这里的barrier服务器
+    SendRpcService::instance()->doSendProtoMsg(SHARE_START, appname,
+                                               startEvent.as_json().str().c_str());
+}
+
+void HandleIpcService::doStopShare(const QString& appname, const QString &targetname, const int flags)
+{
+    // flag: SHARE_STOP_CLIENT SHARE_STOP_SERVER or SHARE_STOP_ALL
+    ShareStop stopEvent;
+    stopEvent.appName = appname.toStdString();
+    stopEvent.tarAppname = targetname.toStdString();
+    stopEvent.flags = flags;
+
+    // 通知远端
+    QString jsonData = stopEvent.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(SHARE_STOP, appname, jsonData);
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
+}
+
+void HandleIpcService::doDisShareCallback(const QString& appname)
+{
+    ShareDisConnect info;
+    info.appName = appname.toStdString();
+    info.tarAppname = appname.toStdString();
+
+    QString jsonData = info.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(DISCONNECT_CB, appname, jsonData);
+
+    SendRpcService::instance()->removePing(appname);
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
+}
+
+void HandleIpcService::doCancelShareApply(const QString& appname)
+{
+    ShareConnectDisApply cancelEvent;
+    cancelEvent.appName = appname.toStdString();
+    cancelEvent.tarAppname = appname.toStdString();
+    cancelEvent.ip = Util::getFirstIp();
+
+    Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
+
+    // 回复控制端连接结果
+    QString jsonData = cancelEvent.as_json().str().c_str();
+    SendRpcService::instance()->doSendProtoMsg(DISAPPLY_SHARE_CONNECT, appname, jsonData);
+}
+
+void HandleIpcService::doAsyncSearch(const QString &targetip, const bool remove)
+{
+    DLOG << "doAsyncSearch targetip = " << targetip.toStdString();
+    DiscoveryJob::instance()->searchDeviceByIp(targetip, remove);
+}
+
+
+void HandleIpcService::handleSessionSignal(const QString& signalName, int type, const QString& message)
+{
+    // send signal to frontend by bind sginal name
+    QMetaObject::invokeMethod(this,
+                              signalName.toLatin1(),
+                              Qt::QueuedConnection,
+                              Q_ARG(int, type),
+                              Q_ARG(QString, message));
+}
+
 
 void HandleIpcService::newTransSendJob(QString session, const QString targetSession, int32 jobId, QStringList paths, bool sub, QString savedir)
 {
@@ -276,43 +350,16 @@ void HandleIpcService::newTransSendJob(QString session, const QString targetSess
 
 void HandleIpcService::handleNodeRegister(bool unreg, const co::Json &info)
 {
-    AppPeerInfo appPeer;
-    appPeer.from_json(info);
     if (unreg) {
+        AppPeerInfo appPeer;
+        appPeer.from_json(info);
         fastring appname = appPeer.appname;
         // 移除ping
         SendRpcService::instance()->removePing(appname.c_str());
-        SendIpcService::instance()->removeSessionByAppName(appname.c_str());
-    }
-    DiscoveryJob::instance()->updateAnnouncApp(unreg, info.as_string());
-}
-
-void HandleIpcService::handleGetAllNodes(const QSharedPointer<BackendService> _backendIpcService)
-{
-    auto nodes = DiscoveryJob::instance()->getNodes();
-    NodeList nodeInfos;
-    for (const auto &node : nodes) {
-        co::Json nodejs;
-        nodejs.parse_from(node);
-        NodeInfo info;
-        info.from_json(nodejs);
-        nodeInfos.peers.push_back(info);
-    }
-    auto _base = DiscoveryJob::instance()->baseInfo();
-    co::Json _base_json;
-    if (_base_json.parse_from(_base)) {
-        NodePeerInfo _info;
-        _info.from_json(_base_json);
-        NodeInfo info;
-        info.os = _info;
-        nodeInfos.peers.push_back(info);
+        SendIpcService::instance()->handleRemoveSessionByAppName(appname.c_str());
     }
 
-    BridgeJsonData res;
-    res.type = BACK_GET_DISCOVERY;
-    res.json = nodeInfos.as_json().str();
-
-    _backendIpcService->bridgeResult()->operator<<(res);
+    DiscoveryJob::instance()->updateAnnouncApp(unreg, info.str());
 }
 
 void HandleIpcService::handleBackApplyTransFiles(co::Json param)
@@ -325,13 +372,13 @@ void HandleIpcService::handleBackApplyTransFiles(co::Json param)
     SendRpcService::instance()->doSendProtoMsg(TRANS_APPLY,info.appname.c_str(), info.as_json().str().c_str());
 }
 
-void HandleIpcService::handleConnectClosed(const quint16 port)
-{
-    // 不延时，还是可以ping通，资源还没有回收
-    QTimer::singleShot(1000, this, [port]{
-        SendIpcService::instance()->handleConnectClosed(port);
-    });
-}
+// void HandleIpcService::handleConnectClosed(const quint16 port)
+// {
+//     // 不延时，还是可以ping通，资源还没有回收
+//     QTimer::singleShot(1000, this, [port]{
+//         SendIpcService::instance()->handleConnectClosed(port);
+//     });
+// }
 
 void HandleIpcService::handleTryConnect(co::Json json)
 {
@@ -394,34 +441,6 @@ bool HandleIpcService::handleJobActions(const uint type, co::Json &msg)
     return JobManager::instance()->doJobAction(type, jobid);
 }
 
-void HandleIpcService::handleShareStart(co::Json json)
-{
-    ShareStart st;
-    st.from_json(json);
-    st.ip = st.ip.empty() ? Util::getFirstIp() : st.ip;
-    st.port = st.port == 0 ? UNI_SHARE_SERVER_PORT : st.port;
-    st.tarAppname = st.tarAppname.empty() ? st.appName : st.tarAppname;
-
-    // 读取相应的配置配置Barrier
-    if (!ShareCooperationServiceManager::instance()->server()->setServerConfig(st.config)) {
-        ShareEvents ev;
-        ev.eventType = FRONT_SHARE_START_REPLY;
-        ShareStartReply reply;
-        reply.result = false;
-        reply.isRemote = false;
-        reply.errorMsg = "init server error! param = " + json.str();
-        ev.data = reply.as_json().str();
-        auto req = ev.as_json();
-        // 通知前端
-        req.add_member("api", "Frontend.shareEvents");
-        SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
-        return;
-    }
-
-    // 启动服务器
-    ShareCooperationServiceManager::instance()->startServer(st.as_json().str().c_str());
-}
-
 void HandleIpcService::handleShareConnect(co::Json json)
 {
     ShareConnectApply param;
@@ -480,17 +499,7 @@ void HandleIpcService::handleShareStop(co::Json json)
 {
     ShareStop st;
     st.from_json(json);
-    // 停止自己的共享
-    if (st.flags == ShareStopFlag::SHARE_STOP_ALL) {
-        ShareCooperationServiceManager::instance()->stop();
-        DiscoveryJob::instance()->updateAnnouncShare(true);
-    } else if (st.flags == ShareStopFlag::SHARE_STOP_CLIENT) {
-        st.flags = ShareStopFlag::SHARE_STOP_SERVER;
-        ShareCooperationServiceManager::instance()->client()->stopBarrier();
-    } else {
-        st.flags = ShareStopFlag::SHARE_STOP_CLIENT;
-        ShareCooperationServiceManager::instance()->stopServer();
-    }
+
     // 通知远端
     SendRpcService::instance()->doSendProtoMsg(SHARE_STOP, st.appName.c_str(),
                                                st.as_json().str().c_str());
@@ -520,17 +529,22 @@ void HandleIpcService::handleShareServerStart(const bool ok, const QString msg)
     ShareStart st;
     st.from_json(json);
     if (!ok) {
-        ShareEvents ev;
-        ev.eventType = FRONT_SHARE_START_REPLY;
+        // ShareEvents ev;
+        // ev.eventType = FRONT_SHARE_START_REPLY;
         ShareStartReply reply;
         reply.result = false;
         reply.isRemote = false;
         reply.errorMsg = "init server error! param = " + json.str();
-        ev.data = reply.as_json().str();
-        auto req = ev.as_json();
-        // 通知前端
-        req.add_member("api", "Frontend.shareEvents");
-        SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
+        // ev.data = reply.as_json().str();
+        // auto req = ev.as_json();
+        // // 通知前端
+        // req.add_member("api", "Frontend.shareEvents");
+        // SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
+
+        // shareEvents
+        QString jsonMsg = reply.as_json().str().c_str();
+        emit cooperationSignal(FRONT_SHARE_START_REPLY, jsonMsg);
+
         Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
         return;
     }

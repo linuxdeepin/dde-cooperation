@@ -16,8 +16,6 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
 if (WIN32)
-    # 管理员权限
-    set (SET_ADMIN "1 24 DISCARDABLE ${CMAKE_CURRENT_SOURCE_DIR}/../uac.manifest")
     # 文件描述信息
     set (PRODUCT_INFO "Deepin cooperation server")
     set (PRODUCT_NAME "cooperation")
@@ -53,10 +51,3 @@ target_link_libraries(${PROJ_NAME}
 
 install(TARGETS ${PROJ_NAME} DESTINATION bin)
 
-# systemd service
-# install(FILES service/${PROJ_NAME}.service
-#     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user)
-
-# xdg-autostart
-# install(FILES service/${PROJ_NAME}.desktop
-# DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/xdg/autostart)

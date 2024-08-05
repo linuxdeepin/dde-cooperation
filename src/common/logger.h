@@ -32,6 +32,7 @@ constexpr int path_base_len(const char(&s)[N], int i = N - 1) {
     return (s[i] == '/' || s[i] == '\\') ? (N - 2 - i) : (i == 0 ? N-1 : path_base_len(s, i - 1));
 }
 
+class LogStream;
 class Logger : public CppCommon::Singleton<Logger>
 {
     friend CppCommon::Singleton<Logger>;
@@ -42,15 +43,43 @@ public:
 
     void init(const std::string &logpath, const std::string &logname);
 
-    std::ostringstream& stream(const char* fname, unsigned line, int level);
+    LogStream log(const char* fname, unsigned line, int level);
 
-private:
+    std::ostringstream& buffer();
     void logout();
 
+private:
     static const char *_levels[];
     CppLogging::Logger _logger;
     std::ostringstream _buffer;
     int _lv;
+};
+
+// 代理类 LogStream
+class LogStream {
+public:
+    LogStream(Logger& logger) : _logger(logger) {};
+
+    ~LogStream() {
+        // 在构时调用输出
+        _logger.logout();
+    }
+
+    template<typename T>
+    LogStream& operator<<(const T& data) {
+        _logger.buffer() << data;
+        return *this;
+    };
+
+    // 处理 std::endl 和其他操纵符
+    LogStream& operator<<(std::ostream& (*manip)(std::ostream&)) {
+        manip(_logger.buffer());
+        _logger.logout();
+        return *this;
+    };
+
+private:
+    Logger& _logger;
 };
 
 }

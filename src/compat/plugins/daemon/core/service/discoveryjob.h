@@ -48,6 +48,8 @@ private:
     void compareOldAndNew(const fastring &uid, const QString &cur,
                           const co::lru_map<fastring, std::pair<fastring, bool>>::iterator &it);
 
+    void notifySearchResult(bool result, const fastring &info);
+
 private:
     explicit DiscoveryJob(QObject *parent = nullptr);
     virtual ~DiscoveryJob();

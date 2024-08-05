@@ -62,6 +62,11 @@ void SessionManager::updateSaveFolder(const QString &folder)
     }
 }
 
+void SessionManager::updateLoginStatus(QString &ip, bool logined)
+{
+    _session_worker->updateLogin(ip, logined);
+}
+
 void SessionManager::sessionListen(int port)
 {
     bool success = _session_worker->startListen(port);
@@ -92,29 +97,14 @@ bool SessionManager::sessionConnect(QString ip, int port, QString password)
     QByteArray pinHash = password.toUtf8().toBase64();
     std::string pinString(pinHash.constData(), pinHash.size());
 
-    LoginMessage req, res;
-    req.name = qApp->applicationName().toStdString();
+    LoginMessage req;
+    req.name = deepin_cross::CommonUitls::getFirstIp();
     req.auth = pinString;
 
-    proto::OriginMessage request;
-    request.mask = REQ_LOGIN;
-    request.json_msg = req.as_json().serialize();
+    QString jsonMsg = req.as_json().serialize().c_str();
+    sendRpcRequest(ip, REQ_LOGIN, jsonMsg);
 
-    // have connected first, and then rpc can return immediately, so call sync rpc
-    auto response = _session_worker->sendRequest(ip, request);
-
-    picojson::value v;
-    std::string err = picojson::parse(v, response.toStdString());
-    if (!err.empty()) {
-        DLOG << "Failed to parse LoginMessage JSON data: " << err;
-        return false;
-    }
-    res.from_json(v);
-    DLOG << "Login return: " << res.name << " " << res.auth;
-
-    bool logined = !res.auth.empty();
-    _session_worker->updateLogin(ip, logined);
-    return logined;
+    return true;
 }
 
 void SessionManager::sessionDisconnect(QString ip)

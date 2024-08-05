@@ -5,7 +5,7 @@
 #ifndef PROTOCONSTANTS_H
 #define PROTOCONSTANTS_H
 
-#define DATA_SESSION_PORT 51595
+#define DATA_SESSION_PORT 51596
 
 typedef enum session_type_t {
     SESSION_LOGIN = 101,   // 登录

@@ -17,18 +17,11 @@ Logger::~Logger()
     CppLogging::Config::Shutdown();
 }
 
-std::ostringstream& Logger::stream(const char* fname, unsigned line, int level)
+LogStream Logger::log(const char* fname, unsigned line, int level)
 {
-    logout();
     _lv = level;
-    _buffer.str(""); // clear
     _buffer << "["<< _levels[level] << "]" << " [" << fname << ':' << line << "] ";
-//    std::thread t([this](){
-//        std::this_thread::sleep_for(std::chrono::microseconds(10));
-//        logout();
-//    });
-//    t.detach();  // 分离线程，使其在后台独立运行
-    return _buffer;
+    return LogStream(*this);
 }
 
 void Logger::init(const std::string &logpath, const std::string &logname) {
@@ -39,7 +32,7 @@ void Logger::init(const std::string &logpath, const std::string &logname) {
 
 
     // Create default logging sink processor with a text layout
-    auto sink = std::make_shared<CppLogging::AsyncWaitProcessor>(std::make_shared<CppLogging::TextLayout>(pattern));
+    auto sink = std::make_shared<CppLogging::AsyncWaitFreeProcessor>(std::make_shared<CppLogging::TextLayout>(pattern));
 
     // Add console appender
     sink->appenders().push_back(std::make_shared<CppLogging::ConsoleAppender>());
@@ -66,6 +59,11 @@ void Logger::init(const std::string &logpath, const std::string &logname) {
     _logger = CppLogging::Config::CreateLogger("dde-cooperation");
 }
 
+std::ostringstream& Logger::buffer()
+{
+    return _buffer;
+}
+
 void Logger::logout()
 {
     switch (_lv) {
@@ -87,4 +85,5 @@ void Logger::logout()
     default:
         break;
     }
+    _buffer.str(""); // clear
 }

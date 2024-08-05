@@ -7,8 +7,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${COMPAT_ROOT_DIR}/base/baseutils.h"
     "${COMPAT_ROOT_DIR}/base/baseutils.cpp"
-    "${COMPAT_ROOT_DIR}/ipc/backendservice.h"
-    "${COMPAT_ROOT_DIR}/ipc/backendservice.cpp"
     "${COMPAT_ROOT_DIR}/common/commonutils.h"
     "${COMPAT_ROOT_DIR}/common/commonutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -27,7 +25,6 @@ find_package(Threads REQUIRED)
 
 include_directories(include)
 
-# include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${COMPAT_ROOT_DIR}/protocol)
 
 add_library(${PROJECT_NAME}
@@ -50,6 +47,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Concurrent
     uniapi
     co
+    CuteIPC
 )
 
 #System libraries

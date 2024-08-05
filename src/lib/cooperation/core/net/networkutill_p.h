@@ -35,7 +35,7 @@ private:
     NetworkUtil *q { nullptr };
     SessionManager *sessionManager { nullptr };
 
-    QString confirmTargetAddress {};   // remote ip address
+    QString confirmTargetAddress {""};   // remote ip address
     QString storageRoot = {};   //storage dir config
     QString storageFolder = {};   //sub folder under storage dir config
     int servePort;

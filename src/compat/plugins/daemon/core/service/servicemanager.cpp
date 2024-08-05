@@ -22,7 +22,7 @@
 ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
     // init and start backend IPC
-    // localIPCStart();
+    localIPCStart();
 
     // init the pin code: no setting then refresh as random
     DaemonConfig::instance()->initPin();
@@ -34,9 +34,9 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
         DaemonConfig::instance()->setUUID(hostid.c_str());
     }
     asyncDiscovery();
-    QTimer::singleShot(2000, this, []{
-        SendIpcService::instance()->handlebackendOnline();
-    });
+    // QTimer::singleShot(2000, this, []{
+    //     SendIpcService::instance()->handlebackendOnline();
+    // });
     _logic.reset(new HandleSendResultService);
     // init sender
     SendIpcService::instance();
@@ -94,6 +94,10 @@ void ServiceManager::localIPCStart()
     if (_ipcService != nullptr)
         return;
     _ipcService = new HandleIpcService;
+    _ipcService->listen("cooperation-daemon");
+
+    connect(SendIpcService::instance(), &SendIpcService::sessionSignal,
+            _ipcService, &HandleIpcService::handleSessionSignal, Qt::QueuedConnection);
 }
 
 fastring ServiceManager::genPeerInfo()
@@ -119,7 +123,8 @@ fastring ServiceManager::genPeerInfo()
 void ServiceManager::asyncDiscovery()
 {
     connect(DiscoveryJob::instance(), &DiscoveryJob::sigNodeChanged, SendIpcService::instance(),
-            &SendIpcService::nodeChanged, Qt::QueuedConnection);
+            &SendIpcService::handleNodeChanged, Qt::QueuedConnection);
+
     UNIGO([]() {
         DiscoveryJob::instance()->discovererRun();
     });

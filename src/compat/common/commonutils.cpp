@@ -267,8 +267,7 @@ void CommonUitls::manageDaemonProcess(const QString &side)
             return;
         } else {
             LOG << "no front-end processes, backend shut down";
-            QString cmd = "killall " + QString::fromUtf8(kDaemon);
-            QProcess::execute(cmd);
+            qApp->exit(0);
         }
     });
     timer->start(10000);

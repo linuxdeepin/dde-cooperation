@@ -23,7 +23,7 @@ extern "C"
 }
 #endif
 
-#define BASEPROTO_PORT 51597
+#define BASEPROTO_PORT 51598
 
 using namespace deepin_cross;
 using namespace cooperation_core;

@@ -78,17 +78,21 @@ bool CooperaionCorePlugin::isMinilize()
 bool CooperaionCorePlugin::start()
 {
     CooperationUtil::instance()->mainWindow(dMain);
-    DiscoverController::instance();
 
-    CooperationUtil::instance()->initNetworkListener();
-    CooperationUtil::instance()->initHistory();
     TransferHelper::instance()->registBtn();
     if (onlyTransfer) {
         // transfer deepend cooperation, not need network & share. bind the sendfile command.
         connect(TransferHelper::instance(), &TransferHelper::deliverMessage, qApp, &SingleApplication::onDeliverMessage);
     } else {
+        DiscoverController::instance();
         NetworkUtil::instance();
+
         ShareHelper::instance()->registConnectBtn();
+        DiscoverController::instance()->init(); // init zeroconf and regist
+
+        CooperationUtil::instance()->initHistory();
+        // start network status listen after all ready
+        CooperationUtil::instance()->initNetworkListener();
 
 #ifdef __linux__
         if (CommonUitls::isFirstStart()) {

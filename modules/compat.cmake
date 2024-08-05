@@ -50,7 +50,10 @@ add_subdirectory("${COOST_DIR}" coost)
 
 set(ZRPC_DIR "${PROJECT_SOURCE_DIR}/3rdparty/zrpc")
 include_directories(${ZRPC_DIR}/include)
-
 add_subdirectory("${ZRPC_DIR}" zrpc)
+
+set(CUTEIPC_DIR "${PROJECT_SOURCE_DIR}/3rdparty/CuteIPC")
+include_directories(${CUTEIPC_DIR}/include)
+add_subdirectory("${CUTEIPC_DIR}" CuteIPC)
 
 endif()

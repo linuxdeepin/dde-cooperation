@@ -29,7 +29,7 @@ TcpClient::TcpClient(NetAddress::ptr addr)
 TcpClient::~TcpClient() {
     if (this->connected()) {
         this->stop();
-        DLOG << "~TcpClient() close : " << _tcp_cli->socket();
+        // DLOG << "~TcpClient() close : " << _tcp_cli->socket();
     }
 }
 
@@ -51,7 +51,7 @@ bool TcpClient::connected() {
 }
 
 bool TcpClient::connect() {
-    DLOG << "try connect...";
+    // DLOG << "try connect...";
     return _tcp_cli->connect(m_max_timeout);
 }
 

@@ -28,6 +28,14 @@ DiscoverController::DiscoverController(QObject *parent)
     : QObject(parent),
       d(new DiscoverControllerPrivate(this))
 {
+}
+
+DiscoverController::~DiscoverController()
+{
+}
+
+void DiscoverController::init()
+{
     if (isZeroConfDaemonActive()) {
         initZeroConf();
         return;
@@ -44,16 +52,12 @@ DiscoverController::DiscoverController(QObject *parent)
     timer->start(5000);
 }
 
-DiscoverController::~DiscoverController()
-{
-}
-
 void DiscoverController::initZeroConf()
 {
     d->zeroConf = new QZeroConf();
     d->zeroconfname = QSysInfo::machineUniqueId();
 
-    publish();
+    // publish();
     initConnect();
     // connect signal should before  browser
     if (!d->zeroConf->browserExists())
@@ -66,7 +70,7 @@ void DiscoverController::initConnect()
         if (validIP.isEmpty())
             return;
         updatePublish();
-        refresh();
+        startDiscover();
     });
 #ifdef linux
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &DiscoverController::onDConfigValueChanged);
@@ -238,10 +242,10 @@ void DiscoverController::updateService(QZeroConfService zcs)
 
     if (!devInfo)
         return;
-
     auto oldinfo = findDeviceByIP(devInfo->ipAddress());
     if (oldinfo)
         d->onlineDeviceList.removeOne(oldinfo);
+
     d->onlineDeviceList.append(devInfo);
     Q_EMIT deviceOnline({ devInfo });
 }
@@ -256,6 +260,7 @@ void DiscoverController::removeService(QZeroConfService zcs)
     auto oldinfo = findDeviceByIP(devInfo->ipAddress());
     if (oldinfo)
         d->onlineDeviceList.removeOne(oldinfo);
+
     Q_EMIT deviceOffline(devInfo->ipAddress());
 }
 
@@ -284,11 +289,15 @@ void DiscoverController::publish()
         d->zeroConf->addServiceTxtRecord(key, deviceInfo.value(key).toString().toUtf8().toBase64());
 
     d->zeroConf->startServicePublish(d->zeroconfname.toUtf8(), UNI_CHANNEL, "local", UNI_RPC_PORT_UDP);
+
+    auto doc = QJsonDocument::fromVariant(deviceInfo);
+    Q_EMIT registCompatAppInfo(true, doc.toJson());
 }
 
 void DiscoverController::unpublish()
 {
     d->zeroConf->stopServicePublish();
+    Q_EMIT registCompatAppInfo(false, "");
 }
 
 void DiscoverController::updatePublish()
@@ -312,7 +321,7 @@ void DiscoverController::refresh()
         QZeroConfService zcs = allServices.value(key);
         auto devInfo = parseDeviceService(zcs);
 
-        if (devInfo)
+        if (devInfo && devInfo->ipAddress() != CooperationUtil::localIPAddress())
             d->onlineDeviceList.append(devInfo);
     }
     if (d->searchDevice)
@@ -335,13 +344,45 @@ void DiscoverController::addSearchDeivce(const QString &info)
         Q_EMIT deviceOnline({ d->searchDevice });
 }
 
+void DiscoverController::compatAddDiscoveryDeivce(const QString &info, const QString &ip, const QString &sharedip, bool online)
+{
+    // DLOG << "compat add: " << info.toStdString() << " ip=" << ip.toStdString();
+    if (online) {
+        if(ip == CooperationUtil::localIPAddress()) {
+            WLOG << "Ignore local host ip: " << ip.toStdString();
+            return;
+        }
+        auto devInfo = parseDeviceJson(info);
+        if (!devInfo) {
+            WLOG << "Can not parse peer: " << info.toStdString();
+            return;
+        }
+        devInfo->setIpAddress(ip);
+        if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
+            if (sharedip == CooperationUtil::localIPAddress())
+                devInfo->setConnectStatus(DeviceInfo::Connected);
+
+            d->onlineDeviceList.append(devInfo);
+            Q_EMIT deviceOnline({ devInfo });
+        }
+    } else {
+        // 更新设备状态为离线状态
+        auto oldinfo = findDeviceByIP(ip);
+        if (oldinfo)
+            d->onlineDeviceList.removeOne(oldinfo);
+        Q_EMIT deviceOffline(ip);
+    }
+}
+
 void DiscoverController::startDiscover()
 {
     if (!d->zeroConf)
         return;
 
-    Q_EMIT startDiscoveryDevice();
-
-    // 延迟1s，为了展示发现界面
-    QTimer::singleShot(1000, this, &DiscoverController::refresh);
+    // 延迟,为了展示发现界面
+    QTimer::singleShot(500, [this]() {
+        // 兼容，获取发现列表，refresh则清除数据
+        Q_EMIT startDiscoveryDevice();
+        refresh();
+    });
 }

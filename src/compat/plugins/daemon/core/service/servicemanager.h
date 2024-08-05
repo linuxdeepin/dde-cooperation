@@ -25,7 +25,6 @@ public:
     ~ServiceManager();
 
     void startRemoteServer();
-private Q_SLOTS:
 
 private:
     void localIPCStart();

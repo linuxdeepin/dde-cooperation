@@ -7,6 +7,7 @@
 #include "common/constant.h"
 #include "service/ipc/sendipcservice.h"
 #include "ipc/proto/chan.h"
+#include "ipc/bridge.h"
 #include "service/comshare.h"
 #include "utils/config.h"
 #include "service/rpc/sendrpcservice.h"
@@ -33,9 +34,10 @@ void HandleSendResultService::handleSendResultMsg(const QString appName, const Q
         st.type = static_cast<int32>(res.protocolType);
         st.status = res.errorType;
         st.msg = msg.toStdString();
-        co::Json req = st.as_json();
-        req.add_member("api", "Frontend.notifySendStatus");
-        SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+
+        // notifySendStatus
+        QString jsonMsg = st.as_json().str().c_str();
+        SendIpcService::instance()->handleSendToClient(appName, FRONT_SEND_STATUS, jsonMsg);
         return;
     }
     if (res.protocolType == LOGIN_INFO) {
@@ -65,14 +67,15 @@ void HandleSendResultService::handleLogin(const QString &appName, const QString 
         }
     }
 
-    co::Json req;
     //cbConnect {GenericResult}
-    req = {
+    co::Json req = {
         { "id", 0 },
         { "result", res.result ? 1 : 0 },
+        // { "msg", (ip + " " + appName).toStdString() },
         { "msg", res.appName },
         { "isself", true},
     };
-    req.add_member("api", "Frontend.cbConnect");
-    SendIpcService::instance()->handleSendToClient(appName, req.str().c_str());
+
+    QString jsonMsg = req.str().c_str();
+    SendIpcService::instance()->handleSendToClient(appName, FRONT_CONNECT_CB, jsonMsg);
 }

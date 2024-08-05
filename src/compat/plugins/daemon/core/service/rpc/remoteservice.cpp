@@ -126,9 +126,7 @@ SendResult RemoteServiceSender::doSendProtoMsg(const uint32 type, const QString 
         res.errorType = INVOKE_FAIL;
         ELOG << "Failed to call server, error code: " << rpc_controller->ErrorCode()
             << ", error info: " << rpc_controller->ErrorText();
-        res.data = "Failed to call server, error code: "
-                + QString::number(rpc_controller->ErrorCode()).toStdString()
-                + ", error info: " + rpc_controller->ErrorText();
+        res.data = _target_ip.toStdString();
         clearExecutor();
         clearLongExecutor();
         return res;

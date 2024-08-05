@@ -5,6 +5,7 @@
 #include "discoveryjob.h"
 #include "searchlight.h"
 #include "ipc/proto/comstruct.h"
+#include "ipc/bridge.h"
 #include "service/ipc/sendipcservice.h"
 #include "service/rpc/remoteservice.h"
 #include "service/comshare.h"
@@ -212,14 +213,9 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip, const bool remove)
         return;
     }
 
-    SearchDeviceResult ev;
     auto offline = Util::getFirstIp().empty();
     if (offline) {
-        ev.result = false;
-        auto req = ev.as_json();
-        // 通知前端
-        req.add_member("api", "Frontend.searchDeviceRes");
-        SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
+        notifySearchResult(false, ip.toStdString().c_str());
         return;
     }
 
@@ -234,22 +230,26 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip, const bool remove)
     if (result.errorType < INVOKE_OK){
         // 通知前端搜索失败
         // 通知前端搜索结果
-        ev.result = false;
-        auto req = ev.as_json();
-        // 通知前端
-        req.add_member("api", "Frontend.searchDeviceRes");
-        SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
+        WLOG << "try SEARCH_DEVICE_BY_IP invoke FAILED!";
+        notifySearchResult(false, ip.toStdString().c_str());
+
         ((searchlight::Discoverer*)_discoverer_p)->setSearchIp("");
         return;
     }
     ((searchlight::Discoverer*)_discoverer_p)->setSearchIp(ip);
     emit sigNodeChanged(true, result.data.c_str());
-    ev.result = true;
-    ev.msg = result.data;
-    auto req = ev.as_json();
-    // 通知前端
-    req.add_member("api", "Frontend.searchDeviceRes");
-    SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
+
+    notifySearchResult(true, result.data);
+}
+
+void DiscoveryJob::notifySearchResult(bool result, const fastring &info)
+{
+    SearchDeviceResult ev;
+    ev.result = result;
+    ev.msg = info;
+
+    QString jsonMsg = ev.as_json().str().c_str();
+    SendIpcService::instance()->handleSendToClient("dde-cooperation", FRONT_SEARCH_IP_DEVICE_RESULT, jsonMsg);
 }
 
 fastring DiscoveryJob::udpSendPackage()

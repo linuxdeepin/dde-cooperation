@@ -173,7 +173,7 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
     }
 
     // send the transfer file RPC request
-    NetworkUtil::instance()->sendTransApply(ip);
+    NetworkUtil::instance()->tryTransApply(ip);
 
     waitForConfirm();
 }
@@ -320,12 +320,13 @@ void TransferHelper::onActionTriggered(const QString &action)
         d->notice->closeNotification();
 #endif
     } else if (action == NotifyViewAction) {
-        if (d->recvFilesSavePath.isEmpty()) {
+        auto fileurl = d->recvFilesSavePath;
+        if (fileurl.isEmpty()) {
             auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
-            auto defaultSavePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+            fileurl = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
         }
 
-        openFileLocation(d->recvFilesSavePath);
+        openFileLocation(fileurl);
     }
 }
 
@@ -339,20 +340,23 @@ void TransferHelper::openFileLocation(const QString &path)
 #endif
 }
 
-void TransferHelper::notifyTransferRequest(const QString &info)
+void TransferHelper::notifyTransferRequest(const QString &nick, const QString &ip)
 {
-    DLOG << "notifyTransferRequest info: " << info.toStdString();
+    DLOG << "request info: " << nick.toStdString() << ip.toStdString();
+    auto storageFolder = nick + "(" + ip + ")";
+    NetworkUtil::instance()->setStorageFolder(storageFolder);
+
     static QString msg(tr("\"%1\" send some files to you"));
-    d->who = info;
+    d->who = nick;
 #ifdef __linux__
 
     QStringList actions { NotifyRejectAction, tr("Reject"),
                           NotifyAcceptAction, tr("Accept"),
                           NotifyCloseAction, tr("Close") };
 
-    d->notifyMessage(msg.arg(CommonUitls::elidedText(info, Qt::ElideMiddle, 25)), actions, 10 * 1000);
+    d->notifyMessage(msg.arg(CommonUitls::elidedText(nick, Qt::ElideMiddle, 25)), actions, 10 * 1000);
 #else
-    d->transDialog()->showConfirmDialog(info);
+    d->transDialog()->showConfirmDialog(nick);
 #endif
 }
 
@@ -500,6 +504,7 @@ void TransferHelper::rejected()
     d->status.storeRelease(Idle);
     if (!d->isTransTimeout)
         transferResult(false, tr("The other party rejects your request"));
+    d->transDialog()->hide();
 }
 
 void TransferHelper::cancelTransfer(bool sender)
@@ -520,4 +525,68 @@ void TransferHelper::cancelTransferApply()
     d->confirmTimer.stop();
     d->transDialog()->hide();
     NetworkUtil::instance()->cancelApply("transfer");
+}
+
+// ----------compat the old protocol-----------
+
+void TransferHelper::compatTransJobStatusChanged(int id, int result, const QString &msg)
+{
+    LOG << "id: " << id << " result: " << result << " msg: " << msg.toStdString();
+    switch (result) {
+    case JOB_TRANS_FAILED:
+        if (d->isClicked) {
+            // Cancel by self clicked
+            d->status.storeRelease(Idle);
+            d->transDialog()->hide();
+            return;
+        }
+        if (msg.contains("::not enough")) {
+            transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
+        } else if (msg.contains("::off line")) {
+            transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
+        } else {
+            transferResult(false, tr("File read/write exception"));
+        }
+        break;
+    case JOB_TRANS_DOING:
+        break;
+    case JOB_TRANS_FINISHED: {
+        d->status.storeRelease(Idle);
+        d->recvFilesSavePath = msg;
+        transferResult(true, tr("File sent successfully"));
+    } break;
+    case JOB_TRANS_CANCELED:
+        d->status.storeRelease(Idle);
+        transferResult(false, tr("The other party has canceled the file transfer"));
+        break;
+    default:
+        break;
+    }
+}
+
+void TransferHelper::compatFileTransStatusChanged(quint64 total, quint64 current, quint64 millisec)
+{
+    d->transferInfo.totalSize = total;
+    d->transferInfo.transferSize = current;
+    d->transferInfo.maxTimeS = millisec / 1000;
+
+    // 计算整体进度和预估剩余时间
+    double value = static_cast<double>(d->transferInfo.transferSize) / d->transferInfo.totalSize;
+    int progressValue = static_cast<int>(value * 100);
+    QTime time(0, 0, 0);
+    int remain_time;
+    if (progressValue <= 0) {
+        return;
+    } else if (progressValue >= 100) {
+        progressValue = 100;
+        remain_time = 0;
+    } else {
+        remain_time = (d->transferInfo.maxTimeS * 100 / progressValue - d->transferInfo.maxTimeS);
+    }
+    time = time.addSecs(remain_time);
+
+    // LOG << "progressbar: " << progressValue << " remain_time=" << remain_time;
+    // LOG << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << d->transferInfo.transferSize;
+
+    updateProgress(progressValue, time.toString("hh:mm:ss"));
 }

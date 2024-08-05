@@ -167,8 +167,10 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
         ShareCooperationServiceManager::instance()->client()->startBarrier();
 
         auto info = DiscoverController::instance()->findDeviceByIP(senderDeviceIp);
-        if (!info)
+        if (!info) {
+            WLOG << "AcceptAction, but not find: " << senderDeviceIp.toStdString();
             return;
+        }
 
         // 更新设备列表中的状态
         targetDeviceInfo = DeviceInfoPointer::create(*info.data());
@@ -252,7 +254,7 @@ void ShareHelper::connectToDevice(const DeviceInfoPointer info)
     d->taskDialog()->show();
     d->confirmTimer.start();
 
-    NetworkUtil::instance()->sendShareEvents(info->ipAddress(), d->selfFingerPrint);
+    NetworkUtil::instance()->tryShareApply(info->ipAddress(), d->selfFingerPrint);
 }
 
 void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
@@ -351,6 +353,10 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         if (crypto) {
             // write its fingerprint into trust client file.
             SslCertConf::ins()->writeTrustPrint(false, clientprint.toStdString());
+        } else {
+            // the server has started, notify remote client connect
+            // compatStartShare();
+            NetworkUtil::instance()->compatSendStartShare(d->targetDeviceInfo->ipAddress());
         }
 
         //启动 ShareCooperationServic
@@ -392,8 +398,10 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
 
 void ShareHelper::handleDisConnectResult(const QString &devName)
 {
-    if (!d->targetDeviceInfo)
+    if (!d->targetDeviceInfo) {
+        WLOG << "The targetDeviceInfo is NULL";
         return;
+    }
     ShareCooperationServiceManager::instance()->stop();
 
     static QString body(tr("Coordination with \"%1\" has ended"));

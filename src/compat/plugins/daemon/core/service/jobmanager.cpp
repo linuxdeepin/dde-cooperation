@@ -260,9 +260,8 @@ void JobManager::handleFileTransStatus(QString appname, int status, QString file
     FileInfo filejob;
     filejob.from_json(infojson);
 
-    co::Json req, res;
     //notifyFileStatus {FileStatus}
-    req = {
+    co::Json req = {
         { "job_id", filejob.job_id },
         { "file_id", filejob.file_id },
         { "name", filejob.name },
@@ -272,23 +271,23 @@ void JobManager::handleFileTransStatus(QString appname, int status, QString file
         { "millisec", filejob.time_spended },
     };
 
-    req.add_member("api", "Frontend.notifyFileStatus");
-    SendIpcService::instance()->handleSendToClient(appname, req.str().c_str());
+    QString jsonMsg = req.str().c_str();
+    SendIpcService::instance()->handleSendToClient(appname, FRONT_NOTIFY_FILE_STATUS, jsonMsg);
 }
 
 void JobManager::handleJobTransStatus(QString appname, int jobid, int status, QString savedir)
 {
     //DLOG << "notify file trans status to:" << appname.toStdString() << " jobid=" << jobid;
-    co::Json req;
     //cbTransStatus {GenericResult}
-    req = {
+    co::Json req = {
         { "id", jobid },
         { "result", status },
         { "msg", savedir.toStdString() },
+        { "isself", false },
     };
 
-    req.add_member("api", "Frontend.cbTransStatus");
-    SendIpcService::instance()->handleSendToClient(appname, req.str().c_str());
+    QString jsonMsg = req.str().c_str();
+    SendIpcService::instance()->handleSendToClient(appname, FRONT_TRANS_STATUS_CB, jsonMsg);
 }
 
 void JobManager::handleRemoveJob(const int jobid)

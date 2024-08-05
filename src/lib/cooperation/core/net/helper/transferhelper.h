@@ -59,9 +59,13 @@ public Q_SLOTS:
     //client
     void openFileLocation(const QString &path);
     void onActionTriggered(const QString &action);
-    void notifyTransferRequest(const QString &info);
+    void notifyTransferRequest(const QString &nick, const QString &ip);
     void notifyTransferResult(bool result, const QString &msg);
     void handleCancelTransferApply();
+
+    // compat old protocol
+    void compatTransJobStatusChanged(int id, int result, const QString &msg);
+    void compatFileTransStatusChanged(quint64 total, quint64 current, quint64 millisec);
 
 private:
     explicit TransferHelper(QObject *parent = nullptr);

@@ -67,16 +67,16 @@ void HandleRpcService::handleRpcLogin(bool result, const QString &targetAppname,
         _ping_lost_count.remove(appName);
     }
 
-    co::Json req;
     //cbConnect {GenericResult}
-    req = {
+    co::Json req = {
         { "id", 0 },
         { "result", result ? 1 : 0 },
         { "msg", (ip + " " + appName).toStdString() },
         { "isself", false},
     };
-    req.add_member("api", "Frontend.cbConnect");
-    SendIpcService::instance()->handleSendToClient(appName, req.str().c_str());
+
+    QString jsonData = req.str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_CONNECT_CB, jsonData);
 }
 
 bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
@@ -89,20 +89,19 @@ bool HandleRpcService::handleRemoteApplyTransFile(co::Json &info)
         auto app = QString(obj.tarAppname.c_str());
         _ping_lost_count.remove(app);
     }
+#ifdef __linux__
+    // for regist daemon-cooperation default.
     auto tmp = obj.tarAppname;
     obj.tarAppname = obj.appname;
     obj.appname = tmp;
-    auto session = obj.appname;
-
-    co::Json infojson;
-    co::Json req;
+#endif
 
     //notifyFileStatus {FileStatus}
-    req = obj.as_json();
-    req.add_member("api", "Frontend.applyTransFiles");
-    SendIpcService::instance()->handleSendToClient(session.c_str(), req.str().c_str());
+    auto targetAppname = QString(obj.appname.c_str());
+    QString jsonData = obj.as_json().str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_APPLY_TRANS_FILE, jsonData);
     if (obj.type != APPLY_TRANS_APPLY)
-        SendRpcService::instance()->removePing(session.c_str());
+        SendRpcService::instance()->removePing(targetAppname);
 
     return true;
 }
@@ -182,10 +181,10 @@ void HandleRpcService::handleRemoteDisc(co::Json &info)
     DLOG_IF(FLG_log_detail) << "handleRemoteDisc: " << info.dbg();
     MiscJsonCall mis;
     mis.from_json(info);
-    co::Json msg;
-    msg.add_member("msg", mis.json.c_str());
-    msg.add_member("api", "Frontend.cbMiscMessage");
-    SendIpcService::instance()->handleSendToClient(mis.app.c_str(), msg.str().c_str());
+
+    auto targetAppname = QString(mis.app.c_str());
+    QString jsonData = mis.json.c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, MISC_MSG, jsonData);
 }
 
 void HandleRpcService::handleRemoteFileBlock(co::Json &info, fastring data)
@@ -279,12 +278,10 @@ void HandleRpcService::handleRemoteShareConnect(co::Json &info)
         }
     }
     Comshare::instance()->updateStatus(CURRENT_STATUS_SHARE_CONNECT);
-    ShareEvents event;
-    event.eventType = FRONT_SHARE_APPLY_CONNECT;
-    event.data = info.str();
-    co::Json req = event.as_json();
-    req.add_member("api", "Frontend.shareEvents");
-    SendIpcService::instance()->handleSendToClient(lo.tarAppname.c_str(), req.str().c_str());
+    // shareEvents
+    auto targetAppname = QString(lo.tarAppname.c_str());
+    QString jsonMsg = info.str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_SHARE_APPLY_CONNECT, jsonMsg);
 }
 
 void HandleRpcService::handleRemoteShareDisConnect(co::Json &info)
@@ -295,12 +292,10 @@ void HandleRpcService::handleRemoteShareDisConnect(co::Json &info)
     DiscoveryJob::instance()->updateAnnouncShare(true);
     Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
 
-    ShareEvents ev;
-    ev.eventType = FRONT_SHARE_DISCONNECT;
-    ev.data = info.str();
-    co::Json req = ev.as_json();
-    req.add_member("api", "Frontend.shareEvents");
-    SendIpcService::instance()->handleSendToClient(sd.tarAppname.c_str(), req.str().c_str());
+    // shareEvents
+    auto targetAppname = QString(sd.tarAppname.c_str());
+    QString jsonMsg = info.str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_SHARE_DISCONNECT, jsonMsg);
 }
 
 void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
@@ -314,12 +309,10 @@ void HandleRpcService::handleRemoteShareConnectReply(co::Json &info)
         Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     }
 
-    ShareEvents event;
-    event.eventType = FRONT_SHARE_APPLY_CONNECT_REPLY;
-    event.data = info.str();
-    co::Json req = event.as_json();
-    req.add_member("api", "Frontend.shareEvents");
-    SendIpcService::instance()->handleSendToClient(reply.tarAppname.c_str(), req.str().c_str());
+    // shareEvents
+    auto targetAppname = QString(reply.tarAppname.c_str());
+    QString jsonMsg = info.str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_SHARE_APPLY_CONNECT_REPLY, jsonMsg);
 }
 
 void HandleRpcService::handleRemoteShareStart(co::Json &info)
@@ -329,38 +322,21 @@ void HandleRpcService::handleRemoteShareStart(co::Json &info)
     st.from_json(info);
     ShareEvents evs;
     evs.eventType = SHARE_START_RES;
-    ShareEvents ev;
-    ev.eventType = FRONT_SHARE_START_REPLY;
 
     ShareStartReply reply;
     reply.result = true;
     reply.isRemote = false;
 
-    ShareStartRmoteReply rreply;
-    rreply.result = true;
-    rreply.tarAppname = st.appName;
-    rreply.appName = st.tarAppname;
-
-    // 获取其中的ip进行Barrier的client配置
-    if (!ShareCooperationServiceManager::instance()->client()->
-            setClientTargetIp(st.config.client_screen.c_str(), st.ip.c_str(), st.port)
-            || !ShareCooperationServiceManager::instance()->client()->restartBarrier()) {
-        reply.result = false;
-        reply.errorMsg = "init client config error or start error! param = " + info.str();
-        rreply.result = false;
-        rreply.errorMsg = "init client config error or start error! param = " + info.str();
-    }
-    evs.data = rreply.as_json().str();
     if (!reply.result)
         Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     // 通知远程
     SendRpcService::instance()->doSendProtoMsg(SHARE_START_RES, st.tarAppname.c_str(),
                                                evs.as_json().str().c_str());
-    ev.data = reply.as_json().str();
-    auto req = ev.as_json();
-    // 通知前端
-    req.add_member("api", "Frontend.shareEvents");
-    SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
+
+    // 通知前端 shareEvents
+    auto targetAppname = QString(st.tarAppname.c_str());
+    QString jsonMsg = reply.as_json().str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_SHARE_START_REPLY, jsonMsg);
 }
 
 void HandleRpcService::handleRemoteShareStartRes(co::Json &info)
@@ -371,15 +347,14 @@ void HandleRpcService::handleRemoteShareStartRes(co::Json &info)
     reply.result = rreply.result;
     reply.isRemote = true;
     reply.errorMsg = rreply.errorMsg;
-    ShareEvents evs;
-    evs.eventType = SHARE_START_RES;
+
     if (!reply.result)
         Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
 
-    // 通知前端
-    auto req = evs.as_json();
-    req.add_member("api", "Frontend.shareEvents");
-    SendIpcService::instance()->handleSendToClient(rreply.tarAppname.c_str(), req.str().c_str());
+    // 通知前端 shareEvents
+    auto targetAppname = QString(rreply.tarAppname.c_str());
+    QString jsonMsg = reply.as_json().str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, SHARE_START_RES, jsonMsg);
 }
 
 void HandleRpcService::handleRemoteShareStop(co::Json &info)
@@ -387,22 +362,11 @@ void HandleRpcService::handleRemoteShareStop(co::Json &info)
     Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
     ShareStop st;
     st.from_json(info);
-    // 停止自己的共享，并告诉前端
-    if (st.flags == ShareStopFlag::SHARE_STOP_ALL) {
-        ShareCooperationServiceManager::instance()->stop();
-        DiscoveryJob::instance()->updateAnnouncShare(true);
-    } else if (st.flags == ShareStopFlag::SHARE_STOP_CLIENT) {
-        ShareCooperationServiceManager::instance()->client()->stopBarrier();
-    } else {
-        ShareCooperationServiceManager::instance()->server()->stopBarrier();
-    }
 
-    ShareEvents event;
-    event.eventType = FRONT_SHARE_STOP;
-    event.data = info.str();
-    co::Json req = event.as_json();
-    req.add_member("api", "Frontend.shareEvents");
-    SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
+    // shareEvents
+    auto targetAppname = QString(st.tarAppname.c_str());
+    QString jsonMsg = info.str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_SHARE_STOP, jsonMsg);
 }
 
 void HandleRpcService::handleRemoteDisConnectCb(co::Json &info)
@@ -412,9 +376,11 @@ void HandleRpcService::handleRemoteDisConnectCb(co::Json &info)
     ShareDisConnect sd;
     sd.from_json(info);
 
-    co::Json req = info;
-    req.add_member("api", "Frontend.cbDisConnect");
-    SendIpcService::instance()->handleSendToClient(sd.tarAppname.c_str(), req.str().c_str());
+    //cbDisConnect
+    auto targetAppname = QString(sd.tarAppname.c_str());
+    QString jsonMsg = info.str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_DISCONNECT_CB, jsonMsg);
+
     SendRpcService::instance()->removePing(sd.tarAppname.c_str());
 }
 
@@ -446,12 +412,11 @@ void HandleRpcService::handleRemoteDisApplyShareConnect(co::Json &info)
     ShareConnectDisApply sd;
     sd.from_json(info);
 
-    ShareEvents event;
-    event.eventType = FRONT_SHARE_DISAPPLY_CONNECT;
-    event.data = info.str();
-    co::Json req = event.as_json();
-    req.add_member("api", "Frontend.shareEvents");
-    SendIpcService::instance()->handleSendToClient(sd.tarAppname.c_str(), req.str().c_str());
+    // ShareEvents event;
+    auto targetAppname = QString(sd.tarAppname.c_str());
+    QString jsonMsg = info.str().c_str();
+    SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_SHARE_DISAPPLY_CONNECT, jsonMsg);
+
     SendRpcService::instance()->removePing(sd.tarAppname.c_str());
 }
 
@@ -612,13 +577,13 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             {
                 // 被控制方收到共享连接申请
                 OutData data;
-                data.type = APPLY_SHARE_DISCONNECT;
+                data.type = APPLY_SHARE_CONNECT;
                 _outgo_chan << data;
                 self->handleRemoteShareConnect(json_obj);
                 break;
             }
             case APPLY_SHARE_DISCONNECT: {
-                // 被控制方收到共享连接申请
+                // 被控制方收到共享断开连接申请
                 OutData data;
                 data.type = APPLY_SHARE_DISCONNECT;
                 _outgo_chan << data;
@@ -654,7 +619,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
             }
             case SHARE_STOP:
             {
-                // 被控制方收到控制方的开始共享
+                // 被控制方收到控制方的共享停止
                 OutData data;
                 data.type = SHARE_STOP;
                 _outgo_chan << data;

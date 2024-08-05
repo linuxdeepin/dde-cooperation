@@ -175,8 +175,9 @@ void SortFilterWorker::updateDevice(QList<DeviceInfoPointer> &list, const Device
 {
     // 更新
     int index = indexOf(list, info);
-    if (info->connectStatus() == DeviceInfo::Unknown) {
-        // 设备属性发生改变时，连接状态为Unknown
+    auto cstatus = info->connectStatus();
+    if (cstatus != DeviceInfo::Connected) {
+        // 设备属性发生改变时，连接状态为Unknown|Connectable
         // 若设备为非离线状态，则保持状态不变
         auto status = list[index]->connectStatus();
         info->setConnectStatus(status == DeviceInfo::Offline ? DeviceInfo::Connectable : status);

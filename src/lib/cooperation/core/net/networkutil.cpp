@@ -15,6 +15,8 @@
 #include "helper/sharehelper.h"
 #include "utils/cooperationutil.h"
 
+#include "compatwrapper.h"
+
 #include <QJsonDocument>
 #include <QDebug>
 #include <QDir>
@@ -41,7 +43,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             ApplyMessage req, res;
             req.from_json(json_value);
             res.flag = DO_DONE;
-
+            WLOG << "msg_cb: " << json_value;
             // response my device info.
             res.nick = q->deviceInfoStr().toStdString();
             *res_msg = res.as_json().serialize();
@@ -59,11 +61,12 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             res.flag = DO_WAIT;
             *res_msg = res.as_json().serialize();
             confirmTargetAddress = QString::fromStdString(req.host);
-            storageFolder = QString::fromStdString(req.nick + "(" + req.host + ")");
+
             q->metaObject()->invokeMethod(TransferHelper::instance(),
                                           "notifyTransferRequest",
                                           Qt::QueuedConnection,
-                                          Q_ARG(QString, QString(req.nick.c_str())));
+                                          Q_ARG(QString, QString(req.nick.c_str())),
+                                          Q_ARG(QString, QString(req.host.c_str())));
         }
             return true;
         case APPLY_TRANS_RESULT: {
@@ -187,42 +190,67 @@ void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, qui
 
 void NetworkUtilPrivate::handleAsyncRpcResult(int32_t type, const QString response)
 {
-    // handle failed result
-    if (response.isEmpty()) {
-        WLOG << "FAIL to RPC: " << type;
+    picojson::value json_value;
+    bool success = false;
+    if (!response.isEmpty()) {
+        std::string err = picojson::parse(json_value, response.toStdString());
+        success = err.empty();
+    }
 
-        if (APPLY_SHARE == type) {
+    switch(type) {
+    case APPLY_LOGIN: {
+        DLOG << "Login return: " << response.toStdString();
+        if (success) {
+            LoginMessage login;
+            login.from_json(json_value);
+
+            QString ip = login.name.c_str();
+            bool logined = !login.auth.empty();
+            sessionManager->updateLoginStatus(ip, logined);
+            // ApplyMessage reply;
+            // reply.from_json(json_value);
+            // next combi request
+            q->doNextCombiRequest(ip);
+        } else {
+            // try connect with old protocol
+            q->compatLogin(response);
+        }
+        break;
+    }
+    case APPLY_INFO: {
+        if (success) {
+            WLOG << "async callback: " << json_value;
+            ApplyMessage reply;
+            reply.from_json(json_value);
+            // update this device info to discovery list
+            q->metaObject()->invokeMethod(DiscoverController::instance(),
+                                          "addSearchDeivce",
+                                          Qt::QueuedConnection,
+                                          Q_ARG(QString, QString(reply.nick.c_str())));
+        }
+        break;
+    }
+    case APPLY_TRANS: {
+        q->metaObject()->invokeMethod(TransferHelper::instance(),
+                                      "onConnectStatusChanged",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, success ? 1 : 0),
+                                      Q_ARG(QString, confirmTargetAddress),
+                                      Q_ARG(bool, true));
+        break;
+    }
+    case APPLY_SHARE: {
+        if (!success) {
             q->metaObject()->invokeMethod(ShareHelper::instance(),
                                           "handleConnectResult",
                                           Qt::QueuedConnection,
                                           Q_ARG(int, SHARE_CONNECT_UNABLE));
-        } else if (APPLY_TRANS == type) {
-            q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
-                                          Qt::QueuedConnection,
-                                          Q_ARG(int, 0),
-                                          Q_ARG(QString, confirmTargetAddress),
-                                          Q_ARG(bool, true));
         }
-
-        return;
+        break;
     }
-
-    // handle success result
-    if (APPLY_INFO == type) {
-        picojson::value json_value;
-        std::string err = picojson::parse(json_value, response.toStdString());
-        if (!err.empty()) {
-            DLOG << "Failed to parse JSON data: " << err;
-            return;
-        }
-
-        ApplyMessage reply;
-        reply.from_json(json_value);
-        // update this device info to discovery list
-        q->metaObject()->invokeMethod(DiscoverController::instance(),
-                                      "addSearchDeivce",
-                                      Qt::QueuedConnection,
-                                      Q_ARG(QString, QString(reply.nick.c_str())));
+    default:
+        WLOG << "unkown rpc callback type: " << type << " response:" << response.toStdString();
+        break;
     }
 }
 
@@ -230,6 +258,11 @@ NetworkUtil::NetworkUtil(QObject *parent)
     : QObject(parent),
       d(new NetworkUtilPrivate(this))
 {
+    auto wrapper = CompatWrapper::instance();
+    auto discover = DiscoverController::instance();
+    connect(wrapper, &CompatWrapper::compatConnectResult, this, &NetworkUtil::handleCompatConnectResult, Qt::QueuedConnection);
+    connect(discover, &DiscoverController::registCompatAppInfo, this, &NetworkUtil::handleCompatRegister, Qt::QueuedConnection);
+    connect(discover, &DiscoverController::startDiscoveryDevice, this, &NetworkUtil::handleCompatDiscover, Qt::QueuedConnection);
 }
 
 NetworkUtil::~NetworkUtil()
@@ -242,10 +275,91 @@ NetworkUtil *NetworkUtil::instance()
     return &ins;
 }
 
+void NetworkUtil::handleCompatConnectResult(int result, const QString &ip)
+{
+    auto type = _nextCombi.first;
+    if (type == APPLY_TRANS) {
+        metaObject()->invokeMethod(TransferHelper::instance(),
+                                   "onConnectStatusChanged",
+                                   Qt::QueuedConnection,
+                                   Q_ARG(int, result),
+                                   Q_ARG(QString, ip),
+                                   Q_ARG(bool, true));
+    } else if (type == APPLY_SHARE) {
+        if (result <= 0) {
+            metaObject()->invokeMethod(ShareHelper::instance(),
+                                       "handleConnectResult",
+                                       Qt::QueuedConnection,
+                                       Q_ARG(int, SHARE_CONNECT_UNABLE));
+        }
+    }
+
+    if (result > 0) {
+        // login success, do next request.
+        doNextCombiRequest(ip, true);
+    } else {
+        //clearup the pending request if failed.
+        _nextCombi.first = 0;
+        _nextCombi.second = "";
+    }
+}
+
+void NetworkUtil::handleCompatRegister(bool reg, const QString &infoJson)
+{
+    auto ipc = CompatWrapper::instance()->ipcInterface();
+    if (reg) {
+        ipc->call("registerDiscovery", Q_ARG(bool, false), Q_ARG(QString, ipc::CooperRegisterName), Q_ARG(QString, infoJson));
+    } else {
+        ipc->call("registerDiscovery", Q_ARG(bool, true), Q_ARG(QString, ipc::CooperRegisterName), Q_ARG(QString, ""));
+    }
+}
+
+void NetworkUtil::handleCompatDiscover()
+{
+    auto ipc = CompatWrapper::instance()->ipcInterface();
+    QString nodesJson;
+    ipc->call("getDiscovery", Q_RETURN_ARG(QString, nodesJson));
+
+    // DLOG << "discovery return:" << nodesJson.toStdString();
+    if (!nodesJson.isEmpty()) {
+        picojson::value json_value;
+        std::string err = picojson::parse(json_value, nodesJson.toStdString());
+        if (!err.empty()) {
+            WLOG << "Incorrect node list format: " << nodesJson.toStdString();
+            return;
+        }
+        ipc::NodeList nodeList;
+        nodeList.from_json(json_value);
+        // update this device info to discovery list
+        for (const auto &peerInfo : nodeList.peers) {
+            for (const auto &appInfo : peerInfo.apps) {
+                if (appInfo.appname != ipc::CooperRegisterName)
+                    continue;
+                metaObject()->invokeMethod(DiscoverController::instance(),
+                                           "compatAddDiscoveryDeivce",
+                                           Qt::QueuedConnection,
+                                           Q_ARG(QString, QString(appInfo.json.c_str())),
+                                           Q_ARG(QString, QString(peerInfo.os.ipv4.c_str())),
+                                           Q_ARG(QString, QString(peerInfo.os.share_connect_ip.c_str())),
+                                           Q_ARG(bool, true));
+            }
+        }
+    }
+}
+
 void NetworkUtil::updateStorageConfig(const QString &value)
 {
     d->sessionManager->setStorageRoot(value);
     d->storageRoot = value;
+
+    //update the storage dir for old protocol
+    auto ipc = CompatWrapper::instance()->ipcInterface();
+    ipc->call("saveAppConfig", Q_ARG(QString, ipc::CooperRegisterName), Q_ARG(QString, "storagedir"), Q_ARG(QString, value));
+}
+
+void NetworkUtil::setStorageFolder(const QString &folder)
+{
+    d->storageFolder = folder;
 }
 
 QString NetworkUtil::getStorageFolder() const
@@ -258,14 +372,17 @@ QString NetworkUtil::getConfirmTargetAddress() const
     return d->confirmTargetAddress;
 }
 
-void NetworkUtil::searchDevice(const QString &ip)
+void NetworkUtil::trySearchDevice(const QString &ip)
 {
     DLOG << "searching " << ip.toStdString();
 
+    _nextCombi.first = APPLY_INFO;
+    _nextCombi.second = ip;
     // session connect and then send rpc request
     bool logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
-    if (logind) {
-        reqTargetInfo(ip);
+    if (!logind) {
+        DLOG << "try apply search FAILED, try compat!";
+        compatLogin(ip);
     }
 }
 
@@ -275,34 +392,87 @@ void NetworkUtil::pingTarget(const QString &ip)
     d->sessionManager->sessionPing(ip, d->servePort);
 }
 
-void NetworkUtil::reqTargetInfo(const QString &ip)
+void NetworkUtil::reqTargetInfo(const QString &ip, bool compat)
 {
-    // send info apply, and sync handle
-    ApplyMessage msg;
-    msg.flag = ASK_QUIET;
-    msg.host = ip.toStdString();
-    msg.nick = deviceInfoStr().toStdString();
-    QString jsonMsg = msg.as_json().serialize().c_str();
-    d->sessionManager->sendRpcRequest(ip, APPLY_INFO, jsonMsg);
-    // handle callback result in handleAsyncRpcResult
+    if (compat) {
+        // try again with old protocol by daemon
+        auto ipc = CompatWrapper::instance()->ipcInterface();
+        ipc->call("doAsyncSearch", Q_ARG(QString, ip), Q_ARG(bool, false));
+    } else {
+        // send info apply, and sync handle
+        ApplyMessage msg;
+        msg.flag = ASK_QUIET;
+        msg.host = ip.toStdString();
+        msg.nick = deviceInfoStr().toStdString();
+        QString jsonMsg = msg.as_json().serialize().c_str();
+        d->sessionManager->sendRpcRequest(ip, APPLY_INFO, jsonMsg);
+        // handle callback result in handleAsyncRpcResult
+    }
 }
 
-void NetworkUtil::sendTransApply(const QString &ip)
+void NetworkUtil::compatLogin(const QString &ip)
 {
+    auto appName = qAppName();
+    // try connect with old protocol by daemon
+    auto ipc = CompatWrapper::instance()->ipcInterface();
+    ipc->call("doTryConnect", Q_ARG(QString, appName), Q_ARG(QString, ipc::CooperRegisterName),
+              Q_ARG(QString, ip), Q_ARG(QString, ""));
+}
+
+void NetworkUtil::doNextCombiRequest(const QString &ip, bool compat)
+{
+    auto type = _nextCombi.first;
+    auto comip = _nextCombi.second;
+    if (type <= 0)
+        return;
+
+    switch(type) {
+
+    case APPLY_INFO: {
+        reqTargetInfo(comip, compat);
+        break;
+    }
+    case APPLY_TRANS: {
+        sendTransApply(comip, compat);
+        break;
+    }
+    case APPLY_SHARE: {
+        sendShareApply(comip, compat);
+        break;
+    }
+    default:
+        WLOG << "unkown next combi type: " << type;
+        break;
+    }
+    //reset
+    _nextCombi.first = 0;
+    _nextCombi.second = "";
+}
+
+void NetworkUtil::tryTransApply(const QString &ip)
+{
+    _nextCombi.first = APPLY_TRANS;
+    _nextCombi.second = ip;
+
     // session connect and then send rpc request
     bool logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
+    if (!logind) {
+        DLOG << "try apply trans FAILED, try compat!";
+        compatLogin(ip);
+    }
+}
 
-    metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
-                               Qt::QueuedConnection,
-                               Q_ARG(int, logind ? 1 : 0),
-                               Q_ARG(QString, ip),
-                               Q_ARG(bool, true));
-
-    if (logind) {
+void NetworkUtil::sendTransApply(const QString &ip, bool compat)
+{
+    auto deviceName = CooperationUtil::deviceInfo().value(AppSettings::DeviceNameKey).toString();
+    if (compat) {
+        auto appName = qAppName();
+        // try again with old protocol by daemon
+        auto ipc = CompatWrapper::instance()->ipcInterface();
+        ipc->call("doApplyTransfer", Q_ARG(QString, appName), Q_ARG(QString, ipc::CooperRegisterName), Q_ARG(QString, deviceName));
+    } else {
         // update the target address
         d->confirmTargetAddress = ip;
-
-        auto deviceName = CooperationUtil::deviceInfo().value(AppSettings::DeviceNameKey).toString();
 
         // send transfer apply, and async handle in RPC recv
         ApplyMessage msg;
@@ -314,106 +484,149 @@ void NetworkUtil::sendTransApply(const QString &ip)
     }
 }
 
-void NetworkUtil::sendShareEvents(const QString &ip, const QString &selfprint)
+void NetworkUtil::tryShareApply(const QString &ip, const QString &selfprint)
 {
+    _nextCombi.first = APPLY_SHARE;
+    _nextCombi.second = ip;
+
+    _selfFingerPrint = selfprint;
+
     bool logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
     if (!logind) {
-        WLOG << "fail to login: " << ip.toStdString() << " pls try again.";
-        metaObject()->invokeMethod(ShareHelper::instance(),
-                                   "handleConnectResult",
-                                   Qt::QueuedConnection,
-                                   Q_ARG(int, SHARE_CONNECT_UNABLE));
-        return;
+        DLOG << "try apply share FAILED, try compat!";
+        compatLogin(ip);
     }
+}
 
-    // update the target address
-    d->confirmTargetAddress = ip;
-
+void NetworkUtil::sendShareApply(const QString &ip, bool compat)
+{
     DeviceInfoPointer selfinfo = DiscoverController::selfInfo();
-    // session connect and then send rpc request
-    ApplyMessage msg;
-    msg.flag = ASK_NEEDCONFIRM;
-    msg.nick = selfinfo->deviceName().toStdString();
-    msg.host = CooperationUtil::localIPAddress().toStdString();
-    msg.fingerprint = selfprint.toStdString(); // send self fingerprint
-    QString jsonMsg = msg.as_json().serialize().c_str();
-    d->sessionManager->sendRpcRequest(ip, APPLY_SHARE, jsonMsg);
+    if (compat) {
+        QStringList dataInfo({ selfinfo->deviceName(),
+                              selfinfo->ipAddress() });
+        QString data = dataInfo.join(',');
+        auto appName = qAppName();
+        // try again with old protocol by daemon
+        auto ipc = CompatWrapper::instance()->ipcInterface();
+        ipc->call("doApplyShare", Q_ARG(QString, appName), Q_ARG(QString, appName), Q_ARG(QString, ip), Q_ARG(QString, data));
+    } else {
+        // update the target address
+        d->confirmTargetAddress = ip;
+
+               // session connect and then send rpc request
+        ApplyMessage msg;
+        msg.flag = ASK_NEEDCONFIRM;
+        msg.nick = selfinfo->deviceName().toStdString();
+        msg.host = CooperationUtil::localIPAddress().toStdString();
+        msg.fingerprint = _selfFingerPrint.toStdString(); // send self fingerprint
+        QString jsonMsg = msg.as_json().serialize().c_str();
+        d->sessionManager->sendRpcRequest(ip, APPLY_SHARE, jsonMsg);
+    }
 }
 
 void NetworkUtil::sendDisconnectShareEvents(const QString &ip)
 {
-    bool logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
-    if (!logind) {
-        WLOG << "fail to login: " << ip.toStdString() << " pls try again.";
-        return;
-    }
-
     DeviceInfoPointer selfinfo = DiscoverController::selfInfo();
-    // session connect and then send rpc request
-    ApplyMessage msg;
-    msg.flag = ASK_NEEDCONFIRM;
-    msg.nick = selfinfo->deviceName().toStdString();
-    msg.host = CooperationUtil::localIPAddress().toStdString();
-    QString jsonMsg = msg.as_json().serialize().c_str();
-    d->sessionManager->sendRpcRequest(ip, APPLY_SHARE_STOP, jsonMsg);
+    if (ip == d->confirmTargetAddress) {
+        // session connect and then send rpc request
+        ApplyMessage msg;
+        msg.flag = ASK_NEEDCONFIRM;
+        msg.nick = selfinfo->deviceName().toStdString();
+        msg.host = CooperationUtil::localIPAddress().toStdString();
+        QString jsonMsg = msg.as_json().serialize().c_str();
+        d->sessionManager->sendRpcRequest(ip, APPLY_SHARE_STOP, jsonMsg);
+    } else {
+        // try again with old protocol by daemon
+        auto ipc = CompatWrapper::instance()->ipcInterface();
+        ipc->call("doDisconnectShare", Q_ARG(QString, qAppName()), Q_ARG(QString, qAppName()), Q_ARG(QString, selfinfo->deviceName()));
+    }
 }
 
 void NetworkUtil::replyTransRequest(bool agree)
 {
-    // send transfer reply, skip result
-    ApplyMessage msg;
-    msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
-    msg.host = CooperationUtil::localIPAddress().toStdString();
-    QString jsonMsg = msg.as_json().serialize().c_str();
+    if (!d->confirmTargetAddress.isEmpty()) {
+        // send transfer reply, skip result
+        ApplyMessage msg;
+        msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
+        msg.host = CooperationUtil::localIPAddress().toStdString();
+        QString jsonMsg = msg.as_json().serialize().c_str();
 
-    // _confirmTargetAddress
-    d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_TRANS_RESULT, jsonMsg);
+        // _confirmTargetAddress
+        d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_TRANS_RESULT, jsonMsg);
 
-    d->sessionManager->updateSaveFolder(d->storageFolder);
+        d->sessionManager->updateSaveFolder(d->storageFolder);
+    } else {
+        auto deviceName = CooperationUtil::deviceInfo().value(AppSettings::DeviceNameKey).toString();
+        // try again with old protocol by daemon
+        auto ipc = CompatWrapper::instance()->ipcInterface();
+        ipc->call("doReplyTransfer", Q_ARG(QString, ipc::CooperRegisterName), Q_ARG(QString, ipc::CooperRegisterName),
+                  Q_ARG(QString, deviceName), Q_ARG(bool, agree));
+    }
 }
 
 void NetworkUtil::replyShareRequest(bool agree, const QString &selfprint)
 {
-    // send transfer reply, skip result
-    ApplyMessage msg;
-    msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
-    msg.host = CooperationUtil::localIPAddress().toStdString();
-    msg.fingerprint = selfprint.toStdString(); // send self fingerprint
-    QString jsonMsg = msg.as_json().serialize().c_str();
+    if (!d->confirmTargetAddress.isEmpty()) {
+        // send transfer reply, skip result
+        ApplyMessage msg;
+        msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
+        msg.host = CooperationUtil::localIPAddress().toStdString();
+        msg.fingerprint = selfprint.toStdString(); // send self fingerprint
+        QString jsonMsg = msg.as_json().serialize().c_str();
 
-    // _confirmTargetAddress
-    d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_SHARE_RESULT, jsonMsg);
+        // _confirmTargetAddress
+        d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_SHARE_RESULT, jsonMsg);
+    } else {
+        int reply = agree ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE;
+        // try again with old protocol by daemon
+        auto ipc = CompatWrapper::instance()->ipcInterface();
+        ipc->call("doReplyShare", Q_ARG(QString, qAppName()), Q_ARG(QString, qAppName()), Q_ARG(int, reply));
+    }
 }
 
 void NetworkUtil::cancelApply(const QString &type)
 {
-    if (d->confirmTargetAddress.isEmpty()) {
-        WLOG << "No confirm address!!!";
-        return;
+    if (!d->confirmTargetAddress.isEmpty()) {
+        ApplyMessage msg;
+        msg.nick = type.toStdString();
+        QString jsonMsg = msg.as_json().serialize().c_str();
+        d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_CANCELED, jsonMsg);
+    } else {
+        // FIXME: cancel trans apply
+        // try again with old protocol by daemon
+        auto ipc = CompatWrapper::instance()->ipcInterface();
+        ipc->call("doCancelShareApply", Q_ARG(QString, qAppName()));
     }
-    ApplyMessage msg;
-    msg.nick = type.toStdString();
-    QString jsonMsg = msg.as_json().serialize().c_str();
-    d->sessionManager->sendRpcRequest(d->confirmTargetAddress, APPLY_CANCELED, jsonMsg);
 }
 
 void NetworkUtil::cancelTrans()
 {
-    if (d->confirmTargetAddress.isEmpty()) {
-        WLOG << "No confirm address!!!";
-        return;
+    if (!d->confirmTargetAddress.isEmpty()) {
+        d->sessionManager->cancelSyncFile(d->confirmTargetAddress);
+    } else {
+        // TRANS_CANCEL 1008; coopertion jobid: 1000
+        bool res =  false;
+        // try again with old protocol by daemon
+        auto ipc = CompatWrapper::instance()->ipcInterface();
+        ipc->call("doOperateJob", Q_RETURN_ARG(bool, res), Q_ARG(int, 1008), Q_ARG(int, 1000), Q_ARG(QString, qAppName()));
     }
-    d->sessionManager->cancelSyncFile(d->confirmTargetAddress);
 }
 
 void NetworkUtil::doSendFiles(const QStringList &fileList)
 {
-    if (d->confirmTargetAddress.isEmpty()) {
-        WLOG << "No confirm address!!!";
-        return;
+    if (!d->confirmTargetAddress.isEmpty()) {
+        int ranport = deepin_cross::CommonUitls::getAvailablePort();
+        d->sessionManager->sendFiles(d->confirmTargetAddress, ranport, fileList);
+    } else {
+        auto session = CompatWrapper::instance()->session();
+        auto deviceName = CooperationUtil::deviceInfo().value(AppSettings::DeviceNameKey).toString();
+        QString saveDir = (deviceName + "(%1)").arg(CooperationUtil::localIPAddress());
+        // try again with old protocol by daemon
+        auto ipc = CompatWrapper::instance()->ipcInterface();
+        ipc->call("doTransferFile", Q_ARG(QString, session), Q_ARG(QString, ipc::CooperRegisterName),
+                  Q_ARG(int, 1000), Q_ARG(QStringList, fileList), Q_ARG(bool, true),
+                  Q_ARG(QString, saveDir));
     }
-    int ranport = deepin_cross::CommonUitls::getAvailablePort();
-    d->sessionManager->sendFiles(d->confirmTargetAddress, ranport, fileList);
 }
 
 QString NetworkUtil::deviceInfoStr()
@@ -425,4 +638,11 @@ QString NetworkUtil::deviceInfoStr()
     QString jsonString = jsonDocument.toJson(QJsonDocument::Compact);
 
     return jsonString;
+}
+
+
+void NetworkUtil::compatSendStartShare(const QString &screenName)
+{
+    auto ipc = CompatWrapper::instance()->ipcInterface();
+    ipc->call("doStartShare", Q_ARG(QString, qAppName()), Q_ARG(QString, screenName));
 }

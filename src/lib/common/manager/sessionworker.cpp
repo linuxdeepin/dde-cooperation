@@ -7,6 +7,7 @@
 #include "sessionmanager.h"
 
 #include "common/log.h"
+#include "common/commonutils.h"
 
 #include <QHostInfo>
 #include <QStandardPaths>
@@ -80,7 +81,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
             emit onRejectConnection();
         }
 
-        res.name = QHostInfo::localHostName().toStdString();
+        res.name = deepin_cross::CommonUitls::getFirstIp();
         response->json_msg = res.as_json().serialize();
         return;
     }

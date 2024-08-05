@@ -18,6 +18,8 @@ class DiscoverController : public QObject
 public:
     static DiscoverController *instance();
 
+    void init();
+
     void publish();
     void unpublish();
     void updatePublish();
@@ -39,6 +41,8 @@ Q_SIGNALS:
     void startDiscoveryDevice();
     void discoveryFinished(bool hasFound);
 
+    void registCompatAppInfo(bool reg, const QString &infoJson);
+
 private Q_SLOTS:
     void addService(QZeroConfService zcs);
     void removeService(QZeroConfService zcs);
@@ -48,6 +52,7 @@ private Q_SLOTS:
     void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 
     void addSearchDeivce(const QString &info);
+    void compatAddDiscoveryDeivce(const QString &info, const QString &ip, const QString &sharedip, bool online);
 
 private:
     explicit DiscoverController(QObject *parent = nullptr);

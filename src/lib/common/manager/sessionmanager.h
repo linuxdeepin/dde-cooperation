@@ -25,6 +25,7 @@ public:
     void updatePin(QString code);
     void setStorageRoot(const QString &root);
     void updateSaveFolder(const QString &folder);
+    void updateLoginStatus(QString &ip, bool logined);
 
     void sessionListen(int port);
     bool sessionPing(QString ip, int port);

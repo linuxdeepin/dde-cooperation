@@ -11,7 +11,7 @@
 //#define _LOG_FNLEN deepin_cross::path_base_len(__FILE__)
 #define _LOG_FILELINE _LOG_FNAME,__LINE__
 
-#define _LOG_STREAM(lv)  deepin_cross::Logger::GetInstance().stream(_LOG_FILELINE, lv)
+#define _LOG_STREAM(lv)  deepin_cross::Logger::GetInstance().log(_LOG_FILELINE, lv)
 
 
 #define DLOG  if (deepin_cross::g_logLevel <= deepin_cross::debug)   _LOG_STREAM(deepin_cross::debug)

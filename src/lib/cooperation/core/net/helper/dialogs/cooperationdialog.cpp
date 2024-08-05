@@ -117,8 +117,8 @@ void ProgressWidget::init()
     msgLabel = new CooperationLabel(this);
 
     CooperationGuiHelper::setAutoFont(msgLabel, 12, QFont::Normal);
-    QColor color(0, 0, 0, 180);
-    CooperationGuiHelper::setFontColor(msgLabel, color);
+    // QColor color(0, 0, 0, 180);
+    // CooperationGuiHelper::setFontColor(msgLabel, color);
 
     progressBar = new QProgressBar(this);
     progressBar->setRange(0, 100);
