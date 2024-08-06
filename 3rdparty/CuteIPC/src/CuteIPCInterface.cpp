@@ -246,13 +246,13 @@ void CuteIPCInterfacePrivate::handleLocalSignalRequest(QObject* localObject, con
 
 void CuteIPCInterfacePrivate::_q_removeSignalHandlersOfObject(QObject* destroyedObject)
 {
-  QMutableHashIterator<MethodData, CuteIPCSignalHandler*> i(m_localSignalHandlers);
-  while (i.hasNext())
-  {
-    i.next();
-    MethodData data = i.key();
+  auto it = m_localSignalHandlers.begin();
+  while (it != m_localSignalHandlers.end()) {
+    MethodData data = it.key();
     if (data.first == destroyedObject)
-      i.remove();
+      it = m_localSignalHandlers.erase(it);
+    else
+      ++it;
   }
 }
 

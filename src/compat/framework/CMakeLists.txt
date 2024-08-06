@@ -11,8 +11,8 @@ file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
     "./*.cpp"
 )
 
-find_package(Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt5 COMPONENTS Concurrent REQUIRED)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Concurrent)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Concurrent)
 
 add_compile_definitions(${BIN_NAME} EXPORT_LIB)
 
@@ -23,8 +23,8 @@ add_library(${BIN_NAME} SHARED
 
 target_link_libraries(
     ${BIN_NAME}
-    Qt5::Core
-    Qt5::Concurrent
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Concurrent
 )
 
 target_include_directories(${BIN_NAME} PUBLIC ${COMPAT_ROOT_DIR}/include)

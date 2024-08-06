@@ -6,14 +6,14 @@ Build-Depends:
  pkg-config,
  cmake,
  qtchooser,
- qt6-base-dev | qtbase5-dev,
- qt6-tools-dev-tools | qttools5-dev-tools,
- qt6-tools-dev | qttools5-dev,
- qt6-svg-dev | libqt5svg5-dev,
- libdtk6widget-dev | libdtkwidget-dev,
- libdtk6gui-dev | libdtkgui-dev,
- libdtk6core-dev | libdtkcore-dev,
- libdtk6declarative-dev | libdtkcore5-bin,
+ qtbase5-dev,
+ qttools5-dev-tools,
+ qttools5-dev,
+ libqt5svg5-dev,
+ libdtkwidget-dev,
+ libdtkgui-dev,
+ libdtkcore-dev,
+ libdtkcore5-bin,
  libssl-dev,
  libzip-dev,
  libcurl4-openssl-dev,
@@ -27,7 +27,8 @@ Build-Depends:
  libice-dev,
  libsm-dev,
  uuid-dev,
- libdisplayjack-dev | hello
+ libdisplayjack-dev | hello,
+ libsystemd-dev,
 Standards-Version: 4.1.3
 Section: utils
 Homepage: http://www.deepin.org
