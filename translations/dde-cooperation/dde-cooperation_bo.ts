@@ -17,7 +17,7 @@
 <context>
     <name>cooperation_core::BottomLabel</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="339"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="348"/>
         <source>Local IP: %1</source>
         <translation>རང་འཕྲུལ་འཁོར་IP %1</translation>
     </message>
@@ -452,32 +452,37 @@
 <context>
     <name>cooperation_core::NoResultTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="172"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="174"/>
+        <source>1. Enable cross-end collaborative applications. Applications on the deepin can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="180"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation>1. མཉམ་སྒྲུབ་ཉེར་སྤྱོད་སྤྱད་ནས་UOSཡི་ཉེར་སྤྱོད་ཉེར་སྤྱོད་ཚོང་ར་ནས་ཕབ་ལེན་བྱ་ཆོག། Windowsམཐུད་སྣེ་ཕབ་ལེན་ས་གནས་</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="194"/>
         <source>2. On the same LAN as the device</source>
         <translation>2. སྒྲིག་ཆས་འདི་དང་དྲ་རྒྱ་གཅིག་ཡིན་དགོས།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="190"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
         <translation>3. ཡིག་ཆ་དོ་དམ་ཆས།-སྒྲིག་བཀོད།-ཡིག་ཆ་སྐུར་བ།-གཤམ་གྱི་སྤྱོད་མཁན་གྱིས་ང་ལ་ཡིག་ཆ་བསྐུར་ཆོག-“དྲ་རྒྱ་གཅིག་པའི་སྤྱོད་མཁན་ཡོངས་ཀྱིས་སྤྱད་ཆོག”</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="192"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="201"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation>3.   སྒྲིག་བཀོད། - རྨང་གཞིའི་སྒྲིག་བཀོད། - མཐོང་རུང་བ། - “དྲ་རྒྱ་གཅིག་པའི་སྤྱོད་མཁན་ཡོངས་ཀྱིས་སྤྱད་ཆོག”</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="198"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="207"/>
         <source>4. Try entering the target device IP in the top search box</source>
         <translation>4. སྟེང་གི་འཚོལ་སྒྲོམ་ནང་དམིགས་འབེན་ཡིག་ཆའི་IPའབྲི་བའི་ཚོད་ལྟ་བྱེད་པ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="202"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="211"/>
         <source>Unable to find collaborative device？</source>
         <translation>མཐུན་སྦྱོར་སྒྲིག་ཆས་མ་རྙེད་དམ།</translation>
     </message>
@@ -485,7 +490,7 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="261"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="270"/>
         <source>No device found</source>
         <translation>སྒྲིག་ཆས་གང་ཡང་ཪྙེད་མ་སོང་།</translation>
     </message>

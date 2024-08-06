@@ -15,6 +15,21 @@ if (NOT WIN32)
 
     #安全加固
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type")
+
+    find_package(DtkCMake REQUIRED)
+    #if no debug, can't out in code define key '__FUNCTION__' and so on
+    add_definitions(-DQT_MESSAGELOGCONTEXT)
+endif()
+
+#Indentify the version
+if (${DEEPIN_OS_VERSION} MATCHES "23")
+    add_definitions(-DCOMPILE_ON_V23)
+    set(COMPLIE_ON_V23 TRUE)
+    message("COMPILE ON v23")
+else()
+    add_definitions(-DCOMPILE_ON_V20)
+    set(COMPLIE_ON_V20 TRUE)
+    message("COMPILE ON v20")
 endif()
 
 if(MINGW)
