@@ -29,7 +29,12 @@ void MainWindowPrivate::initWindow()
 
 void MainWindowPrivate::initTitleBar()
 {
+    bool isOnlyTransfer = qApp->property("onlyTransfer").toBool();
     auto titleBar = q->titlebar();
+    if (!isOnlyTransfer) {
+        titleBar->setIcon(QIcon::fromTheme("dde-cooperation"));
+    }
+    
     DIconButton *refreshBtn = new DIconButton(q);
     refreshBtn->setIcon(QIcon::fromTheme("refresh"));
     refreshBtn->setIconSize(QSize(16, 16));
@@ -37,7 +42,7 @@ void MainWindowPrivate::initTitleBar()
     titleBar->addWidget(refreshBtn, Qt::AlignLeft);
     connect(refreshBtn, &DIconButton::clicked, q, [] { MainController::instance()->start(); });
 
-    if (qApp->property("onlyTransfer").toBool()) {
+    if (isOnlyTransfer) {
         titleBar->setMenuVisible(false);
         titleBar->addWidget(new QLabel(tr("Selection of delivery device")), Qt::AlignHCenter);
         auto margins = titleBar->contentsMargins();
@@ -47,7 +52,6 @@ void MainWindowPrivate::initTitleBar()
         return;
     }
 
-    titleBar->setIcon(QIcon::fromTheme("dde-cooperation"));
     auto menu = titleBar->menu();
     QAction *action = new QAction(tr("Settings"), menu);
     action->setData(MenuAction::kSettings);
