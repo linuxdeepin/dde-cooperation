@@ -72,6 +72,6 @@ int main(int argc, char *argv[])
     int ret = app.exec();
 
     core->stop();
-    app.closeServer();
+
     return ret;
 }

@@ -20,6 +20,7 @@
 #include "protocol/version.h"
 
 #include <QPointer>
+#include <QCoreApplication>
 
 HandleIpcService::HandleIpcService(QObject *parent)
     : CuteIPCService(parent)
@@ -301,6 +302,11 @@ void HandleIpcService::doAsyncSearch(const QString &targetip, const bool remove)
     DiscoveryJob::instance()->searchDeviceByIp(targetip, remove);
 }
 
+void HandleIpcService::appExit()
+{
+    DLOG << "client ask Exit!";
+    qApp->exit();
+}
 
 void HandleIpcService::handleSessionSignal(const QString& signalName, int type, const QString& message)
 {

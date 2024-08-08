@@ -115,6 +115,7 @@ bool CooperaionCorePlugin::start()
 
 void CooperaionCorePlugin::stop()
 {
+    NetworkUtil::instance()->stop();
 }
 
 void CooperaionCorePlugin::handleForwardCommand(const QStringList &forward)

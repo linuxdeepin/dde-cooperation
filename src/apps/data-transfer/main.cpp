@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {
-        //qInfo() << "single application is already running.";
+        qCritical() << app.applicationName() << "is already running.";
         return 0;
     }
 
@@ -48,11 +48,6 @@ int main(int argc, char *argv[])
     int ret = app.exec();
 
     core->stop();
-    app.closeServer();
 
-#if defined(_WIN32) || defined(_WIN64)
-    // FIXME: windows上使用socket，即使线程资源全释放，进程也无法正常退出
-    abort();
-#endif
     return ret;
 }

@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QIcon>
 #include <QDebug>
+#include <QProcess>
 
 #include <signal.h>
 
@@ -23,10 +24,10 @@ extern "C"
 }
 #endif
 
-#define BASEPROTO_PORT 51598
-
 using namespace deepin_cross;
 using namespace cooperation_core;
+
+const char *compatProc = "cooperation-daemon";
 
 static void appExitHandler(int sig)
 {
@@ -54,15 +55,29 @@ int main(int argc, char *argv[])
                                                                "between different devices."));
 #endif
 
-    bool inUse = BaseUtils::portInUse(BASEPROTO_PORT);
-    if (inUse) {
-        qCritical() << "exit, network port (" << BASEPROTO_PORT << ") is busing........";
-        return 1;
+    //Dconfig: should check the compatibility mode
+    bool compatDaemonRun = app.checkProcess(compatProc);
+    if (compatDaemonRun) {
+        qInfo() << "compat backend launched!";
+    } else {
+        QString procPath = QString(COMPAT_DAEMON_DIR);
+        if (procPath.isEmpty()) {
+            procPath = QCoreApplication::applicationDirPath();
+        }
+        procPath.append("/").append(compatProc);
+        qWarning() << procPath;
+        QFile procexe = QFile(procPath);
+        if (procexe.exists()) {
+            // run compat daemon backend
+            QProcess::startDetached(procPath, QStringList());
+        } else {
+            qWarning() << "compat backend is not exist!";
+        }
     }
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {
-        qInfo() << "single application is already running.";
+        qCritical() << app.applicationName() << "is already running.";
         return 0;
     }
 
@@ -90,7 +105,6 @@ int main(int argc, char *argv[])
     int ret = app.exec();
 
     core->stop();
-    app.closeServer();
 
     return ret;
 }

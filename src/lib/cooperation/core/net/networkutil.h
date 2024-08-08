@@ -50,6 +50,7 @@ public:
 
     //compat share
     void compatSendStartShare(const QString &screenName);
+    void stop();
 
 public slots:
     void handleCompatConnectResult(int result, const QString &ip);

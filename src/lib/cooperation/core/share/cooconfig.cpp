@@ -74,8 +74,12 @@ int CooConfig::logLevel() const
 
 QString CooConfig::barrierProgramDir() const
 {
-    // barrier binaries should be in the same dir.
-    return QCoreApplication::applicationDirPath() + "/";
+    QString libexec = QString(EXECUTABLE_PROG_DIR);
+    if (libexec.isEmpty()) {
+        // barrier binaries should be in the same dir.
+        return QCoreApplication::applicationDirPath() + "/";
+    }
+    return libexec + "/";
 }
 
 QString CooConfig::logLevelText() const

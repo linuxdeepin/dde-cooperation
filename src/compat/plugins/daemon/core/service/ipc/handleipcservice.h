@@ -49,6 +49,7 @@ public:
 
     Q_INVOKABLE void doAsyncSearch(const QString &targetip, const bool remove);
 
+    Q_INVOKABLE void appExit();
 
 signals:
     void connectClosed(const quint16 port);

@@ -1,5 +1,8 @@
 ﻿set(PROJ_NAME "cooperation-daemon")
 
+# 设置目标输出目录
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
 configure_file(
     "../config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
@@ -8,12 +11,15 @@ configure_file(
 FILE(GLOB CPP_SRC
     *.h
     *.cpp
-    ${CMAKE_SOURCE_DIR}/src/base/*.h
-    ${CMAKE_SOURCE_DIR}/src/base/*.cpp
+    ${CMAKE_SOURCE_DIR}/src/singleton/*.h
+    ${CMAKE_SOURCE_DIR}/src/singleton/*.cpp
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+if (CMAKE_SYSTEM MATCHES "Linux")
+    find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
+endif()
 
 if (WIN32)
     # 文件描述信息
@@ -49,5 +55,15 @@ target_link_libraries(${PROJ_NAME}
   deepin_cross::framework
 )
 
-install(TARGETS ${PROJ_NAME} DESTINATION bin)
+if (CMAKE_SYSTEM MATCHES "Linux")
+    target_link_libraries(${PROJ_NAME}
+        PRIVATE
+        Dtk${DTK_VERSION_MAJOR}::Widget
+    )
+endif()
 
+if (DEFINED EXECUTABLE_INSTALL_DIR)
+    install (TARGETS ${PROJ_NAME} DESTINATION ${EXECUTABLE_INSTALL_DIR})
+else()
+    install (TARGETS ${PROJ_NAME} DESTINATION bin)
+endif()
