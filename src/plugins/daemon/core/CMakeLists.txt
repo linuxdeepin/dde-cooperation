@@ -7,8 +7,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.h"
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.cpp"
-    "${CMAKE_SOURCE_DIR}/src/ipc/backendservice.h"
-    "${CMAKE_SOURCE_DIR}/src/ipc/backendservice.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -49,6 +47,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Network
     uniapi
     co
+    CuteIPC
 )
 
 #System libraries

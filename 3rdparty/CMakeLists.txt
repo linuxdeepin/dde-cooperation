@@ -26,6 +26,8 @@ add_subdirectory(coost)
 
 add_subdirectory(zrpc)
 
+add_subdirectory(CuteIPC)
+
 
 if (CMAKE_SYSTEM MATCHES "Windows")
     if (MINGW)

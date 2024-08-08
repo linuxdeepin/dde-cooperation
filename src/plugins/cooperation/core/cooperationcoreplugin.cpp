@@ -53,7 +53,6 @@ void CooperaionCorePlugin::initialize()
 bool CooperaionCorePlugin::start()
 {
     CooperationUtil::instance()->mainWindow()->show();
-    MainController::instance()->regist();
     TransferHelper::instance()->regist();
     CooperationManager::instance()->regist();
     MainController::instance()->start();
@@ -72,6 +71,10 @@ bool CooperaionCorePlugin::start()
 #else
     DiscoverController::instance();
 #endif
+    // 延时，确保服务已启动
+    QTimer::singleShot(500, this, [] {
+        MainController::instance()->regist();
+    });
 
     return true;
 }

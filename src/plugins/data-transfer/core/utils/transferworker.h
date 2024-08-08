@@ -4,10 +4,10 @@
 #include <QObject>
 #include <QMap>
 #include <QSet>
-#include <co/rpc.h>
+#include <co/json.h>
 #include <co/co.h>
 
-class FrontendService;
+
 class TransferHandle : public QObject
 {
     Q_OBJECT
@@ -32,36 +32,32 @@ public:
     void disconnectRemote();
 
 public slots:
-    void saveSession(fastring sessionid);
     void handleConnectStatus(int result, QString msg);
     void handleTransJobStatus(int id, int result, QString path);
     void handleFileTransStatus(QString statusstr);
     void handleMiscMessage(QString jsonmsg);
 
-private:
-    void localIPCStart();
+    void backendMessageSlot(int type, const QString& msg);
 
-    FrontendService *_frontendIpcService = nullptr;
+private:
+
     bool _backendOK = false;
-    fastring _sessionid = "";
     // <jobid, jobpath>
     QMap<int, QString> _job_maps;
     int _request_job_id;
 
     //record transfering files ans calculate the progress rate
     file_stats_s _file_stats;
-
-    bool _this_destruct = false;
-    rpc::Server *_rpcServer = nullptr;
-
-    int ipcPing = 3;
 };
 
+class CuteIPCInterface;
 class TransferWoker
 {
 
 public:
     ~TransferWoker();
+
+    CuteIPCInterface *ipc();
 
     bool pingBackend(const std::string &who);
     bool cancelTransferJob(int jobid);
@@ -70,10 +66,8 @@ public:
     void sendFiles(int reqid, QStringList filepaths);
     void sendMessage(json::Json &message);
     void tryConnect(const std::string &ip, const std::string &password);
-    fastring getSessionId();
+    void setSessionId(QString &seesionid);
     void disconnectRemote();
-
-    void call(const json::Json &req, json::Json &res);
 
     static TransferWoker *instance()
     {
@@ -84,8 +78,8 @@ public:
 private:
     TransferWoker();
 
-    std::shared_ptr<rpc::Client> coClient { nullptr };
-    fastring _session_id = "";
+    QString _session_id = "";
+    CuteIPCInterface *ipcInterface { nullptr };
 };
 
 #endif

@@ -109,11 +109,11 @@ inline void signal_safe_sleep(int ms) {
   #endif
 }
 
-// time for logs: "0723 17:00:00.123"
+// time for logs: "2024-07-30 15:09:04.193"
 class LogTime {
   public:
     enum {
-        t_len = 24, // length of time
+        t_len = 23, // length of time
         t_min = 14,  // position of minute
         t_sec = t_min + 3,
         t_ms = t_sec + 3,
@@ -1095,13 +1095,16 @@ inline fastream& log_stream() {
     return s ? *s : *(s = co::_make_static<fastream>(256));
 }
 
+inline const char *levels[] = {"[Debug  ]", "[Info   ]", "[Warning]", "[Error  ]"};
+
 LevelLogSaver::LevelLogSaver(const char* fname, unsigned fnlen, unsigned line, int level)
     : _s(log_stream()) {
     _lv = level;
     _n = _s.size();
-    _s.resize(_n + (LogTime::t_len + 1)); // make room for: "I0523 17:00:00.123"
-    const char *levels[] = {"Debug", "Info", "Warning", "Error"};
-    (_s << " ["<< levels[level] << "  ] " << "[" << co::thread_id() << ' ').append(fname, fnlen) << ':' << line << "] ";
+    _s.resize(_n + (LogTime::t_len + 1), ' '); // make room for: "I0523 17:00:00.123"
+
+    _s << levels[level];
+    (_s << " [" << co::thread_id() << ' ').append(fname, fnlen) << ':' << line << "] ";
 }
 
 LevelLogSaver::~LevelLogSaver() {

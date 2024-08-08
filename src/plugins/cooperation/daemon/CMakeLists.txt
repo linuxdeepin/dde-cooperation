@@ -6,8 +6,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # 插件相关的固定内容，或者公共头文件源文件，添加到这里。
 FILE(GLOB PLUGIN_FILES
-    "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.h"
-    "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_SOURCE_DIR}/src/configs/settings/*.h"
@@ -52,6 +50,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Network
     ${DtkCore_LIBRARIES}
     co
+    CuteIPC
 )
 
 #install library file

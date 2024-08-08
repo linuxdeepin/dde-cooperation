@@ -15,6 +15,8 @@
 #include "utils/config.h"
 #include "service/comshare.h"
 
+#include "ipc/bridge.h"
+
 #include <QPointer>
 #include <QElapsedTimer>
 #include <QStorageInfo>
@@ -69,9 +71,12 @@ bool TransferJob::initRpc(fastring target, uint16 port)
             SendStatus st;
             st.type = res.errorType;
             st.msg = res.as_json().str();
-            co::Json req = st.as_json();
-            req.add_member("api", "Frontend.notifySendStatus");
-            SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+
+            // notifySendStatus
+            auto targetAppname = QString(_app_name.c_str());
+            QString jsonMsg = st.as_json().str().c_str();
+            SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_SEND_STATUS, jsonMsg);
+
             this->_init_success = false;
             return false;
         }
@@ -441,8 +446,8 @@ void TransferJob::handleTransStatus(int status, const FileInfo &info)
     QString fileinfo(filejson.str().c_str());
 
     // FileInfo > FileStatus in handle func
-    DLOG << "handleTransStatus  =  " << appname.toStdString() << " status = " << status
-         << " file info ===== " << filejson;
+    // DLOG << "handleTransStatus  =  " << appname.toStdString() << " status = " << status
+    //      << " file info ===== " << filejson;
     emit notifyFileTransStatus(appname, status, fileinfo);
 }
 
@@ -711,13 +716,18 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
     }
 
     if (res.errorType < INVOKE_OK && !_offlined) {
+        WLOG << "sendToRemote invoke fail";
+
         SendStatus st;
         st.type = res.errorType;
         st.msg = res.as_json().str();
-        co::Json req = st.as_json();
-        req.add_member("api", "Frontend.notifySendStatus");
-        ELOG << "sendToRemote invoke fail";
-        SendIpcService::instance()->handleSendToAllClient(req.str().c_str());
+
+        // notifySendStatus
+        auto targetAppname = QString(_app_name.c_str());
+        QString jsonMsg = st.as_json().str().c_str();
+        SendIpcService::instance()->handleSendToClient(targetAppname, FRONT_SEND_STATUS, jsonMsg);
+
+
         offlineCancel(_tar_ip.c_str());
         return false;
     }

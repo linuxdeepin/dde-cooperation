@@ -10,11 +10,12 @@
 
 #include "common/constant.h"
 #include "common/commonutils.h"
-#include "ipc/frontendservice.h"
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/chan.h"
 #include "ipc/proto/backend.h"
+
+#include <CuteIPCInterface.h>
 
 #include <QDesktopServices>
 #include <QApplication>
@@ -86,13 +87,6 @@ TransferDialog *TransferHelperPrivate::transDialog()
 void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
 {
     // LOG << "send files: " << fileList.toStdList();
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
-
-    co::vector<fastring> fileVector;
-    for (QString path : fileList) {
-        fileVector.push_back(path.toStdString());
-    }
 
     auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
     QString deviceName = value.isValid()
@@ -100,95 +94,51 @@ void TransferHelperPrivate::handleSendFiles(const QStringList &fileList)
             : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
 
     QString saveDir = (deviceName + "(%1)").arg(CooperationUtil::localIPAddress());
-    ipc::TransFilesParam transParam;
-    transParam.session = CooperationUtil::instance()->sessionId().toStdString();
-    transParam.targetSession = CooperRegisterName;   // 发送给后端插件
-    transParam.id = TransferJobStartId;
-    transParam.paths = fileVector;
-    transParam.sub = true;
-    transParam.savedir = saveDir.toStdString();
+    QString session = CooperationUtil::instance()->sessionId();
 
-    req = transParam.as_json();
-    req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
-
-    rpcClient.call(req, res);
-    rpcClient.close();
+    auto ipc = CooperationUtil::instance()->ipcInterface();
+    ipc->call("doTransferFile", Q_ARG(QString, session), Q_ARG(QString, CooperRegisterName),
+              Q_ARG(int, TransferJobStartId), Q_ARG(QStringList, fileList), Q_ARG(bool, true),
+              Q_ARG(QString, saveDir));
 }
 
 void TransferHelperPrivate::handleApplyTransFiles(int type)
 {
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json res;
     // 获取设备名称
     auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
     QString deviceName = value.isValid()
             ? value.toString()
             : QStandardPaths::writableLocation(QStandardPaths::HomeLocation).section(QDir::separator(), -1);
 
-    ApplyTransFiles transInfo;
-    transInfo.appname = qApp->applicationName().toStdString();
-    transInfo.type = type;
-    transInfo.tarAppname = CooperRegisterName;   // 发送给后端插件
-    transInfo.machineName = deviceName.toStdString();
-
-    co::Json req = transInfo.as_json();
-    req.add_member("api", "Backend.applyTransFiles");
-    rpcClient.call(req, res);
-    rpcClient.close();
+    auto ipc = CooperationUtil::instance()->ipcInterface();
+    ipc->call("doApplyTransfer", Q_ARG(QString, qApp->applicationName()), Q_ARG(QString, CooperRegisterName),
+              Q_ARG(QString, deviceName), Q_ARG(int, type));
 }
 
 void TransferHelperPrivate::handleTryConnect(const QString &ip)
 {
     LOG << "connect to " << ip.toStdString();
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
-    fastring targetIp(ip.toStdString());
-    fastring pinCode("");
 
-    ipc::ConnectParam conParam;
-    conParam.appName = qApp->applicationName().toStdString();
-    conParam.host = targetIp;
-    conParam.password = pinCode;
-    conParam.targetAppname = CooperRegisterName;   // 发送给后端插件
-
-    req = conParam.as_json();
-    req.add_member("api", "Backend.tryConnect");
-    rpcClient.call(req, res);
-    rpcClient.close();
+    auto ipc = CooperationUtil::instance()->ipcInterface();
+    ipc->call("doTryConnect", Q_ARG(QString, qApp->applicationName()), Q_ARG(QString, CooperRegisterName),
+              Q_ARG(QString, ip), Q_ARG(QString, ""));
 }
 
 void TransferHelperPrivate::handleSearchDevice(const QString &ip)
 {
     LOG << "searching " << ip.toStdString();
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
-    fastring targetIp(ip.toStdString());
 
-    SearchDevice conParam;
-    conParam.app = qApp->applicationName().toStdString();
-    conParam.ip = targetIp;
-
-    req = conParam.as_json();
-    req.add_member("api", "Backend.searchDevice");
-    rpcClient.call(req, res);
-    rpcClient.close();
+    auto ipc = CooperationUtil::instance()->ipcInterface();
+    ipc->call("doAsyncSearch", Q_ARG(QString, ip), Q_ARG(bool, false));
 }
 
 void TransferHelperPrivate::handleCancelTransfer()
 {
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
-
-    ipc::TransJobParam jobParam;
-    jobParam.session = CooperationUtil::instance()->sessionId().toStdString();
-    jobParam.job_id = TransferJobStartId;
-    jobParam.appname = qApp->applicationName().toStdString();
-
-    req = jobParam.as_json();
-    req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
-    rpcClient.call(req, res);
-    rpcClient.close();
-    LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
+    // TRANS_CANCEL 1008
+    bool res =  false;
+    auto ipc = CooperationUtil::instance()->ipcInterface();
+    ipc->call("doOperateJob", Q_RETURN_ARG(bool, res), Q_ARG(int, 1008), Q_ARG(int, TransferJobStartId), Q_ARG(QString, qApp->applicationName()));
+    LOG << "cancelTransferJob result=" << res;
 }
 
 void TransferHelperPrivate::transferResult(bool result, const QString &msg)
