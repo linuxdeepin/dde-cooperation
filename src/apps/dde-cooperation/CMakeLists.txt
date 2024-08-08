@@ -63,6 +63,9 @@ else()
     )
 endif()
 
+# 使用定义的辅助程序执行目录
+target_compile_definitions(${PROJECT_NAME} PRIVATE COMPAT_DAEMON_DIR="${EXECUTABLE_INSTALL_DIR}")
+
 target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(${PROJ_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/lib/cooperation)
 

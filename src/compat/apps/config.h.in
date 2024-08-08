@@ -17,18 +17,6 @@
 #    warning "cmake unseting definition DEEPIN_DAEMON_PLUGIN_DIR"
 #endif
 
-#ifndef DEEPIN_DATA_TRANS_PLUGIN_DIR
-#    define DEEPIN_DATA_TRANS_PLUGIN_DIR "${DEEPIN_DATA_TRANS_PLUGIN_DIR}"
-#else
-#    warning "cmake unseting definition DEEPIN_DATA_TRANS_PLUGIN_DIR"
-#endif
-
-#ifndef DEEPIN_COOPERATION_PLUGIN_DIR
-#    define DEEPIN_COOPERATION_PLUGIN_DIR "${DEEPIN_COOPERATION_PLUGIN_DIR}"
-#else
-#    warning "cmake unseting definition DEEPIN_COOPERATION_PLUGIN_DIR"
-#endif
-
 #ifndef DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR
 #    define DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR "${DDE_COOPERATION_PLUGIN_ROOT_DEBUG_DIR}"
 #else

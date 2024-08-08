@@ -5,8 +5,6 @@ project(daemon-core)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 FILE(GLOB PLUGIN_FILES
-    "${COMPAT_ROOT_DIR}/base/baseutils.h"
-    "${COMPAT_ROOT_DIR}/base/baseutils.cpp"
     "${COMPAT_ROOT_DIR}/common/commonutils.h"
     "${COMPAT_ROOT_DIR}/common/commonutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"

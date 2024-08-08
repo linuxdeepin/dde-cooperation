@@ -86,6 +86,13 @@ if(NOT CMAKE_BUILD_TYPE)
    set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
+# 后台进程安装目录
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(EXECUTABLE_INSTALL_DIR "")
+else()
+  set(EXECUTABLE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/libexec/${PROJECT_NAME}")
+endif()
+
 # Find Qt version
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 # 检查并设置环境变量

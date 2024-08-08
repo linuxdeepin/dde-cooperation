@@ -43,20 +43,21 @@ Description: Development package for deepin cooperation application
 Package: deepin-data-transfer
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: deepin data transfer frontend
+Description: deepin data transfer application
  Deepin Desktop Environment (DDE) - data transfer application.
-
-Package: dde-cooperation-transfer
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Conflicts: dde-cooperation (<< 0.8.0)
-Replaces: QtZeroConf
-Description: deepin file transfer frontend
- Deepin Desktop Environment (DDE) - file transfer application.
 
 Package: dde-cooperation
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-transfer
-Replaces: barrier
-Description: deepin cooperation frontend
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Replaces:
+ QtZeroConf,
+ dde-cooperation-transfer (<< 1.0.0),
+ dde-cooperation-daemon (<< 1.0.0),
+Description: deepin cooperation application
  Deepin Desktop Environment (DDE) - cooperation application.
+
+Package: dde-cooperation-transfer
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation (= ${binary:Version})
+Description: deepin file delivery
+ Deepin Desktop Environment (DDE) - file transfer application.

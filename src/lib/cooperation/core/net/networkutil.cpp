@@ -646,3 +646,9 @@ void NetworkUtil::compatSendStartShare(const QString &screenName)
     auto ipc = CompatWrapper::instance()->ipcInterface();
     ipc->call("doStartShare", Q_ARG(QString, qAppName()), Q_ARG(QString, screenName));
 }
+
+void NetworkUtil::stop()
+{
+    auto ipc = CompatWrapper::instance()->ipcInterface();
+    ipc->call("appExit");
+}
