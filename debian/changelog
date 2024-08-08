@@ -1,8 +1,15 @@
+dde-cooperation (0.8.7) unstable; urgency=medium
+
+  * v0.8.7 release.
+  * fix the title icon issue.
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 08 Aug 2024 01:21:52 +0800
+
 dde-cooperation (0.8.6) unstable; urgency=medium
 
   * v0.8.6 release.
 
- -- liujinchang <liujinchang@uniontech.com> Mon, 22 Jul 2024 14:49:58 +0800
+ -- liujinchang <liujinchang@uniontech.com>  Mon, 22 Jul 2024 14:49:58 +0800
 
 dde-cooperation (0.8.5) unstable; urgency=medium
 
@@ -16,49 +23,49 @@ dde-cooperation (0.7.11) unstable; urgency=medium
   * v0.7.11 release version.
   * fix some bug.
 
- -- liujinchang <liujinchang@uniontech.com> Mon, 13 May 14:40:51 2024 +0800
+ -- liujinchang <liujinchang@uniontech.com>  Mon, 13 May 14:40:51 2024 +0800
 
 dde-cooperation (0.7.10) unstable; urgency=medium
 
   * v0.7.10 release version.
   * fix wifi network.
 
- -- liujinchang <liujinchang@uniontech.com> Thu, 18 Apr 15:14:27 2024 +0800
+ -- liujinchang <liujinchang@uniontech.com>  Thu, 18 Apr 15:14:27 2024 +0800
 
 dde-cooperation (0.7.9) unstable; urgency=medium
 
   * v0.7.9 release version.
   * fix some backend issues.
 
- -- liujinchang <liujinchang@uniontech.com> Fri, 12 Apr 15:48:56 2024 +0800
+ -- liujinchang <liujinchang@uniontech.com>  Fri, 12 Apr 15:48:56 2024 +0800
 
 dde-cooperation (0.7.8) unstable; urgency=medium
 
   * v0.7.8 release version.
   * fix some backend issues.
 
- -- liujinchang <liujinchang@uniontech.com> Wed, 3  Apr 16:14:03 2024 +0800
+ -- liujinchang <liujinchang@uniontech.com>  Wed, 3  Apr 16:14:03 2024 +0800
 
 dde-cooperation (0.7.7) unstable; urgency=medium
 
   * v0.7.7 release version.
   * fix some UI issues.
 
- -- liujinchang <liujinchang@uniontech.com> Wed, 27 Mar 16:29:48 2024 +0800
+ -- liujinchang <liujinchang@uniontech.com>  Wed, 27 Mar 16:29:48 2024 +0800
 
 dde-cooperation (0.7.6) unstable; urgency=medium
 
   * v0.7.6 release version.
   * fix some UI issues.
 
- -- liujinchang <liujinchang@uniontech.com> Tue, 19 Mar 14:25:20 2024 +0800
+ -- liujinchang <liujinchang@uniontech.com>  Tue, 19 Mar 14:25:20 2024 +0800
 
 dde-cooperation (0.7.5) unstable; urgency=medium
 
   * v0.7.5 release version.
   * linux backend no longer resident
 
- -- liujinchang <liujinchang@uniontech.com> Thu, 14 Mar 20:57:29 2024 +0800
+ -- liujinchang <liujinchang@uniontech.com>  Thu, 14 Mar 20:57:29 2024 +0800
 
 dde-cooperation (0.7.4) unstable; urgency=medium
 
