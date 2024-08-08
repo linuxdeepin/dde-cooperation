@@ -168,11 +168,20 @@ void NoResultTipWidget::setTitleVisible(bool visible)
 void NoResultTipWidget::initUI()
 {
     CooperationGuiHelper::setAutoFont(this, 12, QFont::Normal);
+
+#ifdef COMPILE_ON_V23
+    QString leadintText =
+            tr("1. Enable cross-end collaborative applications. Applications on the deepin "
+               "can be downloaded from the App Store, and applications on the Windows "
+               "side can be downloaded from: ");
+    QString hyperlink = "https://www.deepin.org/index/assistant";
+#else
     QString leadintText =
             tr("1. Enable cross-end collaborative applications. Applications on the UOS "
                "can be downloaded from the App Store, and applications on the Windows "
                "side can be downloaded from: ");
     QString hyperlink = "https://www.chinauos.com/resource/assistant";
+#endif
 
     QString websiteLinkTemplate =
             "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";

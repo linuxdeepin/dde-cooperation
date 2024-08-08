@@ -17,7 +17,7 @@
 <context>
     <name>cooperation_core::BottomLabel</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="339"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="348"/>
         <source>Local IP: %1</source>
         <translation>IP ئادرېس: %1</translation>
     </message>
@@ -452,32 +452,37 @@
 <context>
     <name>cooperation_core::NoResultTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="172"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="174"/>
+        <source>1. Enable cross-end collaborative applications. Applications on the deepin can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="180"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation>1. تېرمىنال ھالقىپ ھەمكارلىشىش دېتالىنى ئېچىڭ، UOS تېرمىنالىدىكى ئەپنى ئەپ بازىرىدىن چۈشۈرگىلى بولىدۇ، Windows تېرمىنالىنى چۈشۈرۈش ئادرېسى: </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="194"/>
         <source>2. On the same LAN as the device</source>
         <translation>2. بۇ ئۈسكۈنە بىلەن ئوخشاش دائىرىلىك تورغا ئۇلاڭ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="190"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
         <translation>3. ھۆججەت باشقۇرغۇچ-تەڭشەك-ھۆججەت يوللاش-تۆۋەندىكى ئىشلەتكۈچىلەرنىڭ ماڭا ھۆججەت يوللىشىغا يول قويۇش-«ئوخشاش دائىرىلىك توردىكى بارلىق كىشىلەر»</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="192"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="201"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation>3. تەڭشەك-ئاساسىي تەڭشەك-بايقىغىلى بولىدىغانلىرى-«ئوخشاش دائىرىلىك توردىكى بارلىق كىشىگە رۇخسەت قىلىش»</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="198"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="207"/>
         <source>4. Try entering the target device IP in the top search box</source>
         <translation>4. ئۈستىدىكى ئىزدەش رامكىسىغا نىشان ئۈسكۈنىنىڭ IP سىنى كىرگۈزۈپ سىناپ بېقىڭ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="202"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="211"/>
         <source>Unable to find collaborative device？</source>
         <translation>ئۈسكۈنىنى تاپالمىدىمۇ؟</translation>
     </message>
@@ -485,7 +490,7 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="261"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="270"/>
         <source>No device found</source>
         <translation>ھېچقانداق ئۈسكۈنە بايقالمىدى</translation>
     </message>
