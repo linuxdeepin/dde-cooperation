@@ -10,9 +10,7 @@
 #include "configs/dconfig/dconfigmanager.h"
 #include "common/constant.h"
 #include "common/commonutils.h"
-#include "discover/discovercontroller.h"
 #include "net/networkutil.h"
-#include "historymanager.h"
 
 #include <QJsonDocument>
 #include <QNetworkInterface>
@@ -73,7 +71,7 @@ void CooperationUtil::registerDeviceOperation(const QVariantMap &map)
 
 void CooperationUtil::setStorageConfig(const QString &value)
 {
-    NetworkUtil::instance()->updateStorageConfig(value);
+    emit storageConfig(value);
 }
 
 QVariantMap CooperationUtil::deviceInfo()
@@ -156,16 +154,6 @@ void CooperationUtil::initNetworkListener()
     connect(networkMonitorTimer, &QTimer::timeout, this, &CooperationUtil::checkNetworkState);
     networkMonitorTimer->start();
     emit onlineStateChanged(deepin_cross::CommonUitls::getFirstIp().c_str());
-}
-
-void CooperationUtil::initHistory()
-{
-    HistoryManager::instance()->refreshHistory();
-
-    connect(DiscoverController::instance(), &DiscoverController::discoveryFinished, this, [](bool hasFound) {
-        Q_UNUSED(hasFound);
-        HistoryManager::instance()->refreshHistory();
-    });
 }
 
 void CooperationUtil::checkNetworkState()

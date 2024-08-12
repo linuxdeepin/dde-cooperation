@@ -8,7 +8,6 @@
 #include "devicelistwidget.h"
 #include "firsttipwidget.h"
 #include "common/commonutils.h"
-#include "net/networkutil.h"
 
 #include <QMouseEvent>
 #include <QRegularExpression>
@@ -18,8 +17,6 @@
 #include <QFile>
 
 #include <gui/utils/cooperationguihelper.h>
-
-#include <net/networkutil.h>
 
 using namespace cooperation_core;
 
@@ -120,9 +117,7 @@ void WorkspaceWidgetPrivate::onSearchDevice()
         return;
 
     q->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
-    QTimer::singleShot(500, this, [ip] {
-        NetworkUtil::instance()->trySearchDevice(ip);
-    });
+    emit q->search(ip);
 }
 
 void WorkspaceWidgetPrivate::onSortFilterResult(int index, const DeviceInfoPointer info)

@@ -4,6 +4,7 @@
 
 #include "cooperationcoreplugin.h"
 #include "utils/cooperationutil.h"
+#include "utils/historymanager.h"
 #include "discover/discovercontroller.h"
 #include "net/networkutil.h"
 #include "net/helper/transferhelper.h"
@@ -88,9 +89,26 @@ bool CooperaionCorePlugin::start()
         NetworkUtil::instance();
 
         ShareHelper::instance()->registConnectBtn();
+
+        // bind search&refresh click and other status
+        connect(dMain.get(), &MainWindow::searchDevice, NetworkUtil::instance(), &NetworkUtil::trySearchDevice);
+        connect(dMain.get(), &MainWindow::refreshDevices, DiscoverController::instance(), &DiscoverController::startDiscover);
+
+        // bind storage setting
+        connect(CooperationUtil::instance(), &CooperationUtil::storageConfig, NetworkUtil::instance(), &NetworkUtil::updateStorageConfig);
+
+        // bind device change with UI
+        connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, dMain.get(), &MainWindow::onlineStateChanged);
+        connect(DiscoverController::instance(), &DiscoverController::deviceOnline, dMain.get(), &MainWindow::addDevice);
+        connect(DiscoverController::instance(), &DiscoverController::deviceOffline, dMain.get(), &MainWindow::removeDevice);
+        connect(DiscoverController::instance(), &DiscoverController::discoveryFinished, dMain.get(), &MainWindow::onDiscoveryFinished);
+
+        // bridge: update the connected history after discover finish.
+        connect(DiscoverController::instance(), &DiscoverController::discoveryFinished, HistoryManager::instance(), &HistoryManager::refreshHistory);
+        connect(HistoryManager::instance(), &HistoryManager::historyConnected, DiscoverController::instance(), &DiscoverController::updateHistoryDevices);
+
         DiscoverController::instance()->init(); // init zeroconf and regist
 
-        CooperationUtil::instance()->initHistory();
         // start network status listen after all ready
         CooperationUtil::instance()->initNetworkListener();
 

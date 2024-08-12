@@ -4,7 +4,6 @@
 
 #include "../mainwindow.h"
 #include "../mainwindow_p.h"
-#include "discover/discovercontroller.h"
 
 #include <QVBoxLayout>
 #include <QApplication>
@@ -83,7 +82,7 @@ void MainWindowPrivate::initTitleBar()
                               "border-radius: 8px;"
                               "}");
     refreshBtn->setFixedSize(35, 35);
-    connect(refreshBtn, &QToolButton::clicked, q, [] { DiscoverController::instance()->startDiscover(); });
+    connect(refreshBtn, &QToolButton::clicked, q, &MainWindow::onLookingForDevices);
 
     QToolButton *closeButton = new QToolButton(titleBar);
     closeButton->setStyleSheet("QWidget {"

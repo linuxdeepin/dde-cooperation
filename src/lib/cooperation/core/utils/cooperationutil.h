@@ -33,8 +33,6 @@ public:
 
     void initNetworkListener();
 
-    void initHistory();
-
     static QVariantMap deviceInfo();
     static QString localIPAddress();
     static QString closeOption();
@@ -42,6 +40,7 @@ public:
 
 Q_SIGNALS:
     void onlineStateChanged(const QString &validIP);
+    void storageConfig(const QString &value);
 
 private:
     explicit CooperationUtil(QObject *parent = nullptr);

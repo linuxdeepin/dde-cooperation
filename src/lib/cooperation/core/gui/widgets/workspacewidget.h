@@ -40,6 +40,9 @@ public:
     void setFirstStartTip(bool visible);
     void setBottomIp(const QString &ip);
 
+signals:
+    void search(const QString &ip);
+
 protected:
     bool event(QEvent *event) override;
 

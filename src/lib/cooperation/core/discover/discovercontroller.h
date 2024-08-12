@@ -43,6 +43,10 @@ Q_SIGNALS:
 
     void registCompatAppInfo(bool reg, const QString &infoJson);
 
+
+public Q_SLOTS:
+    void updateHistoryDevices(const QMap<QString, QString> &connectMap);
+
 private Q_SLOTS:
     void addService(QZeroConfService zcs);
     void removeService(QZeroConfService zcs);

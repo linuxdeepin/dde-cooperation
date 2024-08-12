@@ -6,7 +6,6 @@
 #include "mainwindow_p.h"
 #include "dialogs/settingdialog.h"
 #include "utils/cooperationutil.h"
-#include "discover/discovercontroller.h"
 
 #include <QScreen>
 #include <QUrl>
@@ -37,12 +36,7 @@ MainWindowPrivate::~MainWindowPrivate()
 
 void MainWindowPrivate::initConnect()
 {
-    connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, q, &MainWindow::onlineStateChanged);
-
-    connect(DiscoverController::instance(), &DiscoverController::startDiscoveryDevice, q, &MainWindow::onLookingForDevices);
-    connect(DiscoverController::instance(), &DiscoverController::deviceOnline, q, &MainWindow::addDevice);
-    connect(DiscoverController::instance(), &DiscoverController::deviceOffline, q, &MainWindow::removeDevice);
-    connect(DiscoverController::instance(), &DiscoverController::discoveryFinished, q, &MainWindow::onDiscoveryFinished);
+    connect(workspaceWidget, &WorkspaceWidget::search, q, &MainWindow::searchDevice);
 }
 
 void MainWindowPrivate::moveCenter()
@@ -138,6 +132,7 @@ void MainWindow::setFirstTipVisible()
 
 void MainWindow::onLookingForDevices()
 {
+    emit refreshDevices();
     d->workspaceWidget->clear();
     d->workspaceWidget->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
 }

@@ -19,12 +19,10 @@ public:
     static NetworkUtil *instance();
 
     // setting
-    void updateStorageConfig(const QString &value);
     void setStorageFolder(const QString &folder);
     QString getStorageFolder() const;
     QString getConfirmTargetAddress() const;
 
-    void trySearchDevice(const QString &ip);
     void pingTarget(const QString &ip);
     void reqTargetInfo(const QString &ip, bool compat);
 
@@ -56,6 +54,9 @@ public slots:
     void handleCompatConnectResult(int result, const QString &ip);
     void handleCompatRegister(bool reg, const QString &infoJson);
     void handleCompatDiscover();
+
+    void trySearchDevice(const QString &ip);
+    void updateStorageConfig(const QString &value);
 
 private:
     explicit NetworkUtil(QObject *parent = nullptr);

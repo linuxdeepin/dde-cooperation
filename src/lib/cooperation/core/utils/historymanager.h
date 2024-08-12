@@ -21,11 +21,14 @@ public:
 
     QMap<QString, QString> getConnectHistory();
     void writeIntoConnectHistory(const QString &ip, const QString &devName);
-    void refreshHistory();
+
+public Q_SLOTS:
+    void refreshHistory(bool found);
 
 Q_SIGNALS:
     void transHistoryUpdated();
     void connectHistoryUpdated();
+    void historyConnected(const QMap<QString, QString> &infoMap);
 
 private:
     explicit HistoryManager(QObject *parent = nullptr);

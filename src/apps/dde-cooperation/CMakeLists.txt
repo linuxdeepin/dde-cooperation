@@ -95,6 +95,8 @@ if (CMAKE_SYSTEM MATCHES "Linux")
         PRIVATE
         Dtk${DTK_VERSION_MAJOR}::Widget
     )
+    include(install_dconfig)
+    INSTALL_DCONFIG("org.deepin.dde.cooperation.json")
 endif()
 
 install(TARGETS ${PROJ_NAME} DESTINATION bin)

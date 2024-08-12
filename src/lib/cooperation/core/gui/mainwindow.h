@@ -32,6 +32,10 @@ public:
 
     void minimizedAPP();
 
+signals:
+    void refreshDevices();
+    void searchDevice(const QString &ip);
+
 public Q_SLOTS:
     void setFirstTipVisible();
     void onlineStateChanged(const QString &validIP);

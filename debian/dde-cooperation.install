@@ -5,6 +5,9 @@ usr/libexec/dde-cooperation/cooperation-daemon
 usr/lib/*/libcooperation-core.so*
 usr/lib/*/libQtZeroConf.so*
 usr/lib/*/libCuteIPC.so*
+usr/lib/*/libdde-cooperation-framework.so*
+usr/lib/*/libco.so*
+usr/lib/*/libzrpc.so*
 usr/lib/*/dde-cooperation/plugins/daemon/libdaemon-core.so
 usr/share/dde-cooperation/translations/*.qm
 usr/share/icons/hicolor/scalable/apps/dde-cooperation.svg

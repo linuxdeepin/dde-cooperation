@@ -264,6 +264,23 @@ void DiscoverController::removeService(QZeroConfService zcs)
     Q_EMIT deviceOffline(devInfo->ipAddress());
 }
 
+void DiscoverController::updateHistoryDevices(const QMap<QString, QString> &connectMap)
+{
+    QList<DeviceInfoPointer> offlineDevList;
+    auto iter = connectMap.begin();
+    for (; iter != connectMap.end(); ++iter) {
+        if (findDeviceByIP(iter.key()))
+            continue;
+
+        DeviceInfoPointer info(new DeviceInfo(iter.key(), iter.value()));
+        info->setConnectStatus(DeviceInfo::Offline);
+        offlineDevList << info;
+    }
+
+    if (!offlineDevList.isEmpty())
+        Q_EMIT deviceOnline(offlineDevList);
+}
+
 DiscoverController *DiscoverController::instance()
 {
     static DiscoverController ins;
