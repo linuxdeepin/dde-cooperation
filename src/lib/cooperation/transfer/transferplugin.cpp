@@ -8,6 +8,7 @@
 #include "configs/settings/configmanager.h"
 #include "gui/mainwindow.h"
 #include "helper/transferhelper.h"
+#include "utils/cooperationutil.h"
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
@@ -50,10 +51,13 @@ bool TransferPlugin::start()
     connect(dMain.get(), &MainWindow::searchDevice, TransferHelper::instance(), &TransferHelper::search);
     connect(dMain.get(), &MainWindow::refreshDevices, TransferHelper::instance(), &TransferHelper::refresh);
 
-    // connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, dMain.get(), &MainWindow::onlineStateChanged);
+    connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, dMain.get(), &MainWindow::onlineStateChanged);
     connect(TransferHelper::instance(), &TransferHelper::onlineDevices, dMain.get(), &MainWindow::addDevice);
     connect(TransferHelper::instance(), &TransferHelper::offlineDevice, dMain.get(), &MainWindow::removeDevice);
     connect(TransferHelper::instance(), &TransferHelper::finishDiscovery, dMain.get(), &MainWindow::onDiscoveryFinished);
+
+    // start network status listen after all ready
+    CooperationUtil::instance()->initNetworkListener();
 
     dMain->show();
 

@@ -36,7 +36,7 @@ MainWindowPrivate::~MainWindowPrivate()
 
 void MainWindowPrivate::initConnect()
 {
-    connect(workspaceWidget, &WorkspaceWidget::search, q, &MainWindow::searchDevice);
+    connect(workspaceWidget, &WorkspaceWidget::search, q, &MainWindow::onFindDevice);
 }
 
 void MainWindowPrivate::moveCenter()
@@ -132,21 +132,33 @@ void MainWindow::setFirstTipVisible()
 
 void MainWindow::onLookingForDevices()
 {
+    _userAction = true;
     emit refreshDevices();
     d->workspaceWidget->clear();
     d->workspaceWidget->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
 }
 
+void MainWindow::onFindDevice(const QString &ip)
+{
+    _userAction = true;
+    emit searchDevice(ip);
+}
+
 void MainWindow::onDiscoveryFinished(bool hasFound)
 {
-    if (!hasFound)
+    if (!hasFound && _userAction) {
         d->workspaceWidget->switchWidget(WorkspaceWidget::kNoResultWidget);
+    }
+
+    _userAction = false;
 }
 
 void MainWindow::addDevice(const QList<DeviceInfoPointer> &infoList)
 {
     d->workspaceWidget->switchWidget(WorkspaceWidget::kDeviceListWidget);
     d->workspaceWidget->addDeviceInfos(infoList);
+
+    _userAction = false;
 }
 
 void MainWindow::removeDevice(const QString &ip)

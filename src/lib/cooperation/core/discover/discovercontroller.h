@@ -10,7 +10,11 @@
 #include <QObject>
 #include "qzeroconf.h"
 
+typedef QMap<QString, QString> StringMap;
+Q_DECLARE_METATYPE(StringMap)
+
 namespace cooperation_core {
+
 class DiscoverControllerPrivate;
 class DiscoverController : public QObject
 {
@@ -56,7 +60,8 @@ private Q_SLOTS:
     void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 
     void addSearchDeivce(const QString &info);
-    void compatAddDiscoveryDeivce(const QString &info, const QString &ip, const QString &sharedip, bool online);
+    void compatAddDeivces(StringMap infoMap);
+    void compatRemoveDeivce(const QString &ip);
 
 private:
     explicit DiscoverController(QObject *parent = nullptr);

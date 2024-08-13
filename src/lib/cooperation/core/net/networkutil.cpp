@@ -157,10 +157,10 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
     DLOG << " connect status: " << result << " " << reason.toStdString();
     if (result == 113 || result == 110) {
         // host unreachable or timeout
-        metaObject()->invokeMethod(DiscoverController::instance(),
-                                   "addSearchDeivce",
-                                   Qt::QueuedConnection,
-                                   Q_ARG(QString, ""));
+        q->metaObject()->invokeMethod(DiscoverController::instance(),
+                                      "addSearchDeivce",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(QString, ""));
         return;
     }
     if (result == -2) {
@@ -292,6 +292,13 @@ void NetworkUtil::handleCompatConnectResult(int result, const QString &ip)
                                        Qt::QueuedConnection,
                                        Q_ARG(int, SHARE_CONNECT_UNABLE));
         }
+    } else if (type == APPLY_INFO) {
+        if (result <= 0) {
+            metaObject()->invokeMethod(DiscoverController::instance(),
+                                       "addSearchDeivce",
+                                       Qt::QueuedConnection,
+                                       Q_ARG(QString, ""));
+        }
     }
 
     if (result > 0) {
@@ -330,19 +337,28 @@ void NetworkUtil::handleCompatDiscover()
         }
         ipc::NodeList nodeList;
         nodeList.from_json(json_value);
-        // update this device info to discovery list
+
+        // typedef QMap<QString, QString> StringMap;
+        StringMap infoMap;
         for (const auto &peerInfo : nodeList.peers) {
+            auto ip = QString::fromStdString(peerInfo.os.ipv4);
+            auto sharedip = QString::fromStdString(peerInfo.os.share_connect_ip);
             for (const auto &appInfo : peerInfo.apps) {
                 if (appInfo.appname != ipc::CooperRegisterName)
                     continue;
-                metaObject()->invokeMethod(DiscoverController::instance(),
-                                           "compatAddDiscoveryDeivce",
-                                           Qt::QueuedConnection,
-                                           Q_ARG(QString, QString(appInfo.json.c_str())),
-                                           Q_ARG(QString, QString(peerInfo.os.ipv4.c_str())),
-                                           Q_ARG(QString, QString(peerInfo.os.share_connect_ip.c_str())),
-                                           Q_ARG(bool, true));
+
+                auto info = QString::fromStdString(appInfo.json);
+                auto combinedIP = ip + ", " + sharedip;
+                infoMap.insert(info, combinedIP);
             }
+        }
+
+        if (!infoMap.empty()) {
+            // update this device info to discovery list
+            metaObject()->invokeMethod(DiscoverController::instance(),
+                                       "compatAddDeivces",
+                                       Qt::QueuedConnection,
+                                       Q_ARG(StringMap, infoMap));
         }
     }
 }

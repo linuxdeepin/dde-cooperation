@@ -58,7 +58,7 @@ QMap<QString, QString> HistoryManager::getTransHistory()
 
 void HistoryManager::refreshHistory(bool found)
 {
-    Q_UNUSED(found);
+    if (!found) return;
     auto connectHistory = getConnectHistory();
 
     if (!connectHistory.isEmpty())

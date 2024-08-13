@@ -44,7 +44,7 @@ CooperationSearchEdit::CooperationSearchEdit(QWidget *parent)
     searchEdit->setFont(font);
     searchEdit->installEventFilter(this);
     connect(searchEdit, &QLineEdit::textChanged, this, &CooperationSearchEdit::textChanged);
-    connect(searchEdit, &QLineEdit::editingFinished, this, &CooperationSearchEdit::editingFinished);
+    connect(searchEdit, &QLineEdit::returnPressed, this, &CooperationSearchEdit::editingFinished);
 
     closeBtn = new QToolButton(this);
     closeBtn->setIcon(QIcon(":/icons/deepin/builtin/icons/tab_close_normal.svg"));

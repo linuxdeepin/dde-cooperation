@@ -69,7 +69,8 @@ void TransferWrapper::onDeviceOffline(const QString &ip)
 
 void TransferWrapper::onFinishedDiscovery(bool hasFound)
 {
-    // Q_EMIT searched();
+    if (!hasFound)
+        Q_EMIT searched("");
 }
 
 

@@ -28,6 +28,7 @@ DiscoverController::DiscoverController(QObject *parent)
     : QObject(parent),
       d(new DiscoverControllerPrivate(this))
 {
+    qRegisterMetaType<StringMap>("StringMap");
 }
 
 DiscoverController::~DiscoverController()
@@ -94,7 +95,7 @@ DeviceInfoPointer DiscoverController::parseDeviceJson(const QString &info)
     QJsonParseError error;
     auto doc = QJsonDocument::fromJson(info.toUtf8(), &error);
     if (error.error != QJsonParseError::NoError) {
-        ELOG << "parse device info error";
+        WLOG << "error parse device info:" << info.toStdString();
         return nullptr;
     }
 
@@ -361,34 +362,56 @@ void DiscoverController::addSearchDeivce(const QString &info)
         Q_EMIT deviceOnline({ d->searchDevice });
 }
 
-void DiscoverController::compatAddDiscoveryDeivce(const QString &info, const QString &ip, const QString &sharedip, bool online)
+void DiscoverController::compatAddDeivces(StringMap infoMap)
 {
-    // DLOG << "compat add: " << info.toStdString() << " ip=" << ip.toStdString();
-    if (online) {
-        if(ip == CooperationUtil::localIPAddress()) {
-            WLOG << "Ignore local host ip: " << ip.toStdString();
-            return;
-        }
+    QList<DeviceInfoPointer> addedList;
+    for (auto it = infoMap.constBegin(); it != infoMap.constEnd(); ++it) {
+        QString info = it.key();
+
         auto devInfo = parseDeviceJson(info);
         if (!devInfo) {
             WLOG << "Can not parse peer: " << info.toStdString();
-            return;
+            continue;
         }
+
+        // 解析 combinedIP
+        QString combinedIP = it.value();
+        QStringList ipList = combinedIP.split(", ");
+        if (ipList.size() != 2) {
+            WLOG << "Invalid combined IP format: " << combinedIP.toStdString();
+            continue;
+        }
+
+        QString ip = ipList[0];
+        QString sharedip = ipList[1];
+
+        if(ip == CooperationUtil::localIPAddress()) {
+            WLOG << "Ignore local host ip: " << ip.toStdString();
+            continue;
+        }
+
         devInfo->setIpAddress(ip);
         if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
             if (sharedip == CooperationUtil::localIPAddress())
                 devInfo->setConnectStatus(DeviceInfo::Connected);
 
             d->onlineDeviceList.append(devInfo);
-            Q_EMIT deviceOnline({ devInfo });
+            addedList.append(devInfo);
         }
-    } else {
-        // 更新设备状态为离线状态
-        auto oldinfo = findDeviceByIP(ip);
-        if (oldinfo)
-            d->onlineDeviceList.removeOne(oldinfo);
-        Q_EMIT deviceOffline(ip);
     }
+
+    if (!addedList.isEmpty()) {
+        Q_EMIT deviceOnline(addedList);
+    }
+}
+
+void DiscoverController::compatRemoveDeivce(const QString &ip)
+{
+    // 更新设备状态为离线状态
+    auto oldinfo = findDeviceByIP(ip);
+    if (oldinfo)
+        d->onlineDeviceList.removeOne(oldinfo);
+    Q_EMIT deviceOffline(ip);
 }
 
 void DiscoverController::startDiscover()

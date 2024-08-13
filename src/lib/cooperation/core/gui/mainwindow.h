@@ -40,6 +40,7 @@ public Q_SLOTS:
     void setFirstTipVisible();
     void onlineStateChanged(const QString &validIP);
     void onLookingForDevices();
+    void onFindDevice(const QString &ip);
     void onDiscoveryFinished(bool hasFound);
     void addDevice(const QList<DeviceInfoPointer> &infoList);
     void removeDevice(const QString &ip);
@@ -50,6 +51,8 @@ protected:
 
 private:
     QScopedPointer<MainWindowPrivate> d;
+
+    bool _userAction { false };
 };
 
 }   // namespace cooperation_core

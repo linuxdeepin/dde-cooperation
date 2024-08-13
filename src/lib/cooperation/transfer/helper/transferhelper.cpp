@@ -157,6 +157,12 @@ bool TransferHelper::buttonClickable(const QString &id, const DeviceInfoPointer 
 
 void TransferHelper::searchResultSlot(const QString& info)
 {
+    if (info.isEmpty()) {
+        // From remove onFinishedDiscovery(false)
+        Q_EMIT finishDiscovery(false);
+        return;
+    }
+
     auto devInfo = parseFromJson(info);
     if (transable(devInfo)) {
         Q_EMIT onlineDevices({ devInfo });
@@ -198,7 +204,7 @@ DeviceInfoPointer TransferHelper::parseFromJson(const QString &info)
     QJsonParseError error;
     auto doc = QJsonDocument::fromJson(info.toUtf8(), &error);
     if (error.error != QJsonParseError::NoError) {
-        ELOG << "parse search info error";
+        WLOG << "parse search info error, info:" << info.toStdString();
         return nullptr;
     }
 

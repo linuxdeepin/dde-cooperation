@@ -72,30 +72,36 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
 
         ipc::NodeInfo nodeInfo;
         nodeInfo.from_json(obj);
-        if (nodeInfo.apps.empty() && !find) {
-            q->metaObject()->invokeMethod(DiscoverController::instance(),
-                                          "compatAddDiscoveryDeivce",
-                                          Qt::QueuedConnection,
-                                          Q_ARG(QString, QString("")),
-                                          Q_ARG(QString, QString(nodeInfo.os.ipv4.c_str())),
-                                          Q_ARG(QString, QString("")),
-                                          Q_ARG(bool, find));
-            break;
-        }
+
+        auto ip = QString::fromStdString(nodeInfo.os.ipv4);
+        auto sharedip = QString::fromStdString(nodeInfo.os.share_connect_ip);
+
+        // typedef QMap<QString, QString> StringMap;
+        StringMap infoMap;
         for (const auto &appInfo : nodeInfo.apps) {
             // DLOG << find << " Append peer : " << appInfo.appname << " " << appInfo.json;
             // 非跨端应用无需处理
             if (appInfo.appname != ipc::CooperRegisterName)
                 continue;
 
+            auto info = QString::fromStdString(appInfo.json);
+            auto combinedIP = ip + ", " + sharedip;
+            infoMap.insert(info, combinedIP);
+        }
+
+        if (infoMap.empty()) {
+            if (!find) {
+                q->metaObject()->invokeMethod(DiscoverController::instance(),
+                                              "compatRemoveDeivce",
+                                              Qt::QueuedConnection,
+                                              Q_ARG(QString, ip));
+            }
+        } else {
             // update this device info to discovery list
             q->metaObject()->invokeMethod(DiscoverController::instance(),
-                                          "compatAddDiscoveryDeivce",
+                                          "compatAddDeivces",
                                           Qt::QueuedConnection,
-                                          Q_ARG(QString, QString(appInfo.json.c_str())),
-                                          Q_ARG(QString, QString(nodeInfo.os.ipv4.c_str())),
-                                          Q_ARG(QString, QString(nodeInfo.os.share_connect_ip.c_str())),
-                                          Q_ARG(bool, find));
+                                          Q_ARG(StringMap, infoMap));
         }
     } break;
     case ipc::FRONT_CONNECT_CB: {
@@ -205,7 +211,6 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         param.from_json(json_obj);
         LOG << " FRONT_SEND_STATUS  : " << json_obj;
         //{"curstatus":1,"msg":"{\"app\":\"dde-cooperation\",\"offline\":true}","status":1,"type":2}
-        //
 
         if (param.status < 0) {
             picojson::value obj;
@@ -222,22 +227,12 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
                 emit q->compatConnectResult(param.status, ip);
             }
         }
-        // if ((param.curstatus == CURRENT_STATUS_TRAN_FILE_SEN || param.curstatus == CURRENT_STATUS_TRAN_FILE_RCV || param.msg.contains("\"protocolType\":1004"))) {
-        //     q->metaObject()->invokeMethod(CooperationManager::instance(),
-        //                                   "handleNetworkDismiss",
-        //                                   Qt::QueuedConnection,
-        //                                   Q_ARG(QString, QString(param.msg.c_str())));
-        // }
         break;
     }
     case ipc::FRONT_SEARCH_IP_DEVICE_RESULT: {
         ipc::SearchDeviceResult param;
         param.from_json(json_obj);
         WLOG << "SearchDeviceResult : " << json_obj;
-        // q->metaObject()->invokeMethod(CooperationManager::instance(),
-        //                               "handleSearchDeviceResult",
-        //                               Qt::QueuedConnection,
-        //                               Q_ARG(bool, param.result));
         QString info = param.result ? msg : "";
         // update this device info to discovery list
         q->metaObject()->invokeMethod(DiscoverController::instance(),
