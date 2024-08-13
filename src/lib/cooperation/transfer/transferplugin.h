@@ -6,32 +6,32 @@
 #define COOPERATIONCOREPLUGIN_H
 
 #include "common/exportglobal.h"
-#include "gui/mainwindow.h"
 
 #include <QObject>
 #include <QSharedPointer>
 
 namespace cooperation_core {
+    class MainWindow;
+}
 
+namespace cooperation_transfer {
 
-class EXPORT_API CooperaionCorePlugin : public QObject
+class EXPORT_API TransferPlugin : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit CooperaionCorePlugin(QObject *parent = nullptr);
-    ~CooperaionCorePlugin();
+    explicit TransferPlugin(QObject *parent = nullptr);
+    ~TransferPlugin();
 
     bool start();
     void stop();
 
 private:
     void initialize();
-    bool isMinilize();
-    QSharedPointer<MainWindow> dMain { nullptr };
-    bool onlyTransfer { false };
+    QSharedPointer<cooperation_core::MainWindow> dMain { nullptr };
 };
 
-}   // namespace cooperation_core
+}   // namespace cooperation_transfer
 
 #endif   // COOPERATIONCOREPLUGIN_H

@@ -27,9 +27,6 @@ CompatWrapperPrivate::CompatWrapperPrivate(CompatWrapper *qq)
     if (backendOk) {
         // bind SIGNAL to SLOT
         ipcInterface->remoteConnect(SIGNAL(cooperationSignal(int, QString)), this, SLOT(ipcCompatSlot(int, QString)));
-        // TestObjectSlot* test = new TestObjectSlot();
-        // interface.remoteSlotConnect(test, SIGNAL(testSignal(QString)), SLOT(foo(QString)));
-        // interface.remoteConnect(SIGNAL(testSignal2(QString,int)), test, SLOT(debugSlot(QString,int)));
 
         QString who = qApp->applicationName();
         ipcInterface->call("bindSignal", Q_RETURN_ARG(QString, sessionId), Q_ARG(QString, who), Q_ARG(QString, "cooperationSignal"));

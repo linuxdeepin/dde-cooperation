@@ -7,6 +7,7 @@
 #include "utils/historymanager.h"
 #include "discover/discovercontroller.h"
 #include "net/networkutil.h"
+#include "net/transferwrapper.h"
 #include "net/helper/transferhelper.h"
 #include "net/helper/sharehelper.h"
 #include "discover/deviceinfo.h"
@@ -112,6 +113,9 @@ bool CooperaionCorePlugin::start()
         // start network status listen after all ready
         CooperationUtil::instance()->initNetworkListener();
 
+        // start local ipc listen for transfer app
+        TransferWrapper::instance()->listen(qAppName());
+
 #ifdef __linux__
         if (CommonUitls::isFirstStart()) {
             DFeatureDisplayDialog *dlg = qApp->featureDisplayDialog();
@@ -134,17 +138,4 @@ bool CooperaionCorePlugin::start()
 void CooperaionCorePlugin::stop()
 {
     NetworkUtil::instance()->stop();
-}
-
-void CooperaionCorePlugin::handleForwardCommand(const QStringList &forward)
-{
-    if (forward.size() >= 3) {
-        auto ip = forward.at(0);
-        auto name = forward.at(1);
-        auto files = forward.mid(2);
-        qWarning() << "---------IP: " << ip;
-        qWarning() << "---------name: " << name;
-        qWarning() << "---------files: " << files;
-        TransferHelper::instance()->sendFiles(ip, name, files);
-    }
 }

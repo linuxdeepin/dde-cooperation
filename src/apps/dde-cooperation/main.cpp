@@ -37,6 +37,8 @@ static void appExitHandler(int sig)
 
 int main(int argc, char *argv[])
 {
+    // qputenv("QT_LOGGING_RULES", "dde-cooperation.debug=true");
+    // qputenv("CUTEIPC_DEBUG", "1");
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -87,14 +89,6 @@ int main(int argc, char *argv[])
 
     CooperaionCorePlugin *core =  new CooperaionCorePlugin();
     core->start();
-
-    QObject::connect(&app, &deepin_cross::SingleApplication::onArrivedCommands, [&] (const QStringList &args) {
-        CommandParser::instance().process(args);
-        auto forward = CommandParser::instance().processCommand("f");
-        if (!forward.isEmpty()) {
-            core->handleForwardCommand(forward);
-        }
-    });
 
     // 安全退出
 #ifndef _WIN32

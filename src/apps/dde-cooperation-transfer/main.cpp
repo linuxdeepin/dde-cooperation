@@ -7,12 +7,12 @@
 #include "base/baseutils.h"
 #include "config.h"
 
-#include "core/cooperationcoreplugin.h"
+#include "transfer/transferplugin.h"
 
 #include <QDir>
 #include <QProcess>
 
-using namespace cooperation_core;
+using namespace cooperation_transfer;
 
 const char *dependProc = "dde-cooperation";
 
@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
     if (deepin_cross::BaseUtils::isWayland()) {
         // do something
     }
-    CooperaionCorePlugin *core =  new CooperaionCorePlugin();
-    core->start();
+    TransferPlugin *plugin =  new TransferPlugin();
+    plugin->start();
 
     QObject::connect(&app, &deepin_cross::SingleApplication::onArrivedCommands, [&] (const QStringList &args) {
         CommandParser::instance().process(args);
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 
     int ret = app.exec();
 
-    core->stop();
+    plugin->stop();
 
     return ret;
 }
