@@ -75,31 +75,51 @@ SET(moc_headers
   src/CuteIPCInterfaceWorker.h
 )
 
+SET(moc_service
+  ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCService.cpp
+)
+
+SET(moc_interface
+  ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCInterface.cpp
+)
+
 IF (QT_VERSION_MAJOR MATCHES 6)
   QT6_WRAP_CPP(sources ${moc_headers})
-  QT6_GENERATE_MOC(include/CuteIPCService.h ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCService.cpp)
-  QT6_GENERATE_MOC(include/CuteIPCInterface.h ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCInterface.cpp)
+  QT6_GENERATE_MOC(include/CuteIPCService.h ${moc_service})
+  QT6_GENERATE_MOC(include/CuteIPCInterface.h ${moc_interface})
 ELSEIF (QT_VERSION_MAJOR MATCHES 5)
   QT5_WRAP_CPP(sources ${moc_headers})
-  QT5_GENERATE_MOC(include/CuteIPCService.h ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCService.cpp)
-  QT5_GENERATE_MOC(include/CuteIPCInterface.h ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCInterface.cpp)
+  QT5_GENERATE_MOC(include/CuteIPCService.h ${moc_service})
+  QT5_GENERATE_MOC(include/CuteIPCInterface.h ${moc_interface})
 ELSE()
   QT4_WRAP_CPP(sources ${moc_headers})
-  QT4_GENERATE_MOC(include/CuteIPCService.h ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCService.cpp)
-  QT4_GENERATE_MOC(include/CuteIPCInterface.h ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCInterface.cpp)
+  QT4_GENERATE_MOC(include/CuteIPCService.h ${moc_service})
+  QT4_GENERATE_MOC(include/CuteIPCInterface.h ${moc_interface})
 ENDIF()
 
-SET_SOURCE_FILES_PROPERTIES(src/CuteIPCService.cpp PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCService.cpp)
-SET_SOURCE_FILES_PROPERTIES(src/CuteIPCInterface.cpp PROPERTIES OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCInterface.cpp)
+SET_SOURCE_FILES_PROPERTIES(src/CuteIPCService.cpp PROPERTIES OBJECT_DEPENDS ${moc_service})
+SET_SOURCE_FILES_PROPERTIES(src/CuteIPCInterface.cpp PROPERTIES OBJECT_DEPENDS ${moc_interface})
 
-SET(lib_target CuteIPC)
-ADD_LIBRARY(${lib_target} SHARED ${sources} ${headers} ${moc_headers})
+add_library(${PROJECT_NAME} ${sources} ${headers} ${moc_headers})
 
-set_target_properties(${lib_target} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 0)
+if(BUILD_SHARED_LIBS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE QT_BUILD_SHARED)
+    set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 0)
+    set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
+endif()
 
-target_link_libraries(${lib_target} PUBLIC Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Gui)
+if(FPIC)
+    set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
-TARGET_INCLUDE_DIRECTORIES(${lib_target} PUBLIC
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Gui
+)
+
+TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
@@ -117,13 +137,13 @@ IF (CUTEIPC_BUILD_TESTS)
   ADD_SUBDIRECTORY(test)
 ENDIF ()
 
-#INSTALL(TARGETS ${lib_target} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+#INSTALL(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 if(WIN32)
-    INSTALL(TARGETS ${lib_target} 
+    INSTALL(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 else()
-    INSTALL(TARGETS ${lib_target} 
+    INSTALL(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 endif()

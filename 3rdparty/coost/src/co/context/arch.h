@@ -137,7 +137,6 @@
     defined(__ppc64__) || \
     defined(__powerpc64__) || \
     defined(__loongarch64) || \
-    defined(__riscv_xlen) || \    
     defined(_M_X64) || \
     defined(_M_AMD64) || \
     defined(_M_IA64) || \

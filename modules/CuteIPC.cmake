@@ -4,7 +4,11 @@ if(NOT TARGET CuteIPC)
   set(CUTEIPC_DIR "${PROJECT_SOURCE_DIR}/3rdparty/CuteIPC")
 
   # set build as share library
-  set(BUILD_SHARED_LIBS ON)
+  if(MSVC)
+    set(BUILD_SHARED_LIBS OFF)
+  else()
+    set(BUILD_SHARED_LIBS ON)
+  endif()
 
   # Module subdirectory
   add_subdirectory("${CUTEIPC_DIR}" CuteIPC)

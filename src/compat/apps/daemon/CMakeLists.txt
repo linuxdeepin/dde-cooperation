@@ -1,8 +1,5 @@
 ﻿set(PROJ_NAME "cooperation-daemon")
 
-# 设置目标输出目录
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-
 configure_file(
     "../config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
@@ -15,10 +12,12 @@ FILE(GLOB CPP_SRC
     ${CMAKE_SOURCE_DIR}/src/singleton/*.cpp
 )
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Network)
 if (CMAKE_SYSTEM MATCHES "Linux")
     find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
+else()
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 endif()
 
 if (WIN32)
@@ -52,6 +51,7 @@ target_include_directories(${PROJ_NAME} PUBLIC ${COMPAT_ROOT_DIR}/apps)
 target_link_libraries(${PROJ_NAME}
   PRIVATE
   Qt${QT_VERSION_MAJOR}::Core
+  Qt${QT_VERSION_MAJOR}::Network
   deepin_cross::framework
 )
 
@@ -59,6 +59,11 @@ if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJ_NAME}
         PRIVATE
         Dtk${DTK_VERSION_MAJOR}::Widget
+    )
+else()
+    target_link_libraries(${PROJ_NAME}
+        PRIVATE
+        Qt${QT_VERSION_MAJOR}::Widgets
     )
 endif()
 

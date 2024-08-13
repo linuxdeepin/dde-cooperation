@@ -1,12 +1,16 @@
 #ifndef CUTEIPCINTERFACE_H
 #define CUTEIPCINTERFACE_H
 
+#include "exportglobal.h"
+
 #if __cplusplus >= 201402L
 #  define DECL_DEPRECATED(x) [[deprecated(x)]]
 #elif defined(__GNUC__)
 #  define DECL_DEPRECATED(x) __attribute__((deprecated(x)))
 #elif defined(_MSC_VER)
-#  define DECL_DEPRECATED(x) __pragma deprecated(x)
+// 暂时移除或注释掉这部分代码
+// #  define DECL_DEPRECATED(x) __pragma deprecated(x)
+#  define DECL_DEPRECATED(x)
 #else
 #  define DECL_DEPRECATED(x)
 #endif
@@ -19,7 +23,7 @@ class QHostAddress;
 class CuteIPCInterfacePrivate;
 
 
-class CuteIPCInterface : public QObject
+class EXPORT_API CuteIPCInterface : public QObject
 {
   Q_OBJECT
 

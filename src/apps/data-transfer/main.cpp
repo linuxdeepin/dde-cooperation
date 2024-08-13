@@ -10,6 +10,7 @@
 #include <QDir>
 #include <QIcon>
 #include <QTranslator>
+#include <QDebug>
 
 using namespace data_transfer_core;
 

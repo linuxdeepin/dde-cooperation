@@ -27,12 +27,23 @@ public:
     void cancelTrans();
     void doSendFiles(const QStringList &fileList);
 
+    // compat login
+    void compatLogin();
+
+public slots:
+    void handleMiscMessage(const QString &msg);
+    // compat old protocol
+    void handleCompatConnectResult(int result, const QString &ip);
+    void compatTransJobStatusChanged(int id, int result, const QString &msg);
+    void compatFileTransStatusChanged(const QString &path, quint64 total, quint64 current, quint64 millisec);
+
 private:
     explicit NetworkUtil(QObject *parent = nullptr);
     ~NetworkUtil();
 
 private:
     QSharedPointer<NetworkUtilPrivate> d { nullptr };
+    QPair<QString, QString> _loginCombi;
 };
 
 #endif   // NETWORKUTIL_H

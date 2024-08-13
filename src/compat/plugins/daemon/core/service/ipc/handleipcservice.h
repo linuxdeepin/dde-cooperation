@@ -43,7 +43,7 @@ public:
     Q_INVOKABLE void doReplyShare(const QString& appname, const QString &targetname, const int reply);
     Q_INVOKABLE void doStartShare(const QString& appname, const QString &screenname);
     Q_INVOKABLE void doStopShare(const QString& appname, const QString &targetname, const int flags);
-    Q_INVOKABLE void doDisShareCallback(const QString& appname);
+    Q_INVOKABLE void doDisconnectCallback(const QString& appname);
     Q_INVOKABLE void doCancelShareApply(const QString& appname);
 
 
@@ -60,7 +60,7 @@ signals:
     void cooperationSignal(int type, const QString& message);
 
     // for dde-transfer app
-    void ddeTransSignal(int type, const QString& message);
+    // void ddeTransSignal(int type, const QString& message);
 
     // for data-transfer app
     void dataTransferSignal(int type, const QString& message);

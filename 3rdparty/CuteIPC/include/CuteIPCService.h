@@ -1,6 +1,8 @@
 #ifndef CUTEIPCSERVICE_H
 #define CUTEIPCSERVICE_H
 
+#include "exportglobal.h"
+
 // Qt
 #include <QObject>
 #include <QtNetwork/QHostAddress>
@@ -9,7 +11,7 @@
 // Local
 class CuteIPCServicePrivate;
 
-class CuteIPCService : public QObject
+class EXPORT_API CuteIPCService : public QObject
 {
   Q_OBJECT
 

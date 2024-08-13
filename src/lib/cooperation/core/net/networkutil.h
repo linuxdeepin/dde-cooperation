@@ -64,7 +64,6 @@ private:
 
 private:
     QSharedPointer<NetworkUtilPrivate> d { nullptr };
-    bool compatLogind { false };
     QString _selfFingerPrint;
     QPair<int, QString> _nextCombi;
 };

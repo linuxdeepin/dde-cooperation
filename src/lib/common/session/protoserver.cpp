@@ -161,7 +161,7 @@ size_t ProtoServer::onSend(const void *data, size_t size)
     }
 
     std::shared_lock<std::shared_mutex> locker(_sessionids_lock);
-    std::cout << "FindSession:" << _session_ids[_active_traget] << std::endl;
+    // std::cout << "FindSession:" << _session_ids[_active_traget] << std::endl;
     auto session = FindSession(_session_ids[_active_traget]);
     if (session) {
         session->SendAsync(data, size);

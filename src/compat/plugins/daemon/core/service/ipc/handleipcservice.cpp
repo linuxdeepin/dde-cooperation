@@ -269,7 +269,7 @@ void HandleIpcService::doStopShare(const QString& appname, const QString &target
     Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
 }
 
-void HandleIpcService::doDisShareCallback(const QString& appname)
+void HandleIpcService::doDisconnectCallback(const QString& appname)
 {
     ShareDisConnect info;
     info.appName = appname.toStdString();

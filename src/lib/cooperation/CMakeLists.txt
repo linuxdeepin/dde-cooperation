@@ -1,2 +1,4 @@
 ﻿add_subdirectory(core)
-add_subdirectory(transfer)
+if (CMAKE_SYSTEM MATCHES "Linux")
+    add_subdirectory(transfer)
+endif()

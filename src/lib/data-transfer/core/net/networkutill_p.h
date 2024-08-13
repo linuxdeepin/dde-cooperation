@@ -35,11 +35,13 @@ public:
 public Q_SLOTS:
     void handleConnectStatus(int result, QString reason);
     void handleTransChanged(int status, const QString &path, quint64 size);
+    void handleAsyncRpcResult(int32_t type, const QString response);
 
 private:
     NetworkUtil *q { nullptr };
     SessionManager *sessionManager { nullptr };
     TransferInfo transferInfo;
+    QString transferingFile;
     QString finishfile;
     QString confirmTargetAddress {};   // remote ip address
     QString storageFolder = {};   //sub folder under storage dir config

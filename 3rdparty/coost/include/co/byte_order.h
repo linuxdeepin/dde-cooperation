@@ -33,6 +33,7 @@ inline unsigned int ntoh32(unsigned int v) {
     return ntohl(v);
 }
 
+#ifndef _MSC_VER
 inline unsigned long long hton64(unsigned long long v) {
     return htonll(v);
 }
@@ -40,6 +41,7 @@ inline unsigned long long hton64(unsigned long long v) {
 inline unsigned long long ntoh64(unsigned long long v) {
     return ntohll(v);
 }
+#endif
 
 #else /* linux, mac */
 #include <stdint.h>
