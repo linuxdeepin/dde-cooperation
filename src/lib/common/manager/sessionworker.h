@@ -19,6 +19,7 @@ class SessionWorker : public QObject, public SessionCallInterface
     Q_OBJECT
 public:
     explicit SessionWorker(QObject *parent = nullptr);
+    ~SessionWorker();
 
     void onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response) override;
 

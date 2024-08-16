@@ -429,3 +429,9 @@ void NetworkUtil::compatFileTransStatusChanged(const QString &path, quint64 tota
 
     emit TransferHelper::instance()->transferContent(tr("Transfering"), path, progressValue, remain_time);
 }
+
+void NetworkUtil::stop()
+{
+    auto ipc = CompatWrapper::instance()->ipcInterface();
+    ipc->call("appExit");
+}

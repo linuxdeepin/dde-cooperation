@@ -29,6 +29,11 @@ SessionWorker::SessionWorker(QObject *parent)
     QObject::connect(this, &SessionWorker::onRejectConnection, this, &SessionWorker::handleRejectConnection, Qt::QueuedConnection);
 }
 
+SessionWorker::~SessionWorker()
+{
+    _asioService->Stop();
+}
+
 void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto::OriginMessage *response)
 {
     // mark this rpc has received.

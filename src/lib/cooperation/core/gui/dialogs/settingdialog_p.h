@@ -37,7 +37,7 @@ public Q_SLOTS:
     void onFindComboBoxValueChanged(int index);
     void onConnectComboBoxValueChanged(int index);
     void onTransferComboBoxValueChanged(int index);
-    void checkNameValid();
+    void onEditFinished();
     void onNameChanged(const QString &text);
     void onDeviceShareButtonClicked(bool clicked);
     void onClipboardShareButtonClicked(bool clicked);
@@ -50,6 +50,7 @@ private:
     void createDeviceShareWidget();
     void createTransferWidget();
     void createClipboardShareWidget();
+    bool checkNameValid();
 
 private:
     SettingDialog *q { nullptr };

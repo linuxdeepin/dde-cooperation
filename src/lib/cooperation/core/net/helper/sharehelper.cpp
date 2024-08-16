@@ -155,17 +155,20 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
     } else if (action == NotifyAcceptAction) {
         NetworkUtil::instance()->replyShareRequest(true, selfFingerPrint);
 
+        auto client = ShareCooperationServiceManager::instance()->client();
         // remove "--disable-crypto" if receive server has fingerprint.
         bool enable = !recvServerPrint.isEmpty();
-        ShareCooperationServiceManager::instance()->client()->setEnableCrypto(enable);
+        client->setEnableCrypto(enable);
         if (enable) {
             // write server's fingerprint into trust server file.
             SslCertConf::ins()->writeTrustPrint(true, recvServerPrint.toStdString());
         }
 
-        ShareCooperationServiceManager::instance()->client()->setClientTargetIp(senderDeviceIp);
-        ShareCooperationServiceManager::instance()->client()->startBarrier();
-
+        bool started = client->setClientTargetIp(senderDeviceIp) && client->startBarrier();
+        if (!started) {
+            WLOG << "Failed to start barrier client! " << senderDeviceIp.toStdString();
+            return;
+        }
         auto info = DiscoverController::instance()->findDeviceByIP(senderDeviceIp);
         if (!info) {
             WLOG << "AcceptAction, but not find: " << senderDeviceIp.toStdString();
@@ -287,7 +290,7 @@ void ShareHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 
 bool ShareHelper::buttonVisible(const QString &id, const DeviceInfoPointer info)
 {
-    if (qApp->property("onlyTransfer").toBool() || !info->cooperationEnable())
+    if (qApp->property("onlyTransfer").toBool() || !info->peripheralShared())
         return false;
 
     if (id == ConnectButtonId && info->connectStatus() == DeviceInfo::ConnectStatus::Connectable)
@@ -347,20 +350,33 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         d->targetDeviceInfo.reset();
     } break;
     case SHARE_CONNECT_COMFIRM: {
+        auto server = ShareCooperationServiceManager::instance()->server();
+
         bool crypto = !clientprint.isEmpty();
         // remove "--disable-crypto" if receive client has fingerprint.
-        ShareCooperationServiceManager::instance()->server()->setEnableCrypto(crypto);
+        server->setEnableCrypto(crypto);
         if (crypto) {
             // write its fingerprint into trust client file.
             SslCertConf::ins()->writeTrustPrint(false, clientprint.toStdString());
-        } else {
-            // the server has started, notify remote client connect
-            // compatStartShare();
-            NetworkUtil::instance()->compatSendStartShare(d->targetDeviceInfo->ipAddress());
         }
 
         //启动 ShareCooperationServic
-        ShareCooperationServiceManager::instance()->server()->restartBarrier();
+        auto started = server->restartBarrier();
+        if (!started) {
+            WLOG << "Failed to start barrier server!";
+            static QString title(tr("Unable to collaborate"));
+            static QString msg(tr("Failed to run process!"));
+            d->taskDialog()->switchFailPage(title, msg, false);
+            d->taskDialog()->show();
+            d->targetDeviceInfo.reset();
+            return;
+        }
+
+        // the server has started, notify remote client connect
+        if (!crypto) {
+            // only for old protocol which disabled crypto
+            NetworkUtil::instance()->compatSendStartShare(d->targetDeviceInfo->ipAddress());
+        }
 
         // 上报埋点数据
         d->reportConnectionData();

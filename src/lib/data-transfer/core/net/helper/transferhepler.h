@@ -28,6 +28,8 @@ public:
 
     void sendMessage(const QString &type, const QString &message);
 
+    void finish();
+
 public Q_SLOTS:
     void handleMessage(QString jsonmsg);
 

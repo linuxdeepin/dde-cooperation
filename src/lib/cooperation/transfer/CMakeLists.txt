@@ -95,9 +95,6 @@ add_library(${PROJECT_NAME}
 
 include(GNUInstallDirs)
 
-# 使用定义的辅助程序执行目录
-target_compile_definitions(${PROJECT_NAME} PRIVATE EXECUTABLE_PROG_DIR="${EXECUTABLE_INSTALL_DIR}")
-
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(${PROJECT_NAME} PRIVATE QT_BUILD_SHARED)
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 0)

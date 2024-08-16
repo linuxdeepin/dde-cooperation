@@ -78,6 +78,11 @@ void TransferHelper::sendMessage(const QString &type, const QString &message)
     NetworkUtil::instance()->sendMessage(jsonData);
 }
 
+void TransferHelper::finish()
+{
+    NetworkUtil::instance()->stop();
+}
+
 void TransferHelper::handleMessage(QString jsonmsg)
 {
     QJsonParseError error;

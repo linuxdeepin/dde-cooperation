@@ -8,7 +8,7 @@
 #define DATA_SESSION_PORT 51596
 
 typedef enum session_type_t {
-    APPLY_LOGIN = 99, // 认证登录
+    APPLY_LOGIN = 1000, // 认证登录 REQ_LOGIN
     SESSION_LOGIN = 101,   // 登录
     SESSION_TRANS = 102,   // 传输
     SESSION_STOP = 111,   // 中断传输

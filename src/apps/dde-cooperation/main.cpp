@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
         // do something
     }
 
-    CooperaionCorePlugin *core =  new CooperaionCorePlugin();
+    CooperaionCorePlugin *core = new CooperaionCorePlugin();
     core->start();
 
     // 安全退出

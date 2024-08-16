@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     if (deepin_cross::BaseUtils::isWayland()) {
         // do something
     }
-    TransferPlugin *plugin =  new TransferPlugin();
+    TransferPlugin *plugin = new TransferPlugin();
     plugin->start();
 
     QObject::connect(&app, &deepin_cross::SingleApplication::onArrivedCommands, [&] (const QStringList &args) {

@@ -14,7 +14,6 @@ Logger::Logger()
 
 Logger::~Logger()
 {
-    CppLogging::Config::Shutdown();
 }
 
 LogStream Logger::log(const char* fname, unsigned line, int level)

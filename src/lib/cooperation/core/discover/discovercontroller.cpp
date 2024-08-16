@@ -115,6 +115,13 @@ DeviceInfoPointer DiscoverController::parseDeviceService(QZeroConfService zcs)
     auto devInfo = DeviceInfo::fromVariantMap(infomap);
     if (!isVaildDevice(devInfo))
         return nullptr;
+
+    auto old = findDeviceByIP(devInfo->ipAddress());
+    if (old) {
+        // update its status
+        devInfo->setConnectStatus(old->connectStatus());
+    }
+
     return devInfo;
 }
 
@@ -203,6 +210,18 @@ DeviceInfoPointer DiscoverController::selfInfo()
 
 void DiscoverController::updateDeviceState(const DeviceInfoPointer info)
 {
+    auto oldinfo = findDeviceByIP(info->ipAddress());
+    if (oldinfo)
+        d->onlineDeviceList.removeOne(oldinfo);
+
+    if (DeviceInfo::Connected == info->connectStatus()) {
+        //record the connected status IP
+        _connectedDevice = info->ipAddress();
+    } else {
+        _connectedDevice = "";
+    }
+
+    d->onlineDeviceList.append(info);
     Q_EMIT deviceOnline({ info });
 }
 
@@ -228,6 +247,10 @@ void DiscoverController::onAppAttributeChanged(const QString &group, const QStri
 
 void DiscoverController::addService(QZeroConfService zcs)
 {
+    if (zcs.get()->name() == d->zeroconfname) {
+        LOG << "add service, ignore self zcs service";
+        return;
+    }
     auto devInfo = parseDeviceService(zcs);
 
     if (!devInfo)
@@ -239,6 +262,10 @@ void DiscoverController::addService(QZeroConfService zcs)
 
 void DiscoverController::updateService(QZeroConfService zcs)
 {
+    if (zcs.get()->name() == d->zeroconfname) {
+        LOG << "update service, ignore self zcs service";
+        return;
+    }
     auto devInfo = parseDeviceService(zcs);
 
     if (!devInfo)
@@ -302,7 +329,7 @@ void DiscoverController::publish()
     QString selfIP = deviceInfo.value(AppSettings::IPAddress).toString();
     d->ipfilter = selfIP.lastIndexOf(".") != -1 ? selfIP.left(selfIP.lastIndexOf(".")) : "";
 
-    LOG << "publish:-------------------------------------------";
+    LOG << "publish " << d->zeroconfname.toStdString() << " on: " << selfIP.toStdString();
     for (const auto &key : deviceInfo.keys())
         d->zeroConf->addServiceTxtRecord(key, deviceInfo.value(key).toString().toUtf8().toBase64());
 
@@ -339,8 +366,12 @@ void DiscoverController::refresh()
         QZeroConfService zcs = allServices.value(key);
         auto devInfo = parseDeviceService(zcs);
 
-        if (devInfo && devInfo->ipAddress() != CooperationUtil::localIPAddress())
+        if (devInfo && devInfo->ipAddress() != CooperationUtil::localIPAddress()) {
+            if (_connectedDevice == devInfo->ipAddress()) {
+                devInfo->setConnectStatus(DeviceInfo::Connected);
+            }
             d->onlineDeviceList.append(devInfo);
+        }
     }
     if (d->searchDevice)
         d->onlineDeviceList.append(d->searchDevice);

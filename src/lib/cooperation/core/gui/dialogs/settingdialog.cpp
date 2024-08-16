@@ -186,7 +186,7 @@ void SettingDialogPrivate::createBasicWidget()
     connect(closeBtn, &QToolButton::clicked, this, [this] { nameEdit->setText(""); });
 #endif
     nameEdit->setFixedWidth(280);
-    connect(nameEdit, &CooperationLineEdit::editingFinished, this, &SettingDialogPrivate::checkNameValid);
+    connect(nameEdit, &CooperationLineEdit::editingFinished, this, &SettingDialogPrivate::onEditFinished);
     connect(nameEdit, &CooperationLineEdit::textChanged, this, &SettingDialogPrivate::onNameChanged);
     SettingItem *nameItem = new SettingItem(q);
     nameItem->setItemInfo(tr("Device name"), nameEdit);
@@ -340,29 +340,35 @@ void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 #endif
 }
 
-void SettingDialogPrivate::checkNameValid()
+bool SettingDialogPrivate::checkNameValid()
 {
     int length = nameEdit->text().length();
-    if (length < 1 || length > 20) {
+    if ((length < 1) || (length > 20)) {
 #ifdef linux
         nameEdit->setAlert(true);
         nameEdit->showAlertMessage(tr("The device name must contain 1 to 20 characters"));
         nameEdit->setFocus();
-        return;
+        return false;
 
 #else
         nameEdit->setProperty(KAlert, true);
         QToolTip::showText(nameEdit->parentWidget()->mapToGlobal(nameEdit->pos()) + QPoint(41, 22),
                            tr("The device name must contain 1 to 63 characters"));
         nameEdit->setFocus();
-        return;
+        return false;
     } else {
         nameEdit->setProperty(KAlert, false);
         QToolTip::hideText();
 #endif
     }
 
-    ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey, nameEdit->text());
+    return true;
+}
+
+void SettingDialogPrivate::onEditFinished()
+{
+    if (checkNameValid())
+        ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey, nameEdit->text());
 }
 
 void SettingDialogPrivate::onNameChanged(const QString &text)

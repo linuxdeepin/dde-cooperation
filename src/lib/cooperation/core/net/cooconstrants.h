@@ -9,7 +9,7 @@
 #define COO_HARD_PIN "515616"
 
 typedef enum apply_type_t {
-    APPLY_LOGIN = 99,   // 登录认证申请
+    APPLY_LOGIN = 1000,   // 登录认证申请 REQ_LOGIN
     APPLY_INFO = 100,   // 设备信息申请
     APPLY_TRANS = 101,   // 传输申请
     APPLY_TRANS_RESULT = 102,   // 传输申请的结果

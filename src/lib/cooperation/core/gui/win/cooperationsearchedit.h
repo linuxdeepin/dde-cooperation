@@ -26,7 +26,7 @@ public:
 
 Q_SIGNALS:
     void textChanged(const QString &);
-    void editingFinished();
+    void returnPressed();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;

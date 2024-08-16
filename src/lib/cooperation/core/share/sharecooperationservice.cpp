@@ -223,7 +223,8 @@ bool ShareCooperationService::startBarrier()
 const char ShutdownCh = 'S';
 void ShareCooperationService::stopBarrier()
 {
-    LOG << "stopping process";
+    // This may cause abort while app exit.
+    // LOG << "stopping process";
     _expectedRunning = false;
 
     if (!barrierProcess()) {
@@ -246,7 +247,7 @@ bool ShareCooperationService::clientArgs(QStringList &args, QString &app)
     app = appPath(cooConfig().barriercName());
 
     if (!QFile::exists(app)) {
-        WLOG << "Barrier client not found";
+        WLOG << "Barrier client not found:" << app.toStdString();
         return false;
     }
 
@@ -265,7 +266,7 @@ bool ShareCooperationService::serverArgs(QStringList &args, QString &app)
     app = appPath(cooConfig().barriersName());
 
     if (!QFile::exists(app)) {
-        WLOG << "Barrier server not found";
+        WLOG << "Barrier server not found:" << app.toStdString();
         return false;
     }
 

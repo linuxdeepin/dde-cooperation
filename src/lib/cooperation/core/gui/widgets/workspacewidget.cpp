@@ -87,7 +87,7 @@ void WorkspaceWidgetPrivate::initUI()
 
 void WorkspaceWidgetPrivate::initConnect()
 {
-    connect(searchEdit, &CooperationSearchEdit::editingFinished, this, &WorkspaceWidgetPrivate::onSearchDevice);
+    connect(searchEdit, &CooperationSearchEdit::returnPressed, this, &WorkspaceWidgetPrivate::onSearchDevice);
     connect(searchEdit, &CooperationSearchEdit::textChanged, this, &WorkspaceWidgetPrivate::onSearchValueChanged);
     connect(this, &WorkspaceWidgetPrivate::devicesAdded, sortFilterWorker.data(), &SortFilterWorker::addDevice, Qt::QueuedConnection);
     connect(this, &WorkspaceWidgetPrivate::devicesRemoved, sortFilterWorker.data(), &SortFilterWorker::removeDevice, Qt::QueuedConnection);

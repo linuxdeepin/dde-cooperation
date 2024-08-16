@@ -218,8 +218,8 @@ void NetworkUtilPrivate::handleAsyncRpcResult(int32_t type, const QString respon
         break;
     }
     case APPLY_INFO: {
+        DLOG << "Apply info return: " << response.toStdString();
         if (success) {
-            WLOG << "async callback: " << json_value;
             ApplyMessage reply;
             reply.from_json(json_value);
             // update this device info to discovery list
@@ -399,6 +399,9 @@ void NetworkUtil::trySearchDevice(const QString &ip)
     if (!logind) {
         DLOG << "try apply search FAILED, try compat!";
         compatLogin(ip);
+    } else {
+        // has been login, do next.
+        doNextCombiRequest(ip);
     }
 }
 
@@ -475,6 +478,9 @@ void NetworkUtil::tryTransApply(const QString &ip)
     if (!logind) {
         DLOG << "try apply trans FAILED, try compat!";
         compatLogin(ip);
+    } else {
+        // has been login, do next.
+        doNextCombiRequest(ip);
     }
 }
 
@@ -511,6 +517,9 @@ void NetworkUtil::tryShareApply(const QString &ip, const QString &selfprint)
     if (!logind) {
         DLOG << "try apply share FAILED, try compat!";
         compatLogin(ip);
+    } else {
+        // has been login, do next.
+        doNextCombiRequest(ip);
     }
 }
 

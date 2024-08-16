@@ -36,6 +36,7 @@ public slots:
     void handleCompatConnectResult(int result, const QString &ip);
     void compatTransJobStatusChanged(int id, int result, const QString &msg);
     void compatFileTransStatusChanged(const QString &path, quint64 total, quint64 current, quint64 millisec);
+    void stop();
 
 private:
     explicit NetworkUtil(QObject *parent = nullptr);

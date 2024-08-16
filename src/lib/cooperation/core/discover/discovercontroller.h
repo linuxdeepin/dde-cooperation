@@ -75,6 +75,8 @@ private:
 
 private:
     QSharedPointer<DiscoverControllerPrivate> d { nullptr };
+
+    QString _connectedDevice;
 };
 
 }   // namespace cooperation_core

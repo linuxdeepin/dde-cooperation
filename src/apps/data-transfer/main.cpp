@@ -11,8 +11,20 @@
 #include <QIcon>
 #include <QTranslator>
 #include <QDebug>
+#include <QProcess>
 
+#include <signal.h>
+
+using namespace deepin_cross;
 using namespace data_transfer_core;
+
+const char *compatProc = "cooperation-daemon";
+
+static void appExitHandler(int sig)
+{
+    qInfo() << "break with !SIGTERM! " << sig;
+    qApp->quit();
+}
 
 int main(int argc, char *argv[])
 {
@@ -33,6 +45,24 @@ int main(int argc, char *argv[])
     app.setApplicationDescription(app.translate("Application", "UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system."));
 #endif
 
+    bool compatDaemonRun = app.checkProcess(compatProc);
+    if (compatDaemonRun) {
+        qInfo() << "compat backend launched!";
+    } else {
+        QString procPath = QString(COMPAT_DAEMON_DIR);
+        if (procPath.isEmpty()) {
+            procPath = QCoreApplication::applicationDirPath();
+        }
+        procPath.append("/").append(compatProc);
+        qWarning() << procPath;
+        QFile procexe = QFile(procPath);
+        if (procexe.exists()) {
+            // run compat daemon backend
+            QProcess::startDetached(procPath, QStringList());
+        } else {
+            qWarning() << "compat backend is not exist!";
+        }
+    }
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {
@@ -46,6 +76,12 @@ int main(int argc, char *argv[])
     DataTransferCorePlugin *core = new DataTransferCorePlugin();
     core->start();
 
+    // 安全退出
+#ifndef _WIN32
+    signal(SIGQUIT, appExitHandler);
+#endif
+    signal(SIGINT, appExitHandler);
+    signal(SIGTERM, appExitHandler);
     int ret = app.exec();
 
     core->stop();
