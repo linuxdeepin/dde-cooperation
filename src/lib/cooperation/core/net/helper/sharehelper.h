@@ -34,6 +34,9 @@ public Q_SLOTS:
     void handleCancelCooperApply();
     void handleNetworkDismiss(const QString &msg);
 
+    // exception: network connection(ping out) or other io
+    void onShareExcepted(int type, const QString &remote);
+
 private:
     explicit ShareHelper(QObject *parent = nullptr);
     ~ShareHelper();

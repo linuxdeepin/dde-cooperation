@@ -168,7 +168,6 @@ bool ShareCooperationService::startBarrier()
 const char ShutdownCh = 'S';
 void ShareCooperationService::stopBarrier()
 {
-    LOG << "stopping process";
     _expectedRunning = false;
 
 //    QMutexLocker locker(&m_StopDesktopMutex);

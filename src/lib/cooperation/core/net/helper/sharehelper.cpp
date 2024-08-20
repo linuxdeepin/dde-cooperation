@@ -483,3 +483,24 @@ void ShareHelper::handleNetworkDismiss(const QString &msg)
                                         true);
     }
 }
+
+void ShareHelper::onShareExcepted(int type, const QString &remote)
+{
+    if (!d->targetDeviceInfo || (DeviceInfo::Connected != d->targetDeviceInfo->connectStatus())) {
+        WLOG << "Share, not connected, ignore exception:" << type << " " << remote.toStdString();
+        return;
+    }
+
+    switch (type) {
+    case EX_NETWORK_PINGOUT: {
+        static QString title(tr("Network exception"));
+        static QString msg(tr("Please check the network \"%1\""));
+
+        d->taskDialog()->switchFailPage(title, msg.arg(CommonUitls::elidedText(remote, Qt::ElideMiddle, 15)), false);
+        d->taskDialog()->show();
+    } break;
+    case EX_OTHER:
+    default:
+        break;
+    }
+}

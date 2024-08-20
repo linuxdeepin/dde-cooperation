@@ -53,6 +53,9 @@ signals:
 
     // rpc async call result
     void onRpcResult(int32_t type, const QString &response);
+
+    // I/O exception
+    void onNetException(const QString &remote);
 public slots:
     void handleRemoteDisconnected(const QString &remote);
 

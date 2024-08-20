@@ -5,6 +5,7 @@
 #include "protoserver.h"
 
 using MessageHandler = std::function<void(const proto::OriginMessage &request, proto::OriginMessage *response)>;
+using NotifyHandler = std::function<void(const std::string &addr)>;
 
 class ProtoSession : public CppServer::Asio::SSLSession, public FBE::proto::FinalClient
 {
@@ -14,6 +15,11 @@ public:
     void setMessageHandler(MessageHandler cb)
     {
         _msghandler = std::move(cb);
+    }
+
+    void setNotifyHandler(NotifyHandler cb)
+    {
+        _notifyhandler = std::move(cb);
     }
 
 protected:
@@ -63,6 +69,22 @@ protected:
             send(response);
     }
 
+    void onReceive(const ::proto::MessageNotify &notify) override
+    {
+        // FinalClient::onReceive(notify);
+        // std::cout << "Session received notify: " << notify << std::endl;
+
+        // Send response
+        proto::MessageNotify pong;
+        pong.notification = "pong";
+        send(pong);
+
+        if (_notifyhandler) {
+            std::string addr = socket().remote_endpoint().address().to_string();
+            _notifyhandler(addr);
+        }
+    }
+
     // Protocol implementation
     void onReceived(const void *buffer, size_t size) override
     {
@@ -76,6 +98,7 @@ protected:
 
 private:
     MessageHandler _msghandler { nullptr };
+    NotifyHandler _notifyhandler { nullptr };
 };
 
 
@@ -87,6 +110,78 @@ bool ProtoServer::hasConnected(const std::string &ip)
         return true;
     }
     return false;
+}
+
+bool ProtoServer::startHeartbeat()
+{
+    if (!_ping_timer) {
+        _ping_timer = std::make_shared<Timer>(service());
+        _ping_timer->Setup([this](bool canceled) {
+            if (canceled) {
+                // std::cout << "Timer canceled!" << std::endl;
+            } else {
+                bool recheck = false;
+                auto it = _ping_remotes.begin();
+                while (it != _ping_remotes.end()) {
+                    if (!it->second.exchange(false)) {
+                        // 处理心跳超时的情况
+                        std::string remote = it->first;
+                        it = _ping_remotes.erase(it);
+
+                        onHeartbeatTimeout(remote);
+                    } else {
+                        recheck = true;
+                        ++it;
+                    }
+                }
+
+                if (_session_ids.empty()) {
+                    // no any connection session
+                    _ping_timer->Cancel();
+                    _ping_remotes.clear();
+                } else if (recheck) {
+                    _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
+                    _ping_timer->WaitAsync();
+                }
+            }
+        });
+    }
+
+    // wait for client ping
+    _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
+    return _ping_timer->WaitAsync();
+}
+
+void ProtoServer::handlePing(const std::string &remote)
+{
+    // std::cout << "server ping: " << remote << std::endl;
+    auto pinging = _ping_remotes.find(remote);
+    if (pinging != _ping_remotes.end()) {
+        pinging->second.store(true);
+    } else {
+        if (_ping_remotes.empty()) {
+            startHeartbeat(); // start hearbeat check while receive client's ping
+        }
+        _ping_remotes.insert(std::make_pair(remote, true));
+    }
+}
+
+void ProtoServer::onHeartbeatTimeout(const std::string &remote)
+{
+    // std::cout << "Not receive client ping in 3 seconds: " << remote << std::endl;
+
+    // disconenct and remove
+    auto it = _session_ids.find(remote);
+    if (it != _session_ids.end()) {
+        auto session = FindSession(it->second);
+        if (session) {
+            session->Disconnect();
+        }
+        _session_ids.erase(it);
+    }
+
+    auto ip = remote;
+    _callbacks->onStateChanged(RPC_PINGOUT, ip);
 }
 
 std::shared_ptr<CppServer::Asio::SSLSession>
@@ -104,8 +199,13 @@ ProtoServer::CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &se
         _callbacks->onReceivedMessage(request, response);
     });
 
+    NotifyHandler nft_cb([this](const std::string &addr) {
+        handlePing(addr);
+    });
+
     auto session = std::make_shared<ProtoSession>(server);
     session->setMessageHandler(msg_cb);
+    session->setNotifyHandler(nft_cb);
 
     return session;
 }

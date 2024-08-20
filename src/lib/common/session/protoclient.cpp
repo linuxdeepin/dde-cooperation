@@ -18,6 +18,56 @@ bool ProtoClient::hasConnected(const std::string &ip)
     return ip == _connected_host;
 }
 
+bool ProtoClient::startHeartbeat()
+{
+    if (!_ping_timer) {
+        _ping_timer = std::make_unique<Timer>(service());
+        _ping_timer->Setup([this](bool canceled) {
+            if (canceled) {
+                // std::cout << "Timer canceled!" << std::endl;
+            } else {
+                if (!_pong_received.exchange(false)) {
+                    // 处理心跳超时的情况
+                    onHeartbeatTimeout();
+                } else {
+                    if (_connected_host.empty()) {
+                        _ping_timer->Cancel();
+                    } else {
+                        sendPingMessage();
+                        _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
+                        _ping_timer->WaitAsync();
+                    }
+                }
+            }
+        });
+    }
+
+    sendPingMessage();
+    _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
+    return _ping_timer->WaitAsync();
+}
+
+void ProtoClient::handlePong(const std::string &remote)
+{
+    // std::cout << "client pong: " << remote << std::endl;
+    _connected_host = remote;
+    _pong_received.store(true);
+}
+
+void ProtoClient::sendPingMessage()
+{
+    proto::MessageNotify ping;
+    ping.notification = "ping";
+    send(ping);
+}
+
+void ProtoClient::onHeartbeatTimeout()
+{
+    // std::cout << "Not receive pong in 3 seconds: " << _connected_host << std::endl;
+    _callbacks->onStateChanged(RPC_PINGOUT, _connected_host);
+    _connected_host = "";
+}
+
 bool ProtoClient::connectReplyed()
 {
     return _connect_replay;
@@ -119,8 +169,12 @@ void ProtoClient::onReceive(const ::proto::MessageReject &reject)
 
 void ProtoClient::onReceive(const ::proto::MessageNotify &notify)
 {
-    FinalClient::onReceive(notify);
-    //std::cout << "Received notify: " << notify << std::endl;
+    // FinalClient::onReceive(notify);
+    // std::cout << "Received notify: " << notify << std::endl;
+
+    // mark pinged
+    auto remote = socket().remote_endpoint().address().to_string();
+    handlePong(remote);
 }
 
 // Protocol implementation

@@ -31,9 +31,21 @@ protected:
     size_t onSend(const void *data, size_t size) override;
 
 private:
+    bool startHeartbeat();
+
+    void handlePing(const std::string &remote);
+
+    void onHeartbeatTimeout(const std::string &remote);
+
+private:
     // <ip, sessionid>
     std::shared_mutex _sessionids_lock;
     std::map<std::string, CppCommon::UUID> _session_ids;
+
+    // heartbeat: ping <-> pong
+    std::shared_ptr<Timer> _ping_timer { nullptr };
+    // <ip, pinged>
+    std::map<std::string, std::atomic<bool>> _ping_remotes;
 };
 
 #endif // PROTOSERVER_H

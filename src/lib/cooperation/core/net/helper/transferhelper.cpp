@@ -8,6 +8,7 @@
 #include "utils/cooperationutil.h"
 #include "utils/historymanager.h"
 #include "net/networkutil.h"
+#include "net/cooconstrants.h"
 
 #include "common/constant.h"
 #include "common/commonutils.h"
@@ -388,6 +389,9 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
 
         d->status.storeRelease(Confirming);
     } else {
+        if (Idle == d->status.loadAcquire())
+            return;
+
         d->status.storeRelease(Idle);
         transferResult(false, tr("Connect to \"%1\" failed").arg(msg));
     }
@@ -403,7 +407,6 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
         cancelTransfer(path.compare("im_sender") == 0);
         break;
     case TRANS_EXCEPTION:
-        //TODO: notify show exception UI
         transferResult(false, tr("File read/write exception"));
         if (size == 0) {
             transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
@@ -418,6 +421,7 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
         d->transferInfo.totalSize = size;
         break;
     case TRANS_WHOLE_START:
+        d->status.storeRelease(Transfering);
         updateTransProgress(0);
         break;
     case TRANS_WHOLE_FINISH:
@@ -437,9 +441,10 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
         d->transferInfo.maxTimeS += 1;   // 每1秒收到此信息
         updateTransProgress(d->transferInfo.transferSize);
 
-        //        double speed = (static_cast<double>(size)) / (1024 * 1024); // 计算下载速度，单位为兆字节/秒
-        //        QString formattedSpeed = QString::number(speed, 'f', 2); // 格式化速度为保留两位小数的字符串
-        //        DLOG << "Transfer speed: " << formattedSpeed.toStdString() << " M/s";
+        // double speed = (static_cast<double>(size)) / (1024 * 1024); // 计算下载速度，单位为兆字节/秒
+        // QString formattedSpeed = QString::number(speed, 'f', 2); // 格式化速度为保留两位小数的字符串
+        // DLOG << "Transfer speed: " << formattedSpeed.toStdString() << " M/s";
+
     } break;
     case TRANS_FILE_DONE:
         break;
@@ -470,8 +475,10 @@ void TransferHelper::updateTransProgress(uint64_t current)
     }
     time = time.addSecs(remain_time);
 
-    DLOG << "progressbar: " << progressValue << " remain_time=" << remain_time;
-    DLOG << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << current;
+#ifdef QT_DEBUG
+    // DLOG << "progressbar: " << progressValue << " remain_time=" << remain_time;
+    // DLOG << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << current;
+#endif
 
     updateProgress(progressValue, time.toString("hh:mm:ss"));
 }
@@ -494,6 +501,7 @@ void TransferHelper::accepted()
         return;
     }
     d->role = Server;
+    d->status.storeRelease(Transfering);
     updateProgress(1, tr("calculating"));
     NetworkUtil::instance()->doSendFiles(d->readyToSendFiles);
 }
@@ -549,6 +557,7 @@ void TransferHelper::compatTransJobStatusChanged(int id, int result, const QStri
         }
         break;
     case JOB_TRANS_DOING:
+        d->status.storeRelease(Transfering);
         break;
     case JOB_TRANS_FINISHED: {
         d->status.storeRelease(Idle);
@@ -589,4 +598,32 @@ void TransferHelper::compatFileTransStatusChanged(quint64 total, quint64 current
     // LOG << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << d->transferInfo.transferSize;
 
     updateProgress(progressValue, time.toString("hh:mm:ss"));
+}
+
+void TransferHelper::onTransferExcepted(int type, const QString &remote)
+{
+    if (Idle == d->status.loadAcquire()) {
+        WLOG << "Transfer Idle, ignore exception:" << type << " " << remote.toStdString();
+        return;
+    }
+
+    // cancel transfer and hide progress
+    NetworkUtil::instance()->cancelTrans();
+    d->isClicked = true;
+    cancelTransfer(Server == d->role);
+
+    switch (type) {
+    case EX_NETWORK_PINGOUT:
+        transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
+        break;
+    case EX_SPACE_NOTENOUGH:
+        transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
+        break;
+    case EX_FS_RWERROR: {
+        transferResult(false, tr("File read/write exception"));
+    } break;
+    case EX_OTHER:
+    default:
+        break;
+    }
 }

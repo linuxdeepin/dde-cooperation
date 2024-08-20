@@ -67,6 +67,9 @@ public Q_SLOTS:
     void compatTransJobStatusChanged(int id, int result, const QString &msg);
     void compatFileTransStatusChanged(quint64 total, quint64 current, quint64 millisec);
 
+    // exception: network connection(ping out) or other io
+    void onTransferExcepted(int type, const QString &remote);
+
 private:
     explicit TransferHelper(QObject *parent = nullptr);
     ~TransferHelper();

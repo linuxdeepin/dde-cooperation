@@ -289,28 +289,41 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
         case RES_OKHEADER: {
             //std::string flag = this->getHeadKey(buffer, "Flag");
             //std::cout << "head flag: " << flag << std::endl;
-            CppCommon::Path file_path = tempFile.absolute().RemoveExtension();
+            try {
+                CppCommon::Path file_path = tempFile.absolute().RemoveExtension();
 
-            if (!tempFile.IsFileWriteOpened()) {
-                size_t cur_off = 0;
-                if (tempFile.IsFileExists()) {
-                    cur_off = tempFile.size();
-                    //std::cout << "Exists seek=: " << offset  << " cur_off=" << cur_off << std::endl;
+                if (!tempFile.IsFileWriteOpened()) {
+                    size_t cur_off = 0;
+                    if (tempFile.IsFileExists()) {
+                        cur_off = tempFile.size();
+                        //std::cout << "Exists seek=: " << offset  << " cur_off=" << cur_off << std::endl;
+                    }
+                    tempFile.OpenOrCreate(false, true, true);
+
+                    // set offset and current size
+                    tempFile.Seek(cur_off);
                 }
-                tempFile.OpenOrCreate(false, true, true);
 
-                // set offset and current size
-                tempFile.Seek(cur_off);
+                total = size;
+                _callback->onWebChanged(WEB_FILE_BEGIN, file_path.string(), total);
+            } catch (const CppCommon::FileSystemException &ex) {
+                std::cout << "Head create throw FS exception: " << ex.message() << std::endl;
+                _callback->onWebChanged(WEB_IO_ERROR);
+                return true;
             }
-            total = size;
-            _callback->onWebChanged(WEB_FILE_BEGIN, file_path.string(), total);
         }
         break;
         case RES_BODY: {
             if (tempFile.IsFileWriteOpened() && buffer && size > 0) {
                 current += size;
-                // 实现层已循环写全部
-                tempFile.Write(buffer, size);
+                try {
+                    // 实现层已循环写全部
+                    tempFile.Write(buffer, size);
+                } catch (const CppCommon::FileSystemException &ex) {
+                    std::cout << "Write throw FS exception: " << ex.message() << std::endl;
+                    _callback->onWebChanged(WEB_IO_ERROR);
+                    return true;
+                }
 
                 shouldExit = _callback->onProgress(size);
             }
@@ -329,21 +342,17 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
         case RES_FINISH: {
             if (tempFile.IsFileWriteOpened()) {
                 current += size;
-                // 写入最后一块
-                tempFile.Write(buffer, size);
-//                tempFile.Flush();
-                tempFile.Close();
+                try {
+                    // 写入最后一块
+                    tempFile.Write(buffer, size);
+                    tempFile.Close();
+                } catch (const CppCommon::FileSystemException &ex) {
+                    std::cout << "Write&Close throw FS exception: " << ex.message() << std::endl;
+                    _callback->onWebChanged(WEB_IO_ERROR);
+                    return true;
+                }
             }
-            //std::cout << "RES_FINISH, current=" << current << " total:" << total << std::endl;
-//            CppCommon::Path file_path = tempFile.absolute().RemoveExtension();
-
-//            // rename only for finished
-//            if (current >= total) {
-//                //std::cout << "File path:" << tempFile.absolute().RemoveExtension() << std::endl;
-
-//                CppCommon::Path::Rename(tempFile.absolute(), file_path);
-//                tempFile.Clear();
-//            }
+            std::cout << "RES_FINISH, current=" << current << " total:" << total << std::endl;
 
             shouldExit = true;
             _callback->onWebChanged(WEB_FILE_END, tempFile.string(), total);

@@ -17,6 +17,7 @@
 
 SessionManager::SessionManager(QObject *parent) : QObject(parent)
 {
+    _trans_workers.clear();
     // Create session and transfer worker
     _session_worker = std::make_shared<SessionWorker>();
     connect(_session_worker.get(), &SessionWorker::onConnectChanged, this, &SessionManager::notifyConnection, Qt::QueuedConnection);
@@ -83,14 +84,14 @@ bool SessionManager::sessionPing(QString ip, int port)
     return _session_worker->netTouch(ip, port);
 }
 
-bool SessionManager::sessionConnect(QString ip, int port, QString password)
+int SessionManager::sessionConnect(QString ip, int port, QString password)
 {
     LOG << "sessionConnect: " << ip.toStdString();
     if (_session_worker->isClientLogin(ip))
-        return true;
+        return 1;
     if (!_session_worker->netTouch(ip, port)) {
         ELOG << "Fail to connect remote:" << ip.toStdString();
-        return false;
+        return -1;
     }
 
     // base64 the pwd
@@ -104,7 +105,7 @@ bool SessionManager::sessionConnect(QString ip, int port, QString password)
     QString jsonMsg = req.as_json().serialize().c_str();
     sendRpcRequest(ip, REQ_LOGIN, jsonMsg);
 
-    return true;
+    return 0;
 }
 
 void SessionManager::sessionDisconnect(QString ip)
@@ -113,12 +114,18 @@ void SessionManager::sessionDisconnect(QString ip)
     _session_worker->disconnectRemote();
 }
 
-void SessionManager::createTransWorker()
+std::shared_ptr<TransferWorker> SessionManager::createTransWorker(const QString &jobid)
 {
-    if (!_trans_worker) {
-        _trans_worker = std::make_shared<TransferWorker>();
-        connect(_trans_worker.get(), &TransferWorker::notifyChanged, this, &SessionManager::notifyTransChanged);
-    }
+    // Create a new TransferWorker
+    auto newWorker = std::make_shared<TransferWorker>(jobid);
+    // auto newWorker = QSharedPointer<TransferWorker>::create(this);
+    connect(newWorker.get(), &TransferWorker::notifyChanged, this, &SessionManager::notifyTransChanged);
+    connect(newWorker.get(), &TransferWorker::onException, this, &SessionManager::handleTransException);
+
+    // Store it in the map with the given jobid
+    _trans_workers[jobid] = newWorker;
+
+    return newWorker;
 }
 
 void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
@@ -126,8 +133,8 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
     std::vector<std::string> name_vector;
     std::string token;
 
-    createTransWorker();
-    bool success = _trans_worker->tryStartSend(paths, port, &name_vector, &token);
+    auto worker = createTransWorker(ip);
+    bool success = worker->tryStartSend(paths, port, &name_vector, &token);
     if (!success) {
         ELOG << "Fail to send size: " << paths.size() << " at:" << port;
         return;
@@ -140,7 +147,7 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
     bool needCount = total == 0;
 
     TransDataMessage req;
-    req.id = std::to_string(_request_job_id);
+    req.id = ip.toStdString();
     req.names = name_vector;
     req.endpoint = endpoint.toStdString();
     req.flag = needCount; // many folders
@@ -157,20 +164,20 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
 
 void SessionManager::recvFiles(QString &ip, int port, QString &token, QStringList names)
 {
-    createTransWorker();
-    bool success = _trans_worker->tryStartReceive(names, ip, port, token, _save_dir);
+    auto worker = createTransWorker(ip);
+    bool success = worker->tryStartReceive(names, ip, port, token, _save_dir);
     if (!success) {
         ELOG << "Fail to recv name size: " << names.size() << " at:" << ip.toStdString();
     }
 }
 
-void SessionManager::cancelSyncFile(QString &ip)
+void SessionManager::cancelSyncFile(const QString &ip)
 {
     DLOG << "cancelSyncFile to: " << ip.toStdString();
 
     // first: send cancel rpc
     TransCancelMessage req;
-    req.id = std::to_string(_request_job_id);
+    req.id = ip.toStdString();
     req.name = "all";
     req.reason = "";
 
@@ -178,7 +185,7 @@ void SessionManager::cancelSyncFile(QString &ip)
     sendRpcRequest(ip, REQ_TRANS_CANCLE, jsonMsg);
 
     // then: stop local worker
-    handleCancelTrans(QString::fromStdString(req.id));
+    handleCancelTrans(ip);
 }
 
 void SessionManager::sendRpcRequest(const QString &ip, int type, const QString &reqJson)
@@ -212,10 +219,12 @@ void SessionManager::handleTransCount(const QString names, quint64 size)
 
 void SessionManager::handleCancelTrans(const QString jobid)
 {
-    // stop all local transfer, which will send TRANS_CANCELED: 48
-    if (_trans_worker) {
-        _trans_worker->stop();
-        _trans_worker = nullptr;
+    // stop the worker, which will send TRANS_CANCELED: 48
+    auto it = _trans_workers.find(jobid);
+    if (it != _trans_workers.end()) {
+        it->second->stop();
+        // Remove the worker from the map
+        _trans_workers.erase(it);
     }
 }
 
@@ -233,7 +242,7 @@ void SessionManager::handleFileCounted(const QString ip, const QStringList paths
     }
 
     TransDataMessage req;
-    req.id = std::to_string(_request_job_id);
+    req.id = ip.toStdString();
     req.names = nameVector;
     req.endpoint = "::";
     req.flag = false; // no need count
@@ -253,13 +262,14 @@ void SessionManager::handleRpcResult(int32_t type, const QString &response)
 #ifdef QT_DEBUG
     DLOG << "RPC Result type=" << type << " response: " << response.toStdString();
 #endif
-    if (REQ_TRANS_DATAS == type) {
-        if (!response.isEmpty()) {
-            _send_task = true;
-            _request_job_id++;
-        }
-    } else {
-        // notify the result to upper caller
-        emit notifyAsyncRpcResult(type, response);
-    }
+    // notify the result to upper caller
+    emit notifyAsyncRpcResult(type, response);
+}
+
+void SessionManager::handleTransException(const QString jobid, const QString path)
+{
+#ifdef QT_DEBUG
+    DLOG << jobid.toStdString() << "transfer occur exception:" << path.toStdString();
+#endif
+    cancelSyncFile(jobid);
 }

@@ -26,4 +26,11 @@ enum ShareConnectReplyCode {
     SHARE_CONNECT_ERR_CONNECTED = 2, // 连接错误已连接
 };
 
+enum ExceptionType {
+    EX_NETWORK_PINGOUT = -3, // 远端无法ping通
+    EX_SPACE_NOTENOUGH = -2, // 磁盘空间不足
+    EX_FS_RWERROR = -1, // 文件读写异常
+    EX_OTHER = 0, // 其它异常
+};
+
 #endif   // COO_CONSTRANTS_H

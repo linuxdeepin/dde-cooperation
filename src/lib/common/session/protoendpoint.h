@@ -6,10 +6,15 @@
 #define PROTOENDPOINT_H
 
 #include "session.h"
+#include "server/asio/timer.h"
 
 #include <atomic>
 #include <iostream>
 
+// hearbeat timeout
+#define HEARTBEAT_INTERVAL 3
+
+using CppServer::Asio::Timer;
 using RpcHandler = std::function<void(int32_t type, const std::string &response)>;
 
 class ProtoEndpoint: public FBE::proto::FinalClient

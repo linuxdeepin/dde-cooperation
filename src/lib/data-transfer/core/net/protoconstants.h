@@ -15,4 +15,11 @@ typedef enum session_type_t {
     SESSION_MESSAGE = 112,   //字符串信息
 } SessionReqType;
 
+enum ExceptionType {
+    EX_NETWORK_PINGOUT = -3, // 远端无法ping通
+    EX_SPACE_NOTENOUGH = -2, // 磁盘空间不足
+    EX_FS_RWERROR = -1, // 文件读写异常
+    EX_OTHER = 0, // 其它异常
+};
+
 #endif   // PROTOCONSTANTS_H

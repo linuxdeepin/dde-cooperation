@@ -37,11 +37,10 @@ else()
     endif()
 endif()
 
-option(BUILD_WITH_SYSTEMD "Build with systemd" OFF)
-
+option(BUILD_WITH_SYSTEMD "Build with systemd" ON)
 
 # build with openssl 1.1.0+
-option(WITH_OPENSSL "build with openssl" OFF)
+option(WITH_OPENSSL "build with openssl" ON)
 
 # build with libcurl (openssl & zlib also required)
 option(WITH_LIBCURL "build with libcurl" OFF)

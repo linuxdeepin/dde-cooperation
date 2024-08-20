@@ -44,9 +44,7 @@ include_directories(${COOST_DIR}/include)
 
 # coost 打开SSL和动态库
 # cmake .. -DWITH_LIBCURL=ON -DWITH_OPENSSL=ON -DBUILD_SHARED_LIBS=ON
-set(WITH_OPENSSL ON)
 set(BUILD_SHARED_LIBS ON)
-set(BUILD_WITH_SYSTEMD ON)
 add_subdirectory("${COOST_DIR}" coost)
 
 

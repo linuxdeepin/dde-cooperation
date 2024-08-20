@@ -23,6 +23,8 @@ public:
 
     bool hasConnected(const std::string &ip) override;
 
+    bool startHeartbeat();
+
 protected:
     void onConnected() override;
 
@@ -43,10 +45,20 @@ protected:
     size_t onSend(const void *data, size_t size) override;
 
 private:
+    void handlePong(const std::string &remote);
+
+    void sendPingMessage();
+
+    void onHeartbeatTimeout();
+
+private:
     std::atomic<bool> _stop { false };
     std::atomic<bool> _connect_replay { false };
 
     std::string _connected_host = { "" };
+    // heartbeat: ping <-> pong
+    std::shared_ptr<Timer> _ping_timer { nullptr };
+    std::atomic<bool> _pong_received { false };
 };
 
 #endif // PROTOCLIENT_H

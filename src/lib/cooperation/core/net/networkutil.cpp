@@ -163,16 +163,35 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
                                       Q_ARG(QString, ""));
         return;
     }
-    if (result == -2) {
+    if (result == EX_NETWORK_PINGOUT) {
+        // ping <-> pong timeout, network connection exception
+        // 1. update the discovery list.
+        q->metaObject()->invokeMethod(DiscoverController::instance(),
+                                      "compatRemoveDeivce",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(QString, reason));
+
+        // 2. show UI if there is any doing job
+        q->metaObject()->invokeMethod(ShareHelper::instance(),
+                                      "onShareExcepted",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, EX_NETWORK_PINGOUT),
+                                      Q_ARG(QString, reason));
+        // show UI for transfering
+        q->metaObject()->invokeMethod(TransferHelper::instance(), "onTransferExcepted",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, EX_NETWORK_PINGOUT),
+                                      Q_ARG(QString, reason));
+    } else if (result == -2) {
         // error hanppend
         DLOG << "connect error, reason = " << reason.toStdString();
     } else if (result == -1) {
         // disconnected
-        //        q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
-        //                                      Qt::QueuedConnection,
-        //                                      Q_ARG(int, 0),
-        //                                      Q_ARG(QString, reason),
-        //                                      Q_ARG(bool, false));
+        q->metaObject()->invokeMethod(TransferHelper::instance(), "onConnectStatusChanged",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(int, 0),
+                                      Q_ARG(QString, reason),
+                                      Q_ARG(bool, false));
     } else if (result == 2) {
         // connected
     }
@@ -395,11 +414,11 @@ void NetworkUtil::trySearchDevice(const QString &ip)
     _nextCombi.first = APPLY_INFO;
     _nextCombi.second = ip;
     // session connect and then send rpc request
-    bool logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
-    if (!logind) {
+    int logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
+    if (logind < 0) {
         DLOG << "try apply search FAILED, try compat!";
         compatLogin(ip);
-    } else {
+    } else if (logind > 0) {
         // has been login, do next.
         doNextCombiRequest(ip);
     }
@@ -474,11 +493,11 @@ void NetworkUtil::tryTransApply(const QString &ip)
     _nextCombi.second = ip;
 
     // session connect and then send rpc request
-    bool logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
-    if (!logind) {
+    int logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
+    if (logind < 0) {
         DLOG << "try apply trans FAILED, try compat!";
         compatLogin(ip);
-    } else {
+    } else if (logind > 0) {
         // has been login, do next.
         doNextCombiRequest(ip);
     }
@@ -513,11 +532,12 @@ void NetworkUtil::tryShareApply(const QString &ip, const QString &selfprint)
 
     _selfFingerPrint = selfprint;
 
-    bool logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
-    if (!logind) {
+    int logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
+    WLOG << "tryShareApply, logind=" << logind;
+    if (logind < 0) {
         DLOG << "try apply share FAILED, try compat!";
         compatLogin(ip);
-    } else {
+    } else if (logind > 0) {
         // has been login, do next.
         doNextCombiRequest(ip);
     }

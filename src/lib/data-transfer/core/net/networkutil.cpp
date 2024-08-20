@@ -81,6 +81,9 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
         TransferHelper::instance()->sendMessage("remaining_space", QString::number(remainSpace));
         emit TransferHelper::instance()->connectSucceed();
         return;
+    } else if (result == EX_NETWORK_PINGOUT) {
+        emit TransferHelper::instance()->onlineStateChanged(false);
+        return;
     }
 }
 
@@ -245,11 +248,11 @@ bool NetworkUtil::doConnect(const QString &ip, const QString &password)
     _loginCombi.first = ip;
     _loginCombi.second = password;
 
-    bool logind = d->sessionManager->sessionConnect(ip, DATA_SESSION_PORT, password);
-    if (logind) {
+    int logind = d->sessionManager->sessionConnect(ip, DATA_SESSION_PORT, password);
+    if (logind > 0) {
         d->confirmTargetAddress = ip;
         return true;
-    } else {
+    } else if (logind < 0){
         DLOG << "try connect FAILED, try compat!";
         compatLogin();
     }

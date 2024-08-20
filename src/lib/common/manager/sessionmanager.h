@@ -10,7 +10,6 @@
 
 #include <QObject>
 
-class AsioService;
 class SessionWorker;
 class TransferWorker;
 class FileSizeCounter;
@@ -29,11 +28,11 @@ public:
 
     void sessionListen(int port);
     bool sessionPing(QString ip, int port);
-    bool sessionConnect(QString ip, int port, QString password);
+    int sessionConnect(QString ip, int port, QString password);
     void sessionDisconnect(QString ip);
     void sendFiles(QString &ip, int port, QStringList paths);
     void recvFiles(QString &ip, int port, QString &token, QStringList names);
-    void cancelSyncFile(QString &ip);
+    void cancelSyncFile(const QString &ip);
 
     void sendRpcRequest(const QString &target, int type, const QString &reqJson);
 
@@ -51,9 +50,10 @@ public slots:
     void handleCancelTrans(const QString jobid);
     void handleFileCounted(const QString ip, const QStringList paths, quint64 totalSize);
     void handleRpcResult(int32_t type, const QString &response);
+    void handleTransException(const QString jobid, const QString path);
 
 private:
-    void createTransWorker();
+    std::shared_ptr<TransferWorker> createTransWorker(const QString &jobid);
 
 private:
     // session worker
@@ -62,11 +62,9 @@ private:
     // new thread to count all sub files size of directory
     std::shared_ptr<FileSizeCounter> _file_counter { nullptr };
 
-    // transfer worker, it will be release after stop.
-    std::shared_ptr<TransferWorker> _trans_worker { nullptr };
+    // map to manage multiple transfer workers by jobid (IP address), it will be release after stop.
+    std::map<QString, std::shared_ptr<TransferWorker>> _trans_workers;
 
-    bool _send_task { false };
-    int _request_job_id;
     QString _save_root = "";
     QString _save_dir = "";
 };

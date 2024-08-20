@@ -9,6 +9,7 @@
 #include <iostream>
 
 enum SessionState {
+    RPC_PINGOUT = -3,
     RPC_ERROR = -2,
     RPC_DISCONNECTED = -1,
     RPC_DISCONNECTING = 0,

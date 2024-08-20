@@ -70,7 +70,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
     case REQ_LOGIN: {
         LoginMessage req, res;
         req.from_json(v);
-        DLOG << "Login: " << req.name << " " << res.auth;
+        DLOG << "Login: " << req.name << " " << req.auth;
 
         QString nice = QString::fromStdString(req.name);
         QByteArray pinByte = QByteArray::fromStdString(req.auth);
@@ -174,6 +174,7 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
 
 bool SessionWorker::onStateChanged(int state, std::string &msg)
 {
+//    RPC_PINGOUT = -3,
 //    RPC_ERROR = -2,
 //    RPC_DISCONNECTED = -1,
 //    RPC_DISCONNECTING = 0,
@@ -210,6 +211,12 @@ bool SessionWorker::onStateChanged(int state, std::string &msg)
             emit onConnectChanged(code, addr);
             return false;
         }
+    }
+    break;
+    case RPC_PINGOUT: {
+        // receive pong timeout
+        DLOG << "timeout remote: " << msg;
+        emit onRemoteDisconnected(addr);
     }
     break;
     default:
@@ -320,6 +327,8 @@ void SessionWorker::updatePincode(QString code)
 void SessionWorker::updateLogin(QString ip, bool logined)
 {
     _login_hosts.insert(ip, logined);
+    if (_client)
+        _client->startHeartbeat();
 }
 
 bool SessionWorker::isClientLogin(QString &ip)

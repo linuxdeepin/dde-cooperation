@@ -14,8 +14,9 @@
 
 #include <atomic>
 
-TransferWorker::TransferWorker(QObject *parent)
+TransferWorker::TransferWorker(QString id, QObject *parent)
     : QObject(parent)
+    , _bindId(id)
 {
     // create own asio service
     _asioService = std::make_shared<AsioService>();
@@ -45,6 +46,7 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
         emit speedTimerTick(true);
         QString name = QString::fromStdString(msg);
         emit notifyChanged(TRANS_EXCEPTION, name);
+        emit onException(_bindId, name);
         return;
     }
 
@@ -98,6 +100,7 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
 void TransferWorker::stop()
 {
     _canceled = true;
+    emit speedTimerTick(true); // stop the speed timer
 
     if (_file_server) {
         _file_server->clearBind();
@@ -112,6 +115,7 @@ void TransferWorker::stop()
 bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::string> *nameVector, std::string *token)
 {
     _singleFile = false; //reset for send files
+    _recvPath = "";
 
     // first try run web, or prompt error
     if (!startWeb(port)) {
@@ -153,12 +157,13 @@ bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::
 bool TransferWorker::tryStartReceive(QStringList names, QString &ip, int port, QString &token, QString &dirname)
 {
     _singleFile = false; //reset for send files
+    // update receive path, while will be notify after whole finish.
+    _recvPath = QString(dirname);
+
     if (!startGet(ip.toStdString(), port)) {
         ELOG << "try to create http Geter failed!!!";
         return false;
     }
-    // update receive path, while will be notify after whole finish.
-    _recvPath = QString(dirname);
 
     std::string accessToken = token.toStdString();
     std::string savePath = dirname.toStdString();
@@ -184,6 +189,11 @@ bool TransferWorker::isSyncing()
 void TransferWorker::setEveryFileNotify(bool every)
 {
     _everyNotify = every;
+}
+
+bool TransferWorker::isServe()
+{
+    return _recvPath.isEmpty();
 }
 
 void TransferWorker::handleTimerTick(bool stop)

@@ -22,7 +22,7 @@ class TransferWorker : public QObject, public ProgressCallInterface
     };
 
 public:
-    explicit TransferWorker(QObject *parent = nullptr);
+    explicit TransferWorker(QString id, QObject *parent = nullptr);
 
     bool onProgress(uint64_t size) override;
 
@@ -35,11 +35,15 @@ public:
 
     bool isSyncing();
     void setEveryFileNotify(bool every);
+    bool isServe();
 
 signals:
     void notifyChanged(int status, const QString &path = "", quint64 size = 0);
 
     void speedTimerTick(bool stop = false);
+
+    // IO exception
+    void onException(const QString id, const QString path);
 
 public slots:
     void handleTimerTick(bool stop);
@@ -69,6 +73,9 @@ private:
 
     // files receive path
     QString _recvPath { "" };
+
+    // bind target ip, which as the worker's id
+    QString _bindId;
 };
 
 #endif // TRANSFERWORKER_H
