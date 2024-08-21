@@ -33,7 +33,7 @@ private:
     bool downloadFile(const std::string &name, const std::string &rename = "");
     void downloadFolder(const std::string &foldername, const std::string &refoldername = "");
     void walkDownload(const std::vector<std::string> &webnames);
-    bool createNotExistPath(const std::string &abspath, bool isfile);
+    bool createNotExistPath(std::string &abspath, bool isfile);
     std::string createNextAvailableName(const std::string &name, bool isfile);
 
 

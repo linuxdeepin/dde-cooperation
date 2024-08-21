@@ -259,7 +259,14 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
     std::string ename = CppCommon::Encoding::Base64Encode(name);
     url.append(ename);
 
-    auto tempFile = CppCommon::File(createNextAvailableName(rename.empty() ? name : rename, true));
+    auto avaipath = createNextAvailableName(rename.empty() ? name : rename, true);
+    if (avaipath.empty()) {
+        //FS exception now
+        std::cout << "createNextAvailableName exception now! " << name << std::endl;
+        _callback->onWebChanged(WEB_IO_ERROR);
+        return false;
+    }
+    auto tempFile = CppCommon::File(avaipath);
 //    offset = tempFile.size();
 
     url.append("&token=").append(_token);
@@ -395,7 +402,13 @@ void FileClient::downloadFolder(const std::string &foldername, const std::string
     if (refoldername.empty()) {
         CppCommon::Path path = CppCommon::Path(_savedir) / foldername;
         path = path.canonical(); // remove all '.' and '..' properly
-        createNotExistPath(path.string(), false);
+        auto absapth = path.string();
+        auto ok = createNotExistPath(absapth, false);
+        if (!ok && absapth.empty()) {
+            // FS exception hanppend
+            _callback->onWebChanged(WEB_IO_ERROR);
+            return;
+        }
     }
 
     // request get sub files's info
@@ -459,11 +472,11 @@ void FileClient::walkDownload(const std::vector<std::string> &webnames)
 
 
 
-bool FileClient::createNotExistPath(const std::string &abspath, bool isfile)
+bool FileClient::createNotExistPath(std::string &abspath, bool isfile)
 {
     CppCommon::Path path(abspath);
-    if (!path.IsExists()) {
-        try {
+    try {
+        if (!path.IsExists()) {
             // create its parent first.
             CppCommon::Directory::CreateTree(path.parent());
             if (isfile) {
@@ -471,12 +484,31 @@ bool FileClient::createNotExistPath(const std::string &abspath, bool isfile)
             } else {
                 CppCommon::Directory::Create(path);
             }
-        } catch (const CppCommon::FileSystemException &ex) {
-            // 捕获并处理异常
-            std::cout << "Create throw FS exception: " << ex.message() << std::endl;
-            return false;
+
+            return true;
         }
-        return true;
+    } catch (const CppCommon::FileSystemException &ex) {
+        // std::cout << "Create throw FS exception: " << abspath << std::endl;
+#ifdef __linux__
+        auto filename = path.filename().string();
+        if (filename.length() >= NAME_MAX) {
+            // 长文件名截取前后
+            size_t catlen = NAME_MAX/3;
+            std::string prefix = filename.substr(0, catlen);
+            std::string suffix = filename.substr(filename.length() - catlen, catlen);
+
+            filename = prefix + "..." + suffix;
+            // std::cout << "rename to short: " << filename << std::endl;
+            path = path.parent() / filename;
+            std::string repath = path.string();
+            auto check = createNotExistPath(repath, isfile);
+            abspath = repath;
+            return check;
+        }
+#endif
+        // 捕获, 重置路径表明异常发生
+        abspath = "";
+        return false;
     }
 
     if (isfile && !path.IsDirectory()) {
@@ -529,6 +561,11 @@ std::string FileClient::createNextAvailableName(const std::string &name, bool is
         std::string newpath = CppCommon::Path(path.parent() / newfilename).string();
         if (createNotExistPath(newpath, isfile)) {
             return newpath;
+        } else {
+            if (newpath.empty()) {
+                // FS exception hanppend
+                return "";
+            }
         }
         i++;
     }

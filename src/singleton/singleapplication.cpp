@@ -75,23 +75,22 @@ bool SingleApplication::checkProcess(const QString &key)
 
     // if connect success, another instance is running.
     bool result = localSocket.waitForConnected(1000);
+    if (!result) {
+        // check the /tmp socket file
+        userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation), key);
+        result = QFile::exists(userKey);
+    }
+    qWarning() << "checkProcess " << userKey << result;
 
     return result;
 }
 
 bool SingleApplication::setSingleInstance(const QString &key)
 {
-    QString userKey = userServerName(key);
-
-    QLocalSocket localSocket;
-    localSocket.connectToServer(userKey);
-
-    // if connect success, another instance is running.
-    bool result = localSocket.waitForConnected(1000);
-
-    if (result)
+    if (checkProcess(key))
         return false;
 
+    QString userKey = userServerName(key);
     localServer->removeServer(userKey);
 
     bool f = localServer->listen(userKey);
