@@ -8,3 +8,5 @@ lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../transl
 lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../translations/deepin-data-transfer/deepin-data-transfer_zh_CN.ts
 lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../translations/deepin-data-transfer/deepin-data-transfer_zh_HK.ts
 lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../translations/deepin-data-transfer/deepin-data-transfer_zh_TW.ts
+lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../translations/deepin-data-transfer/deepin-data-transfer_bo.ts
+lupdate ./plugins/data-transfer ./apps/data-transfer  -ts -no-obsolete ../translations/deepin-data-transfer/deepin-data-transfer_ug.ts

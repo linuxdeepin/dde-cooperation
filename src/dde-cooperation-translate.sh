@@ -9,3 +9,4 @@ lupdate ./lib/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translation
 lupdate ./lib/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_zh_HK.ts
 lupdate ./lib/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_zh_TW.ts
 lupdate ./lib/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_ug.ts
+lupdate ./lib/cooperation ./apps/dde-cooperation -ts -no-obsolete ../translations/dde-cooperation/dde-cooperation_bo.ts
