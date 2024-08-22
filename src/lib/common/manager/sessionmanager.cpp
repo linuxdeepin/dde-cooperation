@@ -171,21 +171,21 @@ void SessionManager::recvFiles(QString &ip, int port, QString &token, QStringLis
     }
 }
 
-void SessionManager::cancelSyncFile(const QString &ip)
+void SessionManager::cancelSyncFile(const QString &ip, const QString &reason)
 {
     DLOG << "cancelSyncFile to: " << ip.toStdString();
 
-    // first: send cancel rpc
+    // first: send cancel rpc, target jobid is self ip addr.
     TransCancelMessage req;
-    req.id = ip.toStdString();
+    req.id = deepin_cross::CommonUitls::getFirstIp();
     req.name = "all";
-    req.reason = "";
+    req.reason = reason.toStdString();
 
     QString jsonMsg = req.as_json().serialize().c_str();
     sendRpcRequest(ip, REQ_TRANS_CANCLE, jsonMsg);
 
     // then: stop local worker
-    handleCancelTrans(ip);
+    handleCancelTrans(ip, reason);
 }
 
 void SessionManager::sendRpcRequest(const QString &ip, int type, const QString &reqJson)
@@ -217,7 +217,7 @@ void SessionManager::handleTransCount(const QString names, quint64 size)
     emit notifyTransChanged(50, names, size);
 }
 
-void SessionManager::handleCancelTrans(const QString jobid)
+void SessionManager::handleCancelTrans(const QString jobid, const QString reason)
 {
     // stop the worker, which will send TRANS_CANCELED: 48
     auto it = _trans_workers.find(jobid);
@@ -225,6 +225,11 @@ void SessionManager::handleCancelTrans(const QString jobid)
         it->second->stop();
         // Remove the worker from the map
         _trans_workers.erase(it);
+    }
+
+    if (!reason.isEmpty()) {
+        // TRANS_EXCEPTION = 49
+        emit notifyTransChanged(49, reason, 0);
     }
 }
 
@@ -266,10 +271,10 @@ void SessionManager::handleRpcResult(int32_t type, const QString &response)
     emit notifyAsyncRpcResult(type, response);
 }
 
-void SessionManager::handleTransException(const QString jobid, const QString path)
+void SessionManager::handleTransException(const QString jobid, const QString reason)
 {
 #ifdef QT_DEBUG
-    DLOG << jobid.toStdString() << "transfer occur exception:" << path.toStdString();
+    DLOG << jobid.toStdString() << "transfer occur exception:" << reason.toStdString();
 #endif
-    cancelSyncFile(jobid);
+    cancelSyncFile(jobid, reason);
 }

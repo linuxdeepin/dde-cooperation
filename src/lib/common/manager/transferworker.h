@@ -43,7 +43,7 @@ signals:
     void speedTimerTick(bool stop = false);
 
     // IO exception
-    void onException(const QString id, const QString path);
+    void onException(const QString id, const QString reason);
 
 public slots:
     void handleTimerTick(bool stop);

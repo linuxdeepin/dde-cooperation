@@ -279,9 +279,9 @@ FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &ser
                 _callback->onWebChanged(WEB_FILE_END, path, size);
             } else if (RES_NOTFOUND == status) {
                 std::string path(buffer);
-                _callback->onWebChanged(WEB_NOT_FOUND, path);
+                _callback->onWebChanged(WEB_NOT_FOUND, "not_found");
             } else if (RES_ERROR == status) {
-                _callback->onWebChanged(WEB_IO_ERROR);
+                _callback->onWebChanged(WEB_DISCONNECTED, "net_error");
             } else if (RES_INDEX_CHANGE == status) {
                 std::string path(buffer);
                 _callback->onWebChanged(WEB_INDEX_BEGIN, path);

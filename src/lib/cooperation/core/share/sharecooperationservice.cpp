@@ -234,7 +234,12 @@ void ShareCooperationService::stopBarrier()
     if (barrierProcess()->isOpen()) {
         // try to shutdown child gracefully
         barrierProcess()->write(&ShutdownCh, 1);
+#if defined(Q_OS_WIN)
+        // it will freeze UI if aync wait on windows
+        barrierProcess()->waitForFinished(100);
+#else
         barrierProcess()->waitForFinished(5000);
+#endif
         barrierProcess()->close();
     }
 

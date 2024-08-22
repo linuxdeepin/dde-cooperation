@@ -43,7 +43,7 @@ public:
 signals:
     void onTransData(const QString endpoint, const QStringList nameVector);
     void onTransCount(const QString names, quint64 size);
-    void onCancelJob(const QString jobid);
+    void onCancelJob(const QString jobid, const QString reason);
     void onConnectChanged(int result, QString reason);
 
     // local signals which emit from RPC

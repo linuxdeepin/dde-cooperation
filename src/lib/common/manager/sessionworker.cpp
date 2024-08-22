@@ -138,7 +138,8 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         response->json_msg = res.as_json().serialize();
 
         QString jobid = QString::fromStdString(req.id);
-        emit onCancelJob(jobid);
+        QString reason = QString::fromStdString(req.reason);
+        emit onCancelJob(jobid, reason);
         return;
     }
     break;

@@ -67,6 +67,9 @@ int main(int argc, char *argv[])
             procPath = QCoreApplication::applicationDirPath();
         }
         procPath.append("/").append(compatProc);
+#if defined(_WIN32) || defined(_WIN64)
+        procPath.append(".exe");
+#endif
         qWarning() << procPath;
         QFile procexe = QFile(procPath);
         if (procexe.exists()) {

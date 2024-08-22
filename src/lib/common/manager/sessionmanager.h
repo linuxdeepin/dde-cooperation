@@ -32,7 +32,7 @@ public:
     void sessionDisconnect(QString ip);
     void sendFiles(QString &ip, int port, QStringList paths);
     void recvFiles(QString &ip, int port, QString &token, QStringList names);
-    void cancelSyncFile(const QString &ip);
+    void cancelSyncFile(const QString &ip, const QString &reason = "");
 
     void sendRpcRequest(const QString &target, int type, const QString &reqJson);
 
@@ -47,10 +47,10 @@ signals:
 public slots:
     void handleTransData(const QString endpoint, const QStringList nameVector);
     void handleTransCount(const QString names, quint64 size);
-    void handleCancelTrans(const QString jobid);
+    void handleCancelTrans(const QString jobid, const QString reason);
     void handleFileCounted(const QString ip, const QStringList paths, quint64 totalSize);
     void handleRpcResult(int32_t type, const QString &response);
-    void handleTransException(const QString jobid, const QString path);
+    void handleTransException(const QString jobid, const QString reason);
 
 private:
     std::shared_ptr<TransferWorker> createTransWorker(const QString &jobid);

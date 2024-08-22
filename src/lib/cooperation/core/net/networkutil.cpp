@@ -533,7 +533,6 @@ void NetworkUtil::tryShareApply(const QString &ip, const QString &selfprint)
     _selfFingerPrint = selfprint;
 
     int logind = d->sessionManager->sessionConnect(ip, d->servePort, COO_HARD_PIN);
-    WLOG << "tryShareApply, logind=" << logind;
     if (logind < 0) {
         DLOG << "try apply share FAILED, try compat!";
         compatLogin(ip);

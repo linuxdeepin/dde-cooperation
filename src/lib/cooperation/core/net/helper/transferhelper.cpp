@@ -407,10 +407,11 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
         cancelTransfer(path.compare("im_sender") == 0);
         break;
     case TRANS_EXCEPTION:
-        transferResult(false, tr("File read/write exception"));
-        if (size == 0) {
+        // exception reason: "io_error" "net_error" "not_found" "fs_exception"
+        d->status.storeRelease(Idle);
+        if (path == "io_error") {
             transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
-        } else if (size == 404) {
+        } else if (path == "net_error") {
             transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
         } else {
             transferResult(false, tr("File read/write exception"));

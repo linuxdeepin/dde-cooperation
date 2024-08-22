@@ -44,9 +44,8 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
     if (state < 1) {
         // errors: WEB_DISCONNECTED = -2,WEB_IO_ERROR = -1,WEB_NOT_FOUND = 0
         emit speedTimerTick(true);
-        QString name = QString::fromStdString(msg);
-        emit notifyChanged(TRANS_EXCEPTION, name);
-        emit onException(_bindId, name);
+        QString reason = QString::fromStdString(msg);
+        emit onException(_bindId, reason);
         return;
     }
 

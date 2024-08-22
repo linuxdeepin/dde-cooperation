@@ -263,7 +263,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
     if (avaipath.empty()) {
         //FS exception now
         std::cout << "createNextAvailableName exception now! " << name << std::endl;
-        _callback->onWebChanged(WEB_IO_ERROR);
+        _callback->onWebChanged(WEB_IO_ERROR, "fs_exception");
         return false;
     }
     auto tempFile = CppCommon::File(avaipath);
@@ -290,7 +290,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
             // error：not found
             total = -1;
             shouldExit = true;
-            _callback->onWebChanged(WEB_NOT_FOUND, tempFile.string());
+            _callback->onWebChanged(WEB_NOT_FOUND, "not_found");
         }
         break;
         case RES_OKHEADER: {
@@ -315,7 +315,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                 _callback->onWebChanged(WEB_FILE_BEGIN, file_path.string(), total);
             } catch (const CppCommon::FileSystemException &ex) {
                 std::cout << "Head create throw FS exception: " << ex.message() << std::endl;
-                _callback->onWebChanged(WEB_IO_ERROR);
+                _callback->onWebChanged(WEB_IO_ERROR, "io_error");
                 return true;
             }
         }
@@ -328,7 +328,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                     tempFile.Write(buffer, size);
                 } catch (const CppCommon::FileSystemException &ex) {
                     std::cout << "Write throw FS exception: " << ex.message() << std::endl;
-                    _callback->onWebChanged(WEB_IO_ERROR);
+                    _callback->onWebChanged(WEB_IO_ERROR, "io_error");
                     return true;
                 }
 
@@ -343,7 +343,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
             current = -1;
             shouldExit = true;
 
-            _callback->onWebChanged(WEB_IO_ERROR);
+            _callback->onWebChanged(WEB_DISCONNECTED, "net_error");
         }
         break;
         case RES_FINISH: {
@@ -355,7 +355,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                     tempFile.Close();
                 } catch (const CppCommon::FileSystemException &ex) {
                     std::cout << "Write&Close throw FS exception: " << ex.message() << std::endl;
-                    _callback->onWebChanged(WEB_IO_ERROR);
+                    _callback->onWebChanged(WEB_IO_ERROR, "io_error");
                     return true;
                 }
             }
@@ -406,7 +406,7 @@ void FileClient::downloadFolder(const std::string &foldername, const std::string
         auto ok = createNotExistPath(absapth, false);
         if (!ok && absapth.empty()) {
             // FS exception hanppend
-            _callback->onWebChanged(WEB_IO_ERROR);
+            _callback->onWebChanged(WEB_IO_ERROR, "fs_exception");
             return;
         }
     }
