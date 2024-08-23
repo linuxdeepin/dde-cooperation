@@ -308,9 +308,11 @@ void TransferHelper::updateProgress(int value, const QString &remainTime)
 
 void TransferHelper::onActionTriggered(const QString &action)
 {
+    // clear transfer info
+    d->transferInfo.clear();
     if (action == NotifyCancelAction) {
+        cancelTransfer(true); // do UI first
         NetworkUtil::instance()->cancelTrans();
-        d->isClicked = true;
     } else if (action == NotifyRejectAction) {
         NetworkUtil::instance()->replyTransRequest(false);
     } else if (action == NotifyAcceptAction) {
@@ -404,7 +406,7 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
 #endif
     switch (status) {
     case TRANS_CANCELED:
-        cancelTransfer(path.compare("im_sender") == 0);
+        cancelTransfer(false);
         break;
     case TRANS_EXCEPTION:
         // exception reason: "io_error" "net_error" "not_found" "fs_exception"
@@ -516,16 +518,20 @@ void TransferHelper::rejected()
     d->transDialog()->hide();
 }
 
-void TransferHelper::cancelTransfer(bool sender)
+void TransferHelper::cancelTransfer(bool click)
 {
+    if (Idle == d->status.loadAcquire()) {
+        WLOG << "Transfer Idle, ignore cancel again!";
+        return;
+    }
+
     d->status.storeRelease(Idle);
-    if (d->isClicked) {
+    if (click) {
+        // just hide dislog if user click cancel button
         d->transDialog()->hide();
     } else {
         transferResult(false, tr("The other party has canceled the file transfer"));
     }
-    // reset
-    d->isClicked = false;
 }
 
 void TransferHelper::cancelTransferApply()
@@ -543,7 +549,7 @@ void TransferHelper::compatTransJobStatusChanged(int id, int result, const QStri
     LOG << "id: " << id << " result: " << result << " msg: " << msg.toStdString();
     switch (result) {
     case JOB_TRANS_FAILED:
-        if (d->isClicked) {
+        if (Server == d->role) {
             // Cancel by self clicked
             d->status.storeRelease(Idle);
             d->transDialog()->hide();
@@ -608,10 +614,9 @@ void TransferHelper::onTransferExcepted(int type, const QString &remote)
         return;
     }
 
+    cancelTransfer(true); // hide dialog first and show exception
     // cancel transfer and hide progress
     NetworkUtil::instance()->cancelTrans();
-    d->isClicked = true;
-    cancelTransfer(Server == d->role);
 
     switch (type) {
     case EX_NETWORK_PINGOUT:

@@ -53,7 +53,7 @@ public Q_SLOTS:
     void cancelTransferApply();
     void accepted();
     void rejected();
-    void cancelTransfer(bool sender);
+    void cancelTransfer(bool click);
     void onVerifyTimeout();
 
     //client

@@ -61,7 +61,6 @@ private:
     TransferInfo transferInfo;
     bool isTransTimeout = false;
     QString recvFilesSavePath;
-    bool isClicked = false;
 
     QTimer confirmTimer;
 

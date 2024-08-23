@@ -5,16 +5,8 @@
 #ifndef FILESERVER_H
 #define FILESERVER_H
 
-#include "webbinder.h"
-
-//#include "server/http/https_server.h"
 #include "server/http/https_server.h"
-#include "string/string_utils.h"
 #include "syncstatus.h"
-
-#include <iostream>
-#include <map>
-#include <mutex>
 
 class FileServer : public WebInterface, public CppServer::HTTP::HTTPSServer
 {

@@ -219,7 +219,7 @@ void SessionManager::handleTransCount(const QString names, quint64 size)
 
 void SessionManager::handleCancelTrans(const QString jobid, const QString reason)
 {
-    // stop the worker, which will send TRANS_CANCELED: 48
+    // stop the worker
     auto it = _trans_workers.find(jobid);
     if (it != _trans_workers.end()) {
         it->second->stop();
@@ -230,6 +230,9 @@ void SessionManager::handleCancelTrans(const QString jobid, const QString reason
     if (!reason.isEmpty()) {
         // TRANS_EXCEPTION = 49
         emit notifyTransChanged(49, reason, 0);
+    } else {
+        // TRANS_CANCELED = 48 by user
+        emit notifyTransChanged(48, "", 0);
     }
 }
 
@@ -274,7 +277,7 @@ void SessionManager::handleRpcResult(int32_t type, const QString &response)
 void SessionManager::handleTransException(const QString jobid, const QString reason)
 {
 #ifdef QT_DEBUG
-    DLOG << jobid.toStdString() << "transfer occur exception:" << reason.toStdString();
+    DLOG << jobid.toStdString() << " transfer occur exception: " << reason.toStdString();
 #endif
     cancelSyncFile(jobid, reason);
 }

@@ -35,7 +35,7 @@ private:
 
     void handlePing(const std::string &remote);
 
-    void onHeartbeatTimeout(const std::string &remote);
+    void onHeartbeatTimeout(bool canceled);
 
 private:
     // <ip, sessionid>

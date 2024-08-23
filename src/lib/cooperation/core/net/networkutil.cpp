@@ -268,7 +268,7 @@ void NetworkUtilPrivate::handleAsyncRpcResult(int32_t type, const QString respon
         break;
     }
     default:
-        WLOG << "unkown rpc callback type: " << type << " response:" << response.toStdString();
+        LOG << "unkown rpc callback type: " << type << " response:" << response.toStdString();
         break;
     }
 }

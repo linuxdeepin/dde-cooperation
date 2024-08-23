@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <regex>
 
 class WebBinder : public CppCommon::Singleton<WebBinder>
 {

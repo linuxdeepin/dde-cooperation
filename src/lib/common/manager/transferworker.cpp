@@ -233,14 +233,7 @@ void TransferWorker::doCalculateSpeed()
 void TransferWorker::sendTranEndNotify()
 {
     emit speedTimerTick(true);
-    if (_canceled) {
-        QString from = "im_sender";
-        if (_file_client)
-            from = "im_recver";
-        emit notifyChanged(TRANS_CANCELED, from);
-    } else {
-        emit notifyChanged(TRANS_WHOLE_FINISH, _recvPath);
-    }
+    emit notifyChanged(TRANS_WHOLE_FINISH, _recvPath);
 }
 
 

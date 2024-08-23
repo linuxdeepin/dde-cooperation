@@ -47,9 +47,10 @@ protected:
 private:
     void handlePong(const std::string &remote);
 
-    void sendPingMessage();
+    bool pingMessageStart();
+    void pingTimerStop();
 
-    void onHeartbeatTimeout();
+    void onHeartbeatTimeout(bool canceled);
 
 private:
     std::atomic<bool> _stop { false };

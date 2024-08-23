@@ -4,6 +4,8 @@
 
 #include "webbinder.h"
 
+#include <regex>
+
 WebBinder::WebBinder()
 {
 

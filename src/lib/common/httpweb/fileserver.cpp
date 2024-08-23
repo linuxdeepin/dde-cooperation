@@ -4,12 +4,10 @@
 
 #include "fileserver.h"
 #include "tokencache.h"
+#include "webbinder.h"
 
-//#include "server/http/https_session.h"
 #include "server/http/https_session.h"
 #include "server/http/http_response.h"
-
-#include "system/uuid.h"
 
 #include "webproto.h"
 
@@ -291,7 +289,7 @@ FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &ser
                 _callback->onWebChanged(WEB_TRANS_FINISH);
             }
         }
-        return _stop;
+        return _stop.load();
     });
 
     auto session = std::make_shared<HTTPFileSession>(std::dynamic_pointer_cast<CppServer::HTTP::HTTPSServer>(server));
@@ -306,7 +304,7 @@ void FileServer::onError(int error, const std::string &category, const std::stri
 
 bool FileServer::start()
 {
-    _stop = false;
+    _stop.store(false);
     SetupReuseAddress(true);
     SetupReusePort(true);
     return IsStarted() ? Restart() : Start();
@@ -314,7 +312,7 @@ bool FileServer::start()
 
 bool FileServer::stop()
 {
-    _stop = true;
+    _stop.store(true);
     return Stop();
 }
 

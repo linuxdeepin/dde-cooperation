@@ -116,35 +116,9 @@ bool ProtoServer::startHeartbeat()
 {
     if (!_ping_timer) {
         _ping_timer = std::make_shared<Timer>(service());
-        _ping_timer->Setup([this](bool canceled) {
-            if (canceled) {
-                // std::cout << "Timer canceled!" << std::endl;
-            } else {
-                bool recheck = false;
-                auto it = _ping_remotes.begin();
-                while (it != _ping_remotes.end()) {
-                    if (!it->second.exchange(false)) {
-                        // 处理心跳超时的情况
-                        std::string remote = it->first;
-                        it = _ping_remotes.erase(it);
 
-                        onHeartbeatTimeout(remote);
-                    } else {
-                        recheck = true;
-                        ++it;
-                    }
-                }
-
-                if (_session_ids.empty()) {
-                    // no any connection session
-                    _ping_timer->Cancel();
-                    _ping_remotes.clear();
-                } else if (recheck) {
-                    _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
-                    _ping_timer->WaitAsync();
-                }
-            }
-        });
+        std::function<void(bool)> _action = std::bind(&ProtoServer::onHeartbeatTimeout, this, std::placeholders::_1);
+        _ping_timer->Setup(_action);
     }
 
     // wait for client ping
@@ -166,22 +140,38 @@ void ProtoServer::handlePing(const std::string &remote)
     }
 }
 
-void ProtoServer::onHeartbeatTimeout(const std::string &remote)
+void ProtoServer::onHeartbeatTimeout(bool canceled)
 {
-    // std::cout << "Not receive client ping in 3 seconds: " << remote << std::endl;
-
-    // disconenct and remove
-    auto it = _session_ids.find(remote);
-    if (it != _session_ids.end()) {
-        auto session = FindSession(it->second);
-        if (session) {
-            session->Disconnect();
-        }
-        _session_ids.erase(it);
+    if (_session_ids.empty() || canceled) {
+        // no any connection session
+        _ping_timer->Cancel();
+        _ping_remotes.clear();
+        return;
     }
 
-    auto ip = remote;
-    _callbacks->onStateChanged(RPC_PINGOUT, ip);
+    std::string outip = "";
+    bool recheck = false;
+    auto it = _ping_remotes.begin();
+    while (it != _ping_remotes.end()) {
+        if (!it->second.exchange(false)) {
+            // 处理心跳超时的情况
+            outip = it->first;
+            it = _ping_remotes.erase(it);
+            // std::cout << "Not receive client ping in 3 seconds: " << outip << std::endl;
+
+            if (_callbacks) {
+                _callbacks->onStateChanged(RPC_PINGOUT, outip);
+            }
+        } else {
+            recheck = true;
+            ++it;
+        }
+    }
+
+    if (recheck) {
+        _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
+        _ping_timer->WaitAsync();
+    }
 }
 
 std::shared_ptr<CppServer::Asio::SSLSession>

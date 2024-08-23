@@ -5,13 +5,13 @@
 #include "fileclient.h"
 #include "tokencache.h"
 
-#include "string/string_utils.h"
 #include "filesystem/file.h"
 #include "filesystem/path.h"
 #include "filesystem/directory.h"
 
+#include "server/http/https_client.h"
+
 #include <iostream>
-#include <regex>
 
 using CppServer::HTTP::HTTPRequest;
 using CppServer::HTTP::HTTPResponse;
@@ -140,7 +140,7 @@ void FileClient::setConfig(const std::string &token, const std::string &savedir)
 
 void FileClient::stop()
 {
-    _stop = true;
+    _stop.store(true);
     _httpClient->DisconnectAsync();
 }
 
@@ -151,7 +151,7 @@ void FileClient::startFileDownload(const std::vector<std::string> &webnames)
         return;
     }
 
-    _stop = false;
+    _stop.store(false);
 
     // 创建新线程来运行walkDownload函数
     std::thread downloadThread(&FileClient::walkDownload, this, webnames);
@@ -250,7 +250,6 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
     // use smart pointer in order to wait all free while client stop.
     std::shared_ptr<std::promise<bool>> exitPromisePtr = std::make_shared<std::promise<bool>>();
     std::future<bool> exitFuture = exitPromisePtr->get_future();  // 获取与 promise 关联的 future
-    _promised.store(false, std::memory_order_relaxed); // reset flag
 
     uint64_t current = 0, total = 0;
     uint64_t offset = 0;
@@ -273,9 +272,13 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
     url.append("&offset=").append(std::to_string(offset));
 
     ResponseHandler cb([exitPromisePtr, this, &current, &total, &tempFile](int status, const char *buffer, size_t size) -> bool {
-        if (_stop) {
+        if (_stop.load()) {
             std::cout << "has been canceled from outside!" << std::endl;
-            exitPromisePtr->set_exception(std::make_exception_ptr(std::runtime_error("Download stopped")));
+            try {
+                exitPromisePtr->set_exception(std::make_exception_ptr(std::runtime_error("Download stopped")));
+            } catch (const std::future_error &ex) {
+                std::cerr << "Promise future error: " << ex.what() << std::endl;
+            }
             return true;
         }
 
@@ -288,7 +291,6 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                 tempFile.Close();
             }
             // error：not found
-            total = -1;
             shouldExit = true;
             _callback->onWebChanged(WEB_NOT_FOUND, "not_found");
         }
@@ -340,7 +342,6 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
             if (tempFile.IsFileWriteOpened())
                 tempFile.Close();
             // error：break off
-            current = -1;
             shouldExit = true;
 
             _callback->onWebChanged(WEB_DISCONNECTED, "net_error");
@@ -372,9 +373,12 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
             break;
         }
 
-        if (shouldExit && !_promised.load(std::memory_order_relaxed)) {
-            exitPromisePtr->set_value(true);
-            _promised.store(true, std::memory_order_relaxed);
+        if (shouldExit) {
+            try {
+                exitPromisePtr->set_value(true);
+            } catch (const std::future_error &ex) {
+                std::cerr << "Promise future set_value error: " << ex.what() << std::endl;
+            }
         }
 
         return shouldExit;
@@ -416,7 +420,7 @@ void FileClient::downloadFolder(const std::string &foldername, const std::string
 
     // 循环处理文件夹内文件
     for (const auto &entry : info.datas) {
-        if (_stop)
+        if (_stop.load())
             break;
 
         std::string relName = foldername + "/" + entry.name;

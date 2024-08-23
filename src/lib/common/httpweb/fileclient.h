@@ -5,7 +5,7 @@
 #ifndef FILECLIENT_H
 #define FILECLIENT_H
 
-#include "server/http/https_client.h"
+#include "server/asio/ssl_context.h"
 #include "syncstatus.h"
 
 #include "webproto.h"
@@ -42,8 +42,6 @@ private:
     std::string _token;
     std::string _savedir;
     std::atomic<bool> _stop { false };
-    // download sync, promise value flag
-    std::atomic<bool> _promised { false };
 };
 
 #endif // FILECLIENT_H

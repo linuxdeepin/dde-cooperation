@@ -22,29 +22,12 @@ bool ProtoClient::startHeartbeat()
 {
     if (!_ping_timer) {
         _ping_timer = std::make_unique<Timer>(service());
-        _ping_timer->Setup([this](bool canceled) {
-            if (canceled) {
-                // std::cout << "Timer canceled!" << std::endl;
-            } else {
-                if (!_pong_received.exchange(false)) {
-                    // 处理心跳超时的情况
-                    onHeartbeatTimeout();
-                } else {
-                    if (_connected_host.empty()) {
-                        _ping_timer->Cancel();
-                    } else {
-                        sendPingMessage();
-                        _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
-                        _ping_timer->WaitAsync();
-                    }
-                }
-            }
-        });
+
+        std::function<void(bool)> _action = std::bind(&ProtoClient::onHeartbeatTimeout, this, std::placeholders::_1);
+        _ping_timer->Setup(_action);
     }
 
-    sendPingMessage();
-    _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
-    return _ping_timer->WaitAsync();
+    return pingMessageStart();
 }
 
 void ProtoClient::handlePong(const std::string &remote)
@@ -54,18 +37,40 @@ void ProtoClient::handlePong(const std::string &remote)
     _pong_received.store(true);
 }
 
-void ProtoClient::sendPingMessage()
+bool ProtoClient::pingMessageStart()
 {
+    if (_connected_host.empty() || !IsHandshaked())
+        return false;
+
     proto::MessageNotify ping;
     ping.notification = "ping";
     send(ping);
+
+    _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
+    return _ping_timer->WaitAsync();
 }
 
-void ProtoClient::onHeartbeatTimeout()
+void ProtoClient::pingTimerStop()
 {
-    // std::cout << "Not receive pong in 3 seconds: " << _connected_host << std::endl;
-    _callbacks->onStateChanged(RPC_PINGOUT, _connected_host);
     _connected_host = "";
+    if (_ping_timer) {
+        _ping_timer->Cancel();
+    }
+}
+
+void ProtoClient::onHeartbeatTimeout(bool canceled)
+{
+    // std::cout << "Cient timer handleHeartbeat!" << std::endl;
+    if (!canceled) {
+        if (!_pong_received.exchange(false)) {
+            pingTimerStop();
+            // 处理心跳超时的情况
+            if (_callbacks)
+                _callbacks->onStateChanged(RPC_PINGOUT, _connected_host);
+        } else {
+            pingMessageStart();
+        }
+    }
 }
 
 bool ProtoClient::connectReplyed()
@@ -103,7 +108,7 @@ void ProtoClient::onDisconnected()
         //can not get the remote address if has not connected yet.
          retry = _callbacks->onStateChanged(RPC_DISCONNECTED, _connected_host);
     }
-    _connected_host = "";
+    pingTimerStop();
 
     if (retry) {
         // Wait for a while...
