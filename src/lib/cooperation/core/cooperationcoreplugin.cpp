@@ -41,6 +41,8 @@ CooperaionCorePlugin::~CooperaionCorePlugin()
 
 void CooperaionCorePlugin::initialize()
 {
+    CommonUitls::initLog();
+    CommonUitls::loadTranslator();
     dMain = QSharedPointer<MainWindow>::create();
 
     onlyTransfer = qApp->property("onlyTransfer").toBool();
@@ -56,9 +58,6 @@ void CooperaionCorePlugin::initialize()
 #endif
 
     CooperationUtil::instance();
-
-    CommonUitls::initLog();
-    CommonUitls::loadTranslator();
 }
 
 bool CooperaionCorePlugin::isMinilize()
