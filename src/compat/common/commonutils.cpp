@@ -20,8 +20,7 @@
 using namespace deepin_cross;
 
 static constexpr char kApp1[] { "dde-cooperation" };
-static constexpr char kApp2[] { "dde-cooperation-transfer" };
-static constexpr char kApp3[] { "deepin-data-transfer" };
+static constexpr char kApp2[] { "deepin-data-transfer" };
 static constexpr char kDaemon[] { "cooperation-daemon" };
 
 std::string CommonUitls::getFirstIp()
@@ -262,7 +261,7 @@ void CommonUitls::manageDaemonProcess(const QString &side)
     }
     QTimer *timer = new QTimer();
     QObject::connect(timer, &QTimer::timeout, [] {
-        bool exist = isProcessRunning(kApp1) || isProcessRunning(kApp2) || isProcessRunning(kApp3);
+        bool exist = isProcessRunning(kApp1) || isProcessRunning(kApp2);
         if (exist) {
             return;
         } else {

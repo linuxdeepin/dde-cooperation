@@ -62,22 +62,11 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     _userTimer.start(2000);
 #endif
 
+    connect(qApp, &QCoreApplication::aboutToQuit, this, &ServiceManager::handleAppQuit);
 }
 
 ServiceManager::~ServiceManager()
 {
-    if (_ipcService) {
-        _ipcService->deleteLater();
-        _ipcService = nullptr;
-    }
-
-    if (_rpcService) {
-        _rpcService->deleteLater();
-        _rpcService = nullptr;
-    }
-
-    DiscoveryJob::instance()->stopAnnouncer();
-    DiscoveryJob::instance()->stopDiscoverer();
 }
 
 void ServiceManager::startRemoteServer()
@@ -132,4 +121,22 @@ void ServiceManager::asyncDiscovery()
         fastring baseinfo = genPeerInfo();
         DiscoveryJob::instance()->announcerRun(baseinfo);
     });
+}
+
+void ServiceManager::handleAppQuit()
+{
+    DLOG << "ServiceManager quit!";
+    if (_ipcService) {
+        _ipcService->close();
+        _ipcService->deleteLater();
+        _ipcService = nullptr;
+    }
+
+    if (_rpcService) {
+        _rpcService->deleteLater();
+        _rpcService = nullptr;
+    }
+
+    DiscoveryJob::instance()->stopAnnouncer();
+    DiscoveryJob::instance()->stopDiscoverer();
 }

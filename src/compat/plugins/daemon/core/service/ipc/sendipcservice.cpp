@@ -100,6 +100,10 @@ void SendIpcService::handleSendToAllClient(int type, const QString msg)
 
 void SendIpcService::handleAboutToQuit()
 {
+    _ping.stop();
+    _cacheTimer.stop();
+    _offline_status.clear();
+    _sessions.clear();
 }
 
 void SendIpcService::handleAddJob(const QString appName, const int jobId)

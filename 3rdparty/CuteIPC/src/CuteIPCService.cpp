@@ -353,7 +353,10 @@ void CuteIPCService::close()
 {
   Q_D(CuteIPCService);
   if (d->m_localServer)
+  {
+    d->m_localServer->removeServer(d->m_localServer->serverName());
     d->m_localServer->close();
+  }
   else if (d->m_tcpServer)
     d->m_tcpServer->close();
 }

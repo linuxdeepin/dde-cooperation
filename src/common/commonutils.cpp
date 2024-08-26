@@ -20,10 +20,6 @@
 
 using namespace deepin_cross;
 
-static constexpr char kApp1[] { "dde-cooperation" };
-static constexpr char kApp2[] { "dde-cooperation-transfer" };
-static constexpr char kApp3[] { "deepin-data-transfer" };
-
 //random: 13628~23628
 #define WEB_MIN_PORT 13628
 #define WEB_MAX_PORT 23628

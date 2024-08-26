@@ -184,7 +184,6 @@ void SendRpcService::initConnet()
 {
     _ping_timer.setInterval(1000);
     _work.moveToThread(&_thread);
-    connect(qApp, &QCoreApplication::aboutToQuit, this, &SendRpcService::handleAboutQuit);
 
     connect(&_ping_timer, &QTimer::timeout, this, &SendRpcService::handleTimeOut);
     connect(this, &SendRpcService::startPingTimer, this, &SendRpcService::handleStartTimer, Qt::QueuedConnection);
@@ -200,6 +199,7 @@ void SendRpcService::initConnet()
 
 SendRpcService::~SendRpcService()
 {
+    handleAboutQuit();
 }
 
 SendRpcService *SendRpcService::instance()

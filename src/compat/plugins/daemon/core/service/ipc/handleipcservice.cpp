@@ -305,7 +305,7 @@ void HandleIpcService::doAsyncSearch(const QString &targetip, const bool remove)
 void HandleIpcService::appExit()
 {
     DLOG << "client ask Exit!";
-    qApp->exit();
+    qApp->exit(0);
 }
 
 void HandleIpcService::handleSessionSignal(const QString& signalName, int type, const QString& message)

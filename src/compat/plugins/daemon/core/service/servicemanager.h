@@ -26,6 +26,9 @@ public:
 
     void startRemoteServer();
 
+public slots:
+    void handleAppQuit();
+
 private:
     void localIPCStart();
     fastring genPeerInfo();
