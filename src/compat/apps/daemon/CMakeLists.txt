@@ -26,18 +26,21 @@ if (WIN32)
     set (PRODUCT_NAME "cooperation")
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
     set (RC_FILES ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+    set (MANIFEST ${CMAKE_CURRENT_SOURCE_DIR}/../app.manifest)
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${PROJ_NAME} WIN32
+    qt_add_executable(${PROJ_NAME}
         MANUAL_FINALIZATION
         ${CPP_SRC}
         ${RC_FILES}
+        ${MANIFEST}
     )
 else()
-    add_executable(${PROJ_NAME} WIN32
+    add_executable(${PROJ_NAME}
         ${CPP_SRC}
         ${RC_FILES}
+        ${MANIFEST}
     )
 endif()
 

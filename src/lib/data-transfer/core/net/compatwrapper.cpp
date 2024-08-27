@@ -20,6 +20,18 @@ CompatWrapperPrivate::CompatWrapperPrivate(CompatWrapper *qq)
 {
     ipcInterface = new CuteIPCInterface();
 
+    ipcTimer = new QTimer(this);
+    connect(ipcTimer, &QTimer::timeout, this, &CompatWrapperPrivate::onTimeConnectBackend);
+    ipcTimer->setSingleShot(true);
+    ipcTimer->start(500);
+}
+
+CompatWrapperPrivate::~CompatWrapperPrivate()
+{
+}
+
+void CompatWrapperPrivate::onTimeConnectBackend()
+{
     backendOk = ipcInterface->connectToServer("cooperation-daemon");
     if (backendOk) {
         // bind SIGNAL to SLOT
@@ -31,11 +43,8 @@ CompatWrapperPrivate::CompatWrapperPrivate(CompatWrapper *qq)
         WLOG << "ping return ID:" << sessionId.toStdString();
     } else {
         WLOG << "can not connect to: cooperation-daemon";
+        ipcTimer->start(2000);
     }
-}
-
-CompatWrapperPrivate::~CompatWrapperPrivate()
-{
 }
 
 void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
@@ -54,7 +63,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
 
     } break;
     case ipc::FRONT_PEER_CB: {
-        DLOG << "recv FRONT_PEER_CB json:" << json_obj;
+        //DLOG << "recv FRONT_PEER_CB json:" << json_obj;
     } break;
     case ipc::FRONT_CONNECT_CB: {
         ipc::GenericResult param;

@@ -75,11 +75,13 @@ bool SingleApplication::checkProcess(const QString &key)
 
     // if connect success, another instance is running.
     bool result = localSocket.waitForConnected(1000);
+#ifdef __linux__
     if (!result) {
-        // check the /tmp socket file
+        // check the /tmp socket file for linux
         userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation), key);
         result = QFile::exists(userKey);
     }
+#endif
     qWarning() << "checkProcess " << userKey << result;
 
     return result;
