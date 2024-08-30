@@ -311,24 +311,24 @@ void CooperationManager::regist()
 {
     ClickedCallback clickedCb = CooperationManager::buttonClicked;
     ButtonStateCallback visibleCb = CooperationManager::buttonVisible;
-    QVariantMap historyInfo { { "id", ConnectButtonId },
-                              { "description", tr("connect") },
-                              { "icon-name", Kconnect },
-                              { "location", 0 },
-                              { "button-style", 0 },
-                              { "clicked-callback", QVariant::fromValue(clickedCb) },
-                              { "visible-callback", QVariant::fromValue(visibleCb) } };
+    QVariantMap ConnectedInfo { { "id", ConnectButtonId },
+                                { "description", tr("connect") },
+                                { "icon-name", Kconnect },
+                                { "location", 0 },
+                                { "button-style", 0 },
+                                { "clicked-callback", QVariant::fromValue(clickedCb) },
+                                { "visible-callback", QVariant::fromValue(visibleCb) } };
 
-    QVariantMap transferInfo { { "id", DisconnectButtonId },
-                               { "description", tr("Disconnect") },
-                               { "icon-name", Kdisconnect },
-                               { "location", 1 },
-                               { "button-style", 0 },
-                               { "clicked-callback", QVariant::fromValue(clickedCb) },
-                               { "visible-callback", QVariant::fromValue(visibleCb) } };
+    QVariantMap DisconnectInfo { { "id", DisconnectButtonId },
+                                 { "description", tr("Disconnect") },
+                                 { "icon-name", Kdisconnect },
+                                 { "location", 1 },
+                                 { "button-style", 0 },
+                                 { "clicked-callback", QVariant::fromValue(clickedCb) },
+                                 { "visible-callback", QVariant::fromValue(visibleCb) } };
 
-    CooperationUtil::instance()->registerDeviceOperation(historyInfo);
-    CooperationUtil::instance()->registerDeviceOperation(transferInfo);
+    CooperationUtil::instance()->registerDeviceOperation(ConnectedInfo);
+    CooperationUtil::instance()->registerDeviceOperation(DisconnectInfo);
 }
 
 void CooperationManager::connectToDevice(const DeviceInfoPointer info)
@@ -362,11 +362,13 @@ void CooperationManager::disconnectToDevice(const DeviceInfoPointer info)
     d->backendShareEvent(BACK_SHARE_DISCONNECT);
 
     if (d->targetDeviceInfo) {
-        d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
-        MainController::instance()->updateDeviceState({ d->targetDeviceInfo });
+        d->targetDeviceInfo = nullptr;
+        if (info->connectStatus() != DeviceInfo::Offline)
+            info->setConnectStatus(DeviceInfo::Connectable);
+        MainController::instance()->updateDeviceState({ info });
 
         static QString body(tr("Coordination with \"%1\" has ended"));
-        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+        d->notifyMessage(d->recvReplacesId, body.arg(CommonUitls::elidedText(info->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
     }
 }
 
@@ -395,6 +397,15 @@ void CooperationManager::checkAndProcessShare(const DeviceInfoPointer info)
     }
 }
 
+bool CooperationManager::isConnected(const DeviceInfoPointer info)
+{
+    if (d->targetDeviceInfo
+        && d->targetDeviceInfo->connectStatus() == DeviceInfo::Connected
+        && d->targetDeviceInfo->ipAddress() == info->ipAddress())
+        return true;
+    return false;
+}
+
 void CooperationManager::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
     if (id == ConnectButtonId) {
@@ -410,8 +421,11 @@ void CooperationManager::buttonClicked(const QString &id, const DeviceInfoPointe
 
 bool CooperationManager::buttonVisible(const QString &id, const DeviceInfoPointer info)
 {
-    if (qApp->property("onlyTransfer").toBool() || !info->cooperationEnable())
+    if (qApp->property("onlyTransfer").toBool())
         return false;
+
+    if (id == DisconnectButtonId && CooperationManager::instance()->isConnected(info))
+        return true;
 
     if (id == ConnectButtonId && info->connectStatus() == DeviceInfo::ConnectStatus::Connectable)
         return true;
@@ -565,6 +579,6 @@ void CooperationManager::handleNetworkDismiss(const QString &msg)
 
 void CooperationManager::handleSearchDeviceResult(bool res)
 {
-    if(!res)
+    if (!res)
         emit MainController::instance()->discoveryFinished(false);
 }

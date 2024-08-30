@@ -4,6 +4,7 @@
 
 #include "sortfilterworker.h"
 #include "utils/historymanager.h"
+#include "cooperation/cooperationmanager.h"
 
 using TransHistoryInfo = QMap<QString, QString>;
 Q_GLOBAL_STATIC(TransHistoryInfo, transHistory)
@@ -30,6 +31,10 @@ void SortFilterWorker::onTransHistoryUpdated()
 int SortFilterWorker::calculateIndex(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info)
 {
     int index = 0;
+
+    if (CooperationManager::instance()->isConnected(info))
+        return index;
+
     switch (info->connectStatus()) {
     case DeviceInfo::Connected:
         // 连接中的设备放第一个

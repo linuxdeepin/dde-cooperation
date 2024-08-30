@@ -83,13 +83,24 @@ static QString lockFilePath()
 static bool checkLockFile()
 {
     QFile lockFile(lockFilePath());
-    return !lockFile.exists();
+
+    if (lockFile.open(QIODevice::ReadOnly)) {
+        QString homePath = QDir::homePath();
+        QString username = QDir(homePath).dirName();
+        //如果之前异常退出，lock文件没有移除，判断是否是相同用户在启动。是相同用户的话，允许启动。
+        return lockFile.readAll() == username;
+    } else {
+        return true;
+    }
 }
 
 static void createLockFile()
 {
     QFile lockFile(lockFilePath());
     if (lockFile.open(QIODevice::WriteOnly)) {
+        QString homePath = QDir::homePath();
+        QString username = QDir(homePath).dirName();
+        lockFile.write(username.toUtf8());
         lockFile.close();
     } else {
         qDebug() << "Failed to create lock file.";
@@ -127,17 +138,17 @@ int main(int argc, char *argv[])
                                                                "between different devices."));
 #endif
 
-    if (!checkLockFile()) {
-        qCritical() << "Another user has already started the application.";
-        return 1;
-    }
-    createLockFile();
-
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {
         qInfo() << "single application is already running.";
         return 0;
     }
+
+    if (!checkLockFile()) {
+        qCritical() << "Another user has already started the application.";
+        return 1;
+    }
+    createLockFile();
 
     if (deepin_cross::BaseUtils::isWayland()) {
         // do something

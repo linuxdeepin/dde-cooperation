@@ -20,6 +20,7 @@ public:
     void regist();
 
     void checkAndProcessShare(const DeviceInfoPointer info);
+    bool isConnected(const DeviceInfoPointer info);
 
     static void buttonClicked(const QString &id, const DeviceInfoPointer info);
     static bool buttonVisible(const QString &id, const DeviceInfoPointer info);

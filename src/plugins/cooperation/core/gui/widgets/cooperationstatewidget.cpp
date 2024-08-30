@@ -28,6 +28,8 @@ DWIDGET_USE_NAMESPACE
 
 #include <utils/cooperationutil.h>
 
+#include <maincontroller/maincontroller.h>
+
 using namespace cooperation_core;
 
 #ifdef linux
@@ -340,6 +342,12 @@ void BottomLabel::initUI()
     ipLabel = new QLabel(ip);
     ipLabel->setAlignment(Qt::AlignHCenter);
     ipLabel->setFixedHeight(30);
+    connect(MainController::instance(), &MainController::onlineStateChanged, this, [this](bool isOnline) {
+        if (!isOnline)
+            return;
+        QString ip = QString(tr("Local IP: %1").arg(CooperationUtil::localIPAddress()));
+        ipLabel->setText(ip);
+    });
     CooperationGuiHelper::setAutoFont(ipLabel, 12, QFont::Normal);
 
     dialog = new CooperationAbstractDialog(this);

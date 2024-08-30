@@ -103,7 +103,8 @@ void MainWindow::onlineStateChanged(bool isOnline)
     if (!isOnline) {
         d->workspaceWidget->clear();
         d->workspaceWidget->switchWidget(WorkspaceWidget::kNoNetworkWidget);
-    }
+    } else
+        d->workspaceWidget->switchWidget(WorkspaceWidget::kNoResultWidget);
 }
 
 void MainWindow::setFirstTipVisible()
