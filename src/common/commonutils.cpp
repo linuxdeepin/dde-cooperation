@@ -145,8 +145,8 @@ void CommonUitls::initLog()
     flag::set_value("log_dir", logdir);   //日志保存目录
 
 #ifdef linux
-    QString logConfPath = QString("/usr/share/%1/")
-                                  .arg(qApp->applicationName());   //  /usr/share/xx
+    QString logConfPath = QString("/etc/%1/")
+                                  .arg(qApp->applicationName());
 #else
     QString logConfPath = logDir();
 #endif

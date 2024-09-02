@@ -70,7 +70,8 @@ void MainController::updateDeviceList(const QString &ip, const QString &connecte
         map.insert("OSType", osType);
         auto devInfo = DeviceInfo::fromVariantMap(map);
         if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
-            if (connectedIp == CooperationUtil::localIPAddress())
+            if (connectedIp == CooperationUtil::localIPAddress()
+                && CooperationManager::instance()->isConnected(devInfo))
                 devInfo->setConnectStatus(DeviceInfo::Connected);
 
             // 处理设备的共享属性发生变化情况
