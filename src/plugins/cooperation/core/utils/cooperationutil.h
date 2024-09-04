@@ -11,6 +11,7 @@
 #include <QWidget>
 #include <QDialog>
 
+class CuteIPCInterface;
 namespace cooperation_core {
 
 class CooperationUtilPrivate;
@@ -21,6 +22,7 @@ public:
     static CooperationUtil *instance();
 
     QWidget *mainWindow();
+    CuteIPCInterface *ipcInterface();
     QString sessionId() const;
     DeviceInfoPointer findDeviceInfo(const QString &ip);
     void destroyMainWindow();

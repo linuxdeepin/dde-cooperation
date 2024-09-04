@@ -155,4 +155,5 @@ void MainController::discoveryDevice()
         deviceOnline(offlineDevList);
 
     CooperationUtil::instance()->asyncDiscoveryDevice();
+    isRunning = false;
 }

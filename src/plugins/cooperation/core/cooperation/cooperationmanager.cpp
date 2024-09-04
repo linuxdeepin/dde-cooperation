@@ -13,11 +13,12 @@
 #include "common/constant.h"
 #include "common/commonstruct.h"
 #include "common/commonutils.h"
-#include "ipc/frontendservice.h"
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/chan.h"
 #include "ipc/proto/backend.h"
+
+#include <CuteIPCInterface.h>
 
 #include <QApplication>
 #include <QStandardPaths>
@@ -72,35 +73,21 @@ CooperationManagerPrivate::CooperationManagerPrivate(CooperationManager *qq)
 
 void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceInfoPointer devInfo, QVariant param)
 {
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-    co::Json req, res;
+    auto ipc = CooperationUtil::instance()->ipcInterface();
 
     auto myselfInfo = DeviceInfo::fromVariantMap(CooperationUtil::deviceInfo());
     myselfInfo->setIpAddress(CooperationUtil::localIPAddress());
-    ShareEvents event;
-    event.eventType = type;
+
     switch (type) {
     case BACK_SHARE_CONNECT: {
-        ShareConnectApply conEvent;
-        conEvent.appName = MainAppName;
-        conEvent.tarAppname = MainAppName;
-        conEvent.tarIp = devInfo->ipAddress().toStdString();
-
+        // ipcInterface->call("ping", Q_RETURN_ARG(QString, sessionId), Q_ARG(QString, who));
         QStringList dataInfo({ myselfInfo->deviceName(),
-                               myselfInfo->ipAddress() });
-        conEvent.data = dataInfo.join(',').toStdString();
-
-        event.data = conEvent.as_json().str();
-        req = event.as_json();
+                              myselfInfo->ipAddress() });
+        QString data = dataInfo.join(',');
+        ipc->call("doApplyShare", Q_ARG(QString, MainAppName), Q_ARG(QString, MainAppName), Q_ARG(QString, devInfo->ipAddress()), Q_ARG(QString, data));
     } break;
     case BACK_SHARE_DISCONNECT: {
-        ShareDisConnect disConEvent;
-        disConEvent.appName = MainAppName;
-        disConEvent.tarAppname = MainAppName;
-        disConEvent.msg = myselfInfo->deviceName().toStdString();
-
-        event.data = disConEvent.as_json().str();
-        req = event.as_json();
+        ipc->call("doDisconnectShare", Q_ARG(QString, MainAppName), Q_ARG(QString, MainAppName), Q_ARG(QString, myselfInfo->deviceName()));
     } break;
     case BACK_SHARE_START: {
         if (!devInfo->peripheralShared())
@@ -123,58 +110,24 @@ void CooperationManagerPrivate::backendShareEvent(req_type_t type, const DeviceI
         }
         config.clipboardSharing = devInfo->clipboardShared();
 
-        ShareStart startEvent;
-        startEvent.appName = MainAppName;
-        startEvent.config = config;
-
-        event.data = startEvent.as_json().str();
-        req = event.as_json();
+        QString jsonData = config.as_json().str().c_str();
+        ipc->call("doStartShare", Q_ARG(QString, MainAppName), Q_ARG(QString, jsonData));
     } break;
     case BACK_SHARE_STOP: {
-        ShareStop stopEvent;
-        stopEvent.appName = MainAppName;
-        stopEvent.tarAppname = MainAppName;
-        stopEvent.flags = param.toInt();
-
-        event.data = stopEvent.as_json().str();
-        req = event.as_json();
+        int flags = param.toInt();
+        ipc->call("doStopShare", Q_ARG(QString, MainAppName), Q_ARG(QString, MainAppName), Q_ARG(int, flags));
     } break;
     case BACK_SHARE_CONNECT_REPLY: {
-        ShareConnectReply replyEvent;
-        replyEvent.appName = MainAppName;
-        replyEvent.tarAppname = MainAppName;
-        replyEvent.reply = param.toBool() ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE;
+        int reply = param.toBool() ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE;
 
-        event.data = replyEvent.as_json().str();
-        req = event.as_json();
+        ipc->call("doReplyShare", Q_ARG(QString, MainAppName), Q_ARG(QString, MainAppName), Q_ARG(int, reply));
     } break;
     case BACK_SHARE_DISAPPLY_CONNECT: {
-        ShareConnectDisApply cancelEvent;
-        cancelEvent.appName = MainAppName;
-        cancelEvent.tarAppname = MainAppName;
-        event.data = cancelEvent.as_json().str();
-        req = event.as_json();
+        ipc->call("doCancelShareApply", Q_ARG(QString, MainAppName));
     } break;
     default:
         break;
     }
-
-    if (req.empty())
-        return;
-
-    req.add_member("api", "Backend.shareEvents");
-#if defined(WIN32)
-    co::wait_group wg;
-    wg.add(1);
-    UNIGO([&rpcClient, &req, &res, wg]() {
-        rpcClient.call(req, res);
-        wg.done();
-    });
-    wg.wait();
-#else
-    rpcClient.call(req, res);
-#endif
-    rpcClient.close();
 }
 
 CooperationTaskDialog *CooperationManagerPrivate::taskDialog()

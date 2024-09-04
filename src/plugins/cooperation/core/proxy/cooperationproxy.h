@@ -9,8 +9,6 @@
 #include <QMap>
 #include <QTimer>
 
-class FrontendService;
-
 namespace cooperation_core {
 
 class CooperationTransDialog;
@@ -47,12 +45,13 @@ public Q_SLOTS:
     void onCompleted();
     void onViewed();
 
+public slots:
+    void secondMessageSlot(int type, const QString& msg);
+
 private:
     explicit CooperationProxy(QObject *parent = nullptr);
     ~CooperationProxy();
 
-    bool pingBackend();
-    void localIPCStart();
     void replyTransRequest(int type);
     CooperationTransDialog *cooperationDialog();
 
@@ -60,11 +59,6 @@ private:
     void updateProgress(int value, const QString &msg);
 
 private:
-    FrontendService *frontendIpcSer { nullptr };
-    QString sessionId;
-    bool backendOk { false };
-    bool thisDestruct { false };
-
     TransferInfo transferInfo;
     QString recvFilesSavePath;
     QString fromWho;

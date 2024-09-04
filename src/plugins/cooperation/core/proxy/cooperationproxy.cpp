@@ -12,9 +12,11 @@
 #include "configs/settings/configmanager.h"
 #include "common/constant.h"
 #include "common/commonutils.h"
-#include "ipc/frontendservice.h"
 #include "ipc/proto/comstruct.h"
-#include "ipc/proto/backend.h"
+#include "ipc/proto/frontend.h"
+#include "ipc/bridge.h"
+
+#include <CuteIPCInterface.h>
 
 #include <QDir>
 #include <QUrl>
@@ -34,21 +36,21 @@ using namespace cooperation_core;
 CooperationProxy::CooperationProxy(QObject *parent)
     : QObject(parent)
 {
-    localIPCStart();
-
-    UNIGO([this] {
-        backendOk = pingBackend();
-        LOG << "The result of ping backend is " << backendOk;
-    });
-
     transTimer.setInterval(10 * 1000);
     transTimer.setSingleShot(true);
     connect(&transTimer, &QTimer::timeout, this, &CooperationProxy::onConfirmTimeout);
+
+    auto ipc = CooperationUtil::instance()->ipcInterface();
+    if (ipc) {
+        // bind SIGNAL to SLOT
+        ipc->remoteConnect(SIGNAL(cooperationSignal(int, QString)), this, SLOT(secondMessageSlot(int, QString)));
+    } else {
+        WLOG << "can not connect to: cooperation-daemon";
+    }
 }
 
 CooperationProxy::~CooperationProxy()
 {
-    thisDestruct = true;
 }
 
 CooperationProxy *CooperationProxy::instance()
@@ -160,142 +162,73 @@ void CooperationProxy::onConfirmTimeout()
     showTransResult(false, msg.arg(CommonUitls::elidedText(fromWho, Qt::ElideMiddle, 15)));
 }
 
-bool CooperationProxy::pingBackend()
+void CooperationProxy::secondMessageSlot(int type, const QString& msg)
 {
-    rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
-    co::Json req, res;
+    co::Json json_obj = json::parse(msg.toStdString());
+    if (json_obj.is_null()) {
+        WLOG << "parse error from: " << msg.toStdString();
+        return;
+    }
 
-    ipc::PingBackParam backParam;
-    backParam.who = CooperRegisterName;
-    backParam.version = fastring(UNI_IPC_PROTO);
-    backParam.cb_port = UNI_IPC_BACKEND_COOPER_PLUGIN_PORT;
+    switch (type) {
+    case IPC_PING: {
 
-    req = backParam.as_json();
-    req.add_member("api", "Backend.ping");   //BackendImpl::ping
+    } break;
+    case FRONT_TRANS_STATUS_CB: {
+        ipc::GenericResult param;
+        param.from_json(json_obj);
+        QString msg(param.msg.c_str());   // job path
 
-    rpcClient.call(req, res);
-    rpcClient.close();
-    sessionId = res.get("msg").as_string().c_str();   // save the return session.
+        metaObject()->invokeMethod(this, "onTransJobStatusChanged",
+                                    Qt::QueuedConnection,
+                                    Q_ARG(int, param.id),
+                                    Q_ARG(int, param.result),
+                                    Q_ARG(QString, msg));
+    } break;
+    case FRONT_NOTIFY_FILE_STATUS: {
+        metaObject()->invokeMethod(this,
+                                    "onFileTransStatusChanged",
+                                    Qt::QueuedConnection,
+                                    Q_ARG(QString, msg));
+    } break;
+    case FRONT_APPLY_TRANS_FILE: {
+        ApplyTransFiles transferInfo;
+        transferInfo.from_json(json_obj);
+        LOG << "apply transfer info: " << json_obj;
 
-    //CallResult
-    return res.get("result").as_bool() && !sessionId.isEmpty();
-}
-
-void CooperationProxy::localIPCStart()
-{
-    if (frontendIpcSer) return;
-
-    frontendIpcSer = new FrontendService(this);
-
-    UNIGO([this]() {
-        while (!thisDestruct) {
-            BridgeJsonData bridge;
-            frontendIpcSer->bridgeChan()->operator>>(bridge);   //300ms超时
-            if (!frontendIpcSer->bridgeChan()->done()) {
-                // timeout, next read
-                continue;
-            }
-
-            co::Json json_obj = json::parse(bridge.json);
-            if (json_obj.is_null()) {
-                WLOG << "parse error from: " << bridge.json.c_str();
-                continue;
-            }
-
-            switch (bridge.type) {
-            case IPC_PING: {
-                ipc::PingFrontParam param;
-                param.from_json(json_obj);
-
-                bool result = false;
-                fastring my_ver(FRONTEND_PROTO_VERSION);
-                // test ping 服务测试用
-
-                if (my_ver.compare(param.version) == 0 && (param.session.compare(sessionId.toStdString()) == 0 || param.session.compare("backendServerOnline") == 0)) {
-                    result = true;
-                } else {
-                    WLOG << param.version.c_str() << " =version not match= " << my_ver.c_str();
-                }
-
-                BridgeJsonData res;
-                res.type = IPC_PING;
-                res.json = result ? param.session : "";   // 成功则返回session，否则为空
-
-                frontendIpcSer->bridgeResult()->operator<<(res);
-            } break;
-            case FRONT_TRANS_STATUS_CB: {
-                ipc::GenericResult param;
-                param.from_json(json_obj);
-                QString msg(param.msg.c_str());   // job path
-
-                metaObject()->invokeMethod(this, "onTransJobStatusChanged",
-                                           Qt::QueuedConnection,
-                                           Q_ARG(int, param.id),
-                                           Q_ARG(int, param.result),
-                                           Q_ARG(QString, msg));
-            } break;
-            case FRONT_NOTIFY_FILE_STATUS: {
-                QString objstr(bridge.json.c_str());
-                metaObject()->invokeMethod(this,
-                                           "onFileTransStatusChanged",
-                                           Qt::QueuedConnection,
-                                           Q_ARG(QString, objstr));
-            } break;
-            case FRONT_APPLY_TRANS_FILE: {
-                ApplyTransFiles transferInfo;
-                transferInfo.from_json(json_obj);
-                LOG << "apply transfer info: " << json_obj;
-
-                switch (transferInfo.type) {
-                case ApplyTransType::APPLY_TRANS_APPLY:
-                    metaObject()->invokeMethod(this,
-                                               "waitForConfirm",
-                                               Qt::QueuedConnection,
-                                               Q_ARG(QString, QString(transferInfo.machineName.c_str())));
-                    break;
-                default:
-                    break;
-                }
-            } break;
-            case FRONT_SERVER_ONLINE:
-                pingBackend();
-                MainController::instance()->regist();
-                break;
-            default:
-                break;
-            }
+        switch (transferInfo.type) {
+        case ApplyTransType::APPLY_TRANS_APPLY:
+            metaObject()->invokeMethod(this,
+                                        "waitForConfirm",
+                                        Qt::QueuedConnection,
+                                        Q_ARG(QString, QString(transferInfo.machineName.c_str())));
+            break;
+        default:
+            break;
         }
-    });
-
-    // start ipc services
-    ipc::FrontendImpl *frontendimp = new ipc::FrontendImpl();
-    frontendimp->setInterface(frontendIpcSer);
-
-    rpc::Server().add_service(frontendimp).start("0.0.0.0", UNI_IPC_BACKEND_COOPER_PLUGIN_PORT, "/frontend", "", "");
+    } break;
+    case FRONT_SERVER_ONLINE:
+        MainController::instance()->regist();
+        break;
+    default:
+        break;
+    }
 }
 
 void CooperationProxy::replyTransRequest(int type)
 {
     isReplied = true;
-    UNIGO([=] {
-        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-        co::Json res;
-        // 获取设备名称
-        auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
-        QString deviceName = value.isValid()
-                ? value.toString()
-                : QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).dirName();
 
-        ApplyTransFiles transInfo;
-        transInfo.appname = CooperRegisterName;
-        transInfo.type = type;
-        transInfo.machineName = deviceName.toStdString();
+    // 获取设备名称
+    auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "DeviceName");
+    QString deviceName = value.isValid()
+            ? value.toString()
+            : QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).dirName();
 
-        co::Json req = transInfo.as_json();
-        req.add_member("api", "Backend.applyTransFiles");
-        rpcClient.call(req, res);
-        rpcClient.close();
-    });
+    // 发送申请文件传输请求
+    auto ipc = CooperationUtil::instance()->ipcInterface();
+    ipc->call("doApplyTransfer", Q_ARG(QString, qApp->applicationName()), Q_ARG(QString, CooperRegisterName),
+              Q_ARG(QString, deviceName), Q_ARG(int, type));
 }
 
 void CooperationProxy::onAccepted()
@@ -312,21 +245,11 @@ void CooperationProxy::onRejected()
 
 void CooperationProxy::onCanceled()
 {
-    UNIGO([this] {
-        rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
-        co::Json req, res;
-
-        ipc::TransJobParam jobParam;
-        jobParam.session = sessionId.toStdString();
-        jobParam.job_id = 1000;
-        jobParam.appname = CooperRegisterName;
-
-        req = jobParam.as_json();
-        req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
-        rpcClient.call(req, res);
-        rpcClient.close();
-        LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
-    });
+    // TRANS_CANCEL 1008
+    bool res =  false;
+    auto ipc = CooperationUtil::instance()->ipcInterface();
+    ipc->call("doOperateJob", Q_RETURN_ARG(bool, res), Q_ARG(int, 1008), Q_ARG(int, 1000), Q_ARG(QString, qApp->applicationName()));
+    LOG << "cancelTransferJob result=" << res;
 
     cooperationDialog()->close();
 }

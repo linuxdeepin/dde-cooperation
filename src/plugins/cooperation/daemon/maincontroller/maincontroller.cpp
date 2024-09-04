@@ -255,7 +255,7 @@ void MainController::onTransJobStatusChanged(int id, int result, const QString &
 
 void MainController::onFileTransStatusChanged(const QString &status)
 {
-    LOG << "file transfer info: " << status.toStdString();
+    // LOG << "file transfer info: " << status.toStdString();
     co::Json statusJson;
     statusJson.parse_from(status.toStdString());
     ipc::FileStatus param;

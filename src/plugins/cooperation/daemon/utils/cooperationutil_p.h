@@ -7,12 +7,12 @@
 
 #include "global_defines.h"
 
-#include <co/rpc.h>
+#include <co/json.h>
 #include <co/co.h>
 
 #include <QObject>
 
-class FrontendService;
+
 namespace daemon_cooperation {
 
 class MainWindow;
@@ -24,16 +24,16 @@ public:
     explicit CooperationUtilPrivate(CooperationUtil *qq);
     ~CooperationUtilPrivate();
 
-    bool pingBackend();
-    void localIPCStart();
+public slots:
+    void backendMessageSlot(int type, const QString& msg);
 
 public:
     CooperationUtil *q { nullptr };
 
-    FrontendService *frontendIpcSer { nullptr };
     QString sessionId;
     bool backendOk { false };
-    bool thisDestruct { false };
+
+    CuteIPCInterface *ipcInterface { nullptr };
 };
 
 }

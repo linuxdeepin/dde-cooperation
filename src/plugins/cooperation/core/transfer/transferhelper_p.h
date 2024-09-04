@@ -8,14 +8,13 @@
 #include "transferhelper.h"
 #include "gui/dialogs/transferdialog.h"
 
-#include <co/rpc.h>
+#include <co/json.h>
 #include <co/co.h>
 
 #include <QTimer>
 #include <QMap>
 
-class QDBusInterface;
-class FrontendService;
+
 namespace cooperation_core {
 
 class TransferHelper;

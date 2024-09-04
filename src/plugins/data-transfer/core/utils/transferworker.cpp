@@ -3,18 +3,19 @@
 
 #include "common/constant.h"
 #include "common/commonstruct.h"
-#include "ipc/frontendservice.h"
 #include "ipc/proto/frontend.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/backend.h"
 #include "ipc/proto/chan.h"
+#include "ipc/bridge.h"
 
 #include <co/rpc.h>
 #include <co/co.h>
 #include <co/all.h>
 
+#include <CuteIPCInterface.h>
+
 #include <QTimer>
-#include <QDebug>
 #include <QCoreApplication>
 #include <QFile>
 
@@ -22,165 +23,28 @@
 TransferHandle::TransferHandle()
     : QObject()
 {
-    _this_destruct = false;
-    localIPCStart();
-
     QString appName = QCoreApplication::applicationName();
 
     _backendOK = false;
     _request_job_id = appName.length();   // default start at appName's lenght
     _job_maps.clear();
 
-    _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
+    auto ipcInterface = TransferWoker::instance()->ipc();
+
+    _backendOK = ipcInterface->connectToServer("cooperation-daemon");
     if (_backendOK) {
-        saveSession(TransferWoker::instance()->getSessionId());
+        // bind SIGNAL to SLOT
+        ipcInterface->remoteConnect(SIGNAL(dataTransferSignal(int, QString)), this, SLOT(backendMessageSlot(int, QString)));
+
+        QString sessionId;
+        ipcInterface->call("bindSignal", Q_RETURN_ARG(QString, sessionId), Q_ARG(QString, appName), Q_ARG(QString, "dataTransferSignal"));
+
+        DLOG << "ping return ID:" << sessionId.toStdString();
+        TransferWoker::instance()->setSessionId(sessionId);
+    } else {
+        WLOG << "can not connect to: cooperation-daemon";
+        TransferHelper::instance()->emitDisconnected();
     }
-
-    QTimer *timer = new QTimer();
-
-    // 连接定时器的 timeout 信号到槽函数
-    ipcPing = 3;
-    connect(timer, &QTimer::timeout, [this, appName]() {
-        ipcPing--;
-        if (ipcPing <= 0) {
-            _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
-            if (_backendOK) {
-                ipcPing = 3;
-                saveSession(TransferWoker::instance()->getSessionId());
-            } else {
-                //后端离线，跳转提示界面.
-                // FIXME: 只有从等待传输界面开始才能跳转
-                TransferHelper::instance()->emitDisconnected();
-            }
-        }
-    });
-    timer->start(1000);
-}
-
-TransferHandle::~TransferHandle()
-{
-    _this_destruct = true;
-}
-
-void TransferHandle::localIPCStart()
-{
-    if (_frontendIpcService) return;
-
-    _frontendIpcService = new FrontendService(this);
-
-    UNIGO([this]() {
-        while (!_this_destruct) {
-            BridgeJsonData bridge;
-            _frontendIpcService->bridgeChan()->operator>>(bridge);   //300ms超时
-            if (!_frontendIpcService->bridgeChan()->done()) {
-                // timeout, next read
-                continue;
-            }
-
-            //            LOG << "TransferHandle get bridge json: " << bridge.type << " json:" << bridge.json;
-            co::Json json_obj = json::parse(bridge.json);
-            if (json_obj.is_null()) {
-                ELOG << "parse error from: " << bridge.json;
-                continue;
-            }
-            switch (bridge.type) {
-            case IPC_PING: {
-                ipcPing = 3;
-                ipc::PingFrontParam param;
-                param.from_json(json_obj);
-
-                bool result = false;
-                fastring my_ver(FRONTEND_PROTO_VERSION);
-                if (my_ver.compare(param.version) == 0 && (param.session.compare(_sessionid) == 0 || param.session.compare("backendServerOnline") == 0)) {
-                    result = true;
-                } else {
-                    DLOG << param.version << " =version not match= " << my_ver;
-                }
-
-                BridgeJsonData res;
-                res.type = IPC_PING;
-                res.json = result ? param.session : "";   // 成功则返回session，否则为空
-
-                _frontendIpcService->bridgeResult()->operator<<(res);
-                break;
-            }
-            case MISC_MSG: {
-                QString json(json_obj.get("msg").as_c_str());
-                handleMiscMessage(json);
-                break;
-            }
-            case FRONT_PEER_CB: {
-                ipc::GenericResult param;
-                param.from_json(json_obj);
-                // example to parse string to NodePeerInfo object
-                NodePeerInfo peerobj;
-                peerobj.from_json(param.msg);
-
-                //LOG << param.result << " peer : " << param.msg.c_str();
-
-                break;
-            }
-            case FRONT_CONNECT_CB: {
-                ipc::GenericResult param;
-                param.from_json(json_obj);
-                QString mesg(param.msg.c_str());
-                LOG << param.result << " FRONT_CONNECT_CB : " << param.msg.c_str();
-                handleConnectStatus(param.result, mesg);
-                break;
-            }
-            case FRONT_TRANS_STATUS_CB: {
-                ipc::GenericResult param;
-                param.from_json(json_obj);
-                QString mesg(param.msg.c_str());   // job path
-
-                mesg = mesg.replace("::not enough", "");
-                handleTransJobStatus(param.id, param.result, mesg);
-                break;
-            }
-            case FRONT_FS_PULL_CB: {
-                break;
-            }
-            case FRONT_FS_ACTION_CB: {
-                break;
-            }
-            case FRONT_NOTIFY_FILE_STATUS: {
-                QString objstr(bridge.json.c_str());
-                handleFileTransStatus(objstr);
-                break;
-            }
-            case FRONT_SEND_STATUS: {
-                SendStatus param;
-                param.from_json(json_obj);
-                if (REMOTE_CLIENT_OFFLINE == param.status) {
-                    cancelTransferJob();   //离线，取消job
-                    TransferHelper::instance()->emitDisconnected();
-                }
-                break;
-            }
-            case FRONT_DISCONNECT_CB: {
-                TransferHelper::instance()->emitDisconnected();
-                break;
-            }
-            case FRONT_SERVER_ONLINE: {
-                QString appName = QCoreApplication::applicationName();
-                _backendOK = TransferWoker::instance()->pingBackend(appName.toStdString());
-                if (_backendOK) {
-                    saveSession(TransferWoker::instance()->getSessionId());
-                }
-                break;
-            }
-            default:
-                break;
-            }
-        }
-    });
-
-    // start ipc services
-    ipc::FrontendImpl *frontendimp = new ipc::FrontendImpl();
-    frontendimp->setInterface(_frontendIpcService);
-    _rpcServer = new rpc::Server();
-    _rpcServer->add_service(frontendimp);
-    _rpcServer->start("0.0.0.0", UNI_IPC_FRONTEND_PORT, "/frontend", "", "");
 
     connect(qApp, &QCoreApplication::aboutToQuit, [this]() {
         DLOG << "App exit, exit ipc server";
@@ -190,9 +54,87 @@ void TransferHandle::localIPCStart()
     });
 }
 
-void TransferHandle::saveSession(fastring sessionid)
+TransferHandle::~TransferHandle()
 {
-    _sessionid = sessionid;
+}
+
+void TransferHandle::backendMessageSlot(int type, const QString& msg)
+{
+    co::Json json_obj = json::parse(msg.toStdString());
+    if (json_obj.is_null()) {
+        WLOG << "parse error from: " << msg.toStdString();
+        return;
+    }
+
+    switch (type) {
+    case IPC_PING: {
+        //FIXME: ping?
+        break;
+    }
+    case MISC_MSG: {
+        QString json(json_obj.get("msg").as_c_str());
+        handleMiscMessage(json);
+        break;
+    }
+    case FRONT_PEER_CB: {
+        ipc::GenericResult param;
+        param.from_json(json_obj);
+        // example to parse string to NodePeerInfo object
+        NodePeerInfo peerobj;
+        peerobj.from_json(param.msg);
+
+        //LOG << param.result << " peer : " << param.msg.c_str();
+
+        break;
+    }
+    case FRONT_CONNECT_CB: {
+        ipc::GenericResult param;
+        param.from_json(json_obj);
+        QString mesg(param.msg.c_str());
+        LOG << param.result << " FRONT_CONNECT_CB : " << param.msg.c_str();
+        handleConnectStatus(param.result, mesg);
+        break;
+    }
+    case FRONT_TRANS_STATUS_CB: {
+        ipc::GenericResult param;
+        param.from_json(json_obj);
+        QString mesg(param.msg.c_str());   // job path
+
+        mesg = mesg.replace("::not enough", "");
+        handleTransJobStatus(param.id, param.result, mesg);
+        break;
+    }
+    case FRONT_FS_PULL_CB: {
+        break;
+    }
+    case FRONT_FS_ACTION_CB: {
+        break;
+    }
+    case FRONT_NOTIFY_FILE_STATUS: {
+        handleFileTransStatus(msg);
+        break;
+    }
+    case FRONT_SEND_STATUS: {
+        SendStatus param;
+        param.from_json(json_obj);
+        if (REMOTE_CLIENT_OFFLINE == param.status) {
+            cancelTransferJob();   //离线，取消job
+            TransferHelper::instance()->emitDisconnected();
+        }
+        break;
+    }
+    case FRONT_DISCONNECT_CB: {
+        TransferHelper::instance()->emitDisconnected();
+        break;
+    }
+    case FRONT_SERVER_ONLINE: {
+
+        break;
+    }
+    default:
+        break;
+    }
+
 }
 
 void TransferHandle::handleConnectStatus(int result, QString msg)
@@ -442,163 +384,74 @@ void TransferHandle::sendMessage(json::Json &message)
 
 TransferWoker::TransferWoker()
 {
-    // initialize the proto client
-    coClient = std::shared_ptr<rpc::Client>(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_DATA_TRAN_PORT, false));
+    ipcInterface = new CuteIPCInterface();
 }
 
 TransferWoker::~TransferWoker()
 {
-    coClient->close();
 }
 
-bool TransferWoker::pingBackend(const std::string &who)
+CuteIPCInterface *TransferWoker::ipc()
 {
-    co::Json req, res;
-    //PingBackParam
-    req = {
-        { "who", who },
-        { "version", UNI_IPC_PROTO },
-        { "cb_port", UNI_IPC_FRONTEND_PORT },
-    };
-
-    req.add_member("api", "Backend.ping");   //BackendImpl::ping
-
-    call(req, res);
-    _session_id = res.get("msg").as_string();   // save the return session.
-
-    //CallResult
-    return res.get("result").as_bool() && !_session_id.empty();
+    return ipcInterface;
 }
 
 void TransferWoker::setEmptyPassWord()
 {
     // set empty password, it will refresh password by random
-    co::Json req, res;
-    req = {
-        { "password", "" },
-    };
-
-    req.add_member("api", "Backend.setPassword");   //BackendImpl::setPassword
-
-    call(req, res);
+    ipcInterface->call("setAuthPassword", Q_ARG(QString, ""));
 }
 
 QString TransferWoker::getConnectPassWord()
 {
-    co::Json req, res;
-
-    req.add_member("api", "Backend.getPassword");   //BackendImpl::getPassword
-
-    call(req, res);
-
-    return res.get("password").as_string().c_str();
+    QString password;
+    ipcInterface->call("getAuthPassword", Q_RETURN_ARG(QString, password));
+    return password;
 }
 
 bool TransferWoker::cancelTransferJob(int jobid)
 {
-    co::Json req, res;
-
-    ipc::TransJobParam jobParam;
-    jobParam.session = _session_id;
-    jobParam.job_id = jobid;
-    jobParam.appname = qApp->applicationName().toStdString();
-
-    req = jobParam.as_json();
-    req.add_member("api", "Backend.cancelTransJob");   //BackendImpl::cancelTransJob
-    call(req, res);
-    LOG << "cancelTransferJob" << res.get("result").as_bool() << res.get("msg").as_string().c_str();
-    return res.get("result").as_bool();
+    // TRANS_CANCEL 1008
+    bool res =  false;
+    ipcInterface->call("doOperateJob", Q_RETURN_ARG(bool, res), Q_ARG(int, 1008), Q_ARG(int, jobid), Q_ARG(QString, qApp->applicationName()));
+    LOG << "cancelTransferJob result=" << res;
+    return res;
 }
 
 void TransferWoker::tryConnect(const std::string &ip, const std::string &password)
 {
-    co::Json req, res;
-    fastring target_ip(ip);
-    fastring pin_code(password);
-    fastring app_name(qApp->applicationName().toStdString());
-
-    ipc::ConnectParam conParam;
-    conParam.appName = app_name;
-    conParam.host = target_ip;
-    conParam.password = pin_code;
-    conParam.targetAppname = app_name;
-
-    req = conParam.as_json();
-    req.add_member("api", "Backend.tryConnect");
-    call(req, res);
+    QString appname = qApp->applicationName();
+    ipcInterface->call("doTryConnect", Q_ARG(QString, appname), Q_ARG(QString, appname),
+                       Q_ARG(QString, QString::fromStdString(ip)), Q_ARG(QString, QString::fromStdString(password)));
 }
 
 void TransferWoker::disconnectRemote()
 {
-    co::Json req, res;
-    fastring app_name(qApp->applicationName().toStdString());
-
-    ShareDisConnect info;
-    info.tarAppname = app_name;
-
-    req = info.as_json();
-    req.add_member("api", "Backend.disconnectCb");   //BackendImpl::disConnect
-    LOG << "disConnect" << req.str().c_str();
-    call(req, res);
+    ipcInterface->call("doDisShareCallback", Q_ARG(QString, qApp->applicationName()));
 }
 
-fastring TransferWoker::getSessionId()
+void TransferWoker::setSessionId(QString &seesionid)
 {
-    return _session_id;
+    _session_id = seesionid;
 }
 
 void TransferWoker::sendFiles(int reqid, QStringList filepaths)
 {
-    co::Json req, res;
+    QString target = qApp->applicationName();
 
-    co::vector<fastring> fileVector;
-    for (QString path : filepaths) {
-        fileVector.push_back(path.toStdString());
-    }
-    fastring app_name(qApp->applicationName().toStdString());
-
-    ipc::TransFilesParam transParam;
-    transParam.session = _session_id;
-    transParam.targetSession = app_name;
-    transParam.id = reqid;
-    transParam.paths = fileVector;
-    transParam.sub = true;
-    transParam.savedir = "";
-
-    req = transParam.as_json();
-    req.add_member("api", "Backend.tryTransFiles");   //BackendImpl::tryTransFiles
-
-    call(req, res);
+    ipcInterface->call("doTransferFile", Q_ARG(QString, _session_id), Q_ARG(QString, target),
+                       Q_ARG(int, reqid), Q_ARG(QStringList, filepaths), Q_ARG(bool, true),
+                       Q_ARG(QString, ""));
 }
 
 void TransferWoker::sendMessage(json::Json &message)
 {
-    co::Json req, res;
-    fastring app_name(qApp->applicationName().toStdString());
-
+    QString appname = qApp->applicationName();
     MiscJsonCall miscParam;
-    miscParam.app = app_name;
+    miscParam.app = appname.toStdString();
     miscParam.json = message.str().c_str();
-    req = miscParam.as_json();
-    req.add_member("api", "Backend.miscMessage");   //BackendImpl::miscMessage
 
-    LOG << "sendMessage" << req.str().c_str();
-    call(req, res);
-}
+    QString jsonData = miscParam.as_json().str().c_str();
 
-void TransferWoker::call(const json::Json &req, json::Json &res)
-{
-    coClient.reset(new rpc::Client("127.0.0.1", UNI_IPC_BACKEND_DATA_TRAN_PORT, false));
-#if defined(WIN32)
-    co::wait_group wg;
-    wg.add(1);
-    UNIGO([this, &req, &res, wg]() {
-        coClient->call(req, res);
-        wg.done();
-    });
-    wg.wait();
-#else
-    coClient->call(req, res);
-#endif
-    coClient->close();
+    ipcInterface->call("sendMiscMessage", Q_ARG(QString, appname), Q_ARG(QString, jsonData));
 }

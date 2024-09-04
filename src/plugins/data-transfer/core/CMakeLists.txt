@@ -8,8 +8,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.h"
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.cpp"
-    "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.h"
-    "${CMAKE_SOURCE_DIR}/src/ipc/frontendservice.cpp"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.h"
     "${CMAKE_SOURCE_DIR}/src/common/commonutils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/datatransfercoreplugin.h"
@@ -89,6 +87,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     co
+    CuteIPC
 )
 
 # 平台相关的库，添加到这里

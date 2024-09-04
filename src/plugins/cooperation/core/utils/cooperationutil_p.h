@@ -8,12 +8,12 @@
 #include "global_defines.h"
 #include "info/deviceinfo.h"
 
-#include <co/rpc.h>
+#include <co/json.h>
 #include <co/co.h>
 
 #include <QObject>
 
-class FrontendService;
+
 namespace cooperation_core {
 
 class MainWindow;
@@ -25,18 +25,19 @@ public:
     explicit CooperationUtilPrivate(CooperationUtil *qq);
     ~CooperationUtilPrivate();
 
-    bool pingBackend();
-    void localIPCStart();
     QList<DeviceInfoPointer> parseDeviceInfo(const co::Json &obj);
+
+public slots:
+    void backendMessageSlot(int type, const QString& msg);
 
 public:
     CooperationUtil *q { nullptr };
     MainWindow *window { nullptr };
 
-    FrontendService *frontendIpcSer { nullptr };
     QString sessionId;
     bool backendOk { false };
-    bool thisDestruct { false };
+
+    CuteIPCInterface *ipcInterface { nullptr };
 };
 
 }

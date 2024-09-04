@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QSharedPointer>
 
+class CuteIPCInterface;
 namespace daemon_cooperation {
 
 class CooperationUtilPrivate;
@@ -19,6 +20,7 @@ class CooperationUtil : public QObject
 public:
     static CooperationUtil *instance();
 
+    CuteIPCInterface *ipcInterface();
     void registAppInfo(const QString &infoJson);
     void unregistAppInfo();
     void setAppConfig(const QString &key, const QString &value);

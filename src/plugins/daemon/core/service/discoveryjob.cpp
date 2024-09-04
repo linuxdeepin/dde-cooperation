@@ -5,6 +5,7 @@
 #include "discoveryjob.h"
 #include "searchlight.h"
 #include "ipc/proto/comstruct.h"
+#include "ipc/bridge.h"
 #include "service/ipc/sendipcservice.h"
 #include "service/rpc/remoteservice.h"
 #include "service/comshare.h"
@@ -216,10 +217,9 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip, const bool remove)
     auto offline = Util::getFirstIp().empty();
     if (offline) {
         ev.result = false;
-        auto req = ev.as_json();
-        // 通知前端
-        req.add_member("api", "Frontend.searchDeviceRes");
-        SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
+
+        QString jsonMsg = ev.as_json().str().c_str();
+        SendIpcService::instance()->handleSendToAllClient(FRONT_SEARCH_IP_DEVICE_RESULT, jsonMsg);
         return;
     }
 
@@ -235,10 +235,10 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip, const bool remove)
         // 通知前端搜索失败
         // 通知前端搜索结果
         ev.result = false;
-        auto req = ev.as_json();
-        // 通知前端
-        req.add_member("api", "Frontend.searchDeviceRes");
-        SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
+
+        QString jsonMsg = ev.as_json().str().c_str();
+        SendIpcService::instance()->handleSendToAllClient(FRONT_SEARCH_IP_DEVICE_RESULT, jsonMsg);
+
         ((searchlight::Discoverer*)_discoverer_p)->setSearchIp("");
         return;
     }
@@ -246,10 +246,9 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip, const bool remove)
     emit sigNodeChanged(true, result.data.c_str());
     ev.result = true;
     ev.msg = result.data;
-    auto req = ev.as_json();
-    // 通知前端
-    req.add_member("api", "Frontend.searchDeviceRes");
-    SendIpcService::instance()->handleSendToClient("dde-cooperation", req.str().c_str());
+
+    QString jsonMsg = ev.as_json().str().c_str();
+    SendIpcService::instance()->handleSendToAllClient(FRONT_SEARCH_IP_DEVICE_RESULT, jsonMsg);
 }
 
 fastring DiscoveryJob::udpSendPackage()

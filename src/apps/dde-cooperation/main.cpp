@@ -13,7 +13,6 @@
 
 #include <signal.h>
 
-#define BASEPROTO_PORT 51597
 static constexpr char kPluginInterface[] { "org.deepin.plugin.cooperation" };
 static constexpr char kPluginCore[] { "cooperation-core" };
 
