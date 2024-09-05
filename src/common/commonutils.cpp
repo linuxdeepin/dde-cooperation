@@ -145,12 +145,12 @@ void CommonUitls::initLog()
     flag::set_value("log_dir", logdir);   //日志保存目录
 
 #ifdef linux
-    QString logConfPath = QString("/etc/%1/")
+    QString logConfPath = QString("/etc/%1/config/")
                                   .arg(qApp->applicationName());
 #else
     QString logConfPath = logDir();
 #endif
-    QString configFile = logConfPath + "config.conf";   //日志级别配置
+    QString configFile = logConfPath + "log.conf";   //日志级别配置
     QFile file(configFile);
     QSettings settings(configFile, QSettings::IniFormat);
     if (!file.exists()) {
