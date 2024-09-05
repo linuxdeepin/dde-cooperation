@@ -4,12 +4,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="120"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="131"/>
         <source>Cooperation</source>
         <translation>تېرمىنال ھالقىپ ھەمكارلىشىش</translation>
     </message>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="124"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="135"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
         <translation>تېرمىنال ھالقىپ ھەمكارلىشىش كۈچلۈك بولغان تېرمىنال ھالقىپ خىزمەت قىلىش قورالى بولۇپ، ئوخشىمىغان ئۈسكۈنىلەر ئارا ھۆججەت يەتكۈزۈش، كۇنۇپكا تاختىسى، مائۇس ۋە چاپلاش تاختىسىنى ئورتاقلىشىشىڭىزغا ياردەم بېرىدۇ.</translation>
     </message>
@@ -17,7 +17,8 @@
 <context>
     <name>cooperation_core::BottomLabel</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="339"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="348"/>
         <source>Local IP: %1</source>
         <translation>IP ئادرېس: %1</translation>
     </message>
@@ -55,8 +56,8 @@
         <translation>ئۈزۈش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="368"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="503"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="370"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="517"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
         <translation>&quot;%1&quot; بىلەن بولغان ھەمكارلىشىش ئاياغلاشتى</translation>
     </message>
@@ -71,80 +72,80 @@
         <translation>باشقا ئۈسكۈنە بىلەن ھەمكارلىشىۋاتىسىز</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="433"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="447"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
         <translation>&quot;%1&quot; نىڭ ھەمكارلىشىش تەلىپى تاپشۇرۇۋېلىندى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="434"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="448"/>
         <source>Reject</source>
         <translation>رەت قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="435"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="449"/>
         <source>Accept</source>
         <translation>قوبۇل قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="449"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="463"/>
         <source>Cooperation</source>
         <translation>تېرمىنال ھالقىپ ھەمكارلىشىش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="471"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="485"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
         <translation>ئۇلاندى، &quot;%1&quot; بىلەن ھەمكارلىشىۋاتىسىز</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="537"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="551"/>
         <source>The other party has cancelled the connection request !</source>
         <translation>قارشى تەرەپ ئۇلاش تەلىپىنى بىكار قىلدى!</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="541"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="555"/>
         <source>connect failed</source>
         <translation>ئۇلانمىدى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="551"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="565"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
         <translation>تور ئۇلانمىغاچقا ھۆججەت يوللانمىدى.   تورغا ئۇلاپ قايتا سىناڭ!</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="558"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="572"/>
         <source>File transfer failed</source>
         <translation>ھۆججەت يوللانمىدى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="560"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="574"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
         <translation>تور ئۇلانمىغاچقا ھۆججەت يوللانمىدى.  تورغا ئۇلاپ قايتا سىناڭ!</translation>
     </message>
     <message>
         <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="337"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="476"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="485"/>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="524"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="490"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="499"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="538"/>
         <source>Unable to collaborate to &quot;%1&quot;</source>
         <translation>&quot;%1&quot; بىلەن ھەمكارلاشقىلى بولمايدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="477"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="491"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
         <translation>&quot;%1&quot; ھەمكارلىشىش تەلىپىڭىزنى رەت قىلدى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="486"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="500"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
         <translation>&quot;%1&quot; باشقا ئۈسكۈنە بىلەن ھەمكارلىشىۋاتىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="518"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="532"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
         <translation>&quot;%1&quot; بىلەن ئۇلىنىش تەلىپىنىڭ ۋاقتى ئېشىپ كەتكەچكە ئۈزۈلۈپ قالدى</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="526"/>
+        <location filename="../../src/plugins/cooperation/core/cooperation/cooperationmanager.cpp" line="540"/>
         <source>The other party does not confirm, please try again later</source>
         <translation>قارشى تەرەپ جەزملەشتۈرمىدى، سەل تۇرۇپ قايتا ئۇلاپ بېقىڭ</translation>
     </message>
@@ -410,7 +411,7 @@
 <context>
     <name>cooperation_core::LookingForDeviceWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="74"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="76"/>
         <source>Looking for devices</source>
         <translation>ئۈسكۈنە ئىزدەۋاتىدۇ</translation>
     </message>
@@ -418,24 +419,24 @@
 <context>
     <name>cooperation_core::MainWindowPrivate</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="36"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="41"/>
         <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="80"/>
         <source>Re-scan for devices</source>
         <translation>ئۈسكۈنىنى قايتا ئىزدەش</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="42"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="47"/>
         <source>Selection of delivery device</source>
         <translation>يوللايدىغان ئۈسكۈنىنى تاللاڭ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="52"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="56"/>
         <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="121"/>
         <source>Settings</source>
         <translation>تەڭشەك</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="56"/>
+        <location filename="../../src/plugins/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="60"/>
         <location filename="../../src/plugins/cooperation/core/gui/win/mainwindow_p_win.cpp" line="125"/>
         <source>Download Windows client</source>
         <translation>Windows تېرمىنالىنى چۈشۈرۈش</translation>
@@ -444,7 +445,7 @@
 <context>
     <name>cooperation_core::NoNetworkWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="139"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="141"/>
         <source>Please connect to the network</source>
         <translation>تورغا ئۇلاڭ</translation>
     </message>
@@ -452,32 +453,32 @@
 <context>
     <name>cooperation_core::NoResultTipWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="172"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="174"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation>1. تېرمىنال ھالقىپ ھەمكارلىشىش دېتالىنى ئېچىڭ، UOS تېرمىنالىدىكى ئەپنى ئەپ بازىرىدىن چۈشۈرگىلى بولىدۇ، Windows تېرمىنالىنى چۈشۈرۈش ئادرېسى: </translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="187"/>
         <source>2. On the same LAN as the device</source>
         <translation>2. بۇ ئۈسكۈنە بىلەن ئوخشاش دائىرىلىك تورغا ئۇلاڭ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="190"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="192"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
         <translation>3. ھۆججەت باشقۇرغۇچ-تەڭشەك-ھۆججەت يوللاش-تۆۋەندىكى ئىشلەتكۈچىلەرنىڭ ماڭا ھۆججەت يوللىشىغا يول قويۇش-«ئوخشاش دائىرىلىك توردىكى بارلىق كىشىلەر»</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="192"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="194"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation>3. تەڭشەك-ئاساسىي تەڭشەك-بايقىغىلى بولىدىغانلىرى-«ئوخشاش دائىرىلىك توردىكى بارلىق كىشىگە رۇخسەت قىلىش»</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="198"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="200"/>
         <source>4. Try entering the target device IP in the top search box</source>
         <translation>4. ئۈستىدىكى ئىزدەش رامكىسىغا نىشان ئۈسكۈنىنىڭ IP سىنى كىرگۈزۈپ سىناپ بېقىڭ</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="202"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
         <source>Unable to find collaborative device？</source>
         <translation>ئۈسكۈنىنى تاپالمىدىمۇ؟</translation>
     </message>
@@ -485,7 +486,7 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="261"/>
+        <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="263"/>
         <source>No device found</source>
         <translation>ھېچقانداق ئۈسكۈنە بايقالمىدى</translation>
     </message>
@@ -611,8 +612,8 @@
     <message>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="341"/>
         <location filename="../../src/plugins/cooperation/core/gui/dialogs/settingdialog.cpp" line="348"/>
-        <source>The device name must contain 1 to 63 characters</source>
-        <translation>ئۈسكۈنە نامى چوقۇم 1~63 خانىغىچە بولغان ھەرپ بولسۇن</translation>
+        <source>The device name must contain 1 to 20 characters</source>
+        <translation>ئۈسكۈنە نامى چوقۇم 1~20 خانىغىچە بولغان ھەرپ بولسۇن {1 ?} {20 ?}</translation>
     </message>
 </context>
 <context>
