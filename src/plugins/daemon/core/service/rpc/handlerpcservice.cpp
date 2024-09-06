@@ -529,7 +529,7 @@ void HandleRpcService::startRemoteServer(const quint16 port)
     Cert::instance()->removeFile(crt);
 
     QPointer<HandleRpcService> self = this;
-    UNIGO([self]() {
+    QUNIGO([self]() {
         // 这里已经是线程或者协程
         while (!self.isNull()) {
             IncomeData indata;

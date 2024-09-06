@@ -31,6 +31,10 @@ TcpClient::~TcpClient() {
         this->stop();
         DLOG << "~TcpClient() close : " << _tcp_cli->socket();
     }
+    if(_tcp_cli) {
+        delete _tcp_cli;
+        _tcp_cli = nullptr;
+    }
 }
 
 bool TcpClient::tryConnect() {

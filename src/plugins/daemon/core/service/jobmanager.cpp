@@ -82,7 +82,7 @@ bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
         _transjob_sends.insert(jobId, job);
     }
 
-    UNIGO([job]() {
+    QUNIGO([job]() {
         // DLOG << ".........start job: sched: " << co::sched_id() << " co: " << co::coroutine_id();
         job->start();
     });

@@ -92,7 +92,7 @@ recheck:
 
     _timer.restart();
     // 定时更新发现设备
-    UNIGO([this](){
+    QUNIGO([this](){
         while (!_stop) {
             sleep::ms(1000); //co::sleep(1000);
             remove_idle_services();

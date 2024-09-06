@@ -185,7 +185,7 @@ void CooperationUtil::registAppInfo(const QString &infoJson)
         return;
     }
 
-    UNIGO([infoJson] {
+    QUNIGO([infoJson] {
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_PORT, false);
         co::Json req, res;
 
@@ -248,7 +248,7 @@ void CooperationUtil::setAppConfig(const QString &key, const QString &value)
 
 void CooperationUtil::replyTransRequest(int type)
 {
-    UNIGO([=] {
+    QUNIGO([=] {
         rpc::Client rpcClient("127.0.0.1", UNI_IPC_BACKEND_COOPER_TRAN_PORT, false);
         co::Json res;
         // 获取设备名称

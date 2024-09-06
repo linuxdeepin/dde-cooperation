@@ -120,10 +120,10 @@ void ServiceManager::asyncDiscovery()
 {
     connect(DiscoveryJob::instance(), &DiscoveryJob::sigNodeChanged, SendIpcService::instance(),
             &SendIpcService::nodeChanged, Qt::QueuedConnection);
-    UNIGO([]() {
+    QUNIGO([]() {
         DiscoveryJob::instance()->discovererRun();
     });
-    UNIGO([this]() {
+    QUNIGO([this]() {
         fastring baseinfo = genPeerInfo();
         DiscoveryJob::instance()->announcerRun(baseinfo);
     });
