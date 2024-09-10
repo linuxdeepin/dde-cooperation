@@ -1,4 +1,4 @@
-usr/bin/cooperation-daemon
+usr/bin/dde-cooperation-daemon
 usr/lib/*/*.so*
 usr/lib/*/dde-cooperation/plugins/daemon/libdaemon-core.so
 #usr/lib/systemd/user/

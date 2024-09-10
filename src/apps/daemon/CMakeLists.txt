@@ -1,4 +1,4 @@
-﻿set(PROJ_NAME "cooperation-daemon")
+﻿set(PROJ_NAME "dde-cooperation-daemon")
 
 configure_file(
     "../config.h.in"

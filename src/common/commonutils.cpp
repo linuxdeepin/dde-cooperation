@@ -22,7 +22,7 @@ using namespace deepin_cross;
 static constexpr char kApp1[] { "dde-cooperation" };
 static constexpr char kApp2[] { "dde-cooperation-transfer" };
 static constexpr char kApp3[] { "deepin-data-transfer" };
-static constexpr char kDaemon[] { "cooperation-daemon" };
+static constexpr char kDaemon[] { "dde-cooperation-daemon" };
 
 std::string CommonUitls::getFirstIp()
 {

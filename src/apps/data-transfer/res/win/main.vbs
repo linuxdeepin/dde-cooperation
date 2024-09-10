@@ -4,17 +4,17 @@ Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
 
 b = shell.run(".\deepin-data-transfer.exe",0)
 Wscript.Sleep 500
-Set backProcess = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'cooperation-daemon.exe'")
+Set backProcess = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'dde-cooperation-daemon.exe'")
 if backProcess.Count = 0 Then
     ' Wscript.Echo "backend daemon is not running."
-    a = shell.run (".\cooperation-daemon.exe",0)
+    a = shell.run (".\dde-cooperation-daemon.exe",0)
     Wscript.Sleep 500
-    Set checkProcess = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'cooperation-daemon.exe'")
+    Set checkProcess = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'dde-cooperation-daemon.exe'")
     if checkProcess.Count = 0 Then
-        Wscript.Echo "Failed to start backend daemon: cooperation-daemon.exe"
+        Wscript.Echo "Failed to start backend daemon: dde-cooperation-daemon.exe"
         Wscript.Quit
     else
-        ' Wscript.Echo "cooperation-daemon.exe is started successfully."
+        ' Wscript.Echo "dde-cooperation-daemon.exe is started successfully."
         kill = True
     end if
 else
@@ -27,7 +27,7 @@ Do While True
     Set colProcess = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'deepin-data-transfer.exe'")
     if colProcess.Count = 0 Then
         if kill = True Then
-            Set daemonProcesses = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'cooperation-daemon.exe'")
+            Set daemonProcesses = objWMIService.ExecQuery("Select * from Win32_Process where Name = 'dde-cooperation-daemon.exe'")
             For Each objProccess in daemonProcesses
                 objProccess.Terminate()
             Next

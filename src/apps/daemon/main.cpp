@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
         if (file.exists()) {
             file.remove();
             QProcess process;
-            process.start("systemctl --user restart cooperation-daemon.service");
+            process.start("systemctl --user restart dde-cooperation-daemon.service");
             process.waitForFinished(-1);
             qInfo() << "service restarted now!!";
         }
