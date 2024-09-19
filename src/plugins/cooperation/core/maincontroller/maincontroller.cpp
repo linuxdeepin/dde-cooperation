@@ -70,9 +70,12 @@ void MainController::updateDeviceList(const QString &ip, const QString &connecte
         map.insert("OSType", osType);
         auto devInfo = DeviceInfo::fromVariantMap(map);
         if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
-            if (connectedIp == CooperationUtil::localIPAddress()
-                && CooperationManager::instance()->isConnected(devInfo))
-                devInfo->setConnectStatus(DeviceInfo::Connected);
+            if (CooperationManager::instance()->isConnected(devInfo)) {
+                if (connectedIp == CooperationUtil::localIPAddress())
+                    devInfo->setConnectStatus(DeviceInfo::Connected);
+                else
+                    CooperationManager::instance()->disconnectToDevice(devInfo);
+            }
 
             // 处理设备的共享属性发生变化情况
             CooperationManager::instance()->checkAndProcessShare(devInfo);
