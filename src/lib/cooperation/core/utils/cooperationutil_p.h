@@ -26,7 +26,7 @@ public:
 public:
     CooperationUtil *q { nullptr };
     QSharedPointer<MainWindow> window { nullptr };
-    bool isOnline { true };
+    bool isOnline { false };
 };
 
 }
