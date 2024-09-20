@@ -577,8 +577,11 @@ void CooperationManager::handleNetworkDismiss(const QString &msg)
     }
 }
 
-void CooperationManager::handleSearchDeviceResult(bool res)
+void CooperationManager::handleSearchDeviceResult(bool res, const QString &ip)
 {
     if (!res)
         emit MainController::instance()->discoveryFinished(false);
+    else {
+        ConfigManager::instance()->setAppAttribute(AppSettings::CacheGroup, AppSettings::SearchIPKey, ip);
+    }
 }

@@ -190,16 +190,19 @@ struct SearchDevice {
 
 struct SearchDeviceResult {
     bool result;
+    fastring ip;
     fastring msg;
 
     void from_json(const co::Json& _x_) {
         result = _x_.get("result").as_bool();
+        ip = _x_.get("ip").as_c_str();
         msg = _x_.get("msg").as_c_str();
     }
 
     co::Json as_json() const {
         co::Json _x_;
         _x_.add_member("result", result);
+        _x_.add_member("ip", ip);
         _x_.add_member("msg", msg);
         return _x_;
     }

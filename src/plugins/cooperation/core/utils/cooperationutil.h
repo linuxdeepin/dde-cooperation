@@ -33,6 +33,9 @@ public:
 
     static QVariantMap deviceInfo();
     static QString localIPAddress();
+    static QString closeOption();
+    static void saveOption(bool exit);
+    static QString searchIPHistory();
 
     void showFeatureDisplayDialog(QDialog *dlg);
 

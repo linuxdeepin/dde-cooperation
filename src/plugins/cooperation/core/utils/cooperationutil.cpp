@@ -264,7 +264,8 @@ void CooperationUtilPrivate::localIPCStart()
                 q->metaObject()->invokeMethod(CooperationManager::instance(),
                                               "handleSearchDeviceResult",
                                               Qt::QueuedConnection,
-                                              Q_ARG(bool, param.result));
+                                              Q_ARG(bool, param.result),
+                                              Q_ARG(QString, QString(param.ip.c_str())));
             } break;
             default:
                 break;
@@ -523,6 +524,23 @@ QString CooperationUtil::localIPAddress()
     QString ip;
     ip = deepin_cross::CommonUitls::getFirstIp().data();
     return ip;
+}
+
+QString CooperationUtil::closeOption()
+{
+    QString option = ConfigManager::instance()->appAttribute(AppSettings::CacheGroup, AppSettings::CloseOptionKey).toString();
+    return option;
+}
+
+QString CooperationUtil::searchIPHistory()
+{
+    return ConfigManager::instance()->appAttribute(AppSettings::CacheGroup, AppSettings::SearchIPKey).toString();
+}
+
+void CooperationUtil::saveOption(bool exit)
+{
+    ConfigManager::instance()->setAppAttribute(AppSettings::CacheGroup, AppSettings::CloseOptionKey,
+                                               exit ? "Exit" : "Minimise");
 }
 
 void CooperationUtil::showFeatureDisplayDialog(QDialog *dlg1)
