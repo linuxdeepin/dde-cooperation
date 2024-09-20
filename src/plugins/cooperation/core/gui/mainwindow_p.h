@@ -11,6 +11,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 
+class QSystemTrayIcon;
 namespace cooperation_core {
 
 class MainWindow;
@@ -39,6 +40,7 @@ public:
     WorkspaceWidget *workspaceWidget { nullptr };
     bool leftButtonPressed { false };
     QPoint lastPosition;
+    QSystemTrayIcon *trayIcon { nullptr };
 };
 
 }   // namespace cooperation_core

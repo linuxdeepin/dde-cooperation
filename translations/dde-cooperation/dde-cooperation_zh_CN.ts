@@ -255,52 +255,52 @@
 <context>
     <name>cooperation_core::CooperationUtil</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="533"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="551"/>
         <source>View Help Manual</source>
         <translation>查看帮助手册</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="534"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="552"/>
         <source>Welcome to dde-cooperation</source>
         <translation>欢迎使用跨端协同</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="536"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="554"/>
         <source>Keyboard and mouse sharing</source>
         <translation>键鼠共享</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="536"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="554"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
         <translation>两台设备间进行连接后，可使用发起方的键鼠控制另一设备</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="538"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="556"/>
         <source>Clipboard sharing</source>
         <translation>剪贴板共享</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="538"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="556"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
         <translation>两台设备间进行连接后，将共享剪贴板，可在一台设备上复制，另一台设备粘贴</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="540"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="558"/>
         <source>Delivery of documents</source>
         <translation>文件投送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="540"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="558"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
         <translation>两台设备间进行连接后，可向对方设备发起文件投送</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="542"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="560"/>
         <source>For detailed instructions, please click on the Help Manual below</source>
         <translation>详细的使用方法，请点击下方《帮助手册》进行查看</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="542"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="560"/>
         <source>Usage</source>
         <translation>使用方法</translation>
     </message>
@@ -414,6 +414,52 @@
         <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="76"/>
         <source>Looking for devices</source>
         <translation>正在寻找设备</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::MainWindow</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="199"/>
+        <source>Minimise to system tray</source>
+        <translation>最小化到系统托盘</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="201"/>
+        <source>Exit</source>
+        <translation>退出</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="210"/>
+        <source>No more enquiries</source>
+        <translation>不再询问</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="218"/>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="229"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="219"/>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="228"/>
+        <source>Confirm</source>
+        <translation>确认</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="220"/>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="227"/>
+        <source>Please select your operation</source>
+        <translation>请选择您的操作</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="262"/>
+        <source>Restore</source>
+        <translation>还原</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="263"/>
+        <source>Quit</source>
+        <translation>退出</translation>
     </message>
 </context>
 <context>

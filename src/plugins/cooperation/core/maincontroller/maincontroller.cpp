@@ -17,6 +17,8 @@
 #include <QHostInfo>
 #include <QDir>
 
+#include <transfer/transferhelper.h>
+
 using ConnectHistory = QMap<QString, QString>;
 Q_GLOBAL_STATIC(ConnectHistory, connectHistory)
 
@@ -157,5 +159,8 @@ void MainController::discoveryDevice()
     if (!offlineDevList.isEmpty())
         deviceOnline(offlineDevList);
 
+    QString searchIP = CooperationUtil::searchIPHistory();
+    if (!searchIP.isEmpty())
+        TransferHelper::instance()->searchDevice(searchIP);
     CooperationUtil::instance()->asyncDiscoveryDevice();
 }

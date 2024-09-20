@@ -246,6 +246,7 @@ void DiscoveryJob::searchDeviceByIp(const QString &ip, const bool remove)
     emit sigNodeChanged(true, result.data.c_str());
     ev.result = true;
     ev.msg = result.data;
+    ev.ip = ip.toStdString();
     auto req = ev.as_json();
     // 通知前端
     req.add_member("api", "Frontend.searchDeviceRes");

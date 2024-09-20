@@ -34,7 +34,7 @@ public Q_SLOTS:
     void onVerifyTimeout();
     void handleCancelCooperApply();
     void handleNetworkDismiss(const QString &msg);
-    void handleSearchDeviceResult(bool res);
+    void handleSearchDeviceResult(bool res, const QString &ip);
 
 private:
     explicit CooperationManager(QObject *parent = nullptr);

@@ -7,12 +7,24 @@
 #include "dialogs/settingdialog.h"
 #include "maincontroller/maincontroller.h"
 
+#include <utils/cooperationutil.h>
 #include <QScreen>
 #include <QUrl>
 #include <QApplication>
 #include <QDesktopServices>
+#include <QCheckBox>
+#include <QSystemTrayIcon>
+#include <QMenu>
+#include <QVBoxLayout>
 
 using namespace cooperation_core;
+
+#ifdef __linux__
+DWIDGET_USE_NAMESPACE
+const char *Kicon = "dde-cooperation";
+#else
+const char *Kicon = ":/icons/deepin/builtin/icons/dde-cooperation_128px.svg";
+#endif
 
 MainWindowPrivate::MainWindowPrivate(MainWindow *qq)
     : q(qq)
@@ -160,9 +172,103 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     d->mousePressEvent(event);
 }
+#endif
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    QApplication::quit();
+    if (qApp->property("onlyTransfer").toBool())
+        QApplication::quit();
+
+    showCloseDialog();
+    event->ignore();
 }
+
+void MainWindow::showCloseDialog()
+{
+    QString option = CooperationUtil::closeOption();
+    if (option == "Minimise") {
+        minimizedAPP();
+        return;
+    }
+    if (option == "Exit")
+        QApplication::quit();
+
+    CooperationDialog dlg;
+
+    QVBoxLayout *layout = new QVBoxLayout();
+    QCheckBox *op1 = new QCheckBox(tr("Minimise to system tray"));
+    op1->setChecked(true);
+    QCheckBox *op2 = new QCheckBox(tr("Exit"));
+
+    connect(op1, &QCheckBox::stateChanged, op1, [op2](int state) {
+        op2->setChecked(state != Qt::Checked);
+    });
+    connect(op2, &QCheckBox::stateChanged, op2, [op1](int state) {
+        op1->setChecked(state != Qt::Checked);
+    });
+
+    QCheckBox *op3 = new QCheckBox(tr("No more enquiries"));
+
+    layout->addWidget(op1);
+    layout->addWidget(op2);
+    layout->addWidget(op3);
+
+#ifdef __linux__
+    dlg.setIcon(QIcon::fromTheme("dde-cooperation"));
+    dlg.addButton(tr("Cancel"));
+    dlg.addButton(tr("Confirm"), true, DDialog::ButtonWarning);
+    dlg.setTitle(tr("Please select your operation"));
+    QWidget *content = new QWidget();
+
+    content->setLayout(layout);
+    dlg.addContent(content);
+#else
+    dlg.setWindowIcon(QIcon::fromTheme(Kicon));
+    dlg.setWindowTitle(tr("Please select your operation"));
+    QPushButton *okButton = new QPushButton(tr("Confirm"));
+    QPushButton *cancelButton = new QPushButton(tr("Cancel"));
+
+    QObject::connect(okButton, &QPushButton::clicked, &dlg, &QDialog::accept);
+    QObject::connect(cancelButton, &QPushButton::clicked, &dlg, &QDialog::reject);
+
+    layout->addWidget(okButton);
+    layout->addWidget(cancelButton);
+    dlg.setLayout(layout);
+    dlg.setFixedSize(400, 200);
 #endif
+
+    int code = dlg.exec();
+    if (code == QDialog::Accepted) {
+        bool isExit = op2->checkState() == Qt::Checked;
+        if (op3->checkState() == Qt::Checked) {
+            CooperationUtil::saveOption(isExit);
+        }
+
+        if (isExit)
+            QApplication::quit();
+        else
+            minimizedAPP();
+    }
+}
+
+void MainWindow::minimizedAPP()
+{
+    this->hide();
+    if (d->trayIcon)
+        return;
+    d->trayIcon = new QSystemTrayIcon(QIcon::fromTheme(Kicon), this);
+
+    QMenu *trayMenu = new QMenu(this);
+    QAction *restoreAction = trayMenu->addAction(tr("Restore"));
+    QAction *quitAction = trayMenu->addAction(tr("Quit"));
+
+    d->trayIcon->setContextMenu(trayMenu);
+    d->trayIcon->show();
+
+    QObject::connect(restoreAction, &QAction::triggered, this, &QMainWindow::show);
+    QObject::connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
+    QObject::connect(d->trayIcon, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason reason) {
+        if (reason == QSystemTrayIcon::Trigger)
+            this->show();
+    });
+}

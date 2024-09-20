@@ -255,52 +255,52 @@
 <context>
     <name>cooperation_core::CooperationUtil</name>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="533"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="551"/>
         <source>View Help Manual</source>
         <translation>རོགས་རམ་ལག་དེབ་ལྟ་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="534"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="552"/>
         <source>Welcome to dde-cooperation</source>
         <translation>སྣེ་བརྒལ་མཐུན་སྦྱོར་བེད་སྤྱོད་བྱེད་པར་དགའ་བསུ་ཞུ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="536"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="554"/>
         <source>Keyboard and mouse sharing</source>
         <translation>མཐེབ་གཞོང་དང་ཙི་གུ་མཉམ་སྤྱོད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="536"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="554"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
         <translation>སྒྲིག་ཆས་གཉིས་སྦྲེལ་རྗེས་སྦྲེལ་མཁན་ཕྱོགས་ཀྱི་མཐེབ་གཞོང་དང་ཙི་གུ་ཡིས་སྒྲིག་ཆས་གཞན་དེར་ཚོད་འཛིན་བྱས་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="538"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="556"/>
         <source>Clipboard sharing</source>
         <translation>དྲས་སྦྱར་པང་མཉམ་སྤྱོད།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="538"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="556"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
         <translation>སྒྲིག་ཆས་གཉིས་སྦྲེལ་རྗེས་དྲས་སྦྱར་པང་མཉམ་སྤྱོད་བྱས་ཆོག སྒྲིག་ཆས་གཅིག་གི་ཐོག་པར་སློག་བྱས་ཆོག་པ་དང་། སྒྲིག་ཆས་གཞན་དེའི་ཐོག་སྦྱར་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="540"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="558"/>
         <source>Delivery of documents</source>
         <translation>ཡིག་ཆ་སྐུར་བ།</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="540"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="558"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
         <translation>སྒྲིག་ཆས་གཉིས་སྦྲེལ་རྗེས་ཕ་རོལ་པོ་ལ་ཡིག་ཆ་བསྐུར་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="542"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="560"/>
         <source>For detailed instructions, please click on the Help Manual below</source>
         <translation>ཞིབ་ཕྲའི་བེད་སྤྱོད་བྱེད་སྟངས་ནི་གཤམ་གྱི་《རོགས་རམ་ལག་དེབ་》ནས་བལྟས་ཆོག</translation>
     </message>
     <message>
-        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="542"/>
+        <location filename="../../src/plugins/cooperation/core/utils/cooperationutil.cpp" line="560"/>
         <source>Usage</source>
         <translation>བེད་སྤྱོད་བྱེད་སྟངས།</translation>
     </message>
@@ -414,6 +414,52 @@
         <location filename="../../src/plugins/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="76"/>
         <source>Looking for devices</source>
         <translation>སྒྲིག་ཆས་འཚོལ་བཞིན་པ།</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::MainWindow</name>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="199"/>
+        <source>Minimise to system tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="201"/>
+        <source>Exit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="210"/>
+        <source>No more enquiries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="218"/>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="229"/>
+        <source>Cancel</source>
+        <translation type="unfinished">འདོར་བ།</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="219"/>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="228"/>
+        <source>Confirm</source>
+        <translation type="unfinished">བདེན་དཔང་</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="220"/>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="227"/>
+        <source>Please select your operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="262"/>
+        <source>Restore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/cooperation/core/gui/mainwindow.cpp" line="263"/>
+        <source>Quit</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

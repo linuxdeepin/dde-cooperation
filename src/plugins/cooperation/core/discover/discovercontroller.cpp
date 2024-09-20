@@ -34,7 +34,7 @@ DiscoverController::DiscoverController(QObject *parent)
         return;
     }
 
-    openZeroConfDaemonDailog();
+    //openZeroConfDaemonDailog();
     //    QTimer *timer = new QTimer(this);
     //    connect(timer, &QTimer::timeout, this, [timer, this] {
     //        if (isZeroConfDaemonActive()) {
@@ -187,6 +187,7 @@ bool DiscoverController::isZeroConfDaemonActive()
             return false;
         }
     } else {
+        WLOG << "Avahi service is not running";
         //ELOG << "Error: " << error.toStdString();
         return false;
     }
