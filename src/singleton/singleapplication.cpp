@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QDir>
 #include <QWidget>
+#include <QLockFile>
 
 using namespace deepin_cross;
 
@@ -68,23 +69,18 @@ bool SingleApplication::sendMessage(const QString &key, const QByteArray &messag
 
 bool SingleApplication::checkProcess(const QString &key)
 {
-    QString userKey = userServerName(key);
+    // create lock file for check process
+    const QString lockFilePath = QDir::tempPath() + QLatin1Char('/') + key + QLatin1String(".lock");
+    auto lockFile = new QLockFile(lockFilePath);
+    lockFile->setStaleLockTime(0);
 
-    QLocalSocket localSocket;
-    localSocket.connectToServer(userKey);
-
-    // if connect success, another instance is running.
-    bool result = localSocket.waitForConnected(1000);
-#ifdef __linux__
-    if (!result) {
-        // check the /tmp socket file for linux
-        userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation), key);
-        result = QFile::exists(userKey);
+    if (!lockFile->tryLock()) {
+        // someone else has the lock => process was launched
+        qWarning() << key << "has been launched!";
+        return true;
     }
-#endif
-    qWarning() << "checkProcess " << userKey << result;
 
-    return result;
+    return false;
 }
 
 bool SingleApplication::setSingleInstance(const QString &key)
@@ -93,11 +89,19 @@ bool SingleApplication::setSingleInstance(const QString &key)
         return false;
 
     QString userKey = userServerName(key);
-    localServer->removeServer(userKey);
+    if (!localServer->listen(userKey)) {
+        // maybe exception crashed, leaving a stale socket; delete it and try again
+        QLocalServer::removeServer(userKey);
+        if (!localServer->listen(userKey)) {
+            qWarning("SingleApplication: unable to make instance listen on %ls: %ls",
+                     qUtf16Printable(userKey),
+                     qUtf16Printable(localServer->errorString()));
 
-    bool f = localServer->listen(userKey);
+            return false;
+        }
+    }
 
-    return f;
+    return true;
 }
 
 void SingleApplication::readData()
