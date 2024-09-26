@@ -569,6 +569,14 @@ void TransferHelper::compatTransJobStatusChanged(int id, int result, const QStri
     case JOB_TRANS_FINISHED: {
         d->status.storeRelease(Idle);
         d->recvFilesSavePath = msg;
+        if (d->role == Client) {
+            // get ip address
+            QRegularExpression ipRegex(R"((\d{1,3}\.){3}\d{1,3})");
+            QRegularExpressionMatch match = ipRegex.match(msg);
+
+            QString ip = match.hasMatch() ? match.captured(0) : "";
+            HistoryManager::instance()->writeIntoTransHistory(ip, d->recvFilesSavePath);
+        }
         transferResult(true, tr("File sent successfully"));
     } break;
     case JOB_TRANS_CANCELED:

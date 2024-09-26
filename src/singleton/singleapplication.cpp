@@ -80,6 +80,12 @@ bool SingleApplication::checkProcess(const QString &key)
         return true;
     }
 
+    if (key != qAppName()) {
+        // release this lock file if not myself, it should be lock by itself.
+        lockFile->unlock();
+        lockFile->removeStaleLockFile();
+    }
+
     return false;
 }
 
