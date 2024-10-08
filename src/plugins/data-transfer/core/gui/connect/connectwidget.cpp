@@ -78,16 +78,19 @@ void ConnectWidget::initUI()
     IndexLabel *indelabel = new IndexLabel(1, this);
     indelabel->setAlignment(Qt::AlignCenter);
 
+    QSpacerItem *verticalSpacer = new QSpacerItem(20, 60, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QSpacerItem *verticalSpacer2 =  new QSpacerItem(20, 60, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
     QHBoxLayout *indexLayout = new QHBoxLayout();
     indexLayout->addWidget(indelabel, Qt::AlignCenter);
 
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel);
     mainLayout->addWidget(downloadLabel);
-    mainLayout->addSpacing(60);
+    mainLayout->addItem(verticalSpacer);
     mainLayout->addLayout(connectLayout);
     mainLayout->addWidget(WarnningLabel);
-    mainLayout->addSpacing(60);
+    mainLayout->addItem(verticalSpacer2);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
@@ -132,6 +135,7 @@ void ConnectWidget::initConnectLayout()
     ipVLayout->addWidget(iconLabel);
     ipVLayout->addWidget(nameLabel);
     ipVLayout->addWidget(ipFrame);
+    ipVLayout->addSpacing(14);
     ipVLayout->setAlignment(Qt::AlignCenter);
 
     //passwordLayout
