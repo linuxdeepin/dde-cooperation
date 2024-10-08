@@ -451,7 +451,7 @@ bool Settings::setValueNoNotify(const QString &group, const QString &key, const 
 
         changed = true;
     } else {
-        changed = this->value(group, key, value) != value;
+        changed = this->value(group, key) != value;
     }
 
     d->writableData.setValue(group, key, value);
