@@ -6,6 +6,8 @@
 
 #include <QMovie>
 
+#include <maincontroller/maincontroller.h>
+
 using namespace cooperation_core;
 #ifdef linux
 static constexpr char Ktransfer_success[] = "transfer_success";
@@ -132,6 +134,11 @@ void TransferDialog::createProgressPage()
     vLayout->addWidget(progressBar);
     vLayout->addSpacing(18);
     vLayout->addWidget(progressMsgLael);
+}
+
+bool TransferDialog::isInProgress() const
+{
+    return stackedLayout->currentIndex() == 2;
 }
 
 void TransferDialog::switchWaitConfirmPage()

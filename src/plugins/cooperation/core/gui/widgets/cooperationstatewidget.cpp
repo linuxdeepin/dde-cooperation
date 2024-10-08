@@ -143,7 +143,7 @@ void NoNetworkWidget::initUI()
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
-    vLayout->addSpacing(116);
+    vLayout->addStretch();
     vLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
     vLayout->addSpacing(14);
     vLayout->addWidget(tipsLabel, 0, Qt::AlignCenter);
@@ -242,10 +242,32 @@ void NoResultTipWidget::initUI()
 #endif
 }
 
+void NoResultTipWidget::paintEvent(QPaintEvent *event)
+{
+    if (useTipMode) {
+        QWidget::paintEvent(event);
+        return;
+    }
+    QPainter painter(this);
+    QColor color;
+
+    if (CooperationGuiHelper::isDarkTheme())
+        color.setRgb(255, 255, 255, static_cast<int>(255 * 0.05));
+    else
+        color.setRgb(0, 0, 0, static_cast<int>(255 * 0.05));
+    painter.fillRect(rect(), color);
+    QWidget::paintEvent(event);
+}
+
 NoResultWidget::NoResultWidget(QWidget *parent)
     : QWidget(parent)
 {
     initUI();
+}
+
+void NoResultWidget::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
 }
 
 void NoResultWidget::initUI()
@@ -265,42 +287,42 @@ void NoResultWidget::initUI()
     font.setWeight(QFont::Medium);
     tipsLabel->setFont(font);
 
-    BackgroundWidget *contentBackgroundWidget = new BackgroundWidget(this);
-    contentBackgroundWidget->setBackground(17, BackgroundWidget::ItemBackground,
-                                           BackgroundWidget::TopAndBottom);
+    BackgroundWidget *backgroundWidget = new BackgroundWidget(this);
+    QScrollArea *scrollArea = new QScrollArea();
+    backgroundWidget->setBackground(17, BackgroundWidget::ItemBackground,
+                                    BackgroundWidget::TopAndBottom);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     NoResultTipWidget *noResultTipWidget = new NoResultTipWidget();
     noResultTipWidget->setTitleVisible(false);
-    contentLayout->addWidget(noResultTipWidget);
-    contentBackgroundWidget->setLayout(contentLayout);
+    backgroundWidget->setLayout(contentLayout);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
 
-    QSpacerItem *sp_1 = new QSpacerItem(20, 88, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    QSpacerItem *sp_2 = new QSpacerItem(20, 14, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    QSpacerItem *sp_3 = new QSpacerItem(20, 22, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QSpacerItem *sp_1 = new QSpacerItem(20, 70, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
     vLayout->addItem(sp_1);
     vLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
-    vLayout->addItem(sp_2);
+    vLayout->addSpacing(10);
     vLayout->addWidget(tipsLabel, 0, Qt::AlignCenter);
-    vLayout->addItem(sp_3);
-    QScrollArea *scrollArea = new QScrollArea();
+    vLayout->addSpacing(10);
+
     scrollArea->setWidgetResizable(true);
-    scrollArea->setWidget(contentBackgroundWidget);
+    contentLayout->addWidget(scrollArea);
+    contentLayout->setSpacing(0);
+    scrollArea->setWidget(noResultTipWidget);
 
 #ifndef __linux__
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 #endif
-    scrollArea->setWidget(contentBackgroundWidget);
     scrollArea->show();
     scrollArea->setFrameStyle(QFrame::NoFrame);
-    vLayout->addWidget(scrollArea);
+    vLayout->addWidget(backgroundWidget);
 
     vLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
     setLayout(vLayout);
+    backgroundWidget->setMaximumHeight(129);
 }
 
 BottomLabel::BottomLabel(QWidget *parent)
@@ -340,8 +362,7 @@ void BottomLabel::initUI()
 {
     QString ip = QString(tr("Local IP: %1").arg(CooperationUtil::localIPAddress()));
     ipLabel = new QLabel(ip);
-    ipLabel->setAlignment(Qt::AlignHCenter);
-    ipLabel->setFixedHeight(30);
+    ipLabel->setAlignment(Qt::AlignCenter);
     connect(MainController::instance(), &MainController::onlineStateChanged, this, [this](bool isOnline) {
         if (!isOnline)
             return;
@@ -354,6 +375,7 @@ void BottomLabel::initUI()
     QScrollArea *scrollArea = new QScrollArea(dialog);
     tipLabel = new QLabel(qobject_cast<QWidget *>(this->parent()));
     tipLabel->installEventFilter(this);
+    ipLabel->setFixedSize(500, 33);
 
 #ifdef linux
     updateSizeMode();
@@ -373,7 +395,7 @@ void BottomLabel::initUI()
     scrollArea->setStyleSheet("QScrollArea { border: none; background-color: transparent; }");
 #endif
 
-    dialog->setFixedSize(260, 208);
+    dialog->setFixedSize(260, 210);
     scrollArea->setWidgetResizable(true);
     QWidget *contentWidget = new QWidget;
 
@@ -383,10 +405,21 @@ void BottomLabel::initUI()
     NoResultTipWidget *tipWidgt = new NoResultTipWidget(scrollArea, true);
     layout->addWidget(tipWidgt);
     scrollArea->setWidget(contentWidget);
+    scrollArea->setFrameStyle(QFrame::NoFrame);
+
+    QWidget *topSpace = new QWidget();
+    topSpace->setFixedHeight(5);
+    topSpace->setAutoFillBackground(true);
+    QWidget *bottomSpace = new QWidget();
+    bottomSpace->setFixedHeight(5);
+    bottomSpace->setAutoFillBackground(true);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(0, 0, 0, 0);
+    contentLayout->setSpacing(0);
+    contentLayout->addWidget(topSpace);
     contentLayout->addWidget(scrollArea);
+    contentLayout->addWidget(bottomSpace);
     contentLayout->setAlignment(Qt::AlignCenter);
 
     dialog->setLayout(contentLayout);
@@ -397,7 +430,8 @@ void BottomLabel::initUI()
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(ipLabel);
-    mainLayout->setAlignment(Qt::AlignHCenter);
+    mainLayout->setAlignment(Qt::AlignCenter);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout);
 
     timer = new QTimer(this);

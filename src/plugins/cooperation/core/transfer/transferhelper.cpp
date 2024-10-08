@@ -28,6 +28,8 @@
 
 #    include <QDBusInterface>
 #    include <QDBusReply>
+
+#    include <maincontroller/maincontroller.h>
 #endif
 
 using ButtonStateCallback = std::function<bool(const QString &, const DeviceInfoPointer)>;
@@ -226,6 +228,11 @@ TransferHelper::TransferHelper(QObject *parent)
     : QObject(parent),
       d(new TransferHelperPrivate(this))
 {
+    connect(MainController::instance(), &MainController::onlineStateChanged, this, [this](bool isOnline) {
+        if (isOnline || !d->transDialog()->isVisible() || !d->transDialog()->isInProgress())
+            return;
+        d->transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
+    });
 }
 
 TransferHelper::~TransferHelper()

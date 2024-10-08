@@ -28,11 +28,10 @@ FirstTipWidget::FirstTipWidget(QWidget *parent)
 void FirstTipWidget::themeTypeChanged()
 {
     if (CooperationGuiHelper::instance()->isDarkTheme()) {
-        shadowEffect->setColor(QColor(122, 192, 255, 128));
-        bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/dark/icons/banner_128px.png").pixmap(234, 158));
-
-    } else {
         shadowEffect->setColor(QColor(10, 57, 99, 128));
+        bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/dark/icons/banner_128px.png").pixmap(234, 158));
+    } else {
+        shadowEffect->setColor(QColor(122, 192, 255, 128));
         bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.png").pixmap(234, 158));
     }
     if (!qApp->property("onlyTransfer").toBool())
@@ -46,7 +45,7 @@ void FirstTipWidget::showEvent(QShowEvent *event)
 {
     auto ge = lineBalls.last()->geometry();
 
-    line->setGeometry(32, 26, qApp->devicePixelRatio(), ge.y() - 26);
+    line->setGeometry(32, 32, qApp->devicePixelRatio(), ge.y() - 32);
     QWidget::showEvent(event);
 }
 
@@ -81,7 +80,7 @@ void FirstTipWidget::initbackgroundFrame()
     QString backdarkStyle = ".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(132, 141, 179, 0.24), stop:1 rgba(224, 225, 255, 0.12)); "
                             "border-radius: 10px;"
                             "color: rgba(0, 0, 0, 0.6);"
-                            "border: 1px solid rgba(0, 0, 0, 0.05); } ";
+                            "border: 1px solid rgba(255, 255, 255, 0.05); } ";
     CooperationGuiHelper::initThemeTypeConnect(backgroundFrame, backlightStyle, backdarkStyle);
     backgroundFrame->setFixedWidth(480);
 
@@ -116,12 +115,14 @@ void FirstTipWidget::initbackgroundFrame()
 
             QLabel *lineball = new QLabel(this);
             lineBalls.append(lineball);
-            lineball->setFixedSize(12, 12);
+            lineball->setFixedSize(12, 14);
             QString balllightStyle = "background-color: rgb(33, 138, 244); "
                                      "border-radius: 6px;"
+                                     "margin-top: 2px;"
                                      "border: 1px solid white;";
             QString balldarkStyle = "background-color: rgb(0, 89, 210); "
                                     "border-radius: 6px;"
+                                    "margin-top: 2px;"   //用style画圆形背景会出现顶部被切割，规避一下
                                     "border: 1px solid white; ";
             CooperationGuiHelper::initThemeTypeConnect(lineball, balllightStyle, balldarkStyle);
             lineball->setGraphicsEffect(shadowEffect);
@@ -204,8 +205,13 @@ void FirstTipWidget::inittipBtn()
             flag.close();
         setVisible(false);
     });
-    tipBtn->setStyleSheet("QToolButton { background-color: rgba(0, 0, 0, 0.1); border-radius: 9px; }"
-                          "QToolButton::hover { background-color: rgba(0, 0, 0, 0.2); border-radius: 9px; }");
+
+    tipBtn->setFixedSize(18, 20);
+    QString lightStyle = "QToolButton { background-color: rgba(0, 0, 0, 0.1); margin-top: 2px; border-radius: 9px; }"
+                         "QToolButton::hover { background-color: rgba(0, 0, 0, 0.15); margin-top: 2px; border-radius: 9px; }";
+    QString darkStyle = "QToolButton { background-color: rgba(255, 255, 255, 0.1); margin-top: 2px; border-radius: 9px; }"
+                        "QToolButton::hover { background-color: rgba(255, 255, 255, 0.2);  margin-top: 2px; border-radius: 9px; }";
+    CooperationGuiHelper::initThemeTypeConnect(tipBtn, lightStyle, darkStyle);
 }
 
 void FirstTipWidget::setVisible(bool visible)
@@ -244,7 +250,14 @@ void LineWidget::paintEvent(QPaintEvent *event)
     int x = width() / 2;
     int y = 0;
     int dashLength = 4;   // 每段虚线的长度
+    int mid = 0;
     while (y < height()) {
+        //中间一段不画，不然就画到圆圈上了
+        if (mid < 1 && y > height() / 2 - 8) {
+            mid++;
+            y += 4 * dashLength;
+            continue;
+        }
         painter.drawLine(x, y, x, qMin(y + dashLength, height()));
         y += 2 * dashLength;   // 虚线间距
     }

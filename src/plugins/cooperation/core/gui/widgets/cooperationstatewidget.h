@@ -52,6 +52,8 @@ public:
     void onLinkActivated(const QString &link);
     void setTitleVisible(bool visible);
 
+protected:
+    void paintEvent(QPaintEvent *event) override;
 private:
     void initUI();
     CooperationLabel *titleLabel { nullptr };
@@ -63,6 +65,8 @@ class NoResultWidget : public QWidget
     Q_OBJECT
 public:
     explicit NoResultWidget(QWidget *parent = nullptr);
+    void mousePressEvent(QMouseEvent *event) override;
+
 
 private:
     void initUI();

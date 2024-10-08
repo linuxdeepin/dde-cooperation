@@ -67,6 +67,7 @@ void WorkspaceWidgetPrivate::initUI()
     stackedLayout->addWidget(nnWidget);
     stackedLayout->addWidget(nrWidget);
     stackedLayout->addWidget(dlWidget);
+    stackedLayout->setAlignment(Qt::AlignCenter);
     stackedLayout->setCurrentIndex(0);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;

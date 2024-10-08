@@ -72,6 +72,7 @@ private:
     QTimer confirmTimer;
     bool isTransTimeout = false;
     QString recvFilesSavePath;
+    int jobId = 0;
 };
 
 }   // namespace cooperation_core

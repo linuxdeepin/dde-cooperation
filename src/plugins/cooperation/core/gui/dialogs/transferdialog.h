@@ -24,6 +24,8 @@ public:
     void switchResultPage(bool success, const QString &msg);
     void switchProgressPage(const QString &title);
 
+    bool isInProgress() const;
+
 public Q_SLOTS:
     void updateProgress(int value, const QString &remainTime);
 
