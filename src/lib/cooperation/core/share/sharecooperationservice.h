@@ -64,6 +64,9 @@ public:
 
     void setEnableCrypto(bool enable);
     void setBarrierProfile(const QString &dir);
+
+    bool isRunning();
+
 public slots:
     bool restartBarrier();
     bool startBarrier();

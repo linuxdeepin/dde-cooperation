@@ -37,6 +37,9 @@ public Q_SLOTS:
     // exception: network connection(ping out) or other io
     void onShareExcepted(int type, const QString &remote);
 
+    // check the self is sharing with someone
+    int selfSharing(const QString &shareIp);
+
 private:
     explicit ShareHelper(QObject *parent = nullptr);
     ~ShareHelper();

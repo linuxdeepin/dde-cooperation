@@ -416,14 +416,14 @@ void DiscoverController::compatAddDeivces(StringMap infoMap)
         QString ip = ipList[0];
         QString sharedip = ipList[1];
 
-        if(ip == CooperationUtil::localIPAddress()) {
+        if (ip == CooperationUtil::localIPAddress()) {
             WLOG << "Ignore local host ip: " << ip.toStdString();
             continue;
         }
 
         devInfo->setIpAddress(ip);
         if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
-            if (sharedip == CooperationUtil::localIPAddress())
+            if (sharedip == CooperationUtil::localIPAddress() || _connectedDevice == devInfo->ipAddress())
                 devInfo->setConnectStatus(DeviceInfo::Connected);
 
             d->onlineDeviceList.append(devInfo);
@@ -452,8 +452,9 @@ void DiscoverController::startDiscover()
 
     // 延迟,为了展示发现界面
     QTimer::singleShot(500, [this]() {
-        // 兼容，获取发现列表，refresh则清除数据
-        Q_EMIT startDiscoveryDevice();
+        // clear current list first.
         refresh();
+        // compation: start get nodes
+        Q_EMIT startDiscoveryDevice();
     });
 }

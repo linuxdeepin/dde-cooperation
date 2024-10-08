@@ -162,6 +162,15 @@ void ShareCooperationService::setBarrierProfile(const QString &dir)
     _cooConfig->setProfileDir(dir);
 }
 
+bool ShareCooperationService::isRunning()
+{
+    if (!barrierProcess()) {
+        return false;
+    }
+
+    return barrierProcess()->state() == QProcess::Running;
+}
+
 bool ShareCooperationService::startBarrier()
 {
     LOG << "starting process";

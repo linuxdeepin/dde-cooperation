@@ -109,11 +109,11 @@ void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &a
 void ShareHelperPrivate::stopCooperation()
 {
     if (targetDeviceInfo && targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
-        ShareHelper::instance()->disconnectToDevice(targetDeviceInfo);
 #ifdef linux
         static QString body(tr("Coordination with \"%1\" has ended"));
         notifyMessage(body.arg(CommonUitls::elidedText(targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
 #endif
+        ShareHelper::instance()->disconnectToDevice(targetDeviceInfo);
     }
 }
 
@@ -172,7 +172,9 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
         auto info = DiscoverController::instance()->findDeviceByIP(senderDeviceIp);
         if (!info) {
             WLOG << "AcceptAction, but not find: " << senderDeviceIp.toStdString();
-            return;
+            // create by remote connect info, that is not discoveried.
+            info = DeviceInfoPointer(new DeviceInfo(senderDeviceIp, targetDevName));
+            info->setPeripheralShared(true);
         }
 
         // 更新设备列表中的状态
@@ -266,13 +268,17 @@ void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
 
     ShareCooperationServiceManager::instance()->stop();
 
-    if (d->targetDeviceInfo) {
-        d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
-        DiscoverController::instance()->updateDeviceState({ d->targetDeviceInfo });
-
-        static QString body(tr("Coordination with \"%1\" has ended"));
-        d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+    // The targetDeviceInfo can be null
+    if (d->targetDeviceInfo.isNull()) {
+        d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     }
+
+    info->setConnectStatus(DeviceInfo::Connectable);
+    d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
+    DiscoverController::instance()->updateDeviceState({ d->targetDeviceInfo });
+
+    static QString body(tr("Coordination with \"%1\" has ended"));
+    d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
 }
 
 void ShareHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
@@ -503,4 +509,20 @@ void ShareHelper::onShareExcepted(int type, const QString &remote)
     default:
         break;
     }
+}
+
+int ShareHelper::selfSharing(const QString &shareIp)
+{
+    if (shareIp == CooperationUtil::localIPAddress()) {
+        auto server = ShareCooperationServiceManager::instance()->server();
+        auto client = ShareCooperationServiceManager::instance()->client();
+        if (server.isNull() && client.isNull()) {
+            return 1;
+        }
+
+        auto sharing =  (server && server->isRunning()) || (client && client->isRunning());
+        return sharing ? 0 : 1;
+    }
+
+    return -1;
 }
