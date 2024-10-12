@@ -1,0 +1,379 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">UOS助手</string>
+
+    <string name="public_dialog_loading_text">加载中</string>
+    <string name="lately_file_title">最近文件</string>
+    <string name="notification_title">点击进入</string>
+    <string name="activity_title_personal_info">我的个人信息</string>
+    <string name="file_loading">加载中...</string>
+    <string name="file_continue_loading">继续加载</string>
+    <string name="union_id_scan_login_title">Union ID扫码登录</string>
+    <string name="feedback_title">反馈</string>
+
+    <!--首页-->
+    <string name="find_settings">发现设置</string>
+    <string name="add_device">添加设备</string>
+    <string name="device_number">设备</string>
+    <string name="on_line">在线</string>
+    <string name="off_line">离线</string>
+    <string name="nearby">附近</string>
+    <string name="remote">远程</string>
+    <string name="connected">已连接</string>
+    <string name="connected_device">去连接</string>
+    <string name="no_find_device_hint">未发现设备</string>
+    <string name="no_find_device_login_account">请前往电脑端登录当前账号</string>
+    <string name="allow_everyone_to_find">允许所有人发现</string>
+    <string name="only_the_same_union_id_account_can_be_found">仅限同一Union ID帐号发现</string>
+    <string name="find_close">不被发现</string>
+    <string name="search_computer">搜索电脑</string>
+    <string name="home_pop_edit_pc_name">编辑电脑名</string>
+    <string name="home_pop_delete_pc">删除电脑</string>
+    <string name="recent_pc">最近</string>
+
+
+    <!--登录-->
+    <string name="login_phone_quick">手机快捷登录</string>
+    <string name="login_user_name_hint">请输入Union ID/手机号码/邮箱</string>
+    <string name="login_password">请输入您的密码</string>
+    <string name="login_bgn_text">登录</string>
+    <string name="verfication_code_input_phone_hint">请输入手机号</string>
+    <string name="verfication_please_input_correct_phone">请输入正确的手机号</string>
+    <string name="login_get_code_error">获取验证码失败</string>
+    <string name="login_error_hint">登录失败</string>
+    <string name="login_wx_error_hint">微信登录失败</string>
+    <string name="login_phone_code_hint">请输入8-16位密码</string>
+    <string name="login_input_siz_code_hint">请输入6位数验证码</string>
+    <string name="account_login_text">帐号登录</string>
+    <string name="login_argument_error">参数错误</string>
+    <string name="wx_login_error">微信登录失败</string>
+    <string name="account_locked">账号冻结</string>
+    <string name="account_locked_msg">该账号24小时内无法登录，如需恢复\n使用，请修改密码解冻</string>
+    <string name="modify_password_unlock">修改密码解冻</string>
+
+    <!--注册-->
+    <string name="register_input_phonenum">请输入您的手机号</string>
+    <string name="register_button_text">注册</string>
+    <string name="register_input_verify_code">请输入验证码</string>
+    <string name="register_input_password">请输入您的密码</string>
+    <string name="register_agin_input_password">请再次输入您的密码</string>
+    <string name="register_input_password_hint">请输入登录密码</string>
+    <string name="register_password_not_null">密码不能为空</string>
+    <string name="register_two_password_input_atypism">两次密码输入不一致</string>
+    <string name="register_complete">完成</string>
+    <string name="register_cansole">取消</string>
+    <string name="login_go_register_text">注册帐号</string>
+    <string name="forget_passwprd">忘记密码？</string>
+    <string name="set_passwprd">请输入8-64位密码</string>
+    <string name="set_passwprd_again">请再次输入密码</string>
+    <string name="finish_register_and_login">完成注册并登录</string>
+    <string name="register_send_sms_code_success">验证码已发送</string>
+    <string name="register_send_sms_code_error">验证码发送失败</string>
+    <string name="register_agin_send_sms_code_hint">重新发送</string>
+    <string name="register_get_sms_code">获取验证码</string>
+    <string name="register_error">注册失败</string>
+    <string name="application_error_hint">系统异常</string>
+    <string name="register_phone_or_code_error">手机号或验证码错误</string>
+    <string name="register_phone_validate">密码必须是8-64位，且包含数字、字母或字符组成</string>
+    <string name="register_password_next_error">两次输入的密码不一致</string>
+    <string name="register_phone_no_exists">手机号未注册</string>
+
+    <!--身份认证-->
+    <string name="register_success_hint">恭喜您,完成了身份认证</string>
+    <string name="identity_auth_error">身份认证失败</string>
+    <string name="identity_to_home">进入首页</string>
+    <string name="phone_exist_login">手机号已注册，马上登录</string>
+    <string name="now_certified">立即认证</string>
+    <string name="certified_success">认证成功</string>
+    <string name="phone_bind_weixin_other_phone_operation">该手机已绑定过微信，请使用其他手机号进行操作</string>
+
+    <!--dialog弹框-->
+    <string name="dialog_title">提示</string>
+    <string name="dialog_content">你确定要取消注册吗</string>
+    <string name="dialog_exit">退出</string>
+    <string name="dialog_acontinue_register">继续注册</string>
+    <string name="dialog_is_cansole_register_hint">你确定要取消注册吗</string>
+    <string name="dialog_file_transport_hint_disconnect">文件传输中,请确认是否断开连接</string>
+    <string name="dialog_file_transport_hint_confirm_disconnect">请确认是否断开连接</string>
+    <string name="dialog_file_connection_hint_disconnect">连接中,请确认是否断开连接</string>
+    <string name="dialog_input_text">请输入文本</string>
+    <string name="dialog_project_send_error_hint">连接已断开，请重新连接电脑</string>
+    <string name="dialog_project_send_button_ok">确定</string>
+    <string name="dialog_delete_pc_file_title">确认删除吗?</string>
+    <string name="dialog_delete_pc_file_content">删除之后,可在电脑回收站找回</string>
+    <string name="dialog_now_register_loading">正在注册中,请稍等...</string>
+    <string name="dialog_checkbox_agreement">请阅读并勾选协议</string>
+    <string name="dialog_logout_title">退出登录将断开连接</string>
+    <string name="dialog_logout_message">您确定要退出登录吗?</string>
+    <string name="dialog_copy_text">复制</string>
+    <string name="dialog_delte">删除</string>
+    <string name="dialog_confirm_delete_computer">请确认是否删除该电脑</string>
+    <string name="dialog_connected_computer">当前电脑，正在连接</string>
+    <string name="dialog_update_name_error">修改失败</string>
+    <string name="dialog_delete_computer_error">删除失败</string>
+    <string name="dialog_edit_computer_name">编辑电脑名称</string>
+    <string name="cross_screen_title">无线投送</string>
+    <string name="cross_screen_refuse">拒绝</string>
+    <string name="cross_screen_receive">接受</string>
+    <string name="file_receive_success">文件接收完毕</string>
+    <string name="file_view_location">查看位置</string>
+    <string name="login_credentials_out_of_time">登录凭证已失效,请重新登录再操作</string>
+
+
+    <!--连接电脑-->
+    <string name="connection_computer_refresh">刷新</string>
+
+    <!--已连接电脑-->
+    <string name="connection_computer_transport_assistant">传输助手</string>
+    <string name="connection_computer_me">我的电脑</string>
+    <string name="connection_family_sharing">家庭共享</string>
+    <string name="connection_disconnect_connection">断开连接</string>
+
+    <!--我的电脑-->
+    <string name="me_computer_image">图片</string>
+    <string name="me_computer_video">视频</string>
+    <string name="me_computer_file">文档</string>
+    <string name="me_computer_music">音乐</string>
+
+
+    <!--用户管理-->
+    <string name="user_manager_account_login">登录帐号</string>
+
+    <!--相册选择-->
+    <string name="album_image_video">图片和视频</string>
+    <string name="album_send_image">发送</string>
+    <string name="album_all_video">所有视频</string>
+    <string name="album_screen_capture">截屏</string>
+    <string name="album_camera">相机</string>
+
+    <!--文件选择-->
+    <string name="transfer_files">传输过的文件</string>
+    <string name="phone_file">手机文件</string>
+    <string name="select_file_document">文档</string>
+    <string name="select_file_video">视频</string>
+    <string name="select_file_album">相册</string>
+    <string name="select_file_music">音乐</string>
+    <string name="select_file_other">其他</string>
+    <string name="file_selected_title">文件选择</string>
+    <string name="file_selected_zg">总共：</string>
+    <string name="file_selected_send_format">发送(%1$s)</string>
+    <string name="file_selected_hint">请选择你要发送的文件</string>
+    <string name="folder_desc">文件:%1$s&#160;&#160;|&#160;&#160;文件夹:%2$s</string>
+    <string name="file_desc">%1$s&#160;&#160;|&#160;&#160;%2$s</string>
+    <string name="selected_file_count">选中(%1$s/%2$s)</string>
+
+
+    <!--传输助手-->
+    <string name="transport_assistant_title">传输助手</string>
+    <string name="transport_assistant_edit_text_hint">输入文本后,点击发送...</string>
+    <string name="transport_lately_file">最近文件</string>
+    <string name="transport_clear_record_dialog_title">清空记录</string>
+    <string name="transport_clear_record_dialog_content">传输记录删除后将无法恢复，文件不会被删除，确定删除？</string>
+    <string name="transport_not_file">文件不存在</string>
+    <string name="transport_image_not_exists">图片不存在</string>
+    <string name="transport_manager_image_or_file">轻松管理手机图片与文件</string>
+    <string name="transport_file_text">文件传输</string>
+    <string name="transport_assistant_device_name">设备名称</string>
+    <string name="transport_file_too_big">文档体积过大，应用无法打开</string>
+
+    <!--消息通知-->
+    <string name="msg_tip">消息提示</string>
+    <string name="default_notification">默认通知</string>
+    <string name="msg_num">您有%1$s条未读消息</string>
+    <string name="msg_max">99+</string>
+    <string name="file_receive_done">文件接收已完成</string>
+
+    <!--扫码连接-->
+    <string name="phone_scan_connection">扫码连接</string>
+    <string name="phone_scan_login">扫码登录</string>
+    <string name="scan_search_computer_btn_text">搜索电脑</string>
+    <string name="phone_no_connection_wifi">当前网络不可用</string>
+    <string name="phone_connection_wifi_hint">请检查网络设置</string>
+    <string name="ensure_phone_connection_wifi_hint">请保证手机和电脑连接同一网络</string>
+    <string name="check_same_wifi_hint">请检查手机与电脑是否连接同一网络！</string>
+    <string name="mobile_net_work_title">温馨提示</string>
+    <string name="mobile_network_content">当前为非wifi网络连接,使用该功能将\n消耗较多流量,是否继续</string>
+    <string name="mobile_network_confirm">确认</string>
+    <string name="network_un_stable">网络连接不稳定\n请重新扫码连接</string>
+    <string name="go_to_scan">去扫码</string>
+    <string name="open_hotspot">打开热点</string>
+    <string name="go_to_relogin">重新登录</string>
+
+
+    <string name="phone_connection_wifi_login_unionid">请确保手机与电脑同一网络\n或者登录同一Union ID帐号</string>
+    <string name="please_make_phone_pc_same_network">请确保手机与电脑同一网络或者登录</string>
+    <string name="same_union_id_account">同一Union ID帐号</string>
+    <string name="phone_or_computer_connection_progress">手机与电脑连接中，请稍后...</string>
+    <string name="to_connection_wifi">去连接网络</string>
+    <string name="to_connection_wifi_settings">去设置</string>
+    <string name="now_connection_text">正在连接</string>
+    <string name="connection_error">连接失败</string>
+    <string name="close">关闭</string>
+
+    <string name="no_recent_conn_record">暂无最近的连接记录哦~</string>
+    <string name="no_connected_pc">无连接电脑，请先连接电脑</string>
+    <string name="select_pc_send">请选择电脑</string>
+    <string name="send_file">发送文件</string>
+    <string name="need_connect_local_pc">需要连接本地电脑</string>
+    <string name="file_send_success">文件已发送</string>
+
+    <string name="music_player_title">音乐播放</string>
+    <string name="new_version_dialog_hint">请重新下载APP,方法如下:\n\n1、进入电脑端【我的手机】\n\n\t\t2、点击【安装统信UOS助手】\n\n\t\t\t\t3、使用微信或者浏览器扫码二维码\n\n\t4、按照指引，下载并安装APP</string>
+    <string name="new_version_title">发现版本不一致</string>
+    <string name="upgrade_computer_system">升级电脑系统</string>
+    <string name="find_new_version">发现新版本</string>
+    <string name="upgrade_computer_system_content">请升级电脑系统到最新版本</string>
+    <string name="upgrade_now_to_experience_a_new_version">立即升级,去体验全新版本</string>
+    <string name="upgrade_now">立即升级</string>
+    <string name="scan_code_login_union_id">扫码登录Union ID</string>
+    <string name="scan_code_no_confirm_title">使用提示</string>
+    <string name="scan_code_confirm_message">打开电脑上的【发现设置】, 按需设置发现规则</string>
+    <string name="scan_code_agin_search_btn">继续搜索</string>
+
+    <!--扫码登录-->
+    <string name="scan_login_text">登录</string>
+    <string name="scan_cancel_login_text">取消登录</string>
+    <string name="scan_login_success_text">登录成功</string>
+    <string name="scan_login_loading">正在登录.....</string>
+    <string name="scan_cancel_login">已取消登录</string>
+    <string name="scan_login_error">登录失败,请重新扫码</string>
+    <string name="scan_server_error">服务有异常，请重新操作</string>
+    <string name="connect_pc_auth">访问电脑文件需申请授权\n请在需要访问的电脑上确认授权</string>
+    <string name="scan_invalid_qr_code">无效二维码</string>
+
+    <!--多连接时提示-->
+    <string name="scan_should_disconnect_first">请先断开当前连接的电脑</string>
+    <string name="scan_changed">已切换投屏连接电脑</string>
+    <string name="scan_connect_doing">当前有电脑正在连接中</string>
+
+    <!--申请电脑授权-->
+    <string name="apply_computer_grant">申请授权</string>
+
+    <!--搜索电脑-->
+    <string name="dialog_no_find_computer_please_agin_refresh">未发现电脑,请重新刷新</string>
+    <string name="dialog_please_computer_login_union_id">请在电脑上登录同一Union ID\n(TommyUID)</string>
+    <string name="dialog_agin_search_computer">正在搜索电脑</string>
+    <string name="dialog_connection_failed_the_computer_is_connection_phone">连接失败，该电脑已连接手机</string>
+    <string name="dialog_computers_can_only_be_connected_with_the_same_union_id">电脑仅限同一Union ID连接</string>
+    <string name="dialog_computer_is_not_allowed_to_connect">电脑未允许连接</string>
+    <string name="dialog_computer_not_open_connection">电脑未开放连接</string>
+    <string name="dialog_connection_failed_please_try_again">连接失败，请重新连接</string>
+    <string name="dialog_check_computer_connection_settings">1、电脑和手机登录同一Union id\n2、电脑【发现设置】设置允许发现\n3、请确保手机与电脑同一网络</string>
+    <string name="dialog_computer_exit_unionid">电脑已退出unionid登录</string>
+    <string name="pc_maybe_offline_please_refresh">电脑可能已变更网络，请下拉刷新</string>
+
+    <!--x5浏览器提示-->
+    <string name="x5_open_error">文件无法识别</string>
+
+    <!--最近文件-->
+    <string name="lately_no_content">暂无任何内容...</string>
+
+    <!--任务栏通知-->
+    <string name="notification_text_from_pc">来自电脑端</string>
+    <string name="notification_content_img">发来一张图片</string>
+    <string name="notification_content_file">发来一个文件</string>
+    <string name="cross_screen_notification_title">无线投送</string>
+
+    <string name="privacy_agreement_read">我已阅读并同意《</string>
+    <string name="privacy_agreement_privacy">统信UOS助手软件隐私保护指引</string>
+    <string name="privacy_agreement_click">统信帐号使用协议</string>
+    <string name="privacy_china_mobile_service">中国移动认证服务条款</string>
+
+
+    <!--个人信息-->
+    <string name="persona_info_login_out_text">退出登录</string>
+    <string name="persona_edit_info">修改资料</string>
+    <string name="feedback">反馈</string>
+
+    <!--vpn-->
+    <string name="notify_disconnect">Disconnected with supernode</string>
+    <string name="notify_reconnected">Reconnect to supernode successfully</string>
+
+    <!--反馈-->
+    <string name="long_code_save_phone">长按二维码保存到手机</string>
+    <string name="scan_add_wx_kf">扫码加官方客服，及时响应您的问题</string>
+    <string name="save_image_to_phone">保存到手机</string>
+    <string name="save_wx_kf_phone">已保存到手机</string>
+    <string name="save_wx_kf_error">保存失败</string>
+
+    <string name="notification_channel_id_default">default</string>
+    <string name="notification_channel_name_default">default</string>
+
+    <string name="my_pc_title">我的电脑</string>
+    <string name="pc_desk_top">桌面</string>
+    <string name="pc_picture">图片</string>
+    <string name="pc_video">视频</string>
+    <string name="pc_doc">文档</string>
+    <string name="pc_music">音乐</string>
+
+    <string name="loading_title">正在加载中,请稍等...</string>
+    <string name="down_pc_file">加载中....</string>
+    <string name="wx_login_message">登录中，请稍等......</string>
+    <string name="logout_dialog_hint">正在退出,请稍等...</string>
+
+    <string name="old_package_installed">当前为应用的最新版本，建议卸载其他版本</string>
+    <string name="delete_old_package_ok">卸载</string>
+    <string name="delete_old_package_cancel">保留</string>
+
+    <string name="privacy_dialog_title">使用协议及隐私协议</string>
+    <string name="privacy_dialog_msg1">为了更好地保障您的合法权益，请您阅读并同意以下协议</string>
+    <string name="privacy_dialog_msg2">《统信账号使用协议》</string>
+    <string name="privacy_dialog_msg3">《统信UOS助手软件隐私保护指引》</string>
+    <string name="privacy_dialog_msg4">《中国移动认证服务条款》</string>
+    <string name="privacy_dialog_agree">同意</string>
+    <string name="privacy_dialog_not_agree">不同意</string>
+
+
+    <string name="pc_already_connecting">有设备正在连接</string>
+    <string name="has_connected_other_pc">已连接其他设备</string>
+    <string name="no_application_to_open">没有可打开此文件的应用</string>
+    <string name="no_filemanager_open">未找到文件管理器打开目录</string>
+    <string name="system_permission_denial">系统不允许此操作</string>
+    <string name="pc_is_connected">该设备已连接</string>
+
+    <string name="not_install_app">未安装此应用</string>
+
+    <string name="privacy_agreement">隐私协议</string>
+    <string name="china_mobile_service_terms">中国移动认证服务条款</string>
+    <string name="uos_account_usage_agreement">统信帐号使用协议</string>
+
+    <string name="mobile_network_tips">当前为移动网络,继续使用将\n消耗流量,是否继续</string>
+    <string name="continue_use">继续使用</string>
+    <string name="vpn_name">uos_vpn</string>
+    <string name="share_picker_label">发送到PC</string>
+
+    <!--权限相关-->
+    <string name="permission_need">需要授权!</string>
+    <string name="setting">设置</string>
+
+    <!--投屏相关-->
+    <string name="transfer_dir">文件传输记录</string>
+    <string name="projection_start">开启投屏</string>
+    <string name="projection_stop">关闭投屏</string>
+    <string name="projection_tip">手机投屏</string>
+    <string name="projection_readying">服务准备中，稍后再试</string>
+    <string name="scrcpy_service">投屏服务</string>
+    <string name="scrcpy_service_inprogress">正在投屏到%1$s </string>
+    <string name="projection_not_ready">服务未准备好，请检查电脑端</string>
+    <string name="projection_send_failed">文件发送失败！</string>
+    <string name="jacksu_start_ok">服务启动成功，可以投屏</string>
+    <string name="jacksu_start_title_fail">服务启动失败</string>
+    <string name="enable_usb_and_connect_pc">去开启‘USB调试’并连接计算机</string>
+    <string name="enable_usb_and_wireless_debug">去开启‘USB调试’和‘无线调试’</string>
+
+    <!--投屏设置教程   -->
+    <string name="config_dev_title">投屏配置</string>
+    <string name="config_dev_use_tip">使用手机投屏需要满足以下配置</string>
+    <string name="config_dev_tip_content">首次使用投屏功能，需要通过USB数据线进行连接，请按照以下步骤进行配置,配置方式因移动设备品牌而有所差异，您可以点击电脑端的“手机传输”来查看更详细的教程</string>
+    <string name="dev_open_tip">在手机“设置-关于手机-版本号”开启开发者选项</string>
+    <string name="step1">第一步</string>
+    <string name="step2">第二步</string>
+    <string name="dev_option">开发者选项</string>
+    <string name="opened">已开启</string>
+    <string name="no_open">未开启</string>
+    <string name="go_open">去开启</string>
+    <string name="usb_mode">USB调试</string>
+    <string name="usb_open_tip">首次使用需要通过USB数据线进行设备连接，需要开启“USB调试”设置</string>
+    <string name="scrcpy_succeed">投屏成功！</string>
+    <string name="scrcpy_turned_off">投屏已关闭！</string>
+    <string name="wireless_adb_not_enabled">无线调试未启用, 必须连接电脑</string>
+</resources>
