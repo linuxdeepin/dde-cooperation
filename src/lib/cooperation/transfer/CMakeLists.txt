@@ -77,6 +77,11 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Network DBus Concurrent)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Network DBus Concurrent)
 
+find_library(QRENCODE_LIBRARY qrencode)
+if(NOT QRENCODE_LIBRARY)
+    message(FATAL_ERROR "libqrencode not found. Please install it.")
+endif()
+
 # 根据Qt版本选择合适的命令
 if (QT_VERSION VERSION_GREATER_EQUAL "6.0")
     qt_add_resources(RESOURCE_FILES ${CORE_UI_DIR}/gui/resources/resources.qrc)
@@ -124,6 +129,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Concurrent
     CuteIPC
+    qrencode
 )
 
 target_link_libraries(${PROJECT_NAME}

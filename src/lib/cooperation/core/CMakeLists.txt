@@ -94,6 +94,11 @@ list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS sessionmanager)
 list(APPEND LINKLIBS sslconf)
 
+find_library(QRENCODE_LIBRARY qrencode)
+if(NOT QRENCODE_LIBRARY)
+    message(FATAL_ERROR "libqrencode not found. Please install it.")
+endif()
+
 add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}
     ${BUSS_FILES}
@@ -136,6 +141,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Concurrent
     QtZeroConf
     CuteIPC
+    qrencode
 )
 
 target_link_libraries(${PROJECT_NAME}
