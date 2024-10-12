@@ -12,9 +12,13 @@
 #include <QMouseEvent>
 
 class QSystemTrayIcon;
-namespace cooperation_core {
+class QStackedLayout;
 
+namespace cooperation_core {
+class DeviceListWidget;
+class MobileWidget;
 class MainWindow;
+class BottomLabel;
 class MainWindowPrivate : public QObject
 {
     Q_OBJECT
@@ -28,6 +32,7 @@ public:
     void moveCenter();
 
     void handleSettingMenuTriggered(int action);
+    void setIP(const QString &ip);
 
 public:
     void paintEvent(QPaintEvent *event);
@@ -37,9 +42,12 @@ public:
 
 public:
     MainWindow *q { nullptr };
+    QStackedLayout *stackedLayout { nullptr };
     WorkspaceWidget *workspaceWidget { nullptr };
+    MobileWidget *mobileWidget { nullptr };
     bool leftButtonPressed { false };
     QPoint lastPosition;
+    BottomLabel *bottomLabel { nullptr };
     QSystemTrayIcon *trayIcon { nullptr };
 };
 

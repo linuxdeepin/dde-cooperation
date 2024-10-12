@@ -51,6 +51,18 @@ void WorkspaceWidgetPrivate::initUI()
     deviceLabel = new QLabel(tr("Nearby Device"));
     deviceLabel->setContentsMargins(20, 0, 10, 0);
     CooperationGuiHelper::setAutoFont(deviceLabel, 14, QFont::Normal);
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    refreshBtn = new QPushButton();
+    refreshBtn->setStyleSheet("QPushButton { border: none; }");
+    refreshBtn->setIcon(QIcon::fromTheme("refresh"));
+    refreshBtn->setIconSize(QSize(16, 16));
+    refreshBtn->setToolTip(tr("Re-scan for devices"));
+    refreshBtn->setFixedSize(18, 18);
+    connect(refreshBtn, &QPushButton::clicked, q, &WorkspaceWidget::refresh);
+    hLayout->addWidget(deviceLabel);
+    hLayout->addWidget(refreshBtn);
+    hLayout->setSpacing(0);
+    hLayout->setAlignment(Qt::AlignLeft);
 
     lfdWidget = new LookingForDeviceWidget(q);
     nnWidget = new NoNetworkWidget(q);
@@ -74,14 +86,12 @@ void WorkspaceWidgetPrivate::initUI()
 #else
     mainLayout->addWidget(searchEdit);
 #endif
-    bottomLabel = new BottomLabel(q);
 
     mainLayout->addWidget(tipWidget);
     mainLayout->addSpacing(10);
-    mainLayout->addWidget(deviceLabel);
+    mainLayout->addLayout(hLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(stackedLayout);
-    mainLayout->addWidget(bottomLabel);
     q->setLayout(mainLayout);
 }
 
@@ -182,10 +192,12 @@ void WorkspaceWidget::switchWidget(PageName page)
     if (page == kLookignForDeviceWidget) {
         d->lfdWidget->seAnimationtEnabled(true);
         d->tipWidget->setVisible(false);
+        d->refreshBtn->setVisible(false);
     } else {
         if (qApp->property("onlyTransfer").toBool() || !QFile(deepin_cross::CommonUitls::tipConfPath()).exists())
             d->tipWidget->setVisible(true);
         d->lfdWidget->seAnimationtEnabled(false);
+        d->refreshBtn->setVisible(true);
     }
 
     d->currentPage = page;
@@ -221,12 +233,6 @@ void WorkspaceWidget::clear()
 void WorkspaceWidget::setFirstStartTip(bool visible)
 {
     d->tipWidget->setVisible(visible);
-}
-
-void WorkspaceWidget::setBottomIp(const QString &ip)
-{
-    d->bottomLabel->setIp(ip);
-    d->sortFilterWorker.data()->setSelfip(ip);
 }
 
 bool WorkspaceWidget::event(QEvent *event)

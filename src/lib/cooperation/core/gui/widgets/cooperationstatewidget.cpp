@@ -25,6 +25,7 @@ DWIDGET_USE_NAMESPACE
 #include <QToolButton>
 #include <QScrollArea>
 #include <QMouseEvent>
+#include <QStackedLayout>
 
 #include <common/commonutils.h>
 
@@ -149,8 +150,8 @@ void NoNetworkWidget::initUI()
     setLayout(vLayout);
 }
 
-NoResultTipWidget::NoResultTipWidget(QWidget *parent, bool usetipMode)
-    : QWidget(parent), useTipMode(usetipMode)
+NoResultTipWidget::NoResultTipWidget(QWidget *parent, bool usetipMode, bool ismobile)
+    : QWidget(parent), useTipMode(usetipMode), isMobile(ismobile)
 {
     initUI();
 }
@@ -168,6 +169,7 @@ void NoResultTipWidget::setTitleVisible(bool visible)
 void NoResultTipWidget::initUI()
 {
     CooperationGuiHelper::setAutoFont(this, 12, QFont::Normal);
+
     QString leadintText =
             tr("1. Enable cross-end collaborative applications. Applications on the UOS "
                "can be downloaded from the App Store, and applications on the Windows "
@@ -177,6 +179,7 @@ void NoResultTipWidget::initUI()
     QString websiteLinkTemplate =
             "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
+
     CooperationLabel *contentLable1 = new CooperationLabel(this);
     contentLable1->setWordWrap(true);
     contentLable1->setText(content1);
@@ -201,6 +204,7 @@ void NoResultTipWidget::initUI()
 
     titleLabel = new CooperationLabel(tr("Unable to find collaborative device？"));
     titleLabel->setAlignment(Qt::AlignLeft);
+
     CooperationGuiHelper::setAutoFont(titleLabel, 14, QFont::Medium);
     titleLabel->setWordWrap(true);
 
@@ -220,6 +224,19 @@ void NoResultTipWidget::initUI()
         contentLable2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         contentLable3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         contentLable4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    }
+
+    if (isMobile) {
+        QString leadintText = tr("1. 手机需下载跨端协同应用。");
+        QString hypertext = "前往下载>";
+        QString hyperlink = "https://www.chinauos.com/resource/assistant";
+        content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hypertext);
+        contentLable1->setText(content1);
+        contentLable2->setText(tr("2. 安装后扫码连接本设备进行协同。"));
+        contentLable3->setText(tr("3. 连接本设备后，手机端需要保持跨端协同应用打开，且和本设备在同一局域网"));
+        contentLable4->setText("");
+        titleLabel->setText(tr("使用须知"));
+        titleLabel->setAlignment(Qt::AlignCenter);
     }
 
 #ifdef linux
@@ -345,7 +362,7 @@ void BottomLabel::initUI()
 
     dialog = new CooperationAbstractDialog(this);
     QScrollArea *scrollArea = new QScrollArea(dialog);
-    tipLabel = new QLabel(qobject_cast<QWidget *>(this->parent()));
+    tipLabel = new QLabel(this);
     tipLabel->installEventFilter(this);
 
 #ifdef linux
@@ -373,8 +390,15 @@ void BottomLabel::initUI()
     QVBoxLayout *layout = new QVBoxLayout(contentWidget);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(5, 6, 5, 0);
+
     NoResultTipWidget *tipWidgt = new NoResultTipWidget(scrollArea, true);
-    layout->addWidget(tipWidgt);
+    NoResultTipWidget *mobileTipWidgt = new NoResultTipWidget(scrollArea, true, true);
+    stackedLayout = new QStackedLayout;
+    stackedLayout->addWidget(tipWidgt);
+    stackedLayout->addWidget(mobileTipWidgt);
+    stackedLayout->setCurrentIndex(0);
+    layout->addLayout(stackedLayout);
+
     scrollArea->setWidget(contentWidget);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
@@ -408,10 +432,17 @@ void BottomLabel::showDialog() const
     dialog->show();
 }
 
+void BottomLabel::onSwitchMode(int page)
+{
+    if (page > 1)
+        return;
+    stackedLayout->setCurrentIndex(page);
+}
+
 void BottomLabel::updateSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    tipLabel->setGeometry(460, DSizeModeHelper::element(562, 552), 24, 24);
+    tipLabel->setGeometry(468, DSizeModeHelper::element(562, 5), 24, 24);
     int size = DSizeModeHelper::element(18, 24);
     ipLabel->setFixedHeight(DSizeModeHelper::element(15, 30));
     tipLabel->setPixmap(QIcon::fromTheme("icon_tips").pixmap(size, size));

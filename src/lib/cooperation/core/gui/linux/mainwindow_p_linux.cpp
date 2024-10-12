@@ -7,11 +7,17 @@
 
 #include <DTitlebar>
 #include <DIconButton>
+#include <DButtonBox>
 
 #include <QVBoxLayout>
 #include <QApplication>
+#include <QStackedLayout>
 
 #include <gui/widgets/cooperationstatewidget.h>
+#include <gui/widgets/devicelistwidget.h>
+#include <gui/widgets/mobilewidget.h>
+
+#include <gui/mainwindow_p.h>
 
 using namespace cooperation_core;
 DWIDGET_USE_NAMESPACE
@@ -22,19 +28,46 @@ void MainWindowPrivate::initWindow()
     q->setFixedSize(500, 630);
     q->setWindowIcon(QIcon::fromTheme("dde-cooperation"));
 
+    mobileWidget = new MobileWidget(q);
     workspaceWidget = new WorkspaceWidget(q);
-    q->setCentralWidget(workspaceWidget);
+
+    stackedLayout = new QStackedLayout;
+    stackedLayout->addWidget(workspaceWidget);
+    stackedLayout->addWidget(mobileWidget);
+    stackedLayout->setCurrentIndex(0);
+
+    QWidget *centralWidget = new QWidget();
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    bottomLabel = new BottomLabel(q);
+    mainLayout->addLayout(stackedLayout);
+    mainLayout->addWidget(bottomLabel);
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    centralWidget->setLayout(mainLayout);
+
+    q->setCentralWidget(centralWidget);
+}
+
+void MainWindowPrivate::setIP(const QString &ip)
+{
+    bottomLabel->setIp(ip);
 }
 
 void MainWindowPrivate::initTitleBar()
 {
     auto titleBar = q->titlebar();
-    DIconButton *refreshBtn = new DIconButton(q);
-    refreshBtn->setIcon(QIcon::fromTheme("refresh"));
-    refreshBtn->setIconSize(QSize(16, 16));
-    refreshBtn->setToolTip(tr("Re-scan for devices"));
-    titleBar->addWidget(refreshBtn, Qt::AlignLeft);
-    connect(refreshBtn, &DIconButton::clicked, q, &MainWindow::onLookingForDevices);
+
+    DButtonBox *switchBtn = new DButtonBox(q);
+    QList<DButtonBoxButton *> list;
+    DButtonBoxButton *PCBtn = new DButtonBoxButton(tr("电脑协同"));
+    DButtonBoxButton *mobileBtn = new DButtonBoxButton(tr("手机协同"));
+    list.append(PCBtn);
+    list.append(mobileBtn);
+    switchBtn->setButtonList(list, true);
+    titleBar->addWidget(switchBtn, Qt::AlignCenter);
+    PCBtn->setChecked(true);
+    connect(PCBtn, &DButtonBoxButton::clicked, q, [this] { q->onSwitchMode(CooperationMode::kPC); });
+    connect(mobileBtn, &DButtonBoxButton::clicked, q, [this] { q->onSwitchMode(CooperationMode::kMobile); });
 
     if (qApp->property("onlyTransfer").toBool()) {
         titleBar->setMenuVisible(false);
@@ -53,6 +86,10 @@ void MainWindowPrivate::initTitleBar()
     menu->addAction(action);
 
     action = new QAction(tr("Download Windows client"), menu);
+    action->setData(MenuAction::kDownloadWindowClient);
+    menu->addAction(action);
+
+    action = new QAction(tr("Download Mobile client"), menu);
     action->setData(MenuAction::kDownloadWindowClient);
     menu->addAction(action);
 

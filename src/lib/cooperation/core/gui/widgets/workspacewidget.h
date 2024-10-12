@@ -38,10 +38,10 @@ public:
 
     void clear();
     void setFirstStartTip(bool visible);
-    void setBottomIp(const QString &ip);
 
 signals:
     void search(const QString &ip);
+    void refresh();
 
 protected:
     bool event(QEvent *event) override;

@@ -2,16 +2,16 @@
 #define TYPE_DEFINES_H
 
 #if defined(_WIN32) || defined(_WIN64)
-#include <QMainWindow>
-#include <QApplication>
-#include <QDialog>
-#include <QPushButton>
-#include <QToolButton>
-#include <QLabel>
-#include <QLineEdit>
-#include <QCheckBox>
-#include <QPainter>
-#include <QMouseEvent>
+#    include <QMainWindow>
+#    include <QApplication>
+#    include <QDialog>
+#    include <QPushButton>
+#    include <QToolButton>
+#    include <QLabel>
+#    include <QLineEdit>
+#    include <QCheckBox>
+#    include <QPainter>
+#    include <QMouseEvent>
 typedef QMainWindow CooperationMainWindow;
 typedef QDialog CooperationDialog;
 typedef QToolButton CooperationIconButton;
@@ -21,21 +21,26 @@ typedef QToolButton CooperationFloatingEdit;
 typedef QLabel CooperationSpinner;
 typedef QLineEdit CooperationLineEdit;
 typedef QLabel CooperationLabel;
-class CooperationSwitchButton : public QPushButton {
+class CooperationSwitchButton : public QPushButton
+{
 public:
-    CooperationSwitchButton(QWidget *parent = nullptr) : QPushButton(parent){
+    CooperationSwitchButton(QWidget *parent = nullptr)
+        : QPushButton(parent)
+    {
         setFixedSize(50, 24);
         setCheckable(true);
         setDefault(false);
     }
+
 protected:
-    void paintEvent(QPaintEvent *event) override {
+    void paintEvent(QPaintEvent *event) override
+    {
         Q_UNUSED(event);
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
         int x = 0;
         QColor color("#000000");
-        if(isChecked()){
+        if (isChecked()) {
             x = 20;
             color.setNamedColor("#0098FF");
         }
@@ -46,7 +51,8 @@ protected:
         painter.setBrush(color);
         painter.drawRoundedRect(rect, 8, 8);
     }
-    void keyPressEvent(QKeyEvent *event) override {
+    void keyPressEvent(QKeyEvent *event) override
+    {
         if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
             event->ignore();
             return;
@@ -55,17 +61,17 @@ protected:
     }
 };
 #else
-#include <DMainWindow>
-#include <DAbstractDialog>
-#include <DSwitchButton>
-#include <DSuggestButton>
-#include <DSearchEdit>
-#include <DDialog>
-#include <DSpinner>
-#include <DIconButton>
-#include <DFloatingButton>
-#include <DLineEdit>
-#include <DLabel>
+#    include <DMainWindow>
+#    include <DAbstractDialog>
+#    include <DSwitchButton>
+#    include <DSuggestButton>
+#    include <DSearchEdit>
+#    include <DDialog>
+#    include <DSpinner>
+#    include <DIconButton>
+#    include <DFloatingButton>
+#    include <DLineEdit>
+#    include <DLabel>
 typedef DTK_WIDGET_NAMESPACE::DDialog CooperationDialog;
 typedef DTK_WIDGET_NAMESPACE::DSpinner CooperationSpinner;
 typedef DTK_WIDGET_NAMESPACE::DMainWindow CooperationMainWindow;
@@ -127,7 +133,13 @@ inline const char MainAppName[] { "dde-cooperation" };
 // Setting menu action list
 enum MenuAction {
     kSettings,
-    kDownloadWindowClient
+    kDownloadWindowClient,
+    kDownloadMobileClient
+};
+
+enum CooperationMode {
+    kPC = 0,
+    kMobile
 };
 
 #endif   // TYPE_DEFINES_H

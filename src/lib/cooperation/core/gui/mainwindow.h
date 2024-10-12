@@ -45,6 +45,7 @@ public Q_SLOTS:
     void addDevice(const QList<DeviceInfoPointer> &infoList);
     void removeDevice(const QString &ip);
     void onRegistOperations(const QVariantMap &map);
+    void onSwitchMode(CooperationMode mode);
 
 protected:
     void showCloseDialog();
