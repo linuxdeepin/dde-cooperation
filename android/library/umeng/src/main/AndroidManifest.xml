@@ -44,6 +44,7 @@
         <!-- QQ 回调 -->
         <activity
             android:name="com.tencent.tauth.AuthActivity"
+            android:exported="true"
             android:launchMode="singleTask"
             android:noHistory="true"
             tools:node="replace">

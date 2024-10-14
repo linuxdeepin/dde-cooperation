@@ -27,7 +27,25 @@ android {
         buildConfigField('String', 'BUGLY_ID', '"' + BUGLY_ID + '"')
         // 测试服务器的主机地址
         buildConfigField('String', 'HOST_URL', '"' + HOST_URL + '"')
+
+        externalNativeBuild {
+            cmake {
+                // specify explicit target list to exclude examples, tests, utils. etc from used libraries
+                targets "turbojpeg-static", "vncserver", "droidvnc-ng"
+            }
+        }
+
+        ndk {
+            debugSymbolLevel = 'FULL'
+        }
     }
+
+//    externalNativeBuild {
+//        cmake {
+//            version '3.22.1'
+//            path 'src/main/cpp/CMakeLists.txt'
+//        }
+//    }
 
     // Apk 签名的那些事：https://www.jianshu.com/p/a1f8e5896aa2
     signingConfigs {
@@ -68,7 +86,7 @@ android {
             ])
             // 调试模式下只保留一种架构的 so 库，提升打包速度
             ndk {
-                abiFilters 'armeabi-v7a'
+                abiFilters 'arm64-v8a'
             }
         }
 
@@ -145,8 +163,14 @@ dependencies {
     // 友盟封装
     implementation project(':library:umeng')
 
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
+
+    // AndroidX 版本：https://mvnrepository.com/artifact/androidx.core/core-ktx
+    implementation "androidx.core:core:1.7.0"
+    implementation 'androidx.preference:preference:1.2.1'
+
     // 权限请求框架：https://github.com/getActivity/XXPermissions
-    implementation 'com.github.getActivity:XXPermissions:12.3'
+    implementation 'com.github.getActivity:XXPermissions:16.0'
 
     // 标题栏框架：https://github.com/getActivity/TitleBar
     implementation 'com.github.getActivity:TitleBar:9.2'
@@ -161,7 +185,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.13'
 
     // Json 解析框架：https://github.com/google/gson
-    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.google.code.gson:gson:2.10.1'
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
     implementation 'com.github.getActivity:GsonFactory:5.2'
 
