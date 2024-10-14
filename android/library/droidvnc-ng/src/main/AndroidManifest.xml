@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="net.christianbeier.droidvnc_ng">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application>
+
+        <receiver android:name=".OnBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+            We export the MainService without a permission to enable 3rd party apps to send
+            send Intents to it (otherwise they would have to know about the permission at build
+            time). Access is secured differently by an access key Intent senders have to supply.
+            As only explicit Intents are handled (i.e. no intent-filter), this is secure.
+        -->
+        <service
+            android:name=".MainService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="connectedDevice"
+            tools:ignore="ExportedService" />
+
+        <service
+            android:name=".MediaProjectionService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <service
+            android:name=".InputService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/input_service_config"/>
+        </service>
+
+        <activity android:name=".MediaProjectionRequestActivity"
+            android:theme="@style/TransparentTheme"
+            android:excludeFromRecents="true"
+            />
+
+        <activity android:name=".InputRequestActivity"
+            android:theme="@style/TransparentTheme"
+            android:excludeFromRecents="true"
+            />
+
+        <activity android:name=".WriteStorageRequestActivity"
+            android:theme="@style/TransparentTheme"
+            android:excludeFromRecents="true"
+            />
+
+        <activity android:name=".NotificationRequestActivity"
+            android:theme="@style/TransparentTheme"
+            android:excludeFromRecents="true"
+            />
+
+    </application>
+
+</manifest>

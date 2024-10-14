@@ -22,4 +22,8 @@
     <!-- 对话框取消按钮的文本颜色 -->
     <color name="common_cancel_text_color">#F44336</color>
 
+    <color name="granted">@android:color/holo_green_dark</color>
+    <color name="denied">@android:color/holo_red_dark</color>
+    <color name="fallback">@android:color/holo_orange_dark</color>
+
 </resources>

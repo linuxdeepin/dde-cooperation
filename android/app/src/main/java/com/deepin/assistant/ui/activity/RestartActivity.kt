@@ -28,7 +28,7 @@ class RestartActivity : AppActivity() {
                 Intent(context, SplashActivity::class.java)
             } else {
                 // 如果是已登录的情况下跳转到首页
-                Intent(context, HomeActivity::class.java)
+                Intent(context, MainActivity::class.java)
             }
             if (context !is Activity) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

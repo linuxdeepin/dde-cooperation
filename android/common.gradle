@@ -4,14 +4,19 @@ apply plugin: 'kotlin-android'
 android {
 
     // 编译源码版本
-    compileSdkVersion 30
+    compileSdkVersion 32
     defaultConfig {
         // 最低安装版本
-        minSdkVersion 21
+        minSdkVersion 24
         // 目标适配版本
-        targetSdkVersion 30
+        targetSdkVersion 34
         versionName '1.0'
         versionCode 10
+    }
+
+    ndkVersion '21.4.7075529'
+    externalNativeBuild {
+        cmake {}
     }
 
     // 支持 Java JDK 8
@@ -69,6 +74,7 @@ dependencies {
     // Material 库：https://github.com/material-components/material-components-android
     implementation 'com.google.android.material:material:1.4.0'
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     // Kotlin 协程：https://github.com/Kotlin/kotlinx.coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'

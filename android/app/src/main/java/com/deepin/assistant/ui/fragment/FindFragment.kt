@@ -1,7 +1,13 @@
 package com.deepin.assistant.ui.fragment
 
+import android.content.Intent
+import android.content.SharedPreferences
+import android.os.Build
 import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContextCompat.startForegroundService
+import androidx.preference.PreferenceManager
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
