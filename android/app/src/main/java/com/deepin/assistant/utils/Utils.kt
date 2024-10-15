@@ -2,8 +2,12 @@ package com.deepin.assistant.utils
 
 import android.content.Context
 import android.hardware.display.DisplayManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.provider.Settings
+import android.text.format.Formatter
 import android.util.DisplayMetrics
 import com.deepin.assistant.R
 import java.io.BufferedReader
@@ -93,4 +97,27 @@ object Utils {
         directory.deleteRecursively()
     }
 
+    @JvmStatic
+   fun getIPAddress(context: Context): String? {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val activeNetwork = connectivityManager.activeNetwork
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+
+            return when {
+                networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true -> {
+                    val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                    val ipAddress = wifiManager.connectionInfo.ipAddress
+                    Formatter.formatIpAddress(ipAddress) // 格式化IP地址
+                }
+                networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true -> {
+                    null // 返回null，或根据需要添加逻辑
+                }
+                else -> null // 无网络连接
+            }
+        } else {
+            return null
+        }
+    }
 }

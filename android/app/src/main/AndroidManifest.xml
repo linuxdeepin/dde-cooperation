@@ -161,6 +161,17 @@
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="portrait"
+            tools:replace="android:screenOrientation" />
+
+        <activity
+            android:name=".ui.activity.CooperationActivity"/>
+
+        <activity
+            android:name=".ui.activity.ScanActivity"/>
+
     </application>
 
     <!-- Android 11 软件包可见性适配：https://www.jianshu.com/p/d1ccd425c4ce -->
