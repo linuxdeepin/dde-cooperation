@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">UOSAssistant</string>
 
+    <string name="scan_activity_title">UOSAssistant</string>
+    <string name="scan_activity_btn">Scan code to connect devices</string>
+    <string name="cooperation_activity_screen_casting">Screen casting in progress</string>
+    <string name="cooperation_activity_disconnect">disconnect</string>
+    <string name="cooperation_activity_end_screen">end screen casting</string>
+    <string name="cooperation_activity_cooperation">collaborating in progress</string>
+    <string name="cooperation_activity_screencast">screen casting</string>
+
     <!-- 临时定义 -->
     <string name="main_activity_title">droidVNC-NG Admin Panel</string>
     <string name="main_activity_settings">Settings</string>

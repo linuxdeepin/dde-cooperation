@@ -101,52 +101,55 @@ class MainActivity : AppCompatActivity() {
 
         mButtonToggle = findViewById<Button>(R.id.toggle)
         mButtonToggle?.setOnClickListener(View.OnClickListener { view: View? ->
-            val intent = Intent(this@MainActivity, MainService::class.java)
-            intent.putExtra(
-                MainService.EXTRA_PORT,
-                prefs.getInt(Constants.PREFS_KEY_SETTINGS_PORT, mDefaults!!.port)
-            )
-            intent.putExtra(
-                MainService.EXTRA_PASSWORD,
-                prefs.getString(Constants.PREFS_KEY_SETTINGS_PASSWORD, mDefaults!!.password)
-            )
-            intent.putExtra(
-                MainService.EXTRA_FILE_TRANSFER,
-                prefs.getBoolean(
-                    Constants.PREFS_KEY_SETTINGS_FILE_TRANSFER,
-                    mDefaults!!.fileTransfer
-                )
-            )
-            intent.putExtra(
-                MainService.EXTRA_VIEW_ONLY,
-                prefs.getBoolean(Constants.PREFS_KEY_SETTINGS_VIEW_ONLY, mDefaults!!.viewOnly)
-            )
-            intent.putExtra(
-                MainService.EXTRA_SHOW_POINTERS,
-                prefs.getBoolean(
-                    Constants.PREFS_KEY_SETTINGS_SHOW_POINTERS,
-                    mDefaults!!.showPointers
-                )
-            )
-            intent.putExtra(
-                MainService.EXTRA_SCALING,
-                prefs.getFloat(Constants.PREFS_KEY_SETTINGS_SCALING, mDefaults!!.scaling)
-            )
-            intent.putExtra(
-                MainService.EXTRA_ACCESS_KEY,
-                prefs.getString(Constants.PREFS_KEY_SETTINGS_ACCESS_KEY, mDefaults!!.accessKey)
-            )
-            if (mIsMainServiceRunning) {
-                intent.setAction(MainService.ACTION_STOP)
-            } else {
-                intent.setAction(MainService.ACTION_START)
-            }
-            mButtonToggle?.setEnabled(false)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent)
-            } else {
-                startService(intent)
-            }
+            val intent = Intent(this, ScanActivity::class.java)
+            startActivity(intent)
+
+//            val intent = Intent(this@MainActivity, MainService::class.java)
+//            intent.putExtra(
+//                MainService.EXTRA_PORT,
+//                prefs.getInt(Constants.PREFS_KEY_SETTINGS_PORT, mDefaults!!.port)
+//            )
+//            intent.putExtra(
+//                MainService.EXTRA_PASSWORD,
+//                prefs.getString(Constants.PREFS_KEY_SETTINGS_PASSWORD, mDefaults!!.password)
+//            )
+//            intent.putExtra(
+//                MainService.EXTRA_FILE_TRANSFER,
+//                prefs.getBoolean(
+//                    Constants.PREFS_KEY_SETTINGS_FILE_TRANSFER,
+//                    mDefaults!!.fileTransfer
+//                )
+//            )
+//            intent.putExtra(
+//                MainService.EXTRA_VIEW_ONLY,
+//                prefs.getBoolean(Constants.PREFS_KEY_SETTINGS_VIEW_ONLY, mDefaults!!.viewOnly)
+//            )
+//            intent.putExtra(
+//                MainService.EXTRA_SHOW_POINTERS,
+//                prefs.getBoolean(
+//                    Constants.PREFS_KEY_SETTINGS_SHOW_POINTERS,
+//                    mDefaults!!.showPointers
+//                )
+//            )
+//            intent.putExtra(
+//                MainService.EXTRA_SCALING,
+//                prefs.getFloat(Constants.PREFS_KEY_SETTINGS_SCALING, mDefaults!!.scaling)
+//            )
+//            intent.putExtra(
+//                MainService.EXTRA_ACCESS_KEY,
+//                prefs.getString(Constants.PREFS_KEY_SETTINGS_ACCESS_KEY, mDefaults!!.accessKey)
+//            )
+//            if (mIsMainServiceRunning) {
+//                intent.setAction(MainService.ACTION_STOP)
+//            } else {
+//                intent.setAction(MainService.ACTION_START)
+//            }
+//            mButtonToggle?.setEnabled(false)
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                startForegroundService(intent)
+//            } else {
+//                startService(intent)
+//            }
         })
 
         mAddress = findViewById<TextView>(R.id.address)
