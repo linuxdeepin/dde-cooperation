@@ -215,6 +215,12 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
     previewImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
+    //scan扫码
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0' // ZXing Android Embedded
+    implementation 'com.google.zxing:core:3.3.3' // ZXing Core
+
+    implementation 'com.caverock:androidsvg:1.4'
+
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast
     // 日志输出：https://github.com/getActivity/Logcat
