@@ -3,7 +3,9 @@ package com.deepin.assistant.ui.activity
 import android.app.Activity
 import android.content.*
 import android.os.Bundle
+import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.gyf.immersionbar.ImmersionBar
@@ -14,10 +16,13 @@ import com.deepin.assistant.app.AppFragment
 import com.deepin.assistant.manager.*
 import com.deepin.assistant.other.DoubleClickHelper
 import com.deepin.assistant.ui.adapter.NavigationAdapter
-import com.deepin.assistant.ui.fragment.FindFragment
 import com.deepin.assistant.ui.fragment.HomeFragment
 import com.deepin.assistant.ui.fragment.MessageFragment
 import com.deepin.assistant.ui.fragment.MineFragment
+import com.deepin.assistant.ui.fragment.ScanFragment
+import com.deepin.cooperation.CooperationListener
+import com.deepin.cooperation.JniCooperation
+import net.christianbeier.droidvnc_ng.MainService
 
 /**
  *    author : Android 轮子哥
@@ -28,12 +33,12 @@ import com.deepin.assistant.ui.fragment.MineFragment
 class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
     companion object {
-
+        private const val TAG = "HomeActivity"
         private const val INTENT_KEY_IN_FRAGMENT_INDEX: String = "fragmentIndex"
         private const val INTENT_KEY_IN_FRAGMENT_CLASS: String = "fragmentClass"
 
         @JvmOverloads
-        fun start(context: Context, fragmentClass: Class<out AppFragment<*>?>? = HomeFragment::class.java) {
+        fun start(context: Context, fragmentClass: Class<out AppFragment<*>?>? = ScanFragment::class.java) {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra(INTENT_KEY_IN_FRAGMENT_CLASS, fragmentClass)
             if (context !is Activity) {
@@ -43,8 +48,10 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         }
     }
 
+    private var mCooperation: JniCooperation? = null
+
     private val viewPager: ViewPager? by lazy { findViewById(R.id.vp_home_pager) }
-    private val navigationView: RecyclerView? by lazy { findViewById(R.id.rv_home_navigation) }
+//    private val navigationView: RecyclerView? by lazy { findViewById(R.id.rv_home_navigation) }
     private var navigationAdapter: NavigationAdapter? = null
     private var pagerAdapter: FragmentPagerAdapter<AppFragment<*>>? = null
 
@@ -54,25 +61,40 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
     override fun initView() {
         navigationAdapter = NavigationAdapter(this).apply {
-//            addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_index),
-//                ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_home_selector)))
+            addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_index),
+                ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_home_selector)))
             addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_found),
                 ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_found_selector)))
-//            addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_message),
-//                ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_message_selector)))
-//            addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_me),
-//                ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_me_selector)))
+            addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_message),
+                ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_message_selector)))
+            addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_me),
+                ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_me_selector)))
             setOnNavigationListener(this@HomeActivity)
-            navigationView?.adapter = this
+//            navigationView?.adapter = this
         }
+
+        mCooperation = JniCooperation()
+        val hosts = MainService.getIPv4s()
+        val host = hosts[0]
+        mCooperation?.initNative(host)
+
+        mCooperation?.registerListener(object : CooperationListener {
+            override fun onConnectChanged(result: Int, reason: String) {
+                Log.d(TAG, "Connection changed: result $result, reason: $reason")
+            }
+
+            override fun onAsyncRpcResult(type: Int, response: String) {
+                Log.d(TAG, "Async RPC result: type $type, response: $response")
+            }
+        })
     }
 
     override fun initData() {
         pagerAdapter = FragmentPagerAdapter<AppFragment<*>>(this).apply {
-//            addFragment(HomeFragment.newInstance())
-            addFragment(FindFragment.newInstance())
-//            addFragment(MessageFragment.newInstance())
-//            addFragment(MineFragment.newInstance())
+            addFragment(HomeFragment.newInstance())
+            addFragment(ScanFragment.newInstance())
+            addFragment(MessageFragment.newInstance())
+            addFragment(MineFragment.newInstance())
             viewPager?.adapter = this
         }
         onNewIntent(intent)
@@ -146,7 +168,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
     override fun onDestroy() {
         super.onDestroy()
         viewPager?.adapter = null
-        navigationView?.adapter = null
+//        navigationView?.adapter = null
         navigationAdapter?.setOnNavigationListener(null)
     }
 }

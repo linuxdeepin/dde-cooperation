@@ -29,6 +29,7 @@ Build-Depends:
  uuid-dev,
  libdisplayjack-dev | hello,
  libsystemd-dev,
+ libqrencode-dev,
 Standards-Version: 4.1.3
 Section: utils
 Homepage: http://www.deepin.org

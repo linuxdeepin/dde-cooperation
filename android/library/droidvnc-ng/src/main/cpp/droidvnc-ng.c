@@ -321,7 +321,10 @@ JNIEXPORT jboolean JNICALL Java_net_christianbeier_droidvnc_1ng_MainService_vncS
     // don't show X cursor
     theScreen->cursor = NULL;
     // needed to allow multiple dragging actions at once
-    theScreen->deferPtrUpdateTime = 0;
+    theScreen->deferPtrUpdateTime = 3;
+
+    theScreen->deferUpdateTime = 1;
+    theScreen->maxRectsPerUpdate = 60;
 
     if(desktopname) { // string arg to GetStringUTFChars() must not be NULL
         const char *cDesktopName = (*env)->GetStringUTFChars(env, desktopname, NULL);

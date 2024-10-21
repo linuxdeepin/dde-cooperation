@@ -337,6 +337,25 @@
             style="@style/ButtonStyle"
             />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/test"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="连接"
+            style="@style/ButtonStyle"
+            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/projection"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="投屏请求"
+            style="@style/ButtonStyle"
+            />
+
         <TextView
             android:id="@+id/address"
             android:layout_width="wrap_content"

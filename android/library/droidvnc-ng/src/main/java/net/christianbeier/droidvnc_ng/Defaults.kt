@@ -53,7 +53,7 @@ class Defaults {
         private set
 
     @EncodeDefault
-    var scaling = 0.0f
+    var scaling = 1.0f
         private set
 
     @EncodeDefault
