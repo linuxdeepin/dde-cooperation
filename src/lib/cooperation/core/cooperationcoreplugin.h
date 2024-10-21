@@ -13,7 +13,6 @@
 
 namespace cooperation_core {
 
-
 class EXPORT_API CooperaionCorePlugin : public QObject
 {
     Q_OBJECT
@@ -28,6 +27,7 @@ public:
 private:
     void initialize();
     bool isMinilize();
+    void initMobileModule();
     QSharedPointer<MainWindow> dMain { nullptr };
     bool onlyTransfer { false };
 };

@@ -32,6 +32,8 @@ public:
 
     void minimizedAPP();
 
+    void addMobileOperation(const QVariantMap &map);
+
 signals:
     void refreshDevices();
     void searchDevice(const QString &ip);
@@ -46,6 +48,11 @@ public Q_SLOTS:
     void removeDevice(const QString &ip);
     void onRegistOperations(const QVariantMap &map);
     void onSwitchMode(CooperationMode mode);
+
+    //mobile
+    void addMobileDevice(const DeviceInfoPointer info);
+    void disconnectMobile();
+    void onSetQRCode(const QString &code);
 
 protected:
     void showCloseDialog();

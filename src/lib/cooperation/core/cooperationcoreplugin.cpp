@@ -10,8 +10,8 @@
 #include "net/transferwrapper.h"
 #include "net/helper/transferhelper.h"
 #include "net/helper/sharehelper.h"
+#include "net/helper/phonehelper.h"
 #include "discover/deviceinfo.h"
-
 
 #include "common/commonutils.h"
 #include "configs/settings/configmanager.h"
@@ -73,7 +73,19 @@ bool CooperaionCorePlugin::isMinilize()
         return false;
 
     parser.process(args);
-    return parser.isSet(option);;
+    return parser.isSet(option);
+    ;
+}
+
+void CooperaionCorePlugin::initMobileModule()
+{
+    //todo
+    connect(dMain.get(), &MainWindow::refreshDevices, PhoneHelper::instance(), &PhoneHelper::onScreenMirroring);
+    connect(PhoneHelper::instance(), &PhoneHelper::addMobileInfo, dMain.get(), &MainWindow::addMobileDevice);
+    connect(PhoneHelper::instance(), &PhoneHelper::disconnectMobile, dMain.get(), &MainWindow::disconnectMobile);
+    connect(PhoneHelper::instance(), &PhoneHelper::setQRCode, dMain.get(), &MainWindow::onSetQRCode);
+
+    PhoneHelper::instance()->registConnectBtn(dMain.get());
 }
 
 bool CooperaionCorePlugin::start()
@@ -87,6 +99,7 @@ bool CooperaionCorePlugin::start()
     } else {
         DiscoverController::instance();
         NetworkUtil::instance();
+        initMobileModule();
 
         ShareHelper::instance()->registConnectBtn();
 
@@ -107,7 +120,7 @@ bool CooperaionCorePlugin::start()
         connect(DiscoverController::instance(), &DiscoverController::discoveryFinished, HistoryManager::instance(), &HistoryManager::refreshHistory);
         connect(HistoryManager::instance(), &HistoryManager::historyConnected, DiscoverController::instance(), &DiscoverController::updateHistoryDevices);
 
-        DiscoverController::instance()->init(); // init zeroconf and regist
+        DiscoverController::instance()->init();   // init zeroconf and regist
 
         // start network status listen after all ready
         CooperationUtil::instance()->initNetworkListener();
