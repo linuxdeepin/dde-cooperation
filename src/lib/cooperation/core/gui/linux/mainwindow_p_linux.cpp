@@ -15,7 +15,6 @@
 
 #include <gui/widgets/cooperationstatewidget.h>
 #include <gui/widgets/devicelistwidget.h>
-#include <gui/widgets/mobilewidget.h>
 
 #include <gui/mainwindow_p.h>
 
@@ -28,12 +27,12 @@ void MainWindowPrivate::initWindow()
     q->setFixedSize(500, 630);
     q->setWindowIcon(QIcon::fromTheme("dde-cooperation"));
 
-    mobileWidget = new MobileWidget(q);
+    phoneWidget = new PhoneWidget(q);
     workspaceWidget = new WorkspaceWidget(q);
 
     stackedLayout = new QStackedLayout;
     stackedLayout->addWidget(workspaceWidget);
-    stackedLayout->addWidget(mobileWidget);
+    stackedLayout->addWidget(phoneWidget);
     stackedLayout->setCurrentIndex(0);
 
     QWidget *centralWidget = new QWidget();
@@ -59,8 +58,8 @@ void MainWindowPrivate::initTitleBar()
 
     DButtonBox *switchBtn = new DButtonBox(q);
     QList<DButtonBoxButton *> list;
-    DButtonBoxButton *PCBtn = new DButtonBoxButton(tr("电脑协同"));
-    DButtonBoxButton *mobileBtn = new DButtonBoxButton(tr("手机协同"));
+    DButtonBoxButton *PCBtn = new DButtonBoxButton(tr("Computer"));
+    DButtonBoxButton *mobileBtn = new DButtonBoxButton(tr("Phone"));
     list.append(PCBtn);
     list.append(mobileBtn);
     switchBtn->setButtonList(list, true);

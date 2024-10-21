@@ -1,9 +1,9 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef MOBILEWIDGET_H
-#define MOBILEWIDGET_H
+#ifndef PHONEWIDGET_H
+#define PHONEWIDGET_H
 
 #include "global_defines.h"
 #include "discover/deviceinfo.h"
@@ -14,42 +14,46 @@ namespace cooperation_core {
 class NoNetworkWidget;
 class DeviceListWidget;
 class BottomLabel;
-class ConnectWidget;
+class QRCodeWidget;
 
-class MobileWidget : public QWidget
+class PhoneWidget : public QWidget
 {
     Q_OBJECT
 public:
     enum PageName {
-        kLookignForDeviceWidget = 0,
-        kNoNetworkWidget,
-        kNoResultWidget,
+        kQRCodeWidget = 0,
         kDeviceListWidget,
+        kNoNetworkWidget,
 
         kUnknownPage = 99,
     };
 
-    explicit MobileWidget(QWidget *parent = nullptr);
+    explicit PhoneWidget(QWidget *parent = nullptr);
     void initUI();
     void switchWidget(PageName page);
+
+public slots:
+    void setDeviceInfo(const DeviceInfoPointer info);
+    void addOperation(const QVariantMap &map);
+    void onSetQRcodeInfo(const QString &info);
 
 private:
     QStackedLayout *stackedLayout { nullptr };
     CooperationSearchEdit *searchEdit { nullptr };
     NoNetworkWidget *nnWidget { nullptr };
     DeviceListWidget *dlWidget { nullptr };
-    ConnectWidget *conWidget { nullptr };
+    QRCodeWidget *qrcodeWidget { nullptr };
 };
 
-class ConnectWidget : public QWidget
+class QRCodeWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ConnectWidget(QWidget *parent = nullptr);
+    explicit QRCodeWidget(QWidget *parent = nullptr);
 
     void initUI();
     QPixmap generateQRCode(const QString &text, int scale = 10);
-    void setInfo(const QString &info);
+    void setQRcodeInfo(const QString &info);
 
 private:
     QLabel *qrCode { nullptr };
@@ -57,4 +61,4 @@ private:
 
 }   // namespace cooperation_core
 
-#endif   // MOBILEWIDGET_H
+#endif   // PHONEWIDGET_H

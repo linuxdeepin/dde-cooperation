@@ -59,6 +59,7 @@ void WorkspaceWidgetPrivate::initUI()
     refreshBtn->setToolTip(tr("Re-scan for devices"));
     refreshBtn->setFixedSize(18, 18);
     connect(refreshBtn, &QPushButton::clicked, q, &WorkspaceWidget::refresh);
+
     hLayout->addWidget(deviceLabel);
     hLayout->addWidget(refreshBtn);
     hLayout->setSpacing(0);
@@ -184,20 +185,22 @@ void WorkspaceWidget::switchWidget(PageName page)
     if (d->currentPage == page || page == kUnknownPage)
         return;
 
-    if (page == kDeviceListWidget)
+    if (page == kDeviceListWidget) {
         d->deviceLabel->setVisible(true);
-    else
+        d->refreshBtn->setVisible(true);
+    } else {
         d->deviceLabel->setVisible(false);
+        d->refreshBtn->setVisible(false);
+    }
 
     if (page == kLookignForDeviceWidget) {
         d->lfdWidget->seAnimationtEnabled(true);
         d->tipWidget->setVisible(false);
-        d->refreshBtn->setVisible(false);
+
     } else {
         if (qApp->property("onlyTransfer").toBool() || !QFile(deepin_cross::CommonUitls::tipConfPath()).exists())
             d->tipWidget->setVisible(true);
         d->lfdWidget->seAnimationtEnabled(false);
-        d->refreshBtn->setVisible(true);
     }
 
     d->currentPage = page;

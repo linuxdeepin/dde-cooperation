@@ -172,7 +172,7 @@ void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
     switch (status) {
     case DeviceInfo::Connected: {
         bool isPC = devInfo->deviceType() == DeviceInfo::DeviceType::PC;
-        QIcon icon = QIcon::fromTheme(isPC ? Kcomputer_connected : "66");
+        QIcon icon = QIcon::fromTheme(isPC ? Kcomputer_connected : ":/icons/deepin/builtin/light/icons/connect_phone_16px.svg");
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connected"));
     } break;

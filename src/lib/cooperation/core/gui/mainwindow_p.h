@@ -6,6 +6,7 @@
 #define MAINWINDOW_P_H
 
 #include "widgets/workspacewidget.h"
+#include "phone/phonewidget.h"
 
 #include <QObject>
 #include <QPainter>
@@ -16,7 +17,6 @@ class QStackedLayout;
 
 namespace cooperation_core {
 class DeviceListWidget;
-class MobileWidget;
 class MainWindow;
 class BottomLabel;
 class MainWindowPrivate : public QObject
@@ -44,7 +44,7 @@ public:
     MainWindow *q { nullptr };
     QStackedLayout *stackedLayout { nullptr };
     WorkspaceWidget *workspaceWidget { nullptr };
-    MobileWidget *mobileWidget { nullptr };
+    PhoneWidget *phoneWidget { nullptr };
     bool leftButtonPressed { false };
     QPoint lastPosition;
     BottomLabel *bottomLabel { nullptr };

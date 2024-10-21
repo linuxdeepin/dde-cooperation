@@ -39,6 +39,8 @@ FILE(GLOB PLUGIN_FILES
     "${CORE_UI_DIR}/gui/dialogs/*.cpp"
     "${CORE_UI_DIR}/gui/widgets/*.h"
     "${CORE_UI_DIR}/gui/widgets/*.cpp"
+    "${CORE_UI_DIR}/gui/phone/*.h"
+    "${CORE_UI_DIR}/gui/phone/*.cpp"
     "${CORE_UI_DIR}/gui/utils/*"
     "${CORE_UI_DIR}/discover/deviceinfo.h"
     "${CORE_UI_DIR}/discover/deviceinfo.cpp"
