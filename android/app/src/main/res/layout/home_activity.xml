@@ -20,7 +20,7 @@
         android:background="@color/white"
         android:elevation="@dimen/dp_10"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         app:spanCount="4"
         tools:itemCount="4"
         tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"

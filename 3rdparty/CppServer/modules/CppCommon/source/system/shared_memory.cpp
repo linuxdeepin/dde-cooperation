@@ -15,6 +15,10 @@
 #include <cstring>
 
 #if defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
+#if defined(__ANDROID__)
+#include <android/sharedmem.h>
+#include <android/sharedmem_jni.h>
+#endif
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -39,6 +43,19 @@ public:
         _name = "/" + name;
         _owner = true;
 
+#if defined(__ANDROID__)
+        // Try to create a shared memory handler
+        _shared = ASharedMemory_create(_name.c_str(), total);
+        if (_shared == -1)
+        {
+            // Try to open a shared memory handler
+            _shared = ASharedMemory_create(_name.c_str(), total);
+            if (_shared == -1)
+                throwex SystemException("Failed to create or open a shared memory handler!");
+            else
+                _owner = false;
+        }
+#else
         // Try to create a shared memory handler
         _shared = shm_open(_name.c_str(), (O_CREAT | O_EXCL | O_RDWR), (S_IRUSR | S_IWUSR));
         if (_shared == -1)
@@ -50,6 +67,7 @@ public:
             else
                 _owner = false;
         }
+#endif
         else
         {
             // Truncate a shared memory handler
@@ -63,7 +81,9 @@ public:
         if (_ptr == MAP_FAILED)
         {
             close(_shared);
+#if !defined(__ANDROID__)
             shm_unlink(_name.c_str());
+#endif
             throwex SystemException("Failed to map a shared memory buffer!");
         }
 #elif defined(_WIN32) || defined(_WIN64)
@@ -138,9 +158,11 @@ public:
         // Unlink the shared memory handler (owner only)
         if (_owner)
         {
+#if !defined(__ANDROID__)
             result = shm_unlink(_name.c_str());
             if (result != 0)
                 fatality(SystemException("Failed to unlink a shared memory handler!"));
+#endif
         }
 #elif defined(_WIN32) || defined(_WIN64)
         // Unmap the shared memory buffer

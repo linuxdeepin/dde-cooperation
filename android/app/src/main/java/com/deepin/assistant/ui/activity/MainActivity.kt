@@ -65,6 +65,8 @@ import androidx.preference.PreferenceManager
 import com.deepin.assistant.R
 import com.deepin.assistant.app.AppFragment
 import com.deepin.assistant.ui.fragment.HomeFragment
+import com.deepin.cooperation.CooperationListener
+import com.deepin.cooperation.JniCooperation
 import com.hjq.permissions.Permission.POST_NOTIFICATIONS
 import com.hjq.widget.view.SwitchButton
 import kotlinx.coroutines.newSingleThreadContext
@@ -91,6 +93,9 @@ class MainActivity : AppCompatActivity() {
     private var mLastRepeaterId: String? = null
     private var mDefaults: Defaults? = null
 
+    private var mTestBtn: Button? = null
+    private var mProjectionBtn: Button? = null
+    private var mCooperation: JniCooperation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,9 +106,6 @@ class MainActivity : AppCompatActivity() {
 
         mButtonToggle = findViewById<Button>(R.id.toggle)
         mButtonToggle?.setOnClickListener(View.OnClickListener { view: View? ->
-            val intent = Intent(this, ScanActivity::class.java)
-            startActivity(intent)
-
 //            val intent = Intent(this@MainActivity, MainService::class.java)
 //            intent.putExtra(
 //                MainService.EXTRA_PORT,
@@ -150,6 +152,33 @@ class MainActivity : AppCompatActivity() {
 //            } else {
 //                startService(intent)
 //            }
+        })
+
+        mCooperation = JniCooperation()
+        val hosts = MainService.getIPv4s()
+        val host = hosts[0]
+        mCooperation?.initNative(host)
+
+        mCooperation?.registerListener(object : CooperationListener {
+            override fun onConnectChanged(result: Int, reason: String) {
+                Log.d(TAG, "Connection changed: result $result, reason: $reason")
+            }
+
+            override fun onAsyncRpcResult(type: Int, response: String) {
+                Log.d(TAG, "Async RPC result: type $type, response: $response")
+            }
+        })
+        
+        mTestBtn = findViewById<Button>(R.id.test)
+        mTestBtn?.setOnClickListener(View.OnClickListener { view: View? ->
+//            val targetip = "10.8.11.52"
+//            val port = 51598
+            mCooperation?.connectRemote("10.8.11.52", 51598, "515616")
+        })
+
+        mProjectionBtn = findViewById<Button>(R.id.projection)
+        mProjectionBtn?.setOnClickListener(View.OnClickListener { view: View? ->
+            mCooperation?.sendProjection("Vivo", 5900);
         })
 
         mAddress = findViewById<TextView>(R.id.address)

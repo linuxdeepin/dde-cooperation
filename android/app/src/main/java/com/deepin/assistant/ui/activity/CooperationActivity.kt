@@ -41,7 +41,7 @@ class CooperationActivity : AppCompatActivity() {
             titleTextView.text = if (condition) screenCastingMessage else cooperationMessage
         }
         backButton.setOnClickListener {
-            val intent = Intent(this, ScanActivity::class.java)
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
 

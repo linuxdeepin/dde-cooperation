@@ -812,7 +812,7 @@ public class MainService extends Service {
     }
 
     private void registerNSD(String name, int port) {
-        // unregister old one
+        // unregister old onescaledWidth
         try {
             ((NsdManager) getSystemService(Context.NSD_SERVICE)).unregisterService(mNSDRegistrationListener);
         } catch (Exception ignored) {
