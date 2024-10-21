@@ -156,7 +156,11 @@ std::bitset<64> Thread::GetAffinity()
 #elif defined(unix) || defined(__unix) || defined(__unix__)
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
+#if defined(__ANDROID__)
+    int result = sched_getaffinity(pthread_self(), sizeof(cpu_set_t), &cpuset);
+#else
     int result = pthread_getaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+#endif
     if (result != 0)
         throwex SystemException("Failed to get the current thread CPU affinity!");
     std::bitset<64> affinity;
@@ -207,7 +211,11 @@ std::bitset<64> Thread::GetAffinity(std::thread& thread)
 #elif defined(unix) || defined(__unix) || defined(__unix__)
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
+#if defined(__ANDROID__)
+    int result = sched_getaffinity(thread.native_handle(), sizeof(cpu_set_t), &cpuset);
+#else
     int result = pthread_getaffinity_np(thread.native_handle(), sizeof(cpu_set_t), &cpuset);
+#endif
     if (result != 0)
         throwex SystemException("Failed to get the given thread CPU affinity!");
     std::bitset<64> affinity;
@@ -263,7 +271,11 @@ void Thread::SetAffinity(const std::bitset<64>& affinity)
     for (int i = 0; i < std::min(CPU_SETSIZE, 64); ++i)
         if (affinity[i])
             CPU_SET(i, &cpuset);
+#if defined(__ANDROID__)
+    int result = sched_getaffinity(pthread_self(), sizeof(cpu_set_t), &cpuset);
+#else
     int result = pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+#endif
     if (result != 0)
         throwex SystemException("Failed to set the current thread CPU affinity!");
 #elif defined(_WIN32) || defined(_WIN64)
@@ -285,7 +297,11 @@ void Thread::SetAffinity(std::thread& thread, const std::bitset<64>& affinity)
     for (int i = 0; i < std::min(CPU_SETSIZE, 64); ++i)
         if (affinity[i])
             CPU_SET(i, &cpuset);
+#if defined(__ANDROID__)
+    int result = sched_getaffinity(thread.native_handle(), sizeof(cpu_set_t), &cpuset);
+#else
     int result = pthread_setaffinity_np(thread.native_handle(), sizeof(cpu_set_t), &cpuset);
+#endif
     if (result != 0)
         throwex SystemException("Failed to set the given thread CPU affinity!");
 #elif defined(_WIN32) || defined(_WIN64)

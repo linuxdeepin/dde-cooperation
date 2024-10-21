@@ -146,6 +146,7 @@ dependencies {
     implementation project(':library:umeng')
 
     implementation project(':library:droidvnc-ng')
+    implementation project(':modules:cooperation')
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 

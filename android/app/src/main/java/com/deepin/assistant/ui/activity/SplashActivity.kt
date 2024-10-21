@@ -36,7 +36,7 @@ class SplashActivity : AppActivity() {
         lottieView?.addAnimatorListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 lottieView?.removeAnimatorListener(this)
-                MainActivity.start(this@SplashActivity)
+                HomeActivity.start(this@SplashActivity)
                 finish()
             }
         })
