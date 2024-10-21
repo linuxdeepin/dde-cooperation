@@ -231,15 +231,15 @@ void NoResultTipWidget::initUI()
     }
 
     if (isMobile) {
-        QString leadintText = tr("1. 手机需下载跨端协同应用。");
-        QString hypertext = "前往下载>";
+        QString leadintText = tr("1. The mobile phone needs to download cross end collaborative applications.");
+        QString hypertext = tr("Go to download>");
         QString hyperlink = "https://www.chinauos.com/resource/assistant";
         content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hypertext);
         contentLable1->setText(content1);
-        contentLable2->setText(tr("2. 安装后扫码连接本设备进行协同。"));
-        contentLable3->setText(tr("3. 连接本设备后，手机端需要保持跨端协同应用打开，且和本设备在同一局域网"));
+        contentLable2->setText(tr("2. After installation, scan the code to connect to this device for collaboration."));
+        contentLable3->setText(tr("3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device"));
         contentLable4->setText("");
-        titleLabel->setText(tr("使用须知"));
+        titleLabel->setText(tr("Instructions for use"));
         titleLabel->setAlignment(Qt::AlignCenter);
     }
 

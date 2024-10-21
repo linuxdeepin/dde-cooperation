@@ -39,6 +39,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/dialogs/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/widgets/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/widgets/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/phone/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gui/phone/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/*"

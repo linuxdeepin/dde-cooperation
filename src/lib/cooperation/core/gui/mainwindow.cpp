@@ -173,6 +173,27 @@ void MainWindow::addDevice(const QList<DeviceInfoPointer> &infoList)
     _userAction = false;
 }
 
+void MainWindow::addMobileDevice(const DeviceInfoPointer info)
+{
+    onSwitchMode(kMobile);
+    d->phoneWidget->setDeviceInfo(info);
+}
+
+void MainWindow::disconnectMobile()
+{
+    d->phoneWidget->switchWidget(PhoneWidget::PageName::kQRCodeWidget);
+}
+
+void MainWindow::onSetQRCode(const QString &code)
+{
+    d->phoneWidget->onSetQRcodeInfo(code);
+}
+
+void MainWindow::addMobileOperation(const QVariantMap &map)
+{
+    d->phoneWidget->addOperation(map);
+}
+
 void MainWindow::removeDevice(const QString &ip)
 {
     d->workspaceWidget->removeDeviceInfos(ip);
