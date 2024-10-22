@@ -31,6 +31,7 @@ public:
     void updatePin(const std::string &code);
     void setStorageRoot(const std::string &root);
     void updateSaveFolder(const std::string &folder);
+    void updateNick(const std::string &nick);
     void updateLoginStatus(const std::string &ip, bool logined);
 
     void sessionListen();
@@ -63,6 +64,7 @@ private:
 
     std::string _save_root;
     std::string _save_dir;
+    std::string _device_name;
 
     std::string serveIP;
     int         servePort;

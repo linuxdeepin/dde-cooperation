@@ -17,7 +17,8 @@ public:
     int init(JNIEnv *, jobject, jstring);
 
     // setting
-    void setStorageFolder(const std::string &folder);
+    void setStoragePath(const std::string &root, const std::string &folderName);
+    void setDeviceName(const std::string &name);
 
     // connect/disconnect request
     void asyncConnect(const std::string &ip, int port, const std::string &pin);
@@ -39,10 +40,10 @@ private:
     std::shared_ptr<SessionManager> _sessionManager;
 
     std::string _confirmTargetAddress {""};   // remote ip address
-    std::string _storageFolder = {};   //sub folder under storage dir config
 
     std::string _selfFingerPrint = {};
     std::string _serveIp = {};
+    std::string _deviceName = {};
 
     JavaVM *_jvm;  // Java虚拟机对象
     jobject _jobj; // Java类对象
