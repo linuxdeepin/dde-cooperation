@@ -79,8 +79,6 @@ bool CooperaionCorePlugin::isMinilize()
 
 void CooperaionCorePlugin::initMobileModule()
 {
-    //todo
-    connect(dMain.get(), &MainWindow::refreshDevices, PhoneHelper::instance(), &PhoneHelper::onScreenMirroring);
     connect(PhoneHelper::instance(), &PhoneHelper::addMobileInfo, dMain.get(), &MainWindow::addMobileDevice);
     connect(PhoneHelper::instance(), &PhoneHelper::disconnectMobile, dMain.get(), &MainWindow::disconnectMobile);
     connect(PhoneHelper::instance(), &PhoneHelper::setQRCode, dMain.get(), &MainWindow::onSetQRCode);

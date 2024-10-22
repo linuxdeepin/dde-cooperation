@@ -339,9 +339,9 @@ public class InputService extends AccessibilityService {
 			}
 
 			/*
-				Ctrl-Shift-Esc combo.
+				Pageup(65365) || Ctrl-Shift-Esc combo.
 		 	*/
-			if(inputContext.isKeyCtrlDown && inputContext.isKeyShiftDown && inputContext.isKeyEscDown) {
+			if((keysym == 0xFF55 && down != 0) || (inputContext.isKeyCtrlDown && inputContext.isKeyShiftDown && inputContext.isKeyEscDown)) {
 				Log.i(TAG, "onKeyEvent: got Ctrl-Shift-Esc");
 				instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS);
 			}

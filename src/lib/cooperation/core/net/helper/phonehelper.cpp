@@ -84,8 +84,9 @@ void PhoneHelper::onScreenMirroring()
         return;
 
     screenwindow = new ScreenMirroringWindow(mobileInfo.data()->deviceName());
-    connect(screenwindow, &ScreenMirroringWindow::ButtonClicked, this, &PhoneHelper::onScreenMirroringButtonClicked);
     screenwindow->show();
+
+    screenwindow->connectVncServer(mobileInfo.data()->ipAddress(), 5900, "");
 }
 
 void PhoneHelper::onScreenMirroringResize(int w, int h)
@@ -93,20 +94,6 @@ void PhoneHelper::onScreenMirroringResize(int w, int h)
     if (!screenwindow)
         return;
     screenwindow->resize(w, h);
-}
-
-void PhoneHelper::onScreenMirroringButtonClicked(int operation)
-{
-    auto op = static_cast<ScreenMirroringWindow::Operation>(operation);
-    switch (op) {
-    case ScreenMirroringWindow::Operation::BACK:
-        break;
-    case ScreenMirroringWindow::Operation::HOME:
-        break;
-    case ScreenMirroringWindow::Operation::MULTI_TASK:
-        break;
-    }
-    //todo
 }
 
 void PhoneHelper::onDisconnect(const DeviceInfoPointer info)

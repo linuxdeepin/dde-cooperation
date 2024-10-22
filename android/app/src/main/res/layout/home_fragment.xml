@@ -97,6 +97,117 @@
             android:layout_marginTop="88dp"
             android:textColor="#80000000" />
 
+        <!--disable below permission dashboard-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_activity_permissions_dashboard"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:padding="10dp">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_column="0"
+                    android:padding="10dp"
+                    android:hyphenationFrequency="full"
+                    android:text="@string/main_activity_screen_capturing" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="10dp"
+                    android:text="@string/main_activity_colon" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_column="2"
+                    android:padding="10dp"
+                    android:text="@string/main_activity_fallback"
+                    android:textAllCaps="true"
+                    android:id="@+id/permission_status_screen_capturing"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_column="0"
+                    android:padding="10dp"
+                    android:hyphenationFrequency="full"
+                    android:text="@string/main_activity_input" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="10dp"
+                    android:text="@string/main_activity_colon" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_column="2"
+                    android:padding="10dp"
+                    android:text="@string/main_activity_fallback"
+                    android:textAllCaps="true"
+                    android:id="@+id/permission_status_input"/>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/permission_row_notification">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_column="0"
+                    android:padding="10dp"
+                    android:hyphenationFrequency="full"
+                    android:text="@string/main_activity_notifications" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="10dp"
+                    android:text="@string/main_activity_colon" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_column="2"
+                    android:padding="10dp"
+                    android:text="@string/main_activity_fallback"
+                    android:textAllCaps="true"
+                    android:id="@+id/permission_status_notification"/>
+
+            </TableRow>
+
+        </TableLayout>
+
     </LinearLayout>
 
 </LinearLayout>
