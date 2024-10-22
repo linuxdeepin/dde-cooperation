@@ -1,97 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/background_app"
     tools:context=".ui.fragment.HomeFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:elevation="0px">
-
-        <com.deepin.assistant.widget.XCollapsingToolbarLayout
-            android:id="@+id/ctl_home_bar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_256"
-            app:contentScrim="@color/white"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:scrimVisibleHeightTrigger="@dimen/dp_100">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax"
-                app:srcCompat="@drawable/example_bg" />
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/tb_home_title"
-                android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
-                app:layout_collapseMode="pin" >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_home_address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text="广州"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/sp_15" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_home_hint"
-                        android:layout_width="0px"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/dp_20"
-                        android:layout_weight="1"
-                        android:background="@drawable/home_search_bar_transparent_bg"
-                        android:gravity="center"
-                        android:paddingVertical="@dimen/dp_5"
-                        android:text="完善细节，追求完美"
-                        android:textColor="@color/white60"
-                        android:textSize="@dimen/sp_13" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_home_search"
-                        android:layout_width="@dimen/dp_24"
-                        android:layout_height="@dimen/dp_24"
-                        android:layout_marginEnd="@dimen/dp_10"
-                        app:srcCompat="@drawable/search_ic"
-                        app:tint="@color/white" />
-
-                </LinearLayout>
-
-            </androidx.appcompat.widget.Toolbar>
-
-        </com.deepin.assistant.widget.XCollapsingToolbarLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_home_tab"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:itemCount="2"
-            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:listitem="@layout/tab_item_design"
-            tools:spanCount="2" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <com.hjq.widget.layout.NestedViewPager
-        android:id="@+id/vp_home_pager"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_marginHorizontal="@dimen/dp_30"
+        android:orientation="vertical">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <TextView
+            android:id="@+id/tv_status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_100"
+            android:textSize="16sp"
+            android:text="@string/cooperation_activity_cooperation"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_status_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_50"
+            android:src="@drawable/icon_device" />
+
+
+        <TextView
+            android:id="@+id/tv_device_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_20"
+            android:fontWeight="500"
+            android:text="UOS-deepin"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/tv_device_ip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/background_ip"
+            android:gravity="center"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="5dp"
+            android:text="IP: 123.45.67.8"
+            android:textColor="#41647C"
+            android:textSize="12sp"
+            android:textStyle="normal" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            style="@style/ButtonStyle"
+            android:id="@+id/btn_cast_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_100"
+            android:background="@drawable/background_button_cancel"
+            android:gravity="center"
+            android:text="@string/cooperation_activity_screencast"
+            android:textSize="14sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            style="@style/ButtonStyle"
+            android:id="@+id/btn_cast_stop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_20"
+            android:background="@drawable/background_button_confirm"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="#B3000000"
+            android:text="@string/cooperation_activity_disconnect" />
+
+        <TextView
+            android:id="@+id/tv_device_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="88dp"
+            android:textColor="#80000000" />
+
+    </LinearLayout>
+
+</LinearLayout>

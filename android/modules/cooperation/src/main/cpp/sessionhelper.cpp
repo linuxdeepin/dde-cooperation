@@ -115,7 +115,7 @@ void SessionHelper::initManager(std::string const &ip)
             req.from_json(json_value);
             res.flag = DO_DONE;
             // response my device info.
-            res.nick = "My Device";
+            res.nick = _deviceName;
             *res_msg = res.as_json().serialize();
         }
             return true;
@@ -192,11 +192,23 @@ void SessionHelper::initManager(std::string const &ip)
 }
 
 // 设置存储文件夹
-void SessionHelper::setStorageFolder(const std::string &folder)
+void SessionHelper::setStoragePath(const std::string &root, const std::string &folderName)
 {
-    _storageFolder = folder; // 设置存储子文件夹
-    std::cout << "Storage folder set to: " << _storageFolder << std::endl;
+    if (_sessionManager) {
+        _sessionManager->setStorageRoot(root);
+        _sessionManager->updateSaveFolder(folderName);
+    }
 }
+
+// 设置设备名称
+void SessionHelper::setDeviceName(const std::string &name)
+{    
+    _deviceName = name;
+    if (_sessionManager) {
+        _sessionManager->updateNick(_deviceName);
+    }
+}
+
 
 // 异步连接请求
 void SessionHelper::asyncConnect(const std::string &ip, int port, const std::string &pin)

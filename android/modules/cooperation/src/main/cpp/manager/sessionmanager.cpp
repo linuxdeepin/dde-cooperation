@@ -76,6 +76,11 @@ void SessionManager::updateSaveFolder(const std::string &folder) {
     }
 }
 
+void SessionManager::updateNick(const std::string &nick)
+{
+    _device_name = nick;
+}
+
 void SessionManager::updateLoginStatus(const std::string &ip, bool logined) {
     _session_worker->updateLogin(ip, logined);
 }
@@ -105,7 +110,7 @@ int SessionManager::sessionConnect(const std::string &ip, int port, const std::s
     std::string pinString = CppCommon::Encoding::Base64Encode(password);
 
     LoginMessage req;
-    req.name = serveIP;
+    req.name = serveIP + ":" + _device_name;
     req.auth = pinString;
 
     std::string jsonMsg = req.as_json().serialize();

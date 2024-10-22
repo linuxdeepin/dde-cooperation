@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:background="@drawable/background_app"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".ui.fragment.ScanFragment">
 
     <ImageView
@@ -16,9 +16,9 @@
         android:layout_marginTop="100dp"
         android:gravity="center"
         android:src="@drawable/icon_app"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/title"
@@ -28,9 +28,9 @@
         android:text="@string/scan_activity_title"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/logo"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/logo" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button"
@@ -38,8 +38,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="332dp"
         android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="332dp"
         android:layout_marginEnd="@dimen/dp_20"
         android:background="@drawable/background_button_cancel"
         android:drawableStart="@drawable/icon_scan"
@@ -49,8 +49,8 @@
         android:paddingStart="60dp"
         android:paddingEnd="60dp"
         android:text="@string/scan_activity_btn"
-        android:textSize="@dimen/sp_16"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="@dimen/sp_16" />
 
     <TextView
         android:id="@+id/device_info"

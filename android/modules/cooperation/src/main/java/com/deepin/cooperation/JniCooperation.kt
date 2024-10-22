@@ -18,7 +18,8 @@ class JniCooperation {
      */
     external fun nativeVersion(): String
     external fun initNative(ip: String)
-    external fun setStorageFolder(dirName: String)
+    external fun setStorageFolder(rootPath: String, dirName: String)
+    external fun setDeviceName(nickName: String)
     external fun connectRemote(ip: String, port: Int, pin: String)
     external fun disconnectRemote()
     external fun sendProjection(niceName: String, vncPort: Int)
@@ -26,6 +27,17 @@ class JniCooperation {
     external fun getStatus(): Int
 
     companion object {
+        // RPC 请求的类型，两端一致，不可随意变化
+        const val RPC_APPLY_LOGIN = 1000 // 连接登录请求
+        const val RPC_APPLY_PROJECTION = 201   // 投屏申请
+        const val RPC_APPLY_PROJECTION_RESULT = 202   // 投屏申请的结果
+        const val RPC_APPLY_PROJECTION_STOP = 203   // 收到停止投屏事件
+        const val RPC_APPLY_PROJECTION_CANCELED = 204   // 投屏申请被取消
+
+        // android 自定义动作
+        const val ACTION_PROJECTION_START = 51
+        const val ACTION_PROJECTION_STOP = 52
+
         // Used to load the 'cooperation' library on application startup.
         init {
             System.loadLibrary("cooperation")

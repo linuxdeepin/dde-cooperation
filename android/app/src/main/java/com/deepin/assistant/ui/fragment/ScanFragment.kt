@@ -4,10 +4,7 @@
 
 package com.deepin.assistant.ui.fragment
 
-import android.content.ContentValues
 import android.content.Intent
-import android.os.Build
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,15 +18,10 @@ import com.deepin.assistant.utils.Utils
 
 import com.journeyapps.barcodescanner.CaptureActivity
 
-/**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/AndroidProject-Kotlin
- *    time   : 2018/10/18
- *    desc   : 发现 Fragment
- */
 class ScanFragment : TitleBarFragment<HomeActivity>() {
 
     companion object {
+        private const val TAG = "ScanFragment"
 
         fun newInstance(): ScanFragment {
             return ScanFragment()
@@ -51,7 +43,7 @@ class ScanFragment : TitleBarFragment<HomeActivity>() {
     }
 
     override fun initData() {
-        val deviceName = Build.MANUFACTURER
+        val deviceName = Utils.getDeviceName(requireContext())
         val ipAddress = Utils.getIPAddress(requireContext())
         deviceInfoTextView?.text = "$deviceName | IP：${ipAddress ?: ""}"
     }
@@ -61,10 +53,9 @@ class ScanFragment : TitleBarFragment<HomeActivity>() {
             val data = result.data
             data?.let {
                 val code = it.getStringExtra("SCAN_RESULT")
-                Log.d(ContentValues.TAG, "扫描结果: $code")
-//                val intent = Intent(requireActivity(), CooperationActivity::class.java)
-//                startActivity(intent)
-                HomeActivity.start(getAttachActivity()!!, HomeFragment::class.java)
+                val resultIntent = Intent()
+                resultIntent.putExtra("SCAN_RESULT", code)
+                requireActivity().setResult(AppCompatActivity.RESULT_OK, resultIntent)
             }
         }
     }
