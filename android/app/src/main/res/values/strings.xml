@@ -9,6 +9,9 @@
     <string name="cooperation_activity_cooperation">collaborating in progress</string>
     <string name="cooperation_activity_screencast">screen casting</string>
 
+    <string name="reverse_vnc_success">Connection to %1$s:%2$d succeeded</string>
+    <string name="reverse_vnc_fail">Connection to %1$s:%2$d failed</string>
+
     <!-- 临时定义 -->
     <string name="main_activity_title">droidVNC-NG Admin Panel</string>
     <string name="main_activity_settings">Settings</string>

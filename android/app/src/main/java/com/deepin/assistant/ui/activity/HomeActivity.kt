@@ -4,14 +4,30 @@
 
 package com.deepin.assistant.ui.activity
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.Base64
 import android.util.Log
+import android.util.Pair
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import com.gyf.immersionbar.ImmersionBar
 import com.hjq.base.FragmentPagerAdapter
@@ -28,7 +44,13 @@ import com.deepin.assistant.ui.fragment.MineFragment
 import com.deepin.assistant.ui.fragment.FirstFragment
 import com.deepin.cooperation.CooperationListener
 import com.deepin.cooperation.JniCooperation
+import com.hjq.permissions.Permission
+import net.christianbeier.droidvnc_ng.Constants
+import net.christianbeier.droidvnc_ng.Defaults
+import net.christianbeier.droidvnc_ng.InputRequestActivity
+import net.christianbeier.droidvnc_ng.InputService
 import net.christianbeier.droidvnc_ng.MainService
+import net.christianbeier.droidvnc_ng.MediaProjectionService
 import net.christianbeier.droidvnc_ng.Utils
 import org.json.JSONObject
 
@@ -53,8 +75,15 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
     private lateinit var viewModel: SharedViewModel
     private var mCooperation: JniCooperation? = null
 
+    private var mIsMainServiceRunning = false
+    private var mMainServiceBroadcastReceiver: BroadcastReceiver? = null
+    private var mOutgoingConnectionWaitDialog: AlertDialog? = null
+    private var mLastMainServiceRequestId: String? = null
+    private var mLastReverseHost: String? = null
+    private var mLastReversePort = 0
+    private var mDefaults: Defaults? = null
+
     private val viewPager: ViewPager? by lazy { findViewById(R.id.vp_home_pager) }
-//    private val navigationView: RecyclerView? by lazy { findViewById(R.id.rv_home_navigation) }
     private var navigationAdapter: NavigationAdapter? = null
     private var pagerAdapter: FragmentPagerAdapter<AppFragment<*>>? = null
 
@@ -73,7 +102,6 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
             addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_me),
                 ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_me_selector)))
             setOnNavigationListener(this@HomeActivity)
-//            navigationView?.adapter = this
         }
 
         mCooperation = JniCooperation()
@@ -109,13 +137,66 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                         this@HomeActivity.viewModel.updateInfo(auth, name)
                         start(this@HomeActivity, HomeFragment::class.java)
                     }
+                    JniCooperation.RPC_APPLY_PROJECTION -> {
+                        // start the vnc service after send the projection rpc success.
+                        switchVncServer()
+                    }
                     JniCooperation.RPC_APPLY_PROJECTION_RESULT -> {
                     }
                     JniCooperation.RPC_APPLY_PROJECTION_STOP -> {
+                        switchVncServer()
                     }
                 }
             }
         })
+
+        mMainServiceBroadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                if (MainService.ACTION_START == intent.action) {
+                    if (intent.getBooleanExtra(MainService.EXTRA_REQUEST_SUCCESS, false)) {
+                        // was a successful START requested by anyone (but sent by MainService, as the receiver is not exported!)
+                        Log.d(TAG, "got MainService started success event")
+                        onServerStarted()
+                    } else {
+                        // was a failed START requested by anyone (but sent by MainService, as the receiver is not exported!)
+                        Log.d(TAG, "got MainService started fail event")
+                        onServerFailed()
+                    }
+                }
+
+                if (MainService.ACTION_STOP == intent.action && (intent.getBooleanExtra(
+                        MainService.EXTRA_REQUEST_SUCCESS,
+                        true
+                    ))
+                ) {
+                    // was a successful STOP requested by anyone (but sent by MainService, as the receiver is not exported!)
+                    // or a STOP without any extras
+                    Log.d(TAG, "got MainService stopped event")
+                    onServerStopped()
+                }
+            }
+        }
+        val filter = IntentFilter()
+        filter.addAction(MainService.ACTION_START)
+        filter.addAction(MainService.ACTION_STOP)
+        filter.addAction(MainService.ACTION_CONNECT_REVERSE)
+        filter.addAction(MainService.ACTION_CONNECT_REPEATER)
+        // register the receiver as NOT_EXPORTED so it only receives broadcasts sent by MainService,
+        // not a malicious fake broadcaster like
+        // `adb shell am broadcast -a net.christianbeier.droidvnc_ng.ACTION_STOP --ez net.christianbeier.droidvnc_ng.EXTRA_REQUEST_SUCCESS true`
+        // for instance
+        // androidx 1.8.0 以上高版本，SDK34
+        // ContextCompat.registerReceiver(this, mMainServiceBroadcastReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+        registerReceiver(mMainServiceBroadcastReceiver, filter)
+
+        // setup UI initial state
+        if (MainService.isServerActive()) {
+            Log.d(TAG, "Found server to be started")
+            onServerStarted()
+        } else {
+            Log.d(TAG, "Found server to be stopped")
+            onServerStopped()
+        }
     }
 
     override fun initData() {
@@ -211,11 +292,72 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         }, 300)
     }
 
+    @SuppressLint("SetTextI18n")
+    override fun onResume() {
+        super.onResume()
+
+        /*
+            Update Input permission display.
+         */
+        val inputStatus = findViewById<TextView>(R.id.permission_status_input)
+        if (InputService.isConnected()) {
+            inputStatus?.setText(R.string.main_activity_granted)
+            inputStatus?.setTextColor(getColor(R.color.granted))
+        } else {
+            inputStatus?.setText(R.string.main_activity_denied)
+            inputStatus?.setTextColor(getColor(R.color.denied))
+        }
+
+
+        /*
+            Update Notification permission display. Only show on >= Android 13.
+         */
+        if (Build.VERSION.SDK_INT >= 33) {
+            val notificationStatus = findViewById<TextView>(R.id.permission_status_notification)
+            if (checkSelfPermission(Permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                notificationStatus?.setText(R.string.main_activity_granted)
+                notificationStatus?.setTextColor(getColor(R.color.granted))
+            } else {
+                notificationStatus?.setText(R.string.main_activity_denied)
+                notificationStatus?.setTextColor(getColor(R.color.denied))
+            }
+            notificationStatus?.setOnClickListener { view: View? ->
+                val intent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse(
+                        "package:$packageName"
+                    )
+                )
+                startActivity(intent)
+            }
+        } else {
+            findViewById<View>(R.id.permission_row_notification)?.visibility = View.GONE
+        }
+
+
+        /*
+           Update Screen Capturing permission display.
+        */
+        val screenCapturingStatus = findViewById<TextView>(R.id.permission_status_screen_capturing)
+        if (MediaProjectionService.isMediaProjectionEnabled()) {
+            screenCapturingStatus?.setText(R.string.main_activity_granted)
+            screenCapturingStatus?.setTextColor(getColor(R.color.granted))
+        }
+        if (!MediaProjectionService.isMediaProjectionEnabled()) {
+            screenCapturingStatus?.setText(R.string.main_activity_denied)
+            screenCapturingStatus?.setTextColor(getColor(R.color.denied))
+        }
+        if (!MediaProjectionService.isMediaProjectionEnabled() && InputService.isTakingScreenShots()) {
+            screenCapturingStatus?.setText(R.string.main_activity_fallback)
+            screenCapturingStatus?.setTextColor(getColor(R.color.fallback))
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         viewPager?.adapter = null
-//        navigationView?.adapter = null
+
         navigationAdapter?.setOnNavigationListener(null)
+        unregisterReceiver(mMainServiceBroadcastReceiver)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -268,5 +410,73 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
     fun connectCooperation(ip: String, port: Int, pin: String) {
         mCooperation?.connectRemote(ip, port, pin)
+    }
+
+    fun switchVncServer() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        mDefaults = Defaults(this)
+
+        val intent = Intent(this@HomeActivity, MainService::class.java)
+        intent.putExtra(
+            MainService.EXTRA_PORT,
+            prefs.getInt(Constants.PREFS_KEY_SETTINGS_PORT, mDefaults!!.port)
+        )
+        intent.putExtra(
+            MainService.EXTRA_PASSWORD,
+            prefs.getString(Constants.PREFS_KEY_SETTINGS_PASSWORD, mDefaults!!.password)
+        )
+        intent.putExtra(
+            MainService.EXTRA_FILE_TRANSFER,
+            prefs.getBoolean(
+                Constants.PREFS_KEY_SETTINGS_FILE_TRANSFER,
+                mDefaults!!.fileTransfer
+            )
+        )
+        intent.putExtra(
+            MainService.EXTRA_VIEW_ONLY,
+            prefs.getBoolean(Constants.PREFS_KEY_SETTINGS_VIEW_ONLY, mDefaults!!.viewOnly)
+        )
+        intent.putExtra(
+            MainService.EXTRA_SHOW_POINTERS,
+            false // disable show pointer
+//            prefs.getBoolean(
+//                Constants.PREFS_KEY_SETTINGS_SHOW_POINTERS,
+//                mDefaults!!.showPointers
+//            )
+        )
+        intent.putExtra(
+            MainService.EXTRA_SCALING,
+            prefs.getFloat(Constants.PREFS_KEY_SETTINGS_SCALING, mDefaults!!.scaling)
+        )
+        intent.putExtra(
+            MainService.EXTRA_ACCESS_KEY,
+            prefs.getString(Constants.PREFS_KEY_SETTINGS_ACCESS_KEY, mDefaults!!.accessKey)
+        )
+        if (mIsMainServiceRunning) {
+            intent.setAction(MainService.ACTION_STOP)
+        } else {
+            intent.setAction(MainService.ACTION_START)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+    }
+
+    private fun onServerFailed() {
+    }
+
+    private fun onServerStarted() {
+
+
+        mIsMainServiceRunning = true
+    }
+
+    private fun onServerStopped() {
+
+
+        mIsMainServiceRunning = false
     }
 }

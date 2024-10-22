@@ -144,6 +144,7 @@ target_link_libraries(${PROJECT_NAME}
     QtZeroConf
     CuteIPC
     qrencode
+    vncclient
 )
 
 target_link_libraries(${PROJECT_NAME}

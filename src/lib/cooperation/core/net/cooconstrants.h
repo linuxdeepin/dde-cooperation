@@ -20,7 +20,6 @@ typedef enum apply_type_t {
     APPLY_PROJECTION = 201,   // 投屏申请
     APPLY_PROJECTION_RESULT = 202,   // 投屏申请的结果
     APPLY_PROJECTION_STOP = 203,   // 收到停止投屏事件
-    APPLY_PROJECTION_CANCELED = 204,   // 投屏申请被取消
 } ApplyReqType;
 
 enum ShareConnectReplyCode {

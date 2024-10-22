@@ -4,6 +4,8 @@
 
 #include "screenmirroringwindow.h"
 #include "global_defines.h"
+#include "vncviewer.h"
+
 #include <QPainter>
 #include <QPixmap>
 #include <QVBoxLayout>
@@ -23,7 +25,6 @@ ScreenMirroringWindow::ScreenMirroringWindow(const QString &device, QWidget *par
     initTitleBar(device);
     initWorkWidget();
     initBottom();
-    resize(360, 800);
 
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
@@ -34,22 +35,35 @@ ScreenMirroringWindow::ScreenMirroringWindow(const QString &device, QWidget *par
     mainLayout->addWidget(bottomWidget, Qt::AlignBottom);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
+
+    connect(this, &ScreenMirroringWindow::buttonClicked, m_vncViewer, &VncViewer::onShortcutAction);
+    connect(m_vncViewer, &VncViewer::sizeChanged, this, &ScreenMirroringWindow::handleSizeChange);
+}
+
+ScreenMirroringWindow::~ScreenMirroringWindow()
+{
+    if (m_vncViewer) {
+        m_vncViewer->stop();
+        m_vncViewer->deleteLater();
+    }
 }
 
 void ScreenMirroringWindow::initWorkWidget()
 {
     stackedLayout = new QStackedLayout;
 
+    m_vncViewer = new VncViewer(this);
+    stackedLayout->addWidget(m_vncViewer);
+
     LockScreenWidget *lockWidget = new LockScreenWidget(this);
     stackedLayout->addWidget(lockWidget);
     stackedLayout->setCurrentIndex(0);
-    //todo add screencast widget
 }
 
 void ScreenMirroringWindow::initBottom()
 {
     bottomWidget = new QWidget(this);
-    bottomWidget->setMaximumHeight(56);
+    bottomWidget->setFixedHeight(BOTTOM_HEIGHT);
     bottomWidget->setStyleSheet(".QWidget{background-color : white;}");
     QString lightStyle = ".QWidget{background-color : white;}";
     QString darkStyle = ".QWidget{background-color : rgba(0, 0, 0, 0.1);}";
@@ -65,13 +79,13 @@ void ScreenMirroringWindow::initBottom()
         btn->setFixedSize(36, 36);
 
         connect(btn, &CooperationIconButton::clicked, this, [this, i]() {
-            emit this->ButtonClicked(i);
+            emit this->buttonClicked(i);
         });
 
         buttonLayout->setAlignment(Qt::AlignCenter);
         buttonLayout->setSpacing(20);
         buttonLayout->addWidget(btn);
-    }
+    }   
 }
 
 void ScreenMirroringWindow::initTitleBar(const QString &device)
@@ -83,6 +97,20 @@ void ScreenMirroringWindow::initTitleBar(const QString &device)
 
     QLabel *title = new QLabel(device);
     titleBar->addWidget(title, Qt::AlignLeft);
+}
+
+void ScreenMirroringWindow::connectVncServer(const QString &ip, int port, const QString &password)
+{
+    m_vncViewer->setServes(ip.toStdString(), port, password.toStdString());
+    m_vncViewer->start();
+}
+
+void ScreenMirroringWindow::handleSizeChange(const QSize &size)
+{
+    auto titleBar = titlebar();
+    int w = size.width() + 1;
+    int h = size.height() + titleBar->height() + BOTTOM_HEIGHT + 1;
+    this->resize(w, h);
 }
 
 LockScreenWidget::LockScreenWidget(QWidget *parent)

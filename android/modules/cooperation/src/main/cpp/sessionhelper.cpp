@@ -23,7 +23,6 @@ typedef enum apply_type_t {
     APPLY_PROJECTION = 201,   // 投屏申请
     APPLY_PROJECTION_RESULT = 202,   // 投屏申请的结果
     APPLY_PROJECTION_STOP = 203,   // 收到停止投屏事件
-    APPLY_PROJECTION_CANCELED = 204,   // 投屏申请被取消
 } ApplyReqType;
 
 enum ShareConnectReplyCode {
@@ -153,13 +152,6 @@ void SessionHelper::initManager(std::string const &ip)
         }
             return true;
         case APPLY_PROJECTION_STOP: {
-            ApplyMessage req, res;
-            req.from_json(json_value);
-            res.flag = DO_DONE;
-            *res_msg = res.as_json().serialize();
-        }
-            return true;
-        case APPLY_PROJECTION_CANCELED: {
             ApplyMessage req, res;
             req.from_json(json_value);
             res.flag = DO_DONE;

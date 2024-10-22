@@ -134,6 +134,29 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             }
         }
             return true;
+        case APPLY_PROJECTION: {
+            ApplyMessage req, res;
+            req.from_json(json_value);
+            res.flag = DO_WAIT;
+            *res_msg = res.as_json().serialize();
+            q->metaObject()->invokeMethod(PhoneHelper::instance(),
+                                          "onScreenMirroring",
+                                          Qt::QueuedConnection);
+        }
+            return true;
+        case APPLY_PROJECTION_STOP: {
+            ApplyMessage req, res;
+            req.from_json(json_value);
+            res.flag = DO_DONE;
+            *res_msg = res.as_json().serialize();
+            DeviceInfoPointer info(new DeviceInfo(QString::fromStdString(req.host), QString::fromStdString(req.nick)));
+            info->setConnectStatus(DeviceInfo::ConnectStatus::Connected);
+            info->setDeviceType(DeviceInfo::DeviceType::Mobile);
+            q->metaObject()->invokeMethod(PhoneHelper::instance(), "onDisconnect",
+                                          Qt::QueuedConnection,
+                                          Q_ARG(DeviceInfoPointer, info));
+        }
+            return true;
         }
 
         // unhandle message

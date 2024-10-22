@@ -6,6 +6,7 @@
 #define SCREENMIRRIORINGWINDOW_H
 
 #include "global_defines.h"
+
 #include <QWindow>
 #include <QPainter>
 #include <QPixmap>
@@ -25,30 +26,38 @@
 
 namespace cooperation_core {
 
+class VncViewer;
 class ScreenMirroringWindow : public CooperationMainWindow
 {
     Q_OBJECT
 
 public:
-    enum Operation {
-        BACK = 0,
-        HOME,
-        MULTI_TASK
-    };
-
     explicit ScreenMirroringWindow(const QString &device, QWidget *parent = nullptr);
+    ~ScreenMirroringWindow();
 
     void initTitleBar(const QString &device);
     void initBottom();
     void initWorkWidget();
 
+    void connectVncServer(const QString &ip, int port, const QString &password);
+
 Q_SIGNALS:
-    void ButtonClicked(int opertion);
+    void buttonClicked(int opertion);
+
+public slots:
+    void handleSizeChange(const QSize &size);
 
 private:
     QStackedLayout *stackedLayout { nullptr };
     QWidget *bottomWidget { nullptr };
     QWidget *workWidget { nullptr };
+
+    QPoint lastPos;
+    bool isDragging = false;
+    VncViewer *m_vncViewer { nullptr };
+
+    const int BOTTOM_HEIGHT = 56;
+
 };
 
 class LockScreenWidget : public QWidget
