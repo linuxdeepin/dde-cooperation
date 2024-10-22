@@ -4,6 +4,7 @@
 
 #include "phonehelper.h"
 #include "utils/cooperationutil.h"
+#include "../cooconstrants.h"
 #include <functional>
 #include <QString>
 #include <QMetaType>
@@ -59,13 +60,7 @@ void PhoneHelper::registConnectBtn(MainWindow *window)
                                  { "visible-callback", QVariant::fromValue(visibleCb) } };
 
     window->addMobileOperation(DisconnectInfo);
-    generateQRCode(CooperationUtil::localIPAddress(), "5900", "123456");
-    {   //todo
-        DeviceInfoPointer info(new DeviceInfo("10.8.11.666", "my phone"));
-        info->setConnectStatus(DeviceInfo::ConnectStatus::Connected);
-        info->setDeviceType(DeviceInfo::DeviceType::Mobile);
-        //onConnect(info);
-    }
+    generateQRCode(CooperationUtil::localIPAddress(), QString::number(COO_SESSION_PORT), COO_HARD_PIN);
 }
 
 void PhoneHelper::onConnect(const DeviceInfoPointer info)
@@ -151,7 +146,7 @@ int PhoneHelper::notifyMessage(const QString &message, QStringList actions)
 
 void PhoneHelper::generateQRCode(const QString &ip, const QString &port, const QString &pin)
 {
-    QString combined = QString("%1:%2:%3").arg(ip).arg(port).arg(pin);
+    QString combined = QString("host=%1&port=%2&pin=%3").arg(ip).arg(port).arg(pin);
 
     QByteArray byteArray = combined.toUtf8();
     QByteArray base64 = byteArray.toBase64();

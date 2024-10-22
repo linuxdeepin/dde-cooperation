@@ -44,7 +44,7 @@ object Utils {
             if (Build.VERSION.SDK_INT > 25) {
                 Settings.Global.getString(ctx.contentResolver, Settings.Global.DEVICE_NAME)
             } else {
-                ctx.getString(R.string.app_name)
+                Build.MANUFACTURER
             }
         }
     }

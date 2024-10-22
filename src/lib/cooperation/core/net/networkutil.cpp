@@ -13,6 +13,7 @@
 #include "discover/discovercontroller.h"
 #include "helper/transferhelper.h"
 #include "helper/sharehelper.h"
+#include "helper/phonehelper.h"
 #include "utils/cooperationutil.h"
 
 #include "compatwrapper.h"
@@ -194,6 +195,23 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
                                       Q_ARG(bool, false));
     } else if (result == 2) {
         // connected
+    } else if (result == LOGIN_SUCCESS) {
+        // show UI for mobile connected
+        QString ipAddress, deviceName;
+        QStringList parts = reason.split(":");
+        if (parts.size() == 2) {
+            ipAddress = parts[0];
+            deviceName = parts[1]; 
+        } else {
+            ipAddress = reason;
+            deviceName = "unknown"; 
+        }
+        DeviceInfoPointer info(new DeviceInfo(ipAddress, deviceName));
+        info->setConnectStatus(DeviceInfo::ConnectStatus::Connected);
+        info->setDeviceType(DeviceInfo::DeviceType::Mobile);
+        q->metaObject()->invokeMethod(PhoneHelper::instance(), "onConnect",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(DeviceInfoPointer, info));
     }
 }
 

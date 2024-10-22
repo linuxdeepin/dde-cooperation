@@ -36,11 +36,21 @@ Java_com_deepin_cooperation_JniCooperation_initNative(JNIEnv *env, jobject thiz,
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_deepin_cooperation_JniCooperation_setStorageFolder(JNIEnv *env, jobject thiz,
+Java_com_deepin_cooperation_JniCooperation_setStorageFolder(JNIEnv *env, jobject thiz, jstring root_path,
                                                             jstring dir_name) {
+    std::string storagePath = jstringToString(env, root_path);  
     std::string storageFolder = jstringToString(env, dir_name);
-    SessionHelper::getInstance().setStorageFolder(storageFolder);
+    SessionHelper::getInstance().setStoragePath(storagePath, storageFolder);
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_deepin_cooperation_JniCooperation_setDeviceName(JNIEnv *env, jobject thiz,
+                                                            jstring nick_name) {
+    std::string deviceName = jstringToString(env, nick_name);
+    SessionHelper::getInstance().setDeviceName(deviceName);
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_deepin_cooperation_JniCooperation_connectRemote(JNIEnv *env, jobject thiz, jstring ip,
