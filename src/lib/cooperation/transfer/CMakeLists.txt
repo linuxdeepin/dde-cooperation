@@ -132,6 +132,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Concurrent
     CuteIPC
     qrencode
+    vncclient
 )
 
 target_link_libraries(${PROJECT_NAME}

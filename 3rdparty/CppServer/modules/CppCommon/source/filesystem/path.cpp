@@ -452,7 +452,7 @@ FileType Path::type() const
     else if (S_ISFIFO(status.st_mode))
         return FileType::FIFO;
     else if (S_ISSOCK(status.st_mode))
-        return FileType::SOCKET;
+        return FileType::SOCKETFD;
     else
         return FileType::UNKNOWN;
 #elif defined(_WIN32) || defined(_WIN64)

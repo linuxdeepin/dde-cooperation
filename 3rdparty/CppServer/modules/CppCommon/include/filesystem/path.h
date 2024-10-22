@@ -28,7 +28,7 @@ enum class FileType
     BLOCK,              //!< Block device
     CHARACTER,          //!< Character device
     FIFO,               //!< FIFO (named pipe)
-    SOCKET,             //!< Socket
+    SOCKETFD,           //!< Socket
     UNKNOWN             //!< Unknown
 };
 

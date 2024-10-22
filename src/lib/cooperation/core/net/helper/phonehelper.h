@@ -29,7 +29,6 @@ public Q_SLOTS:
     void onDisconnect(const DeviceInfoPointer info);
     void onScreenMirroring();
     void onScreenMirroringResize(int w, int h);
-    void onScreenMirroringButtonClicked(int operation);
 
 Q_SIGNALS:
     void addMobileInfo(const DeviceInfoPointer info);
