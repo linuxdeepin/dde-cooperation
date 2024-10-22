@@ -111,7 +111,7 @@ void PhoneHelper::onScreenMirroringButtonClicked(int operation)
 
 void PhoneHelper::onDisconnect(const DeviceInfoPointer info)
 {
-    QString mes = QString(tr("Are you sure to disconnect and collaborate with '% 1'?")).arg(info.data()->deviceName());
+    QString mes = QString(tr("Are you sure to disconnect and collaborate with '%1'?")).arg(info.data()->deviceName());
     QStringList actions;
     actions.append(tr("cancel"));
     actions.append(tr("disconnect"));

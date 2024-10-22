@@ -11,6 +11,8 @@
 
 #include <QVBoxLayout>
 #include <QStackedLayout>
+
+#include <gui/utils/cooperationguihelper.h>
 using namespace cooperation_core;
 
 inline constexpr char KIcon[] { ":/icons/deepin/builtin/icons/uos_assistant.png" };
@@ -49,6 +51,9 @@ void ScreenMirroringWindow::initBottom()
     bottomWidget = new QWidget(this);
     bottomWidget->setMaximumHeight(56);
     bottomWidget->setStyleSheet(".QWidget{background-color : white;}");
+    QString lightStyle = ".QWidget{background-color : white;}";
+    QString darkStyle = ".QWidget{background-color : rgba(0, 0, 0, 0.1);}";
+    CooperationGuiHelper::initThemeTypeConnect(bottomWidget, lightStyle, darkStyle);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(bottomWidget);
     QStringList buttonIcons = { "phone_back", "home", "multi_task" };   // 按钮icon列表

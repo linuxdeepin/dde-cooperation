@@ -4,6 +4,7 @@
 
 package com.deepin.assistant.ui.fragment
 
+import android.content.ContentValues
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
@@ -18,13 +19,14 @@ import com.deepin.assistant.utils.Utils
 
 import com.journeyapps.barcodescanner.CaptureActivity
 
-class ScanFragment : TitleBarFragment<HomeActivity>() {
+
+class FirstFragment : TitleBarFragment<HomeActivity>() {
 
     companion object {
         private const val TAG = "ScanFragment"
 
-        fun newInstance(): ScanFragment {
-            return ScanFragment()
+        fun newInstance(): FirstFragment {
+            return FirstFragment()
         }
     }
 
@@ -33,9 +35,8 @@ class ScanFragment : TitleBarFragment<HomeActivity>() {
     private val tTextView: TextView? by lazy { findViewById(R.id.title) }
     private val deviceInfoTextView: TextView? by lazy { findViewById(R.id.device_info) }
 
-
     override fun getLayoutId(): Int {
-        return R.layout.scan_fragment
+        return R.layout.first_fragment
     }
 
     override fun initView() {

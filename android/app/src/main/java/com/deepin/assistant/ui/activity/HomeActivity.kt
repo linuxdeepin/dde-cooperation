@@ -25,7 +25,7 @@ import com.deepin.assistant.ui.adapter.NavigationAdapter
 import com.deepin.assistant.ui.fragment.HomeFragment
 import com.deepin.assistant.ui.fragment.MessageFragment
 import com.deepin.assistant.ui.fragment.MineFragment
-import com.deepin.assistant.ui.fragment.ScanFragment
+import com.deepin.assistant.ui.fragment.FirstFragment
 import com.deepin.cooperation.CooperationListener
 import com.deepin.cooperation.JniCooperation
 import net.christianbeier.droidvnc_ng.MainService
@@ -40,7 +40,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         private const val INTENT_KEY_IN_FRAGMENT_CLASS: String = "fragmentClass"
 
         @JvmOverloads
-        fun start(context: Context, fragmentClass: Class<out AppFragment<*>?>? = ScanFragment::class.java) {
+        fun start(context: Context, fragmentClass: Class<out AppFragment<*>?>? = FirstFragment::class.java) {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra(INTENT_KEY_IN_FRAGMENT_CLASS, fragmentClass)
             if (context !is Activity) {
@@ -121,7 +121,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
     override fun initData() {
         pagerAdapter = FragmentPagerAdapter<AppFragment<*>>(this).apply {
             addFragment(HomeFragment.newInstance())
-            addFragment(ScanFragment.newInstance())
+            addFragment(FirstFragment.newInstance())
             addFragment(MessageFragment.newInstance())
             addFragment(MineFragment.newInstance())
             viewPager?.adapter = this

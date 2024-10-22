@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/dp_50"
-            android:src="@drawable/icon_device" />
+            android:src="@mipmap/cooperation_ic" />
 
 
         <TextView

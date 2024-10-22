@@ -41,6 +41,7 @@ void PhoneWidget::initUI()
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
+    mainLayout->addSpacing(10);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addLayout(stackedLayout);
     setLayout(mainLayout);
@@ -49,6 +50,7 @@ void PhoneWidget::initUI()
 void PhoneWidget::setDeviceInfo(const DeviceInfoPointer info)
 {
     switchWidget(PageName::kDeviceListWidget);
+    dlWidget->clear();
     dlWidget->appendItem(info);
 }
 
@@ -82,18 +84,27 @@ void QRCodeWidget::initUI()
 
     QLabel *title = new QLabel(tr("Scan code connection"), this);
     title->setAlignment(Qt::AlignCenter);
-    title->setStyleSheet("font-weight: bold; font-size: 20px; color:rgba(0, 0, 0, 0.85);");
+    QString lightStyle = "font-weight: bold; font-size: 20px; color:rgba(0, 0, 0, 0.85);";
+    QString darkStyle = "font-weight: bold; font-size: 20px; color:rgba(255, 255, 255, 0.85);";
+    CooperationGuiHelper::initThemeTypeConnect(title, lightStyle, darkStyle);
 
     QLabel *instruction = new QLabel(tr("Please use the cross end collaboration app to scan the code"), this);
     instruction->setAlignment(Qt::AlignCenter);
-    instruction->setStyleSheet("font-weight: 500; font-size: 14px; color:rgba(0, 0, 0, 0.7);");
+    lightStyle = "font-weight: 500; font-size: 14px; color:rgba(0, 0, 0, 0.7);";
+    darkStyle = "font-weight: 500; font-size: 14px; color:rgba(255, 255, 255, 0.7);";
+    CooperationGuiHelper::initThemeTypeConnect(instruction, lightStyle, darkStyle);
 
     QLabel *instruction2 = new QLabel(tr("Mobile phones and devices need to be connected to the same local area network"), this);
     instruction2->setAlignment(Qt::AlignCenter);
-    instruction2->setStyleSheet("font-weight: 400; font-size: 12px; color:rgba(0, 0, 0, 0.6);");
+    lightStyle = "font-weight: 500; font-size: 12px; color:rgba(0, 0, 0, 0.6);";
+    darkStyle = "font-weight: 500; font-size: 12px; color:rgba(255, 255, 255, 0.6);";
+    CooperationGuiHelper::initThemeTypeConnect(instruction2, lightStyle, darkStyle);
 
     QFrame *qrFrame = new QFrame(this);
-    qrFrame->setStyleSheet("background-color: rgba(0, 0, 0, 0.05); border-radius: 18px;");
+    lightStyle = "background-color: rgba(0, 0, 0, 0.05); border-radius: 18px;";
+    darkStyle = "background-color: rgba(255, 255, 255, 0.1); border-radius: 18px;";
+    CooperationGuiHelper::initThemeTypeConnect(qrFrame, lightStyle, darkStyle);
+
     qrFrame->setLayout(new QVBoxLayout);
     qrFrame->setFixedSize(200, 200);
 
@@ -103,6 +114,7 @@ void QRCodeWidget::initUI()
     qrCode->setAlignment(Qt::AlignCenter);
     qrCode->setStyleSheet("background-color : white;border-radius: 10px;");
     qrCode->setFixedSize(185, 185);
+
     qrFrame->layout()->setAlignment(Qt::AlignCenter);
     qrFrame->layout()->addWidget(qrCode);
 

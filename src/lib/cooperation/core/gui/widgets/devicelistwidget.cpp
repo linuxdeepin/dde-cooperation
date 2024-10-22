@@ -25,7 +25,6 @@ void DeviceListWidget::initUI()
     mainLayout->setContentsMargins(0, 0, 0, 10);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignCenter);
     mainLayout->setSpacing(10);
-    mainLayout->addSpacing(10);
 
 #ifndef linux
     QString scrollBarStyle = "QScrollBar:vertical {"
