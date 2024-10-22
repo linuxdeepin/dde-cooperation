@@ -7,15 +7,15 @@
     android:background="@drawable/background_app"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".ui.fragment.ScanFragment">
+    tools:context=".ui.fragment.FirstFragment">
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="100dp"
+        android:layout_width="@dimen/dp_140"
+        android:layout_height="@dimen/dp_140"
+        android:layout_marginTop="@dimen/dp_120"
         android:gravity="center"
-        android:src="@drawable/icon_app"
+        android:src="@mipmap/uos_assistant_ic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -35,8 +35,8 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button"
         style="@style/ButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp_280"
+        android:layout_height="@dimen/dp_48"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="@dimen/dp_20"
         android:layout_marginTop="332dp"
@@ -56,8 +56,10 @@
         android:id="@+id/device_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="@dimen/dp_110"
+        android:text="phone : 10.8.11.xxx"
         android:textColor="#80000000"
+        android:textSize="@dimen/sp_12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
