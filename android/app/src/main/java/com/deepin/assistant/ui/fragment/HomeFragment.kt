@@ -43,11 +43,6 @@ class HomeFragment : TitleBarFragment<HomeActivity>() {
     }
 
     override fun initView() {
-        val screenCastingMessage = getString(R.string.cooperation_activity_screen_casting)
-        val endScreenCastingMessage = getString(R.string.cooperation_activity_end_screen)
-        val cooperationMessage = getString(R.string.cooperation_activity_cooperation)
-        val screenCast = getString(R.string.cooperation_activity_screencast)
-
         setOnClickListener(startButton)
         setOnClickListener(stopButton)
 
@@ -84,9 +79,27 @@ class HomeFragment : TitleBarFragment<HomeActivity>() {
     override fun onClick(view: View) {
         if (view === startButton) {
             viewModel.doAction(JniCooperation.ACTION_PROJECTION_START)
+
+            val screenCastingMessage = getString(R.string.cooperation_activity_screen_casting)
+            val endScreenCastingMessage = getString(R.string.cooperation_activity_end_screen)
+            val cooperationMessage = getString(R.string.cooperation_activity_cooperation)
+            val screenCast = getString(R.string.cooperation_activity_screencast)
+
+            val condition = startButton?.text == screenCast
+            if (condition) {
+                startButton?.text = endScreenCastingMessage
+                statusTextView?.text = screenCastingMessage
+                statusImageView?.setImageResource(R.mipmap.screen_cast_ic)
+            } else {
+                startButton?.text = screenCast
+                statusTextView?.text = cooperationMessage
+                statusImageView?.setImageResource(R.mipmap.cooperation_ic)
+            }
+
         } else if (view === stopButton) {
             // TODO: show dialog?
             viewModel.doAction(JniCooperation.ACTION_PROJECTION_STOP)
+            HomeActivity.start(getAttachActivity()!!, FirstFragment::class.java)
         }
     }
 }
