@@ -5,6 +5,7 @@
 #include "phonehelper.h"
 #include "utils/cooperationutil.h"
 #include "../cooconstrants.h"
+#include "../networkutil.h"
 #include <functional>
 #include <QString>
 #include <QMetaType>
@@ -80,13 +81,20 @@ void PhoneHelper::onScreenMirroring()
     actions.append(tr("comfirm"));
 
     int res = notifyMessage(mes, actions);
-    if (res == 0)
+    if (res != 1)
         return;
 
     screenwindow = new ScreenMirroringWindow(mobileInfo.data()->deviceName());
     screenwindow->show();
 
     screenwindow->connectVncServer(mobileInfo.data()->ipAddress(), 5900, "");
+}
+
+void PhoneHelper::onScreenMirroringStop()
+{
+    //todo
+    if (screenwindow)
+        screenwindow->close();
 }
 
 void PhoneHelper::onScreenMirroringResize(int w, int h)
@@ -98,13 +106,7 @@ void PhoneHelper::onScreenMirroringResize(int w, int h)
 
 void PhoneHelper::onDisconnect(const DeviceInfoPointer info)
 {
-    QString mes = QString(tr("Are you sure to disconnect and collaborate with '%1'?")).arg(info.data()->deviceName());
-    QStringList actions;
-    actions.append(tr("cancel"));
-    actions.append(tr("disconnect"));
-
-    int res = notifyMessage(mes, actions);
-    if (res == 0)
+    if (!info || mobileInfo->ipAddress() != info->ipAddress())
         return;
 
     if (screenwindow)
@@ -112,6 +114,9 @@ void PhoneHelper::onDisconnect(const DeviceInfoPointer info)
 
     //todo disconnect
     emit disconnectMobile();
+
+    QString mes = QString(tr("“%1”connection disconnected!")).arg(mobileInfo.data()->deviceName());
+    notifyMessage(mes, QStringList());
 }
 
 int PhoneHelper::notifyMessage(const QString &message, QStringList actions)
@@ -144,6 +149,16 @@ void PhoneHelper::generateQRCode(const QString &ip, const QString &port, const Q
 void PhoneHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
     if (id == DisconnectButtonId) {
+        QString mes = QString(tr("Are you sure to disconnect and collaborate with '%1'?")).arg(info.data()->deviceName());
+        QStringList actions;
+        actions.append(tr("cancel"));
+        actions.append(tr("disconnect"));
+
+        int res = PhoneHelper::instance()->notifyMessage(mes, actions);
+        if (res != 1)
+            return;
+
+        NetworkUtil::instance()->disconnectRemote(info->ipAddress());
         PhoneHelper::instance()->onDisconnect(info);
         return;
     }

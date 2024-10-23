@@ -4,7 +4,6 @@
 
 package com.deepin.assistant.ui.activity
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
@@ -13,13 +12,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.util.Base64
 import android.util.Log
-import android.util.Pair
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -47,7 +41,6 @@ import com.deepin.cooperation.JniCooperation
 import com.hjq.permissions.Permission
 import net.christianbeier.droidvnc_ng.Constants
 import net.christianbeier.droidvnc_ng.Defaults
-import net.christianbeier.droidvnc_ng.InputRequestActivity
 import net.christianbeier.droidvnc_ng.InputService
 import net.christianbeier.droidvnc_ng.MainService
 import net.christianbeier.droidvnc_ng.MediaProjectionService
@@ -91,6 +84,10 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         return R.layout.home_activity
     }
 
+    fun scanConnect() {
+        val deviceName = Utils.getDeviceName(this);
+        deviceName?.let { mCooperation?.scanConnect(it) }
+    }
     override fun initView() {
         navigationAdapter = NavigationAdapter(this).apply {
             addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_index),
@@ -112,6 +109,12 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         mCooperation?.registerListener(object : CooperationListener {
             override fun onConnectChanged(result: Int, reason: String) {
                 Log.d(TAG, "Connection changed: result $result, reason: $reason")
+                when (result) {
+                    JniCooperation.CONNECT_STATUS_FALSE -> {
+                        toast(R.string.scan_activity_disconnect)
+                        start(this@HomeActivity, FirstFragment::class.java)
+                    }
+                }
             }
 
             override fun onAsyncRpcResult(type: Int, response: String) {
@@ -127,14 +130,23 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                         val jsonObject = JSONObject(response)
                         val auth = jsonObject.getString("auth")
                         val name = jsonObject.getString("name")
-                        if (auth.isNullOrEmpty()) {
+                        Log.d(TAG, "Login success: name $name, auth: $auth")
+                        scanConnect();
+                    }
+                    JniCooperation.RPC_APPLY_SCAN_CONNECT -> {
+                        if (response.isNullOrEmpty()) {
                             Log.e(TAG, "FAIL to connect...")
                             // TODO: show connection failed diaglog.
                             return
                         }
+                        val jsonObject = JSONObject(response)
+                        val nick = jsonObject.getString("nick")
+                        val pcInfo = JSONObject(nick)
+                        val ip = pcInfo.getString("IPAddress")
+                        val name = pcInfo.getString("DeviceName")
 
-                        Log.d(TAG, "Login success: name $name, auth: $auth")
-                        this@HomeActivity.viewModel.updateInfo(auth, name)
+                        Log.d(TAG, "SCAN_CONNECT success: name $name, auth: $ip")
+                        this@HomeActivity.viewModel.updateInfo(name, ip)
                         start(this@HomeActivity, HomeFragment::class.java)
                     }
                     JniCooperation.RPC_APPLY_PROJECTION -> {
@@ -222,6 +234,10 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
                 JniCooperation.ACTION_PROJECTION_STOP -> {
                     deviceName?.let { it -> mCooperation?.stopProjection(it) }
+                }
+
+                JniCooperation.ACTION_PROJECTION_DISCONNECT -> {
+                    mCooperation?.disconnectRemote()
                 }
             }
         })
@@ -367,44 +383,51 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
             Log.d(TAG, "扫描结果传回 HomeActivity: $resultCodeFromScan")
 
             resultCodeFromScan?.let {
-                // 先进行 base64 解码
-                val decodedBytes = Base64.decode(it, Base64.DEFAULT)
-                val decodedString = String(decodedBytes)
+                try {
+                    val decodedBytes = Base64.decode(it, Base64.DEFAULT)
+                    // 处理成功解码的字节
+                    val decodedString = String(decodedBytes)
 
-                // 按照"&"分割字符串
-                val parameters = decodedString.split("&")
-                if (parameters.size == 3) {
-                    // 创建一个存储解析结果的 Map
-                    val resultMap = mutableMapOf<String, String>()
+                    // 按照"&"分割字符串
+                    val parameters = decodedString.split("&")
+                    if (parameters.size == 3) {
+                        // 创建一个存储解析结果的 Map
+                        val resultMap = mutableMapOf<String, String>()
 
-                    // 遍历参数并进行分割
-                    for (parameter in parameters) {
-                        val keyValue = parameter.split("=")
-                        if (keyValue.size == 2) {
-                            resultMap[keyValue[0]] = keyValue[1]
-                        } else {
-                            Log.e(TAG, "解析出错，参数格式不正确：$parameter")
+                        // 遍历参数并进行分割
+                        for (parameter in parameters) {
+                            val keyValue = parameter.split("=")
+                            if (keyValue.size == 2) {
+                                resultMap[keyValue[0]] = keyValue[1]
+                            } else {
+                                Log.e(TAG, "解析出错，参数格式不正确：$parameter")
+                            }
                         }
-                    }
 
-                    // 提取出 ip、port 和 pin
-                    val ip = resultMap["host"]
-                    val portString = resultMap["port"]
-                    val pin = resultMap["pin"]
+                        // 提取出 ip、port 和 pin
+                        val ip = resultMap["host"]
+                        val portString = resultMap["port"]
+                        val pin = resultMap["pin"]
 
-                    // 将 port 转换为 Int，如果失败默认为 0
-                    val port = portString?.toIntOrNull() ?: 0
+                        // 将 port 转换为 Int，如果失败默认为 0
+                        val port = portString?.toIntOrNull() ?: 0
 
-                    if (ip != null && pin != null) {
-                        // 调用连接方法
-                        connectCooperation(ip, port, pin)
+                        if (ip != null && pin != null) {
+                            // 调用连接方法
+                            connectCooperation(ip, port, pin)
+                        } else {
+                            Log.e(TAG, "解析出错，参数不完整：host=$ip, port=$portString, pin=$pin")
+                        }
                     } else {
-                        Log.e(TAG, "解析出错，参数不完整：host=$ip, port=$portString, pin=$pin")
+                        Log.e(TAG, "解析出错，参数数量不匹配：$decodedString")
                     }
-                } else {
-                    Log.e(TAG, "解析出错，参数数量不匹配：$decodedString")
+                } catch (e: IllegalArgumentException) {
+                    // 捕获并处理非法参数异常
+                    Toast.makeText(this, R.string.scan_activity_error, Toast.LENGTH_LONG).show()
+                    e.printStackTrace()
                 }
             }
+
         }
     }
 

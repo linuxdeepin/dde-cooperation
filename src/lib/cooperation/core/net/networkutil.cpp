@@ -134,6 +134,22 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             }
         }
             return true;
+        case APPLY_SCAN_CONNECT: {
+            ApplyMessage req, res;
+            req.from_json(json_value);
+            res.flag = DO_DONE;
+            res.nick = q->deviceInfoStr().toStdString();
+            *res_msg = res.as_json().serialize();
+            QString ipAddress = req.host.c_str();
+            QString deviceName = req.nick.c_str();
+            DeviceInfoPointer info(new DeviceInfo(ipAddress, deviceName));
+            info->setConnectStatus(DeviceInfo::ConnectStatus::Connected);
+            info->setDeviceType(DeviceInfo::DeviceType::Mobile);
+            q->metaObject()->invokeMethod(PhoneHelper::instance(), "onConnect",
+                                          Qt::QueuedConnection,
+                                          Q_ARG(DeviceInfoPointer, info));
+        }
+            return true;
         case APPLY_PROJECTION: {
             ApplyMessage req, res;
             req.from_json(json_value);
@@ -149,12 +165,8 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             req.from_json(json_value);
             res.flag = DO_DONE;
             *res_msg = res.as_json().serialize();
-            DeviceInfoPointer info(new DeviceInfo(QString::fromStdString(req.host), QString::fromStdString(req.nick)));
-            info->setConnectStatus(DeviceInfo::ConnectStatus::Connected);
-            info->setDeviceType(DeviceInfo::DeviceType::Mobile);
-            q->metaObject()->invokeMethod(PhoneHelper::instance(), "onDisconnect",
-                                          Qt::QueuedConnection,
-                                          Q_ARG(DeviceInfoPointer, info));
+            q->metaObject()->invokeMethod(PhoneHelper::instance(), "onScreenMirroringStop",
+                                          Qt::QueuedConnection);
         }
             return true;
         }
@@ -216,23 +228,10 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
                                       Q_ARG(int, 0),
                                       Q_ARG(QString, reason),
                                       Q_ARG(bool, false));
-    } else if (result == 2) {
-        // connected
-    } else if (result == LOGIN_SUCCESS) {
-        // show UI for mobile connected
-        QString ipAddress, deviceName;
-        QStringList parts = reason.split(":");
-        if (parts.size() == 2) {
-            ipAddress = parts[0];
-            deviceName = parts[1]; 
-        } else {
-            ipAddress = reason;
-            deviceName = "unknown"; 
-        }
-        DeviceInfoPointer info(new DeviceInfo(ipAddress, deviceName));
-        info->setConnectStatus(DeviceInfo::ConnectStatus::Connected);
-        info->setDeviceType(DeviceInfo::DeviceType::Mobile);
-        q->metaObject()->invokeMethod(PhoneHelper::instance(), "onConnect",
+
+        //mobile
+        DeviceInfoPointer info(new DeviceInfo(reason, QString()));
+        q->metaObject()->invokeMethod(PhoneHelper::instance(), "onDisconnect",
                                       Qt::QueuedConnection,
                                       Q_ARG(DeviceInfoPointer, info));
     }
@@ -257,7 +256,7 @@ void NetworkUtilPrivate::handleAsyncRpcResult(int32_t type, const QString respon
         success = err.empty();
     }
 
-    switch(type) {
+    switch (type) {
     case APPLY_LOGIN: {
         DLOG << "Login return: " << response.toStdString();
         if (success) {
@@ -494,6 +493,11 @@ void NetworkUtil::reqTargetInfo(const QString &ip, bool compat)
     }
 }
 
+void NetworkUtil::disconnectRemote(const QString &ip)
+{
+    d->sessionManager->sessionDisconnect(ip);
+}
+
 void NetworkUtil::compatLogin(const QString &ip)
 {
     auto appName = qAppName();
@@ -510,7 +514,7 @@ void NetworkUtil::doNextCombiRequest(const QString &ip, bool compat)
     if (type <= 0)
         return;
 
-    switch(type) {
+    switch (type) {
 
     case APPLY_INFO: {
         reqTargetInfo(comip, compat);
@@ -593,7 +597,7 @@ void NetworkUtil::sendShareApply(const QString &ip, bool compat)
     DeviceInfoPointer selfinfo = DiscoverController::selfInfo();
     if (compat) {
         QStringList dataInfo({ selfinfo->deviceName(),
-                              selfinfo->ipAddress() });
+                               selfinfo->ipAddress() });
         QString data = dataInfo.join(',');
         auto appName = qAppName();
         // try again with old protocol by daemon
@@ -603,12 +607,12 @@ void NetworkUtil::sendShareApply(const QString &ip, bool compat)
         // update the target address
         d->confirmTargetAddress = ip;
 
-               // session connect and then send rpc request
+        // session connect and then send rpc request
         ApplyMessage msg;
         msg.flag = ASK_NEEDCONFIRM;
         msg.nick = selfinfo->deviceName().toStdString();
         msg.host = CooperationUtil::localIPAddress().toStdString();
-        msg.fingerprint = _selfFingerPrint.toStdString(); // send self fingerprint
+        msg.fingerprint = _selfFingerPrint.toStdString();   // send self fingerprint
         QString jsonMsg = msg.as_json().serialize().c_str();
         d->sessionManager->sendRpcRequest(ip, APPLY_SHARE, jsonMsg);
     }
@@ -661,7 +665,7 @@ void NetworkUtil::replyShareRequest(bool agree, const QString &selfprint)
         ApplyMessage msg;
         msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
         msg.host = CooperationUtil::localIPAddress().toStdString();
-        msg.fingerprint = selfprint.toStdString(); // send self fingerprint
+        msg.fingerprint = selfprint.toStdString();   // send self fingerprint
         QString jsonMsg = msg.as_json().serialize().c_str();
 
         // _confirmTargetAddress
@@ -695,7 +699,7 @@ void NetworkUtil::cancelTrans()
         d->sessionManager->cancelSyncFile(d->confirmTargetAddress);
     } else {
         // TRANS_CANCEL 1008; coopertion jobid: 1000
-        bool res =  false;
+        bool res = false;
         // try again with old protocol by daemon
         auto ipc = CompatWrapper::instance()->ipcInterface();
         ipc->call("doOperateJob", Q_RETURN_ARG(bool, res), Q_ARG(int, 1008), Q_ARG(int, 1000), Q_ARG(QString, qAppName()));
@@ -729,7 +733,6 @@ QString NetworkUtil::deviceInfoStr()
 
     return jsonString;
 }
-
 
 void NetworkUtil::compatSendStartShare(const QString &screenName)
 {
