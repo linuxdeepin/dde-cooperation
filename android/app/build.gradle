@@ -216,12 +216,8 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
     previewImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
-    //scan扫码
-    implementation 'com.journeyapps:zxing-android-embedded:4.3.0' // ZXing Android Embedded
-    implementation 'com.google.zxing:core:3.4.0' // ZXing Core
-
     // 扫描识别二维码模块
-    //implementation 'com.github.ailiwean:NBZxing:0.2.5'
+    implementation 'com.github.ailiwean:NBZxing:0.2.5'
 
     implementation 'com.caverock:androidsvg:1.4'
 

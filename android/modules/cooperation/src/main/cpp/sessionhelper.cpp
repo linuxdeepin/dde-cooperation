@@ -20,6 +20,7 @@ typedef enum apply_type_t {
     APPLY_SHARE_RESULT = 112,   // 控制申请的结果
     APPLY_SHARE_STOP = 113,   // 收到停止事件
     APPLY_CANCELED = 120,   // 申请被取消
+    APPLY_SCAN_CONNECT = 200,   // 申请扫码连接
     APPLY_PROJECTION = 201,   // 投屏申请
     APPLY_PROJECTION_RESULT = 202,   // 投屏申请的结果
     APPLY_PROJECTION_STOP = 203,   // 收到停止投屏事件
@@ -216,6 +217,21 @@ void SessionHelper::asyncDisconnect()
     _sessionManager->sessionDisconnect(_confirmTargetAddress);
 
     _confirmTargetAddress.clear(); // 清空目标地址
+}
+
+// 扫码连接请求
+void SessionHelper::requestConnect(const std::string &myNick)
+{
+    // 在这里实现扫码连接的逻辑
+    std::cout << "Requesting requestConnect " << std::endl;
+
+    ApplyMessage msg;
+    msg.flag = ASK_NEEDCONFIRM;
+    msg.nick = myNick;
+    msg.host = _serveIp;
+    msg.fingerprint = _selfFingerPrint; // send self fingerprint
+    std::string jsonMsg = msg.as_json().serialize();
+    _sessionManager->sendRpcRequest(_confirmTargetAddress, APPLY_SCAN_CONNECT, jsonMsg);
 }
 
 // 投影请求

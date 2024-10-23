@@ -25,6 +25,7 @@ public:
 
     void pingTarget(const QString &ip);
     void reqTargetInfo(const QString &ip, bool compat);
+    void disconnectRemote(const QString &ip);
 
     // login & combi request
     void compatLogin(const QString &ip);

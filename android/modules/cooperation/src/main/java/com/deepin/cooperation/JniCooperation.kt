@@ -22,6 +22,7 @@ class JniCooperation {
     external fun setDeviceName(nickName: String)
     external fun connectRemote(ip: String, port: Int, pin: String)
     external fun disconnectRemote()
+    external fun scanConnect(niceName: String)
     external fun sendProjection(niceName: String, vncPort: Int)
     external fun stopProjection(niceName: String)
     external fun getStatus(): Int
@@ -29,6 +30,7 @@ class JniCooperation {
     companion object {
         // RPC 请求的类型，两端一致，不可随意变化
         const val RPC_APPLY_LOGIN = 1000 // 连接登录请求
+        const val RPC_APPLY_SCAN_CONNECT = 200 // 扫码登录
         const val RPC_APPLY_PROJECTION = 201   // 投屏申请
         const val RPC_APPLY_PROJECTION_RESULT = 202   // 投屏申请的结果
         const val RPC_APPLY_PROJECTION_STOP = 203   // 收到停止投屏事件
@@ -37,6 +39,11 @@ class JniCooperation {
         // android 自定义动作
         const val ACTION_PROJECTION_START = 51
         const val ACTION_PROJECTION_STOP = 52
+        const val ACTION_PROJECTION_DISCONNECT = 53
+
+        // 连接状态
+        const val CONNECT_STATUS_SUCCESS = 2
+        const val CONNECT_STATUS_FALSE = -1
 
         // Used to load the 'cooperation' library on application startup.
         init {

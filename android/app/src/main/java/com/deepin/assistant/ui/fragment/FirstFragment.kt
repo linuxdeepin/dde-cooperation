@@ -4,7 +4,6 @@
 
 package com.deepin.assistant.ui.fragment
 
-import android.content.ContentValues
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
@@ -15,9 +14,8 @@ import com.deepin.assistant.R
 import com.deepin.assistant.aop.SingleClick
 import com.deepin.assistant.app.TitleBarFragment
 import com.deepin.assistant.ui.activity.HomeActivity
+import com.deepin.assistant.ui.scan.ScanActivity
 import com.deepin.assistant.utils.Utils
-
-import com.journeyapps.barcodescanner.CaptureActivity
 
 
 class FirstFragment : TitleBarFragment<HomeActivity>() {
@@ -62,7 +60,7 @@ class FirstFragment : TitleBarFragment<HomeActivity>() {
     }
 
     private fun scanForDevices() {
-        val intent = Intent(requireActivity(), CaptureActivity::class.java)
+        val intent = Intent(requireActivity(), ScanActivity::class.java)
         barcodeLauncher.launch(intent)
     }
 
