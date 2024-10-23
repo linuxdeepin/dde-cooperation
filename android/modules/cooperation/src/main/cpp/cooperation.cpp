@@ -64,6 +64,14 @@ JNIEXPORT void JNICALL
 Java_com_deepin_cooperation_JniCooperation_disconnectRemote(JNIEnv *env, jobject thiz) {
     SessionHelper::getInstance().asyncDisconnect();
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_deepin_cooperation_JniCooperation_scanConnect(JNIEnv *env, jobject thiz,
+                                                       jstring nice_name) {
+    std::string nickName = jstringToString(env, nice_name);
+    SessionHelper::getInstance().requestConnect(nickName);
+}
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_deepin_cooperation_JniCooperation_sendProjection(JNIEnv *env, jobject thiz,

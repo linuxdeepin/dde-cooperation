@@ -3,6 +3,9 @@
 
     <string name="scan_activity_title">UOS助手</string>
     <string name="scan_activity_btn">扫码连接设备</string>
+    <string name="scan_activity_error">参数错误</string>
+    <string name="scan_activity_tip">扫描客户端-手机协同二维码</string>
+    <string name="scan_activity_disconnect">连接已断开</string>
 
     <string name="cooperation_activity_screen_casting">正在投屏</string>
     <string name="cooperation_activity_disconnect">断开</string>

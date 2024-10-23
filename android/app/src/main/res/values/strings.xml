@@ -3,6 +3,10 @@
 
     <string name="scan_activity_title">UOSAssistant</string>
     <string name="scan_activity_btn">Scan code to connect devices</string>
+    <string name="scan_activity_error">Parameter error</string>
+    <string name="scan_activity_tip">Scan Client - Mobile Collaboration QR Code</string>
+    <string name="scan_activity_disconnect">connection disconnected</string>
+
     <string name="cooperation_activity_screen_casting">Screen casting in progress</string>
     <string name="cooperation_activity_disconnect">disconnect</string>
     <string name="cooperation_activity_end_screen">end screen casting</string>
