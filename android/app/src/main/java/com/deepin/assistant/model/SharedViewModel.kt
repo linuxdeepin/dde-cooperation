@@ -10,13 +10,16 @@ import androidx.lifecycle.ViewModel
 
 class SharedViewModel : ViewModel() {
 
-    private val name: MutableLiveData<String> = MutableLiveData()
-    private val ip: MutableLiveData<String> = MutableLiveData()
-    private val action: MutableLiveData<Int> = MutableLiveData()
+    private val name: MutableLiveData<String> = MutableLiveData("")
+    private val ip: MutableLiveData<String> = MutableLiveData("")
+    private val action: MutableLiveData<Int> = MutableLiveData(-1)
+    private val isScreenMirroring: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun name(): LiveData<String> = name
     fun ip(): LiveData<String> = ip
     fun action(): LiveData<Int> = action
+
+    fun isScreenMirroring(): LiveData<Boolean> = isScreenMirroring
 
     fun updateInfo(auth: String, addr: String) {
         name.postValue(auth)
@@ -30,10 +33,15 @@ class SharedViewModel : ViewModel() {
         action.postValue(req)
     }
 
+    fun setScreenMirroring(req: Boolean) {
+        isScreenMirroring.postValue(req)
+    }
+
     init {
         // Setting default value
         name.value = ""
         ip.value = ""
         action.value = -1
+        isScreenMirroring.value = false
     }
 }
