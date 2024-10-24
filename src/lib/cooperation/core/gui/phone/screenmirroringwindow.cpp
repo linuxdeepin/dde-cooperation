@@ -44,7 +44,6 @@ ScreenMirroringWindow::~ScreenMirroringWindow()
 {
     if (m_vncViewer) {
         m_vncViewer->stop();
-        m_vncViewer->deleteLater();
     }
 }
 
@@ -107,9 +106,27 @@ void ScreenMirroringWindow::connectVncServer(const QString &ip, int port, const 
 
 void ScreenMirroringWindow::handleSizeChange(const QSize &size)
 {
+    float scale = 1.0;
+    QScreen *screen = qApp->primaryScreen();
+    if (screen) {
+        int height = screen->geometry().height();
+
+        if (height >= 2160) {
+            // 4K
+            scale = 1.8;
+        } else if (height >= 1140) {
+            // 2K
+            scale = 2.2;
+        } else {
+            // 1080P
+            scale = 2.6;
+        }
+    }
+
     auto titleBar = titlebar();
-    int w = size.width() + 1;
-    int h = size.height() + titleBar->height() + BOTTOM_HEIGHT + 1;
+    int w = (size.width() / scale);
+    int h = (size.height() / scale) + titleBar->height() + BOTTOM_HEIGHT;
+
     this->resize(w, h);
 }
 

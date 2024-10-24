@@ -23,13 +23,12 @@ VncViewer::VncViewer(QWidget *parent)
       m_scaled(true),
       m_buttonMask(0)
 {
-
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
 
     m_frameTimer = new QTimer(this);
     m_frameTimer->setTimerType(Qt::CoarseTimer);
-    m_frameTimer->setInterval(1000);
+    m_frameTimer->setInterval(500);
 
     connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTimerTimeout()));
 }
@@ -50,11 +49,28 @@ void VncViewer::frameTimerTimeout()
     setCurrentFps(frameCounter());
     setFrameCounter(0);
 
+#ifdef QT_DEBUG
     qWarning() << " FPS: " << currentFps();
+#endif
+
+    if (!m_connected)
+        return;
+
+    // Check the screen has been rotated
+    const QSize screenSize = {m_rfbCli->width, m_rfbCli->height};
+    if (screenSize != m_originalSize) {
+        emit sizeChanged(screenSize);
+        m_originalSize = screenSize;
+
+        setSurfaceSize(m_originalSize);
+    }
 }
 
 void VncViewer::onShortcutAction(int action)
 {
+    if (!m_connected)
+        return;
+
     int key = 0;
     switch (action) {
     case BACK:
@@ -68,9 +84,26 @@ void VncViewer::onShortcutAction(int action)
         break;
     }
 
-    if (key > 0 && m_rfbCli) {
+    if (key > 0) {
         SendKeyEvent(m_rfbCli, qt2keysym(key), true);
     }
+}
+
+void VncViewer::updateSurface()
+{
+    resizeEvent(0);
+    update();
+}
+
+void VncViewer::clearSurface()
+{
+    setCurrentFps(0);
+    setFrameCounter(0);
+
+    if (m_surfacePixmap.isNull() && m_connected)
+        setSurfaceSize({m_rfbCli->width, m_rfbCli->height});
+    else
+        setSurfaceSize(m_surfacePixmap.size());
 }
 
 void VncViewer::finishedFramebufferUpdateStatic(rfbClient *cl)
@@ -91,21 +124,9 @@ int VncViewer::translateMouseButton(Qt::MouseButton button)
 
 void VncViewer::finishedFramebufferUpdate(rfbClient *cl)
 {
-    // QElapsedTimer timer; // 创建计时器
-    // timer.start(); // 启动计时
-
-    // 检查宽度和高度是否倒置
-    // if (originalSize.width() == (cl->height * m_scale) && originalSize.height() == (cl->width * m_scale)) {
-    //     setSurfaceSize({cl->width, cl->height});
-    // }
-
-    m_image = QImage(cl->frameBuffer, cl->width, cl->height, QImage::Format_RGB16);
+    m_image = QImage(cl->frameBuffer, cl->width, cl->height, QImage::Format_RGBA8888);
 
     update();
-
-    // // 计算耗时并打印，以纳秒为单位
-    // qint64 elapsed = timer.nsecsElapsed(); // 获取耗时（纳秒）
-    // qDebug() << "finishedFramebufferUpdate 耗时:" << elapsed << "纳秒";
 }
 
 // std::thread* VncViewer::vncThread()
@@ -115,23 +136,41 @@ void VncViewer::finishedFramebufferUpdate(rfbClient *cl)
 
 void VncViewer::paintEvent(QPaintEvent *event)
 {
-    event->accept();
+    if (m_connected) {
+        m_painter.begin(&m_surfacePixmap);
+        if (m_image.hasAlphaChannel()) {
+            // 设置合成模式为源模式
+            m_painter.setCompositionMode(QPainter::CompositionMode_Source);
+            m_painter.fillRect(this->rect(), Qt::transparent); // 用透明填充
+        } else {
+            // 如果没有 alpha 通道，保留原来的内容
+            m_painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+        }
+        m_painter.drawImage(rect().topLeft(), m_image);
+        m_painter.end();
 
-    QPainter painter(this);
-    painter.drawImage(this->rect(), m_image);
-
-    // painter.begin(this);
-    // // painter.setRenderHints(QPainter::SmoothPixmapTransform);
-    // // painter.fillRect(rect(), m_backgroundBrush);
-    // if ( scaled() ) {
-    //     m_surfaceRect.moveCenter(rect().center());
-    //     painter.scale(m_scale, m_scale);
-    //     painter.drawPixmap(m_surfaceRect.x() / m_scale, m_surfaceRect.y() / m_scale, m_surfacePixmap);
-    // } else {
-    //   painter.scale(1.0, 1.0);
-    //   painter.drawPixmap((width() - m_surfacePixmap.width()) / 2, (height() - m_surfacePixmap.height()) / 2, m_surfacePixmap);
-    // }
-    // painter.end();
+        m_painter.begin(this);
+        m_painter.setRenderHints(QPainter::SmoothPixmapTransform);
+        m_painter.fillRect(rect(), m_backgroundBrush);
+        if (scaled()) {
+            m_surfaceRect.moveCenter(rect().center());
+            m_painter.scale(m_scale, m_scale);
+            m_painter.drawPixmap(m_surfaceRect.x() / m_scale, m_surfaceRect.y() / m_scale, m_surfacePixmap);
+        } else {
+            m_painter.scale(1.0, 1.0);
+            m_painter.drawPixmap((width() - m_surfacePixmap.width()) / 2, (height() - m_surfacePixmap.height()) / 2, m_surfacePixmap);
+        }
+        m_painter.end();
+    } else {
+        m_painter.begin(this);
+        m_painter.fillRect(rect(), backgroundBrush());
+        m_painter.setPen(Qt::black);
+        m_painter.setFont(font());
+        QRect m_textBoundingRect = m_painter.boundingRect(rect(), Qt::AlignHCenter | Qt::AlignVCenter, tr("Disconnected"));
+        m_textBoundingRect.moveCenter(rect().center());
+        m_painter.drawText(m_textBoundingRect, tr("Disconnected"));
+        m_painter.end();
+    }
 
     incFrameCounter();
 }
@@ -144,12 +183,6 @@ void VncViewer::setSurfaceSize(QSize surfaceSize)
     m_surfaceRect.setWidth(m_surfaceRect.width() * m_scale);
     m_surfaceRect.setHeight(m_surfaceRect.height() * m_scale);
     m_transform = QTransform::fromScale(1.0 / m_scale, 1.0 / m_scale);
-
-    // 使用 resize 代替 setFixedSize，使得大小可变
-    // this->resize(m_surfaceRect.width() * m_scale, m_surfaceRect.height() * m_scale);
-
-    m_originalSize = QSize(m_surfaceRect.width() * m_scale, m_surfaceRect.height() * m_scale); // 记录原始大小
-    this->resize(m_originalSize); // 初始设置
 
     QTimer::singleShot(0, this, SLOT(updateSurface()));
 }
@@ -164,10 +197,6 @@ void VncViewer::resizeEvent(QResizeEvent *e)
 
             // 选择较小的缩放因子以保持比例
             m_scale = qMin(widthScale, heightScale);
-
-            // 按比例调整窗口大小
-            int newWidth = m_originalSize.width() * m_scale;
-            int newHeight = m_originalSize.height() * m_scale;
         }
 
         m_surfaceRect = m_surfacePixmap.rect();
@@ -217,6 +246,30 @@ bool VncViewer::event(QEvent *e)
             break;
         }
 
+        case QEvent::Wheel: // 处理滚轮事件
+        {
+            QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(e);
+            QPoint mappedPos = m_transform.map(wheelEvent->pos());
+
+            // 定义一个处理滚轮的辅助函数
+            auto processWheelEvent = [&](int delta, int positiveButtonMask, int negativeButtonMask) {
+                if (delta != 0) {
+                    int steps = delta / 120; // 每120个单位视为一步
+                    int buttonMask = (steps > 0) ? positiveButtonMask : negativeButtonMask;
+                    for (int i = 0; i < abs(steps); ++i) {
+                        SendPointerEvent(m_rfbCli, mappedPos.x(), mappedPos.y(), buttonMask);
+                        SendPointerEvent(m_rfbCli, mappedPos.x(), mappedPos.y(), 0); // 释放按钮
+                    }
+                }
+            };
+
+            // 处理纵向和横向滚轮事件
+            processWheelEvent(wheelEvent->angleDelta().y(), rfbButton4Mask, rfbButton5Mask);
+            processWheelEvent(wheelEvent->angleDelta().x(), 0b01000000, 0b00100000);
+
+            break;
+        }
+
         case QEvent::KeyPress:
         case QEvent::KeyRelease: {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
@@ -252,17 +305,7 @@ void VncViewer::mouseReleaseEvent(QMouseEvent *event)
 void VncViewer::start()
 {
     m_rfbCli = rfbGetClient(8, 3, 4);
-    m_rfbCli->format.depth = 24;
-    m_rfbCli->format.bitsPerPixel = 16;
-    m_rfbCli->format.redShift = 11;
-    m_rfbCli->format.greenShift = 5;
-    m_rfbCli->format.blueShift = 0;
-    m_rfbCli->format.redMax = 0x1f;
-    m_rfbCli->format.greenMax = 0x3f;
-    m_rfbCli->format.blueMax = 0x1f;
-    m_rfbCli->appData.compressLevel = 9;
-    m_rfbCli->appData.qualityLevel = 1;
-    m_rfbCli->appData.encodingsString = "tight ultra";
+    m_rfbCli->format.depth = 32;
     m_rfbCli->FinishedFrameBufferUpdate = finishedFramebufferUpdateStatic;
     m_rfbCli->serverHost = strdup(m_serverIp.c_str());
     m_rfbCli->serverPort = m_serverPort;
@@ -280,17 +323,20 @@ void VncViewer::start()
     }
 
     std::cout << "[INFO] vnc screen: " << m_rfbCli->width << " x " << m_rfbCli->height << std::endl;
-    // QPixmap pixmap(1, 1);
-    // pixmap.fill(Qt::transparent);
-    // setCursor(QCursor(pixmap));
+#ifdef HIDED_CURSOR
+    QPixmap pixmap(1, 1);
+    pixmap.fill(Qt::transparent);
+    setCursor(QCursor(pixmap));
+#endif
     // 启动帧率计时器
     m_frameTimer->start();
     m_stop = false;
 
-    const QSize screenSize = {m_rfbCli->width, m_rfbCli->height};
-    emit sizeChanged(screenSize);
+    // record the first mobile display size
+    m_originalSize = {m_rfbCli->width, m_rfbCli->height};
+    emit sizeChanged(m_originalSize);
 
-    setSurfaceSize(screenSize);
+    setSurfaceSize(m_originalSize);
 
     m_vncThread = new std::thread([this]() {
         while (!m_stop) {
@@ -315,9 +361,11 @@ void VncViewer::start()
 
 void VncViewer::stop()
 {
-    std::cout << "[INFO] stop............" << std::endl;
     m_stop = true;
     m_frameTimer->stop();
     m_vncThread->join();
-    rfbClientCleanup(m_rfbCli);
+    if (m_connected) {
+        m_connected = false;
+        rfbClientCleanup(m_rfbCli);
+    }
 }

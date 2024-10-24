@@ -382,6 +382,8 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
             val resultCodeFromScan = data?.getStringExtra("SCAN_RESULT")
             Log.d(TAG, "扫描结果传回 HomeActivity: $resultCodeFromScan")
 
+            initScreenMirroring()
+
             resultCodeFromScan?.let {
                 try {
                     val decodedBytes = Base64.decode(it, Base64.DEFAULT)
@@ -433,6 +435,12 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
     fun connectCooperation(ip: String, port: Int, pin: String) {
         mCooperation?.connectRemote(ip, port, pin)
+    }
+
+    fun initScreenMirroring() {
+        this@HomeActivity.viewModel?.setScreenMirroring(false)
+        if (mIsMainServiceRunning)
+            switchVncServer()
     }
 
     fun switchVncServer() {

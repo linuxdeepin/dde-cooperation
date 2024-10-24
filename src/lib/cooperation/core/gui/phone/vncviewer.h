@@ -31,8 +31,6 @@ public:
     std::thread *vncThread() const;
     void paintEvent(QPaintEvent *event) override;
 
-    void setSurfaceSize(QSize surfaceSize);
-
     void setBackgroundBrush(QBrush brush) { m_backgroundBrush = brush; }
     QBrush backgroundBrush() { return m_backgroundBrush; }
     bool scaled() { return m_scaled; }
@@ -44,6 +42,10 @@ Q_SIGNALS:
 public slots:
     void frameTimerTimeout();
     void onShortcutAction(int action);
+
+    void setSurfaceSize(QSize surfaceSize);
+    void updateSurface();
+    void clearSurface();
 
 protected:
     bool event(QEvent *e);
@@ -76,8 +78,9 @@ private:
     bool m_stop;
     bool m_connected;
     QImage m_image;
-    rfbClient *m_rfbCli;
+    rfbClient *m_rfbCli { nullptr };
     std::thread *m_vncThread;
+    QPainter m_painter;
 
     QBrush m_backgroundBrush;
     QPixmap m_surfacePixmap;
