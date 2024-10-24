@@ -23,6 +23,7 @@ public:
 
     int notifyMessage(const QString &message, QStringList actions);
     void generateQRCode(const QString &ip, const QString &port, const QString &pin);
+    void resetScreenMirroringWindow();
 
 public Q_SLOTS:
     void onConnect(const DeviceInfoPointer info);
@@ -39,8 +40,8 @@ Q_SIGNALS:
 private:
     explicit PhoneHelper(QObject *parent = nullptr);
     ~PhoneHelper();
-    DeviceInfoPointer mobileInfo { nullptr };
-    ScreenMirroringWindow *screenwindow { nullptr };
+    DeviceInfoPointer m_mobileInfo { nullptr };
+    ScreenMirroringWindow *m_screenwindow { nullptr };
 };
 
 }   // namespace cooperation_core

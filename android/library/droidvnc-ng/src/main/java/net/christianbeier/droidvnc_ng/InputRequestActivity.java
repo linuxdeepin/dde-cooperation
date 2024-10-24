@@ -136,8 +136,10 @@ public class InputRequestActivity extends AppCompatActivity {
 
         if (isA11yEnabled)
             Log.i(TAG, "a11y enabled");
-        else
+        else{
             Log.i(TAG, "a11y disabled");
+            return;
+        }
 
         if(!mDoNotStartMainServiceOnFinish) {
             Intent intent = new Intent(this, MainService.class);

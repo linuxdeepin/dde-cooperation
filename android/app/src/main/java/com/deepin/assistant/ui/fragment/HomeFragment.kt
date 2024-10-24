@@ -62,6 +62,23 @@ class HomeFragment : TitleBarFragment<HomeActivity>() {
                 ipTextView?.text = "IP：${it}"
             }
         })
+        viewModel.isScreenMirroring().observe(viewLifecycleOwner, Observer {
+            val screenCastingMessage = getString(R.string.cooperation_activity_screen_casting)
+            val endScreenCastingMessage = getString(R.string.cooperation_activity_end_screen)
+            val cooperationMessage = getString(R.string.cooperation_activity_cooperation)
+            val screenCast = getString(R.string.cooperation_activity_screencast)
+            Log.d(TAG, "isScreenMirroring: $it")
+            if (it) {
+                startButton?.text = endScreenCastingMessage
+                statusTextView?.text = screenCastingMessage
+                statusImageView?.setImageResource(R.mipmap.screen_cast_ic)
+            }else{
+                startButton?.text = screenCast
+                statusTextView?.text = cooperationMessage
+                statusImageView?.setImageResource(R.mipmap.cooperation_ic)
+
+            }
+        })
     }
 
     override fun initData() {
@@ -78,23 +95,11 @@ class HomeFragment : TitleBarFragment<HomeActivity>() {
     @SingleClick
     override fun onClick(view: View) {
         if (view === startButton) {
-            val screenCastingMessage = getString(R.string.cooperation_activity_screen_casting)
-            val endScreenCastingMessage = getString(R.string.cooperation_activity_end_screen)
-            val cooperationMessage = getString(R.string.cooperation_activity_cooperation)
             val screenCast = getString(R.string.cooperation_activity_screencast)
 
-            val condition = startButton?.text == screenCast
-            if (condition) {
-                startButton?.text = endScreenCastingMessage
-                statusTextView?.text = screenCastingMessage
-                statusImageView?.setImageResource(R.mipmap.screen_cast_ic)
-
+            if (startButton?.text == screenCast) {
                 viewModel.doAction(JniCooperation.ACTION_PROJECTION_START)
             } else {
-                startButton?.text = screenCast
-                statusTextView?.text = cooperationMessage
-                statusImageView?.setImageResource(R.mipmap.cooperation_ic)
-
                 // TODO: show dialog?
                 viewModel.doAction(JniCooperation.ACTION_PROJECTION_STOP)
             }
@@ -102,6 +107,8 @@ class HomeFragment : TitleBarFragment<HomeActivity>() {
         } else if (view === stopButton) {
             HomeActivity.start(getAttachActivity()!!, FirstFragment::class.java)
             viewModel.doAction(JniCooperation.ACTION_PROJECTION_DISCONNECT)
+
+            viewModel.setScreenMirroring(false)
         }
     }
 }

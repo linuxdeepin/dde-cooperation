@@ -272,9 +272,10 @@ bool SessionWorker::netTouch(QString &address, int port)
 
 void SessionWorker::disconnectRemote()
 {
-    if (!_client) return;
-
-    _client->DisconnectAsync();
+    if (_client)
+        _client->DisconnectAsync();
+    if (_server)
+        _server->DisconnectAll();
 }
 
 QString SessionWorker::sendRequest(const QString &target, const proto::OriginMessage &request)

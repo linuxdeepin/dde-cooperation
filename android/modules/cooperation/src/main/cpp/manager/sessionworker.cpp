@@ -174,7 +174,7 @@ bool SessionWorker::onStateChanged(int state, std::string &msg)
             return _tryConnect;
         } else {
             DLOG("disconnected remote: %s", msg.c_str());
-            // emit onRemoteDisconnected(addr);
+            handleRemoteDisconnected(msg.c_str());
         }
     }
     break;
