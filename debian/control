@@ -50,6 +50,7 @@ Description: deepin data transfer application
 Package: dde-cooperation
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+ libqrencode4
 Replaces:
  QtZeroConf,
  dde-cooperation-transfer (<< 1.0.0),
