@@ -99,13 +99,15 @@ bool SessionManager::sessionPing(const std::string &ip, int port) {
 
 int SessionManager::sessionConnect(const std::string &ip, int port, const std::string &password) {
     DLOG("sessionConnect: %s", ip.c_str());
-    if (_session_worker->isClientLogin(ip))
+    if (_session_worker->isClientLogin(ip)){
+        DLOG("isClientLogin: %s", ip.c_str());
         return 1;
+    }
     if (!_session_worker->netTouch(ip, port)) {
         ELOG("Fail to touch remote: %s", ip.c_str());
         return -1;
     }
-
+    DLOG("REQ_LOGIN: %s", ip.c_str());
     // base64 encode
     std::string pinString = CppCommon::Encoding::Base64Encode(password);
 

@@ -66,16 +66,16 @@ void PhoneHelper::registConnectBtn(MainWindow *window)
 
 void PhoneHelper::onConnect(const DeviceInfoPointer info)
 {
-    mobileInfo = info;
+    m_mobileInfo = info;
     emit addMobileInfo(info);
 }
 
 void PhoneHelper::onScreenMirroring()
 {
     //todo
-    if (!mobileInfo)
+    if (!m_mobileInfo)
         return;
-    QString mes = QString(tr("“%1”apply to initiate screen casting")).arg(mobileInfo.data()->deviceName());
+    QString mes = QString(tr("“%1”apply to initiate screen casting")).arg(m_mobileInfo.data()->deviceName());
     QStringList actions;
     actions.append(tr("cancel"));
     actions.append(tr("comfirm"));
@@ -84,39 +84,38 @@ void PhoneHelper::onScreenMirroring()
     if (res != 1)
         return;
 
-    screenwindow = new ScreenMirroringWindow(mobileInfo.data()->deviceName());
-    screenwindow->show();
+    m_screenwindow = new ScreenMirroringWindow(m_mobileInfo.data()->deviceName());
+    m_screenwindow->show();
 
-    screenwindow->connectVncServer(mobileInfo.data()->ipAddress(), 5900, "");
+    m_screenwindow->connectVncServer(m_mobileInfo.data()->ipAddress(), 5900, "");
 }
 
 void PhoneHelper::onScreenMirroringStop()
 {
     //todo
-    if (screenwindow)
-        screenwindow->close();
+    resetScreenMirroringWindow();
 }
 
 void PhoneHelper::onScreenMirroringResize(int w, int h)
 {
-    if (!screenwindow)
+    if (!m_screenwindow)
         return;
-    screenwindow->resize(w, h);
+    m_screenwindow->resize(w, h);
 }
 
 void PhoneHelper::onDisconnect(const DeviceInfoPointer info)
 {
-    if (!info || mobileInfo->ipAddress() != info->ipAddress())
-        return;
+    if (!info)
+        m_mobileInfo.reset();
 
-    if (screenwindow)
-        screenwindow->close();
+    resetScreenMirroringWindow();
 
-    //todo disconnect
     emit disconnectMobile();
 
-    QString mes = QString(tr("“%1”connection disconnected!")).arg(mobileInfo.data()->deviceName());
-    notifyMessage(mes, QStringList());
+    if (m_mobileInfo && info && m_mobileInfo->ipAddress() == info->ipAddress()) {
+        QString mes = QString(tr("“%1”connection disconnected!")).arg(m_mobileInfo.data()->deviceName());
+        notifyMessage(mes, QStringList());
+    }
 }
 
 int PhoneHelper::notifyMessage(const QString &message, QStringList actions)
@@ -146,6 +145,14 @@ void PhoneHelper::generateQRCode(const QString &ip, const QString &port, const Q
     emit setQRCode(base64);
 }
 
+void PhoneHelper::resetScreenMirroringWindow()
+{
+    if (!m_screenwindow)
+        return;
+    delete m_screenwindow;
+    m_screenwindow = nullptr;
+}
+
 void PhoneHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
     if (id == DisconnectButtonId) {
@@ -159,7 +166,7 @@ void PhoneHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
             return;
 
         NetworkUtil::instance()->disconnectRemote(info->ipAddress());
-        PhoneHelper::instance()->onDisconnect(info);
+        PhoneHelper::instance()->onDisconnect(nullptr);
         return;
     }
 }

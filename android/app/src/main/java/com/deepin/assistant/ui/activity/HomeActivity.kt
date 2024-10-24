@@ -151,7 +151,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                     }
                     JniCooperation.RPC_APPLY_PROJECTION -> {
                         // start the vnc service after send the projection rpc success.
-                        switchVncServer()
+                        //switchVncServer()
                     }
                     JniCooperation.RPC_APPLY_PROJECTION_RESULT -> {
                     }
@@ -229,7 +229,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
             Log.d(TAG, "will do the action: $it")
             when (it) {
                 JniCooperation.ACTION_PROJECTION_START -> {
-                    deviceName?.let { it -> mCooperation?.sendProjection(it, 5900) }
+                    switchVncServer()
                 }
 
                 JniCooperation.ACTION_PROJECTION_STOP -> {
@@ -492,14 +492,17 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
     }
 
     private fun onServerStarted() {
-
-
+        viewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
+        this@HomeActivity.viewModel.setScreenMirroring(true)
         mIsMainServiceRunning = true
+
+        val deviceName = Utils.getDeviceName(this)
+        deviceName?.let { it -> mCooperation?.sendProjection(it, 5900) }
     }
 
     private fun onServerStopped() {
-
-
+        viewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
+        this@HomeActivity.viewModel.setScreenMirroring(false)
         mIsMainServiceRunning = false
     }
 }
