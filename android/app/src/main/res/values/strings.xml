@@ -59,23 +59,22 @@
     <!-- APP需求定义 -->
     <string name="main_service_notification_not_listening">Not listening for incoming connections</string>
     <plurals name="main_service_notification_listening">
-        <item quantity="one">Listening on port %1$d, %2$d client connected</item>
-        <item quantity="other">Listening on port %1$d, %2$d clients connected</item>
+        <item quantity="other">The projection service is running</item>
     </plurals>
-    <string name="input_a11y_service_description">This allows droidVNC-NG to post input events to the Android operating system, thus allowing remote control from a connected VNC viewer. All entered input is directly posted to Android, no input is logged, saved or shared.</string>
+    <string name="input_a11y_service_description">This allows remote control from a cooperation projection. All entered input is directly posted to Android, no input is logged, saved or shared.</string>
     <string name="input_a11y_title">Accessibility disabled</string>
-    <string name="input_a11y_msg_input">To be able to remotely control your device, you need to enable accessibility for droidVNC-NG. Do you want to enable accessibility now?</string>
-    <string name="input_a11y_msg_boot">To enable start on boot for droidVNC-NG, you need to enable accessibility for it. Do you want to enable accessibility now?</string>
-    <string name="input_a11y_msg_input_and_boot">To be able to remotely control your device and to enable start on boot for droidVNC-NG, you need to enable accessibility for it. Do you want to enable accessibility now?</string>
-    <string name="input_a11y_act_not_found_msg">Could not find the default accessibility settings activity. Please enable droidVNC-NG in system accessibility settings manually.</string>
-
+    <string name="input_a11y_msg_input">To be able to remotely control your device, you need to enable accessibility. Do you want to enable accessibility now?</string>
+    <string name="input_a11y_msg_boot">To enable start on boot, you need to enable accessibility for UOS-Assistant. Do you want to enable accessibility now?</string>
+    <string name="input_a11y_msg_input_and_boot">To be able to remotely control your device and to enable start on boot, you need to enable accessibility for it. Do you want to enable accessibility now?</string>
+    <string name="input_a11y_act_not_found_msg">Could not find the default accessibility settings activity. Please enable in system accessibility settings manually.</string>
+    <string name="write_storage_title">File access disabled</string>
+    <string name="write_storage_msg">To be able to transfer files to and from your device, you need to enable file access for UOS-Assistant. Do you want to enable file access now?</string>
+    <string name="write_storage_msg_android_11">To be able to transfer files to and from your device, you need to enable file access for UOS-Assistant. Please note that saving files will only be possible in the \'Download\' and \'Documents\' directories. Do you want to enable file access now?</string>
+    <string name="notification_title">Notifications disabled</string>
+    <string name="notification_msg">To be able to show server status information and back to the App more easily, it is recommended to enable notifications. Do you want to enable notifications now?</string>
     <string name="mediaprojection_request_activity_fallback_screen_capture_title">Slow fallback screen capture mode detected</string>
     <string name="mediaprojection_request_activity_fallback_screen_capture_msg">Do you want to upgrade to fast mode now?</string>
-    <string name="write_storage_title">File access disabled</string>
-    <string name="write_storage_msg">To be able to transfer files to and from your device, you need to enable file access for droidVNC-NG. Do you want to enable file access now?</string>
-    <string name="write_storage_msg_android_11">To be able to transfer files to and from your device, you need to enable file access for droidVNC-NG. Please note that saving files will only be possible in the \'Download\' and \'Documents\' directories. Do you want to enable file access now?</string>
-    <string name="notification_title">Notifications disabled</string>
-    <string name="notification_msg">To be able to show server status information and provide a means of navigating back to the admin panel more easily, it is recommended to enable notifications. Do you want to enable notifications now?</string>
+
 
     <!-- 一般 -->
     <string name="start">Start</string>

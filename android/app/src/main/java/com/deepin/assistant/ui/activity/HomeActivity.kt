@@ -199,7 +199,11 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         // for instance
         // androidx 1.8.0 以上高版本，SDK34
         // ContextCompat.registerReceiver(this, mMainServiceBroadcastReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
-        registerReceiver(mMainServiceBroadcastReceiver, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mMainServiceBroadcastReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mMainServiceBroadcastReceiver, filter);
+        }
 
         // setup UI initial state
         if (MainService.isServerActive()) {

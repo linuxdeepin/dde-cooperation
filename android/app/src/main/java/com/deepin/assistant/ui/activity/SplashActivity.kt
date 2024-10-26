@@ -1,27 +1,20 @@
 package com.deepin.assistant.ui.activity
 
-import android.animation.*
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Intent
-import android.view.*
+import android.view.View
+import androidx.core.os.BuildCompat.PrereleaseSdkCheck
 import com.airbnb.lottie.LottieAnimationView
-import com.gyf.immersionbar.BarHide
-import com.gyf.immersionbar.ImmersionBar
 import com.deepin.assistant.R
 import com.deepin.assistant.app.AppActivity
-import com.deepin.assistant.http.api.UserInfoApi
-import com.deepin.assistant.http.model.HttpData
 import com.deepin.assistant.other.AppConfig
-import com.hjq.http.EasyHttp
-import com.hjq.http.listener.HttpCallback
+import com.gyf.immersionbar.BarHide
+import com.gyf.immersionbar.ImmersionBar
 import com.hjq.widget.view.SlantedTextView
-import java.util.*
+import java.util.Locale
 
-/**
- *    author : Android 轮子哥
- *    github : https://github.com/getActivity/AndroidProject-Kotlin
- *    time   : 2018/10/18
- *    desc   : 闪屏界面
- */
+
 class SplashActivity : AppActivity() {
 
     private val lottieView: LottieAnimationView? by lazy { findViewById(R.id.lav_splash_lottie) }
@@ -34,7 +27,8 @@ class SplashActivity : AppActivity() {
     override fun initView() {
         // 设置动画监听
         lottieView?.addAnimatorListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
+            // SDK34以下，无isReverse参数
+            override fun onAnimationEnd(animation: Animator, isReverse: Boolean) {
                 lottieView?.removeAnimatorListener(this)
                 HomeActivity.start(this@SplashActivity)
                 finish()

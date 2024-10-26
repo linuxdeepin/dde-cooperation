@@ -1,5 +1,5 @@
 apply plugin : 'com.android.application'
-apply plugin : 'android-aspectjx'
+//apply plugin : 'android-aspectjx'
 apply plugin : 'kotlin-kapt'
 apply from : '../common.gradle'
 
@@ -11,6 +11,8 @@ android {
 
         // 无痛修改包名：https://www.jianshu.com/p/17327e191d2e
         applicationId 'com.deepin.assistant'
+        versionCode 11
+        versionName "1.0.0"
 
         // 仅保留中文语种的资源
         resConfigs 'zh'
@@ -116,12 +118,12 @@ android {
     // 需要进行配置，否则就会引发冲突，具体表现为：
     // 第一种：编译不过去，报错：java.util.zip.ZipException：Cause: zip file is empty
     // 第二种：编译能过去，但运行时报错：ClassNotFoundException: Didn't find class on path: DexPathList
-    aspectjx {
-        // 排除一些第三方库的包名（Gson、 LeakCanary 和 AOP 有冲突）
-        // exclude 'androidx', 'com.google', 'com.squareup', 'org.apache', 'com.alipay', 'com.taobao', 'versions.9'
-        // 只对以下包名做 AOP 处理
-        include android.defaultConfig.applicationId
-    }
+//    aspectjx {
+//        // 排除一些第三方库的包名（Gson、 LeakCanary 和 AOP 有冲突）
+//        // exclude 'androidx', 'com.google', 'com.squareup', 'org.apache', 'com.alipay', 'com.taobao', 'versions.9'
+//        // 只对以下包名做 AOP 处理
+//        include android.defaultConfig.applicationId
+//    }
 
     applicationVariants.all { variant ->
         // apk 输出文件名配置 rootProject.getName() +

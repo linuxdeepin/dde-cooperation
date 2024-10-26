@@ -4,14 +4,12 @@ apply plugin: 'kotlin-android'
 android {
 
     // 编译源码版本
-    compileSdkVersion 32
+    compileSdk 34
     defaultConfig {
         // 最低安装版本
         minSdkVersion 26
         // 目标适配版本
         targetSdkVersion 34
-        versionName '1.0'
-        versionCode 10
     }
 
 //    27.0.11902837 21.4.7075529
@@ -56,15 +54,15 @@ android {
     }
 }
 
-afterEvaluate {
-    // 前提条件是这个 Module 工程必须是 Library 类型，并且排除名为 umeng 的 Module 工程
-    if (android.defaultConfig.applicationId == null && "umeng" != getName()) {
-        // 排除 BuildConfig.class
-        generateReleaseBuildConfig.enabled = false
-        generatePreviewBuildConfig.enabled = false
-        generateDebugBuildConfig.enabled = false
-    }
-}
+//afterEvaluate {
+//    // 前提条件是这个 Module 工程必须是 Library 类型，并且排除名为 umeng 的 Module 工程
+//    if (android.defaultConfig.applicationId == null && "umeng" != getName()) {
+//        // 排除 BuildConfig.class
+//        generateReleaseBuildConfig.enabled = false
+//        generatePreviewBuildConfig.enabled = false
+//        generateDebugBuildConfig.enabled = false
+//    }
+//}
 
 dependencies {
     // 依赖 libs 目录下所有的 jar 和 aar 包

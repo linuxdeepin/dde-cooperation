@@ -137,17 +137,15 @@ void VncViewer::finishedFramebufferUpdate(rfbClient *cl)
 void VncViewer::paintEvent(QPaintEvent *event)
 {
     if (m_connected) {
-        m_painter.begin(&m_surfacePixmap);
-        if (m_image.hasAlphaChannel()) {
-            // 设置合成模式为源模式
-            m_painter.setCompositionMode(QPainter::CompositionMode_Source);
-            m_painter.fillRect(this->rect(), Qt::transparent); // 用透明填充
-        } else {
-            // 如果没有 alpha 通道，保留原来的内容
-            m_painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+        // 创建一个后台缓冲区
+        QPixmap bufferPixmap(m_surfacePixmap.size());
+        bufferPixmap.fill(Qt::transparent); // 清空背景
+
+        // 在缓冲区中绘制图像
+        QPainter bufferPainter(&bufferPixmap);
+        if (!m_image.isNull()) {
+            bufferPainter.drawImage(0, 0, m_image); // 绘制当前图像
         }
-        m_painter.drawImage(rect().topLeft(), m_image);
-        m_painter.end();
 
         m_painter.begin(this);
         m_painter.setRenderHints(QPainter::SmoothPixmapTransform);
@@ -155,10 +153,10 @@ void VncViewer::paintEvent(QPaintEvent *event)
         if (scaled()) {
             m_surfaceRect.moveCenter(rect().center());
             m_painter.scale(m_scale, m_scale);
-            m_painter.drawPixmap(m_surfaceRect.x() / m_scale, m_surfaceRect.y() / m_scale, m_surfacePixmap);
+            m_painter.drawPixmap(m_surfaceRect.x() / m_scale, m_surfaceRect.y() / m_scale, bufferPixmap);
         } else {
             m_painter.scale(1.0, 1.0);
-            m_painter.drawPixmap((width() - m_surfacePixmap.width()) / 2, (height() - m_surfacePixmap.height()) / 2, m_surfacePixmap);
+            m_painter.drawPixmap((width() - bufferPixmap.width()) / 2, (height() - bufferPixmap.height()) / 2, bufferPixmap);
         }
         m_painter.end();
     } else {
@@ -309,8 +307,12 @@ void VncViewer::start()
     m_rfbCli->FinishedFrameBufferUpdate = finishedFramebufferUpdateStatic;
     m_rfbCli->serverHost = strdup(m_serverIp.c_str());
     m_rfbCli->serverPort = m_serverPort;
+    // m_rfbCli->appData.compressLevel = 1;
+    m_rfbCli->appData.qualityLevel = 9;
+    m_rfbCli->appData.scaleSetting = 1;
     m_rfbCli->appData.forceTrueColour = TRUE;
     m_rfbCli->appData.useRemoteCursor = FALSE;
+    m_rfbCli->appData.encodingsString = "tight ultra";
 
     rfbClientSetClientData(m_rfbCli, nullptr, this);
 
