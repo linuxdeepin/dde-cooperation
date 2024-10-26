@@ -89,7 +89,7 @@ private:
     int m_buttonMask;
     bool m_scaled;
     qreal m_scale;
-    QSize m_originalSize; // 记录原始大小
+    QSize m_originalSize; // record the view size
 
     QTimer *m_frameTimer;
     uint m_frameCounter;

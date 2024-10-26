@@ -38,6 +38,7 @@ public:
     void initTitleBar(const QString &device);
     void initBottom();
     void initWorkWidget();
+    void initSizebyView(QSize &viewSize);
 
     void connectVncServer(const QString &ip, int port, const QString &password);
 
@@ -57,7 +58,8 @@ private:
     VncViewer *m_vncViewer { nullptr };
 
     const int BOTTOM_HEIGHT = 56;
-
+    const float MOBILE_SCALE = 0.6f;
+    QSize m_mobileSize;
 };
 
 class LockScreenWidget : public QWidget

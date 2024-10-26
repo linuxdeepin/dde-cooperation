@@ -34,6 +34,7 @@ inline constexpr char Kdisconnect[] { ":/icons/deepin/builtin/texts/disconnect_1
 
 PhoneHelper::PhoneHelper(QObject *parent)
     : QObject(parent)
+    , m_viewSize(0, 0)
 {
 }
 
@@ -64,8 +65,11 @@ void PhoneHelper::registConnectBtn(MainWindow *window)
     generateQRCode(CooperationUtil::localIPAddress(), QString::number(COO_SESSION_PORT), COO_HARD_PIN);
 }
 
-void PhoneHelper::onConnect(const DeviceInfoPointer info)
+void PhoneHelper::onConnect(const DeviceInfoPointer info, int w, int h)
 {
+    m_viewSize.setWidth(w);
+    m_viewSize.setHeight(h);
+
     m_mobileInfo = info;
     emit addMobileInfo(info);
 }
@@ -85,6 +89,9 @@ void PhoneHelper::onScreenMirroring()
         return;
 
     m_screenwindow = new ScreenMirroringWindow(m_mobileInfo.data()->deviceName());
+    if (m_viewSize.height() > 0) {
+        m_screenwindow->initSizebyView(m_viewSize);
+    }
     m_screenwindow->show();
 
     m_screenwindow->connectVncServer(m_mobileInfo.data()->ipAddress(), 5900, "");

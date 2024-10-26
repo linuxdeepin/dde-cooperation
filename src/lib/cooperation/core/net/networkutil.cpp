@@ -21,6 +21,7 @@
 #include <QJsonDocument>
 #include <QDebug>
 #include <QDir>
+#include <QScreen>
 
 using namespace cooperation_core;
 NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
@@ -139,15 +140,31 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             req.from_json(json_value);
             res.flag = DO_DONE;
             res.nick = q->deviceInfoStr().toStdString();
-            *res_msg = res.as_json().serialize();
+
             QString ipAddress = req.host.c_str();
             QString deviceName = req.nick.c_str();
+            int width, height = 0;
+            // take the name and resolution from the device name, like "xiam 12: 2400x1080"
+            QStringList splitNick = deviceName.split("=");
+            if (splitNick.size() == 2) {
+                deviceName = splitNick[0].trimmed();
+                QString resolution = splitNick[1].trimmed();
+                QStringList resolutionParts = resolution.split("x");
+                if (resolutionParts.size() == 2) {
+                    width = resolutionParts[0].toInt();  // Width
+                    height = resolutionParts[1].toInt(); // Height
+                }
+            }
+            *res_msg = res.as_json().serialize();
+
             DeviceInfoPointer info(new DeviceInfo(ipAddress, deviceName));
             info->setConnectStatus(DeviceInfo::ConnectStatus::Connected);
             info->setDeviceType(DeviceInfo::DeviceType::Mobile);
             q->metaObject()->invokeMethod(PhoneHelper::instance(), "onConnect",
                                           Qt::QueuedConnection,
-                                          Q_ARG(DeviceInfoPointer, info));
+                                          Q_ARG(DeviceInfoPointer, info),
+                                          Q_ARG(int, width),
+                                          Q_ARG(int, height));
         }
             return true;
         case APPLY_PROJECTION: {
