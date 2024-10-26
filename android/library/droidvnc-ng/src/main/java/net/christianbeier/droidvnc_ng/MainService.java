@@ -841,8 +841,10 @@ public class MainService extends Service {
         );
     }
 
+    @SuppressLint("WrongConstant")
     private Notification getNotification(String text, boolean isSilent){
-        Intent notificationIntent = new Intent(this, NotificationRequestActivity.class);
+        Intent notificationIntent = new Intent();
+        notificationIntent.setClassName(this, "com.deepin.assistant.ui.activity.HomeActivity");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -855,7 +857,7 @@ public class MainService extends Service {
                 .setOngoing(true)
                 .setContentIntent(pendingIntent);
         if (Build.VERSION.SDK_INT >= 31) {
-            builder.setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE);
+            builder.setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE);
         }
 
         mNotification = builder.build();
