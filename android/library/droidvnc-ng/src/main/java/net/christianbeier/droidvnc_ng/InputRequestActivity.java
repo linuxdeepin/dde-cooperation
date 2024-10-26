@@ -134,11 +134,11 @@ public class InputRequestActivity extends AppCompatActivity {
 
     private void postResultAndFinish(boolean isA11yEnabled) {
 
-        if (isA11yEnabled)
+        if (isA11yEnabled) {
             Log.i(TAG, "a11y enabled");
-        else{
+        } else {
             Log.i(TAG, "a11y disabled");
-            return;
+//            return;
         }
 
         if(!mDoNotStartMainServiceOnFinish) {
