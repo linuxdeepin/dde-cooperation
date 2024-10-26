@@ -7,6 +7,8 @@
 
 #include "discover/deviceinfo.h"
 
+#include <QSize>
+
 namespace cooperation_core {
 class MainWindow;
 class ScreenMirroringWindow;
@@ -26,7 +28,7 @@ public:
     void resetScreenMirroringWindow();
 
 public Q_SLOTS:
-    void onConnect(const DeviceInfoPointer info);
+    void onConnect(const DeviceInfoPointer info, int w, int h);
     void onDisconnect(const DeviceInfoPointer info);
     void onScreenMirroring();
     void onScreenMirroringStop();
@@ -42,6 +44,8 @@ private:
     ~PhoneHelper();
     DeviceInfoPointer m_mobileInfo { nullptr };
     ScreenMirroringWindow *m_screenwindow { nullptr };
+
+    QSize m_viewSize;
 };
 
 }   // namespace cooperation_core

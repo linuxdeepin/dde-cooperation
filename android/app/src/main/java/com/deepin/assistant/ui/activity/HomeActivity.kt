@@ -6,7 +6,10 @@ package com.deepin.assistant.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -14,6 +17,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Base64
 import android.util.Log
+import android.view.Display
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -23,21 +27,21 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
-import com.gyf.immersionbar.ImmersionBar
-import com.hjq.base.FragmentPagerAdapter
 import com.deepin.assistant.R
 import com.deepin.assistant.app.AppActivity
 import com.deepin.assistant.app.AppFragment
-import com.deepin.assistant.manager.*
+import com.deepin.assistant.manager.ActivityManager
 import com.deepin.assistant.model.SharedViewModel
 import com.deepin.assistant.other.DoubleClickHelper
 import com.deepin.assistant.ui.adapter.NavigationAdapter
+import com.deepin.assistant.ui.fragment.FirstFragment
 import com.deepin.assistant.ui.fragment.HomeFragment
 import com.deepin.assistant.ui.fragment.MessageFragment
 import com.deepin.assistant.ui.fragment.MineFragment
-import com.deepin.assistant.ui.fragment.FirstFragment
 import com.deepin.cooperation.CooperationListener
 import com.deepin.cooperation.JniCooperation
+import com.gyf.immersionbar.ImmersionBar
+import com.hjq.base.FragmentPagerAdapter
 import com.hjq.permissions.Permission
 import net.christianbeier.droidvnc_ng.Constants
 import net.christianbeier.droidvnc_ng.Defaults
@@ -85,8 +89,8 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
     }
 
     fun scanConnect() {
-        val deviceName = Utils.getDeviceName(this);
-        deviceName?.let { mCooperation?.scanConnect(it) }
+        val metrics = Utils.getDisplayMetrics(this, Display.DEFAULT_DISPLAY)
+        mCooperation?.scanConnect(metrics.widthPixels, metrics.heightPixels)
     }
     override fun initView() {
         navigationAdapter = NavigationAdapter(this).apply {
@@ -117,6 +121,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                 }
             }
 
+            @SuppressLint("LogNotTimber")
             override fun onAsyncRpcResult(type: Int, response: String) {
                 Log.d(TAG, "Async RPC result: type $type, response: $response")
                 when (type) {

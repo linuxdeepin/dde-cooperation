@@ -220,14 +220,14 @@ void SessionHelper::asyncDisconnect()
 }
 
 // 扫码连接请求
-void SessionHelper::requestConnect(const std::string &myNick)
+void SessionHelper::requestConnect(const std::string &resolution)
 {
     // 在这里实现扫码连接的逻辑
     std::cout << "Requesting requestConnect " << std::endl;
 
     ApplyMessage msg;
-    msg.flag = ASK_NEEDCONFIRM;
-    msg.nick = myNick;
+    msg.flag = ASK_QUIET;
+    msg.nick = _deviceName + "=" + std::string(resolution);
     msg.host = _serveIp;
     msg.fingerprint = _selfFingerPrint; // send self fingerprint
     std::string jsonMsg = msg.as_json().serialize();

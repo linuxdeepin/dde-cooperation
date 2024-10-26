@@ -107,7 +107,7 @@ class Defaults {
         /*
             Set default scaling according to device display density
          */
-        this.scaling = 0.8f //1.0f / Utils.getDisplayMetrics(context, Display.DEFAULT_DISPLAY).density.coerceAtLeast(1.0f)
+        this.scaling = 0.6f //1.0f / Utils.getDisplayMetrics(context, Display.DEFAULT_DISPLAY).density.coerceAtLeast(1.0f)
 
         /*
             read provided defaults

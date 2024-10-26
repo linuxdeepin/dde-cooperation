@@ -25,7 +25,7 @@ public:
     void asyncDisconnect();
 
     // projection request
-    void requestConnect(const std::string &myNick);
+    void requestConnect(const std::string &resolution);
     void requestProjection(const std::string &myNick, int vncPort);
     void requestStopProjection(const std::string &myNick);
 

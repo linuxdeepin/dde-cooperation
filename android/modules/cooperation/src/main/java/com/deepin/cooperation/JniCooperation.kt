@@ -22,7 +22,7 @@ class JniCooperation {
     external fun setDeviceName(nickName: String)
     external fun connectRemote(ip: String, port: Int, pin: String)
     external fun disconnectRemote()
-    external fun scanConnect(niceName: String)
+    external fun scanConnect(width: Int, height: Int)
     external fun sendProjection(niceName: String, vncPort: Int)
     external fun stopProjection(niceName: String)
     external fun getStatus(): Int
@@ -70,7 +70,7 @@ class JniCooperation {
 
     @Suppress("unused")
     fun onAsyncRpcResult(type: Int, response: String) {
-        Log.d(TAG, "onAsyncRpcResult: type $type response: $response")
+        // Log.d(TAG, "onAsyncRpcResult: type $type response: $response")
 
         try {
             listener?.onAsyncRpcResult(type, response)

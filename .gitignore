@@ -6,6 +6,7 @@ CMakeLists.txt.user
 /.vs/
 /out/
 CMake*.json
+*.o
 
 
 # Modules

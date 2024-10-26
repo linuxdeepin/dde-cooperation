@@ -98,6 +98,11 @@ void ScreenMirroringWindow::initTitleBar(const QString &device)
     titleBar->addWidget(title, Qt::AlignLeft);
 }
 
+void ScreenMirroringWindow::initSizebyView(QSize &viewSize)
+{
+    m_mobileSize = viewSize;
+}
+
 void ScreenMirroringWindow::connectVncServer(const QString &ip, int port, const QString &password)
 {
     m_vncViewer->setServes(ip.toStdString(), port, password.toStdString());
@@ -106,26 +111,48 @@ void ScreenMirroringWindow::connectVncServer(const QString &ip, int port, const 
 
 void ScreenMirroringWindow::handleSizeChange(const QSize &size)
 {
+    //qWarning() << "mobile size=" << m_mobileSize << " size=" << size;
     float scale = 1.0;
+    float mobileScale = MOBILE_SCALE; //default scale setting in phone
+    int realWidth = size.width();
+    if (m_mobileSize.height() <= 0) {
+        m_mobileSize = size;
+    }
+    if (size.height() > size.width()) {
+        // portrait mode
+        realWidth = static_cast<int>(m_mobileSize.width() * mobileScale);
+    } else {
+        // landscape mode
+        realWidth = static_cast<int>(m_mobileSize.height() * mobileScale);
+    }
+
+    if (size.width() < realWidth) {
+        // reset if the vnc width is smaller
+        realWidth = size.width();
+    }
+    //qWarning() << "realWidth size=" << realWidth;
+
     QScreen *screen = qApp->primaryScreen();
     if (screen) {
         int height = screen->geometry().height();
 
         if (height >= 2160) {
             // 4K
-            scale = 1.8;
+            scale = 1.0;
         } else if (height >= 1140) {
             // 2K
-            scale = 2.2;
+            scale = 1.4;
         } else {
             // 1080P
-            scale = 2.6;
+            scale = 1.8;
         }
     }
 
     auto titleBar = titlebar();
-    int w = (size.width() / scale);
+    int w = (realWidth / scale);
     int h = (size.height() / scale) + titleBar->height() + BOTTOM_HEIGHT;
+
+    m_vncViewer->setSurfaceSize({realWidth, size.height()});
 
     this->resize(w, h);
 }
