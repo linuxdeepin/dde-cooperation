@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 /*
  * DroidVNC-NG activity for requesting external storage read/write permissions.
  *
@@ -19,7 +23,7 @@
  * 59 Temple Place Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package net.christianbeier.droidvnc_ng;
+package com.deepin.assistant.services;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -33,6 +37,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.deepin.assistant.R;
 
 public class WriteStorageRequestActivity extends AppCompatActivity {
 

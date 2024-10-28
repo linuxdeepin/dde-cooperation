@@ -1,4 +1,8 @@
-package net.christianbeier.droidvnc_ng
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+package com.deepin.assistant.services
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,6 +17,7 @@ import android.view.Display
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import com.deepin.assistant.utils.Utils
 import java.lang.IllegalArgumentException
 
 /**

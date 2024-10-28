@@ -1,5 +1,8 @@
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-package net.christianbeier.droidvnc_ng;
+package com.deepin.assistant.services;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -13,6 +16,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
+
+import com.deepin.assistant.R;
 
 public class NotificationRequestActivity extends AppCompatActivity {
 

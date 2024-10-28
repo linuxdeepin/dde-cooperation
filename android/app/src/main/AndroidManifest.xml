@@ -67,6 +67,66 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!-- 服务相关 -->
+        <receiver android:name=".services.OnBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+            We export the MainService without a permission to enable 3rd party apps to send
+            send Intents to it (otherwise they would have to know about the permission at build
+            time). Access is secured differently by an access key Intent senders have to supply.
+            As only explicit Intents are handled (i.e. no intent-filter), this is secure.
+        -->
+        <service
+            android:name=".services.MainService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="connectedDevice"
+            tools:ignore="ExportedService" />
+
+        <service
+            android:name=".services.MediaProjectionService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <service
+            android:name=".services.InputService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/input_service_config"/>
+        </service>
+
+        <activity android:name=".services.MediaProjectionRequestActivity"
+            android:theme="@style/TransparentTheme"
+            android:excludeFromRecents="true"
+            />
+
+        <activity android:name=".services.InputRequestActivity"
+            android:theme="@style/TransparentTheme"
+            android:excludeFromRecents="true"
+            />
+
+        <activity android:name=".services.WriteStorageRequestActivity"
+            android:theme="@style/TransparentTheme"
+            android:excludeFromRecents="true"
+            />
+
+        <activity android:name=".services.NotificationRequestActivity"
+            android:theme="@style/TransparentTheme"
+            android:excludeFromRecents="true"
+            />
+
         <!-- 闪屏页 -->
         <activity
             android:name=".ui.activity.SplashActivity"

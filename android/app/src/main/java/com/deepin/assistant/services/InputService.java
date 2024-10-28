@@ -1,4 +1,8 @@
-package net.christianbeier.droidvnc_ng;
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+package com.deepin.assistant.services;
 
 /*
  * DroidVNC-NG InputService that binds to the Android a11y API and posts input events sent by the native backend to Android.
@@ -33,8 +37,12 @@ import android.graphics.Path;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.preference.PreferenceManager;
+
+import net.christianbeier.droidvnc_ng.DroidManager;
+import net.christianbeier.droidvnc_ng.JniDroidVnc;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -165,6 +173,9 @@ public class InputService extends AccessibilityService {
 		isInputEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.PREFS_KEY_INPUT_LAST_ENABLED, !new Defaults(this).getViewOnly());
 		scaling = PreferenceManager.getDefaultSharedPreferences(this).getFloat(Constants.PREFS_KEY_SERVER_LAST_SCALING, new Defaults(this).getScaling());
 		mMainHandler = new Handler(instance.getMainLooper());
+
+		// register the input callback by static method
+		JniDroidVnc.registerInputListener(mDroidInputListener);
 		Log.i(TAG, "onServiceConnected");
 	}
 
@@ -217,283 +228,284 @@ public class InputService extends AccessibilityService {
 		}
 	}
 
-	@SuppressWarnings("unused")
-	public static void onPointerEvent(int buttonMask, int x, int y, long client) {
-
-		if(!isInputEnabled) {
-			return;
-		}
-
-		try {
-			InputContext inputContext = instance.mInputContexts.get(client);
-
-			if(inputContext == null) {
-				throw new IllegalStateException("Client " + client + " was not added or is already removed");
+	private final DroidManager.InputListener mDroidInputListener = new DroidManager.InputListener() {
+		@Override
+		public void onInputPointerEvent(int buttonMask, int x, int y, long client) {
+			if(!isInputEnabled) {
+				return;
 			}
 
-			x = (int) (x / scaling);
-			y = (int) (y / scaling);
+			try {
+				InputContext inputContext = instance.mInputContexts.get(client);
+
+				if(inputContext == null) {
+					throw new IllegalStateException("Client " + client + " was not added or is already removed");
+				}
+
+				x = (int) (x / scaling);
+				y = (int) (y / scaling);
 
 			/*
 				draw pointer
 			 */
-			InputPointerView pointerView = inputContext.pointerView;
-			if (pointerView != null) {
-				// showing pointers is enabled
-				int finalX = x;
-				int finalY = y;
-				pointerView.post(() -> pointerView.positionView(finalX, finalY));
-			}
+				InputPointerView pointerView = inputContext.pointerView;
+				if (pointerView != null) {
+					// showing pointers is enabled
+					int finalX = x;
+					int finalY = y;
+					pointerView.post(() -> pointerView.positionView(finalX, finalY));
+				}
 
 			/*
 			    left mouse button
 			 */
 
-			// down, was up
-			if ((buttonMask & (1 << 0)) != 0 && !inputContext.isButtonOneDown) {
-				inputContext.isButtonOneDown = true;
-				instance.startGesture(inputContext, x, y);
+				// down, was up
+				if ((buttonMask & (1 << 0)) != 0 && !inputContext.isButtonOneDown) {
+					inputContext.isButtonOneDown = true;
+					instance.startGesture(inputContext, x, y);
+				}
+
+				// down, was down
+				if ((buttonMask & (1 << 0)) != 0 && inputContext.isButtonOneDown) {
+					instance.continueGesture(inputContext, x, y);
+				}
+
+				// up, was down
+				if ((buttonMask & (1 << 0)) == 0 && inputContext.isButtonOneDown) {
+					inputContext.isButtonOneDown = false;
+					instance.endGesture(inputContext, x, y);
+				}
+
+
+				// right mouse button
+				if ((buttonMask & (1 << 2)) != 0) {
+					instance.longPress(inputContext, x, y);
+				}
+
+				// scroll up
+				if ((buttonMask & (1 << 3)) != 0) {
+
+					DisplayMetrics displayMetrics = new DisplayMetrics();
+					WindowManager wm = (WindowManager) instance.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+					wm.getDefaultDisplay().getRealMetrics(displayMetrics);
+
+					instance.scroll(inputContext, x, y, -displayMetrics.heightPixels / 2);
+				}
+
+				// scroll down
+				if ((buttonMask & (1 << 4)) != 0) {
+
+					DisplayMetrics displayMetrics = new DisplayMetrics();
+					WindowManager wm = (WindowManager) instance.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+					wm.getDefaultDisplay().getRealMetrics(displayMetrics);
+
+					instance.scroll(inputContext, x, y, displayMetrics.heightPixels / 2);
+				}
+			} catch (Exception e) {
+				// instance probably null
+				Log.e(TAG, "onPointerEvent: failed: " + Log.getStackTraceString(e));
 			}
-
-			// down, was down
-			if ((buttonMask & (1 << 0)) != 0 && inputContext.isButtonOneDown) {
-				instance.continueGesture(inputContext, x, y);
-			}
-
-			// up, was down
-			if ((buttonMask & (1 << 0)) == 0 && inputContext.isButtonOneDown) {
-				inputContext.isButtonOneDown = false;
-				instance.endGesture(inputContext, x, y);
-			}
-
-
-			// right mouse button
-			if ((buttonMask & (1 << 2)) != 0) {
-				instance.longPress(inputContext, x, y);
-			}
-
-			// scroll up
-			if ((buttonMask & (1 << 3)) != 0) {
-
-				DisplayMetrics displayMetrics = new DisplayMetrics();
-				WindowManager wm = (WindowManager) instance.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-				wm.getDefaultDisplay().getRealMetrics(displayMetrics);
-
-				instance.scroll(inputContext, x, y, -displayMetrics.heightPixels / 2);
-			}
-
-			// scroll down
-			if ((buttonMask & (1 << 4)) != 0) {
-
-				DisplayMetrics displayMetrics = new DisplayMetrics();
-				WindowManager wm = (WindowManager) instance.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-				wm.getDefaultDisplay().getRealMetrics(displayMetrics);
-
-				instance.scroll(inputContext, x, y, displayMetrics.heightPixels / 2);
-			}
-		} catch (Exception e) {
-			// instance probably null
-			Log.e(TAG, "onPointerEvent: failed: " + Log.getStackTraceString(e));
-		}
-	}
-
-	public static void onKeyEvent(int down, long keysym, long client) {
-
-		if(!isInputEnabled) {
-			return;
 		}
 
-		Log.d(TAG, "onKeyEvent: keysym " + keysym + " down " + down + " by client " + client);
-
-		try {
-			InputContext inputContext = instance.mInputContexts.get(client);
-
-			if(inputContext == null) {
-				throw new IllegalStateException("Client " + client + " was not added or is already removed");
+		@Override
+		public void onInputKeyEvent(int down, long keysym, long client) {
+			if(!isInputEnabled) {
+				return;
 			}
+
+			Log.d(TAG, "onKeyEvent: keysym " + keysym + " down " + down + " by client " + client);
+
+			try {
+				InputContext inputContext = instance.mInputContexts.get(client);
+
+				if(inputContext == null) {
+					throw new IllegalStateException("Client " + client + " was not added or is already removed");
+				}
 
 			/*
 				Save states of some keys for combo handling.
 			 */
-			if(keysym == 0xFFE3)
-				inputContext.isKeyCtrlDown = down != 0;
+				if(keysym == 0xFFE3)
+					inputContext.isKeyCtrlDown = down != 0;
 
-			if(keysym == 0xFFE9 || keysym == 0xFF7E) // MacOS clients send Alt as 0xFF7E
-				inputContext.isKeyAltDown = down != 0;
+				if(keysym == 0xFFE9 || keysym == 0xFF7E) // MacOS clients send Alt as 0xFF7E
+					inputContext.isKeyAltDown = down != 0;
 
-			if(keysym == 0xFFE1)
-				inputContext.isKeyShiftDown = down != 0;
+				if(keysym == 0xFFE1)
+					inputContext.isKeyShiftDown = down != 0;
 
-			if(keysym == 0xFFFF)
-				inputContext.isKeyDelDown = down != 0;
+				if(keysym == 0xFFFF)
+					inputContext.isKeyDelDown = down != 0;
 
-			if(keysym == 0xFF1B)
-				inputContext.isKeyEscDown = down != 0;
+				if(keysym == 0xFF1B)
+					inputContext.isKeyEscDown = down != 0;
 
 			/*
 				Ctrl-Alt-Del combo.
 		 	*/
-			if(inputContext.isKeyCtrlDown && inputContext.isKeyAltDown && inputContext.isKeyDelDown) {
-				Log.i(TAG, "onKeyEvent: got Ctrl-Alt-Del");
-				instance.mMainHandler.post(MediaProjectionService::togglePortraitInLandscapeWorkaround);
-			}
+				if(inputContext.isKeyCtrlDown && inputContext.isKeyAltDown && inputContext.isKeyDelDown) {
+					Log.i(TAG, "onKeyEvent: got Ctrl-Alt-Del");
+					instance.mMainHandler.post(MediaProjectionService::togglePortraitInLandscapeWorkaround);
+				}
 
 			/*
 				Pageup(65365) || Ctrl-Shift-Esc combo.
 		 	*/
-			if((keysym == 0xFF55 && down != 0) || (inputContext.isKeyCtrlDown && inputContext.isKeyShiftDown && inputContext.isKeyEscDown)) {
-				Log.i(TAG, "onKeyEvent: got Ctrl-Shift-Esc");
-				instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS);
-			}
+				if((keysym == 0xFF55 && down != 0) || (inputContext.isKeyCtrlDown && inputContext.isKeyShiftDown && inputContext.isKeyEscDown)) {
+					Log.i(TAG, "onKeyEvent: got Ctrl-Shift-Esc");
+					instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS);
+				}
 
 			/*
 				Home/Pos1
 		 	*/
-			if (keysym == 0xFF50 && down != 0) {
-				Log.i(TAG, "onKeyEvent: got Home/Pos1");
-				instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
-			}
+				if (keysym == 0xFF50 && down != 0) {
+					Log.i(TAG, "onKeyEvent: got Home/Pos1");
+					instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
+				}
 
 			/*
 				End
 			*/
-			if (keysym == 0xFF57 && down != 0) {
-				Log.i(TAG, "onKeyEvent: got End");
-				instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_POWER_DIALOG);
-			}
+				if (keysym == 0xFF57 && down != 0) {
+					Log.i(TAG, "onKeyEvent: got End");
+					instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_POWER_DIALOG);
+				}
 
 			/*
 				Esc
 			 */
-			if(keysym == 0xFF1B && down != 0)  {
-				Log.i(TAG, "onKeyEvent: got Esc");
-				instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
-			}
+				if(keysym == 0xFF1B && down != 0)  {
+					Log.i(TAG, "onKeyEvent: got Esc");
+					instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
+				}
 
 			/*
 				Get current keyboard focus node for input context's display.
 			 */
-			AccessibilityNodeInfo currentFocusNode = instance.mKeyboardFocusNodes.get(inputContext.getDisplayId());
-			// refresh() is important to load the represented view's current text into the node
-			Objects.requireNonNull(currentFocusNode).refresh();
+				AccessibilityNodeInfo currentFocusNode = instance.mKeyboardFocusNodes.get(inputContext.getDisplayId());
+				// refresh() is important to load the represented view's current text into the node
+				Objects.requireNonNull(currentFocusNode).refresh();
 
 			/*
 			   Left/Right
 			 */
-			if ((keysym == 0xff51 || keysym == 0xff53) && down != 0) {
-				Bundle action = new Bundle();
-				action.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, AccessibilityNodeInfo.MOVEMENT_GRANULARITY_CHARACTER);
-				action.putBoolean(AccessibilityNodeInfo.ACTION_ARGUMENT_EXTEND_SELECTION_BOOLEAN, false);
-				if(keysym == 0xff51)
-					Objects.requireNonNull(currentFocusNode).performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY.getId(), action);
-				else
-					Objects.requireNonNull(currentFocusNode).performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_NEXT_AT_MOVEMENT_GRANULARITY.getId(), action);
-			}
+				if ((keysym == 0xff51 || keysym == 0xff53) && down != 0) {
+					Bundle action = new Bundle();
+					action.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, AccessibilityNodeInfo.MOVEMENT_GRANULARITY_CHARACTER);
+					action.putBoolean(AccessibilityNodeInfo.ACTION_ARGUMENT_EXTEND_SELECTION_BOOLEAN, false);
+					if(keysym == 0xff51)
+						Objects.requireNonNull(currentFocusNode).performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY.getId(), action);
+					else
+						Objects.requireNonNull(currentFocusNode).performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_NEXT_AT_MOVEMENT_GRANULARITY.getId(), action);
+				}
 
 			/*
 			    Backspace/Delete
 			    TODO: implement deletions of text selections, right now it's only 1 char at a time
 			 */
-			if ((keysym == 0xff08 || keysym == 0xffff) && down != 0) {
-				CharSequence currentFocusText = Objects.requireNonNull(currentFocusNode).getText();
-				int cursorPos = getCursorPos(currentFocusNode);
+				if ((keysym == 0xff08 || keysym == 0xffff) && down != 0) {
+					CharSequence currentFocusText = Objects.requireNonNull(currentFocusNode).getText();
+					int cursorPos = getCursorPos(currentFocusNode);
 
-				// set new text
-				String newFocusText;
-				if (keysym == 0xff08) {
-					// backspace
-					newFocusText = String.valueOf(currentFocusText.subSequence(0, cursorPos - 1)) + currentFocusText.subSequence(cursorPos, currentFocusText.length());
-				} else {
-					// delete
-					newFocusText = String.valueOf(currentFocusText.subSequence(0, cursorPos)) + currentFocusText.subSequence(cursorPos + 1, currentFocusText.length());
+					// set new text
+					String newFocusText;
+					if (keysym == 0xff08) {
+						// backspace
+						newFocusText = String.valueOf(currentFocusText.subSequence(0, cursorPos - 1)) + currentFocusText.subSequence(cursorPos, currentFocusText.length());
+					} else {
+						// delete
+						newFocusText = String.valueOf(currentFocusText.subSequence(0, cursorPos)) + currentFocusText.subSequence(cursorPos + 1, currentFocusText.length());
+					}
+					Bundle action = new Bundle();
+					action.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, newFocusText);
+					currentFocusNode.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_TEXT.getId(), action);
+
+					// ACTION_SET_TEXT moves cursor to the end, move cursor back to where it should be
+					setCursorPos(currentFocusNode, keysym == 0xff08 ? cursorPos - 1 : cursorPos);
 				}
-				Bundle action = new Bundle();
-				action.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, newFocusText);
-				currentFocusNode.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_TEXT.getId(), action);
-
-				// ACTION_SET_TEXT moves cursor to the end, move cursor back to where it should be
-				setCursorPos(currentFocusNode, keysym == 0xff08 ? cursorPos - 1 : cursorPos);
-			}
 
 			/*
 			   Insert
 			 */
-			if (keysym == 0xff63 && down != 0) {
-				Bundle action = new Bundle();
-				Objects.requireNonNull(currentFocusNode).performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_PASTE.getId(), action);
-			}
+				if (keysym == 0xff63 && down != 0) {
+					Bundle action = new Bundle();
+					Objects.requireNonNull(currentFocusNode).performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_PASTE.getId(), action);
+				}
 
 			/*
 			    Enter, for API level 30+
 			 */
-			if (keysym == 0xff0d && down != 0) {
-				if (Build.VERSION.SDK_INT >= 30) {
-					Bundle action = new Bundle();
-					Objects.requireNonNull(currentFocusNode).performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.getId(), action);
+				if (keysym == 0xff0d && down != 0) {
+					if (Build.VERSION.SDK_INT >= 30) {
+						Bundle action = new Bundle();
+						Objects.requireNonNull(currentFocusNode).performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.getId(), action);
+					}
 				}
-			}
 
 			/*
 			    ISO-8859-1 input
 			 */
-			if (keysym >= 32 && keysym <= 255 && down != 0) {
-				CharSequence currentFocusText = Objects.requireNonNull(currentFocusNode).getText();
-				// some implementations return null for empty text, work around that
-				if (currentFocusText == null)
-					currentFocusText = "";
+				if (keysym >= 32 && keysym <= 255 && down != 0) {
+					CharSequence currentFocusText = Objects.requireNonNull(currentFocusNode).getText();
+					// some implementations return null for empty text, work around that
+					if (currentFocusText == null)
+						currentFocusText = "";
 
-				int cursorPos = getCursorPos(currentFocusNode);
+					int cursorPos = getCursorPos(currentFocusNode);
 
-				// set new text
-				String textBeforeCursor = "";
-				try {
-					textBeforeCursor = String.valueOf(currentFocusText.subSequence(0, cursorPos));
-				} catch (IndexOutOfBoundsException ignored) {
+					// set new text
+					String textBeforeCursor = "";
+					try {
+						textBeforeCursor = String.valueOf(currentFocusText.subSequence(0, cursorPos));
+					} catch (IndexOutOfBoundsException ignored) {
+					}
+					String textAfterCursor = "";
+					try {
+						textAfterCursor = String.valueOf(currentFocusText.subSequence(cursorPos, currentFocusText.length()));
+					} catch (IndexOutOfBoundsException ignored) {
+					}
+					String newFocusText = textBeforeCursor + (char) keysym + textAfterCursor;
+
+					Bundle action = new Bundle();
+					action.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, newFocusText);
+					currentFocusNode.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_TEXT.getId(), action);
+
+					// ACTION_SET_TEXT moves cursor to the end, move cursor back to where it should be
+					setCursorPos(currentFocusNode, cursorPos > 0 ? cursorPos + 1 : 1);
 				}
-				String textAfterCursor = "";
-				try {
-					textAfterCursor = String.valueOf(currentFocusText.subSequence(cursorPos, currentFocusText.length()));
-				} catch (IndexOutOfBoundsException ignored) {
-				}
-				String newFocusText = textBeforeCursor + (char) keysym + textAfterCursor;
 
-				Bundle action = new Bundle();
-				action.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, newFocusText);
-				currentFocusNode.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_TEXT.getId(), action);
+			} catch (Exception e) {
+				// instance probably null
+				Log.e(TAG, "onKeyEvent: failed: " + e);
+			}
+		}
 
-				// ACTION_SET_TEXT moves cursor to the end, move cursor back to where it should be
-				setCursorPos(currentFocusNode, cursorPos > 0 ? cursorPos + 1 : 1);
+		@Override
+		public void onInputCutText(@Nullable String text, long client) {
+			if(!isInputEnabled) {
+				return;
 			}
 
-		} catch (Exception e) {
-			// instance probably null
-			Log.e(TAG, "onKeyEvent: failed: " + e);
-		}
-	}
+			Log.d(TAG, "onCutText: text '" + text + "' by client " + client);
 
-	public static void onCutText(String text, long client) {
-
-		if(!isInputEnabled) {
-			return;
-		}
-
-		Log.d(TAG, "onCutText: text '" + text + "' by client " + client);
-
-		try {
-			instance.mMainHandler.post(() -> {
-						try {
-							((ClipboardManager) instance.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText(text, text));
-						} catch (Exception e) {
-							// some other error on main thread
-							Log.e(TAG, "onCutText: failed: " + e);
+			try {
+				instance.mMainHandler.post(() -> {
+							try {
+								((ClipboardManager) instance.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText(text, text));
+							} catch (Exception e) {
+								// some other error on main thread
+								Log.e(TAG, "onCutText: failed: " + e);
+							}
 						}
-					}
-			);
-		} catch (Exception e) {
-			// instance probably null
-			Log.e(TAG, "onCutText: failed: " + e);
+				);
+			} catch (Exception e) {
+				// instance probably null
+				Log.e(TAG, "onCutText: failed: " + e);
+			}
 		}
-	}
+	};
 
 	@RequiresApi(api = Build.VERSION_CODES.R)
 	public static void takeScreenShots(boolean enable) {

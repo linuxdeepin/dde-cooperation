@@ -34,3 +34,11 @@
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn org.conscrypt.**
+
+# non-static JNI methods
+-keep class com.deepin.cooperation.JniCooperation {
+    *;
+}
+-keep class net.christianbeier.droidvnc_ng.JniDroidVnc {
+    *;
+}

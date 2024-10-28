@@ -45,12 +45,12 @@ import com.deepin.cooperation.JniCooperation
 import com.gyf.immersionbar.ImmersionBar
 import com.hjq.base.FragmentPagerAdapter
 import com.hjq.permissions.Permission
-import net.christianbeier.droidvnc_ng.Constants
-import net.christianbeier.droidvnc_ng.Defaults
-import net.christianbeier.droidvnc_ng.InputService
-import net.christianbeier.droidvnc_ng.MainService
-import net.christianbeier.droidvnc_ng.MediaProjectionService
-import net.christianbeier.droidvnc_ng.Utils
+import com.deepin.assistant.utils.Utils
+import com.deepin.assistant.services.Constants
+import com.deepin.assistant.services.Defaults
+import com.deepin.assistant.services.InputService
+import com.deepin.assistant.services.MainService
+import com.deepin.assistant.services.MediaProjectionService
 import org.json.JSONObject
 
 class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
@@ -213,7 +213,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         filter.addAction(MainService.ACTION_CONNECT_REPEATER)
         // register the receiver as NOT_EXPORTED so it only receives broadcasts sent by MainService,
         // not a malicious fake broadcaster like
-        // `adb shell am broadcast -a net.christianbeier.droidvnc_ng.ACTION_STOP --ez net.christianbeier.droidvnc_ng.EXTRA_REQUEST_SUCCESS true`
+        // `adb shell am broadcast -a com.deepin.assistant.ACTION_STOP --ez com.deepin.assistant.EXTRA_REQUEST_SUCCESS true`
         // for instance
         // androidx 1.8.0 以上高版本，SDK34
         // ContextCompat.registerReceiver(this, mMainServiceBroadcastReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
