@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 /*
  * DroidVNC-NG main service.
  *
@@ -19,7 +23,7 @@
  * 59 Temple Place Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package net.christianbeier.droidvnc_ng;
+package com.deepin.assistant.services;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -27,7 +31,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,6 +47,7 @@ import android.os.PowerManager;
 
 import androidx.annotation.NonNull;
 //import androidx.core.content.IntentSanitizer;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
@@ -51,6 +55,12 @@ import android.util.Log;
 import android.view.Display;
 
 import androidx.core.app.NotificationCompat;
+
+import com.deepin.assistant.utils.Utils;
+import com.deepin.assistant.R;
+
+import net.christianbeier.droidvnc_ng.DroidManager;
+import net.christianbeier.droidvnc_ng.JniDroidVnc;
 
 import java.io.File;
 import java.net.InterfaceAddress;
@@ -67,29 +77,29 @@ public class MainService extends Service {
 
     private static final String TAG = "MainService";
     static final int NOTIFICATION_ID = 11;
-    public final static String ACTION_START = "net.christianbeier.droidvnc_ng.ACTION_START";
-    public final static String ACTION_STOP = "net.christianbeier.droidvnc_ng.ACTION_STOP";
-    public static final String ACTION_CONNECT_REVERSE = "net.christianbeier.droidvnc_ng.ACTION_CONNECT_REVERSE";
-    public static final String ACTION_CONNECT_REPEATER = "net.christianbeier.droidvnc_ng.ACTION_CONNECT_REPEATER";
-    public static final String EXTRA_REQUEST_ID = "net.christianbeier.droidvnc_ng.EXTRA_REQUEST_ID";
-    public static final String EXTRA_REQUEST_SUCCESS = "net.christianbeier.droidvnc_ng.EXTRA_REQUEST_SUCCESS";
-    public static final String EXTRA_HOST = "net.christianbeier.droidvnc_ng.EXTRA_HOST";
-    public static final String EXTRA_PORT = "net.christianbeier.droidvnc_ng.EXTRA_PORT";
-    public static final String EXTRA_REPEATER_ID = "net.christianbeier.droidvnc_ng.EXTRA_REPEATER_ID";
-    public static final String EXTRA_RECONNECT_TRIES = "net.christianbeier.droidvnc_ng.EXTRA_RECONNECT_TRIES";
-    public static final String EXTRA_ACCESS_KEY = "net.christianbeier.droidvnc_ng.EXTRA_ACCESS_KEY";
-    public static final String EXTRA_PASSWORD = "net.christianbeier.droidvnc_ng.EXTRA_PASSWORD";
-    public static final String EXTRA_VIEW_ONLY = "net.christianbeier.droidvnc_ng.EXTRA_VIEW_ONLY";
-    public static final String EXTRA_SHOW_POINTERS = "net.christianbeier.droidvnc_ng.EXTRA_SHOW_POINTERS";
-    public static final String EXTRA_SCALING = "net.christianbeier.droidvnc_ng.EXTRA_SCALING";
+    public final static String ACTION_START = "com.deepin.assistant.ACTION_START";
+    public final static String ACTION_STOP = "com.deepin.assistant.ACTION_STOP";
+    public static final String ACTION_CONNECT_REVERSE = "com.deepin.assistant.ACTION_CONNECT_REVERSE";
+    public static final String ACTION_CONNECT_REPEATER = "com.deepin.assistant.ACTION_CONNECT_REPEATER";
+    public static final String EXTRA_REQUEST_ID = "com.deepin.assistant.EXTRA_REQUEST_ID";
+    public static final String EXTRA_REQUEST_SUCCESS = "com.deepin.assistant.EXTRA_REQUEST_SUCCESS";
+    public static final String EXTRA_HOST = "com.deepin.assistant.EXTRA_HOST";
+    public static final String EXTRA_PORT = "com.deepin.assistant.EXTRA_PORT";
+    public static final String EXTRA_REPEATER_ID = "com.deepin.assistant.EXTRA_REPEATER_ID";
+    public static final String EXTRA_RECONNECT_TRIES = "com.deepin.assistant.EXTRA_RECONNECT_TRIES";
+    public static final String EXTRA_ACCESS_KEY = "com.deepin.assistant.EXTRA_ACCESS_KEY";
+    public static final String EXTRA_PASSWORD = "com.deepin.assistant.EXTRA_PASSWORD";
+    public static final String EXTRA_VIEW_ONLY = "com.deepin.assistant.EXTRA_VIEW_ONLY";
+    public static final String EXTRA_SHOW_POINTERS = "com.deepin.assistant.EXTRA_SHOW_POINTERS";
+    public static final String EXTRA_SCALING = "com.deepin.assistant.EXTRA_SCALING";
     /**
      * Only used on Android 12 and earlier.
      */
-    public static final String EXTRA_FILE_TRANSFER = "net.christianbeier.droidvnc_ng.EXTRA_FILE_TRANSFER";
+    public static final String EXTRA_FILE_TRANSFER = "com.deepin.assistant.EXTRA_FILE_TRANSFER";
     /**
      * Only used on Android 10 and later.
      */
-    public static final String EXTRA_FALLBACK_SCREEN_CAPTURE = "net.christianbeier.droidvnc_ng.EXTRA_FALLBACK_SCREEN_CAPTURE";
+    public static final String EXTRA_FALLBACK_SCREEN_CAPTURE = "com.deepin.assistant.EXTRA_FALLBACK_SCREEN_CAPTURE";
 
     final static String ACTION_HANDLE_MEDIA_PROJECTION_RESULT = "action_handle_media_projection_result";
     final static String EXTRA_MEDIA_PROJECTION_RESULT_DATA = "result_data_media_projection";
@@ -117,6 +127,8 @@ public class MainService extends Service {
     private Notification mNotification;
 
     private int mNumberOfClients;
+
+    private JniDroidVnc mDroidJni;
 
     private static class OutboundClientReconnectData {
         Intent intent;
@@ -160,7 +172,6 @@ public class MainService extends Service {
                                         startService(entry.getValue().intent);
                                     }
                                 },
-                                entry.getKey(),
                                 SystemClock.uptimeMillis() + entry.getValue().backoff * 1000L
                         );
                     });
@@ -175,43 +186,74 @@ public class MainService extends Service {
 
     private static MainService instance;
 
-    private final NsdManager.RegistrationListener mNSDRegistrationListener = new NsdManager.RegistrationListener() {
+    private final DroidManager.ClientListener mDroidClientListener = new DroidManager.ClientListener() {
         @Override
-        public void onRegistrationFailed(NsdServiceInfo nsdServiceInfo, int i) {
-            Log.e(TAG, "NSD register failed for " + nsdServiceInfo + " with code " + i);
+        public void onClientConnected(long client) {
+            Log.d(TAG, "onClientConnected: client " + client);
+
+            try {
+                instance.mWakeLock.acquire();
+                instance.mNumberOfClients++;
+                instance.updateNotification();
+                InputService.addClient(client, PreferenceManager.getDefaultSharedPreferences(instance).getBoolean(PREFS_KEY_SERVER_LAST_SHOW_POINTERS, new Defaults(instance).getShowPointers()));
+                if(!MediaProjectionService.isMediaProjectionEnabled() && InputService.isTakingScreenShots()) {
+                    Log.d(TAG, "onClientConnected: in fallback screen capture mode, asking for upgrade");
+                    Intent mediaProjectionRequestIntent = new Intent(instance, MediaProjectionRequestActivity.class);
+                    mediaProjectionRequestIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mediaProjectionRequestIntent.putExtra(MediaProjectionRequestActivity.EXTRA_UPGRADING_FROM_FALLBACK_SCREEN_CAPTURE, true);
+                    instance.startActivity(mediaProjectionRequestIntent);
+                }
+            } catch (Exception e) {
+                // instance probably null
+                Log.e(TAG, "onClientConnected: error: " + e);
+            }
         }
 
         @Override
-        public void onUnregistrationFailed(NsdServiceInfo nsdServiceInfo, int i) {
-            Log.e(TAG, "NSD unregister failed for " + nsdServiceInfo + " with code " + i);
-        }
+        public void onClientDisconnected(long client) {
+            Log.d(TAG, "onClientDisconnected: client " + client);
 
-        @Override
-        public void onServiceRegistered(NsdServiceInfo nsdServiceInfo) {
-            Log.d(TAG, "NSD register for " + nsdServiceInfo);
-        }
+            try {
+                instance.mWakeLock.release();
+                instance.mNumberOfClients--;
+                if(!instance.mIsStopping) {
+                    // don't show notifications when clients are disconnected on orderly server shutdown
+                    instance.updateNotification();
+                }
+                InputService.removeClient(client);
 
-        @Override
-        public void onServiceUnregistered(NsdServiceInfo nsdServiceInfo) {
-            Log.d(TAG, "NSD unregister for " + nsdServiceInfo);
+                // check if the gone client was part of a reconnect entry
+                instance.mOutboundClientsToReconnect
+                        .entrySet()
+                        .stream()
+                        .filter(entry -> entry.getValue().client == client )
+                        .forEach(entry -> {
+                            // unset entry's client as it's now disconnected
+                            entry.getValue().client = 0;
+                            // if the connections is set to reconnect, it definitely has tries left on disconnect
+                            // (otherwise it wouldn't be in the list), so fire up reconnect action
+                            Log.d(TAG, "onClientDisconnected: outbound connection " + entry.getKey() + " set to reconnect, reconnecting with delay of " + entry.getValue().backoff + " seconds");
+                            instance.mOutboundClientReconnectHandler.postAtTime(() -> {
+                                        try {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                instance.startForegroundService(entry.getValue().intent);
+                                            } else {
+                                                instance.startService(entry.getValue().intent);
+                                            }
+                                        } catch (NullPointerException ignored) {
+                                            // onClientDisconnected() is triggered by vncStopServer() from onDestroy(),
+                                            // but the actual call might happen well after instance is set to null in onDestroy()
+                                        }
+                                    },
+                                    entry.getKey(),
+                                    SystemClock.uptimeMillis() + entry.getValue().backoff * 1000L);
+                        });
+            } catch (Exception e) {
+                // instance probably null
+                Log.e(TAG, "onClientDisconnected: error: " + e);
+            }
         }
     };
-
-    static {
-        // order is important here
-        System.loadLibrary("droidvnc-ng");
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private native boolean vncStartServer(int width, int height, int port, String desktopName, String password, String httpRootDir);
-    private native boolean vncStopServer();
-    private native boolean vncIsActive();
-    private native long vncConnectReverse(String host, int port);
-    private native long vncConnectRepeater(String host, int port, String repeaterIdentifier);
-    static native boolean vncNewFramebuffer(int width, int height);
-    static native boolean vncUpdateFramebuffer(ByteBuffer buf);
-    static native int vncGetFramebufferWidth();
-    static native int vncGetFramebufferHeight();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -268,6 +310,9 @@ public class MainService extends Service {
 //        String clientPath = getFilesDir().getAbsolutePath() + File.separator + "novnc";
 //        Utils.deleteRecursively(clientPath);
 //        Utils.copyAssetsToDir(this, "novnc", clientPath);
+
+        mDroidJni =  new JniDroidVnc();
+        JniDroidVnc.registerClientListener(mDroidClientListener);
     }
 
 
@@ -278,16 +323,10 @@ public class MainService extends Service {
 
         mIsStopping = true;
 
-        if(!mIsStoppingByUs && vncIsActive()) {
+        if(!mIsStoppingByUs && mDroidJni.vncIsActive()) {
             // stopService() from OS or other component
             Log.d(TAG, "onDestroy: sending ACTION_STOP");
             sendBroadcastToOthersAndUs(new Intent(ACTION_STOP));
-        }
-
-        try {
-            ((NsdManager) getSystemService(Context.NSD_SERVICE)).unregisterService(mNSDRegistrationListener);
-        } catch (Exception ignored) {
-            // was not registered
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -306,7 +345,7 @@ public class MainService extends Service {
         mOutboundClientReconnectHandler.removeCallbacksAndMessages(null);
 
         stopScreenCapture();
-        vncStopServer();
+        mDroidJni.vncStopServer();
         instance = null;
     }
 
@@ -320,7 +359,7 @@ public class MainService extends Service {
                 || accessKey.isEmpty()
                 || !accessKey.equals(PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREFS_KEY_SETTINGS_ACCESS_KEY, mDefaults.getAccessKey()))) {
             Log.e(TAG, "Access key missing or incorrect");
-            if(!vncIsActive()) {
+            if(!mDroidJni.vncIsActive()) {
                 stopSelfByUs();
             }
             return START_NOT_STICKY;
@@ -342,7 +381,7 @@ public class MainService extends Service {
                 // get device name
                 String name = Utils.getDeviceName(this);
 
-                boolean status = vncStartServer(displayMetrics.widthPixels,
+                boolean status = mDroidJni.vncStartServer(displayMetrics.widthPixels,
                         displayMetrics.heightPixels,
                         port,
                         name,
@@ -355,7 +394,6 @@ public class MainService extends Service {
 
                 if (status) {
                     startScreenCapture();
-//                    registerNSD(name, port);
                     updateNotification();
                     // if we got here, we want to restart if we were killed
                     return START_REDELIVER_INTENT;
@@ -383,7 +421,7 @@ public class MainService extends Service {
                 DisplayMetrics displayMetrics = Utils.getDisplayMetrics(this, Display.DEFAULT_DISPLAY);
                 int port = PreferenceManager.getDefaultSharedPreferences(this).getInt(PREFS_KEY_SERVER_LAST_PORT, mDefaults.getPort());
                 String name = Utils.getDeviceName(this);
-                boolean status = vncStartServer(displayMetrics.widthPixels,
+                boolean status = mDroidJni.vncStartServer(displayMetrics.widthPixels,
                         displayMetrics.heightPixels,
                         port,
                         name,
@@ -397,7 +435,6 @@ public class MainService extends Service {
 
                 if(status) {
                     startScreenCapture();
-//                    registerNSD(name, port);
                     updateNotification();
                     // if we got here, we want to restart if we were killed
                     return START_REDELIVER_INTENT;
@@ -441,7 +478,7 @@ public class MainService extends Service {
         if(ACTION_START.equals(intent.getAction())) {
             Log.d(TAG, "onStartCommand: start");
 
-            if(vncIsActive()) {
+            if(mDroidJni.vncIsActive()) {
                 Intent answer = new Intent(ACTION_START);
                 answer.putExtra(EXTRA_REQUEST_ID, intent.getStringExtra(EXTRA_REQUEST_ID));
                 answer.putExtra(EXTRA_REQUEST_SUCCESS, false);
@@ -485,19 +522,19 @@ public class MainService extends Service {
             stopSelfByUs();
             Intent answer = new Intent(ACTION_STOP);
             answer.putExtra(EXTRA_REQUEST_ID, intent.getStringExtra(EXTRA_REQUEST_ID));
-            answer.putExtra(EXTRA_REQUEST_SUCCESS, vncIsActive());
+            answer.putExtra(EXTRA_REQUEST_SUCCESS, mDroidJni.vncIsActive());
             sendBroadcastToOthersAndUs(answer);
             return START_NOT_STICKY;
         }
 
         if(ACTION_CONNECT_REVERSE.equals(intent.getAction())) {
             Log.d(TAG, "onStartCommand: connect reverse, id " + intent.getStringExtra(EXTRA_REQUEST_ID));
-            if(vncIsActive()) {
+            if(mDroidJni.vncIsActive()) {
                 // run on worker thread
                 new Thread(() -> {
                     long client = 0;
                     try {
-                        client = instance.vncConnectReverse(intent.getStringExtra(EXTRA_HOST), intent.getIntExtra(EXTRA_PORT, mDefaults.getPortReverse()));
+                        client = instance.mDroidJni.vncConnectReverse(intent.getStringExtra(EXTRA_HOST), intent.getIntExtra(EXTRA_PORT, mDefaults.getPortReverse()));
                     } catch (NullPointerException ignored) {
                     }
                     Intent answer = new Intent(ACTION_CONNECT_REVERSE);
@@ -517,12 +554,12 @@ public class MainService extends Service {
         if(ACTION_CONNECT_REPEATER.equals(intent.getAction())) {
             Log.d(TAG, "onStartCommand: connect repeater, id " + intent.getStringExtra(EXTRA_REQUEST_ID));
 
-            if(vncIsActive()) {
+            if(mDroidJni.vncIsActive()) {
                 // run on worker thread
                 new Thread(() -> {
                     long client = 0;
                     try {
-                        client = instance.vncConnectRepeater(
+                        client = instance.mDroidJni.vncConnectRepeater(
                                 intent.getStringExtra(EXTRA_HOST),
                                 intent.getIntExtra(EXTRA_PORT, mDefaults.getPortRepeater()),
                                 intent.getStringExtra(EXTRA_REPEATER_ID));
@@ -543,79 +580,11 @@ public class MainService extends Service {
         }
 
         // no known action was given, stop the _service_ again if the _server_ is not active
-        if(!vncIsActive()) {
+        if(!mDroidJni.vncIsActive()) {
             stopSelfByUs();
         }
 
         return START_NOT_STICKY;
-    }
-
-    @SuppressLint("WakelockTimeout")
-    @SuppressWarnings("unused")
-    static void onClientConnected(long client) {
-        Log.d(TAG, "onClientConnected: client " + client);
-
-        try {
-            instance.mWakeLock.acquire();
-            instance.mNumberOfClients++;
-            instance.updateNotification();
-            InputService.addClient(client, PreferenceManager.getDefaultSharedPreferences(instance).getBoolean(PREFS_KEY_SERVER_LAST_SHOW_POINTERS, new Defaults(instance).getShowPointers()));
-            if(!MediaProjectionService.isMediaProjectionEnabled() && InputService.isTakingScreenShots()) {
-                Log.d(TAG, "onClientConnected: in fallback screen capture mode, asking for upgrade");
-                Intent mediaProjectionRequestIntent = new Intent(instance, MediaProjectionRequestActivity.class);
-                mediaProjectionRequestIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mediaProjectionRequestIntent.putExtra(MediaProjectionRequestActivity.EXTRA_UPGRADING_FROM_FALLBACK_SCREEN_CAPTURE, true);
-                instance.startActivity(mediaProjectionRequestIntent);
-            }
-        } catch (Exception e) {
-            // instance probably null
-            Log.e(TAG, "onClientConnected: error: " + e);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    static void onClientDisconnected(long client) {
-        Log.d(TAG, "onClientDisconnected: client " + client);
-
-        try {
-            instance.mWakeLock.release();
-            instance.mNumberOfClients--;
-            if(!instance.mIsStopping) {
-                // don't show notifications when clients are disconnected on orderly server shutdown
-                instance.updateNotification();
-            }
-            InputService.removeClient(client);
-
-            // check if the gone client was part of a reconnect entry
-            instance.mOutboundClientsToReconnect
-                    .entrySet()
-                    .stream()
-                    .filter(entry -> entry.getValue().client == client )
-                    .forEach(entry -> {
-                        // unset entry's client as it's now disconnected
-                        entry.getValue().client = 0;
-                        // if the connections is set to reconnect, it definitely has tries left on disconnect
-                        // (otherwise it wouldn't be in the list), so fire up reconnect action
-                        Log.d(TAG, "onClientDisconnected: outbound connection " + entry.getKey() + " set to reconnect, reconnecting with delay of " + entry.getValue().backoff + " seconds");
-                        instance.mOutboundClientReconnectHandler.postAtTime(() -> {
-                                    try {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                            instance.startForegroundService(entry.getValue().intent);
-                                        } else {
-                                            instance.startService(entry.getValue().intent);
-                                        }
-                                    } catch (NullPointerException ignored) {
-                                        // onClientDisconnected() is triggered by vncStopServer() from onDestroy(),
-                                        // but the actual call might happen well after instance is set to null in onDestroy()
-                                    }
-                                },
-                                entry.getKey(),
-                                SystemClock.uptimeMillis() + entry.getValue().backoff * 1000L);
-                    });
-        } catch (Exception e) {
-            // instance probably null
-            Log.e(TAG, "onClientDisconnected: error: " + e);
-        }
     }
 
     private void handleClientReconnect(Intent reconnectIntent, long client, String logTag) {
@@ -755,7 +724,7 @@ public class MainService extends Service {
 
     public static boolean isServerActive() {
         try {
-            return instance.vncIsActive();
+            return instance.mDroidJni.vncIsActive();
         } catch (Exception ignored) {
             return false;
         }
@@ -811,36 +780,6 @@ public class MainService extends Service {
         }
     }
 
-    private void registerNSD(String name, int port) {
-        // unregister old one
-        try {
-            ((NsdManager) getSystemService(Context.NSD_SERVICE)).unregisterService(mNSDRegistrationListener);
-        } catch (Exception ignored) {
-            // was not registered
-        }
-
-        if(port < 0) {
-            // no service offered
-            return;
-        }
-
-        if(name == null || name.isEmpty()) {
-            name = "Android";
-        }
-
-        // register new one
-        NsdServiceInfo serviceInfo = new NsdServiceInfo();
-        serviceInfo.setServiceName(name);
-        serviceInfo.setServiceType("_rfb._tcp.");
-        serviceInfo.setPort(port);
-
-        ((NsdManager)getSystemService(Context.NSD_SERVICE)).registerService(
-                serviceInfo,
-                NsdManager.PROTOCOL_DNS_SD,
-                mNSDRegistrationListener
-        );
-    }
-
     @SuppressLint("WrongConstant")
     private Notification getNotification(String text, boolean isSilent){
         Intent notificationIntent = new Intent();
@@ -891,4 +830,35 @@ public class MainService extends Service {
         }
     }
 
+    public static int vncGetFramebufferWidth() {
+        try {
+            return instance.mDroidJni.vncGetFramebufferWidth();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int vncGetFramebufferHeight() {
+        try {
+            return instance.mDroidJni.vncGetFramebufferHeight();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean vncNewFramebuffer(int w, int h) {
+        try {
+            return instance.mDroidJni.vncNewFramebuffer(w, h);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean vncUpdateFramebuffer(ByteBuffer buffer) {
+        try {
+            return instance.mDroidJni.vncUpdateFramebuffer(buffer);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

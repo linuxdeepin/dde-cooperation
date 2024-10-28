@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 /*
  * DroidVNC-NG MediaProjection service.
  *
@@ -19,7 +23,7 @@
  * 59 Temple Place Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package net.christianbeier.droidvnc_ng;
+package com.deepin.assistant.services;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
@@ -45,6 +49,8 @@ import android.view.Display;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
+
+import com.deepin.assistant.utils.Utils;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;

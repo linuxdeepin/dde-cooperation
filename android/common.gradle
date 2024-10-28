@@ -54,16 +54,6 @@ android {
     }
 }
 
-//afterEvaluate {
-//    // 前提条件是这个 Module 工程必须是 Library 类型，并且排除名为 umeng 的 Module 工程
-//    if (android.defaultConfig.applicationId == null && "umeng" != getName()) {
-//        // 排除 BuildConfig.class
-//        generateReleaseBuildConfig.enabled = false
-//        generatePreviewBuildConfig.enabled = false
-//        generateDebugBuildConfig.enabled = false
-//    }
-//}
-
 dependencies {
     // 依赖 libs 目录下所有的 jar 和 aar 包
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')

@@ -29,17 +29,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
-import android.text.InputType
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
@@ -47,20 +44,14 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
 import android.util.Pair
-import android.util.TypedValue
 import android.view.View
 import android.view.View.OnFocusChangeListener
-import android.view.WindowManager
 import android.widget.Button
-import android.widget.CompoundButton
 import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.deepin.assistant.R
 import com.deepin.assistant.app.AppFragment
@@ -68,16 +59,12 @@ import com.deepin.assistant.ui.fragment.HomeFragment
 import com.deepin.cooperation.CooperationListener
 import com.deepin.cooperation.JniCooperation
 import com.hjq.permissions.Permission.POST_NOTIFICATIONS
-import com.hjq.widget.view.SwitchButton
-import kotlinx.coroutines.newSingleThreadContext
-import net.christianbeier.droidvnc_ng.Constants
-import net.christianbeier.droidvnc_ng.Defaults
-import net.christianbeier.droidvnc_ng.InputRequestActivity
-import net.christianbeier.droidvnc_ng.InputService
-import net.christianbeier.droidvnc_ng.MainService
-import net.christianbeier.droidvnc_ng.MediaProjectionService
-import java.util.UUID
-import kotlin.math.ceil
+import com.deepin.assistant.services.Constants
+import com.deepin.assistant.services.Defaults
+import com.deepin.assistant.services.InputRequestActivity
+import com.deepin.assistant.services.InputService
+import com.deepin.assistant.services.MainService
+import com.deepin.assistant.services.MediaProjectionService
 
 class MainActivity : AppCompatActivity() {
     private var mButtonToggle: Button? = null
