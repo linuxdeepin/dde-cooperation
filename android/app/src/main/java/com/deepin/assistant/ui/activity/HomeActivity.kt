@@ -366,7 +366,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
             Update Input permission display.
          */
         val inputStatus = findViewById<TextView>(R.id.permission_status_input)
-        if (InputService.isConnected()) {
+        if (InputService.isConnected) {
             inputStatus?.setText(R.string.main_activity_granted)
             inputStatus?.setTextColor(getColor(R.color.granted))
         } else {
@@ -412,7 +412,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
             screenCapturingStatus?.setText(R.string.main_activity_denied)
             screenCapturingStatus?.setTextColor(getColor(R.color.denied))
         }
-        if (!MediaProjectionService.isMediaProjectionEnabled() && InputService.isTakingScreenShots()) {
+        if (!MediaProjectionService.isMediaProjectionEnabled() && InputService.isTakingScreenShots) {
             screenCapturingStatus?.setText(R.string.main_activity_fallback)
             screenCapturingStatus?.setTextColor(getColor(R.color.fallback))
         }
