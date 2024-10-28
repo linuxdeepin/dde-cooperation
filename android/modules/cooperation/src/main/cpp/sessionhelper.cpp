@@ -204,11 +204,11 @@ void SessionHelper::setDeviceName(const std::string &name)
 
 
 // 异步连接请求
-void SessionHelper::asyncConnect(const std::string &ip, int port, const std::string &pin)
+int SessionHelper::asyncConnect(const std::string &ip, int port, const std::string &pin)
 {
     _confirmTargetAddress = ip; // 设置目标地址
     // 在这里实现连接逻辑，通常为异步操作
-    _sessionManager->sessionConnect(ip, port, pin);
+    return _sessionManager->sessionConnect(ip, port, pin);
 }
 
 // 异步断开请求

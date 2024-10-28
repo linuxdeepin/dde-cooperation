@@ -12,11 +12,15 @@ class SharedViewModel : ViewModel() {
 
     private val name: MutableLiveData<String> = MutableLiveData("")
     private val ip: MutableLiveData<String> = MutableLiveData("")
+    private val selfIp: MutableLiveData<String> = MutableLiveData("")
     private val action: MutableLiveData<Int> = MutableLiveData(-1)
     private val isScreenMirroring: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun name(): LiveData<String> = name
     fun ip(): LiveData<String> = ip
+
+    fun selfIp(): LiveData<String> = selfIp
+
     fun action(): LiveData<Int> = action
 
     fun isScreenMirroring(): LiveData<Boolean> = isScreenMirroring
@@ -31,6 +35,10 @@ class SharedViewModel : ViewModel() {
 
     fun doAction(req: Int) {
         action.postValue(req)
+    }
+
+    fun updateSelfIp(addr: String) {
+        selfIp.postValue(addr)
     }
 
     fun setScreenMirroring(req: Boolean) {

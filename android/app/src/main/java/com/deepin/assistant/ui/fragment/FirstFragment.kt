@@ -5,17 +5,21 @@
 package com.deepin.assistant.ui.fragment
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.lifecycle.ViewModelProvider
 import com.deepin.assistant.R
 import com.deepin.assistant.aop.SingleClick
 import com.deepin.assistant.app.TitleBarFragment
+import com.deepin.assistant.model.SharedViewModel
 import com.deepin.assistant.ui.activity.HomeActivity
 import com.deepin.assistant.ui.scan.ScanActivity
 import com.deepin.assistant.utils.Utils
+import androidx.lifecycle.Observer
 
 
 class FirstFragment : TitleBarFragment<HomeActivity>() {
@@ -28,6 +32,7 @@ class FirstFragment : TitleBarFragment<HomeActivity>() {
         }
     }
 
+    private lateinit var viewModel: SharedViewModel
     // 初始化视图
     private val button: AppCompatButton? by lazy { findViewById(R.id.button) }
     private val tTextView: TextView? by lazy { findViewById(R.id.title) }
@@ -39,12 +44,22 @@ class FirstFragment : TitleBarFragment<HomeActivity>() {
 
     override fun initView() {
         setOnClickListener(button)
+
+        activity?.let {
+            viewModel = ViewModelProvider(it).get(SharedViewModel::class.java)
+        }
+
+        viewModel.selfIp().observe(viewLifecycleOwner, Observer {
+            if (!it.isBlank()) {
+                Log.d(FirstFragment.TAG, "the selfip update: $it")
+                val deviceName = Utils.getDeviceName(requireContext())
+                val ipAddress = it
+                deviceInfoTextView?.text = "$deviceName | IP：${ipAddress ?: ""}"
+            }
+        })
     }
 
     override fun initData() {
-        val deviceName = Utils.getDeviceName(requireContext())
-        val ipAddress = Utils.getIPAddress(requireContext())
-        deviceInfoTextView?.text = "$deviceName | IP：${ipAddress ?: ""}"
     }
 
     private val barcodeLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

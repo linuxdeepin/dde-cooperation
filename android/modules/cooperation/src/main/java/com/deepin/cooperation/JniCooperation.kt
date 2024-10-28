@@ -20,7 +20,7 @@ class JniCooperation {
     external fun initNative(ip: String)
     external fun setStorageFolder(rootPath: String, dirName: String)
     external fun setDeviceName(nickName: String)
-    external fun connectRemote(ip: String, port: Int, pin: String)
+    external fun connectRemote(ip: String, port: Int, pin: String): Int
     external fun disconnectRemote()
     external fun scanConnect(width: Int, height: Int)
     external fun sendProjection(niceName: String, vncPort: Int)
