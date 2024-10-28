@@ -50,6 +50,15 @@ class HomeFragment : TitleBarFragment<HomeActivity>() {
             viewModel = ViewModelProvider(it).get(SharedViewModel::class.java)
         }
 
+        viewModel.selfIp().observe(viewLifecycleOwner, Observer {
+            if (!it.isBlank()) {
+                Log.d(HomeFragment.TAG, "the selfip update: $it")
+                val deviceName = Utils.getDeviceName(requireContext())
+                val ipAddress = it
+                deviceInfoTextView?.text = "$deviceName | IP：${ipAddress ?: ""}"
+            }
+        })
+
         viewModel.name().observe(viewLifecycleOwner, Observer {
             if (!it.isBlank()) {
                 Log.d(TAG, "the name update: $it")

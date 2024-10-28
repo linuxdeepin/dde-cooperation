@@ -263,12 +263,12 @@
 <context>
     <name>cooperation_core::LockScreenWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="91"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="168"/>
         <source>The current device has been locked</source>
         <translation>当前设备已被锁定</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="94"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="171"/>
         <source>You can unlock it on mobile devices</source>
         <translation>你可以在移动端解锁</translation>
     </message>
@@ -444,7 +444,7 @@
 <context>
     <name>cooperation_core::PhoneHelper</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="54"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="57"/>
         <source>Disconnect</source>
         <translation>断开</translation>
     </message>
@@ -455,23 +455,28 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="84"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="121"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="168"/>
         <source>cancel</source>
         <translation>取消</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="85"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="142"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="135"/>
         <source>comfirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="119"/>
-        <source>Are you sure to disconnect and collaborate with &apos;% 1&apos;?</source>
-        <translation>确定断开和“%1”协同？</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="123"/>
+        <source>“%1”connection disconnected!</source>
+        <translation>“%1”连接已断开!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="122"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="166"/>
+        <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
+        <translation>确定要和 &apos;%1&apos; 断开连接吗?</translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="169"/>
         <source>disconnect</source>
         <translation>断开</translation>
     </message>
@@ -493,17 +498,17 @@
 <context>
     <name>cooperation_core::QRCodeWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="83"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="85"/>
         <source>Scan code connection</source>
         <translation>扫码连接</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="87"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="91"/>
         <source>Please use the cross end collaboration app to scan the code</source>
         <translation>请使用“UOS助手”APP扫码</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="91"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="97"/>
         <source>Mobile phones and devices need to be connected to the same local area network</source>
         <translation>手机和设备需要连接同一局域网</translation>
     </message>
@@ -898,6 +903,15 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="117"/>
         <source>File transfer</source>
         <translation>文件投送</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::VncViewer</name>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="168"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="170"/>
+        <source>Disconnected</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
