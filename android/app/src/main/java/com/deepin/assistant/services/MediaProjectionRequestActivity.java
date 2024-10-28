@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 /*
  * DroidVNC-NG activity for (automatically) requesting media projection
  * permission.
@@ -20,7 +24,7 @@
  * 59 Temple Place Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package net.christianbeier.droidvnc_ng;
+package com.deepin.assistant.services;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
@@ -32,6 +36,8 @@ import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.deepin.assistant.R;
 
 public class MediaProjectionRequestActivity extends AppCompatActivity {
 

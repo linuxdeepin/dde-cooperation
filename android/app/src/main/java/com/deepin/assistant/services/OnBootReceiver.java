@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 /*
  * DroidVNC-NG broadcast receiver that listens for boot-completed events
  * and starts MainService in turn.
@@ -20,7 +24,7 @@
  * 59 Temple Place Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package net.christianbeier.droidvnc_ng;
+package com.deepin.assistant.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
