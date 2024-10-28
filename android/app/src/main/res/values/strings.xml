@@ -4,8 +4,10 @@
     <string name="scan_activity_title">UOSAssistant</string>
     <string name="scan_activity_btn">Scan code to connect devices</string>
     <string name="scan_activity_error">Parameter error</string>
+    <string name="scan_activity_connect_fail">Unable to connect, please check if you are connected to the same local area network</string>
     <string name="scan_activity_tip">Scan Client - Mobile Collaboration QR Code</string>
     <string name="scan_activity_disconnect">connection disconnected</string>
+    <string name="scan_activity_no_network">no network</string>
 
     <string name="cooperation_activity_screen_casting">Screen casting in progress</string>
     <string name="cooperation_activity_disconnect">disconnect</string>

@@ -16,6 +16,7 @@ import com.deepin.assistant.R
 class ScanActivity : AppCompatActivity() {
     private var scan_view: ScanView? = null
     private var button: AppCompatButton? = null
+    private var icon_button: AppCompatButton? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +37,7 @@ class ScanActivity : AppCompatActivity() {
     fun initView() {
         scan_view = findViewById<ScanView>(R.id.nbscanview)
         button = findViewById<AppCompatButton>(R.id.myButton)
+        icon_button = findViewById<AppCompatButton>(R.id.iconButton)
     }
 
     //必须调用
@@ -45,6 +47,10 @@ class ScanActivity : AppCompatActivity() {
         scan_view!!.synchLifeStart(this)
 
         button?.setOnClickListener {
+            finish()
+        }
+
+        icon_button?.setOnClickListener {
             finish()
         }
     }

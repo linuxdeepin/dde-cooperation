@@ -16,9 +16,9 @@
         android:layout_margin="16dp" />
 
     <Button
-        android:id="@+id/iconImageView"
-        android:layout_width="@dimen/dp_15"
-        android:layout_height="@dimen/dp_15"
+        android:id="@+id/iconButton"
+        android:layout_width="@dimen/dp_20"
+        android:layout_height="@dimen/dp_20"
         android:background="@drawable/back_ic"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

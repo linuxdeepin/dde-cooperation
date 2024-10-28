@@ -52,12 +52,12 @@ Java_com_deepin_cooperation_JniCooperation_setDeviceName(JNIEnv *env, jobject th
 }
 
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT jint JNICALL
 Java_com_deepin_cooperation_JniCooperation_connectRemote(JNIEnv *env, jobject thiz, jstring ip,
                                                          jint port, jstring pin) {
     std::string ipStr = jstringToString(env, ip);
     std::string pinStr = jstringToString(env, pin);
-    SessionHelper::getInstance().asyncConnect(ipStr, port, pinStr);
+    return SessionHelper::getInstance().asyncConnect(ipStr, port, pinStr);
 }
 extern "C"
 JNIEXPORT void JNICALL

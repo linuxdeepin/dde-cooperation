@@ -11,6 +11,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.Network
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -69,6 +71,9 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         }
     }
 
+    private lateinit var connectivityManager: ConnectivityManager
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
+
     private lateinit var viewModel: SharedViewModel
     private var mCooperation: JniCooperation? = null
 
@@ -107,8 +112,16 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
         mCooperation = JniCooperation()
         val hosts = MainService.getIPv4s()
-        val host = hosts[0]
-        mCooperation?.initNative(host)
+
+        viewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
+        if (hosts.isNotEmpty()) {
+            val host = hosts[0]
+            mCooperation?.initNative(host)
+            viewModel.updateSelfIp(host)
+        } else {
+            mCooperation?.initNative("")
+            viewModel.updateSelfIp(getString(R.string.scan_activity_no_network))
+        }
 
         mCooperation?.registerListener(object : CooperationListener {
             override fun onConnectChanged(result: Int, reason: String) {
@@ -229,6 +242,34 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
             viewPager?.adapter = this
         }
         onNewIntent(intent)
+
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        // 创建并注册 NetworkCallback
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                Log.d(TAG, "执行网络连接时的操作")
+                // 网络连接可用时调用
+                runOnUiThread {
+                    // 执行网络连接时的操作
+                    val hosts = MainService.getIPv4s()
+                    val host = hosts[0]
+                    mCooperation?.initNative(host)
+                    viewModel.updateSelfIp(host)
+                }
+            }
+
+            override fun onLost(network: Network) {
+                // 网络连接丢失时调用
+                Log.d(TAG, "网络连接丢失时调用")
+                runOnUiThread {
+                    // 执行网络断开时的操作
+                    viewModel.updateSelfIp(getString(R.string.scan_activity_no_network))
+                }
+            }
+        }
+
+        // 注册回调
+        connectivityManager.registerDefaultNetworkCallback(networkCallback)
 
         val deviceName = Utils.getDeviceName(this)
         deviceName?.let { mCooperation?.setDeviceName(it) }
@@ -425,11 +466,16 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
                         if (ip != null && pin != null) {
                             // 调用连接方法
-                            connectCooperation(ip, port, pin)
+                            val ret =  connectCooperation(ip, port, pin)
+                            if (ret == -1)
+                                Toast.makeText(this, R.string.scan_activity_connect_fail, Toast.LENGTH_LONG).show()
+                            else
+                                Log.e(TAG, "连接成功：host=$ip, port=$portString, pin=$pin")
                         } else {
                             Log.e(TAG, "解析出错，参数不完整：host=$ip, port=$portString, pin=$pin")
                         }
                     } else {
+                        Toast.makeText(this, R.string.scan_activity_error, Toast.LENGTH_LONG).show()
                         Log.e(TAG, "解析出错，参数数量不匹配：$decodedString")
                     }
                 } catch (e: IllegalArgumentException) {
@@ -442,8 +488,9 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         }
     }
 
-    fun connectCooperation(ip: String, port: Int, pin: String) {
-        mCooperation?.connectRemote(ip, port, pin)
+    fun connectCooperation(ip: String, port: Int, pin: String): Int{
+        val ret =  mCooperation?.connectRemote(ip, port, pin) ?: return -1
+        return ret;
     }
 
     fun initScreenMirroring() {

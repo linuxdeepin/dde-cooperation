@@ -21,7 +21,7 @@ public:
     void setDeviceName(const std::string &name);
 
     // connect/disconnect request
-    void asyncConnect(const std::string &ip, int port, const std::string &pin);
+    int asyncConnect(const std::string &ip, int port, const std::string &pin);
     void asyncDisconnect();
 
     // projection request
