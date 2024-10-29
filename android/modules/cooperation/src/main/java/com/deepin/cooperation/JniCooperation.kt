@@ -55,8 +55,7 @@ class JniCooperation {
         this.listener = listener
     }
 
-    // @SuppressLint("WakelockTimeout")
-    @Suppress("unused")
+
     fun onConnectChanged(result: Int, reason: String) {
         Log.d(TAG, "onConnectChanged: result $result reason:$reason")
 
@@ -68,7 +67,7 @@ class JniCooperation {
         }
     }
 
-    @Suppress("unused")
+
     fun onAsyncRpcResult(type: Int, response: String) {
         // Log.d(TAG, "onAsyncRpcResult: type $type response: $response")
 

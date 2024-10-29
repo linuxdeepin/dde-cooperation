@@ -4,20 +4,6 @@ import android.util.Log
 import java.nio.ByteBuffer
 
 class JniDroidVnc {
-//    private val TAG = "JniDroidVnc"
-//
-//    private var mClientListener: DroidManager.ClientListener? = null
-//    private var mInputListener: DroidManager.InputListener? = null
-//
-//    private val instance: JniDroidVnc? = null
-//
-//    fun registerClientListener(listener: DroidManager.ClientListener) {
-//        this.mClientListener = listener
-//    }
-//
-//    fun registerInputListener(listener: DroidManager.InputListener) {
-//        this.mInputListener = listener
-//    }
 
     external fun vncStartServer(width: Int, height: Int, port: Int, desktopName: String,
         password: String, httpRootDir: String
@@ -54,7 +40,7 @@ class JniDroidVnc {
             this.mInputListener = listener
         }
 
-        @Suppress("unused")
+
         @JvmStatic
         fun callbackClientConnected(client: Long) {
             try {
@@ -65,7 +51,7 @@ class JniDroidVnc {
             }
         }
 
-        @Suppress("unused")
+
         @JvmStatic
         fun callbackClientDisconnected(client: Long) {
             try {
@@ -76,7 +62,7 @@ class JniDroidVnc {
             }
         }
 
-        @Suppress("unused")
+
         @JvmStatic
         fun callbackPointerEvent(buttonMask: Int, x: Int, y: Int, client: Long) {
             try {
@@ -87,7 +73,7 @@ class JniDroidVnc {
             }
         }
 
-        @Suppress("unused")
+
         @JvmStatic
         fun callbackKeyEvent(down: Int, keysym: Long, client: Long) {
             try {
@@ -98,7 +84,7 @@ class JniDroidVnc {
             }
         }
 
-        @Suppress("unused")
+
         @JvmStatic
         fun callbackCutText(text: String?, client: Long) {
             try {
