@@ -141,10 +141,10 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
             scale = 1.0;
         } else if (height >= 1140) {
             // 2K
-            scale = 1.4;
+            scale = 1.5;
         } else {
             // 1080P
-            scale = 1.8;
+            scale = 2.0;
         }
     }
 

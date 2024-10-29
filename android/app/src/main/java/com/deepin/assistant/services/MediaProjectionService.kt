@@ -287,10 +287,9 @@ class MediaProjectionService : Service() {
                     val w = scaledWidth + rowPadding / pixelStride
 
                     // if needed, setup a new VNC framebuffer that matches the image plane's parameters
-                    if (w != vncGetFramebufferWidth() || scaledHeight != vncGetFramebufferHeight()) vncNewFramebuffer(
-                        w,
-                        scaledHeight
-                    )
+                    if (w != vncGetFramebufferWidth() || scaledHeight != vncGetFramebufferHeight()) {
+                        vncNewFramebuffer(w, scaledHeight)
+                    }
 
                     buffer.rewind()
                     vncUpdateFramebuffer(buffer)

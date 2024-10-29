@@ -92,6 +92,7 @@ else()
 endif()
 
 list(APPEND LINKLIBS cpplogging)
+list(APPEND LINKLIBS vncclient)
 
 add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}
@@ -132,7 +133,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Concurrent
     CuteIPC
     qrencode
-    vncclient
 )
 
 target_link_libraries(${PROJECT_NAME}
