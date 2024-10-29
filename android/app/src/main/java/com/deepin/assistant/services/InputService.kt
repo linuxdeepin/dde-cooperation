@@ -21,7 +21,7 @@ import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import androidx.annotation.RequiresApigit
+import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
 import com.deepin.assistant.services.MainService.Companion.vncGetFramebufferHeight
 import com.deepin.assistant.services.MainService.Companion.vncGetFramebufferWidth

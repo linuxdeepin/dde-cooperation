@@ -23,6 +23,7 @@ import android.os.IBinder
 import android.util.Log
 import android.view.Display
 import androidx.preference.PreferenceManager
+import com.deepin.assistant.R
 import com.deepin.assistant.services.MainService.Companion.currentNotification
 import com.deepin.assistant.services.MainService.Companion.vncGetFramebufferHeight
 import com.deepin.assistant.services.MainService.Companion.vncGetFramebufferWidth
@@ -244,9 +245,8 @@ class MediaProjectionService : Service() {
 
             try {
                 if (mVirtualDisplay == null) {
-                    val app_name = "UOSAssistant"
                     mVirtualDisplay = mMediaProjection!!.createVirtualDisplay(
-                        app_name,
+                        getString(R.string.app_name),
                         quirkyLandscapeWidth, quirkyLandscapeHeight, metrics.densityDpi,
                         DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                         mImageReader!!.surface, null, null
@@ -301,9 +301,8 @@ class MediaProjectionService : Service() {
 
         try {
             if (mVirtualDisplay == null) {
-                val app_name = "UOSAssistant"
                 mVirtualDisplay = mMediaProjection!!.createVirtualDisplay(
-                    app_name,
+                    getString(R.string.app_name),
                     scaledWidth, scaledHeight, metrics.densityDpi,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                     mImageReader!!.surface, null, null
