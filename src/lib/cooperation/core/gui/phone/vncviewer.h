@@ -7,6 +7,9 @@
 
 #include "rfb/rfbclient.h"
 
+#include "vncrecvthread.h"
+#include "vncsendworker.h"
+
 #include <iostream>
 #include <thread>
 #include <QPaintEvent>
@@ -28,6 +31,8 @@ public:
     void start();
     void stop();
 
+    void updateImage(const QImage& image);
+
     std::thread *vncThread() const;
     void paintEvent(QPaintEvent *event) override;
 
@@ -38,6 +43,9 @@ public:
 
 Q_SIGNALS:
     void sizeChanged(const QSize &size);
+    void sendMouseState(rfbClient* cl, int x, int y, int button);
+    void sendKeyState(rfbClient *cl, int key, bool down);
+    void fullWindowCloseSignal();
 
 public slots:
     void frameTimerTimeout();
@@ -55,6 +63,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
 
     int currentFps() { return m_currentFps; }
     void setCurrentFps(int fps) { m_currentFps = fps; }
@@ -63,24 +72,21 @@ protected:
     void incFrameCounter() { m_frameCounter++; }
     void setFrameCounter(int counter) { m_frameCounter = counter; }
 
-
-private:
-    static void finishedFramebufferUpdateStatic(rfbClient *cl);
-    static int translateMouseButton(Qt::MouseButton button);
-
-    void finishedFramebufferUpdate(rfbClient *cl);
+    int translateMouseButton(Qt::MouseButton button);
 
 private:
     std::string m_serverIp;
     std::string m_serverPwd;
     int m_serverPort;
 
-    bool m_stop;
     bool m_connected;
     QImage m_image;
     rfbClient *m_rfbCli { nullptr };
-    std::thread *m_vncThread;
     QPainter m_painter;
+
+    QThread* _vncSendThread;
+    VNCSendWorker* _vncSendWorker;
+    VNCRecvThread* _vncRecvThread;
 
     QBrush m_backgroundBrush;
     QPixmap m_surfacePixmap;

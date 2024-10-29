@@ -95,6 +95,7 @@ endif()
 list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS sessionmanager)
 list(APPEND LINKLIBS sslconf)
+list(APPEND LINKLIBS vncclient)
 
 find_library(QRENCODE_LIBRARY qrencode)
 if(NOT QRENCODE_LIBRARY)
@@ -144,7 +145,6 @@ target_link_libraries(${PROJECT_NAME}
     QtZeroConf
     CuteIPC
     qrencode
-    vncclient
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -25,11 +25,25 @@ VncViewer::VncViewer(QWidget *parent)
       m_originalSize(0, 0)
 {
     setFocusPolicy(Qt::StrongFocus);
+#ifdef TOUCH_MODE
+    setMouseTracking(false);
+#else
     setMouseTracking(true);
+#endif
+
+    _vncSendThread = new QThread(this);
+    _vncSendWorker = new VNCSendWorker();
+    connect(this, &VncViewer::sendMouseState, _vncSendWorker, &VNCSendWorker::sendMouseUpdateMsg);
+    connect(this, &VncViewer::sendKeyState, _vncSendWorker, &VNCSendWorker::sendKeyUpdateMsg);
+    _vncSendWorker->moveToThread(_vncSendThread);
+
+    _vncRecvThread = new VNCRecvThread(this);
+    connect(_vncRecvThread, &VNCRecvThread::updateImageSignal, this, &VncViewer::updateImage, Qt::BlockingQueuedConnection);
+    connect(_vncRecvThread, &VNCRecvThread::finished, this, &VncViewer::stop);
 
     m_frameTimer = new QTimer(this);
     m_frameTimer->setTimerType(Qt::CoarseTimer);
-    m_frameTimer->setInterval(500);
+    m_frameTimer->setInterval(1000);
 
     connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTimerTimeout()));
 }
@@ -104,12 +118,6 @@ void VncViewer::clearSurface()
         setSurfaceSize(m_surfacePixmap.size());
 }
 
-void VncViewer::finishedFramebufferUpdateStatic(rfbClient *cl)
-{
-    VncViewer *ptr = static_cast<VncViewer *>(rfbClientGetClientData(cl, nullptr));
-    ptr->finishedFramebufferUpdate(cl);
-}
-
 int VncViewer::translateMouseButton(Qt::MouseButton button)
 {
     switch (button) {
@@ -120,17 +128,12 @@ int VncViewer::translateMouseButton(Qt::MouseButton button)
     }
 }
 
-void VncViewer::finishedFramebufferUpdate(rfbClient *cl)
+void VncViewer::updateImage(const QImage &image)
 {
-    m_image = QImage(cl->frameBuffer, cl->width, cl->height, QImage::Format_RGBA8888);
+    m_image = image;
 
     update();
 }
-
-// std::thread* VncViewer::vncThread()
-// {
-//     return m_vncThread;
-// }
 
 void VncViewer::paintEvent(QPaintEvent *event)
 {
@@ -234,16 +237,16 @@ bool VncViewer::event(QEvent *e)
                 break;
 
             case QEvent::MouseButtonDblClick:
-                SendPointerEvent(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask | button);
-                SendPointerEvent(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask);
-                SendPointerEvent(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask | button);
+                emit sendMouseState(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask | button);
+                emit sendMouseState(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask);
+                emit sendMouseState(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask | button);
                 break;
 
             default:
                 break;
             }
 
-            SendPointerEvent(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask);
+            emit sendMouseState(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask);
             break;
         }
 
@@ -257,8 +260,8 @@ bool VncViewer::event(QEvent *e)
                     int steps = delta / 120; // 每120个单位视为一步
                     int buttonMask = (steps > 0) ? positiveButtonMask : negativeButtonMask;
                     for (int i = 0; i < abs(steps); ++i) {
-                        SendPointerEvent(m_rfbCli, mappedPos.x(), mappedPos.y(), buttonMask);
-                        SendPointerEvent(m_rfbCli, mappedPos.x(), mappedPos.y(), 0); // 释放按钮
+                        emit sendMouseState(m_rfbCli, mappedPos.x(), mappedPos.y(), buttonMask);
+                        emit sendMouseState(m_rfbCli, mappedPos.x(), mappedPos.y(), 0); // release event
                     }
                 }
             };
@@ -273,7 +276,7 @@ bool VncViewer::event(QEvent *e)
         case QEvent::KeyPress:
         case QEvent::KeyRelease: {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
-            SendKeyEvent(m_rfbCli, qt2keysym(keyEvent->key()), e->type() == QEvent::KeyPress);
+            emit sendKeyState(m_rfbCli, qt2keysym(keyEvent->key()), e->type() == QEvent::KeyPress);
             if (keyEvent->key() == Qt::Key_Alt)
                 setFocus(); // avoid losing focus
             return true; // prevent futher processing of event
@@ -302,16 +305,21 @@ void VncViewer::mouseReleaseEvent(QMouseEvent *event)
     event->accept();
 }
 
+void VncViewer ::closeEvent(QCloseEvent *event)
+{
+    emit fullWindowCloseSignal();
+    QWidget::closeEvent(event);
+}
+
 void VncViewer::start()
 {
     m_rfbCli = rfbGetClient(8, 3, 4);
     m_rfbCli->format.depth = 32;
-    m_rfbCli->FinishedFrameBufferUpdate = finishedFramebufferUpdateStatic;
     m_rfbCli->serverHost = strdup(m_serverIp.c_str());
     m_rfbCli->serverPort = m_serverPort;
-    m_rfbCli->appData.compressLevel = 9;
-    m_rfbCli->appData.qualityLevel = 9;
-    m_rfbCli->appData.scaleSetting = 1;
+    // m_rfbCli->appData.compressLevel = 9;
+    // m_rfbCli->appData.qualityLevel = 9;
+    // m_rfbCli->appData.scaleSetting = 1;
     m_rfbCli->appData.forceTrueColour = TRUE;
     m_rfbCli->appData.useRemoteCursor = FALSE;
     m_rfbCli->appData.encodingsString = "tight ultra";
@@ -334,42 +342,35 @@ void VncViewer::start()
 #endif
     // 启动帧率计时器
     m_frameTimer->start();
-    m_stop = false;
 
-    if (m_originalSize.height() != m_rfbCli->height) {       
+    if (m_originalSize.height() != m_rfbCli->height) {
         // record the first mobile display size if has not been setted
         QSize size = {m_rfbCli->width, m_rfbCli->height};
         emit sizeChanged(size);
     }
 
-    m_vncThread = new std::thread([this]() {
-        while (!m_stop) {
-            int i = WaitForMessage(m_rfbCli, 500);
-            if (i < 0) {
-                std::cout << "[INFO] disconnected" << std::endl;
-                m_connected = false;
-                rfbClientCleanup(m_rfbCli);
-                break;
-            }
-
-            if (i && !HandleRFBServerMessage(m_rfbCli)) {
-                std::cout << "[INFO] disconnected" << std::endl;
-                m_connected = false;
-                rfbClientCleanup(m_rfbCli);
-                break;
-            }
-        };
-    });
+    _vncRecvThread->startRun(m_rfbCli);
+    _vncSendThread->start();
 }
 
 
 void VncViewer::stop()
 {
-    m_stop = true;
+    if (!m_connected)
+        return;
+
     m_frameTimer->stop();
-    m_vncThread->join();
-    if (m_connected) {
-        m_connected = false;
+    m_connected = false;
+
+    _vncRecvThread->stopRun();
+    _vncRecvThread->quit();
+    _vncRecvThread->wait();
+
+    _vncSendThread->quit();
+    _vncSendThread->wait();
+
+    if (m_rfbCli) {
         rfbClientCleanup(m_rfbCli);
+        m_rfbCli = nullptr;
     }
 }

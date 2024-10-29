@@ -27,6 +27,7 @@ import android.view.Display
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
 import com.deepin.assistant.R
+import com.deepin.assistant.ui.activity.HomeActivity
 import com.deepin.assistant.utils.Utils
 import com.deepin.assistant.utils.Utils.getDeviceName
 import com.deepin.assistant.utils.Utils.getDisplayMetrics
@@ -258,12 +259,6 @@ class MainService : Service() {
          */
         mDefaults = Defaults(this)
 
-        //        /*
-//            Copy embedded HTML VNC client to directory accessible by embedded HTTP server.
-//         */
-//        String clientPath = getFilesDir().getAbsolutePath() + File.separator + "novnc";
-//        Utils.deleteRecursively(clientPath);
-//        Utils.copyAssetsToDir(this, "novnc", clientPath);
         mDroidJni = JniDroidVnc()
         registerClientListener(mDroidClientListener)
     }
@@ -790,8 +785,7 @@ class MainService : Service() {
 
     @SuppressLint("WrongConstant")
     private fun getNotification(text: String?, isSilent: Boolean): Notification {
-        val notificationIntent = Intent()
-        notificationIntent.setClassName(this, "com.deepin.assistant.ui.activity.HomeActivity")
+        val notificationIntent = Intent(this, HomeActivity::class.java)
 
         val pendingIntent = PendingIntent.getActivity(
             this, 0,
