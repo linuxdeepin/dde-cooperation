@@ -130,6 +130,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                     JniCooperation.CONNECT_STATUS_FALSE -> {
                         toast(R.string.scan_activity_disconnect)
                         start(this@HomeActivity, FirstFragment::class.java)
+                        initScreenMirroring()
                     }
                 }
             }
