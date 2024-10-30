@@ -100,7 +100,7 @@ void ScreenMirroringWindow::initTitleBar(const QString &device)
 
 void ScreenMirroringWindow::initSizebyView(QSize &viewSize)
 {
-    m_mobileSize = viewSize;
+    m_vncViewer->setMobileRealSize(viewSize.width(), viewSize.height());
 }
 
 void ScreenMirroringWindow::connectVncServer(const QString &ip, int port, const QString &password)
@@ -111,27 +111,7 @@ void ScreenMirroringWindow::connectVncServer(const QString &ip, int port, const 
 
 void ScreenMirroringWindow::handleSizeChange(const QSize &size)
 {
-    //qWarning() << "mobile size=" << m_mobileSize << " size=" << size;
     float scale = 1.0;
-    float mobileScale = MOBILE_SCALE; //default scale setting in phone
-    int realWidth = size.width();
-    if (m_mobileSize.height() <= 0) {
-        m_mobileSize = size;
-    }
-    if (size.height() > size.width()) {
-        // portrait mode
-        realWidth = static_cast<int>(m_mobileSize.width() * mobileScale);
-    } else {
-        // landscape mode
-        realWidth = static_cast<int>(m_mobileSize.height() * mobileScale);
-    }
-
-    if (size.width() < realWidth) {
-        // reset if the vnc width is smaller
-        realWidth = size.width();
-    }
-    //qWarning() << "realWidth size=" << realWidth;
-
     QScreen *screen = qApp->primaryScreen();
     if (screen) {
         int height = screen->geometry().height();
@@ -149,10 +129,8 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
     }
 
     auto titleBar = titlebar();
-    int w = (realWidth / scale);
+    int w = (size.width() / scale);
     int h = (size.height() / scale) + titleBar->height() + BOTTOM_HEIGHT;
-
-    m_vncViewer->setSurfaceSize({realWidth, size.height()});
 
     this->resize(w, h);
 }
