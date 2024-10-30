@@ -15,6 +15,9 @@ if(NOT TARGET libVNC)
   # adds a source subdir with specifying a build output dir
   add_subdirectory(${libvnc_src_DIR} ${libvnc_build_DIR})
   # need to add the build dir to include dirs as well because of generated rfbconfig.h
-  include_directories(${libvnc_src_DIR}/include)
+  include_directories(
+          ${libvnc_src_DIR}/include
+          ${libvnc_build_DIR}/include
+  )
 
 endif()
