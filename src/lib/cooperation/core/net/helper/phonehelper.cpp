@@ -89,9 +89,7 @@ void PhoneHelper::onScreenMirroring()
         return;
 
     m_screenwindow = new ScreenMirroringWindow(m_mobileInfo.data()->deviceName());
-    if (m_viewSize.height() > 0) {
-        m_screenwindow->initSizebyView(m_viewSize);
-    }
+    m_screenwindow->initSizebyView(m_viewSize);
     m_screenwindow->show();
 
     m_screenwindow->connectVncServer(m_mobileInfo.data()->ipAddress(), 5900, "");

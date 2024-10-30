@@ -16,13 +16,17 @@ enum Operation {
     RECENTS
 };
 
+enum PhoneMode {
+    PORTRAIT= 0,
+    LANDSCAPE,
+};
+
 VncViewer::VncViewer(QWidget *parent)
     : QWidget(parent),
       m_surfacePixmap(-1, -1),
       m_scale(1.0),
       m_scaled(true),
-      m_buttonMask(0),
-      m_originalSize(0, 0)
+      m_buttonMask(0)
 {
     setFocusPolicy(Qt::StrongFocus);
 #ifdef TOUCH_MODE
@@ -72,9 +76,14 @@ void VncViewer::frameTimerTimeout()
         return;
 
     // Check the screen has been rotated
-    if (m_rfbCli->height != m_originalSize.height()) {
-        const QSize viewSize = {m_originalSize.height(), m_originalSize.width()};
-        emit sizeChanged(viewSize);
+    int curentMode = (m_rfbCli->width < m_rfbCli->height) ? PORTRAIT : LANDSCAPE;
+    if (curentMode != m_phoneMode) {
+        m_phoneMode = curentMode;
+        int w = (m_phoneMode == PORTRAIT) ? m_realSize.width() : m_realSize.height();
+        const QSize size = {static_cast<int>(w * m_phoneScale), m_rfbCli->height};
+
+        setSurfaceSize(size);
+        emit sizeChanged(size);
     }
 }
 
@@ -126,6 +135,12 @@ int VncViewer::translateMouseButton(Qt::MouseButton button)
     case Qt::RightButton:  return rfbButton3Mask;
     default:               return 0;
     }
+}
+
+void VncViewer::setMobileRealSize(const int w, const int h)
+{
+    // set the phone real resolution by only once
+    m_realSize = w < h ? QSize(w, h) : QSize(h, w);
 }
 
 void VncViewer::updateImage(const QImage &image)
@@ -185,8 +200,6 @@ void VncViewer::setSurfaceSize(QSize surfaceSize)
     m_surfaceRect.setWidth(m_surfaceRect.width() * m_scale);
     m_surfaceRect.setHeight(m_surfaceRect.height() * m_scale);
     m_transform = QTransform::fromScale(1.0 / m_scale, 1.0 / m_scale);
-
-    m_originalSize = surfaceSize;
 
     QTimer::singleShot(0, this, SLOT(updateSurface()));
 }
@@ -343,11 +356,15 @@ void VncViewer::start()
     // 启动帧率计时器
     m_frameTimer->start();
 
-    if (m_originalSize.height() != m_rfbCli->height) {
-        // record the first mobile display size if has not been setted
-        QSize size = {m_rfbCli->width, m_rfbCli->height};
-        emit sizeChanged(size);
-    }
+    m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.height());
+    m_phoneMode = (m_rfbCli->width < m_rfbCli->height) ? PORTRAIT : LANDSCAPE;
+    const QSize size = {static_cast<int>(m_realSize.width() * m_phoneScale), m_rfbCli->height};
+
+    qWarning() << "Phone mode: " << m_phoneMode << " Phone scale: " << m_phoneScale;
+    qWarning() << "Real size: " << m_realSize << " show size: " << size;
+
+    setSurfaceSize(size);
+    emit sizeChanged(size);
 
     _vncRecvThread->startRun(m_rfbCli);
     _vncSendThread->start();

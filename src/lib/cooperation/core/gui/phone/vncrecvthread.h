@@ -22,15 +22,15 @@ public:
 
     static void frameBufferUpdated(rfbClient *cl);
 
+signals:
+    void updateImageSignal(QImage);
+
 protected:
     void run() override;
 
 private:
     bool _runFlag = false;
     rfbClient *_cl;
-
-signals:
-    void updateImageSignal(QImage);
 };
 
 #endif // VNCRECVTHREAD_H
