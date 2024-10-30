@@ -31,6 +31,7 @@ public:
     void start();
     void stop();
 
+    void setMobileRealSize(const int w, const int h);
     void updateImage(const QImage& image);
 
     std::thread *vncThread() const;
@@ -51,8 +52,10 @@ public slots:
     void frameTimerTimeout();
     void onShortcutAction(int action);
 
-    void setSurfaceSize(QSize surfaceSize);
     void updateSurface();
+
+private:
+    void setSurfaceSize(QSize surfaceSize);
     void clearSurface();
 
 protected:
@@ -95,7 +98,10 @@ private:
     int m_buttonMask;
     bool m_scaled;
     qreal m_scale;
-    QSize m_originalSize; // record the view size
+
+    QSize m_realSize; // record the phone real size
+    qreal m_phoneScale; // the image scale on phone side
+    int m_phoneMode;  // phone showing mode
 
     QTimer *m_frameTimer;
     uint m_frameCounter;
