@@ -57,7 +57,7 @@ class PermissionsAspect {
         XXPermissions.with(activity)
             .permission(*permissions)
             .request(object : PermissionCallback() {
-                override fun onGranted(permissions: MutableList<String?>?, all: Boolean) {
+                override fun onGranted(permissions: MutableList<String>, all: Boolean) {
                     if (all) {
                         try {
                             // 获得权限，执行原方法
@@ -65,6 +65,16 @@ class PermissionsAspect {
                         } catch (e: Throwable) {
                             CrashReport.postCatchedException(e)
                         }
+                    }
+                }
+
+                override fun onDenied(permissions: MutableList<String>, never: Boolean) {
+                    if (never) {
+                        Timber.w("Request permissions were denied forever!")
+                        // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                        XXPermissions.startPermissionActivity(activity, permissions)
+                    } else {
+                        Timber.w("Request permissions FAILED!")
                     }
                 }
             })

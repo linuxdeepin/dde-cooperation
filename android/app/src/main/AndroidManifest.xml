@@ -136,12 +136,12 @@
             android:theme="@style/SplashTheme">
 
             <!-- 程序入口 -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
 
         </activity>
 
@@ -151,23 +151,20 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".ui.activity.MainActivity"
-            android:label="@string/main_activity_title"
-            android:launchMode="singleTask"
-            android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
-
         <!-- 首页 -->
         <activity
             android:name=".ui.activity.HomeActivity"
-            android:launchMode="singleTask"
+            android:exported="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <!-- 崩溃展示（必须在独立进程） -->
         <activity
@@ -202,12 +199,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
-        <!-- 对话框案例 -->
-        <activity
-            android:name=".ui.activity.DialogActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-
         <!-- 状态案例 -->
         <activity
             android:name=".ui.activity.StatusActivity"
@@ -218,17 +209,10 @@
         <activity
             android:name=".ui.scan.ScanActivity"/>
 
-        <!-- 微信回调（请注意这个 Activity 放置的包名要和当前项目的包名保持一致，否则将不能正常回调） -->
-        <activity
-            android:name=".wxapi.WXEntryActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
-        <activity
-            android:name="com.journeyapps.barcodescanner.CaptureActivity"
-            android:screenOrientation="portrait"
-            tools:replace="android:screenOrientation" />
+<!--        <activity-->
+<!--            android:name="com.journeyapps.barcodescanner.CaptureActivity"-->
+<!--            android:screenOrientation="portrait"-->
+<!--            tools:replace="android:screenOrientation" />-->
 
     </application>
 
