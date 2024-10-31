@@ -263,12 +263,12 @@
 <context>
     <name>cooperation_core::LockScreenWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="168"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="146"/>
         <source>The current device has been locked</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="171"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="149"/>
         <source>You can unlock it on mobile devices</source>
         <translation type="unfinished"></translation>
     </message>
@@ -455,28 +455,28 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="84"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="168"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="166"/>
         <source>cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="85"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="135"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="133"/>
         <source>comfirm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="123"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="121"/>
         <source>“%1”connection disconnected!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="166"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="164"/>
         <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="169"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="167"/>
         <source>disconnect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -908,8 +908,8 @@
 <context>
     <name>cooperation_core::VncViewer</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="168"/>
-        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="170"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="186"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="188"/>
         <source>Disconnected</source>
         <translation type="unfinished"></translation>
     </message>

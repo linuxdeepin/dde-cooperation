@@ -60,7 +60,7 @@ public:
     NoNetworkWidget *nnWidget { nullptr };
     NoResultWidget *nrWidget { nullptr };
     DeviceListWidget *dlWidget { nullptr };
-    QPushButton *refreshBtn { nullptr };
+    CooperationIconButton *refreshBtn { nullptr };
 
     WorkspaceWidget::PageName currentPage { WorkspaceWidget::kUnknownPage };
     QSharedPointer<SortFilterWorker> sortFilterWorker { nullptr };

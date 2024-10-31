@@ -12,9 +12,14 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.deepin.assistant.R
+
 
 class InputRequestActivity : AppCompatActivity() {
     private var mDoNotStartMainServiceOnFinish = false
@@ -76,10 +81,24 @@ class InputRequestActivity : AppCompatActivity() {
         }
 
         if (!InputService.isConnected) {
+            // 创建一个 TextView 来显示消息
+            val messageView = TextView(this)
+            messageView.setText(msg)
+            messageView.textAlignment = View.TEXT_ALIGNMENT_VIEW_START // 设置文本对齐方式为两端对齐
+
+            messageView.gravity = Gravity.LEFT // 确保左对齐
+
+            messageView.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            messageView.setPadding(50, 50, 50, 50) // 设置内边距
+
+
             AlertDialog.Builder(this)
                 .setCancelable(false)
                 .setTitle(R.string.input_a11y_title)
-                .setMessage(msg)
+                .setView(messageView)
                 .setPositiveButton(R.string.yes) { dialog: DialogInterface?, which: Int ->
                     val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                     // highlight entry on some devices, see https://stackoverflow.com/a/63214655/361413

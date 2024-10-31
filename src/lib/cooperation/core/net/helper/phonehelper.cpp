@@ -33,8 +33,7 @@ inline constexpr char Kdisconnect[] { ":/icons/deepin/builtin/texts/disconnect_1
 #endif
 
 PhoneHelper::PhoneHelper(QObject *parent)
-    : QObject(parent)
-    , m_viewSize(0, 0)
+    : QObject(parent), m_viewSize(0, 0)
 {
 }
 
@@ -125,7 +124,8 @@ void PhoneHelper::onDisconnect(const DeviceInfoPointer info)
 
 int PhoneHelper::notifyMessage(const QString &message, QStringList actions)
 {
-    CooperationDialog dlg;
+    QMainWindow *activeMainWindow = qobject_cast<QMainWindow *>(QApplication::activeWindow());
+    CooperationDialog dlg(qApp->activeWindow());
     dlg.setIcon(QIcon::fromTheme("dde-cooperation"));
     dlg.setMessage(message);
 
@@ -136,6 +136,8 @@ int PhoneHelper::notifyMessage(const QString &message, QStringList actions)
 
     if (actions.size() > 1)
         dlg.addButton(actions[1], true, CooperationDialog::ButtonRecommend);
+
+    dlg.move(activeMainWindow->pos() + QPoint(70, 200));
     int code = dlg.exec();
     return code;
 }
