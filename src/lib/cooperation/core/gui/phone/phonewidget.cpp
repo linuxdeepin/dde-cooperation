@@ -90,14 +90,14 @@ void QRCodeWidget::initUI()
 
     QLabel *instruction = new QLabel(tr("Please use the cross end collaboration app to scan the code"), this);
     instruction->setAlignment(Qt::AlignCenter);
-    lightStyle = "font-weight: 500; font-size: 14px; color:rgba(0, 0, 0, 0.7);";
-    darkStyle = "font-weight: 500; font-size: 14px; color:rgba(255, 255, 255, 0.7);";
+    lightStyle = "font-weight: 400; font-size: 14px; color:rgba(0, 0, 0, 0.7);";
+    darkStyle = "font-weight: 400; font-size: 14px; color:rgba(255, 255, 255, 0.7);";
     CooperationGuiHelper::initThemeTypeConnect(instruction, lightStyle, darkStyle);
 
     QLabel *instruction2 = new QLabel(tr("Mobile phones and devices need to be connected to the same local area network"), this);
     instruction2->setAlignment(Qt::AlignCenter);
-    lightStyle = "font-weight: 500; font-size: 12px; color:rgba(0, 0, 0, 0.6);";
-    darkStyle = "font-weight: 500; font-size: 12px; color:rgba(255, 255, 255, 0.6);";
+    lightStyle = "font-weight: 400; font-size: 12px; color:rgba(0, 0, 0, 0.6);";
+    darkStyle = "font-weight: 400; font-size: 12px; color:rgba(255, 255, 255, 0.6);";
     CooperationGuiHelper::initThemeTypeConnect(instruction2, lightStyle, darkStyle);
 
     QFrame *qrFrame = new QFrame(this);
@@ -115,6 +115,11 @@ void QRCodeWidget::initUI()
     qrCode->setStyleSheet("background-color : white;border-radius: 10px;");
     qrCode->setFixedSize(185, 185);
 
+    auto qricon = new QLabel(qrCode);
+    QIcon icon(":/icons/deepin/builtin/icons/uos_assistant@3x.png");
+    qricon->setPixmap(icon.pixmap(50, 50));
+    qricon->setGeometry(67, 67, 50, 50);
+
     qrFrame->layout()->setAlignment(Qt::AlignCenter);
     qrFrame->layout()->addWidget(qrCode);
 
@@ -122,9 +127,10 @@ void QRCodeWidget::initUI()
     hLayout->addWidget(qrFrame);
     hLayout->setAlignment(Qt::AlignCenter);
 
-    mainLayout->setSpacing(10);
+    mainLayout->setSpacing(5);
     mainLayout->addSpacing(80);
     mainLayout->addWidget(title);
+    mainLayout->addSpacing(2);
     mainLayout->addWidget(instruction);
     mainLayout->addWidget(instruction2);
     mainLayout->addSpacing(20);
@@ -153,8 +159,8 @@ QPixmap QRCodeWidget::generateQRCode(const QString &text, int scale)
     QImage image(size, size, QImage::Format_RGB32);
     image.fill(Qt::white);   // 填充白色背景
 
-    // 在二维码中间绘制一个 75x75 的空白区域
-    int iconSize = 77;   // 空白区域的尺寸
+    // 在二维码中间绘制一个 80x80 的空白区域
+    int iconSize = 80;   // 空白区域的尺寸
     int iconX = (size - iconSize) / 2;   // 图标X坐标
     int iconY = (size - iconSize) / 2;   // 图标Y坐标
     QRect iconRect(iconX, iconY, iconSize, iconSize);
@@ -182,10 +188,6 @@ QPixmap QRCodeWidget::generateQRCode(const QString &text, int scale)
 
     // 删除二维码对象
     QRcode_free(qrcode);
-
-    // 使用 QPainter 在空白区域绘制图标
-    QIcon icon(":/icons/deepin/builtin/icons/uos_assistant@3x.png");
-    painter.drawPixmap(iconX, iconY, icon.pixmap(iconSize, iconSize));
 
     // 转换为 QPixmap 并返回
     return QPixmap::fromImage(image).scaled(170, 170, Qt::KeepAspectRatio);

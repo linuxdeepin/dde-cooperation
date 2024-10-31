@@ -263,12 +263,12 @@
 <context>
     <name>cooperation_core::LockScreenWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="168"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="146"/>
         <source>The current device has been locked</source>
         <translation>当前设备已被锁定</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="171"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="149"/>
         <source>You can unlock it on mobile devices</source>
         <translation>你可以在移动端解锁</translation>
     </message>
@@ -451,32 +451,32 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="82"/>
         <source>“%1”apply to initiate screen casting</source>
-        <translation>“%1”应用于启动屏幕投射</translation>
+        <translation type="unfinished">“%1”请求投屏至本设备</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="84"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="168"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="166"/>
         <source>cancel</source>
         <translation>取消</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="85"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="135"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="133"/>
         <source>comfirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="123"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="121"/>
         <source>“%1”connection disconnected!</source>
         <translation>“%1”连接已断开!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="166"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="164"/>
         <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
         <translation>确定要和 &apos;%1&apos; 断开连接吗?</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="169"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="167"/>
         <source>disconnect</source>
         <translation>断开</translation>
     </message>
@@ -908,10 +908,10 @@
 <context>
     <name>cooperation_core::VncViewer</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="168"/>
-        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="170"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="186"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="188"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>投屏已结束</translation>
     </message>
 </context>
 <context>
