@@ -63,10 +63,6 @@ void ScreenMirroringWindow::initBottom()
 {
     bottomWidget = new QWidget(this);
     bottomWidget->setFixedHeight(BOTTOM_HEIGHT);
-    bottomWidget->setStyleSheet(".QWidget{background-color : white;}");
-    QString lightStyle = ".QWidget{background-color : white;}";
-    QString darkStyle = ".QWidget{background-color : rgba(0, 0, 0, 0.1);}";
-    CooperationGuiHelper::initThemeTypeConnect(bottomWidget, lightStyle, darkStyle);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(bottomWidget);
     QStringList buttonIcons = { "phone_back", "home", "multi_task" };   // 按钮icon列表
