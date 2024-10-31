@@ -52,12 +52,12 @@ void WorkspaceWidgetPrivate::initUI()
     deviceLabel->setContentsMargins(20, 0, 10, 0);
     CooperationGuiHelper::setAutoFont(deviceLabel, 14, QFont::Normal);
     QHBoxLayout *hLayout = new QHBoxLayout;
-    refreshBtn = new QPushButton();
-    refreshBtn->setStyleSheet("QPushButton { border: none; }");
-    refreshBtn->setIcon(QIcon::fromTheme("refresh"));
+    refreshBtn = new CooperationIconButton();
+    refreshBtn->setIcon(QIcon::fromTheme("refresh_tip"));
     refreshBtn->setIconSize(QSize(16, 16));
+    refreshBtn->setFlat(true);
     refreshBtn->setToolTip(tr("Re-scan for devices"));
-    refreshBtn->setFixedSize(18, 18);
+    refreshBtn->setFixedSize(24, 24);
     connect(refreshBtn, &QPushButton::clicked, q, &WorkspaceWidget::refresh);
 
     hLayout->addWidget(deviceLabel);
