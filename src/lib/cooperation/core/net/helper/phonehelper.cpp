@@ -124,7 +124,11 @@ void PhoneHelper::onDisconnect(const DeviceInfoPointer info)
 
 int PhoneHelper::notifyMessage(const QString &message, QStringList actions)
 {
-    QMainWindow *activeMainWindow = qobject_cast<QMainWindow *>(QApplication::activeWindow());
+    if (isInNotify)
+        return -1;
+
+    isInNotify = true;
+
     CooperationDialog dlg(qApp->activeWindow());
     dlg.setIcon(QIcon::fromTheme("dde-cooperation"));
     dlg.setMessage(message);
@@ -137,8 +141,19 @@ int PhoneHelper::notifyMessage(const QString &message, QStringList actions)
     if (actions.size() > 1)
         dlg.addButton(actions[1], true, CooperationDialog::ButtonRecommend);
 
-    dlg.move(activeMainWindow->pos() + QPoint(70, 200));
+    if (qApp->activeWindow()) {
+        QWidget *activeWindow = qApp->activeWindow();
+        QSize activeSize = activeWindow->size();
+        QSize dlgSize = dlg.size();
+
+        // 计算新位置，使对话框位于活动窗口的中心
+        QPoint newPos = activeWindow->pos() + QPoint((activeSize.width() - dlgSize.width()) / 2, (activeSize.height() - dlgSize.height()) / 2);
+        dlg.move(newPos);
+    }
+
     int code = dlg.exec();
+
+    isInNotify = false;
     return code;
 }
 
