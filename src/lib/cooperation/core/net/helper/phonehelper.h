@@ -45,6 +45,8 @@ private:
     DeviceInfoPointer m_mobileInfo { nullptr };
     ScreenMirroringWindow *m_screenwindow { nullptr };
 
+    bool isInNotify =false;
+
     QSize m_viewSize;
 };
 
