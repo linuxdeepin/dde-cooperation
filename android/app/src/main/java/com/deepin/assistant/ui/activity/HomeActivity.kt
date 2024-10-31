@@ -79,10 +79,6 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
     private var mIsMainServiceRunning = false
     private var mMainServiceBroadcastReceiver: BroadcastReceiver? = null
-    private var mOutgoingConnectionWaitDialog: AlertDialog? = null
-    private var mLastMainServiceRequestId: String? = null
-    private var mLastReverseHost: String? = null
-    private var mLastReversePort = 0
     private var mDefaults: Defaults? = null
 
     private val viewPager: ViewPager? by lazy { findViewById(R.id.vp_home_pager) }
@@ -99,10 +95,10 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
     }
     override fun initView() {
         navigationAdapter = NavigationAdapter(this).apply {
-            addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_index),
-                ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_home_selector)))
             addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_found),
                 ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_found_selector)))
+            addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_index),
+                ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_home_selector)))
             addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_message),
                 ContextCompat.getDrawable(this@HomeActivity, R.drawable.home_message_selector)))
             addItem(NavigationAdapter.MenuItem(getString(R.string.home_nav_me),
@@ -236,8 +232,8 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
     override fun initData() {
         pagerAdapter = FragmentPagerAdapter<AppFragment<*>>(this).apply {
-            addFragment(HomeFragment.newInstance())
             addFragment(FirstFragment.newInstance())
+            addFragment(HomeFragment.newInstance())
             addFragment(MessageFragment.newInstance())
             addFragment(MineFragment.newInstance())
             viewPager?.adapter = this
@@ -362,61 +358,6 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
     @SuppressLint("SetTextI18n")
     override fun onResume() {
         super.onResume()
-
-        /*
-            Update Input permission display.
-         */
-        val inputStatus = findViewById<TextView>(R.id.permission_status_input)
-        if (InputService.isConnected) {
-            inputStatus?.setText(R.string.main_activity_granted)
-            inputStatus?.setTextColor(getColor(R.color.granted))
-        } else {
-            inputStatus?.setText(R.string.main_activity_denied)
-            inputStatus?.setTextColor(getColor(R.color.denied))
-        }
-
-
-        /*
-            Update Notification permission display. Only show on >= Android 13.
-         */
-        if (Build.VERSION.SDK_INT >= 33) {
-            val notificationStatus = findViewById<TextView>(R.id.permission_status_notification)
-            if (checkSelfPermission(Permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                notificationStatus?.setText(R.string.main_activity_granted)
-                notificationStatus?.setTextColor(getColor(R.color.granted))
-            } else {
-                notificationStatus?.setText(R.string.main_activity_denied)
-                notificationStatus?.setTextColor(getColor(R.color.denied))
-            }
-            notificationStatus?.setOnClickListener { view: View? ->
-                val intent = Intent(
-                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse(
-                        "package:$packageName"
-                    )
-                )
-                startActivity(intent)
-            }
-        } else {
-            findViewById<View>(R.id.permission_row_notification)?.visibility = View.GONE
-        }
-
-
-        /*
-           Update Screen Capturing permission display.
-        */
-        val screenCapturingStatus = findViewById<TextView>(R.id.permission_status_screen_capturing)
-        if (MediaProjectionService.isMediaProjectionEnabled()) {
-            screenCapturingStatus?.setText(R.string.main_activity_granted)
-            screenCapturingStatus?.setTextColor(getColor(R.color.granted))
-        }
-        if (!MediaProjectionService.isMediaProjectionEnabled()) {
-            screenCapturingStatus?.setText(R.string.main_activity_denied)
-            screenCapturingStatus?.setTextColor(getColor(R.color.denied))
-        }
-        if (!MediaProjectionService.isMediaProjectionEnabled() && InputService.isTakingScreenShots) {
-            screenCapturingStatus?.setText(R.string.main_activity_fallback)
-            screenCapturingStatus?.setTextColor(getColor(R.color.fallback))
-        }
     }
 
     override fun onDestroy() {

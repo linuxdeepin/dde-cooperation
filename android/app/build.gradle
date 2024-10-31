@@ -132,8 +132,6 @@ dependencies {
     implementation project(':library:base')
     // 控件封装
     implementation project(':library:widget')
-    // 友盟封装
-    implementation project(':library:umeng')
 
     implementation project(':library:droidvnc-ng')
     implementation project(':modules:cooperation')
@@ -145,7 +143,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.1'
 
     // 权限请求框架：https://github.com/getActivity/XXPermissions
-    implementation 'com.github.getActivity:XXPermissions:16.0'
+    implementation 'com.github.getActivity:XXPermissions:20.0'
 
     // 标题栏框架：https://github.com/getActivity/TitleBar
     implementation 'com.github.getActivity:TitleBar:9.2'

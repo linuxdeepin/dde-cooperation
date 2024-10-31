@@ -329,7 +329,7 @@ class BrowserView  @JvmOverloads constructor(
                             .permission(Permission.ACCESS_COARSE_LOCATION)
                             .request(object : PermissionCallback() {
                                 override fun onGranted(
-                                    permissions: MutableList<String?>?,
+                                    permissions: MutableList<String>,
                                     all: Boolean
                                 ) {
                                     if (all) {

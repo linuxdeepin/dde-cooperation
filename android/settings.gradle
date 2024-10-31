@@ -1,6 +1,5 @@
 include ':app'
 include ':library:base'
 include ':library:widget'
-include ':library:umeng'
 include ':library:droidvnc-ng'
 include ':modules:cooperation'
