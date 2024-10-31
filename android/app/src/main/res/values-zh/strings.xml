@@ -18,46 +18,6 @@
     <string name="reverse_vnc_success">成功连接到%1$s:%2$d</string>
     <string name="reverse_vnc_fail">连接%1$s:%2$d失败</string>
 
-    <!-- 临时定义 -->
-    <string name="main_activity_title">UOS 助手</string>
-    <string name="main_activity_settings">设置</string>
-    <string name="main_activity_settings_port">端口</string>
-    <string name="main_activity_settings_port_not_listening">禁用传入连接</string>
-    <string name="main_activity_settings_password">密码</string>
-    <string name="main_activity_settings_access_key">访问键</string>
-    <string name="main_activity_settings_start_on_boot">开机启动</string>
-    <string name="main_activity_settings_start_on_boot_delay">启动延迟（秒）</string>
-    <string name="main_activity_settings_file_transfer">文件传输</string>
-    <string name="main_activity_settings_scaling">缩放</string>
-    <string name="main_activity_settings_view_only">只读</string>
-    <string name="main_activity_settings_show_pointers">鼠标指针</string>
-    <string name="main_activity_permissions_dashboard">权限仪表盘</string>
-    <string name="main_activity_colon">：</string>
-    <string name="main_activity_screen_capturing">截屏</string>
-    <string name="main_activity_fallback">倒退</string>
-    <string name="main_activity_granted">已授权</string>
-    <string name="main_activity_denied">已禁止</string>
-    <string name="main_activity_file_access">文件访问权限</string>
-    <string name="main_activity_notifications">通知</string>
-    <string name="main_activity_input">输入</string>
-    <string name="main_activity_start_on_boot">开机启动</string>
-    <string name="main_activity_address">可以访问当前服务在</string>
-    <string name="main_activity_share_link">分享浏览器访问链接</string>
-    <string name="main_activity_not_listening">该服务器没有监听传入的连接。</string>
-    <string name="main_activity_outbound_text">你可以建立出站连接：</string>
-    <string name="main_activity_connecting_to">正在连接到%1$s</string>
-    <string name="main_activity_reverse_vnc_button">连接到监听的viewer</string>
-    <string name="main_activity_reverse_vnc_hint">域名:端口</string>
-    <string name="main_activity_reverse_vnc_success">成功连接到%1$s:%2$d</string>
-    <string name="main_activity_reverse_vnc_fail">连接%1$s:%2$d失败</string>
-    <string name="main_activity_repeater_vnc_button">连接到中继器</string>
-    <string name="main_activity_repeater_vnc_hint">域名:端口</string>
-    <string name="main_activity_repeater_vnc_hint_id">中继器上的ID</string>
-    <string name="main_activity_repeater_vnc_success">成功连接到%1$s:%2$d；ID%3$s</string>
-    <string name="main_activity_repeater_vnc_fail">连接%1$s:%2$d失败；ID%3$s</string>
-    <string name="main_activity_repeater_vnc_input_missing">域名/ID遗失</string>
-    <string name="main_activity_reconnect_tries_hint">最大重新连接尝试次数</string>
-
     <!-- APP需求定义，会覆盖模块下的字符串 -->
     <string name="main_service_notification_not_listening">不监听传入连接</string>
     <plurals name="main_service_notification_listening">

@@ -23,13 +23,14 @@ class RestartActivity : AppActivity() {
         }
 
         fun restart(context: Context) {
-            val intent: Intent = if (true) {
-                // 如果是未登录的情况下跳转到闪屏页
-                Intent(context, SplashActivity::class.java)
-            } else {
-                // 如果是已登录的情况下跳转到首页
-                Intent(context, MainActivity::class.java)
-            }
+//            val intent: Intent = if (true) {
+//                // 如果是未登录的情况下跳转到闪屏页
+//                Intent(context, SplashActivity::class.java)
+//            } else {
+//                // 如果是已登录的情况下跳转到首页
+//                Intent(context, MainActivity::class.java)
+//            }
+            val intent: Intent = Intent(context, HomeActivity::class.java)
             if (context !is Activity) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }

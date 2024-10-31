@@ -25,7 +25,6 @@ import com.hjq.http.config.IRequestApi
 import com.hjq.http.model.HttpHeaders
 import com.hjq.http.model.HttpParams
 import com.hjq.toast.ToastUtils
-import com.hjq.umeng.UmengClient
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshLayout
 import com.tencent.bugly.crashreport.CrashReport
@@ -100,9 +99,6 @@ class AppApplication : Application() {
             // 本地异常捕捉
             CrashHandler.register(application)
 
-            // 友盟统计、登录、分享 SDK
-            UmengClient.init(application, AppConfig.isLogEnable())
-
             // Bugly 异常捕捉
             CrashReport.initCrashReport(application, AppConfig.getBuglyId(), AppConfig.isDebug())
 
@@ -128,7 +124,6 @@ class AppApplication : Application() {
                 .setInterceptor { api: IRequestApi, params: HttpParams, headers: HttpHeaders ->
                     // 添加全局请求头
                     headers.put("token", "66666666666")
-                    headers.put("deviceOaid", UmengClient.getDeviceOaid())
                     headers.put("versionName", AppConfig.getVersionName())
                     headers.put("versionCode", AppConfig.getVersionCode().toString())
                 }
