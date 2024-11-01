@@ -356,12 +356,19 @@ void VncViewer::start()
     // 启动帧率计时器
     m_frameTimer->start();
 
-    m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.height());
+    int viewWidth;
     m_phoneMode = (m_rfbCli->width < m_rfbCli->height) ? PORTRAIT : LANDSCAPE;
-    const QSize size = {static_cast<int>(m_realSize.width() * m_phoneScale), m_rfbCli->height};
+    if (PORTRAIT == m_phoneMode) {
+        m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.height());
+        viewWidth = static_cast<int>(m_realSize.width() * m_phoneScale);
+    } else {
+        m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.width());
+        viewWidth = static_cast<int>(m_realSize.height() * m_phoneScale);
+    }
+    const QSize size = {viewWidth, m_rfbCli->height};
 
-    qWarning() << "Phone mode: " << m_phoneMode << " Phone scale: " << m_phoneScale;
-    qWarning() << "Real size: " << m_realSize << " show size: " << size;
+    // qWarning() << "Phone mode: " << m_phoneMode << " Phone scale: " << m_phoneScale;
+    // qWarning() << "Real size: " << m_realSize << " show size: " << size;
 
     setSurfaceSize(size);
     emit sizeChanged(size);
