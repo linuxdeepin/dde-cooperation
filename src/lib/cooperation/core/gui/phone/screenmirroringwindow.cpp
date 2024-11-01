@@ -128,6 +128,24 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
     int w = (size.width() / scale);
     int h = (size.height() / scale) + titleBar->height() + BOTTOM_HEIGHT;
 
+    if (!initShow && screen) {
+        int width = screen->geometry().width();
+        int height = screen->geometry().height();
+        int offw = (size.height() / scale);
+        int offh = h;
+        if (size.width() > size.height()) {
+            //landscape
+            offw = w;
+            offh = w +  titleBar->height() + BOTTOM_HEIGHT;
+        }
+        // 计算窗口的X坐标，使其始终以竖屏在右边居中
+        int x = width - offw;
+        int y = (height - offh) / 2; // 垂直居中
+
+        this->move(x, y);
+        initShow = true;
+    }
+
     this->resize(w, h);
 }
 

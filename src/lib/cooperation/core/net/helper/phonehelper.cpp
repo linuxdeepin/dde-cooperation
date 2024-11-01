@@ -96,7 +96,6 @@ void PhoneHelper::onScreenMirroring()
 
 void PhoneHelper::onScreenMirroringStop()
 {
-    //todo
     resetScreenMirroringWindow();
 }
 
@@ -171,7 +170,8 @@ void PhoneHelper::resetScreenMirroringWindow()
 {
     if (!m_screenwindow)
         return;
-    delete m_screenwindow;
+
+    m_screenwindow->deleteLater();
     m_screenwindow = nullptr;
 }
 
