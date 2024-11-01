@@ -178,7 +178,11 @@ QPixmap QRCodeWidget::generateQRCode(const QString &text, int scale)
                     for (int y = 0; y < scale; ++y) {
                         // 判断当前绘制的黑色像素是否在空白区域内
                         if (!(iconX <= i * scale + x && i * scale + x < iconX + iconSize && iconY <= j * scale + y && j * scale + y < iconY + iconSize)) {
-                            image.setPixel(i * scale + x + 1, j * scale + y + 1, qRgb(0, 0, 0));   // 设置为黑色像素
+                            int pixelX = i * scale + x + 1;
+                            int pixelY = j * scale + y + 1;
+                            // 确保坐标在图像范围内
+                            if (pixelX >= 0 && pixelX < image.width() && pixelY >= 0 && pixelY < image.height())
+                                image.setPixel(pixelX, pixelY, qRgb(0, 0, 0));   // 设置为黑色像素
                         }
                     }
                 }

@@ -55,6 +55,7 @@ private:
 
     QPoint lastPos;
     bool isDragging = false;
+    bool initShow = false;
     VncViewer *m_vncViewer { nullptr };
 
     const int BOTTOM_HEIGHT = 56;

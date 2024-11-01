@@ -32,7 +32,6 @@ void VNCRecvThread::stopRun()
     if (_cl) {
         rfbClientSetClientData(_cl, nullptr, nullptr);
         _cl->FinishedFrameBufferUpdate = nullptr;
-        _cl = nullptr;
     }
 }
 
