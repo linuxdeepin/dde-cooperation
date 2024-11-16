@@ -146,7 +146,33 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
         initShow = true;
     }
 
-    this->resize(w, h);
+    // only the size is biger current size can be resized.
+    if (w > this->width() || h > this->height()) {
+        m_expectSize = QSize(0, 0); // has been resize, reset.
+        this->resize(w, h);
+    } else {
+        m_expectSize = size; // record expected size which is not resized
+    }
+}
+
+void ScreenMirroringWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::WindowStateChange) {
+        if (isMaximized() || isMinimized()) {
+            m_previousSize = size();
+        } else {
+            if (m_vncViewer) {
+                if (m_expectSize.width() > 0) {
+                    // back to previous size and then do expected changed.
+                    resize(m_previousSize);
+                    handleSizeChange(m_expectSize);
+                    return;
+                }
+            }
+        }
+    }
+
+    QWidget::changeEvent(event);
 }
 
 LockScreenWidget::LockScreenWidget(QWidget *parent)
