@@ -48,10 +48,15 @@ Q_SIGNALS:
 public slots:
     void handleSizeChange(const QSize &size);
 
+protected:
+    void changeEvent(QEvent *event);
+
 private:
     QStackedLayout *stackedLayout { nullptr };
     QWidget *bottomWidget { nullptr };
     QWidget *workWidget { nullptr };
+    QSize m_expectSize;  // record the size that vnc view expected
+    QSize m_previousSize;  // record the normal window size
 
     QPoint lastPos;
     bool isDragging = false;
