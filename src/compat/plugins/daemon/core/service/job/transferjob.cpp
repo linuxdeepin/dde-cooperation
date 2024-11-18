@@ -165,7 +165,7 @@ void TransferJob::start()
         // 读取所有文件的信息
         DLOG << "doTransfileJob path to save:" << _savedir;
         //并行读取文件数据
-        UNIGO([this]() {
+        QUNIGO([this]() {
             co::Json pathJson;
             pathJson.parse_from(_path);
             for (uint32 i = 0; i < pathJson.array_size(); i++) {

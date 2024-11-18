@@ -108,7 +108,7 @@ void DiscoveryJob::announcerRun(const fastring &info)
     _announcer_p = co::make<searchlight::Announcer>("ulink_service", UNI_RPC_PORT_BASE, info);
 
     ((searchlight::Announcer*)_announcer_p)->start([this](const QString &ip){
-        UNIGO([this, ip](){
+        QUNIGO([this, ip](){
             auto selfIp = Util::getFirstIp();
             if (selfIp.empty())
                 return;
