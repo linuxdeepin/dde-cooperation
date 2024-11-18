@@ -7,6 +7,8 @@
 
 #include "service/servicemanager.h"
 
+#include <QThreadPool>
+
 using namespace daemon_core;
 using namespace deepin_cross;
 
@@ -18,6 +20,7 @@ void daemonCorePlugin::initialize()
 
 bool daemonCorePlugin::start()
 {
+    QThreadPool::globalInstance()->setMaxThreadCount(32);
     ServiceManager *manager = new ServiceManager(this);
     manager->startRemoteServer();
     return true;
