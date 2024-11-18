@@ -562,9 +562,9 @@ void HandleIpcService::handleShareServerStart(const bool ok, const QString msg)
 
 void HandleIpcService::handleSearchDevice(co::Json json)
 {
-    UNIGO([json](){
-        SearchDevice de;
-        de.from_json(json);
+    SearchDevice de;
+    de.from_json(json);
+    QUNIGO([de](){
         DiscoveryJob::instance()->searchDeviceByIp(de.ip.c_str(), de.remove);
     });
 }

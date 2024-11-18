@@ -207,15 +207,30 @@ enum CurrentStatus {
     CURRENT_STATUS_SHARE_START = 6, // 5键鼠共享中
 };
 
-// use thread replace the coroutine
+//QUNIGO不会持续创建新线程，导致co的内存泄露
 #if defined(DISABLE_GO)
+#include <QThreadPool>
+class LambdaTask : public QRunnable {
+public:
+    using FunctionType = std::function<void()>;
+    explicit LambdaTask(FunctionType func) : function(std::move(func)) {}
+    void run() override {
+        function();
+    }
+private:
+    FunctionType function;
+};
+    #define QUNIGO(...) \
+    do { \
+        QThreadPool::globalInstance()->start(new LambdaTask(__VA_ARGS__)); \
+    } while(0)
     #define UNIGO(...) \
-        do { \
-            std::thread coThread(__VA_ARGS__); \
-            coThread.detach(); \
-        } while(0)
+    do { \
+        std::thread coThread(__VA_ARGS__); \
+        coThread.detach(); \
+    } while(0)
 #else
     #define UNIGO go
+    #define QUNIGO go
 #endif
-
 #endif // CONSTANT_H
