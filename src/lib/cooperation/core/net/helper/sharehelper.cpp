@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -83,6 +83,8 @@ void ShareHelperPrivate::initConnect()
     connect(taskDialog(), &CooperationTaskDialog::acceptRequest, this, [this] { onActionTriggered(NotifyAcceptAction); });
     connect(taskDialog(), &CooperationTaskDialog::waitCanceled, this, &ShareHelperPrivate::cancelShareApply);
 
+    connect(ConfigManager::instance(), &ConfigManager::appAttributeChanged, this, &ShareHelperPrivate::onAppAttributeChanged);
+
     connect(qApp, &QApplication::aboutToQuit, this, &ShareHelperPrivate::stopCooperation);
 }
 
@@ -109,11 +111,17 @@ void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &a
 void ShareHelperPrivate::stopCooperation()
 {
     if (targetDeviceInfo && targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
-#ifdef linux
-        static QString body(tr("Coordination with \"%1\" has ended"));
-        notifyMessage(body.arg(CommonUitls::elidedText(targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
-#endif
-        ShareHelper::instance()->disconnectToDevice(targetDeviceInfo);
+        q->disconnectToDevice(targetDeviceInfo);
+    }
+}
+
+void ShareHelperPrivate::onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value)
+{
+    if (group != AppSettings::GenericGroup)
+        return;
+
+    if (key == AppSettings::PeripheralShareKey) {
+        q->switchPeripheralShared(value.toBool());
     }
 }
 
@@ -163,12 +171,8 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
             // write server's fingerprint into trust server file.
             SslCertConf::ins()->writeTrustPrint(true, recvServerPrint.toStdString());
         }
+        client->setClientTargetIp(senderDeviceIp);
 
-        bool started = client->setClientTargetIp(senderDeviceIp) && client->startBarrier();
-        if (!started) {
-            WLOG << "Failed to start barrier client! " << senderDeviceIp.toStdString();
-            return;
-        }
         auto info = DiscoverController::instance()->findDeviceByIP(senderDeviceIp);
         if (!info) {
             WLOG << "AcceptAction, but not find: " << senderDeviceIp.toStdString();
@@ -187,6 +191,10 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
 
         static QString body(tr("Connection successful, coordinating with \"%1\""));
         notifyMessage(body.arg(CommonUitls::elidedText(info->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+
+        // check setting and turn on/off client
+        auto on = CooperationUtil::deviceInfo().value(AppSettings::PeripheralShareKey).toBool();
+        q->switchPeripheralShared(on);
     }
     recvServerPrint = ""; // clear received server's ingerprint
 }
@@ -275,7 +283,7 @@ void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
 
     info->setConnectStatus(DeviceInfo::Connectable);
     d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
-    DiscoverController::instance()->updateDeviceState({ d->targetDeviceInfo });
+    DiscoverController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
 
     static QString body(tr("Coordination with \"%1\" has ended"));
     d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
@@ -296,7 +304,7 @@ void ShareHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 
 bool ShareHelper::buttonVisible(const QString &id, const DeviceInfoPointer info)
 {
-    if (qApp->property("onlyTransfer").toBool() || !info->peripheralShared())
+    if (qApp->property("onlyTransfer").toBool())
         return false;
 
     if (id == ConnectButtonId && info->connectStatus() == DeviceInfo::ConnectStatus::Connectable)
@@ -525,4 +533,19 @@ int ShareHelper::selfSharing(const QString &shareIp)
     }
 
     return -1;
+}
+
+
+bool ShareHelper::switchPeripheralShared(bool on)
+{
+    auto client = ShareCooperationServiceManager::instance()->client();
+    if (client.isNull()) {
+        return false;
+    }
+
+    if (on) {
+        return client->startBarrier();
+    }
+    client->stopBarrier();
+    return true;
 }
