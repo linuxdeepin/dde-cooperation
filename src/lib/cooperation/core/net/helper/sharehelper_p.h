@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -34,6 +34,7 @@ public Q_SLOTS:
     void onActionTriggered(const QString &action);
     void stopCooperation();
     void cancelShareApply();
+    void onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value);
 
 public:
     ShareHelper *q;

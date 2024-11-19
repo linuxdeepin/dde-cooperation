@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -59,8 +59,7 @@ public:
     void setServerConfig(const DeviceInfoPointer selfDevice, const DeviceInfoPointer targetDevice);
     bool setServerConfig(const ShareServerConfig &config);
 
-    bool setClientTargetIp(const QString &screen, const QString &ip, const int &port);
-    bool setClientTargetIp(const QString &ip);
+    void setClientTargetIp(const QString &ip);
 
     void setEnableCrypto(bool enable);
     void setBarrierProfile(const QString &dir);
