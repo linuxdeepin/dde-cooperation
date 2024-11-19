@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -102,48 +102,10 @@ bool ShareCooperationService::setServerConfig(const ShareServerConfig &config)
     return true;
 }
 
-bool ShareCooperationService::setClientTargetIp(const QString &screen, const QString &ip, const int &port)
+void ShareCooperationService::setClientTargetIp(const QString &ip)
 {
-    if (BarrierType::Server == _brrierType) {
-        ELOG << "not the brrier client !!!!!!!";
-        return false;
-    }
-    if (!_cooConfig) {
-        ELOG << "the _cooConfig is null !!!!!"
-             << " ip = " << ip.toStdString() << ":" << port;
-        return false;
-    }
-    if (ip.isEmpty()) {
-        ELOG << "error param !!!!!"
-             << " ip = " << ip.toStdString() << ":" << port;
-        return false;
-    }
-
-    _cooConfig->setServerIp(ip);
-    _cooConfig->setPort(port == 0 ? UNI_SHARE_SERVER_PORT : port);
-    return true;
-}
-
-bool ShareCooperationService::setClientTargetIp(const QString &ip)
-{
-    if (BarrierType::Server == _brrierType) {
-        ELOG << "not the brrier client !!!!!!!";
-        return false;
-    }
-    if (!_cooConfig) {
-        ELOG << "the _cooConfig is null !!!!!"
-             << " ip = " << ip.toStdString() << ":" << UNI_SHARE_SERVER_PORT;
-        return false;
-    }
-    if (ip.isEmpty()) {
-        ELOG << "error param !!!!!"
-             << " ip = " << ip.toStdString() << ":" << UNI_SHARE_SERVER_PORT;
-        return false;
-    }
-
-    _cooConfig->setServerIp(ip);
-    _cooConfig->setPort(UNI_SHARE_SERVER_PORT);
-    return true;
+    cooConfig().setServerIp(ip);
+    cooConfig().setPort(UNI_SHARE_SERVER_PORT);
 }
 
 void ShareCooperationService::setEnableCrypto(bool enable)
@@ -159,7 +121,7 @@ void ShareCooperationService::setBarrierProfile(const QString &dir)
         pdir.mkpath(pdir.absolutePath());
     }
 
-    _cooConfig->setProfileDir(dir);
+    cooConfig().setProfileDir(dir);
 }
 
 bool ShareCooperationService::isRunning()
@@ -262,6 +224,10 @@ bool ShareCooperationService::clientArgs(QStringList &args, QString &app)
 
     if (!QFile::exists(app)) {
         WLOG << "Barrier client not found:" << app.toStdString();
+        return false;
+    }
+    if (cooConfig().serverIp().isEmpty()) {
+        WLOG << "Barrier client serverIp not setting!";
         return false;
     }
 

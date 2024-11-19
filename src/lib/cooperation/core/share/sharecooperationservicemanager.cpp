@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -46,6 +46,7 @@ QSharedPointer<ShareCooperationService> ShareCooperationServiceManager::server()
 void ShareCooperationServiceManager::stop()
 {
     _client->stopBarrier();
+    _client->setClientTargetIp(""); // reset client by serverIp
     emit stopShareServer();
 }
 
