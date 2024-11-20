@@ -133,6 +133,45 @@ bool ShareCooperationService::isRunning()
     return barrierProcess()->state() == QProcess::Running;
 }
 
+void ShareCooperationService::terminateAllBarriers()
+{
+#if defined(Q_OS_WIN)
+    // Windows
+    QProcess process;
+    process.start("tasklist");
+    process.waitForFinished();
+
+    QString output = process.readAllStandardOutput();
+    QStringList processList = output.split('\n', QString::SkipEmptyParts);
+    
+    for (const QString &line : processList) {
+        if (line.contains("barrier", Qt::CaseInsensitive)) {
+            QStringList tokens = line.split(QStringLiteral(" "), QString::SkipEmptyParts);
+            if (tokens.size() >= 2) {
+                QString pid = tokens[1]; // PID 在第二个字段
+                QProcess::execute("taskkill", QStringList() << "/F" << "/PID" << pid);
+                LOG << "Terminated barrier process with PID:" << pid.toStdString();
+            }
+        }
+    }
+#else
+    // Linux
+    QProcess process;
+    process.start("pgrep", QStringList() << "barrier");
+    process.waitForFinished();
+
+    QString output = process.readAllStandardOutput();
+    QStringList pidList = output.split('\n', QString::SkipEmptyParts);
+
+    for (const QString &pid : pidList) {
+        if (!pid.isEmpty()) {
+            QProcess::execute("kill", QStringList() << pid);
+            LOG << "Terminated barrier process with PID:" << pid.toStdString();
+        }
+    }
+#endif
+}
+
 bool ShareCooperationService::startBarrier()
 {
     LOG << "starting process";
@@ -165,6 +204,8 @@ bool ShareCooperationService::startBarrier()
         stopBarrier();
         return false;
     }
+
+    terminateAllBarriers();
 
     setBarrierProcess(new QProcess());
     connect(barrierProcess(), SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(barrierFinished(int, QProcess::ExitStatus)));
