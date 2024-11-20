@@ -65,6 +65,7 @@ public:
     void setBarrierProfile(const QString &dir);
 
     bool isRunning();
+    void terminateAllBarriers();
 
 public slots:
     bool restartBarrier();
