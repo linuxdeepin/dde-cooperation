@@ -11,7 +11,7 @@ android {
         // 无痛修改包名：https://www.jianshu.com/p/17327e191d2e
         applicationId 'com.deepin.assistant'
         versionCode 11
-        versionName "1.0.0"
+        versionName "1.0.2"
 
         // 仅保留中文语种的资源
         resConfigs 'zh'
