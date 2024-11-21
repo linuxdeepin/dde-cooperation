@@ -1,3 +1,15 @@
+dde-cooperation (1.0.2) unstable; urgency=medium
+
+  * v1.0.2 version update.
+  * feat: [cast]Update QR with url
+  * fix: [ui]Fix some ui layout issues
+  * fix: [share]Terminate all process before start one
+  * fix: [share]Make the peripheral share controlable by setting
+  * fix: Fix the vnc view not change mode if mobile has changed show mode
+  * fix: [memory leaks] Fix memory leaks
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 21 Nov 2024 04:55:18 +0800
+
 dde-cooperation (1.0.1) unstable; urgency=medium
 
   * v1.0.1 version update.
