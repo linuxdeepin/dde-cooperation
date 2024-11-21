@@ -32,6 +32,9 @@ inline constexpr char Kconnect[] { ":/icons/deepin/builtin/texts/connect_18px.sv
 inline constexpr char Kdisconnect[] { ":/icons/deepin/builtin/texts/disconnect_18px.svg" };
 #endif
 
+inline constexpr char KprotocolVer[] { "1.0.0" };
+inline constexpr char KdownloadUrl[] { "https://www.chinauos.com/resource/assistant" };
+
 PhoneHelper::PhoneHelper(QObject *parent)
     : QObject(parent), m_viewSize(0, 0)
 {
@@ -158,12 +161,13 @@ int PhoneHelper::notifyMessage(const QString &message, QStringList actions)
 
 void PhoneHelper::generateQRCode(const QString &ip, const QString &port, const QString &pin)
 {
-    QString combined = QString("host=%1&port=%2&pin=%3").arg(ip).arg(port).arg(pin);
+    QString combined = QString("host=%1&port=%2&pin=%3&pv=%4").arg(ip).arg(port).arg(pin).arg(KprotocolVer);
 
     QByteArray byteArray = combined.toUtf8();
     QByteArray base64 = byteArray.toBase64();
+    QString qrContent = QString("%1?mark=%2").arg(KdownloadUrl).arg(QString::fromUtf8(base64));
 
-    emit setQRCode(base64);
+    emit setQRCode(qrContent);
 }
 
 void PhoneHelper::resetScreenMirroringWindow()

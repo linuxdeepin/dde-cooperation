@@ -378,13 +378,17 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
             resultCodeFromScan?.let {
                 try {
-                    val decodedBytes = Base64.decode(it, Base64.DEFAULT)
+                    var mark = it.substringAfter("mark=")
+                    if (mark.isNullOrEmpty()) {
+                        mark = it // without mark=, back to old.
+                    }
+                    val decodedBytes = Base64.decode(mark, Base64.DEFAULT)
                     // 处理成功解码的字节
                     val decodedString = String(decodedBytes)
 
                     // 按照"&"分割字符串
                     val parameters = decodedString.split("&")
-                    if (parameters.size == 3) {
+                    if (parameters.size >= 3) {
                         // 创建一个存储解析结果的 Map
                         val resultMap = mutableMapOf<String, String>()
 
@@ -402,6 +406,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                         val ip = resultMap["host"]
                         val portString = resultMap["port"]
                         val pin = resultMap["pin"]
+                        val pv = resultMap["pv"] // protocol version
 
                         // 将 port 转换为 Int，如果失败默认为 0
                         val port = portString?.toIntOrNull() ?: 0
