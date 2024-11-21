@@ -1,4 +1,8 @@
-﻿#include "firsttipwidget.h"
+﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "firsttipwidget.h"
 
 #include <QFile>
 #include <QToolButton>
@@ -44,9 +48,14 @@ void FirstTipWidget::themeTypeChanged()
 
 void FirstTipWidget::showEvent(QShowEvent *event)
 {
-    auto ge = lineBalls.last()->geometry();
+    drawLine();
 
-    line->setGeometry(32, 26, qApp->devicePixelRatio(), ge.y() - 26);
+    // show the close button on the right top
+    const int BTN_SIZE = 18;
+    int bx = this->width() - BTN_SIZE - 15;
+    int by = 15;
+    tipBtn->setGeometry(bx, by, BTN_SIZE, BTN_SIZE);
+
     QWidget::showEvent(event);
 }
 
@@ -55,10 +64,17 @@ void FirstTipWidget::hideEvent(QHideEvent *event)
     QWidget::hideEvent(event);
 }
 
+void FirstTipWidget::resizeEvent(QResizeEvent *event)
+{
+    drawLine();
+
+    QWidget::resizeEvent(event);
+}
+
 void FirstTipWidget::initUI()
 {
-    inittipBtn();
     initbackgroundFrame();
+    inittipBtn();
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(0);
@@ -195,7 +211,7 @@ void FirstTipWidget::initbackgroundFrame()
 
 void FirstTipWidget::inittipBtn()
 {
-    tipBtn = new QToolButton(dynamic_cast<QWidget *>(parent()));
+    tipBtn = new QToolButton(this);
     tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_white.svg"));
     tipBtn->setIconSize(QSize(8, 8));
     connect(tipBtn, &QToolButton::clicked, this, [this]() {
@@ -208,21 +224,16 @@ void FirstTipWidget::inittipBtn()
                           "QToolButton::hover { background-color: rgba(0, 0, 0, 0.2); border-radius: 9px; }");
 }
 
-void FirstTipWidget::setVisible(bool visible)
+void FirstTipWidget::drawLine()
 {
-    QWidget::setVisible(visible);
-    tipBtn->setVisible(visible);
-#ifdef linux
-    tipBtn->setGeometry(467, 68, 18, 18);
-#    ifdef DTKWIDGET_CLASS_DSizeMode
-    tipBtn->setGeometry(467, DSizeModeHelper::element(53, 68), 18, 18);
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this] {
-        tipBtn->setGeometry(467, DSizeModeHelper::element(53, 68), 18, 18);
-    });
-#    endif
-#else
-    tipBtn->setGeometry(467, 115, 18, 18);
-#endif
+    const int TOP_SPACE = 25;
+    auto ge = lineBalls.last()->geometry();
+
+    int lx = ge.x() + ge.width() / 2  - 1; // first ball's x
+    int ly = TOP_SPACE + ge.height() / 2; // first ball's y
+    int lw = qApp->devicePixelRatio();
+    int lh = ge.y() - ly;
+    line->setGeometry(lx, ly, lw, lh);
 }
 
 void LineWidget::paintEvent(QPaintEvent *event)
