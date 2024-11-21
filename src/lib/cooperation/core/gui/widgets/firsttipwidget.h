@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -20,17 +20,18 @@ class FirstTipWidget : public QWidget
 public:
     explicit FirstTipWidget(QWidget *parent = nullptr);
 
-    void setVisible(bool visible) override;
     void themeTypeChanged();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     void initUI();
     void initbackgroundFrame();
     void inittipBtn();
+    void drawLine();
 
     QFrame *backgroundFrame { nullptr };
     QLabel *bannerLabel { nullptr };

@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -192,13 +192,13 @@ void SettingDialogPrivate::createBasicWidget()
     nameItem->setItemInfo(tr("Device name"), nameEdit);
 
     contentLayout->addWidget(basicLable);
-    contentLayout->addSpacing(10);
+    contentLayout->addSpacing(12);
     contentLayout->addWidget(findItem);
-    contentLayout->addSpacing(4);
+    contentLayout->addSpacing(6);
     contentLayout->addWidget(tipLabel);
-    contentLayout->addSpacing(16);
+    contentLayout->addSpacing(12);
     contentLayout->addWidget(nameItem);
-    contentLayout->addSpacing(10);
+    contentLayout->addSpacing(12);
 }
 
 void SettingDialogPrivate::createDeviceShareWidget()
@@ -251,13 +251,13 @@ void SettingDialogPrivate::createDeviceShareWidget()
     connectItem->setItemInfo(tr("Connection direction"), connectCB);
 
     contentLayout->addWidget(deviceShareItem);
-    contentLayout->addSpacing(4);
+    contentLayout->addSpacing(6);
     contentLayout->addWidget(tipLabel);
-    contentLayout->addSpacing(16);
+    contentLayout->addSpacing(12);
     contentLayout->addWidget(connectItem);
-    contentLayout->addSpacing(4);
+    contentLayout->addSpacing(6);
     contentLayout->addWidget(tipLabel2);
-    contentLayout->addSpacing(16);
+    contentLayout->addSpacing(12);
 }
 
 void SettingDialogPrivate::createTransferWidget()
@@ -277,9 +277,9 @@ void SettingDialogPrivate::createTransferWidget()
     fileSaveItem->setItemInfo(tr("File save location"), chooserEdit);
 
     contentLayout->addWidget(transferItem);
-    contentLayout->addSpacing(10);
+    contentLayout->addSpacing(12);
     contentLayout->addWidget(fileSaveItem);
-    contentLayout->addSpacing(10);
+    contentLayout->addSpacing(12);
 #ifndef linux
     setQComboxWinStyle(transferCB);
 #endif
@@ -311,9 +311,9 @@ void SettingDialogPrivate::createClipboardShareWidget()
 #endif
 
     contentLayout->addWidget(clipShareItem);
-    contentLayout->addSpacing(4);
+    contentLayout->addSpacing(6);
     contentLayout->addWidget(tipLabel);
-    contentLayout->addSpacing(16);
+    contentLayout->addSpacing(12);
 }
 
 void SettingDialogPrivate::onFindComboBoxValueChanged(int index)

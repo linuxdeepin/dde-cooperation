@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -205,12 +205,16 @@ void NoResultTipWidget::initUI()
     titleLabel->setWordWrap(true);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
-    contentLayout->setSpacing(5);
     contentLayout->addWidget(titleLabel);
+    contentLayout->setSpacing(10);
     contentLayout->addWidget(contentLable1);
+    contentLayout->setSpacing(5);
     contentLayout->addWidget(contentLable2);
+    contentLayout->setSpacing(5);
     contentLayout->addWidget(contentLable3);
+    contentLayout->setSpacing(5);
     contentLayout->addWidget(contentLable4);
+    contentLayout->addStretch(1);
     contentLayout->setContentsMargins(5, 3, 5, 5);
     setLayout(contentLayout);
 
@@ -300,7 +304,7 @@ BottomLabel::BottomLabel(QWidget *parent)
     : QWidget(parent)
 {
     initUI();
-    setFixedSize(500, 33);
+    setMaximumHeight(40);
     dialog->installEventFilter(this);
 }
 
@@ -339,14 +343,14 @@ void BottomLabel::initUI()
 {
     QString ip = QString(tr("Local IP: %1").arg("---"));
     ipLabel = new QLabel(ip);
-    ipLabel->setAlignment(Qt::AlignHCenter);
-    ipLabel->setFixedHeight(30);
+    ipLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     CooperationGuiHelper::setAutoFont(ipLabel, 12, QFont::Normal);
 
     dialog = new CooperationAbstractDialog(this);
     QScrollArea *scrollArea = new QScrollArea(dialog);
-    tipLabel = new QLabel(qobject_cast<QWidget *>(this->parent()));
+    tipLabel = new QLabel(this);
     tipLabel->installEventFilter(this);
+    tipLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
 
 #ifdef linux
     updateSizeMode();
@@ -355,7 +359,6 @@ void BottomLabel::initUI()
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &BottomLabel::updateSizeMode);
 #    endif
 #else
-    tipLabel->setGeometry(455, 600, 24, 24);
     tipLabel->setPixmap(QIcon(":/icons/deepin/builtin/light/icons/icon_tips_128px.svg").pixmap(24, 24));
     dialog->setWindowFlags(dialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     dialog->setStyleSheet("background-color: white;"
@@ -388,9 +391,18 @@ void BottomLabel::initUI()
     CooperationGuiHelper::setAutoFont(tipWidgt, 14, QFont::Normal);
     CooperationGuiHelper::setAutoFont(tipWidgt, 12, QFont::Normal);
 
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    hLayout->addSpacing(30); // left fix width
+    hLayout->addStretch();
+    hLayout->addWidget(ipLabel);
+    hLayout->addStretch();
+    tipLabel->setFixedWidth(30); // right fix width
+    tipLabel->setAlignment(Qt::AlignRight);
+    hLayout->addWidget(tipLabel);
+    hLayout->setAlignment(Qt::AlignHCenter);
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(ipLabel);
-    mainLayout->setAlignment(Qt::AlignHCenter);
+    mainLayout->addLayout(hLayout);
     setLayout(mainLayout);
 
     timer = new QTimer(this);
@@ -403,21 +415,22 @@ void BottomLabel::showDialog() const
     timer->stop();
     if (dialog->isVisible())
         return;
-    QMainWindow *activeMainWindow = qobject_cast<QMainWindow *>(qApp->topLevelAt(QCursor::pos()));
-    dialog->move(activeMainWindow->pos() + QPoint(228, 398));
+
+    // get dailog pos base on this bottom label
+    QPoint globalLabelPos = this->mapToGlobal(QPoint(0, 0)); // lable's showing pos
+    int x = this->width() - 10 - dialog->width();
+    int y = 0 - dialog->height();
+
+    dialog->move(globalLabelPos + QPoint(x, y));
     dialog->show();
 }
 
 void BottomLabel::updateSizeMode()
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    tipLabel->setGeometry(460, DSizeModeHelper::element(562, 552), 24, 24);
     int size = DSizeModeHelper::element(18, 24);
-    ipLabel->setFixedHeight(DSizeModeHelper::element(15, 30));
     tipLabel->setPixmap(QIcon::fromTheme("icon_tips").pixmap(size, size));
 #else
-    tipLabel->setGeometry(480, 552, 24, 24);
-    ipLabel->setFixedHeight(30);
     tipLabel->setPixmap(QIcon(":/icons/deepin/builtin/light/icons/icon_tips.svg").pixmap(24, 24));
 #endif
 }
