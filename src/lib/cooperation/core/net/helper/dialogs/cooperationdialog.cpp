@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -90,7 +90,7 @@ void WaitConfirmWidget::init()
     vLayout->addWidget(spinner, 0, Qt::AlignHCenter);
     vLayout->addSpacing(15);
     vLayout->addWidget(label, 0, Qt::AlignHCenter);
-    vLayout->addSpacerItem(new QSpacerItem(1, 80, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    vLayout->addStretch();
 }
 
 ProgressWidget::ProgressWidget(QWidget *parent)
@@ -181,10 +181,9 @@ void ResultWidget::init()
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 5, 0, 0);
-    mainLayout->addWidget(iconLabel, 1, Qt::AlignHCenter);
-    mainLayout->addWidget(msgLabel, 1, Qt::AlignCenter);
-    mainLayout->addLayout(btnLayout, 1);
-    setMinimumHeight(150);
+    mainLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
+    mainLayout->addWidget(msgLabel);
+    mainLayout->addLayout(btnLayout);
 }
 
 bool ResultWidget::getResult() const
@@ -202,23 +201,21 @@ void CooperationTransDialog::showConfirmDialog(const QString &name)
 {
     confirmWidget->setDeviceName(name);
     mainLayout->setCurrentWidget(confirmWidget);
-    setHidden(false);
+    show();
 }
 
 void CooperationTransDialog::showWaitConfirmDialog()
 {
     waitconfirmWidget->startMovie();
     mainLayout->setCurrentWidget(waitconfirmWidget);
-    setFixedHeight(234);
-    setHidden(false);
+    show();
 }
 
 void CooperationTransDialog::showResultDialog(bool success, const QString &msg, bool view)
 {
-    resultWidget->setResult(success, msg, view);
     mainLayout->setCurrentWidget(resultWidget);
-    setFixedHeight(250);
-    setHidden(false);
+    resultWidget->setResult(success, msg, view);
+    show();
 }
 
 void CooperationTransDialog::showProgressDialog(const QString &title)
@@ -227,9 +224,8 @@ void CooperationTransDialog::showProgressDialog(const QString &title)
         return;
 
     progressWidget->setTitle(title);
-    setFixedHeight(223);
     mainLayout->setCurrentWidget(progressWidget);
-    setHidden(false);
+    show();
 }
 
 void CooperationTransDialog::updateProgress(int value, const QString &msg)
@@ -256,23 +252,15 @@ void CooperationTransDialog::closeEvent(QCloseEvent *e)
 
 void CooperationTransDialog::init()
 {
-    QWidget *contentWidget = new QWidget(this);
-    mainLayout = new QStackedLayout(this);
-
-    QVBoxLayout *vLayout = new QVBoxLayout(contentWidget);
-    vLayout->setContentsMargins(0, 0, 0, 0);
-    vLayout->addLayout(mainLayout);
-
 #ifdef linux
     setIcon(QIcon::fromTheme("dde-cooperation"));
     setTitle(tr("File Transfer"));
-    addContent(contentWidget);
 #else
     setWindowTitle(tr("File transfer"));
-    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowIcon(QIcon(":/icons/deepin/builtin/icons/dde-cooperation_128px.svg"));
-    setFixedWidth(380);
 #endif
+    // it has to set fixed size, which may crash on treeland and workaround UI not smooth.
+    setFixedSize(380, 220);
 
     confirmWidget = new ConfirmWidget(this);
     connect(confirmWidget, &ConfirmWidget::rejected, this, &CooperationTransDialog::rejected);
@@ -289,8 +277,19 @@ void CooperationTransDialog::init()
     connect(resultWidget, &ResultWidget::viewed, this, &CooperationTransDialog::viewed);
     connect(resultWidget, &ResultWidget::completed, this, &CooperationTransDialog::close);
 
+    mainLayout = new QStackedLayout;
     mainLayout->addWidget(confirmWidget);
     mainLayout->addWidget(waitconfirmWidget);
     mainLayout->addWidget(progressWidget);
     mainLayout->addWidget(resultWidget);
+
+#ifdef linux
+    QWidget *contentWidget = new QWidget(this);
+    contentWidget->setLayout(mainLayout);
+    addContent(contentWidget);
+    setContentsMargins(0, 0, 0, 0);
+#else
+    setLayout(mainLayout);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+#endif
 }
