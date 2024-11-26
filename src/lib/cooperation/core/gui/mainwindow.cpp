@@ -91,6 +91,11 @@ void MainWindowPrivate::handleSettingMenuTriggered(int action)
     }
 }
 
+void MainWindowPrivate::setIP(const QString &ip)
+{
+    bottomLabel->setIp(ip);
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : CooperationMainWindow(parent),
       d(new MainWindowPrivate(this))
@@ -173,6 +178,7 @@ void MainWindow::addDevice(const QList<DeviceInfoPointer> &infoList)
     _userAction = false;
 }
 
+#ifdef ENABLE_PHONE
 void MainWindow::addMobileDevice(const DeviceInfoPointer info)
 {
     onSwitchMode(kMobile);
@@ -193,6 +199,7 @@ void MainWindow::addMobileOperation(const QVariantMap &map)
 {
     d->phoneWidget->addOperation(map);
 }
+#endif
 
 void MainWindow::removeDevice(const QString &ip)
 {
