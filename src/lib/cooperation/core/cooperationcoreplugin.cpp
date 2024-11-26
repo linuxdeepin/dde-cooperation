@@ -10,7 +10,9 @@
 #include "net/transferwrapper.h"
 #include "net/helper/transferhelper.h"
 #include "net/helper/sharehelper.h"
+#ifdef ENABLE_PHONE
 #include "net/helper/phonehelper.h"
+#endif
 #include "discover/deviceinfo.h"
 
 #include "common/commonutils.h"
@@ -77,6 +79,7 @@ bool CooperaionCorePlugin::isMinilize()
     ;
 }
 
+#ifdef ENABLE_PHONE
 void CooperaionCorePlugin::initMobileModule()
 {
     connect(PhoneHelper::instance(), &PhoneHelper::addMobileInfo, dMain.get(), &MainWindow::addMobileDevice);
@@ -85,6 +88,7 @@ void CooperaionCorePlugin::initMobileModule()
 
     PhoneHelper::instance()->registConnectBtn(dMain.get());
 }
+#endif
 
 bool CooperaionCorePlugin::start()
 {
@@ -97,7 +101,9 @@ bool CooperaionCorePlugin::start()
     } else {
         DiscoverController::instance();
         NetworkUtil::instance();
+#ifdef ENABLE_PHONE
         initMobileModule();
+#endif
 
         ShareHelper::instance()->registConnectBtn();
 

@@ -12,6 +12,9 @@
 #include <QAction>
 #include <QMenu>
 #include <QPainterPath>
+#include <QStackedLayout>
+
+#include <gui/widgets/cooperationstatewidget.h>
 
 using namespace cooperation_core;
 void MainWindowPrivate::initWindow()
@@ -22,7 +25,17 @@ void MainWindowPrivate::initWindow()
     q->setWindowIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/dde-cooperation_128px.png"));
 
     workspaceWidget = new WorkspaceWidget(q);
-    q->setCentralWidget(workspaceWidget);
+
+    QWidget *centralWidget = new QWidget();
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    bottomLabel = new BottomLabel(q);
+    mainLayout->addWidget(workspaceWidget);
+    mainLayout->addWidget(bottomLabel);
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    centralWidget->setLayout(mainLayout);
+    q->setCentralWidget(centralWidget);
+
     workspaceWidget->setStyleSheet("background-color: rgba(230,230,230, 0.1);"
                                    "border-bottom-right-radius: 10px;"
                                    "border-bottom-left-radius: 10px;");
@@ -72,17 +85,6 @@ void MainWindowPrivate::initTitleBar()
                             "border-top-left-radius: 10px;"
                             "}");
     titleBar->setFocusPolicy(Qt::ClickFocus);
-
-    QToolButton *refreshBtn = new QToolButton(q);
-    refreshBtn->setIcon(QIcon(":/icons/deepin/builtin/texts/refresh_14px.svg"));
-    refreshBtn->setIconSize(QSize(16, 16));
-    refreshBtn->setToolTip(tr("Re-scan for devices"));
-    refreshBtn->setStyleSheet("QToolButton {"
-                              "background-color: rgba(0,0,0,0.15);"
-                              "border-radius: 8px;"
-                              "}");
-    refreshBtn->setFixedSize(35, 35);
-    connect(refreshBtn, &QToolButton::clicked, q, &MainWindow::onLookingForDevices);
 
     QToolButton *closeButton = new QToolButton(titleBar);
     closeButton->setStyleSheet("QWidget {"
@@ -138,7 +140,6 @@ void MainWindowPrivate::initTitleBar()
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);
 
     titleLayout->addWidget(iconLabel);
-    titleLayout->addWidget(refreshBtn, Qt::AlignLeft);
     titleLayout->addStretch();
     titleLayout->addWidget(helpButton, Qt::AlignHCenter);
     titleLayout->addWidget(minButton, Qt::AlignHCenter);

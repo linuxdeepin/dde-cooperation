@@ -53,9 +53,17 @@ void WorkspaceWidgetPrivate::initUI()
     CooperationGuiHelper::setAutoFont(deviceLabel, 14, QFont::Normal);
     QHBoxLayout *hLayout = new QHBoxLayout;
     refreshBtn = new CooperationIconButton();
-    refreshBtn->setIcon(QIcon::fromTheme("refresh_tip"));
     refreshBtn->setIconSize(QSize(16, 16));
+#ifdef __linux__
+    refreshBtn->setIcon(QIcon::fromTheme("refresh_tip"));
     refreshBtn->setFlat(true);
+#else
+    refreshBtn->setIcon(QIcon(":/icons/deepin/builtin/texts/refresh_tip_14px.svg"));
+    refreshBtn->setStyleSheet("QToolButton {"
+                              "background-color: rgba(0,0,0,0.15);"
+                              "border-radius: 8px;"
+                              "}");
+#endif
     refreshBtn->setToolTip(tr("Re-scan for devices"));
     refreshBtn->setFixedSize(24, 24);
     connect(refreshBtn, &QPushButton::clicked, q, &WorkspaceWidget::refresh);

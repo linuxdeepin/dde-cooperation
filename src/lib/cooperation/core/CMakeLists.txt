@@ -39,8 +39,6 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/dialogs/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/widgets/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/widgets/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/gui/phone/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/gui/phone/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/*"
@@ -48,8 +46,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/share/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/net/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/net/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/sharehelper*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/transferhelper*"
     "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/dialogs/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
@@ -75,7 +73,10 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
         "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/phone/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/phone/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/net/linux/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/phonehelper*"
     )
     find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 else()
@@ -97,9 +98,12 @@ list(APPEND LINKLIBS sessionmanager)
 list(APPEND LINKLIBS sslconf)
 list(APPEND LINKLIBS vncclient)
 
-find_library(QRENCODE_LIBRARY qrencode)
-if(NOT QRENCODE_LIBRARY)
-    message(FATAL_ERROR "libqrencode not found. Please install it.")
+if (NOT WIN32)
+    find_library(QRENCODE_LIBRARY qrencode)
+    if(NOT QRENCODE_LIBRARY)
+        message(FATAL_ERROR "libqrencode not found. Please install it.")
+    endif()
+    add_definitions(-DENABLE_PHONE=1)
 endif()
 
 add_library(${PROJECT_NAME}
@@ -144,8 +148,14 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Concurrent
     QtZeroConf
     CuteIPC
-    qrencode
 )
+
+if (NOT WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        qrencode
+    )
+endif()
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
