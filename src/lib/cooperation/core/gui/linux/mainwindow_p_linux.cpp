@@ -27,12 +27,14 @@ void MainWindowPrivate::initWindow()
     q->setFixedSize(500, 630);
     q->setWindowIcon(QIcon::fromTheme("dde-cooperation"));
 
-    phoneWidget = new PhoneWidget(q);
     workspaceWidget = new WorkspaceWidget(q);
 
     stackedLayout = new QStackedLayout;
     stackedLayout->addWidget(workspaceWidget);
+#ifdef ENABLE_PHONE
+    phoneWidget = new PhoneWidget(q);
     stackedLayout->addWidget(phoneWidget);
+#endif
     stackedLayout->setCurrentIndex(0);
 
     QWidget *centralWidget = new QWidget();
@@ -47,15 +49,10 @@ void MainWindowPrivate::initWindow()
     q->setCentralWidget(centralWidget);
 }
 
-void MainWindowPrivate::setIP(const QString &ip)
-{
-    bottomLabel->setIp(ip);
-}
-
 void MainWindowPrivate::initTitleBar()
 {
     auto titleBar = q->titlebar();
-
+#ifdef ENABLE_PHONE
     DButtonBox *switchBtn = new DButtonBox(q);
     QList<DButtonBoxButton *> list;
     DButtonBoxButton *PCBtn = new DButtonBoxButton(tr("Computer"));
@@ -67,7 +64,7 @@ void MainWindowPrivate::initTitleBar()
     PCBtn->setChecked(true);
     connect(PCBtn, &DButtonBoxButton::clicked, q, [this] { q->onSwitchMode(CooperationMode::kPC); });
     connect(mobileBtn, &DButtonBoxButton::clicked, q, [this] { q->onSwitchMode(CooperationMode::kMobile); });
-
+#endif
     if (qApp->property("onlyTransfer").toBool()) {
         titleBar->setMenuVisible(false);
         titleBar->addWidget(new QLabel(tr("Selection of delivery device")), Qt::AlignHCenter);

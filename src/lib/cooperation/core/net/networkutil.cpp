@@ -13,7 +13,9 @@
 #include "discover/discovercontroller.h"
 #include "helper/transferhelper.h"
 #include "helper/sharehelper.h"
+#ifdef ENABLE_PHONE
 #include "helper/phonehelper.h"
+#endif
 #include "utils/cooperationutil.h"
 
 #include "compatwrapper.h"
@@ -135,6 +137,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             }
         }
             return true;
+#ifdef ENABLE_PHONE
         case APPLY_SCAN_CONNECT: {
             ApplyMessage req, res;
             req.from_json(json_value);
@@ -186,6 +189,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
                                           Qt::QueuedConnection);
         }
             return true;
+#endif
         }
 
         // unhandle message
@@ -245,12 +249,13 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
                                       Q_ARG(int, 0),
                                       Q_ARG(QString, reason),
                                       Q_ARG(bool, false));
-
+#ifdef ENABLE_PHONE
         //mobile
         DeviceInfoPointer info(new DeviceInfo(reason, QString()));
         q->metaObject()->invokeMethod(PhoneHelper::instance(), "onDisconnect",
                                       Qt::QueuedConnection,
                                       Q_ARG(DeviceInfoPointer, info));
+#endif
     }
 }
 

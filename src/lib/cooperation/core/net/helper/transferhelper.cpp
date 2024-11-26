@@ -19,6 +19,7 @@
 #include <QStandardPaths>
 #include <QTime>
 #include <QProcess>
+#include <QRegularExpression>
 
 #ifdef linux
 #    include "base/reportlog/reportlogmanager.h"

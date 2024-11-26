@@ -6,7 +6,9 @@
 #define MAINWINDOW_P_H
 
 #include "widgets/workspacewidget.h"
+#ifdef ENABLE_PHONE
 #include "phone/phonewidget.h"
+#endif
 
 #include <QObject>
 #include <QPainter>
@@ -44,7 +46,9 @@ public:
     MainWindow *q { nullptr };
     QStackedLayout *stackedLayout { nullptr };
     WorkspaceWidget *workspaceWidget { nullptr };
+#ifdef ENABLE_PHONE
     PhoneWidget *phoneWidget { nullptr };
+#endif
     bool leftButtonPressed { false };
     QPoint lastPosition;
     BottomLabel *bottomLabel { nullptr };
