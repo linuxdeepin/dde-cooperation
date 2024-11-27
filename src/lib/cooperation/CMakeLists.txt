@@ -1,5 +1,7 @@
 ﻿
-include("libvnc.cmake")
+if (CMAKE_SYSTEM MATCHES "Linux")
+    include("libvnc.cmake")
+endif()
 
 add_subdirectory(core)
 if (CMAKE_SYSTEM MATCHES "Linux")
