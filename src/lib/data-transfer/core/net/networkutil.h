@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -33,10 +33,12 @@ public:
 public slots:
     void handleMiscMessage(const QString &msg);
     // compat old protocol
+#ifdef ENABLE_COMPAT
     void handleCompatConnectResult(int result, const QString &ip);
     void compatTransJobStatusChanged(int id, int result, const QString &msg);
     void compatFileTransStatusChanged(const QString &path, quint64 total, quint64 current, quint64 millisec);
     void stop();
+#endif
 
 private:
     explicit NetworkUtil(QObject *parent = nullptr);

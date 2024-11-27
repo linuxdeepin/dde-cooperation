@@ -44,13 +44,22 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/discover/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/share/*"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/cooconstrants.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/networkutil*"
     "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/sharehelper*"
     "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/transferhelper*"
     "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/dialogs/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
+
+if(ENABLE_CUTEIPC)
+    #include CuteIPC using wrapper files
+    FILE(GLOB COMPAT_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/compatstruct.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/compatwrapper*"
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/transferwrapper.*"
+    )
+endif()
 
 # 在这里添加业务代码
 if (CMAKE_SYSTEM MATCHES "Windows")
@@ -59,7 +68,6 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/net/win/*.cpp"
     )
-   find_package(Qt5 COMPONENTS Sql REQUIRED)
 
    # 从定位输出目录
    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/dde-cooperation)
@@ -111,6 +119,7 @@ add_library(${PROJECT_NAME}
     ${BUSS_FILES}
     ${BARRIER_CONFIG_FILES}
     ${RESOURCE_FILES}
+    ${COMPAT_FILES}
 )
 
 include(GNUInstallDirs)
@@ -147,8 +156,14 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Concurrent
     QtZeroConf
-    CuteIPC
 )
+
+if(ENABLE_CUTEIPC)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        CuteIPC
+    )
+endif()
 
 if (NOT WIN32)
     target_link_libraries(${PROJECT_NAME}

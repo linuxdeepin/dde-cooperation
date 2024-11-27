@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -47,14 +47,18 @@ public:
 
     QString deviceInfoStr();
 
+#ifdef ENABLE_COMPAT
     //compat share
     void compatSendStartShare(const QString &screenName);
     void stop();
+#endif
 
 public slots:
+#ifdef ENABLE_COMPAT
     void handleCompatConnectResult(int result, const QString &ip);
     void handleCompatRegister(bool reg, const QString &infoJson);
     void handleCompatDiscover();
+#endif
 
     void trySearchDevice(const QString &ip);
     void updateStorageConfig(const QString &value);

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,7 +7,9 @@
 #include "utils/historymanager.h"
 #include "discover/discovercontroller.h"
 #include "net/networkutil.h"
+#ifdef ENABLE_COMPAT
 #include "net/transferwrapper.h"
+#endif
 #include "net/helper/transferhelper.h"
 #include "net/helper/sharehelper.h"
 #ifdef ENABLE_PHONE
@@ -129,8 +131,10 @@ bool CooperaionCorePlugin::start()
         // start network status listen after all ready
         CooperationUtil::instance()->initNetworkListener();
 
+#ifdef ENABLE_COMPAT
         // start local ipc listen for transfer app
         TransferWrapper::instance()->listen(qAppName());
+#endif
 
 #ifdef __linux__
         if (CommonUitls::isFirstStart()) {
@@ -153,5 +157,7 @@ bool CooperaionCorePlugin::start()
 
 void CooperaionCorePlugin::stop()
 {
+#ifdef ENABLE_COMPAT
     NetworkUtil::instance()->stop();
+#endif
 }
