@@ -56,11 +56,11 @@ public:
     QLabel *deviceLabel { nullptr };
     CooperationSearchEdit *searchEdit { nullptr };
     FirstTipWidget *tipWidget { nullptr };
-    BottomLabel *bottomLabel { nullptr };
     LookingForDeviceWidget *lfdWidget { nullptr };
     NoNetworkWidget *nnWidget { nullptr };
     NoResultWidget *nrWidget { nullptr };
     DeviceListWidget *dlWidget { nullptr };
+    CooperationIconButton *refreshBtn { nullptr };
 
     WorkspaceWidget::PageName currentPage { WorkspaceWidget::kUnknownPage };
     QSharedPointer<SortFilterWorker> sortFilterWorker { nullptr };

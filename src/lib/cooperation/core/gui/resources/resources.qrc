@@ -10,7 +10,7 @@
         <file>icons/deepin/builtin/texts/connect_18px.svg</file>
         <file>icons/deepin/builtin/texts/disconnect_18px.svg</file>
         <file>icons/deepin/builtin/texts/history_18px.svg</file>
-        <file>icons/deepin/builtin/texts/refresh_14px.svg</file>
+        <file>icons/deepin/builtin/texts/refresh_tip_14px.svg</file>
         <file>icons/deepin/builtin/texts/send_18px.svg</file>
         <file>icons/deepin/builtin/texts/display_left_24px.svg</file>
         <file>icons/deepin/builtin/texts/display_right_24px.svg</file>
@@ -40,5 +40,14 @@
         <file>icons/deepin/builtin/light/icons/banner_128px.png</file>
         <file>icons/deepin/builtin/icons/close_white.svg</file>
         <file>icons/deepin/builtin/icons/close.svg</file>
+        <file>icons/deepin/builtin/icons/uos_assistant.png</file>
+        <file>icons/deepin/builtin/icons/uos_assistant@1x.png</file>
+        <file>icons/deepin/builtin/icons/uos_assistant@3x.png</file>
+        <file>icons/deepin/builtin/light/icons/connect_phone_16px.svg</file>
+        <file>icons/deepin/builtin/texts/phone_back_18px.svg</file>
+        <file>icons/deepin/builtin/texts/home_18px.svg</file>
+        <file>icons/deepin/builtin/texts/multi_task_18px.svg</file>
+        <file>icons/deepin/builtin/icons/background_app.png</file>
+        <file>icons/deepin/builtin/dark/icons/connect_phone_16px.svg</file>
     </qresource>
 </RCC>

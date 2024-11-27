@@ -51,6 +51,27 @@ void WorkspaceWidgetPrivate::initUI()
     deviceLabel = new QLabel(tr("Nearby Device"));
     deviceLabel->setContentsMargins(20, 0, 10, 0);
     CooperationGuiHelper::setAutoFont(deviceLabel, 14, QFont::Normal);
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    refreshBtn = new CooperationIconButton();
+    refreshBtn->setIconSize(QSize(16, 16));
+#ifdef __linux__
+    refreshBtn->setIcon(QIcon::fromTheme("refresh_tip"));
+    refreshBtn->setFlat(true);
+#else
+    refreshBtn->setIcon(QIcon(":/icons/deepin/builtin/texts/refresh_tip_14px.svg"));
+    refreshBtn->setStyleSheet("QToolButton {"
+                              "background-color: rgba(0,0,0,0.15);"
+                              "border-radius: 8px;"
+                              "}");
+#endif
+    refreshBtn->setToolTip(tr("Re-scan for devices"));
+    refreshBtn->setFixedSize(24, 24);
+    connect(refreshBtn, &QPushButton::clicked, q, &WorkspaceWidget::refresh);
+
+    hLayout->addWidget(deviceLabel);
+    hLayout->addWidget(refreshBtn);
+    hLayout->setSpacing(0);
+    hLayout->setAlignment(Qt::AlignLeft);
 
     lfdWidget = new LookingForDeviceWidget(q);
     nnWidget = new NoNetworkWidget(q);
@@ -74,14 +95,12 @@ void WorkspaceWidgetPrivate::initUI()
 #else
     mainLayout->addWidget(searchEdit);
 #endif
-    bottomLabel = new BottomLabel(q);
 
     mainLayout->addWidget(tipWidget);
     mainLayout->addSpacing(10);
-    mainLayout->addWidget(deviceLabel);
+    mainLayout->addLayout(hLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(stackedLayout);
-    mainLayout->addWidget(bottomLabel);
     q->setLayout(mainLayout);
 }
 
@@ -174,14 +193,18 @@ void WorkspaceWidget::switchWidget(PageName page)
     if (d->currentPage == page || page == kUnknownPage)
         return;
 
-    if (page == kDeviceListWidget)
+    if (page == kDeviceListWidget) {
         d->deviceLabel->setVisible(true);
-    else
+        d->refreshBtn->setVisible(true);
+    } else {
         d->deviceLabel->setVisible(false);
+        d->refreshBtn->setVisible(false);
+    }
 
     if (page == kLookignForDeviceWidget) {
         d->lfdWidget->seAnimationtEnabled(true);
         d->tipWidget->setVisible(false);
+
     } else {
         if (qApp->property("onlyTransfer").toBool() || !QFile(deepin_cross::CommonUitls::tipConfPath()).exists())
             d->tipWidget->setVisible(true);
@@ -221,12 +244,6 @@ void WorkspaceWidget::clear()
 void WorkspaceWidget::setFirstStartTip(bool visible)
 {
     d->tipWidget->setVisible(visible);
-}
-
-void WorkspaceWidget::setBottomIp(const QString &ip)
-{
-    d->bottomLabel->setIp(ip);
-    d->sortFilterWorker.data()->setSelfip(ip);
 }
 
 bool WorkspaceWidget::event(QEvent *event)

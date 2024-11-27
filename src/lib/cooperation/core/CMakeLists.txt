@@ -44,13 +44,22 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/utils/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/discover/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/share/*"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/cooconstrants.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/networkutil*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/sharehelper*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/transferhelper*"
     "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/dialogs/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
+
+if(ENABLE_CUTEIPC)
+    #include CuteIPC using wrapper files
+    FILE(GLOB COMPAT_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/compatstruct.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/compatwrapper*"
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/transferwrapper.*"
+    )
+endif()
 
 # 在这里添加业务代码
 if (CMAKE_SYSTEM MATCHES "Windows")
@@ -59,7 +68,6 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/win/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/net/win/*.cpp"
     )
-   find_package(Qt5 COMPONENTS Sql REQUIRED)
 
    # 从定位输出目录
    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/dde-cooperation)
@@ -73,7 +81,10 @@ elseif (CMAKE_SYSTEM MATCHES "Linux")
         "${CMAKE_SOURCE_DIR}/src/configs/dconfig/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/linux/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/phone/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/phone/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/net/linux/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/phonehelper*"
     )
     find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 else()
@@ -93,12 +104,22 @@ endif()
 list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS sessionmanager)
 list(APPEND LINKLIBS sslconf)
+list(APPEND LINKLIBS vncclient)
+
+if (NOT WIN32)
+    find_library(QRENCODE_LIBRARY qrencode)
+    if(NOT QRENCODE_LIBRARY)
+        message(FATAL_ERROR "libqrencode not found. Please install it.")
+    endif()
+    add_definitions(-DENABLE_PHONE=1)
+endif()
 
 add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}
     ${BUSS_FILES}
     ${BARRIER_CONFIG_FILES}
     ${RESOURCE_FILES}
+    ${COMPAT_FILES}
 )
 
 include(GNUInstallDirs)
@@ -135,8 +156,21 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Concurrent
     QtZeroConf
-    CuteIPC
 )
+
+if(ENABLE_CUTEIPC)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        CuteIPC
+    )
+endif()
+
+if (NOT WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        qrencode
+    )
+endif()
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC

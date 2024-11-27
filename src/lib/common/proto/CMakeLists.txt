@@ -3,10 +3,12 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 project(proto)
 
 # CMake module path
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/3rdparty/CppServer/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/3rdparty/CppServer/cmake")
 # Compiler features
 include(SetCompilerFeatures)
+if (NOT ANDROID)
 include(SetCompilerWarnings)
+endif()
 include(SetPlatformFeatures)
 include(SystemInformation)
 
@@ -21,7 +23,7 @@ add_library(proto STATIC ${PROTO_HEADER_FILES} ${PROTO_INLINE_FILES} ${PROTO_SOU
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}" FOLDER "proto")
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 
-target_link_libraries(${PROJECT_NAME} PUBLIC cppcommon)
+target_link_libraries(${PROJECT_NAME} PUBLIC cppcommon uuid)
 
 if(FPIC)
     set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)

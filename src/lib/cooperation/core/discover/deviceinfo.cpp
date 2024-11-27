@@ -113,6 +113,16 @@ DeviceInfo::LinkMode DeviceInfo::linkMode() const
     return d->linkMode;
 }
 
+void DeviceInfo::setDeviceType(DeviceInfo::DeviceType type)
+{
+    d->deviceType = type;
+}
+
+DeviceInfo::DeviceType DeviceInfo::deviceType() const
+{
+    return d->deviceType;
+}
+
 void DeviceInfo::setPeripheralShared(bool b)
 {
     d->isPeripheralShared = b;

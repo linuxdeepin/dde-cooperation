@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -19,6 +19,7 @@
 #include <QStandardPaths>
 #include <QTime>
 #include <QProcess>
+#include <QRegularExpression>
 
 #ifdef linux
 #    include "base/reportlog/reportlogmanager.h"
@@ -84,6 +85,12 @@ void TransferHelperPrivate::initConnect()
     confirmTimer.setInterval(10 * 1000);
     confirmTimer.setSingleShot(true);
     connect(&confirmTimer, &QTimer::timeout, q, &TransferHelper::onVerifyTimeout);
+
+    connect(transDialog(), &CooperationTransDialog::cancelApply, q, &TransferHelper::cancelTransferApply);
+    connect(transDialog(), &CooperationTransDialog::cancel, q, [this] { q->onActionTriggered(NotifyCancelAction); });
+    connect(transDialog(), &CooperationTransDialog::rejected, q, [this] { q->onActionTriggered(NotifyRejectAction); });
+    connect(transDialog(), &CooperationTransDialog::accepted, q, [this] { q->onActionTriggered(NotifyAcceptAction); });
+    connect(transDialog(), &CooperationTransDialog::viewed, q, [this] { q->onActionTriggered(NotifyViewAction); });
 }
 
 CooperationTransDialog *TransferHelperPrivate::transDialog()
@@ -91,12 +98,6 @@ CooperationTransDialog *TransferHelperPrivate::transDialog()
     if (!dialog) {
         dialog = new CooperationTransDialog(qApp->activeWindow());
         dialog->setModal(true);
-
-        connect(dialog, &CooperationTransDialog::cancelApply, q, &TransferHelper::cancelTransferApply);
-        connect(dialog, &CooperationTransDialog::cancel, q, [this] { q->onActionTriggered(NotifyCancelAction); });
-        connect(dialog, &CooperationTransDialog::rejected, q, [this] { q->onActionTriggered(NotifyRejectAction); });
-        connect(dialog, &CooperationTransDialog::accepted, q, [this] { q->onActionTriggered(NotifyAcceptAction); });
-        connect(dialog, &CooperationTransDialog::viewed, q, [this] { q->onActionTriggered(NotifyViewAction); });
     }
 
     return dialog;

@@ -22,7 +22,9 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake")
 
 # Compiler features
 include(SetCompilerFeatures)
+if (NOT ANDROID)
 include(SetCompilerWarnings)
+endif()
 include(SetPlatformFeatures)
 include(SystemInformation)
 

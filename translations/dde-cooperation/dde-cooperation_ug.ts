@@ -17,8 +17,8 @@
 <context>
     <name>cooperation_core::BottomLabel</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="309"/>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="340"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="326"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="357"/>
         <source>Local IP: %1</source>
         <translation>IP ئادرېس: %1</translation>
     </message>
@@ -154,17 +154,17 @@
 <context>
     <name>cooperation_core::DeviceItem</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="176"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="177"/>
         <source>connected</source>
         <translation>ھەمكارلىشىۋاتىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="181"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="182"/>
         <source>connectable</source>
         <translation>ئۇلىنىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="187"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="188"/>
         <source>offline</source>
         <translation>توردا يوق</translation>
     </message>
@@ -261,9 +261,22 @@
     </message>
 </context>
 <context>
+    <name>cooperation_core::LockScreenWidget</name>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="146"/>
+        <source>The current device has been locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="149"/>
+        <source>You can unlock it on mobile devices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>cooperation_core::LookingForDeviceWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="74"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="75"/>
         <source>Looking for devices</source>
         <translation>ئۈسكۈنە ئىزدەۋاتىدۇ</translation>
     </message>
@@ -271,45 +284,45 @@
 <context>
     <name>cooperation_core::MainWindow</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="209"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="242"/>
         <source>Minimise to system tray</source>
         <translation>سىستېما تەخسىگە كىچىكلىتىڭ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="211"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="244"/>
         <source>Exit</source>
         <translation>چىقىش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="220"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="253"/>
         <source>No more enquiries</source>
         <translation>باشقا سوئال يوق</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="228"/>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="239"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="261"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="272"/>
         <source>Cancel</source>
         <translation>بىكار قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="229"/>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="238"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="262"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="271"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="230"/>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="237"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="263"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="270"/>
         <source>Please select your operation</source>
         <translation>مەشغۇلاتىڭىزنى تاللاڭ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="272"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="305"/>
         <source>Restore</source>
         <translation>ئەسلىگە كەلتۈرۈش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="273"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="306"/>
         <source>Quit</source>
         <translation>چېكىنىش</translation>
     </message>
@@ -317,33 +330,47 @@
 <context>
     <name>cooperation_core::MainWindowPrivate</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="35"/>
         <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="79"/>
         <source>Re-scan for devices</source>
         <translation>ئۈسكۈنىنى قايتا ئىزدەش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="41"/>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="61"/>
+        <source>Computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="62"/>
+        <source>Phone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="73"/>
         <source>Selection of delivery device</source>
         <translation>يوللايدىغان ئۈسكۈنىنى تاللاڭ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="51"/>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="83"/>
         <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="120"/>
         <source>Settings</source>
         <translation>تەڭشەك</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="55"/>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="87"/>
         <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="124"/>
         <source>Download Windows client</source>
         <translation>Windows تېرمىنالىنى چۈشۈرۈش</translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="91"/>
+        <source>Download Mobile client</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::NoNetworkWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="139"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="140"/>
         <source>Please connect to the network</source>
         <translation>تورغا ئۇلاڭ</translation>
     </message>
@@ -351,42 +378,107 @@
 <context>
     <name>cooperation_core::NoResultTipWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="172"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="174"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation>1. تېرمىنال ھالقىپ ھەمكارلىشىش دېتالىنى ئېچىڭ، UOS تېرمىنالىدىكى ئەپنى ئەپ بازىرىدىن چۈشۈرگىلى بولىدۇ، Windows تېرمىنالىنى چۈشۈرۈش ئادرېسى: </translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="188"/>
         <source>2. On the same LAN as the device</source>
         <translation>2. بۇ ئۈسكۈنە بىلەن ئوخشاش دائىرىلىك تورغا ئۇلاڭ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="190"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="193"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
         <translation>3. ھۆججەت باشقۇرغۇچ-تەڭشەك-ھۆججەت يوللاش-تۆۋەندىكى ئىشلەتكۈچىلەرنىڭ ماڭا ھۆججەت يوللىشىغا يول قويۇش-«ئوخشاش دائىرىلىك توردىكى بارلىق كىشىلەر»</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="192"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="195"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation>3. تەڭشەك-ئاساسىي تەڭشەك-بايقىغىلى بولىدىغانلىرى-«ئوخشاش دائىرىلىك توردىكى بارلىق كىشىگە رۇخسەت قىلىش»</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="198"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="201"/>
         <source>4. Try entering the target device IP in the top search box</source>
         <translation>4. ئۈستىدىكى ئىزدەش رامكىسىغا نىشان ئۈسكۈنىنىڭ IP سىنى كىرگۈزۈپ سىناپ بېقىڭ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="202"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="205"/>
         <source>Unable to find collaborative device？</source>
         <translation>ئۈسكۈنىنى تاپالمىدىمۇ؟</translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="230"/>
+        <source>1. The mobile phone needs to download cross end collaborative applications.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="231"/>
+        <source>Go to download&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="235"/>
+        <source>2. After installation, scan the code to connect to this device for collaboration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="236"/>
+        <source>3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="238"/>
+        <source>Instructions for use</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="261"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="278"/>
         <source>No device found</source>
         <translation>ھېچقانداق ئۈسكۈنە بايقالمىدى</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::PhoneHelper</name>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="57"/>
+        <source>Disconnect</source>
+        <translation type="unfinished">ئۈزۈش</translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="82"/>
+        <source>“%1”apply to initiate screen casting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="84"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="166"/>
+        <source>cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="85"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="133"/>
+        <source>comfirm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="121"/>
+        <source>“%1”connection disconnected!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="164"/>
+        <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="167"/>
+        <source>disconnect</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -401,6 +493,24 @@
         <source>Cancel</source>
         <comment>button</comment>
         <translation>بىكار قىلىش</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::QRCodeWidget</name>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="85"/>
+        <source>Scan code connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="91"/>
+        <source>Please use the cross end collaboration app to scan the code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="97"/>
+        <source>Mobile phones and devices need to be connected to the same local area network</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -521,132 +631,132 @@
 <context>
     <name>cooperation_core::ShareHelper</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="217"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="219"/>
         <source>connect</source>
         <translation>ئۇلاندى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="225"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="227"/>
         <source>Disconnect</source>
         <translation>ئۈزۈش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="239"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="344"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="402"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="445"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="241"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="350"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="399"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="408"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="451"/>
         <source>Unable to collaborate to &quot;%1&quot;</source>
         <translation>&quot;%1&quot; بىلەن ھەمكارلاشقىلى بولمايدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="241"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="243"/>
         <source>You are connecting to another device</source>
         <translation>باشقا ئۈسكۈنە بىلەن ھەمكارلىشىۋاتىسىز</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="255"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="257"/>
         <source>Requesting collaborate to &quot;%1&quot;</source>
         <translation>&quot;%1&quot; بىلەن ھەمكارلىشىش تەلەپ قىلىنىۋاتىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="273"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="423"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="429"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
         <translation>&quot;%1&quot; بىلەن بولغان ھەمكارلىشىش ئاياغلاشتى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="312"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="318"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
         <translation>&quot;%1&quot; نىڭ ھەمكارلىشىش تەلىپى تاپشۇرۇۋېلىندى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="313"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="319"/>
         <source>Reject</source>
         <translation>رەت قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="314"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="320"/>
         <source>Accept</source>
         <translation>قوبۇل قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="331"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="337"/>
         <source>Cooperation</source>
         <translation>تېرمىنال ھالقىپ ھەمكارلىشىش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="345"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="351"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation>&quot;%1&quot; گە ئۇلانمىدى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="367"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="373"/>
         <source>Unable to collaborate</source>
         <translation>ھەمكارلىشالمىدى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="368"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
         <source>Failed to run process!</source>
         <translation>ئىجرا بولمىدى!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="388"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="394"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
         <translation>ئۇلاندى، &quot;%1&quot; بىلەن ھەمكارلىشىۋاتىسىز</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="394"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="400"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
         <translation>&quot;%1&quot; ھەمكارلىشىش تەلىپىڭىزنى رەت قىلدى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="403"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="409"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
         <translation>&quot;%1&quot; باشقا ئۈسكۈنە بىلەن ھەمكارلىشىۋاتىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="439"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="445"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
         <translation>&quot;%1&quot; بىلەن ئۇلىنىش تەلىپىنىڭ ۋاقتى ئېشىپ كەتكەچكە ئۈزۈلۈپ قالدى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="447"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="453"/>
         <source>The other party does not confirm, please try again later</source>
         <translation>قارشى تەرەپ جەزملەشتۈرمىدى، سەل تۇرۇپ قايتا ئۇلاپ بېقىڭ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="464"/>
         <source>The other party has cancelled the connection request !</source>
         <translation>قارشى تەرەپ ئۇلاش تەلىپىنى بىكار قىلدى!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="462"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="468"/>
         <source>connect failed</source>
         <translation>ئۇلانمىدى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="472"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="478"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
         <translation>تور ئۇلانمىغاچقا ھۆججەت يوللانمىدى.   تورغا ئۇلاپ قايتا سىناڭ!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="479"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="485"/>
         <source>File transfer failed</source>
         <translation>ھۆججەت يوللانمىدى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="481"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="487"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
         <translation>تور ئۇلانمىغاچقا ھۆججەت يوللانمىدى.  تورغا ئۇلاپ قايتا سىناڭ!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="496"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="502"/>
         <source>Network exception</source>
         <translation>تور سىرتىدا</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="497"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
         <source>Please check the network &quot;%1&quot;</source>
         <translation>تورنى «% 1» دىن تەكشۈرۈپ بېقىڭ</translation>
     </message>
@@ -660,12 +770,12 @@
         <translation>تېرمىنال ھالقىپ ھەمكارلىشىش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="114"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="113"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
         <translation>&quot;%1&quot; بىلەن بولغان ھەمكارلىشىش ئاياغلاشتى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="186"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="188"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
         <translation>ئۇلاندى، &quot;%1&quot; بىلەن ھەمكارلىشىۋاتىسىز</translation>
     </message>
@@ -673,27 +783,26 @@
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="396"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="398"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation>&quot;%1&quot; گە ئۇلانمىدى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="410"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="416"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="556"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="623"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="419"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="637"/>
         <source>File read/write exception</source>
         <translation>ھۆججەتنى ئوقۇش، يېزىشتا بىنورماللىق كۆرۈلدى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="524"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="569"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="533"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="584"/>
         <source>The other party has canceled the file transfer</source>
         <translation>قارشى تەرەپ ھۆججەت يوللاشنى بىكار قىلدى</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="565"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="436"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="580"/>
         <source>File sent successfully</source>
         <translation>ھۆججەت يوللاندى</translation>
     </message>
@@ -733,57 +842,57 @@
         <translation>&quot;% 1&quot; دىن ھۆججەتلەرنى قوبۇل قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="354"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="356"/>
         <source>Reject</source>
         <translation>رەت قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="355"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="357"/>
         <source>Accept</source>
         <translation>قوبۇل قىلىش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="356"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="358"/>
         <source>Close</source>
         <translation>تاقاش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="350"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="352"/>
         <source>&quot;%1&quot; send some files to you</source>
         <translation>&quot;%1&quot; سىزگە ھۆججەت يوللىدى</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="277"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="368"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="370"/>
         <source>View</source>
         <translation>كۆرۈش</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="375"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="377"/>
         <source>The other party has cancelled the transfer request !</source>
         <translation>قارشى تەرەپ يۆتكىلىش تەلىپىنى بىكار قىلدى!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="552"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="620"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="415"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="559"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="634"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
         <translation>بوشلۇق يېتىشمىگەچكە ھۆججەت يوللانمىدى، دىسكا بوشلۇقىنى تازىلاپ قايتا سىناڭ!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="414"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="617"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="417"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="561"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="631"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
         <translation>تور ئۇلانمىغاچقا ھۆججەت يوللانمىدى.  تورغا ئۇلاپ قايتا سىناڭ!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="505"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="508"/>
         <source>calculating</source>
         <translation>ھېسابلاۋاتىدۇ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="514"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="517"/>
         <source>The other party rejects your request</source>
         <translation>قارشى تەرەپ تەلىپىڭىزنى رەت قىلدى</translation>
     </message>
@@ -794,6 +903,15 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="117"/>
         <source>File transfer</source>
         <translation>ھۆججەت يوللاش</translation>
+    </message>
+</context>
+<context>
+    <name>cooperation_core::VncViewer</name>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="186"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="188"/>
+        <source>Disconnected</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -821,6 +939,11 @@
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="51"/>
         <source>Nearby Device</source>
         <translation>ئەتراپتىكى ئۈسكۈنە</translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="59"/>
+        <source>Re-scan for devices</source>
+        <translation type="unfinished">ئۈسكۈنىنى قايتا ئىزدەش</translation>
     </message>
 </context>
 <context>

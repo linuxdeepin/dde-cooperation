@@ -31,6 +31,9 @@ public:
     void closeEvent(QCloseEvent *event) override;
 
     void minimizedAPP();
+#ifdef ENABLE_PHONE
+    void addMobileOperation(const QVariantMap &map);
+#endif
 
 signals:
     void refreshDevices();
@@ -45,6 +48,14 @@ public Q_SLOTS:
     void addDevice(const QList<DeviceInfoPointer> &infoList);
     void removeDevice(const QString &ip);
     void onRegistOperations(const QVariantMap &map);
+    void onSwitchMode(CooperationMode mode);
+
+#ifdef ENABLE_PHONE
+    //mobile
+    void addMobileDevice(const DeviceInfoPointer info);
+    void disconnectMobile();
+    void onSetQRCode(const QString &code);
+#endif
 
 protected:
     void showCloseDialog();

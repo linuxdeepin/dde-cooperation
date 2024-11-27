@@ -31,8 +31,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/connect/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/gui/transfer/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/net/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/protoconstants.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/net/networkutil*"
     "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/net/helper/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/optionsmanager.h"
@@ -41,6 +41,14 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/transferutil.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
+
+if(ENABLE_CUTEIPC)
+    #include CuteIPC using wrapper files
+    FILE(GLOB COMPAT_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/compatstruct.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/net/compatwrapper*"
+    )
+endif()
 
 # 在这里添加业务代码
 if (CMAKE_SYSTEM MATCHES "Windows")
@@ -93,6 +101,7 @@ add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}
     ${BUSS_FILES}
     ${RESOURCE_FILES}
+    ${COMPAT_FILES}
 )
 
 include(GNUInstallDirs)
@@ -119,8 +128,14 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
-    CuteIPC
 )
+
+if(ENABLE_CUTEIPC)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        CuteIPC
+    )
+endif()
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC

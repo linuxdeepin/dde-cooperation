@@ -3,5 +3,7 @@ add_subdirectory(lib)
 
 add_subdirectory(apps)
 
-# compat v20 daemon app
-add_subdirectory(compat)
+if(ENABLE_CUTEIPC)
+    # compat v20 daemon app
+    add_subdirectory(compat)
+endif()

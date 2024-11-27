@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,11 +7,15 @@
 #include "utils/historymanager.h"
 #include "discover/discovercontroller.h"
 #include "net/networkutil.h"
+#ifdef ENABLE_COMPAT
 #include "net/transferwrapper.h"
+#endif
 #include "net/helper/transferhelper.h"
 #include "net/helper/sharehelper.h"
+#ifdef ENABLE_PHONE
+#include "net/helper/phonehelper.h"
+#endif
 #include "discover/deviceinfo.h"
-
 
 #include "common/commonutils.h"
 #include "configs/settings/configmanager.h"
@@ -73,8 +77,20 @@ bool CooperaionCorePlugin::isMinilize()
         return false;
 
     parser.process(args);
-    return parser.isSet(option);;
+    return parser.isSet(option);
+    ;
 }
+
+#ifdef ENABLE_PHONE
+void CooperaionCorePlugin::initMobileModule()
+{
+    connect(PhoneHelper::instance(), &PhoneHelper::addMobileInfo, dMain.get(), &MainWindow::addMobileDevice);
+    connect(PhoneHelper::instance(), &PhoneHelper::disconnectMobile, dMain.get(), &MainWindow::disconnectMobile);
+    connect(PhoneHelper::instance(), &PhoneHelper::setQRCode, dMain.get(), &MainWindow::onSetQRCode);
+
+    PhoneHelper::instance()->registConnectBtn(dMain.get());
+}
+#endif
 
 bool CooperaionCorePlugin::start()
 {
@@ -87,6 +103,9 @@ bool CooperaionCorePlugin::start()
     } else {
         DiscoverController::instance();
         NetworkUtil::instance();
+#ifdef ENABLE_PHONE
+        initMobileModule();
+#endif
 
         ShareHelper::instance()->registConnectBtn();
 
@@ -107,13 +126,15 @@ bool CooperaionCorePlugin::start()
         connect(DiscoverController::instance(), &DiscoverController::discoveryFinished, HistoryManager::instance(), &HistoryManager::refreshHistory);
         connect(HistoryManager::instance(), &HistoryManager::historyConnected, DiscoverController::instance(), &DiscoverController::updateHistoryDevices);
 
-        DiscoverController::instance()->init(); // init zeroconf and regist
+        DiscoverController::instance()->init();   // init zeroconf and regist
 
         // start network status listen after all ready
         CooperationUtil::instance()->initNetworkListener();
 
+#ifdef ENABLE_COMPAT
         // start local ipc listen for transfer app
         TransferWrapper::instance()->listen(qAppName());
+#endif
 
 #ifdef __linux__
         if (CommonUitls::isFirstStart()) {
@@ -136,5 +157,7 @@ bool CooperaionCorePlugin::start()
 
 void CooperaionCorePlugin::stop()
 {
+#ifdef ENABLE_COMPAT
     NetworkUtil::instance()->stop();
+#endif
 }

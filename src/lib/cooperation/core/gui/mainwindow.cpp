@@ -6,6 +6,7 @@
 #include "mainwindow_p.h"
 #include "dialogs/settingdialog.h"
 #include "utils/cooperationutil.h"
+#include "widgets/cooperationstatewidget.h"
 
 #include <QScreen>
 #include <QUrl>
@@ -15,6 +16,7 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QVBoxLayout>
+#include <QStackedLayout>
 
 using namespace cooperation_core;
 
@@ -37,6 +39,7 @@ MainWindowPrivate::~MainWindowPrivate()
 void MainWindowPrivate::initConnect()
 {
     connect(workspaceWidget, &WorkspaceWidget::search, q, &MainWindow::onFindDevice);
+    connect(workspaceWidget, &WorkspaceWidget::refresh, q, &MainWindow::onLookingForDevices);
 }
 
 void MainWindowPrivate::moveCenter()
@@ -82,7 +85,15 @@ void MainWindowPrivate::handleSettingMenuTriggered(int action)
     case MenuAction::kDownloadWindowClient:
         QDesktopServices::openUrl(QUrl("https://www.chinauos.com/resource/assistant"));
         break;
+    case MenuAction::kDownloadMobileClient:
+        QDesktopServices::openUrl(QUrl("https://www.chinauos.com/resource/assistant"));
+        break;
     }
+}
+
+void MainWindowPrivate::setIP(const QString &ip)
+{
+    bottomLabel->setIp(ip);
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -119,9 +130,9 @@ void MainWindow::onlineStateChanged(const QString &validIP)
     if (offline) {
         d->workspaceWidget->clear();
         d->workspaceWidget->switchWidget(WorkspaceWidget::kNoNetworkWidget);
-        d->workspaceWidget->setBottomIp("---");
+        d->setIP("---");
     } else {
-        d->workspaceWidget->setBottomIp(validIP);
+        d->setIP(validIP);
     }
 }
 
@@ -136,6 +147,12 @@ void MainWindow::onLookingForDevices()
     emit refreshDevices();
     d->workspaceWidget->clear();
     d->workspaceWidget->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
+}
+
+void MainWindow::onSwitchMode(CooperationMode mode)
+{
+    d->stackedLayout->setCurrentIndex(mode);
+    d->bottomLabel->onSwitchMode(mode);
 }
 
 void MainWindow::onFindDevice(const QString &ip)
@@ -160,6 +177,29 @@ void MainWindow::addDevice(const QList<DeviceInfoPointer> &infoList)
 
     _userAction = false;
 }
+
+#ifdef ENABLE_PHONE
+void MainWindow::addMobileDevice(const DeviceInfoPointer info)
+{
+    onSwitchMode(kMobile);
+    d->phoneWidget->setDeviceInfo(info);
+}
+
+void MainWindow::disconnectMobile()
+{
+    d->phoneWidget->switchWidget(PhoneWidget::PageName::kQRCodeWidget);
+}
+
+void MainWindow::onSetQRCode(const QString &code)
+{
+    d->phoneWidget->onSetQRcodeInfo(code);
+}
+
+void MainWindow::addMobileOperation(const QVariantMap &map)
+{
+    d->phoneWidget->addOperation(map);
+}
+#endif
 
 void MainWindow::removeDevice(const QString &ip)
 {

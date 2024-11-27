@@ -1,13 +1,16 @@
 ﻿cmake_minimum_required(VERSION 3.13)
 
-project(sessionmanager)
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # enable qt build support
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+
+# # set build as share library
+# set(BUILD_SHARED_LIBS ON CACHE BOOL "Build shared Libs" FORCE)
+
+project(sessionmanager VERSION 1.0.0)
 
 if (WIN32)
     # 从定位输出目录
@@ -48,12 +51,17 @@ target_link_libraries(${PROJECT_NAME}
     ${LINKLIBS}
 )
 
+# if(BUILD_SHARED_LIBS)
+#     target_compile_definitions(${PROJECT_NAME} PRIVATE QT_BUILD_SHARED)
+#     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 0)
+#     set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
+# endif()
+
 if(FPIC)
     set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
-# #install library file
+#install library file
 # install(TARGETS ${PROJECT_NAME}
-#         RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-#         ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-#         LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
+#         LIBRARY DESTINATION ${LIB_INSTALL_DIR})
+
