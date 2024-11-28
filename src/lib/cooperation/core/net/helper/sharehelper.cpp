@@ -385,13 +385,12 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
             d->targetDeviceInfo.reset();
             return;
         }
-#ifdef ENABLE_COMPAT
+
         // the server has started, notify remote client connect
         if (!crypto) {
             // only for old protocol which disabled crypto
             NetworkUtil::instance()->compatSendStartShare(d->targetDeviceInfo->ipAddress());
         }
-#endif
 
         // 上报埋点数据
         d->reportConnectionData();

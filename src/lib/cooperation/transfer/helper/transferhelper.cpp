@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,9 +10,7 @@
 #include "discover/deviceinfo.h"
 #include "gui/mainwindow.h"
 
-#ifdef ENABLE_COMPAT
 #include <CuteIPCInterface.h>
-#endif
 
 #include <QDesktopServices>
 #include <QApplication>
@@ -49,7 +47,6 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
     : QObject(qq),
       q(qq)
 {
-#ifdef ENABLE_COMPAT
     ipcInterface = new CuteIPCInterface();
 
     backendOk = ipcInterface->connectToServer("dde-cooperation");
@@ -58,7 +55,6 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
     } else {
         WLOG << "can not connect to: dde-cooperation";
     }
-#endif
 }
 
 TransferHelperPrivate::~TransferHelperPrivate()
@@ -70,7 +66,6 @@ TransferHelper::TransferHelper(QObject *parent)
     : QObject(parent),
       d(new TransferHelperPrivate(this))
 {
-#ifdef ENABLE_COMPAT
     if (d->backendOk) {
         // bind SIGNAL to SLOT
         d->ipcInterface->remoteConnect(SIGNAL(searched(QString)), this, SLOT(searchResultSlot(QString)));
@@ -84,7 +79,6 @@ TransferHelper::TransferHelper(QObject *parent)
         // frist, refresh & get device list
         Q_EMIT refresh();
     }
-#endif
 }
 
 TransferHelper::~TransferHelper()

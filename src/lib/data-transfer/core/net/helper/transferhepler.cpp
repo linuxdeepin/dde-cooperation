@@ -1,8 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
-//
-// SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "transferhepler.h"
+﻿#include "transferhepler.h"
 
 #include "utils/optionsmanager.h"
 #include "utils/transferutil.h"
@@ -84,9 +80,7 @@ void TransferHelper::sendMessage(const QString &type, const QString &message)
 
 void TransferHelper::finish()
 {
-#ifdef ENABLE_COMPAT
     NetworkUtil::instance()->stop();
-#endif
 }
 
 void TransferHelper::handleMessage(QString jsonmsg)

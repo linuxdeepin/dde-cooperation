@@ -45,7 +45,7 @@ void CompatWrapperPrivate::onTimeConnectBackend()
 
         WLOG << "ping return ID:" << sessionId.toStdString();
     } else {
-        //WLOG << "can not connect to: cooperation-daemon";
+        WLOG << "can not connect to: cooperation-daemon";
         ipcTimer->start(2000);
     }
 }

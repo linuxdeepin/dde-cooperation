@@ -85,7 +85,6 @@ else()
 endif()
 
 list(APPEND LINKLIBS cpplogging)
-list(APPEND LINKLIBS vncclient)
 
 add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}
@@ -124,14 +123,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Concurrent
+    CuteIPC
 )
-
-if(ENABLE_CUTEIPC)
-    target_link_libraries(${PROJECT_NAME}
-        PRIVATE
-        CuteIPC
-    )
-endif()
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC

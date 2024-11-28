@@ -45,11 +45,6 @@ public:
         LeftMode
     };
 
-    enum class DeviceType {
-        PC,
-        Mobile
-    };
-
     explicit DeviceInfo();
     explicit DeviceInfo(const QString &ip, const QString &name);
     explicit DeviceInfo(const DeviceInfo &other);
@@ -77,9 +72,6 @@ public:
 
     void setLinkMode(LinkMode mode);
     LinkMode linkMode() const;
-
-    void setDeviceType(DeviceInfo::DeviceType type);
-    DeviceInfo::DeviceType deviceType() const;
 
     void setPeripheralShared(bool b);
     bool peripheralShared() const;

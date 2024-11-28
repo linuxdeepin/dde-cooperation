@@ -9,7 +9,6 @@
 #include "backgroundwidget.h"
 #include "global_defines.h"
 
-class QStackedLayout;
 namespace cooperation_core {
 
 class LookingForDeviceWidget : public QWidget
@@ -46,7 +45,7 @@ class NoResultTipWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit NoResultTipWidget(QWidget *parent = nullptr, bool usetipMode = false, bool isMobile = false);
+    explicit NoResultTipWidget(QWidget *parent = nullptr, bool usetipMode = false);
 
     void onLinkActivated(const QString &link);
     void setTitleVisible(bool visible);
@@ -55,7 +54,6 @@ private:
     void initUI();
     CooperationLabel *titleLabel { nullptr };
     bool useTipMode = false;
-    bool isMobile = false;
 };
 
 class NoResultWidget : public QWidget
@@ -76,7 +74,6 @@ public:
 
     void setIp(const QString &ip);
     void showDialog() const;
-    void onSwitchMode(int page);
 
 protected:
     void paintEvent(QPaintEvent *) override;
@@ -90,7 +87,6 @@ private:
 
 private:
     CooperationAbstractDialog *dialog { nullptr };
-    QStackedLayout *stackedLayout { nullptr };
     QLabel *tipLabel { nullptr };
     QLabel *ipLabel { nullptr };
     QTimer *timer { nullptr };

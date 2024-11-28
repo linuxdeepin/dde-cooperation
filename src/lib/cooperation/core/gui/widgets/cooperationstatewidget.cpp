@@ -25,7 +25,6 @@ DWIDGET_USE_NAMESPACE
 #include <QToolButton>
 #include <QScrollArea>
 #include <QMouseEvent>
-#include <QStackedLayout>
 
 #include <common/commonutils.h>
 
@@ -150,8 +149,8 @@ void NoNetworkWidget::initUI()
     setLayout(vLayout);
 }
 
-NoResultTipWidget::NoResultTipWidget(QWidget *parent, bool usetipMode, bool ismobile)
-    : QWidget(parent), useTipMode(usetipMode), isMobile(ismobile)
+NoResultTipWidget::NoResultTipWidget(QWidget *parent, bool usetipMode)
+    : QWidget(parent), useTipMode(usetipMode)
 {
     initUI();
 }
@@ -169,7 +168,6 @@ void NoResultTipWidget::setTitleVisible(bool visible)
 void NoResultTipWidget::initUI()
 {
     CooperationGuiHelper::setAutoFont(this, 12, QFont::Normal);
-
     QString leadintText =
             tr("1. Enable cross-end collaborative applications. Applications on the UOS "
                "can be downloaded from the App Store, and applications on the Windows "
@@ -179,7 +177,6 @@ void NoResultTipWidget::initUI()
     QString websiteLinkTemplate =
             "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";
     QString content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hyperlink);
-
     CooperationLabel *contentLable1 = new CooperationLabel(this);
     contentLable1->setWordWrap(true);
     contentLable1->setText(content1);
@@ -204,7 +201,6 @@ void NoResultTipWidget::initUI()
 
     titleLabel = new CooperationLabel(tr("Unable to find collaborative device？"));
     titleLabel->setAlignment(Qt::AlignLeft);
-
     CooperationGuiHelper::setAutoFont(titleLabel, 14, QFont::Medium);
     titleLabel->setWordWrap(true);
 
@@ -228,19 +224,6 @@ void NoResultTipWidget::initUI()
         contentLable2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         contentLable3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         contentLable4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    }
-
-    if (isMobile) {
-        QString leadintText = tr("1. The mobile phone needs to download cross end collaborative applications.");
-        QString hypertext = tr("Go to download>");
-        QString hyperlink = "https://www.chinauos.com/resource/assistant";
-        content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hypertext);
-        contentLable1->setText(content1);
-        contentLable2->setText(tr("2. After installation, scan the code to connect to this device for collaboration."));
-        contentLable3->setText(tr("3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device"));
-        contentLable4->setText("");
-        titleLabel->setText(tr("Instructions for use"));
-        titleLabel->setAlignment(Qt::AlignCenter);
     }
 
 #ifdef linux
@@ -393,15 +376,8 @@ void BottomLabel::initUI()
     QVBoxLayout *layout = new QVBoxLayout(contentWidget);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(5, 6, 5, 0);
-
     NoResultTipWidget *tipWidgt = new NoResultTipWidget(scrollArea, true);
-    NoResultTipWidget *mobileTipWidgt = new NoResultTipWidget(scrollArea, true, true);
-    stackedLayout = new QStackedLayout;
-    stackedLayout->addWidget(tipWidgt);
-    stackedLayout->addWidget(mobileTipWidgt);
-    stackedLayout->setCurrentIndex(0);
-    layout->addLayout(stackedLayout);
-
+    layout->addWidget(tipWidgt);
     scrollArea->setWidget(contentWidget);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
@@ -447,13 +423,6 @@ void BottomLabel::showDialog() const
 
     dialog->move(globalLabelPos + QPoint(x, y));
     dialog->show();
-}
-
-void BottomLabel::onSwitchMode(int page)
-{
-    if (page > 1)
-        return;
-    stackedLayout->setCurrentIndex(page);
 }
 
 void BottomLabel::updateSizeMode()

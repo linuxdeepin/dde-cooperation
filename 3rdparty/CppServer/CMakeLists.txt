@@ -22,9 +22,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Compiler features
 include(SetCompilerFeatures)
-if (NOT ANDROID)
 include(SetCompilerWarnings)
-endif()
 include(SetPlatformFeatures)
 include(SystemInformation)
 
@@ -46,29 +44,7 @@ if(BIND_STATIC_OPENSSL)
     set(OPENSSL_MSVC_STATIC_RT TRUE)
   endif()
 endif()
-
-if (ANDROID)
-    message("   >>> ANDROID_HOME  $ENV{ANDROID_HOME}")
-    
-    if (DEFINED ENV{ANDROID_HOME})
-      set(ssl_root_path $ENV{ANDROID_HOME}/android_openssl)
-      list(APPEND android_extra_libs
-         ${ssl_root_path}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI}/libcrypto_1_1.so
-         ${ssl_root_path}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI}/libssl_1_1.so)
-
-      set(OPENSSL_ROOT_DIR ${ssl_root_path}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI})
-      set(OPENSSL_INCLUDE_DIR ${ssl_root_path}/ssl_1.1/include)
-      set(OPENSSL_LIBRARIES ${android_extra_libs})
-      set(OPENSSL_VERSION 1.1)
-    else()
-        message(FATAL_ERROR "ANDROID_HOME环境变量未设置！")
-    endif()
-else()
-    find_package(OpenSSL REQUIRED)
-endif()
-
-list(APPEND LINKLIBS ${OPENSSL_LIBRARIES})
-
+find_package(OpenSSL REQUIRED)
 if(WIN32)
   find_package(Crypt)
   find_package(WinSock)
@@ -78,14 +54,13 @@ endif()
 add_subdirectory("modules")
 
 # Link libraries
+list(APPEND LINKLIBS ${OPENSSL_LIBRARIES})
 if(WIN32)
   list(APPEND LINKLIBS ${CRYPT_LIBRARIES})
   list(APPEND LINKLIBS ${WINSOCK_LIBRARIES})
 endif()
 list(APPEND LINKLIBS cppcommon)
-if (NOT ANDROID)
-  list(APPEND LINKLIBS cpplogging)
-endif()
+list(APPEND LINKLIBS cpplogging)
 
 # OpenSSL libraries
 message(STATUS "OpenSSL version: ${OPENSSL_VERSION} ${OPENSSL_INCLUDE_DIR} ${OPENSSL_LIBRARIES}")

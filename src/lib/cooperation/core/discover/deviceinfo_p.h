@@ -26,7 +26,6 @@ public:
     DeviceInfo::TransMode transMode { DeviceInfo::TransMode::Everyone };
     DeviceInfo::DiscoveryMode discoveryMode { DeviceInfo::DiscoveryMode::Everyone };
     DeviceInfo::LinkMode linkMode { DeviceInfo::LinkMode::RightMode };
-    DeviceInfo::DeviceType deviceType { DeviceInfo::DeviceType::PC };
 };
 
 }   // namespace cooperation_core

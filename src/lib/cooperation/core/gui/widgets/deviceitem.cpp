@@ -171,8 +171,7 @@ void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
     stateLabel->setState(status);
     switch (status) {
     case DeviceInfo::Connected: {
-        bool isPC = devInfo->deviceType() == DeviceInfo::DeviceType::PC;
-        QIcon icon = QIcon::fromTheme(isPC ? Kcomputer_connected : "connect_phone");
+        QIcon icon = QIcon::fromTheme(Kcomputer_connected);
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connected"));
     } break;
@@ -196,12 +195,12 @@ void DeviceItem::setOperations(const QList<Operation> &operations)
     tmpOperaList << indexOperaMap.values();
 
     std::sort(tmpOperaList.begin(), tmpOperaList.end(),
-              [](const Operation &op1, const Operation &op2) {
+            [](const Operation &op1, const Operation &op2) {
                   if (op1.location < op2.location)
                       return true;
 
                   return false;
-              });
+            });
 
     for (auto op : tmpOperaList) {
         int index = btnBoxWidget->addButton(QIcon::fromTheme(op.icon), op.description,

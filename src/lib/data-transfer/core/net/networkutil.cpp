@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,9 +13,7 @@
 #include "common/commonutils.h"
 
 #include "helper/transferhepler.h"
-#ifdef ENABLE_COMPAT
 #include "compatwrapper.h"
-#endif
 
 #include <QApplication>
 #include <QJsonDocument>
@@ -26,9 +24,7 @@
 
 #include <utils/transferutil.h>
 
-#ifdef ENABLE_COMPAT
 using namespace cooperation_core;
-#endif
 NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
     : q(qq)
 {
@@ -209,10 +205,8 @@ NetworkUtil::NetworkUtil(QObject *parent)
 {
     updateStorageConfig();
 
-#ifdef ENABLE_COMPAT
     auto wrapper = CompatWrapper::instance();
     connect(wrapper, &CompatWrapper::compatConnectResult, this, &NetworkUtil::handleCompatConnectResult, Qt::QueuedConnection);
-#endif
 }
 
 NetworkUtil::~NetworkUtil()
@@ -230,7 +224,6 @@ void NetworkUtil::updateStorageConfig()
     auto stordir = TransferUtil::DownLoadDir(false);
     d->sessionManager->updateSaveFolder(stordir);
 
-#ifdef ENABLE_COMPAT
     // compat old protocol
     {
         auto appName = qAppName();
@@ -239,17 +232,15 @@ void NetworkUtil::updateStorageConfig()
         auto ipc = CompatWrapper::instance()->ipcInterface();
         ipc->call("saveAppConfig", Q_ARG(QString, appName), Q_ARG(QString, "storagedir"), Q_ARG(QString, fullstorpath));
     }
-#endif
 }
 
 void NetworkUtil::updatePassword(const QString &code)
 {
     d->sessionManager->updatePin(code);
-#ifdef ENABLE_COMPAT
+
     //update the pincode for old protocol
     auto ipc = CompatWrapper::instance()->ipcInterface();
     ipc->call("setAuthPassword", Q_ARG(QString, code));
-#endif
 }
 
 bool NetworkUtil::doConnect(const QString &ip, const QString &password)
@@ -272,14 +263,11 @@ void NetworkUtil::disConnect()
 {
     if (!d->confirmTargetAddress.isEmpty()) {
         d->sessionManager->sessionDisconnect(d->confirmTargetAddress);
-    }
-#ifdef ENABLE_COMPAT
-    else {
+    } else {
         auto appName = qAppName();
         auto ipc = CompatWrapper::instance()->ipcInterface();
         ipc->call("doDisconnectCallback", Q_ARG(QString, appName));
     }
-#endif
 }
 
 bool NetworkUtil::sendMessage(const QString &message)
@@ -289,9 +277,7 @@ bool NetworkUtil::sendMessage(const QString &message)
         msg.nick = message.toStdString();
         QString jsonMsg = msg.as_json().serialize().c_str();
         d->sessionManager->sendRpcRequest(d->confirmTargetAddress, SESSION_MESSAGE, jsonMsg);
-    }
-#ifdef ENABLE_COMPAT
-    else {
+    } else {
         auto msg = message;
         if (msg.contains("add_result")) {
             msg.replace("/", " "); // true或false前后的/
@@ -301,7 +287,6 @@ bool NetworkUtil::sendMessage(const QString &message)
         auto ipc = CompatWrapper::instance()->ipcInterface();
         ipc->call("sendMiscMessage", Q_ARG(QString, appName), Q_ARG(QString, msg));
     }
-#endif
 
     return true;
 }
@@ -310,9 +295,7 @@ void NetworkUtil::cancelTrans()
 {
     if (!d->confirmTargetAddress.isEmpty()) {
         d->sessionManager->cancelSyncFile(d->confirmTargetAddress);
-    }
-#ifdef ENABLE_COMPAT
-    else {
+    } else {
         auto appName = qAppName();
         auto jobid = appName.length();
         // TRANS_CANCEL 1008; data transfer jobid: name's length
@@ -321,7 +304,6 @@ void NetworkUtil::cancelTrans()
         auto ipc = CompatWrapper::instance()->ipcInterface();
         ipc->call("doOperateJob", Q_RETURN_ARG(bool, res), Q_ARG(int, 1008), Q_ARG(int, jobid), Q_ARG(QString, appName));
     }
-#endif
 }
 
 void NetworkUtil::doSendFiles(const QStringList &fileList)
@@ -329,9 +311,7 @@ void NetworkUtil::doSendFiles(const QStringList &fileList)
     if (!d->confirmTargetAddress.isEmpty()) {
         int ranport = deepin_cross::CommonUitls::getAvailablePort();
         d->sessionManager->sendFiles(d->confirmTargetAddress, ranport, fileList);
-    }
-#ifdef ENABLE_COMPAT
-    else {
+    } else {
         auto appName = qAppName();
         auto jobid = appName.length();
         auto session = CompatWrapper::instance()->session();
@@ -343,12 +323,10 @@ void NetworkUtil::doSendFiles(const QStringList &fileList)
                   Q_ARG(int, jobid), Q_ARG(QStringList, fileList), Q_ARG(bool, true),
                   Q_ARG(QString, ""));
     }
-#endif
 }
 
 void NetworkUtil::compatLogin()
 {
-#ifdef ENABLE_COMPAT
     auto ip = _loginCombi.first;
     auto pwd = _loginCombi.second;
 
@@ -357,7 +335,6 @@ void NetworkUtil::compatLogin()
     auto ipc = CompatWrapper::instance()->ipcInterface();
     ipc->call("doTryConnect", Q_ARG(QString, appName), Q_ARG(QString, appName),
               Q_ARG(QString, ip), Q_ARG(QString, pwd));
-#endif
 }
 
 void NetworkUtil::handleMiscMessage(const QString &msg)
@@ -370,7 +347,6 @@ void NetworkUtil::handleMiscMessage(const QString &msg)
 
 
 // ----------compat the old protocol-----------
-#ifdef ENABLE_COMPAT
 
 void NetworkUtil::handleCompatConnectResult(int result, const QString &ip)
 {
@@ -462,4 +438,3 @@ void NetworkUtil::stop()
     auto ipc = CompatWrapper::instance()->ipcInterface();
     ipc->call("appExit");
 }
-#endif
