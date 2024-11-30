@@ -1,3 +1,11 @@
+dde-cooperation (1.0.3) unstable; urgency=medium
+
+  * v1.0.3 version update.
+  * fix: [ui]workaround crash on treeland.
+  * refactor: [compat]Add macro define for compatibile mode
+
+ -- re2zero <yangwu@uniontech.com>  Sat, 30 Nov 2024 01:16:56 +0800
+
 dde-cooperation (1.0.2) unstable; urgency=medium
 
   * v1.0.2 version update.
