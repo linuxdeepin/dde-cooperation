@@ -30,6 +30,7 @@ Build-Depends:
  libdisplayjack-dev | hello,
  libsystemd-dev,
  libqrencode-dev,
+ dde-file-manager-dev,
 Standards-Version: 4.1.3
 Section: utils
 Homepage: http://www.deepin.org
@@ -61,5 +62,7 @@ Description: deepin cooperation application
 Package: dde-cooperation-transfer
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation (= ${binary:Version})
+Replaces:
+ dfmplugin-cooperation
 Description: deepin file delivery
  Deepin Desktop Environment (DDE) - file transfer application.
