@@ -78,7 +78,6 @@ bool CooperaionCorePlugin::isMinilize()
 
     parser.process(args);
     return parser.isSet(option);
-    ;
 }
 
 #ifdef ENABLE_PHONE
@@ -133,7 +132,7 @@ bool CooperaionCorePlugin::start()
 
 #ifdef ENABLE_COMPAT
         // start local ipc listen for transfer app
-        TransferWrapper::instance()->listen(qAppName());
+        TransferWrapper::instance()->listen(qAppName() + ".ipc");
 #endif
 
 #ifdef __linux__

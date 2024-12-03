@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -38,6 +38,9 @@ signals:
     void sendFiles(const QString &ip, const QString &devName, const QStringList &fileList);
 
 public Q_SLOTS:
+    void timeConnectBackend();
+    void timeWatchBackend();
+
     // remote ipc callback slots
     void searchResultSlot(const QString& info);
     void refreshResultSlot(const QStringList& infoList);
@@ -51,6 +54,9 @@ private:
     bool transable(const DeviceInfoPointer devInfo);
 private:
     QSharedPointer<TransferHelperPrivate> d { nullptr };
+#ifdef ENABLE_COMPAT
+    QTimer *backendWatcher { nullptr };
+#endif
 };
 
 }   // namespace cooperation_transfer

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -38,6 +38,7 @@ void SingleApplication::handleConnection()
     auto windowList = qApp->topLevelWidgets();
     for (auto w : windowList) {
         if (w->objectName() == "MainWindow") {
+            w->show();
             w->raise();
             w->activateWindow();
             break;

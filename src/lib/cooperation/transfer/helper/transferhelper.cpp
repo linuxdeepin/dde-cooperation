@@ -35,6 +35,8 @@ inline constexpr char NotifyAcceptAction[] { "accept" };
 inline constexpr char NotifyCloseAction[] { "close" };
 inline constexpr char NotifyViewAction[] { "view" };
 
+inline constexpr char BackendProcIPC[] { "dde-cooperation.ipc" };
+
 #ifdef linux
 inline constexpr char Ksend[] { "send" };
 #else
@@ -51,13 +53,6 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
 {
 #ifdef ENABLE_COMPAT
     ipcInterface = new CuteIPCInterface();
-
-    backendOk = ipcInterface->connectToServer("dde-cooperation");
-    if (backendOk) {
-        DLOG << "success connect to: dde-cooperation";
-    } else {
-        WLOG << "can not connect to: dde-cooperation";
-    }
 #endif
 }
 
@@ -70,20 +65,14 @@ TransferHelper::TransferHelper(QObject *parent)
     : QObject(parent),
       d(new TransferHelperPrivate(this))
 {
+    backendWatcher = new QTimer(this);
+    backendWatcher->setInterval(2000);
+    connect(backendWatcher, &QTimer::timeout, this, &TransferHelper::timeWatchBackend);
+    backendWatcher->start();
+
 #ifdef ENABLE_COMPAT
-    if (d->backendOk) {
-        // bind SIGNAL to SLOT
-        d->ipcInterface->remoteConnect(SIGNAL(searched(QString)), this, SLOT(searchResultSlot(QString)));
-        d->ipcInterface->remoteConnect(SIGNAL(refreshed(QStringList)), this, SLOT(refreshResultSlot(QStringList)));
-        d->ipcInterface->remoteConnect(SIGNAL(deviceChanged(bool, QString)), this, SLOT(deviceChangedSlot(bool, QString)));
-
-        d->ipcInterface->remoteConnect(this, SIGNAL(refresh()), SLOT(onRefreshDevice()));
-        d->ipcInterface->remoteConnect(this, SIGNAL(search(QString)), SLOT(onSearchDevice(QString)));
-        d->ipcInterface->remoteConnect(this, SIGNAL(sendFiles(QString, QString, QStringList)), SLOT(onSendFiles(QString, QString, QStringList)));
-
-        // frist, refresh & get device list
-        Q_EMIT refresh();
-    }
+    // try connect backend by delay 500ms
+    QTimer::singleShot(500, this, &TransferHelper::timeConnectBackend);
 #endif
 }
 
@@ -159,6 +148,49 @@ bool TransferHelper::buttonClickable(const QString &id, const DeviceInfoPointer 
     Q_UNUSED(info)
 
     return true;
+}
+
+void TransferHelper::timeConnectBackend()
+{
+#ifdef ENABLE_COMPAT
+    d->backendOk = d->ipcInterface->connectToServer(BackendProcIPC);
+    if (d->backendOk) {
+        // bind SIGNAL to SLOT
+        d->ipcInterface->remoteConnect(SIGNAL(searched(QString)), this, SLOT(searchResultSlot(QString)));
+        d->ipcInterface->remoteConnect(SIGNAL(refreshed(QStringList)), this, SLOT(refreshResultSlot(QStringList)));
+        d->ipcInterface->remoteConnect(SIGNAL(deviceChanged(bool, QString)), this, SLOT(deviceChangedSlot(bool, QString)));
+
+        d->ipcInterface->remoteConnect(this, SIGNAL(refresh()), SLOT(onRefreshDevice()));
+        d->ipcInterface->remoteConnect(this, SIGNAL(search(QString)), SLOT(onSearchDevice(QString)));
+        d->ipcInterface->remoteConnect(this, SIGNAL(sendFiles(QString, QString, QStringList)), SLOT(onSendFiles(QString, QString, QStringList)));
+
+        LOG << "SUCCESS connect to depending backend: " << BackendProcIPC;
+        // frist, refresh & get device list
+        Q_EMIT refresh();
+    } else {
+        // TODO: show dialog
+        WLOG << "can not connect to: " << BackendProcIPC;
+    }
+#endif
+}
+
+void TransferHelper::timeWatchBackend()
+{
+#ifdef __linux__
+    QProcess process;
+    // get the related process count
+    process.start("pgrep", QStringList() << "-c" << "-f" << "dde-cooperation");
+
+    if (!process.waitForFinished(2000)) {
+        return;
+    }
+
+    QString output = process.readAllStandardOutput();
+    bool backendOK = (!output.isEmpty() && output.toInt() > 2);
+    if (!backendOK) {
+        //TODO: show tip
+    }
+#endif
 }
 
 void TransferHelper::searchResultSlot(const QString& info)

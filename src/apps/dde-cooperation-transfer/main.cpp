@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,12 +12,23 @@
 #include <QDir>
 #include <QProcess>
 
+#include <signal.h>
+
+using namespace deepin_cross;
 using namespace cooperation_transfer;
 
 const char *dependProc = "dde-cooperation";
 
+static void appExitHandler(int sig)
+{
+    qInfo() << "break with !SIGTERM! " << sig;
+    qApp->quit();
+}
+
 int main(int argc, char *argv[])
 {
+    // qputenv("QT_LOGGING_RULES", "dde-cooperation-transfer.debug=true");
+    // qputenv("CUTEIPC_DEBUG", "1");
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -29,7 +40,7 @@ int main(int argc, char *argv[])
     if (cooRunning) {
         qInfo() << "cooperation App launched!";
     } else {
-        // run dde-cooperation and set minimize
+        // run backend and set minimize
         QProcess::startDetached(dependProc, QStringList() << "-m");
     }
 
@@ -44,6 +55,9 @@ int main(int argc, char *argv[])
     bool isSingleInstance = app.setSingleInstance(app.applicationName());
     if (!isSingleInstance) {
         QStringList msgs = app.arguments().mid(1); //remove first arg: app name
+        if (msgs.isEmpty()) {
+            msgs << "top"; // top show
+        }
         qWarning() << "new client: " << msgs;
         app.onDeliverMessage(app.applicationName(), msgs);
         return 0;
@@ -69,6 +83,8 @@ int main(int argc, char *argv[])
         }
     });
 
+    signal(SIGINT, appExitHandler);
+    signal(SIGTERM, appExitHandler);
     int ret = app.exec();
 
     plugin->stop();

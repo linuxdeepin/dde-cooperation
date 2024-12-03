@@ -90,7 +90,6 @@ list(APPEND LINKLIBS vncclient)
 add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}
     ${BUSS_FILES}
-    ${BARRIER_CONFIG_FILES}
     ${RESOURCE_FILES}
 )
 
