@@ -16,6 +16,8 @@
 #include <QStandardPaths>
 #include <QDir>
 
+inline constexpr char DaemonProcIPC[] { "dde-cooperation-daemon.ipc" };
+
 using namespace cooperation_core;
 
 CompatWrapperPrivate::CompatWrapperPrivate(CompatWrapper *qq)
@@ -35,7 +37,7 @@ CompatWrapperPrivate::~CompatWrapperPrivate()
 
 void CompatWrapperPrivate::onTimeConnectBackend()
 {
-    backendOk = ipcInterface->connectToServer("cooperation-daemon");
+    backendOk = ipcInterface->connectToServer(DaemonProcIPC);
     if (backendOk) {
         // bind SIGNAL to SLOT
         ipcInterface->remoteConnect(SIGNAL(cooperationSignal(int, QString)), this, SLOT(ipcCompatSlot(int, QString)));
@@ -43,9 +45,9 @@ void CompatWrapperPrivate::onTimeConnectBackend()
         QString who = qApp->applicationName();
         ipcInterface->call("bindSignal", Q_RETURN_ARG(QString, sessionId), Q_ARG(QString, who), Q_ARG(QString, "cooperationSignal"));
 
-        WLOG << "ping return ID:" << sessionId.toStdString();
+        LOG << "ping return ID:" << sessionId.toStdString();
     } else {
-        //WLOG << "can not connect to: cooperation-daemon";
+        //WLOG << "can not connect to daemon backend";
         ipcTimer->start(2000);
     }
 }

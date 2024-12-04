@@ -1,7 +1,7 @@
 usr/bin/dde-cooperation
 usr/libexec/dde-cooperation/barriers
 usr/libexec/dde-cooperation/barrierc
-usr/libexec/dde-cooperation/cooperation-daemon
+usr/libexec/dde-cooperation/dde-cooperation-daemon
 usr/lib/*/libcooperation-core.so*
 usr/lib/*/libQtZeroConf.so*
 usr/lib/*/libCuteIPC.so*

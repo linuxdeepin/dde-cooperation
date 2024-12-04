@@ -63,7 +63,7 @@ static bool loadPlugins()
 
 int main(int argc, char *argv[])
 {
-    // qputenv("QT_LOGGING_RULES", "cooperation-daemon.debug=true");
+    // qputenv("QT_LOGGING_RULES", "dde-cooperation-daemon.debug=true");
     // qputenv("CUTEIPC_DEBUG", "1");
 
     deepin_cross::SingleApplication app(argc, argv);

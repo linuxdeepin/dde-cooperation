@@ -5,8 +5,6 @@
 #include "handleipcservice.h"
 #include "sendipcservice.h"
 #include "service/rpc/sendrpcservice.h"
-#include "service/share/sharecooperationservice.h"
-#include "service/share/sharecooperationservicemanager.h"
 #include "ipc/proto/chan.h"
 #include "ipc/proto/comstruct.h"
 #include "ipc/proto/backend.h"
@@ -524,41 +522,6 @@ void HandleIpcService::handleDisConnectCb(co::Json json)
     Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
 }
 
-void HandleIpcService::handleShareServerStart(const bool ok, const QString msg)
-{
-    co::Json json;
-    if (!json.parse_from(msg.toStdString())) {
-        ELOG << "handleShareServerStart parse json error!!!!";
-        Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
-        return;
-    }
-    ShareStart st;
-    st.from_json(json);
-    if (!ok) {
-        // ShareEvents ev;
-        // ev.eventType = FRONT_SHARE_START_REPLY;
-        ShareStartReply reply;
-        reply.result = false;
-        reply.isRemote = false;
-        reply.errorMsg = "init server error! param = " + json.str();
-        // ev.data = reply.as_json().str();
-        // auto req = ev.as_json();
-        // // 通知前端
-        // req.add_member("api", "Frontend.shareEvents");
-        // SendIpcService::instance()->handleSendToClient(st.tarAppname.c_str(), req.str().c_str());
-
-        // shareEvents
-        QString jsonMsg = reply.as_json().str().c_str();
-        emit cooperationSignal(FRONT_SHARE_START_REPLY, jsonMsg);
-
-        Comshare::instance()->updateStatus(CURRENT_STATUS_DISCONNECT);
-        return;
-    }
-    Comshare::instance()->updateStatus(CURRENT_STATUS_SHARE_START);
-    // 通知远端启动客户端连接到这里的batter服务器
-    SendRpcService::instance()->doSendProtoMsg(SHARE_START, st.appName.c_str(),
-                                               st.as_json().str().c_str());
-}
 
 void HandleIpcService::handleSearchDevice(co::Json json)
 {

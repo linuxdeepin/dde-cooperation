@@ -6,7 +6,6 @@
 #include "service/comshare.h"
 #include "session.h"
 #include "service/discoveryjob.h"
-#include "service/share/sharecooperationservicemanager.h"
 #include "service/rpc/sendrpcservice.h"
 #include "common/constant.h"
 #include "ipc/proto/comstruct.h"

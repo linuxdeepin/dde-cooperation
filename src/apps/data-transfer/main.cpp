@@ -18,7 +18,7 @@
 using namespace deepin_cross;
 using namespace data_transfer_core;
 
-const char *compatProc = "cooperation-daemon";
+const char *compatProc = "dde-cooperation-daemon";
 
 static void appExitHandler(int sig)
 {

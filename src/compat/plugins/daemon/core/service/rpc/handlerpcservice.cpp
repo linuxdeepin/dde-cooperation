@@ -6,8 +6,6 @@
 #include "service/ipc/sendipcservice.h"
 #include "sendrpcservice.h"
 #include "service/rpc/remoteservice.h"
-#include "service/share/sharecooperationservicemanager.h"
-#include "service/share/sharecooperationservice.h"
 #include "common/constant.h"
 #include "common/commonstruct.h"
 #include "service/comshare.h"

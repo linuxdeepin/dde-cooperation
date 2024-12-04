@@ -27,7 +27,7 @@ extern "C"
 using namespace deepin_cross;
 using namespace cooperation_core;
 
-const char *compatProc = "cooperation-daemon";
+const char *compatProc = "dde-cooperation-daemon";
 
 static void appExitHandler(int sig)
 {

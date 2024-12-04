@@ -9,7 +9,6 @@
 #include "service/ipc/sendipcservice.h"
 #include "service/rpc/sendrpcservice.h"
 #include "service/rpc/handlesendresultservice.h"
-#include "service/share/sharecooperationservicemanager.h"
 #include "jobmanager.h"
 
 #include "utils/config.h"
@@ -42,11 +41,10 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
     SendIpcService::instance();
     SendRpcService::instance();
     JobManager::instance();
-    ShareCooperationServiceManager::instance();
+
     connect(SendRpcService::instance(), &SendRpcService::sendToRpcResult,
             _logic.data(), &HandleSendResultService::handleSendResultMsg, Qt::QueuedConnection);
-    connect(ShareCooperationServiceManager::instance(), &ShareCooperationServiceManager::startServerResult,
-            _ipcService, &HandleIpcService::handleShareServerStart, Qt::QueuedConnection);
+
 #ifndef _WIN32
     _userTimer.setInterval(500);
     connect(&_userTimer, &QTimer::timeout, this, [this](){
@@ -83,7 +81,7 @@ void ServiceManager::localIPCStart()
     if (_ipcService != nullptr)
         return;
     _ipcService = new HandleIpcService;
-    _ipcService->listen("cooperation-daemon");
+    _ipcService->listen(qAppName() + ".ipc");
 
     connect(SendIpcService::instance(), &SendIpcService::sessionSignal,
             _ipcService, &HandleIpcService::handleSessionSignal, Qt::QueuedConnection);
