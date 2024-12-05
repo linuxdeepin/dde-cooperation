@@ -43,6 +43,9 @@ ShareCooperationService::~ShareCooperationService()
 void ShareCooperationService::setBarrierType(BarrierType type)
 {
     _brrierType = type;
+
+    // terminate all current exit barrier when launchup
+    terminateAllBarriers();
 }
 
 void ShareCooperationService::setServerConfig(const DeviceInfoPointer selfDevice, const DeviceInfoPointer targetDevice)
@@ -240,6 +243,8 @@ void ShareCooperationService::stopBarrier()
     _expectedRunning = false;
 
     if (!barrierProcess()) {
+        // kill existed process.
+        terminateAllBarriers();
         return;
     }
 
