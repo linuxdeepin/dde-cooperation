@@ -56,3 +56,7 @@ void NoticeUtil::closeNotification()
     notifyIfc->call("CloseNotification", recvNotifyId);
 }
 
+void NoticeUtil::resetNotifyId()
+{
+    recvNotifyId = 0;
+}

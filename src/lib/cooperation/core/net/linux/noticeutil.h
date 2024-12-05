@@ -21,6 +21,7 @@ public:
 
     void notifyMessage(const QString &title, const QString &body, const QStringList &actions, QVariantMap hitMap, int expireTimeout);
     void closeNotification();
+    void resetNotifyId();
 
 Q_SIGNALS:
     void ActionInvoked(const QString &action);

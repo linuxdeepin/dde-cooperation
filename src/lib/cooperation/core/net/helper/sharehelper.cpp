@@ -473,6 +473,7 @@ void ShareHelper::handleCancelCooperApply()
         static QString body(tr("The other party has cancelled the connection request !"));
 #ifdef linux
         d->notifyMessage(body, {}, 3 * 1000);
+        d->notice->resetNotifyId();
 #else
         static QString title(tr("connect failed"));
         d->taskDialog()->switchInfomationPage(title, body);
