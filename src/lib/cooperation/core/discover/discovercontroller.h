@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -72,11 +72,13 @@ private:
     bool isVaildDevice(const DeviceInfoPointer info);
     DeviceInfoPointer parseDeviceJson(const QString &info);
     DeviceInfoPointer parseDeviceService(QZeroConfService zcs);
+    void deviceLosted(const QString &ip);
 
 private:
     QSharedPointer<DiscoverControllerPrivate> d { nullptr };
 
     QString _connectedDevice;
+    QStringList _historyDevices;
 };
 
 }   // namespace cooperation_core

@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -120,9 +120,31 @@ DeviceInfoPointer DiscoverController::parseDeviceService(QZeroConfService zcs)
     if (old) {
         // update its status
         devInfo->setConnectStatus(old->connectStatus());
+    } else {
+        // set default status
+        devInfo->setConnectStatus(DeviceInfo::Connectable);
     }
 
     return devInfo;
+}
+
+void DiscoverController::deviceLosted(const QString &ip)
+{
+    // update its status or remove it
+    auto oldinfo = findDeviceByIP(ip);
+    if (oldinfo) {
+        if (_historyDevices.contains(ip)) {
+            // just need to update status
+            oldinfo->setConnectStatus(DeviceInfo::Offline);
+            Q_EMIT deviceOnline({oldinfo});
+            return;
+        } else {
+            d->onlineDeviceList.removeOne(oldinfo);
+        }
+    }
+
+    // notify to remove it
+    Q_EMIT deviceOffline(ip);
 }
 
 QList<DeviceInfoPointer> DiscoverController::getOnlineDeviceList() const
@@ -285,18 +307,16 @@ void DiscoverController::removeService(QZeroConfService zcs)
     if (!devInfo)
         return;
 
-    auto oldinfo = findDeviceByIP(devInfo->ipAddress());
-    if (oldinfo)
-        d->onlineDeviceList.removeOne(oldinfo);
-
-    Q_EMIT deviceOffline(devInfo->ipAddress());
+    deviceLosted(devInfo->ipAddress());
 }
 
 void DiscoverController::updateHistoryDevices(const QMap<QString, QString> &connectMap)
 {
+    _historyDevices.clear();
     QList<DeviceInfoPointer> offlineDevList;
     auto iter = connectMap.begin();
     for (; iter != connectMap.end(); ++iter) {
+        _historyDevices.append(iter.key());
         if (findDeviceByIP(iter.key()))
             continue;
 
@@ -438,11 +458,7 @@ void DiscoverController::compatAddDeivces(StringMap infoMap)
 
 void DiscoverController::compatRemoveDeivce(const QString &ip)
 {
-    // 更新设备状态为离线状态
-    auto oldinfo = findDeviceByIP(ip);
-    if (oldinfo)
-        d->onlineDeviceList.removeOne(oldinfo);
-    Q_EMIT deviceOffline(ip);
+    deviceLosted(ip);
 }
 
 void DiscoverController::startDiscover()

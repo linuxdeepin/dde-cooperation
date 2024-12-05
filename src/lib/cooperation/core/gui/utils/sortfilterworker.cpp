@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -173,15 +173,7 @@ int SortFilterWorker::findLast(const QList<DeviceInfoPointer> &list, DeviceInfo:
 
 void SortFilterWorker::updateDevice(QList<DeviceInfoPointer> &list, const DeviceInfoPointer info, bool needNotify)
 {
-    // 更新
     int index = indexOf(list, info);
-    auto cstatus = info->connectStatus();
-    if (cstatus != DeviceInfo::Connected) {
-        // 设备属性发生改变时，连接状态为Unknown|Connectable
-        // 若设备为非离线状态，则保持状态不变
-        auto status = list[index]->connectStatus();
-        info->setConnectStatus(status == DeviceInfo::Offline ? DeviceInfo::Connectable : status);
-    }
 
     // 当连接状态不一致时，需要更新位置
     bool needMove = list[index]->connectStatus() != info->connectStatus();
