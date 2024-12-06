@@ -45,7 +45,7 @@ private:
     // heartbeat: ping <-> pong
     std::shared_ptr<Timer> _ping_timer { nullptr };
     // <ip, pinged>
-    std::map<std::string, std::atomic<bool>> _ping_remotes;
+    std::map<std::string, std::atomic<int>> _ping_remotes;
 };
 
 #endif // PROTOSERVER_H

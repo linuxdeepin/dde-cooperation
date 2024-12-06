@@ -38,6 +38,7 @@ private:
 
 
     std::shared_ptr<HTTPFileClient> _httpClient { nullptr };
+    std::thread _download_thread;
 
     std::string _token;
     std::string _savedir;

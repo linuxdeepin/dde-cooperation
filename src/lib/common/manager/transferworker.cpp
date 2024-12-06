@@ -222,9 +222,9 @@ void TransferWorker::doCalculateSpeed()
         _noDataCount++;
     }
 
-    double speed = (static_cast<double>(bytesize)) / (1024 * 1024); // 计算下载速度，单位为兆字节/秒
-    QString formattedSpeed = QString::number(speed, 'f', 2); // 格式化速度为保留两位小数的字符串
-    DLOG << "Transfer speed: " << formattedSpeed.toStdString() << " M/s";
+    // double speed = (static_cast<double>(bytesize)) / (1024 * 1024); // 计算下载速度，单位为兆字节/秒
+    // QString formattedSpeed = QString::number(speed, 'f', 2); // 格式化速度为保留两位小数的字符串
+    // DLOG << "Transfer speed: " << formattedSpeed.toStdString() << " M/s";
 
     QString path = QString::fromStdString(_status.path);
     emit notifyChanged(TRANS_FILE_SPEED, path, bytesize);

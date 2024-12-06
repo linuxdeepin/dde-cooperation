@@ -53,9 +53,19 @@ void FileSizeCounter::countFilesInDir(const QString &path)
     }
 
     QDir dir(path);
-    QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+    QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
     foreach (const QFileInfo &info, infoList) {
-        if (info.isDir()) {
+        if (info.isSymLink()) {
+            // 处理符号链接
+            QFileInfo targetInfo(info.symLinkTarget());
+            if (targetInfo.exists()) {
+                if (targetInfo.isDir()) {
+                    countFilesInDir(targetInfo.filePath());
+                } else {
+                    _totalSize += targetInfo.size();
+                }
+            }
+        } else if (info.isDir()) {
             countFilesInDir(info.filePath()); // 递归遍历子目录
         } else {
             _totalSize += info.size(); // 统计文件大小

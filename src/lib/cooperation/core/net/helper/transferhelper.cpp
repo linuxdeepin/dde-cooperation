@@ -403,7 +403,7 @@ void TransferHelper::onConnectStatusChanged(int result, const QString &msg, cons
 void TransferHelper::onTransChanged(int status, const QString &path, quint64 size)
 {
 #ifdef QT_DEBUG
-    DLOG << "status: " << status << " path=" << path.toStdString();
+    // DLOG << "status: " << status << " path=" << path.toStdString();
 #endif
     switch (status) {
     case TRANS_CANCELED:
