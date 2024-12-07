@@ -1,3 +1,14 @@
+dde-cooperation (1.0.4) unstable; urgency=medium
+
+  * v1.0.4 version update.
+  * fix: Fix it still continue cooperation even has been canceled
+  * chore: Rename daemon backend and remove unused codes
+  * fix: Fix incorrect status issue
+  * feat: [plugin]Move the file deliver plugin from extension project
+  * fix: Fix file delivery and single app show issue
+
+ -- re2zero <yangwu@uniontech.com>  Sat, 07 Dec 2024 11:19:12 +0800
+
 dde-cooperation (1.0.3) unstable; urgency=medium
 
   * v1.0.3 version update.
