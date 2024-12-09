@@ -13,6 +13,7 @@
 #include <QToolTip>
 #include <QFile>
 #include <QStackedLayout>
+#include <QDesktopServices>
 
 #include <qrencode.h>
 #include <gui/utils/cooperationguihelper.h>
@@ -127,6 +128,21 @@ void QRCodeWidget::initUI()
     hLayout->addWidget(qrFrame);
     hLayout->setAlignment(Qt::AlignCenter);
 
+    QString hypertext = tr("Click to download UOS assistant APP");
+    QString hyperlink = "https://www.chinauos.com/resource/assistant";
+
+    QString websiteLinkTemplate =
+        "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";
+    QString content1 = websiteLinkTemplate.arg(hyperlink, hypertext);
+
+    CooperationLabel *linkLable1 = new CooperationLabel(this);
+    linkLable1->setWordWrap(false);
+    linkLable1->setAlignment(Qt::AlignCenter);
+    linkLable1->setText(content1);
+    connect(linkLable1, &QLabel::linkActivated, this, [](const QString &link) {
+        QDesktopServices::openUrl(QUrl(link));
+    });
+
     mainLayout->setSpacing(5);
     mainLayout->addSpacing(80);
     mainLayout->addWidget(title);
@@ -135,7 +151,9 @@ void QRCodeWidget::initUI()
     mainLayout->addWidget(instruction2);
     mainLayout->addSpacing(20);
     mainLayout->addLayout(hLayout);
-    mainLayout->addSpacing(150);
+    mainLayout->addSpacing(120);
+    mainLayout->addWidget(linkLable1);
+    mainLayout->addSpacing(120);
     setLayout(mainLayout);
 }
 

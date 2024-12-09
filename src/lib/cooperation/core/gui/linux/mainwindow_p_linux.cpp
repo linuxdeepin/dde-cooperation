@@ -81,11 +81,7 @@ void MainWindowPrivate::initTitleBar()
     action->setData(MenuAction::kSettings);
     menu->addAction(action);
 
-    action = new QAction(tr("Download Windows client"), menu);
-    action->setData(MenuAction::kDownloadWindowClient);
-    menu->addAction(action);
-
-    action = new QAction(tr("Download Mobile client"), menu);
+    action = new QAction(tr("Download client"), menu);
     action->setData(MenuAction::kDownloadWindowClient);
     menu->addAction(action);
 

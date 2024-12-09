@@ -85,9 +85,6 @@ void MainWindowPrivate::handleSettingMenuTriggered(int action)
     case MenuAction::kDownloadWindowClient:
         QDesktopServices::openUrl(QUrl("https://www.chinauos.com/resource/assistant"));
         break;
-    case MenuAction::kDownloadMobileClient:
-        QDesktopServices::openUrl(QUrl("https://www.chinauos.com/resource/assistant"));
-        break;
     }
 }
 
