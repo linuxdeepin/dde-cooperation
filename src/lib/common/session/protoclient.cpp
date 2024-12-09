@@ -34,7 +34,7 @@ void ProtoClient::handlePong(const std::string &remote)
 {
     // std::cout << "client pong: " << remote << std::endl;
     _connected_host = remote;
-    _pong_received.store(true);
+    _nopong_count.store(0);
 }
 
 bool ProtoClient::pingMessageStart()
@@ -62,13 +62,15 @@ void ProtoClient::onHeartbeatTimeout(bool canceled)
 {
     // std::cout << "Cient timer handleHeartbeat!" << std::endl;
     if (!canceled) {
-        if (!_pong_received.exchange(false)) {
-            pingTimerStop();
-            // 处理心跳超时的情况
+        auto count = _nopong_count.load();
+        if (count < 3) {
+            _nopong_count.fetch_add(1);
+            pingMessageStart();
+        } else {
+            // no pong more than 3 times
             if (_callbacks)
                 _callbacks->onStateChanged(RPC_PINGOUT, _connected_host);
-        } else {
-            pingMessageStart();
+            pingTimerStop();
         }
     }
 }

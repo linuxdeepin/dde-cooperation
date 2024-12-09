@@ -59,7 +59,7 @@ private:
     std::string _connected_host = { "" };
     // heartbeat: ping <-> pong
     std::shared_ptr<Timer> _ping_timer { nullptr };
-    std::atomic<bool> _pong_received { false };
+    std::atomic<int> _nopong_count { 0 };
 };
 
 #endif // PROTOCLIENT_H

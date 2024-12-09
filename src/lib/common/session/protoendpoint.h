@@ -12,7 +12,7 @@
 #include <iostream>
 
 // hearbeat timeout
-#define HEARTBEAT_INTERVAL 3
+#define HEARTBEAT_INTERVAL 2
 
 using CppServer::Asio::Timer;
 using RpcHandler = std::function<void(int32_t type, const std::string &response)>;

@@ -131,12 +131,12 @@ void ProtoServer::handlePing(const std::string &remote)
     // std::cout << "server ping: " << remote << std::endl;
     auto pinging = _ping_remotes.find(remote);
     if (pinging != _ping_remotes.end()) {
-        pinging->second.store(true);
+        pinging->second.store(0);
     } else {
         if (_ping_remotes.empty()) {
             startHeartbeat(); // start hearbeat check while receive client's ping
         }
-        _ping_remotes.insert(std::make_pair(remote, true));
+        _ping_remotes.insert(std::make_pair(remote, 0));
     }
 }
 
@@ -153,18 +153,18 @@ void ProtoServer::onHeartbeatTimeout(bool canceled)
     bool recheck = false;
     auto it = _ping_remotes.begin();
     while (it != _ping_remotes.end()) {
-        if (!it->second.exchange(false)) {
-            // 处理心跳超时的情况
+        auto count = it->second.load();
+        if (count < 3) {
+            recheck = true;
+            ++it;
+        } else {
             outip = it->first;
             it = _ping_remotes.erase(it);
-            // std::cout << "Not receive client ping in 3 seconds: " << outip << std::endl;
+            std::cout << "Not receive client ping in 3 times: " << outip << std::endl;
 
             if (_callbacks) {
                 _callbacks->onStateChanged(RPC_PINGOUT, outip);
             }
-        } else {
-            recheck = true;
-            ++it;
         }
     }
 
