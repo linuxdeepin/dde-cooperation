@@ -51,17 +51,17 @@ Description: deepin data transfer application
 Package: dde-cooperation
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
- libqrencode4
+ libqrencode4,
+ dde-cooperation-transfer
 Replaces:
  QtZeroConf,
- dde-cooperation-transfer (<< 1.0.0),
  dde-cooperation-daemon (<< 1.0.0),
 Description: deepin cooperation application
  Deepin Desktop Environment (DDE) - cooperation application.
 
 Package: dde-cooperation-transfer
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation (= ${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces:
  dfmplugin-cooperation
 Description: deepin file delivery

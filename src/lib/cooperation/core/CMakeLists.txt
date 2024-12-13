@@ -104,7 +104,6 @@ endif()
 list(APPEND LINKLIBS cpplogging)
 list(APPEND LINKLIBS sessionmanager)
 list(APPEND LINKLIBS sslconf)
-list(APPEND LINKLIBS vncclient)
 
 if (NOT WIN32)
     find_library(QRENCODE_LIBRARY qrencode)
@@ -112,6 +111,7 @@ if (NOT WIN32)
         message(FATAL_ERROR "libqrencode not found. Please install it.")
     endif()
     add_definitions(-DENABLE_PHONE=1)
+    list(APPEND LINKLIBS vncclient)
 endif()
 
 add_library(${PROJECT_NAME}
