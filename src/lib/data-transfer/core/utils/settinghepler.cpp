@@ -17,6 +17,10 @@
 #include <QDir>
 #include <QJsonDocument>
 
+#include <DSysInfo>
+
+DCORE_USE_NAMESPACE
+
 SettingHelper::SettingHelper()
     : QObject()
 {
@@ -103,6 +107,12 @@ bool SettingHelper::setWallpaper(const QString &filepath)
     QString service = "com.deepin.daemon.Appearance";
     QString path = "/com/deepin/daemon/Appearance";
     QString interfaceName = "com.deepin.daemon.Appearance";
+    auto ver = DSysInfo::majorVersion().toInt();
+    if (ver > 20) {
+        service = "org.deepin.dde.Appearance1";
+        path = "/org/deepin/dde/Appearance1";
+        interfaceName = "org.deepin.dde.Appearance1";
+    }
 
     QDBusInterface interface(service, path, interfaceName);
 
@@ -169,6 +179,12 @@ bool SettingHelper::installApps(const QString &app)
     QString service = "com.deepin.lastore";
     QString path = "/com/deepin/lastore";
     QString interfaceName = "com.deepin.lastore.Manager";
+    auto ver = DSysInfo::majorVersion().toInt();
+    if (ver > 20) {
+        service = "org.deepin.dde.Lastore1";
+        path = "/org/deepin/dde/Lastore1";
+        interfaceName = "org.deepin.dde.Lastore1.Manager";
+    }
 
     QDBusInterface interface(service, path, interfaceName, QDBusConnection::systemBus());
 
@@ -213,12 +229,21 @@ void SettingHelper::onPropertiesChanged(const QDBusMessage &message)
 {
     if (message.arguments().count() != 3)
         return;
+    auto ver = DSysInfo::majorVersion().toInt();
     QVariantMap changedProps = qdbus_cast<QVariantMap>(message.arguments().at(1).value<QDBusArgument>());
     foreach (const QString &key, changedProps.keys()) {
         QVariant value = changedProps.value(key);
-        QDBusInterface interface("com.deepin.lastore",
+        QString service = "com.deepin.lastore";
+        QString interfaceName = "com.deepin.lastore.Job";
+
+        if (ver > 20) {
+            service = "org.deepin.dde.Lastore1";
+            interfaceName = "org.deepin.dde.Lastore1.Job";
+        }
+
+        QDBusInterface interface(service,
                                  message.path(),
-                                 "com.deepin.lastore.Job",
+                                 interfaceName,
                                  QDBusConnection::systemBus());
         auto packages = interface.property("Packages").toStringList();
         QString package;
