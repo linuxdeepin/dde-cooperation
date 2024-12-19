@@ -261,32 +261,37 @@ private:
     ResponseHandler _handler { nullptr };
 };
 
+FileServer::~FileServer()
+{
+    this->context().reset();
+}
+
 std::shared_ptr<CppServer::Asio::SSLSession>
 FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &server)
 {
     ResponseHandler cb([this](int status, const char *buffer, uint64_t size) -> bool {
-        if (_callback) {
+        if (auto callback = _callback.lock()) {
             if (RES_OKHEADER == status) {
                 std::string path(buffer);
-                _callback->onWebChanged(WEB_FILE_BEGIN, path, size);
+                callback->onWebChanged(WEB_FILE_BEGIN, path, size);
             } else if (RES_BODY == status) {
                 // return true to canceled from outside.
-                return _callback->onProgress(size);
+                return callback->onProgress(size);
             } else if (RES_FINISH == status) {
                 std::string path(buffer);
-                _callback->onWebChanged(WEB_FILE_END, path, size);
+                callback->onWebChanged(WEB_FILE_END, path, size);
             } else if (RES_NOTFOUND == status) {
                 std::string path(buffer);
-                _callback->onWebChanged(WEB_NOT_FOUND, "not_found");
+                callback->onWebChanged(WEB_NOT_FOUND, "not_found");
             } else if (RES_ERROR == status) {
-                _callback->onWebChanged(WEB_DISCONNECTED, "net_error");
+                callback->onWebChanged(WEB_DISCONNECTED, "net_error");
             } else if (RES_INDEX_CHANGE == status) {
                 std::string path(buffer);
-                _callback->onWebChanged(WEB_INDEX_BEGIN, path);
+                callback->onWebChanged(WEB_INDEX_BEGIN, path);
             } else if (RES_WEB_START == status) {
-                _callback->onWebChanged(WEB_TRANS_START);
+                callback->onWebChanged(WEB_TRANS_START);
             } else if (RES_WEB_FINISH == status) {
-                _callback->onWebChanged(WEB_TRANS_FINISH);
+                callback->onWebChanged(WEB_TRANS_FINISH);
             }
         }
         return _stop.load();

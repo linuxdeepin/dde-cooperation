@@ -29,7 +29,19 @@ TransferWorker::TransferWorker(QString id, QObject *parent)
     QObject::connect(&_speedTimer, &QTimer::timeout, this, &TransferWorker::doCalculateSpeed, Qt::QueuedConnection);
 }
 
-
+TransferWorker::~TransferWorker()
+{
+    LOG << "~TransferWorker :" << _bindId.toStdString();
+    if (_file_server) {
+        _file_server.reset();
+    }
+    if (_file_client) {
+        _file_client.reset();
+    }
+    if (_asioService) {
+        _asioService.reset();
+    }
+}
 
 // return true -> cancel
 bool TransferWorker::onProgress(uint64_t size)
@@ -85,11 +97,10 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
         break;
     case WEB_FILE_END: {
         _status.path = msg;
-        _status.total = size;
         if (_everyNotify) {
             DLOG << "notify file end: " << msg;
             QString path = QString::fromStdString(msg);
-            emit notifyChanged(TRANS_FILE_DONE, path, size);
+            emit notifyChanged(TRANS_FILE_DONE, path, _status.total);
         }
     }
         break;
@@ -103,11 +114,17 @@ void TransferWorker::stop()
 
     if (_file_server) {
         _file_server->clearBind();
+        _file_server->setCallback(nullptr);
         _file_server->stop();
     }
 
     if (_file_client) {
+        _file_client->setCallback(nullptr);
         _file_client->stop();
+    }
+
+    if (_asioService) {
+        _asioService.reset();
     }
 }
 
@@ -234,6 +251,8 @@ void TransferWorker::sendTranEndNotify()
 {
     emit speedTimerTick(true);
     emit notifyChanged(TRANS_WHOLE_FINISH, _recvPath);
+
+    emit onFinished(_bindId);
 }
 
 

@@ -13,6 +13,7 @@ class FileServer : public WebInterface, public CppServer::HTTP::HTTPSServer
     using CppServer::HTTP::HTTPSServer::HTTPSServer;
 
 public:
+    ~FileServer();
 
     bool start();
     bool stop();

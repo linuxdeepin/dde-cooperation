@@ -23,6 +23,7 @@ class TransferWorker : public QObject, public ProgressCallInterface
 
 public:
     explicit TransferWorker(QString id, QObject *parent = nullptr);
+    ~TransferWorker();
 
     bool onProgress(uint64_t size) override;
 
@@ -44,6 +45,9 @@ signals:
 
     // IO exception
     void onException(const QString id, const QString reason);
+
+    // transfer work finished
+    void onFinished(const QString id);
 
 public slots:
     void handleTimerTick(bool stop);

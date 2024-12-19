@@ -70,7 +70,7 @@ public:
     }
 
 protected:
-    std::shared_ptr<ProgressCallInterface> _callback { nullptr };
+    std::weak_ptr<ProgressCallInterface> _callback;
 };
 
 

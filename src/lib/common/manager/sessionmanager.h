@@ -51,9 +51,11 @@ public slots:
     void handleFileCounted(const QString ip, const QStringList paths, quint64 totalSize);
     void handleRpcResult(int32_t type, const QString &response);
     void handleTransException(const QString jobid, const QString reason);
+    void handleTransFinish(const QString jobid);
 
 private:
     std::shared_ptr<TransferWorker> createTransWorker(const QString &jobid);
+    void releaseTransWorker(const QString &jobid);
 
 private:
     // session worker
