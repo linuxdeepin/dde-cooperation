@@ -10,6 +10,8 @@
 
 #include "webproto.h"
 
+#include <queue>
+
 class HTTPFileClient;
 class FileClient : public WebInterface
 {
@@ -31,14 +33,15 @@ private:
     InfoEntry requestInfo(const std::string &name);
     std::string getHeadKey(const std::string &headstrs, const std::string &keyfind);
     bool downloadFile(const std::string &name, const std::string &rename = "");
-    void downloadFolder(const std::string &foldername, const std::string &refoldername = "");
     void walkDownload(const std::vector<std::string> &webnames);
     bool createNotExistPath(std::string &abspath, bool isfile);
     std::string createNextAvailableName(const std::string &name, bool isfile);
 
+    void walkFolder(const std::string &foldername);
+    void walkFolderEntry(const std::string &name, std::queue<std::string> *entryQueue);
 
     std::shared_ptr<HTTPFileClient> _httpClient { nullptr };
-    std::thread _download_thread;
+    std::thread _downloadThread;
 
     std::string _token;
     std::string _savedir;

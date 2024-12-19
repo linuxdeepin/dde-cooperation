@@ -119,13 +119,24 @@ std::shared_ptr<TransferWorker> SessionManager::createTransWorker(const QString 
     // Create a new TransferWorker
     auto newWorker = std::make_shared<TransferWorker>(jobid);
     // auto newWorker = QSharedPointer<TransferWorker>::create(this);
-    connect(newWorker.get(), &TransferWorker::notifyChanged, this, &SessionManager::notifyTransChanged);
-    connect(newWorker.get(), &TransferWorker::onException, this, &SessionManager::handleTransException);
-
-    // Store it in the map with the given jobid
-    _trans_workers[jobid] = newWorker;
+    connect(newWorker.get(), &TransferWorker::notifyChanged, this, &SessionManager::notifyTransChanged, Qt::QueuedConnection);
+    connect(newWorker.get(), &TransferWorker::onException, this, &SessionManager::handleTransException, Qt::QueuedConnection);
+    connect(newWorker.get(), &TransferWorker::onFinished, this, &SessionManager::handleTransFinish, Qt::QueuedConnection);
 
     return newWorker;
+}
+
+void SessionManager::releaseTransWorker(const QString &jobid)
+{
+    auto it = _trans_workers.find(jobid);
+    if (it != _trans_workers.end()) {
+        it->second->stop();
+        disconnect(it->second.get(), nullptr, nullptr, nullptr);
+
+        _trans_workers.erase(it);
+    } else {
+        WLOG << "Worker not found for job id: " << jobid.toStdString();
+    }
 }
 
 void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
@@ -139,6 +150,7 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
         ELOG << "Fail to send size: " << paths.size() << " at:" << port;
         return;
     }
+    _trans_workers[ip] = worker;
 
     QString localIp = deepin_cross::CommonUitls::getFirstIp().data();
     QString accesstoken = QString::fromStdString(token);
@@ -168,7 +180,10 @@ void SessionManager::recvFiles(QString &ip, int port, QString &token, QStringLis
     bool success = worker->tryStartReceive(names, ip, port, token, _save_dir);
     if (!success) {
         ELOG << "Fail to recv name size: " << names.size() << " at:" << ip.toStdString();
+        return;
     }
+
+    _trans_workers[ip] = worker;
 }
 
 void SessionManager::cancelSyncFile(const QString &ip, const QString &reason)
@@ -219,13 +234,8 @@ void SessionManager::handleTransCount(const QString names, quint64 size)
 
 void SessionManager::handleCancelTrans(const QString jobid, const QString reason)
 {
-    // stop the worker
-    auto it = _trans_workers.find(jobid);
-    if (it != _trans_workers.end()) {
-        it->second->stop();
-        // Remove the worker from the map
-        _trans_workers.erase(it);
-    }
+    // stop & release the worker
+    releaseTransWorker(jobid);
 
     if (!reason.isEmpty()) {
         // TRANS_EXCEPTION = 49
@@ -281,3 +291,13 @@ void SessionManager::handleTransException(const QString jobid, const QString rea
 #endif
     cancelSyncFile(jobid, reason);
 }
+
+void SessionManager::handleTransFinish(const QString jobid)
+{
+#ifdef QT_DEBUG
+    DLOG << jobid.toStdString() << " transfer finished!";
+#endif
+    // stop & release the worker
+    releaseTransWorker(jobid);
+}
+

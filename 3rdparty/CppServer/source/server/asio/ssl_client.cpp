@@ -1068,6 +1068,9 @@ void SSLClient::ClearBuffers()
         _bytes_pending = 0;
         _bytes_sending = 0;
     }
+    {
+        _receive_buffer.clear();
+    }
 }
 
 void SSLClient::SendError(std::error_code ec)
