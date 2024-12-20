@@ -116,6 +116,9 @@ void TransferHelper::handleMessage(QString jsonmsg)
         QString result = jsonObj.value("add_result").toString();
         LOG << "add_result: " << result.toStdString();
         for (QString str : result.split(";")) {
+            if (str.isEmpty())
+                continue;
+
             // 以 "/true|false/" 或旧协议 " true|false " 分隔
             QRegularExpression re("(/|\\s)(true|false)(/|\\s)");
             QRegularExpressionMatch match = re.match(str);

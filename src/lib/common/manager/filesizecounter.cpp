@@ -38,20 +38,22 @@ quint64 FileSizeCounter::countFiles(const QString &targetIp, const QStringList p
 void FileSizeCounter::run()
 {
     _totalSize = 0;
+    QStringList names;
     foreach (const QString &path, _paths) {
-        countFilesInDir(path);
+        QFileInfo fileInfo(path);
+        if (fileInfo.isFile()) {
+            _totalSize += fileInfo.size();
+        } else {
+            countFilesInDir(path);
+        }
+        names.append(fileInfo.fileName());
     }
-    emit onCountFinish(_targetIp, _paths, _totalSize);
+
+    emit onCountFinish(_targetIp, names, _totalSize);
 }
 
 void FileSizeCounter::countFilesInDir(const QString &path)
 {
-    QFileInfo fileInfo(path);
-    if (fileInfo.isFile()) {
-        _totalSize += fileInfo.size();
-        return;
-    }
-
     QDir dir(path);
     QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
     foreach (const QFileInfo &info, infoList) {

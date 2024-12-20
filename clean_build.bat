@@ -77,8 +77,7 @@ if exist output\%B_BUILD_TYPE% (
     )
 
 
-    copy output\%B_BUILD_TYPE%\* output\%DT_PROJECT%\%B_BUILD_TYPE%\ > NUL
-    del output\%DT_PROJECT%\%B_BUILD_TYPE%\QtZeroConf.* > NUL
+    copy output\%B_BUILD_TYPE%\quazip5.* output\%DT_PROJECT%\%B_BUILD_TYPE%\ > NUL
     copy "%OPENSSL_ROOT_DIR%\libcrypto-1_1-x64.dll" output\%DT_PROJECT%\%B_BUILD_TYPE%\ > NUL
     copy "%OPENSSL_ROOT_DIR%\libssl-1_1-x64.dll" output\%DT_PROJECT%\%B_BUILD_TYPE%\ > NUL
     mkdir installer-inno\%DT_PROJECT%

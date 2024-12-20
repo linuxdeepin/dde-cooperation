@@ -12,6 +12,9 @@ project(data-transfer-core VERSION 1.0.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(ENABLE_CUTEIPC OFF)
+remove_definitions(-DENABLE_COMPAT)
+
 # 插件相关的固定内容，或者公共头文件源文件，添加到这里。
 FILE(GLOB PLUGIN_FILES
     "${CMAKE_SOURCE_DIR}/src/base/baseutils.h"

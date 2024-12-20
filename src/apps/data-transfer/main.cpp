@@ -18,6 +18,7 @@
 using namespace deepin_cross;
 using namespace data_transfer_core;
 
+#undef ENABLE_COMPAT
 const char *compatProc = "dde-cooperation-daemon";
 
 static void appExitHandler(int sig)
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" );
     app.setApplicationDescription(app.translate("Application", "UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system."));
 #endif
-
+#ifdef ENABLE_COMPAT
     bool compatDaemonRun = app.checkProcess(compatProc);
     if (compatDaemonRun) {
         qInfo() << "compat backend launched!";
@@ -66,6 +67,7 @@ int main(int argc, char *argv[])
             qWarning() << "compat backend is not exist!";
         }
     }
+#endif
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
     if (!canSetSingle) {

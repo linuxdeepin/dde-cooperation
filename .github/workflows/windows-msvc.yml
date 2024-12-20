@@ -90,8 +90,7 @@ jobs:
               )
 
 
-              copy output\%BUILD_TYPE%\* output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
-              del output\%DT_PROJECT%\%BUILD_TYPE%\QtZeroConf.* > NUL
+              copy output\%BUILD_TYPE%\quazip5.* output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
               copy "%OPENSSL_ROOT_DIR%\libcrypto-1_1-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
               copy "%OPENSSL_ROOT_DIR%\libssl-1_1-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
               mkdir installer-inno\%DT_PROJECT%
