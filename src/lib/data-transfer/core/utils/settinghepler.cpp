@@ -39,9 +39,9 @@ QJsonObject SettingHelper::ParseJson(const QString &filepath)
 {
     QJsonObject jsonObj;
     QFile file(filepath);
-    LOG << "Parsing the configuration file for transmission" << file.fileName().toStdString();
+    LOG << "Parsing the configuration file for transmission " << file.fileName().toStdString();
     if (!file.open(QIODevice::ReadOnly)) {
-        WLOG << "could not open datajson file";
+        DLOG << "could not open datajson file";
         return jsonObj;
     }
     QByteArray jsonData = file.readAll();

@@ -14,6 +14,7 @@ public:
     explicit FileSizeCounter(QObject *parent = nullptr);
 
     quint64 countFiles(const QString &targetIp, const QStringList paths);
+    void stop();
 
 signals:
     void onCountFinish(const QString targetIp, const QStringList paths, quint64 totalSize);
@@ -27,6 +28,7 @@ private:
     QStringList _paths;
     QString _targetIp;
     quint64 _totalSize {0};
+    bool _stoped { true };
 };
 
 #endif // FILESIZECOUNTER_H

@@ -40,8 +40,7 @@ void DataTransferCorePlugin::stop()
 {
     TransferHelper::instance()->finish();
     if (w) {
-        delete w;
-        w = nullptr;
+        w->deleteLater();
     }
 }
 

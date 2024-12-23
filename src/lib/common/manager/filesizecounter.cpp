@@ -34,12 +34,19 @@ quint64 FileSizeCounter::countFiles(const QString &targetIp, const QStringList p
     return totalSize;
 }
 
+void FileSizeCounter::stop()
+{
+    _stoped = true;
+}
 
 void FileSizeCounter::run()
 {
+    _stoped = false;
     _totalSize = 0;
     QStringList names;
     foreach (const QString &path, _paths) {
+        if (_stoped)
+            return;
         QFileInfo fileInfo(path);
         if (fileInfo.isFile()) {
             _totalSize += fileInfo.size();
@@ -54,9 +61,15 @@ void FileSizeCounter::run()
 
 void FileSizeCounter::countFilesInDir(const QString &path)
 {
+    if (_stoped)
+        return;
+
     QDir dir(path);
     QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
     foreach (const QFileInfo &info, infoList) {
+        if (_stoped)
+            return;
+
         if (info.isSymLink()) {
             // 处理符号链接
             QFileInfo targetInfo(info.symLinkTarget());

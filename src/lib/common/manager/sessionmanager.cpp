@@ -32,9 +32,25 @@ SessionManager::SessionManager(QObject *parent) : QObject(parent)
 
 SessionManager::~SessionManager()
 {
-    //FIXME: abort if stop them
-    //_session_worker->stop();
-    //_trans_worker->stop();
+    if (_file_counter) {
+        _file_counter->stop();
+        _file_counter.reset();
+    }
+
+    if (_session_worker) {
+        _session_worker->stop();
+        _session_worker.reset();
+    }
+
+    // release all transfer worker.
+    auto it = _trans_workers.begin();
+    while (it != _trans_workers.end()) {
+        it->second->stop();
+        disconnect(it->second.get(), nullptr, nullptr, nullptr);
+
+        it = _trans_workers.erase(it);
+    }
+    _trans_workers.clear();
 }
 
 void SessionManager::setSessionExtCallback(ExtenMessageHandler cb)

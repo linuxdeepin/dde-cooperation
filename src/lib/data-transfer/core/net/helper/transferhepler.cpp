@@ -348,7 +348,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
         QFile jsonfile(filepath);
         QString fileDir = filepath.left(filepath.lastIndexOf('/'));
         if (!jsonfile.exists() || jsonObj.isEmpty()) {
-            WLOG << "Failed to recordTranfer file";
+            DLOG << "Failed to recordTranfer file";
             return;
         }
         QJsonArray userFileArray = jsonObj["user_file"].toArray();

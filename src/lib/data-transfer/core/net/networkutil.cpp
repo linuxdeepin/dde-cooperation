@@ -54,9 +54,9 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
 
     sessionManager->sessionListen(DATA_SESSION_PORT);
 
-    connect(sessionManager, &SessionManager::notifyConnection, this, &NetworkUtilPrivate::handleConnectStatus);
-    connect(sessionManager, &SessionManager::notifyTransChanged, this, &NetworkUtilPrivate::handleTransChanged);
-    connect(sessionManager, &SessionManager::notifyAsyncRpcResult, this, &NetworkUtilPrivate::handleAsyncRpcResult);
+    connect(sessionManager, &SessionManager::notifyConnection, this, &NetworkUtilPrivate::handleConnectStatus, Qt::QueuedConnection);
+    connect(sessionManager, &SessionManager::notifyTransChanged, this, &NetworkUtilPrivate::handleTransChanged, Qt::QueuedConnection);
+    connect(sessionManager, &SessionManager::notifyAsyncRpcResult, this, &NetworkUtilPrivate::handleAsyncRpcResult, Qt::QueuedConnection);
 }
 
 NetworkUtilPrivate::~NetworkUtilPrivate()
