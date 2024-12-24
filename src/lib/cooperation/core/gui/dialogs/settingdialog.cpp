@@ -8,6 +8,7 @@
 #include "gui/utils/cooperationguihelper.h"
 #include "configs/settings/configmanager.h"
 #include "configs/dconfig/dconfigmanager.h"
+#include "common/qtcompat.h"
 
 #ifdef linux
 #    include <DPalette>
@@ -19,9 +20,6 @@
 #include <QStandardPaths>
 #include <QToolTip>
 #include <QScrollBar>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QRegularExpression>
-#endif
 
 #include <utils/cooperationutil.h>
 #include <base/reportlog/reportlogmanager.h>

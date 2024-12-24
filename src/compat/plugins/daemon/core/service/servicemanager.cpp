@@ -137,4 +137,6 @@ void ServiceManager::handleAppQuit()
 
     DiscoveryJob::instance()->stopAnnouncer();
     DiscoveryJob::instance()->stopDiscoverer();
+
+    _exit(0);
 }

@@ -10,6 +10,8 @@ if(NOT TARGET CuteIPC)
     set(BUILD_SHARED_LIBS ON)
   endif()
 
+  SET(QT_DESIRED_VERSION ${QT_VERSION_MAJOR})
+
   # Module subdirectory
   add_subdirectory("${CUTEIPC_DIR}" CuteIPC)
   include_directories(${CUTEIPC_DIR}/include)

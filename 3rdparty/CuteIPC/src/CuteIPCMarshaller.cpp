@@ -23,14 +23,15 @@ QByteArray CuteIPCMarshaller::marshallMessage(const CuteIPCMessage& message)
   stream << message.messageType();
   stream << message.method();
   stream << message.returnType();
-  stream << message.arguments().size();
+  stream << (quint32)message.arguments().size();
 
   bool successfullyMarshalled;
-  foreach (const QGenericArgument& arg, message.arguments())
+  foreach (const auto& arg, message.arguments())
   {
     successfullyMarshalled = marshallArgumentToStream(arg, stream);
+
     if (!successfullyMarshalled)
-      return QByteArray();
+        return QByteArray();
   }
 
   return result;
@@ -55,7 +56,7 @@ CuteIPCMessage CuteIPCMarshaller::demarshallMessage(QByteArray& call)
   stream >> returnType;
 
   // Arguments
-  int argc = 0;
+  quint32 argc = 0;
   stream >> argc;
   Q_ASSERT(argc <= 10);
 
@@ -233,6 +234,12 @@ bool CuteIPCMarshaller::marshallQImageToStream(QGenericArgument value, QDataStre
   QImage* image = static_cast<QImage*>(value.data());
   const uchar* imageData = image->constBits();
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+  const int size = image->byteCount();
+#else
+  const int size = image->sizeInBytes();
+#endif
+
   stream << QString::fromLatin1(value.name());
 
   stream << image->width();
@@ -245,8 +252,9 @@ bool CuteIPCMarshaller::marshallQImageToStream(QGenericArgument value, QDataStre
 
   stream << image->colorTable();
 
-  stream << image->byteCount();
-  stream.writeRawData(reinterpret_cast<const char*>(imageData), image->byteCount());
+  stream << size;
+  stream.writeRawData(reinterpret_cast<const char*>(imageData), size);
+
   return true;
 }
 
@@ -261,7 +269,14 @@ bool CuteIPCMarshaller::marshallContainerOfQImagesToStream(QGenericArgument valu
   {
     QByteArray dt;
     QDataStream dtStream(&dt, QIODevice::WriteOnly);
-    if (!marshallQImageToStream(Q_ARG(QImage, *it), dtStream))
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QGenericArgument genArg = Q_ARG(QImage, *it);
+#else
+    auto arg = Q_ARG(QImage, *it);
+    QGenericArgument genArg("QImage", arg.data);
+#endif
+
+    if (!marshallQImageToStream(genArg, dtStream))
       return false;
     dataContainer << dt;
   }

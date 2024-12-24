@@ -42,6 +42,10 @@ class CuteIPCInterfacePrivate
     void _q_invokeRemoteSignal(const QString& signalSignature, const CuteIPCMessage::Arguments& arguments);
     void _q_removeRemoteConnectionsOfObject(QObject* destroyedObject);
 
+    bool call(const QString& method, 
+              const QGenericReturnArgument& ret,
+              const CuteIPCMessage::Arguments& arguments);
+
     CuteIPCInterface* q_ptr;
     QMultiHash<MethodData, CuteIPCSignalHandler*> m_localSignalHandlers;
     QString m_lastError;

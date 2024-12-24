@@ -16,10 +16,6 @@
 #include <QStandardPaths>
 #include <QTimer>
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QRegularExpression>
-#endif
-
 ShareCooperationService::ShareCooperationService(QObject *parent)
     : QObject(parent)
 {
@@ -145,11 +141,11 @@ void ShareCooperationService::terminateAllBarriers()
     process.waitForFinished();
 
     QString output = process.readAllStandardOutput();
-    QStringList processList = output.split('\n', QString::SkipEmptyParts);
+    QStringList processList = output.split('\n', SKIP_EMPTY_PARTS);
     
     for (const QString &line : processList) {
         if (line.contains("barrier", Qt::CaseInsensitive)) {
-            QStringList tokens = line.split(QStringLiteral(" "), QString::SkipEmptyParts);
+            QStringList tokens = line.split(QStringLiteral(" "), SKIP_EMPTY_PARTS;
             if (tokens.size() >= 2) {
                 QString pid = tokens[1]; // PID 在第二个字段
                 QProcess::execute("taskkill", QStringList() << "/F" << "/PID" << pid);
@@ -164,8 +160,8 @@ void ShareCooperationService::terminateAllBarriers()
     process.waitForFinished();
 
     QString output = process.readAllStandardOutput();
-    QStringList pidList = output.split('\n', QString::SkipEmptyParts);
 
+    QStringList pidList = output.split('\n', SKIP_EMPTY_PARTS);
     for (const QString &pid : pidList) {
         if (!pid.isEmpty()) {
             QProcess::execute("kill", QStringList() << pid);

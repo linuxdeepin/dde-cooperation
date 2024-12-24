@@ -80,11 +80,11 @@ if (WIN32)
 endif()
 
 # 如果未设置CMAKE_BUILD_TYPE，则将其设置为Release
-message("   >>> CMAKE_BUILD_TYPE  ${CMAKE_BUILD_TYPE}")
 if(NOT CMAKE_BUILD_TYPE)
-   message("Cmake build type is not defined!")
+   message("Build type is not defined, default to Debug")
    set(CMAKE_BUILD_TYPE "Debug")
 endif()
+message("   >>> CMAKE_BUILD_TYPE  ${CMAKE_BUILD_TYPE}")
 
 # 后台进程安装目录
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -97,13 +97,14 @@ option(ENABLE_CUTEIPC "Enable CuteIPC for compatible with old daemon" ON)
 
 # Find Qt version
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+message("   >>> Found Qt version: ${QT_VERSION_MAJOR}")
 # 检查并设置环境变量
 if(NOT DEFINED ENV{QT_SELECT})
     set(ENV{QT_SELECT} "qt${QT_VERSION_MAJOR}")
 endif()
 message("   >>> Build with Qt version: $ENV{QT_SELECT}")
 
-if (QT_VERSION_MAJOR EQUAL "6")
+if (QT_VERSION_MAJOR MATCHES 6)
     set(DTK_VERSION_MAJOR 6)
 else()
     set(DTK_VERSION_MAJOR "")

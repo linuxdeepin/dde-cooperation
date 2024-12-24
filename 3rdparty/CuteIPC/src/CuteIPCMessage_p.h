@@ -6,6 +6,9 @@
 #include <QGenericArgument>
 #include <QList>
 
+// 添加宏定义
+#include "CuteIPCGlobal.h"
+
 #define DEBUG if (qgetenv("CUTEIPC_DEBUG") == "1") qDebug() << "CuteIPC:"
 
 class CuteIPCMessage
@@ -27,15 +30,22 @@ class CuteIPCMessage
     };
 
     CuteIPCMessage(MessageType type,
-                   const QString& method = QString(), QGenericArgument val0 = QGenericArgument(),
-                   QGenericArgument val1 = QGenericArgument(), QGenericArgument val2 = QGenericArgument(),
-                   QGenericArgument val3 = QGenericArgument(), QGenericArgument val4 = QGenericArgument(),
-                   QGenericArgument val5 = QGenericArgument(), QGenericArgument val6 = QGenericArgument(),
-                   QGenericArgument val7 = QGenericArgument(), QGenericArgument val8 = QGenericArgument(),
-                   QGenericArgument val9 = QGenericArgument(), const QString& returnType = QString());
+                   const QString& method = QString(),
+                   CUTE_IPC_ARG val0 = CUTE_IPC_ARG(),
+                   CUTE_IPC_ARG val1 = CUTE_IPC_ARG(),
+                   CUTE_IPC_ARG val2 = CUTE_IPC_ARG(),
+                   CUTE_IPC_ARG val3 = CUTE_IPC_ARG(),
+                   CUTE_IPC_ARG val4 = CUTE_IPC_ARG(),
+                   CUTE_IPC_ARG val5 = CUTE_IPC_ARG(),
+                   CUTE_IPC_ARG val6 = CUTE_IPC_ARG(),
+                   CUTE_IPC_ARG val7 = CUTE_IPC_ARG(),
+                   CUTE_IPC_ARG val8 = CUTE_IPC_ARG(),
+                   CUTE_IPC_ARG val9 = CUTE_IPC_ARG(),
+                   const QString& returnType = QString());
 
     CuteIPCMessage(MessageType type, const QString& method, const Arguments& arguments,
                    const QString& returnType = QString());
+
 
     const MessageType& messageType() const;
     const QString& method() const;

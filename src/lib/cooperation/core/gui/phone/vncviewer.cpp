@@ -4,6 +4,7 @@
 
 #include "vncviewer.h"
 #include "qt2keysum.h"
+#include "common/qtcompat.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -265,7 +266,11 @@ bool VncViewer::event(QEvent *e)
 
         case QEvent::Wheel: { // 处理滚轮事件
             QWheelEvent *wheelEvent = static_cast<QWheelEvent *>(e);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            QPointF mappedPos = m_transform.map(wheelEvent->position());
+#else
             QPoint mappedPos = m_transform.map(wheelEvent->pos());
+#endif
 
             // 定义一个处理滚轮的辅助函数
             auto processWheelEvent = [&](int delta, int positiveButtonMask, int negativeButtonMask) {

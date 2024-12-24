@@ -8,6 +8,7 @@
 #include "devicelistwidget.h"
 #include "firsttipwidget.h"
 #include "common/commonutils.h"
+#include "common/qtcompat.h"
 
 #include <QMouseEvent>
 #include <QRegularExpression>

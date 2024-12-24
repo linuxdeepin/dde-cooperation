@@ -5,39 +5,48 @@
 #include <QDebug>
 
 CuteIPCMessage::CuteIPCMessage(MessageType type, const QString& method,
-                               QGenericArgument val0, QGenericArgument val1,
-                               QGenericArgument val2, QGenericArgument val3,
-                               QGenericArgument val4, QGenericArgument val5,
-                               QGenericArgument val6, QGenericArgument val7,
-                               QGenericArgument val8, QGenericArgument val9,
+                               CUTE_IPC_ARG val0,
+                               CUTE_IPC_ARG val1,
+                               CUTE_IPC_ARG val2,
+                               CUTE_IPC_ARG val3,
+                               CUTE_IPC_ARG val4,
+                               CUTE_IPC_ARG val5,
+                               CUTE_IPC_ARG val6,
+                               CUTE_IPC_ARG val7,
+                               CUTE_IPC_ARG val8,
+                               CUTE_IPC_ARG val9,
                                const QString& returnType)
 {
   m_messageType = type;
-
   m_method = method;
-
-  if (val0.data())
-    m_arguments.append(val0);
-  if (val1.data())
-    m_arguments.append(val1);
-  if (val2.data())
-    m_arguments.append(val2);
-  if (val3.data())
-    m_arguments.append(val3);
-  if (val4.data())
-    m_arguments.append(val4);
-  if (val5.data())
-    m_arguments.append(val5);
-  if (val6.data())
-    m_arguments.append(val6);
-  if (val7.data())
-    m_arguments.append(val7);
-  if (val8.data())
-    m_arguments.append(val8);
-  if (val9.data())
-    m_arguments.append(val9);
-
   m_returnType = returnType;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  // Qt6: 需要转换参数类型
+  const CUTE_IPC_ARG args[] = {
+    val0, val1, val2, val3, val4, val5, val6, val7, val8, val9
+  };
+  
+  for(int i = 0; i < 10; ++i) {
+    if(args[i].name) {
+      // m_arguments.append(args[i]);
+      QGenericArgument arg(qstrdup(args[i].name), args[i].data);
+      m_arguments.append(arg);
+    }
+  }
+#else
+  // Qt5: 直接使用参数
+  if (val0.name()) m_arguments.append(val0);
+  if (val1.name()) m_arguments.append(val1);
+  if (val2.name()) m_arguments.append(val2);
+  if (val3.name()) m_arguments.append(val3);
+  if (val4.name()) m_arguments.append(val4);
+  if (val5.name()) m_arguments.append(val5);
+  if (val6.name()) m_arguments.append(val6);
+  if (val7.name()) m_arguments.append(val7);
+  if (val8.name()) m_arguments.append(val8);
+  if (val9.name()) m_arguments.append(val9);
+#endif
 }
 
 
@@ -115,7 +124,7 @@ QDebug operator<<(QDebug dbg, const CuteIPCMessage& message)
   if (message.arguments().length())
   {
     dbg.nospace() << "  " << "Arguments of type: ";
-    foreach (const QGenericArgument& arg, message.arguments())
+    foreach (const auto& arg, message.arguments())
     {
       dbg.space() << arg.name();
     }

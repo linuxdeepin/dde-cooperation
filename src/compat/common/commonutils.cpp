@@ -98,7 +98,11 @@ void CommonUitls::loadTranslator()
     auto locale = QLocale::system();
     QStringList missingQmfiles;
     QStringList translateFilenames { QString("%1_%2").arg(qApp->applicationName()).arg(QLocale::system().name()) };
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    const QStringList parseLocalNameList = locale.name().split("_", Qt::SkipEmptyParts);
+#else
     const QStringList parseLocalNameList = locale.name().split("_", QString::SkipEmptyParts);
+#endif
     if (parseLocalNameList.length() > 0)
         translateFilenames << QString("%1_%2").arg(qApp->applicationName()).arg(parseLocalNameList.at(0));
 

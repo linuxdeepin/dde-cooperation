@@ -403,7 +403,11 @@ QStringList Settings::keyList(const QString &group) const
         }
     }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     keyList << keys.toList();
+#else
+    keyList << QStringList(keys.begin(), keys.end());
+#endif
 
     return keyList;
 }
