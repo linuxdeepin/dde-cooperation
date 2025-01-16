@@ -14,7 +14,7 @@
 #include "common/commonutils.h"
 #include "gui/utils/cooperationguihelper.h"
 
-#ifdef linux
+#ifdef __linux__
 #    include <DPalette>
 #endif
 #ifdef DTKWIDGET_CLASS_DSizeMode
@@ -90,7 +90,7 @@ void FirstTipWidget::initUI()
 void FirstTipWidget::initbackgroundFrame()
 {
     backgroundFrame = new QFrame(this);
-    QString backlightStyle = ".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(249, 250, 254), stop:1 rgba(232, 242, 255)); "
+    QString backlightStyle = ".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(249, 250, 254, 0.24), stop:1 rgba(232, 242, 255, 0.12)); "
                              "border-radius: 10px;"
                              "color: rgba(0, 0, 0, 0.6);"
                              "border: 1px solid rgba(0, 0, 0, 0.05); } ";
