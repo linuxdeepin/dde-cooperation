@@ -21,7 +21,7 @@
 #include <QProcess>
 #include <QRegularExpression>
 
-#ifdef linux
+#ifdef __linux__
 #    include "base/reportlog/reportlogmanager.h"
 #    include <QDBusInterface>
 #    include <QDBusReply>
@@ -46,7 +46,7 @@ inline constexpr char NotifyViewAction[] { "view" };
 using TransHistoryInfo = QMap<QString, QString>;
 Q_GLOBAL_STATIC(TransHistoryInfo, transHistory)
 
-#ifdef linux
+#ifdef __linux__
 inline constexpr char Khistory[] { "history" };
 inline constexpr char Ksend[] { "send" };
 #else
@@ -277,6 +277,7 @@ void TransferHelper::transferResult(bool result, const QString &msg)
         if (result)
             actions << NotifyViewAction << tr("View");
         d->notifyMessage(msg, actions, 3 * 1000);
+        d->notice->resetNotifyId();
         return;
     }
 #endif
@@ -364,20 +365,12 @@ void TransferHelper::notifyTransferRequest(const QString &nick, const QString &i
 #endif
 }
 
-void TransferHelper::notifyTransferResult(bool result, const QString &msg)
-{
-    QStringList actions;
-    if (result)
-        actions << NotifyViewAction << tr("View");
-
-    d->notifyMessage(msg, actions, 3 * 1000);
-}
-
 void TransferHelper::handleCancelTransferApply()
 {
     static QString body(tr("The other party has cancelled the transfer request !"));
 #ifdef __linux__
     d->notifyMessage(body, {}, 3 * 1000);
+    d->notice->resetNotifyId();
 #else
     d->transDialog()->showResultDialog(false, body);
 #endif

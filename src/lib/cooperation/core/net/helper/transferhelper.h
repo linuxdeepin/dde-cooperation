@@ -60,7 +60,6 @@ public Q_SLOTS:
     void openFileLocation(const QString &path);
     void onActionTriggered(const QString &action);
     void notifyTransferRequest(const QString &nick, const QString &ip);
-    void notifyTransferResult(bool result, const QString &msg);
     void handleCancelTransferApply();
 
     // compat old protocol

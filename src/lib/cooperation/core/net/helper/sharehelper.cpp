@@ -21,7 +21,7 @@
 #include <QStandardPaths>
 #include <QDir>
 
-#ifdef linux
+#ifdef __linux__
 #    include "base/reportlog/reportlogmanager.h"
 #endif
 
@@ -40,7 +40,7 @@ inline constexpr char NotifyAcceptAction[] { "accept" };
 inline constexpr char ConnectButtonId[] { "connect-button" };
 inline constexpr char DisconnectButtonId[] { "disconnect-button" };
 
-#ifdef linux
+#ifdef __linux__
 inline constexpr char Kconnect[] { "connect" };
 inline constexpr char Kdisconnect[] { "disconnect" };
 #else
@@ -127,7 +127,7 @@ void ShareHelperPrivate::onAppAttributeChanged(const QString &group, const QStri
 
 void ShareHelperPrivate::reportConnectionData()
 {
-#ifdef linux
+#ifdef __linux__
     if (!targetDeviceInfo)
         return;
 
@@ -338,7 +338,7 @@ void ShareHelper::notifyConnectRequest(const QString &info)
         d->recvServerPrint = infoList[2];
     }
 
-#ifdef linux
+#ifdef __linux__
     d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), actions, 10 * 1000);
 #else
     CooperationUtil::instance()->activateWindow();
@@ -471,7 +471,7 @@ void ShareHelper::handleCancelCooperApply()
         if (d->isReplied)
             return;
         static QString body(tr("The other party has cancelled the connection request !"));
-#ifdef linux
+#ifdef __linux__
         d->notifyMessage(body, {}, 3 * 1000);
         d->notice->resetNotifyId();
 #else
