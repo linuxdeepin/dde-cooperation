@@ -29,6 +29,9 @@ VncViewer::VncViewer(QWidget *parent)
       m_scaled(true),
       m_buttonMask(0)
 {
+    //init the background color
+    m_backgroundBrush = QBrush(Qt::black);
+
     setFocusPolicy(Qt::StrongFocus);
 #ifdef TOUCH_MODE
     setMouseTracking(false);
@@ -44,6 +47,7 @@ VncViewer::VncViewer(QWidget *parent)
 
     _vncRecvThread = new VNCRecvThread(this);
     connect(_vncRecvThread, &VNCRecvThread::updateImageSignal, this, &VncViewer::updateImage, Qt::BlockingQueuedConnection);
+    connect(_vncRecvThread, &VNCRecvThread::sizeChangedSignal, this, &VncViewer::onSizeChange, Qt::QueuedConnection);
     connect(_vncRecvThread, &VNCRecvThread::finished, this, &VncViewer::stop);
 
     m_frameTimer = new QTimer(this);
@@ -72,16 +76,19 @@ void VncViewer::frameTimerTimeout()
 #ifdef QT_DEBUG
     qWarning() << " FPS: " << currentFps();
 #endif
+}
 
+void VncViewer::onSizeChange(int width, int height)
+{
     if (!m_connected)
         return;
 
     // Check the screen has been rotated
-    int curentMode = (m_rfbCli->width < m_rfbCli->height) ? PORTRAIT : LANDSCAPE;
+    int curentMode = (width < height) ? PORTRAIT : LANDSCAPE;
     if (curentMode != m_phoneMode) {
         m_phoneMode = curentMode;
         int w = (m_phoneMode == PORTRAIT) ? m_realSize.width() : m_realSize.height();
-        const QSize size = {static_cast<int>(w * m_phoneScale), m_rfbCli->height};
+        const QSize size = {static_cast<int>(w * m_phoneScale), height};
 
         setSurfaceSize(size);
         emit sizeChanged(size);
@@ -154,6 +161,9 @@ void VncViewer::updateImage(const QImage &image)
 void VncViewer::paintEvent(QPaintEvent *event)
 {
     if (m_connected) {
+        if (m_image.isNull())
+            return;
+        
         m_painter.begin(&m_surfacePixmap);
         // if (m_image.hasAlphaChannel()) {
         //     // 设置合成模式为源模式
@@ -169,7 +179,7 @@ void VncViewer::paintEvent(QPaintEvent *event)
 
         m_painter.begin(this);
         m_painter.setRenderHints(QPainter::SmoothPixmapTransform);
-        m_painter.fillRect(rect(), m_backgroundBrush);
+        m_painter.fillRect(rect(), backgroundBrush());
         if (scaled()) {
             m_surfaceRect.moveCenter(rect().center());
             m_painter.scale(m_scale, m_scale);

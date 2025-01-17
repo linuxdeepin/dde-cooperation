@@ -50,6 +50,7 @@ Q_SIGNALS:
 
 public slots:
     void frameTimerTimeout();
+    void onSizeChange(int width, int height);
     void onShortcutAction(int action);
 
     void updateSurface();

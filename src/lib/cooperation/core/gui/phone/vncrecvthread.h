@@ -21,9 +21,11 @@ public:
     void stopRun();
 
     static void frameBufferUpdated(rfbClient *cl);
+    static void screenSizeChanged(rfbClient *cl, int width, int height);
 
 signals:
     void updateImageSignal(QImage);
+    void sizeChangedSignal(int width, int height);
 
 protected:
     void run() override;
@@ -31,6 +33,8 @@ protected:
 private:
     bool _runFlag = false;
     rfbClient *_cl;
+
+    static bool _skipFirst; // skip the first image
 };
 
 #endif // VNCRECVTHREAD_H
