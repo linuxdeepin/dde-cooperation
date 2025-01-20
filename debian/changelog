@@ -1,3 +1,13 @@
+dde-cooperation (1.0.8) unstable; urgency=medium
+
+  * v1.0.8 version update.
+  * [ipc]Enable Qt6 support.
+  * fix: Workaround notification incorrect issue.
+  * Fix light style issue.
+  * [vnc]Fix display incorrect image issue.
+
+ -- re2zero <yangwu@uniontech.com>  Mon, 20 Jan 2025 15:30:43 +0800
+
 dde-cooperation (1.0.7) unstable; urgency=medium
 
   * v1.0.7 version update.
