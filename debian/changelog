@@ -1,3 +1,10 @@
+dde-cooperation (1.0.9) unstable; urgency=medium
+
+  * v1.0.9 version update.
+  * fix: fix CI build issue.
+
+ -- re2zero <yangwu@uniontech.com>  Mon, 20 Jan 2025 17:30:43 +0800
+
 dde-cooperation (1.0.8) unstable; urgency=medium
 
   * v1.0.8 version update.

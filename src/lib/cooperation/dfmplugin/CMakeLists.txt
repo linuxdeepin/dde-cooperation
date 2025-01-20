@@ -32,8 +32,6 @@ FILE(GLOB PLUGIN_FILES
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
-find_package(dfm-base REQUIRED)
-find_package(dfm-framework REQUIRED)
 find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
@@ -54,8 +52,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Dtk${DTK_VERSION_MAJOR}::Widget
-    ${dfm-base_LIBRARIES}
-    ${dfm-framework_LIBRARIES}
 )
 
 #install library file
