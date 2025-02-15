@@ -18,7 +18,9 @@ SingleApplication::SingleApplication(int &argc, char **argv, int)
     : CrossApplication(argc, argv), localServer(new QLocalServer(this))
 {
     setOrganizationName("deepin");
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
     initConnect();
 }
 

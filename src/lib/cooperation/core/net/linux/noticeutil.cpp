@@ -44,11 +44,13 @@ void NoticeUtil::onActionTriggered(uint replacesId, const QString &action)
 
 void NoticeUtil::notifyMessage(const QString &title, const QString &body, const QStringList &actions, QVariantMap hitMap, int expireTimeout)
 {
-    QDBusReply<uint> reply = notifyIfc->call(QString("Notify"), QString("dde-cooperation"), recvNotifyId,
+
+    uint notifyId = hitMap.empty() ? 0 : recvNotifyId;
+    QDBusReply<uint> reply = notifyIfc->call(QString("Notify"), QString("dde-cooperation"), notifyId,
                                              QString("dde-cooperation"), title, body,
                                              actions, hitMap, expireTimeout);
 
-    recvNotifyId = reply.isValid() ? reply.value() : recvNotifyId;
+    recvNotifyId = reply.value();
 }
 
 void NoticeUtil::closeNotification()

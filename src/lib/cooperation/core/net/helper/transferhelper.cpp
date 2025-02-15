@@ -112,10 +112,10 @@ void TransferHelperPrivate::reportTransferResult(bool result)
 #endif
 }
 
-void TransferHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout)
+void TransferHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout, const QVariantMap &hitMap)
 {
 #ifdef __linux__
-    notice->notifyMessage(tr("File transfer"), body, actions, QVariantMap(), expireTimeout);
+    notice->notifyMessage(tr("File transfer"), body, actions, hitMap, expireTimeout);
 #endif
 }
 
@@ -273,11 +273,12 @@ void TransferHelper::transferResult(bool result, const QString &msg)
 {
 #ifdef __linux__
     if (d->role != Server) {
+        d->notice->closeNotification(); // close previous progress notification
+
         QStringList actions;
         if (result)
             actions << NotifyViewAction << tr("View");
         d->notifyMessage(msg, actions, 3 * 1000);
-        d->notice->resetNotifyId();
         return;
     }
 #endif
@@ -296,7 +297,7 @@ void TransferHelper::updateProgress(int value, const QString &remainTime)
         QVariantMap hitMap { { "x-deepin-ShowInNotifyCenter", false } };
         QString msg(tr("File receiving %1% | Remaining time %2").arg(QString::number(value), remainTime));
 
-        d->notifyMessage(msg, actions, 15 * 1000);
+        d->notifyMessage(msg, actions, 15 * 1000, hitMap);
         return;
     }
 #endif
@@ -370,7 +371,6 @@ void TransferHelper::handleCancelTransferApply()
     static QString body(tr("The other party has cancelled the transfer request !"));
 #ifdef __linux__
     d->notifyMessage(body, {}, 3 * 1000);
-    d->notice->resetNotifyId();
 #else
     d->transDialog()->showResultDialog(false, body);
 #endif
