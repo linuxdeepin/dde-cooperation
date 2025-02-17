@@ -416,13 +416,13 @@ QVariant Settings::value(const QString &group, const QString &key, const QVarian
 {
     Q_D(const Settings);
 
-    QVariant value = d->writableData.values.value(group).value(key, QVariant::Invalid);
+    QVariant value = d->writableData.values.value(group).value(key, QVariant());
 
     if (value.isValid()) {
         return value;
     }
 
-    value = d->fallbackData.values.value(group).value(key, QVariant::Invalid);
+    value = d->fallbackData.values.value(group).value(key, QVariant());
 
     if (value.isValid()) {
         return value;
