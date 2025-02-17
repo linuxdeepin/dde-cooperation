@@ -22,6 +22,7 @@ public:
     static CooperationUtil *instance();
 
     void mainWindow(QSharedPointer<MainWindow> window);
+    QWidget* mainWindowWidget();
 
     void activateWindow();
 

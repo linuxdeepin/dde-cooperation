@@ -96,7 +96,7 @@ void TransferHelperPrivate::initConnect()
 CooperationTransDialog *TransferHelperPrivate::transDialog()
 {
     if (!dialog) {
-        dialog = new CooperationTransDialog(qApp->activeWindow());
+        dialog = new CooperationTransDialog(CooperationUtil::instance()->mainWindowWidget());
         dialog->setModal(true);
     }
 

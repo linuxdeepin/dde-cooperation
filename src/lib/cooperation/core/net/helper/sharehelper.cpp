@@ -61,7 +61,7 @@ ShareHelperPrivate::ShareHelperPrivate(ShareHelper *qq)
 CooperationTaskDialog *ShareHelperPrivate::taskDialog()
 {
     if (!ctDialog) {
-        ctDialog = new CooperationTaskDialog(qApp->activeWindow());
+        ctDialog = new CooperationTaskDialog(CooperationUtil::instance()->mainWindowWidget());
         ctDialog->setModal(true);
     }
     return ctDialog;

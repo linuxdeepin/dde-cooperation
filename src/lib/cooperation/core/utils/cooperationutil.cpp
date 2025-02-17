@@ -57,6 +57,20 @@ void CooperationUtil::mainWindow(QSharedPointer<MainWindow> window)
     d->window = window;
 }
 
+QWidget* CooperationUtil::mainWindowWidget()
+{
+    if (d->window) {
+       return d->window->window();
+    }
+    auto windowList = qApp->topLevelWidgets();
+    for (auto w : windowList) {
+        if (w->objectName() == "MainWindow") {
+            return w->window();
+        }
+    }
+    return nullptr;
+}
+
 void CooperationUtil::activateWindow()
 {
     if (d->window) {
