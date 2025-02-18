@@ -47,7 +47,7 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
 {
     if (_stoped)
         return;
-    DLOG << "000000 " << appName.toStdString() << type << msg.toStdString();
+    DLOG << "compat: " << appName.toStdString() << " type:" << type << " msg:" << msg.toStdString();
     auto sender = this->rpcSender(appName);
 
     SendResult res;

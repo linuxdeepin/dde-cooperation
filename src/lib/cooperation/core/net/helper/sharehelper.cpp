@@ -91,7 +91,7 @@ void ShareHelperPrivate::initConnect()
 void ShareHelperPrivate::cancelShareApply()
 {
     taskDialog()->hide();
-    NetworkUtil::instance()->cancelApply("share");
+    NetworkUtil::instance()->cancelApply("share", targetDeviceInfo->ipAddress());
 }
 
 void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout)
@@ -159,9 +159,9 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
 {
     isReplied = true;
     if (action == NotifyRejectAction) {
-        NetworkUtil::instance()->replyShareRequest(false, selfFingerPrint);
+        NetworkUtil::instance()->replyShareRequest(false, selfFingerPrint, senderDeviceIp);
     } else if (action == NotifyAcceptAction) {
-        NetworkUtil::instance()->replyShareRequest(true, selfFingerPrint);
+        NetworkUtil::instance()->replyShareRequest(true, selfFingerPrint, senderDeviceIp);
 
         auto client = ShareCooperationServiceManager::instance()->client();
         // remove "--disable-crypto" if receive server has fingerprint.

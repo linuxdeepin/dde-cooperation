@@ -63,6 +63,8 @@ private:
     QString recvFilesSavePath;
 
     QTimer confirmTimer;
+    // 作为接收方时，发送方的ip; 作为发送方时，接收方的ip
+    QString targetDeviceIp;
 
 #ifdef __linux__
     NoticeUtil *notice { nullptr };

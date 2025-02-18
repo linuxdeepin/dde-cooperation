@@ -165,6 +165,7 @@ void TransferHelper::registBtn()
 void TransferHelper::sendFiles(const QString &ip, const QString &devName, const QStringList &fileList)
 {
     d->who = devName;
+    d->targetDeviceIp = ip;
     d->readyToSendFiles = fileList;
     if (fileList.isEmpty())
         return;
@@ -315,12 +316,12 @@ void TransferHelper::onActionTriggered(const QString &action)
     d->transferInfo.clear();
     if (action == NotifyCancelAction) {
         cancelTransfer(true); // do UI first
-        NetworkUtil::instance()->cancelTrans();
+        NetworkUtil::instance()->cancelTrans(d->targetDeviceIp);
     } else if (action == NotifyRejectAction) {
-        NetworkUtil::instance()->replyTransRequest(false);
+        NetworkUtil::instance()->replyTransRequest(false, d->targetDeviceIp);
     } else if (action == NotifyAcceptAction) {
         d->role = Client;
-        NetworkUtil::instance()->replyTransRequest(true);
+        NetworkUtil::instance()->replyTransRequest(true, d->targetDeviceIp);
     } else if (action == NotifyCloseAction) {
 #ifdef __linux__
         d->notice->closeNotification();
@@ -354,6 +355,7 @@ void TransferHelper::notifyTransferRequest(const QString &nick, const QString &i
 
     static QString msg(tr("\"%1\" send some files to you"));
     d->who = nick;
+    d->targetDeviceIp = ip;
 #ifdef __linux__
 
     QStringList actions { NotifyRejectAction, tr("Reject"),
@@ -500,7 +502,7 @@ void TransferHelper::accepted()
     d->role = Server;
     d->status.storeRelease(Transfering);
     updateProgress(1, tr("calculating"));
-    NetworkUtil::instance()->doSendFiles(d->readyToSendFiles);
+    NetworkUtil::instance()->doSendFiles(d->readyToSendFiles, d->targetDeviceIp);
 }
 
 void TransferHelper::rejected()
@@ -533,7 +535,7 @@ void TransferHelper::cancelTransferApply()
     d->status.storeRelease(Idle);
     d->confirmTimer.stop();
     d->transDialog()->hide();
-    NetworkUtil::instance()->cancelApply("transfer");
+    NetworkUtil::instance()->cancelApply("transfer", d->targetDeviceIp);
 }
 
 // ----------compat the old protocol-----------
@@ -618,7 +620,7 @@ void TransferHelper::onTransferExcepted(int type, const QString &remote)
 
     cancelTransfer(true); // hide dialog first and show exception
     // cancel transfer and hide progress
-    NetworkUtil::instance()->cancelTrans();
+    NetworkUtil::instance()->cancelTrans(remote);
 
     switch (type) {
     case EX_NETWORK_PINGOUT:

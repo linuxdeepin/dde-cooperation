@@ -675,9 +675,9 @@ void NetworkUtil::sendDisconnectShareEvents(const QString &ip)
     }
 }
 
-void NetworkUtil::replyTransRequest(bool agree)
+void NetworkUtil::replyTransRequest(bool agree, const QString &targetIp)
 {
-    if (!d->confirmTargetAddress.isEmpty()) {
+    if (d->confirmTargetAddress == targetIp) {
         // send transfer reply, skip result
         ApplyMessage msg;
         msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
@@ -699,9 +699,9 @@ void NetworkUtil::replyTransRequest(bool agree)
     }
 }
 
-void NetworkUtil::replyShareRequest(bool agree, const QString &selfprint)
+void NetworkUtil::replyShareRequest(bool agree, const QString &selfprint, const QString &targetIp)
 {
-    if (!d->confirmTargetAddress.isEmpty()) {
+    if (d->confirmTargetAddress == targetIp) {
         // send transfer reply, skip result
         ApplyMessage msg;
         msg.flag = agree ? REPLY_ACCEPT : REPLY_REJECT;
@@ -721,9 +721,9 @@ void NetworkUtil::replyShareRequest(bool agree, const QString &selfprint)
     }
 }
 
-void NetworkUtil::cancelApply(const QString &type)
+void NetworkUtil::cancelApply(const QString &type, const QString &targetIp)
 {
-    if (!d->confirmTargetAddress.isEmpty()) {
+    if (d->confirmTargetAddress == targetIp) {
         ApplyMessage msg;
         msg.nick = type.toStdString();
         QString jsonMsg = msg.as_json().serialize().c_str();
@@ -738,9 +738,9 @@ void NetworkUtil::cancelApply(const QString &type)
     }
 }
 
-void NetworkUtil::cancelTrans()
+void NetworkUtil::cancelTrans(const QString &targetIp)
 {
-    if (!d->confirmTargetAddress.isEmpty()) {
+    if (d->confirmTargetAddress == targetIp) {
         d->sessionManager->cancelSyncFile(d->confirmTargetAddress);
     } else {
 #ifdef ENABLE_COMPAT
@@ -753,9 +753,9 @@ void NetworkUtil::cancelTrans()
     }
 }
 
-void NetworkUtil::doSendFiles(const QStringList &fileList)
+void NetworkUtil::doSendFiles(const QStringList &fileList, const QString &targetIp)
 {
-    if (!d->confirmTargetAddress.isEmpty()) {
+    if (d->confirmTargetAddress == targetIp) {
         int ranport = deepin_cross::CommonUitls::getAvailablePort();
         d->sessionManager->sendFiles(d->confirmTargetAddress, ranport, fileList);
     } else {

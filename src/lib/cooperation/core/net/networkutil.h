@@ -34,16 +34,16 @@ public:
     //transfer
     void tryTransApply(const QString &ip);
     void sendTransApply(const QString &ip, bool compat);
-    void replyTransRequest(bool agree);
-    void cancelTrans();
-    void doSendFiles(const QStringList &fileList);
+    void replyTransRequest(bool agree, const QString &targetIp);
+    void cancelTrans(const QString &targetIp);
+    void doSendFiles(const QStringList &fileList, const QString &targetIp);
 
     //Keymouse sharing
     void tryShareApply(const QString &ip, const QString &selfprint);
     void sendShareApply(const QString &ip, bool compat);
     void sendDisconnectShareEvents(const QString &ip);
-    void replyShareRequest(bool agree, const QString &selfprint);
-    void cancelApply(const QString &type);
+    void replyShareRequest(bool agree, const QString &selfprint, const QString &targetIp);
+    void cancelApply(const QString &type, const QString &targetIp);
 
     QString deviceInfoStr();
 
