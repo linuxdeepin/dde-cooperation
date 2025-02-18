@@ -240,7 +240,7 @@ void MainWindow::showCloseDialog()
     if (option == "Exit")
         QApplication::quit();
 
-    CooperationDialog dlg;
+    CooperationDialog dlg(this);
 
     QVBoxLayout *layout = new QVBoxLayout();
     QCheckBox *op1 = new QCheckBox(tr("Minimise to system tray"));
@@ -283,6 +283,12 @@ void MainWindow::showCloseDialog()
     dlg.setLayout(layout);
     dlg.setFixedSize(400, 200);
 #endif
+
+    // get the center position of parent window and move to center
+    QRect parentRect = this->window()->frameGeometry();
+    QRect dialogRect = dlg.frameGeometry();
+    QPoint centerPoint = parentRect.center() - dialogRect.center();
+    dlg.move(centerPoint);
 
     int code = dlg.exec();
     if (code == QDialog::Accepted) {
