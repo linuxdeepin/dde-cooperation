@@ -1,3 +1,14 @@
+dde-cooperation (1.0.10) unstable; urgency=medium
+
+  * v1.0.10 version update.
+  * Fix work with compat target issue.
+  * Fix close dialog not show in center.
+  * fix: Fix incorrect default setting.
+  * fix: Fix dialog does not show in center.
+  * fix: Fix notification do not update issue.
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 20 Feb 2025 19:33:13 +0800
+
 dde-cooperation (1.0.9) unstable; urgency=medium
 
   * v1.0.9 version update.
