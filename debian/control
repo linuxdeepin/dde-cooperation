@@ -27,7 +27,6 @@ Build-Depends:
  libice-dev,
  libsm-dev,
  uuid-dev,
- libdisplayjack-dev | hello,
  libsystemd-dev,
  libqrencode-dev,
  dde-file-manager-dev,

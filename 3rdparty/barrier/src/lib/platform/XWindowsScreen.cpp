@@ -17,6 +17,7 @@
  */
 
 #include "platform/XWindowsScreen.h"
+#include "platform/waylandUtils.h"
 
 #include "platform/XWindowsClipboard.h"
 #include "platform/XWindowsEventQueueBuffer.h"
@@ -36,9 +37,6 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
-#ifdef LIBDJK_SUPPORT
-#include <waylandUtils.h>
-#endif
 
 
 static int xi_opcode;
@@ -125,12 +123,10 @@ XWindowsScreen::XWindowsScreen(
 		LOG((CLOG_DEBUG "screen shape: %d,%d %dx%d %s", m_x, m_y, m_w, m_h, m_xinerama ? "(xinerama)" : ""));
 		LOG((CLOG_DEBUG "window is 0x%08x", m_window));
 
-#ifdef LIBDJK_SUPPORT
         if( WaylandUtils::isWayland()){
             LOG((CLOG_DEBUG "run on Wayland"));
-            WaylandUtils::init_wayland_kvm(this);
+            WaylandUtils::initWaylandKvm(this);
         }
-#endif
 	}
 	catch (...) {
 		if (m_display != NULL) {
@@ -1041,11 +1037,7 @@ XWindowsScreen::openWindow() const
 	}
 
 	// create and return the window
-#ifdef LIBDJK_SUPPORT
     unsigned inputType = WaylandUtils::isWayland() ? InputOutput : InputOnly;
-#else
-    unsigned inputType = InputOnly;
-#endif
     Window window = m_impl->XCreateWindow(m_display, m_root, x, y, w, h, 0, 0,
                             inputType, CopyFromParent,
 							CWDontPropagate | CWEventMask |
@@ -1938,11 +1930,8 @@ XWindowsScreen::warpCursorNoFlush(SInt32 x, SInt32 y)
     m_impl->XSendEvent(m_display, m_window, False, 0, &eventBefore);
 
 	// warp mouse
-#ifdef LIBDJK_SUPPORT
-    if(WaylandUtils::isWayland())
-        WaylandUtils::set_pointer_pos(x, y);
-    else
-#endif
+	bool warped = WaylandUtils::setPointerPos(x, y);
+    if(!warped)
         m_impl->XWarpPointer(m_display, None, m_root, 0, 0, 0, 0, x, y);
 
 	// send an event that we can recognize after the mouse warp
