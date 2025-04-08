@@ -6,13 +6,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/include)
 
-include(protobuf-generate)
-
 # do not find, check system installed protobuf package
 if(NOT EXISTS "${PROTOBUF_DIR}")
     find_package(Protobuf REQUIRED)
     if (${PROTOBUF_FOUND})
-        message("protobuf found")
+        message(STATUS "protobuf found: ${Protobuf_VERSION}")
+        message(STATUS "Protobuf_PROTOC_EXECUTABLE: ${Protobuf_PROTOC_EXECUTABLE}")
+        include(protobuf-generate)
     else ()
         message(FATAL_ERROR "Cannot find Protobuf")
     endif ()

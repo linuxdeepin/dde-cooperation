@@ -28,7 +28,7 @@ function(PROTOBUF_GENERATE_CPP SRCS HDRS)
     endforeach()
   endif()
 
-  message(STATUS "PROTOBUF_PROTOC_EXECUTABLE = " ${PROTOBUF_PROTOC_EXECUTABLE})
+  message(STATUS "Protobuf_PROTOC_EXECUTABLE = " ${Protobuf_PROTOC_EXECUTABLE})
 
   set(${SRCS})
   set(${HDRS})
@@ -42,9 +42,9 @@ function(PROTOBUF_GENERATE_CPP SRCS HDRS)
     add_custom_command(
       OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.cc"
              "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.h"
-      COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE}
+      COMMAND  ${Protobuf_PROTOC_EXECUTABLE}
       ARGS --cpp_out  ${CMAKE_CURRENT_BINARY_DIR} ${_protobuf_include_path} ${ABS_FIL}
-      DEPENDS ${ABS_FIL} ${PROTOBUF_PROTOC_EXECUTABLE}
+      DEPENDS ${ABS_FIL} ${Protobuf_PROTOC_EXECUTABLE}
       COMMENT "Running C++ protocol buffer compiler on ${FIL}"
       VERBATIM )
   endforeach()

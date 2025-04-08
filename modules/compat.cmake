@@ -27,16 +27,19 @@ endif()
 
 # The protoc tool not for all platforms, so use the generate out sources.
 set(USE_PROTOBUF_FILES ON)
-set(PROTOBUF_DIR "${PROJECT_SOURCE_DIR}/3rdparty/protobuf")
-include_directories(${PROTOBUF_DIR}/src)
+# 检查protobuf目录是否存在
+if(EXISTS "${PROJECT_SOURCE_DIR}/3rdparty/protobuf")
+    set(PROTOBUF_DIR "${PROJECT_SOURCE_DIR}/3rdparty/protobuf")
+    include_directories(${PROTOBUF_DIR}/src)
 
-if(MSVC)
-    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /std:c++17")
-else()
-    # protobuf.a 需要加“-fPIC”， 否则无法连接到.so
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    if(MSVC)
+        # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /std:c++17")
+    else()
+        # protobuf.a 需要加"-fPIC"，否则无法连接到.so
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    endif()
+    add_subdirectory("${PROTOBUF_DIR}" protobuf)
 endif()
-add_subdirectory("${PROTOBUF_DIR}" protobuf)
 
 
 set(COOST_DIR "${PROJECT_SOURCE_DIR}/3rdparty/coost")
