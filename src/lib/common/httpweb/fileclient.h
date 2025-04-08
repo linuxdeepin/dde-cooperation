@@ -5,7 +5,7 @@
 #ifndef FILECLIENT_H
 #define FILECLIENT_H
 
-#include "server/asio/ssl_context.h"
+#include "asio/ssl_context.h"
 #include "syncstatus.h"
 
 #include "webproto.h"

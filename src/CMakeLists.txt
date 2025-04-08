@@ -1,3 +1,6 @@
+# some base common libraries
+add_subdirectory(infrastructure)
+
 # share libraries
 add_subdirectory(lib)
 

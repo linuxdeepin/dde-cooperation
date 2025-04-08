@@ -1,4 +1,4 @@
-/build/
+build/
 /.vscode/
 meson.build.user
 CMakeLists.txt.user
@@ -7,7 +7,7 @@ CMakeLists.txt.user
 /out/
 CMake*.json
 *.o
-
+*.--quiet
 
 # Modules
 modules/*

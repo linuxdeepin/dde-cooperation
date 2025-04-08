@@ -8,7 +8,7 @@
 #include "asioservice.h"
 #include "protoendpoint.h"
 
-#include "server/asio/ssl_client.h"
+#include "asio/ssl_client.h"
 #include "string/format.h"
 #include "threads/thread.h"
 

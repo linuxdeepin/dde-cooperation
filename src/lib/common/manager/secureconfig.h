@@ -5,7 +5,7 @@
 #ifndef SECURECONFIG_H
 #define SECURECONFIG_H
 
-#include "server/asio/ssl_context.h"
+#include "asio/ssl_context.h"
 
 class SecureConfig {
 public:

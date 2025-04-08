@@ -97,7 +97,7 @@ else()
     qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
 endif()
 
-list(APPEND LINKLIBS cpplogging)
+list(APPEND LINKLIBS logging)
 list(APPEND LINKLIBS sessionmanager)
 
 add_library(${PROJECT_NAME}

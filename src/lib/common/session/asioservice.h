@@ -5,7 +5,7 @@
 #ifndef ASIOSERVICE_H
 #define ASIOSERVICE_H
 
-#include "server/asio/service.h"
+#include "asio/service.h"
 
 class AsioService : public CppServer::Asio::Service
 {

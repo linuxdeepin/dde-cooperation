@@ -6,8 +6,8 @@
 #include "tokencache.h"
 #include "webbinder.h"
 
-#include "server/http/https_session.h"
-#include "server/http/http_response.h"
+#include "http/https_session.h"
+#include "http/http_response.h"
 
 #include "webproto.h"
 

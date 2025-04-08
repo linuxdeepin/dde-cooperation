@@ -5,7 +5,7 @@
 #ifndef FILESERVER_H
 #define FILESERVER_H
 
-#include "server/http/https_server.h"
+#include "http/https_server.h"
 #include "syncstatus.h"
 
 class FileServer : public WebInterface, public CppServer::HTTP::HTTPSServer

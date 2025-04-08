@@ -1,2 +1,0 @@
-# CppCMakeScripts
-C++ CMake Scripts

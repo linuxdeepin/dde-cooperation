@@ -8,7 +8,7 @@
 #include "asioservice.h"
 #include "protoendpoint.h"
 
-#include "server/asio/ssl_server.h"
+#include "asio/ssl_server.h"
 
 class ProtoServer : public CppServer::Asio::SSLServer, public ProtoEndpoint
 {

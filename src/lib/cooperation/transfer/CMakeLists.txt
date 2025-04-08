@@ -84,7 +84,7 @@ else()
     qt5_add_resources(RESOURCE_FILES ${CORE_UI_DIR}/gui/resources/resources.qrc)
 endif()
 
-list(APPEND LINKLIBS cpplogging)
+list(APPEND LINKLIBS logging)
 list(APPEND LINKLIBS vncclient)
 
 add_library(${PROJECT_NAME}

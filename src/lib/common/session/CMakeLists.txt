@@ -5,7 +5,7 @@ FILE(GLOB CPP_SRC
     *.cpp
 )
 
-list(APPEND LINKLIBS cppserver)
+list(APPEND LINKLIBS netutil)
 list(APPEND LINKLIBS proto)
 
 # session library

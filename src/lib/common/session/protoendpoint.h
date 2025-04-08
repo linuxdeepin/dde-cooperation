@@ -6,7 +6,7 @@
 #define PROTOENDPOINT_H
 
 #include "session.h"
-#include "server/asio/timer.h"
+#include "asio/timer.h"
 
 #include <atomic>
 #include <iostream>
