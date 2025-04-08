@@ -1,12 +1,8 @@
-/*!
-    \file spin_lock.inl
-    \brief Spin-lock synchronization primitive inline implementation
-    \author Ivan Shynkarenka
-    \date 22.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 inline bool SpinLock::IsLocked() noexcept
 {
@@ -57,4 +53,4 @@ inline void SpinLock::Unlock() noexcept
     _lock.store(false, std::memory_order_release);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

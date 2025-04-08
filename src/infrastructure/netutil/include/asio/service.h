@@ -1,13 +1,9 @@
-/*!
-    \file service.h
-    \brief Asio service definition
-    \author Ivan Shynkarenka
-    \date 16.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_SERVICE_H
-#define CPPSERVER_ASIO_SERVICE_H
+#ifndef NETUTIL_ASIO_SERVICE_H
+#define NETUTIL_ASIO_SERVICE_H
 
 #include "asio.h"
 #include "memory.h"
@@ -21,7 +17,7 @@
 #include <string_view>
 #include <vector>
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 //! Asio service
@@ -149,7 +145,7 @@ protected:
     virtual void onStopped() {}
 
     //! Handle service idle notification
-    virtual void onIdle() { CppCommon::Thread::Yield(); }
+    virtual void onIdle() { BaseKit::Thread::Yield(); }
 
     //! Handle error notification
     /*!
@@ -184,6 +180,6 @@ private:
 /*! \example asio_service.cpp Asio service example */
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_ASIO_SERVICE_H
+#endif // NETUTIL_ASIO_SERVICE_H

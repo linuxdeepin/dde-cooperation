@@ -1,13 +1,10 @@
-/*!
-    \file string_utils.h
-    \brief String utilities definition
-    \author Ivan Shynkarenka
-    \date 15.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_STRING_STRING_UTILS_H
-#define CPPCOMMON_STRING_STRING_UTILS_H
+
+#ifndef BASEKIT_STRING_STRING_UTILS_H
+#define BASEKIT_STRING_STRING_UTILS_H
 
 #include <algorithm>
 #include <cctype>
@@ -16,7 +13,7 @@
 #include <string>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! String utilities
 /*!
@@ -328,10 +325,9 @@ private:
     static char ToUpperInternal(char ch);
 };
 
-/*! \example string_utils.cpp String utilities example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "string_utils.inl"
 
-#endif // CPPCOMMON_STRING_STRING_UTILS_H
+#endif // BASEKIT_STRING_STRING_UTILS_H

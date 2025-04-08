@@ -1,19 +1,15 @@
-/*!
-    \file tcp_session.cpp
-    \brief TCP session implementation
-    \author Ivan Shynkarenka
-    \date 14.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/tcp_session.h"
 #include "asio/tcp_server.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 TCPSession::TCPSession(const std::shared_ptr<TCPServer>& server)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _server(server),
       _io_service(server->service()->GetAsioService()),
       _strand(*_io_service),
@@ -190,7 +186,7 @@ size_t TCPSession::Send(const void* buffer, size_t size)
     return sent;
 }
 
-size_t TCPSession::Send(const void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t TCPSession::Send(const void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsConnected())
         return 0;
@@ -349,7 +345,7 @@ std::string TCPSession::Receive(size_t size)
     return text;
 }
 
-size_t TCPSession::Receive(void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t TCPSession::Receive(void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsConnected())
         return 0;
@@ -413,7 +409,7 @@ size_t TCPSession::Receive(void* buffer, size_t size, const CppCommon::Timespan&
     return received;
 }
 
-std::string TCPSession::Receive(size_t size, const CppCommon::Timespan& timeout)
+std::string TCPSession::Receive(size_t size, const BaseKit::Timespan& timeout)
 {
     std::string text(size, 0);
     text.resize(Receive(text.data(), text.size(), timeout));
@@ -598,4 +594,4 @@ void TCPSession::SendError(std::error_code ec)
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

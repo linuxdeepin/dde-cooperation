@@ -1,18 +1,14 @@
-/*!
-    \file tcp_client.cpp
-    \brief TCP client implementation
-    \author Ivan Shynkarenka
-    \date 15.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/tcp_client.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 TCPClient::TCPClient(const std::shared_ptr<Service>& service, const std::string& address, int port)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -35,11 +31,11 @@ TCPClient::TCPClient(const std::shared_ptr<Service>& service, const std::string&
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 }
 
 TCPClient::TCPClient(const std::shared_ptr<Service>& service, const std::string& address, const std::string& scheme)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -63,11 +59,11 @@ TCPClient::TCPClient(const std::shared_ptr<Service>& service, const std::string&
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 }
 
 TCPClient::TCPClient(const std::shared_ptr<Service>& service, const asio::ip::tcp::endpoint& endpoint)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -91,7 +87,7 @@ TCPClient::TCPClient(const std::shared_ptr<Service>& service, const asio::ip::tc
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 }
 
 size_t TCPClient::option_receive_buffer_size() const
@@ -497,7 +493,7 @@ bool TCPClient::ReconnectAsync()
         return false;
 
     while (IsConnected())
-        CppCommon::Thread::Yield();
+        BaseKit::Thread::Yield();
 
     return ConnectAsync();
 }
@@ -537,7 +533,7 @@ size_t TCPClient::Send(const void* buffer, size_t size)
     return sent;
 }
 
-size_t TCPClient::Send(const void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t TCPClient::Send(const void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsConnected())
         return 0;
@@ -694,7 +690,7 @@ std::string TCPClient::Receive(size_t size)
     return text;
 }
 
-size_t TCPClient::Receive(void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t TCPClient::Receive(void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsConnected())
         return 0;
@@ -757,7 +753,7 @@ size_t TCPClient::Receive(void* buffer, size_t size, const CppCommon::Timespan& 
     return received;
 }
 
-std::string TCPClient::Receive(size_t size, const CppCommon::Timespan& timeout)
+std::string TCPClient::Receive(size_t size, const BaseKit::Timespan& timeout)
 {
     std::string text(size, 0);
     text.resize(Receive(text.data(), text.size(), timeout));
@@ -934,4 +930,4 @@ void TCPClient::SendError(std::error_code ec)
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

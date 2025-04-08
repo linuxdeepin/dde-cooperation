@@ -1,10 +1,6 @@
-/*!
-    \file rolling_file_appender.cpp
-    \brief Rolling file appender definition
-    \author Ivan Shynkarenka
-    \date 12.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/appenders/rolling_file_appender.h"
 
@@ -25,7 +21,7 @@
 #include <atomic>
 #include <cassert>
 
-namespace CppLogging {
+namespace Logging {
 
 //! @cond INTERNALS
 
@@ -34,7 +30,7 @@ class RollingFileAppender::Impl
 public:
     static const std::string ARCHIVE_EXTENSION;
 
-    Impl(RollingFileAppender& appender, const CppCommon::Path& path, bool archive, bool truncate, bool auto_flush, bool auto_start)
+    Impl(RollingFileAppender& appender, const BaseKit::Path& path, bool archive, bool truncate, bool auto_flush, bool auto_start)
         : _appender(appender), _path(path), _archive(archive), _truncate(truncate), _auto_flush(auto_flush)
     {
         // Start the rolling file appender
@@ -82,14 +78,14 @@ public:
 
 protected:
     RollingFileAppender& _appender;
-    CppCommon::Path _path;
+    BaseKit::Path _path;
     bool _archive;
     bool _truncate;
     bool _auto_flush;
 
     std::atomic<bool> _started{false};
-    CppCommon::Timestamp _retry{0};
-    CppCommon::File _file;
+    BaseKit::Timestamp _retry{0};
+    BaseKit::File _file;
     size_t _written{0};
 
     bool CloseFile()
@@ -109,20 +105,20 @@ protected:
             }
             return true;
         }
-        catch (const CppCommon::FileSystemException&) { return false; }
+        catch (const BaseKit::FileSystemException&) { return false; }
     }
 
     std::thread _archive_thread;
-    CppCommon::WaitQueue<CppCommon::Path> _archive_queue;
+    BaseKit::WaitQueue<BaseKit::Path> _archive_queue;
 
-    virtual void ArchiveQueue(const CppCommon::Path& path)
+    virtual void ArchiveQueue(const BaseKit::Path& path)
     {
         _archive_queue.Enqueue(path);
     }
 
-    virtual void ArchiveFile(const CppCommon::Path& path, const CppCommon::Path& filename)
+    virtual void ArchiveFile(const BaseKit::Path& path, const BaseKit::Path& filename)
     {
-        CppCommon::File file(path);
+        BaseKit::File file(path);
 
         // Create a new zip archive
         zipFile zf;
@@ -134,20 +130,20 @@ protected:
         zf = zipOpen64((file + ".zip").string().c_str(), APPEND_STATUS_CREATE);
 #endif
         if (zf == nullptr)
-            throwex CppCommon::FileSystemException("Cannot create a new zip archive!").Attach(file);
+            throwex BaseKit::FileSystemException("Cannot create a new zip archive!").Attach(file);
 
         // Smart resource cleaner pattern
-        auto zip = CppCommon::resource(zf, [](zipFile handle) { zipClose(handle, nullptr); });
+        auto zip = BaseKit::resource(zf, [](zipFile handle) { zipClose(handle, nullptr); });
 
         // Open a new file in zip archive
         int result = zipOpenNewFileInZip64(zf, filename.empty() ? file.filename().string().c_str() : filename.string().c_str(), nullptr, nullptr, 0, nullptr, 0, nullptr, Z_DEFLATED, Z_DEFAULT_COMPRESSION, 1);
         if (result != ZIP_OK)
-            throwex CppCommon::FileSystemException("Cannot open a new file in zip archive!").Attach(file);
+            throwex BaseKit::FileSystemException("Cannot open a new file in zip archive!").Attach(file);
 
         // Smart resource cleaner pattern
-        auto zip_file = CppCommon::resource(zf, [](zipFile handle) { zipCloseFileInZip(handle); });
+        auto zip_file = BaseKit::resource(zf, [](zipFile handle) { zipCloseFileInZip(handle); });
 
-        CppCommon::File source(file);
+        BaseKit::File source(file);
         uint8_t buffer[16384];
         size_t size;
 
@@ -157,12 +153,12 @@ protected:
         // Write data into the zip file
         do
         {
-            size = source.Read(buffer, CppCommon::countof(buffer));
+            size = source.Read(buffer, BaseKit::countof(buffer));
             if (size > 0)
             {
                 result = zipWriteInFileInZip(zf, buffer, (unsigned)size);
                 if (result != ZIP_OK)
-                    throwex CppCommon::FileSystemException("Cannot write into the zip file!").Attach(file);
+                    throwex BaseKit::FileSystemException("Cannot write into the zip file!").Attach(file);
             }
         } while (size > 0);
 
@@ -172,23 +168,23 @@ protected:
         // Close the file in zip archive
         result = zipCloseFileInZip(zf);
         if (result != ZIP_OK)
-            throwex CppCommon::FileSystemException("Cannot close a file in zip archive!").Attach(file);
+            throwex BaseKit::FileSystemException("Cannot close a file in zip archive!").Attach(file);
         zip_file.release();
 
         // Close zip archive
         result = zipClose(zf, nullptr);
         if (result != ZIP_OK)
-            throwex CppCommon::FileSystemException("Cannot close a zip archive!").Attach(file);
+            throwex BaseKit::FileSystemException("Cannot close a zip archive!").Attach(file);
         zip.release();
 
         // Remove the source file
-        CppCommon::File::Remove(source);
+        BaseKit::File::Remove(source);
     }
 
     void ArchivationStart()
     {
         // Start archivation thread
-        _archive_thread = CppCommon::Thread::Start([this]() { ArchivationThread(); });
+        _archive_thread = BaseKit::Thread::Start([this]() { ArchivationThread(); });
     }
 
     void ArchivationStop()
@@ -205,7 +201,7 @@ protected:
 
         try
         {
-            CppCommon::Path path;
+            BaseKit::Path path;
             while (_archive_queue.Dequeue(path))
                 ArchiveFile(path, "");
         }
@@ -262,7 +258,7 @@ class TimePolicyImpl : public RollingFileAppender::Impl
     };
 
 public:
-    TimePolicyImpl(RollingFileAppender& appender, const CppCommon::Path& path, TimeRollingPolicy policy, const std::string& pattern, bool archive, bool truncate, bool auto_flush, bool auto_start)
+    TimePolicyImpl(RollingFileAppender& appender, const BaseKit::Path& path, TimeRollingPolicy policy, const std::string& pattern, bool archive, bool truncate, bool auto_flush, bool auto_start)
         : RollingFileAppender::Impl(appender, path, archive, truncate, auto_flush, auto_start),
           _policy(policy), _pattern(pattern)
     {
@@ -361,35 +357,35 @@ public:
                 if (_auto_flush)
                     _file.Flush();
             }
-            catch (const CppCommon::FileSystemException&)
+            catch (const BaseKit::FileSystemException&)
             {
                 // Try to close the opened file in case of any IO error
                 try
                 {
                     _file.Close();
                 }
-                catch (const CppCommon::FileSystemException&) {}
+                catch (const BaseKit::FileSystemException&) {}
             }
         }
     }
 
     void Flush() override
     {
-        if (FlushFile(CppCommon::Timestamp::utc()))
+        if (FlushFile(BaseKit::Timestamp::utc()))
         {
             // Try to flush the opened file
             try
             {
                 _file.Flush();
             }
-            catch (const CppCommon::FileSystemException&)
+            catch (const BaseKit::FileSystemException&)
             {
                 // Try to close the opened file in case of any IO error
                 try
                 {
                     _file.Close();
                 }
-                catch (const CppCommon::FileSystemException&) {}
+                catch (const BaseKit::FileSystemException&) {}
             }
         }
     }
@@ -398,8 +394,8 @@ private:
     TimeRollingPolicy _policy;
     std::string _pattern;
     std::vector<Placeholder> _placeholders;
-    CppCommon::Timestamp _rollstamp{0};
-    CppCommon::Timespan _rolldelay{0};
+    BaseKit::Timestamp _rollstamp{0};
+    BaseKit::Timespan _rolldelay{0};
     bool _first{true};
 
     bool FlushFile(uint64_t timestamp)
@@ -422,10 +418,10 @@ private:
                     ArchiveQueue(_file);
             }
         }
-        catch (const CppCommon::FileSystemException&)
+        catch (const BaseKit::FileSystemException&)
         {
             // In case of any IO error reset the retry timestamp and return false!
-            _retry = CppCommon::Timestamp::utc();
+            _retry = BaseKit::Timestamp::utc();
         }
 
         return false;
@@ -440,7 +436,7 @@ private:
                 return true;
 
             // 2. Check retry timestamp if 100ms elapsed after the last attempt
-            if ((CppCommon::Timestamp::utc() - _retry).milliseconds() < 100)
+            if ((BaseKit::Timestamp::utc() - _retry).milliseconds() < 100)
                 return false;
 
             uint64_t rollstamp = timestamp;
@@ -473,10 +469,10 @@ private:
                 _file.Close();
 
             // 6. Prepare the actual rolling file path
-            _file = PrepareFilePath(CppCommon::Timestamp(timestamp));
+            _file = PrepareFilePath(BaseKit::Timestamp(timestamp));
 
             // 7. Create the parent directory tree
-            CppCommon::Directory::CreateTree(_file.parent());
+            BaseKit::Directory::CreateTree(_file.parent());
 
             // 8. Open or create the rolling file
             _file.OpenOrCreate(false, true, _truncate);
@@ -493,15 +489,15 @@ private:
 
             return true;
         }
-        catch (const CppCommon::FileSystemException&)
+        catch (const BaseKit::FileSystemException&)
         {
             // In case of any IO error reset the retry timestamp and return false!
-            _retry = CppCommon::Timestamp::utc();
+            _retry = BaseKit::Timestamp::utc();
             return false;
         }
     }
 
-    CppCommon::Path PrepareFilePath(const CppCommon::Timestamp& timestamp)
+    BaseKit::Path PrepareFilePath(const BaseKit::Timestamp& timestamp)
     {
         thread_local bool cache_initizlied = false;
         thread_local bool cache_time_required = false;
@@ -543,7 +539,7 @@ private:
                 // Update timezone cache values
                 if (cache_timezone_required || !cache_initizlied)
                 {
-                    CppCommon::Timezone local;
+                    BaseKit::Timezone local;
                     ConvertTimezone(cache_local_timezone_str, local.total().minutes(), 5);
                     cache_update_datetime = true;
                 }
@@ -551,7 +547,7 @@ private:
                 // Update UTC time cache values
                 if (cache_utc_required || !cache_initizlied)
                 {
-                    CppCommon::UtcTime utc(timestamp);
+                    BaseKit::UtcTime utc(timestamp);
                     ConvertNumber(cache_utc_year_str, utc.year(), 4);
                     ConvertNumber(cache_utc_month_str, utc.month(), 2);
                     ConvertNumber(cache_utc_day_str, utc.day(), 2);
@@ -564,7 +560,7 @@ private:
                 // Update local time cache values
                 if (cache_local_required || !cache_initizlied)
                 {
-                    CppCommon::LocalTime local(timestamp);
+                    BaseKit::LocalTime local(timestamp);
                     ConvertNumber(cache_local_year_str, local.year(), 4);
                     ConvertNumber(cache_local_month_str, local.month(), 2);
                     ConvertNumber(cache_local_day_str, local.day(), 2);
@@ -580,58 +576,58 @@ private:
         if (cache_update_datetime)
         {
             char* buffer = cache_utc_date_str;
-            std::memcpy(buffer, cache_utc_year_str, CppCommon::countof(cache_utc_year_str) - 1);
-            buffer += CppCommon::countof(cache_utc_year_str) - 1;
+            std::memcpy(buffer, cache_utc_year_str, BaseKit::countof(cache_utc_year_str) - 1);
+            buffer += BaseKit::countof(cache_utc_year_str) - 1;
             *buffer++ = '-';
-            std::memcpy(buffer, cache_utc_month_str, CppCommon::countof(cache_utc_month_str) - 1);
-            buffer += CppCommon::countof(cache_utc_month_str) - 1;
+            std::memcpy(buffer, cache_utc_month_str, BaseKit::countof(cache_utc_month_str) - 1);
+            buffer += BaseKit::countof(cache_utc_month_str) - 1;
             *buffer++ = '-';
-            std::memcpy(buffer, cache_utc_day_str, CppCommon::countof(cache_utc_day_str) - 1);
-            buffer += CppCommon::countof(cache_utc_day_str) - 1;
+            std::memcpy(buffer, cache_utc_day_str, BaseKit::countof(cache_utc_day_str) - 1);
+            buffer += BaseKit::countof(cache_utc_day_str) - 1;
 
             buffer = cache_utc_time_str;
-            std::memcpy(buffer, cache_utc_hour_str, CppCommon::countof(cache_utc_hour_str) - 1);
-            buffer += CppCommon::countof(cache_utc_hour_str) - 1;
-            std::memcpy(buffer, cache_utc_minute_str, CppCommon::countof(cache_utc_minute_str) - 1);
-            buffer += CppCommon::countof(cache_utc_minute_str) - 1;
-            std::memcpy(buffer, cache_utc_second_str, CppCommon::countof(cache_utc_second_str) - 1);
-            buffer += CppCommon::countof(cache_utc_second_str) - 1;
-            std::memcpy(buffer, cache_utc_timezone_str, CppCommon::countof(cache_utc_timezone_str) - 1);
-            buffer += CppCommon::countof(cache_utc_timezone_str) - 1;
+            std::memcpy(buffer, cache_utc_hour_str, BaseKit::countof(cache_utc_hour_str) - 1);
+            buffer += BaseKit::countof(cache_utc_hour_str) - 1;
+            std::memcpy(buffer, cache_utc_minute_str, BaseKit::countof(cache_utc_minute_str) - 1);
+            buffer += BaseKit::countof(cache_utc_minute_str) - 1;
+            std::memcpy(buffer, cache_utc_second_str, BaseKit::countof(cache_utc_second_str) - 1);
+            buffer += BaseKit::countof(cache_utc_second_str) - 1;
+            std::memcpy(buffer, cache_utc_timezone_str, BaseKit::countof(cache_utc_timezone_str) - 1);
+            buffer += BaseKit::countof(cache_utc_timezone_str) - 1;
 
             buffer = cache_utc_datetime_str;
-            std::memcpy(buffer, cache_utc_date_str, CppCommon::countof(cache_utc_date_str) - 1);
-            buffer += CppCommon::countof(cache_utc_date_str) - 1;
+            std::memcpy(buffer, cache_utc_date_str, BaseKit::countof(cache_utc_date_str) - 1);
+            buffer += BaseKit::countof(cache_utc_date_str) - 1;
             *buffer++ = 'T';
-            std::memcpy(buffer, cache_utc_time_str, CppCommon::countof(cache_utc_time_str) - 1);
-            buffer += CppCommon::countof(cache_utc_time_str) - 1;
+            std::memcpy(buffer, cache_utc_time_str, BaseKit::countof(cache_utc_time_str) - 1);
+            buffer += BaseKit::countof(cache_utc_time_str) - 1;
 
             buffer = cache_local_date_str;
-            std::memcpy(buffer, cache_local_year_str, CppCommon::countof(cache_local_year_str) - 1);
-            buffer += CppCommon::countof(cache_local_year_str) - 1;
+            std::memcpy(buffer, cache_local_year_str, BaseKit::countof(cache_local_year_str) - 1);
+            buffer += BaseKit::countof(cache_local_year_str) - 1;
             *buffer++ = '-';
-            std::memcpy(buffer, cache_local_month_str, CppCommon::countof(cache_local_month_str) - 1);
-            buffer += CppCommon::countof(cache_local_month_str) - 1;
+            std::memcpy(buffer, cache_local_month_str, BaseKit::countof(cache_local_month_str) - 1);
+            buffer += BaseKit::countof(cache_local_month_str) - 1;
             *buffer++ = '-';
-            std::memcpy(buffer, cache_local_day_str, CppCommon::countof(cache_local_day_str) - 1);
-            buffer += CppCommon::countof(cache_local_day_str) - 1;
+            std::memcpy(buffer, cache_local_day_str, BaseKit::countof(cache_local_day_str) - 1);
+            buffer += BaseKit::countof(cache_local_day_str) - 1;
 
             buffer = cache_local_time_str;
-            std::memcpy(buffer, cache_local_hour_str, CppCommon::countof(cache_local_hour_str) - 1);
-            buffer += CppCommon::countof(cache_local_hour_str) - 1;
-            std::memcpy(buffer, cache_local_minute_str, CppCommon::countof(cache_local_minute_str) - 1);
-            buffer += CppCommon::countof(cache_local_minute_str) - 1;
-            std::memcpy(buffer, cache_local_second_str, CppCommon::countof(cache_local_second_str) - 1);
-            buffer += CppCommon::countof(cache_local_second_str) - 1;
-            std::memcpy(buffer, cache_local_timezone_str, CppCommon::countof(cache_local_timezone_str) - 1);
-            buffer += CppCommon::countof(cache_local_timezone_str) - 1;
+            std::memcpy(buffer, cache_local_hour_str, BaseKit::countof(cache_local_hour_str) - 1);
+            buffer += BaseKit::countof(cache_local_hour_str) - 1;
+            std::memcpy(buffer, cache_local_minute_str, BaseKit::countof(cache_local_minute_str) - 1);
+            buffer += BaseKit::countof(cache_local_minute_str) - 1;
+            std::memcpy(buffer, cache_local_second_str, BaseKit::countof(cache_local_second_str) - 1);
+            buffer += BaseKit::countof(cache_local_second_str) - 1;
+            std::memcpy(buffer, cache_local_timezone_str, BaseKit::countof(cache_local_timezone_str) - 1);
+            buffer += BaseKit::countof(cache_local_timezone_str) - 1;
 
             buffer = cache_local_datetime_str;
-            std::memcpy(buffer, cache_local_date_str, CppCommon::countof(cache_local_date_str) - 1);
-            buffer += CppCommon::countof(cache_local_date_str) - 1;
+            std::memcpy(buffer, cache_local_date_str, BaseKit::countof(cache_local_date_str) - 1);
+            buffer += BaseKit::countof(cache_local_date_str) - 1;
             *buffer++ = 'T';
-            std::memcpy(buffer, cache_local_time_str, CppCommon::countof(cache_local_time_str) - 1);
-            buffer += CppCommon::countof(cache_local_time_str) - 1;
+            std::memcpy(buffer, cache_local_time_str, BaseKit::countof(cache_local_time_str) - 1);
+            buffer += BaseKit::countof(cache_local_time_str) - 1;
 
             cache_update_datetime = false;
         }
@@ -833,7 +829,7 @@ private:
             }
         }
 
-        return CppCommon::Path(_path / filename);
+        return BaseKit::Path(_path / filename);
     }
 
     void AppendPattern(const std::string& pattern)
@@ -963,17 +959,17 @@ private:
 class SizePolicyImpl : public RollingFileAppender::Impl
 {
 public:
-    SizePolicyImpl(RollingFileAppender& appender, const CppCommon::Path& path, const std::string& filename, const std::string& extension, size_t size, size_t backups, bool archive, bool truncate, bool auto_flush, bool auto_start)
+    SizePolicyImpl(RollingFileAppender& appender, const BaseKit::Path& path, const std::string& filename, const std::string& extension, size_t size, size_t backups, bool archive, bool truncate, bool auto_flush, bool auto_start)
         : RollingFileAppender::Impl(appender, path, archive, truncate, auto_flush, auto_start),
           _filename(filename), _extension(extension), _size(size), _backups(backups)
     {
         assert((size > 0) && "Size limit should be greater than zero!");
         if (size <= 0)
-            throwex CppCommon::ArgumentException("Size limit should be greater than zero!");
+            throwex BaseKit::ArgumentException("Size limit should be greater than zero!");
 
         assert((backups > 0) && "Backups count should be greater than zero!");
         if (backups <= 0)
-            throwex CppCommon::ArgumentException("Backups count should be greater than zero!");
+            throwex BaseKit::ArgumentException("Backups count should be greater than zero!");
     }
 
     virtual ~SizePolicyImpl()
@@ -1003,14 +999,14 @@ public:
                 if (_auto_flush)
                     _file.Flush();
             }
-            catch (const CppCommon::FileSystemException&)
+            catch (const BaseKit::FileSystemException&)
             {
                 // Try to close the opened file in case of any IO error
                 try
                 {
                     _file.Close();
                 }
-                catch (const CppCommon::FileSystemException&) {}
+                catch (const BaseKit::FileSystemException&) {}
             }
         }
     }
@@ -1024,14 +1020,14 @@ public:
             {
                 _file.Flush();
             }
-            catch (const CppCommon::FileSystemException&)
+            catch (const BaseKit::FileSystemException&)
             {
                 // Try to close the opened file in case of any IO error
                 try
                 {
                     _file.Close();
                 }
-                catch (const CppCommon::FileSystemException&) {}
+                catch (const BaseKit::FileSystemException&) {}
             }
         }
     }
@@ -1064,10 +1060,10 @@ private:
                     RollBackup(_file);
             }
         }
-        catch (const CppCommon::FileSystemException&)
+        catch (const BaseKit::FileSystemException&)
         {
             // In case of any IO error reset the retry timestamp and return false!
-            _retry = CppCommon::Timestamp::utc();
+            _retry = BaseKit::Timestamp::utc();
         }
 
         return false;
@@ -1082,7 +1078,7 @@ private:
                 return true;
 
             // 2. Check retry timestamp if 100ms elapsed after the last attempt
-            if ((CppCommon::Timestamp::utc() - _retry).milliseconds() < 100)
+            if ((BaseKit::Timestamp::utc() - _retry).milliseconds() < 100)
                 return false;
 
             // 3. If the file is opened for reading close it
@@ -1093,7 +1089,7 @@ private:
             _file = PrepareFilePath();
 
             // 5. Create the parent directory tree
-            CppCommon::Directory::CreateTree(_file.parent());
+            BaseKit::Directory::CreateTree(_file.parent());
 
             // 6. Open or create the rolling file
             _file.OpenOrCreate(false, true, _truncate);
@@ -1107,78 +1103,78 @@ private:
 
             return true;
         }
-        catch (const CppCommon::FileSystemException&)
+        catch (const BaseKit::FileSystemException&)
         {
             // In case of any IO error reset the retry timestamp and return false!
-            _retry = CppCommon::Timestamp::utc();
+            _retry = BaseKit::Timestamp::utc();
             return false;
         }
     }
 
-    void ArchiveQueue(const CppCommon::Path& path) override
+    void ArchiveQueue(const BaseKit::Path& path) override
     {
         // Create unique file name
-        CppCommon::File unique = CppCommon::File(path).ReplaceFilename(CppCommon::File::unique());
-        CppCommon::File::Rename(path, unique);
+        BaseKit::File unique = BaseKit::File(path).ReplaceFilename(BaseKit::File::unique());
+        BaseKit::File::Rename(path, unique);
 
         _archive_queue.Enqueue(unique);
     }
 
-    void ArchiveFile(const CppCommon::Path& path, const CppCommon::Path& filename) override
+    void ArchiveFile(const BaseKit::Path& path, const BaseKit::Path& filename) override
     {
         // Roll backup
-        CppCommon::File backup = RollBackup(path);
+        BaseKit::File backup = RollBackup(path);
 
         // Archive backup
         Impl::ArchiveFile(backup, PrepareFilePath());
     }
 
-    CppCommon::File RollBackup(const CppCommon::Path& path)
+    BaseKit::File RollBackup(const BaseKit::Path& path)
     {
         // Delete the last backup and archive if exists
-        CppCommon::File backup = PrepareFilePath(_backups);
+        BaseKit::File backup = PrepareFilePath(_backups);
         if (backup.IsFileExists())
-            CppCommon::File::Remove(backup);
+            BaseKit::File::Remove(backup);
         backup += "." + ARCHIVE_EXTENSION;
         if (backup.IsFileExists())
-            CppCommon::File::Remove(backup);
+            BaseKit::File::Remove(backup);
 
         // Roll backup files
         for (size_t i = _backups - 1; i > 0; --i)
         {
-            CppCommon::File src = PrepareFilePath(i);
-            CppCommon::File dst = PrepareFilePath(i + 1);
+            BaseKit::File src = PrepareFilePath(i);
+            BaseKit::File dst = PrepareFilePath(i + 1);
             if (src.IsFileExists())
-                CppCommon::File::Rename(src, dst);
+                BaseKit::File::Rename(src, dst);
             src += "." + ARCHIVE_EXTENSION;
             dst += "." + ARCHIVE_EXTENSION;
             if (src.IsFileExists())
-                CppCommon::File::Rename(src, dst);
+                BaseKit::File::Rename(src, dst);
         }
 
         // Backup the current file
         backup = PrepareFilePath(1);
-        CppCommon::File::Rename(path, backup);
+        BaseKit::File::Rename(path, backup);
         return backup;
     }
 
-    CppCommon::Path PrepareFilePath()
+    BaseKit::Path PrepareFilePath()
     {
-        return CppCommon::Path(_path / CppCommon::format("{}.{}", _filename, _extension));
+        return BaseKit::Path(_path / BaseKit::format("{}.{}", _filename, _extension));
     }
 
-    CppCommon::Path PrepareFilePath(size_t backup)
+    BaseKit::Path PrepareFilePath(size_t backup)
     {
-        return CppCommon::Path(_path / CppCommon::format("{}.{}.{}", _filename, backup, _extension));
+        return BaseKit::Path(_path / BaseKit::format("{}.{}.{}", _filename, backup, _extension));
     }
 };
 
 //! @endcond
 
-RollingFileAppender::RollingFileAppender(const CppCommon::Path& path, TimeRollingPolicy policy, const std::string& pattern, bool archive, bool truncate, bool auto_flush, bool auto_start)
+RollingFileAppender::RollingFileAppender(const BaseKit::Path& path, TimeRollingPolicy policy, const std::string& pattern, bool archive, bool truncate, bool auto_flush, bool auto_start)
 {
     // Check implementation storage parameters
-    [[maybe_unused]] CppCommon::ValidateAlignedStorage<sizeof(Impl), alignof(Impl), StorageSize, StorageAlign> _;
+    [[maybe_unused]] BaseKit::ValidateAlignedStorage<sizeof(Impl), alignof(Impl), StorageSize, StorageAlign> _;
     static_assert((StorageSize >= sizeof(Impl)), "RollingFileAppender::StorageSize must be increased!");
     static_assert(((StorageAlign % alignof(Impl)) == 0), "RollingFileAppender::StorageAlign must be adjusted!");
 
@@ -1186,10 +1182,10 @@ RollingFileAppender::RollingFileAppender(const CppCommon::Path& path, TimeRollin
     new(&_storage)TimePolicyImpl(*this, path, policy, pattern, archive, truncate, auto_flush, auto_start);
 }
 
-RollingFileAppender::RollingFileAppender(const CppCommon::Path& path, const std::string& filename, const std::string& extension, size_t size, size_t backups, bool archive, bool truncate, bool auto_flush, bool auto_start)
+RollingFileAppender::RollingFileAppender(const BaseKit::Path& path, const std::string& filename, const std::string& extension, size_t size, size_t backups, bool archive, bool truncate, bool auto_flush, bool auto_start)
 {
     // Check implementation storage parameters
-    [[maybe_unused]] CppCommon::ValidateAlignedStorage<sizeof(Impl), alignof(Impl), StorageSize, StorageAlign> _;
+    [[maybe_unused]] BaseKit::ValidateAlignedStorage<sizeof(Impl), alignof(Impl), StorageSize, StorageAlign> _;
     static_assert((StorageSize >= sizeof(Impl)), "RollingFileAppender::StorageSize must be increased!");
     static_assert(((StorageAlign % alignof(Impl)) == 0), "RollingFileAppender::StorageAlign must be adjusted!");
 
@@ -1209,4 +1205,4 @@ bool RollingFileAppender::Stop() { return impl().Stop(); }
 void RollingFileAppender::AppendRecord(Record& record) { impl().AppendRecord(record); }
 void RollingFileAppender::Flush() { impl().Flush(); }
 
-} // namespace CppLogging
+} // namespace Logging

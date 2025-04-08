@@ -1,13 +1,9 @@
-/*!
-    \file timer.h
-    \brief Timer definition
-    \author Ivan Shynkarenka
-    \date 16.08.2018
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_TIMER_H
-#define CPPSERVER_ASIO_TIMER_H
+#ifndef NETUTIL_ASIO_TIMER_H
+#define NETUTIL_ASIO_TIMER_H
 
 #include "service.h"
 
@@ -17,7 +13,7 @@
 #include <cassert>
 #include <functional>
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 //! Timer
@@ -39,13 +35,13 @@ public:
         \param service - Asio service
         \param time - Absolute time
     */
-    Timer(const std::shared_ptr<Service>& service, const CppCommon::UtcTime& time);
+    Timer(const std::shared_ptr<Service>& service, const BaseKit::UtcTime& time);
     //! Initialize timer with a given Asio service and expiry time relative to now
     /*!
         \param service - Asio service
         \param timespan - Relative timespan
     */
-    Timer(const std::shared_ptr<Service>& service, const CppCommon::Timespan& timespan);
+    Timer(const std::shared_ptr<Service>& service, const BaseKit::Timespan& timespan);
     //! Initialize timer with a given Asio service and action function
     /*!
         \param service - Asio service
@@ -58,14 +54,14 @@ public:
         \param action - Action function
         \param time - Absolute time
     */
-    Timer(const std::shared_ptr<Service>& service, const std::function<void(bool)>& action, const CppCommon::UtcTime& time);
+    Timer(const std::shared_ptr<Service>& service, const std::function<void(bool)>& action, const BaseKit::UtcTime& time);
     //! Initialize timer with a given Asio service, action function and expiry time relative to now
     /*!
         \param service - Asio service
         \param action - Action function
         \param timespan - Relative timespan
     */
-    Timer(const std::shared_ptr<Service>& service, const std::function<void(bool)>& action, const CppCommon::Timespan& timespan);
+    Timer(const std::shared_ptr<Service>& service, const std::function<void(bool)>& action, const BaseKit::Timespan& timespan);
     Timer(const Timer&) = delete;
     Timer(Timer&&) = delete;
     virtual ~Timer() = default;
@@ -81,22 +77,22 @@ public:
     asio::io_service::strand& strand() noexcept { return _strand; }
 
     //! Get the timer's expiry time as an absolute time
-    CppCommon::UtcTime expire_time() const;
+    BaseKit::UtcTime expire_time() const;
     //! Get the timer's expiry time relative to now
-    CppCommon::Timespan expire_timespan() const;
+    BaseKit::Timespan expire_timespan() const;
 
     //! Setup the timer with absolute expiry time
     /*!
         \param time - Absolute time
         \return 'true' if the timer was successfully setup, 'false' if the timer failed to setup
     */
-    virtual bool Setup(const CppCommon::UtcTime& time);
+    virtual bool Setup(const BaseKit::UtcTime& time);
     //! Setup the timer with expiry time relative to now
     /*!
         \param timespan - Relative timespan
         \return 'true' if the timer was successfully setup, 'false' if the timer failed to setup
     */
-    virtual bool Setup(const CppCommon::Timespan& timespan);
+    virtual bool Setup(const BaseKit::Timespan& timespan);
     //! Setup the timer with an action function
     /*!
         \param action - Action function
@@ -109,14 +105,14 @@ public:
         \param time - Absolute time
         \return 'true' if the timer was successfully setup, 'false' if the timer failed to setup
     */
-    virtual bool Setup(const std::function<void(bool)>& action, const CppCommon::UtcTime& time);
+    virtual bool Setup(const std::function<void(bool)>& action, const BaseKit::UtcTime& time);
     //! Setup the timer with an action function and expiry time relative to now
     /*!
         \param action - Action function
         \param timespan - Relative timespan
         \return 'true' if the timer was successfully setup, 'false' if the timer failed to setup
     */
-    virtual bool Setup(const std::function<void(bool)>& action, const CppCommon::Timespan& timespan);
+    virtual bool Setup(const std::function<void(bool)>& action, const BaseKit::Timespan& timespan);
 
     //! Wait for the timer (asynchronous)
     /*!
@@ -169,6 +165,6 @@ private:
 /*! \example asio_timer.cpp Asio timer example */
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_ASIO_TIMER_H
+#endif // NETUTIL_ASIO_TIMER_H

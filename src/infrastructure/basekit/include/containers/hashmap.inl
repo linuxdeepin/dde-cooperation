@@ -1,12 +1,8 @@
-/*!
-    \file hashmap.inl
-    \brief Hash map container inline implementation
-    \author Ivan Shynkarenka
-    \date 11.07.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <typename TKey, typename TValue, typename THash, typename TEqual, typename TAllocator>
 inline HashMap<TKey, TValue, THash, TEqual, TAllocator>::HashMap(size_t capacity, const TKey& blank, const THash& hash, const TEqual& equal, const TAllocator& allocator)
@@ -671,4 +667,4 @@ void swap(HashMapConstReverseIterator<TContainer, TKey, TValue>& it1, HashMapCon
     it1.swap(it2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

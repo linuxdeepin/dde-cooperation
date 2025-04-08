@@ -1,13 +1,9 @@
-/*!
-    \file thread.h
-    \brief Thread definition
-    \author Ivan Shynkarenka
-    \date 27.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_THREAD_H
-#define CPPCOMMON_THREADS_THREAD_H
+#ifndef BASEKIT_THREADS_THREAD_H
+#define BASEKIT_THREADS_THREAD_H
 
 #include "errors/exceptions_handler.h"
 #include "time/timestamp.h"
@@ -19,9 +15,9 @@
 /*!
     Get the current thread Id.
 */
-#define __THREAD__ CppCommon::Thread::CurrentThreadId()
+#define __THREAD__ BaseKit::Thread::CurrentThreadId()
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Thread priorities
 enum class ThreadPriority : uint8_t
@@ -159,8 +155,8 @@ public:
 
 /*! \example threads_thread.cpp Thread example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "thread.inl"
 
-#endif // CPPCOMMON_THREADS_THREAD_H
+#endif // BASEKIT_THREADS_THREAD_H

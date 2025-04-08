@@ -1,10 +1,6 @@
-/*!
-    \file syslog_appender.cpp
-    \brief Syslog appender implementation
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/appenders/syslog_appender.h"
 
@@ -12,7 +8,7 @@
 #include <syslog.h>
 #endif
 
-namespace CppLogging {
+namespace Logging {
 
 SyslogAppender::SyslogAppender()
 {
@@ -64,4 +60,4 @@ void SyslogAppender::AppendRecord(Record& record)
 #endif
 }
 
-} // namespace CppLogging
+} // namespace Logging

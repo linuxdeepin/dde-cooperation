@@ -1,19 +1,15 @@
-/*!
-    \file timezone.h
-    \brief Timezone definition
-    \author Ivan Shynkarenka
-    \date 18.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_TIME_TIMEZONE_H
-#define CPPCOMMON_TIME_TIMEZONE_H
+#ifndef BASEKIT_TIME_TIMEZONE_H
+#define BASEKIT_TIME_TIMEZONE_H
 
 #include "time/time.h"
 
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Timezone
 /*!
@@ -112,10 +108,9 @@ protected:
     Timespan _dstoffset;
 };
 
-/*! \example time_timezone.cpp Timezone example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "timezone.inl"
 
-#endif // CPPCOMMON_TIME_TIMEZONE_H
+#endif // BASEKIT_TIME_TIMEZONE_H

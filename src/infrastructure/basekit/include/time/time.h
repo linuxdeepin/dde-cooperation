@@ -1,17 +1,13 @@
-/*!
-    \file time.h
-    \brief Time definition
-    \author Ivan Shynkarenka
-    \date 12.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_TIME_TIME_H
-#define CPPCOMMON_TIME_TIME_H
+#ifndef BASEKIT_TIME_TIME_H
+#define BASEKIT_TIME_TIME_H
 
 #include "time/timestamp.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Weekday
 enum class Weekday
@@ -256,10 +252,9 @@ public:
     LocalTime(const UtcTime& time);
 };
 
-/*! \example time_time.cpp Time example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "time.inl"
 
-#endif // CPPCOMMON_TIME_TIME_H
+#endif // BASEKIT_TIME_TIME_H

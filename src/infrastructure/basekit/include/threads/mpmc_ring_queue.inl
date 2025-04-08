@@ -1,12 +1,8 @@
-/*!
-    \file mpmc_ring_queue.inl
-    \brief Multiple producers / multiple consumers wait-free ring queue inline implementation
-    \author Ivan Shynkarenka
-    \date 19.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template<typename T>
 inline MPMCRingQueue<T>::MPMCRingQueue(size_t capacity) : _capacity(capacity), _mask(capacity - 1), _buffer(new Node[capacity]), _head(0), _tail(0)
@@ -129,4 +125,4 @@ inline bool MPMCRingQueue<T>::Dequeue(T& item)
     return false;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

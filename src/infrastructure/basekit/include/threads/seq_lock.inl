@@ -1,12 +1,8 @@
-/*!
-    \file seq_lock.inl
-    \brief Sequential lock synchronization primitive inline implementation
-    \author Ivan Shynkarenka
-    \date 17.08.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <typename T>
 inline SeqLock<T>::SeqLock() : _seq(0)
@@ -58,4 +54,4 @@ inline void SeqLock<T>::Write(const T& data) noexcept
     _seq.store(seq0 + 2, std::memory_order_release);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

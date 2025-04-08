@@ -1,10 +1,6 @@
-/*!
-    \file record.cpp
-    \brief Logging record implementation
-    \author Ivan Shynkarenka
-    \date 08.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/record.h"
 
@@ -15,13 +11,13 @@ std::string RestoreFormatString(std::string_view pattern, const std::vector<uint
 size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, const std::vector<uint8_t>& buffer, size_t& index)
 {
     // Parse the argument type
-    CppLogging::ArgumentType type;
+    Logging::ArgumentType type;
     std::memcpy(&type, buffer.data() + index, sizeof(uint8_t));
     index += sizeof(uint8_t);
 
     // Parse the named argument name
     std::string name;
-    if (type == CppLogging::ArgumentType::ARG_NAMEDARG)
+    if (type == Logging::ArgumentType::ARG_NAMEDARG)
     {
         uint32_t length;
         std::memcpy(&length, buffer.data() + index, sizeof(uint32_t));
@@ -39,7 +35,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
     // Parse the argument value
     switch (type)
     {
-        case CppLogging::ArgumentType::ARG_BOOL:
+        case Logging::ArgumentType::ARG_BOOL:
         {
             uint8_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(uint8_t));
@@ -48,7 +44,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value != 0) : store.push_back(fmt::detail::named_arg(name.c_str(), value != 0));
             break;
         }
-        case CppLogging::ArgumentType::ARG_CHAR:
+        case Logging::ArgumentType::ARG_CHAR:
         {
             uint8_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(uint8_t));
@@ -57,7 +53,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back((char)value) : store.push_back(fmt::detail::named_arg(name.c_str(), (char)value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_WCHAR:
+        case Logging::ArgumentType::ARG_WCHAR:
         {
             uint32_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(uint32_t));
@@ -66,7 +62,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back((char)value) : store.push_back(fmt::detail::named_arg(name.c_str(), (char)value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_INT8:
+        case Logging::ArgumentType::ARG_INT8:
         {
             int8_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(int8_t));
@@ -75,7 +71,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_UINT8:
+        case Logging::ArgumentType::ARG_UINT8:
         {
             uint8_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(uint8_t));
@@ -84,7 +80,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_INT16:
+        case Logging::ArgumentType::ARG_INT16:
         {
             int16_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(int16_t));
@@ -93,7 +89,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_UINT16:
+        case Logging::ArgumentType::ARG_UINT16:
         {
             uint16_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(uint16_t));
@@ -102,7 +98,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_INT32:
+        case Logging::ArgumentType::ARG_INT32:
         {
             int32_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(int32_t));
@@ -111,7 +107,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_UINT32:
+        case Logging::ArgumentType::ARG_UINT32:
         {
             uint32_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(uint32_t));
@@ -120,7 +116,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_INT64:
+        case Logging::ArgumentType::ARG_INT64:
         {
             int64_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(int64_t));
@@ -129,7 +125,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_UINT64:
+        case Logging::ArgumentType::ARG_UINT64:
         {
             uint64_t value;
             std::memcpy(&value, buffer.data() + index, sizeof(uint64_t));
@@ -138,7 +134,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_FLOAT:
+        case Logging::ArgumentType::ARG_FLOAT:
         {
             float value;
             std::memcpy(&value, buffer.data() + index, sizeof(float));
@@ -147,7 +143,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_DOUBLE:
+        case Logging::ArgumentType::ARG_DOUBLE:
         {
             double value;
             std::memcpy(&value, buffer.data() + index, sizeof(double));
@@ -156,7 +152,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
        }
-        case CppLogging::ArgumentType::ARG_STRING:
+        case Logging::ArgumentType::ARG_STRING:
         {
             uint32_t length;
             std::memcpy(&length, buffer.data() + index, sizeof(uint32_t));
@@ -168,7 +164,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }
-        case CppLogging::ArgumentType::ARG_POINTER:
+        case Logging::ArgumentType::ARG_POINTER:
         {
             const void* value;
             std::memcpy(&value, buffer.data() + index, sizeof(uint64_t));
@@ -177,7 +173,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(value) : store.push_back(fmt::detail::named_arg(name.c_str(), value));
             break;
         }            
-        case CppLogging::ArgumentType::ARG_CUSTOM:
+        case Logging::ArgumentType::ARG_CUSTOM:
         {
             // Parse the custom data type size
             uint32_t custom_size;
@@ -203,7 +199,7 @@ size_t ParseArgument(fmt::dynamic_format_arg_store<fmt::format_context>& store, 
             name.empty() ? store.push_back(custom) : store.push_back(fmt::detail::named_arg(name.c_str(), custom));
             break;
         }
-        case CppLogging::ArgumentType::ARG_LIST:
+        case Logging::ArgumentType::ARG_LIST:
         {
             // Parse the list size
             uint32_t list_size;
@@ -265,7 +261,7 @@ std::string RestoreFormatString(std::string_view pattern, const std::vector<uint
 
 } // namespace
 
-namespace CppLogging {
+namespace Logging {
 
 std::string Record::RestoreFormat(std::string_view pattern, const std::vector<uint8_t>& buffer, size_t offset, size_t size)
 {
@@ -273,4 +269,4 @@ std::string Record::RestoreFormat(std::string_view pattern, const std::vector<ui
     return RestoreFormatString(pattern, buffer, index, size);
 }
 
-} // namespace CppLogging
+} // namespace Logging

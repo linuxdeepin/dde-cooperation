@@ -1,12 +1,9 @@
-/*!
-    \file process.inl
-    \brief Process inline implementation
-    \author Ivan Shynkarenka
-    \date 01.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 inline Process Process::CurrentProcess()
 {
@@ -23,4 +20,4 @@ inline void swap(Process& process1, Process& process2) noexcept
     process1.swap(process2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

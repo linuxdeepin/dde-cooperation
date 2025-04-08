@@ -1,10 +1,6 @@
-/*!
-    \file process.cpp
-    \brief Process implementation
-    \author Ivan Shynkarenka
-    \date 01.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "system/process.h"
 
@@ -27,7 +23,7 @@
 #undef min
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -411,7 +407,7 @@ public:
         // Create a new process
         PROCESS_INFORMATION pi;
         if (!CreateProcessW(nullptr, (wchar_t*)command_line.c_str(), nullptr, nullptr, bInheritHandles, CREATE_UNICODE_ENVIRONMENT, environment.empty() ? nullptr : (LPVOID)environment.data(), (directory == nullptr) ? nullptr : Encoding::FromUTF8(*directory).c_str(), &si, &pi))
-            throwex SystemException(CppCommon::format("Failed to execute a new process with command '{}'!", command));
+            throwex SystemException(BaseKit::format("Failed to execute a new process with command '{}'!", command));
 
         // Close standard handles
         if (si.hStdInput != nullptr)
@@ -557,4 +553,4 @@ void Process::swap(Process& process) noexcept
     swap(_storage, process._storage);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

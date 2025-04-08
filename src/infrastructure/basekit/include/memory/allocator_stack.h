@@ -1,17 +1,13 @@
-/*!
-    \file allocator_stack.h
-    \brief Stack memory allocator definition
-    \author Ivan Shynkarenka
-    \date 17.04.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_MEMORY_ALLOCATOR_STACK_H
-#define CPPCOMMON_MEMORY_ALLOCATOR_STACK_H
+#ifndef BASEKIT_MEMORY_ALLOCATOR_STACK_H
+#define BASEKIT_MEMORY_ALLOCATOR_STACK_H
 
 #include "allocator.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Stack memory manager class
 /*!
@@ -86,8 +82,8 @@ private:
 template <typename T, size_t N, bool nothrow = false>
 using StackAllocator = Allocator<T, StackMemoryManager<N>, nothrow>;
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "allocator_stack.inl"
 
-#endif // CPPCOMMON_MEMORY_ALLOCATOR_STACK_H
+#endif // BASEKIT_MEMORY_ALLOCATOR_STACK_H

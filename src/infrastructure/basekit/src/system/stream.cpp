@@ -1,10 +1,6 @@
-/*!
-    \file stream.cpp
-    \brief Standard input/output/error stream implementation
-    \author Ivan Shynkarenka
-    \date 23.07.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "system/stream.h"
 
@@ -19,7 +15,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -315,4 +311,4 @@ void StdError::swap(StdError& stream) noexcept
     swap(_storage, stream._storage);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

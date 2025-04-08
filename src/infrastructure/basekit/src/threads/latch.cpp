@@ -1,14 +1,10 @@
-/*!
-    \file latch.cpp
-    \brief Latch synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 25.03.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/latch.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 void Latch::Reset(int threads) noexcept
 {
@@ -85,4 +81,4 @@ bool Latch::TryWait() noexcept
     return (_threads == 0);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

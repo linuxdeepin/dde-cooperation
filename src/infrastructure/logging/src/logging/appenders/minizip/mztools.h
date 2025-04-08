@@ -1,8 +1,6 @@
-/*
-  Additional tools for Minizip
-  Code: Xavier Roche '2004
-  License: Same as ZLIB (www.gzip.org)
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef _zip_tools_H
 #define _zip_tools_H

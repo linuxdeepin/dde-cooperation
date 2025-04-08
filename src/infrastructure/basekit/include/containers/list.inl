@@ -1,12 +1,8 @@
-/*!
-    \file list.inl
-    \brief Intrusive list container inline implementation
-    \author Ivan Shynkarenka
-    \date 20.06.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <typename T>
 template <class InputIterator>
@@ -444,4 +440,4 @@ void swap(ListConstReverseIterator<T>& it1, ListConstReverseIterator<T>& it2) no
     it1.swap(it2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

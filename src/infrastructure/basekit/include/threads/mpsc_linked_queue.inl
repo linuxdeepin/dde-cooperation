@@ -1,12 +1,8 @@
-/*!
-    \file mpsc_linked_queue.inl
-    \brief Multiple producers / single consumer wait-free linked queue inline implementation
-    \author Ivan Shynkarenka
-    \date 18.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template<typename T>
 inline MPSCLinkedQueue<T>::MPSCLinkedQueue() : _head(new Node), _tail(_head.load(std::memory_order_relaxed))
@@ -80,4 +76,4 @@ inline bool MPSCLinkedQueue<T>::Dequeue(T& item)
     return true;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

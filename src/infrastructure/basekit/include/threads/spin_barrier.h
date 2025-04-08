@@ -1,18 +1,14 @@
-/*!
-    \file spin_barrier.h
-    \brief Spin barrier synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 16.03.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_SPIN_BARRIER_H
-#define CPPCOMMON_THREADS_SPIN_BARRIER_H
+#ifndef BASEKIT_THREADS_SPIN_BARRIER_H
+#define BASEKIT_THREADS_SPIN_BARRIER_H
 
 #include <atomic>
 #include <cassert>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Spin barrier synchronization primitive
 /*!
@@ -61,8 +57,8 @@ private:
 
 /*! \example threads_spin_barrier.cpp Spin barrier synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "spin_barrier.inl"
 
-#endif // CPPCOMMON_THREADS_SPIN_BARRIER_H
+#endif // BASEKIT_THREADS_SPIN_BARRIER_H

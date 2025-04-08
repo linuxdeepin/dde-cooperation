@@ -1,12 +1,8 @@
-/*!
-    \file condition_variable.inl
-    \brief Condition variable synchronization primitive inline implementation
-    \author Ivan Shynkarenka
-    \date 03.10.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <typename TPredicate>
 void ConditionVariable::Wait(CriticalSection& cs, TPredicate predicate)
@@ -25,4 +21,4 @@ bool ConditionVariable::TryWaitFor(CriticalSection& cs, const Timespan& timespan
     return true;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

@@ -1,65 +1,30 @@
-/*!
-    \file flags.h
-    \brief Enum-based flags definition
-    \author Ivan Shynkarenka
-    \date 25.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_FLAGS_H
-#define CPPCOMMON_FLAGS_H
+#ifndef BASEKIT_FLAGS_H
+#define BASEKIT_FLAGS_H
 
 #include <bitset>
 #include <type_traits>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Enum-based flags false checker
 template <typename TEnum>
 struct IsEnumFlags : public std::false_type {};
 
 //! Register a new enum-based flags macro
-/*!
-    Should be used to get access to AND/OR/XOR logical operators with a given enum values.
-
-    Example:
-    \code{.cpp}
-    enum class MyFlags
-    {
-        None  = 0x0,
-        One   = 0x1,
-        Two   = 0x2,
-        Three = 0x4,
-        Four  = 0x8
-    };
-
-    ENUM_FLAGS(MyFlags)
-
-    int main()
-    {
-        auto mask = MyFlags::One | MyFlags::Two;
-        if (mask & MyFlags::Two)
-        {
-            ...
-        }
-    }
-    \endcode
-*/
 #define ENUM_FLAGS(type)\
-using CppCommon::operator&;\
-using CppCommon::operator|;\
-using CppCommon::operator^;\
-namespace CppCommon {\
+using BaseKit::operator&;\
+using BaseKit::operator|;\
+using BaseKit::operator^;\
+namespace BaseKit {\
 template <> struct IsEnumFlags<type> : std::true_type {};\
 }
 
 //! Enum-based flags
-/*!
-    Helper class for enum based flags which wraps particular enum as a template parameter
-    and provides flags manipulation operators and methods.
-
-    Not thread-safe.
-*/
+/*! \note This class is not intended to be used directly, use the ENUM_FLAGS macro instead. */
 template <typename TEnum>
 class Flags
 {
@@ -138,10 +103,9 @@ private:
     type _value;
 };
 
-/*! \example common_flags.cpp Enum-based flags example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "flags.inl"
 
-#endif // CPPCOMMON_FLAGS_H
+#endif // BASEKIT_FLAGS_H

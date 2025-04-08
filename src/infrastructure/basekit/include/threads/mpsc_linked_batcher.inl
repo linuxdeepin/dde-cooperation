@@ -1,12 +1,8 @@
-/*!
-    \file mpsc_linked_batcher.inl
-    \brief Multiple producers / single consumer wait-free linked batcher inline implementation
-    \author Ivan Shynkarenka
-    \date 19.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template<typename T>
 inline MPSCLinkedBatcher<T>::MPSCLinkedBatcher() : _head(nullptr)
@@ -82,4 +78,4 @@ inline bool MPSCLinkedBatcher<T>::Dequeue(const std::function<void(const T&)>& h
     return true;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

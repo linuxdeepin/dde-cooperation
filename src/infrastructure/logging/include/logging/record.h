@@ -1,13 +1,9 @@
-/*!
-    \file record.h
-    \brief Logging record definition
-    \author Ivan Shynkarenka
-    \date 08.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_RECORD_H
-#define CPPLOGGING_RECORD_H
+#ifndef LOGGING_RECORD_H
+#define LOGGING_RECORD_H
 
 #include "logging/level.h"
 #include "string/format.h"
@@ -16,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Logging record
 /*!
@@ -99,8 +95,8 @@ public:
     friend void swap(Record& record1, Record& record2) noexcept;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
 #include "record.inl"
 
-#endif // CPPLOGGING_RECORD_H
+#endif // LOGGING_RECORD_H

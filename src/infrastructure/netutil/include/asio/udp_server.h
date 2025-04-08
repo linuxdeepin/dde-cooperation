@@ -1,19 +1,15 @@
-/*!
-    \file udp_server.h
-    \brief UDP server definition
-    \author Ivan Shynkarenka
-    \date 22.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_UDP_SERVER_H
-#define CPPSERVER_ASIO_UDP_SERVER_H
+#ifndef NETUTIL_ASIO_UDP_SERVER_H
+#define NETUTIL_ASIO_UDP_SERVER_H
 
 #include "service.h"
 
 #include "system/uuid.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 //! UDP server
@@ -53,7 +49,7 @@ public:
     UDPServer& operator=(UDPServer&&) = delete;
 
     //! Get the server Id
-    const CppCommon::UUID& id() const noexcept { return _id; }
+    const BaseKit::UUID& id() const noexcept { return _id; }
 
     //! Get the Asio service
     std::shared_ptr<Service>& service() noexcept { return _service; }
@@ -150,14 +146,14 @@ public:
         \param timeout - Timeout
         \return Size of multicasted datagram
     */
-    virtual size_t Multicast(const void* buffer, size_t size, const CppCommon::Timespan& timeout);
+    virtual size_t Multicast(const void* buffer, size_t size, const BaseKit::Timespan& timeout);
     //! Multicast text to the prepared mulicast endpoint with timeout (synchronous)
     /*!
         \param text - Text to multicast
         \param timeout - Timeout
         \return Size of multicasted datagram
     */
-    virtual size_t Multicast(std::string_view text, const CppCommon::Timespan& timeout) { return Multicast(text.data(), text.size(), timeout); }
+    virtual size_t Multicast(std::string_view text, const BaseKit::Timespan& timeout) { return Multicast(text.data(), text.size(), timeout); }
 
     //! Multicast datagram to the prepared mulicast endpoint (asynchronous)
     /*!
@@ -197,7 +193,7 @@ public:
         \param timeout - Timeout
         \return Size of sent datagram
     */
-    virtual size_t Send(const asio::ip::udp::endpoint& endpoint, const void* buffer, size_t size, const CppCommon::Timespan& timeout);
+    virtual size_t Send(const asio::ip::udp::endpoint& endpoint, const void* buffer, size_t size, const BaseKit::Timespan& timeout);
     //! Send text into the given endpoint with timeout (synchronous)
     /*!
         \param endpoint - Endpoint to send
@@ -205,7 +201,7 @@ public:
         \param timeout - Timeout
         \return Size of sent datagram
     */
-    virtual size_t Send(const asio::ip::udp::endpoint& endpoint, std::string_view text, const CppCommon::Timespan& timeout) { return Send(endpoint, text.data(), text.size(), timeout); }
+    virtual size_t Send(const asio::ip::udp::endpoint& endpoint, std::string_view text, const BaseKit::Timespan& timeout) { return Send(endpoint, text.data(), text.size(), timeout); }
 
     //! Send datagram into the given endpoint (asynchronous)
     /*!
@@ -247,7 +243,7 @@ public:
         \param timeout - Timeout
         \return Size of received datagram
     */
-    virtual size_t Receive(asio::ip::udp::endpoint& endpoint, void* buffer, size_t size, const CppCommon::Timespan& timeout);
+    virtual size_t Receive(asio::ip::udp::endpoint& endpoint, void* buffer, size_t size, const BaseKit::Timespan& timeout);
     //! Receive text from the given endpoint with timeout (synchronous)
     /*!
         \param endpoint - Endpoint to receive from
@@ -255,7 +251,7 @@ public:
         \param timeout - Timeout
         \return Received text
     */
-    virtual std::string Receive(asio::ip::udp::endpoint& endpoint, size_t size, const CppCommon::Timespan& timeout);
+    virtual std::string Receive(asio::ip::udp::endpoint& endpoint, size_t size, const BaseKit::Timespan& timeout);
 
     //! Receive datagram from the client (asynchronous)
     virtual void ReceiveAsync();
@@ -343,7 +339,7 @@ protected:
 
 private:
     // Server Id
-    CppCommon::UUID _id;
+    BaseKit::UUID _id;
     // Asio service
     std::shared_ptr<Service> _service;
     // Asio IO service
@@ -396,6 +392,6 @@ private:
 /*! \example udp_multicast_server.cpp UDP multicast server example */
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_ASIO_UDP_SERVER_H
+#endif // NETUTIL_ASIO_UDP_SERVER_H

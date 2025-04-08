@@ -1,10 +1,6 @@
-/*!
-    \file http_response.cpp
-    \brief HTTP response implementation
-    \author Ivan Shynkarenka
-    \date 15.02.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "http/http_response.h"
 
@@ -15,7 +11,7 @@
 
 #include <cassert>
 
-namespace CppServer {
+namespace NetUtil {
 namespace HTTP {
 
 const std::unordered_map<std::string, std::string> HTTPResponse::_mime_table =
@@ -228,7 +224,7 @@ HTTPResponse& HTTPResponse::SetBegin(int status, std::string_view status_phrase,
 
     // Append the HTTP response status
     char buffer[32];
-    _cache.append(FastConvert(status, buffer, CppCommon::countof(buffer)));
+    _cache.append(FastConvert(status, buffer, BaseKit::countof(buffer)));
     _status = status;
 
     _cache.append(" ");
@@ -299,7 +295,7 @@ HTTPResponse& HTTPResponse::SetCookie(std::string_view name, std::string_view va
     _cache.append("=");
     _cache.append(value);
     _cache.append("; Max-Age=");
-    _cache.append(FastConvert(max_age, buffer, CppCommon::countof(buffer)));
+    _cache.append(FastConvert(max_age, buffer, BaseKit::countof(buffer)));
     if (!domain.empty())
     {
         _cache.append("; Domain=");
@@ -330,7 +326,7 @@ HTTPResponse& HTTPResponse::SetBody(std::string_view body)
 {
     // Append non empty content length header
     char buffer[32];
-    SetHeader("Content-Length", FastConvert(body.size(), buffer, CppCommon::countof(buffer)));
+    SetHeader("Content-Length", FastConvert(body.size(), buffer, BaseKit::countof(buffer)));
 
     _cache.append("\r\n");
 
@@ -349,7 +345,7 @@ HTTPResponse& HTTPResponse::SetBodyLength(size_t length)
 {
     // Append content length header
     char buffer[32];
-    SetHeader("Content-Length", FastConvert(length, buffer, CppCommon::countof(buffer)));
+    SetHeader("Content-Length", FastConvert(length, buffer, BaseKit::countof(buffer)));
 
     _cache.append("\r\n");
 
@@ -558,7 +554,7 @@ bool HTTPResponse::ReceiveHeader(const void* buffer, size_t size)
                 _headers.emplace_back(header_name_index, header_name_size, header_value_index, header_value_size);
 
                 // Try to find the body content length
-                if (CppCommon::StringUtils::CompareNoCase(std::string_view(_cache.data() + header_name_index, header_name_size), "Content-Length"))
+                if (BaseKit::StringUtils::CompareNoCase(std::string_view(_cache.data() + header_name_index, header_name_size), "Content-Length"))
                 {
                     _body_length = 0;
                     for (size_t j = header_value_index; j < (header_value_index + header_value_size); ++j)
@@ -680,4 +676,4 @@ void HTTPResponse::swap(HTTPResponse& response) noexcept
 }
 
 } // namespace HTTP
-} // namespace CppServer
+} // namespace NetUtil

@@ -1,13 +1,9 @@
-/*!
-    \file http_session.h
-    \brief HTTP session definition
-    \author Ivan Shynkarenka
-    \date 30.04.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_HTTP_HTTP_SESSION_H
-#define CPPSERVER_HTTP_HTTP_SESSION_H
+#ifndef NETUTIL_HTTP_HTTP_SESSION_H
+#define NETUTIL_HTTP_HTTP_SESSION_H
 
 #include "http_request.h"
 #include "http_response.h"
@@ -15,7 +11,7 @@
 #include "cache/filecache.h"
 #include "asio/tcp_session.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace HTTP {
 
 class HTTPServer;
@@ -38,8 +34,8 @@ public:
     HTTPSession& operator=(HTTPSession&&) = delete;
 
     //! Get the static content cache
-    CppCommon::FileCache& cache() noexcept { return _cache; }
-    const CppCommon::FileCache& cache() const noexcept { return _cache; }
+    BaseKit::FileCache& cache() noexcept { return _cache; }
+    const BaseKit::FileCache& cache() const noexcept { return _cache; }
 
     //! Get the HTTP response
     HTTPResponse& response() noexcept { return _response; }
@@ -76,14 +72,14 @@ public:
         \param timeout - Timeout
         \return Size of sent data
     */
-    size_t SendResponse(const CppCommon::Timespan& timeout) { return SendResponse(_response, timeout); }
+    size_t SendResponse(const BaseKit::Timespan& timeout) { return SendResponse(_response, timeout); }
     //! Send the HTTP response with timeout (synchronous)
     /*!
         \param response - HTTP response
         \param timeout - Timeout
         \return Size of sent data
     */
-    size_t SendResponse(const HTTPResponse& response, const CppCommon::Timespan& timeout) { return Send(response.cache(), timeout); }
+    size_t SendResponse(const HTTPResponse& response, const BaseKit::Timespan& timeout) { return Send(response.cache(), timeout); }
 
     //! Send the HTTP response body with timeout (synchronous)
     /*!
@@ -91,7 +87,7 @@ public:
         \param timeout - Timeout
         \return Size of sent data
     */
-    size_t SendResponseBody(std::string_view body, const CppCommon::Timespan& timeout) { return Send(body, timeout); }
+    size_t SendResponseBody(std::string_view body, const BaseKit::Timespan& timeout) { return Send(body, timeout); }
     //! Send the HTTP response body with timeout (synchronous)
     /*!
         \param buffer - HTTP response body buffer
@@ -99,7 +95,7 @@ public:
         \param timeout - Timeout
         \return Size of sent data
     */
-    size_t SendResponseBody(const void* buffer, size_t size, const CppCommon::Timespan& timeout) { return Send(buffer, size, timeout); }
+    size_t SendResponseBody(const void* buffer, size_t size, const BaseKit::Timespan& timeout) { return Send(buffer, size, timeout); }
 
     //! Send the current HTTP response (asynchronous)
     /*!
@@ -180,12 +176,12 @@ protected:
 
 private:
     // Static content cache
-    CppCommon::FileCache& _cache;
+    BaseKit::FileCache& _cache;
 
     void onReceivedRequestInternal(const HTTPRequest& request);
 };
 
 } // namespace HTTP
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_HTTP_HTTP_SESSION_H
+#endif // NETUTIL_HTTP_HTTP_SESSION_H

@@ -10,7 +10,7 @@ void ProtoClient::DisconnectAndStop()
     _connect_replay = false;
     DisconnectAsync();
     while (IsConnected())
-        CppCommon::Thread::Yield();
+        BaseKit::Thread::Yield();
 }
 
 bool ProtoClient::hasConnected(const std::string &ip)
@@ -46,7 +46,7 @@ bool ProtoClient::pingMessageStart()
     ping.notification = "ping";
     send(ping);
 
-    _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
+    _ping_timer->Setup(BaseKit::Timespan::seconds(HEARTBEAT_INTERVAL));
     return _ping_timer->WaitAsync();
 }
 
@@ -114,7 +114,7 @@ void ProtoClient::onDisconnected()
 
     if (retry) {
         // Wait for a while...
-        CppCommon::Thread::Sleep(1000);
+        BaseKit::Thread::Sleep(1000);
 
         // Try to connect again
         if (!_stop)

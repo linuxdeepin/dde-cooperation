@@ -1,12 +1,8 @@
-/*!
-    \file asio.inl
-    \brief Asio C++ Library inline implementation
-    \author Ivan Shynkarenka
-    \date 14.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 template <class TOutputStream>
@@ -28,4 +24,4 @@ inline TOutputStream& operator<<(TOutputStream& stream, InternetProtocol protoco
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

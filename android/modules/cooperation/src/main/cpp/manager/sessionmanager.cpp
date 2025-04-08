@@ -109,7 +109,7 @@ int SessionManager::sessionConnect(const std::string &ip, int port, const std::s
     }
     DLOG("REQ_LOGIN: %s", ip.c_str());
     // base64 encode
-    std::string pinString = CppCommon::Encoding::Base64Encode(password);
+    std::string pinString = BaseKit::Encoding::Base64Encode(password);
 
     LoginMessage req;
     req.name = serveIP + ":" + _device_name;

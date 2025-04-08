@@ -1,15 +1,11 @@
-/*!
-    \file locker.h
-    \brief Locker synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 08.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_LOCKER_H
-#define CPPCOMMON_THREADS_LOCKER_H
+#ifndef BASEKIT_THREADS_LOCKER_H
+#define BASEKIT_THREADS_LOCKER_H
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Locker synchronization primitive
 /*!
@@ -92,6 +88,6 @@ private:
     T& _primitive;
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_THREADS_LOCKER_H
+#endif // BASEKIT_THREADS_LOCKER_H

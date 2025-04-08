@@ -1,10 +1,6 @@
-/*!
-    \file barrier.cpp
-    \brief Barrier synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 16.03.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/barrier.h"
 
@@ -22,7 +18,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -140,4 +136,4 @@ int Barrier::threads() const noexcept { return impl().threads(); }
 
 bool Barrier::Wait() { return impl().Wait(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

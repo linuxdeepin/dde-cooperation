@@ -1,20 +1,16 @@
-/*!
-    \file named_event_auto_reset.h
-    \brief Named auto-reset event synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 24.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_NAMED_EVENT_AUTO_RESET_H
-#define CPPCOMMON_THREADS_NAMED_EVENT_AUTO_RESET_H
+#ifndef BASEKIT_THREADS_NAMED_EVENT_AUTO_RESET_H
+#define BASEKIT_THREADS_NAMED_EVENT_AUTO_RESET_H
 
 #include "time/timestamp.h"
 
 #include <memory>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Named auto-reset event synchronization primitive
 /*!
@@ -98,6 +94,6 @@ private:
 
 /*! \example threads_named_event_auto_reset.cpp Named auto-reset event synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_THREADS_NAMED_EVENT_AUTO_RESET_H
+#endif // BASEKIT_THREADS_NAMED_EVENT_AUTO_RESET_H

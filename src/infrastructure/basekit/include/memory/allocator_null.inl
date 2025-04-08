@@ -1,12 +1,9 @@
-/*!
-    \file allocator_null.inl
-    \brief Null memory allocator inline implementation
-    \author Ivan Shynkarenka
-    \date 17.04.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 inline void* NullMemoryManager::malloc(size_t size, size_t alignment)
 {
@@ -35,4 +32,4 @@ inline void NullMemoryManager::reset()
     assert((_allocations == 0) && "Memory leak detected! Count of active memory allocations must be zero!");
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

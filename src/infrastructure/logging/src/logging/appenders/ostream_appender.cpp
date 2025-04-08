@@ -1,14 +1,10 @@
-/*!
-    \file ostream_appender.cpp
-    \brief Output stream (std::ostream) appender implementation
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/appenders/ostream_appender.h"
 
-namespace CppLogging {
+namespace Logging {
 
 void OstreamAppender::AppendRecord(Record& record)
 {
@@ -26,4 +22,4 @@ void OstreamAppender::Flush()
     _ostream.flush();
 }
 
-} // namespace CppLogging
+} // namespace Logging

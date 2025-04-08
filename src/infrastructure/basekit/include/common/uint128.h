@@ -1,13 +1,9 @@
-/*!
-    \file uint128.h
-    \brief Unsigned 128-bit integer type definition
-    \author Ivan Shynkarenka
-    \date 11.10.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_UINT128_H
-#define CPPCOMMON_UINT128_H
+#ifndef BASEKIT_UINT128_H
+#define BASEKIT_UINT128_H
 
 #include "string/format.h"
 
@@ -18,12 +14,10 @@
 #include <type_traits>
 #include <utility>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Unsigned 128-bit integer type
-/*!
-    Represents unsigned 128-bit integer type and provides basic arithmetic operations.
-*/
+/*! \note This class is not intended to be used directly, use the uint128_t macro instead. */
 class uint128_t
 {
 public:
@@ -305,10 +299,9 @@ private:
     uint64_t _lower;
 };
 
-/*! \example common_uint128.cpp Unsigned 128-bit integer type example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "uint128.inl"
 
-#endif // CPPCOMMON_UINT128_H
+#endif // BASEKIT_UINT128_H

@@ -1,10 +1,6 @@
-/*!
-    \file exceptions_handler.cpp
-    \brief Exceptions handler implementation
-    \author Ivan Shynkarenka
-    \date 22.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "errors/exceptions_handler.h"
 
@@ -43,7 +39,7 @@
 #endif
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -657,4 +653,4 @@ void ExceptionsHandler::SetupHandler(const std::function<void (const SystemExcep
 void ExceptionsHandler::SetupProcess() { GetInstance().impl().SetupProcess(); }
 void ExceptionsHandler::SetupThread() { GetInstance().impl().SetupThread(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

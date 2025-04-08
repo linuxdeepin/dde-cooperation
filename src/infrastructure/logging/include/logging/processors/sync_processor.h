@@ -1,19 +1,15 @@
-/*!
-    \file sync_processor.h
-    \brief Synchronous logging processor definition
-    \author Ivan Shynkarenka
-    \date 28.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_PROCESSORS_SYNC_PROCESSOR_H
-#define CPPLOGGING_PROCESSORS_SYNC_PROCESSOR_H
+#ifndef LOGGING_PROCESSORS_SYNC_PROCESSOR_H
+#define LOGGING_PROCESSORS_SYNC_PROCESSOR_H
 
 #include "logging/processor.h"
 
 #include "threads/critical_section.h"
 
-namespace CppLogging {
+namespace Logging {
 
 //! Synchronous logging processor
 /*!
@@ -43,11 +39,11 @@ public:
     void Flush() override;
 
 private:
-    CppCommon::CriticalSection _lock;
+    BaseKit::CriticalSection _lock;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
 /*! \example sync.cpp Synchronous logger processor example */
 
-#endif // CPPLOGGING_PROCESSORS_SYNC_PROCESSOR_H
+#endif // LOGGING_PROCESSORS_SYNC_PROCESSOR_H

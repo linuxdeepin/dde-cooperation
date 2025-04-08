@@ -1,20 +1,16 @@
-/*!
-    \file spsc_ring_buffer.h
-    \brief Single producer / single consumer wait-free ring buffer definition
-    \author Ivan Shynkarenka
-    \date 16.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_SPSC_RING_BUFFER_H
-#define CPPCOMMON_THREADS_SPSC_RING_BUFFER_H
+#ifndef BASEKIT_THREADS_SPSC_RING_BUFFER_H
+#define BASEKIT_THREADS_SPSC_RING_BUFFER_H
 
 #include <atomic>
 #include <cassert>
 #include <cstdio>
 #include <cstring>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Single producer / single consumer wait-free ring buffer
 /*!
@@ -96,8 +92,8 @@ private:
 
 /*! \example threads_spsc_ring_buffer.cpp Single producer / single consumer wait-free ring buffer example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "spsc_ring_buffer.inl"
 
-#endif // CPPCOMMON_THREADS_SPSC_RING_BUFFER_H
+#endif // BASEKIT_THREADS_SPSC_RING_BUFFER_H

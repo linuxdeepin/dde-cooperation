@@ -1,19 +1,15 @@
-/*!
-    \file config.h
-    \brief Logger configuration definition
-    \author Ivan Shynkarenka
-    \date 29.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_CONFIG_H
-#define CPPLOGGING_CONFIG_H
+#ifndef LOGGING_CONFIG_H
+#define LOGGING_CONFIG_H
 
 #include "logging/logger.h"
 
 #include <map>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Logger configuration static class
 /*!
@@ -67,7 +63,7 @@ public:
     static void Shutdown();
 
 private:
-    CppCommon::CriticalSection _lock;
+    BaseKit::CriticalSection _lock;
     std::map<std::string, std::shared_ptr<Processor>> _config;
     std::map<std::string, std::shared_ptr<Processor>> _working;
 
@@ -78,6 +74,6 @@ private:
     { static Config instance; return instance; }
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_LOGGER_H
+#endif // LOGGING_LOGGER_H

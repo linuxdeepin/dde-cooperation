@@ -1,12 +1,8 @@
-/*!
-    \file math.inl
-    \brief Math inline implementation
-    \author Ivan Shynkarenka
-    \date 01.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <typename T>
 inline T GCD(T a, T b)
@@ -29,4 +25,4 @@ inline T Math::RoundUp(T a, T k)
     return ((a + k - 1) / k) * k;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

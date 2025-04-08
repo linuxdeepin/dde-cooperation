@@ -1,13 +1,9 @@
-/*!
-    \file async_wait_processor.h
-    \brief Asynchronous wait logging processor definition
-    \author Ivan Shynkarenka
-    \date 01.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_PROCESSORS_ASYNC_WAIT_PROCESSOR_H
-#define CPPLOGGING_PROCESSORS_ASYNC_WAIT_PROCESSOR_H
+#ifndef LOGGING_PROCESSORS_ASYNC_WAIT_PROCESSOR_H
+#define LOGGING_PROCESSORS_ASYNC_WAIT_PROCESSOR_H
 
 #include "logging/processor.h"
 
@@ -15,7 +11,7 @@
 
 #include <functional>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Asynchronous wait logging processor
 /*!
@@ -59,7 +55,7 @@ public:
     void Flush() override;
 
 private:
-    CppCommon::WaitBatcher<Record> _queue;
+    BaseKit::WaitBatcher<Record> _queue;
     std::thread _thread;
     std::function<void ()> _on_thread_initialize;
     std::function<void ()> _on_thread_clenup;
@@ -68,8 +64,8 @@ private:
     void ProcessThread(const std::function<void ()>& on_thread_initialize, const std::function<void ()>& on_thread_clenup);
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
 /*! \example async.cpp Asynchronous logger processor example */
 
-#endif // CPPLOGGING_PROCESSORS_ASYNC_WAIT_PROCESSOR_H
+#endif // LOGGING_PROCESSORS_ASYNC_WAIT_PROCESSOR_H

@@ -1,13 +1,10 @@
-/*!
-    \file stream.h
-    \brief Standard input/output/error stream definition
-    \author Ivan Shynkarenka
-    \date 23.07.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_STREAM_H
-#define CPPCOMMON_SYSTEM_STREAM_H
+
+#ifndef BASEKIT_SYSTEM_STREAM_H
+#define BASEKIT_SYSTEM_STREAM_H
 
 #include "common/reader.h"
 #include "common/writer.h"
@@ -15,7 +12,7 @@
 
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Standard input stream
 /*!
@@ -172,8 +169,8 @@ private:
     alignas(StorageAlign) std::byte _storage[StorageSize];
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "stream.inl"
 
-#endif // CPPCOMMON_SYSTEM_STREAM_H
+#endif // BASEKIT_SYSTEM_STREAM_H

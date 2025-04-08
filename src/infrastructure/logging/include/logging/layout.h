@@ -1,18 +1,14 @@
-/*!
-    \file layout.h
-    \brief Logging layout interface definition
-    \author Ivan Shynkarenka
-    \date 08.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_LAYOUT_H
-#define CPPLOGGING_LAYOUT_H
+#ifndef LOGGING_LAYOUT_H
+#define LOGGING_LAYOUT_H
 
 #include "logging/element.h"
 #include "logging/record.h"
 
-namespace CppLogging {
+namespace Logging {
 
 //! Logging layout interface
 /*!
@@ -36,6 +32,6 @@ public:
     virtual void LayoutRecord(Record& record) = 0;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_LAYOUT_H
+#endif // LOGGING_LAYOUT_H

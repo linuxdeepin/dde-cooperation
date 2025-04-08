@@ -1,10 +1,6 @@
-/*!
-    \file named_event_manual_reset.cpp
-    \brief Named manual-reset event synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 24.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/named_event_manual_reset.h"
 
@@ -22,7 +18,7 @@
 #undef min
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -268,4 +264,4 @@ bool NamedEventManualReset::TryWaitFor(const Timespan& timespan) { return impl()
 
 void NamedEventManualReset::Wait() { impl().Wait(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

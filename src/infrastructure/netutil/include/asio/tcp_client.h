@@ -1,13 +1,9 @@
-/*!
-    \file tcp_client.h
-    \brief TCP client definition
-    \author Ivan Shynkarenka
-    \date 15.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_TCP_CLIENT_H
-#define CPPSERVER_ASIO_TCP_CLIENT_H
+#ifndef NETUTIL_ASIO_TCP_CLIENT_H
+#define NETUTIL_ASIO_TCP_CLIENT_H
 
 #include "tcp_resolver.h"
 
@@ -17,7 +13,7 @@
 #include <mutex>
 #include <vector>
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 //! TCP client
@@ -57,7 +53,7 @@ public:
     TCPClient& operator=(TCPClient&&) = delete;
 
     //! Get the client Id
-    const CppCommon::UUID& id() const noexcept { return _id; }
+    const BaseKit::UUID& id() const noexcept { return _id; }
 
     //! Get the Asio service
     std::shared_ptr<Service>& service() noexcept { return _service; }
@@ -171,14 +167,14 @@ public:
         \param timeout - Timeout
         \return Size of sent data
     */
-    virtual size_t Send(const void* buffer, size_t size, const CppCommon::Timespan& timeout);
+    virtual size_t Send(const void* buffer, size_t size, const BaseKit::Timespan& timeout);
     //! Send text to the server with timeout (synchronous)
     /*!
         \param text - Text to send
         \param timeout - Timeout
         \return Size of sent text
     */
-    virtual size_t Send(std::string_view text, const CppCommon::Timespan& timeout) { return Send(text.data(), text.size(), timeout); }
+    virtual size_t Send(std::string_view text, const BaseKit::Timespan& timeout) { return Send(text.data(), text.size(), timeout); }
 
     //! Send data to the server (asynchronous)
     /*!
@@ -215,14 +211,14 @@ public:
         \param timeout - Timeout
         \return Size of received data
     */
-    virtual size_t Receive(void* buffer, size_t size, const CppCommon::Timespan& timeout);
+    virtual size_t Receive(void* buffer, size_t size, const BaseKit::Timespan& timeout);
     //! Receive text from the server with timeout (synchronous)
     /*!
         \param size - Text size to receive
         \param timeout - Timeout
         \return Received text
     */
-    virtual std::string Receive(size_t size, const CppCommon::Timespan& timeout);
+    virtual std::string Receive(size_t size, const BaseKit::Timespan& timeout);
 
     //! Receive data from the server (asynchronous)
     virtual void ReceiveAsync();
@@ -321,7 +317,7 @@ protected:
 
 private:
     // Client Id
-    CppCommon::UUID _id;
+    BaseKit::UUID _id;
     // Asio service
     std::shared_ptr<Service> _service;
     // Asio IO service
@@ -381,6 +377,6 @@ private:
 /*! \example tcp_chat_client.cpp TCP chat client example */
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_ASIO_TCP_CLIENT_H
+#endif // NETUTIL_ASIO_TCP_CLIENT_H

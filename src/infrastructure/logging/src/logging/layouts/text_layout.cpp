@@ -1,10 +1,6 @@
-/*!
-    \file text_layout.cpp
-    \brief Text layout implementation
-    \author Ivan Shynkarenka
-    \date 08.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/layouts/text_layout.h"
 
@@ -15,7 +11,7 @@
 
 #include <vector>
 
-namespace CppLogging {
+namespace Logging {
 
 //! @cond INTERNALS
 
@@ -169,7 +165,7 @@ public:
         // Update time cache
         if (cache_time_required || !cache_initizlied)
         {
-            CppCommon::Timestamp timestamp(record.timestamp);
+            BaseKit::Timestamp timestamp(record.timestamp);
             uint64_t seconds = timestamp.seconds();
             int millisecond = timestamp.milliseconds() % 1000;
             int microsecond = timestamp.microseconds() % 1000;
@@ -212,7 +208,7 @@ public:
                 // Update timezone cache values
                 if (cache_timezone_required || !cache_initizlied)
                 {
-                    CppCommon::Timezone local;
+                    BaseKit::Timezone local;
                     ConvertTimezone(cache_local_timezone_str, local.total().minutes(), 6);
                     cache_update_datetime = true;
                 }
@@ -220,7 +216,7 @@ public:
                 // Update UTC time cache values
                 if (cache_utc_required || !cache_initizlied)
                 {
-                    CppCommon::UtcTime utc(timestamp);
+                    BaseKit::UtcTime utc(timestamp);
                     ConvertNumber(cache_utc_year_str, utc.year(), 4);
                     ConvertNumber(cache_utc_month_str, utc.month(), 2);
                     ConvertNumber(cache_utc_day_str, utc.day(), 2);
@@ -233,7 +229,7 @@ public:
                 // Update local time cache values
                 if (cache_local_required || !cache_initizlied)
                 {
-                    CppCommon::LocalTime local(timestamp);
+                    BaseKit::LocalTime local(timestamp);
                     ConvertNumber(cache_local_year_str, local.year(), 4);
                     ConvertNumber(cache_local_month_str, local.month(), 2);
                     ConvertNumber(cache_local_day_str, local.day(), 2);
@@ -249,68 +245,68 @@ public:
         if (cache_update_datetime)
         {
             char* buffer = cache_utc_date_str;
-            std::memcpy(buffer, cache_utc_year_str, CppCommon::countof(cache_utc_year_str) - 1);
-            buffer += CppCommon::countof(cache_utc_year_str) - 1;
+            std::memcpy(buffer, cache_utc_year_str, BaseKit::countof(cache_utc_year_str) - 1);
+            buffer += BaseKit::countof(cache_utc_year_str) - 1;
             *buffer++ = '-';
-            std::memcpy(buffer, cache_utc_month_str, CppCommon::countof(cache_utc_month_str) - 1);
-            buffer += CppCommon::countof(cache_utc_month_str) - 1;
+            std::memcpy(buffer, cache_utc_month_str, BaseKit::countof(cache_utc_month_str) - 1);
+            buffer += BaseKit::countof(cache_utc_month_str) - 1;
             *buffer++ = '-';
-            std::memcpy(buffer, cache_utc_day_str, CppCommon::countof(cache_utc_day_str) - 1);
-            buffer += CppCommon::countof(cache_utc_day_str) - 1;
+            std::memcpy(buffer, cache_utc_day_str, BaseKit::countof(cache_utc_day_str) - 1);
+            buffer += BaseKit::countof(cache_utc_day_str) - 1;
 
             buffer = cache_utc_time_str;
-            std::memcpy(buffer, cache_utc_hour_str, CppCommon::countof(cache_utc_hour_str) - 1);
-            buffer += CppCommon::countof(cache_utc_hour_str) - 1;
+            std::memcpy(buffer, cache_utc_hour_str, BaseKit::countof(cache_utc_hour_str) - 1);
+            buffer += BaseKit::countof(cache_utc_hour_str) - 1;
             *buffer++ = ':';
-            std::memcpy(buffer, cache_utc_minute_str, CppCommon::countof(cache_utc_minute_str) - 1);
-            buffer += CppCommon::countof(cache_utc_minute_str) - 1;
+            std::memcpy(buffer, cache_utc_minute_str, BaseKit::countof(cache_utc_minute_str) - 1);
+            buffer += BaseKit::countof(cache_utc_minute_str) - 1;
             *buffer++ = ':';
-            std::memcpy(buffer, cache_utc_second_str, CppCommon::countof(cache_utc_second_str) - 1);
-            buffer += CppCommon::countof(cache_utc_second_str) - 1;
+            std::memcpy(buffer, cache_utc_second_str, BaseKit::countof(cache_utc_second_str) - 1);
+            buffer += BaseKit::countof(cache_utc_second_str) - 1;
             *buffer++ = '.';
-            std::memcpy(buffer, cache_millisecond_str, CppCommon::countof(cache_millisecond_str) - 1);
-            buffer += CppCommon::countof(cache_millisecond_str) - 1;
-            std::memcpy(buffer, cache_utc_timezone_str, CppCommon::countof(cache_utc_timezone_str) - 1);
-            buffer += CppCommon::countof(cache_utc_timezone_str) - 1;
+            std::memcpy(buffer, cache_millisecond_str, BaseKit::countof(cache_millisecond_str) - 1);
+            buffer += BaseKit::countof(cache_millisecond_str) - 1;
+            std::memcpy(buffer, cache_utc_timezone_str, BaseKit::countof(cache_utc_timezone_str) - 1);
+            buffer += BaseKit::countof(cache_utc_timezone_str) - 1;
 
             buffer = cache_utc_datetime_str;
-            std::memcpy(buffer, cache_utc_date_str, CppCommon::countof(cache_utc_date_str) - 1);
-            buffer += CppCommon::countof(cache_utc_date_str) - 1;
+            std::memcpy(buffer, cache_utc_date_str, BaseKit::countof(cache_utc_date_str) - 1);
+            buffer += BaseKit::countof(cache_utc_date_str) - 1;
             *buffer++ = 'T';
-            std::memcpy(buffer, cache_utc_time_str, CppCommon::countof(cache_utc_time_str) - 1);
-            buffer += CppCommon::countof(cache_utc_time_str) - 1;
+            std::memcpy(buffer, cache_utc_time_str, BaseKit::countof(cache_utc_time_str) - 1);
+            buffer += BaseKit::countof(cache_utc_time_str) - 1;
 
             buffer = cache_local_date_str;
-            std::memcpy(buffer, cache_local_year_str, CppCommon::countof(cache_local_year_str) - 1);
-            buffer += CppCommon::countof(cache_local_year_str) - 1;
+            std::memcpy(buffer, cache_local_year_str, BaseKit::countof(cache_local_year_str) - 1);
+            buffer += BaseKit::countof(cache_local_year_str) - 1;
             *buffer++ = '-';
-            std::memcpy(buffer, cache_local_month_str, CppCommon::countof(cache_local_month_str) - 1);
-            buffer += CppCommon::countof(cache_local_month_str) - 1;
+            std::memcpy(buffer, cache_local_month_str, BaseKit::countof(cache_local_month_str) - 1);
+            buffer += BaseKit::countof(cache_local_month_str) - 1;
             *buffer++ = '-';
-            std::memcpy(buffer, cache_local_day_str, CppCommon::countof(cache_local_day_str) - 1);
-            buffer += CppCommon::countof(cache_local_day_str) - 1;
+            std::memcpy(buffer, cache_local_day_str, BaseKit::countof(cache_local_day_str) - 1);
+            buffer += BaseKit::countof(cache_local_day_str) - 1;
 
             buffer = cache_local_time_str;
-            std::memcpy(buffer, cache_local_hour_str, CppCommon::countof(cache_local_hour_str) - 1);
-            buffer += CppCommon::countof(cache_local_hour_str) - 1;
+            std::memcpy(buffer, cache_local_hour_str, BaseKit::countof(cache_local_hour_str) - 1);
+            buffer += BaseKit::countof(cache_local_hour_str) - 1;
             *buffer++ = ':';
-            std::memcpy(buffer, cache_local_minute_str, CppCommon::countof(cache_local_minute_str) - 1);
-            buffer += CppCommon::countof(cache_local_minute_str) - 1;
+            std::memcpy(buffer, cache_local_minute_str, BaseKit::countof(cache_local_minute_str) - 1);
+            buffer += BaseKit::countof(cache_local_minute_str) - 1;
             *buffer++ = ':';
-            std::memcpy(buffer, cache_local_second_str, CppCommon::countof(cache_local_second_str) - 1);
-            buffer += CppCommon::countof(cache_local_second_str) - 1;
+            std::memcpy(buffer, cache_local_second_str, BaseKit::countof(cache_local_second_str) - 1);
+            buffer += BaseKit::countof(cache_local_second_str) - 1;
             *buffer++ = '.';
-            std::memcpy(buffer, cache_millisecond_str, CppCommon::countof(cache_millisecond_str) - 1);
-            buffer += CppCommon::countof(cache_millisecond_str) - 1;
-            std::memcpy(buffer, cache_local_timezone_str, CppCommon::countof(cache_local_timezone_str) - 1);
-            buffer += CppCommon::countof(cache_local_timezone_str) - 1;
+            std::memcpy(buffer, cache_millisecond_str, BaseKit::countof(cache_millisecond_str) - 1);
+            buffer += BaseKit::countof(cache_millisecond_str) - 1;
+            std::memcpy(buffer, cache_local_timezone_str, BaseKit::countof(cache_local_timezone_str) - 1);
+            buffer += BaseKit::countof(cache_local_timezone_str) - 1;
 
             buffer = cache_local_datetime_str;
-            std::memcpy(buffer, cache_local_date_str, CppCommon::countof(cache_local_date_str) - 1);
-            buffer += CppCommon::countof(cache_local_date_str) - 1;
+            std::memcpy(buffer, cache_local_date_str, BaseKit::countof(cache_local_date_str) - 1);
+            buffer += BaseKit::countof(cache_local_date_str) - 1;
             *buffer++ = 'T';
-            std::memcpy(buffer, cache_local_time_str, CppCommon::countof(cache_local_time_str) - 1);
-            buffer += CppCommon::countof(cache_local_time_str) - 1;
+            std::memcpy(buffer, cache_local_time_str, BaseKit::countof(cache_local_time_str) - 1);
+            buffer += BaseKit::countof(cache_local_time_str) - 1;
 
             cache_update_datetime = false;
         }
@@ -321,7 +317,7 @@ public:
             if (record.thread != cache_thread)
             {
                 cache_thread = record.thread;
-                ConvertThread(cache_thread_str, cache_thread, CppCommon::countof(cache_thread_str) - 1);
+                ConvertThread(cache_thread_str, cache_thread, BaseKit::countof(cache_thread_str) - 1);
             }
         }
 
@@ -331,7 +327,7 @@ public:
             if (record.level != cache_level)
             {
                 cache_level = record.level;
-                ConvertLevel(cache_level_str, cache_level, CppCommon::countof(cache_level_str) - 1);
+                ConvertLevel(cache_level_str, cache_level, BaseKit::countof(cache_level_str) - 1);
             }
         }
 
@@ -675,7 +671,7 @@ private:
         else if (placeholder == "Message")
             _placeholders.emplace_back(PlaceholderType::Message);
         else if (placeholder == "EndLine")
-            AppendPattern(CppCommon::Environment::EndLine());
+            AppendPattern(BaseKit::Environment::EndLine());
         else
             AppendPattern("{" + placeholder + "}");
     }
@@ -772,28 +768,28 @@ private:
         switch (level)
         {
             case Level::NONE:
-                std::memcpy(output, "NONE", CppCommon::countof("NONE") - 1);
+                std::memcpy(output, "NONE", BaseKit::countof("NONE") - 1);
                 break;
             case Level::FATAL:
-                std::memcpy(output, "FATAL", CppCommon::countof("FATAL") - 1);
+                std::memcpy(output, "FATAL", BaseKit::countof("FATAL") - 1);
                 break;
             case Level::ERROR:
-                std::memcpy(output, "ERROR", CppCommon::countof("ERROR") - 1);
+                std::memcpy(output, "ERROR", BaseKit::countof("ERROR") - 1);
                 break;
             case Level::WARN:
-                std::memcpy(output, "WARN", CppCommon::countof("WARN") - 1);
+                std::memcpy(output, "WARN", BaseKit::countof("WARN") - 1);
                 break;
             case Level::INFO:
-                std::memcpy(output, "INFO", CppCommon::countof("INFO") - 1);
+                std::memcpy(output, "INFO", BaseKit::countof("INFO") - 1);
                 break;
             case Level::DEBUG:
-                std::memcpy(output, "DEBUG", CppCommon::countof("DEBUG") - 1);
+                std::memcpy(output, "DEBUG", BaseKit::countof("DEBUG") - 1);
                 break;
             case Level::ALL:
-                std::memcpy(output, "ALL", CppCommon::countof("ALL") - 1);
+                std::memcpy(output, "ALL", BaseKit::countof("ALL") - 1);
                 break;
             default:
-                std::memcpy(output, "<\?\?\?>", CppCommon::countof("<\?\?\?>") - 1);
+                std::memcpy(output, "<\?\?\?>", BaseKit::countof("<\?\?\?>") - 1);
                 break;
         }
     }
@@ -804,7 +800,7 @@ private:
 TextLayout::TextLayout(const std::string& layout)
 {
     // Check implementation storage parameters
-    [[maybe_unused]] CppCommon::ValidateAlignedStorage<sizeof(Impl), alignof(Impl), StorageSize, StorageAlign> _;
+    [[maybe_unused]] BaseKit::ValidateAlignedStorage<sizeof(Impl), alignof(Impl), StorageSize, StorageAlign> _;
     static_assert((StorageSize >= sizeof(Impl)), "TextLayout::StorageSize must be increased!");
     static_assert(((StorageAlign % alignof(Impl)) == 0), "TextLayout::StorageAlign must be adjusted!");
 
@@ -822,4 +818,4 @@ const std::string& TextLayout::pattern() const noexcept { return impl().pattern(
 
 void TextLayout::LayoutRecord(Record& record) { impl().LayoutRecord(record); }
 
-} // namespace CppLogging
+} // namespace Logging

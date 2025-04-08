@@ -1,13 +1,9 @@
-/*!
-    \file named_semaphore.h
-    \brief Named semaphore synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 15.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_NAMED_SEMAPHORE_H
-#define CPPCOMMON_THREADS_NAMED_SEMAPHORE_H
+#ifndef BASEKIT_THREADS_NAMED_SEMAPHORE_H
+#define BASEKIT_THREADS_NAMED_SEMAPHORE_H
 
 #include "threads/locker.h"
 #include "time/timestamp.h"
@@ -15,7 +11,7 @@
 #include <memory>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Named semaphore synchronization primitive
 /*!
@@ -98,6 +94,6 @@ private:
 
 /*! \example threads_named_semaphore.cpp Named semaphore synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_THREADS_NAMED_SEMAPHORE_H
+#endif // BASEKIT_THREADS_NAMED_SEMAPHORE_H

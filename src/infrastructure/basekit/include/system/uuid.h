@@ -1,20 +1,17 @@
-/*!
-    \file uuid.h
-    \brief Universally unique identifier (UUID) definition
-    \author Ivan Shynkarenka
-    \date 18.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_UUID_H
-#define CPPCOMMON_SYSTEM_UUID_H
+
+#ifndef BASEKIT_SYSTEM_UUID_H
+#define BASEKIT_SYSTEM_UUID_H
 
 #include "errors/exceptions.h"
 
 #include <array>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Universally unique identifier (UUID)
 /*!
@@ -125,11 +122,11 @@ private:
     \param uuid - UUID string literal
     \param size - UUID string literal size
 */
-constexpr CppCommon::UUID operator ""_uuid(const char* uuid, size_t size)
+constexpr BaseKit::UUID operator ""_uuid(const char* uuid, size_t size)
 {
-    return CppCommon::UUID(uuid, size);
+    return BaseKit::UUID(uuid, size);
 }
 
 #include "uuid.inl"
 
-#endif // CPPCOMMON_SYSTEM_UUID_H
+#endif // BASEKIT_SYSTEM_UUID_H

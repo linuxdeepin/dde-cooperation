@@ -1,15 +1,11 @@
-/*!
-    \file singleton.h
-    \brief Singleton definition
-    \author Ivan Shynkarenka
-    \date 31.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_UTILITY_SINGLETON_H
-#define CPPCOMMON_UTILITY_SINGLETON_H
+#ifndef BASEKIT_UTILITY_SINGLETON_H
+#define BASEKIT_UTILITY_SINGLETON_H
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Singleton template base class
 /*!
@@ -21,9 +17,9 @@ namespace CppCommon {
 
     Example:
     \code{.cpp}
-    class MySingleton : public CppCommon::Singleton<MySingleton>
+    class MySingleton : public BaseKit::Singleton<MySingleton>
     {
-       friend CppCommon::Singleton<MySingleton>;
+       friend BaseKit::Singleton<MySingleton>;
 
     public:
         void Test() { ... }
@@ -69,8 +65,7 @@ private:
     ~Singleton() noexcept = default;
 };
 
-/*! \example utility_singleton.cpp Singleton example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_UTILITY_SINGLETON_H
+#endif // BASEKIT_UTILITY_SINGLETON_H

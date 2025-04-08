@@ -1,12 +1,8 @@
-/*!
-    \file uint256.inl
-    \brief Unsigned 256-bit integer type inline implementation
-    \author Ivan Shynkarenka
-    \date 11.10.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 inline uint256_t::uint256_t() noexcept
     : _upper(0), _lower(0)
@@ -198,31 +194,28 @@ inline void swap(uint256_t& value1, uint256_t& value2) noexcept
     value1.swap(value2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #if defined(FMT_VERSION)
 template <>
-struct fmt::formatter<CppCommon::uint256_t> : formatter<std::string_view>
-{
+template <>
+struct fmt::formatter<BaseKit::uint256_t> : fmt::formatter<std::string_view> {
     template <typename FormatContext>
-    auto format(const CppCommon::uint256_t& value, FormatContext& ctx) const
-    {
-        return formatter<string_view>::format(value.string(10), ctx);
+    auto format(const BaseKit::uint256_t& value, FormatContext& ctx) const {
+        return fmt::formatter<std::string_view>::format(value.string(10), ctx);
     }
 };
 #endif
 
 //! \cond DOXYGEN_SKIP
 template <>
-struct std::hash<CppCommon::uint256_t>
-{
-    typedef CppCommon::uint256_t argument_type;
+struct std::hash<BaseKit::uint256_t> {
+    typedef BaseKit::uint256_t argument_type;
     typedef size_t result_type;
 
-    result_type operator() (const argument_type& value) const
-    {
+    result_type operator()(const argument_type& value) const {
         result_type result = 17;
-        std::hash<CppCommon::uint128_t> hasher;
+        std::hash<BaseKit::uint128_t> hasher;
         result = result * 31 + hasher(value.upper());
         result = result * 31 + hasher(value.lower());
         return result;

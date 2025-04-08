@@ -1,10 +1,6 @@
-/*!
-    \file critical_section.cpp
-    \brief Critical section synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 27.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/critical_section.h"
 
@@ -19,7 +15,7 @@
 #undef Yield
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -155,4 +151,4 @@ bool CriticalSection::TryLockFor(const Timespan& timespan)
 void CriticalSection::Lock() { impl().Lock(); }
 void CriticalSection::Unlock() { impl().Unlock(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

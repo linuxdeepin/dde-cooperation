@@ -1,16 +1,12 @@
-/*!
-    \file token_bucket.cpp
-    \brief Token bucket rate limit algorithm implementation
-    \author Ivan Shynkarenka
-    \date 07.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "algorithms/token_bucket.h"
 
 #include "time/timestamp.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 bool TokenBucket::Consume(uint64_t tokens)
 {
@@ -43,4 +39,4 @@ bool TokenBucket::Consume(uint64_t tokens)
     }
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

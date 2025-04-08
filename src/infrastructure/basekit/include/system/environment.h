@@ -1,20 +1,17 @@
-/*!
-    \file environment.h
-    \brief Environment management definition
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_ENVIRONMENT_H
-#define CPPCOMMON_SYSTEM_ENVIRONMENT_H
+
+#ifndef BASEKIT_SYSTEM_ENVIRONMENT_H
+#define BASEKIT_SYSTEM_ENVIRONMENT_H
 
 #include "errors/exceptions.h"
 
 #include <map>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Environment management static class
 /*!
@@ -90,8 +87,7 @@ public:
     static void ClearEnvar(const std::string name);
 };
 
-/*! \example system_environment.cpp Environment management example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_SYSTEM_ENVIRONMENT_H
+#endif // BASEKIT_SYSTEM_ENVIRONMENT_H

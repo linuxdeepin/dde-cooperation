@@ -1,13 +1,10 @@
-/*!
-    \file path.h
-    \brief Filesystem path definition
-    \author Ivan Shynkarenka
-    \date 11.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_FILESYSTEM_PATH_H
-#define CPPCOMMON_FILESYSTEM_PATH_H
+
+#ifndef BASEKIT_FILESYSTEM_PATH_H
+#define BASEKIT_FILESYSTEM_PATH_H
 
 #include "common/flags.h"
 #include "string/encoding.h"
@@ -16,7 +13,7 @@
 
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! File types
 enum class FileType
@@ -376,13 +373,12 @@ protected:
     std::string _path;
 };
 
-/*! \example filesystem_path.cpp Filesystem path example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "path.inl"
 
 // Resolve forward declaration issue
 #include "filesystem/exceptions.h"
 
-#endif // CPPCOMMON_FILESYSTEM_PATH_H
+#endif // BASEKIT_FILESYSTEM_PATH_H

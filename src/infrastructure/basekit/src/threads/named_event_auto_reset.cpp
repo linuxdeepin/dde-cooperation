@@ -1,10 +1,6 @@
-/*!
-    \file named_event_auto_reset.cpp
-    \brief Named auto-reset event synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 24.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/named_event_auto_reset.h"
 
@@ -22,7 +18,7 @@
 #undef min
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -252,4 +248,4 @@ bool NamedEventAutoReset::TryWaitFor(const Timespan& timespan) { return impl().T
 
 void NamedEventAutoReset::Wait() { impl().Wait(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

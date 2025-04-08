@@ -1,10 +1,6 @@
-/*!
-    \file system_error.cpp
-    \brief System error implementation
-    \author Ivan Shynkarenka
-    \date 10.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "errors/system_error.h"
 
@@ -18,7 +14,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 int SystemError::GetLast() noexcept
 {
@@ -65,4 +61,4 @@ std::string SystemError::Description(int error)
 #endif
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

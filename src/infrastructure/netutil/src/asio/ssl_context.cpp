@@ -1,10 +1,6 @@
-/*!
-    \file ssl_context.cpp
-    \brief SSL context implementation
-    \author Ivan Shynkarenka
-    \date 12.02.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/ssl_context.h"
 
@@ -12,7 +8,7 @@
 #include <wincrypt.h>
 #endif
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 void SSLContext::set_root_certs()
@@ -44,4 +40,4 @@ void SSLContext::set_root_certs()
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

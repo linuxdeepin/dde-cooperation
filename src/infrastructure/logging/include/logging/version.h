@@ -1,13 +1,9 @@
-/*!
-    \file version.h
-    \brief Version definition
-    \author Ivan Shynkarenka
-    \date 26.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_VERSION_H
-#define CPPLOGGING_VERSION_H
+#ifndef LOGGING_VERSION_H
+#define LOGGING_VERSION_H
 
 /*! \mainpage C++ Logging Library
 
@@ -25,14 +21,14 @@ GitHub: https://github.com/chronoxor/CppLogging
 */
 
 /*!
-    \namespace CppLogging
+    \namespace Logging
     \brief C++ Logging project definitions
 */
-namespace CppLogging {
+namespace Logging {
 
 //! Project version
 const char version[] = "1.0.4.0";
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_VERSION_H
+#endif // LOGGING_VERSION_H

@@ -1,26 +1,23 @@
-/*!
-    \file source_location.h
-    \brief Source location definition
-    \author Ivan Shynkarenka
-    \date 09.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_SOURCE_LOCATION_H
-#define CPPCOMMON_SYSTEM_SOURCE_LOCATION_H
+
+#ifndef BASEKIT_SYSTEM_SOURCE_LOCATION_H
+#define BASEKIT_SYSTEM_SOURCE_LOCATION_H
 
 #include "string/format.h"
 
 #include <sstream>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Current source location macro
 /*!
     Create a new source location with a current file name and line number.
 */
-#define __LOCATION__ CppCommon::SourceLocation(__FILE__, __LINE__)
+#define __LOCATION__ BaseKit::SourceLocation(__FILE__, __LINE__)
 
 //! Source location
 /*!
@@ -65,10 +62,9 @@ private:
     SourceLocation() noexcept : SourceLocation(nullptr, 0) {}
 };
 
-/*! \example system_source_location.cpp Source location example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "source_location.inl"
 
-#endif // CPPCOMMON_SYSTEM_SOURCE_LOCATION_H
+#endif // BASEKIT_SYSTEM_SOURCE_LOCATION_H

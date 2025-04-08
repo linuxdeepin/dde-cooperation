@@ -1,13 +1,10 @@
-/*!
-    \file memory_leaks_debug.h
-    \brief Memory leaks detecting tool. Include this file to detect memory leaks in debug build.
-    \author Ivan Shynkarenka
-    \date 26.02.2018
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_MEMORY_MEMORY_LEAKS_DEBUG_H
-#define CPPCOMMON_MEMORY_MEMORY_LEAKS_DEBUG_H
+
+#ifndef BASEKIT_MEMORY_MEMORY_LEAKS_DEBUG_H
+#define BASEKIT_MEMORY_MEMORY_LEAKS_DEBUG_H
 
 #if defined(__clang__)
 #pragma clang system_header
@@ -23,4 +20,4 @@
 #endif
 //! @endcond
 
-#endif // CPPCOMMON_MEMORY_MEMORY_LEAKS_DEBUG_H
+#endif // BASEKIT_MEMORY_MEMORY_LEAKS_DEBUG_H

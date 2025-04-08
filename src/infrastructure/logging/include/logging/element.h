@@ -1,15 +1,11 @@
-/*!
-    \file element.h
-    \brief Logging element interface definition
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_ELEMENT_H
-#define CPPLOGGING_ELEMENT_H
+#ifndef LOGGING_ELEMENT_H
+#define LOGGING_ELEMENT_H
 
-namespace CppLogging {
+namespace Logging {
 
 //! Logging element interface
 /*!
@@ -40,6 +36,6 @@ public:
     virtual bool Stop() { return true; }
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_ELEMENT_H
+#endif // LOGGING_ELEMENT_H

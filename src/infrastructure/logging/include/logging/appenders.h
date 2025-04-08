@@ -1,13 +1,9 @@
-/*!
-    \file appenders.h
-    \brief Logging appenders definition
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_APPENDERS_H
-#define CPPLOGGING_APPENDERS_H
+#ifndef LOGGING_APPENDERS_H
+#define LOGGING_APPENDERS_H
 
 #include "logging/appenders/null_appender.h"
 #include "logging/appenders/console_appender.h"
@@ -19,4 +15,4 @@
 #include "logging/appenders/rolling_file_appender.h"
 #include "logging/appenders/syslog_appender.h"
 
-#endif // CPPLOGGING_APPENDERS_H
+#endif // LOGGING_APPENDERS_H

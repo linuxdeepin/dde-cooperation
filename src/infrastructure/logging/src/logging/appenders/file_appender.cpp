@@ -1,16 +1,12 @@
-/*!
-    \file file_appender.cpp
-    \brief File appender implementation
-    \author Ivan Shynkarenka
-    \date 07.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/appenders/file_appender.h"
 
-namespace CppLogging {
+namespace Logging {
 
-FileAppender::FileAppender(const CppCommon::Path& file, bool truncate, bool auto_flush, bool auto_start)
+FileAppender::FileAppender(const BaseKit::Path& file, bool truncate, bool auto_flush, bool auto_start)
     : _file(file), _truncate(truncate), _auto_flush(auto_flush)
 {
     // Start the file appender
@@ -62,7 +58,7 @@ void FileAppender::AppendRecord(Record& record)
             if (_auto_flush)
                 _file.Flush();
         }
-        catch (const CppCommon::FileSystemException&)
+        catch (const BaseKit::FileSystemException&)
         {
             // Try to close the opened file in case of any IO error
             CloseFile();
@@ -79,7 +75,7 @@ void FileAppender::Flush()
         {
             _file.Flush();
         }
-        catch (const CppCommon::FileSystemException&)
+        catch (const BaseKit::FileSystemException&)
         {
             // Try to close the opened file in case of any IO error
             CloseFile();
@@ -96,7 +92,7 @@ bool FileAppender::PrepareFile()
             return true;
 
         // 2. Check retry timestamp if 100ms elapsed after the last attempt
-        if ((CppCommon::Timestamp::utc() - _retry).milliseconds() < 100)
+        if ((BaseKit::Timestamp::utc() - _retry).milliseconds() < 100)
             return false;
 
         // 3. If the file is opened for reading close it
@@ -112,10 +108,10 @@ bool FileAppender::PrepareFile()
 
         return true;
     }
-    catch (const CppCommon::FileSystemException&)
+    catch (const BaseKit::FileSystemException&)
     {
         // In case of any IO error reset the retry timestamp and return false!
-        _retry = CppCommon::Timestamp::utc();
+        _retry = BaseKit::Timestamp::utc();
         return false;
     }
 }
@@ -128,7 +124,7 @@ bool FileAppender::CloseFile()
             _file.Close();
         return true;
     }
-    catch (const CppCommon::FileSystemException&) { return false; }
+    catch (const BaseKit::FileSystemException&) { return false; }
 }
 
-} // namespace CppLogging
+} // namespace Logging

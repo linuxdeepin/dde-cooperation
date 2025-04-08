@@ -1,13 +1,10 @@
-/*!
-    \file exceptions_handler.h
-    \brief Exceptions handler definition
-    \author Ivan Shynkarenka
-    \date 22.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_ERRORS_EXCEPTIONS_HANDLER_H
-#define CPPCOMMON_ERRORS_EXCEPTIONS_HANDLER_H
+
+#ifndef BASEKIT_ERRORS_EXCEPTIONS_HANDLER_H
+#define BASEKIT_ERRORS_EXCEPTIONS_HANDLER_H
 
 #include "filesystem/exceptions.h"
 #include "system/stack_trace.h"
@@ -17,19 +14,10 @@
 #include <functional>
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Exceptions handler
-/*!
-    Exceptions handler allows to setup special handlers for all process and thread exceptions.
-    This allows to catch different kinds of unhandled exceptions, signals, process abort and
-    termination. As the result corresponding exception will be routed to the global exceptions
-    handler function (default one will print the exception in std::cerr with a full stack-trace)
-    and the dump file will be created.
-
-    Not thread-safe.
-*/
-class ExceptionsHandler : public CppCommon::Singleton<ExceptionsHandler>
+class ExceptionsHandler : public BaseKit::Singleton<ExceptionsHandler>
 {
    friend Singleton<ExceptionsHandler>;
 
@@ -79,8 +67,7 @@ private:
     ExceptionsHandler();
 };
 
-/*! \example errors_exceptions_handler.cpp Exceptions handler example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_ERRORS_EXCEPTIONS_HANDLER_H
+#endif // BASEKIT_ERRORS_EXCEPTIONS_HANDLER_H

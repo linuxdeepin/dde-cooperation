@@ -1,12 +1,9 @@
-/*!
-    \file stream.inl
-    \brief Standard input/output/error stream inline implementation
-    \author Ivan Shynkarenka
-    \date 23.07.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 inline void swap(StdInput& stream1, StdInput& stream2) noexcept
 {
@@ -23,4 +20,4 @@ inline void swap(StdError& stream1, StdError& stream2) noexcept
     stream1.swap(stream2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

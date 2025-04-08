@@ -1,12 +1,9 @@
-/*!
-    \file uuid.inl
-    \brief Universally unique identifier (UUID) inline implementation
-    \author Ivan Shynkarenka
-    \date 18.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 //! @cond INTERNALS
 namespace Internals {
@@ -75,14 +72,14 @@ inline void swap(UUID& uuid1, UUID& uuid2) noexcept
     uuid1.swap(uuid2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #if defined(FMT_VERSION)
 template <>
-struct fmt::formatter<CppCommon::UUID> : formatter<std::string_view>
+struct fmt::formatter<BaseKit::UUID> : formatter<std::string_view>
 {
     template <typename FormatContext>
-    auto format(const CppCommon::UUID& value, FormatContext& ctx) const
+    auto format(const BaseKit::UUID& value, FormatContext& ctx) const
     {
         return formatter<string_view>::format(value.string(), ctx);
     }
@@ -91,9 +88,9 @@ struct fmt::formatter<CppCommon::UUID> : formatter<std::string_view>
 
 //! \cond DOXYGEN_SKIP
 template <>
-struct std::hash<CppCommon::UUID>
+struct std::hash<BaseKit::UUID>
 {
-    typedef CppCommon::UUID argument_type;
+    typedef BaseKit::UUID argument_type;
     typedef size_t result_type;
 
     result_type operator() (const argument_type& value) const

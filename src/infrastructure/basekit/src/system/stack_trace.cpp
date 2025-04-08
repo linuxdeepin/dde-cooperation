@@ -1,10 +1,6 @@
-/*!
-    \file stack_trace.cpp
-    \brief Stack trace snapshot provider implementation
-    \author Ivan Shynkarenka
-    \date 09.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 // Workaround for the "binutils/bfd.h wants config.h now?" issue
 // https://stackoverflow.com/questions/11748035/binutils-bfd-h-wants-config-h-now
@@ -47,7 +43,7 @@
 #endif
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 std::ostream& operator<<(std::ostream& os, const StackTrace::Frame& frame)
 {
@@ -274,4 +270,4 @@ std::ostream& operator<<(std::ostream& os, const StackTrace& stack_trace)
     return os;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

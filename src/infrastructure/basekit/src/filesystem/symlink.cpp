@@ -1,10 +1,6 @@
-/*!
-    \file symlink.cpp
-    \brief Filesystem symlink implementation
-    \author Ivan Shynkarenka
-    \date 30.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filesystem/symlink.h"
 
@@ -61,7 +57,7 @@ typedef struct _REPARSE_DATA_BUFFER
 #endif
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 Path Symlink::target() const
 {
@@ -178,4 +174,4 @@ Path Symlink::CreateHardlink(const Path& src, const Path& dst)
     return dst;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

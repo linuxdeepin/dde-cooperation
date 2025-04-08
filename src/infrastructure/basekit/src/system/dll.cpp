@@ -1,10 +1,6 @@
-/*!
-    \file dll.cpp
-    \brief Dynamic link library implementation
-    \author Ivan Shynkarenka
-    \date 07.06.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "system/dll.h"
 
@@ -20,7 +16,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -238,4 +234,4 @@ void DLL::swap(DLL& dll) noexcept
     swap(_storage, dll._storage);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

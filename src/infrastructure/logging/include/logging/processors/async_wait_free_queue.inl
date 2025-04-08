@@ -1,17 +1,13 @@
-/*!
-    \file async_wait_free_queue.inl
-    \brief Asynchronous wait-free logging ring queue inline implementation
-    \author Ivan Shynkarenka
-    \date 04.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable: 4702) // C4702: unreachable code
 #endif
 
-namespace CppLogging {
+namespace Logging {
 
 template<typename T>
 inline AsyncWaitFreeQueue<T>::AsyncWaitFreeQueue(size_t capacity) : _capacity(capacity), _mask(capacity - 1), _buffer(new Node[capacity]), _head(0), _tail(0)
@@ -127,7 +123,7 @@ inline bool AsyncWaitFreeQueue<T>::Dequeue(Record& record)
     return false;
 }
 
-} // namespace CppLogging
+} // namespace Logging
 
 #if defined(_MSC_VER)
 #pragma warning(pop)

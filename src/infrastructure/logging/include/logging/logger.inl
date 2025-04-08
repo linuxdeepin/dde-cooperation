@@ -1,12 +1,8 @@
-/*!
-    \file logger.inl
-    \brief Logger interface inline implementation
-    \author Ivan Shynkarenka
-    \date 29.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppLogging {
+namespace Logging {
 
 inline Logger::Logger(const std::string& name, const std::shared_ptr<Processor>& sink) : _name(name), _sink(sink)
 {
@@ -21,7 +17,7 @@ template <typename... T>
 inline void Logger::Log(Level level, bool format, fmt::format_string<T...> message, T&&... args) const
 {
     // Thread local thread Id
-    thread_local uint64_t thread = CppCommon::Thread::CurrentThreadId();
+    thread_local uint64_t thread = BaseKit::Thread::CurrentThreadId();
     // Thread local instance of the logging record
     thread_local Record record;
 
@@ -29,7 +25,7 @@ inline void Logger::Log(Level level, bool format, fmt::format_string<T...> messa
     record.Clear();
 
     // Fill necessary fields of the logging record
-    record.timestamp = CppCommon::Timestamp::utc();
+    record.timestamp = BaseKit::Timestamp::utc();
     record.thread = thread;
     record.level = level;
     record.logger = _name;
@@ -92,4 +88,4 @@ inline void Logger::Flush()
         _sink->Flush();
 }
 
-} // namespace CppLogging
+} // namespace Logging

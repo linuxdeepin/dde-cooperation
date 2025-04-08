@@ -1,10 +1,6 @@
-/*!
-    \file path.cpp
-    \brief Filesystem path implementation
-    \author Ivan Shynkarenka
-    \date 11.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filesystem/path.h"
 
@@ -39,7 +35,7 @@
 #include <userenv.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 namespace Internals {
@@ -1496,4 +1492,4 @@ void Path::Touch(const Path& path)
         File::WriteEmpty(path);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

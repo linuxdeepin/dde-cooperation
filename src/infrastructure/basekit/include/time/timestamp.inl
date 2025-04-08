@@ -1,12 +1,8 @@
-/*!
-    \file timestamp.inl
-    \brief Timestamp inline implementation
-    \author Ivan Shynkarenka
-    \date 26.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 inline void Timestamp::swap(Timestamp& timestamp) noexcept
 {
@@ -19,13 +15,13 @@ inline void swap(Timestamp& timestamp1, Timestamp& timestamp2) noexcept
     timestamp1.swap(timestamp2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 //! \cond DOXYGEN_SKIP
 template <>
-struct std::hash<CppCommon::Timestamp>
+struct std::hash<BaseKit::Timestamp>
 {
-    typedef CppCommon::Timestamp argument_type;
+    typedef BaseKit::Timestamp argument_type;
     typedef size_t result_type;
 
     result_type operator() (const argument_type& value) const

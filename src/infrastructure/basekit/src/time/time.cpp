@@ -1,10 +1,6 @@
-/*!
-    \file time.cpp
-    \brief Time implementation
-    \author Ivan Shynkarenka
-    \date 12.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "time/time.h"
 
@@ -14,7 +10,7 @@
 
 #include <time.h>
 
-namespace CppCommon {
+namespace BaseKit {
 
 Time::Time(const Timestamp& timestamp)
 {
@@ -183,4 +179,4 @@ LocalTime::LocalTime(const Timestamp& timestamp)
     _nanosecond = timestamp.nanoseconds() % 1000;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

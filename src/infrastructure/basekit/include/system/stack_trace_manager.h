@@ -1,20 +1,17 @@
-/*!
-    \file stack_trace_manager.h
-    \brief Stack trace manager definition
-    \author Ivan Shynkarenka
-    \date 10.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_STACK_TRACE_MANAGER_H
-#define CPPCOMMON_SYSTEM_STACK_TRACE_MANAGER_H
+
+#ifndef BASEKIT_SYSTEM_STACK_TRACE_MANAGER_H
+#define BASEKIT_SYSTEM_STACK_TRACE_MANAGER_H
 
 #include "errors/exceptions.h"
 #include "utility/singleton.h"
 
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Stack trace manager
 /*!
@@ -22,7 +19,7 @@ namespace CppCommon {
 
     Not thread-safe.
 */
-class StackTraceManager : public CppCommon::Singleton<StackTraceManager>
+class StackTraceManager : public BaseKit::Singleton<StackTraceManager>
 {
    friend Singleton<StackTraceManager>;
 
@@ -59,6 +56,6 @@ private:
     StackTraceManager();
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_SYSTEM_STACK_TRACE_MANAGER_H
+#endif // BASEKIT_SYSTEM_STACK_TRACE_MANAGER_H

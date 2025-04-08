@@ -1,18 +1,14 @@
-/*!
-    \file endian.h
-    \brief Big/Little-endian utilities definition
-    \author Ivan Shynkarenka
-    \date 21.07.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_UTILITY_ENDIAN_H
-#define CPPCOMMON_UTILITY_ENDIAN_H
+#ifndef BASEKIT_UTILITY_ENDIAN_H
+#define BASEKIT_UTILITY_ENDIAN_H
 
 #include <cstdint>
 #include <cstring>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Big/Little-endian utilities
 /*!
@@ -209,8 +205,8 @@ public:
     static size_t WriteLittleEndian(void* buffer, uint64_t value);
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "endian.inl"
 
-#endif // CPPCOMMON_UTILITY_ENDIAN_H
+#endif // BASEKIT_UTILITY_ENDIAN_H

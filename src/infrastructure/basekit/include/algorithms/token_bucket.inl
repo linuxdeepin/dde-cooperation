@@ -1,19 +1,14 @@
-/*!
-    \file token_bucket.inl
-    \brief Token bucket rate limit algorithm inline implementation
-    \author Ivan Shynkarenka
-    \date 07.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 inline TokenBucket::TokenBucket(uint64_t rate, uint64_t burst)
     : _time(0),
       _time_per_token(1000000000 / rate),
       _time_per_burst(burst * _time_per_token)
 {
-
 }
 
 inline TokenBucket::TokenBucket(const TokenBucket& tb)
@@ -31,4 +26,4 @@ inline TokenBucket& TokenBucket::operator=(const TokenBucket& tb)
     return *this;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

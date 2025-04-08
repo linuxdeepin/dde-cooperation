@@ -1,10 +1,6 @@
-/*!
-    \file console.cpp
-    \brief Console management implementation
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "system/console.h"
 
@@ -14,7 +10,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 void Console::SetColor(Color color, Color background)
 {
@@ -65,4 +61,4 @@ void Console::SetColor(Color color, Color background)
 #endif
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

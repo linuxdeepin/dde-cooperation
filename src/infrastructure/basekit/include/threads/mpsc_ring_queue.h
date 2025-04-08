@@ -1,13 +1,9 @@
-/*!
-    \file mpsc_ring_queue.h
-    \brief Multiple producers / single consumer wait-free ring queue definition
-    \author Ivan Shynkarenka
-    \date 21.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_MPSC_RING_QUEUE_H
-#define CPPCOMMON_THREADS_MPSC_RING_QUEUE_H
+#ifndef BASEKIT_THREADS_MPSC_RING_QUEUE_H
+#define BASEKIT_THREADS_MPSC_RING_QUEUE_H
 
 #include "threads/spin_lock.h"
 #include "threads/spsc_ring_queue.h"
@@ -21,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Multiple producers / single consumer wait-free ring queue
 /*!
@@ -124,8 +120,8 @@ private:
 
 /*! \example threads_mpsc_ring_queue.cpp Multiple producers / single consumer wait-free ring queue example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "mpsc_ring_queue.inl"
 
-#endif // CPPCOMMON_THREADS_MPSC_RING_QUEUE_H
+#endif // BASEKIT_THREADS_MPSC_RING_QUEUE_H

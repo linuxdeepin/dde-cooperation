@@ -1,13 +1,9 @@
-/*!
-    \file named_mutex.h
-    \brief Named mutex synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 15.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_NAMED_MUTEX_H
-#define CPPCOMMON_THREADS_NAMED_MUTEX_H
+#ifndef BASEKIT_THREADS_NAMED_MUTEX_H
+#define BASEKIT_THREADS_NAMED_MUTEX_H
 
 #include "threads/locker.h"
 #include "time/timestamp.h"
@@ -15,7 +11,7 @@
 #include <memory>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Named mutex synchronization primitive
 /*!
@@ -95,6 +91,6 @@ private:
 
 /*! \example threads_named_mutex.cpp Named mutex synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_THREADS_NAMED_MUTEX_H
+#endif // BASEKIT_THREADS_NAMED_MUTEX_H

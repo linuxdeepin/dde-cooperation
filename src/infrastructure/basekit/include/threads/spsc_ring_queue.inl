@@ -1,12 +1,8 @@
-/*!
-    \file spsc_ring_queue.inl
-    \brief Single producer / single consumer wait-free ring queue inline implementation
-    \author Ivan Shynkarenka
-    \date 15.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template<typename T>
 inline SPSCRingQueue<T>::SPSCRingQueue(size_t capacity) : _capacity(capacity - 1), _mask(capacity - 1), _buffer(new T[capacity]), _head(0), _tail(0)
@@ -74,4 +70,4 @@ inline bool SPSCRingQueue<T>::Dequeue(T& item)
     return true;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

@@ -1,17 +1,14 @@
-/*!
-    \file include/system/exceptions.h
-    \brief System exceptions definition
-    \author Ivan Shynkarenka
-    \date 07.06.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_EXCEPTIONS_H
-#define CPPCOMMON_SYSTEM_EXCEPTIONS_H
+
+#ifndef BASEKIT_SYSTEM_EXCEPTIONS_H
+#define BASEKIT_SYSTEM_EXCEPTIONS_H
 
 #include "filesystem/exceptions.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Dynamic link library exception
 class DLLException : public FileSystemException
@@ -20,6 +17,6 @@ public:
     using FileSystemException::FileSystemException;
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_SYSTEM_EXCEPTIONS_H
+#endif // BASEKIT_SYSTEM_EXCEPTIONS_H

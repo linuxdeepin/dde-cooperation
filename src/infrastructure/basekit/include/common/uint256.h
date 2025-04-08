@@ -1,22 +1,16 @@
-/*!
-    \file uint256.h
-    \brief Unsigned 256-bit integer type definition
-    \author Ivan Shynkarenka
-    \date 11.10.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_UINT256_H
-#define CPPCOMMON_UINT256_H
+#ifndef BASEKIT_UINT256_H
+#define BASEKIT_UINT256_H
 
 #include "uint128.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Unsigned 256-bit integer type
-/*!
-    Represents unsigned 256-bit integer type and provides basic arithmetic operations.
-*/
+
 class uint256_t
 {
 public:
@@ -349,10 +343,9 @@ private:
     uint128_t _lower;
 };
 
-/*! \example common_uint256.cpp Unsigned 256-bit integer type example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "uint256.inl"
 
-#endif // CPPCOMMON_UINT256_H
+#endif // BASEKIT_UINT256_H

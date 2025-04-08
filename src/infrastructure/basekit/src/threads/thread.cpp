@@ -1,10 +1,6 @@
-/*!
-    \file thread.cpp
-    \brief Thread implementation
-    \author Ivan Shynkarenka
-    \date 27.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/thread.h"
 
@@ -27,7 +23,7 @@
 #define STATUS_SUCCESS 0x00000000
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 namespace Internals {
@@ -543,4 +539,4 @@ void Thread::SetPriority(std::thread& thread, ThreadPriority priority)
 #endif
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

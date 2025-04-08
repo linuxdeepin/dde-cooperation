@@ -1,20 +1,16 @@
-/*!
-    \file http_server.h
-    \brief HTTP server definition
-    \author Ivan Shynkarenka
-    \date 30.04.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_HTTP_HTTP_SERVER_H
-#define CPPSERVER_HTTP_HTTP_SERVER_H
+#ifndef NETUTIL_HTTP_HTTP_SERVER_H
+#define NETUTIL_HTTP_HTTP_SERVER_H
 
 #include "http_session.h"
 
 #include "cache/filecache.h"
 #include "asio/tcp_server.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace HTTP {
 
 //! HTTP server
@@ -39,8 +35,8 @@ public:
     HTTPServer& operator=(HTTPServer&&) = delete;
 
     //! Get the static content cache
-    CppCommon::FileCache& cache() noexcept { return _cache; }
-    const CppCommon::FileCache& cache() const noexcept { return _cache; }
+    BaseKit::FileCache& cache() noexcept { return _cache; }
+    const BaseKit::FileCache& cache() const noexcept { return _cache; }
 
     //! Add static content cache
     /*!
@@ -48,29 +44,29 @@ public:
         \param prefix - Cache prefix (default is "/")
         \param timeout - Refresh cache timeout (default is 1 hour)
     */
-    void AddStaticContent(const CppCommon::Path& path, const std::string& prefix = "/", const CppCommon::Timespan& timeout = CppCommon::Timespan::hours(1));
+    void AddStaticContent(const BaseKit::Path& path, const std::string& prefix = "/", const BaseKit::Timespan& timeout = BaseKit::Timespan::hours(1));
     //! Remove static content cache
     /*!
         \param path - Static content path
     */
-    void RemoveStaticContent(const CppCommon::Path& path) { _cache.remove_path(path); }
+    void RemoveStaticContent(const BaseKit::Path& path) { _cache.remove_path(path); }
     //! Clear static content cache
     void ClearStaticContent() { _cache.clear(); }
 
     //! Watchdog the static content cache
-    void Watchdog(const CppCommon::UtcTimestamp& utc = CppCommon::UtcTimestamp()) { _cache.watchdog(utc); }
+    void Watchdog(const BaseKit::UtcTimestamp& utc = BaseKit::UtcTimestamp()) { _cache.watchdog(utc); }
 
 protected:
     std::shared_ptr<Asio::TCPSession> CreateSession(const std::shared_ptr<Asio::TCPServer>& server) override { return std::make_shared<HTTPSession>(std::dynamic_pointer_cast<HTTPServer>(server)); }
 
 private:
     // Static content cache
-    CppCommon::FileCache _cache;
+    BaseKit::FileCache _cache;
 };
 
 /*! \example http_server.cpp HTTP server example */
 
 } // namespace HTTP
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_HTTP_HTTP_SERVER_H
+#endif // NETUTIL_HTTP_HTTP_SERVER_H

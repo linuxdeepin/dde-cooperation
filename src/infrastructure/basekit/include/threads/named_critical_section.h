@@ -1,13 +1,9 @@
-/*!
-    \file named_critical_section.h
-    \brief Named critical section synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 26.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_NAMED_CRITICAL_SECTION_H
-#define CPPCOMMON_THREADS_NAMED_CRITICAL_SECTION_H
+#ifndef BASEKIT_THREADS_NAMED_CRITICAL_SECTION_H
+#define BASEKIT_THREADS_NAMED_CRITICAL_SECTION_H
 
 #include "threads/locker.h"
 #include "time/timestamp.h"
@@ -15,7 +11,7 @@
 #include <memory>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Named critical section synchronization primitive
 /*!
@@ -95,6 +91,6 @@ private:
 
 /*! \example threads_named_critical_section.cpp Named critical section synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_THREADS_NAMED_CRITICAL_SECTION_H
+#endif // BASEKIT_THREADS_NAMED_CRITICAL_SECTION_H

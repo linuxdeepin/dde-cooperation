@@ -1,13 +1,9 @@
-/*!
-    \file rolling_file_appender.h
-    \brief Rolling file appender definition
-    \author Ivan Shynkarenka
-    \date 12.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_APPENDERS_ROLLING_FILE_APPENDER_H
-#define CPPLOGGING_APPENDERS_ROLLING_FILE_APPENDER_H
+#ifndef LOGGING_APPENDERS_ROLLING_FILE_APPENDER_H
+#define LOGGING_APPENDERS_ROLLING_FILE_APPENDER_H
 
 #include "logging/appender.h"
 
@@ -15,7 +11,7 @@
 
 #include <memory>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Time rolling policy
 enum class TimeRollingPolicy
@@ -85,7 +81,7 @@ public:
          \param auto_flush - Auto-flush flag (default is false)
          \param auto_start - Auto-start flag (default is true)
     */
-    explicit RollingFileAppender(const CppCommon::Path& path, TimeRollingPolicy policy = TimeRollingPolicy::DAY, const std::string& pattern = "{UtcDateTime}.log", bool archive = false, bool truncate = false, bool auto_flush = false, bool auto_start = true);
+    explicit RollingFileAppender(const BaseKit::Path& path, TimeRollingPolicy policy = TimeRollingPolicy::DAY, const std::string& pattern = "{UtcDateTime}.log", bool archive = false, bool truncate = false, bool auto_flush = false, bool auto_start = true);
     //! Initialize the rolling file appender with a size-based policy
     /*!
          Size-based policy for 5 backups works in a following way:
@@ -107,7 +103,7 @@ public:
          \param auto_flush - Auto-flush flag (default is false)
          \param auto_start - Auto-start flag (default is true)
     */
-    explicit RollingFileAppender(const CppCommon::Path& path, const std::string& filename, const std::string& extension, size_t size = 104857600, size_t backups = 10, bool archive = false, bool truncate = false, bool auto_flush = false, bool auto_start = true);
+    explicit RollingFileAppender(const BaseKit::Path& path, const std::string& filename, const std::string& extension, size_t size = 104857600, size_t backups = 10, bool archive = false, bool truncate = false, bool auto_flush = false, bool auto_start = true);
     RollingFileAppender(const RollingFileAppender&) = delete;
     RollingFileAppender(RollingFileAppender&& appender) = delete;
     virtual ~RollingFileAppender();
@@ -145,8 +141,8 @@ private:
     alignas(StorageAlign) std::byte _storage[StorageSize];
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
 #include "rolling_file_appender.inl"
 
-#endif // CPPLOGGING_APPENDERS_ROLLING_FILE_APPENDER_H
+#endif // LOGGING_APPENDERS_ROLLING_FILE_APPENDER_H

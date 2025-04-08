@@ -1,19 +1,16 @@
-/*!
-    \file directory.h
-    \brief Filesystem directory definition
-    \author Ivan Shynkarenka
-    \date 30.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_FILESYSTEM_DIRECTORY_H
-#define CPPCOMMON_FILESYSTEM_DIRECTORY_H
+
+#ifndef BASEKIT_FILESYSTEM_DIRECTORY_H
+#define BASEKIT_FILESYSTEM_DIRECTORY_H
 
 #include "filesystem/directory_iterator.h"
 #include "filesystem/file.h"
 #include "filesystem/symlink.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Filesystem directory
 /*!
@@ -137,10 +134,9 @@ public:
     friend void swap(Directory& directory1, Directory& directory2) noexcept;
 };
 
-/*! \example filesystem_directory.cpp Filesystem directory example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "directory.inl"
 
-#endif // CPPCOMMON_FILESYSTEM_DIRECTORY_H
+#endif // BASEKIT_FILESYSTEM_DIRECTORY_H

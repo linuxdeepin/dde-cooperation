@@ -1,19 +1,15 @@
-/*!
-    \file processor.h
-    \brief Logging processor interface definition
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_PROCESSOR_H
-#define CPPLOGGING_PROCESSOR_H
+#ifndef LOGGING_PROCESSOR_H
+#define LOGGING_PROCESSOR_H
 
 #include "logging/appenders.h"
 #include "logging/filters.h"
 #include "logging/layouts.h"
 
-namespace CppLogging {
+namespace Logging {
 
 //! Logging processor interface
 /*!
@@ -102,6 +98,6 @@ protected:
     std::vector<std::shared_ptr<Processor>> _processors;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_PROCESSOR_H
+#endif // LOGGING_PROCESSOR_H

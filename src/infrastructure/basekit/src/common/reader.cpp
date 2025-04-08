@@ -1,16 +1,12 @@
-/*!
-    \file reader.cpp
-    \brief Reader interface implementation
-    \author Ivan Shynkarenka
-    \date 07.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "common/reader.h"
 
 #include "utility/countof.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 std::vector<uint8_t> Reader::ReadAllBytes()
 {
@@ -58,4 +54,4 @@ std::vector<std::string> Reader::ReadAllLines()
     return result;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

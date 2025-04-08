@@ -1,10 +1,6 @@
-/*!
-    \file file.cpp
-    \brief Filesystem file implementation
-    \author Ivan Shynkarenka
-    \date 29.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filesystem/file.h"
 
@@ -22,7 +18,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -833,4 +829,4 @@ void File::swap(File& file) noexcept
     swap(impl()._path, file.impl()._path);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

@@ -1,10 +1,6 @@
-/*!
-    \file named_critical_section.cpp
-    \brief Named critical section synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 26.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/named_critical_section.h"
 
@@ -21,7 +17,7 @@
 #undef Yield
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -223,4 +219,4 @@ bool NamedCriticalSection::TryLockFor(const Timespan& timespan)
 void NamedCriticalSection::Lock() { impl().Lock(); }
 void NamedCriticalSection::Unlock() { impl().Unlock(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

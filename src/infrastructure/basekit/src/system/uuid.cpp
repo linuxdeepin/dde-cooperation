@@ -1,10 +1,6 @@
-/*!
-    \file uuid.cpp
-    \brief Universally unique identifier (UUID) implementation
-    \author Ivan Shynkarenka
-    \date 18.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "system/uuid.h"
 
@@ -17,7 +13,7 @@
 #include <uuid/uuid.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 std::string UUID::string() const
 {
@@ -156,4 +152,4 @@ UUID UUID::Secure()
     return result;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

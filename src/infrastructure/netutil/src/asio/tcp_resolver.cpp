@@ -1,14 +1,10 @@
-/*!
-    \file tcp_resolver.cpp
-    \brief TCP resolver implementation
-    \author Ivan Shynkarenka
-    \date 08.02.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/tcp_resolver.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 TCPResolver::TCPResolver(const std::shared_ptr<Service>& service)
@@ -20,8 +16,8 @@ TCPResolver::TCPResolver(const std::shared_ptr<Service>& service)
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

@@ -1,17 +1,13 @@
-/*!
-    \file fatal.cpp
-    \brief Fatal abort execution implementation
-    \author Ivan Shynkarenka
-    \date 04.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "errors/fatal.h"
 
 #include <cstdlib>
 #include <iostream>
 
-namespace CppCommon {
+namespace BaseKit {
 
 void fatal(const SourceLocation& location, const StackTrace& trace, const std::string& message, int error) noexcept
 {
@@ -29,4 +25,4 @@ void fatal(const SourceLocation& location, const StackTrace& trace, const std::e
     std::abort();
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

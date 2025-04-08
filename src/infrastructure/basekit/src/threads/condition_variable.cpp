@@ -1,10 +1,6 @@
-/*!
-    \file condition_variable.cpp
-    \brief Condition variable synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 03.10.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/condition_variable.h"
 
@@ -21,7 +17,7 @@
 #undef min
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -141,4 +137,4 @@ void ConditionVariable::Wait(CriticalSection& cs) { impl().Wait(cs); }
 
 bool ConditionVariable::TryWaitFor(CriticalSection& cs, const Timespan& timespan) { return impl().TryWaitFor(cs, timespan); }
 
-} // namespace CppCommon
+} // namespace BaseKit

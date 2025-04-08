@@ -1,13 +1,10 @@
-/*!
-    \file dll.h
-    \brief Dynamic link library definition
-    \author Ivan Shynkarenka
-    \date 07.06.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_DLL_H
-#define CPPCOMMON_SYSTEM_DLL_H
+
+#ifndef BASEKIT_SYSTEM_DLL_H
+#define BASEKIT_SYSTEM_DLL_H
 
 #include "filesystem/path.h"
 #include "system/exceptions.h"
@@ -44,7 +41,7 @@
 */
 #define API extern "C" EXPORT
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Dynamic link library
 /*!
@@ -153,10 +150,9 @@ private:
     void* ResolveAddress(const std::string& name) const;
 };
 
-/*! \example system_dll.cpp Dynamic link library example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "dll.inl"
 
-#endif // CPPCOMMON_SYSTEM_DLL_H
+#endif // BASEKIT_SYSTEM_DLL_H

@@ -1,18 +1,15 @@
-/*!
-    \file encoding.h
-    \brief Encoding utilities definition
-    \author Ivan Shynkarenka
-    \date 12.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_STRING_ENCODING_H
-#define CPPCOMMON_STRING_ENCODING_H
+
+#ifndef BASEKIT_STRING_ENCODING_H
+#define BASEKIT_STRING_ENCODING_H
 
 #include <cstdint>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Encoding utilities
 /*!
@@ -141,8 +138,7 @@ public:
     static std::string URLDecode(std::string_view str);
 };
 
-/*! \example string_encoding.cpp Encoding utilities example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_STRING_ENCODING_H
+#endif // BASEKIT_STRING_ENCODING_H

@@ -1,12 +1,9 @@
-/*!
-    \file string_utils.inl
-    \brief String utilities inline implementation
-    \author Ivan Shynkarenka
-    \date 15.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 inline bool StringUtils::IsBlankInternal(char ch)
 {
@@ -170,4 +167,4 @@ inline std::string_view StringUtils::FromString(std::string_view str)
 template <>
 bool StringUtils::FromString(std::string_view str);
 
-} // namespace CppCommon
+} // namespace BaseKit

@@ -1,10 +1,6 @@
-/*!
-    \file directory.cpp
-    \brief Filesystem directory implementation
-    \author Ivan Shynkarenka
-    \date 30.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filesystem/directory.h"
 
@@ -23,7 +19,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 const Flags<FileAttributes> Directory::DEFAULT_ATTRIBUTES = FileAttributes::NORMAL;
 const Flags<FilePermissions> Directory::DEFAULT_PERMISSIONS = FilePermissions::IRUSR | FilePermissions::IWUSR | FilePermissions::IXUSR | FilePermissions::IRGRP | FilePermissions::IXGRP | FilePermissions::IROTH | FilePermissions::IXOTH;
@@ -327,4 +323,4 @@ Directory Directory::CreateTree(const Path& path, const Flags<FileAttributes>& a
     return tree;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

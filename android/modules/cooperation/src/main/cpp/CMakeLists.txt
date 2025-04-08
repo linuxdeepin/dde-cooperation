@@ -25,7 +25,6 @@ set(PROJECT_SOURCE_DIR ${PROJECT_ROOT_DIR})
 
 # CMake module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_ROOT_DIR}/cmake)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_ROOT_DIR}/3rdparty/CppServer/cmake")
 
 ##===openssl====
 ##OpenSSL_1_1_1l openssl-3.0.1
@@ -95,16 +94,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 #    message(FATAL_ERROR "ANDROID_HOME环境变量未设置！")
 #endif()
 
-# Modules cppserver
-include("${PROJECT_ROOT_DIR}/modules/cppserver.cmake")
+# Modules netutil
+# include("${PROJECT_ROOT_DIR}/src/infrastructure")
+add_subdirectory("${PROJECT_ROOT_DIR}/src/infrastructure" "${CMAKE_BINARY_DIR}/infrastructure")
 
 
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/include")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules/CppLogging/include")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules/CppCommon/include")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules/asio/asio/include")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules/CppCommon/modules/fmt/include")
+include_directories("${PROJECT_ROOT_DIR}/3rdparty/asio")
+include_directories("${PROJECT_ROOT_DIR}/src/infrastructure/basekit/include")
+include_directories("${PROJECT_ROOT_DIR}/src/infrastructure/logging/include")
+include_directories("${PROJECT_ROOT_DIR}/src/infrastructure/netutil/include")
 
 include_directories("${PROJECT_ROOT_DIR}/src")
 include_directories("${PROJECT_ROOT_DIR}/src/lib/common")

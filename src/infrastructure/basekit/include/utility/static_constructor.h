@@ -1,15 +1,11 @@
-/*!
-    \file static_constructor.h
-    \brief Static constructor pattern definition
-    \author Ivan Shynkarenka
-    \date 31.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_UTILITY_STATIC_CONSTRUCTOR_H
-#define CPPCOMMON_UTILITY_STATIC_CONSTRUCTOR_H
+#ifndef BASEKIT_UTILITY_STATIC_CONSTRUCTOR_H
+#define BASEKIT_UTILITY_STATIC_CONSTRUCTOR_H
 
-namespace CppCommon {
+namespace BaseKit {
 
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
@@ -33,7 +29,7 @@ namespace CppCommon {
     private:
         static void StaticConstructor()
         {
-            CppCommon::StaticConstructor<&MyClass::StaticConstructor, &MyClass::StaticDestructor>::instance();
+            BaseKit::StaticConstructor<&MyClass::StaticConstructor, &MyClass::StaticDestructor>::instance();
             ...
         }
 
@@ -78,10 +74,9 @@ private:
 #pragma warning(pop)
 #endif
 
-/*! \example utility_static_constructor.cpp Static constructor pattern example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "static_constructor.inl"
 
-#endif // CPPCOMMON_UTILITY_STATIC_CONSTRUCTOR_H
+#endif // BASEKIT_UTILITY_STATIC_CONSTRUCTOR_H

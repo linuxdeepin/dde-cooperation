@@ -1,13 +1,9 @@
-/*!
-    \file file_appender.h
-    \brief File appender definition
-    \author Ivan Shynkarenka
-    \date 07.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_APPENDERS_FILE_APPENDER_H
-#define CPPLOGGING_APPENDERS_FILE_APPENDER_H
+#ifndef LOGGING_APPENDERS_FILE_APPENDER_H
+#define LOGGING_APPENDERS_FILE_APPENDER_H
 
 #include "logging/appender.h"
 
@@ -15,7 +11,7 @@
 
 #include <atomic>
 
-namespace CppLogging {
+namespace Logging {
 
 //! File appender
 /*!
@@ -36,7 +32,7 @@ public:
          \param auto_flush - Auto-flush flag (default is false)
          \param auto_start - Auto-start flag (default is true)
     */
-    explicit FileAppender(const CppCommon::Path& file, bool truncate = false, bool auto_flush = false, bool auto_start = true);
+    explicit FileAppender(const BaseKit::Path& file, bool truncate = false, bool auto_flush = false, bool auto_start = true);
     FileAppender(const FileAppender&) = delete;
     FileAppender(FileAppender&&) = delete;
     virtual ~FileAppender();
@@ -53,8 +49,8 @@ public:
 
 private:
     std::atomic<bool> _started{false};
-    CppCommon::Timestamp _retry{0};
-    CppCommon::File _file;
+    BaseKit::Timestamp _retry{0};
+    BaseKit::File _file;
     bool _truncate;
     bool _auto_flush;
 
@@ -74,8 +70,8 @@ private:
     bool CloseFile();
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
 /*! \example file.cpp File logger example */
 
-#endif // CPPLOGGING_APPENDERS_FILE_APPENDER_H
+#endif // LOGGING_APPENDERS_FILE_APPENDER_H

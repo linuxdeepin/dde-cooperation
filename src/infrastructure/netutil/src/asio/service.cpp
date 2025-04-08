@@ -1,16 +1,12 @@
-/*!
-    \file service.cpp
-    \brief Asio service implementation
-    \author Ivan Shynkarenka
-    \date 16.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/service.h"
 
 #include "errors/fatal.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 Service::Service(int threads, bool pool)
@@ -54,7 +50,7 @@ Service::Service(const std::shared_ptr<asio::io_service>& service, bool strands)
 {
     assert((service != nullptr) && "Asio IO service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio IO service is invalid!");
+        throw BaseKit::ArgumentException("Asio IO service is invalid!");
 
     _services.emplace_back(service);
     if (_strand_required)
@@ -93,11 +89,11 @@ bool Service::Start(bool polling)
 
     // Start service working threads
     for (size_t thread = 0; thread < _threads.size(); ++thread)
-        _threads[thread] = CppCommon::Thread::Start([this, self, thread]() { ServiceThread(self, _services[thread % _services.size()]); });
+        _threads[thread] = BaseKit::Thread::Start([this, self, thread]() { ServiceThread(self, _services[thread % _services.size()]); });
 
     // Wait for service is started
     while (!IsStarted())
-        CppCommon::Thread::Yield();
+        BaseKit::Thread::Yield();
 
     return true;
 }
@@ -139,7 +135,7 @@ bool Service::Stop()
 
     // Wait for service is stopped
     while (IsStarted())
-        CppCommon::Thread::Yield();
+        BaseKit::Thread::Yield();
 
     return true;
 }
@@ -233,4 +229,4 @@ void Service::SendError(std::error_code ec)
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

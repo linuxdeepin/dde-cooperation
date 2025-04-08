@@ -1,10 +1,6 @@
-/*!
-    \file http_request.cpp
-    \brief HTTP request implementation
-    \author Ivan Shynkarenka
-    \date 07.02.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "http/http_request.h"
 
@@ -13,7 +9,7 @@
 
 #include <cassert>
 
-namespace CppServer {
+namespace NetUtil {
 namespace HTTP {
 
 std::tuple<std::string_view, std::string_view> HTTPRequest::header(size_t i) const noexcept
@@ -175,7 +171,7 @@ HTTPRequest& HTTPRequest::SetBody(std::string_view body)
 {
     // Append content length header
     char buffer[32];
-    SetHeader("Content-Length", FastConvert(body.size(), buffer, CppCommon::countof(buffer)));
+    SetHeader("Content-Length", FastConvert(body.size(), buffer, BaseKit::countof(buffer)));
 
     _cache.append("\r\n");
 
@@ -194,7 +190,7 @@ HTTPRequest& HTTPRequest::SetBodyLength(size_t length)
 {
     // Append content length header
     char buffer[32];
-    SetHeader("Content-Length", FastConvert(length, buffer, CppCommon::countof(buffer)));
+    SetHeader("Content-Length", FastConvert(length, buffer, BaseKit::countof(buffer)));
 
     _cache.append("\r\n");
 
@@ -401,7 +397,7 @@ bool HTTPRequest::ReceiveHeader(const void* buffer, size_t size)
                 _headers.emplace_back(header_name_index, header_name_size, header_value_index, header_value_size);
 
                 // Try to find the body content length
-                if (CppCommon::StringUtils::CompareNoCase(std::string_view(_cache.data() + header_name_index, header_name_size), "Content-Length"))
+                if (BaseKit::StringUtils::CompareNoCase(std::string_view(_cache.data() + header_name_index, header_name_size), "Content-Length"))
                 {
                     _body_length = 0;
                     for (size_t j = header_value_index; j < (header_value_index + header_value_size); ++j)
@@ -415,7 +411,7 @@ bool HTTPRequest::ReceiveHeader(const void* buffer, size_t size)
                 }
 
                 // Try to find Cookies
-                if (CppCommon::StringUtils::CompareNoCase(std::string_view(_cache.data() + header_name_index, header_name_size), "Cookie"))
+                if (BaseKit::StringUtils::CompareNoCase(std::string_view(_cache.data() + header_name_index, header_name_size), "Cookie"))
                 {
                     bool name = true;
                     bool token = false;
@@ -644,4 +640,4 @@ void HTTPRequest::swap(HTTPRequest& request) noexcept
 }
 
 } // namespace HTTP
-} // namespace CppServer
+} // namespace NetUtil

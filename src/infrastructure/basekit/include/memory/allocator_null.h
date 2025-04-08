@@ -1,17 +1,14 @@
-/*!
-    \file allocator_null.h
-    \brief Null memory allocator definition
-    \author Ivan Shynkarenka
-    \date 17.04.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_MEMORY_ALLOCATOR_NULL_H
-#define CPPCOMMON_MEMORY_ALLOCATOR_NULL_H
+
+#ifndef BASEKIT_MEMORY_ALLOCATOR_NULL_H
+#define BASEKIT_MEMORY_ALLOCATOR_NULL_H
 
 #include "allocator.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Null memory manager class
 /*!
@@ -66,8 +63,8 @@ private:
 template <typename T, bool nothrow = false>
 using NullAllocator = Allocator<T, NullMemoryManager, nothrow>;
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "allocator_null.inl"
 
-#endif // CPPCOMMON_MEMORY_ALLOCATOR_NULL_H
+#endif // BASEKIT_MEMORY_ALLOCATOR_NULL_H

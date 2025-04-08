@@ -1,18 +1,14 @@
-/*!
-    \file ssl_server.cpp
-    \brief SSL server implementation
-    \author Ivan Shynkarenka
-    \date 30.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/ssl_server.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 SSLServer::SSLServer(const std::shared_ptr<Service>& service, const std::shared_ptr<SSLContext>& context, int port, InternetProtocol protocol)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -31,11 +27,11 @@ SSLServer::SSLServer(const std::shared_ptr<Service>& service, const std::shared_
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     assert((context != nullptr) && "SSL context is invalid!");
     if (context == nullptr)
-        throw CppCommon::ArgumentException("SSL context is invalid!");
+        throw BaseKit::ArgumentException("SSL context is invalid!");
 
     // Prepare endpoint
     switch (protocol)
@@ -50,7 +46,7 @@ SSLServer::SSLServer(const std::shared_ptr<Service>& service, const std::shared_
 }
 
 SSLServer::SSLServer(const std::shared_ptr<Service>& service, const std::shared_ptr<SSLContext>& context, const std::string& address, int port)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -70,18 +66,18 @@ SSLServer::SSLServer(const std::shared_ptr<Service>& service, const std::shared_
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     assert((context != nullptr) && "SSL context is invalid!");
     if (context == nullptr)
-        throw CppCommon::ArgumentException("SSL context is invalid!");
+        throw BaseKit::ArgumentException("SSL context is invalid!");
 
     // Prepare endpoint
     _endpoint = asio::ip::tcp::endpoint(asio::ip::make_address(address), (unsigned short)port);
 }
 
 SSLServer::SSLServer(const std::shared_ptr<Service>& service, const std::shared_ptr<SSLContext>& context, const asio::ip::tcp::endpoint& endpoint)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -102,11 +98,11 @@ SSLServer::SSLServer(const std::shared_ptr<Service>& service, const std::shared_
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     assert((context != nullptr) && "SSL context is invalid!");
     if (context == nullptr)
-        throw CppCommon::ArgumentException("SSL context is invalid!");
+        throw BaseKit::ArgumentException("SSL context is invalid!");
 }
 
 bool SSLServer::Start()
@@ -204,7 +200,7 @@ bool SSLServer::Restart()
         return false;
 
     while (IsStarted())
-        CppCommon::Thread::Yield();
+        BaseKit::Thread::Yield();
 
     return Start();
 }
@@ -297,7 +293,7 @@ bool SSLServer::DisconnectAll()
     return true;
 }
 
-std::shared_ptr<SSLSession> SSLServer::FindSession(const CppCommon::UUID& id)
+std::shared_ptr<SSLSession> SSLServer::FindSession(const BaseKit::UUID& id)
 {
     std::shared_lock<std::shared_mutex> locker(_sessions_lock);
 
@@ -314,7 +310,7 @@ void SSLServer::RegisterSession()
     _sessions.emplace(_session->id(), _session);
 }
 
-void SSLServer::UnregisterSession(const CppCommon::UUID& id)
+void SSLServer::UnregisterSession(const BaseKit::UUID& id)
 {
     std::unique_lock<std::shared_mutex> locker(_sessions_lock);
 
@@ -351,4 +347,4 @@ void SSLServer::SendError(std::error_code ec)
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

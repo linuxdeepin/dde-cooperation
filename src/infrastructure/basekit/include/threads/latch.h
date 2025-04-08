@@ -1,13 +1,9 @@
-/*!
-    \file latch.h
-    \brief Latch synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 25.03.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_LATCH_H
-#define CPPCOMMON_THREADS_LATCH_H
+#ifndef BASEKIT_THREADS_LATCH_H
+#define BASEKIT_THREADS_LATCH_H
 
 #include "time/timestamp.h"
 
@@ -16,7 +12,7 @@
 #include <memory>
 #include <mutex>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Latch synchronization primitive
 /*!
@@ -118,8 +114,8 @@ private:
 /*! \example threads_latch_multi.cpp Latch synchronization primitive example for multiple threads waiting */
 /*! \example threads_latch_single.cpp Latch synchronization primitive example for single thread waiting */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "latch.inl"
 
-#endif // CPPCOMMON_THREADS_LATCH_H
+#endif // BASEKIT_THREADS_LATCH_H

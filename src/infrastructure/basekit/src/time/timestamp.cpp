@@ -1,10 +1,6 @@
-/*!
-    \file timestamp.cpp
-    \brief Timestamp implementation
-    \author Ivan Shynkarenka
-    \date 26.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "time/timestamp.h"
 
@@ -23,7 +19,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 namespace Internals {
@@ -303,4 +299,4 @@ uint64_t Timestamp::rdts()
 #endif
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

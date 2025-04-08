@@ -1,12 +1,8 @@
-/*!
-    \file mpsc_ring_queue.inl
-    \brief Multiple producers / single consumer wait-free ring queue class inline implementation
-    \author Ivan Shynkarenka
-    \date 21.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template<typename T>
 inline MPSCRingQueue<T>::MPSCRingQueue(size_t capacity, size_t concurrency) : _capacity(capacity - 1), _concurrency(concurrency), _consumer(0)
@@ -79,4 +75,4 @@ inline bool MPSCRingQueue<T>::Dequeue(const std::function<void(const T&)>& handl
     return result;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

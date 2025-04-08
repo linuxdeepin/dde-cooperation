@@ -1,13 +1,9 @@
-/*!
-    \file file_lock.h
-    \brief File-lock synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 01.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_FILE_LOCK_H
-#define CPPCOMMON_THREADS_FILE_LOCK_H
+#ifndef BASEKIT_THREADS_FILE_LOCK_H
+#define BASEKIT_THREADS_FILE_LOCK_H
 
 #include "filesystem/file.h"
 #include "threads/locker.h"
@@ -15,7 +11,7 @@
 
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! File-lock synchronization primitive
 /*!
@@ -140,6 +136,6 @@ private:
 
 /*! \example threads_file_lock.cpp File-lock synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_THREADS_FILE_LOCK_H
+#endif // BASEKIT_THREADS_FILE_LOCK_H

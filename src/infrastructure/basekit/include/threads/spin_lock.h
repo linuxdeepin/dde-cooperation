@@ -1,20 +1,16 @@
-/*!
-    \file spin_lock.h
-    \brief Spin-lock synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 22.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_SPIN_LOCK_H
-#define CPPCOMMON_THREADS_SPIN_LOCK_H
+#ifndef BASEKIT_THREADS_SPIN_LOCK_H
+#define BASEKIT_THREADS_SPIN_LOCK_H
 
 #include "threads/locker.h"
 #include "time/timestamp.h"
 
 #include <atomic>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Spin-lock synchronization primitive
 /*!
@@ -98,8 +94,8 @@ private:
 
 /*! \example threads_spin_lock.cpp Spin-lock synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "spin_lock.inl"
 
-#endif // CPPCOMMON_THREADS_SPIN_LOCK_H
+#endif // BASEKIT_THREADS_SPIN_LOCK_H

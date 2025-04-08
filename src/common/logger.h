@@ -33,9 +33,9 @@ constexpr int path_base_len(const char(&s)[N], int i = N - 1) {
 }
 
 class LogStream;
-class Logger : public CppCommon::Singleton<Logger>
+class Logger : public BaseKit::Singleton<Logger>
 {
-    friend CppCommon::Singleton<Logger>;
+    friend BaseKit::Singleton<Logger>;
 public:
     Logger();
 
@@ -50,7 +50,7 @@ public:
 
 private:
     static const char *_levels[];
-    CppLogging::Logger _logger;
+    Logging::Logger _logger;
     std::ostringstream _buffer;
     int _lv;
 };

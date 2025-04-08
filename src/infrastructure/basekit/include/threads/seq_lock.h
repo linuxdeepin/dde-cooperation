@@ -1,18 +1,14 @@
-/*!
-    \file seq_lock.h
-    \brief Sequential lock synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 17.08.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_SEQLOCK_H
-#define CPPCOMMON_THREADS_SEQLOCK_H
+#ifndef BASEKIT_THREADS_SEQLOCK_H
+#define BASEKIT_THREADS_SEQLOCK_H
 
 #include <atomic>
 #include <cstring>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Sequential lock synchronization primitive
 /*!
@@ -67,8 +63,8 @@ private:
 
 /*! \example threads_seq_lock.cpp Sequential lock synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "seq_lock.inl"
 
-#endif // CPPCOMMON_THREADS_SEQLOCK_H
+#endif // BASEKIT_THREADS_SEQLOCK_H

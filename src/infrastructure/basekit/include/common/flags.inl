@@ -1,12 +1,9 @@
-/*!
-    \file flags.inl
-    \brief Enum-based flags inline implementation
-    \author Ivan Shynkarenka
-    \date 25.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 template <typename TEnum>
 inline void swap(Flags<TEnum>& flags1, Flags<TEnum>& flags2) noexcept
@@ -32,4 +29,4 @@ constexpr auto operator^(TEnum value1, TEnum value2) noexcept -> typename std::e
     return Flags<TEnum>(value1) ^ value2;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

@@ -1,32 +1,19 @@
-/*!
-    \file token_bucket.h
-    \brief Token bucket rate limit algorithm definition
-    \author Ivan Shynkarenka
-    \date 07.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_ALGORITHMS_TOKEN_BUCKET_H
-#define CPPCOMMON_ALGORITHMS_TOKEN_BUCKET_H
+#ifndef BASEKIT_ALGORITHMS_TOKEN_BUCKET_H
 
 #include <atomic>
 #include <cstdint>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Token bucket rate limit algorithm
 /*!
-    Lock-free implementation of the token bucket rate limit algorithm.
-
-    \image html TokenBucket.png "Token bucket"
-
-    The token bucket is an algorithm used in packet switched computer
-    networks and telecommunications networks. It can be used to check
-    that data transmissions, in the form of packets, conform to defined
-    limits on bandwidth and burstiness (a measure of the unevenness or
-    variations in the traffic flow).
-
-    Thread-safe.
+    Token bucket is a rate limit algorithm that allows a burst of traffic
+    to be sent at once, but limits the average rate of traffic over time.
+    It is commonly used in network traffic shaping and bandwidth management.
 
     https://en.wikipedia.org/wiki/Token_bucket
 */
@@ -62,10 +49,9 @@ private:
     std::atomic<uint64_t> _time_per_burst;
 };
 
-/*! \example algorithms_token_bucket.cpp Token bucket rate limit algorithm example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "token_bucket.inl"
 
-#endif // CPPCOMMON_ALGORITHMS_TOKEN_BUCKET_H
+#endif // BASEKIT_ALGORITHMS_TOKEN_BUCKET_H

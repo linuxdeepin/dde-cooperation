@@ -1,12 +1,8 @@
-/*!
-    \file memory.inl
-    \brief Asio memory manager inline implementation
-    \author Ivan Shynkarenka
-    \date 16.02.2018
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 inline void* HandlerStorage::allocate(size_t size)
@@ -42,4 +38,4 @@ inline AllocateHandler<THandler> make_alloc_handler(HandlerStorage& storage, THa
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

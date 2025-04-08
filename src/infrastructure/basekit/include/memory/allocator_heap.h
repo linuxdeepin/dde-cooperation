@@ -1,13 +1,10 @@
-/*!
-    \file allocator_heap.h
-    \brief Heap memory allocator definition
-    \author Ivan Shynkarenka
-    \date 07.06.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_MEMORY_ALLOCATOR_HEAP_H
-#define CPPCOMMON_MEMORY_ALLOCATOR_HEAP_H
+
+#ifndef BASEKIT_MEMORY_ALLOCATOR_HEAP_H
+#define BASEKIT_MEMORY_ALLOCATOR_HEAP_H
 
 #include "allocator.h"
 
@@ -21,7 +18,7 @@
 #undef uuid_t
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Heap memory manager class
 /*!
@@ -77,8 +74,8 @@ private:
 template <typename T, bool nothrow = false>
 using HeapAllocator = Allocator<T, HeapMemoryManager, nothrow>;
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "allocator_heap.inl"
 
-#endif // CPPCOMMON_MEMORY_ALLOCATOR_HEAP_H
+#endif // BASEKIT_MEMORY_ALLOCATOR_HEAP_H

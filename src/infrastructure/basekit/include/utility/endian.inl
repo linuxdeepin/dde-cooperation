@@ -1,12 +1,8 @@
-/*!
-    \file endian.inl
-    \brief Big/Little-endian utilities inline implementation
-    \author Ivan Shynkarenka
-    \date 21.07.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 inline bool Endian::IsBigEndian()
 {
@@ -530,4 +526,4 @@ inline size_t Endian::WriteLittleEndian(void* buffer, uint64_t value)
     return 8;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

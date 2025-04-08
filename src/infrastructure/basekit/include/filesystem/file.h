@@ -1,13 +1,10 @@
-/*!
-    \file file.h
-    \brief Filesystem file definition
-    \author Ivan Shynkarenka
-    \date 29.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_FILESYSTEM_FILE_H
-#define CPPCOMMON_FILESYSTEM_FILE_H
+
+#ifndef BASEKIT_FILESYSTEM_FILE_H
+#define BASEKIT_FILESYSTEM_FILE_H
 
 #include "common/reader.h"
 #include "common/writer.h"
@@ -16,7 +13,7 @@
 #include <memory>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Filesystem file
 /*!
@@ -233,10 +230,9 @@ private:
     alignas(StorageAlign) std::byte _storage[StorageSize];
 };
 
-/*! \example filesystem_file.cpp Filesystem file example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "file.inl"
 
-#endif // CPPCOMMON_FILESYSTEM_FILE_H
+#endif // BASEKIT_FILESYSTEM_FILE_H

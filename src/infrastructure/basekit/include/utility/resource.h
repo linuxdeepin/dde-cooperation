@@ -1,17 +1,13 @@
-/*!
-    \file resource.h
-    \brief Resource smart cleaner pattern definition
-    \author Ivan Shynkarenka
-    \date 01.10.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_UTILITY_RESOURCE_H
-#define CPPCOMMON_UTILITY_RESOURCE_H
+#ifndef BASEKIT_UTILITY_RESOURCE_H
+#define BASEKIT_UTILITY_RESOURCE_H
 
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Resource smart cleaner pattern
 /*!
@@ -26,7 +22,7 @@ namespace CppCommon {
     int test()
     {
         // Create a file resource
-        auto file = CppCommon::resource(fopen("test", "rb"), [](FILE* file) { fclose(file); });
+        auto file = BaseKit::resource(fopen("test", "rb"), [](FILE* file) { fclose(file); });
 
         // Work with the file resource
         int result = fgetc(file.get());
@@ -66,6 +62,6 @@ auto resource(TCleaner cleaner)
     return std::unique_ptr<void, TCleaner>(&cleaner, cleaner);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_UTILITY_RESOURCE_H
+#endif // BASEKIT_UTILITY_RESOURCE_H

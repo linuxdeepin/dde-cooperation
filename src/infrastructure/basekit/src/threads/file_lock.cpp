@@ -1,10 +1,6 @@
-/*!
-    \file file_lock.cpp
-    \brief File-lock synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 01.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/file_lock.h"
 
@@ -21,7 +17,7 @@
 #undef Yield
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -382,4 +378,4 @@ void FileLock::LockWrite() { impl().LockWrite(); }
 void FileLock::UnlockRead() { impl().UnlockRead(); }
 void FileLock::UnlockWrite() { impl().UnlockWrite(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

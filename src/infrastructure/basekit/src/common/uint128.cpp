@@ -1,14 +1,10 @@
-/*!
-    \file uint128.cpp
-    \brief Unsigned 128-bit integer type implementation
-    \author Ivan Shynkarenka
-    \date 11.10.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "common/uint128.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 uint128_t operator*(const uint128_t& value1, const uint128_t& value2) noexcept
 {
@@ -199,4 +195,4 @@ std::pair<uint128_t, uint128_t> uint128_t::divmod(const uint128_t& x, const uint
     return result;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

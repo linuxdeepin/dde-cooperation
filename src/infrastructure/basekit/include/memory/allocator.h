@@ -1,17 +1,14 @@
-/*!
-    \file allocator.h
-    \brief Memory allocator definition
-    \author Ivan Shynkarenka
-    \date 17.04.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_MEMORY_ALLOCATOR_H
-#define CPPCOMMON_MEMORY_ALLOCATOR_H
+
+#ifndef BASEKIT_MEMORY_ALLOCATOR_H
+#define BASEKIT_MEMORY_ALLOCATOR_H
 
 #include "memory.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Memory allocator class
 /*!
@@ -229,8 +226,8 @@ private:
 template <typename T, bool nothrow = false>
 using DefaultAllocator = Allocator<T, DefaultMemoryManager, nothrow>;
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "allocator.inl"
 
-#endif // CPPCOMMON_MEMORY_ALLOCATOR_H
+#endif // BASEKIT_MEMORY_ALLOCATOR_H

@@ -1,13 +1,9 @@
-/*!
-    \file ssl_server.h
-    \brief SSL server definition
-    \author Ivan Shynkarenka
-    \date 30.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_SSL_SERVER_H
-#define CPPSERVER_ASIO_SSL_SERVER_H
+#ifndef NETUTIL_ASIO_SSL_SERVER_H
+#define NETUTIL_ASIO_SSL_SERVER_H
 
 #include "ssl_context.h"
 #include "ssl_session.h"
@@ -19,7 +15,7 @@
 #include <shared_mutex>
 #include <vector>
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 //! SSL server
@@ -64,7 +60,7 @@ public:
     SSLServer& operator=(SSLServer&&) = delete;
 
     //! Get the server Id
-    const CppCommon::UUID& id() const noexcept { return _id; }
+    const BaseKit::UUID& id() const noexcept { return _id; }
 
     //! Get the Asio service
     std::shared_ptr<Service>& service() noexcept { return _service; }
@@ -146,7 +142,7 @@ public:
         \param id - Session Id
         \return Session with a given Id or null if the session it not connected
     */
-    std::shared_ptr<SSLSession> FindSession(const CppCommon::UUID& id);
+    std::shared_ptr<SSLSession> FindSession(const BaseKit::UUID& id);
 
     //! Setup option: keep alive
     /*!
@@ -220,11 +216,11 @@ protected:
 protected:
     // Server sessions
     std::shared_mutex _sessions_lock;
-    std::map<CppCommon::UUID, std::shared_ptr<SSLSession>> _sessions;
+    std::map<BaseKit::UUID, std::shared_ptr<SSLSession>> _sessions;
 
 private:
     // Server Id
-    CppCommon::UUID _id;
+    BaseKit::UUID _id;
     // Asio service
     std::shared_ptr<Service> _service;
     // Asio IO service
@@ -261,7 +257,7 @@ private:
     /*!
         \param id - Session Id
     */
-    void UnregisterSession(const CppCommon::UUID& id);
+    void UnregisterSession(const BaseKit::UUID& id);
 
     //! Clear multicast buffer
     void ClearBuffers();
@@ -273,6 +269,6 @@ private:
 /*! \example ssl_chat_server.cpp SSL chat server example */
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_ASIO_SSL_SERVER_H
+#endif // NETUTIL_ASIO_SSL_SERVER_H

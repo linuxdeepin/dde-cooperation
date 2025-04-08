@@ -1,20 +1,16 @@
-/*!
-    \file logger_filter.h
-    \brief Logger filter definition
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_FILTERS_LOGGER_FILTER_H
-#define CPPLOGGING_FILTERS_LOGGER_FILTER_H
+#ifndef LOGGING_FILTERS_LOGGER_FILTER_H
+#define LOGGING_FILTERS_LOGGER_FILTER_H
 
 #include "logging/filter.h"
 
 #include <atomic>
 #include <string>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Logger filter
 /*!
@@ -53,6 +49,6 @@ private:
     std::string _pattern;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_FILTERS_LOGGER_FILTER_H
+#endif // LOGGING_FILTERS_LOGGER_FILTER_H

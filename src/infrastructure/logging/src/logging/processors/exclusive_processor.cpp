@@ -1,14 +1,10 @@
-/*!
-    \file exclusive_processor.cpp
-    \brief Exclusive logging processor implementation
-    \author Ivan Shynkarenka
-    \date 11.04.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/processors/exclusive_processor.h"
 
-namespace CppLogging {
+namespace Logging {
 
 bool ExclusiveProcessor::ProcessRecord(Record& record)
 {
@@ -38,4 +34,4 @@ bool ExclusiveProcessor::ProcessRecord(Record& record)
     return false;
 }
 
-} // namespace CppLogging
+} // namespace Logging

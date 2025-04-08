@@ -1,12 +1,8 @@
-/*!
-    \file latch.inl
-    \brief Latch synchronization primitive inline implementation
-    \author Ivan Shynkarenka
-    \date 25.03.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 inline Latch::Latch(int threads) noexcept : _generation(0), _threads(threads)
 {
@@ -43,4 +39,4 @@ inline bool Latch::TryWaitUntil(const Timestamp& timestamp) noexcept
     return _cond.wait_until(lock, timestamp.chrono(), [&, this]() { return generation != _generation; });
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

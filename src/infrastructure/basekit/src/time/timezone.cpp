@@ -1,10 +1,6 @@
-/*!
-    \file timezone.cpp
-    \brief Timezone implementation
-    \author Ivan Shynkarenka
-    \date 18.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "time/timezone.h"
 
@@ -14,7 +10,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 Timezone::Timezone() : _name(), _offset(Timespan::zero()), _dstoffset(Timespan::zero())
 {
@@ -66,4 +62,4 @@ Timezone::Timezone() : _name(), _offset(Timespan::zero()), _dstoffset(Timespan::
 #endif
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

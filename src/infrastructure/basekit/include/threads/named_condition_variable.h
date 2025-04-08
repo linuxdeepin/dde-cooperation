@@ -1,20 +1,16 @@
-/*!
-    \file named_condition_variable.h
-    \brief Named condition variable synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 04.10.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_NAMED_CONDITION_VARIABLE_H
-#define CPPCOMMON_THREADS_NAMED_CONDITION_VARIABLE_H
+#ifndef BASEKIT_THREADS_NAMED_CONDITION_VARIABLE_H
+#define BASEKIT_THREADS_NAMED_CONDITION_VARIABLE_H
 
 #include "time/timestamp.h"
 
 #include <memory>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Named condition variable synchronization primitive
 /*!
@@ -153,8 +149,8 @@ private:
 
 /*! \example threads_named_condition_variable.cpp Named condition variable synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "named_condition_variable.inl"
 
-#endif // CPPCOMMON_THREADS_NAMED_CONDITION_VARIABLE_H
+#endif // BASEKIT_THREADS_NAMED_CONDITION_VARIABLE_H

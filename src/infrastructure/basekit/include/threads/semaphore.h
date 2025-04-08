@@ -1,20 +1,16 @@
-/*!
-    \file semaphore.h
-    \brief Semaphore synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 12.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_SEMAPHORE_H
-#define CPPCOMMON_THREADS_SEMAPHORE_H
+#ifndef BASEKIT_THREADS_SEMAPHORE_H
+#define BASEKIT_THREADS_SEMAPHORE_H
 
 #include "threads/locker.h"
 #include "time/timestamp.h"
 
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Semaphore synchronization primitive
 /*!
@@ -95,6 +91,6 @@ private:
 
 /*! \example threads_semaphore.cpp Semaphore synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_THREADS_SEMAPHORE_H
+#endif // BASEKIT_THREADS_SEMAPHORE_H

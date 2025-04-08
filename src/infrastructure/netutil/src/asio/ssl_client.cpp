@@ -1,18 +1,14 @@
-/*!
-    \file ssl_client.cpp
-    \brief SSL client implementation
-    \author Ivan Shynkarenka
-    \date 01.01.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/ssl_client.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 SSLClient::SSLClient(const std::shared_ptr<Service>& service, const std::shared_ptr<SSLContext>& context, const std::string& address, int port)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -38,15 +34,15 @@ SSLClient::SSLClient(const std::shared_ptr<Service>& service, const std::shared_
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     assert((context != nullptr) && "SSL context is invalid!");
     if (context == nullptr)
-        throw CppCommon::ArgumentException("SSL context is invalid!");
+        throw BaseKit::ArgumentException("SSL context is invalid!");
 }
 
 SSLClient::SSLClient(const std::shared_ptr<Service>& service, const std::shared_ptr<SSLContext>& context, const std::string& address, const std::string& scheme)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -73,15 +69,15 @@ SSLClient::SSLClient(const std::shared_ptr<Service>& service, const std::shared_
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     assert((context != nullptr) && "SSL context is invalid!");
     if (context == nullptr)
-        throw CppCommon::ArgumentException("SSL context is invalid!");
+        throw BaseKit::ArgumentException("SSL context is invalid!");
 }
 
 SSLClient::SSLClient(const std::shared_ptr<Service>& service, const std::shared_ptr<SSLContext>& context, const asio::ip::tcp::endpoint& endpoint)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -108,11 +104,11 @@ SSLClient::SSLClient(const std::shared_ptr<Service>& service, const std::shared_
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     assert((context != nullptr) && "SSL context is invalid!");
     if (context == nullptr)
-        throw CppCommon::ArgumentException("SSL context is invalid!");
+        throw BaseKit::ArgumentException("SSL context is invalid!");
 }
 
 SSLClient::~SSLClient()
@@ -647,7 +643,7 @@ bool SSLClient::ReconnectAsync()
         return false;
 
     while (IsConnected())
-        CppCommon::Thread::Yield();
+        BaseKit::Thread::Yield();
 
     return ConnectAsync();
 }
@@ -687,7 +683,7 @@ size_t SSLClient::Send(const void* buffer, size_t size)
     return sent;
 }
 
-size_t SSLClient::Send(const void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t SSLClient::Send(const void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsHandshaked())
         return 0;
@@ -844,7 +840,7 @@ std::string SSLClient::Receive(size_t size)
     return text;
 }
 
-size_t SSLClient::Receive(void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t SSLClient::Receive(void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsHandshaked())
         return 0;
@@ -907,7 +903,7 @@ size_t SSLClient::Receive(void* buffer, size_t size, const CppCommon::Timespan& 
     return received;
 }
 
-std::string SSLClient::Receive(size_t size, const CppCommon::Timespan& timeout)
+std::string SSLClient::Receive(size_t size, const BaseKit::Timespan& timeout)
 {
     std::string text(size, 0);
     text.resize(Receive(text.data(), text.size(), timeout));
@@ -1098,4 +1094,4 @@ void SSLClient::SendError(std::error_code ec)
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

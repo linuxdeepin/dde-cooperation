@@ -1,17 +1,13 @@
-/*!
-    \file memory.h
-    \brief Asio memory manager definition
-    \author Ivan Shynkarenka
-    \date 16.02.2018
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_MEMORY_H
-#define CPPSERVER_ASIO_MEMORY_H
+#ifndef NETUTIL_ASIO_MEMORY_H
+#define NETUTIL_ASIO_MEMORY_H
 
 #include <memory>
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 //! Asio handler storage
@@ -169,8 +165,8 @@ template <typename THandler>
 AllocateHandler<THandler> make_alloc_handler(HandlerStorage& storage, THandler handler);
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
 #include "memory.inl"
 
-#endif // CPPSERVER_ASIO_MEMORY_H
+#endif // NETUTIL_ASIO_MEMORY_H

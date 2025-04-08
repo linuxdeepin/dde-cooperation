@@ -1,13 +1,9 @@
-/*!
-    \file memcache.h
-    \brief Memory cache definition
-    \author Ivan Shynkarenka
-    \date 14.05.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_CACHE_MEMCACHE_H
-#define CPPCOMMON_CACHE_MEMCACHE_H
+#ifndef BASEKIT_CACHE_MEMCACHE_H
+#define BASEKIT_CACHE_MEMCACHE_H
 
 #include "time/timespan.h"
 #include "time/timestamp.h"
@@ -17,13 +13,13 @@
 #include <shared_mutex>
 #include <unordered_map>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Memory cache
 /*!
-    Memory cache is used to cache data in memory with optional timeouts.
-
-    Thread-safe.
+    Memory cache is a simple in-memory key-value store with optional timeout for each value.
+    It allows to store and retrieve values by their keys, and automatically removes expired values.
+    The memory cache is thread-safe and can be used in multi-threaded applications.
 */
 template <typename TKey, typename TValue>
 class MemCache
@@ -125,10 +121,8 @@ private:
     bool remove_internal(const TKey& key);
 };
 
-/*! \example cache_memcache.cpp Memory cache example */
-
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "memcache.inl"
 
-#endif // CPPCOMMON_CACHE_MEMCACHE_H
+#endif // BASEKIT_CACHE_MEMCACHE_H

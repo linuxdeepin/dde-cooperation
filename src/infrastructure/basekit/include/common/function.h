@@ -1,18 +1,14 @@
-/*!
-    \file function.h
-    \brief Allocation free function definition
-    \author Ivan Shynkarenka
-    \date 18.08.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_FUNCTION_H
-#define CPPCOMMON_FUNCTION_H
+#ifndef BASEKIT_FUNCTION_H
+#define BASEKIT_FUNCTION_H
 
 #include <functional>
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Allocation free function stub
 template <class, size_t Capacity = 1024>
@@ -20,11 +16,8 @@ class Function;
 
 //! Allocation free function
 /*!
-    Allocation free function uses internal stack-based buffer to keep
-    the closure. This allows to avoid slow heap allocation in function
-    constructor as it performed in std::function implementation.
-
-    Invocation overhead is similar to std::function implementation.
+    \note This class is not intended to be used directly, use the Function macro instead.
+    \note The function must be copyable and movable.
 */
 template <class R, class... Args, size_t Capacity>
 class Function<R(Args...), Capacity>
@@ -77,10 +70,9 @@ private:
     static void Manage(void* dst, void* src, Operation op) noexcept;
 };
 
-/*! \example common_function.cpp Allocation free function example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "function.inl"
 
-#endif // CPPCOMMON_FUNCTION_H
+#endif // BASEKIT_FUNCTION_H

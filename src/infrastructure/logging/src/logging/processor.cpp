@@ -1,14 +1,10 @@
-/*!
-    \file processor.cpp
-    \brief Logging processor interface implementation
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/processor.h"
 
-namespace CppLogging {
+namespace Logging {
 
 Processor::~Processor()
 {
@@ -141,4 +137,4 @@ void Processor::Flush()
             processor->Flush();
 }
 
-} // namespace CppLogging
+} // namespace Logging

@@ -1,12 +1,8 @@
-/*!
-    \file mpsc_ring_buffer.inl
-    \brief Multiple producers / single consumer wait-free ring buffer class inline implementation
-    \author Ivan Shynkarenka
-    \date 26.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 inline MPSCRingBuffer::MPSCRingBuffer(size_t capacity, size_t concurrency) : _capacity(capacity - 1), _concurrency(concurrency), _consumer(0)
 {
@@ -52,4 +48,4 @@ inline bool MPSCRingBuffer::Dequeue(void* data, size_t& size)
     return false;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

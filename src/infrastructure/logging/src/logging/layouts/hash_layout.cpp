@@ -1,17 +1,13 @@
-/*!
-    \file hash_layout.cpp
-    \brief Hash layout implementation
-    \author Ivan Shynkarenka
-    \date 13.12.2021
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/layouts/hash_layout.h"
 
 #include <cstring>
 #include <vector>
 
-namespace CppLogging {
+namespace Logging {
 
 uint32_t HashLayout::Hash(std::string_view message)
 {
@@ -69,4 +65,4 @@ void HashLayout::LayoutRecord(Record& record)
     *buffer = 0;
 }
 
-} // namespace CppLogging
+} // namespace Logging

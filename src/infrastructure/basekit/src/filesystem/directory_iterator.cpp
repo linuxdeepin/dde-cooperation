@@ -1,10 +1,6 @@
-/*!
-    \file directory_iterator.cpp
-    \brief Filesystem directory iterator implementation
-    \author Ivan Shynkarenka
-    \date 30.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filesystem/directory_iterator.h"
 
@@ -21,7 +17,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -261,4 +257,4 @@ DirectoryIterator DirectoryIterator::operator++(int)
     return result;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

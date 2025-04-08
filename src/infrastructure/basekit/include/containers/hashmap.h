@@ -1,13 +1,9 @@
-/*!
-    \file hashmap.h
-    \brief Hash map container definition
-    \author Ivan Shynkarenka
-    \date 11.07.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_CONTAINERS_HASHMAP_H
-#define CPPCOMMON_CONTAINERS_HASHMAP_H
+#ifndef BASEKIT_CONTAINERS_HASHMAP_H
+#define BASEKIT_CONTAINERS_HASHMAP_H
 
 #include <algorithm>
 #include <cassert>
@@ -18,7 +14,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <class TContainer, typename TKey, typename TValue>
 class HashMapIterator;
@@ -29,17 +25,6 @@ class HashMapReverseIterator;
 template <class TContainer, typename TKey, typename TValue>
 class HashMapConstReverseIterator;
 
-//! Hash map container
-/*!
-    Hash map is an efficient  structure  for  associative  keys/value  storing  and
-    accessing without keeping order. It uses hash function to  convert  string  key
-    into the integer and use the index to quick access value data.
-
-    Open  address  hash map resolves collisions of the  same  hash  values  by
-    inserting new item into the next free place (probing with step 1).
-
-    Not thread-safe.
-*/
 template <typename TKey, typename TValue, typename THash = std::hash<TKey>, typename TEqual = std::equal_to<TKey>, typename TAllocator = std::allocator<std::pair<TKey, TValue>>>
 class HashMap
 {
@@ -215,10 +200,6 @@ private:
     size_t diff(size_t index1, size_t index2) const noexcept;
 };
 
-//! Hash map iterator
-/*!
-    Not thread-safe.
-*/
 template <class TContainer, typename TKey, typename TValue>
 class HashMapIterator
 {
@@ -270,10 +251,6 @@ private:
     size_t _index;
 };
 
-//! Hash map constant iterator
-/*!
-    Not thread-safe.
-*/
 template <class TContainer, typename TKey, typename TValue>
 class HashMapConstIterator
 {
@@ -327,10 +304,6 @@ private:
     size_t _index;
 };
 
-//! Hash map reverse iterator
-/*!
-    Not thread-safe.
-*/
 template <class TContainer, typename TKey, typename TValue>
 class HashMapReverseIterator
 {
@@ -382,10 +355,6 @@ private:
     size_t _index;
 };
 
-//! Hash map constant reverse iterator
-/*!
-    Not thread-safe.
-*/
 template <class TContainer, typename TKey, typename TValue>
 class HashMapConstReverseIterator
 {
@@ -439,10 +408,9 @@ private:
     size_t _index;
 };
 
-/*! \example containers_hashmap.cpp Hash map container example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "hashmap.inl"
 
-#endif // CPPCOMMON_CONTAINERS_HASHMAP_H
+#endif // BASEKIT_CONTAINERS_HASHMAP_H

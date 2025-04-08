@@ -13,3 +13,6 @@ endif()
 
 # network utils
 add_subdirectory(netutil)
+
+# rpc module for compat old protocal
+# add_subdirectory(zrpc)

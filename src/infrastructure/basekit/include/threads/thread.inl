@@ -1,12 +1,8 @@
-/*!
-    \file thread.inl
-    \brief Thread inline implementation
-    \author Ivan Shynkarenka
-    \date 27.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <class TOutputStream>
 inline TOutputStream& operator<<(TOutputStream& stream, ThreadPriority priority)
@@ -54,4 +50,4 @@ inline std::thread Thread::Start(Fn&& fn, Args&&... args)
     });
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

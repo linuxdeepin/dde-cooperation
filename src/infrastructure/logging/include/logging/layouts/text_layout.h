@@ -1,20 +1,16 @@
-/*!
-    \file text_layout.h
-    \brief Text layout definition
-    \author Ivan Shynkarenka
-    \date 08.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_LAYOUTS_TEXT_LAYOUT_H
-#define CPPLOGGING_LAYOUTS_TEXT_LAYOUT_H
+#ifndef LOGGING_LAYOUTS_TEXT_LAYOUT_H
+#define LOGGING_LAYOUTS_TEXT_LAYOUT_H
 
 #include "logging/layout.h"
 
 #include <memory>
 #include <string>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Text layout
 /*!
@@ -76,6 +72,6 @@ private:
     alignas(StorageAlign) std::byte _storage[StorageSize];
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_LAYOUTS_TEXT_LAYOUT_H
+#endif // LOGGING_LAYOUTS_TEXT_LAYOUT_H

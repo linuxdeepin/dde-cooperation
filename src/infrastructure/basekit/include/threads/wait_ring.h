@@ -1,20 +1,16 @@
-/*!
-    \file wait_ring.h
-    \brief Multiple producers / multiple consumers wait ring definition
-    \author Ivan Shynkarenka
-    \date 05.10.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_WAIT_RING_H
-#define CPPCOMMON_THREADS_WAIT_RING_H
+#ifndef BASEKIT_THREADS_WAIT_RING_H
+#define BASEKIT_THREADS_WAIT_RING_H
 
 #include "condition_variable.h"
 
 #include <cassert>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Multiple producers / multiple consumers wait ring
 /*!
@@ -107,8 +103,8 @@ private:
 
 /*! \example threads_wait_ring.cpp Multiple producers / multiple consumers wait ring example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "wait_ring.inl"
 
-#endif // CPPCOMMON_THREADS_WAIT_RING_H
+#endif // BASEKIT_THREADS_WAIT_RING_H

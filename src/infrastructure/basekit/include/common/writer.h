@@ -1,23 +1,20 @@
-/*!
-    \file writer.h
-    \brief Writer interface definition
-    \author Ivan Shynkarenka
-    \date 07.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_WRITER_H
-#define CPPCOMMON_WRITER_H
-
+#ifndef BASEKIT_WRITER_H
+#define BASEKIT_WRITER_H
 #include <string>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Writer interface
 /*!
-    Writer interface is based on a write byte buffer method and provides
-    functionality to write bytes buffer, text or text lines.
+    The Writer interface provides a common interface for writing data to different destinations.
+    It defines methods for writing bytes, text, and lines of text.
+    The implementation of this interface can be used to write data to files, network sockets,
+    or any other destination that supports writing data in a similar manner.
 */
 class Writer
 {
@@ -30,18 +27,18 @@ public:
     Writer& operator=(const Writer&) noexcept = default;
     Writer& operator=(Writer&&) noexcept = default;
 
-    //! Write a byte buffer base method
+    //! Write a byte buffer
     /*!
-        \param buffer - Buffer to write
-        \param size - Buffer size
-        \return Count of written bytes
+        \param buffer - Pointer to the buffer to write
+        \param size - Size of the buffer in bytes
+        \return The number of bytes written
     */
     virtual size_t Write(const void* buffer, size_t size) = 0;
 
     //! Write a text string
     /*!
-        \param text - Text string
-        \return Count of written characters
+        \param text - The text string to write
+        \return The number of characters written
     */
     size_t Write(const std::string& text);
     //! Write text lines
@@ -55,6 +52,6 @@ public:
     virtual void Flush() {}
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_WRITER_H
+#endif // BASEKIT_WRITER_H

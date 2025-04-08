@@ -1,13 +1,9 @@
-/*!
-    \file filters.h
-    \brief Logging filters definition
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_FILTERS_H
-#define CPPLOGGING_FILTERS_H
+#ifndef LOGGING_FILTERS_H
+#define LOGGING_FILTERS_H
 
 #include "logging/trigger.h"
 #include "logging/filters/logger_filter.h"
@@ -15,4 +11,4 @@
 #include "logging/filters/message_filter.h"
 #include "logging/filters/switch_filter.h"
 
-#endif // CPPLOGGING_FILTERS_H
+#endif // LOGGING_FILTERS_H

@@ -1,20 +1,16 @@
-/*!
-    \file wait_batcher.h
-    \brief Multiple producers / multiple consumers wait batcher definition
-    \author Ivan Shynkarenka
-    \date 13.03.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_WAIT_BATCHER_H
-#define CPPCOMMON_THREADS_WAIT_BATCHER_H
+#ifndef BASEKIT_THREADS_WAIT_BATCHER_H
+#define BASEKIT_THREADS_WAIT_BATCHER_H
 
 #include "condition_variable.h"
 
 #include <cassert>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Multiple producers / multiple consumers wait batcher
 /*!
@@ -116,8 +112,8 @@ private:
 
 /*! \example threads_wait_batcher.cpp Multiple producers / multiple consumers wait batcher example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "wait_batcher.inl"
 
-#endif // CPPCOMMON_THREADS_WAIT_BATCHER_H
+#endif // BASEKIT_THREADS_WAIT_BATCHER_H

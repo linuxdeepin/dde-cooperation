@@ -1,12 +1,8 @@
-/*!
-    \file shared_type.inl
-    \brief Shared memory type inline implementation
-    \author Ivan Shynkarenka
-    \date 23.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <typename T>
 inline SharedType<T>::SharedType(const std::string& name) : _shared(name, sizeof(T))
@@ -19,4 +15,4 @@ inline SharedType<T>::SharedType(const std::string& name) : _shared(name, sizeof
     }
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

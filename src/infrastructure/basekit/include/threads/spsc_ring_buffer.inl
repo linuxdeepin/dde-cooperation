@@ -1,12 +1,8 @@
-/*!
-    \file spsc_ring_buffer.inl
-    \brief Single producer / single consumer wait-free ring buffer inline implementation
-    \author Ivan Shynkarenka
-    \date 16.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 inline SPSCRingBuffer::SPSCRingBuffer(size_t capacity) : _capacity(capacity), _mask(capacity - 1), _buffer(new uint8_t[capacity]), _head(0), _tail(0)
 {
@@ -98,4 +94,4 @@ inline bool SPSCRingBuffer::Dequeue(void* data, size_t& size)
     return true;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

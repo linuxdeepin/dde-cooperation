@@ -1,19 +1,15 @@
-/*!
-    \file ssl_session.h
-    \brief SSL session definition
-    \author Ivan Shynkarenka
-    \date 30.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_SSL_SESSION_H
-#define CPPSERVER_ASIO_SSL_SESSION_H
+#ifndef NETUTIL_ASIO_SSL_SESSION_H
+#define NETUTIL_ASIO_SSL_SESSION_H
 
 #include "service.h"
 
 #include "system/uuid.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 class SSLServer;
@@ -42,7 +38,7 @@ public:
     SSLSession& operator=(SSLSession&&) = delete;
 
     //! Get the session Id
-    const CppCommon::UUID& id() const noexcept { return _id; }
+    const BaseKit::UUID& id() const noexcept { return _id; }
 
     //! Get the server
     std::shared_ptr<SSLServer>& server() noexcept { return _server; }
@@ -103,14 +99,14 @@ public:
         \param timeout - Timeout
         \return Size of sent data
     */
-    virtual size_t Send(const void* buffer, size_t size, const CppCommon::Timespan& timeout);
+    virtual size_t Send(const void* buffer, size_t size, const BaseKit::Timespan& timeout);
     //! Send text to the client with timeout (synchronous)
     /*!
         \param text - Text to send
         \param timeout - Timeout
         \return Size of sent text
     */
-    virtual size_t Send(std::string_view text, const CppCommon::Timespan& timeout) { return Send(text.data(), text.size(), timeout); }
+    virtual size_t Send(std::string_view text, const BaseKit::Timespan& timeout) { return Send(text.data(), text.size(), timeout); }
 
     //! Send data to the client (asynchronous)
     /*!
@@ -147,14 +143,14 @@ public:
         \param timeout - Timeout
         \return Size of received data
     */
-    virtual size_t Receive(void* buffer, size_t size, const CppCommon::Timespan& timeout);
+    virtual size_t Receive(void* buffer, size_t size, const BaseKit::Timespan& timeout);
     //! Receive text from the client with timeout (synchronous)
     /*!
         \param size - Text size to receive
         \param timeout - Timeout
         \return Received text
     */
-    virtual std::string Receive(size_t size, const CppCommon::Timespan& timeout);
+    virtual std::string Receive(size_t size, const BaseKit::Timespan& timeout);
 
     //! Receive data from the client (asynchronous)
     virtual void ReceiveAsync();
@@ -239,7 +235,7 @@ protected:
 
 private:
     // Session Id
-    CppCommon::UUID _id;
+    BaseKit::UUID _id;
     // Server & session
     std::shared_ptr<SSLServer> _server;
     // Asio IO service
@@ -296,6 +292,6 @@ private:
 };
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_ASIO_SSL_SESSION_H
+#endif // NETUTIL_ASIO_SSL_SESSION_H

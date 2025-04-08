@@ -1,14 +1,10 @@
-/*!
-    \file filesystem/exceptions.cpp
-    \brief File system exceptions implementation
-    \author Ivan Shynkarenka
-    \date 24.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filesystem/exceptions.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 std::string FileSystemException::string() const
 {
@@ -32,4 +28,4 @@ std::string FileSystemException::string() const
     return _cache;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

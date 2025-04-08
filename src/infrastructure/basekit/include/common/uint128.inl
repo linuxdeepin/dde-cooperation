@@ -1,13 +1,8 @@
-/*!
-    \file uint128.inl
-    \brief Unsigned 128-bit integer type inline implementation
-    \author Ivan Shynkarenka
-    \date 11.10.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
-
+namespace BaseKit {
 inline uint128_t::uint128_t() noexcept
     : _upper(0), _lower(0)
 {
@@ -186,29 +181,25 @@ inline void swap(uint128_t& value1, uint128_t& value2) noexcept
     value1.swap(value2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #if defined(FMT_VERSION)
 template <>
-struct fmt::formatter<CppCommon::uint128_t> : formatter<std::string_view>
-{
+struct fmt::formatter<BaseKit::uint128_t> : fmt::formatter<std::string_view> {
     template <typename FormatContext>
-    auto format(const CppCommon::uint128_t& value, FormatContext& ctx) const
-    {
-        return formatter<string_view>::format(value.string(10), ctx);
+    auto format(const BaseKit::uint128_t& value, FormatContext& ctx) const {
+        return fmt::formatter<std::string_view>::format(value.string(10), ctx);
     }
 };
 #endif
 
 //! \cond DOXYGEN_SKIP
 template <>
-struct std::hash<CppCommon::uint128_t>
-{
-    typedef CppCommon::uint128_t argument_type;
+struct std::hash<BaseKit::uint128_t> {
+    typedef BaseKit::uint128_t argument_type;
     typedef size_t result_type;
 
-    result_type operator() (const argument_type& value) const
-    {
+    result_type operator()(const argument_type& value) const {
         result_type result = 17;
         std::hash<uint64_t> hasher;
         result = result * 31 + hasher(value.upper());

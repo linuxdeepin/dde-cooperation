@@ -304,7 +304,7 @@ public:
 
 #if defined(LOGGING_PROTOCOL)
     //! Store logging format
-    friend CppLogging::Record& operator<<(CppLogging::Record& record, const decimal_t& value)
+    friend Logging::Record& operator<<(Logging::Record& record, const decimal_t& value)
     { return record.StoreCustom(value._value); }
 #endif
 
@@ -522,7 +522,7 @@ public:
 
 #if defined(LOGGING_PROTOCOL)
     //! Store logging format
-    friend CppLogging::Record& operator<<(CppLogging::Record& record, const uuid_t& uuid);
+    friend Logging::Record& operator<<(Logging::Record& record, const uuid_t& uuid);
 #endif
 
     //! Swap two instances

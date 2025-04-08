@@ -1,19 +1,15 @@
-/*!
-    \file ssl_session.cpp
-    \brief SSL session implementation
-    \author Ivan Shynkarenka
-    \date 30.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/ssl_session.h"
 #include "asio/ssl_server.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 SSLSession::SSLSession(const std::shared_ptr<SSLServer>& server)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _server(server),
       _io_service(server->service()->GetAsioService()),
       _strand(*_io_service),
@@ -244,7 +240,7 @@ size_t SSLSession::Send(const void* buffer, size_t size)
     return sent;
 }
 
-size_t SSLSession::Send(const void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t SSLSession::Send(const void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsHandshaked())
         return 0;
@@ -403,7 +399,7 @@ std::string SSLSession::Receive(size_t size)
     return text;
 }
 
-size_t SSLSession::Receive(void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t SSLSession::Receive(void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsHandshaked())
         return 0;
@@ -467,7 +463,7 @@ size_t SSLSession::Receive(void* buffer, size_t size, const CppCommon::Timespan&
     return received;
 }
 
-std::string SSLSession::Receive(size_t size, const CppCommon::Timespan& timeout)
+std::string SSLSession::Receive(size_t size, const BaseKit::Timespan& timeout)
 {
     std::string text(size, 0);
     text.resize(Receive(text.data(), text.size(), timeout));
@@ -663,4 +659,4 @@ void SSLSession::SendError(std::error_code ec)
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

@@ -1,10 +1,6 @@
-/*!
-    \file async_wait_free_processor.cpp
-    \brief Asynchronous wait-free logging processor implementation
-    \author Ivan Shynkarenka
-    \date 01.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/processors/async_wait_free_processor.h"
 
@@ -13,7 +9,7 @@
 
 #include <cassert>
 
-namespace CppLogging {
+namespace Logging {
 
 AsyncWaitFreeProcessor::AsyncWaitFreeProcessor(const std::shared_ptr<Layout>& layout, bool auto_start, size_t capacity, bool discard, const std::function<void ()>& on_thread_initialize, const std::function<void ()>& on_thread_clenup)
     : Processor(layout),
@@ -46,7 +42,7 @@ bool AsyncWaitFreeProcessor::Start()
     if (!started)
     {
         // Start processing thread
-        _thread = CppCommon::Thread::Start([this]() { ProcessThread(_on_thread_initialize, _on_thread_clenup); });
+        _thread = BaseKit::Thread::Start([this]() { ProcessThread(_on_thread_initialize, _on_thread_clenup); });
     }
 
     return true;
@@ -91,7 +87,7 @@ bool AsyncWaitFreeProcessor::EnqueueRecord(bool discard, Record& record)
 
         // If the overflow policy is blocking then yield if the queue is full
         while (!_queue.Enqueue(record))
-            CppCommon::Thread::Yield();
+            BaseKit::Thread::Yield();
     }
 
     return true;
@@ -108,7 +104,7 @@ void AsyncWaitFreeProcessor::ProcessThread(const std::function<void ()>& on_thre
     {
         // Thread local logger record to process
         thread_local Record record;
-        thread_local uint64_t previous = CppCommon::Timestamp::utc();
+        thread_local uint64_t previous = BaseKit::Timestamp::utc();
 
         while (_started)
         {
@@ -141,11 +137,11 @@ void AsyncWaitFreeProcessor::ProcessThread(const std::function<void ()>& on_thre
             else
             {
                 // Update the current timestamp
-                current = CppCommon::Timestamp::utc();
+                current = BaseKit::Timestamp::utc();
             }
 
             // Handle auto-flush period
-            if (CppCommon::Timespan((int64_t)(current - previous)).seconds() > 1)
+            if (BaseKit::Timespan((int64_t)(current - previous)).seconds() > 1)
             {
                 // Flush the logging processor
                 Processor::Flush();
@@ -156,7 +152,7 @@ void AsyncWaitFreeProcessor::ProcessThread(const std::function<void ()>& on_thre
 
             // Sleep for a while if the queue was empty
             if (empty)
-                CppCommon::Thread::Sleep(100);
+                BaseKit::Thread::Sleep(100);
         }
     }
     catch (const std::exception& ex)
@@ -188,4 +184,4 @@ void AsyncWaitFreeProcessor::Flush()
     EnqueueRecord(false, flush);
 }
 
-} // namespace CppLogging
+} // namespace Logging

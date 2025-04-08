@@ -1,13 +1,9 @@
-/*!
-    \file processors.h
-    \brief Logging processors definition
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_PROCESSORS_H
-#define CPPLOGGING_PROCESSORS_H
+#ifndef LOGGING_PROCESSORS_H
+#define LOGGING_PROCESSORS_H
 
 #include "logging/processors/exclusive_processor.h"
 #include "logging/processors/buffered_processor.h"
@@ -15,4 +11,4 @@
 #include "logging/processors/async_wait_processor.h"
 #include "logging/processors/async_wait_free_processor.h"
 
-#endif // CPPLOGGING_PROCESSORS_H
+#endif // LOGGING_PROCESSORS_H

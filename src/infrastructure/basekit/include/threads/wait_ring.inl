@@ -1,12 +1,8 @@
-/*!
-    \file wait_ring.inl
-    \brief Multiple producers / multiple consumers wait ring inline implementation
-    \author Ivan Shynkarenka
-    \date 05.10.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template<typename T>
 inline WaitRing<T>::WaitRing(size_t capacity) : _closed(false), _capacity(capacity - 1), _mask(capacity - 1), _head(0), _tail(0), _ring(capacity)
@@ -99,4 +95,4 @@ inline void WaitRing<T>::Close()
     _cv2.NotifyAll();
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

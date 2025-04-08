@@ -1,20 +1,17 @@
-/*!
-    \file shared_type.h
-    \brief Shared memory type definition
-    \author Ivan Shynkarenka
-    \date 23.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_SHARED_TYPE_H
-#define CPPCOMMON_SYSTEM_SHARED_TYPE_H
+
+#ifndef BASEKIT_SYSTEM_SHARED_TYPE_H
+#define BASEKIT_SYSTEM_SHARED_TYPE_H
 
 #include "system/shared_memory.h"
 
 #include <memory>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Shared memory type
 /*!
@@ -74,10 +71,9 @@ private:
     SharedMemory _shared;
 };
 
-/*! \example system_shared_type.cpp Shared memory type example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "shared_type.inl"
 
-#endif // CPPCOMMON_SYSTEM_SHARED_TYPE_H
+#endif // BASEKIT_SYSTEM_SHARED_TYPE_H

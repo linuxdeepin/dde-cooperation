@@ -1,12 +1,9 @@
-/*!
-    \file flatmap.inl
-    \brief Flat map container inline implementation
-    \author Ivan Shynkarenka
-    \date 27.07.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 template <typename TKey, typename TValue, typename TCompare, typename TAllocator>
 inline FlatMap<TKey, TValue, TCompare, TAllocator>::FlatMap(size_t capacity, const TCompare& compare, const TAllocator& allocator)
@@ -234,4 +231,4 @@ inline void swap(FlatMap<TKey, TValue, TCompare, TAllocator>& flatmap1, FlatMap<
     flatmap1.swap(flatmap2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

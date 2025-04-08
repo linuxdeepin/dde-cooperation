@@ -1,16 +1,12 @@
-/*!
-    \file errors/exceptions.cpp
-    \brief Exceptions implementation
-    \author Ivan Shynkarenka
-    \date 09.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "errors/exceptions.h"
 
 #include <sstream>
 
-namespace CppCommon {
+namespace BaseKit {
 
 const char* Exception::what() const noexcept
 {
@@ -56,4 +52,4 @@ std::string SystemException::string() const
     return _cache;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

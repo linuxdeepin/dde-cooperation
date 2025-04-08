@@ -1,20 +1,16 @@
-/*!
-    \file mutex.h
-    \brief Mutex synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 04.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_MUTEX_H
-#define CPPCOMMON_THREADS_MUTEX_H
+#ifndef BASEKIT_THREADS_MUTEX_H
+#define BASEKIT_THREADS_MUTEX_H
 
 #include "threads/locker.h"
 #include "time/timestamp.h"
 
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Mutex synchronization primitive
 /*!
@@ -88,6 +84,6 @@ private:
 
 /*! \example threads_mutex.cpp Mutex synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_THREADS_MUTEX_H
+#endif // BASEKIT_THREADS_MUTEX_H

@@ -1,17 +1,14 @@
-/*!
-    \file allocator.inl
-    \brief Memory allocator inline implementation
-    \author Ivan Shynkarenka
-    \date 17.04.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable: 4127) // C4127: conditional expression is constant
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <typename T, typename U, class TMemoryManager, bool nothrow>
 inline bool operator==(const Allocator<T, TMemoryManager, nothrow>& alloc1, const Allocator<U, TMemoryManager, nothrow>& alloc2) noexcept
@@ -180,7 +177,7 @@ inline void DefaultMemoryManager::reset()
     assert((_allocations == 0) && "Memory leak detected! Count of active memory allocations must be zero!");
 }
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #if defined(_MSC_VER)
 #pragma warning(pop)

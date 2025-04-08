@@ -1,17 +1,14 @@
-/*!
-    \file allocator_arena.h
-    \brief Arena memory allocator definition
-    \author Ivan Shynkarenka
-    \date 17.04.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_MEMORY_ALLOCATOR_ARENA_H
-#define CPPCOMMON_MEMORY_ALLOCATOR_ARENA_H
+
+#ifndef BASEKIT_MEMORY_ALLOCATOR_ARENA_H
+#define BASEKIT_MEMORY_ALLOCATOR_ARENA_H
 
 #include "allocator.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Arena memory manager class
 /*!
@@ -142,10 +139,9 @@ private:
 template <typename T, class TAuxMemoryManager = DefaultMemoryManager, bool nothrow = false>
 using ArenaAllocator = Allocator<T, ArenaMemoryManager<TAuxMemoryManager>, nothrow>;
 
-/*! \example memory_arena.cpp Arena memory allocator example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "allocator_arena.inl"
 
-#endif // CPPCOMMON_MEMORY_ALLOCATOR_ARENA_H
+#endif // BASEKIT_MEMORY_ALLOCATOR_ARENA_H

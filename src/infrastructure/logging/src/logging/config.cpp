@@ -1,14 +1,10 @@
-/*!
-    \file config.cpp
-    \brief Logger configuration implementation
-    \author Ivan Shynkarenka
-    \date 29.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/config.h"
 
-namespace CppLogging {
+namespace Logging {
 
 Config::~Config()
 {
@@ -20,7 +16,7 @@ void Config::ConfigLogger(const std::shared_ptr<Processor>& sink)
 {
     Config& instance = GetInstance();
 
-    CppCommon::Locker<CppCommon::CriticalSection> locker(instance._lock);
+    BaseKit::Locker<BaseKit::CriticalSection> locker(instance._lock);
 
     instance._config[""] = sink;
 }
@@ -29,7 +25,7 @@ void Config::ConfigLogger(const std::string& name, const std::shared_ptr<Process
 {
     Config& instance = GetInstance();
 
-    CppCommon::Locker<CppCommon::CriticalSection> locker(instance._lock);
+    BaseKit::Locker<BaseKit::CriticalSection> locker(instance._lock);
 
     instance._config[name] = sink;
 }
@@ -38,7 +34,7 @@ Logger Config::CreateLogger()
 {
     Config& instance = GetInstance();
 
-    CppCommon::Locker<CppCommon::CriticalSection> locker(instance._lock);
+    BaseKit::Locker<BaseKit::CriticalSection> locker(instance._lock);
 
     auto it = instance._working.find("");
     if (it != instance._working.end())
@@ -56,7 +52,7 @@ Logger Config::CreateLogger(const std::string& name)
 {
     Config& instance = GetInstance();
 
-    CppCommon::Locker<CppCommon::CriticalSection> locker(instance._lock);
+    BaseKit::Locker<BaseKit::CriticalSection> locker(instance._lock);
 
     auto it = instance._working.find(name);
     if (it != instance._working.end())
@@ -69,7 +65,7 @@ void Config::Startup()
 {
     Config& instance = GetInstance();
 
-    CppCommon::Locker<CppCommon::CriticalSection> locker(instance._lock);
+    BaseKit::Locker<BaseKit::CriticalSection> locker(instance._lock);
 
     // Update working logger processors map
     std::swap(instance._working, instance._config);
@@ -87,7 +83,7 @@ void Config::Shutdown()
 {
     Config& instance = GetInstance();
 
-    CppCommon::Locker<CppCommon::CriticalSection> locker(instance._lock);
+    BaseKit::Locker<BaseKit::CriticalSection> locker(instance._lock);
 
     // Flush and stop all working logger processors
     for (auto& processor : instance._working)
@@ -103,4 +99,4 @@ void Config::Shutdown()
     instance._working.clear();
 }
 
-} // namespace CppLogging
+} // namespace Logging

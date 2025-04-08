@@ -1,10 +1,6 @@
-/*!
-    \file debug_appender.cpp
-    \brief Debug appender implementation
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/appenders/debug_appender.h"
 
@@ -14,7 +10,7 @@
 #include <cstdio>
 #endif
 
-namespace CppLogging {
+namespace Logging {
 
 void DebugAppender::AppendRecord(Record& record)
 {
@@ -41,4 +37,4 @@ void DebugAppender::Flush()
 #endif
 }
 
-} // namespace CppLogging
+} // namespace Logging

@@ -1,12 +1,8 @@
-/*!
-    \file rolling_file_appender.inl
-    \brief Rolling file appender inline implementation
-    \author Ivan Shynkarenka
-    \date 12.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppLogging {
+namespace Logging {
 
 template <class TOutputStream>
 inline TOutputStream& operator<<(TOutputStream& stream, TimeRollingPolicy policy)
@@ -38,4 +34,4 @@ inline TOutputStream& operator<<(TOutputStream& stream, TimeRollingPolicy policy
     return stream;
 }
 
-} // namespace CppLogging
+} // namespace Logging

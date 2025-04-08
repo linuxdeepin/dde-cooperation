@@ -1,13 +1,9 @@
-/*!
-    \file mpmc_ring_queue.h
-    \brief Multiple producers / multiple consumers wait-free ring queue definition
-    \author Ivan Shynkarenka
-    \date 19.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_MPMC_RING_QUEUE_H
-#define CPPCOMMON_THREADS_MPMC_RING_QUEUE_H
+#ifndef BASEKIT_THREADS_MPMC_RING_QUEUE_H
+#define BASEKIT_THREADS_MPMC_RING_QUEUE_H
 
 #include <atomic>
 #include <cassert>
@@ -15,7 +11,7 @@
 #include <cstring>
 #include <utility>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Multiple producers / multiple consumers wait-free ring queue
 /*!
@@ -110,8 +106,8 @@ private:
 
 /*! \example threads_mpmc_ring_queue.cpp Multiple producers / multiple consumers wait-free ring queue example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "mpmc_ring_queue.inl"
 
-#endif // CPPCOMMON_THREADS_MPMC_RING_QUEUE_H
+#endif // BASEKIT_THREADS_MPMC_RING_QUEUE_H

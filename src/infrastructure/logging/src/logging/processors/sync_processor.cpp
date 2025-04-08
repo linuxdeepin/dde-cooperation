@@ -1,18 +1,14 @@
-/*!
-    \file sync_processor.cpp
-    \brief Synchronous logging processor implementation
-    \author Ivan Shynkarenka
-    \date 28.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/processors/sync_processor.h"
 
-namespace CppLogging {
+namespace Logging {
 
 bool SyncProcessor::ProcessRecord(Record& record)
 {
-    CppCommon::Locker<CppCommon::CriticalSection> locker(_lock);
+    BaseKit::Locker<BaseKit::CriticalSection> locker(_lock);
 
     // Process the given logging record under the critical section lock
     return Processor::ProcessRecord(record);
@@ -20,10 +16,10 @@ bool SyncProcessor::ProcessRecord(Record& record)
 
 void SyncProcessor::Flush()
 {
-    CppCommon::Locker<CppCommon::CriticalSection> locker(_lock);
+    BaseKit::Locker<BaseKit::CriticalSection> locker(_lock);
 
     // Flush under the critical section lock
     return Processor::Flush();
 }
 
-} // namespace CppLogging
+} // namespace Logging

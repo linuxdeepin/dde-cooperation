@@ -1,13 +1,9 @@
-/*!
-    \file async_wait_free_queue.h
-    \brief Asynchronous wait-free logging ring queue definition
-    \author Ivan Shynkarenka
-    \date 04.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_PROCESSORS_ASYNC_WAIT_FREE_QUEUE_H
-#define CPPLOGGING_PROCESSORS_ASYNC_WAIT_FREE_QUEUE_H
+#ifndef LOGGING_PROCESSORS_ASYNC_WAIT_FREE_QUEUE_H
+#define LOGGING_PROCESSORS_ASYNC_WAIT_FREE_QUEUE_H
 
 #include "logging/record.h"
 
@@ -17,7 +13,7 @@
 #include <cstring>
 #include <utility>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Asynchronous wait-free logging ring queue
 /*!
@@ -92,8 +88,8 @@ private:
     cache_line_pad _pad3;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
 #include "async_wait_free_queue.inl"
 
-#endif // CPPLOGGING_PROCESSORS_ASYNC_WAIT_FREE_QUEUE_H
+#endif // LOGGING_PROCESSORS_ASYNC_WAIT_FREE_QUEUE_H

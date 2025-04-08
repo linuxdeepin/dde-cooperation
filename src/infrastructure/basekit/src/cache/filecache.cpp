@@ -1,14 +1,10 @@
-/*!
-    \file filecache.cpp
-    \brief File cache implementation
-    \author Ivan Shynkarenka
-    \date 14.05.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cache/filecache.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 bool FileCache::emplace(std::string&& key, std::string&& value, const Timespan& timeout)
 {
@@ -101,7 +97,7 @@ bool FileCache::remove_internal(const std::string& key)
     return true;
 }
 
-bool FileCache::insert_path(const CppCommon::Path& path, const std::string& prefix, const Timespan& timeout, const InsertHandler& handler)
+bool FileCache::insert_path(const BaseKit::Path& path, const std::string& prefix, const Timespan& timeout, const InsertHandler& handler)
 {
     // Try to find and remove the previous path
     remove_path_internal(path);
@@ -126,17 +122,17 @@ bool FileCache::insert_path(const CppCommon::Path& path, const std::string& pref
     return true;
 }
 
-bool FileCache::insert_path_internal(const CppCommon::Path& path, const std::string& prefix, const Timespan& timeout, const InsertHandler& handler)
+bool FileCache::insert_path_internal(const BaseKit::Path& path, const std::string& prefix, const Timespan& timeout, const InsertHandler& handler)
 {
     try
     {
         const std::string key_prefix = (prefix.empty() || (prefix == "/")) ? "/" : (prefix + "/");
 
         // Iterate through all directory entries
-        for (const auto& item : CppCommon::Directory(path))
+        for (const auto& item : BaseKit::Directory(path))
         {
-            const CppCommon::Path entry = item.IsSymlink() ? Symlink(item).target() : item;
-            const std::string key = key_prefix + CppCommon::Encoding::URLDecode(item.filename().string());
+            const BaseKit::Path entry = item.IsSymlink() ? Symlink(item).target() : item;
+            const std::string key = key_prefix + BaseKit::Encoding::URLDecode(item.filename().string());
 
             if (entry.IsDirectory())
             {
@@ -149,21 +145,21 @@ bool FileCache::insert_path_internal(const CppCommon::Path& path, const std::str
                 try
                 {
                     // Load the cache file content
-                    auto content = CppCommon::File::ReadAllBytes(entry);
+                    auto content = BaseKit::File::ReadAllBytes(entry);
                     std::string value(content.begin(), content.end());
                     if (!handler(*this, key, value, timeout))
                         return false;
                 }
-                catch (const CppCommon::FileSystemException&) { return false; }
+                catch (const BaseKit::FileSystemException&) { return false; }
             }
         }
 
         return true;
     }
-    catch (const CppCommon::FileSystemException&) { return false; }
+    catch (const BaseKit::FileSystemException&) { return false; }
 }
 
-bool FileCache::find_path(const CppCommon::Path& path)
+bool FileCache::find_path(const BaseKit::Path& path)
 {
     std::shared_lock<std::shared_mutex> locker(_lock);
 
@@ -175,7 +171,7 @@ bool FileCache::find_path(const CppCommon::Path& path)
     return true;
 }
 
-bool FileCache::find_path(const CppCommon::Path& path, Timestamp& timeout)
+bool FileCache::find_path(const BaseKit::Path& path, Timestamp& timeout)
 {
     std::shared_lock<std::shared_mutex> locker(_lock);
 
@@ -188,12 +184,12 @@ bool FileCache::find_path(const CppCommon::Path& path, Timestamp& timeout)
     return true;
 }
 
-bool FileCache::remove_path(const CppCommon::Path& path)
+bool FileCache::remove_path(const BaseKit::Path& path)
 {
     return remove_path_internal(path);
 }
 
-bool FileCache::remove_path_internal(const CppCommon::Path& path)
+bool FileCache::remove_path_internal(const BaseKit::Path& path)
 {
     std::unique_lock<std::shared_mutex> locker(_lock);
 
@@ -283,4 +279,4 @@ void FileCache::swap(FileCache& cache) noexcept
     swap(_paths_by_timestamp, cache._paths_by_timestamp);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

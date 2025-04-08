@@ -1,17 +1,14 @@
-/*!
-    \file system_error.h
-    \brief System error definition
-    \author Ivan Shynkarenka
-    \date 09.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_ERRORS_SYSTEM_ERROR_H
-#define CPPCOMMON_ERRORS_SYSTEM_ERROR_H
+
+#ifndef BASEKIT_ERRORS_SYSTEM_ERROR_H
+#define BASEKIT_ERRORS_SYSTEM_ERROR_H
 
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! System error
 /*!
@@ -58,8 +55,7 @@ public:
     static std::string Description(int error);
 };
 
-/*! \example errors_system_error.cpp System error example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_ERRORS_SYSTEM_ERROR_H
+#endif // BASEKIT_ERRORS_SYSTEM_ERROR_H

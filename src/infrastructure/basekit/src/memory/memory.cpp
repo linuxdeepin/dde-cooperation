@@ -1,10 +1,6 @@
-/*!
-    \file memory.cpp
-    \brief Memory management implementation
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #if defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
 #define __STDC_WANT_LIB_EXT1__ 1
@@ -28,7 +24,7 @@
 #include <wincrypt.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 int64_t Memory::RamTotal()
 {
@@ -156,4 +152,4 @@ void Memory::CryptoFill(void* buffer, size_t size)
 #endif
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

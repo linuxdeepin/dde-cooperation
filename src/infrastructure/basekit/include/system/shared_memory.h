@@ -1,20 +1,17 @@
-/*!
-    \file shared_memory.h
-    \brief Shared memory manager definition
-    \author Ivan Shynkarenka
-    \date 19.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_SHARED_MEMORY_H
-#define CPPCOMMON_SYSTEM_SHARED_MEMORY_H
+
+#ifndef BASEKIT_SYSTEM_SHARED_MEMORY_H
+#define BASEKIT_SYSTEM_SHARED_MEMORY_H
 
 #include "errors/exceptions.h"
 
 #include <memory>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Shared memory manager
 /*!
@@ -71,8 +68,7 @@ private:
     size_t _size;
 };
 
-/*! \example system_shared_memory.cpp Shared memory manager example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_SYSTEM_SHARED_MEMORY_H
+#endif // BASEKIT_SYSTEM_SHARED_MEMORY_H

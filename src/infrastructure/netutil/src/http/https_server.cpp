@@ -1,26 +1,22 @@
-/*!
-    \file https_server.cpp
-    \brief HTTPS server implementation
-    \author Ivan Shynkarenka
-    \date 30.04.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "http/https_server.h"
 
 #include "string/format.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace HTTP {
 
-void HTTPSServer::AddStaticContent(const CppCommon::Path& path, const std::string& prefix, const CppCommon::Timespan& timeout)
+void HTTPSServer::AddStaticContent(const BaseKit::Path& path, const std::string& prefix, const BaseKit::Timespan& timeout)
 {
-    auto hanlder = [](CppCommon::FileCache & cache, const std::string& key, const std::string& value, const CppCommon::Timespan& timespan)
+    auto hanlder = [](BaseKit::FileCache & cache, const std::string& key, const std::string& value, const BaseKit::Timespan& timespan)
     {
         auto response = HTTPResponse();
         response.SetBegin(200);
-        response.SetContentType(CppCommon::Path(key).extension().string());
-        response.SetHeader("Cache-Control", CppCommon::format("max-age={}", timespan.seconds()));
+        response.SetContentType(BaseKit::Path(key).extension().string());
+        response.SetHeader("Cache-Control", BaseKit::format("max-age={}", timespan.seconds()));
         response.SetBody(value);
         return cache.insert(key, response.cache(), timespan);
     };
@@ -29,4 +25,4 @@ void HTTPSServer::AddStaticContent(const CppCommon::Path& path, const std::strin
 }
 
 } // namespace HTTP
-} // namespace CppServer
+} // namespace NetUtil

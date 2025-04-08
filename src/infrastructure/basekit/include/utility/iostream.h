@@ -1,17 +1,13 @@
-/*!
-    \file iostream.h
-    \brief I/O stream helpers definition
-    \author Ivan Shynkarenka
-    \date 04.08.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_UTILITY_IOSTREAM_H
-#define CPPCOMMON_UTILITY_IOSTREAM_H
+#ifndef BASEKIT_UTILITY_IOSTREAM_H
+#define BASEKIT_UTILITY_IOSTREAM_H
 
 #include <iostream>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Write character stream manipulator
 class WriteChar
@@ -99,6 +95,6 @@ private:
     size_t _size;
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_UTILITY_IOSTREAM_H
+#endif // BASEKIT_UTILITY_IOSTREAM_H

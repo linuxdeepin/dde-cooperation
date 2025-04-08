@@ -1,10 +1,6 @@
-/*!
-    \file named_semaphore.cpp
-    \brief Named semaphore synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 14.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/named_semaphore.h"
 
@@ -27,7 +23,7 @@
 #undef min
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -207,4 +203,4 @@ bool NamedSemaphore::TryLockFor(const Timespan& timespan) { return impl().TryLoc
 void NamedSemaphore::Lock() { impl().Lock(); }
 void NamedSemaphore::Unlock() { impl().Unlock(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

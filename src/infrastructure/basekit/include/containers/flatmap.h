@@ -1,13 +1,9 @@
-/*!
-    \file flatmap.h
-    \brief Flat map container definition
-    \author Ivan Shynkarenka
-    \date 27.07.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_CONTAINERS_FLATMAP_H
-#define CPPCOMMON_CONTAINERS_FLATMAP_H
+#ifndef BASEKIT_CONTAINERS_FLATMAP_H
+#define BASEKIT_CONTAINERS_FLATMAP_H
 
 #include <algorithm>
 #include <cstddef>
@@ -17,17 +13,8 @@
 #include <stdexcept>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
-//! Flat map container
-/*!
-    Flat map is an efficient  structure  for  associative  keys/value  storing  and
-    accessing with keeping order. All key/value items  are  stored  in  the  sorted
-    array container with using binary search algorithm to  find  the  item  by  the
-    given key.
-
-    Not thread-safe.
-*/
 template <typename TKey, typename TValue, typename TCompare = std::less<TKey>, typename TAllocator = std::allocator<std::pair<TKey, TValue>>>
 class FlatMap
 {
@@ -234,10 +221,9 @@ private:
     iterator emplace_hint_internal(const const_iterator& position, const TKey& key, Args&&... args);
 };
 
-/*! \example containers_flatmap.cpp Flat map container example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "flatmap.inl"
 
-#endif // CPPCOMMON_CONTAINERS_FLATMAP_H
+#endif // BASEKIT_CONTAINERS_FLATMAP_H

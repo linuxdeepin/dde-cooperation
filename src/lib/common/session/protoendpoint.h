@@ -14,7 +14,7 @@
 // hearbeat timeout
 #define HEARTBEAT_INTERVAL 2
 
-using CppServer::Asio::Timer;
+using NetUtil::Asio::Timer;
 using RpcHandler = std::function<void(int32_t type, const std::string &response)>;
 
 class ProtoEndpoint: public FBE::proto::FinalClient

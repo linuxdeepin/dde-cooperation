@@ -1,13 +1,9 @@
-/*!
-    \file filecache.h
-    \brief File cache definition
-    \author Ivan Shynkarenka
-    \date 14.05.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_CACHE_FILECACHE_H
-#define CPPCOMMON_CACHE_FILECACHE_H
+#ifndef BASEKIT_CACHE_FILECACHE_H
+#define BASEKIT_CACHE_FILECACHE_H
 
 #include "filesystem/directory.h"
 #include "filesystem/file.h"
@@ -24,14 +20,9 @@
 #include <tuple>
 #include <unordered_map>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! File cache
-/*!
-    File cache is used to cache files in memory with optional timeouts.
-
-    Thread-safe.
-*/
 class FileCache
 {
 public:
@@ -102,28 +93,28 @@ public:
         \param handler - Cache insert handler (default is 'return cache.insert(key, value, timeout)')
         \return 'true' if the cache path was setup, 'false' if failed to setup the cache path
     */
-    bool insert_path(const CppCommon::Path& path, const std::string& prefix = "/", const Timespan& timeout = Timespan(0), const InsertHandler& handler = [](FileCache& cache, const std::string& key, const std::string& value, const Timespan& timeout){ return cache.insert(key, value, timeout); });
+    bool insert_path(const BaseKit::Path& path, const std::string& prefix = "/", const Timespan& timeout = Timespan(0), const InsertHandler& handler = [](FileCache& cache, const std::string& key, const std::string& value, const Timespan& timeout){ return cache.insert(key, value, timeout); });
 
     //! Try to find the cache path
     /*!
         \param path - Path to find
         \return 'true' if the cache path was found, 'false' if the given path was not found
     */
-    bool find_path(const CppCommon::Path& path);
+    bool find_path(const BaseKit::Path& path);
     //! Try to find the cache path with timeout
     /*!
         \param path - Path to find
         \param timeout - Cache timeout value
         \return 'true' if the cache path was found, 'false' if the given path was not found
     */
-    bool find_path(const CppCommon::Path& path, Timestamp& timeout);
+    bool find_path(const BaseKit::Path& path, Timestamp& timeout);
 
     //! Remove the cache path from the file cache
     /*!
         \param path - Path to remove
         \return 'true' if the cache path was removed, 'false' if the given path was not found
     */
-    bool remove_path(const CppCommon::Path& path);
+    bool remove_path(const BaseKit::Path& path);
 
     //! Clear the memory cache
     void clear();
@@ -163,18 +154,17 @@ private:
 
     std::unordered_map<std::string, MemCacheEntry> _entries_by_key;
     std::map<Timestamp, std::string> _entries_by_timestamp;
-    std::map<CppCommon::Path, FileCacheEntry> _paths_by_key;
-    std::map<Timestamp, CppCommon::Path> _paths_by_timestamp;
+    std::map<BaseKit::Path, FileCacheEntry> _paths_by_key;
+    std::map<Timestamp, BaseKit::Path> _paths_by_timestamp;
 
     bool remove_internal(const std::string& key);
-    bool insert_path_internal(const CppCommon::Path& path, const std::string& prefix, const Timespan& timeout, const InsertHandler& handler);
-    bool remove_path_internal(const CppCommon::Path& path);
+    bool insert_path_internal(const BaseKit::Path& path, const std::string& prefix, const Timespan& timeout, const InsertHandler& handler);
+    bool remove_path_internal(const BaseKit::Path& path);
 };
 
-/*! \example cache_filecache.cpp File cache example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "filecache.inl"
 
-#endif // CPPCOMMON_CACHE_FILECACHE_H
+#endif // BASEKIT_CACHE_FILECACHE_H

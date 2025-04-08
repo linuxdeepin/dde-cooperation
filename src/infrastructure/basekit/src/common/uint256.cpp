@@ -1,14 +1,10 @@
-/*!
-    \file uint256.cpp
-    \brief Unsigned 256-bit integer type implementation
-    \author Ivan Shynkarenka
-    \date 11.10.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "common/uint256.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 uint256_t operator*(const uint256_t& value1, const uint256_t& value2) noexcept
 {
@@ -193,4 +189,4 @@ std::pair<uint256_t, uint256_t> uint256_t::divmod(const uint256_t& x, const uint
     return result;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

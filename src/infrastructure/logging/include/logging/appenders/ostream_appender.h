@@ -1,19 +1,15 @@
-/*!
-    \file ostream_appender.h
-    \brief Output stream (std::ostream) appender definition
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_APPENDERS_OSTREAM_APPENDER_H
-#define CPPLOGGING_APPENDERS_OSTREAM_APPENDER_H
+#ifndef LOGGING_APPENDERS_OSTREAM_APPENDER_H
+#define LOGGING_APPENDERS_OSTREAM_APPENDER_H
 
 #include "logging/appender.h"
 
 #include <iostream>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Output stream (std::ostream) appender
 /*!
@@ -45,6 +41,6 @@ private:
     std::ostream& _ostream;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_APPENDERS_OSTREAM_APPENDER_H
+#endif // LOGGING_APPENDERS_OSTREAM_APPENDER_H

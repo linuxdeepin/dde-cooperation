@@ -1,14 +1,10 @@
-/*!
-    \file memory_appender.cpp
-    \brief Memory appender implementation
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/appenders/memory_appender.h"
 
-namespace CppLogging {
+namespace Logging {
 
 void MemoryAppender::AppendRecord(Record& record)
 {
@@ -20,4 +16,4 @@ void MemoryAppender::AppendRecord(Record& record)
     _buffer.insert(_buffer.end(), record.raw.begin(), record.raw.end());
 }
 
-} // namespace CppLogging
+} // namespace Logging

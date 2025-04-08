@@ -1,12 +1,9 @@
-/*!
-    \file directory_iterator.inl
-    \brief Filesystem directory iterator inline implementation
-    \author Ivan Shynkarenka
-    \date 04.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 inline bool operator==(const DirectoryIterator& it1, const DirectoryIterator& it2) noexcept
 {
@@ -39,4 +36,4 @@ inline void swap(DirectoryIterator& it1, DirectoryIterator& it2) noexcept
     it1.swap(it2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

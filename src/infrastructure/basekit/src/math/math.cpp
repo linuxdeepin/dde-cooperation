@@ -1,10 +1,6 @@
-/*!
-    \file math.cpp
-    \brief Math implementation
-    \author Ivan Shynkarenka
-    \date 01.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "math/math.h"
 
@@ -12,7 +8,7 @@
 #include <intrin.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 uint64_t Math::MulDiv64(uint64_t operant, uint64_t multiplier, uint64_t divider)
 {
@@ -314,4 +310,4 @@ done:
 #endif
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

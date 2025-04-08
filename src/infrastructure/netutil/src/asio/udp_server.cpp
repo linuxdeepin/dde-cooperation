@@ -1,18 +1,14 @@
-/*!
-    \file udp_server.cpp
-    \brief UDP server implementation
-    \author Ivan Shynkarenka
-    \date 22.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/udp_server.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 UDPServer::UDPServer(const std::shared_ptr<Service>& service, int port, InternetProtocol protocol)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -32,7 +28,7 @@ UDPServer::UDPServer(const std::shared_ptr<Service>& service, int port, Internet
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     // Prepare endpoint
     switch (protocol)
@@ -47,7 +43,7 @@ UDPServer::UDPServer(const std::shared_ptr<Service>& service, int port, Internet
 }
 
 UDPServer::UDPServer(const std::shared_ptr<Service>& service, const std::string& address, int port)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -68,14 +64,14 @@ UDPServer::UDPServer(const std::shared_ptr<Service>& service, const std::string&
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     // Prepare endpoint
     _endpoint = asio::ip::udp::endpoint(asio::ip::make_address(address), (unsigned short)port);
 }
 
 UDPServer::UDPServer(const std::shared_ptr<Service>& service, const asio::ip::udp::endpoint& endpoint)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -95,7 +91,7 @@ UDPServer::UDPServer(const std::shared_ptr<Service>& service, const asio::ip::ud
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 }
 
 size_t UDPServer::option_receive_buffer_size() const
@@ -229,7 +225,7 @@ bool UDPServer::Restart()
         return false;
 
     while (IsStarted())
-        CppCommon::Thread::Yield();
+        BaseKit::Thread::Yield();
 
     return Start();
 }
@@ -240,7 +236,7 @@ size_t UDPServer::Multicast(const void* buffer, size_t size)
     return Send(_multicast_endpoint, buffer, size);
 }
 
-size_t UDPServer::Multicast(const void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t UDPServer::Multicast(const void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     // Send the datagram to the multicast endpoint
     return Send(_multicast_endpoint, buffer, size, timeout);
@@ -285,7 +281,7 @@ size_t UDPServer::Send(const asio::ip::udp::endpoint& endpoint, const void* buff
     return sent;
 }
 
-size_t UDPServer::Send(const asio::ip::udp::endpoint& endpoint, const void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t UDPServer::Send(const asio::ip::udp::endpoint& endpoint, const void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsStarted())
         return 0;
@@ -463,7 +459,7 @@ std::string UDPServer::Receive(asio::ip::udp::endpoint& endpoint, size_t size)
     return text;
 }
 
-size_t UDPServer::Receive(asio::ip::udp::endpoint& endpoint, void* buffer, size_t size, const CppCommon::Timespan& timeout)
+size_t UDPServer::Receive(asio::ip::udp::endpoint& endpoint, void* buffer, size_t size, const BaseKit::Timespan& timeout)
 {
     if (!IsStarted())
         return 0;
@@ -520,7 +516,7 @@ size_t UDPServer::Receive(asio::ip::udp::endpoint& endpoint, void* buffer, size_
     return received;
 }
 
-std::string UDPServer::Receive(asio::ip::udp::endpoint& endpoint, size_t size, const CppCommon::Timespan& timeout)
+std::string UDPServer::Receive(asio::ip::udp::endpoint& endpoint, size_t size, const BaseKit::Timespan& timeout)
 {
     std::string text(size, 0);
     text.resize(Receive(endpoint, text.data(), text.size(), timeout));
@@ -615,4 +611,4 @@ void UDPServer::SendError(std::error_code ec)
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

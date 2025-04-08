@@ -1,13 +1,9 @@
-/*!
-    \file process.h
-    \brief Process definition
-    \author Ivan Shynkarenka
-    \date 01.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_PROCESS_H
-#define CPPCOMMON_SYSTEM_PROCESS_H
+#ifndef BASEKIT_SYSTEM_PROCESS_H
+#define BASEKIT_SYSTEM_PROCESS_H
 
 #include "errors/exceptions.h"
 #include "system/pipe.h"
@@ -23,9 +19,9 @@
 /*!
     Get the current process Id.
 */
-#define __PROCESS__ CppCommon::Process::CurrentProcessId()
+#define __PROCESS__ BaseKit::Process::CurrentProcessId()
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Process abstraction
 /*!
@@ -146,11 +142,9 @@ private:
     Process(uint64_t pid);
 };
 
-/*! \example system_process.cpp Process example */
-/*! \example system_process_pipes.cpp Process pipes example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "process.inl"
 
-#endif // CPPCOMMON_SYSTEM_PROCESS_H
+#endif // BASEKIT_SYSTEM_PROCESS_H

@@ -1,19 +1,16 @@
-/*!
-    \file directory_iterator.h
-    \brief Filesystem directory iterator definition
-    \author Ivan Shynkarenka
-    \date 04.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_FILESYSTEM_DIRECTORY_ITERATOR_H
-#define CPPCOMMON_FILESYSTEM_DIRECTORY_ITERATOR_H
+
+#ifndef BASEKIT_FILESYSTEM_DIRECTORY_ITERATOR_H
+#define BASEKIT_FILESYSTEM_DIRECTORY_ITERATOR_H
 
 #include "filesystem/path.h"
 
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Filesystem directory iterator
 /*!
@@ -68,8 +65,8 @@ private:
     DirectoryIterator(const Path& parent, bool recursive);
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "directory_iterator.inl"
 
-#endif // CPPCOMMON_FILESYSTEM_DIRECTORY_ITERATOR_H
+#endif // BASEKIT_FILESYSTEM_DIRECTORY_ITERATOR_H

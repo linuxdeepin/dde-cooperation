@@ -1,16 +1,12 @@
-/*!
-    \file writer.cpp
-    \brief Writer interface implementation
-    \author Ivan Shynkarenka
-    \date 07.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "common/writer.h"
 
 #include "system/environment.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 size_t Writer::Write(const std::string& text)
 {
@@ -33,4 +29,4 @@ size_t Writer::Write(const std::vector<std::string>& lines)
     return result;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

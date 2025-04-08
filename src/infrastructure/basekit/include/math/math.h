@@ -1,17 +1,14 @@
-/*!
-    \file math.h
-    \brief Math definition
-    \author Ivan Shynkarenka
-    \date 01.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_MATH_MATH_H
-#define CPPCOMMON_MATH_MATH_H
+
+#ifndef BASEKIT_MATH_MATH_H
+#define BASEKIT_MATH_MATH_H
 
 #include <cstdint>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Math static class
 /*!
@@ -58,10 +55,9 @@ public:
     static uint64_t MulDiv64(uint64_t operant, uint64_t multiplier, uint64_t divider);
 };
 
-/*! \example math_math.cpp Math example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "math.inl"
 
-#endif // CPPCOMMON_MATH_MATH_H
+#endif // BASEKIT_MATH_MATH_H

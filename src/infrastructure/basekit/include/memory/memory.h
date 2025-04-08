@@ -1,13 +1,10 @@
-/*!
-    \file memory.h
-    \brief Memory management definition
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_MEMORY_MEMORY_H
-#define CPPCOMMON_MEMORY_MEMORY_H
+
+#ifndef BASEKIT_MEMORY_MEMORY_H
+#define BASEKIT_MEMORY_MEMORY_H
 
 #include "errors/exceptions.h"
 
@@ -20,7 +17,7 @@
 #include <limits>
 #include <memory>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Memory management static class
 /*!
@@ -98,10 +95,9 @@ public:
     static void CryptoFill(void* buffer, size_t size);
 };
 
-/*! \example memory_memory.cpp Memory management example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "memory.inl"
 
-#endif // CPPCOMMON_MEMORY_MEMORY_H
+#endif // BASEKIT_MEMORY_MEMORY_H

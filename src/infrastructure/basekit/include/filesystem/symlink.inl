@@ -1,12 +1,9 @@
-/*!
-    \file symlink.inl
-    \brief Filesystem symlink inline implementation
-    \author Ivan Shynkarenka
-    \date 30.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 inline void Symlink::swap(Symlink& symlink) noexcept
 {
@@ -19,4 +16,4 @@ inline void swap(Symlink& symlink1, Symlink& symlink2) noexcept
     symlink1.swap(symlink2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

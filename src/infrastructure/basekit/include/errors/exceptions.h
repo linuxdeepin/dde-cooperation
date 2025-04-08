@@ -1,13 +1,10 @@
-/*!
-    \file include/errors/exceptions.h
-    \brief Exceptions definition
-    \author Ivan Shynkarenka
-    \date 09.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_ERRORS_EXCEPTIONS_H
-#define CPPCOMMON_ERRORS_EXCEPTIONS_H
+
+#ifndef BASEKIT_ERRORS_EXCEPTIONS_H
+#define BASEKIT_ERRORS_EXCEPTIONS_H
 
 #include "errors/system_error.h"
 #include "system/source_location.h"
@@ -22,7 +19,7 @@
 */
 #define throwex throw __LOCATION__ +
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Exception
 /*!
@@ -150,8 +147,8 @@ protected:
     std::string _system_message;
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#include "exceptions.inl"
+// #include "exceptions.inl"
 
-#endif // CPPCOMMON_ERRORS_EXCEPTIONS_H
+#endif // BASEKIT_ERRORS_EXCEPTIONS_H

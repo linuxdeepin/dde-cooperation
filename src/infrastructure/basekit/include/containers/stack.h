@@ -1,19 +1,16 @@
-/*!
-    \file stack.h
-    \brief Intrusive stack container definition
-    \author Ivan Shynkarenka
-    \date 20.06.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_CONTAINERS_STACK_H
-#define CPPCOMMON_CONTAINERS_STACK_H
+
+#ifndef BASEKIT_CONTAINERS_STACK_H
+#define BASEKIT_CONTAINERS_STACK_H
 
 #include <cassert>
 #include <cstddef>
 #include <iterator>
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <typename T>
 class StackIterator;
@@ -21,86 +18,6 @@ template <typename T>
 class StackConstIterator;
 
 //! Intrusive stack container
-/*!
-    Stack  represents  container  with  LIFO  (last  in  -  first  out)  stock
-    algorithm. For example, you insert item A into stack. Then you insert item
-    B into stack. There is an item B on the top of the stack.  After  removing
-    item B, there will be an item A on the top of the stack.
-
-    \code
-      Top-<--- Insert here
-       |
-    +-----+         +-----+         +-----+         +-----+
-    |     |    Next |     |    Next |     |    Next |     |    Next
-    |  1  |-------->|  2  |-------->|  3  |-------->|  4  |--------> NULL
-    |     |         |     |         |     |         |     |
-    +-----+         +-----+         +-----+         +-----+
-       |
-       +-->--- Remove from here
-    \endcode
-
-    Not thread-safe.
-
-    <b>Overview</b>\n
-    \image html Stack.png "Stack"
-    In computer science, a stack is a temporary abstract data  type  and  data
-    structure based on the principle of Last In First Out (LIFO).  Stacks  are
-    used extensively at every level of a modern computer system. For  example,
-    a modern PC uses stacks at the architecture level, which are used  to  run
-    an operating system. The operating system also uses stacks, which are used
-    to run a Java Virtual Machine, which  is  stack  oriented,  and  the  Java
-    language itself has a class called "Stack",  which  can  be  used  by  the
-    programmer. The stack is ubiquitous.
-
-    A stack-based computer system is one  that  stores  temporary  information
-    primarily in stacks, rather than hardware CPU registers (a  register-based
-    computer system).
-
-    <b>Abstract data type</b>\n
-    As an abstract data type, the stack is a  container  (data  structure)  of
-    nodes and has two basic operations: push and pop. Push adds a  given  node
-    to the top of the stack leaving previous  nodes  below.  Pop  removes  and
-    returns the current top node of the stack. A frequently used  metaphor  is
-    the idea of a stack of plates in a spring loaded cafeteria stack. In  such
-    a stack, only the top plate is visible and accessible  to  the  user,  all
-    other plates remain hidden. As new plates are  added  (pushed),  each  new
-    plate becomes the top of the stack, and hides each plate below. As  plates
-    are removed (popped) from the stack, they can be used,  and  second  plate
-    becomes the top of the stack. Two important principles are illustrated  by
-    this metaphor, the Last In First Out principle is one. The second is  that
-    the contents of the stack are hidden. Only the top plate is visible, so to
-    see what is on the third plate, the first and second plates will  have  to
-    be removed.
-
-    <b>Other Operations</b>\n
-    In modern computer languages, the stack is usually implemented  with  more
-    operations than just "push" and "pop". The length of a stack can often  be
-    returned as a parameter. Another helper  operation  peek  can  return  the
-    current top node of the stack without removing it from the stack.
-
-    <b>Implementation</b>\n
-    A typical storage requirement for a stack  of  n  elements  is  O(n).  The
-    typical time requirement of O(1) operations is also easy to  satisfy  with
-    an dynamic array or (singly) linked list implementation.
-
-    <b>History</b>\n
-    The stack method of expression evaluation  was  first  proposed  by  early
-    German computer scientist F.L.  Bauer,  who  received  the  IEEE  Computer
-    Society Pioneer Award in 1988 for his work on Computer Stacks.
-
-    <b>References</b>\n
-    \li Donald Knuth. The Art of Computer Programming, Volume  1:  Fundamental
-        Algorithms, Third Edition. Addison-Wesley, 1997.  ISBN  0-201-89683-4.
-        Section 2.2.1: Stacks, Queues, and Deques, pp. 238-243.
-    \li Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Clifford
-        Stein. Introduction to  Algorithms,  Second  Edition.  MIT  Press  and
-        McGraw-Hill,  2001.  ISBN  0-262-03293-7.  Section  10.1:  Stacks  and
-        queues, pp.200-204.
-
-    <b>Taken from:</b>\n
-    Stack (data structure) from Wikipedia, the free encyclopedia
-    http://en.wikipedia.org/wiki/Stack_%28data_structure%29
-*/
 template <typename T>
 class Stack
 {
@@ -289,10 +206,9 @@ private:
     const T* _node;
 };
 
-/*! \example containers_stack.cpp Intrusive stack container example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "stack.inl"
 
-#endif // CPPCOMMON_CONTAINERS_STACK_H
+#endif // BASEKIT_CONTAINERS_STACK_H

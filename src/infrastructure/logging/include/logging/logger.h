@@ -1,17 +1,13 @@
-/*!
-    \file logger.h
-    \brief Logger interface definition
-    \author Ivan Shynkarenka
-    \date 29.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_LOGGER_H
-#define CPPLOGGING_LOGGER_H
+#ifndef LOGGING_LOGGER_H
+#define LOGGING_LOGGER_H
 
 #include "logging/processors.h"
 
-namespace CppLogging {
+namespace Logging {
 
 //! Logger interface
 /*!
@@ -135,11 +131,11 @@ private:
     void Log(Level level, bool format, fmt::format_string<T...> message, T&&... args) const;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
 #include "logger.inl"
 
 /*! \example default.cpp Default logger example */
 /*! \example format.cpp Format logger example */
 
-#endif // CPPLOGGING_LOGGER_H
+#endif // LOGGING_LOGGER_H

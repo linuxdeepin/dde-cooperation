@@ -1,18 +1,14 @@
-/*!
-    \file tcp_server.cpp
-    \brief TCP server implementation
-    \author Ivan Shynkarenka
-    \date 14.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/tcp_server.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 TCPServer::TCPServer(const std::shared_ptr<Service>& service, int port, InternetProtocol protocol)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -30,7 +26,7 @@ TCPServer::TCPServer(const std::shared_ptr<Service>& service, int port, Internet
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     // Prepare endpoint
     switch (protocol)
@@ -45,7 +41,7 @@ TCPServer::TCPServer(const std::shared_ptr<Service>& service, int port, Internet
 }
 
 TCPServer::TCPServer(const std::shared_ptr<Service>& service, const std::string& address, int port)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -64,14 +60,14 @@ TCPServer::TCPServer(const std::shared_ptr<Service>& service, const std::string&
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 
     // Prepare endpoint
     _endpoint = asio::ip::tcp::endpoint(asio::ip::make_address(address), (unsigned short)port);
 }
 
 TCPServer::TCPServer(const std::shared_ptr<Service>& service, const asio::ip::tcp::endpoint& endpoint)
-    : _id(CppCommon::UUID::Sequential()),
+    : _id(BaseKit::UUID::Sequential()),
       _service(service),
       _io_service(_service->GetAsioService()),
       _strand(*_io_service),
@@ -91,7 +87,7 @@ TCPServer::TCPServer(const std::shared_ptr<Service>& service, const asio::ip::tc
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 }
 
 bool TCPServer::Start()
@@ -189,7 +185,7 @@ bool TCPServer::Restart()
         return false;
 
     while (IsStarted())
-        CppCommon::Thread::Yield();
+        BaseKit::Thread::Yield();
 
     return Start();
 }
@@ -282,7 +278,7 @@ bool TCPServer::DisconnectAll()
     return true;
 }
 
-std::shared_ptr<TCPSession> TCPServer::FindSession(const CppCommon::UUID& id)
+std::shared_ptr<TCPSession> TCPServer::FindSession(const BaseKit::UUID& id)
 {
     std::shared_lock<std::shared_mutex> locker(_sessions_lock);
 
@@ -299,7 +295,7 @@ void TCPServer::RegisterSession()
     _sessions.emplace(_session->id(), _session);
 }
 
-void TCPServer::UnregisterSession(const CppCommon::UUID& id)
+void TCPServer::UnregisterSession(const BaseKit::UUID& id)
 {
     std::unique_lock<std::shared_mutex> locker(_sessions_lock);
 
@@ -336,4 +332,4 @@ void TCPServer::SendError(std::error_code ec)
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

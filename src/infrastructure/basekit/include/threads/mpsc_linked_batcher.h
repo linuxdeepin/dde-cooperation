@@ -1,20 +1,16 @@
-/*!
-    \file mpsc_linked_batcher.h
-    \brief Multiple producers / single consumer wait-free linked batcher definition
-    \author Ivan Shynkarenka
-    \date 19.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_MPSC_LINKED_BATCHER_H
-#define CPPCOMMON_THREADS_MPSC_LINKED_BATCHER_H
+#ifndef BASEKIT_THREADS_MPSC_LINKED_BATCHER_H
+#define BASEKIT_THREADS_MPSC_LINKED_BATCHER_H
 
 #include <atomic>
 #include <cassert>
 #include <functional>
 #include <utility>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Multiple producers / single consumer wait-free linked batcher
 /*!
@@ -83,8 +79,8 @@ private:
     std::atomic<Node*> _head;
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "mpsc_linked_batcher.inl"
 
-#endif // CPPCOMMON_THREADS_MPSC_LINKED_BATCHER_H
+#endif // BASEKIT_THREADS_MPSC_LINKED_BATCHER_H

@@ -1,17 +1,13 @@
-/*!
-    \file level.h
-    \brief Logging level definition
-    \author Ivan Shynkarenka
-    \date 08.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_LEVEL_H
-#define CPPLOGGING_LEVEL_H
+#ifndef LOGGING_LEVEL_H
+#define LOGGING_LEVEL_H
 
 #include <cstdint>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Logging level
 enum class Level : uint8_t
@@ -34,8 +30,8 @@ enum class Level : uint8_t
 template <class TOutputStream>
 TOutputStream& operator<<(TOutputStream& stream, Level level);
 
-} // namespace CppLogging
+} // namespace Logging
 
 #include "level.inl"
 
-#endif // CPPLOGGING_LEVEL_H
+#endif // LOGGING_LEVEL_H

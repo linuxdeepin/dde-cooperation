@@ -1,16 +1,12 @@
-/*!
-    \file logger.cpp
-    \brief Logger interface implementation
-    \author Ivan Shynkarenka
-    \date 29.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/logger.h"
 
 #include "logging/config.h"
 
-namespace CppLogging {
+namespace Logging {
 
 Logger::Logger() : _sink(Config::CreateLogger()._sink)
 {
@@ -25,4 +21,4 @@ void Logger::Update()
     _sink = Config::CreateLogger(_name)._sink;
 }
 
-} // namespace CppLogging
+} // namespace Logging

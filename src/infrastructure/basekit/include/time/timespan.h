@@ -1,19 +1,15 @@
-/*!
-    \file timespan.h
-    \brief Timespan definition
-    \author Ivan Shynkarenka
-    \date 11.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_TIME_TIMESPAN_H
-#define CPPCOMMON_TIME_TIMESPAN_H
+#ifndef BASEKIT_TIME_TIMESPAN_H
+#define BASEKIT_TIME_TIMESPAN_H
 
 #include <chrono>
 
 #include "errors/exceptions.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Timespan
 /*!
@@ -189,10 +185,9 @@ private:
     int64_t _duration;
 };
 
-/*! \example time_timespan.cpp Timespan example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "timespan.inl"
 
-#endif // CPPCOMMON_TIME_TIMESPAN_H
+#endif // BASEKIT_TIME_TIMESPAN_H

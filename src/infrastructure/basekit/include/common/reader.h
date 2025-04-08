@@ -1,24 +1,22 @@
-/*!
-    \file reader.h
-    \brief Reader interface definition
-    \author Ivan Shynkarenka
-    \date 07.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_READER_H
-#define CPPCOMMON_READER_H
+#ifndef BASEKIT_READER_H
+#define BASEKIT_READER_H
 
 #include <cstdint>
 #include <string>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Reader interface
 /*!
-    Reader interface is based on a read byte buffer method and provides
-    functionality to read all bytes, text or text lines.
+    The Reader interface provides a common interface for reading data from different sources.
+    It defines methods for reading bytes, text, and lines of text.
+    The implementation of this interface can be used to read data from files, network sockets,
+    or any other source that supports reading data in a similar manner.
 */
 class Reader
 {
@@ -56,6 +54,6 @@ public:
     std::vector<std::string> ReadAllLines();
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_READER_H
+#endif // BASEKIT_READER_H

@@ -1,10 +1,6 @@
-/*!
-    \file shared_memory.cpp
-    \brief Shared memory manager implementation
-    \author Ivan Shynkarenka
-    \date 19.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "system/shared_memory.h"
 
@@ -26,7 +22,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -227,4 +223,4 @@ void* SharedMemory::ptr() { return impl().ptr(); }
 const void* SharedMemory::ptr() const { return impl().ptr(); }
 bool SharedMemory::owner() const { return impl().owner(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

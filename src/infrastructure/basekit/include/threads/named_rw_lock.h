@@ -1,13 +1,9 @@
-/*!
-    \file named_rw_lock.h
-    \brief Named read/write lock synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 24.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_NAMED_RW_LOCK_H
-#define CPPCOMMON_THREADS_NAMED_RW_LOCK_H
+#ifndef BASEKIT_THREADS_NAMED_RW_LOCK_H
+#define BASEKIT_THREADS_NAMED_RW_LOCK_H
 
 #include "threads/locker.h"
 #include "time/timestamp.h"
@@ -15,7 +11,7 @@
 #include <memory>
 #include <string>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Named read/write lock synchronization primitive
 /*!
@@ -166,6 +162,6 @@ private:
 
 /*! \example threads_named_rw_lock.cpp Named read/write lock synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_THREADS_NAMED_RW_LOCK_H
+#endif // BASEKIT_THREADS_NAMED_RW_LOCK_H

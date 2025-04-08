@@ -1,17 +1,13 @@
-/*!
-    \file string_utils.cpp
-    \brief String utilities implementation
-    \author Ivan Shynkarenka
-    \date 15.05.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "string/string_utils.h"
 
 #include <cassert>
 #include <regex>
 
-namespace CppCommon {
+namespace BaseKit {
 
 bool StringUtils::IsBlank(const char* str)
 {
@@ -309,4 +305,4 @@ bool StringUtils::FromString(std::string_view str)
     return false;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

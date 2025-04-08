@@ -1,13 +1,9 @@
-/*!
-    \file format.h
-    \brief Format string definition
-    \author Ivan Shynkarenka
-    \date 16.09.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_STRING_FORMAT_H
-#define CPPCOMMON_STRING_FORMAT_H
+#ifndef BASEKIT_STRING_FORMAT_H
+#define BASEKIT_STRING_FORMAT_H
 
 #if defined(__clang__)
 #pragma clang system_header
@@ -22,7 +18,7 @@
 #include <fmt/ostream.h>
 #include <fmt/xchar.h>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Format string
 /*!
@@ -100,10 +96,9 @@ void print(TOutputStream& stream, fmt::format_string<T...> pattern, T&&... args)
 template <typename TOutputStream, typename... T>
 void print(TOutputStream& stream, fmt::wformat_string<T...> pattern, T&&... args);
 
-/*! \example string_format.cpp Format string example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "format.inl"
 
-#endif // CPPCOMMON_STRING_FORMAT_H
+#endif // BASEKIT_STRING_FORMAT_H

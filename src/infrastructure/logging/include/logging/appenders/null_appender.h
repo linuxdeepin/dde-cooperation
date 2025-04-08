@@ -1,17 +1,13 @@
-/*!
-    \file null_appender.h
-    \brief Null appender definition
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_APPENDERS_NULL_APPENDER_H
-#define CPPLOGGING_APPENDERS_NULL_APPENDER_H
+#ifndef LOGGING_APPENDERS_NULL_APPENDER_H
+#define LOGGING_APPENDERS_NULL_APPENDER_H
 
 #include "logging/appender.h"
 
-namespace CppLogging {
+namespace Logging {
 
 //! Null appender
 /*!
@@ -34,6 +30,6 @@ public:
     void AppendRecord(Record& record) override {}
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_APPENDERS_NULL_APPENDER_H
+#endif // LOGGING_APPENDERS_NULL_APPENDER_H

@@ -1,10 +1,6 @@
-/*!
-    \file stack_trace_manager.cpp
-    \brief Stack trace manager implementation
-    \author Ivan Shynkarenka
-    \date 10.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "system/stack_trace_manager.h"
 
@@ -24,7 +20,7 @@
 #endif
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -120,4 +116,4 @@ StackTraceManager::~StackTraceManager()
 void StackTraceManager::Initialize() { GetInstance().impl().Initialize(); }
 void StackTraceManager::Cleanup() { GetInstance().impl().Cleanup(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

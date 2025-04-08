@@ -1,13 +1,9 @@
-/*!
-    \file mpsc_ring_buffer.h
-    \brief Multiple producers / single consumer wait-free ring buffer definition
-    \author Ivan Shynkarenka
-    \date 26.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_MPSC_RING_BUFFER_H
-#define CPPCOMMON_THREADS_MPSC_RING_BUFFER_H
+#ifndef BASEKIT_THREADS_MPSC_RING_BUFFER_H
+#define BASEKIT_THREADS_MPSC_RING_BUFFER_H
 
 #include "threads/spin_lock.h"
 #include "threads/spsc_ring_buffer.h"
@@ -18,7 +14,7 @@
 #include <thread>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Multiple producers / single consumer wait-free ring buffer
 /*!
@@ -102,8 +98,8 @@ private:
 
 /*! \example threads_mpsc_ring_buffer.cpp Multiple producers / single consumer wait-free ring buffer example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "mpsc_ring_buffer.inl"
 
-#endif // CPPCOMMON_THREADS_MPSC_RING_BUFFER_H
+#endif // BASEKIT_THREADS_MPSC_RING_BUFFER_H

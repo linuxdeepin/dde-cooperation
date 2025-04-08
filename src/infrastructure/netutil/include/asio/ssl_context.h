@@ -1,17 +1,13 @@
-/*!
-    \file ssl_context.h
-    \brief SSL context definition
-    \author Ivan Shynkarenka
-    \date 12.02.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_SSL_CONTEXT_H
-#define CPPSERVER_ASIO_SSL_CONTEXT_H
+#ifndef NETUTIL_ASIO_SSL_CONTEXT_H
+#define NETUTIL_ASIO_SSL_CONTEXT_H
 
 #include "service.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 //! SSL context
@@ -37,6 +33,6 @@ public:
 };
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_ASIO_SSL_CONTEXT_H
+#endif // NETUTIL_ASIO_SSL_CONTEXT_H

@@ -1,14 +1,10 @@
-/*!
-    \file http_client.cpp
-    \brief HTTP client implementation
-    \author Ivan Shynkarenka
-    \date 08.02.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "http/http_client.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace HTTP {
 
 void HTTPClient::onReceived(const void* buffer, size_t size)
@@ -64,7 +60,7 @@ void HTTPClient::onDisconnected()
     }
 }
 
-std::future<HTTPResponse> HTTPClientEx::SendRequest(const HTTPRequest& request, const CppCommon::Timespan& timeout)
+std::future<HTTPResponse> HTTPClientEx::SendRequest(const HTTPRequest& request, const BaseKit::Timespan& timeout)
 {
     // Create TCP resolver if the current one is empty
     if (!_resolver)
@@ -173,4 +169,4 @@ void HTTPClientEx::SetPromiseError(const std::string& error)
 }
 
 } // namespace HTTP
-} // namespace CppServer
+} // namespace NetUtil

@@ -1,12 +1,8 @@
-/*!
-    \file level.inl
-    \brief Logging level inline implementation
-    \author Ivan Shynkarenka
-    \date 08.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppLogging {
+namespace Logging {
 
 template <class TOutputStream>
 inline TOutputStream& operator<<(TOutputStream& stream, Level level)
@@ -41,4 +37,4 @@ inline TOutputStream& operator<<(TOutputStream& stream, Level level)
     return stream;
 }
 
-} // namespace CppLogging
+} // namespace Logging

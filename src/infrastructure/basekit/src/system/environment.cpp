@@ -1,10 +1,6 @@
-/*!
-    \file environment.cpp
-    \brief Environment management implementation
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "system/environment.h"
 
@@ -36,7 +32,7 @@ extern char **environ;
 #include <vector>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 bool Environment::Is32BitOS()
 {
@@ -512,4 +508,4 @@ void Environment::ClearEnvar(const std::string name)
 #endif
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

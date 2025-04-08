@@ -1,16 +1,12 @@
-/*!
-    \file record.inl
-    \brief Logging record inline implementation
-    \author Ivan Shynkarenka
-    \date 08.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppLogging {
+namespace Logging {
 
 inline Record::Record()
-    : timestamp(CppCommon::Timestamp::utc()),
-      thread(CppCommon::Thread::CurrentThreadId()),
+    : timestamp(BaseKit::Timestamp::utc()),
+      thread(BaseKit::Thread::CurrentThreadId()),
       level(Level::INFO)
 {
     logger.reserve(32);
@@ -360,7 +356,7 @@ inline void SerializeArgument(Record& record, const T& argument, Args&&... args)
 template <typename... T>
 inline Record& Record::Format(fmt::format_string<T...> pattern, T&&... args)
 {
-    message = CppCommon::format(pattern, std::forward<T>(args)...);
+    message = BaseKit::format(pattern, std::forward<T>(args)...);
     return *this;
 }
 
@@ -474,4 +470,4 @@ inline void swap(Record& record1, Record& record2) noexcept
     record1.swap(record2);
 }
 
-} // namespace CppLogging
+} // namespace Logging

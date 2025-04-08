@@ -1,17 +1,13 @@
-/*!
-    \file allocator_pool.h
-    \brief Memory pool allocator definition
-    \author Ivan Shynkarenka
-    \date 08.05.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_MEMORY_ALLOCATOR_POOL_H
-#define CPPCOMMON_MEMORY_ALLOCATOR_POOL_H
+#ifndef BASEKIT_MEMORY_ALLOCATOR_POOL_H
+#define BASEKIT_MEMORY_ALLOCATOR_POOL_H
 
 #include "allocator.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Memory pool manager class
 /*!
@@ -161,10 +157,9 @@ private:
 template <typename T, class TAuxMemoryManager = DefaultMemoryManager, bool nothrow = false>
 using PoolAllocator = Allocator<T, PoolMemoryManager<TAuxMemoryManager>, nothrow>;
 
-/*! \example memory_pool.cpp Pool memory allocator example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "allocator_pool.inl"
 
-#endif // CPPCOMMON_MEMORY_ALLOCATOR_POOL_H
+#endif // BASEKIT_MEMORY_ALLOCATOR_POOL_H

@@ -1,13 +1,9 @@
-/*!
-    \file async_wait_free_processor.h
-    \brief Asynchronous wait-free logging processor definition
-    \author Ivan Shynkarenka
-    \date 01.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_PROCESSORS_ASYNC_WAIT_FREE_PROCESSOR_H
-#define CPPLOGGING_PROCESSORS_ASYNC_WAIT_FREE_PROCESSOR_H
+#ifndef LOGGING_PROCESSORS_ASYNC_WAIT_FREE_PROCESSOR_H
+#define LOGGING_PROCESSORS_ASYNC_WAIT_FREE_PROCESSOR_H
 
 #include "logging/processor.h"
 
@@ -15,7 +11,7 @@
 
 #include <functional>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Asynchronous wait-free logging processor
 /*!
@@ -67,6 +63,6 @@ private:
     void ProcessThread(const std::function<void ()>& on_thread_initialize, const std::function<void ()>& on_thread_clenup);
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_PROCESSORS_ASYNC_WAIT_FREE_PROCESSOR_H
+#endif // LOGGING_PROCESSORS_ASYNC_WAIT_FREE_PROCESSOR_H

@@ -1,12 +1,9 @@
-/*!
-    \file allocator_stack.inl
-    \brief Stack memory allocator inline implementation
-    \author Ivan Shynkarenka
-    \date 17.04.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 template <size_t N>
 inline StackMemoryManager<N>::StackMemoryManager()
@@ -66,4 +63,4 @@ inline void StackMemoryManager<N>::reset()
     _size = 0;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

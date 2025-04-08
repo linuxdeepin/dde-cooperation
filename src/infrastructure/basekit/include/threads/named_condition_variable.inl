@@ -1,12 +1,8 @@
-/*!
-    \file named_condition_variable.inl
-    \brief Named condition variable synchronization primitive inline implementation
-    \author Ivan Shynkarenka
-    \date 04.10.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <typename TPredicate>
 void NamedConditionVariable::Wait(TPredicate predicate)
@@ -25,4 +21,4 @@ bool NamedConditionVariable::TryWaitFor(const Timespan& timespan, TPredicate pre
     return true;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

@@ -1,12 +1,9 @@
-/*!
-    \file console.inl
-    \brief Console management inline implementation
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 template <class TOutputStream>
 inline TOutputStream& operator<<(TOutputStream& stream, Color color)
@@ -22,4 +19,4 @@ inline TOutputStream& operator<<(TOutputStream& stream, std::pair<Color, Color> 
     return stream;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

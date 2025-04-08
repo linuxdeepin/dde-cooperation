@@ -1,17 +1,13 @@
-/*!
-    \file timestamp.h
-    \brief Timestamp definition
-    \author Ivan Shynkarenka
-    \date 26.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_TIME_TIMESTAMP_H
-#define CPPCOMMON_TIME_TIMESTAMP_H
+#ifndef BASEKIT_TIME_TIMESTAMP_H
+#define BASEKIT_TIME_TIMESTAMP_H
 
 #include "time/timespan.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Timestamp
 /*!
@@ -291,10 +287,9 @@ public:
     RdtsTimestamp(const Timestamp& timestamp) : Timestamp(timestamp) {}
 };
 
-/*! \example time_timestamp.cpp Timestamp example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "timestamp.inl"
 
-#endif // CPPCOMMON_TIME_TIMESTAMP_H
+#endif // BASEKIT_TIME_TIMESTAMP_H

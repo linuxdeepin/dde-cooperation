@@ -1,10 +1,6 @@
-/*!
-    \file pipe.cpp
-    \brief Pipe implementation
-    \author Ivan Shynkarenka
-    \date 30.11.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "system/pipe.h"
 
@@ -19,7 +15,7 @@
 #include <windows.h>
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -217,4 +213,4 @@ void Pipe::swap(Pipe& pipe) noexcept
     swap(_storage, pipe._storage);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

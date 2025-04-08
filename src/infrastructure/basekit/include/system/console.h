@@ -1,17 +1,14 @@
-/*!
-    \file console.h
-    \brief Console management definition
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_CONSOLE_H
-#define CPPCOMMON_SYSTEM_CONSOLE_H
+
+#ifndef BASEKIT_SYSTEM_CONSOLE_H
+#define BASEKIT_SYSTEM_CONSOLE_H
 
 #include <ostream>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Supported console colors
 enum class Color
@@ -78,10 +75,9 @@ public:
     static void SetColor(Color color, Color background = Color::BLACK);
 };
 
-/*! \example system_console.cpp Console management example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "console.inl"
 
-#endif // CPPCOMMON_SYSTEM_CONSOLE_H
+#endif // BASEKIT_SYSTEM_CONSOLE_H

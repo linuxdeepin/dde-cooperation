@@ -1,19 +1,15 @@
-/*!
-    \file mpsc_linked_queue.h
-    \brief Multiple producers / single consumer wait-free linked queue definition
-    \author Ivan Shynkarenka
-    \date 18.01.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_MPSC_LINKED_QUEUE_H
-#define CPPCOMMON_THREADS_MPSC_LINKED_QUEUE_H
+#ifndef BASEKIT_THREADS_MPSC_LINKED_QUEUE_H
+#define BASEKIT_THREADS_MPSC_LINKED_QUEUE_H
 
 #include <atomic>
 #include <cstring>
 #include <utility>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Multiple producers / single consumer wait-free linked queue
 /*!
@@ -90,8 +86,8 @@ private:
 
 /*! \example threads_mpsc_linked_queue.cpp Multiple producers / single consumer wait-free linked queue example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "mpsc_linked_queue.inl"
 
-#endif // CPPCOMMON_THREADS_MPSC_LINKED_QUEUE_H
+#endif // BASEKIT_THREADS_MPSC_LINKED_QUEUE_H

@@ -1,19 +1,15 @@
-/*!
-    \file level_filter.h
-    \brief Level filter definition
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_FILTERS_LEVEL_FILTER_H
-#define CPPLOGGING_FILTERS_LEVEL_FILTER_H
+#ifndef LOGGING_FILTERS_LEVEL_FILTER_H
+#define LOGGING_FILTERS_LEVEL_FILTER_H
 
 #include "logging/filter.h"
 
 #include <atomic>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Level filter
 /*!
@@ -76,6 +72,6 @@ private:
     std::atomic<Level> _to;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_FILTERS_LEVEL_FILTER_H
+#endif // LOGGING_FILTERS_LEVEL_FILTER_H

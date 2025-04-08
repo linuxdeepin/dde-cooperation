@@ -1,13 +1,9 @@
-/*!
-    \file http_response.h
-    \brief HTTP response definition
-    \author Ivan Shynkarenka
-    \date 15.02.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_HTTP_HTTP_RESPONSE_H
-#define CPPSERVER_HTTP_HTTP_RESPONSE_H
+#ifndef NETUTIL_HTTP_HTTP_RESPONSE_H
+#define NETUTIL_HTTP_HTTP_RESPONSE_H
 
 #include "http.h"
 
@@ -20,7 +16,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace CppServer {
+namespace NetUtil {
 namespace HTTP {
 
 //! HTTP response
@@ -229,8 +225,8 @@ private:
 };
 
 } // namespace HTTP
-} // namespace CppServer
+} // namespace NetUtil
 
 #include "http_response.inl"
 
-#endif // CPPSERVER_HTTP_HTTP_RESPONSE_H
+#endif // NETUTIL_HTTP_HTTP_RESPONSE_H

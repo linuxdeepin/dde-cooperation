@@ -1,13 +1,10 @@
-/*!
-    \file stack_trace.h
-    \brief Stack trace snapshot provider definition
-    \author Ivan Shynkarenka
-    \date 09.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_SYSTEM_STACK_TRACE_H
-#define CPPCOMMON_SYSTEM_STACK_TRACE_H
+
+#ifndef BASEKIT_SYSTEM_STACK_TRACE_H
+#define BASEKIT_SYSTEM_STACK_TRACE_H
 
 #include "string/format.h"
 
@@ -19,9 +16,9 @@
 /*!
     Capture the current stack trace snapshot.
 */
-#define __STACK__ CppCommon::StackTrace()
+#define __STACK__ BaseKit::StackTrace()
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Stack trace snapshot provider
 /*!
@@ -76,10 +73,9 @@ private:
     std::vector<Frame> _frames;
 };
 
-/*! \example system_stack_trace.cpp Stack trace snapshot provider example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#include "stack_trace.inl"
+// #include "stack_trace.inl"
 
-#endif // CPPCOMMON_SYSTEM_STACK_TRACE_H
+#endif // BASEKIT_SYSTEM_STACK_TRACE_H

@@ -1,13 +1,9 @@
-/*!
-    \file tcp_server.h
-    \brief TCP server definition
-    \author Ivan Shynkarenka
-    \date 14.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_TCP_SERVER_H
-#define CPPSERVER_ASIO_TCP_SERVER_H
+#ifndef NETUTIL_ASIO_TCP_SERVER_H
+#define NETUTIL_ASIO_TCP_SERVER_H
 
 #include "tcp_session.h"
 
@@ -18,7 +14,7 @@
 #include <shared_mutex>
 #include <vector>
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 //! TCP server
@@ -60,7 +56,7 @@ public:
     TCPServer& operator=(TCPServer&&) = delete;
 
     //! Get the server Id
-    const CppCommon::UUID& id() const noexcept { return _id; }
+    const BaseKit::UUID& id() const noexcept { return _id; }
 
     //! Get the Asio service
     std::shared_ptr<Service>& service() noexcept { return _service; }
@@ -140,7 +136,7 @@ public:
         \param id - Session Id
         \return Session with a given Id or null if the session it not connected
     */
-    std::shared_ptr<TCPSession> FindSession(const CppCommon::UUID& id);
+    std::shared_ptr<TCPSession> FindSession(const BaseKit::UUID& id);
 
     //! Setup option: keep alive
     /*!
@@ -209,11 +205,11 @@ protected:
 protected:
     // Server sessions
     std::shared_mutex _sessions_lock;
-    std::map<CppCommon::UUID, std::shared_ptr<TCPSession>> _sessions;
+    std::map<BaseKit::UUID, std::shared_ptr<TCPSession>> _sessions;
 
 private:
     // Server Id
-    CppCommon::UUID _id;
+    BaseKit::UUID _id;
     // Asio service
     std::shared_ptr<Service> _service;
     // Asio IO service
@@ -249,7 +245,7 @@ private:
     /*!
         \param id - Session Id
     */
-    void UnregisterSession(const CppCommon::UUID& id);
+    void UnregisterSession(const BaseKit::UUID& id);
 
     //! Clear multicast buffer
     void ClearBuffers();
@@ -261,6 +257,6 @@ private:
 /*! \example tcp_chat_server.cpp TCP chat server example */
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_ASIO_TCP_SERVER_H
+#endif // NETUTIL_ASIO_TCP_SERVER_H

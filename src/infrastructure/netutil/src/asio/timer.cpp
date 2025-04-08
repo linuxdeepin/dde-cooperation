@@ -1,14 +1,10 @@
-/*!
-    \file timer.cpp
-    \brief Timer implementation
-    \author Ivan Shynkarenka
-    \date 16.08.2018
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "asio/timer.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 Timer::Timer(const std::shared_ptr<Service>& service)
@@ -20,10 +16,10 @@ Timer::Timer(const std::shared_ptr<Service>& service)
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 }
 
-Timer::Timer(const std::shared_ptr<Service>& service, const CppCommon::UtcTime& time)
+Timer::Timer(const std::shared_ptr<Service>& service, const BaseKit::UtcTime& time)
     : _service(service),
     _io_service(_service->GetAsioService()),
     _strand(*_io_service),
@@ -32,10 +28,10 @@ Timer::Timer(const std::shared_ptr<Service>& service, const CppCommon::UtcTime& 
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 }
 
-Timer::Timer(const std::shared_ptr<Service>& service, const CppCommon::Timespan& timespan)
+Timer::Timer(const std::shared_ptr<Service>& service, const BaseKit::Timespan& timespan)
     : _service(service),
     _io_service(_service->GetAsioService()),
     _strand(*_io_service),
@@ -44,7 +40,7 @@ Timer::Timer(const std::shared_ptr<Service>& service, const CppCommon::Timespan&
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
 }
 
 Timer::Timer(const std::shared_ptr<Service>& service, const std::function<void(bool)>& action)
@@ -57,13 +53,13 @@ Timer::Timer(const std::shared_ptr<Service>& service, const std::function<void(b
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
     assert((action) && "Action function is invalid!");
     if (!action)
-        throw CppCommon::ArgumentException("Action function is invalid!");
+        throw BaseKit::ArgumentException("Action function is invalid!");
 }
 
-Timer::Timer(const std::shared_ptr<Service>& service, const std::function<void(bool)>& action, const CppCommon::UtcTime& time)
+Timer::Timer(const std::shared_ptr<Service>& service, const std::function<void(bool)>& action, const BaseKit::UtcTime& time)
     : _service(service),
     _io_service(_service->GetAsioService()),
     _strand(*_io_service),
@@ -73,13 +69,13 @@ Timer::Timer(const std::shared_ptr<Service>& service, const std::function<void(b
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
     assert((action) && "Action function is invalid!");
     if (!action)
-        throw CppCommon::ArgumentException("Action function is invalid!");
+        throw BaseKit::ArgumentException("Action function is invalid!");
 }
 
-Timer::Timer(const std::shared_ptr<Service>& service, const std::function<void(bool)>& action, const CppCommon::Timespan& timespan)
+Timer::Timer(const std::shared_ptr<Service>& service, const std::function<void(bool)>& action, const BaseKit::Timespan& timespan)
     : _service(service),
     _io_service(_service->GetAsioService()),
     _strand(*_io_service),
@@ -89,23 +85,23 @@ Timer::Timer(const std::shared_ptr<Service>& service, const std::function<void(b
 {
     assert((service != nullptr) && "Asio service is invalid!");
     if (service == nullptr)
-        throw CppCommon::ArgumentException("Asio service is invalid!");
+        throw BaseKit::ArgumentException("Asio service is invalid!");
     assert((action) && "Action function is invalid!");
     if (!action)
-        throw CppCommon::ArgumentException("Action function is invalid!");
+        throw BaseKit::ArgumentException("Action function is invalid!");
 }
 
-CppCommon::UtcTime Timer::expire_time() const
+BaseKit::UtcTime Timer::expire_time() const
 {
-    return CppCommon::UtcTime(_timer.expires_at());
+    return BaseKit::UtcTime(_timer.expires_at());
 }
 
-CppCommon::Timespan Timer::expire_timespan() const
+BaseKit::Timespan Timer::expire_timespan() const
 {
-    return CppCommon::Timespan(_timer.expires_from_now());
+    return BaseKit::Timespan(_timer.expires_from_now());
 }
 
-bool Timer::Setup(const CppCommon::UtcTime& time)
+bool Timer::Setup(const BaseKit::UtcTime& time)
 {
     asio::error_code ec;
     _timer.expires_at(time.chrono(), ec);
@@ -120,7 +116,7 @@ bool Timer::Setup(const CppCommon::UtcTime& time)
     return true;
 }
 
-bool Timer::Setup(const CppCommon::Timespan& timespan)
+bool Timer::Setup(const BaseKit::Timespan& timespan)
 {
     asio::error_code ec;
     _timer.expires_from_now(timespan.chrono(), ec);
@@ -145,7 +141,7 @@ bool Timer::Setup(const std::function<void(bool)>& action)
     return true;
 }
 
-bool Timer::Setup(const std::function<void(bool)>& action, const CppCommon::UtcTime& time)
+bool Timer::Setup(const std::function<void(bool)>& action, const BaseKit::UtcTime& time)
 {
     assert((action) && "Action function is invalid!");
     if (!action)
@@ -155,7 +151,7 @@ bool Timer::Setup(const std::function<void(bool)>& action, const CppCommon::UtcT
     return Setup(time);
 }
 
-bool Timer::Setup(const std::function<void(bool)>& action, const CppCommon::Timespan& timespan)
+bool Timer::Setup(const std::function<void(bool)>& action, const BaseKit::Timespan& timespan)
 {
     assert((action) && "Action function is invalid!");
     if (!action)
@@ -249,4 +245,4 @@ void Timer::SendTimer(bool canceled)
 }
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil

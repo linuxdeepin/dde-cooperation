@@ -1,10 +1,6 @@
-/*!
-    \file async_wait_processor.cpp
-    \brief Asynchronous wait logging processor implementation
-    \author Ivan Shynkarenka
-    \date 01.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/processors/async_wait_processor.h"
 
@@ -13,7 +9,7 @@
 
 #include <cassert>
 
-namespace CppLogging {
+namespace Logging {
 
 AsyncWaitProcessor::AsyncWaitProcessor(const std::shared_ptr<Layout>& layout, bool auto_start, size_t capacity, size_t initial, const std::function<void ()>& on_thread_initialize, const std::function<void ()>& on_thread_clenup)
     : Processor(layout),
@@ -45,7 +41,7 @@ bool AsyncWaitProcessor::Start()
     if (!started)
     {
         // Start processing thread
-        _thread = CppCommon::Thread::Start([this]() { ProcessThread(_on_thread_initialize, _on_thread_clenup); });
+        _thread = BaseKit::Thread::Start([this]() { ProcessThread(_on_thread_initialize, _on_thread_clenup); });
     }
 
     return true;
@@ -134,7 +130,7 @@ void AsyncWaitProcessor::ProcessThread(const std::function<void ()>& on_thread_i
             }
 
             // Handle auto-flush period
-            if (CppCommon::Timespan((int64_t)(current - previous)).seconds() > 1)
+            if (BaseKit::Timespan((int64_t)(current - previous)).seconds() > 1)
             {
                 // Flush the logging processor
                 Processor::Flush();
@@ -173,4 +169,4 @@ void AsyncWaitProcessor::Flush()
     EnqueueRecord(flush);
 }
 
-} // namespace CppLogging
+} // namespace Logging

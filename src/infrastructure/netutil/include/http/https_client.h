@@ -1,13 +1,9 @@
-/*!
-    \file https_client.h
-    \brief HTTPS client definition
-    \author Ivan Shynkarenka
-    \date 12.02.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_HTTP_HTTPS_CLIENT_H
-#define CPPSERVER_HTTP_HTTPS_CLIENT_H
+#ifndef NETUTIL_HTTP_HTTPS_CLIENT_H
+#define NETUTIL_HTTP_HTTPS_CLIENT_H
 
 #include "http_request.h"
 #include "http_response.h"
@@ -17,7 +13,7 @@
 
 #include <future>
 
-namespace CppServer {
+namespace NetUtil {
 namespace HTTP {
 
 //! HTTPS client
@@ -75,14 +71,14 @@ public:
         \param timeout - Timeout
         \return Size of sent data
     */
-    size_t SendRequest(const CppCommon::Timespan& timeout) { return SendRequest(_request, timeout); }
+    size_t SendRequest(const BaseKit::Timespan& timeout) { return SendRequest(_request, timeout); }
     //! Send the HTTP request with timeout (synchronous)
     /*!
         \param request - HTTP request
         \param timeout - Timeout
         \return Size of sent data
     */
-    size_t SendRequest(const HTTPRequest& request, const CppCommon::Timespan& timeout) { return Send(request.cache(), timeout); }
+    size_t SendRequest(const HTTPRequest& request, const BaseKit::Timespan& timeout) { return Send(request.cache(), timeout); }
 
     //! Send the HTTP request body with timeout (synchronous)
     /*!
@@ -90,7 +86,7 @@ public:
         \param timeout - Timeout
         \return Size of sent data
     */
-    size_t SendRequestBody(std::string_view body, const CppCommon::Timespan& timeout) { return Send(body, timeout); }
+    size_t SendRequestBody(std::string_view body, const BaseKit::Timespan& timeout) { return Send(body, timeout); }
     //! Send the HTTP request body with timeout (synchronous)
     /*!
         \param buffer - HTTP request body buffer
@@ -98,7 +94,7 @@ public:
         \param timeout - Timeout
         \return Size of sent data
     */
-    size_t SendRequestBody(const void* buffer, size_t size, const CppCommon::Timespan& timeout) { return Send(buffer, size, timeout); }
+    size_t SendRequestBody(const void* buffer, size_t size, const BaseKit::Timespan& timeout) { return Send(buffer, size, timeout); }
 
     //! Send the current HTTP request (asynchronous)
     /*!
@@ -198,14 +194,14 @@ public:
         \param timeout - HTTP request timeout
         \return HTTP request future
     */
-    std::future<HTTPResponse> SendRequest(const CppCommon::Timespan& timeout = CppCommon::Timespan::minutes(1)) { return SendRequest(_request, timeout); }
+    std::future<HTTPResponse> SendRequest(const BaseKit::Timespan& timeout = BaseKit::Timespan::minutes(1)) { return SendRequest(_request, timeout); }
     //! HTTP request
     /*!
         \param request - HTTP request
         \param timeout - HTTP request timeout
         \return HTTP request future
     */
-    std::future<HTTPResponse> SendRequest(const HTTPRequest& request, const CppCommon::Timespan& timeout = CppCommon::Timespan::minutes(1));
+    std::future<HTTPResponse> SendRequest(const HTTPRequest& request, const BaseKit::Timespan& timeout = BaseKit::Timespan::minutes(1));
 
     //! Send HEAD request
     /*!
@@ -213,7 +209,7 @@ public:
         \param timeout - HTTP request timeout
         \return HTTP request future
     */
-    std::future<HTTPResponse> SendHeadRequest(std::string_view url, const CppCommon::Timespan& timeout = CppCommon::Timespan::minutes(1))
+    std::future<HTTPResponse> SendHeadRequest(std::string_view url, const BaseKit::Timespan& timeout = BaseKit::Timespan::minutes(1))
     { return SendRequest(_request.MakeHeadRequest(url), timeout); }
     //! Send GET request
     /*!
@@ -221,7 +217,7 @@ public:
         \param timeout - HTTP request timeout
         \return HTTP request future
     */
-    std::future<HTTPResponse> SendGetRequest(std::string_view url, const CppCommon::Timespan& timeout = CppCommon::Timespan::minutes(1))
+    std::future<HTTPResponse> SendGetRequest(std::string_view url, const BaseKit::Timespan& timeout = BaseKit::Timespan::minutes(1))
     { return SendRequest(_request.MakeGetRequest(url), timeout); }
     //! Send POST request
     /*!
@@ -230,7 +226,7 @@ public:
         \param timeout - HTTP request timeout
         \return HTTP request future
     */
-    std::future<HTTPResponse> SendPostRequest(std::string_view url, std::string_view content, const CppCommon::Timespan& timeout = CppCommon::Timespan::minutes(1))
+    std::future<HTTPResponse> SendPostRequest(std::string_view url, std::string_view content, const BaseKit::Timespan& timeout = BaseKit::Timespan::minutes(1))
     { return SendRequest(_request.MakePostRequest(url, content), timeout); }
     //! Send PUT request
     /*!
@@ -239,7 +235,7 @@ public:
         \param timeout - HTTP request timeout
         \return HTTP request future
     */
-    std::future<HTTPResponse> SendPutRequest(std::string_view url, std::string_view content, const CppCommon::Timespan& timeout = CppCommon::Timespan::minutes(1))
+    std::future<HTTPResponse> SendPutRequest(std::string_view url, std::string_view content, const BaseKit::Timespan& timeout = BaseKit::Timespan::minutes(1))
     { return SendRequest(_request.MakePutRequest(url, content), timeout); }
     //! Send DELETE request
     /*!
@@ -247,7 +243,7 @@ public:
         \param timeout - HTTP request timeout
         \return HTTP request future
     */
-    std::future<HTTPResponse> SendDeleteRequest(std::string_view url, const CppCommon::Timespan& timeout = CppCommon::Timespan::minutes(1))
+    std::future<HTTPResponse> SendDeleteRequest(std::string_view url, const BaseKit::Timespan& timeout = BaseKit::Timespan::minutes(1))
     { return SendRequest(_request.MakeDeleteRequest(url), timeout); }
     //! Send OPTIONS request
     /*!
@@ -255,7 +251,7 @@ public:
         \param timeout - HTTP request timeout
         \return HTTP request future
     */
-    std::future<HTTPResponse> SendOptionsRequest(std::string_view url, const CppCommon::Timespan& timeout = CppCommon::Timespan::minutes(1))
+    std::future<HTTPResponse> SendOptionsRequest(std::string_view url, const BaseKit::Timespan& timeout = BaseKit::Timespan::minutes(1))
     { return SendRequest(_request.MakeOptionsRequest(url), timeout); }
     //! Send TRACE request
     /*!
@@ -263,7 +259,7 @@ public:
         \param timeout - HTTP request timeout
         \return HTTP request future
     */
-    std::future<HTTPResponse> SendTraceRequest(std::string_view url, const CppCommon::Timespan& timeout = CppCommon::Timespan::minutes(1))
+    std::future<HTTPResponse> SendTraceRequest(std::string_view url, const BaseKit::Timespan& timeout = BaseKit::Timespan::minutes(1))
     { return SendRequest(_request.MakeTraceRequest(url), timeout); }
 
 protected:
@@ -284,6 +280,6 @@ private:
 /*! \example https_client.cpp HTTPS client example */
 
 } // namespace HTTP
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_HTTP_HTTPS_CLIENT_H
+#endif // NETUTIL_HTTP_HTTPS_CLIENT_H

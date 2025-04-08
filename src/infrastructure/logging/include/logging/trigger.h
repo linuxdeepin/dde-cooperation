@@ -1,19 +1,15 @@
-/*!
-    \file trigger.h
-    \brief Logging trigger definition
-    \author Ivan Shynkarenka
-    \date 27.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_TRIGGER_H
-#define CPPLOGGING_TRIGGER_H
+#ifndef LOGGING_TRIGGER_H
+#define LOGGING_TRIGGER_H
 
 #include "logging/filter.h"
 
 #include <atomic>
 
-namespace CppLogging {
+namespace Logging {
 
 //! Logging trigger
 /*!
@@ -54,6 +50,6 @@ private:
     std::atomic<bool> _state;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_TRIGGER_H
+#endif // LOGGING_TRIGGER_H

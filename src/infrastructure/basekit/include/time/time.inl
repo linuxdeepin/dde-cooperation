@@ -1,12 +1,8 @@
-/*!
-    \file time.inl
-    \brief Time inline implementation
-    \author Ivan Shynkarenka
-    \date 12.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <class TOutputStream>
 inline TOutputStream& operator<<(TOutputStream& stream, Weekday weekday)
@@ -281,13 +277,13 @@ inline UtcTime::UtcTime(const LocalTime& time) : UtcTime(time.localstamp())
 inline LocalTime::LocalTime(const UtcTime& time) : LocalTime(time.utcstamp())
 {}
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 //! \cond DOXYGEN_SKIP
 template <>
-struct std::hash<CppCommon::Time>
+struct std::hash<BaseKit::Time>
 {
-    typedef CppCommon::Time argument_type;
+    typedef BaseKit::Time argument_type;
     typedef size_t result_type;
 
     result_type operator() (const argument_type& value) const

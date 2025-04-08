@@ -1,15 +1,11 @@
-/*!
-    \file https_session.cpp
-    \brief HTTPS session implementation
-    \author Ivan Shynkarenka
-    \date 30.04.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "http/https_session.h"
 #include "http/https_server.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace HTTP {
 
 HTTPSSession::HTTPSSession(const std::shared_ptr<HTTPSServer>& server)
@@ -88,4 +84,4 @@ void HTTPSSession::onReceivedRequestInternal(const HTTPRequest& request)
 }
 
 } // namespace HTTP
-} // namespace CppServer
+} // namespace NetUtil

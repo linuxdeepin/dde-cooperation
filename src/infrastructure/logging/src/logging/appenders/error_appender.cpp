@@ -1,16 +1,12 @@
-/*!
-    \file error_appender.cpp
-    \brief Error (stderr) appender implementation
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/appenders/error_appender.h"
 
 #include <cstdio>
 
-namespace CppLogging {
+namespace Logging {
 
 void ErrorAppender::AppendRecord(Record& record)
 {
@@ -28,4 +24,4 @@ void ErrorAppender::Flush()
     std::fflush(stderr);
 }
 
-} // namespace CppLogging
+} // namespace Logging

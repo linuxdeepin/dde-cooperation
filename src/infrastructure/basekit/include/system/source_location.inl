@@ -1,12 +1,9 @@
-/*!
-    \file source_location.inl
-    \brief Source location inline implementation
-    \author Ivan Shynkarenka
-    \date 09.02.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 inline std::ostream& operator<<(std::ostream& os, const SourceLocation& source_location)
 {
@@ -16,8 +13,8 @@ inline std::ostream& operator<<(std::ostream& os, const SourceLocation& source_l
     return os << source_location.filename() << ':' << source_location.line();
 }
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #if defined(FMT_VERSION)
-template <> struct fmt::formatter<CppCommon::SourceLocation> : ostream_formatter {};
+template <> struct fmt::formatter<BaseKit::SourceLocation> : ostream_formatter {};
 #endif

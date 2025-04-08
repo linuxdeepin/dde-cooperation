@@ -1,13 +1,10 @@
-/*!
-    \file fatal.h
-    \brief Fatal abort execution definition
-    \author Ivan Shynkarenka
-    \date 04.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_ERRORS_FATAL_H
-#define CPPCOMMON_ERRORS_FATAL_H
+
+#ifndef BASEKIT_ERRORS_FATAL_H
+#define BASEKIT_ERRORS_FATAL_H
 
 #include "errors/system_error.h"
 #include "system/source_location.h"
@@ -19,9 +16,9 @@
 /*!
     Fatal abort execution with the current location.
 */
-#define fatality(...) CppCommon::fatal(__LOCATION__, __STACK__, __VA_ARGS__)
+#define fatality(...) BaseKit::fatal(__LOCATION__, __STACK__, __VA_ARGS__)
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Fatal abort execution
 /*!
@@ -51,8 +48,7 @@ void fatal(const SourceLocation& location, const StackTrace& trace, const std::s
 */
 void fatal(const SourceLocation& location, const StackTrace& trace, const std::exception& fatal) noexcept;
 
-/*! \example errors_fatal.cpp Fatal abort execution example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_ERRORS_FATAL_H
+#endif // BASEKIT_ERRORS_FATAL_H

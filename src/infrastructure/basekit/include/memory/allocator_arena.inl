@@ -1,12 +1,9 @@
-/*!
-    \file allocator_arena.inl
-    \brief Arena memory allocator inline implementation
-    \author Ivan Shynkarenka
-    \date 17.04.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 template <class TAuxMemoryManager>
 inline ArenaMemoryManager<TAuxMemoryManager>::ArenaMemoryManager(TAuxMemoryManager& auxiliary, size_t capacity)
@@ -264,4 +261,4 @@ inline void ArenaMemoryManager<TAuxMemoryManager>::ClearArena()
     }
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

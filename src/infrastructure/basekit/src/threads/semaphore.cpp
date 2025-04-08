@@ -1,10 +1,6 @@
-/*!
-    \file semaphore.cpp
-    \brief Semaphore synchronization primitive implementation
-    \author Ivan Shynkarenka
-    \date 12.04.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "threads/semaphore.h"
 
@@ -25,7 +21,7 @@
 #undef min
 #endif
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! @cond INTERNALS
 
@@ -178,4 +174,4 @@ bool Semaphore::TryLockFor(const Timespan& timespan) { return impl().TryLockFor(
 void Semaphore::Lock() { impl().Lock(); }
 void Semaphore::Unlock() { impl().Unlock(); }
 
-} // namespace CppCommon
+} // namespace BaseKit

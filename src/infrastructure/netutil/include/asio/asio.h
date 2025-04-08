@@ -1,13 +1,9 @@
-/*!
-    \file asio.h
-    \brief Asio C++ Library definition
-    \author Ivan Shynkarenka
-    \date 14.12.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_H
-#define CPPSERVER_ASIO_H
+#ifndef NETUTIL_ASIO_H
+#define NETUTIL_ASIO_H
 
 #include <iostream>
 
@@ -53,10 +49,10 @@
 
 #endif
 
-namespace CppServer {
+namespace NetUtil {
 
 /*!
-    \namespace CppServer::Asio
+    \namespace NetUtil::Asio
     \brief Asio definitions
 */
 namespace Asio {
@@ -78,8 +74,8 @@ template <class TOutputStream>
 TOutputStream& operator<<(TOutputStream& stream, InternetProtocol protocol);
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
 #include "asio.inl"
 
-#endif // CPPSERVER_ASIO_H
+#endif // NETUTIL_ASIO_H

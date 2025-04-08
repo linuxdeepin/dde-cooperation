@@ -1,10 +1,6 @@
-/*!
-    \file encoding.cpp
-    \brief Encoding utilities implementation
-    \author Ivan Shynkarenka
-    \date 12.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "string/encoding.h"
 
@@ -14,7 +10,7 @@
 #include <locale>
 #include <vector>
 
-namespace CppCommon {
+namespace BaseKit {
 
 std::string Encoding::ToUTF8(std::wstring_view wstr)
 {
@@ -536,4 +532,4 @@ std::string Encoding::URLDecode(std::string_view str)
     return result;
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

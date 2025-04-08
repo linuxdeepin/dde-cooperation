@@ -1,13 +1,9 @@
-/*!
-    \file bintree.h
-    \brief Intrusive non balanced binary tree container definition
-    \author Ivan Shynkarenka
-    \date 22.06.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_CONTAINERS_BINTREE_H
-#define CPPCOMMON_CONTAINERS_BINTREE_H
+#ifndef BASEKIT_CONTAINERS_BINTREE_H
+#define BASEKIT_CONTAINERS_BINTREE_H
 
 #include <cassert>
 #include <cstddef>
@@ -15,7 +11,7 @@
 #include <iterator>
 #include <utility>
 
-namespace CppCommon {
+namespace BaseKit {
 
 template <class TContainer, typename T>
 class BinTreeIterator;
@@ -26,114 +22,6 @@ class BinTreeReverseIterator;
 template <class TContainer, typename T>
 class BinTreeConstReverseIterator;
 
-//! Intrusive non balanced binary tree container
-/*!
-    Binary trees are the good structures for associative searching. They  keep
-    items in sort order, so each of item can be found in a short time.
-
-    Not thread-safe.
-
-    <b>Overview</b>\n
-    In computer science, a binary search tree (BST) is a binary tree which has
-    the following properties:
-    \li Each node has a value.
-    \li A total order is defined on these values.
-    \li The left subtree of a node contains only values less than or equal  to
-        the node's value.
-    \li The right subtree of a node contains only values greater than or equal
-        to the node's value.
-
-    \image html BinTree.png "Binary tree"
-    The major advantage of binary search trees is  that  the  related  sorting
-    algorithms and search algorithms such as in-order traversal  can  be  very
-    efficient.
-
-    Binary search trees are a fundamental data  structure  used  to  construct
-    more abstract data structures such as  sets,  multisets,  and  associative
-    arrays.
-
-    If a BST allows duplicate values, then it represents a multiset. This kind
-    of tree uses non-strict inequalities. Everything in the left subtree of  a
-    node is strictly less than the value of the node, but  everything  in  the
-    right subtree is either greater than or equal to the value of the node.
-
-    If a BST does not allow duplicate values, then the tree represents  a  set
-    with unique values, like the mathematical  set.  Trees  without  duplicate
-    values use strict inequalities, meaning that the left subtree  of  a  node
-    only contains nodes with values that are less than the value of the  node,
-    and the right subtree only contains values that are greater.
-
-    The choice of storing equal values in the right subtree only is arbitrary;
-    the left would work just as well. One can also permit non-strict  equality
-    in both sides. This allows a tree containing many duplicate values  to  be
-    balanced better, but it makes searching more complex.
-
-    Most operations on a binary search tree take time directly proportional to
-    the tree's height, so it is desirable to keep the height  small.  Ordinary
-    binary search trees have the primary disadvantage  that  they  can  attain
-    very large heights in rather ordinary situations, such as  when  the  keys
-    are inserted in order. The result is a data structure similar to a  linked
-    list, making all operations on the tree expensive. If we know all the data
-    ahead of time, we can keep the height small on average by adding values in
-    a random order, but we do not always have  this  luxury,  particularly  in
-    online algorithms.
-
-    Self-balancing   binary   trees   solve   this   problem   by   performing
-    transformations on the tree (such as tree  rotations)  at  key  times,  in
-    order to reduce the height. Although a certain overhead is involved, it is
-    justified in the long run by drastically  decreasing  the  time  of  later
-    operations.
-
-    The height must always be at least the ceiling of log n, since  there  are
-    at most 2k nodes on the kth level; a complete  or  full  binary  tree  has
-    exactly this many levels.  Balanced  BSTs  are  not  always  so  precisely
-    balanced, since it can be expensive to keep a tree at  minimum  height  at
-    all times; instead, they keep the height within a constant factor of  this
-    lower bound.
-
-    Times for various operations in terms of number of nodes in the tree n:
-    \li Lookup - O(log n)
-    \li Insertion -  O(log n)
-    \li Removal -  O(log n)
-    \li In-order iteration over all elements - O(n)
-
-    For some implementations these times are worst-case, while for others they
-    are amortized.
-
-    <b>Applications</b>\n
-    Self-balancing binary search trees  can  be  used  in  a  natural  way  to
-    construct associative arrays; key-value pairs are simply inserted with  an
-    ordering based on the key alone. In  this  capacity,  self-balancing  BSTs
-    have a number of advantages and disadvantages over their main  competitor,
-    hash tables. Lookup is somewhat complicated in the case where the same key
-    can be used multiple times.
-
-    Many algorithms can exploit self-balancing BSTs  to  achieve  good  worst-
-    case bounds with very little effort. For example, if binary tree  sort  is
-    done with a BST, we have  a  very  simple-to-describe  yet  asymptotically
-    optimal O(n log n) sorting  algorithm  (although  such  an  algorithm  has
-    practical disadvantages  due  to  bad  cache  behavior).  Similarly,  many
-    algorithms in computational geometry exploit variations on self- balancing
-    BSTs to solve problems such as the line segment intersection  problem  and
-    the point location problem efficiently.
-
-    Self-balancing BSTs are a flexible data structure, in that  it's  easy  to
-    extend them to efficiently record additional information  or  perform  new
-    operations. For example, one can  record  the  number  of  nodes  in  each
-    subtree having a certain property, allowing one to  count  the  number  of
-    nodes in a certain key range with that property in O(log  n)  time.  These
-    extensions can be used, for example, to optimize database queries or other
-    list-processing algorithms.
-
-    <b>References</b>\n
-    \li Donald Knuth. The Art of Computer Programming, Volume 3:  Sorting  and
-        Searching, Third Edition. Addison-Wesley,  1997.  ISBN  0-201-89685-0.
-        Section 6.2.3: Balanced Trees, pp.458-481.
-
-    <b>Taken from:</b>\n
-    Binary search tree from Wikipedia, the free encyclopedia
-    http://en.wikipedia.org/wiki/Binary_search_tree
-*/
 template <typename T, typename TCompare = std::less<T>>
 class BinTree
 {
@@ -152,12 +40,11 @@ public:
     typedef BinTreeReverseIterator<BinTree<T, TCompare>, T> reverse_iterator;
     typedef BinTreeConstReverseIterator<BinTree<T, TCompare>, T> const_reverse_iterator;
 
-    //! Binary tree node
     struct Node
     {
-        T* parent;  //!< Pointer to the parent binary tree node
-        T* left;    //!< Pointer to the left child binary tree node
-        T* right;   //!< Pointer to the right child binary tree node
+        T* parent;
+        T* left;
+        T* right;
 
         Node() : parent(nullptr), left(nullptr), right(nullptr) {}
     };
@@ -224,30 +111,13 @@ public:
     const_iterator upper_bound(const T& item) const noexcept;
 
     //! Insert a new item into the binary tree
-    /*!
-        \param item - Item to insert
-        \return Pair with the iterator to the inserted item and success flag
-    */
     std::pair<iterator, bool> insert(T& item) noexcept;
     //! Insert a new item into the binary tree with a position hint
-    /*!
-        \param position - Iterator position to the inserted item
-        \param item - Item to insert
-        \return Pair with the iterator to the inserted item and success flag
-    */
     std::pair<iterator, bool> insert(const const_iterator& position, T& item) noexcept;
 
     //! Erase the given item from the binary tree
-    /*!
-        \param item - Item to erase
-        \return Erased item
-    */
     T* erase(const T& item) noexcept;
     //! Erase the given item from the binary tree
-    /*!
-        \param it - Iterator to the erased item
-        \return Erased item iterator
-    */
     iterator erase(const iterator& it) noexcept;
 
     //! Clear the binary tree
@@ -271,9 +141,6 @@ private:
 };
 
 //! Intrusive binary tree iterator
-/*!
-    Not thread-safe.
-*/
 template <class TContainer, typename T>
 class BinTreeIterator
 {
@@ -327,9 +194,6 @@ private:
 };
 
 //! Intrusive binary tree constant iterator
-/*!
-    Not thread-safe.
-*/
 template <class TContainer, typename T>
 class BinTreeConstIterator
 {
@@ -384,9 +248,6 @@ private:
 };
 
 //! Intrusive binary tree reverse iterator
-/*!
-    Not thread-safe.
-*/
 template <class TContainer, typename T>
 class BinTreeReverseIterator
 {
@@ -440,9 +301,6 @@ private:
 };
 
 //! Intrusive binary tree constant reverse iterator
-/*!
-    Not thread-safe.
-*/
 template <class TContainer, typename T>
 class BinTreeConstReverseIterator
 {
@@ -496,10 +354,9 @@ private:
     const T* _node;
 };
 
-/*! \example containers_bintree.cpp Intrusive binary tree container example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "bintree.inl"
 
-#endif // CPPCOMMON_CONTAINERS_BINTREE_H
+#endif // BASEKIT_CONTAINERS_BINTREE_H

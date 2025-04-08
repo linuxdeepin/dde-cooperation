@@ -1,17 +1,13 @@
-/*!
-    \file exclusive_processor.h
-    \brief Exclusive logging processor definition
-    \author Ivan Shynkarenka
-    \date 11.04.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_PROCESSORS_EXCLUSIVE_PROCESSOR_H
-#define CPPLOGGING_PROCESSORS_EXCLUSIVE_PROCESSOR_H
+#ifndef LOGGING_PROCESSORS_EXCLUSIVE_PROCESSOR_H
+#define LOGGING_PROCESSORS_EXCLUSIVE_PROCESSOR_H
 
 #include "logging/processor.h"
 
-namespace CppLogging {
+namespace Logging {
 
 //! Exclusive logging processor
 /*!
@@ -40,6 +36,6 @@ public:
     bool ProcessRecord(Record& record) override;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_PROCESSORS_EXCLUSIVE_PROCESSOR_H
+#endif // LOGGING_PROCESSORS_EXCLUSIVE_PROCESSOR_H

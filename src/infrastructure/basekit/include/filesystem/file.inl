@@ -1,16 +1,13 @@
-/*!
-    \file file.inl
-    \brief Filesystem file inline implementation
-    \author Ivan Shynkarenka
-    \date 29.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 inline void swap(File& file1, File& file2) noexcept
 {
     file1.swap(file2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

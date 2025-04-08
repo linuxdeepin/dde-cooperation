@@ -1,10 +1,6 @@
-/*!
-    \file console_appender.cpp
-    \brief Console (stdout) appender implementation
-    \author Ivan Shynkarenka
-    \date 26.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/appenders/console_appender.h"
 
@@ -12,7 +8,7 @@
 
 #include <cstdio>
 
-namespace CppLogging {
+namespace Logging {
 
 void ConsoleAppender::AppendRecord(Record& record)
 {
@@ -24,25 +20,25 @@ void ConsoleAppender::AppendRecord(Record& record)
     switch (record.level)
     {
         case Level::NONE:
-            CppCommon::Console::SetColor(CppCommon::Color::DARKGREY);
+            BaseKit::Console::SetColor(BaseKit::Color::DARKGREY);
             break;
         case Level::FATAL:
-            CppCommon::Console::SetColor(CppCommon::Color::WHITE, CppCommon::Color::LIGHTRED);
+            BaseKit::Console::SetColor(BaseKit::Color::WHITE, BaseKit::Color::LIGHTRED);
             break;
         case Level::ERROR:
-            CppCommon::Console::SetColor(CppCommon::Color::LIGHTRED);
+            BaseKit::Console::SetColor(BaseKit::Color::LIGHTRED);
             break;
         case Level::WARN:
-            CppCommon::Console::SetColor(CppCommon::Color::YELLOW);
+            BaseKit::Console::SetColor(BaseKit::Color::YELLOW);
             break;
         case Level::INFO:
-            CppCommon::Console::SetColor(CppCommon::Color::WHITE);
+            BaseKit::Console::SetColor(BaseKit::Color::WHITE);
             break;
         case Level::DEBUG:
-            CppCommon::Console::SetColor(CppCommon::Color::WHITE);
+            BaseKit::Console::SetColor(BaseKit::Color::WHITE);
             break;
         case Level::ALL:
-            CppCommon::Console::SetColor(CppCommon::Color::GREY);
+            BaseKit::Console::SetColor(BaseKit::Color::GREY);
             break;
     }
 
@@ -50,7 +46,7 @@ void ConsoleAppender::AppendRecord(Record& record)
     std::fwrite(record.raw.data(), 1, record.raw.size() - 1, stdout);
 
     // Reset console color
-    CppCommon::Console::SetColor(CppCommon::Color::WHITE);
+    BaseKit::Console::SetColor(BaseKit::Color::WHITE);
 }
 
 void ConsoleAppender::Flush()
@@ -59,4 +55,4 @@ void ConsoleAppender::Flush()
     std::fflush(stdout);
 }
 
-} // namespace CppLogging
+} // namespace Logging

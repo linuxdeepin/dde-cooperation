@@ -1,18 +1,15 @@
-/*!
-    \file include/filesystem/exceptions.h
-    \brief File system exceptions definition
-    \author Ivan Shynkarenka
-    \date 24.08.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_FILESYSTEM_EXCEPTIONS_H
-#define CPPCOMMON_FILESYSTEM_EXCEPTIONS_H
+
+#ifndef BASEKIT_FILESYSTEM_EXCEPTIONS_H
+#define BASEKIT_FILESYSTEM_EXCEPTIONS_H
 
 #include "errors/exceptions.h"
 #include "filesystem/path.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! File system exception
 class FileSystemException : public SystemException
@@ -49,6 +46,6 @@ protected:
     Path _dst;
 };
 
-} // namespace CppCommon
+} // namespace BaseKit
 
-#endif // CPPCOMMON_FILESYSTEM_EXCEPTIONS_H
+#endif // BASEKIT_FILESYSTEM_EXCEPTIONS_H

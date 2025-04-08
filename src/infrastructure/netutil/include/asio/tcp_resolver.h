@@ -1,17 +1,13 @@
-/*!
-    \file tcp_resolver.h
-    \brief TCP resolver definition
-    \author Ivan Shynkarenka
-    \date 08.02.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPSERVER_ASIO_TCP_RESOLVER_H
-#define CPPSERVER_ASIO_TCP_RESOLVER_H
+#ifndef NETUTIL_ASIO_TCP_RESOLVER_H
+#define NETUTIL_ASIO_TCP_RESOLVER_H
 
 #include "service.h"
 
-namespace CppServer {
+namespace NetUtil {
 namespace Asio {
 
 //! TCP resolver
@@ -60,6 +56,6 @@ private:
 };
 
 } // namespace Asio
-} // namespace CppServer
+} // namespace NetUtil
 
-#endif // CPPSERVER_ASIO_TCP_RESOLVER_H
+#endif // NETUTIL_ASIO_TCP_RESOLVER_H

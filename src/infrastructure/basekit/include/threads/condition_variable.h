@@ -1,17 +1,13 @@
-/*!
-    \file condition_variable.h
-    \brief Condition variable synchronization primitive definition
-    \author Ivan Shynkarenka
-    \date 03.10.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_CONDITION_VARIABLE_H
-#define CPPCOMMON_THREADS_CONDITION_VARIABLE_H
+#ifndef BASEKIT_THREADS_CONDITION_VARIABLE_H
+#define BASEKIT_THREADS_CONDITION_VARIABLE_H
 
 #include "threads/critical_section.h"
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Condition variable synchronization primitive
 /*!
@@ -161,8 +157,8 @@ private:
 
 /*! \example threads_condition_variable.cpp Condition variable synchronization primitive example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "condition_variable.inl"
 
-#endif // CPPCOMMON_THREADS_CONDITION_VARIABLE_H
+#endif // BASEKIT_THREADS_CONDITION_VARIABLE_H

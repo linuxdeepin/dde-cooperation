@@ -1,12 +1,8 @@
-/*!
-    \file filecache.inl
-    \brief File cache inline implementation
-    \author Ivan Shynkarenka
-    \date 14.05.2019
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+namespace BaseKit {
 
 inline bool FileCache::empty() const
 {
@@ -25,4 +21,4 @@ inline void swap(FileCache& cache1, FileCache& cache2) noexcept
     cache1.swap(cache2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

@@ -1,17 +1,13 @@
-/*!
-    \file hash_layout.h
-    \brief Hash layout definition
-    \author Ivan Shynkarenka
-    \date 12.12.2021
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPLOGGING_LAYOUTS_HASH_LAYOUT_H
-#define CPPLOGGING_LAYOUTS_HASH_LAYOUT_H
+#ifndef LOGGING_LAYOUTS_HASH_LAYOUT_H
+#define LOGGING_LAYOUTS_HASH_LAYOUT_H
 
 #include "logging/layout.h"
 
-namespace CppLogging {
+namespace Logging {
 
 //! Hash layout
 /*!
@@ -50,6 +46,6 @@ public:
     void LayoutRecord(Record& record) override;
 };
 
-} // namespace CppLogging
+} // namespace Logging
 
-#endif // CPPLOGGING_LAYOUTS_HASH_LAYOUT_H
+#endif // LOGGING_LAYOUTS_HASH_LAYOUT_H

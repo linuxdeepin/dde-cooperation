@@ -1,19 +1,15 @@
-/*!
-    \file wait_queue.h
-    \brief Multiple producers / multiple consumers wait queue definition
-    \author Ivan Shynkarenka
-    \date 04.10.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CPPCOMMON_THREADS_WAIT_QUEUE_H
-#define CPPCOMMON_THREADS_WAIT_QUEUE_H
+#ifndef BASEKIT_THREADS_WAIT_QUEUE_H
+#define BASEKIT_THREADS_WAIT_QUEUE_H
 
 #include "condition_variable.h"
 
 #include <queue>
 
-namespace CppCommon {
+namespace BaseKit {
 
 //! Multiple producers / multiple consumers wait queue
 /*!
@@ -103,8 +99,8 @@ private:
 
 /*! \example threads_wait_queue.cpp Multiple producers / multiple consumers wait queue example */
 
-} // namespace CppCommon
+} // namespace BaseKit
 
 #include "wait_queue.inl"
 
-#endif // CPPCOMMON_THREADS_WAIT_QUEUE_H
+#endif // BASEKIT_THREADS_WAIT_QUEUE_H

@@ -1,13 +1,9 @@
-/*!
-    \file function.inl
-    \brief Allocation free function inline implementation
-    \author Ivan Shynkarenka
-    \date 18.08.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
 
+namespace BaseKit {
 template <class R, class... Args, size_t Capacity>
 inline Function<R(Args...), Capacity>::Function() noexcept
     : _data(),
@@ -155,4 +151,4 @@ void swap(Function<R(Args...), Capacity>& function1, Function<R(Args...), Capaci
     function1.swap(function2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

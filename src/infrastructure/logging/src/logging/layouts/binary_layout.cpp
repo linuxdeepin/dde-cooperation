@@ -1,17 +1,13 @@
-/*!
-    \file binary_layout.cpp
-    \brief Binary layout implementation
-    \author Ivan Shynkarenka
-    \date 08.07.2016
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logging/layouts/binary_layout.h"
 
 #include <cstring>
 #include <vector>
 
-namespace CppLogging {
+namespace Logging {
 
 void BinaryLayout::LayoutRecord(Record& record)
 {
@@ -59,4 +55,4 @@ void BinaryLayout::LayoutRecord(Record& record)
     *buffer = 0;
 }
 
-} // namespace CppLogging
+} // namespace Logging

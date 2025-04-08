@@ -1,12 +1,9 @@
-/*!
-    \file bintree_aa.inl
-    \brief Intrusive balanced A.Andersson binary tree container inline implementation
-    \author Ivan Shynkarenka
-    \date 23.06.2017
-    \copyright MIT License
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-namespace CppCommon {
+
+namespace BaseKit {
 
 template <typename T, typename TCompare>
 template <class InputIterator>
@@ -512,4 +509,4 @@ inline void swap(BinTreeAA<T, TCompare>& bintree1, BinTreeAA<T, TCompare>& bintr
     bintree1.swap(bintree2);
 }
 
-} // namespace CppCommon
+} // namespace BaseKit

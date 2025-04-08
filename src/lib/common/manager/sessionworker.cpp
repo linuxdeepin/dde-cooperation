@@ -306,8 +306,8 @@ bool SessionWorker::sendAsyncRequest(const QString &target, const proto::OriginM
     }
 
     // Sleep for release something
-    CppCommon::Thread::Yield();
-    CppCommon::Thread::Sleep(1);
+    BaseKit::Thread::Yield();
+    BaseKit::Thread::Sleep(1);
 
     std::string ip = target.toStdString();
     if (doAsyncRequest(_client.get(), ip, request)) {
@@ -398,8 +398,8 @@ bool SessionWorker::connect(QString &address, int port)
     while (!_client->connectReplyed()) {
         if (wait_cout > 2000)
             break;
-        CppCommon::Thread::Sleep(1);
-        CppCommon::Thread::Yield();
+        BaseKit::Thread::Sleep(1);
+        BaseKit::Thread::Yield();
         wait_cout++;
     };
 
