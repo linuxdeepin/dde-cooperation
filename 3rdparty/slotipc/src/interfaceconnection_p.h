@@ -1,23 +1,27 @@
-#ifndef CUTEIPCINTERFACECONNECTION_P_H
-#define CUTEIPCINTERFACECONNECTION_P_H
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#ifndef INTERFACECONNECTION_P_H
+#define INTERFACECONNECTION_P_H
+
+
 #include <QObject>
 #include <QLocalSocket>
 #include <QTcpSocket>
 
-// Local
-#include "CuteIPCInterface.h"
-#include "CuteIPCMessage_p.h"
+
+#include "slotipc/interface.h"
+#include "message_p.h"
 
 
-class CuteIPCInterfaceConnection : public QObject
+class SlotIPCInterfaceConnection : public QObject
 {
   Q_OBJECT
 
   public:
-    CuteIPCInterfaceConnection(QLocalSocket* socket, QObject* parent = 0);
-    CuteIPCInterfaceConnection(QTcpSocket* socket, QObject* parent = 0);
+    SlotIPCInterfaceConnection(QLocalSocket* socket, QObject* parent = 0);
+    SlotIPCInterfaceConnection(QTcpSocket* socket, QObject* parent = 0);
 
     void sendCallRequest(const QByteArray& request);
     void setReturnedObject(QGenericReturnArgument returnedObject);
@@ -27,7 +31,7 @@ class CuteIPCInterfaceConnection : public QObject
   signals:
     void callFinished();
     void socketDisconnected();
-    void invokeRemoteSignal(const QString& signalSignature, const CuteIPCMessage::Arguments& arguments);
+    void invokeRemoteSignal(const QString& signalSignature, const SlotIPCMessage::Arguments& arguments);
     void errorOccured(const QString&);
 
   public slots:
@@ -48,4 +52,4 @@ class CuteIPCInterfaceConnection : public QObject
     bool readMessageFromSocket();
 };
 
-#endif // CUTEIPCINTERFACECONNECTION_P_H
+#endif // INTERFACECONNECTION_P_H

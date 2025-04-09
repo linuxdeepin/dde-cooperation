@@ -1,16 +1,19 @@
-// Local
-#include "CuteIPCInterfaceConnection_p.h"
-#include "CuteIPCMarshaller_p.h"
-#include "CuteIPCMessage_p.h"
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#include "interfaceconnection_p.h"
+#include "marshaller_p.h"
+#include "message_p.h"
+
+
 #include <QLocalSocket>
 #include <QDataStream>
 #include <QTime>
 #include <QMetaType>
 
 
-CuteIPCInterfaceConnection::CuteIPCInterfaceConnection(QLocalSocket* socket, QObject* parent)
+SlotIPCInterfaceConnection::SlotIPCInterfaceConnection(QLocalSocket* socket, QObject* parent)
   : QObject(parent),
     m_socket(socket),
     m_nextBlockSize(0),
@@ -26,7 +29,7 @@ CuteIPCInterfaceConnection::CuteIPCInterfaceConnection(QLocalSocket* socket, QOb
 }
 
 
-CuteIPCInterfaceConnection::CuteIPCInterfaceConnection(QTcpSocket* socket, QObject* parent)
+SlotIPCInterfaceConnection::SlotIPCInterfaceConnection(QTcpSocket* socket, QObject* parent)
   : QObject(parent),
     m_socket(socket),
     m_nextBlockSize(0),
@@ -37,18 +40,18 @@ CuteIPCInterfaceConnection::CuteIPCInterfaceConnection(QTcpSocket* socket, QObje
   connect(socket, SIGNAL(readyRead()), SLOT(readyRead()));
 }
 
-bool CuteIPCInterfaceConnection::isConnected() {
+bool SlotIPCInterfaceConnection::isConnected() {
   return m_socket && m_socket->isOpen();
 }
 
-void CuteIPCInterfaceConnection::sendCallRequest(const QByteArray& request)
+void SlotIPCInterfaceConnection::sendCallRequest(const QByteArray& request)
 {
   QDataStream stream(m_socket);
   stream << (quint32)request.size();
   int written = stream.writeRawData(request.constData(), request.size());
 
   if (written != request.size())
-    qWarning() << "CuteIPC:" << "Warning:" << "Written bytes and request size doesn't match";
+    qWarning() << "SlotIPC:" << "Warning:" << "Written bytes and request size doesn't match";
 
   if (QAbstractSocket* socket = qobject_cast<QAbstractSocket*>(m_socket))
     socket->flush();
@@ -59,7 +62,7 @@ void CuteIPCInterfaceConnection::sendCallRequest(const QByteArray& request)
 }
 
 
-void CuteIPCInterfaceConnection::readyRead()
+void SlotIPCInterfaceConnection::readyRead()
 {
   bool messageStreamFinished;
 
@@ -70,7 +73,7 @@ void CuteIPCInterfaceConnection::readyRead()
 }
 
 
-bool CuteIPCInterfaceConnection::readMessageFromSocket()
+bool SlotIPCInterfaceConnection::readMessageFromSocket()
 {
   QDataStream in(m_socket);
 
@@ -94,32 +97,32 @@ bool CuteIPCInterfaceConnection::readMessageFromSocket()
   if (m_block.size() == (int)m_nextBlockSize)
   {
     // Fetched enough, need to parse
-    CuteIPCMessage::MessageType type = CuteIPCMarshaller::demarshallMessageType(m_block);
+    SlotIPCMessage::MessageType type = SlotIPCMarshaller::demarshallMessageType(m_block);
 
     switch (type)
     {
-      case CuteIPCMessage::MessageResponse:
+      case SlotIPCMessage::MessageResponse:
       {
-        CuteIPCMessage message = CuteIPCMarshaller::demarshallResponse(m_block, m_returnedObject);
+        SlotIPCMessage message = SlotIPCMarshaller::demarshallResponse(m_block, m_returnedObject);
         callWasFinished = true;
-        CuteIPCMarshaller::freeArguments(message.arguments());
+        SlotIPCMarshaller::freeArguments(message.arguments());
         break;
       }
-      case CuteIPCMessage::MessageError:
+      case SlotIPCMessage::MessageError:
       {
         m_lastCallSuccessful = false;
         callWasFinished = true;
-        CuteIPCMessage message = CuteIPCMarshaller::demarshallMessage(m_block);
-        qWarning() << "CuteIPC:" << "Error:" << message.method();
+        SlotIPCMessage message = SlotIPCMarshaller::demarshallMessage(m_block);
+        qWarning() << "SlotIPC:" << "Error:" << message.method();
         emit errorOccured(message.method());
-        CuteIPCMarshaller::freeArguments(message.arguments());
+        SlotIPCMarshaller::freeArguments(message.arguments());
         break;
       }
-      case CuteIPCMessage::AboutToCloseSocket:
+      case SlotIPCMessage::AboutToCloseSocket:
       {
         DEBUG << "The server reports that the connection is closed";
-        CuteIPCMessage message = CuteIPCMarshaller::demarshallMessage(m_block);
-        CuteIPCMarshaller::freeArguments(message.arguments());
+        SlotIPCMessage message = SlotIPCMarshaller::demarshallMessage(m_block);
+        SlotIPCMarshaller::freeArguments(message.arguments());
         m_lastCallSuccessful = false;
 
         // Разрываем соединение с сервером. При этом отправляется сигнал socketDiconnected
@@ -130,9 +133,9 @@ bool CuteIPCInterfaceConnection::readMessageFromSocket()
 
         break;
       }
-      case CuteIPCMessage::MessageSignal:
+      case SlotIPCMessage::MessageSignal:
       {
-        CuteIPCMessage message = CuteIPCMarshaller::demarshallMessage(m_block);
+        SlotIPCMessage message = SlotIPCMarshaller::demarshallMessage(m_block);
         emit invokeRemoteSignal(message.method(), message.arguments());
         break;
       }
@@ -157,27 +160,27 @@ bool CuteIPCInterfaceConnection::readMessageFromSocket()
 }
 
 
-void CuteIPCInterfaceConnection::errorOccured(QLocalSocket::LocalSocketError)
+void SlotIPCInterfaceConnection::errorOccured(QLocalSocket::LocalSocketError)
 {
-  qWarning() << "CuteIPC" << "Socket error: " << m_socket->errorString();
+  qWarning() << "SlotIPC" << "Socket error: " << m_socket->errorString();
   emit errorOccured(m_socket->errorString());
 }
 
 
-void CuteIPCInterfaceConnection::errorOccured(QAbstractSocket::SocketError)
+void SlotIPCInterfaceConnection::errorOccured(QAbstractSocket::SocketError)
 {
-  qWarning() << "CuteIPC" << "Socket error: " << m_socket->errorString();
+  qWarning() << "SlotIPC" << "Socket error: " << m_socket->errorString();
   emit errorOccured(m_socket->errorString());
 }
 
 
-void CuteIPCInterfaceConnection::setReturnedObject(QGenericReturnArgument returnedObject)
+void SlotIPCInterfaceConnection::setReturnedObject(QGenericReturnArgument returnedObject)
 {
   m_returnedObject = returnedObject;
 }
 
 
-bool CuteIPCInterfaceConnection::lastCallSuccessful() const
+bool SlotIPCInterfaceConnection::lastCallSuccessful() const
 {
   return m_lastCallSuccessful;
 }

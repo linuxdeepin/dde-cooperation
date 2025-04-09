@@ -1,23 +1,27 @@
-#ifndef CUTEIPCSERVICE_H
-#define CUTEIPCSERVICE_H
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef SERVICE_H
+#define SERVICE_H
 
 #include "exportglobal.h"
 
-// Qt
+
 #include <QObject>
 #include <QtNetwork/QHostAddress>
 #include <QLocalServer>
 
-// Local
-class CuteIPCServicePrivate;
 
-class EXPORT_API CuteIPCService : public QObject
+class SlotIPCServicePrivate;
+
+class EXPORT_API SlotIPCService : public QObject
 {
   Q_OBJECT
 
   public:
-    explicit CuteIPCService(QObject* parent = 0);
-    ~CuteIPCService();
+    explicit SlotIPCService(QObject* parent = 0);
+    ~SlotIPCService();
 
     bool listen(const QString& name = QString(), QObject* subject = 0, QLocalServer::SocketOptions options=QLocalServer::NoOptions);
     bool listen(QObject* subject, QLocalServer::SocketOptions options=QLocalServer::NoOptions);
@@ -31,11 +35,11 @@ class EXPORT_API CuteIPCService : public QObject
     void close();
 
   protected:
-    CuteIPCServicePrivate* const d_ptr;
-    CuteIPCService(CuteIPCServicePrivate& dd, QObject* parent);
+    SlotIPCServicePrivate* const d_ptr;
+    SlotIPCService(SlotIPCServicePrivate& dd, QObject* parent);
 
   private:
-    Q_DECLARE_PRIVATE(CuteIPCService)
+    Q_DECLARE_PRIVATE(SlotIPCService)
 
     Q_PRIVATE_SLOT(d_func(),void _q_newLocalConnection())
     Q_PRIVATE_SLOT(d_func(),void _q_newTcpConnection())
@@ -46,4 +50,4 @@ class EXPORT_API CuteIPCService : public QObject
     Q_PRIVATE_SLOT(d_func(),void _q_connectionDestroyed(QObject*))
 };
 
-#endif // CUTEIPCSERVICE_H
+#endif // SERVICE_H

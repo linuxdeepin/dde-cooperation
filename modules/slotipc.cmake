@@ -1,7 +1,7 @@
-if(NOT TARGET CuteIPC)
+if(NOT TARGET SlotIPC)
 
   # Module subdirectory
-  set(CUTEIPC_DIR "${PROJECT_SOURCE_DIR}/3rdparty/CuteIPC")
+  set(SLOTIPC_DIR "${PROJECT_SOURCE_DIR}/3rdparty/slotipc")
 
   # set build as share library
   if(MSVC)
@@ -13,15 +13,15 @@ if(NOT TARGET CuteIPC)
   SET(QT_DESIRED_VERSION ${QT_VERSION_MAJOR})
 
   # Module subdirectory
-  add_subdirectory("${CUTEIPC_DIR}" CuteIPC)
-  include_directories(${CUTEIPC_DIR}/include)
+  add_subdirectory("${SLOTIPC_DIR}" SlotIPC)
+  include_directories(${SLOTIPC_DIR}/include)
 
 if(MSVC)
   # 拷贝输出文件到应用
-  file(GLOB OUTPUTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}/CuteIPC.*)
+  file(GLOB OUTPUTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}/SlotIPC.*)
   file(COPY ${OUTPUTS}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dde-cooperation/${CMAKE_BUILD_TYPE})
-  message("   >>> copy CuteIPC output libraries:  ${OUTPUTS}")
+  message("   >>> copy SlotIPC output libraries:  ${OUTPUTS}")
 endif()
 
 endif()

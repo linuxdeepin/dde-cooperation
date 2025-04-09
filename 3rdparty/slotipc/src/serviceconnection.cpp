@@ -1,8 +1,11 @@
-// Local
-#include "CuteIPCServiceConnection_p.h"
-#include "CuteIPCMarshaller_p.h"
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#include "serviceconnection_p.h"
+#include "marshaller_p.h"
+
+
 #include <QLocalSocket>
 #include <QTcpSocket>
 #include <QDataStream>
@@ -10,7 +13,7 @@
 #include <QMetaType>
 
 
-CuteIPCServiceConnection::CuteIPCServiceConnection(QLocalSocket* socket, CuteIPCService* parent)
+SlotIPCServiceConnection::SlotIPCServiceConnection(QLocalSocket* socket, SlotIPCService* parent)
   : QObject(parent),
     m_socket(socket),
     m_nextBlockSize(0),
@@ -33,19 +36,19 @@ CuteIPCServiceConnection::CuteIPCServiceConnection(QLocalSocket* socket, CuteIPC
   connect(socket, SIGNAL(readyRead()), SLOT(readyRead()));
   if (socket->state() != QLocalSocket::ConnectedState || !socket->isReadable() || !socket->isWritable())
   {
-    qWarning() << "CuteIPC:" << "Socket was not opened corectly. We tried to open again";
+    qWarning() << "SlotIPC:" << "Socket was not opened corectly. We tried to open again";
     socket->open(QIODevice::ReadWrite);
   }
 
   if (!socket->isOpen())
   {
-    qWarning() << "CuteIPC:" << "Failed to open socket in ReadWrite mode:" << socket->errorString();
+    qWarning() << "SlotIPC:" << "Failed to open socket in ReadWrite mode:" << socket->errorString();
     deleteLater();
   }
 }
 
 
-CuteIPCServiceConnection::CuteIPCServiceConnection(QTcpSocket* socket, CuteIPCService* parent)
+SlotIPCServiceConnection::SlotIPCServiceConnection(QTcpSocket* socket, SlotIPCService* parent)
   : QObject(parent),
     m_socket(socket),
     m_nextBlockSize(0),
@@ -65,29 +68,29 @@ CuteIPCServiceConnection::CuteIPCServiceConnection(QTcpSocket* socket, CuteIPCSe
   connect(socket, SIGNAL(readyRead()), SLOT(readyRead()));
   if (socket->state() != QAbstractSocket::ConnectedState || !socket->isReadable() || !socket->isWritable())
   {
-    qWarning() << "CuteIPC:" << "Socket was not opened corectly. We tried to open again";
+    qWarning() << "SlotIPC:" << "Socket was not opened corectly. We tried to open again";
     socket->open(QIODevice::ReadWrite);
   }
 
   if (!socket->isOpen())
   {
-    qWarning() << "CuteIPC:" << "Failed to open socket in ReadWrite mode:" << socket->errorString();
+    qWarning() << "SlotIPC:" << "Failed to open socket in ReadWrite mode:" << socket->errorString();
     deleteLater();
   }
 }
 
 
-CuteIPCServiceConnection::~CuteIPCServiceConnection()
+SlotIPCServiceConnection::~SlotIPCServiceConnection()
 {}
 
 
-void CuteIPCServiceConnection::setSubject(QObject* subject)
+void SlotIPCServiceConnection::setSubject(QObject* subject)
 {
   m_subject = subject;
 }
 
 
-void CuteIPCServiceConnection::readyRead()
+void SlotIPCServiceConnection::readyRead()
 {
   bool messageStreamFinished;
 
@@ -98,7 +101,7 @@ void CuteIPCServiceConnection::readyRead()
 }
 
 
-bool CuteIPCServiceConnection::readMessageFromSocket()
+bool SlotIPCServiceConnection::readMessageFromSocket()
 {
   QDataStream in(m_socket);
 
@@ -132,20 +135,20 @@ bool CuteIPCServiceConnection::readMessageFromSocket()
 }
 
 
-void CuteIPCServiceConnection::processMessage()
+void SlotIPCServiceConnection::processMessage()
 {
-  CuteIPCMessage call = CuteIPCMarshaller::demarshallMessage(m_block);
-  CuteIPCMessage::MessageType messageType = call.messageType();
+  SlotIPCMessage call = SlotIPCMarshaller::demarshallMessage(m_block);
+  SlotIPCMessage::MessageType messageType = call.messageType();
   DEBUG << call;
 
   QObject* subject = m_subject ? m_subject : parent();
 
   // Fill empty args
-  CuteIPCMessage::Arguments args = call.arguments();
+  SlotIPCMessage::Arguments args = call.arguments();
   while (args.size() < 10)
     args.append(QGenericArgument());
 
-  if (messageType == CuteIPCMessage::MessageCallWithReturn && !call.returnType().isEmpty())
+  if (messageType == SlotIPCMessage::MessageCallWithReturn && !call.returnType().isEmpty())
   {
     int retType = QMetaType::type(call.returnType().toLatin1());
     if (retType > 0)
@@ -177,12 +180,12 @@ void CuteIPCServiceConnection::processMessage()
     else
     {
       QString error = "Unsupported type of expected return value: " + call.returnType();
-      qWarning() << "CuteIPC:" << error;
+      qWarning() << "SlotIPC:" << error;
       sendErrorMessage(error);
     }
   }
-  else if ((messageType == CuteIPCMessage::MessageCallWithReturn && call.returnType().isEmpty())
-           || messageType == CuteIPCMessage::MessageCallWithoutReturn)
+  else if ((messageType == SlotIPCMessage::MessageCallWithReturn && call.returnType().isEmpty())
+           || messageType == SlotIPCMessage::MessageCallWithoutReturn)
   {
     bool successfulInvoke = QMetaObject::invokeMethod(subject, call.method().toLatin1(),
         args.at(0), args.at(1), args.at(2), args.at(3), args.at(4), args.at(5),
@@ -193,11 +196,11 @@ void CuteIPCServiceConnection::processMessage()
     }
     else
     {
-      if (messageType == CuteIPCMessage::MessageCallWithReturn)
+      if (messageType == SlotIPCMessage::MessageCallWithReturn)
         sendResponseMessage(call.method());
     }
   }
-  else if (messageType == CuteIPCMessage::MessageSignal)
+  else if (messageType == SlotIPCMessage::MessageSignal)
   {
     bool successfulInvoke = QMetaObject::invokeMethod(subject,
         call.method().left(call.method().indexOf("(")).toLatin1(),
@@ -206,7 +209,7 @@ void CuteIPCServiceConnection::processMessage()
     if (!successfulInvoke)
       sendErrorMessage("Unsuccessful invoke");
   }
-  else if (messageType == CuteIPCMessage::SignalConnectionRequest)
+  else if (messageType == SlotIPCMessage::SignalConnectionRequest)
   {
 #if QT_VERSION >= 0x050000
     void* connectionId = QMetaType::create(QMetaType::QString, args.at(0).data());
@@ -222,14 +225,14 @@ void CuteIPCServiceConnection::processMessage()
 
     QMetaType::destroy(QMetaType::QString, connectionId);
   }
-  else if (messageType == CuteIPCMessage::SlotConnectionRequest)
+  else if (messageType == SlotIPCMessage::SlotConnectionRequest)
   {
     if (subject->metaObject()->indexOfSlot(QMetaObject::normalizedSignature(call.method().toLatin1())) == -1)
       sendErrorMessage("Remote slot doesn't exist:" + call.method());
     else
       sendResponseMessage(call.method());
   }
-  else if (messageType == CuteIPCMessage::ConnectionInitialize)
+  else if (messageType == SlotIPCMessage::ConnectionInitialize)
   {
 #if QT_VERSION >= 0x050000
     void* connectionId = QMetaType::create(QMetaType::QString, args.at(0).data());
@@ -244,35 +247,35 @@ void CuteIPCServiceConnection::processMessage()
 
 
   // Cleanup
-  CuteIPCMarshaller::freeArguments(call.arguments());
+  SlotIPCMarshaller::freeArguments(call.arguments());
 }
 
 
-void CuteIPCServiceConnection::sendErrorMessage(const QString& error)
+void SlotIPCServiceConnection::sendErrorMessage(const QString& error)
 {
-  CuteIPCMessage message(CuteIPCMessage::MessageError, error);
-  QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+  SlotIPCMessage message(SlotIPCMessage::MessageError, error);
+  QByteArray request = SlotIPCMarshaller::marshallMessage(message);
   sendResponse(request);
-  qWarning() << "CuteIPC:" << "Error message was sent:" << error;
+  qWarning() << "SlotIPC:" << "Error message was sent:" << error;
 }
 
 
-void CuteIPCServiceConnection::sendResponseMessage(const QString& method, QGenericArgument arg)
+void SlotIPCServiceConnection::sendResponseMessage(const QString& method, QGenericArgument arg)
 {
-  CuteIPCMessage::Arguments args;
+  SlotIPCMessage::Arguments args;
   if (arg.name()) args.push_back(arg);
-  CuteIPCMessage message(CuteIPCMessage::MessageResponse, method, args);
-  QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+  SlotIPCMessage message(SlotIPCMessage::MessageResponse, method, args);
+  QByteArray request = SlotIPCMarshaller::marshallMessage(message);
 
   sendResponse(request);
   //  qDebug() << "Returned value was sent";
 }
 
 
-void CuteIPCServiceConnection::sendAboutToQuit()
+void SlotIPCServiceConnection::sendAboutToQuit()
 {
-  CuteIPCMessage message(CuteIPCMessage::AboutToCloseSocket);
-  QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+  SlotIPCMessage message(SlotIPCMessage::AboutToCloseSocket);
+  QByteArray request = SlotIPCMarshaller::marshallMessage(message);
 
   DEBUG << "Send aboutToClose notification";
 
@@ -282,14 +285,14 @@ void CuteIPCServiceConnection::sendAboutToQuit()
 }
 
 
-void CuteIPCServiceConnection::sendResponse(const QByteArray& response)
+void SlotIPCServiceConnection::sendResponse(const QByteArray& response)
 {
   QDataStream stream(m_socket);
   stream << (quint32)response.size();
   int written = stream.writeRawData(response.constData(), response.size());
 
   if (written != response.size())
-    qWarning() << "CuteIPC:" << "Socket error: Written bytes and request size doesn't match";
+    qWarning() << "SlotIPC:" << "Socket error: Written bytes and request size doesn't match";
 
   if (QAbstractSocket* socket = qobject_cast<QAbstractSocket*>(m_socket))
     socket->flush();
@@ -298,27 +301,27 @@ void CuteIPCServiceConnection::sendResponse(const QByteArray& response)
 }
 
 
-void CuteIPCServiceConnection::errorOccured(QLocalSocket::LocalSocketError error)
+void SlotIPCServiceConnection::errorOccured(QLocalSocket::LocalSocketError error)
 {
   // Connection closed by peer is normal situation: it just notifies us that the remote client have been disconnected
   if (error != QLocalSocket::PeerClosedError)
-    qWarning() << "CuteIPC:" << "Socket error: " << m_socket->errorString();
+    qWarning() << "SlotIPC:" << "Socket error: " << m_socket->errorString();
 
   deleteLater();
 }
 
 
-void CuteIPCServiceConnection::errorOccured(QAbstractSocket::SocketError error)
+void SlotIPCServiceConnection::errorOccured(QAbstractSocket::SocketError error)
 {
   // Connection closed by peer is normal situation: it just notifies us that the remote client have been disconnected
   if (error != QAbstractSocket::RemoteHostClosedError)
-    qWarning() << "CuteIPC:" << "Socket error: " << m_socket->errorString();
+    qWarning() << "SlotIPC:" << "Socket error: " << m_socket->errorString();
 
   deleteLater();
 }
 
 
-void CuteIPCServiceConnection::sendSignal(const QByteArray& data)
+void SlotIPCServiceConnection::sendSignal(const QByteArray& data)
 {
   sendResponse(data);
 }

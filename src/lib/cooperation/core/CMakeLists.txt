@@ -52,8 +52,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-if(ENABLE_CUTEIPC)
-    #include CuteIPC using wrapper files
+if(ENABLE_SLOTIPC)
+    #include SlotIPC using wrapper files
     FILE(GLOB COMPAT_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/net/compatstruct.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/net/compatwrapper*"
@@ -163,10 +163,10 @@ target_link_libraries(${PROJECT_NAME}
     QtZeroConf
 )
 
-if(ENABLE_CUTEIPC)
+if(ENABLE_SLOTIPC)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        CuteIPC
+        slotipc
     )
 endif()
 

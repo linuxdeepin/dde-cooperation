@@ -1,20 +1,23 @@
-// Local
-#include "CuteIPCMessage_p.h"
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#include "message_p.h"
+
+
 #include <QDebug>
 
-CuteIPCMessage::CuteIPCMessage(MessageType type, const QString& method,
-                               CUTE_IPC_ARG val0,
-                               CUTE_IPC_ARG val1,
-                               CUTE_IPC_ARG val2,
-                               CUTE_IPC_ARG val3,
-                               CUTE_IPC_ARG val4,
-                               CUTE_IPC_ARG val5,
-                               CUTE_IPC_ARG val6,
-                               CUTE_IPC_ARG val7,
-                               CUTE_IPC_ARG val8,
-                               CUTE_IPC_ARG val9,
+SlotIPCMessage::SlotIPCMessage(MessageType type, const QString& method,
+                               METHOD_ARG val0,
+                               METHOD_ARG val1,
+                               METHOD_ARG val2,
+                               METHOD_ARG val3,
+                               METHOD_ARG val4,
+                               METHOD_ARG val5,
+                               METHOD_ARG val6,
+                               METHOD_ARG val7,
+                               METHOD_ARG val8,
+                               METHOD_ARG val9,
                                const QString& returnType)
 {
   m_messageType = type;
@@ -23,7 +26,7 @@ CuteIPCMessage::CuteIPCMessage(MessageType type, const QString& method,
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
   // Qt6: 需要转换参数类型
-  const CUTE_IPC_ARG args[] = {
+  const METHOD_ARG args[] = {
     val0, val1, val2, val3, val4, val5, val6, val7, val8, val9
   };
   
@@ -50,7 +53,7 @@ CuteIPCMessage::CuteIPCMessage(MessageType type, const QString& method,
 }
 
 
-CuteIPCMessage::CuteIPCMessage(MessageType type, const QString& method,
+SlotIPCMessage::SlotIPCMessage(MessageType type, const QString& method,
                                const Arguments& arguments, const QString& returnType)
 {
   m_method = method;
@@ -60,60 +63,60 @@ CuteIPCMessage::CuteIPCMessage(MessageType type, const QString& method,
 }
 
 
-const QString& CuteIPCMessage::method() const
+const QString& SlotIPCMessage::method() const
 {
   return m_method;
 }
 
 
-const CuteIPCMessage::Arguments& CuteIPCMessage::arguments() const
+const SlotIPCMessage::Arguments& SlotIPCMessage::arguments() const
 {
   return m_arguments;
 }
 
 
-const CuteIPCMessage::MessageType& CuteIPCMessage::messageType() const
+const SlotIPCMessage::MessageType& SlotIPCMessage::messageType() const
 {
   return m_messageType;
 }
 
 
-const QString& CuteIPCMessage::returnType() const
+const QString& SlotIPCMessage::returnType() const
 {
   return m_returnType;
 }
 
 
-QDebug operator<<(QDebug dbg, const CuteIPCMessage& message)
+QDebug operator<<(QDebug dbg, const SlotIPCMessage& message)
 {
   QString type;
   switch (message.messageType())
   {
-    case CuteIPCMessage::MessageCallWithReturn:
+    case SlotIPCMessage::MessageCallWithReturn:
       type = "CallWithReturn";
       break;
-    case CuteIPCMessage::MessageCallWithoutReturn:
+    case SlotIPCMessage::MessageCallWithoutReturn:
       type = "CallWithoutReturn";
       break;
-    case CuteIPCMessage::MessageResponse:
+    case SlotIPCMessage::MessageResponse:
       type = "Response";
       break;
-    case CuteIPCMessage::MessageError:
+    case SlotIPCMessage::MessageError:
       type = "Error";
       break;
-    case CuteIPCMessage::SignalConnectionRequest:
+    case SlotIPCMessage::SignalConnectionRequest:
       type = "SignalConnectionRequest";
       break;
-    case CuteIPCMessage::MessageSignal:
+    case SlotIPCMessage::MessageSignal:
       type = "Signal";
       break;
-    case CuteIPCMessage::SlotConnectionRequest:
+    case SlotIPCMessage::SlotConnectionRequest:
       type = "SlotConnectionRequest";
       break;
-    case CuteIPCMessage::AboutToCloseSocket:
+    case SlotIPCMessage::AboutToCloseSocket:
       type = "AboutToCloseSocket";
       break;
-    case CuteIPCMessage::ConnectionInitialize:
+    case SlotIPCMessage::ConnectionInitialize:
       type = "ConnectionInitialize";
       break;
     default: break;

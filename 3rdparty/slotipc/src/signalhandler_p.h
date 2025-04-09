@@ -1,22 +1,26 @@
-#ifndef CUTEIPCSIGNALHANDLER_P_H
-#define CUTEIPCSIGNALHANDLER_P_H
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#ifndef SIGNALHANDLER_P_H
+#define SIGNALHANDLER_P_H
+
+
 #include <QObject>
 class QMetaMethod;
 
-// Local
-class CuteIPCService;
-class CuteIPCServiceConnection;
+
+class SlotIPCService;
+class SlotIPCServiceConnection;
 
 
-class CuteIPCSignalHandler : public QObject
+class SlotIPCSignalHandler : public QObject
 {
   Q_OBJECT_FAKE
 
   public:
-    explicit CuteIPCSignalHandler(const QString& signature, QObject* parent = 0);
-    ~CuteIPCSignalHandler();
+    explicit SlotIPCSignalHandler(const QString& signature, QObject* parent = 0);
+    ~SlotIPCSignalHandler();
 
     //To send signals from client-side local objects, pass server's slot signature to constructor
     //and object's signal to setSignalParametersInfo.
@@ -26,8 +30,8 @@ class CuteIPCSignalHandler : public QObject
 
 //  public slots:
     void relaySlot(void**);
-    void addListener(CuteIPCServiceConnection* listener);
-    void removeListener(CuteIPCServiceConnection* listener);
+    void addListener(SlotIPCServiceConnection* listener);
+    void removeListener(SlotIPCServiceConnection* listener);
     void listenerDestroyed(QObject* listener);
 
   protected:
@@ -39,7 +43,7 @@ class CuteIPCSignalHandler : public QObject
     QString m_signature;
     QList<QByteArray> m_signalParametersInfo;
     bool m_signalParametersInfoWasSet;
-    QList<CuteIPCServiceConnection*> m_listeners;
+    QList<SlotIPCServiceConnection*> m_listeners;
 };
 
-#endif // CUTEIPCSIGNALHANDLER_P_H
+#endif // SIGNALHANDLER_P_H

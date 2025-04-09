@@ -125,10 +125,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Concurrent
 )
 
-if(ENABLE_CUTEIPC)
+if(ENABLE_SLOTIPC)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        CuteIPC
+        slotipc
     )
 endif()
 

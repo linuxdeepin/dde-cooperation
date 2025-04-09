@@ -5,7 +5,6 @@
 #ifndef EXPORTGLOBAL_H
 #define EXPORTGLOBAL_H
 
-// Qt build
 #ifdef QT_BUILD_SHARED
   #include <QtCore/QtGlobal>
   #define EXPORT_API Q_DECL_EXPORT

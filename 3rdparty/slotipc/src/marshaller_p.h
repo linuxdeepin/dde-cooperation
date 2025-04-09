@@ -1,25 +1,29 @@
-#ifndef CUTEIPCMARSHALLER_P_H
-#define CUTEIPCMARSHALLER_P_H
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#ifndef MARSHALLER_P_H
+#define MARSHALLER_P_H
+
+
 #include <QString>
 #include <QByteArray>
 #include <QPair>
 #include <QGenericArgument>
 
 // local
-#include "CuteIPCMessage_p.h"
+#include "message_p.h"
 
-class CuteIPCMarshaller
+class SlotIPCMarshaller
 {
   public:
-    static QByteArray marshallMessage(const CuteIPCMessage& message);
-    static CuteIPCMessage demarshallMessage(QByteArray& call);
-    static CuteIPCMessage demarshallResponse(QByteArray& call, QGenericReturnArgument arg);
+    static QByteArray marshallMessage(const SlotIPCMessage& message);
+    static SlotIPCMessage demarshallMessage(QByteArray& call);
+    static SlotIPCMessage demarshallResponse(QByteArray& call, QGenericReturnArgument arg);
 
-    static CuteIPCMessage::MessageType demarshallMessageType(QByteArray& message);
+    static SlotIPCMessage::MessageType demarshallMessageType(QByteArray& message);
 
-    static void freeArguments(const CuteIPCMessage::Arguments&);
+    static void freeArguments(const SlotIPCMessage::Arguments&);
     static void freeArgument(QGenericArgument);
 
   private:
@@ -37,4 +41,4 @@ class CuteIPCMarshaller
     static bool loadContainerOfQImages(QDataStream& stream, void* data);
 };
 
-#endif // CUTEIPCMARSHALLER_P_H
+#endif // MARSHALLER_P_H

@@ -1,24 +1,28 @@
-#ifndef CUTEIPCSERVICECONNECTION_P_H
-#define CUTEIPCSERVICECONNECTION_P_H
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#ifndef SERVICECONNECTION_P_H
+#define SERVICECONNECTION_P_H
+
+
 #include <QObject>
 #include <QLocalSocket>
 class QTcpSocket;
 
-// Local
-#include "CuteIPCService.h"
+
+#include "slotipc/service.h"
 
 
-class CuteIPCServiceConnection : public QObject
+class SlotIPCServiceConnection : public QObject
 {
   Q_OBJECT
 
   public:
-    CuteIPCServiceConnection(QLocalSocket* socket, CuteIPCService* parent);
-    CuteIPCServiceConnection(QTcpSocket* socket, CuteIPCService* parent);
+    SlotIPCServiceConnection(QLocalSocket* socket, SlotIPCService* parent);
+    SlotIPCServiceConnection(QTcpSocket* socket, SlotIPCService* parent);
 
-    ~CuteIPCServiceConnection();
+    ~SlotIPCServiceConnection();
     void setSubject(QObject* subject);
 
   signals:
@@ -52,4 +56,4 @@ class CuteIPCServiceConnection : public QObject
 };
 
 
-#endif // CUTEIPCSERVICECONNECTION_P_H
+#endif // SERVICECONNECTION_P_H

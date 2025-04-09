@@ -1,31 +1,35 @@
-#ifndef CUTEIPCINTERFACE_P_H
-#define CUTEIPCINTERFACE_P_H
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#ifndef INTERFACE_P_H
+#define INTERFACE_P_H
+
+
 #include <QObject>
 #include <QMultiHash>
 #include <QPointer>
 #include <QHostAddress>
 class QLocalSocket;
 
-// Local
-#include "CuteIPCInterface.h"
-#include "CuteIPCMessage_p.h"
-class CuteIPCInterfaceConnection;
-class CuteIPCSignalHandler;
-class CuteIPCInterfaceWorker;
-class CuteIPCLoopVector;
+
+#include "slotipc/interface.h"
+#include "message_p.h"
+class SlotIPCInterfaceConnection;
+class SlotIPCSignalHandler;
+class SlotIPCInterfaceWorker;
+class SlotIPCLoopVector;
 
 
-class CuteIPCInterfacePrivate
+class SlotIPCInterfacePrivate
 {
-  Q_DECLARE_PUBLIC(CuteIPCInterface)
+  Q_DECLARE_PUBLIC(SlotIPCInterface)
 
   typedef QPair<QObject*,QString> MethodData;
 
   public:
-    CuteIPCInterfacePrivate();
-    virtual ~CuteIPCInterfacePrivate();
+    SlotIPCInterfacePrivate();
+    virtual ~SlotIPCInterfacePrivate();
 
     bool checkConnectCorrection(const QString& signal, const QString& method);
     bool checkRemoteSlotExistance(const QString& slot);
@@ -39,19 +43,19 @@ class CuteIPCInterfacePrivate
     void _q_sendAsynchronousRequest(const QByteArray& request);
     void _q_removeSignalHandlersOfObject(QObject*);
     void _q_setLastError(QString); //TODO: !!!!!!
-    void _q_invokeRemoteSignal(const QString& signalSignature, const CuteIPCMessage::Arguments& arguments);
+    void _q_invokeRemoteSignal(const QString& signalSignature, const SlotIPCMessage::Arguments& arguments);
     void _q_removeRemoteConnectionsOfObject(QObject* destroyedObject);
 
     bool call(const QString& method, 
               const QGenericReturnArgument& ret,
-              const CuteIPCMessage::Arguments& arguments);
+              const SlotIPCMessage::Arguments& arguments);
 
-    CuteIPCInterface* q_ptr;
-    QMultiHash<MethodData, CuteIPCSignalHandler*> m_localSignalHandlers;
+    SlotIPCInterface* q_ptr;
+    QMultiHash<MethodData, SlotIPCSignalHandler*> m_localSignalHandlers;
     QString m_lastError;
 
     QThread* m_workerThread;
-    CuteIPCInterfaceWorker* m_worker;
+    SlotIPCInterfaceWorker* m_worker;
 
     QString m_localServer;
     QPair<QHostAddress, quint16> m_tcpAddress;
@@ -59,4 +63,4 @@ class CuteIPCInterfacePrivate
     QMultiHash<QString, MethodData> m_connections;
 };
 
-#endif //CUTEIPCINTERFACE_P_H
+#endif //INTERFACE_P_H

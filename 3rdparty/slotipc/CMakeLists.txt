@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 # Project
-PROJECT(CuteIPC VERSION 0.1.0)
+PROJECT(slotipc VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -36,59 +36,62 @@ INCLUDE_DIRECTORIES(include src ${CMAKE_CURRENT_BINARY_DIR})
 # Turn off automoc
 SET(CMAKE_AUTOMOC OFF)
 
+set(PUB_HEADER_SERVICE "include/slotipc/service.h")
+set(PUB_HEADER_INTERFACE "include/slotipc/interface.h")
+
 SET(sources
-  src/CuteIPCService.cpp
-  src/CuteIPCInterface.cpp
-  src/CuteIPCMarshaller.cpp
-  src/CuteIPCServiceConnection.cpp
-  src/CuteIPCInterfaceConnection.cpp
-  src/CuteIPCMessage.cpp
-  src/CuteIPCSignalHandler.cpp
-  src/CuteIPCInterfaceWorker.cpp
+  src/service.cpp
+  src/interface.cpp
+  src/marshaller.cpp
+  src/serviceconnection.cpp
+  src/interfaceconnection.cpp
+  src/message.cpp
+  src/signalhandler.cpp
+  src/interfaceworker.cpp
 )
 
 SET(headers
-  include/CuteIPCGlobal.h
-  include/CuteIPCService.h
-  include/CuteIPCInterface.h
-  src/CuteIPCService_p.h
-  src/CuteIPCInterface_p.h
-  src/CuteIPCMarshaller_p.h
-  src/CuteIPCMessage_p.h
-  src/CuteIPCSignalHandler_p.h
+  ${PUB_HEADER_SERVICE}
+  ${PUB_HEADER_INTERFACE}
+  include/global.h
+  src/service_p.h
+  src/interface_p.h
+  src/marshaller_p.h
+  src/message_p.h
+  src/signalhandler_p.h
 )
 
 SET(moc_headers
-  src/CuteIPCServiceConnection_p.h
-  src/CuteIPCInterfaceConnection_p.h
-  src/CuteIPCInterfaceWorker.h
+  src/serviceconnection_p.h
+  src/interfaceconnection_p.h
+  src/interfaceworker.h
 )
 
 SET(moc_service
-  ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCService.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/moc_service.cpp
 )
 
 SET(moc_interface
-  ${CMAKE_CURRENT_BINARY_DIR}/moc_CuteIPCInterface.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/moc_interface.cpp
 )
 
 IF (QT_DESIRED_VERSION MATCHES 6)
   # find_package(Qt${QT_DESIRED_VERSION} REQUIRED COMPONENTS Core5Compat)
   QT6_WRAP_CPP(sources ${moc_headers})
-  QT6_GENERATE_MOC(include/CuteIPCService.h ${moc_service})
-  QT6_GENERATE_MOC(include/CuteIPCInterface.h ${moc_interface})
+  QT6_GENERATE_MOC(${PUB_HEADER_SERVICE} ${moc_service})
+  QT6_GENERATE_MOC(${PUB_HEADER_INTERFACE} ${moc_interface})
 ELSEIF (QT_DESIRED_VERSION MATCHES 5)
   QT5_WRAP_CPP(sources ${moc_headers})
-  QT5_GENERATE_MOC(include/CuteIPCService.h ${moc_service})
-  QT5_GENERATE_MOC(include/CuteIPCInterface.h ${moc_interface})
+  QT5_GENERATE_MOC(${PUB_HEADER_SERVICE} ${moc_service})
+  QT5_GENERATE_MOC(${PUB_HEADER_INTERFACE} ${moc_interface})
 ELSE()
   QT4_WRAP_CPP(sources ${moc_headers})
-  QT4_GENERATE_MOC(include/CuteIPCService.h ${moc_service})
-  QT4_GENERATE_MOC(include/CuteIPCInterface.h ${moc_interface})
+  QT4_GENERATE_MOC(${PUB_HEADER_SERVICE} ${moc_service})
+  QT4_GENERATE_MOC(${PUB_HEADER_INTERFACE} ${moc_interface})
 ENDIF()
 
-SET_SOURCE_FILES_PROPERTIES(src/CuteIPCService.cpp PROPERTIES OBJECT_DEPENDS ${moc_service})
-SET_SOURCE_FILES_PROPERTIES(src/CuteIPCInterface.cpp PROPERTIES OBJECT_DEPENDS ${moc_interface})
+SET_SOURCE_FILES_PROPERTIES(src/service.cpp PROPERTIES OBJECT_DEPENDS ${moc_service})
+SET_SOURCE_FILES_PROPERTIES(src/interface.cpp PROPERTIES OBJECT_DEPENDS ${moc_interface})
 
 add_library(${PROJECT_NAME} ${sources} ${headers} ${moc_headers})
 
@@ -120,17 +123,17 @@ TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-SET(CUTEIPC_BUILD_EXAMPLES OFF CACHE BOOL "Build CuteIPC examples")
-SET(CUTEIPC_BUILD_TESTS OFF CACHE BOOL "Build CuteIPC tests")
+SET(SLOTIPC_BUILD_EXAMPLES OFF CACHE BOOL "Build SlotIPC examples")
+SET(SLOTIPC_BUILD_TESTS OFF CACHE BOOL "Build SlotIPC tests")
 
 
 # Examples
-IF (CUTEIPC_BUILD_EXAMPLES)
+IF (SLOTIPC_BUILD_EXAMPLES)
   ADD_SUBDIRECTORY(example/client)
   ADD_SUBDIRECTORY(example/server)
 ENDIF ()
 
-IF (CUTEIPC_BUILD_TESTS)
+IF (SLOTIPC_BUILD_TESTS)
   ADD_SUBDIRECTORY(test)
 ENDIF ()
 

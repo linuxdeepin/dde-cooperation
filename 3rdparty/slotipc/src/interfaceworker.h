@@ -1,25 +1,29 @@
-#ifndef CUTEIPCINTERFACEWORKER_H
-#define CUTEIPCINTERFACEWORKER_H
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef INTERFACEWORKER_H
+#define INTERFACEWORKER_H
 
 #include <QObject>
 #include <QPointer>
 class QIODevice;
 class QHostAddress;
 
-// Local
-#include "CuteIPCMessage_p.h"
 
-class CuteIPCInterfaceConnection;
-class CuteIPCLoopVector;
+#include "message_p.h"
+
+class SlotIPCInterfaceConnection;
+class SlotIPCLoopVector;
 
 
-class CuteIPCInterfaceWorker : public QObject
+class SlotIPCInterfaceWorker : public QObject
 {
   Q_OBJECT
 
   public:
-    explicit CuteIPCInterfaceWorker(QObject* parent = 0);
-    ~CuteIPCInterfaceWorker();
+    explicit SlotIPCInterfaceWorker(QObject* parent = 0);
+    ~SlotIPCInterfaceWorker();
 
     bool isConnected();
   signals:
@@ -30,7 +34,7 @@ class CuteIPCInterfaceWorker : public QObject
     void connectToServerFinished();
     void sendConnectionIdFinished();
     void disconnectFromServerFinished();
-    void invokeRemoteSignal(const QString& signalSignature, const CuteIPCMessage::Arguments& arguments);
+    void invokeRemoteSignal(const QString& signalSignature, const SlotIPCMessage::Arguments& arguments);
 
   public slots:
     void connectToServer(const QString& name, void* successful);
@@ -45,8 +49,8 @@ class CuteIPCInterfaceWorker : public QObject
     void sendRemoteConnectionRequest(const QString& signal);
     void sendSignalDisconnectRequest(const QString& signal);
 
-    QPointer<CuteIPCInterfaceConnection> m_connection;
+    QPointer<SlotIPCInterfaceConnection> m_connection;
     QPointer<QIODevice> m_socket;
 };
 
-#endif // CUTEIPCINTERFACEWORKER_H
+#endif // INTERFACEWORKER_H

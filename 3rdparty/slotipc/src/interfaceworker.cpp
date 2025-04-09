@@ -1,28 +1,32 @@
-#include "CuteIPCInterfaceWorker.h"
-#include "CuteIPCInterfaceConnection_p.h"
-#include "CuteIPCMessage_p.h"
-#include "CuteIPCMarshaller_p.h"
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#include "interfaceworker.h"
+#include "interfaceconnection_p.h"
+#include "message_p.h"
+#include "marshaller_p.h"
+
+
 #include <QEventLoop>
 #include <QTcpSocket>
 #include <QLocalSocket>
 #include <QHostAddress>
 
 
-CuteIPCInterfaceWorker::CuteIPCInterfaceWorker(QObject* parent)
+SlotIPCInterfaceWorker::SlotIPCInterfaceWorker(QObject* parent)
   : QObject(parent)
 {}
 
 
-CuteIPCInterfaceWorker::~CuteIPCInterfaceWorker()
+SlotIPCInterfaceWorker::~SlotIPCInterfaceWorker()
 {
   if (m_socket)
     delete m_socket;
 }
 
 
-void CuteIPCInterfaceWorker::connectToServer(const QString& name, void* successful)
+void SlotIPCInterfaceWorker::connectToServer(const QString& name, void* successful)
 {
   // TODO: Add checking for existing connection
 
@@ -38,21 +42,21 @@ void CuteIPCInterfaceWorker::connectToServer(const QString& name, void* successf
   else
   {
     m_socket = socket;
-    m_connection = new CuteIPCInterfaceConnection(socket, this);
-    connect(m_connection, SIGNAL(invokeRemoteSignal(QString, CuteIPCMessage::Arguments)),
-            this, SIGNAL(invokeRemoteSignal(QString, CuteIPCMessage::Arguments)));
+    m_connection = new SlotIPCInterfaceConnection(socket, this);
+    connect(m_connection, SIGNAL(invokeRemoteSignal(QString, SlotIPCMessage::Arguments)),
+            this, SIGNAL(invokeRemoteSignal(QString, SlotIPCMessage::Arguments)));
     connect(m_connection, SIGNAL(errorOccured(QString)), this, SIGNAL(setLastError(QString)));
 
     connect(m_connection, SIGNAL(socketDisconnected()), SIGNAL(disconnected()));
     connect(m_connection, SIGNAL(socketDisconnected()), m_connection, SLOT(deleteLater()));
     connect(m_connection, SIGNAL(socketDisconnected()), socket, SLOT(deleteLater()));
 
-    DEBUG << "CuteIPC:" << "Connected:" << name << connected;
+    DEBUG << "SlotIPC:" << "Connected:" << name << connected;
 
     // Register connection ID on the serverside
     QString id = connectionId();
-    CuteIPCMessage message(CuteIPCMessage::ConnectionInitialize, "", Q_ARG(QString, id));
-    QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+    SlotIPCMessage message(SlotIPCMessage::ConnectionInitialize, "", Q_ARG(QString, id));
+    QByteArray request = SlotIPCMarshaller::marshallMessage(message);
 
     DEBUG << "Send connection ID to the server:" << id;
 
@@ -64,7 +68,7 @@ void CuteIPCInterfaceWorker::connectToServer(const QString& name, void* successf
 
     bool ok = m_connection->lastCallSuccessful();
     if (!ok)
-      qWarning() << "CuteIPC:" << "Error: send connection ID failed. Remote signal connections will be unsuccessful";
+      qWarning() << "SlotIPC:" << "Error: send connection ID failed. Remote signal connections will be unsuccessful";
   }
 
   *reinterpret_cast<bool*>(successful) = connected;
@@ -72,7 +76,7 @@ void CuteIPCInterfaceWorker::connectToServer(const QString& name, void* successf
 }
 
 
-void CuteIPCInterfaceWorker::connectToTcpServer(const QHostAddress& host, const quint16 port, void *successful)
+void SlotIPCInterfaceWorker::connectToTcpServer(const QHostAddress& host, const quint16 port, void *successful)
 {
   QTcpSocket* socket = new QTcpSocket;
   socket->connectToHost(host, port);
@@ -85,21 +89,21 @@ void CuteIPCInterfaceWorker::connectToTcpServer(const QHostAddress& host, const 
   else
   {
     m_socket = socket;
-    m_connection = new CuteIPCInterfaceConnection(socket, this);
-    connect(m_connection, SIGNAL(invokeRemoteSignal(QString, CuteIPCMessage::Arguments)),
-            this, SIGNAL(invokeRemoteSignal(QString, CuteIPCMessage::Arguments)));
+    m_connection = new SlotIPCInterfaceConnection(socket, this);
+    connect(m_connection, SIGNAL(invokeRemoteSignal(QString, SlotIPCMessage::Arguments)),
+            this, SIGNAL(invokeRemoteSignal(QString, SlotIPCMessage::Arguments)));
     connect(m_connection, SIGNAL(errorOccured(QString)), this, SIGNAL(setLastError(QString)));
 
     connect(m_connection, SIGNAL(socketDisconnected()), SIGNAL(disconnected()));
     connect(m_connection, SIGNAL(socketDisconnected()), m_connection, SLOT(deleteLater()));
     connect(m_connection, SIGNAL(socketDisconnected()), socket, SLOT(deleteLater()));
 
-    DEBUG << "CuteIPC:" << "Connected over network:" << host << port << connected;
+    DEBUG << "SlotIPC:" << "Connected over network:" << host << port << connected;
 
     // Register connection ID on the serverside
     QString id = connectionId();
-    CuteIPCMessage message(CuteIPCMessage::ConnectionInitialize, "", Q_ARG(QString, id));
-    QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+    SlotIPCMessage message(SlotIPCMessage::ConnectionInitialize, "", Q_ARG(QString, id));
+    QByteArray request = SlotIPCMarshaller::marshallMessage(message);
 
     DEBUG << "Send connection ID to the server:" << id;
 
@@ -111,7 +115,7 @@ void CuteIPCInterfaceWorker::connectToTcpServer(const QHostAddress& host, const 
 
     bool ok = m_connection->lastCallSuccessful();
     if (!ok)
-      qWarning() << "CuteIPC:" << "Error: send connection ID failed. Remote signal connections will be unsuccessful";
+      qWarning() << "SlotIPC:" << "Error: send connection ID failed. Remote signal connections will be unsuccessful";
   }
 
   *reinterpret_cast<bool*>(successful) = connected;
@@ -119,7 +123,7 @@ void CuteIPCInterfaceWorker::connectToTcpServer(const QHostAddress& host, const 
 }
 
 
-void CuteIPCInterfaceWorker::disconnectFromServer()
+void SlotIPCInterfaceWorker::disconnectFromServer()
 {
   if (!m_socket)
     return;
@@ -134,11 +138,11 @@ void CuteIPCInterfaceWorker::disconnectFromServer()
 }
 
 
-bool CuteIPCInterfaceWorker::isConnected() {
+bool SlotIPCInterfaceWorker::isConnected() {
   return m_connection->isConnected();
 }
 
-void CuteIPCInterfaceWorker::sendCallRequest(const QByteArray& request)
+void SlotIPCInterfaceWorker::sendCallRequest(const QByteArray& request)
 {
   if (!m_connection)
     return;
@@ -147,7 +151,7 @@ void CuteIPCInterfaceWorker::sendCallRequest(const QByteArray& request)
 }
 
 
-QString CuteIPCInterfaceWorker::connectionId() const
+QString SlotIPCInterfaceWorker::connectionId() const
 {
   return QString::number(reinterpret_cast<quintptr>(m_connection.data()));
 }

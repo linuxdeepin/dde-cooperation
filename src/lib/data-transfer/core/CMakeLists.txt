@@ -12,7 +12,7 @@ project(data-transfer-core VERSION 1.0.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(ENABLE_CUTEIPC OFF)
+set(ENABLE_SLOTIPC OFF)
 remove_definitions(-DENABLE_COMPAT)
 
 # 插件相关的固定内容，或者公共头文件源文件，添加到这里。
@@ -45,8 +45,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-if(ENABLE_CUTEIPC)
-    #include CuteIPC using wrapper files
+if(ENABLE_SLOTIPC)
+    #include SlotIPC using wrapper files
     FILE(GLOB COMPAT_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/net/compatstruct.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/net/compatwrapper*"
@@ -133,10 +133,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Network
 )
 
-if(ENABLE_CUTEIPC)
+if(ENABLE_SLOTIPC)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        CuteIPC
+        slotipc
     )
 endif()
 

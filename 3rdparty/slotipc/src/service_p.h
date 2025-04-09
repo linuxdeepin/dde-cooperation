@@ -1,26 +1,30 @@
-#ifndef CUTEIPCSERVICE_P_H
-#define CUTEIPCSERVICE_P_H
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#ifndef SERVICE_P_H
+#define SERVICE_P_H
+
+
 #include <QObject>
 #include <QHash>
 #include <QPointer>
 class QLocalServer;
 class QTcpServer;
 
-// Local
-#include "CuteIPCService.h"
-class CuteIPCSignalHandler;
-class CuteIPCServiceConnection;
+
+#include "slotipc/service.h"
+class SlotIPCSignalHandler;
+class SlotIPCServiceConnection;
 
 
-class CuteIPCServicePrivate
+class SlotIPCServicePrivate
 {
-  Q_DECLARE_PUBLIC(CuteIPCService)
+  Q_DECLARE_PUBLIC(SlotIPCService)
 
   public:
-    CuteIPCServicePrivate();
-    virtual ~CuteIPCServicePrivate();
+    SlotIPCServicePrivate();
+    virtual ~SlotIPCServicePrivate();
 
     void registerLocalServer();
     void registerTcpServer();
@@ -33,15 +37,15 @@ class CuteIPCServicePrivate
     void _q_handleSignalDisconnect(const QString& signature, const QString& connectionId, QObject*);
     void _q_removeSignalHandler(QString);
 
-    QHash<QString, CuteIPCSignalHandler*> m_signalHandlers;
+    QHash<QString, SlotIPCSignalHandler*> m_signalHandlers;
     QHash<QString, QObject*> m_longLivedConnections;
     QObject* m_subject;
 
-    CuteIPCService* q_ptr;
+    SlotIPCService* q_ptr;
 
   private:
     QPointer<QLocalServer> m_localServer;
     QPointer<QTcpServer> m_tcpServer;
 };
 
-#endif // CUTEIPCSERVICE_P_H
+#endif // SERVICE_P_H

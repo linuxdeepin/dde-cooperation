@@ -1,22 +1,25 @@
-// Local
-#include "CuteIPCInterface.h"
-#include "CuteIPCInterface_p.h"
-#include "CuteIPCMarshaller_p.h"
-#include "CuteIPCInterfaceConnection_p.h"
-#include "CuteIPCMessage_p.h"
-#include "CuteIPCSignalHandler_p.h"
-#include "CuteIPCInterfaceWorker.h"
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#include "slotipc//interface.h"
+#include "interface_p.h"
+#include "marshaller_p.h"
+#include "interfaceconnection_p.h"
+#include "message_p.h"
+#include "signalhandler_p.h"
+#include "interfaceworker.h"
+
+
 #include <QThread>
 #include <QEventLoop>
 #include <QHostAddress>
 
 
 /*!
-    \class CuteIPCInterface
+    \class SlotIPCInterface
 
-    \brief The CuteIPCInterface class provides an IPC client
+    \brief The SlotIPCInterface class provides an IPC client
     used to send remote call requests and set connections between remote
     signals and slots.
 
@@ -35,19 +38,19 @@
     Contrarily, you can connect the local signal to the remote slot, by using
     remoteSlotConnect().
 
-    \sa CuteIPCService
+    \sa SlotIPCService
 */
 
-CuteIPCInterfacePrivate::CuteIPCInterfacePrivate()
+SlotIPCInterfacePrivate::SlotIPCInterfacePrivate()
   : m_workerThread(new QThread),
-    m_worker(new CuteIPCInterfaceWorker)
+    m_worker(new SlotIPCInterfaceWorker)
 {
   m_worker->moveToThread(m_workerThread);
   m_workerThread->start();
 }
 
 
-CuteIPCInterfacePrivate::~CuteIPCInterfacePrivate()
+SlotIPCInterfacePrivate::~SlotIPCInterfacePrivate()
 {
   m_workerThread->quit();
   m_workerThread->wait();
@@ -57,7 +60,7 @@ CuteIPCInterfacePrivate::~CuteIPCInterfacePrivate()
 }
 
 
-bool CuteIPCInterfacePrivate::checkConnectCorrection(const QString& signal, const QString& method)
+bool SlotIPCInterfacePrivate::checkConnectCorrection(const QString& signal, const QString& method)
 {
   if (signal[0] != '2' || (method[0] != '1' && method[0] != '2'))
     return false;
@@ -67,7 +70,7 @@ bool CuteIPCInterfacePrivate::checkConnectCorrection(const QString& signal, cons
 
   if (!QMetaObject::checkConnectArgs(signalSignature.toLatin1(), methodSignature.toLatin1()))
   {
-    qWarning() << "CuteIPC:" << "Error: incompatible signatures" << signalSignature << methodSignature;
+    qWarning() << "SlotIPC:" << "Error: incompatible signatures" << signalSignature << methodSignature;
     m_lastError = "Incompatible signatures: " + signalSignature + "," + methodSignature;
     return false;
   }
@@ -75,29 +78,29 @@ bool CuteIPCInterfacePrivate::checkConnectCorrection(const QString& signal, cons
 }
 
 
-bool CuteIPCInterfacePrivate::checkRemoteSlotExistance(const QString& slot)
+bool SlotIPCInterfacePrivate::checkRemoteSlotExistance(const QString& slot)
 {
   DEBUG << "Check remote slot existence" << slot;
-  CuteIPCMessage message(CuteIPCMessage::SlotConnectionRequest, slot);
-  QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+  SlotIPCMessage message(SlotIPCMessage::SlotConnectionRequest, slot);
+  QByteArray request = SlotIPCMarshaller::marshallMessage(message);
   return sendSynchronousRequest(request);
 }
 
 
-bool CuteIPCInterfacePrivate::sendRemoteConnectRequest(const QString& signalSignature)
+bool SlotIPCInterfacePrivate::sendRemoteConnectRequest(const QString& signalSignature)
 {
   QString connectionId = m_worker->connectionId();
 
   DEBUG << "Requesting connection to signal" << signalSignature << "Worker connection ID: " << connectionId;
 
-  CuteIPCMessage message(CuteIPCMessage::SignalConnectionRequest, signalSignature, Q_ARG(QString, connectionId));
-  QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+  SlotIPCMessage message(SlotIPCMessage::SignalConnectionRequest, signalSignature, Q_ARG(QString, connectionId));
+  QByteArray request = SlotIPCMarshaller::marshallMessage(message);
 
   return sendSynchronousRequest(request);
 }
 
 
-bool CuteIPCInterfacePrivate::sendRemoteDisconnectRequest(const QString& signalSignature)
+bool SlotIPCInterfacePrivate::sendRemoteDisconnectRequest(const QString& signalSignature)
 {
   DEBUG << "Requesting remote signal disconnect" << signalSignature;
 
@@ -109,18 +112,18 @@ bool CuteIPCInterfacePrivate::sendRemoteDisconnectRequest(const QString& signalS
   QGenericArgument genArg("QString", arg.data);
 #endif
 
-  CuteIPCMessage::Arguments args;
+  SlotIPCMessage::Arguments args;
   args.push_back(genArg);
-  CuteIPCMessage message(CuteIPCMessage::SignalConnectionRequest, signalSignature, args, "disconnect");
-  QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+  SlotIPCMessage message(SlotIPCMessage::SignalConnectionRequest, signalSignature, args, "disconnect");
+  QByteArray request = SlotIPCMarshaller::marshallMessage(message);
 
   return sendSynchronousRequest(request);
 }
 
 
-bool CuteIPCInterfacePrivate::sendSynchronousRequest(const QByteArray& request, QGenericReturnArgument returnedObject)
+bool SlotIPCInterfacePrivate::sendSynchronousRequest(const QByteArray& request, QGenericReturnArgument returnedObject)
 {
-  Q_Q(CuteIPCInterface);
+  Q_Q(SlotIPCInterface);
 
   if (!m_localServer.isEmpty())
   {
@@ -130,13 +133,13 @@ bool CuteIPCInterfacePrivate::sendSynchronousRequest(const QByteArray& request, 
     if (!connected)
     {
       socket.disconnectFromServer();
-      QString error("CuteIPC: Could not connect to the server when the synchronous method was called");
+      QString error("SlotIPC: Could not connect to the server when the synchronous method was called");
       qWarning() << error;
       _q_setLastError(error);
       return false;
     }
 
-    CuteIPCInterfaceConnection connection(&socket);
+    SlotIPCInterfaceConnection connection(&socket);
     QObject::connect(&connection, SIGNAL(errorOccured(QString)), q, SLOT(_q_setLastError(QString)));
     connection.setReturnedObject(returnedObject);
 
@@ -158,13 +161,13 @@ bool CuteIPCInterfacePrivate::sendSynchronousRequest(const QByteArray& request, 
     if (!connected)
     {
       socket.disconnectFromHost();
-      QString error("CuteIPC: Could not connect to the server when the synchronous method was called");
+      QString error("SlotIPC: Could not connect to the server when the synchronous method was called");
       qWarning() << error;
       _q_setLastError(error);
       return false;
     }
 
-    CuteIPCInterfaceConnection connection(&socket);
+    SlotIPCInterfaceConnection connection(&socket);
     QObject::connect(&connection, SIGNAL(errorOccured(QString)), q, SLOT(_q_setLastError(QString)));
     connection.setReturnedObject(returnedObject);
 
@@ -181,20 +184,20 @@ bool CuteIPCInterfacePrivate::sendSynchronousRequest(const QByteArray& request, 
 }
 
 
-void CuteIPCInterfacePrivate::_q_setLastError(QString lastError)
+void SlotIPCInterfacePrivate::_q_setLastError(QString lastError)
 {
   this->m_lastError = lastError;
 }
 
 
-void CuteIPCInterfacePrivate::_q_invokeRemoteSignal(const QString& signalSignature, const CuteIPCMessage::Arguments& arguments)
+void SlotIPCInterfacePrivate::_q_invokeRemoteSignal(const QString& signalSignature, const SlotIPCMessage::Arguments& arguments)
 {
   QList<MethodData> recieversData = m_connections.values(signalSignature);
   foreach (const MethodData& data, recieversData)
   {
     if (!data.first)
     {
-      CuteIPCMarshaller::freeArguments(arguments);
+      SlotIPCMarshaller::freeArguments(arguments);
       return;
     }
 
@@ -203,7 +206,7 @@ void CuteIPCInterfacePrivate::_q_invokeRemoteSignal(const QString& signalSignatu
     QString methodName = data.second;
     methodName = methodName.left(methodName.indexOf("("));
 
-    CuteIPCMessage::Arguments args = arguments;
+    SlotIPCMessage::Arguments args = arguments;
     while (args.size() < 10)
       args.append(QGenericArgument());
 
@@ -212,20 +215,20 @@ void CuteIPCInterfacePrivate::_q_invokeRemoteSignal(const QString& signalSignatu
                               args.at(7), args.at(8), args.at(9));
   }
 
-  CuteIPCMarshaller::freeArguments(arguments);
+  SlotIPCMarshaller::freeArguments(arguments);
 }
 
 
-void CuteIPCInterfacePrivate::handleLocalSignalRequest(QObject* localObject, const QString& signalSignature,
+void SlotIPCInterfacePrivate::handleLocalSignalRequest(QObject* localObject, const QString& signalSignature,
                                                        const QString& slotSignature)
 {
-  Q_Q(CuteIPCInterface);
+  Q_Q(SlotIPCInterface);
 
   MethodData data(localObject, signalSignature);
 
-  QList<CuteIPCSignalHandler*> handlers = m_localSignalHandlers.values(data);
-  CuteIPCSignalHandler* handler = 0;
-  foreach (CuteIPCSignalHandler* existingHandler, handlers)
+  QList<SlotIPCSignalHandler*> handlers = m_localSignalHandlers.values(data);
+  SlotIPCSignalHandler* handler = 0;
+  foreach (SlotIPCSignalHandler* existingHandler, handlers)
   {
     if (existingHandler->signature() == slotSignature)
       handler = existingHandler;
@@ -233,7 +236,7 @@ void CuteIPCInterfacePrivate::handleLocalSignalRequest(QObject* localObject, con
 
   if (!handler)
   {
-    handler = new CuteIPCSignalHandler(slotSignature, q);
+    handler = new SlotIPCSignalHandler(slotSignature, q);
     handler->setSignalParametersInfo(localObject, signalSignature);
 
     m_localSignalHandlers.insert(data, handler);
@@ -253,7 +256,7 @@ void CuteIPCInterfacePrivate::handleLocalSignalRequest(QObject* localObject, con
 }
 
 
-void CuteIPCInterfacePrivate::_q_removeSignalHandlersOfObject(QObject* destroyedObject)
+void SlotIPCInterfacePrivate::_q_removeSignalHandlersOfObject(QObject* destroyedObject)
 {
   auto it = m_localSignalHandlers.begin();
   while (it != m_localSignalHandlers.end())
@@ -267,21 +270,21 @@ void CuteIPCInterfacePrivate::_q_removeSignalHandlersOfObject(QObject* destroyed
 }
 
 
-void CuteIPCInterfacePrivate::_q_sendAsynchronousRequest(const QByteArray& request)
+void SlotIPCInterfacePrivate::_q_sendAsynchronousRequest(const QByteArray& request)
 {
   QMetaObject::invokeMethod(m_worker, "sendCallRequest", Q_ARG(QByteArray, request));
 }
 
 
-void CuteIPCInterfacePrivate::registerConnection(const QString& signalSignature, QObject* reciever, const QString& methodSignature)
+void SlotIPCInterfacePrivate::registerConnection(const QString& signalSignature, QObject* reciever, const QString& methodSignature)
 {
-  Q_Q(CuteIPCInterface);
+  Q_Q(SlotIPCInterface);
   m_connections.insert(signalSignature, MethodData(reciever, methodSignature));
   QObject::connect(reciever, SIGNAL(destroyed(QObject*)), q, SLOT(_q_removeRemoteConnectionsOfObject(QObject*)));
 }
 
 
-void CuteIPCInterfacePrivate::_q_removeRemoteConnectionsOfObject(QObject* destroyedObject)
+void SlotIPCInterfacePrivate::_q_removeRemoteConnectionsOfObject(QObject* destroyedObject)
 {
   auto it = m_connections.begin();
   while (it != m_connections.end())
@@ -294,74 +297,74 @@ void CuteIPCInterfacePrivate::_q_removeRemoteConnectionsOfObject(QObject* destro
   }
 }
 
-bool CuteIPCInterfacePrivate::call(const QString& method,
+bool SlotIPCInterfacePrivate::call(const QString& method,
                                   const QGenericReturnArgument& ret,
-                                  const CuteIPCMessage::Arguments& arguments)
+                                  const SlotIPCMessage::Arguments& arguments)
 {
     QString retType = ret.name() ? QString::fromLatin1(ret.name()) : QString();
-    CuteIPCMessage message(CuteIPCMessage::MessageCallWithReturn, 
+    SlotIPCMessage message(SlotIPCMessage::MessageCallWithReturn, 
                           method,
                           arguments,
                           retType);
     
     // 序列化并发送请求
-    QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+    QByteArray request = SlotIPCMarshaller::marshallMessage(message);
     DEBUG << "Remote call" << method;
     return sendSynchronousRequest(request, ret);
 }
 
 
 /*!
-    Creates a new CuteIPCInterface object with the given \a parent.
+    Creates a new SlotIPCInterface object with the given \a parent.
 
     \sa connectToServer()
  */
-CuteIPCInterface::CuteIPCInterface(QObject* parent)
+SlotIPCInterface::SlotIPCInterface(QObject* parent)
   : QObject(parent),
-    d_ptr(new CuteIPCInterfacePrivate())
+    d_ptr(new SlotIPCInterfacePrivate())
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
   d->q_ptr = this;
 
   connect(d->m_worker, SIGNAL(disconnected()), SIGNAL(disconnected()));
   connect(d->m_worker, SIGNAL(setLastError(QString)), SLOT(_q_setLastError(QString)));
-  connect(d->m_worker, SIGNAL(invokeRemoteSignal(QString, CuteIPCMessage::Arguments)),
-          SLOT(_q_invokeRemoteSignal(QString, CuteIPCMessage::Arguments)));
+  connect(d->m_worker, SIGNAL(invokeRemoteSignal(QString, SlotIPCMessage::Arguments)),
+          SLOT(_q_invokeRemoteSignal(QString, SlotIPCMessage::Arguments)));
 
   qRegisterMetaType<QGenericReturnArgument>("QGenericReturnArgument");
   qRegisterMetaType<QAbstractSocket::SocketState>("QAbstractSocket::SocketState");
-  qRegisterMetaType<CuteIPCMessage::Arguments>("CuteIPCMessage::Arguments");
+  qRegisterMetaType<SlotIPCMessage::Arguments>("SlotIPCMessage::Arguments");
   qRegisterMetaType<QHostAddress>("QHostAddress");
 }
 
 
-CuteIPCInterface::CuteIPCInterface(CuteIPCInterfacePrivate& dd, QObject* parent)
+SlotIPCInterface::SlotIPCInterface(SlotIPCInterfacePrivate& dd, QObject* parent)
   : QObject(parent),
     d_ptr(&dd)
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
   d->q_ptr = this;
 
   connect(d->m_worker, SIGNAL(setLastError(QString)), SLOT(_q_setLastError(QString)));
-  connect(d->m_worker, SIGNAL(invokeRemoteSignal(QString, CuteIPCMessage::Arguments)),
-          SLOT(_q_invokeRemoteSignal(QString, CuteIPCMessage::Arguments)));
+  connect(d->m_worker, SIGNAL(invokeRemoteSignal(QString, SlotIPCMessage::Arguments)),
+          SLOT(_q_invokeRemoteSignal(QString, SlotIPCMessage::Arguments)));
 
   qRegisterMetaType<QGenericReturnArgument>("QGenericReturnArgument");
   qRegisterMetaType<QAbstractSocket::SocketState>("QAbstractSocket::SocketState");
-  qRegisterMetaType<CuteIPCMessage::Arguments>("CuteIPCMessage::Arguments");
+  qRegisterMetaType<SlotIPCMessage::Arguments>("SlotIPCMessage::Arguments");
   qRegisterMetaType<QHostAddress>("QHostAddress");
 }
 
 
-bool CuteIPCInterface::isConnected() {
-  Q_D(CuteIPCInterface);
+bool SlotIPCInterface::isConnected() {
+  Q_D(SlotIPCInterface);
   return d->m_worker->isConnected();
 }
 
 /*!
     Destroyes the object.
  */
-CuteIPCInterface::~CuteIPCInterface()
+SlotIPCInterface::~SlotIPCInterface()
 {
   delete d_ptr;
 }
@@ -371,12 +374,12 @@ CuteIPCInterface::~CuteIPCInterface()
   Attempts to make a connection to the local server with a given \a name.
   Returns true on success, otherwise false.
   \param name Local server name
-  \sa CuteIPCInterface::connectToServer(const QHostAddress &host, quint16 port)
-  \sa CuteIPCService::serverName()
+  \sa SlotIPCInterface::connectToServer(const QHostAddress &host, quint16 port)
+  \sa SlotIPCService::serverName()
  */
-bool CuteIPCInterface::connectToServer(const QString& name)
+bool SlotIPCInterface::connectToServer(const QString& name)
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
   bool isConnected;
 
   QEventLoop loop;
@@ -396,12 +399,12 @@ bool CuteIPCInterface::connectToServer(const QString& name)
   Returns true on success, otherwise false.
   \param host Server host
   \param port Server tcp port
-  \sa CuteIPCInterface::connectToServer(const QString& name)
-  \sa CuteIPCService::serverName()
+  \sa SlotIPCInterface::connectToServer(const QString& name)
+  \sa SlotIPCService::serverName()
  */
-bool CuteIPCInterface::connectToServer(const QHostAddress& host, quint16 port)
+bool SlotIPCInterface::connectToServer(const QHostAddress& host, quint16 port)
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
   bool isConnected;
 
   QEventLoop loop;
@@ -420,9 +423,9 @@ bool CuteIPCInterface::connectToServer(const QHostAddress& host, quint16 port)
 /*!
     Disconnects from server by closing the socket.
  */
-void CuteIPCInterface::disconnectFromServer()
+void SlotIPCInterface::disconnectFromServer()
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
   QEventLoop loop;
   connect(d->m_worker, SIGNAL(disconnectFromServerFinished()), &loop, SLOT(quit()));
   QMetaObject::invokeMethod(d->m_worker, "disconnectFromServer");
@@ -449,14 +452,14 @@ void CuteIPCInterface::disconnectFromServer()
 
     \sa remoteSlotConnect()
  */
-bool CuteIPCInterface::remoteConnect(const char* signal, QObject* object, const char* method)
+bool SlotIPCInterface::remoteConnect(const char* signal, QObject* object, const char* method)
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
 
   if (!object)
   {
     d->m_lastError = "Object doesn't exist";
-    qWarning() << "CuteIPC:" << "Error: " + d->m_lastError + "; object:" << object;
+    qWarning() << "SlotIPC:" << "Error: " + d->m_lastError + "; object:" << object;
     return false;
   }
 
@@ -480,7 +483,7 @@ bool CuteIPCInterface::remoteConnect(const char* signal, QObject* object, const 
   if (methodIndex == -1)
   {
     d->m_lastError = "Method (slot or signal) doesn't exist:" + methodSignature;
-    qWarning() << "CuteIPC:" << "Error: " + d->m_lastError + "; object:" << object;
+    qWarning() << "SlotIPC:" << "Error: " + d->m_lastError + "; object:" << object;
     return false;
   }
 
@@ -513,14 +516,14 @@ bool CuteIPCInterface::remoteConnect(const char* signal, QObject* object, const 
 
     \sa remoteConnect(), call()
  */
-bool CuteIPCInterface::remoteConnect(QObject* localObject, const char* localSignal, const char* remoteMethod)
+bool SlotIPCInterface::remoteConnect(QObject* localObject, const char* localSignal, const char* remoteMethod)
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
 
   if (!localObject)
   {
     d->m_lastError = "Object doesn't exist";
-    qWarning() << "CuteIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
+    qWarning() << "SlotIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
     return false;
   }
 
@@ -540,7 +543,7 @@ bool CuteIPCInterface::remoteConnect(QObject* localObject, const char* localSign
   if (signalIndex == -1)
   {
     d->m_lastError = "Signal doesn't exist:" + signalSignature;
-    qWarning() << "CuteIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
+    qWarning() << "SlotIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
     return false;
   }
 
@@ -575,14 +578,14 @@ bool CuteIPCInterface::remoteConnect(QObject* localObject, const char* localSign
 
     \sa remoteConnect
  */
-bool CuteIPCInterface::disconnectSignal(const char* signal, QObject* object, const char* method)
+bool SlotIPCInterface::disconnectSignal(const char* signal, QObject* object, const char* method)
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
 
   if (!object)
   {
     d->m_lastError = "Object doesn't exist";
-    qWarning() << "CuteIPC:" << "Error: " + d->m_lastError + "; object:" << object;
+    qWarning() << "SlotIPC:" << "Error: " + d->m_lastError + "; object:" << object;
     return false;
   }
 
@@ -606,14 +609,14 @@ bool CuteIPCInterface::disconnectSignal(const char* signal, QObject* object, con
 
     \sa remoteConnect
  */
-bool CuteIPCInterface::disconnectRemoteMethod(QObject* localObject, const char* signal, const char* remoteMethod)
+bool SlotIPCInterface::disconnectRemoteMethod(QObject* localObject, const char* signal, const char* remoteMethod)
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
 
   if (!localObject)
   {
     d->m_lastError = "Object doesn't exist";
-    qWarning() << "CuteIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
+    qWarning() << "SlotIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
     return false;
   }
 
@@ -622,10 +625,10 @@ bool CuteIPCInterface::disconnectRemoteMethod(QObject* localObject, const char* 
 
   QString signalSignature = QString::fromLatin1(signal).mid(1);
   QString methodSignature = QString::fromLatin1(remoteMethod).mid(1);
-  CuteIPCInterfacePrivate::MethodData data(localObject, signalSignature);
+  SlotIPCInterfacePrivate::MethodData data(localObject, signalSignature);
 
-  QList<CuteIPCSignalHandler*> handlers = d->m_localSignalHandlers.values(data);
-  foreach (CuteIPCSignalHandler* handler, handlers)
+  QList<SlotIPCSignalHandler*> handlers = d->m_localSignalHandlers.values(data);
+  foreach (SlotIPCSignalHandler* handler, handlers)
   {
     if (handler->signature() == methodSignature)
     {
@@ -656,14 +659,14 @@ bool CuteIPCInterface::disconnectRemoteMethod(QObject* localObject, const char* 
 
     \sa remoteConnect(), call()
  */
-bool CuteIPCInterface::remoteSlotConnect(QObject* localObject, const char* signal, const char* remoteSlot)
+bool SlotIPCInterface::remoteSlotConnect(QObject* localObject, const char* signal, const char* remoteSlot)
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
 
   if (!localObject)
   {
     d->m_lastError = "Object doesn't exist";
-    qWarning() << "CuteIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
+    qWarning() << "SlotIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
     return false;
   }
 
@@ -682,7 +685,7 @@ bool CuteIPCInterface::remoteSlotConnect(QObject* localObject, const char* signa
   if (signalIndex == -1)
   {
     d->m_lastError = "Signal doesn't exist:" + signalSignature;
-    qWarning() << "CuteIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
+    qWarning() << "SlotIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
     return false;
   }
 
@@ -704,14 +707,14 @@ bool CuteIPCInterface::remoteSlotConnect(QObject* localObject, const char* signa
 
     \sa remoteSlotConnect
  */
-bool CuteIPCInterface::disconnectSlot(QObject* localObject, const char* signal, const char* remoteSlot)
+bool SlotIPCInterface::disconnectSlot(QObject* localObject, const char* signal, const char* remoteSlot)
 {
-  Q_D(CuteIPCInterface);
+  Q_D(SlotIPCInterface);
 
   if (!localObject)
   {
     d->m_lastError = "Object doesn't exist";
-    qWarning() << "CuteIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
+    qWarning() << "SlotIPC:" << "Error: " + d->m_lastError + "; object:" << localObject;
     return false;
   }
 
@@ -720,10 +723,10 @@ bool CuteIPCInterface::disconnectSlot(QObject* localObject, const char* signal, 
 
   QString signalSignature = QString::fromLatin1(signal).mid(1);
   QString slotSignature = QString::fromLatin1(remoteSlot).mid(1);
-  CuteIPCInterfacePrivate::MethodData data(localObject, signalSignature);
+  SlotIPCInterfacePrivate::MethodData data(localObject, signalSignature);
 
-  QList<CuteIPCSignalHandler*> handlers = d->m_localSignalHandlers.values(data);
-  foreach (CuteIPCSignalHandler* handler, handlers)
+  QList<SlotIPCSignalHandler*> handlers = d->m_localSignalHandlers.values(data);
+  foreach (SlotIPCSignalHandler* handler, handlers)
   {
     if (handler->signature() == slotSignature)
     {
@@ -751,15 +754,15 @@ bool CuteIPCInterface::disconnectSlot(QObject* localObject, const char* signal, 
     \note This method doesn't establish the connection to the server, you must use connectToServer() first.
     \sa callNoReply()
  */
-bool CuteIPCInterface::callImpl(const QString& method, 
+bool SlotIPCInterface::callImpl(const QString& method, 
                                const QGenericReturnArgument& ret,
                                const QGenericArgument* args,
                                int argc)
 {
-    Q_D(CuteIPCInterface);
+    Q_D(SlotIPCInterface);
     
     // 构建参数列表
-    CuteIPCMessage::Arguments arguments;
+    SlotIPCMessage::Arguments arguments;
     for(int i = 0; i < argc; ++i) {
         if(args[i].name()) {
             arguments.push_back(args[i]);
@@ -769,20 +772,20 @@ bool CuteIPCInterface::callImpl(const QString& method,
     return d->call(method, ret, arguments);
 }
 
-bool CuteIPCInterface::call(const QString& method, 
-                           CUTE_IPC_RETURN_ARG ret,
-                           CUTE_IPC_ARG val0,
-                           CUTE_IPC_ARG val1,
-                           CUTE_IPC_ARG val2,
-                           CUTE_IPC_ARG val3,
-                           CUTE_IPC_ARG val4,
-                           CUTE_IPC_ARG val5,
-                           CUTE_IPC_ARG val6,
-                           CUTE_IPC_ARG val7,
-                           CUTE_IPC_ARG val8,
-                           CUTE_IPC_ARG val9)
+bool SlotIPCInterface::call(const QString& method, 
+                           METHOD_RE_ARG ret,
+                           METHOD_ARG val0,
+                           METHOD_ARG val1,
+                           METHOD_ARG val2,
+                           METHOD_ARG val3,
+                           METHOD_ARG val4,
+                           METHOD_ARG val5,
+                           METHOD_ARG val6,
+                           METHOD_ARG val7,
+                           METHOD_ARG val8,
+                           METHOD_ARG val9)
 {
-    const CUTE_IPC_ARG args[] = {
+    const METHOD_ARG args[] = {
         val0, val1, val2, val3, val4, val5, val6, val7, val8, val9
     };
 
@@ -813,19 +816,19 @@ bool CuteIPCInterface::call(const QString& method,
 #endif
 }
 
-bool CuteIPCInterface::call(const QString& method,
-                           CUTE_IPC_ARG val0,
-                           CUTE_IPC_ARG val1,
-                           CUTE_IPC_ARG val2,
-                           CUTE_IPC_ARG val3,
-                           CUTE_IPC_ARG val4,
-                           CUTE_IPC_ARG val5,
-                           CUTE_IPC_ARG val6,
-                           CUTE_IPC_ARG val7,
-                           CUTE_IPC_ARG val8,
-                           CUTE_IPC_ARG val9)
+bool SlotIPCInterface::call(const QString& method,
+                           METHOD_ARG val0,
+                           METHOD_ARG val1,
+                           METHOD_ARG val2,
+                           METHOD_ARG val3,
+                           METHOD_ARG val4,
+                           METHOD_ARG val5,
+                           METHOD_ARG val6,
+                           METHOD_ARG val7,
+                           METHOD_ARG val8,
+                           METHOD_ARG val9)
 {
-    return call(method, CUTE_IPC_RETURN_ARG(), 
+    return call(method, METHOD_RE_ARG(), 
                val0, val1, val2, val3, val4,
                val5, val6, val7, val8, val9);
 }
@@ -846,26 +849,26 @@ bool CuteIPCInterface::call(const QString& method,
     \note This method doesn't establish the connection to the server, you must use connectToServer() first.
     \sa call(), connectToServer()
  */
-void CuteIPCInterface::callNoReply(const QString& method, 
-                                  CUTE_IPC_ARG val0,
-                                  CUTE_IPC_ARG val1,
-                                  CUTE_IPC_ARG val2,
-                                  CUTE_IPC_ARG val3,
-                                  CUTE_IPC_ARG val4,
-                                  CUTE_IPC_ARG val5,
-                                  CUTE_IPC_ARG val6,
-                                  CUTE_IPC_ARG val7,
-                                  CUTE_IPC_ARG val8,
-                                  CUTE_IPC_ARG val9)
+void SlotIPCInterface::callNoReply(const QString& method, 
+                                  METHOD_ARG val0,
+                                  METHOD_ARG val1,
+                                  METHOD_ARG val2,
+                                  METHOD_ARG val3,
+                                  METHOD_ARG val4,
+                                  METHOD_ARG val5,
+                                  METHOD_ARG val6,
+                                  METHOD_ARG val7,
+                                  METHOD_ARG val8,
+                                  METHOD_ARG val9)
 {
-    Q_D(CuteIPCInterface);
+    Q_D(SlotIPCInterface);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     // Qt6: 需要转换参数类型
-    CuteIPCMessage::Arguments arguments;
+    SlotIPCMessage::Arguments arguments;
     arguments.reserve(10);
     
-    const CUTE_IPC_ARG args[] = {
+    const METHOD_ARG args[] = {
         val0, val1, val2, val3, val4, val5, val6, val7, val8, val9
     };
     
@@ -875,15 +878,15 @@ void CuteIPCInterface::callNoReply(const QString& method,
         }
     }
     
-    CuteIPCMessage message(CuteIPCMessage::MessageCallWithoutReturn, method, arguments);
+    SlotIPCMessage message(SlotIPCMessage::MessageCallWithoutReturn, method, arguments);
 #else
     // Qt5: 直接使用参数
-    CuteIPCMessage message(CuteIPCMessage::MessageCallWithoutReturn, method, 
+    SlotIPCMessage message(SlotIPCMessage::MessageCallWithoutReturn, method, 
                           val0, val1, val2, val3, val4,
                           val5, val6, val7, val8, val9);
 #endif
 
-    QByteArray request = CuteIPCMarshaller::marshallMessage(message);
+    QByteArray request = SlotIPCMarshaller::marshallMessage(message);
     DEBUG << "Remote call (asynchronous)" << method;
     d->_q_sendAsynchronousRequest(request);
 }
@@ -892,11 +895,11 @@ void CuteIPCInterface::callNoReply(const QString& method,
 /*!
     Returns the last occured error.
  */
-QString CuteIPCInterface::lastError() const
+QString SlotIPCInterface::lastError() const
 {
-  Q_D(const CuteIPCInterface);
+  Q_D(const SlotIPCInterface);
   return d->m_lastError;
 }
 
-#include "moc_CuteIPCInterface.cpp"
+#include "moc_interface.cpp"
 

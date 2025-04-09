@@ -45,7 +45,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Concurrent
     uniapi
     co
-    CuteIPC
+    slotipc
 )
 
 #System libraries

@@ -93,7 +93,7 @@ else()
   set(EXECUTABLE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/libexec/${PROJECT_NAME}")
 endif()
 
-option(ENABLE_CUTEIPC "Enable CuteIPC for compatible with old daemon" ON)
+option(ENABLE_SLOTIPC "Enable SlotIPC for compatible with old daemon" ON)
 
 # Find Qt version
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
@@ -112,7 +112,7 @@ endif()
 message("   >>> Build with DTK: ${DTK_VERSION_MAJOR}")
 
 # 兼容模式的编译
-if(ENABLE_CUTEIPC)
+if(ENABLE_SLOTIPC)
     add_definitions(-DENABLE_COMPAT)
     message("   >>> Build with compatible mode!")
 endif()

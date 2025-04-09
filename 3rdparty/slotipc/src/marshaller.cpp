@@ -1,8 +1,11 @@
-// Local
-#include "CuteIPCMarshaller_p.h"
-#include "CuteIPCMessage_p.h"
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-// Qt
+#include "marshaller_p.h"
+#include "message_p.h"
+
+
 #include <QDataStream>
 #include <QPair>
 #include <QMetaType>
@@ -15,7 +18,7 @@
 #include <QVector>
 
 
-QByteArray CuteIPCMarshaller::marshallMessage(const CuteIPCMessage& message)
+QByteArray SlotIPCMarshaller::marshallMessage(const SlotIPCMessage& message)
 {
   QByteArray result;
   QDataStream stream(&result, QIODevice::WriteOnly);
@@ -38,15 +41,15 @@ QByteArray CuteIPCMarshaller::marshallMessage(const CuteIPCMessage& message)
 }
 
 
-CuteIPCMessage CuteIPCMarshaller::demarshallMessage(QByteArray& call)
+SlotIPCMessage SlotIPCMarshaller::demarshallMessage(QByteArray& call)
 {
   QDataStream stream(&call, QIODevice::ReadOnly);
 
   // Call type
-  CuteIPCMessage::MessageType type;
+  SlotIPCMessage::MessageType type;
   int buffer;
   stream >> buffer;
-  type = CuteIPCMessage::MessageType(buffer);
+  type = SlotIPCMessage::MessageType(buffer);
 
   // Method
   QString method;
@@ -60,41 +63,41 @@ CuteIPCMessage CuteIPCMarshaller::demarshallMessage(QByteArray& call)
   stream >> argc;
   Q_ASSERT(argc <= 10);
 
-  CuteIPCMessage::Arguments args;
+  SlotIPCMessage::Arguments args;
   for (int i = 0; i < argc; ++i)
   {
     bool ok;
     QGenericArgument argument = demarshallArgumentFromStream(ok, stream);
     if (!ok)
     {
-      qWarning() << "CuteIPC:" << "Failed to deserialize argument" << i;
+      qWarning() << "SlotIPC:" << "Failed to deserialize argument" << i;
       break;
     }
     args.append(argument);
   }
 
-  return CuteIPCMessage(type, method, args, returnType);
+  return SlotIPCMessage(type, method, args, returnType);
 }
 
 
-CuteIPCMessage::MessageType CuteIPCMarshaller::demarshallMessageType(QByteArray& message)
+SlotIPCMessage::MessageType SlotIPCMarshaller::demarshallMessageType(QByteArray& message)
 {
   QDataStream stream(&message, QIODevice::ReadOnly);
   // Call type
   int buffer;
   stream >> buffer;
-  return CuteIPCMessage::MessageType(buffer);
+  return SlotIPCMessage::MessageType(buffer);
 }
 
 
-CuteIPCMessage CuteIPCMarshaller::demarshallResponse(QByteArray& call, QGenericReturnArgument arg)
+SlotIPCMessage SlotIPCMarshaller::demarshallResponse(QByteArray& call, QGenericReturnArgument arg)
 {
   QDataStream stream(&call, QIODevice::ReadOnly);
 
-  CuteIPCMessage::MessageType type;
+  SlotIPCMessage::MessageType type;
   int buffer;
   stream >> buffer;
-  type = CuteIPCMessage::MessageType(buffer);
+  type = SlotIPCMessage::MessageType(buffer);
 
   QString method;
   stream >> method;
@@ -102,7 +105,7 @@ CuteIPCMessage CuteIPCMarshaller::demarshallResponse(QByteArray& call, QGenericR
   QString returnType;
   stream >> returnType;
 
-  CuteIPCMessage::Arguments args; //construct message with empty arguments
+  SlotIPCMessage::Arguments args; //construct message with empty arguments
 
   int argc;
   stream >> argc;
@@ -114,12 +117,12 @@ CuteIPCMessage CuteIPCMarshaller::demarshallResponse(QByteArray& call, QGenericR
     // Check type
     int type = QMetaType::type(typeName.toLatin1());
     if (type == 0)
-      qWarning() << "CuteIPC:" << "Unsupported type of argument " << ":" << typeName;
+      qWarning() << "SlotIPC:" << "Unsupported type of argument " << ":" << typeName;
 
     if (arg.name() && arg.data())
     {
       if (type != QMetaType::type(arg.name()))
-        qWarning() << "CuteIPC:" << "Type doesn't match:" << typeName << "Expected:" << arg.name();
+        qWarning() << "SlotIPC:" << "Type doesn't match:" << typeName << "Expected:" << arg.name();
 
       bool dataLoaded = false;
 
@@ -137,21 +140,21 @@ CuteIPCMessage CuteIPCMarshaller::demarshallResponse(QByteArray& call, QGenericR
         dataLoaded = QMetaType::load(stream, type, arg.data());
 
       if (!dataLoaded)
-        qWarning() << "CuteIPC:" << "Failed to deserialize argument value" << "of type" << typeName;
+        qWarning() << "SlotIPC:" << "Failed to deserialize argument value" << "of type" << typeName;
     }
   }
 
-  return CuteIPCMessage(type, method, args, returnType);
+  return SlotIPCMessage(type, method, args, returnType);
 }
 
 
-bool CuteIPCMarshaller::marshallArgumentToStream(QGenericArgument value, QDataStream& stream)
+bool SlotIPCMarshaller::marshallArgumentToStream(QGenericArgument value, QDataStream& stream)
 {
   // Detect and check type
   int type = QMetaType::type(value.name());
   if (type == 0)
   {
-    qWarning() << "CuteIPC:" << "Type" << value.name() << "have not been registered in Qt metaobject system";
+    qWarning() << "SlotIPC:" << "Type" << value.name() << "have not been registered in Qt metaobject system";
     return false;
   }
   if (type == QMetaType::QImage)
@@ -169,7 +172,7 @@ bool CuteIPCMarshaller::marshallArgumentToStream(QGenericArgument value, QDataSt
   bool ok = QMetaType::save(stream, type, value.data());
   if (!ok)
   {
-    qWarning() << "CuteIPC:" << "Failed to serialize" << value.name()
+    qWarning() << "SlotIPC:" << "Failed to serialize" << value.name()
                << "to data stream. Call qRegisterMetaTypeStreamOperators to"
                   "register stream operators for this metatype";
     return false;
@@ -179,7 +182,7 @@ bool CuteIPCMarshaller::marshallArgumentToStream(QGenericArgument value, QDataSt
 }
 
 
-QGenericArgument CuteIPCMarshaller::demarshallArgumentFromStream(bool& ok, QDataStream& stream)
+QGenericArgument SlotIPCMarshaller::demarshallArgumentFromStream(bool& ok, QDataStream& stream)
 {
   // Load type
   QString typeName;
@@ -189,7 +192,7 @@ QGenericArgument CuteIPCMarshaller::demarshallArgumentFromStream(bool& ok, QData
   int type = QMetaType::type(typeName.toLatin1());
   if (type == 0)
   {
-    qWarning() << "CuteIPC:" << "Unsupported type of argument " << ":" << typeName;
+    qWarning() << "SlotIPC:" << "Unsupported type of argument " << ":" << typeName;
     ok = false;
     return QGenericArgument();
   }
@@ -218,7 +221,7 @@ QGenericArgument CuteIPCMarshaller::demarshallArgumentFromStream(bool& ok, QData
 
   if (!dataLoaded)
   {
-    qWarning() << "CuteIPC:" << "Failed to deserialize argument value" << "of type" << typeName;
+    qWarning() << "SlotIPC:" << "Failed to deserialize argument value" << "of type" << typeName;
     QMetaType::destroy(type, data);
     ok = false;
     return QGenericArgument();
@@ -229,7 +232,7 @@ QGenericArgument CuteIPCMarshaller::demarshallArgumentFromStream(bool& ok, QData
 }
 
 
-bool CuteIPCMarshaller::marshallQImageToStream(QGenericArgument value, QDataStream& stream)
+bool SlotIPCMarshaller::marshallQImageToStream(QGenericArgument value, QDataStream& stream)
 {
   QImage* image = static_cast<QImage*>(value.data());
   const uchar* imageData = image->constBits();
@@ -260,7 +263,7 @@ bool CuteIPCMarshaller::marshallQImageToStream(QGenericArgument value, QDataStre
 
 
 template <template<class QImage> class Container>
-bool CuteIPCMarshaller::marshallContainerOfQImagesToStream(QGenericArgument value, QDataStream& stream)
+bool SlotIPCMarshaller::marshallContainerOfQImagesToStream(QGenericArgument value, QDataStream& stream)
 {
   const Container<QImage>* imgContainer = static_cast<Container<QImage>*>(value.data());
 
@@ -290,7 +293,7 @@ bool CuteIPCMarshaller::marshallContainerOfQImagesToStream(QGenericArgument valu
 }
 
 
-bool CuteIPCMarshaller::loadQImage(QDataStream& stream, void* data)
+bool SlotIPCMarshaller::loadQImage(QDataStream& stream, void* data)
 {
   // Image parameters
   int width;
@@ -318,7 +321,7 @@ bool CuteIPCMarshaller::loadQImage(QDataStream& stream, void* data)
   uchar* bits = new uchar[byteCount];
   if (stream.readRawData(reinterpret_cast<char*>(bits), byteCount) != byteCount)
   {
-    qWarning() << "CuteIPC:" << "Failed to deserialize argument value" << "of type" << "QImage";
+    qWarning() << "SlotIPC:" << "Failed to deserialize argument value" << "of type" << "QImage";
     return false;
   }
 
@@ -334,7 +337,7 @@ bool CuteIPCMarshaller::loadQImage(QDataStream& stream, void* data)
 
 
 template <template<class QImage> class Container>
-bool CuteIPCMarshaller::loadContainerOfQImages(QDataStream& stream, void* data)
+bool SlotIPCMarshaller::loadContainerOfQImages(QDataStream& stream, void* data)
 {
   Container<QByteArray> dataContainer;
   int dataContainerSize = 0;
@@ -371,7 +374,7 @@ bool CuteIPCMarshaller::loadContainerOfQImages(QDataStream& stream, void* data)
 }
 
 
-void CuteIPCMarshaller::freeArguments(const CuteIPCMessage::Arguments& args)
+void SlotIPCMarshaller::freeArguments(const SlotIPCMessage::Arguments& args)
 {
   // Free allocated memory
   for (int i = 0; i < args.size(); ++i)
@@ -379,7 +382,7 @@ void CuteIPCMarshaller::freeArguments(const CuteIPCMessage::Arguments& args)
 }
 
 
-void CuteIPCMarshaller::freeArgument(QGenericArgument arg)
+void SlotIPCMarshaller::freeArgument(QGenericArgument arg)
 {
   if (arg.data())
     QMetaType::destroy(QMetaType::type(arg.name()), arg.data());
