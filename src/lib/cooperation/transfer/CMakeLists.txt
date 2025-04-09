@@ -85,7 +85,7 @@ else()
 endif()
 
 list(APPEND LINKLIBS logging)
-list(APPEND LINKLIBS vncclient)
+# list(APPEND LINKLIBS vncclient)
 
 add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}

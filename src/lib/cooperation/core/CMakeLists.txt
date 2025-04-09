@@ -111,7 +111,13 @@ if (NOT WIN32)
         message(FATAL_ERROR "libqrencode not found. Please install it.")
     endif()
     add_definitions(-DENABLE_PHONE=1)
-    list(APPEND LINKLIBS vncclient)
+    # build from libvnc.cmake
+    # list(APPEND LINKLIBS vncclient)
+    find_library(VNCCCLIENT_LIBRARY vncclient)
+    if(NOT VNCCCLIENT_LIBRARY)
+        message(FATAL_ERROR "libvncclient not found. Please install it.")
+    endif()
+    list(APPEND LINKLIBS ${VNCCCLIENT_LIBRARY})
 endif()
 
 add_library(${PROJECT_NAME}

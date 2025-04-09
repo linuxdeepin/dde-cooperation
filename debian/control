@@ -29,6 +29,7 @@ Build-Depends:
  uuid-dev,
  libsystemd-dev,
  libqrencode-dev,
+ libvncserver-dev,
  libprotobuf-dev (>= 3.7.0),
  dde-file-manager-dev,
 Standards-Version: 4.1.3

@@ -18,7 +18,7 @@ void VNCRecvThread::startRun(rfbClient *cl)
 
     _cl = cl;
     _cl->FinishedFrameBufferUpdate = frameBufferUpdated;
-    _cl->ScreenSizeChanged = screenSizeChanged;
+    // _cl->ScreenSizeChanged = screenSizeChanged;
     rfbClientSetClientData(_cl, nullptr, this);
     _runFlag = true;
 
@@ -35,7 +35,7 @@ void VNCRecvThread::stopRun()
     if (_cl) {
         rfbClientSetClientData(_cl, nullptr, nullptr);
         _cl->FinishedFrameBufferUpdate = nullptr;
-        _cl->ScreenSizeChanged = nullptr;
+        // _cl->ScreenSizeChanged = nullptr;
     }
 }
 
