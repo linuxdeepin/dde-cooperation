@@ -35,9 +35,9 @@ set(
     ${PROJECT_SOURCE_DIR}/server.cpp
     ${PROTO_FILES}
 )
-add_executable(server ${server_src})
-target_link_libraries(server ${LIBS})
-install(TARGETS server DESTINATION ${PATH_BIN})
+add_executable(zrpc_server ${server_src})
+target_link_libraries(zrpc_server ${LIBS})
+install(TARGETS zrpc_server DESTINATION ${PATH_BIN})
 
 # client
 set(
@@ -45,6 +45,6 @@ set(
     ${PROJECT_SOURCE_DIR}/client.cpp
     ${PROTO_FILES}
 )
-add_executable(client ${client_src})
-target_link_libraries(client ${LIBS})
-install(TARGETS client DESTINATION ${PATH_BIN})
+add_executable(zrpc_client ${client_src})
+target_link_libraries(zrpc_client ${LIBS})
+install(TARGETS zrpc_client DESTINATION ${PATH_BIN})

@@ -5,6 +5,11 @@
     include_directories(${COMPAT_ROOT_DIR})
     include_directories(${COMPAT_ROOT_DIR}/include)
 
+    # zrpc module base on coost library
+    set(ZRPC_DIR "${COMPAT_ROOT_DIR}/zrpc")
+    include_directories(${ZRPC_DIR}/include)
+    add_subdirectory("${ZRPC_DIR}" zrpc)    
+
     add_subdirectory(protocol)
 
     set(CMAKE_AUTOUIC ON)

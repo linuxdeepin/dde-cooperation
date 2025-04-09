@@ -51,8 +51,5 @@ set(BUILD_SHARED_LIBS ON)
 add_subdirectory("${COOST_DIR}" coost)
 
 
-set(ZRPC_DIR "${PROJECT_SOURCE_DIR}/3rdparty/zrpc")
-include_directories(${ZRPC_DIR}/include)
-add_subdirectory("${ZRPC_DIR}" zrpc)
 
 endif()

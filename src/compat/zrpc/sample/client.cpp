@@ -14,7 +14,7 @@
 #include "zrpc.h"
 
 void test_client() {
-    zrpc_ns::ZRpcClient *client = new zrpc_ns::ZRpcClient("10.8.11.98", 8899, true);
+    zrpc_ns::ZRpcClient *client = new zrpc_ns::ZRpcClient("10.8.12.138", 8899, true);
     QueryService_Stub stub(client->getChannel());
     zrpc_ns::ZRpcController *rpc_controller = client->getControler();
 
@@ -39,10 +39,10 @@ void test_client() {
 int main(int argc, char *argv[]) {
     flag::parse(argc, argv);
 
-    for (int i = 0; i < 16; ++i) {
-        go(test_client);
-        co::sleep(1);
-    }
+    // for (int i = 0; i < 16; ++i) {
+        test_client();
+    //     co::sleep(1);
+    // }
 
     sleep::sec(2);
     return 0;
