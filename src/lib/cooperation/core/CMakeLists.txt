@@ -149,7 +149,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-    ${CMAKE_SOURCE_DIR}/modules/sslconf/
+    ${CMAKE_SOURCE_DIR}/modules/sslconf/include
 )
 
 # 公共依赖库，添加到这里

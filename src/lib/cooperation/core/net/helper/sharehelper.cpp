@@ -15,7 +15,7 @@
 #include "share/sharecooperationservicemanager.h"
 #include "discover/discovercontroller.h"
 
-#include "sslcertconf.h"
+#include <sslcertconf.h>
 
 #include <QApplication>
 #include <QStandardPaths>
