@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.13)
 # Global properties
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# fmt library > 10.1
+include("fmt.cmake")
+
 # Project name
 project(basekit)
 
@@ -48,4 +51,4 @@ if(FPIC)
   set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" PUBLIC ${vld})
-target_link_libraries(${PROJECT_NAME} ${LINKLIBS})
+target_link_libraries(${PROJECT_NAME} ${LINKLIBS} fmt)
