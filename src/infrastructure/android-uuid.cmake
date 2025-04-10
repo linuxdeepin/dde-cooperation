@@ -36,6 +36,7 @@ if(NOT TARGET uuid)
   add_library(uuid STATIC ${SOURCE_FILES})
   # 为特定目标添加编译选项
   target_compile_options(uuid PRIVATE -fdeclspec)
+  target_include_directories(uuid PUBLIC "${UUID_DIR}/..")
 
   # Module folder
   set_target_properties(uuid PROPERTIES FOLDER "modules/uuid")
