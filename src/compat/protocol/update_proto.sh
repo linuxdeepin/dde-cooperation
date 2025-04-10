@@ -5,7 +5,7 @@ if which protoc >/dev/null 2>&1; then
     protoc=$(which protoc)
     echo "Using system installed protoc: $protoc"
 else
-    protobuf_dir="${PWD}/../../3rdparty/protobuf"
+    protobuf_dir="${PWD}/../../../3rdparty/protobuf"
     protoc="${protobuf_dir}/protoc/linux-x86_64/protoc"
     
     if [ ! -f "$protoc" ]; then
