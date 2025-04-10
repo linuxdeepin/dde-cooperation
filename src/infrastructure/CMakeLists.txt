@@ -18,5 +18,8 @@ if(ENABLE_SLOTIPC)
     include("slotipc.cmake")
 endif()
 
+# the ssl configuration module
+add_subdirectory(sslconf)
+
 # rpc module for compat old protocal
 # add_subdirectory(zrpc)

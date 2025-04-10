@@ -32,6 +32,7 @@ else()
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${OPENSSL_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES})
 
 if(FPIC)
