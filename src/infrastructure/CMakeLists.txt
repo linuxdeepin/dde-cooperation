@@ -14,5 +14,9 @@ endif()
 # network utils
 add_subdirectory(netutil)
 
+if(ENABLE_SLOTIPC)
+    include("slotipc.cmake")
+endif()
+
 # rpc module for compat old protocal
 # add_subdirectory(zrpc)

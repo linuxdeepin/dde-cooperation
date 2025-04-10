@@ -5,9 +5,6 @@
 #ifndef SERVICE_H
 #define SERVICE_H
 
-#include "exportglobal.h"
-
-
 #include <QObject>
 #include <QtNetwork/QHostAddress>
 #include <QLocalServer>
@@ -15,7 +12,7 @@
 
 class SlotIPCServicePrivate;
 
-class EXPORT_API SlotIPCService : public QObject
+class Q_DECL_EXPORT SlotIPCService : public QObject
 {
   Q_OBJECT
 

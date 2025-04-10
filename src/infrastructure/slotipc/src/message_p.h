@@ -11,7 +11,7 @@
 #include <QList>
 
 // 添加宏定义
-#include "global.h"
+#include "slotipc/argdefine.h"
 
 #define DEBUG if (qgetenv("SLOTIPC_DEBUG") == "1") qDebug() << "SlotIPC:"
 

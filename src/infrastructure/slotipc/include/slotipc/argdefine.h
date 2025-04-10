@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#ifndef ARG_DEFINE_H
+#define GLOBAARG_DEFINE_HL_H
 
 #include <QtGlobal>
 
@@ -15,4 +15,4 @@
     #define METHOD_RE_ARG QGenericReturnArgument
 #endif
 
-#endif // GLOBAL_H 
+#endif // ARG_DEFINE_H

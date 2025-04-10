@@ -5,8 +5,9 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include "exportglobal.h"
-#include "global.h"
+#include "argdefine.h"
+
+#include <QObject>
 
 #if __cplusplus >= 201402L
 #  define DECL_DEPRECATED(x) [[deprecated(x)]]
@@ -20,15 +21,9 @@
 #  define DECL_DEPRECATED(x)
 #endif
 
-
-#include <QObject>
 class QHostAddress;
-
-
 class SlotIPCInterfacePrivate;
-
-
-class EXPORT_API SlotIPCInterface : public QObject
+class Q_DECL_EXPORT SlotIPCInterface : public QObject
 {
   Q_OBJECT
 

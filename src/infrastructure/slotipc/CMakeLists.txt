@@ -51,9 +51,9 @@ SET(sources
 )
 
 SET(headers
+  include/slotipc/argdefine.h
   ${PUB_HEADER_SERVICE}
   ${PUB_HEADER_INTERFACE}
-  include/global.h
   src/service_p.h
   src/interface_p.h
   src/marshaller_p.h
@@ -96,7 +96,6 @@ SET_SOURCE_FILES_PROPERTIES(src/interface.cpp PROPERTIES OBJECT_DEPENDS ${moc_in
 add_library(${PROJECT_NAME} ${sources} ${headers} ${moc_headers})
 
 if(BUILD_SHARED_LIBS)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE QT_BUILD_SHARED)
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION 0)
     set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
 endif()
