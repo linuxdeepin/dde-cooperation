@@ -1,33 +1,17 @@
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef QUA_ZIP_H
 #define QUA_ZIP_H
 
-/*
-Copyright (C) 2005-2014 Sergey A. Tachenov
-
-This file is part of QuaZIP.
-
-QuaZIP is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 2.1 of the License, or
-(at your option) any later version.
-
-QuaZIP is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with QuaZIP.  If not, see <http://www.gnu.org/licenses/>.
-
-See COPYING file for the full LGPL text.
-
-Original ZIP package is copyrighted by Gilles Vollant, see
-quazip/(un)zip.h files for details, basically it's zlib license.
- **/
-
 #include <QString>
 #include <QStringList>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QTextCodec>
+#else
+#include <QStringConverter>
+#endif
 
 #include "zip.h"
 #include "unzip.h"
@@ -215,31 +199,25 @@ class QUAZIP_EXPORT QuaZip {
      * commit() isn't called.
       */
     void close();
-    /// Sets the codec used to encode/decode file names inside archive.
+    /// Sets the encoding used for file names inside archive.
     /** This is necessary to access files in the ZIP archive created
      * under Windows with non-latin characters in file names. For
      * example, file names with cyrillic letters will be in \c IBM866
      * encoding.
      **/
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     void setFileNameCodec(QTextCodec *fileNameCodec);
-    /// Sets the codec used to encode/decode file names inside archive.
-    /** \overload
-     * Equivalent to calling setFileNameCodec(QTextCodec::codecForName(codecName));
-     **/
     void setFileNameCodec(const char *fileNameCodecName);
-    /// Returns the codec used to encode/decode comments inside archive.
     QTextCodec* getFileNameCodec() const;
-    /// Sets the codec used to encode/decode comments inside archive.
-    /** This codec defaults to locale codec, which is probably ok.
-     **/
     void setCommentCodec(QTextCodec *commentCodec);
-    /// Sets the codec used to encode/decode comments inside archive.
-    /** \overload
-     * Equivalent to calling setCommentCodec(QTextCodec::codecForName(codecName));
-     **/
     void setCommentCodec(const char *commentCodecName);
-    /// Returns the codec used to encode/decode comments inside archive.
     QTextCodec* getCommentCodec() const;
+#else
+    void setFileNameEncoding(QStringConverter::Encoding encoding);
+    QStringConverter::Encoding getFileNameEncoding() const;
+    void setCommentEncoding(QStringConverter::Encoding encoding);
+    QStringConverter::Encoding getCommentEncoding() const;
+#endif
     /// Returns the name of the ZIP file.
     /** Returns null string if no ZIP file name has been set, for
      * example when the QuaZip instance is set up to use a QIODevice
@@ -559,7 +537,11 @@ class QUAZIP_EXPORT QuaZip {
      *
      * @param codec The codec to use by default. If NULL, resets to default.
      */
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     static void setDefaultFileNameCodec(QTextCodec *codec);
+#else
+    static void setDefaultFileNameEncoding(QStringConverter::Encoding encoding);
+#endif
     /**
      * @overload
      * Equivalent to calling

@@ -1,27 +1,6 @@
-/*
-Copyright (C) 2010 Roberto Pompermaier
-Copyright (C) 2005-2014 Sergey A. Tachenov
-
-This file is part of QuaZIP.
-
-QuaZIP is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 2.1 of the License, or
-(at your option) any later version.
-
-QuaZIP is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with QuaZIP.  If not, see <http://www.gnu.org/licenses/>.
-
-See COPYING file for the full LGPL text.
-
-Original ZIP package is copyrighted by Gilles Vollant and contributors,
-see quazip/(un)zip.h files for details. Basically it's the zlib license.
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "JlCompress.h"
 #include <QDebug>
@@ -255,7 +234,7 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
 }
 
 bool JlCompress::compressDir(QString fileCompressed, QString dir, bool recursive) {
-    return compressDir(fileCompressed, dir, recursive, 0);
+    return compressDir(fileCompressed, dir, recursive, QDir::NoFilter);
 }
 
 bool JlCompress::compressDir(QString fileCompressed, QString dir,

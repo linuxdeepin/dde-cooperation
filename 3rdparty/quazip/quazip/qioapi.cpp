@@ -1,12 +1,6 @@
-/* ioapi.c -- IO base function header for compress/uncompress .zip
-   files using zlib + zip or unzip API
-
-   Version 1.01e, February 12th, 2005
-
-   Copyright (C) 1998-2005 Gilles Vollant
-
-   Modified by Sergey A. Tachenov to integrate with Qt.
-*/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <stdio.h>
 #include <stdlib.h>

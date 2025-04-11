@@ -1,26 +1,6 @@
-/*
-Copyright (C) 2005-2014 Sergey A. Tachenov
-
-This file is part of QuaZIP.
-
-QuaZIP is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 2.1 of the License, or
-(at your option) any later version.
-
-QuaZIP is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with QuaZIP.  If not, see <http://www.gnu.org/licenses/>.
-
-See COPYING file for the full LGPL text.
-
-Original ZIP package is copyrighted by Gilles Vollant, see
-quazip/(un)zip.h files for details, basically it's zlib license.
- **/
+// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <QFile>
 #include <QFlags>
@@ -43,9 +23,14 @@ class QuaZipPrivate {
     /// The pointer to the corresponding QuaZip instance.
     QuaZip *q;
     /// The codec for file names.
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QTextCodec *fileNameCodec;
     /// The codec for comments.
     QTextCodec *commentCodec;
+#else
+    QStringConverter::Encoding fileNameEncoding = QStringConverter::Utf8;
+    QStringConverter::Encoding commentEncoding = QStringConverter::Utf8;
+#endif
     /// The archive file name.
     QString zipName;
     /// The device to access the archive.
@@ -576,6 +561,7 @@ QString QuaZip::getCurrentFileName()const
   return result;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 void QuaZip::setFileNameCodec(QTextCodec *fileNameCodec)
 {
   p->fileNameCodec=fileNameCodec;
@@ -605,6 +591,27 @@ QTextCodec *QuaZip::getCommentCodec()const
 {
   return p->commentCodec;
 }
+#else
+void QuaZip::setFileNameEncoding(QStringConverter::Encoding encoding)
+{
+    p->fileNameEncoding = encoding;
+}
+
+QStringConverter::Encoding QuaZip::getFileNameEncoding() const
+{
+    return p->fileNameEncoding;
+}
+
+void QuaZip::setCommentEncoding(QStringConverter::Encoding encoding)
+{
+    p->commentEncoding = encoding;
+}
+
+QStringConverter::Encoding QuaZip::getCommentEncoding() const
+{
+    return p->commentEncoding;
+}
+#endif
 
 QString QuaZip::getZipName() const
 {
