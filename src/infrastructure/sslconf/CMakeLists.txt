@@ -16,6 +16,12 @@ else()
     set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD /O2 /Ob2")
 endif()
 
+if (NOT OpenSSL_FOUND)
+  find_package(OpenSSL REQUIRED)
+  # OpenSSL libraries
+  message(STATUS "sslconf > OpenSSL version: ${OPENSSL_VERSION} ${OPENSSL_INCLUDE_DIR} ${OPENSSL_LIBRARIES}")
+endif()
+
 # Module library
 file(GLOB SOURCE_FILES
     "src/${PLATNAME}/*.h"

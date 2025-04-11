@@ -6,6 +6,12 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Project name
 project(asio)
 
+if (NOT OpenSSL_FOUND)
+  find_package(OpenSSL REQUIRED)
+  # OpenSSL libraries
+  message(STATUS "asio > OpenSSL version: ${OPENSSL_VERSION} ${OPENSSL_INCLUDE_DIR} ${OPENSSL_LIBRARIES}")
+endif()
+
 # Module library
 file(GLOB SOURCE_FILES "src/*.cpp")
 add_library(${PROJECT_NAME} ${SOURCE_FILES})

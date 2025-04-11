@@ -66,7 +66,6 @@ cmake --build . --config %B_BUILD_TYPE%
 if ERRORLEVEL 1 goto failed
 if exist output\%B_BUILD_TYPE% (
     copy output\%B_BUILD_TYPE%\* output\%COO_PROJECT%\%B_BUILD_TYPE%\ > NUL
-    del output\%COO_PROJECT%\%B_BUILD_TYPE%\quazip5.* > NUL
     copy "%OPENSSL_ROOT_DIR%\libcrypto-1_1-x64.dll" output\%COO_PROJECT%\%B_BUILD_TYPE%\ > NUL
     copy "%OPENSSL_ROOT_DIR%\libssl-1_1-x64.dll" output\%COO_PROJECT%\%B_BUILD_TYPE%\ > NUL
     
@@ -77,7 +76,6 @@ if exist output\%B_BUILD_TYPE% (
     )
 
 
-    copy output\%B_BUILD_TYPE%\quazip5.* output\%DT_PROJECT%\%B_BUILD_TYPE%\ > NUL
     copy "%OPENSSL_ROOT_DIR%\libcrypto-1_1-x64.dll" output\%DT_PROJECT%\%B_BUILD_TYPE%\ > NUL
     copy "%OPENSSL_ROOT_DIR%\libssl-1_1-x64.dll" output\%DT_PROJECT%\%B_BUILD_TYPE%\ > NUL
     mkdir installer-inno\%DT_PROJECT%

@@ -198,7 +198,6 @@ inline void swap(uint256_t& value1, uint256_t& value2) noexcept
 
 #if defined(FMT_VERSION)
 template <>
-template <>
 struct fmt::formatter<BaseKit::uint256_t> : fmt::formatter<std::string_view> {
     template <typename FormatContext>
     auto format(const BaseKit::uint256_t& value, FormatContext& ctx) const {

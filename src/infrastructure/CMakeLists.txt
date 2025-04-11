@@ -1,3 +1,18 @@
+if(ENABLE_SLOTIPC)
+    include("slotipc.cmake")
+endif()
+
+# the ssl configuration module
+add_subdirectory(sslconf)
+
+# Compiler features
+include(SetCompilerFeatures)
+if (NOT ANDROID)
+include(SetCompilerWarnings)
+endif()
+include(SetPlatformFeatures)
+include(SystemInformation)
+
 # import non-boost asio
 include("asio.cmake")
 
@@ -15,13 +30,6 @@ endif()
 
 # network utils
 add_subdirectory(netutil)
-
-if(ENABLE_SLOTIPC)
-    include("slotipc.cmake")
-endif()
-
-# the ssl configuration module
-add_subdirectory(sslconf)
 
 # rpc module for compat old protocal
 # add_subdirectory(zrpc)

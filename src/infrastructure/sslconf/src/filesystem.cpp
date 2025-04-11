@@ -7,7 +7,7 @@
 
 #include "filesystem.h"
 #if SYSAPI_WIN32
-#include "common/win32/encoding_utilities.h"
+#include "win32/encodingutilities.h"
 #endif
 #include <fstream>
 

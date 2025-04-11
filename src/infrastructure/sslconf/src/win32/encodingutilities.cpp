@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "encoding_utilities.h"
+#include "encodingutilities.h"
 #include <stringapiset.h>
 
 std::string win_wchar_to_utf8(const WCHAR* utfStr)

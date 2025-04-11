@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "../datadirectories.h"
-#include "encoding_utilities.h"
+#include "encodingutilities.h"
 
 #include <Shlobj.h>
 
