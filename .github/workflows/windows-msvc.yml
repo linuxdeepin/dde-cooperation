@@ -94,6 +94,7 @@ jobs:
               copy "%OPENSSL_ROOT_DIR%\libcrypto-1_1-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
               copy "%OPENSSL_ROOT_DIR%\libssl-1_1-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
               mkdir installer-inno\%DT_PROJECT%
+              copy "%B_BONJOUR%\Bonjour64.msi" installer-inno\%DT_PROJECT%\ > NUL
               if exist output\%DT_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe (
                   move output\%DT_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe installer-inno\%DT_PROJECT%\ > NUL
               )

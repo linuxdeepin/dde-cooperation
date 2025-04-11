@@ -21,7 +21,7 @@ set DT_PROJECT=data-transfer
 
 REM defaults - override them by creating a build_env.bat file
 set B_BUILD_TYPE=Release
-set B_QT_ROOT=C:\Qt
+set B_QT_ROOT=D:\Qt
 set B_QT_VER=5.15.2
 set B_QT_MSVC=msvc2019_64
 set B_BONJOUR=%~dp0\3rdparty\ext\BonjourSDK
@@ -81,6 +81,7 @@ if exist output\%B_BUILD_TYPE% (
     copy "%OPENSSL_ROOT_DIR%\libcrypto-1_1-x64.dll" output\%DT_PROJECT%\%B_BUILD_TYPE%\ > NUL
     copy "%OPENSSL_ROOT_DIR%\libssl-1_1-x64.dll" output\%DT_PROJECT%\%B_BUILD_TYPE%\ > NUL
     mkdir installer-inno\%DT_PROJECT%
+    copy "%B_BONJOUR%\Bonjour64.msi" installer-inno\%DT_PROJECT%\ > NUL
     if exist output\%DT_PROJECT%\%B_BUILD_TYPE%\vc_redist.x64.exe (
         move output\%DT_PROJECT%\%B_BUILD_TYPE%\vc_redist.x64.exe installer-inno\%DT_PROJECT%\ > NUL
     )
