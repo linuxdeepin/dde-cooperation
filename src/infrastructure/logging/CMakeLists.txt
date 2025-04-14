@@ -45,3 +45,12 @@ target_link_libraries(${PROJECT_NAME} ${LINKLIBS} ${ZLIB_LIBRARIES})
 if(FPIC)
   set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
+
+# 添加测试支持
+option(BUILD_LOGGING_TESTS "Build logging tests" OFF)
+if(BUILD_LOGGING_TESTS)
+    # 启用测试
+    enable_testing()
+    # 添加tests子目录
+    add_subdirectory(tests)
+endif()

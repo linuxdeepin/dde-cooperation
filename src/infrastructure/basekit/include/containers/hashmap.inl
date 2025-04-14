@@ -162,7 +162,7 @@ inline std::pair<typename HashMap<TKey, TValue, THash, TEqual, TAllocator>::cons
 }
 
 template <typename TKey, typename TValue, typename THash, typename TEqual, typename TAllocator>
-inline typename HashMap<TKey, TValue, THash, TEqual, TAllocator>::mapped_type& HashMap<TKey, TValue, THash, TEqual, TAllocator>::at(const TKey& key) noexcept
+inline typename HashMap<TKey, TValue, THash, TEqual, TAllocator>::mapped_type& HashMap<TKey, TValue, THash, TEqual, TAllocator>::at(const TKey& key)
 {
     auto it = find(key);
     if (it == end())
@@ -172,7 +172,7 @@ inline typename HashMap<TKey, TValue, THash, TEqual, TAllocator>::mapped_type& H
 }
 
 template <typename TKey, typename TValue, typename THash, typename TEqual, typename TAllocator>
-inline const typename HashMap<TKey, TValue, THash, TEqual, TAllocator>::mapped_type& HashMap<TKey, TValue, THash, TEqual, TAllocator>::at(const TKey& key) const noexcept
+inline const typename HashMap<TKey, TValue, THash, TEqual, TAllocator>::mapped_type& HashMap<TKey, TValue, THash, TEqual, TAllocator>::at(const TKey& key) const
 {
     auto it = find(key);
     if (it == end())

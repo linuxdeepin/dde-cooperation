@@ -1,7 +1,7 @@
 if(NOT TARGET fmt)
 
   # Module subdirectory
-  set(FMT_DIR "${PROJECT_SOURCE_DIR}/3rdparty/fmt")
+  set(FMT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../3rdparty/fmt")
 
   # Module library
   file(GLOB SOURCE_FILES "${FMT_DIR}/src/*.cc")

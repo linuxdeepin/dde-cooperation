@@ -64,3 +64,12 @@ endif()
 if(BUILD_SHARED_LIBS)
     set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
 endif()
+
+# 添加测试支持
+option(BUILD_NETUTIL_TESTS "Build netutil tests" OFF)
+if(BUILD_NETUTIL_TESTS)
+    # 启用测试
+    enable_testing()
+    # 添加tests子目录
+    add_subdirectory(tests)
+endif()

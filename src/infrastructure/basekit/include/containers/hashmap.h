@@ -120,18 +120,19 @@ public:
     //! Find the count of items with the given key
     size_t count(const TKey& key) const noexcept { return (find(key) == end()) ? 0 : 1; }
 
-    //! Access to the item with the given key or throw std::out_of_range exception
+    //! Access element at the given key
     /*!
-        \param key - Key of the item
-        \return Item with the given key
+        \param key - Element key
+        \return Reference to the element value
     */
-    mapped_type& at(const TKey& key) noexcept;
-    //! Access to the constant item with the given key or throw std::out_of_range exception
+    mapped_type& at(const TKey& key);
+
+    //! Access constant element at the given key
     /*!
-        \param key - Key of the item
-        \return Constant item with the given key
+        \param key - Element key
+        \return Constant reference to the element value
     */
-    const mapped_type& at(const TKey& key) const noexcept;
+    const mapped_type& at(const TKey& key) const;
 
     //! Insert a new item into the hash map
     /*!

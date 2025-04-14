@@ -10,5 +10,6 @@
 #include "logging/layouts/binary_layout.h"
 #include "logging/layouts/hash_layout.h"
 #include "logging/layouts/text_layout.h"
+#include "logging/layouts/custom_layout.h"
 
 #endif // LOGGING_LAYOUTS_H
