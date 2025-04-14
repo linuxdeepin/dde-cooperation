@@ -8,12 +8,12 @@
 
 #include "zlib.h"
 #include "ioapi.h"
-#include "quazip_global.h"
+#include "exportdefine.h"
 #include <QIODevice>
 #if (QT_VERSION >= 0x050100)
-#define QUAZIP_QSAVEFILE_BUG_WORKAROUND
+#define QSAVEFILE_BUG_WORKAROUND
 #endif
-#ifdef QUAZIP_QSAVEFILE_BUG_WORKAROUND
+#ifdef QSAVEFILE_BUG_WORKAROUND
 #include <QSaveFile>
 #endif
 
@@ -281,7 +281,7 @@ int ZCALLBACK qiodevice_close_file_func (
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     delete d;
     QIODevice *device = reinterpret_cast<QIODevice*>(stream);
-#ifdef QUAZIP_QSAVEFILE_BUG_WORKAROUND
+#ifdef QSAVEFILE_BUG_WORKAROUND
     // QSaveFile terribly breaks the is-a idiom:
     // it IS a QIODevice, but it is NOT compatible with it: close() is private
     QSaveFile *file = qobject_cast<QSaveFile*>(device);

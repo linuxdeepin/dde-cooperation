@@ -182,16 +182,28 @@ bool QuaZipPrivate::goToFirstUnmappedFile()
     return hasCurrentFile_f;
 }
 
+/**
+ * 默认构造函数
+ * 需要调用setZipName()或setIoDevice()设置ZIP文件后才能使用
+ */
 QuaZip::QuaZip():
   p(new QuaZipPrivate(this))
 {
 }
 
+/**
+ * 通过ZIP文件名构造
+ * @param zipName ZIP文件路径
+ */
 QuaZip::QuaZip(const QString& zipName):
   p(new QuaZipPrivate(this, zipName))
 {
 }
 
+/**
+ * 通过IO设备构造
+ * @param ioDevice 用于读写ZIP的IO设备，必须支持随机访问
+ */
 QuaZip::QuaZip(QIODevice *ioDevice):
   p(new QuaZipPrivate(this, ioDevice))
 {

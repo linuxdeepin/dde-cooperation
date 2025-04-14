@@ -132,7 +132,7 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
                 | (static_cast<unsigned>(static_cast<unsigned char>(
                                                   extra.at(i + 1))) << 8);
         i += 2;
-        if (type == QUAZIP_EXTRA_NTFS_MAGIC) {
+        if (type == EXTRA_NTFS_MAGIC) {
             ntfsPos = i - 4; // the beginning of the NTFS record
             ntfsLength = length;
             if (length <= 4) {
@@ -152,7 +152,7 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
                                static_cast<unsigned char>(extra.at(i + 1)))
                            << 8);
                 i += 2;
-                if (tag == QUAZIP_EXTRA_NTFS_TIME_MAGIC) {
+                if (tag == EXTRA_NTFS_TIME_MAGIC) {
                     timesPos = i - 4; // the beginning of the NTFS times tag
                     ntfsTimesLength = tagsize;
                     break;
@@ -171,16 +171,16 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
         ntfsLength = 32;
         extra.resize(extra.size() + 4 + ntfsLength);
         // the NTFS record header
-        extra[ntfsPos] = static_cast<char>(QUAZIP_EXTRA_NTFS_MAGIC);
-        extra[ntfsPos + 1] = static_cast<char>(QUAZIP_EXTRA_NTFS_MAGIC >> 8);
+        extra[ntfsPos] = static_cast<char>(EXTRA_NTFS_MAGIC);
+        extra[ntfsPos + 1] = static_cast<char>(EXTRA_NTFS_MAGIC >> 8);
         extra[ntfsPos + 2] = 32; // the 2-byte size in LittleEndian
         extra[ntfsPos + 3] = 0;
         // zero the record
         memset(extra.data() + ntfsPos + 4, 0, 32);
         timesPos = ntfsPos + 8;
         // now set the tag data
-        extra[timesPos] = static_cast<char>(QUAZIP_EXTRA_NTFS_TIME_MAGIC);
-        extra[timesPos + 1] = static_cast<char>(QUAZIP_EXTRA_NTFS_TIME_MAGIC
+        extra[timesPos] = static_cast<char>(EXTRA_NTFS_TIME_MAGIC);
+        extra[timesPos + 1] = static_cast<char>(EXTRA_NTFS_TIME_MAGIC
                                                >> 8);
         // the size:
         extra[timesPos + 2] = 24;
@@ -199,8 +199,8 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
                 extra.size() - 28 - timesPos);
         ntfsLength += 28;
         // now set the tag data
-        extra[timesPos] = static_cast<char>(QUAZIP_EXTRA_NTFS_TIME_MAGIC);
-        extra[timesPos + 1] = static_cast<char>(QUAZIP_EXTRA_NTFS_TIME_MAGIC
+        extra[timesPos] = static_cast<char>(EXTRA_NTFS_TIME_MAGIC);
+        extra[timesPos + 1] = static_cast<char>(EXTRA_NTFS_TIME_MAGIC
                                                >> 8);
         // the size:
         extra[timesPos + 2] = 24;

@@ -45,11 +45,11 @@ QuaZIODevicePrivate::QuaZIODevicePrivate(QIODevice *io):
   zouts.opaque = NULL;
   inBuf = new char[QUAZIO_INBUFSIZE];
   outBuf = new char[QUAZIO_OUTBUFSIZE];
-#ifdef QUAZIP_ZIODEVICE_DEBUG_OUTPUT
+#ifdef ZIODEVICE_DEBUG_OUTPUT
   debug.setFileName("debug.out");
   debug.open(QIODevice::WriteOnly);
 #endif
-#ifdef QUAZIP_ZIODEVICE_DEBUG_INPUT
+#ifdef ZIODEVICE_DEBUG_INPUT
   indebug.setFileName("debug.in");
   indebug.open(QIODevice::WriteOnly);
 #endif
@@ -57,10 +57,10 @@ QuaZIODevicePrivate::QuaZIODevicePrivate(QIODevice *io):
 
 QuaZIODevicePrivate::~QuaZIODevicePrivate()
 {
-#ifdef QUAZIP_ZIODEVICE_DEBUG_OUTPUT
+#ifdef ZIODEVICE_DEBUG_OUTPUT
   debug.close();
 #endif
-#ifdef QUAZIP_ZIODEVICE_DEBUG_INPUT
+#ifdef ZIODEVICE_DEBUG_INPUT
   indebug.close();
 #endif
   if (inBuf != NULL)
@@ -91,13 +91,13 @@ int QuaZIODevicePrivate::doFlush(QString &error)
 
 /// \endcond
 
-// #define QUAZIP_ZIODEVICE_DEBUG_OUTPUT
-// #define QUAZIP_ZIODEVICE_DEBUG_INPUT
-#ifdef QUAZIP_ZIODEVICE_DEBUG_OUTPUT
+// #define ZIODEVICE_DEBUG_OUTPUT
+// #define ZIODEVICE_DEBUG_INPUT
+#ifdef ZIODEVICE_DEBUG_OUTPUT
 #include <QFile>
 static QFile debug;
 #endif
-#ifdef QUAZIP_ZIODEVICE_DEBUG_INPUT
+#ifdef ZIODEVICE_DEBUG_INPUT
 #include <QFile>
 static QFile indebug;
 #endif
@@ -219,7 +219,7 @@ qint64 QuaZIODevice::readData(char *data, qint64 maxSize)
       }
     }
   }
-#ifdef QUAZIP_ZIODEVICE_DEBUG_INPUT
+#ifdef ZIODEVICE_DEBUG_INPUT
   indebug.write(data, read);
 #endif
   return read;
@@ -255,7 +255,7 @@ qint64 QuaZIODevice::writeData(const char *data, qint64 maxSize)
       return -1;
     }
   }
-#ifdef QUAZIP_ZIODEVICE_DEBUG_OUTPUT
+#ifdef ZIODEVICE_DEBUG_OUTPUT
   debug.write(data, written);
 #endif
   return written;

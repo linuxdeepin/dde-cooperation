@@ -6,7 +6,7 @@
 #define QUACHECKSUM32_H
 
 #include <QByteArray>
-#include "quazip_global.h"
+#include "exportdefine.h"
 
 /// Checksum interface.
 /** \class QuaChecksum32 quachecksum32.h <quazip/quachecksum32.h>
@@ -29,7 +29,7 @@
  * resoultB = crc32->value();
  * \endcode
  */
-class QUAZIP_EXPORT QuaChecksum32
+class DLL_EXPORT QuaChecksum32
 {
 
 public:

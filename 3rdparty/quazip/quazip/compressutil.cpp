@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "JlCompress.h"
+#include "compressutil.h"
 #include <QDebug>
 
 static bool copyData(QIODevice &inFile, QIODevice &outFile)
@@ -18,7 +18,7 @@ static bool copyData(QIODevice &inFile, QIODevice &outFile)
     return true;
 }
 
-bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
+bool CompressUtil::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
     // zip: oggetto dove aggiungere il file
     // fileName: nome del file reale
     // fileDest: nome del file all'interno del file compresso
@@ -51,7 +51,7 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
     return true;
 }
 
-bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool recursive, QDir::Filters filters) {
+bool CompressUtil::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool recursive, QDir::Filters filters) {
     // zip: oggetto dove aggiungere il file
     // dir: cartella reale corrente
     // origDir: cartella reale originale
@@ -104,7 +104,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
     return true;
 }
 
-bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
+bool CompressUtil::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
     // zip: oggetto dove aggiungere il file
     // filename: nome del file reale
     // fileincompress: nome del file all'interno del file compresso
@@ -169,7 +169,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
     return true;
 }
 
-bool JlCompress::removeFile(QStringList listFile) {
+bool CompressUtil::removeFile(QStringList listFile) {
     bool ret = true;
     // Per ogni file
     for (int i=0; i<listFile.count(); i++) {
@@ -179,7 +179,7 @@ bool JlCompress::removeFile(QStringList listFile) {
     return ret;
 }
 
-bool JlCompress::compressFile(QString fileCompressed, QString file) {
+bool CompressUtil::compressFile(QString fileCompressed, QString file) {
     // Creo lo zip
     QuaZip zip(fileCompressed);
     QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
@@ -204,7 +204,7 @@ bool JlCompress::compressFile(QString fileCompressed, QString file) {
     return true;
 }
 
-bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
+bool CompressUtil::compressFiles(QString fileCompressed, QStringList files) {
     // Creo lo zip
     QuaZip zip(fileCompressed);
     QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
@@ -233,11 +233,11 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
     return true;
 }
 
-bool JlCompress::compressDir(QString fileCompressed, QString dir, bool recursive) {
+bool CompressUtil::compressDir(QString fileCompressed, QString dir, bool recursive) {
     return compressDir(fileCompressed, dir, recursive, QDir::NoFilter);
 }
 
-bool JlCompress::compressDir(QString fileCompressed, QString dir,
+bool CompressUtil::compressDir(QString fileCompressed, QString dir,
                              bool recursive, QDir::Filters filters)
 {
     // Creo lo zip
@@ -264,13 +264,13 @@ bool JlCompress::compressDir(QString fileCompressed, QString dir,
     return true;
 }
 
-QString JlCompress::extractFile(QString fileCompressed, QString fileName, QString fileDest) {
+QString CompressUtil::extractFile(QString fileCompressed, QString fileName, QString fileDest) {
     // Apro lo zip
     QuaZip zip(fileCompressed);
     return extractFile(zip, fileName, fileDest);
 }
 
-QString JlCompress::extractFile(QuaZip &zip, QString fileName, QString fileDest)
+QString CompressUtil::extractFile(QuaZip &zip, QString fileName, QString fileDest)
 {
     if(!zip.open(QuaZip::mdUnzip)) {
         return QString();
@@ -292,13 +292,13 @@ QString JlCompress::extractFile(QuaZip &zip, QString fileName, QString fileDest)
     return QFileInfo(fileDest).absoluteFilePath();
 }
 
-QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, QString dir) {
+QStringList CompressUtil::extractFiles(QString fileCompressed, QStringList files, QString dir) {
     // Creo lo zip
     QuaZip zip(fileCompressed);
     return extractFiles(zip, files, dir);
 }
 
-QStringList JlCompress::extractFiles(QuaZip &zip, const QStringList &files, const QString &dir)
+QStringList CompressUtil::extractFiles(QuaZip &zip, const QStringList &files, const QString &dir)
 {
     if(!zip.open(QuaZip::mdUnzip)) {
         return QStringList();
@@ -325,13 +325,13 @@ QStringList JlCompress::extractFiles(QuaZip &zip, const QStringList &files, cons
     return extracted;
 }
 
-QStringList JlCompress::extractDir(QString fileCompressed, QString dir) {
+QStringList CompressUtil::extractDir(QString fileCompressed, QString dir) {
     // Apro lo zip
     QuaZip zip(fileCompressed);
     return extractDir(zip, dir);
 }
 
-QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
+QStringList CompressUtil::extractDir(QuaZip &zip, const QString &dir)
 {
     if(!zip.open(QuaZip::mdUnzip)) {
         return QStringList();
@@ -362,13 +362,13 @@ QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
     return extracted;
 }
 
-QStringList JlCompress::getFileList(QString fileCompressed) {
+QStringList CompressUtil::getFileList(QString fileCompressed) {
     // Apro lo zip
     QuaZip* zip = new QuaZip(QFileInfo(fileCompressed).absoluteFilePath());
     return getFileList(zip);
 }
 
-QStringList JlCompress::getFileList(QuaZip *zip)
+QStringList CompressUtil::getFileList(QuaZip *zip)
 {
     if(!zip->open(QuaZip::mdUnzip)) {
         delete zip;
@@ -397,26 +397,26 @@ QStringList JlCompress::getFileList(QuaZip *zip)
     return lst;
 }
 
-QStringList JlCompress::extractDir(QIODevice *ioDevice, QString dir)
+QStringList CompressUtil::extractDir(QIODevice *ioDevice, QString dir)
 {
     QuaZip zip(ioDevice);
     return extractDir(zip, dir);
 }
 
-QStringList JlCompress::getFileList(QIODevice *ioDevice)
+QStringList CompressUtil::getFileList(QIODevice *ioDevice)
 {
     QuaZip *zip = new QuaZip(ioDevice);
     return getFileList(zip);
 }
 
-QString JlCompress::extractFile(QIODevice *ioDevice, QString fileName, QString fileDest)
+QString CompressUtil::extractFile(QIODevice *ioDevice, QString fileName, QString fileDest)
 {
     QuaZip zip(ioDevice);
     return extractFile(zip, fileName, fileDest);
 }
 
-QStringList JlCompress::extractFiles(QIODevice *ioDevice, QStringList files, QString dir)
+QStringList CompressUtil::extractFiles(QIODevice *ioDevice, QStringList files, QString dir)
 {
     QuaZip zip(ioDevice);
     return extractFiles(zip, files, dir);
-} 
+}

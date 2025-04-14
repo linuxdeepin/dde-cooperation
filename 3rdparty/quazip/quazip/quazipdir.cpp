@@ -76,7 +76,7 @@ bool QuaZipDir::cd(const QString &directoryName)
     if (dirName.contains('/')) {
         QuaZipDir dir(*this);
         if (dirName.startsWith('/')) {
-#ifdef QUAZIP_QUAZIPDIR_DEBUG
+#ifdef ZIPDIR_DEBUG
             qDebug("QuaZipDir::cd(%s): going to /",
                     dirName.toUtf8().constData());
 #endif
@@ -93,7 +93,7 @@ bool QuaZipDir::cd(const QString &directoryName)
                 i != path.end();
                 ++i) {
             const QString &step = *i;
-#ifdef QUAZIP_QUAZIPDIR_DEBUG
+#ifdef ZIPDIR_DEBUG
             qDebug("QuaZipDir::cd(%s): going to %s",
                     dirName.toUtf8().constData(),
                     step.toUtf8().constData());
@@ -363,7 +363,7 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
     QDir::SortFlags srt = sort;
     if (srt == QDir::NoSort)
         srt = sorting;
-#ifdef QUAZIP_QUAZIPDIR_DEBUG
+#ifdef ZIPDIR_DEBUG
     qDebug("QuaZipDirPrivate::entryInfoList(): before sort:");
     foreach (QuaZipFileInfo64 info, list) {
         qDebug("%s\t%s", info.name.toUtf8().constData(),
@@ -440,7 +440,7 @@ bool QuaZipDir::exists(const QString &filePath) const
         fileName.chop(1);
     if (fileName.contains('/')) {
         QFileInfo fileInfo(fileName);
-#ifdef QUAZIP_QUAZIPDIR_DEBUG
+#ifdef ZIPDIR_DEBUG
         qDebug("QuaZipDir::exists(): fileName=%s, fileInfo.fileName()=%s, "
                 "fileInfo.path()=%s", fileName.toUtf8().constData(),
                 fileInfo.fileName().toUtf8().constData(),
@@ -455,7 +455,7 @@ bool QuaZipDir::exists(const QString &filePath) const
             return true;
         } else {
             QStringList entries = entryList(QDir::AllEntries, QDir::NoSort);
-#ifdef QUAZIP_QUAZIPDIR_DEBUG
+#ifdef ZIPDIR_DEBUG
             qDebug("QuaZipDir::exists(): looking for %s",
                     fileName.toUtf8().constData());
             for (QStringList::const_iterator i = entries.constBegin();
