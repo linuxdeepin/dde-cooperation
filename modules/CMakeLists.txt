@@ -1,8 +1,2 @@
-include("cppserver.cmake")
 include("barrier.cmake")
-include("sslconf.cmake")
-include("quazip.cmake")
 include("QtZeroConf.cmake")
-if(ENABLE_CUTEIPC)
-    include("CuteIPC.cmake")
-endif()

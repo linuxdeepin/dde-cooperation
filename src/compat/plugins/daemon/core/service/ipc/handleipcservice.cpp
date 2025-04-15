@@ -21,7 +21,7 @@
 #include <QCoreApplication>
 
 HandleIpcService::HandleIpcService(QObject *parent)
-    : CuteIPCService(parent)
+    : SlotIPCService(parent)
 {
 }
 

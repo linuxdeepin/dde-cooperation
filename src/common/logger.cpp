@@ -24,38 +24,38 @@ LogStream Logger::log(const char* fname, unsigned line, int level)
 }
 
 void Logger::init(const std::string &logpath, const std::string &logname) {
-    CppCommon::Path savepath = CppCommon::Path(logpath);
+    BaseKit::Path savepath = BaseKit::Path(logpath);
     // Create a custom text layout pattern {LocalDate} {LocalTime}
     // std::string fileAndLine = std::string(__FILE__) + ":" + std::to_string(__LINE__);
     const std::string pattern = "{LocalYear}-{LocalMonth}-{LocalDay} {LocalHour}:{LocalMinute}:{LocalSecond}.{Millisecond} {Message} {EndLine}";
 
 
     // Create default logging sink processor with a text layout
-    auto sink = std::make_shared<CppLogging::AsyncWaitFreeProcessor>(std::make_shared<CppLogging::TextLayout>(pattern));
+    auto sink = std::make_shared<Logging::AsyncWaitFreeProcessor>(std::make_shared<Logging::TextLayout>(pattern));
 
     // Add console appender
-    sink->appenders().push_back(std::make_shared<CppLogging::ConsoleAppender>());
+    sink->appenders().push_back(std::make_shared<Logging::ConsoleAppender>());
     // Add syslog appender
-    sink->appenders().push_back(std::make_shared<CppLogging::SyslogAppender>());
+    sink->appenders().push_back(std::make_shared<Logging::SyslogAppender>());
 
     // Add file appender
-    //CppCommon::Path logfile = logpath + "/" + logname + ".log";
-    //sink->appenders().push_back(std::make_shared<CppLogging::FileAppender>(logfile));
+    //BaseKit::Path logfile = logpath + "/" + logname + ".log";
+    //sink->appenders().push_back(std::make_shared<Logging::FileAppender>(logfile));
 
     // Add file appender with time-based rolling policy and archivation
-    // sink->appenders().push_back(std::make_shared<CppLogging::RollingFileAppender>(savepath, CppLogging::TimeRollingPolicy::DAY, logname + "_{LocalDate}.log", true));
+    // sink->appenders().push_back(std::make_shared<Logging::RollingFileAppender>(savepath, Logging::TimeRollingPolicy::DAY, logname + "_{LocalDate}.log", true));
 
     // Add rolling file appender which rolls after append 100MB of logs and will keep only 5 recent archives
-    sink->appenders().push_back(std::make_shared<CppLogging::RollingFileAppender>(savepath, logname, "log", 104857600, 5, true));
+    sink->appenders().push_back(std::make_shared<Logging::RollingFileAppender>(savepath, logname, "log", 104857600, 5, true));
 
     // Configure example logger
-    CppLogging::Config::ConfigLogger("dde-cooperation", sink);
+    Logging::Config::ConfigLogger("dde-cooperation", sink);
 
     // Startup the logging infrastructure
-    CppLogging::Config::Startup();
+    Logging::Config::Startup();
 
     // last: get the configed logger
-    _logger = CppLogging::Config::CreateLogger("dde-cooperation");
+    _logger = Logging::Config::CreateLogger("dde-cooperation");
 }
 
 std::ostringstream& Logger::buffer()

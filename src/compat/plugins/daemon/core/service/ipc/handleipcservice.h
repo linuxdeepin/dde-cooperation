@@ -8,11 +8,11 @@
 #include <QObject>
 #include <QMap>
 #include "co/json.h"
-#include <CuteIPCService.h>
+#include <slotipc/service.h>
 
 #include "common/commonstruct.h"
 
-class HandleIpcService : public CuteIPCService
+class HandleIpcService : public SlotIPCService
 {
     Q_OBJECT
 public:

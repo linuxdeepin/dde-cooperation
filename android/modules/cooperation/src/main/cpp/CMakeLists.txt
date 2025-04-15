@@ -25,7 +25,6 @@ set(PROJECT_SOURCE_DIR ${PROJECT_ROOT_DIR})
 
 # CMake module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_ROOT_DIR}/cmake)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_ROOT_DIR}/3rdparty/CppServer/cmake")
 
 ##===openssl====
 ##OpenSSL_1_1_1l openssl-3.0.1
@@ -79,32 +78,31 @@ include_directories(${PROJECT_ROOT_DIR}/3rdparty/include)
 # header: openssl
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-#message("   >>> ANDROID_HOME  $ENV{ANDROID_HOME}")
-#
-#if (DEFINED ENV{ANDROID_HOME})
-#    set(ssl_root_path $ENV{ANDROID_HOME}/android_openssl)
-#    list(APPEND android_extra_libs
-#            ${ssl_root_path}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI}/libcrypto_1_1.so
-#            ${ssl_root_path}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI}/libssl_1_1.so)
-#
-#    set(OPENSSL_ROOT_DIR ${ssl_root_path}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI})
-#    set(OPENSSL_INCLUDE_DIR ${ssl_root_path}/ssl_1.1/include)
-#    set(OPENSSL_LIBRARIES ${android_extra_libs})
-#    set(OPENSSL_VERSION 1.1)
-#else()
-#    message(FATAL_ERROR "ANDROID_HOME环境变量未设置！")
-#endif()
+message("   >>> ANDROID_HOME  $ENV{ANDROID_HOME}")
 
-# Modules cppserver
-include("${PROJECT_ROOT_DIR}/modules/cppserver.cmake")
+if (DEFINED ENV{ANDROID_HOME})
+   set(ssl_root_path $ENV{ANDROID_HOME}/android_openssl)
+   list(APPEND android_extra_libs
+           ${ssl_root_path}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI}/libcrypto_1_1.so
+           ${ssl_root_path}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI}/libssl_1_1.so)
+
+   set(OPENSSL_ROOT_DIR ${ssl_root_path}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI})
+   set(OPENSSL_INCLUDE_DIR ${ssl_root_path}/ssl_1.1/include)
+   set(OPENSSL_LIBRARIES ${android_extra_libs})
+   set(OPENSSL_VERSION 1.1)
+else()
+   message(FATAL_ERROR "ANDROID_HOME环境变量未设置！")
+endif()
+
+# Modules netutil
+include_directories("${PROJECT_ROOT_DIR}/3rdparty")
+add_subdirectory("${PROJECT_ROOT_DIR}/src/infrastructure" "${CMAKE_BINARY_DIR}/infrastructure")
 
 
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/include")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules/CppLogging/include")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules/CppCommon/include")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules/asio/asio/include")
-include_directories("${PROJECT_ROOT_DIR}/3rdparty/CppServer/modules/CppCommon/modules/fmt/include")
+include_directories("${PROJECT_ROOT_DIR}/3rdparty/asio")
+include_directories("${PROJECT_ROOT_DIR}/src/infrastructure/basekit/include")
+include_directories("${PROJECT_ROOT_DIR}/src/infrastructure/logging/include")
+include_directories("${PROJECT_ROOT_DIR}/src/infrastructure/netutil/include")
 
 include_directories("${PROJECT_ROOT_DIR}/src")
 include_directories("${PROJECT_ROOT_DIR}/src/lib/common")

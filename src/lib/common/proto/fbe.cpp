@@ -266,7 +266,7 @@ uuid_t uuid_t::random()
 }
 
 #if defined(LOGGING_PROTOCOL)
-CppLogging::Record& operator<<(CppLogging::Record& record, const uuid_t& uuid)
+Logging::Record& operator<<(Logging::Record& record, const uuid_t& uuid)
 {
     const char* digits = "0123456789abcdef";
 

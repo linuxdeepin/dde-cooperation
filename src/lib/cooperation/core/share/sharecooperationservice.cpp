@@ -145,7 +145,7 @@ void ShareCooperationService::terminateAllBarriers()
     
     for (const QString &line : processList) {
         if (line.contains("barrier", Qt::CaseInsensitive)) {
-            QStringList tokens = line.split(QStringLiteral(" "), SKIP_EMPTY_PARTS;
+            QStringList tokens = line.split(QStringLiteral(" "), SKIP_EMPTY_PARTS);
             if (tokens.size() >= 2) {
                 QString pid = tokens[1]; // PID 在第二个字段
                 QProcess::execute("taskkill", QStringList() << "/F" << "/PID" << pid);

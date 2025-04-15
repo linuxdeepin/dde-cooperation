@@ -8,7 +8,7 @@ FILE(GLOB CPP_SRC
     *.cpp
 )
 
-list(APPEND LINKLIBS cppserver)
+list(APPEND LINKLIBS netutil)
 
 # httpweb library
 add_library(${PROJECT_NAME} ${CPP_SRC})

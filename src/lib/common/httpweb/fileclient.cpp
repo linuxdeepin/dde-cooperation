@@ -9,20 +9,20 @@
 #include "filesystem/path.h"
 #include "filesystem/directory.h"
 
-#include "server/http/https_client.h"
+#include "http/https_client.h"
 
 #include <iostream>
 
 // timeout if no data arrived
 inline constexpr int ExitCount = 5000;
 
-using CppServer::HTTP::HTTPRequest;
-using CppServer::HTTP::HTTPResponse;
+using NetUtil::HTTP::HTTPRequest;
+using NetUtil::HTTP::HTTPResponse;
 
-class HTTPFileClient : public CppServer::HTTP::HTTPSClientEx
+class HTTPFileClient : public NetUtil::HTTP::HTTPSClientEx
 {
 public:
-    using CppServer::HTTP::HTTPSClientEx::HTTPSClientEx;
+    using NetUtil::HTTP::HTTPSClientEx::HTTPSClientEx;
 
     void setResponseHandler(ResponseHandler cb)
     {
@@ -31,8 +31,8 @@ public:
         }
         _handler = cb;
         // Must sleep for release something, or it will be blocked in request
-        CppCommon::Thread::Yield();
-        CppCommon::Thread::Sleep(1);
+        BaseKit::Thread::Yield();
+        BaseKit::Thread::Sleep(1);
     }
 
 protected:
@@ -121,7 +121,7 @@ private:
     std::atomic<bool> _canceled { false };
 };
 
-FileClient::FileClient(const std::shared_ptr<CppServer::Asio::Service> &service, const std::shared_ptr<CppServer::Asio::SSLContext>& context, const std::string &address, int port)
+FileClient::FileClient(const std::shared_ptr<NetUtil::Asio::Service> &service, const std::shared_ptr<NetUtil::Asio::SSLContext>& context, const std::string &address, int port)
 {
     if (_httpClient) {
         //discontect current one
@@ -176,7 +176,7 @@ void FileClient::startFileDownload(const std::vector<std::string> &webnames)
 
     _stop.store(false);
 
-    _downloadThread = CppCommon::Thread::Start([this, webnames]() { walkDownload(webnames); });
+    _downloadThread = BaseKit::Thread::Start([this, webnames]() { walkDownload(webnames); });
 }
 
 //-------------private-----------------
@@ -191,7 +191,7 @@ void FileClient::sendInfobyHeader(uint8_t mask, const std::string &name)
     _httpClient->setResponseHandler(nullptr);
 
     std::string url = s_headerInfos[mask] + ">" + name;
-    _httpClient->SendHeadRequest(url, CppCommon::Timespan::seconds(3)).get();
+    _httpClient->SendHeadRequest(url, BaseKit::Timespan::seconds(3)).get();
 }
 
 InfoEntry FileClient::requestInfo(const std::string &name)
@@ -207,13 +207,13 @@ InfoEntry FileClient::requestInfo(const std::string &name)
     // [GET]info/<name>&token
     std::string url = "info/";
     // base64 the file name in order to keep original name, which may include '&'
-    std::string ename = CppCommon::Encoding::Base64Encode(name);
+    std::string ename = BaseKit::Encoding::Base64Encode(name);
     url.append(ename);
     url.append("&token=").append(_token);
 
     _httpClient->setResponseHandler(nullptr);
 
-    auto response = _httpClient->SendGetRequest(url, CppCommon::Timespan::seconds(3)).get();
+    auto response = _httpClient->SendGetRequest(url, BaseKit::Timespan::seconds(3)).get();
     if (response.status() == 404) {
         return fileInfo;
     }
@@ -271,7 +271,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
         std::atomic<int> timeout_done(0);
 
         uint64_t offset = 0;
-        auto tempFile = CppCommon::File(avaipath);
+        auto tempFile = BaseKit::File(avaipath);
         //    offset = tempFile.size();
 
         ResponseHandler cb([&](int status, const char *buffer, size_t size) -> bool {
@@ -298,7 +298,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                 //std::string flag = this->getHeadKey(buffer, "Flag");
                 //std::cout << "head flag: " << flag << std::endl;
                 try {
-                    CppCommon::Path file_path = tempFile.absolute().RemoveExtension();
+                    BaseKit::Path file_path = tempFile.absolute().RemoveExtension();
 
                     if (!tempFile.IsFileWriteOpened()) {
                         size_t cur_off = 0;
@@ -315,7 +315,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                     if (auto callback = _callback.lock()) {
                         callback->onWebChanged(WEB_FILE_BEGIN, file_path.string(), size);
                     }
-                } catch (const CppCommon::FileSystemException &ex) {
+                } catch (const BaseKit::FileSystemException &ex) {
                     std::cout << "Header create throw FS exception: " << ex.message() << std::endl;
                     shouldExit = true;
                     if (auto callback = _callback.lock()) {
@@ -333,7 +333,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                         if (auto callback = _callback.lock()) {
                             callback->onProgress(size);
                         }
-                    } catch (const CppCommon::FileSystemException &ex) {
+                    } catch (const BaseKit::FileSystemException &ex) {
                         std::cout << "Write throw FS exception: " << ex.message() << std::endl;
                         shouldExit = true;
                         if (auto callback = _callback.lock()) {
@@ -357,7 +357,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                     try {
                         // 写入最后一块
                         tempFile.Write(buffer, size);
-                    } catch (const CppCommon::FileSystemException &ex) {
+                    } catch (const BaseKit::FileSystemException &ex) {
                         std::cout << "Write&Close throw FS exception: " << ex.message() << std::endl;
                         if (auto callback = _callback.lock()) {
                             callback->onWebChanged(WEB_IO_ERROR, "io_error");
@@ -389,7 +389,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
 
         std::string url = "download/";
         // base64 the file name in order to keep original name, which may include '&'
-        std::string ename = CppCommon::Encoding::Base64Encode(name);
+        std::string ename = BaseKit::Encoding::Base64Encode(name);
         url.append(ename);
         url.append("&token=").append(_token);
         url.append("&offset=").append(std::to_string(offset));
@@ -403,8 +403,8 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                 break;
             }
             timeout_done.fetch_add(1);
-            CppCommon::Thread::Yield();
-            CppCommon::Thread::Sleep(1);
+            BaseKit::Thread::Yield();
+            BaseKit::Thread::Sleep(1);
         }
 
         // make sure the file has been closed
@@ -413,7 +413,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                 // tempFile.Flush();
                 tempFile.Close();
                 tempFile.Clear();
-            } catch (const CppCommon::FileSystemException &ex) {
+            } catch (const BaseKit::FileSystemException &ex) {
                 std::cout << "Close throw FS exception: " << ex.message() << std::endl;
             }
         }
@@ -478,7 +478,7 @@ void FileClient::walkFolder(const std::string &name)
         std::cout << name << "can not get a replace folder, skip!" << std::endl;
         return;
     }
-    std::string avainame = CppCommon::Path(replacePath).filename().string();
+    std::string avainame = BaseKit::Path(replacePath).filename().string();
     std::string rename = (name == avainame) ? "" : avainame;
 
     // walk all sub files and folders into queue
@@ -551,20 +551,20 @@ void FileClient::walkFolderEntry(const std::string &name, std::queue<std::string
 
 bool FileClient::createNotExistPath(std::string &abspath, bool isfile)
 {
-    CppCommon::Path path(abspath);
+    BaseKit::Path path(abspath);
     try {
         if (!path.IsExists()) {
             // create its parent first.
-            CppCommon::Directory::CreateTree(path.parent());
+            BaseKit::Directory::CreateTree(path.parent());
             if (isfile) {
-                CppCommon::File::WriteEmpty(path);
+                BaseKit::File::WriteEmpty(path);
             } else {
-                CppCommon::Directory::Create(path);
+                BaseKit::Directory::Create(path);
             }
 
             return true;
         }
-    } catch (const CppCommon::FileSystemException &ex) {
+    } catch (const BaseKit::FileSystemException &ex) {
         // std::cout << "Create throw FS exception: " << abspath << std::endl;
 #ifdef __linux__
         auto filename = path.filename().string();
@@ -590,12 +590,12 @@ bool FileClient::createNotExistPath(std::string &abspath, bool isfile)
 
     if (isfile && !path.IsDirectory()) {
         // empty file, use the exist one.
-        CppCommon::File existFile(path);
+        BaseKit::File existFile(path);
         if (existFile.IsFileEmpty())
             return true;
     } else {
         // empty folder, use the exist one.
-        CppCommon::Directory existDir(path);
+        BaseKit::Directory existDir(path);
         if (existDir.IsDirectoryEmpty())
             return true;
     }
@@ -605,7 +605,7 @@ bool FileClient::createNotExistPath(std::string &abspath, bool isfile)
 
 std::string FileClient::createNextAvailableName(const std::string &name, bool isfile)
 {
-    CppCommon::Path path = CppCommon::Path(_savedir) / name;
+    BaseKit::Path path = BaseKit::Path(_savedir) / name;
     path = path.canonical(); // remove all '.' and '..' properly
 
     // save file security check
@@ -616,7 +616,7 @@ std::string FileClient::createNextAvailableName(const std::string &name, bool is
                 std::cout << "Save dir is user Home, forbid! " << path.string() << std::endl;
                 path = path.parent() / "Download" / path.filename();
             }
-        } catch (const CppCommon::FileSystemException &ex) {
+        } catch (const BaseKit::FileSystemException &ex) {
             // 捕获并处理异常
             // std::cout << "IsEquivalent throw FS exception: " << ex.message()<< std::endl;
         }
@@ -635,7 +635,7 @@ std::string FileClient::createNextAvailableName(const std::string &name, bool is
     int i = 1;
     while (true) {
         std::string newfilename = prefix + "(" + std::to_string(i) + ")" + suffix;
-        std::string newpath = CppCommon::Path(path.parent() / newfilename).string();
+        std::string newpath = BaseKit::Path(path.parent() / newfilename).string();
         if (createNotExistPath(newpath, isfile)) {
             return newpath;
         } else {

@@ -31,7 +31,7 @@ FILE(GLOB SRC_FILES
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Network)
 
-list(APPEND LINKLIBS cpplogging)
+list(APPEND LINKLIBS logging)
 list(APPEND LINKLIBS session)
 list(APPEND LINKLIBS httpweb)
 

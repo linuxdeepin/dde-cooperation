@@ -7,10 +7,10 @@
 using MessageHandler = std::function<void(const proto::OriginMessage &request, proto::OriginMessage *response)>;
 using NotifyHandler = std::function<void(const std::string &addr)>;
 
-class ProtoSession : public CppServer::Asio::SSLSession, public FBE::proto::FinalClient
+class ProtoSession : public NetUtil::Asio::SSLSession, public FBE::proto::FinalClient
 {
 public:
-    using CppServer::Asio::SSLSession::SSLSession;
+    using NetUtil::Asio::SSLSession::SSLSession;
 
     void setMessageHandler(MessageHandler cb)
     {
@@ -122,7 +122,7 @@ bool ProtoServer::startHeartbeat()
     }
 
     // wait for client ping
-    _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
+    _ping_timer->Setup(BaseKit::Timespan::seconds(HEARTBEAT_INTERVAL));
     return _ping_timer->WaitAsync();
 }
 
@@ -169,13 +169,13 @@ void ProtoServer::onHeartbeatTimeout(bool canceled)
     }
 
     if (recheck) {
-        _ping_timer->Setup(CppCommon::Timespan::seconds(HEARTBEAT_INTERVAL));
+        _ping_timer->Setup(BaseKit::Timespan::seconds(HEARTBEAT_INTERVAL));
         _ping_timer->WaitAsync();
     }
 }
 
-std::shared_ptr<CppServer::Asio::SSLSession>
-ProtoServer::CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &server)
+std::shared_ptr<NetUtil::Asio::SSLSession>
+ProtoServer::CreateSession(const std::shared_ptr<NetUtil::Asio::SSLServer> &server)
 {
     // data and state handle callback
     MessageHandler msg_cb([this](const proto::OriginMessage &request, proto::OriginMessage *response) {
@@ -208,7 +208,7 @@ void ProtoServer::onError(int error, const std::string &category, const std::str
     _callbacks->onStateChanged(RPC_ERROR, err);
 }
 
-void ProtoServer::onConnected(std::shared_ptr<CppServer::Asio::SSLSession>& session)
+void ProtoServer::onConnected(std::shared_ptr<NetUtil::Asio::SSLSession>& session)
 {
     // std::cout << "onConnected from:" << session->socket().remote_endpoint() << std::endl;
     std::string addr = session->socket().remote_endpoint().address().to_string();
@@ -218,12 +218,12 @@ void ProtoServer::onConnected(std::shared_ptr<CppServer::Asio::SSLSession>& sess
     _callbacks->onStateChanged(RPC_CONNECTED, addr);
 }
 
-void ProtoServer::onDisconnected(std::shared_ptr<CppServer::Asio::SSLSession>& session)
+void ProtoServer::onDisconnected(std::shared_ptr<NetUtil::Asio::SSLSession>& session)
 {
     //std::cout << "onDisconnected from: id: " << session->id() << std::endl;
 
     auto search_uuid = session->id();
-    auto it = std::find_if(_session_ids.begin(), _session_ids.end(), [search_uuid](const std::pair<std::string, CppCommon::UUID>& pair) {
+    auto it = std::find_if(_session_ids.begin(), _session_ids.end(), [search_uuid](const std::pair<std::string, BaseKit::UUID>& pair) {
         return pair.second == search_uuid;
     });
 

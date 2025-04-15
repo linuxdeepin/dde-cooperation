@@ -1,16 +1,24 @@
-﻿include_directories(include)
-include("${CMAKE_SOURCE_DIR}/modules/compat.cmake")
+﻿if(NOT TARGET COMPAT_DEAMON)
+    include("${CMAKE_SOURCE_DIR}/modules/compat.cmake")
 
-set(COMPAT_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-include_directories(${COMPAT_ROOT_DIR})
+    set(COMPAT_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+    include_directories(${COMPAT_ROOT_DIR})
+    include_directories(${COMPAT_ROOT_DIR}/include)
 
-add_subdirectory(protocol)
+    # zrpc module base on coost library
+    set(ZRPC_DIR "${COMPAT_ROOT_DIR}/zrpc")
+    include_directories(${ZRPC_DIR}/include)
+    add_subdirectory("${ZRPC_DIR}" zrpc)    
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+    add_subdirectory(protocol)
 
-add_subdirectory(framework)
-add_subdirectory(plugins)
+    set(CMAKE_AUTOUIC ON)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
 
-add_subdirectory(apps)
+    add_subdirectory(framework)
+    add_subdirectory(plugins)
+
+    add_subdirectory(apps)
+
+endif()

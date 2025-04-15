@@ -6,13 +6,13 @@
 #define TRANSFERWRAPPER_H
 
 #include "discover/deviceinfo.h"
-#include <CuteIPCService.h>
+#include <slotipc/service.h>
 
 #include <QObject>
 
 namespace cooperation_core {
 
-class TransferWrapper : public CuteIPCService
+class TransferWrapper : public SlotIPCService
 {
     Q_OBJECT
 public:

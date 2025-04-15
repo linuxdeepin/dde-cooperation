@@ -4,7 +4,7 @@ usr/libexec/dde-cooperation/barrierc
 usr/libexec/dde-cooperation/dde-cooperation-daemon
 usr/lib/*/libcooperation-core.so*
 usr/lib/*/libQtZeroConf.so*
-usr/lib/*/libCuteIPC.so*
+usr/lib/*/libslotipc.so*
 usr/lib/*/libdde-cooperation-framework.so*
 usr/lib/*/libco.so*
 usr/lib/*/libzrpc.so*

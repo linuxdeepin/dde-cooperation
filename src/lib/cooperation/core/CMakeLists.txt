@@ -52,8 +52,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-if(ENABLE_CUTEIPC)
-    #include CuteIPC using wrapper files
+if(ENABLE_SLOTIPC)
+    #include SlotIPC using wrapper files
     FILE(GLOB COMPAT_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/net/compatstruct.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/net/compatwrapper*"
@@ -101,7 +101,7 @@ else()
     qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources/resources.qrc)
 endif()
 
-list(APPEND LINKLIBS cpplogging)
+list(APPEND LINKLIBS logging)
 list(APPEND LINKLIBS sessionmanager)
 list(APPEND LINKLIBS sslconf)
 
@@ -111,7 +111,13 @@ if (NOT WIN32)
         message(FATAL_ERROR "libqrencode not found. Please install it.")
     endif()
     add_definitions(-DENABLE_PHONE=1)
-    list(APPEND LINKLIBS vncclient)
+    # build from libvnc.cmake
+    # list(APPEND LINKLIBS vncclient)
+    find_library(VNCCCLIENT_LIBRARY vncclient)
+    if(NOT VNCCCLIENT_LIBRARY)
+        message(FATAL_ERROR "libvncclient not found. Please install it.")
+    endif()
+    list(APPEND LINKLIBS ${VNCCCLIENT_LIBRARY})
 endif()
 
 add_library(${PROJECT_NAME}
@@ -141,11 +147,6 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_SOURCE_DIR}/src/
 )
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-    ${CMAKE_SOURCE_DIR}/modules/sslconf/
-)
-
 # 公共依赖库，添加到这里
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
@@ -157,10 +158,10 @@ target_link_libraries(${PROJECT_NAME}
     QtZeroConf
 )
 
-if(ENABLE_CUTEIPC)
+if(ENABLE_SLOTIPC)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        CuteIPC
+        slotipc
     )
 endif()
 

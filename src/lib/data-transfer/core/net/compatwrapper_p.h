@@ -8,7 +8,7 @@
 #include <QObject>
 #include <QTimer>
 
-class CuteIPCInterface;
+class SlotIPCInterface;
 namespace cooperation_core {
 
 class CompatWrapper;
@@ -27,7 +27,7 @@ public Q_SLOTS:
 
 private:
     CompatWrapper *q { nullptr };
-    CuteIPCInterface *ipcInterface { nullptr };
+    SlotIPCInterface *ipcInterface { nullptr };
 
     QTimer *ipcTimer { nullptr };
     bool backendOk { false };

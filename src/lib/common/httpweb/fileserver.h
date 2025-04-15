@@ -5,12 +5,12 @@
 #ifndef FILESERVER_H
 #define FILESERVER_H
 
-#include "server/http/https_server.h"
+#include "http/https_server.h"
 #include "syncstatus.h"
 
-class FileServer : public WebInterface, public CppServer::HTTP::HTTPSServer
+class FileServer : public WebInterface, public NetUtil::HTTP::HTTPSServer
 {
-    using CppServer::HTTP::HTTPSServer::HTTPSServer;
+    using NetUtil::HTTP::HTTPSServer::HTTPSServer;
 
 public:
     ~FileServer();
@@ -26,7 +26,7 @@ public:
     bool verifyToken(std::string &token);
 
 protected:
-    std::shared_ptr<CppServer::Asio::SSLSession> CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &server) override;
+    std::shared_ptr<NetUtil::Asio::SSLSession> CreateSession(const std::shared_ptr<NetUtil::Asio::SSLServer> &server) override;
     void onError(int error, const std::string &category, const std::string &message) override;
 
 private:

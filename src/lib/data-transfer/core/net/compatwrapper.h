@@ -6,7 +6,7 @@
 #define COMPATWRAPPER_H
 
 #include "compatstruct.h"
-#include <CuteIPCInterface.h>
+#include <slotipc/interface.h>
 
 #include <QString>
 #include <QObject>
@@ -20,7 +20,7 @@ class CompatWrapper : public QObject {
 public:
     static CompatWrapper *instance();
 
-    CuteIPCInterface *ipcInterface();
+    SlotIPCInterface *ipcInterface();
     QString session();
 
 signals:

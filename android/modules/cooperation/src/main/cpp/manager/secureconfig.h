@@ -5,13 +5,13 @@
 #ifndef SECURECONFIG_H
 #define SECURECONFIG_H
 
-#include "server/asio/ssl_context.h"
+#include "asio/ssl_context.h"
 
 class SecureConfig {
 public:
-    static std::shared_ptr<CppServer::Asio::SSLContext> serverContext();
+    static std::shared_ptr<NetUtil::Asio::SSLContext> serverContext();
 
-    static std::shared_ptr<CppServer::Asio::SSLContext> clientContext();
+    static std::shared_ptr<NetUtil::Asio::SSLContext> clientContext();
 
 private:
 };

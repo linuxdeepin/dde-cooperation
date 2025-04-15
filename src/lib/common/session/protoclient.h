@@ -8,14 +8,14 @@
 #include "asioservice.h"
 #include "protoendpoint.h"
 
-#include "server/asio/ssl_client.h"
+#include "asio/ssl_client.h"
 #include "string/format.h"
 #include "threads/thread.h"
 
-class ProtoClient : public CppServer::Asio::SSLClient, public ProtoEndpoint
+class ProtoClient : public NetUtil::Asio::SSLClient, public ProtoEndpoint
 {
 public:
-    using CppServer::Asio::SSLClient::SSLClient;
+    using NetUtil::Asio::SSLClient::SSLClient;
 
     void DisconnectAndStop();
 

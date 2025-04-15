@@ -20,7 +20,7 @@ using namespace cooperation_core;
 CompatWrapperPrivate::CompatWrapperPrivate(CompatWrapper *qq)
     : q(qq)
 {
-    ipcInterface = new CuteIPCInterface();
+    ipcInterface = new SlotIPCInterface();
 
     ipcTimer = new QTimer(this);
     connect(ipcTimer, &QTimer::timeout, this, &CompatWrapperPrivate::onTimeConnectBackend);
@@ -160,10 +160,10 @@ CompatWrapper *CompatWrapper::instance()
     return &ins;
 }
 
-CuteIPCInterface *CompatWrapper::ipcInterface()
+SlotIPCInterface *CompatWrapper::ipcInterface()
 {
     if (!d->ipcInterface)
-        d->ipcInterface = new CuteIPCInterface;
+        d->ipcInterface = new SlotIPCInterface;
 
     return d->ipcInterface;
 }

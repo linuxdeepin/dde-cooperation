@@ -11,7 +11,7 @@
 #include <QMap>
 
 #ifdef ENABLE_COMPAT
-class CuteIPCInterface;
+class SlotIPCInterface;
 #endif
 namespace cooperation_transfer {
 
@@ -28,7 +28,7 @@ public:
 private:
     TransferHelper *q;
 #ifdef ENABLE_COMPAT
-    CuteIPCInterface *ipcInterface { nullptr };
+    SlotIPCInterface *ipcInterface { nullptr };
 
     bool backendOk { false };
 #endif

@@ -5,12 +5,12 @@
 #ifndef ASIOSERVICE_H
 #define ASIOSERVICE_H
 
-#include "server/asio/service.h"
+#include "asio/service.h"
 
-class AsioService : public CppServer::Asio::Service
+class AsioService : public NetUtil::Asio::Service
 {
 public:
-    using CppServer::Asio::Service::Service;
+    using NetUtil::Asio::Service::Service;
 
 protected:
     void onError(int error, const std::string &category, const std::string &message) override

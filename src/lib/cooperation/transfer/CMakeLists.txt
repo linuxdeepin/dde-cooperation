@@ -84,8 +84,8 @@ else()
     qt5_add_resources(RESOURCE_FILES ${CORE_UI_DIR}/gui/resources/resources.qrc)
 endif()
 
-list(APPEND LINKLIBS cpplogging)
-list(APPEND LINKLIBS vncclient)
+list(APPEND LINKLIBS logging)
+# list(APPEND LINKLIBS vncclient)
 
 add_library(${PROJECT_NAME}
     ${PLUGIN_FILES}
@@ -125,10 +125,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Concurrent
 )
 
-if(ENABLE_CUTEIPC)
+if(ENABLE_SLOTIPC)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        CuteIPC
+        slotipc
     )
 endif()
 

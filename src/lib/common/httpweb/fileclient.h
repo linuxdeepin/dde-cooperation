@@ -5,7 +5,7 @@
 #ifndef FILECLIENT_H
 #define FILECLIENT_H
 
-#include "server/asio/ssl_context.h"
+#include "asio/ssl_context.h"
 #include "syncstatus.h"
 
 #include "webproto.h"
@@ -17,7 +17,7 @@ class FileClient : public WebInterface
 {
     friend class HTTPFileClient;
 public:
-    FileClient(const std::shared_ptr<CppServer::Asio::Service> &service, const std::shared_ptr<CppServer::Asio::SSLContext>& context, const std::string &address, int port);
+    FileClient(const std::shared_ptr<NetUtil::Asio::Service> &service, const std::shared_ptr<NetUtil::Asio::SSLContext>& context, const std::string &address, int port);
     ~FileClient();
 
     std::vector<std::string> parseWeb(const std::string &token);

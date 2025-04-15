@@ -12,9 +12,9 @@
 #include <map>
 #include <mutex>
 
-class TokenCache : public CppCommon::Singleton<TokenCache>
+class TokenCache : public BaseKit::Singleton<TokenCache>
 {
-    friend CppCommon::Singleton<TokenCache>;
+    friend BaseKit::Singleton<TokenCache>;
 
 public:
     std::string genToken(std::string info);

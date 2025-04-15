@@ -6,15 +6,15 @@
 #include "tokencache.h"
 #include "webbinder.h"
 
-#include "server/http/https_session.h"
-#include "server/http/http_response.h"
+#include "http/https_session.h"
+#include "http/http_response.h"
 
 #include "webproto.h"
 
-class HTTPFileSession : public CppServer::HTTP::HTTPSSession
+class HTTPFileSession : public NetUtil::HTTP::HTTPSSession
 {
 public:
-    using CppServer::HTTP::HTTPSSession::HTTPSSession;
+    using NetUtil::HTTP::HTTPSSession::HTTPSSession;
 
     void setResponseHandler(ResponseHandler cb)
     {
@@ -22,7 +22,7 @@ public:
     }
 
 protected:
-    InfoEntry putFileInfo(const CppCommon::Path &entry)
+    InfoEntry putFileInfo(const BaseKit::Path &entry)
     {
         InfoEntry info;
         auto name = entry.filename().string();
@@ -30,7 +30,7 @@ protected:
         if (entry.IsDirectory()) {
             info.size = -1; // mask as folder flag.
         } else if (entry.IsRegularFile()) {
-            CppCommon::File temp(entry);
+            BaseKit::File temp(entry);
             info.size = temp.size(); // mask as file flag.
         } else {
             std::cout << "this is link file: " << entry.string() << std::endl;
@@ -39,14 +39,14 @@ protected:
         return info;
     }
 
-    void serveInfo(const CppCommon::Path &path)
+    void serveInfo(const BaseKit::Path &path)
     {
-        CppCommon::File info(path);
+        BaseKit::File info(path);
         if (info.IsExists()) {
             InfoEntry fileInfo = putFileInfo(info);
             if (info.IsDirectory()) {
-                for (const auto &item : CppCommon::Directory(path)) {
-                    const CppCommon::Path entry = item.IsSymlink() ? CppCommon::Symlink(item).target() : item;
+                for (const auto &item : BaseKit::Directory(path)) {
+                    const BaseKit::Path entry = item.IsSymlink() ? BaseKit::Symlink(item).target() : item;
 
                     InfoEntry subInfo = putFileInfo(entry);
                     fileInfo.datas.push_back(subInfo);
@@ -63,9 +63,9 @@ protected:
         }
     }
 
-    void serveContent(const CppCommon::Path &path, size_t offset)
+    void serveContent(const BaseKit::Path &path, size_t offset)
     {
-        CppCommon::File info(path);
+        BaseKit::File info(path);
         if (info.IsExists()) {
             response().Clear();
             response().SetBegin(200);
@@ -150,7 +150,7 @@ protected:
         return params;
     }
 
-    void onReceivedRequest(const CppServer::HTTP::HTTPRequest &request) override
+    void onReceivedRequest(const NetUtil::HTTP::HTTPRequest &request) override
     {
         // Show HTTP request content
         //std::cout << std::endl << request;
@@ -176,7 +176,7 @@ protected:
                 _handler(RES_WEB_FINISH, nullptr, 0);
             } else if (method == s_headerInfos[INFO_WEB_INDEX]) {
                 std::string name = key.substr(dePos + 1);
-                CppCommon::Path diskpath = WebBinder::GetInstance().getPath(name);
+                BaseKit::Path diskpath = WebBinder::GetInstance().getPath(name);
                 if (diskpath.empty()) {
                     std::cout << "webindex : " << name << " > " << diskpath.string() << std::endl;
                     SendResponseAsync(response().MakeErrorResponse(404, "Not found."));
@@ -205,14 +205,14 @@ protected:
             std::unordered_map<std::string, std::string> queryParams = parseQueryParams(query);
             std::string ename = path.substr(path.find('/') + 1);
             // dcode realname from base64, which may include '&'
-            std::string name = CppCommon::Encoding::Base64Decode(ename);
+            std::string name = BaseKit::Encoding::Base64Decode(ename);
             std::string token = queryParams["token"];
 
             std::string method = path.substr(0, path.find('/'));
 
             // 检查token是否正确
             if (TokenCache::GetInstance().verifyToken(token)) {
-                CppCommon::Path diskpath = WebBinder::GetInstance().getPath(name);
+                BaseKit::Path diskpath = WebBinder::GetInstance().getPath(name);
 
                 if (diskpath.empty()) {
                     std::cout << "request >> name: " << name << " > " << diskpath.string() << std::endl;
@@ -245,7 +245,7 @@ protected:
             SendResponseAsync(response().MakeErrorResponse("Unsupported HTTP method: " + std::string(request.method())));
     }
 
-    void onReceivedRequestError(const CppServer::HTTP::HTTPRequest &request, const std::string &error) override
+    void onReceivedRequestError(const NetUtil::HTTP::HTTPRequest &request, const std::string &error) override
     {
         std::cout << "Request error: " << error << std::endl;
         _handler(RES_ERROR, nullptr, 0);
@@ -266,8 +266,8 @@ FileServer::~FileServer()
     this->context().reset();
 }
 
-std::shared_ptr<CppServer::Asio::SSLSession>
-FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &server)
+std::shared_ptr<NetUtil::Asio::SSLSession>
+FileServer::CreateSession(const std::shared_ptr<NetUtil::Asio::SSLServer> &server)
 {
     ResponseHandler cb([this](int status, const char *buffer, uint64_t size) -> bool {
         if (auto callback = _callback.lock()) {
@@ -297,7 +297,7 @@ FileServer::CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer> &ser
         return _stop.load();
     });
 
-    auto session = std::make_shared<HTTPFileSession>(std::dynamic_pointer_cast<CppServer::HTTP::HTTPSServer>(server));
+    auto session = std::make_shared<HTTPFileSession>(std::dynamic_pointer_cast<NetUtil::HTTP::HTTPSServer>(server));
     session->setResponseHandler(std::move(cb));
     return session;
 }

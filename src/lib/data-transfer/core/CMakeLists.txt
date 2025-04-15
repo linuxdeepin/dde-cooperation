@@ -12,7 +12,7 @@ project(data-transfer-core VERSION 1.0.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(ENABLE_CUTEIPC OFF)
+set(ENABLE_SLOTIPC OFF)
 remove_definitions(-DENABLE_COMPAT)
 
 # 插件相关的固定内容，或者公共头文件源文件，添加到这里。
@@ -45,8 +45,8 @@ FILE(GLOB PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-if(ENABLE_CUTEIPC)
-    #include CuteIPC using wrapper files
+if(ENABLE_SLOTIPC)
+    #include SlotIPC using wrapper files
     FILE(GLOB COMPAT_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/net/compatstruct.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/net/compatwrapper*"
@@ -97,7 +97,7 @@ else()
     qt5_add_resources(RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/gui/resources.qrc)
 endif()
 
-list(APPEND LINKLIBS cpplogging)
+list(APPEND LINKLIBS logging)
 list(APPEND LINKLIBS sessionmanager)
 
 add_library(${PROJECT_NAME}
@@ -133,10 +133,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt${QT_VERSION_MAJOR}::Network
 )
 
-if(ENABLE_CUTEIPC)
+if(ENABLE_SLOTIPC)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        CuteIPC
+        slotipc
     )
 endif()
 
@@ -154,24 +154,32 @@ if (CMAKE_SYSTEM MATCHES "Linux")
     )
 endif()
 if (CMAKE_SYSTEM MATCHES "Windows")
+    # quazip
+    set(QUAZIP_DIR "${CMAKE_SOURCE_DIR}/3rdparty/quazip")
+    set(QUAZIP_LIBRARIES "${QUAZIP_DIR}/lib/quazip5.lib")
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        ${QUAZIP_LIB_TARGET_NAME}
+        ${QUAZIP_LIBRARIES}
         Qt${QT_VERSION_MAJOR}::Sql
         Qt${QT_VERSION_MAJOR}::WinExtras
     )
 
     target_include_directories(${PROJECT_NAME}
         PRIVATE
-        ${CMAKE_SOURCE_DIR}/3rdparty/quazip/quazip
+        ${QUAZIP_DIR}/include
     )
+
+    # 拷贝文件到应用
+    file(GLOB DLLFILE "${QUAZIP_DIR}/lib/quazip5.dll")
+    file(COPY ${DLLFILE} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
+    message("   >>> copy quazip dll libraries:  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 endif()
 
 
-add_library(quazipd SHARED IMPORTED)
-set_target_properties(quazipd PROPERTIES
-    IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/quazipd.lib
-)
+# add_library(quazipd SHARED IMPORTED)
+# set_target_properties(quazipd PROPERTIES
+#     IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/quazipd.lib
+# )
 
 #install library file
 install(TARGETS ${PROJECT_NAME}

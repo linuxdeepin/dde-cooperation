@@ -11,9 +11,9 @@
 #include <vector>
 #include <utility>
 
-class WebBinder : public CppCommon::Singleton<WebBinder>
+class WebBinder : public BaseKit::Singleton<WebBinder>
 {
-    friend CppCommon::Singleton<WebBinder>;
+    friend BaseKit::Singleton<WebBinder>;
 public:
     WebBinder();
 

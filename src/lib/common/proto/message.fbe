@@ -1,5 +1,5 @@
 /*
-   Fast Binary Encoding protocol for CppServer
+   Fast Binary Encoding protocol
    https://github.com/chronoxor/FastBinaryEncoding
 
    Generate protocol command: fbec --cpp --proto --input=base.fbe --output=.

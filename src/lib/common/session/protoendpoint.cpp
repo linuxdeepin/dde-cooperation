@@ -87,7 +87,7 @@ std::string ProtoEndpoint::getResponse(int32_t type)
                 }
             }
             wait_cout++;
-            CppCommon::Thread::Yield();
+            BaseKit::Thread::Yield();
         } while (wait_cout < 3000); // timeout 3s
 
         _responses_by_type.erase(it);

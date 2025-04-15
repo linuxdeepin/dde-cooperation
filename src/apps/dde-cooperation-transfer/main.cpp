@@ -28,7 +28,7 @@ static void appExitHandler(int sig)
 int main(int argc, char *argv[])
 {
     // qputenv("QT_LOGGING_RULES", "dde-cooperation-transfer.debug=true");
-    // qputenv("CUTEIPC_DEBUG", "1");
+    // qputenv("SLOTIPC_DEBUG", "1");
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif

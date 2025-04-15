@@ -11,7 +11,7 @@
 #include "gui/mainwindow.h"
 
 #ifdef ENABLE_COMPAT
-#include <CuteIPCInterface.h>
+#include <slotipc/interface.h>
 #endif
 
 #include <QDesktopServices>
@@ -52,7 +52,7 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
       q(qq)
 {
 #ifdef ENABLE_COMPAT
-    ipcInterface = new CuteIPCInterface();
+    ipcInterface = new SlotIPCInterface();
 #endif
 }
 

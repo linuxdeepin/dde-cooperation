@@ -13,7 +13,7 @@
 using namespace cooperation_core;
 
 TransferWrapper::TransferWrapper(QObject *parent)
-    : CuteIPCService(parent)
+    : SlotIPCService(parent)
 {
     connect(DiscoverController::instance(), &DiscoverController::deviceOnline, this, &TransferWrapper::onDeviceOnline);
     connect(DiscoverController::instance(), &DiscoverController::deviceOffline, this, &TransferWrapper::onDeviceOffline);
