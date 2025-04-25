@@ -72,6 +72,17 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
 
 TransferHelperPrivate::~TransferHelperPrivate()
 {
+    if (dialog) {
+        dialog->deleteLater();
+        dialog = nullptr;
+    }
+#ifdef __linux__
+    if (notice) {
+        notice->deleteLater();
+        notice = nullptr;
+    }
+#endif
+    transHistory->clear();
 }
 
 void TransferHelperPrivate::initConnect()
@@ -117,6 +128,13 @@ void TransferHelperPrivate::notifyMessage(const QString &body, const QStringList
 #ifdef __linux__
     notice->notifyMessage(tr("File transfer"), body, actions, hitMap, expireTimeout);
 #endif
+}
+
+QVariantMap TransferHelperPrivate::createViewFileHints(const QString &path) {
+    QVariantMap hints;
+    QStringList commands{"xdg-open", path};
+    hints["x-deepin-action-view"] = commands.join(",");
+    return hints;
 }
 
 TransferHelper::TransferHelper(QObject *parent)
@@ -277,9 +295,13 @@ void TransferHelper::transferResult(bool result, const QString &msg)
         d->notice->closeNotification(); // close previous progress notification
 
         QStringList actions;
-        if (result)
+        if (result) {
             actions << NotifyViewAction << tr("View");
-        d->notifyMessage(msg, actions, 3 * 1000);
+            auto hints = d->createViewFileHints(d->recvFilesSavePath);
+            d->notifyMessage(msg, actions, -1, hints);
+        } else {
+            d->notifyMessage(msg, {}, 3 * 1000);
+        }
         return;
     }
 #endif
@@ -333,7 +355,8 @@ void TransferHelper::onActionTriggered(const QString &action)
             fileurl = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
         }
 
-        openFileLocation(fileurl);
+        // has been opened by notify center
+        // openFileLocation(fileurl);
     }
 }
 

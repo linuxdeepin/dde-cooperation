@@ -45,7 +45,7 @@ void NoticeUtil::onActionTriggered(uint replacesId, const QString &action)
 void NoticeUtil::notifyMessage(const QString &title, const QString &body, const QStringList &actions, QVariantMap hitMap, int expireTimeout)
 {
 
-    uint notifyId = hitMap.empty() ? 0 : recvNotifyId;
+    uint notifyId = 0;
     QDBusReply<uint> reply = notifyIfc->call(QString("Notify"), QString("dde-cooperation"), notifyId,
                                              QString("dde-cooperation"), title, body,
                                              actions, hitMap, expireTimeout);

@@ -46,6 +46,7 @@ public:
     void reportTransferResult(bool result);
     void notifyMessage(const QString &body, const QStringList &actions, int expireTimeout, const QVariantMap &hitMap = QVariantMap());
     void initConnect();
+    QVariantMap createViewFileHints(const QString &path);
 
 private:
     TransferHelper *q;
