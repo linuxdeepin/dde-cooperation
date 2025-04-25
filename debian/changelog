@@ -1,3 +1,10 @@
+dde-cooperation (1.1.1) unstable; urgency=medium
+
+  * v1.1.1 version update.
+  * fix: Fix miss the dynamic library issue.
+
+ -- re2zero <yangwu@uniontech.com>  Fri, 25 Apr 2025 15:55:10 +0800
+
 dde-cooperation (1.1.0) unstable; urgency=medium
 
   * v1.1.0 version update.
