@@ -9,6 +9,15 @@ CMake*.json
 *.o
 *.--quiet
 
+# AI configuration files
+.roomodes
+.roo/
+.roo_temp/
+.roo_temp_$$/
+.cursor/
+memory-bank/
+.cursorrules
+
 # Modules
 modules/*
 !modules/CMakeLists.txt

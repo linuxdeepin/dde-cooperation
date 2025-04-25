@@ -19,7 +19,7 @@ endif()
 file(GLOB_RECURSE LIB_HEADER_FILES "include/*.h" "src/*.h")
 file(GLOB_RECURSE LIB_INLINE_FILES "include/*.inl" "src/*.inl")
 file(GLOB_RECURSE LIB_SOURCE_FILES "src/*.cpp")
-add_library(${PROJECT_NAME} ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${MINIZIP_FILES})
+add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${MINIZIP_FILES})
 if(MSVC)
   # zlib
   target_include_directories(${PROJECT_NAME} PRIVATE "zlib/include")

@@ -14,7 +14,7 @@ endif()
 
 # Module library
 file(GLOB SOURCE_FILES "src/*.cpp")
-add_library(${PROJECT_NAME} ${SOURCE_FILES})
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 if(MSVC)
   set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}")
 else()
