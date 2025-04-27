@@ -12,6 +12,7 @@ CMake*.json
 # AI configuration files
 .roomodes
 .roo/
+.ruru/
 .roo_temp/
 .roo_temp_$$/
 .cursor/
