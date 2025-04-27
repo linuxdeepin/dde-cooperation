@@ -336,7 +336,7 @@ void ServerImpl::loop() {
             continue;
         }
 
-//        const uint32 n = this->ref() - 1;
+        const uint32 n = this->ref() - 1; // must: refcount - 1 for the current coroutine
 //        DLOG << "server " << _ip << ':' << _port
 //             << " accept connection: " << co::addr2str(&_addr, _addrlen)
 //             << ", connfd: " << _connfd << ", conn num: " << n;
