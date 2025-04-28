@@ -8,6 +8,7 @@ CMakeLists.txt.user
 CMake*.json
 *.o
 *.--quiet
+.cache/
 
 # AI configuration files
 .roomodes

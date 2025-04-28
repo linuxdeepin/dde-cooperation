@@ -90,6 +90,8 @@ DeviceItem::DeviceItem(QWidget *parent)
 
 DeviceItem::~DeviceItem()
 {
+    devInfo.reset();
+    disconnect(btnBoxWidget, &ButtonBoxWidget::buttonClicked, this, &DeviceItem::onButtonClicked);
 }
 
 void DeviceItem::setDeviceInfo(const DeviceInfoPointer info)
@@ -212,6 +214,10 @@ void DeviceItem::setOperations(const QList<Operation> &operations)
 
 void DeviceItem::updateOperations()
 {
+    // this device item may be not visible after it's been removed from the list, e.g. network disconnected.
+    if (!isVisible())
+        return;
+
     auto iter = indexOperaMap.begin();
     for (; iter != indexOperaMap.end(); ++iter) {
         if (!iter.value().visibleCb)
