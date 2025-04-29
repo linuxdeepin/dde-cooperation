@@ -1,3 +1,10 @@
+dde-cooperation (1.1.2) unstable; urgency=medium
+
+  * v1.1.2 version update.
+  * fix: Fix crash issue after network change.
+
+ -- re2zero <yangwu@uniontech.com>  Tue, 29 Apr 2025 19:21:18 +0800
+
 dde-cooperation (1.1.1) unstable; urgency=medium
 
   * v1.1.1 version update.
