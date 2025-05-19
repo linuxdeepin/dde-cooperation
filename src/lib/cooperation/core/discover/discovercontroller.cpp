@@ -165,7 +165,7 @@ bool DiscoverController::openZeroConfDaemonDailog()
 
     int code = dlg.exec();
     if (code == 0)
-        QProcess::startDetached("systemctl start avahi-daemon.service");
+        QProcess::startDetached("systemctl", QStringList() << "start" << "avahi-daemon.service");
     return true;
 #else
     int choice = QMessageBox::warning(nullptr, tr("Please click to confirm to enable the LAN discovery service!"),
