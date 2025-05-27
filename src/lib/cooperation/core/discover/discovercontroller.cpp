@@ -37,6 +37,7 @@ DiscoverController::~DiscoverController()
 
 void DiscoverController::init()
 {
+    DLOG << "Initializing discovery controller";
     if (isZeroConfDaemonActive()) {
         initZeroConf();
         return;
@@ -55,6 +56,7 @@ void DiscoverController::init()
 
 void DiscoverController::initZeroConf()
 {
+    DLOG << "Initializing ZeroConf service";
     d->zeroConf = new QZeroConf();
     d->zeroconfname = QSysInfo::machineUniqueId();
 
@@ -67,6 +69,7 @@ void DiscoverController::initZeroConf()
 
 void DiscoverController::initConnect()
 {
+    DLOG << "Setting up discovery controller connections";
     connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, this, [this](const QString &validIP) {
         if (validIP.isEmpty())
             return;
@@ -337,6 +340,7 @@ DiscoverController *DiscoverController::instance()
 
 void DiscoverController::publish()
 {
+    DLOG << "Publishing device info via ZeroConf";
     d->zeroConf->clearServiceTxtRecords();
 
     QVariantMap deviceInfo = CooperationUtil::deviceInfo();
@@ -361,24 +365,31 @@ void DiscoverController::publish()
 
 void DiscoverController::unpublish()
 {
+    DLOG << "Stopping ZeroConf service publishing";
     d->zeroConf->stopServicePublish();
     Q_EMIT registCompatAppInfo(false, "");
 }
 
 void DiscoverController::updatePublish()
 {
-    if (!d->zeroConf)
+    if (!d->zeroConf) {
+        WLOG << "Cannot update publish - ZeroConf not initialized";
         return;
+    }
 
+    DLOG << "Updating ZeroConf service publishing";
     unpublish();
     publish();
 }
 
 void DiscoverController::refresh()
 {
-    if (!d->zeroConf)
+    if (!d->zeroConf) {
+        WLOG << "Cannot refresh - ZeroConf not initialized";
         return;
+    }
 
+    DLOG << "Refreshing discovered devices list";
     d->onlineDeviceList.clear();
     auto allServices = d->zeroConf->getServices();
 
@@ -403,6 +414,7 @@ void DiscoverController::refresh()
 
 void DiscoverController::addSearchDeivce(const QString &info)
 {
+    DLOG << "Adding device from search result";
     auto devInfo = parseDeviceJson(info);
     if (!devInfo) {
         Q_EMIT discoveryFinished(false);
@@ -415,6 +427,7 @@ void DiscoverController::addSearchDeivce(const QString &info)
 
 void DiscoverController::compatAddDeivces(StringMap infoMap)
 {
+    DLOG << "Adding compatible devices, count:" << infoMap.size();
     QList<DeviceInfoPointer> addedList;
     for (auto it = infoMap.constBegin(); it != infoMap.constEnd(); ++it) {
         QString info = it.key();
@@ -458,14 +471,18 @@ void DiscoverController::compatAddDeivces(StringMap infoMap)
 
 void DiscoverController::compatRemoveDeivce(const QString &ip)
 {
+    DLOG << "Removing compatible device with IP:" << ip.toStdString();
     deviceLosted(ip);
 }
 
 void DiscoverController::startDiscover()
 {
-    if (!d->zeroConf)
+    if (!d->zeroConf) {
+        WLOG << "Cannot start discovery - ZeroConf not initialized";
         return;
+    }
 
+    DLOG << "Starting device discovery";
     // 延迟,为了展示发现界面
     QTimer::singleShot(500, [this]() {
         // clear current list first.

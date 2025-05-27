@@ -239,6 +239,11 @@ void SettingsPrivate::_q_onFileChanged(const QString &filePath)
 Settings::Settings(const QString &defaultFile, const QString &fallbackFile, const QString &settingFile, QObject *parent)
     : QObject(parent), d_ptr(new SettingsPrivate(this))
 {
+    qDebug() << "Creating Settings instance with files:"
+             << "\nDefault:" << defaultFile
+             << "\nFallback:" << fallbackFile
+             << "\nSetting:" << settingFile;
+
     d_ptr->fallbackFile = fallbackFile;
     d_ptr->settingFile = settingFile;
 
@@ -278,31 +283,38 @@ Settings::Settings(const QString &name, ConfigType type, QObject *parent)
                                     name, true),
                   parent)
 {
+    qDebug() << "Created Settings instance for:" << name << "with type:" << type;
 }
 
 Settings::~Settings()
 {
+    qDebug() << "Destroying Settings instance";
     Q_D(Settings);
 
     if (d->syncTimer) {
+        qDebug() << "Stopping sync timer";
         d->syncTimer->stop();
     }
 
     if (d->settingFileIsDirty) {
+        qInfo() << "Settings are dirty, performing final sync";
         sync();
     }
 }
 
 bool Settings::contains(const QString &group, const QString &key) const
 {
+    qDebug() << "Checking if settings contain group:" << group << "key:" << key;
     Q_D(const Settings);
 
     if (key.isEmpty()) {
         if (d->writableData.values.contains(group)) {
+            qDebug() << "Found in writable data";
             return true;
         }
 
         if (d->fallbackData.values.contains(group)) {
+            qDebug() << "Found in fallback data";
             return true;
         }
 
@@ -310,10 +322,12 @@ bool Settings::contains(const QString &group, const QString &key) const
     }
 
     if (d->writableData.values.value(group).contains(key)) {
+        qDebug() << "Found in writable data";
         return true;
     }
 
     if (d->fallbackData.values.value(group).contains(key)) {
+        qDebug() << "Found in fallback data";
         return true;
     }
 
@@ -414,17 +428,20 @@ QStringList Settings::keyList(const QString &group) const
 
 QVariant Settings::value(const QString &group, const QString &key, const QVariant &defaultValue) const
 {
+    qDebug() << "Getting value for group:" << group << "key:" << key;
     Q_D(const Settings);
 
     QVariant value = d->writableData.values.value(group).value(key, QVariant());
 
     if (value.isValid()) {
+        qDebug() << "Found in writable data:" << value;
         return value;
     }
 
     value = d->fallbackData.values.value(group).value(key, QVariant());
 
     if (value.isValid()) {
+        qDebug() << "Found in fallback data:" << value;
         return value;
     }
 
@@ -440,22 +457,27 @@ void Settings::setValue(const QString &group, const QString &key, const QVariant
 
 bool Settings::setValueNoNotify(const QString &group, const QString &key, const QVariant &value)
 {
+    qDebug() << "Setting value without notification for group:" << group << "key:" << key;
     Q_D(Settings);
 
     bool changed = false;
 
     if (isRemovable(group, key)) {
         if (d->writableData.value(group, key) == value) {
+            qDebug() << "Value unchanged, skipping update";
             return false;
         }
 
         changed = true;
+        qDebug() << "Value changed in writable data";
     } else {
         changed = this->value(group, key, value) != value;
+        qDebug() << "Value" << (changed ? "changed" : "unchanged") << "compared to default/fallback";
     }
 
     d->writableData.setValue(group, key, value);
     d->makeSettingFileToDirty(true);
+    qDebug() << "Settings marked as dirty";
 
     return changed;
 }

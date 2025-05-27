@@ -1,4 +1,5 @@
 ﻿#include "noticeutil.h"
+#include "common/log.h"
 
 #include <QDBusInterface>
 #include <QDBusReply>
@@ -12,19 +13,25 @@ using namespace cooperation_core;
 NoticeUtil::NoticeUtil(QObject *parent)
     : QObject(parent)
 {
+    DLOG << "NoticeUtil constructor";
     initNotifyConnect();
+    DLOG << "NoticeUtil initialized";
 }
 
 NoticeUtil::~NoticeUtil()
 {
+    DLOG << "NoticeUtil destructor";
 }
 
 void NoticeUtil::initNotifyConnect()
 {
+    DLOG << "Initializing notification connection";
     confirmTimer.setInterval(10 * 1000);
     confirmTimer.setSingleShot(true);
+    DLOG << "Set confirm timer to 10 seconds";
 
     connect(&confirmTimer, &QTimer::timeout, this, &NoticeUtil::onConfirmTimeout);
+    DLOG << "Connected confirm timer signal";
 
     notifyIfc = new QDBusInterface(NotifyServerName,
                                    NotifyServerPath,
@@ -36,8 +43,13 @@ void NoticeUtil::initNotifyConnect()
 
 void NoticeUtil::onActionTriggered(uint replacesId, const QString &action)
 {
-    if (replacesId != recvNotifyId)
+    DLOG << "Notification action triggered, ID:" << replacesId << "action:" << action.toStdString();
+    
+    if (replacesId != recvNotifyId) {
+        DLOG << "Notification ID mismatch (expected:" << recvNotifyId
+                          << "got:" << replacesId << "), ignoring action";
         return;
+    }
 
     emit ActionInvoked(action);
 }
@@ -60,5 +72,7 @@ void NoticeUtil::closeNotification()
 
 void NoticeUtil::resetNotifyId()
 {
+    DLOG << "Resetting notification ID";
     recvNotifyId = 0;
+    DLOG << "Notification ID reset complete";
 }

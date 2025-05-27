@@ -21,14 +21,21 @@
 TransferringWidget::TransferringWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Initializing transferring widget";
+
     initUI();
     initConnect();
 }
 
-TransferringWidget::~TransferringWidget() {}
+TransferringWidget::~TransferringWidget()
+{
+    DLOG << "Destroying transferring widget";
+}
 
 void TransferringWidget::initUI()
 {
+    DLOG << "Initializing UI";
+
     setStyleSheet(".TransferringWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -102,6 +109,8 @@ void TransferringWidget::initUI()
 
 void TransferringWidget::initConnect()
 {
+    DLOG << "Setting up signal connections";
+
     connect(TransferHelper::instance(), &TransferHelper::transferContent, this,
             &TransferringWidget::updateProcess);
     connect(TransferHelper::instance(), &TransferHelper::disconnected, this,
@@ -110,6 +119,8 @@ void TransferringWidget::initConnect()
 
 void TransferringWidget::updateInformationPage()
 {
+    DLOG << "Toggling process information page visibility";
+
     if (!isVisible) {
         isVisible = true;
         iconWidget->setVisible(false);
@@ -163,6 +174,9 @@ void TransferringWidget::changeProgressLabel(const int &ratio)
 void TransferringWidget::updateProcess(const QString &tpye, const QString &content, int progressbar,
                                        int estimatedtime)
 {
+    DLOG << "Updating process - Type:" << tpye.toStdString()
+             << "Content:" << content.toStdString() << "Progress:" << progressbar << "%";
+
 #if defined(_WIN32) || defined(_WIN64)
     if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
         == TransferMethod::kLocalExport) {
@@ -213,6 +227,8 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
 
 void TransferringWidget::themeChanged(int theme)
 {
+    DLOG << "Theme changed to:" << (theme == 1 ? "Light" : "Dark");
+
     // light
     if (theme == 1) {
         setStyleSheet(".TransferringWidget{background-color: white; border-radius: 10px;}");
@@ -226,6 +242,8 @@ void TransferringWidget::themeChanged(int theme)
 
 void TransferringWidget::clear()
 {
+    DLOG << "Clearing transfer state";
+
     processWindow->clear();
     progressLabel->setProgress(0);
     timeLabel->setText(tr("Calculationing..."));
@@ -281,15 +299,19 @@ QString TransferringWidget::getTransferFileName(const QString &fullPath, const Q
 ProcessWindow::ProcessWindow(QFrame *parent)
     : ProcessDetailsWindow(parent)
 {
+    DLOG << "Initializing process window";
     init();
 }
 
 ProcessWindow::~ProcessWindow()
 {
+    DLOG << "Destroying process window";
 }
 
 void ProcessWindow::updateContent(const QString &name, const QString &type)
 {
+    DLOG << "Updating content - Name:" << name.toStdString() << "Type:" << type.toStdString();
+
     int maxWith = 100;
     QString nameT = QFontMetrics(StyleHelper::font(3)).elidedText(name, Qt::ElideRight, maxWith);
     QString typeT = QFontMetrics(StyleHelper::font(3)).elidedText(type, Qt::ElideRight, maxWith);
@@ -322,6 +344,8 @@ void ProcessWindow::updateContent(const QString &name, const QString &type)
 
 void ProcessWindow::changeTheme(int theme)
 {
+    DLOG << "Changing theme to:" << (theme == 1 ? "Light" : "Dark");
+
     if (theme == 1) {
         setStyleSheet(".ProcessWindow{background-color: rgba(0, 0, 0, 0.08);"
                       "border-radius: 10px;"
@@ -341,6 +365,8 @@ void ProcessWindow::changeTheme(int theme)
 
 void ProcessWindow::init()
 {
+    DLOG << "Initializing process window components";
+
     setStyleSheet(".ProcessWindow{background-color: rgba(0, 0, 0, 0.08);"
                   "border-radius: 10px;"
                   "padding: 10px 30px 10px 10px;"

@@ -1,4 +1,6 @@
 ﻿#include "custommessagebox.h"
+#include "common/log.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QToolButton>
@@ -9,6 +11,7 @@ CustomMessageBox::CustomMessageBox(const QString &mainTitle, const QString &subT
                                    QWidget *parent)
     : QDialog(parent), message1(mainTitle), message2(subTitle)
 {
+    DLOG << "Creating with title:" << mainTitle.toStdString();
     initUi();
 }
 
@@ -135,6 +138,7 @@ void CustomMessageBox::initUi()
 
 bool CustomMessageBox::SelectContinueTransfer()
 {
+    DLOG << "Checking for outstanding transfer tasks";
     CustomMessageBox messageBox(tr("The presence of outstanding transfer tasks between you and the target device has been detected."), tr("Do you want to continue with the last transfer?"));
     if (messageBox.exec() == QDialog::Accepted)
         return true;

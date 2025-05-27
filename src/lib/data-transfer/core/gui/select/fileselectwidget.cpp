@@ -4,6 +4,7 @@
 #include "calculatefilesize.h"
 #include "userselectfilesize.h"
 #include "../type_defines.h"
+#include "common/log.h"
 
 #include <utils/optionsmanager.h>
 #include <net/helper/transferhepler.h>
@@ -17,6 +18,8 @@
 FileSelectWidget::FileSelectWidget(SidebarWidget *siderbarWidget, QWidget *parent)
     : QFrame(parent), sidebar(siderbarWidget)
 {
+    DLOG << "Initializing file selection widget";
+
     initUI();
 
     QObject::connect(sidebar, &SidebarWidget::updateFileview, this,
@@ -30,10 +33,15 @@ FileSelectWidget::FileSelectWidget(SidebarWidget *siderbarWidget, QWidget *paren
     QObject::connect(sidebar, &QListView::clicked, this, &FileSelectWidget::changeFileView);
 }
 
-FileSelectWidget::~FileSelectWidget() { }
+FileSelectWidget::~FileSelectWidget()
+{
+    DLOG << "Destroying file selection widget";
+}
 
 void FileSelectWidget::initUI()
 {
+    DLOG << "Initializing UI components";
+
     setStyleSheet("background-color: white; border-radius: 10px;");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -103,11 +111,15 @@ void FileSelectWidget::initUI()
 
 void FileSelectWidget::startCalcluateFileSize(QList<QString> fileList)
 {
+    DLOG << "Starting file size calculation for" << fileList.size() << "files";
+
     CalculateFileSizeThreadPool::instance()->work(fileList);
 }
 
 void FileSelectWidget::initFileView()
 {
+    DLOG << "Initializing file views";
+
     QMap<QStandardItem *, DiskInfo> *diskList = sidebar->getSidebarDiskList();
     for (auto iterator = diskList->begin(); iterator != diskList->end(); ++iterator) {
         QStandardItem *diskItem = iterator.key();
@@ -140,6 +152,8 @@ void FileSelectWidget::changeFileView(const QModelIndex &siderbarIndex)
 
 void FileSelectWidget::selectOrDelAllItem()
 {
+    DLOG << "Toggling select/deselect all items";
+
     SelectListView *listview = qobject_cast<SelectListView *>(stackedWidget->currentWidget());
     listview->selectorDelAllItem();
 }
@@ -193,6 +207,8 @@ void FileSelectWidget::updateTitleSelectBtnState(QStandardItem *siderbarItem,
 
 void FileSelectWidget::sortListviewColumn2()
 {
+    DLOG << "Sorting by column 2 (size)";
+
     for (auto iteraotr = sidebarFileViewList.begin(); iteraotr != sidebarFileViewList.end();
          ++iteraotr) {
         auto view = qobject_cast<SelectListView *>(iteraotr.value());
@@ -203,6 +219,8 @@ void FileSelectWidget::sortListviewColumn2()
 
 void FileSelectWidget::sortListview()
 {
+    DLOG << "Sorting by column 1 (name)";
+
     for (auto iteraotr = sidebarFileViewList.begin(); iteraotr != sidebarFileViewList.end();
          ++iteraotr) {
         auto view = qobject_cast<SelectListView *>(iteraotr.value());
@@ -349,6 +367,8 @@ void FileSelectWidget::updateFileSelectList(QStandardItem *item)
 
 void FileSelectWidget::nextPage()
 {
+    DLOG << "Navigating to next page";
+
     // send useroptions
     sendOptions();
 
@@ -358,6 +378,8 @@ void FileSelectWidget::nextPage()
 
 void FileSelectWidget::backPage()
 {
+    DLOG << "Returning to previous page";
+
     // delete Options
     delOptions();
 
@@ -366,6 +388,8 @@ void FileSelectWidget::backPage()
 
 void FileSelectWidget::sendOptions()
 {
+    DLOG << "Sending selected file options";
+
     QStringList selectFileLsit = UserSelectFileSize::instance()->getSelectFilesList();
     OptionsManager::instance()->addUserOption(Options::kFile, selectFileLsit);
     qInfo() << "select file:" << selectFileLsit;
@@ -375,6 +399,8 @@ void FileSelectWidget::sendOptions()
 
 void FileSelectWidget::delOptions()
 {
+    DLOG << "Clearing selected file options";
+
     // Clear All File Selections
     QStringList filelist = UserSelectFileSize::instance()->getSelectFilesList();
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();

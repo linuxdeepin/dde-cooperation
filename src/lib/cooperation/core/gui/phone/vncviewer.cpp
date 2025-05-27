@@ -5,6 +5,7 @@
 #include "vncviewer.h"
 #include "qt2keysum.h"
 #include "common/qtcompat.h"
+#include "common/log.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -29,13 +30,16 @@ VncViewer::VncViewer(QWidget *parent)
       m_scaled(true),
       m_buttonMask(0)
 {
+    DLOG << "Initializing VNC viewer";
     //init the background color
     m_backgroundBrush = QBrush(Qt::black);
 
     setFocusPolicy(Qt::StrongFocus);
 #ifdef TOUCH_MODE
+    DLOG << "Touch mode enabled";
     setMouseTracking(false);
 #else
+    DLOG << "Mouse tracking enabled";
     setMouseTracking(true);
 #endif
 
@@ -44,28 +48,35 @@ VncViewer::VncViewer(QWidget *parent)
     connect(this, &VncViewer::sendMouseState, _vncSendWorker, &VNCSendWorker::sendMouseUpdateMsg);
     connect(this, &VncViewer::sendKeyState, _vncSendWorker, &VNCSendWorker::sendKeyUpdateMsg);
     _vncSendWorker->moveToThread(_vncSendThread);
+    DLOG << "Send worker initialized";
 
     _vncRecvThread = new VNCRecvThread(this);
     connect(_vncRecvThread, &VNCRecvThread::updateImageSignal, this, &VncViewer::updateImage, Qt::BlockingQueuedConnection);
     connect(_vncRecvThread, &VNCRecvThread::sizeChangedSignal, this, &VncViewer::onSizeChange, Qt::QueuedConnection);
     connect(_vncRecvThread, &VNCRecvThread::finished, this, &VncViewer::stop);
+    DLOG << "Receive thread initialized";
 
     m_frameTimer = new QTimer(this);
     m_frameTimer->setTimerType(Qt::CoarseTimer);
     m_frameTimer->setInterval(1000);
 
     connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTimerTimeout()));
+
+    DLOG << "Initialization completed";
 }
 
 VncViewer::~VncViewer()
 {
+    DLOG << "Destroying VNC viewer";
 }
 
 void VncViewer::setServes(const std::string &ip, int port, const std::string &pwd)
 {
+    DLOG << "Setting server connection - IP:" << ip.c_str() << "Port:" << port;
     m_serverIp = ip;
     m_serverPort = port;
     m_serverPwd = pwd;
+    DLOG << "Server settings updated";
 }
 
 void VncViewer::frameTimerTimeout()
@@ -74,18 +85,21 @@ void VncViewer::frameTimerTimeout()
     setFrameCounter(0);
 
 #ifdef QT_DEBUG
-    qWarning() << " FPS: " << currentFps();
+    DLOG << " FPS: " << currentFps();
 #endif
 }
 
 void VncViewer::onSizeChange(int width, int height)
 {
-    if (!m_connected)
+    if (!m_connected) {
+        DLOG << "Size change ignored - not connected";
         return;
+    }
 
     // Check the screen has been rotated
     int curentMode = (width < height) ? PORTRAIT : LANDSCAPE;
     if (curentMode != m_phoneMode) {
+        DLOG << "Screen rotation detected - new mode:" << curentMode;
         m_phoneMode = curentMode;
         int w = (m_phoneMode == PORTRAIT) ? m_realSize.width() : m_realSize.height();
         const QSize size = {static_cast<int>(w * m_phoneScale), height};
@@ -341,6 +355,7 @@ void VncViewer ::closeEvent(QCloseEvent *event)
 
 void VncViewer::start()
 {
+    DLOG << "Starting VNC connection to" << m_serverIp.c_str() << ":" << m_serverPort;
     m_rfbCli = rfbGetClient(8, 3, 4);
     m_rfbCli->format.depth = 32;
     m_rfbCli->serverHost = strdup(m_serverIp.c_str());
@@ -351,34 +366,40 @@ void VncViewer::start()
     m_rfbCli->appData.forceTrueColour = TRUE;
     m_rfbCli->appData.useRemoteCursor = FALSE;
     m_rfbCli->appData.encodingsString = "tight ultra";
+    DLOG << "VNC client configured";
 
     rfbClientSetClientData(m_rfbCli, nullptr, this);
 
     if (rfbInitClient(m_rfbCli, 0, nullptr)) {
         m_connected = true;
+        DLOG << "VNC connection established successfully";
     } else {
-        std::cout << "[INFO] disconnected" << std::endl;
+        DLOG << "Failed to establish VNC connection";
         m_connected = false;
         return;
     }
 
-    std::cout << "[INFO] vnc screen: " << m_rfbCli->width << " x " << m_rfbCli->height << std::endl;
+    DLOG << "VNC screen size:" << m_rfbCli->width << "x" << m_rfbCli->height;
 #ifdef HIDED_CURSOR
     QPixmap pixmap(1, 1);
     pixmap.fill(Qt::transparent);
     setCursor(QCursor(pixmap));
+    DLOG << "Cursor hidden";
 #endif
     // 启动帧率计时器
     m_frameTimer->start();
+    DLOG << "Frame timer started";
 
     int viewWidth;
     m_phoneMode = (m_rfbCli->width < m_rfbCli->height) ? PORTRAIT : LANDSCAPE;
     if (PORTRAIT == m_phoneMode) {
         m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.height());
         viewWidth = static_cast<int>(m_realSize.width() * m_phoneScale);
+        DLOG << "Portrait mode - scale:" << m_phoneScale;
     } else {
         m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.width());
         viewWidth = static_cast<int>(m_realSize.height() * m_phoneScale);
+        DLOG << "Landscape mode - scale:" << m_phoneScale;
     }
     const QSize size = {viewWidth, m_rfbCli->height};
 
@@ -390,26 +411,33 @@ void VncViewer::start()
 
     _vncRecvThread->startRun(m_rfbCli);
     _vncSendThread->start();
+    DLOG << "Worker threads started";
 }
 
 
 void VncViewer::stop()
 {
-    if (!m_connected)
+    if (!m_connected) {
+        DLOG << "Already stopped, skipping";
         return;
+    }
 
+    DLOG << "Stopping VNC connection";
     m_frameTimer->stop();
     m_connected = false;
 
     _vncRecvThread->stopRun();
     _vncRecvThread->quit();
     _vncRecvThread->wait();
+    DLOG << "Receive thread stopped";
 
     _vncSendThread->quit();
     _vncSendThread->wait();
+    DLOG << "Send thread stopped";
 
     if (m_rfbCli) {
         rfbClientCleanup(m_rfbCli);
         m_rfbCli = nullptr;
+        DLOG << "VNC client cleaned up";
     }
 }

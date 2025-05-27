@@ -15,10 +15,14 @@
 
 ZipFileProcessResultWidget::ZipFileProcessResultWidget(QWidget *parent) : QFrame(parent)
 {
+    DLOG << "Widget constructor called";
     initUI();
 }
 
-ZipFileProcessResultWidget::~ZipFileProcessResultWidget() { }
+ZipFileProcessResultWidget::~ZipFileProcessResultWidget()
+{
+    DLOG << "Widget destructor called";
+}
 
 void ZipFileProcessResultWidget::initUI()
 {
@@ -77,6 +81,7 @@ void ZipFileProcessResultWidget::initUI()
 
 void ZipFileProcessResultWidget::successed()
 {
+    DLOG << "Backup process completed successfully";
     icon = new QLabel(this);
     icon->setPixmap(QIcon(":/icon/success-128.svg").pixmap(128, 128));
     icon->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -115,6 +120,7 @@ void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int pr
     if (progressbar != -1) {
         return;
     }
+    DLOG << "Backup process failed with error:" << content.toStdString();
     displayLabel->setVisible(false);
     icon->setPixmap(QIcon(":/icon/fail.svg").pixmap(128, 128));
     tipLabel1->setText(tr("Back up failed"));
@@ -135,6 +141,7 @@ void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int pr
 
 void ZipFileProcessResultWidget::backPage()
 {
+    DLOG << "Navigating back to choose widget";
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 

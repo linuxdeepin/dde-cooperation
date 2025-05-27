@@ -26,16 +26,21 @@ using namespace cooperation_core;
 FirstTipWidget::FirstTipWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "Initializing first tip widget";
     initUI();
+    DLOG << "Initialization completed";
 }
 
 void FirstTipWidget::themeTypeChanged()
 {
+    DLOG << "Theme type changed";
     if (CooperationGuiHelper::instance()->isDarkTheme()) {
+        DLOG << "Switching to dark theme";
         shadowEffect->setColor(QColor(122, 192, 255, 128));
         bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/dark/icons/banner_128px.png").pixmap(234, 158));
 
     } else {
+        DLOG << "Switching to light theme";
         shadowEffect->setColor(QColor(10, 57, 99, 128));
         bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.png").pixmap(234, 158));
     }
@@ -48,6 +53,7 @@ void FirstTipWidget::themeTypeChanged()
 
 void FirstTipWidget::showEvent(QShowEvent *event)
 {
+    DLOG << "Showing widget";
     drawLine();
 
     // show the close button on the right top
@@ -55,13 +61,17 @@ void FirstTipWidget::showEvent(QShowEvent *event)
     int bx = this->width() - BTN_SIZE - 15;
     int by = 15;
     tipBtn->setGeometry(bx, by, BTN_SIZE, BTN_SIZE);
+    DLOG << "Close button positioned at:" << bx << by;
 
     QWidget::showEvent(event);
+    DLOG << "Show event completed";
 }
 
 void FirstTipWidget::hideEvent(QHideEvent *event)
 {
+    DLOG << "Hiding widget";
     QWidget::hideEvent(event);
+    DLOG << "Hide event completed";
 }
 
 void FirstTipWidget::resizeEvent(QResizeEvent *event)
@@ -73,6 +83,7 @@ void FirstTipWidget::resizeEvent(QResizeEvent *event)
 
 void FirstTipWidget::initUI()
 {
+    DLOG << "Initializing UI components";
     initbackgroundFrame();
     inittipBtn();
 
@@ -82,13 +93,16 @@ void FirstTipWidget::initUI()
     mainLayout->addWidget(backgroundFrame);
 
     line = new LineWidget(backgroundFrame);
+    DLOG << "Created line widget";
 
     connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, &FirstTipWidget::themeTypeChanged);
     themeTypeChanged();
+    DLOG << "UI initialization completed";
 }
 
 void FirstTipWidget::initbackgroundFrame()
 {
+    DLOG << "Initializing background frame";
     backgroundFrame = new QFrame(this);
     QString backlightStyle = ".QFrame { background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(249, 250, 254, 0.24), stop:1 rgba(232, 242, 255, 0.12)); "
                              "border-radius: 10px;"
@@ -211,6 +225,7 @@ void FirstTipWidget::initbackgroundFrame()
 
 void FirstTipWidget::inittipBtn()
 {
+    DLOG << "Initializing tip button";
     tipBtn = new QToolButton(this);
     tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_white.svg"));
     tipBtn->setIconSize(QSize(8, 8));
@@ -226,6 +241,7 @@ void FirstTipWidget::inittipBtn()
 
 void FirstTipWidget::drawLine()
 {
+    DLOG << "Drawing connecting line";
     const int TOP_SPACE = 25;
     auto ge = lineBalls.last()->geometry();
 
@@ -234,6 +250,7 @@ void FirstTipWidget::drawLine()
     int lw = qApp->devicePixelRatio();
     int lh = ge.y() - ly;
     line->setGeometry(lx, ly, lw, lh);
+    DLOG << "Line drawn at position:" << lx << ly << "size:" << lw << lh;
 }
 
 void LineWidget::paintEvent(QPaintEvent *event)

@@ -40,62 +40,81 @@ CooperationUtil::CooperationUtil(QObject *parent)
     : QObject(parent),
       d(new CooperationUtilPrivate(this))
 {
+    DLOG << "CooperationUtil constructor";
 }
 
 CooperationUtil::~CooperationUtil()
 {
+    DLOG << "CooperationUtil destructor";
 }
 
 CooperationUtil *CooperationUtil::instance()
 {
+    DLOG << "Getting CooperationUtil instance";
     static CooperationUtil ins;
     return &ins;
 }
 
 void CooperationUtil::mainWindow(QSharedPointer<MainWindow> window)
 {
+    DLOG << "Setting main window";
     d->window = window;
 }
 
 QWidget* CooperationUtil::mainWindowWidget()
 {
     if (d->window) {
-       return d->window->window();
+        DLOG << "Returning registered main window";
+        return d->window->window();
     }
+    DLOG << "Searching for main window in top level widgets";
     auto windowList = qApp->topLevelWidgets();
     for (auto w : windowList) {
         if (w->objectName() == "MainWindow") {
+            DLOG << "Found main window by object name";
             return w->window();
         }
     }
+    WLOG << "No main window found";
     return nullptr;
 }
 
 void CooperationUtil::activateWindow()
 {
     if (d->window) {
+        DLOG << "Activating main window";
         d->window->activateWindow();
+    } else {
+        WLOG << "No main window to activate";
     }
 }
 
 void CooperationUtil::registerDeviceOperation(const QVariantMap &map)
 {
-    d->window->onRegistOperations(map);
+    DLOG << "Registering device operation";
+    if (d->window) {
+        d->window->onRegistOperations(map);
+    } else {
+        WLOG << "No main window to register operation";
+    }
 }
 
 void CooperationUtil::setStorageConfig(const QString &value)
 {
+    DLOG << "Emitting storage config:" << value.toStdString();
     emit storageConfig(value);
 }
 
 QVariantMap CooperationUtil::deviceInfo()
 {
+    DLOG << "Getting device info";
     QVariantMap info;
 #ifdef linux
     auto value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::DiscoveryModeKey, 0);
     int mode = value.toInt();
     mode = (mode < 0) ? 0 : (mode > 1) ? 1 : mode;
     info.insert(AppSettings::DiscoveryModeKey, mode);
+    DLOG << "Discovery mode:" << mode;
 #else
     auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
     info.insert(AppSettings::DiscoveryModeKey, value.isValid() ? value.toInt() : 0);
@@ -118,6 +137,7 @@ QVariantMap CooperationUtil::deviceInfo()
     mode = value.toInt();
     mode = (mode < 0) ? 0 : (mode > 2) ? 2 : mode;
     info.insert(AppSettings::TransferModeKey, mode);
+    DLOG << "Transfer mode:" << mode;
 #else
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
     info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
@@ -126,6 +146,8 @@ QVariantMap CooperationUtil::deviceInfo()
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey);
     auto storagePath = value.isValid() ? value.toString() : QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     info.insert(AppSettings::StoragePathKey, storagePath);
+    DLOG << "Storage path:" << storagePath.toStdString();
+    
     static std::once_flag flag;
     std::call_once(flag, [&storagePath] { CooperationUtil::instance()->setStorageConfig(storagePath); });
 
@@ -140,12 +162,14 @@ QVariantMap CooperationUtil::deviceInfo()
 
     info.insert(AppSettings::IPAddress, localIPAddress());
 
+    DLOG << "Device info collected successfully";
     return info;
 }
 
 QString CooperationUtil::localIPAddress()
 {
     QString ip = deepin_cross::CommonUitls::getFirstIp().data();
+    DLOG << "Local IP address:" << ip.toStdString();
     return ip;
 }
 
@@ -159,10 +183,12 @@ void CooperationUtil::saveOption(bool exit)
 {
     ConfigManager::instance()->setAppAttribute(AppSettings::CacheGroup, AppSettings::CloseOptionKey,
                                                exit ? "Exit" : "Minimise");
+    DLOG << "Saved close option:" << (exit ? "Exit" : "Minimise");
 }
 
 void CooperationUtil::initNetworkListener()
 {
+    DLOG << "Initializing network listener";
     QTimer *networkMonitorTimer = new QTimer(this);
     networkMonitorTimer->setInterval(1000);
     connect(networkMonitorTimer, &QTimer::timeout, this, &CooperationUtil::checkNetworkState);
@@ -185,9 +211,13 @@ void CooperationUtil::showFeatureDisplayDialog(QDialog *dlg1)
 {
 #ifdef linux
     DFeatureDisplayDialog *dlg = static_cast<DFeatureDisplayDialog *>(dlg1);
+    DLOG << "Setting up feature display dialog";
+    
     auto btn = dlg->getButton(0);
     btn->setText(tr("View Help Manual"));
     dlg->setTitle(tr("Welcome to dde-cooperation"));
+    
+    DLOG << "Adding feature items to dialog";
     dlg->addItem(new DFeatureItem(QIcon::fromTheme(":/icons/deepin/builtin/icons/tip_kvm.png"),
                                   tr("Keyboard and mouse sharing"), tr("When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device"), dlg));
     dlg->addItem(new DFeatureItem(QIcon::fromTheme(":/icons/deepin/builtin/icons/tip_clipboard.png"),
@@ -197,5 +227,7 @@ void CooperationUtil::showFeatureDisplayDialog(QDialog *dlg1)
     dlg->addItem(new DFeatureItem(QIcon::fromTheme(":/icons/deepin/builtin/icons/tip_more.png"),
                                   tr("Usage"), tr("For detailed instructions, please click on the Help Manual below"), dlg));
     dlg->show();
+#else
+    DLOG << "Feature display dialog not supported on this platform";
 #endif
 }

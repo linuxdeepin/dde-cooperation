@@ -2,6 +2,7 @@
 #include "appselectwidget.h"
 #include "item.h"
 #include "../type_defines.h"
+#include "common/log.h"
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
@@ -17,13 +18,20 @@
 
 ConfigSelectWidget::ConfigSelectWidget(QWidget *parent) : QFrame(parent)
 {
+    DLOG << "Initializing config selection widget";
+
     initUI();
 }
 
-ConfigSelectWidget::~ConfigSelectWidget() { }
+ConfigSelectWidget::~ConfigSelectWidget()
+{
+    DLOG << "Destroying config selection widget";
+}
 
 void ConfigSelectWidget::initUI()
 {
+    DLOG << "Initializing UI components";
+
     setStyleSheet(".ConfigSelectWidget{background-color: white; border-radius: 8px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -70,6 +78,8 @@ void ConfigSelectWidget::initUI()
 
 void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
 {
+    DLOG << "Initializing browser bookmark selection frame";
+
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
     ItemTitlebar *titlebar = new ItemTitlebar(tr("Browser bookmarks"), tr("Recommendation"), 40,
@@ -112,6 +122,8 @@ void ConfigSelectWidget::initSelectBrowerBookMarkFrame()
 
 void ConfigSelectWidget::initSelectConfigFrame()
 {
+    DLOG << "Initializing config selection frame";
+
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     ItemTitlebar *titlebar = new ItemTitlebar(tr("Personal Settings"), tr("Recommendation"), 40,
                                               360, QRectF(10, 8, 16, 16), 3, this);
@@ -151,6 +163,8 @@ void ConfigSelectWidget::initSelectConfigFrame()
 
 void ConfigSelectWidget::sendOptions()
 {
+    DLOG << "Sending selected options";
+
     QStringList browser;
     QAbstractItemModel *model = browserView->model();
     for (int row = 0; row < model->rowCount(); ++row) {
@@ -184,6 +198,8 @@ void ConfigSelectWidget::sendOptions()
 
 void ConfigSelectWidget::delOptions()
 {
+    DLOG << "Clearing selected options";
+
     // Clear All config Selections
     QAbstractItemModel *model = browserView->getModel();
     for (int row = 0; row < model->rowCount(); ++row) {
@@ -240,6 +256,8 @@ void ConfigSelectWidget::clear()
 
 void ConfigSelectWidget::nextPage()
 {
+    DLOG << "Navigating to next page";
+
     // send useroptions
     sendOptions();
 
@@ -248,6 +266,8 @@ void ConfigSelectWidget::nextPage()
 }
 void ConfigSelectWidget::backPage()
 {
+    DLOG << "Returning to previous page";
+
     // delete Options
     delOptions();
 

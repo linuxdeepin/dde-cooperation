@@ -15,24 +15,33 @@ using namespace deepin_cross;
 ReportLogWorker::ReportLogWorker(QObject *parent)
     : QObject(parent)
 {
+    qDebug() << "ReportLogWorker created";
 }
 
 ReportLogWorker::~ReportLogWorker()
 {
+    qDebug() << "Destroying ReportLogWorker";
+
     qDeleteAll(logDataObj.begin(), logDataObj.end());
     logDataObj.clear();
+    qDebug() << "Cleared all log data objects";
 
-    if (logLibrary.isLoaded())
+    if (logLibrary.isLoaded()) {
         logLibrary.unload();
+        qDebug() << "Unloaded log library";
+    }
 }
 
 bool ReportLogWorker::init()
 {
+    qDebug() << "Initializing ReportLogWorker";
+
     QList<ReportDataInterface *> datas {
         new StatusReportData,
         new FileDeliveryReportData,
         new ConnectionReportData
     };
+    qDebug() << "Created default report data handlers";
 
     std::for_each(datas.cbegin(), datas.cend(), [this](ReportDataInterface *dat) { registerLogData(dat->type(), dat); });
 
@@ -46,6 +55,7 @@ bool ReportLogWorker::init()
 
     initEventLogFunc = reinterpret_cast<InitEventLog>(logLibrary.resolve("Initialize"));
     writeEventLogFunc = reinterpret_cast<WriteEventLog>(logLibrary.resolve("WriteEventLog"));
+    qDebug() << "Resolved log library functions";
 
     if (!initEventLogFunc || !writeEventLogFunc) {
         qWarning() << "Log library init failed!";
@@ -57,41 +67,61 @@ bool ReportLogWorker::init()
         return false;
     }
 
+    qInfo() << "ReportLogWorker initialized successfully";
     return true;
 }
 
 void ReportLogWorker::commitLog(const QString &type, const QVariantMap &args)
 {
+    qDebug() << "Committing log for type:" << type << "with args:" << args;
+
     ReportDataInterface *interface = logDataObj.value(type, nullptr);
     if (!interface) {
         qInfo() << "Error: Log data object is not registed.";
         return;
     }
+
     QJsonObject jsonObject = interface->prepareData(args);
+    qDebug() << "Prepared log data JSON object";
 
     const QStringList &keys = commonData.keys();
     foreach (const QString &key, keys) {
         jsonObject.insert(key, commonData.value(key));   //add common data for each log commit
     }
+    qDebug() << "Added common data fields to log entry";
 
     commit(jsonObject.toVariantHash());
+    qInfo() << "Successfully committed log for type:" << type;
 }
 
 bool ReportLogWorker::registerLogData(const QString &type, ReportDataInterface *dataObj)
 {
-    if (logDataObj.contains(type))
+    qDebug() << "Registering log data handler for type:" << type;
+
+    if (logDataObj.contains(type)) {
+        qWarning() << "Log data handler already registered for type:" << type;
         return false;
+    }
 
     logDataObj.insert(type, dataObj);
+    qInfo() << "Successfully registered log data handler for type:" << type;
     return true;
 }
 
 void ReportLogWorker::commit(const QVariant &args)
 {
-    if (args.isNull() || !args.isValid())
+    qDebug() << "Finalizing log commit";
+
+    if (args.isNull() || !args.isValid()) {
+        qWarning() << "Invalid log data provided";
         return;
+    }
+
     const QJsonObject &dataObj = QJsonObject::fromVariantHash(args.toHash());
     QJsonDocument doc(dataObj);
     const QByteArray &sendData = doc.toJson(QJsonDocument::Compact);
+    qDebug() << "Serialized log data to JSON";
+
     writeEventLogFunc(sendData.data());
+    qInfo() << "Log data written to event log";
 }

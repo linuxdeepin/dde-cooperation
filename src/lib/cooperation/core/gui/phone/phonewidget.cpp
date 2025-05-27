@@ -23,22 +23,27 @@ using namespace cooperation_core;
 PhoneWidget::PhoneWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "Initializing phone widget";
     initUI();
+    DLOG << "Initialization completed";
 }
 
 void PhoneWidget::initUI()
 {
+    DLOG << "Initializing UI";
     stackedLayout = new QStackedLayout;
 
     nnWidget = new NoNetworkWidget(this);
     dlWidget = new DeviceListWidget(this);
     qrcodeWidget = new QRCodeWidget(this);
     dlWidget->setContentsMargins(10, 0, 10, 0);
+    DLOG << "Widgets created";
 
     stackedLayout->addWidget(qrcodeWidget);
     stackedLayout->addWidget(dlWidget);
     stackedLayout->addWidget(nnWidget);
     stackedLayout->setCurrentIndex(0);
+    DLOG << "Stacked layout configured";
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
@@ -46,31 +51,42 @@ void PhoneWidget::initUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addLayout(stackedLayout);
     setLayout(mainLayout);
+    DLOG << "UI initialization completed";
 }
 
 void PhoneWidget::setDeviceInfo(const DeviceInfoPointer info)
 {
+    DLOG << "Setting device info";
     switchWidget(PageName::kDeviceListWidget);
     dlWidget->clear();
     dlWidget->appendItem(info);
+    DLOG << "Device info set successfully";
 }
 
 void PhoneWidget::addOperation(const QVariantMap &map)
 {
+    DLOG << "Adding operation to device list";
     dlWidget->addItemOperation(map);
+    DLOG << "Operation added successfully";
 }
 
 void PhoneWidget::onSetQRcodeInfo(const QString &info)
 {
+    DLOG << "Setting QR code info";
     qrcodeWidget->setQRcodeInfo(info);
+    DLOG << "QR code info set successfully";
 }
 
 void PhoneWidget::switchWidget(PageName page)
 {
-    if (stackedLayout->currentIndex() == page || page == kUnknownPage)
+    if (stackedLayout->currentIndex() == page || page == kUnknownPage) {
+        DLOG << "Already on page" << page << "or unknown page, skipping switch";
         return;
+    }
 
+    DLOG << "Switching to page" << page;
     stackedLayout->setCurrentIndex(page);
+    DLOG << "Page switched successfully";
 }
 
 QRCodeWidget::QRCodeWidget(QWidget *parent)
@@ -165,10 +181,12 @@ void QRCodeWidget::setQRcodeInfo(const QString &info)
 
 QPixmap QRCodeWidget::generateQRCode(const QString &text, int scale)
 {
+    DLOG << "Generating QR code for text:" << text.toStdString();
     // 创建二维码对象，scale 参数控制二维码的大小
     QRcode *qrcode = QRcode_encodeString(text.toStdString().c_str(), 0, QR_ECLEVEL_H, QR_MODE_8, scale);
 
     if (!qrcode) {
+        WLOG << "Failed to generate QR code";
         return QPixmap();   // 处理编码失败情况
     }
 
@@ -211,6 +229,7 @@ QPixmap QRCodeWidget::generateQRCode(const QString &text, int scale)
     // 删除二维码对象
     QRcode_free(qrcode);
 
+    DLOG << "QR code generated successfully";
     // 转换为 QPixmap 并返回
     return QPixmap::fromImage(image).scaled(170, 170, Qt::KeepAspectRatio);
 }

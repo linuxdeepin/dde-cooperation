@@ -25,10 +25,14 @@
 ChooseWidget::ChooseWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Widget constructor called";
     initUI();
 }
 
-ChooseWidget::~ChooseWidget() {}
+ChooseWidget::~ChooseWidget()
+{
+    DLOG << "Widget destructor called";
+}
 
 void ChooseWidget::initUI()
 {
@@ -103,6 +107,7 @@ void ChooseWidget::initUI()
     connect(nextButton, &QToolButton::clicked, this, &ChooseWidget::nextPage);
     connect(winItem, &ModeItem::clicked, [this](int state) {
         if (state == true) {
+            DLOG << "User selected network transmission mode";
             if (packageItem->checked == true) {
                 packageItem->checked = false;
                 packageItem->update();
@@ -116,6 +121,7 @@ void ChooseWidget::initUI()
     });
     connect(packageItem, &ModeItem::clicked, this, [this](int state) {
         if (state == true) {
+            DLOG << "User selected local export mode";
             if (winItem->checked == true) {
                 winItem->checked = false;
                 winItem->update();
@@ -147,6 +153,8 @@ void ChooseWidget::nextPage()
 
 void ChooseWidget::themeChanged(int theme)
 {
+    DLOG << "Theme changed to:" << (theme == 1 ? "light" : "dark");
+
     // light
     if (theme == 1) {
         setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");

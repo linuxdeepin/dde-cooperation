@@ -46,6 +46,8 @@ using namespace data_transfer_core;
 
 void MainWindowPrivate::initWindow()
 {
+    DLOG << "Initializing window with frameless style";
+
     q->setWindowFlags(Qt::FramelessWindowHint);
     q->setAttribute(Qt::WA_TranslucentBackground);
     q->setFixedSize(740, 552);
@@ -72,6 +74,8 @@ void MainWindowPrivate::initWindow()
 
 void MainWindowPrivate::initWidgets()
 {
+    DLOG << "Initializing widgets and connections";
+
     StartWidget *startwidget = new StartWidget(q);
     ChooseWidget *choosewidget = new ChooseWidget(q);
     TransferringWidget *transferringwidget = new TransferringWidget(q);
@@ -108,6 +112,7 @@ void MainWindowPrivate::initWidgets()
     stackedWidget->insertWidget(PageName::zipfileprocessresultwidget, zipfileprocessresultwidget);
 
     stackedWidget->setCurrentIndex(PageName::startwidget);
+    DLOG << "Set initial page to startwidget";
 
     windowsCentralWidgetContent->setContentsMargins(8, 8, 8, 8);
     windowsCentralWidgetContent->addWidget(stackedWidget);
@@ -171,6 +176,8 @@ void MainWindowPrivate::initWidgets()
 }
 void MainWindowPrivate::paintEvent(QPaintEvent *event)
 {
+    DLOG << "Painting window with rounded corners";
+
     Q_UNUSED(event)
     QPainter painter(q);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -184,6 +191,8 @@ void MainWindowPrivate::paintEvent(QPaintEvent *event)
 
 void MainWindowPrivate::initSideBar()
 {
+    DLOG << "Initializing sidebar dock widget";
+
     sidebar = new QDockWidget("Sidebar", q);
     q->setDockOptions(QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks);
     q->addDockWidget(Qt::LeftDockWidgetArea, sidebar);
@@ -203,6 +212,8 @@ void MainWindowPrivate::initSideBar()
 
 void MainWindowPrivate::initTitleBar()
 {
+    DLOG << "Initializing title bar with control buttons";
+
     QWidget *titleBar = new QWidget(q->centralWidget());
     MoveFilter *filter = new MoveFilter(q);
     titleBar->installEventFilter(filter);
@@ -239,6 +250,8 @@ void MainWindowPrivate::initTitleBar()
 
 void MainWindowPrivate::handleCurrentChanged(int index)
 {
+    DLOG << "Page changed to index:" << index;
+
     if (index == PageName::filewselectidget)
         sidebar->setVisible(true);
     else
@@ -247,6 +260,8 @@ void MainWindowPrivate::handleCurrentChanged(int index)
 
 void MainWindowPrivate::clearWidget()
 {
+    DLOG << "Clearing all widget states";
+
     //  OptionsManager::instance()->clear();
     SelectMainWidget *widgetMainselect =
             qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
@@ -274,6 +289,8 @@ void MainWindowPrivate::clearWidget()
 
 void MainWindowPrivate::changeAllWidgtText()
 {
+    DLOG << "Updating text in all widgets";
+
     SelectMainWidget *widgetMainselect =
             qobject_cast<SelectMainWidget *>(stackedWidget->widget(PageName::selectmainwidget));
     ConfigSelectWidget *widgetConfig =
@@ -295,6 +312,7 @@ MoveFilter::MoveFilter(MainWindow *qq)
 bool MoveFilter::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonPress) {
+        DLOG << "Mouse button pressed for window movement";
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
         if (mouseEvent->buttons() == Qt::LeftButton) {
             leftButtonPressed = true;
@@ -310,6 +328,7 @@ bool MoveFilter::eventFilter(QObject *obj, QEvent *event)
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
         if ((mouseEvent->buttons() == Qt::LeftButton) && leftButtonPressed) {
             q->move(mouseEvent->globalPos() - lastPosition);
+            DLOG << "Moving window to new position";
         }
         return true;
     }

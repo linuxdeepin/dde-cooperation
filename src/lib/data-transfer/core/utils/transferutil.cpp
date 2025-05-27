@@ -18,13 +18,18 @@
 TransferUtil::TransferUtil()
     : QObject()
 {
+    DLOG << "Creating TransferUtil instance";
     initOnlineState();
 }
 
-TransferUtil::~TransferUtil() {}
+TransferUtil::~TransferUtil()
+{
+    DLOG << "Destroying TransferUtil instance";
+}
 
 TransferUtil *TransferUtil::instance()
 {
+    DLOG << "Accessing TransferUtil singleton instance";
     static TransferUtil ins;
     return &ins;
 }
@@ -138,6 +143,7 @@ bool TransferUtil::checkSize(const QString &filepath)
     LOG << "The actual size is " << sizestr.toStdString() << "B "
         << "Two times the space needs to be reserved" << size << "G";
     int remainSize = getRemainSize();
+    DLOG << "Remaining storage:" << remainSize << "GB";
     if (size >= remainSize) {
         LOG << "outOfStorage" << size;
         emit TransferHelper::instance()->outOfStorage(size);

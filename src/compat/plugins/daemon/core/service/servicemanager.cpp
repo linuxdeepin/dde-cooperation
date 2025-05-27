@@ -20,6 +20,7 @@
 
 ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
+    DLOG << "ServiceManager initializing";
     // init and start backend IPC
     localIPCStart();
 
@@ -51,9 +52,10 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
         QString curUser = QDir::home().dirName();
         auto active = qApp->property(KEY_CURRENT_ACTIVE_USER).toString();
         if (!active.isEmpty() && curUser != active && !curUser.startsWith(active + "@")) {
-            qCritical() << "active session user:" << active << " current user:" << curUser;
+            WLOG << "User session mismatch"
+                                       << "active:" << active.toStdString()
+                                       << "current:" << curUser.toStdString();
             _userTimer.stop();
-            qCritical() <<  curUser << active;
             qApp->exit(0);
         }
     });
@@ -69,8 +71,11 @@ ServiceManager::~ServiceManager()
 
 void ServiceManager::startRemoteServer()
 {
-    if (_rpcService != nullptr)
+    if (_rpcService != nullptr) {
+        WLOG << "RPC service already initialized";
         return;
+    }
+    DLOG << "Starting RPC service";
     _rpcService = new HandleRpcService;
     _rpcService->startRemoteServer();
 }
@@ -78,10 +83,18 @@ void ServiceManager::startRemoteServer()
 
 void ServiceManager::localIPCStart()
 {
-    if (_ipcService != nullptr)
+    if (_ipcService != nullptr) {
+        WLOG << "IPC service already initialized";
         return;
+    }
+    DLOG << "Starting IPC service";
     _ipcService = new HandleIpcService;
-    _ipcService->listen(qAppName() + ".ipc");
+    bool ret = _ipcService->listen(qAppName() + ".ipc");
+    if (!ret) {
+        ELOG << "Failed to start IPC service";
+    } else {
+        DLOG << "IPC service started successfully";
+    }
 
     connect(SendIpcService::instance(), &SendIpcService::sessionSignal,
             _ipcService, &HandleIpcService::handleSessionSignal, Qt::QueuedConnection);
@@ -123,20 +136,24 @@ void ServiceManager::asyncDiscovery()
 
 void ServiceManager::handleAppQuit()
 {
-    DLOG << "ServiceManager quit!";
+    DLOG << "ServiceManager shutting down";
     if (_ipcService) {
+        DLOG << "Closing IPC service";
         _ipcService->close();
         _ipcService->deleteLater();
         _ipcService = nullptr;
     }
 
     if (_rpcService) {
+        DLOG << "Closing RPC service";
         _rpcService->deleteLater();
         _rpcService = nullptr;
     }
 
+    DLOG << "Stopping discovery services";
     DiscoveryJob::instance()->stopAnnouncer();
     DiscoveryJob::instance()->stopDiscoverer();
 
+    DLOG << "ServiceManager shutdown complete";
     _exit(0);
 }

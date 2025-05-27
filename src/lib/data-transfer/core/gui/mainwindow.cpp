@@ -1,5 +1,6 @@
 ﻿#include "mainwindow.h"
 #include "mainwindow_p.h"
+#include "common/log.h"
 
 #include <QScreen>
 #include <QApplication>
@@ -9,12 +10,17 @@ using namespace data_transfer_core;
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags /*flags*/)
     : CrossMainWindow(parent), d(new MainWindowPrivate(this))
 {
+    DLOG << "Initializing main window";
+
     d->initWindow();
     d->initWidgets();
     d->moveCenter();
 }
 
-MainWindow::~MainWindow() { }
+MainWindow::~MainWindow()
+{
+    DLOG << "Destroying main window";
+}
 
 #if defined(_WIN32) || defined(_WIN64)
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -35,10 +41,13 @@ MainWindowPrivate::~MainWindowPrivate() { }
 
 void MainWindowPrivate::moveCenter()
 {
+    DLOG << "Moving window to center of current screen";
+
     QScreen *cursorScreen = nullptr;
     const QPoint &cursorPos = QCursor::pos();
 
     QList<QScreen *> screens = qApp->screens();
+    DLOG << "Found" << screens.size() << "available screens";
     QList<QScreen *>::const_iterator it = screens.begin();
     for (; it != screens.end(); ++it) {
         if ((*it)->geometry().contains(cursorPos)) {
@@ -47,13 +56,17 @@ void MainWindowPrivate::moveCenter()
         }
     }
 
-    if (!cursorScreen)
+    if (!cursorScreen) {
+        DLOG << "No screen contains cursor, using primary screen";
         cursorScreen = qApp->primaryScreen();
+    }
     if (!cursorScreen)
         return;
 
     int x = (cursorScreen->availableGeometry().width() - q->width()) / 2;
     int y = (cursorScreen->availableGeometry().height() - q->height()) / 2;
     q->move(QPoint(x, y) + cursorScreen->geometry().topLeft());
+    DLOG << "Calculated center position - x:" << x << "y:" << y
+             << "on screen:" << cursorScreen->name().toStdString();
 }
 

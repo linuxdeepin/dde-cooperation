@@ -19,6 +19,7 @@
 ShareCooperationService::ShareCooperationService(QObject *parent)
     : QObject(parent)
 {
+    DLOG << "ShareCooperationService constructor";
     qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
 
     _expectedRunning = false;
@@ -29,15 +30,18 @@ ShareCooperationService::ShareCooperationService(QObject *parent)
     _cooConfig = new CooConfig(settings);
     QString ipName = QString::fromStdString(deepin_cross::CommonUitls::getFirstIp());
     _cooConfig->setScreenName(ipName);
+    DLOG << "ShareCooperationService initialized, IP:" << ipName.toStdString();
 }
 
 ShareCooperationService::~ShareCooperationService()
 {
+    DLOG << "ShareCooperationService destructor";
     stopBarrier();
 }
 
 void ShareCooperationService::setBarrierType(BarrierType type)
 {
+    DLOG << "Setting barrier type:" << static_cast<int>(type);
     _brrierType = type;
 
     // terminate all current exit barrier when launchup
@@ -65,6 +69,7 @@ BarrierType ShareCooperationService::barrierType() const
 
 bool ShareCooperationService::restartBarrier()
 {
+    DLOG << "Restarting barrier service";
     stopBarrier();
     return startBarrier();
 }
@@ -103,24 +108,30 @@ bool ShareCooperationService::setServerConfig(const ShareServerConfig &config)
 
 void ShareCooperationService::setClientTargetIp(const QString &ip)
 {
+    DLOG << "Setting client target IP:" << ip.toStdString();
     cooConfig().setServerIp(ip);
     cooConfig().setPort(UNI_SHARE_SERVER_PORT);
+    DLOG << "Client target port:" << UNI_SHARE_SERVER_PORT;
 }
 
 void ShareCooperationService::setEnableCrypto(bool enable)
 {
+    DLOG << "Setting crypto enabled:" << enable;
     cooConfig().setCryptoEnabled(enable);
 }
 
 void ShareCooperationService::setBarrierProfile(const QString &dir)
 {
+    DLOG << "Setting barrier profile directory:" << dir.toStdString();
     // check and create
     QDir pdir(dir);
     if (!pdir.exists()) {
+        DLOG << "Creating barrier profile directory";
         pdir.mkpath(pdir.absolutePath());
     }
 
     cooConfig().setProfileDir(dir);
+    DLOG << "Barrier profile directory set";
 }
 
 bool ShareCooperationService::isRunning()
@@ -200,10 +211,12 @@ bool ShareCooperationService::startBarrier()
 
     if ((barrierType() == BarrierType::Client && !clientArgs(args, app))
         || (barrierType() == BarrierType::Server && !serverArgs(args, app))) {
+        WLOG << "Failed to prepare barrier arguments";
         stopBarrier();
         return false;
     }
 
+    DLOG << "Terminating existing barrier processes";
     terminateAllBarriers();
 
     setBarrierProcess(new QProcess());
@@ -218,8 +231,10 @@ bool ShareCooperationService::startBarrier()
 #if defined(Q_OS_WIN)
     QString winarg = args.join(" ");
     barrierProcess()->setNativeArguments(winarg);
+    DLOG << "Starting barrier process on Windows";
     barrierProcess()->start(app);
 #else
+    DLOG << "Starting barrier process on Linux";
     barrierProcess()->start(app, args);
 #endif
 
@@ -251,9 +266,12 @@ void ShareCooperationService::stopBarrier()
         // it will freeze UI if aync wait on windows
         barrierProcess()->waitForFinished(100);
 #else
+        DLOG << "Waiting for barrier process to exit (Linux)";
         barrierProcess()->waitForFinished(5000);
 #endif
+        
         barrierProcess()->close();
+        DLOG << "Barrier process closed";
     }
 
     delete barrierProcess();

@@ -11,12 +11,14 @@
 #include <QDir>
 #include <QWidget>
 #include <QLockFile>
+#include <QDebug>
 
 using namespace deepin_cross;
 
 SingleApplication::SingleApplication(int &argc, char **argv, int)
     : CrossApplication(argc, argv), localServer(new QLocalServer(this))
 {
+    qDebug() << "SingleApplication initialized with argc:" << argc;
     setOrganizationName("deepin");
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -26,12 +28,16 @@ SingleApplication::SingleApplication(int &argc, char **argv, int)
 
 SingleApplication::~SingleApplication()
 {
+    qDebug() << "SingleApplication shutting down";
     closeServer();
+    qDebug() << "SingleApplication shutdown completed";
 }
 
 void SingleApplication::initConnect()
 {
+    qDebug() << "Initializing local server connections";
     connect(localServer, &QLocalServer::newConnection, this, &SingleApplication::handleConnection);
+    qDebug() << "Local server connections initialized";
 }
 
 void SingleApplication::handleConnection()
@@ -53,6 +59,7 @@ void SingleApplication::handleConnection()
 
 bool SingleApplication::sendMessage(const QString &key, const QByteArray &message)
 {
+    qDebug() << "Attempting to send message to:" << key;
     QLocalSocket *localSocket = new QLocalSocket;
     localSocket->connectToServer(userServerName(key));
     if (localSocket->waitForConnected(1000)) {
@@ -60,6 +67,7 @@ bool SingleApplication::sendMessage(const QString &key, const QByteArray &messag
             if (localSocket->isValid()) {
                 localSocket->write(message);
                 localSocket->flush();
+                qDebug() << "Message successfully sent to:" << key;
                 return true;
             }
         }
@@ -67,6 +75,7 @@ bool SingleApplication::sendMessage(const QString &key, const QByteArray &messag
         qDebug() << localSocket->errorString();
     }
 
+    qWarning() << "Message send failed for:" << key;
     return false;
 }
 
@@ -110,6 +119,7 @@ bool SingleApplication::setSingleInstance(const QString &key)
         }
     }
 
+    qDebug() << "Successfully set as single instance for:" << key;
     return true;
 }
 
@@ -136,11 +146,16 @@ void SingleApplication::readData()
 
 void SingleApplication::closeServer()
 {
+    qDebug() << "Closing local server";
     if (localServer) {
+        qDebug() << "Removing server:" << localServer->serverName();
         localServer->removeServer(localServer->serverName());
         localServer->close();
         delete localServer;
         localServer = nullptr;
+        qDebug() << "Local server closed successfully";
+    } else {
+        qDebug() << "No local server to close";
     }
 }
 
@@ -153,6 +168,7 @@ void SingleApplication::helpActionTriggered()
 
 void SingleApplication::onDeliverMessage(const QString &app, const QStringList &msg)
 {
+    qDebug() << "Preparing to deliver message to:" << app;
     QByteArray data { nullptr };
     for (const QString &arg : msg) {
         data.append(arg.toLocal8Bit().toBase64());

@@ -140,16 +140,21 @@ void BackgroundWidget::paintEvent(QPaintEvent *event)
 FileTransferSettingsDialog::FileTransferSettingsDialog(QWidget *parent)
     : DDialog(parent)
 {
+    qDebug() << "Creating file transfer settings dialog";
     initUI();
     initConnect();
+    qDebug() << "File transfer settings dialog initialized";
 }
 
 void FileTransferSettingsDialog::initUI()
 {
+    qDebug() << "Initializing file transfer settings UI";
+
     setIcon(QIcon::fromTheme("dde-file-manager"));
     setTitle(tr("File transfer settings"));
     setFixedWidth(400);
     setContentsMargins(0, 0, 0, 0);
+    qDebug() << "Dialog basic properties set";
 
     QWidget *contentWidget = new QWidget(this);
     mainLayout = new QVBoxLayout;
@@ -157,8 +162,10 @@ void FileTransferSettingsDialog::initUI()
     mainLayout->setSpacing(1);
     contentWidget->setLayout(mainLayout);
     addContent(contentWidget);
+    qDebug() << "Main content layout created";
 
     fileChooserEdit = new FileChooserEdit(this);
+    qDebug() << "File chooser edit created";
 
     comBox = new DComboBox(this);
     QStringList items { tr("Everyone in the same LAN"),
@@ -166,9 +173,11 @@ void FileTransferSettingsDialog::initUI()
                         tr("Not allow") };
     comBox->addItems(items);
     comBox->setFocusPolicy(Qt::NoFocus);
+    qDebug() << "Transfer mode combo box created with options";
 
     addItem(tr("Allows the following users to send files to me"), comBox, 0);
     addItem(tr("File save location"), fileChooserEdit, 1);
+    qInfo() << "File transfer settings UI initialized";
 }
 
 void FileTransferSettingsDialog::initConnect()
@@ -179,11 +188,13 @@ void FileTransferSettingsDialog::initConnect()
 
 void FileTransferSettingsDialog::loadConfig()
 {
+    qDebug() << "Loading file transfer settings";
 #ifdef linux
     auto value = DConfigManager::instance()->value(kDefaultCfgPath, "cooperation.transfer.mode", 0);
     int mode = value.toInt();
     mode = (mode < 0) ? 0 : (mode > 2) ? 2 : mode;
     comBox->setCurrentIndex(mode);
+    qDebug() << "Loaded transfer mode from dconfig:" << mode;
 #else
     auto value = ConfigManager::instance()->appAttribute("GenericAttribute", "TransferMode");
     comBox->setCurrentIndex(value.isValid() ? value.toInt() : 0);
@@ -222,6 +233,7 @@ void FileTransferSettingsDialog::addItem(const QString &text, QWidget *widget, i
 void FileTransferSettingsDialog::onFileChoosered(const QString &fileName)
 {
     ConfigManager::instance()->setAppAttribute("GenericAttribute", "StoragePath", fileName);
+    qInfo() << "Saved storage path to config:" << fileName;
 }
 
 void FileTransferSettingsDialog::onComBoxValueChanged(int index)
@@ -232,8 +244,10 @@ void FileTransferSettingsDialog::onComBoxValueChanged(int index)
     QVariantMap data;
     data.insert("enableFileDelivery", status);
     deepin_cross::ReportLogManager::instance()->commit("CooperationStatus", data);
+    qInfo() << "Reported transfer mode change to log system";
 #else
     ConfigManager::instance()->setAppAttribute("GenericAttribute", "TransferMode", index);
+    qInfo() << "Saved transfer mode to config:" << index;
 #endif
 }
 

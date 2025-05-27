@@ -5,6 +5,7 @@
 #include "../select/userselectfilesize.h"
 #include "../select/calculatefilesize.h"
 #include "../win/devicelistener.h"
+#include "common/log.h"
 
 #include <QDebug>
 #include <QLabel>
@@ -25,15 +26,20 @@
 
 CreateBackupFileWidget::CreateBackupFileWidget(QWidget *parent) : QFrame(parent)
 {
+    DLOG << "Widget constructor called";
     initUI();
     QObject::connect(DeviceListener::instance(), &DeviceListener::updateDevice, this,
                      &CreateBackupFileWidget::getUpdateDeviceSingla);
 }
 
-CreateBackupFileWidget::~CreateBackupFileWidget() { }
+CreateBackupFileWidget::~CreateBackupFileWidget()
+{
+    DLOG << "Widget destructor called";
+}
 
 void CreateBackupFileWidget::sendOptions()
 {
+    DLOG << "Saving backup options";
     QStringList savePath;
     QAbstractItemModel *model = diskListView->model();
     for (int row = 0; row < model->rowCount(); ++row) {
@@ -57,12 +63,11 @@ void CreateBackupFileWidget::sendOptions()
     QStringList saveName;
     saveName << fileNameInput->getBackupFileName();
     OptionsManager::instance()->addUserOption(Options::kBackupFileName, saveName);
-    qInfo() << "backup file save path:" << savePath;
-    qInfo() << "backup file name:" << saveName;
 }
 
 void CreateBackupFileWidget::clear()
 {
+    DLOG << "Clearing backup file widget state";
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
     for (int row = 0; row < model->rowCount(); ++row) {
         QModelIndex itemIndex = model->index(row, 0);
@@ -198,6 +203,7 @@ void CreateBackupFileWidget::initUI()
 
     connect(cancelButton, &QToolButton::clicked, this, &CreateBackupFileWidget::backPage);
     connect(determineButton, &QToolButton::clicked, this, [this]() {
+        DLOG << "Backup button clicked, starting backup process";
         nextPage();
         ZipWork *worker = new ZipWork(this);
         worker->start();
@@ -290,6 +296,7 @@ void CreateBackupFileWidget::checkDisk()
 
 void CreateBackupFileWidget::nextPage()
 {
+    DLOG << "Proceeding to zip file process page";
     // send useroptions
     sendOptions();
     // nextpage
@@ -297,6 +304,7 @@ void CreateBackupFileWidget::nextPage()
 }
 void CreateBackupFileWidget::backPage()
 {
+    DLOG << "Returning to select main widget";
     clear();
     emit TransferHelper::instance()->changeWidget(PageName::selectmainwidget);
 }
@@ -345,6 +353,7 @@ void CreateBackupFileWidget::updaeBackupFileSize()
 
 void CreateBackupFileWidget::getUpdateDeviceSingla()
 {
+    DLOG << "Updating device list";
     QString rootPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QString cPath = QDir(rootPath).rootPath();
 
@@ -372,6 +381,7 @@ void CreateBackupFileWidget::getUpdateDeviceSingla()
     deviceList = devices;
 
     checkDisk();
+    DLOG << "Device list updated, current device count:" << deviceList.count();
 }
 
 void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
@@ -404,6 +414,7 @@ void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool
             QModelIndex itemIndex = model->index(row, 0);
             if (rootPath == model->data(itemIndex, Qt::UserRole)) {
                 model->removeRow(itemIndex.row());
+                DLOG << "Device update completed";
             }
         }
         for (auto iterator = diskCapacity.begin(); iterator != diskCapacity.end(); ++iterator) {

@@ -1,5 +1,6 @@
 ﻿#include "startwidget.h"
 #include "../type_defines.h"
+#include "common/log.h"
 #include <net/helper/transferhepler.h>
 
 #include <QHBoxLayout>
@@ -13,11 +14,13 @@
 StartWidget::StartWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Widget constructor called";
     initUI();
 }
 
 StartWidget::~StartWidget()
 {
+    DLOG << "Widget destructor called";
 }
 
 void StartWidget::initUI()
@@ -56,11 +59,14 @@ void StartWidget::initUI()
 
 void StartWidget::nextPage()
 {
+    DLOG << "Navigating to choose widget";
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void StartWidget::themeChanged(int theme)
 {
+    DLOG << "Theme changed to:" << (theme == 1 ? "light" : "dark");
+
     //light
     if (theme == 1) {
         setStyleSheet(".StartWidget{background-color: white; border-radius: 10px;}");

@@ -5,6 +5,7 @@
 #include "deviceitem.h"
 #include "buttonboxwidget.h"
 #include "gui/utils/cooperationguihelper.h"
+#include "common/log.h"
 
 #ifdef linux
 #    include <DPalette>
@@ -84,18 +85,23 @@ void StateLabel::paintEvent(QPaintEvent *event)
 DeviceItem::DeviceItem(QWidget *parent)
     : BackgroundWidget(parent)
 {
+    DLOG << "Creating device item";
     initUI();
     initConnect();
+    DLOG << "Device item created";
 }
 
 DeviceItem::~DeviceItem()
 {
+    DLOG << "Destroying device item";
     devInfo.reset();
     disconnect(btnBoxWidget, &ButtonBoxWidget::buttonClicked, this, &DeviceItem::onButtonClicked);
+    DLOG << "Device item destroyed";
 }
 
 void DeviceItem::setDeviceInfo(const DeviceInfoPointer info)
 {
+    DLOG << "Setting device info for:" << info->ipAddress().toStdString();
     devInfo = info;
     setDeviceName(info->deviceName());
     setDeviceStatus(info->connectStatus());
@@ -103,6 +109,7 @@ void DeviceItem::setDeviceInfo(const DeviceInfoPointer info)
 
     update();
     updateOperations();
+    DLOG << "Device info set";
 }
 
 DeviceInfoPointer DeviceItem::deviceInfo() const
@@ -160,12 +167,16 @@ void DeviceItem::initConnect()
 
 void DeviceItem::setDeviceName(const QString &name)
 {
+    DLOG << "Setting device name:" << name.toStdString();
     QFontMetrics fm(nameLabel->font());
     auto showName = fm.elidedText(name, Qt::ElideMiddle, 385);
 
     nameLabel->setText(showName);
-    if (showName != name)
+    if (showName != name) {
+        DLOG << "Name truncated, setting tooltip";
         nameLabel->setToolTip(name);
+    }
+    DLOG << "Device name set to:" << showName.toStdString();
 }
 
 void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
@@ -177,23 +188,27 @@ void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
         QIcon icon = QIcon::fromTheme(isPC ? Kcomputer_connected : "connect_phone");
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connected"));
+        DLOG << "Device status set to Connected";
     } break;
     case DeviceInfo::Connectable: {
         QIcon icon = QIcon::fromTheme(Kcomputer_can_connect);
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connectable"));
+        DLOG << "Device status set to Connectable";
     } break;
     case DeviceInfo::Offline:
     default: {
         QIcon icon = QIcon::fromTheme(Kcomputer_off_line);
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("offline"));
+        DLOG << "Device status set to Offline";
     } break;
     }
 }
 
 void DeviceItem::setOperations(const QList<Operation> &operations)
 {
+    DLOG << "Setting" << operations.size() << "operations";
     auto tmpOperaList = operations;
     tmpOperaList << indexOperaMap.values();
 
@@ -210,13 +225,17 @@ void DeviceItem::setOperations(const QList<Operation> &operations)
                                             static_cast<ButtonBoxWidget::ButtonStyle>(op.style));
         indexOperaMap.insert(index, op);
     }
+    DLOG << "Operations set";
 }
 
 void DeviceItem::updateOperations()
 {
+    DLOG << "Updating operations visibility";
     // this device item may be not visible after it's been removed from the list, e.g. network disconnected.
-    if (!isVisible())
+    if (!isVisible()) {
+        DLOG << "Item not visible, skipping update";
         return;
+    }
 
     auto iter = indexOperaMap.begin();
     for (; iter != indexOperaMap.end(); ++iter) {
@@ -232,30 +251,38 @@ void DeviceItem::updateOperations()
         bool clickable = iter.value().clickableCb(iter.value().id, devInfo);
         btnBoxWidget->setButtonClickable(iter.key(), clickable);
     }
+    DLOG << "Operations updated";
 }
 
 void DeviceItem::onButtonClicked(int index)
 {
-    if (!indexOperaMap.contains(index))
+    if (!indexOperaMap.contains(index)) {
+        WLOG << "Invalid operation index:" << index;
         return;
+    }
 
     if (indexOperaMap[index].clickedCb)
         indexOperaMap[index].clickedCb(indexOperaMap[index].id, devInfo);
 
     updateOperations();
+    DLOG << "Operation handled";
 }
 
 void DeviceItem::enterEvent(EnterEvent *event)
 {
+    DLOG << "Mouse entered";
     updateOperations();
     btnBoxWidget->setVisible(true);
     BackgroundWidget::enterEvent(event);
+    DLOG << "Mouse enter handled";
 }
 
 void DeviceItem::leaveEvent(QEvent *event)
 {
+    DLOG << "Mouse left";
     btnBoxWidget->setVisible(false);
     BackgroundWidget::leaveEvent(event);
+    DLOG << "Mouse leave handled";
 }
 
 void DeviceItem::showEvent(QShowEvent *event)

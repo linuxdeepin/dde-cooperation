@@ -26,15 +26,19 @@ WorkspaceWidgetPrivate::WorkspaceWidgetPrivate(WorkspaceWidget *qq)
       sortFilterWorker(new SortFilterWorker),
       workThread(new QThread)
 {
+    DLOG << "Initializing worker thread";
     sortFilterWorker->moveToThread(workThread.data());
     workThread->start();
+    DLOG << "Worker thread started";
 }
 
 WorkspaceWidgetPrivate::~WorkspaceWidgetPrivate()
 {
+    DLOG << "Stopping worker thread";
     sortFilterWorker->stop();
     workThread->quit();
     workThread->wait();
+    DLOG << "Worker thread stopped";
 }
 
 void WorkspaceWidgetPrivate::initUI()
@@ -180,8 +184,10 @@ WorkspaceWidget::WorkspaceWidget(QWidget *parent)
     : QWidget(parent),
       d(new WorkspaceWidgetPrivate(this))
 {
+    DLOG << "Initializing workspace widget";
     d->initUI();
     d->initConnect();
+    DLOG << "Initialization completed";
 }
 
 int WorkspaceWidget::itemCount()
@@ -191,8 +197,10 @@ int WorkspaceWidget::itemCount()
 
 void WorkspaceWidget::switchWidget(PageName page)
 {
-    if (d->currentPage == page || page == kUnknownPage)
+    if (d->currentPage == page || page == kUnknownPage) {
+        DLOG << "Already on requested page or unknown page";
         return;
+    }
 
     if (page == kDeviceListWidget) {
         d->deviceLabel->setVisible(true);
@@ -218,11 +226,13 @@ void WorkspaceWidget::switchWidget(PageName page)
 
 void WorkspaceWidget::addDeviceInfos(const QList<DeviceInfoPointer> &infoList)
 {
+    DLOG << "Adding " << infoList.size() << " devices";
     Q_EMIT d->devicesAdded(infoList);
 }
 
 void WorkspaceWidget::removeDeviceInfos(const QString &ip)
 {
+    DLOG << "Removing device with IP:" << ip.toStdString();
     Q_EMIT d->devicesRemoved(ip);
 }
 
@@ -238,8 +248,10 @@ DeviceInfoPointer WorkspaceWidget::findDeviceInfo(const QString &ip)
 
 void WorkspaceWidget::clear()
 {
+    DLOG << "Clearing device list";
     d->dlWidget->clear();
     Q_EMIT d->clearDevice();
+    DLOG << "Device list cleared";
 }
 
 void WorkspaceWidget::setFirstStartTip(bool visible)

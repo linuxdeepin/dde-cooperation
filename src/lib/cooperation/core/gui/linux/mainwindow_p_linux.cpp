@@ -4,6 +4,7 @@
 
 #include "../mainwindow.h"
 #include "../mainwindow_p.h"
+#include "common/log.h"
 
 #include <DTitlebar>
 #include <DIconButton>
@@ -23,6 +24,7 @@ DWIDGET_USE_NAMESPACE
 
 void MainWindowPrivate::initWindow()
 {
+    DLOG << "Enter initWindow() - Initializing main window components";
     q->setObjectName("MainWindow");
     q->setFixedSize(500, 630);
     q->setWindowIcon(QIcon::fromTheme("dde-cooperation"));
@@ -47,10 +49,12 @@ void MainWindowPrivate::initWindow()
     centralWidget->setLayout(mainLayout);
 
     q->setCentralWidget(centralWidget);
+    DLOG << "Exit initWindow() - Main window initialized successfully";
 }
 
 void MainWindowPrivate::initTitleBar()
 {
+    DLOG << "Enter initTitleBar() - Initializing title bar";
     auto titleBar = q->titlebar();
 #ifdef ENABLE_PHONE
     DButtonBox *switchBtn = new DButtonBox(q);
@@ -91,4 +95,5 @@ void MainWindowPrivate::initTitleBar()
         if (ok)
             handleSettingMenuTriggered(val);
     });
+    DLOG << "Exit initTitleBar() - Title bar initialized successfully";
 }

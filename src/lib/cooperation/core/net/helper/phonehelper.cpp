@@ -6,6 +6,8 @@
 #include "utils/cooperationutil.h"
 #include "../cooconstrants.h"
 #include "../networkutil.h"
+#include "common/log.h"
+
 #include <functional>
 #include <QString>
 #include <QMetaType>
@@ -38,20 +40,24 @@ inline constexpr char KdownloadUrl[] { "https://www.chinauos.com/resource/assist
 PhoneHelper::PhoneHelper(QObject *parent)
     : QObject(parent), m_viewSize(0, 0)
 {
+    DLOG << "PhoneHelper constructor";
 }
 
 PhoneHelper::~PhoneHelper()
 {
+    DLOG << "PhoneHelper destructor";
 }
 
 PhoneHelper *PhoneHelper::instance()
 {
+    DLOG << "Getting PhoneHelper instance";
     static PhoneHelper ins;
     return &ins;
 }
 
 void PhoneHelper::registConnectBtn(MainWindow *window)
 {
+    DLOG << "Registering mobile connection buttons";
     ClickedCallback clickedCb = PhoneHelper::buttonClicked;
     ButtonStateCallback visibleCb = PhoneHelper::buttonVisible;
 
@@ -64,7 +70,9 @@ void PhoneHelper::registConnectBtn(MainWindow *window)
                                  { "visible-callback", QVariant::fromValue(visibleCb) } };
 
     window->addMobileOperation(DisconnectInfo);
+    DLOG << "Generating QR code for mobile connection";
     generateQRCode(CooperationUtil::localIPAddress(), QString::number(COO_SESSION_PORT), COO_HARD_PIN);
+    DLOG << "Mobile connection buttons registered";
 }
 
 void PhoneHelper::onConnect(const DeviceInfoPointer info, int w, int h)
@@ -74,6 +82,7 @@ void PhoneHelper::onConnect(const DeviceInfoPointer info, int w, int h)
 
     m_mobileInfo = info;
     emit addMobileInfo(info);
+    DLOG << "Emitted addMobileInfo signal";
 }
 
 void PhoneHelper::onScreenMirroring()
@@ -86,10 +95,12 @@ void PhoneHelper::onScreenMirroring()
     actions.append(tr("cancel"));
     actions.append(tr("comfirm"));
 
+    DLOG << "Showing screen mirroring confirmation dialog";
     int res = notifyMessage(mes, actions);
     if (res != 1)
         return;
 
+    DLOG << "Creating screen mirroring window";
     m_screenwindow = new ScreenMirroringWindow(m_mobileInfo.data()->deviceName());
     m_screenwindow->initSizebyView(m_viewSize);
     m_screenwindow->show();
@@ -100,6 +111,7 @@ void PhoneHelper::onScreenMirroring()
 void PhoneHelper::onScreenMirroringStop()
 {
     resetScreenMirroringWindow();
+    DLOG << "Screen mirroring stopped";
 }
 
 void PhoneHelper::onScreenMirroringResize(int w, int h)
@@ -111,15 +123,21 @@ void PhoneHelper::onScreenMirroringResize(int w, int h)
 
 void PhoneHelper::onDisconnect(const DeviceInfoPointer info)
 {
-    if (!info)
+    if (!info) {
+        DLOG << "Resetting mobile info";
         m_mobileInfo.reset();
+    } else {
+        DLOG << "Disconnecting specific device:" << info->deviceName().toStdString();
+    }
 
     resetScreenMirroringWindow();
 
+    DLOG << "Emitting disconnectMobile signal";
     emit disconnectMobile();
 
     if (m_mobileInfo && info && m_mobileInfo->ipAddress() == info->ipAddress()) {
         QString mes = QString(tr("“%1”connection disconnected!")).arg(m_mobileInfo.data()->deviceName());
+        DLOG << "Showing disconnection notification";
         notifyMessage(mes, QStringList());
     }
 }
@@ -168,30 +186,40 @@ void PhoneHelper::generateQRCode(const QString &ip, const QString &port, const Q
     QString qrContent = QString("%1?mark=%2").arg(KdownloadUrl).arg(QString::fromUtf8(base64));
 
     emit setQRCode(qrContent);
+    DLOG << "QR code signal emitted";
 }
 
 void PhoneHelper::resetScreenMirroringWindow()
 {
-    if (!m_screenwindow)
+    if (!m_screenwindow) {
+        DLOG << "No screen mirroring window to reset";
         return;
+    }
 
+    DLOG << "Resetting screen mirroring window";
     m_screenwindow->deleteLater();
     m_screenwindow = nullptr;
+    DLOG << "Screen mirroring window reset complete";
 }
 
 void PhoneHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
     if (id == DisconnectButtonId) {
+        DLOG << "Disconnect requested for device:"
+                          << info->deviceName().toStdString();
         QString mes = QString(tr("Are you sure to disconnect and collaborate with '%1'?")).arg(info.data()->deviceName());
         QStringList actions;
         actions.append(tr("cancel"));
         actions.append(tr("disconnect"));
 
         int res = PhoneHelper::instance()->notifyMessage(mes, actions);
-        if (res != 1)
+        if (res != 1) {
+            DLOG << "Disconnect canceled by user";
             return;
+        }
 
         NetworkUtil::instance()->disconnectRemote(info->ipAddress());
+        DLOG << "Disconnecting from device:" << info->ipAddress().toStdString();
         PhoneHelper::instance()->onDisconnect(nullptr);
         return;
     }

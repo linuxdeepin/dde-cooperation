@@ -12,12 +12,20 @@
 ErrorWidget::ErrorWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Initializing error widget";
+
     initUI();
 }
 
-ErrorWidget::~ErrorWidget() {}
+ErrorWidget::~ErrorWidget()
+{
+    DLOG << "Destroying error widget";
+}
+
 void ErrorWidget::initUI()
 {
+    DLOG << "Initializing UI";
+
     setStyleSheet(".ErrorWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -98,17 +106,23 @@ void ErrorWidget::initUI()
 
 void ErrorWidget::backPage()
 {
+    DLOG << "Back button clicked, returning to choose page";
+
     emit TransferHelper::instance()->clearWidget();
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void ErrorWidget::retryPage()
 {
+    DLOG << "Retry button clicked, returning to choose page";
+
     emit TransferHelper::instance()->clearWidget();
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 void ErrorWidget::themeChanged(int theme)
 {
+    DLOG << "Theme changed to:" << (theme == 1 ? "Light" : "Dark");
+
     // light
     if (theme == 1) {
         setStyleSheet(".ErrorWidget{background-color: white; border-radius: 10px;}");

@@ -61,6 +61,7 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
     : QObject(qq),
       q(qq)
 {
+    DLOG << "TransferHelperPrivate constructor";
     *transHistory = HistoryManager::instance()->getTransHistory();
     connect(HistoryManager::instance(), &HistoryManager::transHistoryUpdated, q,
             [] {
@@ -68,10 +69,12 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
             });
 
     initConnect();
+    DLOG << "TransferHelperPrivate initialized";
 }
 
 TransferHelperPrivate::~TransferHelperPrivate()
 {
+    DLOG << "TransferHelperPrivate destructor";
     if (dialog) {
         dialog->deleteLater();
         dialog = nullptr;
@@ -141,14 +144,17 @@ TransferHelper::TransferHelper(QObject *parent)
     : QObject(parent),
       d(new TransferHelperPrivate(this))
 {
+    DLOG << "TransferHelper constructor";
 }
 
 TransferHelper::~TransferHelper()
 {
+    DLOG << "TransferHelper destructor";
 }
 
 TransferHelper *TransferHelper::instance()
 {
+    DLOG << "Getting TransferHelper instance";
     static TransferHelper ins;
     return &ins;
 }
@@ -185,10 +191,14 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
     d->who = devName;
     d->targetDeviceIp = ip;
     d->readyToSendFiles = fileList;
-    if (fileList.isEmpty())
+    
+    if (fileList.isEmpty()) {
+        WLOG << "No files to send";
         return;
+    }
 
     if (!d->status.testAndSetRelease(TransferHelper::Idle, TransferHelper::Connecting)) {
+        WLOG << "Transfer is not idle, cannot start new transfer. Current status:" << d->status.loadAcquire();
         d->status.storeRelease(TransferHelper::Idle);
         return;
     }
@@ -196,6 +206,7 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
     // send the transfer file RPC request
     NetworkUtil::instance()->tryTransApply(ip);
 
+    DLOG << "Waiting for transfer confirmation";
     waitForConfirm();
 }
 
@@ -280,9 +291,12 @@ bool TransferHelper::buttonClickable(const QString &id, const DeviceInfoPointer 
 
 void TransferHelper::onVerifyTimeout()
 {
+    DLOG << "Transfer verification timeout";
     d->isTransTimeout = true;
-    if (d->status.loadAcquire() != TransferHelper::Confirming)
+    if (d->status.loadAcquire() != TransferHelper::Confirming) {
+        DLOG << "Not in confirming state, ignoring timeout";
         return;
+    }
 
     d->status.storeRelease(Idle);
     d->transDialog()->showResultDialog(false, tr("The other party did not receive, the files failed to send"));
@@ -375,6 +389,7 @@ void TransferHelper::notifyTransferRequest(const QString &nick, const QString &i
     DLOG << "request info: " << nick.toStdString() << ip.toStdString();
     auto storageFolder = nick + "(" + ip + ")";
     NetworkUtil::instance()->setStorageFolder(storageFolder);
+    DLOG << "Set storage folder to:" << storageFolder.toStdString();
 
     static QString msg(tr("\"%1\" send some files to you"));
     d->who = nick;
@@ -387,6 +402,7 @@ void TransferHelper::notifyTransferRequest(const QString &nick, const QString &i
 
     d->notifyMessage(msg.arg(CommonUitls::elidedText(nick, Qt::ElideMiddle, 25)), actions, 10 * 1000);
 #else
+    DLOG << "Showing transfer confirmation dialog";
     d->transDialog()->showConfirmDialog(nick);
 #endif
 }
@@ -425,16 +441,20 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
 #endif
     switch (status) {
     case TRANS_CANCELED:
+        DLOG << "Transfer canceled by remote";
         cancelTransfer(false);
         break;
     case TRANS_EXCEPTION:
         // exception reason: "io_error" "net_error" "not_found" "fs_exception"
         d->status.storeRelease(Idle);
         if (path == "io_error") {
+            WLOG << "IO error - insufficient storage space";
             transferResult(false, tr("Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!"));
         } else if (path == "net_error") {
+            WLOG << "Network error - connection lost";
             transferResult(false, tr("Network not connected, file delivery failed this time. Please connect to the network and try again!"));
         } else {
+            WLOG << "Unknown transfer exception";
             transferResult(false, tr("File read/write exception"));
         }
         break;
@@ -443,20 +463,25 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
         d->transferInfo.totalSize = size;
         break;
     case TRANS_WHOLE_START:
+        DLOG << "Transfer started successfully";
         d->status.storeRelease(Transfering);
         updateTransProgress(0);
         break;
     case TRANS_WHOLE_FINISH:
+        DLOG << "Transfer completed successfully";
         d->status.storeRelease(Idle);
         if (d->role == Client) {
             d->recvFilesSavePath = NetworkUtil::instance()->getStorageFolder();
+            DLOG << "Files saved to:" << d->recvFilesSavePath.toStdString();
             HistoryManager::instance()->writeIntoTransHistory(NetworkUtil::instance()->getConfirmTargetAddress(), d->recvFilesSavePath);
         }
         transferResult(true, tr("File sent successfully"));
         break;
     case TRANS_INDEX_CHANGE:
+        DLOG << "Transfer index changed to:" << path.toStdString();
         break;
     case TRANS_FILE_CHANGE:
+        DLOG << "Current transfer file changed to:" << path.toStdString();
         break;
     case TRANS_FILE_SPEED: {
         d->transferInfo.transferSize += size;
@@ -469,12 +494,14 @@ void TransferHelper::onTransChanged(int status, const QString &path, quint64 siz
 
     } break;
     case TRANS_FILE_DONE:
+        DLOG << "File transfer completed:" << path.toStdString();
         break;
     }
 }
 
 void TransferHelper::updateTransProgress(uint64_t current)
 {
+    DLOG << "Updating transfer progress, current:" << current << "total:" << d->transferInfo.totalSize;
     QTime time(0, 0, 0);
     if (d->transferInfo.totalSize < 1) {
         // the total has not been set.

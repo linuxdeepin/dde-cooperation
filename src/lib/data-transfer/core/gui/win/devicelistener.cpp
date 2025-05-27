@@ -1,4 +1,5 @@
 ﻿#include "devicelistener.h"
+#include "common/log.h"
 
 #include <Windows.h>
 #include <QStorageInfo>
@@ -7,14 +8,21 @@
 
 DeviceListener::DeviceListener(QWidget *parent) : QWidget(parent)
 {
+    DLOG << "Initializing device listener";
+
     setFixedSize(0, 0);
     updateDevice();
 }
 
-DeviceListener::~DeviceListener() { }
+DeviceListener::~DeviceListener()
+{
+    DLOG << "Destroying device listener";
+}
 
 DeviceListener *DeviceListener::instance()
 {
+    DLOG << "Getting device listener instance";
+
     static DeviceListener ins;
 
     if (!ins.enroll) {
@@ -31,8 +39,10 @@ bool DeviceListener::nativeEvent(const QByteArray &eventType, void *message, lon
     if (msg->message == WM_DEVICECHANGE) {
         switch (msg->wParam) {
         case DBT_DEVICEARRIVAL:
+            DLOG << "Device connected";
             break;
         case DBT_DEVICEREMOVECOMPLETE:
+            DLOG << "Device disconnected";
             break;
         }
     }

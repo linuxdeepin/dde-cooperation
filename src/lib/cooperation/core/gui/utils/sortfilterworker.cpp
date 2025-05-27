@@ -4,6 +4,7 @@
 
 #include "sortfilterworker.h"
 #include "utils/historymanager.h"
+#include "common/log.h"
 
 using TransHistoryInfo = QMap<QString, QString>;
 Q_GLOBAL_STATIC(TransHistoryInfo, transHistory)
@@ -13,13 +14,17 @@ using namespace cooperation_core;
 SortFilterWorker::SortFilterWorker(QObject *parent)
     : QObject(parent)
 {
+    DLOG << "Initializing worker";
     onTransHistoryUpdated();
     connect(HistoryManager::instance(), &HistoryManager::transHistoryUpdated, this, &SortFilterWorker::onTransHistoryUpdated, Qt::QueuedConnection);
+    DLOG << "Initialization completed";
 }
 
 void SortFilterWorker::stop()
 {
+    DLOG << "Stopping worker";
     isStoped = true;
+    DLOG << "Worker stopped";
 }
 
 void SortFilterWorker::onTransHistoryUpdated()
@@ -29,26 +34,34 @@ void SortFilterWorker::onTransHistoryUpdated()
 
 int SortFilterWorker::calculateIndex(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info)
 {
+    DLOG << "Calculating index for device";
     int index = 0;
     switch (info->connectStatus()) {
     case DeviceInfo::Connected:
         // 连接中的设备放第一个
         index = 0;
+        DLOG << "Connected device placed at index 0";
         break;
     case DeviceInfo::Connectable: {
         index = findLast(list, DeviceInfo::Connectable, info);
-        if (index != -1)
+        if (index != -1) {
+            DLOG << "Connectable device placed at index:" << index;
             break;
+        }
 
         index = findFirst(list, DeviceInfo::Offline);
-        if (index != -1)
+        if (index != -1) {
+            DLOG << "Connectable device placed before offline at index:" << index;
             break;
+        }
 
         index = list.size();
+        DLOG << "Connectable device placed at end:" << index;
     } break;
     case DeviceInfo::Offline:
     default:
         index = list.size();
+        DLOG << "Offline device placed at end:" << index;
         break;
     }
 
@@ -57,8 +70,11 @@ int SortFilterWorker::calculateIndex(const QList<DeviceInfoPointer> &list, const
 
 void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
 {
-    if (isStoped)
+    DLOG << "Adding" << infoList.size() << "devices";
+    if (isStoped) {
+        DLOG << "Worker stopped, skipping add";
         return;
+    }
 
     for (auto info : infoList) {
         if (isStoped)
@@ -93,24 +109,30 @@ void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
         Q_EMIT sortFilterResult(index, info);
     }
 
+    DLOG << "Added" << infoList.size() << "devices successfully";
     Q_EMIT filterFinished();
 }
 
 void SortFilterWorker::removeDevice(const QString &ip)
 {
+    DLOG << "Removing device with IP:" << ip.toStdString();
     for (int i = 0; i < visibleDeviceList.size(); ++i) {
-        if (visibleDeviceList[i]->ipAddress() != ip)
+        if (visibleDeviceList[i]->ipAddress() != ip) {
             continue;
+        }
 
+        DLOG << "Found device at index:" << i;
         allDeviceList.removeOne(visibleDeviceList[i]);
         visibleDeviceList.removeAt(i);
         Q_EMIT deviceRemoved(i);
+        DLOG << "Device removed successfully";
         break;
     }
 }
 
 void SortFilterWorker::filterDevice(const QString &filter)
 {
+    DLOG << "Filtering devices with text:" << filter.toStdString();
     filterText = filter;
     visibleDeviceList.clear();
     int index = -1;
@@ -123,6 +145,7 @@ void SortFilterWorker::filterDevice(const QString &filter)
         }
     }
 
+    DLOG << "Filtering completed, found" << visibleDeviceList.size() << "devices";
     Q_EMIT filterFinished();
 }
 
@@ -178,15 +201,22 @@ void SortFilterWorker::updateDevice(QList<DeviceInfoPointer> &list, const Device
     // 当连接状态不一致时，需要更新位置
     bool needMove = list[index]->connectStatus() != info->connectStatus();
     if (needMove) {
+        DLOG << "Moving device from index:" << index;
         list.removeAt(index);
         auto to = calculateIndex(list, info);
         list.insert(to, info);
-        if (needNotify)
+        DLOG << "Moved device to index:" << to;
+        if (needNotify) {
             Q_EMIT deviceMoved(index, to, info);
+            DLOG << "Emitted deviceMoved signal";
+        }
     } else {
+        DLOG << "Updating device at index:" << index;
         list.replace(index, info);
-        if (needNotify)
+        if (needNotify) {
             Q_EMIT deviceUpdated(index, info);
+            DLOG << "Emitted deviceUpdated signal";
+        }
     }
 }
 

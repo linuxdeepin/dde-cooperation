@@ -17,11 +17,13 @@
 ConnectWidget::ConnectWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Widget constructor called";
     initUI();
 }
 
 ConnectWidget::~ConnectWidget()
 {
+    DLOG << "Widget destructor called";
 }
 
 void ConnectWidget::initUI()
@@ -181,6 +183,7 @@ void ConnectWidget::initConnectLayout()
     });
     timer->start(1000);
     connect(refreshLabel, &QLabel::linkActivated, this, [this, timer, passwordLabel, tipLabel, nullLabel] {
+        DLOG << "Refreshing connection password";
         QString password = TransferHelper::instance()->updateConnectPassword();
         passwordLabel->setText(password);
         tipLabel->setVisible(true);
@@ -188,8 +191,10 @@ void ConnectWidget::initConnectLayout()
         nullLabel->setVisible(false);
         WarnningLabel->setVisible(false);
         remainingTime = 300;
-        if (!timer->isActive())
+        if (!timer->isActive()) {
+            DLOG << "Restarting password expiration timer";
             timer->start(1000);
+        }
     });
 
     passwordHLayout->addWidget(nullLabel);
@@ -217,11 +222,13 @@ void ConnectWidget::initConnectLayout()
 
 void ConnectWidget::nextPage()
 {
+    DLOG << "Navigating to wait widget";
     emit TransferHelper::instance()->changeWidget(PageName::waitwidget);
 }
 
 void ConnectWidget::backPage()
 {
+    DLOG << "Returning to previous page";
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
@@ -232,6 +239,8 @@ void ConnectWidget::backPage()
 
 void ConnectWidget::themeChanged(int theme)
 {
+    DLOG << "Theme changed to:" << (theme == 1 ? "light" : "dark");
+
     // light
     if (theme == 1) {
         setStyleSheet(".ConnectWidget{background-color: rgba(255,255,255,1); border-radius: 10px;}");

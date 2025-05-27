@@ -35,9 +35,11 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
 
     sessionManager = new SessionManager(this);
     if (onlyTransfer) {
+        DLOG << "Running in transfer-only mode, skipping full initialization";
         return;
     }
     servePort = COO_SESSION_PORT;
+    DLOG << "Using session port:" << servePort;
 
     ExtenMessageHandler msg_cb([this](int32_t mask, const picojson::value &json_value, std::string *res_msg) -> bool {
 #ifdef QT_DEBUG
@@ -208,6 +210,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
 
 NetworkUtilPrivate::~NetworkUtilPrivate()
 {
+    DLOG << "NetworkUtilPrivate destructor";
 }
 
 void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
@@ -340,21 +343,25 @@ NetworkUtil::NetworkUtil(QObject *parent)
     : QObject(parent),
       d(new NetworkUtilPrivate(this))
 {
+    DLOG << "NetworkUtil constructor";
 #ifdef ENABLE_COMPAT
     auto wrapper = CompatWrapper::instance();
     auto discover = DiscoverController::instance();
     connect(wrapper, &CompatWrapper::compatConnectResult, this, &NetworkUtil::handleCompatConnectResult, Qt::QueuedConnection);
     connect(discover, &DiscoverController::registCompatAppInfo, this, &NetworkUtil::handleCompatRegister, Qt::QueuedConnection);
     connect(discover, &DiscoverController::startDiscoveryDevice, this, &NetworkUtil::handleCompatDiscover, Qt::QueuedConnection);
+    DLOG << "Compat mode connections established";
 #endif
 }
 
 NetworkUtil::~NetworkUtil()
 {
+    DLOG << "NetworkUtil destructor";
 }
 
 NetworkUtil *NetworkUtil::instance()
 {
+    DLOG << "Getting NetworkUtil instance";
     static NetworkUtil ins;
     return &ins;
 }
@@ -456,10 +463,12 @@ void NetworkUtil::handleCompatDiscover()
 
 void NetworkUtil::updateStorageConfig(const QString &value)
 {
+    DLOG << "Updating storage config to:" << value.toStdString();
     d->sessionManager->setStorageRoot(value);
     d->storageRoot = value;
 
 #ifdef ENABLE_COMPAT
+    DLOG << "Updating compat storage config";
     //update the storage dir for old protocol
     auto ipc = CompatWrapper::instance()->ipcInterface();
     ipc->call("saveAppConfig", Q_ARG(QString, ipc::CooperRegisterName), Q_ARG(QString, "storagedir"), Q_ARG(QString, value));
@@ -468,12 +477,15 @@ void NetworkUtil::updateStorageConfig(const QString &value)
 
 void NetworkUtil::setStorageFolder(const QString &folder)
 {
+    DLOG << "Setting storage folder:" << folder.toStdString();
     d->storageFolder = folder;
 }
 
 QString NetworkUtil::getStorageFolder() const
 {
-    return d->storageRoot + QDir::separator() + d->storageFolder;
+    QString path = d->storageRoot + QDir::separator() + d->storageFolder;
+    DLOG << "Getting storage folder path:" << path.toStdString();
+    return path;
 }
 
 QString NetworkUtil::getConfirmTargetAddress() const

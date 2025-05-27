@@ -1,4 +1,5 @@
 ﻿#include "readywidget.h"
+#include "common/log.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -16,10 +17,14 @@
 ReadyWidget::ReadyWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Widget constructor called";
     initUI();
 }
 
-ReadyWidget::~ReadyWidget() {}
+ReadyWidget::~ReadyWidget()
+{
+    DLOG << "Widget destructor called";
+}
 
 void ReadyWidget::clear()
 {
@@ -247,6 +252,7 @@ void ReadyWidget::onLineTextChange()
         return;
     }
 
+    DLOG << "Input validation passed, enabling connect button";
     setnextButEnable(true);
 }
 

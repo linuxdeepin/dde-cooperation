@@ -28,6 +28,7 @@
 TransferHelper::TransferHelper()
     : QObject()
 {
+    DLOG << "Initializing TransferHelper";
 #ifdef __linux__
     SettingHelper::instance();
     connect(this, &TransferHelper::transferFinished, this, [this]() { isSetting = false; });
@@ -38,10 +39,14 @@ TransferHelper::TransferHelper()
     });
 }
 
-TransferHelper::~TransferHelper() {}
+TransferHelper::~TransferHelper()
+{
+    DLOG << "Destroying TransferHelper";
+}
 
 TransferHelper *TransferHelper::instance()
 {
+    DLOG << "Accessing TransferHelper singleton instance";
     static TransferHelper ins;
     return &ins;
 }
@@ -56,6 +61,7 @@ QString TransferHelper::updateConnectPassword()
 
 void TransferHelper::tryConnect(const QString &ip, const QString &password)
 {
+    DLOG << "Attempting to connect to:" << ip.toStdString();
     bool res = NetworkUtil::instance()->doConnect(ip, password);
     if (res)
         emit connectSucceed();
@@ -69,6 +75,7 @@ bool TransferHelper::cancelTransferJob()
 
 void TransferHelper::disconnectRemote()
 {
+    DLOG << "Disconnecting from remote";
     NetworkUtil::instance()->disConnect();
 }
 
@@ -91,11 +98,12 @@ void TransferHelper::finish()
 
 void TransferHelper::handleMessage(QString jsonmsg)
 {
+    DLOG << "Handling incoming message";
     QJsonParseError error;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonmsg.toUtf8(), &error);
 
     if (error.error != QJsonParseError::NoError || !jsonDoc.isObject()) {
-        qDebug() << "Error parsing JSON: " << error.errorString();
+        DLOG << "Error parsing JSON: " << error.errorString().toStdString();
         return;
     }
     QJsonObject jsonObj = jsonDoc.object();
@@ -167,6 +175,7 @@ void TransferHelper::handleMessage(QString jsonmsg)
 
 void TransferHelper::emitDisconnected()
 {
+    DLOG << "Emitting disconnected signal";
 #ifdef linux
     connectIP = "";
     if (!isSetting)
@@ -415,6 +424,7 @@ void TransferHelper::recordTranferJob(const QString &filepath)
 
 void TransferHelper::addFinshedFiles(const QString &filepath, int64_t size)
 {
+    DLOG << "Marking file as finished:" << filepath.toStdString() << "Size:" << size;
     if (filepath.isEmpty())
         return;
     finshedFiles.insert(filepath, size);
@@ -430,6 +440,7 @@ void TransferHelper::addFinshedFiles(const QString &filepath, int64_t size)
 
 void TransferHelper::setConnectIP(const QString &ip)
 {
+    DLOG << "Setting connection IP:" << ip.toStdString();
     connectIP = ip;
 }
 
@@ -440,6 +451,7 @@ QString TransferHelper::getConnectIP() const
 
 void TransferHelper::setting(const QString &filepath)
 {
+    DLOG << "Applying settings from file:" << filepath.toStdString();
     isSetting = true;
     SettingHelper::instance()->handleDataConfiguration(filepath);
 }

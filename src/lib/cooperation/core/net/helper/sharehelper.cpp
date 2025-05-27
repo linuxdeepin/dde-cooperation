@@ -54,8 +54,9 @@ using namespace deepin_cross;
 ShareHelperPrivate::ShareHelperPrivate(ShareHelper *qq)
     : q(qq)
 {
-
+    DLOG << "ShareHelperPrivate constructor";
     initConnect();
+    DLOG << "ShareHelperPrivate initialized";
 }
 
 CooperationTaskDialog *ShareHelperPrivate::taskDialog()
@@ -90,8 +91,10 @@ void ShareHelperPrivate::initConnect()
 
 void ShareHelperPrivate::cancelShareApply()
 {
+    DLOG << "Canceling share application";
     taskDialog()->hide();
     NetworkUtil::instance()->cancelApply("share", targetDeviceInfo->ipAddress());
+    DLOG << "Share application canceled";
 }
 
 void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout)
@@ -110,9 +113,11 @@ void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &a
 
 void ShareHelperPrivate::stopCooperation()
 {
+    DLOG << "Stopping cooperation";
     if (targetDeviceInfo && targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
         q->disconnectToDevice(targetDeviceInfo);
     }
+    DLOG << "Cooperation stopped";
 }
 
 void ShareHelperPrivate::onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value)
@@ -203,6 +208,7 @@ ShareHelper::ShareHelper(QObject *parent)
     : QObject(parent),
       d(new ShareHelperPrivate(this))
 {
+    DLOG << "ShareHelper constructor";
     // the certificate profile will set to barrier using.
     std::string profile = ShareCooperationServiceManager::instance()->barrierProfile().toStdString();
     SslCertConf::ins()->generateCertificate(profile);
@@ -211,10 +217,12 @@ ShareHelper::ShareHelper(QObject *parent)
 
 ShareHelper::~ShareHelper()
 {
+    DLOG << "ShareHelper destructor";
 }
 
 ShareHelper *ShareHelper::instance()
 {
+    DLOG << "Getting ShareHelper instance";
     static ShareHelper ins;
     return &ins;
 }
@@ -245,7 +253,10 @@ void ShareHelper::registConnectBtn()
 
 void ShareHelper::connectToDevice(const DeviceInfoPointer info)
 {
+    DLOG << "Connecting to device:" << info->deviceName().toStdString() << "(" << info->ipAddress().toStdString() << ")";
+    
     if (d->targetDeviceInfo && d->targetDeviceInfo->connectStatus() == DeviceInfo::Connected) {
+        WLOG << "Already connected to another device:" << d->targetDeviceInfo->deviceName().toStdString();
         static QString title(tr("Unable to collaborate to \"%1\""));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(info->deviceName(), Qt::ElideMiddle, 15)),
                                         tr("You are connecting to another device"),
@@ -254,6 +265,7 @@ void ShareHelper::connectToDevice(const DeviceInfoPointer info)
         return;
     }
     DeviceInfoPointer selfinfo = DiscoverController::selfInfo();
+    DLOG << "Setting server config with self device:" << selfinfo->deviceName().toStdString();
     ShareCooperationServiceManager::instance()->server()->setServerConfig(selfinfo, info);
 
     d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
@@ -267,6 +279,7 @@ void ShareHelper::connectToDevice(const DeviceInfoPointer info)
     d->taskDialog()->show();
     d->confirmTimer.start();
 
+    DLOG << "Initiating share application to:" << info->ipAddress().toStdString();
     NetworkUtil::instance()->tryShareApply(info->ipAddress(), d->selfFingerPrint);
 }
 
@@ -274,19 +287,23 @@ void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
 {
     NetworkUtil::instance()->sendDisconnectShareEvents(info->ipAddress());
 
+    DLOG << "Stopping cooperation service";
     ShareCooperationServiceManager::instance()->stop();
 
     // The targetDeviceInfo can be null
     if (d->targetDeviceInfo.isNull()) {
+        DLOG << "Creating new target device info";
         d->targetDeviceInfo = DeviceInfoPointer::create(*info.data());
     }
 
+    DLOG << "Updating device connection status to Connectable";
     info->setConnectStatus(DeviceInfo::Connectable);
     d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
     DiscoverController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
 
     static QString body(tr("Coordination with \"%1\" has ended"));
     d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
+    DLOG << "Disconnection completed";
 }
 
 void ShareHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
@@ -318,6 +335,7 @@ bool ShareHelper::buttonVisible(const QString &id, const DeviceInfoPointer info)
 
 void ShareHelper::notifyConnectRequest(const QString &info)
 {
+    DLOG << "Received connection request:" << info.toStdString();
     d->isReplied = false;
     d->isTimeout = false;
     d->isRecvMode = true;
@@ -333,6 +351,7 @@ void ShareHelper::notifyConnectRequest(const QString &info)
 
     d->senderDeviceIp = infoList[0];
     d->targetDevName = infoList[1];
+    DLOG << "Connection request from IP:" << d->senderDeviceIp.toStdString() << "Device name:" << d->targetDevName.toStdString();
 
     if (infoList.size() >= 3) {
         d->recvServerPrint = infoList[2];
@@ -341,6 +360,7 @@ void ShareHelper::notifyConnectRequest(const QString &info)
 #ifdef __linux__
     d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), actions, 10 * 1000);
 #else
+    DLOG << "Showing confirmation dialog";
     CooperationUtil::instance()->activateWindow();
     d->taskDialog()->switchConfirmPage(tr("Cooperation"), body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)));
     d->taskDialog()->show();
@@ -349,12 +369,16 @@ void ShareHelper::notifyConnectRequest(const QString &info)
 
 void ShareHelper::handleConnectResult(int result, const QString &clientprint)
 {
+    DLOG << "Handling connection result:" << result << "clientprint:" << clientprint.toStdString();
     d->isReplied = true;
-    if (!d->targetDeviceInfo || d->isTimeout)
+    if (!d->targetDeviceInfo || d->isTimeout) {
+        DLOG << "No target device or timeout, ignoring result";
         return;
+    }
 
     switch (result) {
     case SHARE_CONNECT_UNABLE: {
+        WLOG << "Unable to connect to device";
         static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("Connect to \"%1\" failed"));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
@@ -364,9 +388,11 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         d->targetDeviceInfo.reset();
     } break;
     case SHARE_CONNECT_COMFIRM: {
+        DLOG << "Connection confirmed, setting up server";
         auto server = ShareCooperationServiceManager::instance()->server();
 
         bool crypto = !clientprint.isEmpty();
+        DLOG << "Crypto enabled:" << crypto;
         // remove "--disable-crypto" if receive client has fingerprint.
         server->setEnableCrypto(crypto);
         if (crypto) {
@@ -375,6 +401,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         }
 
         //启动 ShareCooperationServic
+        DLOG << "Starting barrier server";
         auto started = server->restartBarrier();
         if (!started) {
             WLOG << "Failed to start barrier server!";
@@ -394,6 +421,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
 #endif
 
         // 上报埋点数据
+        DLOG << "Reporting connection data";
         d->reportConnectionData();
 
         d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
@@ -403,8 +431,10 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
         d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
         d->taskDialog()->close();
+        DLOG << "Connection established successfully";
     } break;
     case SHARE_CONNECT_REFUSE: {
+        DLOG << "Connection request was refused";
         static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("\"%1\" has rejected your request for collaboration"));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
@@ -414,6 +444,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         d->targetDeviceInfo.reset();
     } break;
     case SHARE_CONNECT_ERR_CONNECTED: {
+        DLOG << "Target device is already connected to another device";
         static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("\"%1\" is connecting with other devices"));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
@@ -423,16 +454,20 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         d->targetDeviceInfo.reset();
     } break;
     default:
+        DLOG << "Unknown connection result:" << result;
         break;
     }
 }
 
 void ShareHelper::handleDisConnectResult(const QString &devName)
 {
+    DLOG << "Handling disconnection result for:" << devName.toStdString();
     if (!d->targetDeviceInfo) {
         WLOG << "The targetDeviceInfo is NULL";
         return;
     }
+
+    DLOG << "Stopping cooperation service";
     ShareCooperationServiceManager::instance()->stop();
 
     static QString body(tr("Coordination with \"%1\" has ended"));
@@ -441,21 +476,27 @@ void ShareHelper::handleDisConnectResult(const QString &devName)
     d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
     DiscoverController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
     d->targetDeviceInfo.reset();
+    DLOG << "Disconnection completed";
 }
 
 void ShareHelper::onVerifyTimeout()
 {
+    DLOG << "Connection verification timeout";
     d->recvServerPrint = ""; // clear received nserver fingerprint when timeout
     d->isTimeout = true;
     if (d->isRecvMode) {
-        if (d->isReplied)
+        if (d->isReplied) {
+            DLOG << "Already replied, ignoring timeout";
             return;
+        }
 
         static QString body(tr("The connection request sent to you by \"%1\" was interrupted due to a timeout"));
         d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)), {}, 3 * 1000);
     } else {
-        if (!d->taskDialog()->isVisible() || d->isReplied)
+        if (!d->taskDialog()->isVisible() || d->isReplied) {
+            DLOG << "Dialog not visible or already replied, ignoring timeout";
             return;
+        }
 
         static QString title(tr("Unable to collaborate to \"%1\""));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDevName, Qt::ElideMiddle, 15)),

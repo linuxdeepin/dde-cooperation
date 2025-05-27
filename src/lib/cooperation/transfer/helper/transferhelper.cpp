@@ -51,8 +51,10 @@ TransferHelperPrivate::TransferHelperPrivate(TransferHelper *qq)
     : QObject(qq),
       q(qq)
 {
+    DLOG << "TransferHelperPrivate constructor entered";
 #ifdef ENABLE_COMPAT
     ipcInterface = new SlotIPCInterface();
+    DLOG << "SlotIPCInterface created for compatibility mode";
 #endif
 }
 
@@ -65,14 +67,18 @@ TransferHelper::TransferHelper(QObject *parent)
     : QObject(parent),
       d(new TransferHelperPrivate(this))
 {
+    DLOG << "TransferHelper constructor entered";
+
     backendWatcher = new QTimer(this);
     backendWatcher->setInterval(2000);
     connect(backendWatcher, &QTimer::timeout, this, &TransferHelper::timeWatchBackend);
     backendWatcher->start();
+    DLOG << "Backend watcher timer started with 2s interval";
 
 #ifdef ENABLE_COMPAT
     // try connect backend by delay 500ms
     QTimer::singleShot(500, this, &TransferHelper::timeConnectBackend);
+    DLOG << "Scheduled backend connection attempt in 500ms";
 #endif
 }
 
@@ -82,12 +88,15 @@ TransferHelper::~TransferHelper()
 
 TransferHelper *TransferHelper::instance()
 {
+    DLOG << "Getting TransferHelper instance";
     static TransferHelper ins;
     return &ins;
 }
 
 void TransferHelper::registBtn(cooperation_core::MainWindow *window)
 {
+    DLOG << "Registering transfer button to MainWindow";
+
     ClickedCallback clickedCb = TransferHelper::buttonClicked;
     ButtonStateCallback visibleCb = TransferHelper::buttonVisible;
     ButtonStateCallback clickableCb = TransferHelper::buttonClickable;
@@ -102,10 +111,13 @@ void TransferHelper::registBtn(cooperation_core::MainWindow *window)
                                { "clickable-callback", QVariant::fromValue(clickableCb) } };
 
     window->onRegistOperations(transferInfo);
+    DLOG << "Transfer button registered with ID:" << TransferButtonId;
 }
 
 void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 {
+    DLOG << "Button clicked event received, ID:" << id.toStdString();
+
     QString ip = info->ipAddress();
     QString name = info->deviceName();
     LOG << "button clicked, button id: " << id.toStdString()
@@ -113,16 +125,24 @@ void TransferHelper::buttonClicked(const QString &id, const DeviceInfoPointer in
         << " device name: " << name.toStdString();
 
     if (id == TransferButtonId) {
+        DLOG << "Transfer button clicked for device:" << name.toStdString() << "IP:" << ip.toStdString();
+
         QStringList selectedFiles = qApp->property("sendFiles").toStringList();
-        if (selectedFiles.isEmpty())
+        if (selectedFiles.isEmpty()) {
+            DLOG << "No pre-selected files, opening file dialog";
             selectedFiles = QFileDialog::getOpenFileNames(qApp->activeWindow());
+        }
 
-        if (selectedFiles.isEmpty())
+        if (selectedFiles.isEmpty()) {
+            WLOG << "No files selected for transfer";
             return;
+        }
 
+        DLOG << "Selected" << selectedFiles.size() << "files for transfer";
         // send command to local socket.
         Q_EMIT TransferHelper::instance()->sendFiles(ip, name, selectedFiles);
         qApp->exit(0);
+        DLOG << "Transfer initiated, application exiting";
     }
 }
 
@@ -152,6 +172,7 @@ bool TransferHelper::buttonClickable(const QString &id, const DeviceInfoPointer 
 
 void TransferHelper::timeConnectBackend()
 {
+    DLOG << "Attempting to connect to backend IPC";
 #ifdef ENABLE_COMPAT
     d->backendOk = d->ipcInterface->connectToServer(BackendProcIPC);
     if (d->backendOk) {
@@ -165,8 +186,9 @@ void TransferHelper::timeConnectBackend()
         d->ipcInterface->remoteConnect(this, SIGNAL(sendFiles(QString, QString, QStringList)), SLOT(onSendFiles(QString, QString, QStringList)));
 
         LOG << "SUCCESS connect to depending backend: " << BackendProcIPC;
-        // frist, refresh & get device list
+        // first, refresh & get device list
         Q_EMIT refresh();
+        DLOG << "Initial device refresh triggered";
     } else {
         // TODO: show dialog
         WLOG << "can not connect to: " << BackendProcIPC;
@@ -195,7 +217,10 @@ void TransferHelper::timeWatchBackend()
 
 void TransferHelper::searchResultSlot(const QString& info)
 {
+    DLOG << "Search result received, data:" << info.toStdString();
+
     if (info.isEmpty()) {
+        WLOG << "Empty search result received";
         // From remove onFinishedDiscovery(false)
         Q_EMIT finishDiscovery(false);
         return;
@@ -203,8 +228,10 @@ void TransferHelper::searchResultSlot(const QString& info)
 
     auto devInfo = parseFromJson(info);
     if (transable(devInfo)) {
+        DLOG << "New transable device found:" << devInfo->deviceName().toStdString();
         Q_EMIT onlineDevices({ devInfo });
     } else if (devInfo) {
+        DLOG << "Non-transable device filtered out:" << devInfo->deviceName().toStdString();
         // filter the invisible device
         auto ip = devInfo->ipAddress();
         Q_EMIT offlineDevice(ip);
@@ -239,6 +266,8 @@ void TransferHelper::deviceChangedSlot(bool found, const QString& info)
 
 DeviceInfoPointer TransferHelper::parseFromJson(const QString &info)
 {
+    DLOG << "Parsing device info from JSON, data length:" << info.length();
+
     QJsonParseError error;
     auto doc = QJsonDocument::fromJson(info.toUtf8(), &error);
     if (error.error != QJsonParseError::NoError) {
@@ -250,6 +279,7 @@ DeviceInfoPointer TransferHelper::parseFromJson(const QString &info)
     auto devInfo = DeviceInfo::fromVariantMap(map);
     devInfo->setConnectStatus(DeviceInfo::Connectable);
 
+    DLOG << "Successfully parsed device info for:" << devInfo->deviceName().toStdString();
     return devInfo;
 }
 

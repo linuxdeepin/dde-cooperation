@@ -5,6 +5,7 @@
 #include "settingitem.h"
 #include "gui/utils/cooperationguihelper.h"
 #include "global_defines.h"
+#include "common/log.h"
 
 #include <QPainter>
 #include <QPainterPath>
@@ -14,16 +15,19 @@ using namespace cooperation_core;
 SettingItem::SettingItem(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Initializing setting item";
     mainLayout = new QHBoxLayout;
     mainLayout->setContentsMargins(10, 6, 10, 6);
     setLayout(mainLayout);
 #ifndef linux
     setFixedHeight(48);
 #endif
+    DLOG << "Initialization completed";
 }
 
 void SettingItem::setItemInfo(const QString &text, QWidget *w)
 {
+    DLOG << "Setting item info with text:" << text.toStdString();
     CooperationLabel *label = new CooperationLabel(text, this);
     auto font = label->font();
     font.setWeight(QFont::Medium);
@@ -31,6 +35,7 @@ void SettingItem::setItemInfo(const QString &text, QWidget *w)
 
     mainLayout->addWidget(label, 0, Qt::AlignLeft);
     mainLayout->addWidget(w, 0, Qt::AlignRight);
+    DLOG << "Item info set successfully";
 }
 
 void SettingItem::paintEvent(QPaintEvent *event)

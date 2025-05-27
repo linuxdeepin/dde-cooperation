@@ -1,5 +1,7 @@
 ﻿#include "item.h"
 #include "calculatefilesize.h"
+#include "common/log.h"
+
 #include <QApplication>
 #include <QLabel>
 #include <QPainterPath>
@@ -27,6 +29,8 @@ ItemTitlebar::ItemTitlebar(const QString &label1_, const QString &label2_,
 
 ItemTitlebar::ItemTitlebar(QWidget *parent) : QFrame(parent)
 {
+    DLOG << "Creating default titlebar";
+
     selectAllButton = new SelectAllButton(this);
     selectAllButton->move(iconPosSize.x(), iconPosSize.y());
     QObject::connect(selectAllButton, &SelectAllButton::selectAll, this, &ItemTitlebar::selectAll);
@@ -34,7 +38,10 @@ ItemTitlebar::ItemTitlebar(QWidget *parent) : QFrame(parent)
     initUI();
 }
 
-ItemTitlebar::~ItemTitlebar() { }
+ItemTitlebar::~ItemTitlebar()
+{
+    DLOG << "Destroying titlebar";
+}
 
 void ItemTitlebar::paintEvent(QPaintEvent *event)
 {
@@ -60,6 +67,8 @@ void ItemTitlebar::paintEvent(QPaintEvent *event)
 
 void ItemTitlebar::updateSelectAllButState(ListSelectionState selectState)
 {
+    DLOG << "Updating select all button stat";
+
     selectAllButton->changeState(selectState);
 }
 
@@ -139,7 +148,10 @@ void ItemTitlebar::setLabel1(const QString &newLabel1)
     label1 = newLabel1;
 }
 
-ItemDelegate::ItemDelegate() { }
+ItemDelegate::ItemDelegate()
+{
+    DLOG << "Creating default delegate";
+}
 
 ItemDelegate::ItemDelegate(const qreal &filenameTextLeftMargin_, const qreal &filenameTextMaxLen_,
                            const qreal &remarkTextLeftMargin_, const qreal &remarkTextMaxLen_,

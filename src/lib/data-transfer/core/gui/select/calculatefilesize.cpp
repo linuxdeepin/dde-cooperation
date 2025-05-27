@@ -72,6 +72,8 @@ CalculateFileSizeTask::~CalculateFileSizeTask() { }
 
 void CalculateFileSizeTask::run()
 {
+    DLOG<< "Starting calculation for:" << filePath.toStdString();
+
     fileSize = calculate(filePath);
     QMetaObject::invokeMethod(calculatePool, "sendFileSizeSlots", Qt::QueuedConnection,
                               Q_ARG(quint64, fileSize), Q_ARG(QString, filePath));
@@ -79,6 +81,8 @@ void CalculateFileSizeTask::run()
 
 void CalculateFileSizeTask::abortTask()
 {
+    DLOG<< "Aborting calculation for:" << filePath.toStdString();
+
     abort = true;
 }
 
@@ -109,10 +113,15 @@ CalculateFileSizeThreadPool *CalculateFileSizeThreadPool::instance()
     return &ins;
 }
 
-CalculateFileSizeThreadPool::~CalculateFileSizeThreadPool() { }
+CalculateFileSizeThreadPool::~CalculateFileSizeThreadPool()
+{
+    DLOG<< "Destroying thread pool";
+}
 
 CalculateFileSizeThreadPool::CalculateFileSizeThreadPool()
 {
+    DLOG<< "Initializing thread pool with max 4 threads";
+
     threadPool = new QThreadPool();
     fileMap = new QMap<QString, FileInfo>();
     threadPool->setMaxThreadCount(4);
@@ -123,6 +132,8 @@ CalculateFileSizeThreadPool::CalculateFileSizeThreadPool()
 
 void CalculateFileSizeThreadPool::work(const QList<QString> &list)
 {
+    DLOG<< "Starting work on" << list.size();
+
     for (const QString &path : list) {
         QFileInfo fileInfo(path);
         if (fileInfo.isFile()) {
@@ -139,11 +150,15 @@ void CalculateFileSizeThreadPool::work(const QList<QString> &list)
 
 void CalculateFileSizeThreadPool::addFileMap(const QString &path, const FileInfo &fileinfo)
 {
+    DLOG<< "Adding file to map:" << path.toStdString();
+
     (*fileMap)[path] = fileinfo;
 }
 
 void CalculateFileSizeThreadPool::delFileMap(const QString &path)
 {
+    DLOG<< "Removing file from map:" << path.toStdString();
+
     if (fileMap->contains(path))
         fileMap->remove(path);
 }
@@ -155,6 +170,9 @@ QMap<QString, FileInfo> *CalculateFileSizeThreadPool::getFileMap()
 
 void CalculateFileSizeThreadPool::sendFileSizeSlots(quint64 fileSize, const QString &path)
 {
+    DLOG<< "Sending file size for" << path.toStdString()
+             << "Size:" << fileSize;
+
     if (!fileMap->contains(path))
         return;
 
@@ -170,6 +188,9 @@ void CalculateFileSizeThreadPool::addFileSlots(const QList<QString> &list)
 
 void CalculateFileSizeThreadPool::exitPool()
 {
+    DLOG<< "Exiting thread pool, aborting"
+             << workList.size() << "tasks";
+
     threadPool->clear();
     for (CalculateFileSizeTask *task : workList) {
         task->abortTask();
@@ -182,6 +203,8 @@ void CalculateFileSizeThreadPool::exitPool()
 
 void CalculateFileSizeThreadPool::delDevice(const QStandardItem *siderbarItem)
 {
+    DLOG<< "Removing device entries for sidebar item";
+
     QMap<QString, FileInfo>::iterator it = fileMap->begin();
     while (it != fileMap->end()) {
         if (it.value().siderbarItem == siderbarItem) {

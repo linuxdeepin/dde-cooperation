@@ -1,6 +1,7 @@
 ﻿#include "selectmainwidget.h"
 #include "../type_defines.h"
 #include "userselectfilesize.h"
+#include "common/log.h"
 
 #include <QToolButton>
 #include <QHBoxLayout>
@@ -15,13 +16,20 @@
 
 SelectMainWidget::SelectMainWidget(QWidget *parent) : QFrame(parent)
 {
+    DLOG << "Initializing main selection widget";
+
     initUi();
 }
 
-SelectMainWidget::~SelectMainWidget() { }
+SelectMainWidget::~SelectMainWidget()
+{
+    DLOG << "Destroying main selection widget";
+}
 
 void SelectMainWidget::changeSelectframeState(const SelectItemName &name)
 {
+    DLOG << "Updating selection state";
+
     if (name == SelectItemName::APP) {
         QStringList list = OptionsManager::instance()->getUserOption(Options::kApp);
         if (list.isEmpty()) {
@@ -51,6 +59,8 @@ void SelectMainWidget::changeSelectframeState(const SelectItemName &name)
 
 void SelectMainWidget::changeText()
 {
+    DLOG << "Updating UI text based on transfer method";
+
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
         titileLabel->setText(LocalText);
@@ -67,6 +77,8 @@ void SelectMainWidget::changeText()
 
 void SelectMainWidget::clear()
 {
+    DLOG << "Clearing all selections";
+
     changeSelectframeState(SelectItemName::FILES);
     changeSelectframeState(SelectItemName::CONFIG);
     changeSelectframeState(SelectItemName::APP);
@@ -74,6 +86,8 @@ void SelectMainWidget::clear()
 
 void SelectMainWidget::initUi()
 {
+    DLOG << "Initializing UI components";
+
     setStyleSheet("background-color: white; border-radius: 10px;");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -137,6 +151,8 @@ void SelectMainWidget::initUi()
 }
 void SelectMainWidget::nextPage()
 {
+    DLOG << "Navigating to next page";
+
     // If the selected file is being calculated ,return
     if (!UserSelectFileSize::instance()->done()) {
         return;
@@ -166,6 +182,8 @@ void SelectMainWidget::nextPage()
 
 void SelectMainWidget::backPage()
 {
+    DLOG << "Returning to previous page";
+
     PageName back;
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
@@ -179,6 +197,8 @@ void SelectMainWidget::backPage()
 
 void SelectMainWidget::selectPage()
 {
+    DLOG << "Selecting specific item page";
+
     SelectItem *selectitem = qobject_cast<SelectItem *>(QObject::sender());
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     int pageNum = -1;
@@ -229,7 +249,10 @@ SelectItem::SelectItem(QString text, QIcon icon, SelectItemName itemName, QWidge
     QObject::connect(this, &SelectItem::changePage, qobject_cast<SelectMainWidget *>(parent),
                      &SelectMainWidget::selectPage);
 }
-SelectItem::~SelectItem() { }
+SelectItem::~SelectItem()
+{
+    DLOG << "Destroying selection item";
+}
 
 void SelectItem::updateSelectSize(QString num)
 {
@@ -321,6 +344,8 @@ void SelectItem::initEditFrame()
 
 void SelectItem::changeState(const bool &ok)
 {
+    DLOG << "Changing state to:" << (ok ? "Selected" : "Unselected");
+
     isOk = ok;
     update();
 }

@@ -18,6 +18,7 @@ inline constexpr char datajson[] { "transfer.json" };
 UnzipWorker::UnzipWorker(QString filepath)
     : filepath(filepath)
 {
+    DLOG << "UnzipWorker constructor called with file:" << filepath.toStdString();
     QFileInfo fileInfo(filepath);
     targetDir = QDir::homePath() + "/" + fileInfo.baseName();
     while (QFile::exists(targetDir)) {
@@ -36,15 +37,18 @@ UnzipWorker::UnzipWorker(QString filepath)
 
 UnzipWorker::~UnzipWorker()
 {
+    DLOG << "UnzipWorker destructor called";
 }
 
 void UnzipWorker::run()
 {
+    DLOG << "UnzipWorker::run started";
     //decompression
     extract();
 
     //configuration
     TransferHelper::instance()->setting(targetDir + "/");
+    DLOG << "UnzipWorker::run completed";
 }
 
 int UnzipWorker::getNumFiles(QString filepath)

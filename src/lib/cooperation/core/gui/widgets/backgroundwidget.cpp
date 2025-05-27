@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "backgroundwidget.h"
+#include "common/log.h"
 
 #ifdef linux
 #include <DGuiApplicationHelper>
@@ -14,6 +15,7 @@
 BackgroundWidget::BackgroundWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Initializing background widget";
 }
 
 void BackgroundWidget::setBackground(int radius, ColorType colorType, RoundRole role)
@@ -21,6 +23,7 @@ void BackgroundWidget::setBackground(int radius, ColorType colorType, RoundRole 
     this->radius = radius;
     this->colorType = colorType;
     roundRole = role;
+    DLOG << "Background settings applied";
 }
 
 void BackgroundWidget::paintEvent(QPaintEvent *event)

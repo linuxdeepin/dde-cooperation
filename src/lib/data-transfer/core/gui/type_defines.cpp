@@ -1,4 +1,5 @@
 ﻿#include "type_defines.h"
+#include "common/log.h"
 
 #include <QPainter>
 #include <QStandardItemModel>
@@ -13,6 +14,8 @@ DWIDGET_USE_NAMESPACE
 ButtonLayout::ButtonLayout(QWidget *parent)
     : QHBoxLayout(parent)
 {
+    DLOG << "Initializing button layout";
+
     button1 = new QPushButton(parent);
     button1->setFixedSize(120, 36);
 
@@ -34,10 +37,13 @@ ButtonLayout::ButtonLayout(QWidget *parent)
 
 ButtonLayout::~ButtonLayout()
 {
+    DLOG << "Destroying button layout";
 }
 
 void ButtonLayout::setCount(int count)
 {
+    DLOG << "Setting button count to:" << count;
+
     switch (count) {
     case 1:
         button1->setFixedSize(250, 36);
@@ -252,6 +258,8 @@ void IndexLabel::paintEvent(QPaintEvent *event)
 MovieWidget::MovieWidget(QString filename, QWidget *parent)
     : QWidget(parent), movie(filename)
 {
+    DLOG << "[MovieWidget] Creating movie widget with file:" << filename.toStdString();
+
     setFixedSize(200, 160);
     loadFrames();
     timer = new QTimer(this);
@@ -284,12 +292,15 @@ void MovieWidget::loadFrames()
 ProcessDetailsWindow::ProcessDetailsWindow(QFrame *parent)
     : QListView(parent)
 {
+    DLOG << "[ProcessDetailsWindow] Initializing process details window";
 }
 
 ProcessDetailsWindow::~ProcessDetailsWindow() {}
 
 void ProcessDetailsWindow::clear()
 {
+    DLOG << "[ProcessDetailsWindow] Clearing process details";
+
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
     model->clear();
 }

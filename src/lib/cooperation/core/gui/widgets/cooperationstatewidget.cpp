@@ -44,20 +44,26 @@ const char *Knot_find_device = ":/icons/deepin/builtin/light/icons/not_find_devi
 LookingForDeviceWidget::LookingForDeviceWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "Initializing widget";
     initUI();
 
     animationTimer = new QTimer(this);
     animationTimer->setInterval(16);
     connect(animationTimer, &QTimer::timeout, this, [this] { update(); });
+    DLOG << "LookingForDeviceWidget created";
 }
 
 void LookingForDeviceWidget::seAnimationtEnabled(bool enabled)
 {
-    if (isEnabled == enabled)
+    DLOG << "Setting animation state:" << enabled;
+    if (isEnabled == enabled) {
+        DLOG << "Animation state unchanged";
         return;
+    }
 
     angle = 0;
     (isEnabled = enabled) ? animationTimer->start() : animationTimer->stop();
+    DLOG << "LookingForDeviceWidget animation state changed to" << enabled;
 }
 
 void LookingForDeviceWidget::initUI()
@@ -122,7 +128,9 @@ void LookingForDeviceWidget::paintEvent(QPaintEvent *event)
 NoNetworkWidget::NoNetworkWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "Initializing widget";
     initUI();
+    DLOG << "Initialization completed";
 }
 
 void NoNetworkWidget::initUI()
@@ -135,7 +143,9 @@ void NoNetworkWidget::initUI()
     iconLabel->setPixmap(icon.pixmap(150, 150));
     connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, this, [icon, iconLabel] {
         iconLabel->setPixmap(icon.pixmap(150, 150));
+        DLOG << "NoNetworkWidget theme changed";
     });
+    DLOG << "NoNetworkWidget initialized";
 
     CooperationLabel *tipsLabel = new CooperationLabel(tr("Please connect to the network"), this);
 
@@ -158,6 +168,7 @@ NoResultTipWidget::NoResultTipWidget(QWidget *parent, bool usetipMode, bool ismo
 
 void NoResultTipWidget::onLinkActivated(const QString &link)
 {
+    DLOG << "Opening external link:" << link.toStdString();
     QDesktopServices::openUrl(QUrl(link));
 }
 
@@ -329,6 +340,7 @@ void BottomLabel::setIp(const QString &ip)
 {
     QString iptext = QString(tr("Local IP: %1").arg(ip));
     ipLabel->setText(iptext);
+    DLOG << "BottomLabel IP set to:" << ip.toStdString();
 }
 
 void BottomLabel::paintEvent(QPaintEvent *)
@@ -436,9 +448,12 @@ void BottomLabel::initUI()
 
 void BottomLabel::showDialog() const
 {
+    DLOG << "Showing dialog";
     timer->stop();
-    if (dialog->isVisible())
+    if (dialog->isVisible()) {
+        DLOG << "Dialog already visible";
         return;
+    }
 
     // get dailog pos base on this bottom label
     QPoint globalLabelPos = this->mapToGlobal(QPoint(0, 0)); // lable's showing pos
@@ -447,13 +462,18 @@ void BottomLabel::showDialog() const
 
     dialog->move(globalLabelPos + QPoint(x, y));
     dialog->show();
+    DLOG << "BottomLabel dialog shown";
 }
 
 void BottomLabel::onSwitchMode(int page)
 {
-    if (page > 1)
+    DLOG << "Switching to page:" << page;
+    if (page > 1) {
+        WLOG << "Invalid page index:" << page;
         return;
+    }
     stackedLayout->setCurrentIndex(page);
+    DLOG << "Page switched successfully";
 }
 
 void BottomLabel::updateSizeMode()

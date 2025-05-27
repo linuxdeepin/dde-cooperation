@@ -4,6 +4,7 @@
 
 #include "screenmirroringwindow.h"
 #include "global_defines.h"
+#include "common/log.h"
 #include "vncviewer.h"
 
 #include <QPainter>
@@ -22,6 +23,7 @@ inline constexpr char KIcon[] { ":/icons/deepin/builtin/icons/uos_assistant.png"
 ScreenMirroringWindow::ScreenMirroringWindow(const QString &device, QWidget *parent)
     : CooperationMainWindow(parent)
 {
+    DLOG << "Initializing window for device:" << device.toStdString();
     initTitleBar(device);
     initWorkWidget();
     initBottom();
@@ -38,29 +40,37 @@ ScreenMirroringWindow::ScreenMirroringWindow(const QString &device, QWidget *par
 
     connect(this, &ScreenMirroringWindow::buttonClicked, m_vncViewer, &VncViewer::onShortcutAction);
     connect(m_vncViewer, &VncViewer::sizeChanged, this, &ScreenMirroringWindow::handleSizeChange);
+    DLOG << "Initialization completed";
 }
 
 ScreenMirroringWindow::~ScreenMirroringWindow()
 {
+    DLOG << "Destroying window";
     if (m_vncViewer) {
+        DLOG << "Stopping VNC viewer";
         m_vncViewer->stop();
     }
+    DLOG << "Destruction completed";
 }
 
 void ScreenMirroringWindow::initWorkWidget()
 {
+    DLOG << "Initializing work widgets";
     stackedLayout = new QStackedLayout;
 
     m_vncViewer = new VncViewer(this);
     stackedLayout->addWidget(m_vncViewer);
+    DLOG << "VNC viewer initialized";
 
     LockScreenWidget *lockWidget = new LockScreenWidget(this);
     stackedLayout->addWidget(lockWidget);
     stackedLayout->setCurrentIndex(0);
+    DLOG << "Work widgets initialized";
 }
 
 void ScreenMirroringWindow::initBottom()
 {
+    DLOG << "Initializing bottom controls";
     bottomWidget = new QWidget(this);
     bottomWidget->setFixedHeight(BOTTOM_HEIGHT);
 
@@ -80,7 +90,8 @@ void ScreenMirroringWindow::initBottom()
         buttonLayout->setAlignment(Qt::AlignCenter);
         buttonLayout->setSpacing(20);
         buttonLayout->addWidget(btn);
-    }   
+    }
+    DLOG << "Bottom controls initialized";
 }
 
 void ScreenMirroringWindow::initTitleBar(const QString &device)
@@ -101,8 +112,10 @@ void ScreenMirroringWindow::initSizebyView(QSize &viewSize)
 
 void ScreenMirroringWindow::connectVncServer(const QString &ip, int port, const QString &password)
 {
+    DLOG << "Connecting to VNC server at" << ip.toStdString() << ":" << port;
     m_vncViewer->setServes(ip.toStdString(), port, password.toStdString());
     m_vncViewer->start();
+    DLOG << "VNC connection initiated";
 }
 
 void ScreenMirroringWindow::handleSizeChange(const QSize &size)
@@ -111,6 +124,7 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
     QScreen *screen = qApp->primaryScreen();
     if (screen) {
         int height = screen->geometry().height();
+        DLOG << "Screen height:" << height;
 
         if (height >= 2160) {
             // 4K
@@ -122,11 +136,13 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
             // 1080P
             scale = 2.0;
         }
+        DLOG << "Using scale factor:" << scale;
     }
 
     auto titleBar = titlebar();
     int w = (size.width() / scale);
     int h = (size.height() / scale) + titleBar->height() + BOTTOM_HEIGHT;
+    DLOG << "Calculated window size:" << w << "x" << h;
 
     if (!initShow && screen) {
         int width = screen->geometry().width();
@@ -142,12 +158,14 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
         int x = width - offw;
         int y = (height - offh) / 2; // 垂直居中
 
+        DLOG << "Initial window position:" << x << "," << y;
         this->move(x, y);
         initShow = true;
     }
 
     // only the size is biger current size can be resized.
     if (w > this->width() || h > this->height()) {
+        DLOG << "Resizing window to:" << w << "x" << h;
         m_expectSize = QSize(0, 0); // has been resize, reset.
         this->resize(w, h);
     } else {

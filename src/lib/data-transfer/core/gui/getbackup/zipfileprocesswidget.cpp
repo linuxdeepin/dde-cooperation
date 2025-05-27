@@ -17,10 +17,14 @@
 
 ZipFileProcessWidget::ZipFileProcessWidget(QWidget *parent) : QFrame(parent)
 {
+    DLOG << "Widget constructor called";
     initUI();
 }
 
-ZipFileProcessWidget::~ZipFileProcessWidget() { }
+ZipFileProcessWidget::~ZipFileProcessWidget()
+{
+    DLOG << "Widget destructor called";
+}
 
 void ZipFileProcessWidget::updateProcess(const QString &content, int processbar, int estimatedtime)
 {
@@ -30,9 +34,11 @@ void ZipFileProcessWidget::updateProcess(const QString &content, int processbar,
     }
     // Transfer success or failure to go to the next page
     if (processbar == 100 || processbar == -1) {
+        DLOG << "Zip process completed with status:" << processbar << ", proceeding to next page";
         nextPage();
         return;
     }
+    DLOG << "Updating zip process:" << processbar << "% - Current file:" << content.toStdString();
     changeFileLabel(deepin_cross::CommonUitls::elidedText(content, Qt::ElideMiddle, 40));
     changeTimeLabel(estimatedtime);
     changeProgressBarLabel(processbar);
@@ -42,15 +48,18 @@ void ZipFileProcessWidget::changeFileLabel(const QString &path)
 {
     QString info = QString(QString("<font color='#526A7F'>&nbsp;&nbsp;&nbsp;%1</font>")
                                    .arg(tr("Packing  %1").arg(path)));
+    DLOG << "Updating current file label to:" << path.toStdString();
     fileLabel->setText(info);
 }
 
 void ZipFileProcessWidget::changeTimeLabel(const int &time)
 {
+    DLOG << "Updating estimated time:" << time << "seconds";
     if (time > 60) {
         int textTime = time / 60;
         timeLabel->setText(QString(
                 tr("Transfer will be completed in %1 minutes").arg(QString::number(textTime))));
+        DLOG << "Converted to minutes:" << textTime;
     } else {
         timeLabel->setText(QString(
                 tr("Transfer will be completed in %1 secondes").arg(QString::number(time))));
@@ -59,6 +68,7 @@ void ZipFileProcessWidget::changeTimeLabel(const int &time)
 
 void ZipFileProcessWidget::changeProgressBarLabel(const int &processbar)
 {
+    DLOG << "Updating progress bar to:" << processbar << "%";
     progressLabel->setProgress(processbar);
 }
 
@@ -128,5 +138,6 @@ void ZipFileProcessWidget::initUI()
 
 void ZipFileProcessWidget::nextPage()
 {
+    DLOG << "Navigation initiated to result widget";
     emit TransferHelper::instance()->changeWidget(PageName::zipfileprocessresultwidget);
 }

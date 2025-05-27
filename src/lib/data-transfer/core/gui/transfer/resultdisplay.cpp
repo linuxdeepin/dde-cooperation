@@ -13,13 +13,20 @@
 ResultDisplayWidget::ResultDisplayWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Initializing result display widget";
+
     initUI();
 }
 
-ResultDisplayWidget::~ResultDisplayWidget() {}
+ResultDisplayWidget::~ResultDisplayWidget()
+{
+    DLOG << "Destroying result display widget";
+}
 
 void ResultDisplayWidget::initUI()
 {
+    DLOG << "Initializing UI";
+
     setStyleSheet(".ResultDisplayWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -74,6 +81,8 @@ void ResultDisplayWidget::initUI()
 
 void ResultDisplayWidget::nextPage()
 {
+    DLOG << "Navigating to next page";
+
     TransferHelper::instance()->sendMessage("change_page", "startTransfer");
     QTimer::singleShot(1000, this, [this] {
         QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
@@ -90,6 +99,8 @@ void ResultDisplayWidget::nextPage()
 
 void ResultDisplayWidget::themeChanged(int theme)
 {
+    DLOG << "Theme changed to:" << (theme == 1 ? "Light" : "Dark");
+
     // light
     if (theme == 1) {
         setStyleSheet(".ResultDisplayWidget{background-color: white; border-radius: 10px;}");
@@ -102,6 +113,9 @@ void ResultDisplayWidget::themeChanged(int theme)
 
 void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
 {
+    DLOG << "Adding result - Name:" << name.toStdString()
+             << "Success:" << success << "Reason:" << reason.toStdString();
+
     QString info, color;
     if (!success)
         setStatus(false);
@@ -113,6 +127,8 @@ void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
 
 void ResultDisplayWidget::clear()
 {
+    DLOG << "Clearing all results";
+
     resultWindow->clear();
     processText.clear();
     setStatus(true);
@@ -120,6 +136,8 @@ void ResultDisplayWidget::clear()
 
 void ResultDisplayWidget::setStatus(bool success)
 {
+    DLOG << "Setting status to:" << success;
+
     tiptextlabel->setVisible(!success);
     if (success) {
         titileLabel->setText(tr("Transfer completed"));
@@ -133,15 +151,20 @@ void ResultDisplayWidget::setStatus(bool success)
 ResultWindow::ResultWindow(QFrame *parent)
     : ProcessDetailsWindow(parent)
 {
+    DLOG << "Initializing result window";
     init();
 }
 
 ResultWindow::~ResultWindow()
 {
+    DLOG << "Destroying result window";
 }
 
 void ResultWindow::updateContent(const QString &name, const QString &type, bool success)
 {
+    DLOG << "Updating content - Name:" << name.toStdString()
+             << "Type:" << type.toStdString() << "Success:" << success;
+
     int maxWith = 430;
     QString nameT = QFontMetrics(StyleHelper::font(3)).elidedText(name, Qt::ElideRight, maxWith);
     QString typeT = QFontMetrics(StyleHelper::font(3)).elidedText(type, Qt::ElideRight, maxWith);
@@ -171,6 +194,8 @@ void ResultWindow::updateContent(const QString &name, const QString &type, bool 
 
 void ResultWindow::changeTheme(int theme)
 {
+    DLOG << "Changing theme to:" << (theme == 1 ? "Light" : "Dark");
+
     if (theme == 1) {
         setStyleSheet(".ResultWindow{background-color: rgba(0, 0, 0, 0.08);"
                       "border-radius: 10px;"
@@ -190,6 +215,8 @@ void ResultWindow::changeTheme(int theme)
 
 void ResultWindow::init()
 {
+    DLOG << "Initializing components";
+
     setStyleSheet(".ResultWindow{background-color: rgba(0, 0, 0, 0.08);"
                   "border-radius: 10px;"
                   "padding: 10px 5px 10px 10px;"

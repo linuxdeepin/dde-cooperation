@@ -9,12 +9,14 @@
 #include <QMovie>
 
 #include "gui/utils/cooperationguihelper.h"
+#include "common/log.h"
 
 using namespace cooperation_core;
 
 ConfirmWidget::ConfirmWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "ConfirmWidget constructor";
     init();
 }
 
@@ -22,6 +24,7 @@ void ConfirmWidget::setDeviceName(const QString &name)
 {
     static QString msg(tr("\"%1\" send some files to you"));
     msgLabel->setText(msg.arg(name));
+    DLOG << "Set device name for confirmation:" << name.toStdString();
 }
 
 void ConfirmWidget::init()
@@ -47,6 +50,7 @@ void ConfirmWidget::init()
 WaitConfirmWidget::WaitConfirmWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "WaitConfirmWidget constructor";
     init();
 }
 
@@ -96,6 +100,7 @@ void WaitConfirmWidget::init()
 ProgressWidget::ProgressWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "ProgressWidget constructor";
     init();
 }
 
@@ -140,11 +145,14 @@ void ProgressWidget::init()
 ResultWidget::ResultWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "ResultWidget constructor";
     init();
 }
 
 void ResultWidget::setResult(bool success, const QString &msg, bool view)
 {
+    DLOG << "Setting result widget state, success:" << success
+                              << "message:" << msg.toStdString() << "viewable:" << view;
     res = success;
     if (success) {
         QIcon icon(":/icons/deepin/builtin/icons/transfer_success_128px.svg");
@@ -199,6 +207,7 @@ CooperationTransDialog::CooperationTransDialog(QWidget *parent)
 
 void CooperationTransDialog::showConfirmDialog(const QString &name)
 {
+    DLOG << "Showing confirm dialog for device:" << name.toStdString();
     confirmWidget->setDeviceName(name);
     mainLayout->setCurrentWidget(confirmWidget);
     show();
@@ -206,6 +215,7 @@ void CooperationTransDialog::showConfirmDialog(const QString &name)
 
 void CooperationTransDialog::showWaitConfirmDialog()
 {
+    DLOG << "Showing wait confirmation dialog";
     waitconfirmWidget->startMovie();
     mainLayout->setCurrentWidget(waitconfirmWidget);
     show();
@@ -213,6 +223,8 @@ void CooperationTransDialog::showWaitConfirmDialog()
 
 void CooperationTransDialog::showResultDialog(bool success, const QString &msg, bool view)
 {
+    DLOG << "Showing result dialog, success:" << success
+                             << "message:" << msg.toStdString() << "viewable:" << view;
     mainLayout->setCurrentWidget(resultWidget);
     resultWidget->setResult(success, msg, view);
     show();
@@ -226,10 +238,12 @@ void CooperationTransDialog::showProgressDialog(const QString &title)
     progressWidget->setTitle(title);
     mainLayout->setCurrentWidget(progressWidget);
     show();
+    DLOG << "Progress dialog shown";
 }
 
 void CooperationTransDialog::updateProgress(int value, const QString &msg)
 {
+    DLOG << "Updating progress:" << value << "% message:" << msg.toStdString();
     progressWidget->setProgress(value, msg);
 }
 
@@ -239,10 +253,13 @@ void CooperationTransDialog::closeEvent(QCloseEvent *e)
         e->accept();
 
     if (mainLayout->currentWidget() == confirmWidget) {
+        DLOG << "User closed confirmation dialog, emitting rejected";
         Q_EMIT rejected();
     } else if (mainLayout->currentWidget() == progressWidget) {
+        DLOG << "User closed progress dialog, canceling transfer";
         Q_EMIT cancel();
     } else if (mainLayout->currentWidget() == waitconfirmWidget) {
+        DLOG << "User closed wait confirmation dialog, canceling apply";
         Q_EMIT cancelApply();
     } else if (mainLayout->currentWidget() == resultWidget) {
         if (qApp->property("onlyTransfer").toBool() && resultWidget->getResult())
@@ -252,12 +269,15 @@ void CooperationTransDialog::closeEvent(QCloseEvent *e)
 
 void CooperationTransDialog::init()
 {
+    DLOG << "Initializing dialog components";
 #ifdef linux
     setIcon(QIcon::fromTheme("dde-cooperation"));
     setTitle(tr("File Transfer"));
+    DLOG << "Set Linux theme icon and title";
 #else
     setWindowTitle(tr("File transfer"));
     setWindowIcon(QIcon(":/icons/deepin/builtin/icons/dde-cooperation_128px.svg"));
+    DLOG << "Set Windows theme icon and title";
 #endif
     // it has to set fixed size, which may crash on treeland and workaround UI not smooth.
     setFixedSize(380, 220);
@@ -289,7 +309,9 @@ void CooperationTransDialog::init()
     addContent(contentWidget);
     setContentsMargins(0, 0, 0, 0);
 #else
+    DLOG << "Configuring Windows style dialog";
     setLayout(mainLayout);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 #endif
+    DLOG << "Dialog initialization complete";
 }

@@ -2,6 +2,8 @@
 #include "../type_defines.h"
 #include "../win/drapwindowsdata.h"
 #include "item.h"
+#include "common/log.h"
+
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
@@ -18,13 +20,19 @@
 
 AppSelectWidget::AppSelectWidget(QWidget *parent) : QFrame(parent)
 {
+    DLOG << "Initializing application selection widget";
     initUI();
 }
 
-AppSelectWidget::~AppSelectWidget() { }
+AppSelectWidget::~AppSelectWidget()
+{
+    DLOG << "Destroying application selection widget";
+}
 
 void AppSelectWidget::initUI()
 {
+    DLOG << "Initializing UI components";
+
     setStyleSheet(".AppSelectWidget{background-color: white; border-radius: 8px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -72,6 +80,8 @@ void AppSelectWidget::initUI()
 
 void AppSelectWidget::initSelectFrame()
 {
+    DLOG << "Initializing application selection frame";
+
     QVBoxLayout *selectframeLayout = new QVBoxLayout();
     selectframeLayout->setContentsMargins(1, 1, 1, 1);
     ItemTitlebar *titlebar = new ItemTitlebar(tr("Application"), tr("Recommendation"), 40, 360,
@@ -158,6 +168,8 @@ void AppSelectWidget::clear()
 
 void AppSelectWidget::sendOptions()
 {
+    DLOG << "Sending selected application options";
+
     QStringList appName;
     QAbstractItemModel *model = appView->model();
     for (int row = 0; row < model->rowCount(); ++row) {
@@ -177,6 +189,8 @@ void AppSelectWidget::sendOptions()
 
 void AppSelectWidget::delOptions()
 {
+    DLOG << "Clearing selected application options";
+
     // Clear All App Selections
     QAbstractItemModel *model = appView->model();
     for (int row = 0; row < model->rowCount(); ++row) {
@@ -195,6 +209,8 @@ void AppSelectWidget::delOptions()
 
 void AppSelectWidget::nextPage()
 {
+    DLOG << "Navigating to next page";
+
     // send useroptions
     sendOptions();
 
@@ -203,6 +219,8 @@ void AppSelectWidget::nextPage()
 }
 void AppSelectWidget::backPage()
 {
+    DLOG << "Returning to previous page";
+
     // delete Options
     delOptions();
     // backpage

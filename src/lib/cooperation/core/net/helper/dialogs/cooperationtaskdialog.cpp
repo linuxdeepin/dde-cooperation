@@ -18,12 +18,15 @@ CooperationTaskDialog::CooperationTaskDialog(QWidget *parent)
 
 void CooperationTaskDialog::switchWaitPage(const QString &title)
 {
+    DLOG << "Switching to wait page, title:" << title.toStdString();
     setTaskTitle(title);
     switchLayout->setCurrentIndex(0);
 }
 
 void CooperationTaskDialog::switchFailPage(const QString &title, const QString &msg, bool retry)
 {
+    DLOG << "Switching to fail page, title:" << title.toStdString()
+                      << "message:" << msg.toStdString() << "retry:" << retry;
     setTaskTitle(title);
 
     failMsgLabel->setText(msg);
@@ -33,6 +36,8 @@ void CooperationTaskDialog::switchFailPage(const QString &title, const QString &
 
 void CooperationTaskDialog::switchConfirmPage(const QString &title, const QString &msg)
 {
+    DLOG << "Switching to confirm page, title:" << title.toStdString()
+                      << "message:" << msg.toStdString();
     setTaskTitle(title);
     confirmMsgLabel->setText(msg);
     switchLayout->setCurrentIndex(2);
@@ -40,6 +45,8 @@ void CooperationTaskDialog::switchConfirmPage(const QString &title, const QStrin
 
 void CooperationTaskDialog::switchInfomationPage(const QString &title, const QString &msg)
 {
+    DLOG << "Switching to information page, title:" << title.toStdString()
+                      << "message:" << msg.toStdString();
     setTaskTitle(title);
     infoLabel->setText(msg);
     switchLayout->setCurrentIndex(3);
@@ -47,6 +54,7 @@ void CooperationTaskDialog::switchInfomationPage(const QString &title, const QSt
 
 void CooperationTaskDialog::init()
 {
+    DLOG << "Initializing dialog components";
 #ifdef linux
     setIcon(QIcon::fromTheme("dde-cooperation"));
 #else
@@ -65,10 +73,13 @@ void CooperationTaskDialog::init()
     contentWidget->setLayout(switchLayout);
     addContent(contentWidget);
     setContentsMargins(0, 0, 0, 0);
+    DLOG << "Configured Linux style dialog";
 #else
     setLayout(switchLayout);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    DLOG << "Configured Windows style dialog";
 #endif
+    DLOG << "Dialog initialization complete";
 }
 
 void CooperationTaskDialog::setTaskTitle(const QString &title)
@@ -78,10 +89,12 @@ void CooperationTaskDialog::setTaskTitle(const QString &title)
 #else
     setWindowTitle(title);
 #endif
+    DLOG << "Dialog title updated";
 }
 
 QWidget *CooperationTaskDialog::createWaitPage()
 {
+    DLOG << "Creating wait page";
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
     vlayout->setContentsMargins(0, 0, 0, 0);
@@ -92,6 +105,7 @@ QWidget *CooperationTaskDialog::createWaitPage()
     spinner->setFocusPolicy(Qt::NoFocus);
 #ifdef linux
     spinner->start();
+    DLOG << "Started spinner animation on Linux";
 #endif
 
     QPushButton *celBtn = new QPushButton(tr("Cancel", "button"), this);
@@ -100,6 +114,7 @@ QWidget *CooperationTaskDialog::createWaitPage()
     vlayout->addWidget(spinner, 0, Qt::AlignHCenter);
     vlayout->addWidget(celBtn, 0, Qt::AlignBottom);
 
+    DLOG << "Wait page created with spinner and cancel button";
     return widget;
 }
 
@@ -130,6 +145,7 @@ QWidget *CooperationTaskDialog::createFailPage()
 
 QWidget *CooperationTaskDialog::createConfirmPage()
 {
+    DLOG << "Creating confirm page";
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
     vlayout->setContentsMargins(0, 0, 0, 0);
@@ -150,6 +166,8 @@ QWidget *CooperationTaskDialog::createConfirmPage()
 
     vlayout->addWidget(confirmMsgLabel);
     vlayout->addLayout(hlayout);
+
+    DLOG << "Confirm page created with reject/accept buttons";
     return widget;
 }
 
@@ -168,5 +186,6 @@ QWidget *CooperationTaskDialog::createInfomationPage()
 
     vlayout->addWidget(infoLabel);
     vlayout->addWidget(closeBtn, 0, Qt::AlignBottom);
+    DLOG << "Information page created";
     return widget;
 }

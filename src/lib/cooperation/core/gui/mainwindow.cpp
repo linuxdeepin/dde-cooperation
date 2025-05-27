@@ -7,6 +7,7 @@
 #include "dialogs/settingdialog.h"
 #include "utils/cooperationutil.h"
 #include "widgets/cooperationstatewidget.h"
+#include "common/log.h"
 
 #include <QScreen>
 #include <QUrl>
@@ -97,14 +98,17 @@ MainWindow::MainWindow(QWidget *parent)
     : CooperationMainWindow(parent),
       d(new MainWindowPrivate(this))
 {
+    DLOG << "Initializing main window";
     d->initWindow();
     d->initTitleBar();
     d->moveCenter();
     d->initConnect();
+    DLOG << "Initialization completed";
 }
 
 MainWindow::~MainWindow()
 {
+    DLOG << "Destroying main window";
 }
 
 // DeviceInfoPointer MainWindow::findDeviceInfo(const QString &ip)
@@ -119,16 +123,20 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     showCloseDialog();
     event->ignore();
+    DLOG << "Close event handled";
 }
 
 void MainWindow::onlineStateChanged(const QString &validIP)
 {
+    DLOG << "Online state changed, IP:" << validIP.toStdString();
     bool offline = validIP.isEmpty();
     if (offline) {
+        DLOG << "Device is offline";
         d->workspaceWidget->clear();
         d->workspaceWidget->switchWidget(WorkspaceWidget::kNoNetworkWidget);
         d->setIP("---");
     } else {
+        DLOG << "Device is online";
         d->setIP(validIP);
     }
 }
@@ -140,10 +148,12 @@ void MainWindow::setFirstTipVisible()
 
 void MainWindow::onLookingForDevices()
 {
+    DLOG << "Looking for devices";
     _userAction = true;
     emit refreshDevices();
     d->workspaceWidget->clear();
     d->workspaceWidget->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
+    DLOG << "Device search started";
 }
 
 void MainWindow::onSwitchMode(CooperationMode mode)
@@ -154,25 +164,32 @@ void MainWindow::onSwitchMode(CooperationMode mode)
 
 void MainWindow::onFindDevice(const QString &ip)
 {
+    DLOG << "Searching for device with IP:" << ip.toStdString();
     _userAction = true;
     emit searchDevice(ip);
+    DLOG << "Device search request sent";
 }
 
 void MainWindow::onDiscoveryFinished(bool hasFound)
 {
+    DLOG << "Device discovery finished, found:" << hasFound;
     if (!hasFound && _userAction) {
+        DLOG << "No devices found";
         d->workspaceWidget->switchWidget(WorkspaceWidget::kNoResultWidget);
     }
 
     _userAction = false;
+    DLOG << "Discovery process completed";
 }
 
 void MainWindow::addDevice(const QList<DeviceInfoPointer> &infoList)
 {
+    DLOG << "Adding" << infoList.size() << "devices";
     d->workspaceWidget->switchWidget(WorkspaceWidget::kDeviceListWidget);
     d->workspaceWidget->addDeviceInfos(infoList);
 
     _userAction = false;
+    DLOG << "Devices added successfully";
 }
 
 #ifdef ENABLE_PHONE
@@ -200,7 +217,9 @@ void MainWindow::addMobileOperation(const QVariantMap &map)
 
 void MainWindow::removeDevice(const QString &ip)
 {
+    DLOG << "Removing device with IP:" << ip.toStdString();
     d->workspaceWidget->removeDeviceInfos(ip);
+    DLOG << "Device removed";
 }
 
 void MainWindow::onRegistOperations(const QVariantMap &map)
@@ -232,6 +251,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 void MainWindow::showCloseDialog()
 {
+    DLOG << "Showing close dialog";
     QString option = CooperationUtil::closeOption();
     if (option == "Minimise") {
         minimizedAPP();
@@ -306,9 +326,12 @@ void MainWindow::showCloseDialog()
 
 void MainWindow::minimizedAPP()
 {
+    DLOG << "Minimizing application to tray";
     this->hide();
-    if (d->trayIcon)
+    if (d->trayIcon) {
+        DLOG << "Tray icon already exists";
         return;
+    }
     d->trayIcon = new QSystemTrayIcon(QIcon::fromTheme(Kicon), this);
 
     QMenu *trayMenu = new QMenu(this);
@@ -324,4 +347,5 @@ void MainWindow::minimizedAPP()
         if (reason == QSystemTrayIcon::Trigger)
             this->show();
     });
+    DLOG << "Application minimized to tray";
 }

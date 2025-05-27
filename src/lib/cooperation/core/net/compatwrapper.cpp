@@ -23,16 +23,19 @@ using namespace cooperation_core;
 CompatWrapperPrivate::CompatWrapperPrivate(CompatWrapper *qq)
     : q(qq)
 {
+    DLOG << "CompatWrapperPrivate constructor";
     ipcInterface = new SlotIPCInterface();
 
     ipcTimer = new QTimer(this);
     connect(ipcTimer, &QTimer::timeout, this, &CompatWrapperPrivate::onTimeConnectBackend);
     ipcTimer->setSingleShot(true);
     ipcTimer->start(500);
+    DLOG << "Started IPC connection timer";
 }
 
 CompatWrapperPrivate::~CompatWrapperPrivate()
 {
+    DLOG << "CompatWrapperPrivate destructor";
 }
 
 void CompatWrapperPrivate::onTimeConnectBackend()
@@ -65,7 +68,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
 
     switch (type) {
     case ipc::IPC_PING: {
-
+        DLOG << "Received IPC ping message";
     } break;
     case ipc::FRONT_PEER_CB: {
         // WLOG << "recv IPC json:" << json_obj;
@@ -73,10 +76,12 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         ipc::GenericResult param;
         param.from_json(json_obj);
         bool find = param.result > 0;
+        DLOG << "Peer found status:" << find;
 
         picojson::value obj;
         std::string err = picojson::parse(obj, param.msg);
         if (!err.empty()) {
+            WLOG << "Failed to parse peer data:" << err.c_str();
             WLOG << "Failed to parse peer data: " << err;
             return;
         }
@@ -107,6 +112,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
 
         if (infoMap.empty()) {
             if (!find) {
+                DLOG << "Removing device from discovery list:" << ip.toStdString();
                 q->metaObject()->invokeMethod(DiscoverController::instance(),
                                               "compatRemoveDeivce",
                                               Qt::QueuedConnection,
@@ -266,14 +272,17 @@ CompatWrapper::CompatWrapper(QObject *parent)
     : QObject(parent),
     d(new CompatWrapperPrivate(this))
 {
+    DLOG << "CompatWrapper constructor";
 }
 
 CompatWrapper::~CompatWrapper()
 {
+    DLOG << "CompatWrapper destructor";
 }
 
 CompatWrapper *CompatWrapper::instance()
 {
+    DLOG << "Getting CompatWrapper instance";
     static CompatWrapper ins;
     return &ins;
 }
@@ -288,5 +297,6 @@ SlotIPCInterface *CompatWrapper::ipcInterface()
 
 QString CompatWrapper::session()
 {
+    DLOG << "Getting session ID:" << d->sessionId.toStdString();
     return d->sessionId;
 }

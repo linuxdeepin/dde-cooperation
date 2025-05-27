@@ -24,13 +24,18 @@ DCORE_USE_NAMESPACE
 SettingHelper::SettingHelper()
     : QObject()
 {
+    DLOG << "Creating SettingHelper instance";
     initAppList();
 }
 
-SettingHelper::~SettingHelper() {}
+SettingHelper::~SettingHelper()
+{
+    DLOG << "Destroying SettingHelper instance";
+}
 
 SettingHelper *SettingHelper::instance()
 {
+    DLOG << "Accessing SettingHelper singleton instance";
     static SettingHelper ins;
     return &ins;
 }

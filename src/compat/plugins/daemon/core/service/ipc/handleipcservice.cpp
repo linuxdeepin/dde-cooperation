@@ -36,6 +36,9 @@ QString HandleIpcService::bindSignal(const QString& appname, const QString& sign
     _sessionIDs.insert(appname, sesid);
     // 创建新的sessionid
     SendIpcService::instance()->handleSaveSession(appname, sesid, signalname);
+    DLOG << "Bound signal for app:" << appname.toStdString()
+                        << "signal:" << signalname.toStdString()
+                        << "session:" << sesid.toStdString();
     return sesid;
 }
 
@@ -139,6 +142,12 @@ void HandleIpcService::doTryConnect(const QString& appname, const QString& targe
 void HandleIpcService::doTransferFile(const QString& session, const QString &targetsession, const int jobid,
                                 const QStringList paths, const bool hassub, const QString savedir)
 {
+    DLOG << "Starting file transfer job:" << jobid
+                        << "session:" << session.toStdString()
+                        << "target:" << targetsession.toStdString()
+                        << "files:" << paths.size()
+                        << "subdirs:" << hassub
+                        << "savepath:" << savedir.toStdString();
     newTransSendJob(session, targetsession, jobid, paths, hassub, savedir);
 }
 
@@ -360,6 +369,8 @@ void HandleIpcService::handleNodeRegister(bool unreg, const co::Json &info)
         fastring appname = appPeer.appname;
         // 移除ping
         SendRpcService::instance()->removePing(appname.c_str());
+        DLOG << "Unregistering app:" << appname.c_str()
+                            << "reason: session terminated";
         SendIpcService::instance()->handleRemoveSessionByAppName(appname.c_str());
     }
 

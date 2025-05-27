@@ -20,6 +20,7 @@ using namespace cooperation_core;
 CompatWrapperPrivate::CompatWrapperPrivate(CompatWrapper *qq)
     : q(qq)
 {
+    DLOG << "Initializing CompatWrapper private implementation";
     ipcInterface = new SlotIPCInterface();
 
     ipcTimer = new QTimer(this);
@@ -30,6 +31,7 @@ CompatWrapperPrivate::CompatWrapperPrivate(CompatWrapper *qq)
 
 CompatWrapperPrivate::~CompatWrapperPrivate()
 {
+    DLOG << "Destroying CompatWrapper private implementation";
 }
 
 void CompatWrapperPrivate::onTimeConnectBackend()
@@ -148,10 +150,12 @@ CompatWrapper::CompatWrapper(QObject *parent)
     : QObject(parent),
     d(new CompatWrapperPrivate(this))
 {
+    DLOG << "Creating CompatWrapper instance";
 }
 
 CompatWrapper::~CompatWrapper()
 {
+    DLOG << "Destroying CompatWrapper instance";
 }
 
 CompatWrapper *CompatWrapper::instance()

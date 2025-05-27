@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "cooperationsearchedit.h"
+#include "common/log.h"
 
 #include <QEvent>
 #include <QHBoxLayout>
@@ -17,6 +18,7 @@ const char *iconpath = ":/icons/deepin/builtin/texts/search_icon.svg";
 CooperationSearchEdit::CooperationSearchEdit(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Initializing search edit";
     setStyleSheet("border-radius: 8px;"
                   "background-color: rgba(0,0,0,0.1);");
 
@@ -62,6 +64,7 @@ CooperationSearchEdit::CooperationSearchEdit(QWidget *parent)
     mainLayout->addWidget(searchEdit);
     mainLayout->setMargin(0);
     mainLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    DLOG << "Initialization completed";
 }
 
 QString CooperationSearchEdit::text() const
@@ -84,11 +87,13 @@ bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
     if (obj == searchEdit) {
         QIcon searchicon(iconpath);
         if (event->type() == QEvent::FocusIn) {
+            DLOG << "Search edit gained focus";
             searchIcon->setPixmap(searchicon.pixmap(17, 17));
             searchIcon->setGeometry(15, 7, 20, 20);
             searchText->setVisible(false);
             searchEdit->setPlaceholderText(placeholderText);
         } else if (event->type() == QEvent::FocusOut && searchEdit->text().isEmpty()) {
+            DLOG << "Search edit lost focus";
             searchIcon->setPixmap(searchicon.pixmap(17, 17));
             searchIcon->setGeometry(125, 7, 20, 20);
             searchText->setVisible(true);
@@ -100,6 +105,8 @@ bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
 
 void CooperationSearchEdit::focusInEvent(QFocusEvent *event)
 {
+    DLOG << "Handling focus in event";
     searchEdit->setFocus();
     QWidget::focusInEvent(event);
+    DLOG << "Focus set to search edit";
 }

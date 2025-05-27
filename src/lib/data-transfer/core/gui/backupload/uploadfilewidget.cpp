@@ -19,11 +19,13 @@
 UploadFileWidget::UploadFileWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Widget constructor called";
     initUI();
 }
 
 UploadFileWidget::~UploadFileWidget()
 {
+    DLOG << "Widget destructor called";
 }
 
 void UploadFileWidget::initUI()
@@ -65,15 +67,19 @@ void UploadFileWidget::initUI()
     connect(backButton, &QPushButton::clicked, this, &UploadFileWidget::backPage);
     connect(nextButton, &QPushButton::clicked, this, [this]() {
         if (nextButton->text() == tr("Retry")) {
+            DLOG << "User clicked retry button, resetting upload UI";
             emit uploadFileFrame->updateUI(uploadStatus::Initial);
             tipLabel->setVisible(false);
             return;
         }
+        DLOG << "Next button clicked, checking backup file";
         if (!checkBackupFile(uploadFileFrame->getZipFilePath())) {
+            qWarning() << "Backup file validation failed";
             tipLabel->setVisible(true);
             nextButton->setText(tr("Retry"));
             return;
         }
+        DLOG << "Starting unzip worker for file:" << uploadFileFrame->getZipFilePath().toStdString();
         UnzipWorker *woker = new UnzipWorker(uploadFileFrame->getZipFilePath());
         woker->start();
         nextPage();
@@ -141,6 +147,7 @@ void UploadFileWidget::clear()
 
 void UploadFileWidget::nextPage()
 {
+    DLOG << "Navigating to transferring widget";
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(PageName::transferringwidget);
@@ -161,6 +168,8 @@ void UploadFileWidget::backPage()
 
 void UploadFileWidget::themeChanged(int theme)
 {
+    DLOG << "Theme changed to:" << (theme == 1 ? "light" : "dark");
+
     //light
     if (theme == 1) {
         setStyleSheet(".UploadFileWidget{background-color: white; border-radius: 10px;}");

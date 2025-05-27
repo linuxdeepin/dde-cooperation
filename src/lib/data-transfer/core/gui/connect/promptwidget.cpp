@@ -1,5 +1,6 @@
 ﻿#include "promptwidget.h"
 #include "../type_defines.h"
+#include "common/log.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -13,10 +14,14 @@
 PromptWidget::PromptWidget(QWidget *parent)
     : QFrame(parent)
 {
+    DLOG << "Widget constructor called";
     initUI();
 }
 
-PromptWidget::~PromptWidget() {}
+PromptWidget::~PromptWidget()
+{
+    DLOG << "Widget destructor called";
+}
 
 void PromptWidget::initUI()
 {
@@ -77,8 +82,10 @@ void PromptWidget::initUI()
 void PromptWidget::nextPage()
 {
 #ifdef _WIN32
+    DLOG << "Navigating to ready widget (Windows)";
     emit TransferHelper::instance()->changeWidget(PageName::readywidget);
 #else
+    DLOG << "Navigating to connect widget";
     emit TransferHelper::instance()->changeWidget(PageName::connectwidget);
 
 #endif
@@ -86,11 +93,13 @@ void PromptWidget::nextPage()
 
 void PromptWidget::backPage()
 {
+    DLOG << "Returning to choose widget";
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
 void PromptWidget::themeChanged(int theme)
 {
+    DLOG << "Theme changed to:" << (theme == 1 ? "light" : "dark");
     // light
     if (theme == 1) {
         setStyleSheet(".PromptWidget{background-color: white; border-radius: 10px;}");

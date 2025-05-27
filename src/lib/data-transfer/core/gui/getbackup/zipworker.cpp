@@ -29,7 +29,10 @@ ZipWork::ZipWork(QObject *parent) : QThread(parent)
                      &ZipWork::abortingBackupFileProcess);
 }
 
-ZipWork::~ZipWork() { }
+ZipWork::~ZipWork()
+{
+    DLOG << "Destroying zip worker";
+}
 
 void ZipWork::run()
 {
@@ -65,6 +68,7 @@ int ZipWork::getPathFileNum(const QString &filePath)
         }
     }
 
+    DLOG << "File count for path" << filePath.toStdString() << ":" << fileCount;
     return fileCount;
 }
 
@@ -76,6 +80,7 @@ int ZipWork::getAllFileNum(const QStringList &fileList)
         int curPathFileNum = getPathFileNum(filePath);
         fileNum += curPathFileNum;
     }
+    DLOG << "Total files counted:" << fileNum;
     return fileNum;
 }
 
@@ -143,6 +148,8 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
 bool ZipWork::addFolderToZip(const QString &sourceFolder, const QString &relativeTo, QuaZip &zip,
                              QElapsedTimer &timer)
 {
+    DLOG << "Adding folder to zip:" << sourceFolder.toStdString();
+
     QDir directory(sourceFolder);
     QFileInfoList entries = directory.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
 
@@ -172,6 +179,8 @@ bool ZipWork::addFolderToZip(const QString &sourceFolder, const QString &relativ
 
 bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZipFile)
 {
+    DLOG << "Starting backup of" << entries.size() << "entries to" << destinationZipFile.toStdString();
+
     zipFile = destinationZipFile;
     QuaZip zip(destinationZipFile);
     QElapsedTimer timer;
@@ -183,6 +192,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
         return false;
     }
 
+    DLOG << "ZIP file created successfully, starting compression...";
     for (QString entry : entries) {
 
         QFileInfo fileInfo(entry);
@@ -200,6 +210,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     }
 
     zip.close();
+    DLOG << "ZIP file closed, verifying integrity...";
 
     if (zip.getZipError() != UNZ_OK) {
         qCritical() << "Error while compressing. Error code:" << zip.getZipError();
@@ -210,12 +221,15 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     }
 
     // backup file true
+    DLOG << "Backup completed successfully to:" << destinationZipFile.toStdString();
     emit backupFileProcessSingal(QString(tr("Back up file done")), 100, 0);
     return true;
 }
 
 void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &timer, int size)
 {
+    DLOG << "Processing file:" << filePath.toStdString() << "Size:" << size;
+
     zipFileSize += size;
     num += size;
     double progress = (static_cast<double>(zipFileSize) / static_cast<double>(allFileSize)) * 100;
@@ -278,6 +292,7 @@ QString ZipWork::getBackupFilName()
 
 void ZipWork::sendBackupFileFailMessage(const QString &path)
 {
+    DLOG << "Sending failure notification for:" << path.toStdString();
     QString text = deepin_cross::CommonUitls::elidedText(path, Qt::ElideRight,50);
     emit backupFileProcessSingal(
             QString(tr("%1 File compression failed")).arg(text), -1, -1);
@@ -285,6 +300,8 @@ void ZipWork::sendBackupFileFailMessage(const QString &path)
 
 void ZipWork::abortingBackupFileProcess()
 {
+    DLOG << "Aborting backup process due to application shutdown";
+
     abort = true;
     //  quit();
     // wait();

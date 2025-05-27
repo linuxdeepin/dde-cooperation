@@ -9,6 +9,7 @@
 #include "configs/settings/configmanager.h"
 #include "configs/dconfig/dconfigmanager.h"
 #include "common/qtcompat.h"
+#include "common/log.h"
 
 #ifdef linux
 #    include <DPalette>
@@ -41,6 +42,8 @@ SettingDialogPrivate::SettingDialogPrivate(SettingDialog *qq)
     : QObject(qq),
       q(qq)
 {
+    DLOG << "SettingDialogPrivate created";
+
     findComboBoxInfo << tr("Everyone in the same LAN")
 
                      << tr("Not allow");
@@ -58,10 +61,12 @@ SettingDialogPrivate::SettingDialogPrivate(SettingDialog *qq)
 
 SettingDialogPrivate::~SettingDialogPrivate()
 {
+    DLOG << "SettingDialogPrivate destroyed";
 }
 
 void SettingDialogPrivate::initWindow()
 {
+    DLOG << "Initializing setting dialog window";
     q->setFixedSize(650, 584);
 
     contentLayout = new QVBoxLayout;
@@ -316,6 +321,7 @@ void SettingDialogPrivate::createClipboardShareWidget()
 
 void SettingDialogPrivate::onFindComboBoxValueChanged(int index)
 {
+    DLOG << "Discovery mode changed to index:" << index;
 #ifdef linux
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKey::DiscoveryModeKey, index);
 #else
@@ -325,11 +331,13 @@ void SettingDialogPrivate::onFindComboBoxValueChanged(int index)
 
 void SettingDialogPrivate::onConnectComboBoxValueChanged(int index)
 {
+    DLOG << "Connection direction changed to index:" << index;
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey, index);
 }
 
 void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 {
+    DLOG << "Transfer mode changed to index:" << index;
 #ifdef linux
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKey::TransferModeKey, index);
     reportDeviceStatus(DConfigKey::TransferModeKey, index != 2);
@@ -383,18 +391,21 @@ void SettingDialogPrivate::onNameChanged(const QString &text)
 
 void SettingDialogPrivate::onDeviceShareButtonClicked(bool clicked)
 {
+    DLOG << "Peripheral share setting changed to:" << clicked;
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey, clicked);
     reportDeviceStatus(AppSettings::PeripheralShareKey, clicked);
 }
 
 void SettingDialogPrivate::onClipboardShareButtonClicked(bool clicked)
 {
+    DLOG << "Clipboard share setting changed to:" << clicked;
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey, clicked);
     reportDeviceStatus(AppSettings::ClipboardShareKey, clicked);
 }
 
 void SettingDialogPrivate::onFileChoosed(const QString &path)
 {
+    DLOG << "File save location changed to:" << path.toStdString();
     ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::StoragePathKey, path);
 }
 
@@ -428,6 +439,7 @@ SettingDialog::SettingDialog(QWidget *parent)
     : CooperationAbstractDialog(parent),
       d(new SettingDialogPrivate(this))
 {
+    DLOG << "SettingDialog created";
     d->initWindow();
 #ifdef linux
     d->initTitleBar();
@@ -440,6 +452,7 @@ SettingDialog::SettingDialog(QWidget *parent)
 
 SettingDialog::~SettingDialog()
 {
+    DLOG << "SettingDialog destroyed";
 }
 
 bool SettingDialog::eventFilter(QObject *watched, QEvent *event)

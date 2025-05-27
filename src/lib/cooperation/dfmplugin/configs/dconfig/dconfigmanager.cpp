@@ -22,16 +22,19 @@ DConfigManager::DConfigManager(QObject *parent)
 
 DConfigManager *DConfigManager::instance()
 {
+    qDebug() << "Getting DConfigManager instance";
     static DConfigManager ins;
     return &ins;
 }
 
 DConfigManager::~DConfigManager()
 {
+    qDebug() << "Destroying DConfigManager instance";
 #ifdef DTKCORE_CLASS_DConfig
     QWriteLocker locker(&d->lock);
 
     auto configs = d->configs.values();
+    qDebug() << "Cleaning up" << configs.size() << "configurations";
     std::for_each(configs.begin(), configs.end(), [](DConfig *cfg) { delete cfg; });
     d->configs.clear();
 #endif
@@ -39,10 +42,12 @@ DConfigManager::~DConfigManager()
 
 bool DConfigManager::addConfig(const QString &config, QString *err)
 {
+    qDebug() << "Adding config:" << config;
 #ifdef DTKCORE_CLASS_DConfig
     QWriteLocker locker(&d->lock);
 
     if (d->configs.contains(config)) {
+        qWarning() << "Config already exists:" << config;
         if (err)
             *err = "config is already added";
         return false;
@@ -50,12 +55,14 @@ bool DConfigManager::addConfig(const QString &config, QString *err)
 
     auto cfg = DConfig::create(kCfgAppId, config, "", this);
     if (!cfg) {
+        qCritical() << "Failed to create config:" << config;
         if (err)
             *err = "cannot create config";
         return false;
     }
 
     if (!cfg->isValid()) {
+        qCritical() << "Config is not valid:" << config;
         if (err)
             *err = "config is not valid";
         delete cfg;
@@ -71,6 +78,7 @@ bool DConfigManager::addConfig(const QString &config, QString *err)
 
 bool DConfigManager::removeConfig(const QString &config, QString *err)
 {
+    qDebug() << "Removing config:" << config;
     Q_UNUSED(err)
 
 #ifdef DTKCORE_CLASS_DConfig
@@ -79,6 +87,9 @@ bool DConfigManager::removeConfig(const QString &config, QString *err)
     if (d->configs.contains(config)) {
         delete d->configs[config];
         d->configs.remove(config);
+        qInfo() << "Successfully removed config:" << config;
+    } else {
+        qWarning() << "Config not found:" << config;
     }
 #endif
     return true;
@@ -105,6 +116,7 @@ bool DConfigManager::contains(const QString &config, const QString &key) const
 
 QVariant DConfigManager::value(const QString &config, const QString &key, const QVariant &fallback) const
 {
+    qDebug() << "Getting value for config:" << config << "key:" << key;
 #ifdef DTKCORE_CLASS_DConfig
     QReadLocker locker(&d->lock);
 
@@ -114,12 +126,14 @@ QVariant DConfigManager::value(const QString &config, const QString &key, const 
         qWarning() << "Config: " << config << "is not registered!!!";
     return fallback;
 #else
+    qDebug() << "DConfig not supported, using fallback value:" << fallback;
     return fallback;
 #endif
 }
 
 void DConfigManager::setValue(const QString &config, const QString &key, const QVariant &value)
 {
+    qDebug() << "Setting value for config:" << config << "key:" << key << "value:" << value;
 #ifdef DTKCORE_CLASS_DConfig
     QReadLocker locker(&d->lock);
 
