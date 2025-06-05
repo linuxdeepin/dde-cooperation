@@ -94,6 +94,7 @@ DeviceItem::DeviceItem(QWidget *parent)
 DeviceItem::~DeviceItem()
 {
     DLOG << "Destroying device item";
+    isDestroyed.store(true, std::memory_order_release);
     devInfo.reset();
     disconnect(btnBoxWidget, &ButtonBoxWidget::buttonClicked, this, &DeviceItem::onButtonClicked);
     DLOG << "Device item destroyed";
@@ -232,8 +233,8 @@ void DeviceItem::updateOperations()
 {
     DLOG << "Updating operations visibility";
     // this device item may be not visible after it's been removed from the list, e.g. network disconnected.
-    if (!isVisible()) {
-        DLOG << "Item not visible, skipping update";
+    if (!isAlive()) {
+        DLOG << "Device item destroyed during callback, skipping further operations";
         return;
     }
 
@@ -261,8 +262,9 @@ void DeviceItem::onButtonClicked(int index)
         return;
     }
 
-    if (indexOperaMap[index].clickedCb)
+    if (indexOperaMap[index].clickedCb) {
         indexOperaMap[index].clickedCb(indexOperaMap[index].id, devInfo);
+    }
 
     updateOperations();
     DLOG << "Operation handled";
@@ -298,7 +300,7 @@ void DeviceItem::showEvent(QShowEvent *event)
 
 bool DeviceItem::eventFilter(QObject *watched, QEvent *event)
 {
-    // 设备名的蒙版效果，采用字体渐变色实现
+    // Device name mask effect, implemented with gradient font color
     if (watched == nameLabel && event->type() == QEvent::Paint && btnBoxWidget->isVisible()) {
         QPainter painter(nameLabel);
         QLinearGradient lg(nameLabel->rect().topLeft(), nameLabel->rect().bottomRight());

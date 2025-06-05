@@ -12,6 +12,7 @@
 
 #include <QIcon>
 #include <QMap>
+#include <atomic>
 
 namespace cooperation_core {
 
@@ -59,6 +60,9 @@ public:
     void setOperations(const QList<Operation> &operations);
     void updateOperations();
 
+    // Check if the object is still alive
+    bool isAlive() const { return !isDestroyed.load(std::memory_order_acquire); }
+
 public Q_SLOTS:
     void onButtonClicked(int index);
 
@@ -83,6 +87,9 @@ private:
 
     QMap<int, Operation> indexOperaMap;
     DeviceInfoPointer devInfo;
+
+    // Atomic flag to mark if the object has been destroyed
+    std::atomic<bool> isDestroyed { false };
 };
 
 }   // namespace cooperation_core

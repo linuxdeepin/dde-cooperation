@@ -19,6 +19,8 @@ CMake*.json
 .cursor/
 memory-bank/
 .cursorrules
+.cursorindexingignore
+.specstory/
 
 # Modules
 modules/*

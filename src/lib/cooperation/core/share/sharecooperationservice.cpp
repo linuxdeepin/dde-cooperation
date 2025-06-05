@@ -149,7 +149,7 @@ void ShareCooperationService::terminateAllBarriers()
     // Windows
     QProcess process;
     process.start("tasklist");
-    process.waitForFinished();
+    process.waitForFinished(200);
 
     QString output = process.readAllStandardOutput();
     QStringList processList = output.split('\n', SKIP_EMPTY_PARTS);
@@ -168,7 +168,7 @@ void ShareCooperationService::terminateAllBarriers()
     // Linux
     QProcess process;
     process.start("pgrep", QStringList() << "barrier");
-    process.waitForFinished();
+    process.waitForFinished(200);
 
     QString output = process.readAllStandardOutput();
 
