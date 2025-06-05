@@ -26,6 +26,8 @@ private:
     QString ipfilter;
     //发现服务名，需要为局域网唯一
     QString zeroconfname;
+    // Store complete history device info (IP -> DeviceName)
+    QMap<QString, QString> historyDeviceMap;
 };
 
 }   // namespace cooperation_core

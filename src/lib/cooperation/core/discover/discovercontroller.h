@@ -69,6 +69,15 @@ private:
 
     void initZeroConf();
     void initConnect();
+    void connectZeroConfSignals();
+    void startServiceWaitLoop();
+    void collectAvahiDevices();
+    void collectOfflineHistoryDevices();
+    void addPreservedHistoryDevices(const QList<DeviceInfoPointer> &preservedDevices);
+    void addSearchDeviceIfExists();
+    void refreshDeviceList();
+    void finishDiscovery();
+    void finishDiscoveryWithError(const QString &errorMsg);
     bool isVaildDevice(const DeviceInfoPointer info);
     DeviceInfoPointer parseDeviceJson(const QString &info);
     DeviceInfoPointer parseDeviceService(QZeroConfService zcs);
