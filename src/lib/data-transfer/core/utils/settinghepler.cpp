@@ -107,8 +107,27 @@ bool SettingHelper::handleDataConfiguration(const QString &path)
 
 bool SettingHelper::setWallpaper(const QString &filepath)
 {
-    LOG << "Setting picture as wallpaper" << filepath.toStdString();
+    DLOG << "Setting picture as wallpaper: " << filepath.toStdString();
 
+    // First verify that the file exists
+    QFileInfo fileInfo(filepath);
+    if (!fileInfo.exists()) {
+        WLOG << "Wallpaper file does not exist:" << filepath.toStdString();
+        emit TransferHelper::instance()->addResult(tr("My Wallpaper"), false, tr("File not found"));
+        return false;
+    }
+
+    // Move the file to the target location first
+    QString destination = QDir::homePath() + "/Pictures/Wallpapers/ConvertedWallpaper." + fileInfo.suffix();
+    if (!moveFile(filepath, destination)) {
+        WLOG << "Failed to move wallpaper file to destination:" << destination.toStdString();
+        emit TransferHelper::instance()->addResult(tr("My Wallpaper"), false, tr("Failed to move wallpaper file"));
+        return false;
+    }
+
+    DLOG << "Wallpaper file moved to:" << destination.toStdString();
+
+    // Then set the wallpaper using the new path
     QString service = "com.deepin.daemon.Appearance";
     QString path = "/com/deepin/daemon/Appearance";
     QString interfaceName = "com.deepin.daemon.Appearance";
@@ -124,18 +143,16 @@ bool SettingHelper::setWallpaper(const QString &filepath)
     QString func = "SetMonitorBackground";
     QString screenName = QGuiApplication::screens().first()->name();
     QVariant monitorName = QVariant::fromValue(screenName);
-    QVariant imageFile = QVariant::fromValue(filepath);
+    QVariant imageFile = QVariant::fromValue(destination);
 
     QDBusMessage reply = interface.call(func, monitorName, imageFile);
     if (reply.type() == QDBusMessage::ReplyMessage) {
-        DLOG << "SetMonitorBackground method called successfully";
+        DLOG << "SetMonitorBackground method called successfully with path:" << destination.toStdString();
         emit TransferHelper::instance()->addResult(tr("My Wallpaper"), true, tr("Transfer completed"));
-        QFileInfo info(filepath);
-        QString destination = QDir::homePath() + "/Pictures/ConvertedWallpaper.png";
-        moveFile(filepath, destination);
         return true;
     } else {
-        DLOG << "Failed to call SetMonitorBackground method";
+        WLOG << "Failed to call SetMonitorBackground method:" << reply.errorName().toStdString() << reply.errorMessage().toStdString();
+        emit TransferHelper::instance()->addResult(tr("My Wallpaper"), false, tr("Failed to set wallpaper"));
         return false;
     }
 }
