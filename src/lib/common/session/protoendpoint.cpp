@@ -19,7 +19,7 @@ void ProtoEndpoint::sendDisRequest()
 
 proto::OriginMessage ProtoEndpoint::syncRequest(const std::string &target, const proto::OriginMessage &msg)
 {
-    _active_traget = target;
+    _active_target = target;
     _self_request.store(true, std::memory_order_relaxed);
 
     try {
@@ -50,7 +50,7 @@ void ProtoEndpoint::asyncRequestWithHandler(const std::string &target, const pro
 
 void ProtoEndpoint::asyncRequest(const std::string &target, const proto::OriginMessage &msg)
 {
-    _active_traget = target;
+    _active_target = target;
     _self_request.store(true, std::memory_order_relaxed);
 
     // new request comeing, reset all pending.

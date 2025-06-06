@@ -35,12 +35,19 @@ private:
 
     void handlePing(const std::string &remote);
 
+    void handleRealIPMapping(const std::string &real_ip, const std::string &remote_ip);
+
     void onHeartbeatTimeout(bool canceled);
 
 private:
     // <ip, sessionid>
     std::shared_mutex _sessionids_lock;
     std::map<std::string, BaseKit::UUID> _session_ids;
+
+    // IP mapping for NAT/Router scenarios: <real_ip, remote_endpoint_ip>
+    std::shared_mutex _ipmapping_lock;
+    std::map<std::string, std::string> _real_to_remote_ip;
+    std::map<std::string, std::string> _remote_to_real_ip;
 
     // heartbeat: ping <-> pong
     std::shared_ptr<Timer> _ping_timer { nullptr };

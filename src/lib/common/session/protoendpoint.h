@@ -42,7 +42,7 @@ protected:
     std::atomic<bool> _self_request { false };
 
     //current active request target
-    std::string _active_traget = { "" };
+    std::string _active_target = { "" };
 
 private:
     std::mutex _lock;

@@ -40,6 +40,9 @@ public:
     void updateLogin(QString ip, bool logined);
     bool isClientLogin(QString &ip);
 
+    void setRealIP(const QString &realIP);
+    QString getRealIP() const;
+
 signals:
     void onTransData(const QString endpoint, const QStringList nameVector);
     void onTransCount(const QString names, quint64 size);
@@ -78,6 +81,7 @@ private:
     QString _savedPin = "";
     QString _accessToken = "";
     QString _connectedAddress = "";
+    QString _realIP = "";
 
     // mark the connection need to retry after disconneted.
     bool _tryConnect { false };

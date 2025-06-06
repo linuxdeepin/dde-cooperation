@@ -259,9 +259,12 @@ bool SessionWorker::startListen(int port)
 
 bool SessionWorker::netTouch(QString &address, int port)
 {
+    DLOG << "netTouch to address: " << address.toStdString() << " port: " << port << " realIP: " << _realIP.toStdString();
+
     bool hasConnected = false;
     if (_client && _client->hasConnected(address.toStdString())) {
         hasConnected = _client->IsConnected();
+        DLOG << "Client already has connection to " << address.toStdString() << ": " << hasConnected;
     }
 
     if (hasConnected)
@@ -281,6 +284,8 @@ void SessionWorker::disconnectRemote()
 QString SessionWorker::sendRequest(const QString &target, const proto::OriginMessage &request)
 {
     QString jsonContent = "";
+
+    DLOG << "sendRequest to target: " << target.toStdString() << " realIP: " << _realIP.toStdString();
 
     if (_client && _client->hasConnected(target.toStdString())) {
         auto res = _client->syncRequest(target.toStdString(), request);
@@ -305,16 +310,20 @@ bool SessionWorker::sendAsyncRequest(const QString &target, const proto::OriginM
         return false;
     }
 
+    DLOG << "sendAsyncRequest to target: " << target.toStdString() << " realIP: " << _realIP.toStdString();
+
     // Sleep for release something
     BaseKit::Thread::Yield();
     BaseKit::Thread::Sleep(1);
 
     std::string ip = target.toStdString();
     if (doAsyncRequest(_client.get(), ip, request)) {
+        DLOG << "sendAsyncRequest to server: " << ip;
         return true;
     }
 
     if (doAsyncRequest(_server.get(), ip, request)) {
+        DLOG << "sendAsyncRequest to client: " << ip;
         return true;
     }
 
@@ -349,6 +358,24 @@ bool SessionWorker::isClientLogin(QString &ip)
     return foundValue && hasConnected;
 }
 
+void SessionWorker::setRealIP(const QString &realIP)
+{
+    DLOG << "SessionWorker: Setting real IP to " << realIP.toStdString();
+    
+    _realIP = realIP;
+    
+    if (_client) {
+        _client->setRealIP(realIP.toStdString());
+        DLOG << "Real IP set for existing client: " << realIP.toStdString();
+    } else {
+        DLOG << "Real IP stored, will be set when client is created";
+    }
+}
+
+QString SessionWorker::getRealIP() const
+{
+    return _realIP;
+}
 
 bool SessionWorker::listen(int port)
 {
@@ -375,6 +402,13 @@ bool SessionWorker::connect(QString &address, int port)
     if (!_client) {
         _client = std::make_shared<ProtoClient>(_asioService, context, address.toStdString(), port);
 
+        // Set real IP for NAT/Router scenarios
+        std::string realIP = _realIP.isEmpty() ? deepin_cross::CommonUitls::getFirstIp() : _realIP.toStdString();
+        if (!realIP.empty()) {
+            _client->setRealIP(realIP);
+            DLOG << "Set real IP for client: " << realIP << (_realIP.isEmpty() ? " (auto-detected)" : " (manually set)");
+        }
+
         auto self(this->shared_from_this());
         _client->setCallbacks(self);
     } else {
@@ -385,6 +419,13 @@ bool SessionWorker::connect(QString &address, int port)
             // different target, create new connection.
             _client->DisconnectAndStop();
             _client = std::make_shared<ProtoClient>(_asioService, context, address.toStdString(), port);
+
+            // Set real IP for NAT/Router scenarios
+            std::string realIP = _realIP.isEmpty() ? deepin_cross::CommonUitls::getFirstIp() : _realIP.toStdString();
+            if (!realIP.empty()) {
+                _client->setRealIP(realIP);
+                DLOG << "Set real IP for new client: " << realIP << (_realIP.isEmpty() ? " (auto-detected)" : " (manually set)");
+            }
 
             auto self(this->shared_from_this());
             _client->setCallbacks(self);
@@ -410,7 +451,9 @@ template<typename T>
 bool SessionWorker::doAsyncRequest(T *endpoint, const std::string& target, const proto::OriginMessage &request)
 {
     if (endpoint && endpoint->hasConnected(target)) {
+        DLOG << "doAsyncRequest to " << target;
         endpoint->asyncRequestWithHandler(target, request, [this](int32_t type, const std::string &response) {
+            DLOG << "doAsyncRequest callback: " << type << " " << response;
             QString res = QString::fromStdString(response);
             emit onRpcResult(type, res);
         });

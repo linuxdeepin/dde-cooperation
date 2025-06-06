@@ -25,6 +25,8 @@ public:
 
     bool startHeartbeat();
 
+    void setRealIP(const std::string &real_ip);
+
 protected:
     void onConnected() override;
 
@@ -57,6 +59,7 @@ private:
     std::atomic<bool> _connect_replay { false };
 
     std::string _connected_host = { "" };
+    std::string _real_ip = { "" };
     // heartbeat: ping <-> pong
     std::shared_ptr<Timer> _ping_timer { nullptr };
     std::atomic<int> _nopong_count { 0 };
