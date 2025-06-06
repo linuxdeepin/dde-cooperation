@@ -12,11 +12,16 @@
 #include <QWidget>
 #include <QLockFile>
 #include <QDebug>
+#include <QDateTime>
+#include <QCoreApplication>
+
+#include <unistd.h>
 
 using namespace deepin_cross;
 
 SingleApplication::SingleApplication(int &argc, char **argv, int)
-    : CrossApplication(argc, argv), localServer(new QLocalServer(this))
+    : CrossApplication(argc, argv)
+    , localServer(new QLocalServer(this))
 {
     qDebug() << "SingleApplication initialized with argc:" << argc;
     setOrganizationName("deepin");
@@ -31,6 +36,10 @@ SingleApplication::~SingleApplication()
     qDebug() << "SingleApplication shutting down";
     closeServer();
     qDebug() << "SingleApplication shutdown completed";
+    if (qAppName() == "dde-cooperation-daemon") {
+        // daemon process should exit after all work is done
+        _exit(0);
+    }
 }
 
 void SingleApplication::initConnect()
@@ -42,7 +51,7 @@ void SingleApplication::initConnect()
 
 void SingleApplication::handleConnection()
 {
-    qDebug() << "new connection is coming";
+    qDebug() << "new connection is coming: " << qAppName();
     auto windowList = qApp->topLevelWidgets();
     for (auto w : windowList) {
         if (w->objectName() == "MainWindow") {
@@ -54,73 +63,101 @@ void SingleApplication::handleConnection()
     }
 
     QLocalSocket *nextPendingConnection = localServer->nextPendingConnection();
+    if (!nextPendingConnection) {
+        qWarning() << "No pending connection available";
+        return;
+    }
+
     connect(nextPendingConnection, SIGNAL(readyRead()), this, SLOT(readData()));
+
+    // If data is already available, process it immediately
+    if (nextPendingConnection->bytesAvailable() > 0) {
+        readData();
+    }
 }
 
 bool SingleApplication::sendMessage(const QString &key, const QByteArray &message)
 {
     qDebug() << "Attempting to send message to:" << key;
-    QLocalSocket *localSocket = new QLocalSocket;
-    localSocket->connectToServer(userServerName(key));
-    if (localSocket->waitForConnected(1000)) {
-        if (localSocket->state() == QLocalSocket::ConnectedState) {
-            if (localSocket->isValid()) {
-                localSocket->write(message);
-                localSocket->flush();
-                qDebug() << "Message successfully sent to:" << key;
-                return true;
-            }
-        }
-    } else {
-        qDebug() << localSocket->errorString();
+
+    SingleApplication *instance = qobject_cast<SingleApplication *>(QCoreApplication::instance());
+    if (!instance) {
+        qWarning() << "No SingleApplication instance available";
+        return false;
     }
 
-    qWarning() << "Message send failed for:" << key;
-    return false;
+    // Prefer using recorded active socket (avoid redundant testing)
+    if (!instance->activeServerName.isEmpty()) {
+        qDebug() << "Using recorded active socket:" << instance->activeServerName;
+        if (instance->doSendMessage(instance->activeServerName, message)) {
+            return true;
+        }
+        qWarning() << "Failed to send via recorded socket, falling back to socket discovery";
+    }
+
+    // Fallback: Find active socket (for cross-process or socket change scenarios)
+    QString targetSocket = instance->findActiveSocket(key);
+    if (targetSocket.isEmpty()) {
+        qWarning() << "No active socket found for message delivery to:" << key;
+        return false;
+    }
+
+    bool sent = instance->doSendMessage(targetSocket, message);
+    if (sent) {
+        instance->activeServerName = targetSocket;
+    }
+    return sent;
 }
 
 bool SingleApplication::checkProcess(const QString &key)
 {
-    // create lock file for check process
-    const QString lockFilePath = QDir::tempPath() + QLatin1Char('/') + key + QLatin1String(".lock");
-    auto lockFile = new QLockFile(lockFilePath);
-    lockFile->setStaleLockTime(0);
+    QString standardSocket = getSocketName(key, StandardSocket);
+    QString backupSocket = getSocketName(key, BackupSocket);
 
-    if (!lockFile->tryLock()) {
-        // someone else has the lock => process was launched
-        qWarning() << key << "has been launched!";
+    // Check standard socket
+    if (testSocketConnection(standardSocket)) {
+        qDebug() << "Found active process on standard socket";
         return true;
     }
 
-    if (key != qAppName()) {
-        // release this lock file if not myself, it should be lock by itself.
-        lockFile->unlock();
-        lockFile->removeStaleLockFile();
+    // Check backup socket
+    if (testSocketConnection(backupSocket)) {
+        qDebug() << "Found active process on backup socket";
+        return true;
     }
 
+    qDebug() << "No active process found on either socket";
     return false;
 }
 
 bool SingleApplication::setSingleInstance(const QString &key)
 {
-    if (checkProcess(key))
+    QString standardSocket = getSocketName(key, StandardSocket);
+    QString backupSocket = getSocketName(key, BackupSocket);
+
+    // Step 1: Check if a process is already running (check both sockets)
+    if (checkProcess(key)) {
+        qDebug() << "Process already running, will connect to existing instance";
         return false;
-
-    QString userKey = userServerName(key);
-    if (!localServer->listen(userKey)) {
-        // maybe exception crashed, leaving a stale socket; delete it and try again
-        QLocalServer::removeServer(userKey);
-        if (!localServer->listen(userKey)) {
-            qWarning("SingleApplication: unable to make instance listen on %ls: %ls",
-                     qUtf16Printable(userKey),
-                     qUtf16Printable(localServer->errorString()));
-
-            return false;
-        }
     }
 
-    qDebug() << "Successfully set as single instance for:" << key;
-    return true;
+    // Step 2: Try to create standard socket
+    if (tryCreateSocket(standardSocket)) {
+        activeServerName = standardSocket;
+        qDebug() << "Successfully set as single instance using standard socket:" << standardSocket;
+        return true;
+    }
+
+    // Step 3: Standard socket failed, try backup socket
+    qDebug() << "Standard socket failed, trying backup socket";
+    if (tryCreateSocket(backupSocket)) {
+        activeServerName = backupSocket;
+        qDebug() << "Successfully set as single instance using backup socket:" << backupSocket;
+        return true;
+    }
+
+    qWarning() << "Both standard and backup sockets failed for key:" << key;
+    return false;
 }
 
 void SingleApplication::readData()
@@ -153,7 +190,10 @@ void SingleApplication::closeServer()
         localServer->close();
         delete localServer;
         localServer = nullptr;
-        qDebug() << "Local server closed successfully";
+
+        // Clear active socket record
+        activeServerName.clear();
+        qDebug() << "Local server closed successfully and active socket name cleared";
     } else {
         qDebug() << "No local server to close";
     }
@@ -181,11 +221,124 @@ void SingleApplication::onDeliverMessage(const QString &app, const QStringList &
     }
 }
 
-QString SingleApplication::userServerName(const QString &key)
+QString SingleApplication::getSocketName(const QString &key, SocketType type)
 {
-    QString userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation), key);
-    if (userKey.isEmpty()) {
-        userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation), key);
+#ifdef linux
+    // On Unix systems, use abstract socket namespace (starts with \0)
+    // Use a globally accessible name - add a specific prefix to ensure uniqueness
+    switch (type) {
+    case StandardSocket:
+        return QString("@%1-socket").arg(key);
+    case BackupSocket:
+        return QString("@%1-backup").arg(key);
     }
-    return userKey;
+#else
+    // On Windows and other platforms, use the temp path
+    switch (type) {
+    case StandardSocket:
+        return QDir::tempPath() + QDir::separator() + key + ".socket";
+    case BackupSocket:
+        return QDir::tempPath() + QDir::separator() + key + "-backup.socket";
+    }
+#endif
+    return QString(); // Should never reach here
+}
+
+bool SingleApplication::tryCreateSocket(const QString &socketPath)
+{
+    if (socketPath.isEmpty()) {
+        qWarning() << "Empty socket path provided";
+        return false;
+    }
+
+    // Clean up possible stale socket
+    QLocalServer::removeServer(socketPath);
+    QFile::remove(socketPath);
+
+    // Set permission options to allow all users access
+    localServer->setSocketOptions(QLocalServer::WorldAccessOption);
+
+    if (localServer->listen(socketPath)) {
+        qDebug() << "Successfully created socket:" << socketPath;
+        return true;
+    }
+
+    qDebug() << "Failed to create socket:" << socketPath << "Error:" << localServer->errorString();
+    return false;
+}
+
+bool SingleApplication::testSocketConnection(const QString &socketPath)
+{
+    if (socketPath.isEmpty()) {
+        return false;
+    }
+
+    QLocalSocket testSocket;
+    testSocket.connectToServer(socketPath);
+    bool connected = testSocket.waitForConnected(1000);
+
+    if (connected) {
+        qDebug() << "Successfully connected to:" << socketPath;
+        testSocket.close();
+        return true;
+    }
+
+    qDebug() << "Failed to connect to:" << socketPath;
+    return false;
+}
+
+QString SingleApplication::findActiveSocket(const QString &key)
+{
+    QString standardSocket = getSocketName(key, StandardSocket);
+    QString backupSocket = getSocketName(key, BackupSocket);
+
+    // Find active socket by priority
+    if (testSocketConnection(standardSocket)) {
+        qDebug() << "Found active standard socket:" << standardSocket;
+        return standardSocket;
+    }
+
+    if (testSocketConnection(backupSocket)) {
+        qDebug() << "Found active backup socket:" << backupSocket;
+        return backupSocket;
+    }
+
+    qDebug() << "No active socket found for key:" << key;
+    return QString(); // No active socket found
+}
+
+bool SingleApplication::doSendMessage(const QString &socketPath, const QByteArray &message)
+{
+    if (socketPath.isEmpty()) {
+        qWarning() << "Empty socket path for message sending";
+        return false;
+    }
+
+    QLocalSocket *localSocket = new QLocalSocket();
+
+    // Error handling function
+    auto errorHandler = [localSocket]() {
+        qWarning() << "Socket error:" << localSocket->error() << localSocket->errorString();
+    };
+
+    // Connect error signals
+    connect(localSocket, &QLocalSocket::errorOccurred, errorHandler);
+    connect(localSocket, &QLocalSocket::disconnected, localSocket, &QLocalSocket::deleteLater);
+
+    localSocket->connectToServer(socketPath);
+    if (localSocket->waitForConnected(1000)) {
+        if (localSocket->state() == QLocalSocket::ConnectedState && localSocket->isValid()) {
+            localSocket->write(message);
+            localSocket->flush();
+            if (localSocket->waitForBytesWritten(1000)) {
+                qDebug() << "Message successfully sent to:" << socketPath;
+                localSocket->disconnectFromServer();
+                return true;
+            }
+        }
+    }
+
+    qWarning() << "Message send failed to:" << socketPath;
+    localSocket->deleteLater();
+    return false;
 }

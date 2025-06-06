@@ -28,6 +28,13 @@ namespace deepin_cross {
 class SingleApplication : public CrossApplication
 {
     Q_OBJECT
+    
+public:
+    enum SocketType {
+        StandardSocket,  // Primary socket
+        BackupSocket     // Fallback socket for cross-user scenarios
+    };
+    
 public:
     explicit SingleApplication(int &argc, char **argv, int = ApplicationFlags);
     ~SingleApplication() override;
@@ -49,10 +56,19 @@ protected:
 
 private:
     static bool sendMessage(const QString &key, const QByteArray &message);
-    static QString userServerName(const QString &key);
+    
+    // Unified socket name generation
+    QString getSocketName(const QString &key, SocketType type);
+    
+    // double socket strategy related methods
+    bool tryCreateSocket(const QString &socketPath);
+    bool testSocketConnection(const QString &socketPath);
+    QString findActiveSocket(const QString &key);
+    bool doSendMessage(const QString &socketPath, const QByteArray &message);
 
 private:
     QLocalServer *localServer { nullptr };
+    QString activeServerName;  // record the current used socket name
 };
 }
 
