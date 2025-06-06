@@ -155,5 +155,5 @@ void ServiceManager::handleAppQuit()
     DiscoveryJob::instance()->stopDiscoverer();
 
     DLOG << "ServiceManager shutdown complete";
-    _exit(0);
+    // _exit(0);
 }

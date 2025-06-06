@@ -193,6 +193,7 @@ void CooperaionCorePlugin::stop()
 #ifdef ENABLE_COMPAT
     NetworkUtil::instance()->stop();
     DLOG << "Network util stopped";
+    TransferWrapper::instance()->close();
 #endif
     DLOG << "Cleanup complete";
 }
