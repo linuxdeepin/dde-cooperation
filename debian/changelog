@@ -1,3 +1,11 @@
+dde-cooperation (1.1.5) unstable; urgency=medium
+
+  * v1.1.5 version update.
+  * fix: Introduce IPC name generation for service management.
+  * fix: Fix coredump.
+
+ -- re2zero <yangwu@uniontech.com>  Wed, 18 Jun 2025 11:49:02 +0800
+
 dde-cooperation (1.1.4) unstable; urgency=medium
 
   * v1.1.4 version update.
