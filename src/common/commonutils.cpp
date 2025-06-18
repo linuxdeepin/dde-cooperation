@@ -142,6 +142,11 @@ void CommonUitls::initLog()
     }
 }
 
+void CommonUitls::shutdownLog()
+{
+    deepin_cross::Logger::GetInstance().stop();
+}
+
 QString CommonUitls::elidedText(const QString &text, Qt::TextElideMode mode, int maxLength)
 {
     if (text.length() <= maxLength)

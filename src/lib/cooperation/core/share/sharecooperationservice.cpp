@@ -146,39 +146,18 @@ bool ShareCooperationService::isRunning()
 void ShareCooperationService::terminateAllBarriers()
 {
 #if defined(Q_OS_WIN)
-    // Windows
-    QProcess process;
-    process.start("tasklist");
-    process.waitForFinished(200);
-
-    QString output = process.readAllStandardOutput();
-    QStringList processList = output.split('\n', SKIP_EMPTY_PARTS);
-    
-    for (const QString &line : processList) {
-        if (line.contains("barrier", Qt::CaseInsensitive)) {
-            QStringList tokens = line.split(QStringLiteral(" "), SKIP_EMPTY_PARTS);
-            if (tokens.size() >= 2) {
-                QString pid = tokens[1]; // PID 在第二个字段
-                QProcess::execute("taskkill", QStringList() << "/F" << "/PID" << pid);
-                LOG << "Terminated barrier process with PID:" << pid.toStdString();
-            }
-        }
-    }
+    // On Windows, use taskkill with a wildcard to terminate all barrier processes.
+    // This is more robust than parsing tasklist output and avoids issues with
+    // QProcess::waitForFinished during application shutdown.
+    QProcess::execute("taskkill", QStringList() << "/F" << "/IM" << "barrier*.exe");
+    LOG << "Attempted to terminate barrier processes on Windows.";
 #else
-    // Linux
-    QProcess process;
-    process.start("pgrep", QStringList() << "barrier");
-    process.waitForFinished(200);
-
-    QString output = process.readAllStandardOutput();
-
-    QStringList pidList = output.split('\n', SKIP_EMPTY_PARTS);
-    for (const QString &pid : pidList) {
-        if (!pid.isEmpty()) {
-            QProcess::execute("kill", QStringList() << pid);
-            LOG << "Terminated barrier process with PID:" << pid.toStdString();
-        }
-    }
+    // On Linux, use pkill to terminate barrierc and barriers processes by name.
+    // This is simpler and more robust than a pgrep + kill loop, and avoids
+    // issues with QProcess::waitForFinished during application shutdown.
+    QProcess::execute("pkill", QStringList() << "barrierc");
+    QProcess::execute("pkill", QStringList() << "barriers");
+    LOG << "Attempted to terminate barrierc and barriers processes on Linux.";
 #endif
 }
 

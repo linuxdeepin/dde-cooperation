@@ -58,6 +58,12 @@ void Logger::init(const std::string &logpath, const std::string &logname) {
     _logger = Logging::Config::CreateLogger("dde-cooperation");
 }
 
+void Logger::stop()
+{
+    // Shutdown the logging
+    Logging::Config::Shutdown();
+}
+
 std::ostringstream& Logger::buffer()
 {
     return _buffer;

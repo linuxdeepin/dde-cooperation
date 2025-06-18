@@ -21,6 +21,9 @@ memory-bank/
 .cursorrules
 .cursorindexingignore
 .specstory/
+.taskmaster/
+.kilocode/
+.marscode/
 
 # Modules
 modules/*

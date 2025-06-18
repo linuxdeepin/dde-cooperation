@@ -196,4 +196,5 @@ void CooperaionCorePlugin::stop()
     TransferWrapper::instance()->close();
 #endif
     DLOG << "Cleanup complete";
+    CommonUitls::shutdownLog();
 }

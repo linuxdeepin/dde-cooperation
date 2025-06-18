@@ -36,10 +36,10 @@ SingleApplication::~SingleApplication()
     qDebug() << "SingleApplication shutting down";
     closeServer();
     qDebug() << "SingleApplication shutdown completed";
-    if (qAppName() == "dde-cooperation-daemon") {
+    // if (qAppName() == "dde-cooperation-daemon") {
         // daemon process should exit after all work is done
-        _exit(0);
-    }
+        _exit(0); // FIXME: always double free if without this.
+    // }
 }
 
 void SingleApplication::initConnect()

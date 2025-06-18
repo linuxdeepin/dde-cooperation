@@ -156,7 +156,7 @@ public:
         thread_local char cache_nanosecond_str[] = "000";
         thread_local bool cache_thread_required = false;
         thread_local uint64_t cache_thread = 0;
-        thread_local char cache_thread_str[] = "0x00000000";
+        thread_local char cache_thread_str[] = "0x0000000000000000";
         thread_local bool cache_level_required = false;
         thread_local Level cache_level = Level::FATAL;
         thread_local char cache_level_str[] = "FATAL";
@@ -701,21 +701,22 @@ private:
     {
         const char* digits = "0123456789ABCDEF";
 
-        // Prepare the output string
+        // Prepare the output string. It must be large enough for "0x".
+        if (size < 2)
+            return;
         std::memset(output, '0', size);
-
-        // Calculate the output index
-        size_t index = size - 1;
-
-        // Output digits
-        do
-        {
-            output[index--] = digits[thread & 0x0F];
-        } while (((thread >>= 4) != 0) && (index != 0));
-
-        // Output hex prefix
         output[0] = '0';
         output[1] = 'x';
+
+        size_t index = size - 1;
+
+        // Output digits from right to left, stopping before we overwrite the "0x" prefix.
+        uint64_t t = thread;
+        while (t > 0 && index > 1)
+        {
+            output[index--] = digits[t & 0x0F];
+            t >>= 4;
+        }
     }
 
     static void ConvertTimezone(char* output, int64_t offset, size_t size)

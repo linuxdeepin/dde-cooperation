@@ -19,6 +19,8 @@ public:
 
     static void initLog();
 
+    static void shutdownLog();
+
     static QString elidedText(const QString &text, Qt::TextElideMode mode, int maxLength);
 
     static bool isFirstStart();

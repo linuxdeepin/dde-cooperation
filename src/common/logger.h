@@ -42,6 +42,7 @@ public:
     ~Logger();
 
     void init(const std::string &logpath, const std::string &logname);
+    void stop();
 
     LogStream log(const char* fname, unsigned line, int level);
 
