@@ -30,6 +30,8 @@ public:
     static QString generateRandomPassword();
 
     static int getAvailablePort();
+
+    static QString ipcServerName(const QString &appName);
 private:
     static QString logDir();
     static bool detailLog();

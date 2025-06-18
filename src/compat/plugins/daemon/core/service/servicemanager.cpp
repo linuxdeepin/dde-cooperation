@@ -16,7 +16,7 @@
 #include "common/commonutils.h"
 
 #include <QCoreApplication>
-
+#include <QStandardPaths>
 
 ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
@@ -81,6 +81,17 @@ void ServiceManager::startRemoteServer()
 }
 
 
+QString ServiceManager::ipcName()
+{
+    QString key = qAppName() + ".ipc";
+    // create ipc socket under user's tmp
+    QString userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation), key);
+    if (userKey.isEmpty()) {
+        userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation), key);
+    }
+    return userKey;
+}
+
 void ServiceManager::localIPCStart()
 {
     if (_ipcService != nullptr) {
@@ -89,7 +100,7 @@ void ServiceManager::localIPCStart()
     }
     DLOG << "Starting IPC service";
     _ipcService = new HandleIpcService;
-    bool ret = _ipcService->listen(qAppName() + ".ipc");
+    bool ret = _ipcService->listen(ipcName());
     if (!ret) {
         ELOG << "Failed to start IPC service";
     } else {

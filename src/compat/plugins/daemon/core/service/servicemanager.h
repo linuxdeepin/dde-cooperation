@@ -30,6 +30,7 @@ public slots:
     void handleAppQuit();
 
 private:
+    QString ipcName();
     void localIPCStart();
     fastring genPeerInfo();
     void asyncDiscovery();

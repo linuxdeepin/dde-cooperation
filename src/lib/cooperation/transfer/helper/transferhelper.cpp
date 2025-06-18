@@ -35,7 +35,7 @@ inline constexpr char NotifyAcceptAction[] { "accept" };
 inline constexpr char NotifyCloseAction[] { "close" };
 inline constexpr char NotifyViewAction[] { "view" };
 
-inline constexpr char BackendProcIPC[] { "dde-cooperation.ipc" };
+inline constexpr char BackendProcIPC[] { "dde-cooperation" };
 
 #ifdef linux
 inline constexpr char Ksend[] { "send" };
@@ -174,7 +174,9 @@ void TransferHelper::timeConnectBackend()
 {
     DLOG << "Attempting to connect to backend IPC";
 #ifdef ENABLE_COMPAT
-    d->backendOk = d->ipcInterface->connectToServer(BackendProcIPC);
+    QString ipcName = CommonUitls::ipcServerName(BackendProcIPC);
+    DLOG << "Connecting to backend IPC:" << ipcName.toStdString();
+    d->backendOk = d->ipcInterface->connectToServer(ipcName);
     if (d->backendOk) {
         // bind SIGNAL to SLOT
         d->ipcInterface->remoteConnect(SIGNAL(searched(QString)), this, SLOT(searchResultSlot(QString)));
@@ -185,13 +187,13 @@ void TransferHelper::timeConnectBackend()
         d->ipcInterface->remoteConnect(this, SIGNAL(search(QString)), SLOT(onSearchDevice(QString)));
         d->ipcInterface->remoteConnect(this, SIGNAL(sendFiles(QString, QString, QStringList)), SLOT(onSendFiles(QString, QString, QStringList)));
 
-        LOG << "SUCCESS connect to depending backend: " << BackendProcIPC;
+        LOG << "SUCCESS connect to depending backend: " << ipcName.toStdString();
         // first, refresh & get device list
         Q_EMIT refresh();
         DLOG << "Initial device refresh triggered";
     } else {
         // TODO: show dialog
-        WLOG << "can not connect to: " << BackendProcIPC;
+        WLOG << "can not connect to: " << ipcName.toStdString();
     }
 #endif
 }

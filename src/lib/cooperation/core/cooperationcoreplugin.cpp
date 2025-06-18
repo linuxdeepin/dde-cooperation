@@ -23,6 +23,7 @@
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QStandardPaths>
 #ifdef __linux__
 #    include "base/reportlog/reportlogmanager.h"
 #    include <DFeatureDisplayDialog>
@@ -160,7 +161,9 @@ bool CooperaionCorePlugin::start()
 
 #ifdef ENABLE_COMPAT
         // start local ipc listen for transfer app
-        TransferWrapper::instance()->listen(qAppName() + ".ipc");
+        QString ipcName = CommonUitls::ipcServerName(qAppName());
+        DLOG << "Listening on IPC:" << ipcName.toStdString();
+        TransferWrapper::instance()->listen(ipcName);
         DLOG << "Transfer wrapper listening on IPC";
 #endif
 

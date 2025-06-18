@@ -16,9 +16,10 @@
 #include <QStandardPaths>
 #include <QDir>
 
-inline constexpr char DaemonProcIPC[] { "dde-cooperation-daemon.ipc" };
+inline constexpr char DaemonProcIPC[] { "dde-cooperation-daemon" };
 
 using namespace cooperation_core;
+using namespace deepin_cross;
 
 CompatWrapperPrivate::CompatWrapperPrivate(CompatWrapper *qq)
     : q(qq)
@@ -40,7 +41,9 @@ CompatWrapperPrivate::~CompatWrapperPrivate()
 
 void CompatWrapperPrivate::onTimeConnectBackend()
 {
-    backendOk = ipcInterface->connectToServer(DaemonProcIPC);
+    QString ipcName = CommonUitls::ipcServerName(DaemonProcIPC);
+    DLOG << "Connecting to backend IPC:" << ipcName.toStdString();
+    backendOk = ipcInterface->connectToServer(ipcName);
     if (backendOk) {
         // bind SIGNAL to SLOT
         ipcInterface->remoteConnect(SIGNAL(cooperationSignal(int, QString)), this, SLOT(ipcCompatSlot(int, QString)));

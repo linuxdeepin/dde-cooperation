@@ -273,3 +273,14 @@ bool CommonUitls::isPortInUse(int port)
     }
     return false;
 }
+
+QString CommonUitls::ipcServerName(const QString &appName)
+{
+    QString key = appName + ".ipc";
+    // create ipc socket under user's tmp
+    QString userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation), key);
+    if (userKey.isEmpty()) {
+        userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation), key);
+    }
+    return userKey;
+}
