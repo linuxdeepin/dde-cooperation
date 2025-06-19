@@ -1,3 +1,11 @@
+dde-cooperation (1.1.6) unstable; urgency=medium
+
+  * v1.1.6 version update.
+  * fix: Handle network errors.
+  * chore: Update dman's resources.
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 19 Jun 2025 20:13:15 +0800
+
 dde-cooperation (1.1.5) unstable; urgency=medium
 
   * v1.1.5 version update.
