@@ -206,14 +206,19 @@ void SessionManager::cancelSyncFile(const QString &ip, const QString &reason)
 {
     DLOG << "cancelSyncFile to: " << ip.toStdString();
 
-    // first: send cancel rpc, target jobid is self ip addr.
-    TransCancelMessage req;
-    req.id = deepin_cross::CommonUitls::getFirstIp();
-    req.name = "all";
-    req.reason = reason.toStdString();
+    if (reason.contains("net_error")) {
+        // no need to cancel sync file if net_error, or it will cause ui block.
+        WLOG << "net_error, no need to cancel sync file";
+    } else {
+        // first: send cancel rpc, target jobid is self ip addr.
+        TransCancelMessage req;
+        req.id = deepin_cross::CommonUitls::getFirstIp();
+        req.name = "all";
+        req.reason = reason.toStdString();
 
-    QString jsonMsg = req.as_json().serialize().c_str();
-    sendRpcRequest(ip, REQ_TRANS_CANCLE, jsonMsg);
+        QString jsonMsg = req.as_json().serialize().c_str();
+        sendRpcRequest(ip, REQ_TRANS_CANCLE, jsonMsg);
+    }
 
     // then: stop local worker
     handleCancelTrans(ip, reason);
@@ -227,6 +232,7 @@ void SessionManager::sendRpcRequest(const QString &ip, int type, const QString &
 #ifdef QT_DEBUG
     DLOG << "sendRpcRequest " << request;
 #endif
+    WLOG << "sendRpcRequest " << request;
     _session_worker->sendAsyncRequest(ip, request);
 }
 
@@ -300,9 +306,8 @@ void SessionManager::handleRpcResult(int32_t type, const QString &response)
 
 void SessionManager::handleTransException(const QString jobid, const QString reason)
 {
-#ifdef QT_DEBUG
-    DLOG << jobid.toStdString() << " transfer occur exception: " << reason.toStdString();
-#endif
+    WLOG << jobid.toStdString() << " transfer occur exception: " << reason.toStdString();
+
     cancelSyncFile(jobid, reason);
 }
 

@@ -23,7 +23,7 @@ public:
 
     void disconnectRemote();
     QString getJsonfile(const QJsonObject &jsonData, const QString &save);
-    bool cancelTransferJob();
+    bool cancelTransferJob(const QString &reason = "");
     void emitDisconnected();
 
     void sendMessage(const QString &type, const QString &message);

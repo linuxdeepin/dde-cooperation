@@ -24,7 +24,7 @@ public:
     bool sendMessage(const QString &msg);
 
     //transfer
-    void cancelTrans();
+    void cancelTrans(const QString &reason = "");
     void doSendFiles(const QStringList &fileList);
 
     // compat login

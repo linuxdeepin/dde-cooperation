@@ -4,7 +4,7 @@
 #include <QFrame>
 #include <QLabel>
 
-enum ErrorType { networkError = 0, outOfStorageError };
+enum ErrorType { noError = -1, networkError = 0, outOfStorageError };
 
 class ErrorWidget : public QFrame
 {
@@ -21,10 +21,12 @@ public slots:
 
 private:
     void initUI();
+    bool checkNetworkAndUpdate();
 
 private:
     QLabel *titleLabel = nullptr;
     QLabel *promptLabel = nullptr;
+    ErrorType currentErrorType = noError;
 
     QString internetError{ tr("Network Error") };
     QString transferError{ tr("Transfer interrupted") };

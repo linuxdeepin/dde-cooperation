@@ -45,6 +45,11 @@ void TransferUtil::initOnlineState()
             LOG << "Network is" << isConnected;
             online = isConnected;
             Q_EMIT TransferHelper::instance()->onlineStateChanged(isConnected);
+            if (!isConnected) {
+                // cancel transfer worker by net error
+                WLOG << "Network is offline, cancel transfer worker";
+                TransferHelper::instance()->cancelTransferJob("net_error");
+            }
         }
     });
 

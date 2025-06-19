@@ -67,7 +67,7 @@ NetworkUtilPrivate::~NetworkUtilPrivate()
 
 void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
 {
-    DLOG << " connect status: " << result << " " << reason.toStdString();
+    WLOG << " connect status: " << result << " " << reason.toStdString();
     if (result == 2)
         confirmTargetAddress = reason;
 
@@ -88,7 +88,10 @@ void NetworkUtilPrivate::handleConnectStatus(int result, QString reason)
         emit TransferHelper::instance()->connectSucceed();
         return;
     } else if (result == EX_NETWORK_PINGOUT) {
+        WLOG << "EX_NETWORK_PINGOUT: " << reason.toStdString();
         emit TransferHelper::instance()->onlineStateChanged(false);
+        // cancel transfer worker by net error
+        q->cancelTrans("net_error");
         return;
     }
 }
@@ -99,15 +102,18 @@ void NetworkUtilPrivate::handleTransChanged(int status, const QString &path, qui
     Q_UNUSED(status);
     Q_UNUSED(path);
     Q_UNUSED(size);
+    DLOG << "windows not handle handleTransChanged: " << status << " " << path.toStdString();
     return;
 #else
     //DLOG << "handleTransChanged" << status << " " << path.toStdString();
     switch (status) {
     case TRANS_CANCELED:
         //cancelTransfer(path.compare("im_sender") == 0);
+        WLOG << "TRANS_CANCELED: " << path.toStdString();
         break;
     case TRANS_EXCEPTION:
         //TODO: notify show exception UI
+        WLOG << "TRANS_EXCEPTION: " << path.toStdString();
         break;
     case TRANS_COUNT_SIZE:
         // only update the total size while rpc notice
@@ -313,10 +319,10 @@ bool NetworkUtil::sendMessage(const QString &message)
     return true;
 }
 
-void NetworkUtil::cancelTrans()
+void NetworkUtil::cancelTrans(const QString &reason)
 {
     if (!d->confirmTargetAddress.isEmpty()) {
-        d->sessionManager->cancelSyncFile(d->confirmTargetAddress);
+        d->sessionManager->cancelSyncFile(d->confirmTargetAddress, reason);
     }
 #ifdef ENABLE_COMPAT
     else {

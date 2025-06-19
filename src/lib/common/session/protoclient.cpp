@@ -46,8 +46,10 @@ void ProtoClient::handlePong(const std::string &remote)
 
 bool ProtoClient::pingMessageStart()
 {
-    if (_connected_host.empty() || !IsHandshaked())
+    if (_connected_host.empty() || !IsHandshaked()) {
+        std::cout << "Try to start ping failed";
         return false;
+    }
 
     proto::MessageNotify ping;
     ping.notification = "ping";

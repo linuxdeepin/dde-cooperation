@@ -8,6 +8,7 @@
 #include <QStackedWidget>
 #include <QDebug>
 #include <net/helper/transferhepler.h>
+#include "common/commonutils.h"
 
 ErrorWidget::ErrorWidget(QWidget *parent)
     : QFrame(parent)
@@ -101,12 +102,32 @@ void ErrorWidget::initUI()
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
 
-    setErrorType(ErrorType::outOfStorageError);
+    // 默认设置为无错误状态
+    currentErrorType = noError;
+}
+
+bool ErrorWidget::checkNetworkAndUpdate()
+{
+    // 检查当前网络状态
+    bool isNetworkAvailable = deepin_cross::CommonUitls::getFirstIp().size() > 0;
+
+    // 如果是网络错误类型，且现在网络已恢复，通知网络状态变更
+    if (currentErrorType == ErrorType::networkError && isNetworkAvailable) {
+        DLOG << "Network is now available, updating online state";
+        // 只通知网络状态变更，不触发其他操作
+        emit TransferHelper::instance()->onlineStateChanged(true);
+        return true;
+    }
+
+    return isNetworkAvailable;
 }
 
 void ErrorWidget::backPage()
 {
     DLOG << "Back button clicked, returning to choose page";
+
+    // 检查网络状态并更新
+    checkNetworkAndUpdate();
 
     emit TransferHelper::instance()->clearWidget();
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
@@ -116,9 +137,13 @@ void ErrorWidget::retryPage()
 {
     DLOG << "Retry button clicked, returning to choose page";
 
+    // 检查网络状态并更新
+    checkNetworkAndUpdate();
+
     emit TransferHelper::instance()->clearWidget();
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
+
 void ErrorWidget::themeChanged(int theme)
 {
     DLOG << "Theme changed to:" << (theme == 1 ? "Light" : "Dark");
@@ -134,10 +159,12 @@ void ErrorWidget::themeChanged(int theme)
 
 void ErrorWidget::setErrorType(ErrorType type, int size)
 {
+    currentErrorType = type;
+
     if (type == ErrorType::networkError) {
         titleLabel->setText(internetError);
         promptLabel->setText(internetErrorPrompt);
-    } else {
+    } else if (type == ErrorType::outOfStorageError) {
         titleLabel->setText(transferError);
         QString prompt;
         if (size == 0)

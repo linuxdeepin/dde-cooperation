@@ -15,7 +15,9 @@
 #include <QDateTime>
 #include <QCoreApplication>
 
+#ifdef __linux__
 #include <unistd.h>
+#endif
 
 using namespace deepin_cross;
 

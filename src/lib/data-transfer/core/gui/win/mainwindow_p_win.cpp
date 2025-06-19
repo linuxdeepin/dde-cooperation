@@ -161,7 +161,8 @@ void MainWindowPrivate::initWidgets()
                 // only these need jump to networkdisconnectwidget
                 if (index >= PageName::promptwidget && index <= PageName::readywidget)
                     stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
-                if (index >= PageName::selectmainwidget && index <= PageName::appselectwidget) {
+                if (index >= PageName::selectmainwidget && index <= PageName::transferringwidget) {
+                    WLOG << "sender > network disconnected, jump to errorwidget";
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
                     errorwidget->setErrorType(ErrorType::networkError);
                 }
@@ -169,8 +170,10 @@ void MainWindowPrivate::initWidgets()
     // disconect transfer
     connect(TransferHelper::instance(), &TransferHelper::disconnected, [this, errorwidget]() {
         int index = stackedWidget->currentIndex();
-        if (index >= PageName::selectmainwidget && index <= PageName::transferringwidget)
+        if (index >= PageName::selectmainwidget && index <= PageName::transferringwidget) {
+            WLOG << "receiver > disconnected, jump to errorwidget";
             stackedWidget->setCurrentIndex(PageName::errorwidget);
+        }
         errorwidget->setErrorType(ErrorType::networkError);
     });
 }

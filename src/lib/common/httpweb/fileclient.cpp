@@ -57,7 +57,12 @@ protected:
 
         if (_handler) {
             // get body by stream, so mark response arrived.
-            HTTPSClientEx::onReceivedResponse(response);
+            try {
+                HTTPSClientEx::onReceivedResponse(response);
+            } catch (const std::future_error &e) {
+                // 忽略"promise already satisfied"错误
+                std::cerr << "Ignored future error in onReceivedResponseHeader: " << e.what() << std::endl;
+            }
 
             if (_handler(response.status() == 200 ? RES_OKHEADER : RES_NOTFOUND, response.string().data(), response.body_length())) {
                 // cancel
@@ -65,7 +70,12 @@ protected:
             }
             _response.ClearCache();
         } else {
-            HTTPSClientEx::onReceivedResponseHeader(response);
+            try {
+                HTTPSClientEx::onReceivedResponseHeader(response);
+            } catch (const std::future_error &e) {
+                // 忽略"promise already satisfied"错误
+                std::cerr << "Ignored future error in onReceivedResponseHeader fallback: " << e.what() << std::endl;
+            }
         }
     }
 
@@ -83,7 +93,12 @@ protected:
             _handler(RES_FINISH, cache.data(), size);
             _response.Clear();
         } else {
-            HTTPSClientEx::onReceivedResponse(response);
+            try {
+                HTTPSClientEx::onReceivedResponse(response);
+            } catch (const std::future_error &e) {
+                // 忽略"promise already satisfied"错误
+                std::cerr << "Ignored future error in onReceivedResponse: " << e.what() << std::endl;
+            }
         }
     }
 
@@ -100,7 +115,12 @@ protected:
             }
             _response.ClearCache();
         } else {
-            HTTPSClientEx::onReceivedResponseBody(response);
+            try {
+                HTTPSClientEx::onReceivedResponseBody(response);
+            } catch (const std::future_error &e) {
+                // 忽略"promise already satisfied"错误
+                std::cerr << "Ignored future error in onReceivedResponseBody: " << e.what() << std::endl;
+            }
         }
 
         return true;
@@ -112,7 +132,12 @@ protected:
         if (_handler) {
             _handler(RES_ERROR, nullptr, 0);
         } else {
-            HTTPSClientEx::onReceivedResponseError(response, error);
+            try {
+                HTTPSClientEx::onReceivedResponseError(response, error);
+            } catch (const std::future_error &e) {
+                // 忽略"promise already satisfied"错误
+                std::cerr << "Ignored future error: " << e.what() << std::endl;
+            }
         }
     }
 
@@ -162,7 +187,11 @@ void FileClient::setConfig(const std::string &token, const std::string &savedir)
 void FileClient::stop()
 {
     _stop.store(true);
-    _httpClient->DisconnectAsync();
+    try {
+        _httpClient->DisconnectAsync();
+    } catch (const std::exception &e) {
+        std::cerr << "Exception during disconnect: " << e.what() << std::endl;
+    }
     // Note: can not join this thread beause of it callback to main thread.
     // _downloadThread.join();
 }
@@ -191,7 +220,13 @@ void FileClient::sendInfobyHeader(uint8_t mask, const std::string &name)
     _httpClient->setResponseHandler(nullptr);
 
     std::string url = s_headerInfos[mask] + ">" + name;
-    _httpClient->SendHeadRequest(url, BaseKit::Timespan::seconds(3)).get();
+    
+    try {
+        _httpClient->SendHeadRequest(url, BaseKit::Timespan::seconds(3)).get();
+    } catch (const std::exception &e) {
+        std::cerr << "Exception during sending header info: " << e.what() << std::endl;
+        // 头部信息发送失败，继续执行不影响主要功能
+    }
 }
 
 InfoEntry FileClient::requestInfo(const std::string &name)
@@ -213,20 +248,26 @@ InfoEntry FileClient::requestInfo(const std::string &name)
 
     _httpClient->setResponseHandler(nullptr);
 
-    auto response = _httpClient->SendGetRequest(url, BaseKit::Timespan::seconds(3)).get();
-    if (response.status() == 404) {
-        return fileInfo;
-    }
-    std::string body_str = response.body().data();
+    try {
+        auto response = _httpClient->SendGetRequest(url, BaseKit::Timespan::seconds(3)).get();
+        if (response.status() == 404) {
+            return fileInfo;
+        }
+        std::string body_str = response.body().data();
 
-    picojson::value v;
-    std::string err = picojson::parse(v, body_str);
-    if (!err.empty()) {
-        std::cout << "Failed to parse JSON data: " << err << std::endl;
-        return fileInfo;
-    }
+        picojson::value v;
+        std::string err = picojson::parse(v, body_str);
+        if (!err.empty()) {
+            std::cout << "Failed to parse JSON data: " << err << std::endl;
+            return fileInfo;
+        }
 
-    fileInfo.from_json(v);
+        fileInfo.from_json(v);
+    } catch (const std::exception &e) {
+        std::cerr << "Exception during requesting info: " << e.what() << std::endl;
+        // 当请求信息失败时，返回空信息，调用方会处理
+    }
+    
     return fileInfo;
 }
 
@@ -394,7 +435,16 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
         url.append("&token=").append(_token);
         url.append("&offset=").append(std::to_string(offset));
 
-        _httpClient->SendGetRequest(url).get(); // use get to sync download one by one
+        try {
+            _httpClient->SendGetRequest(url).get(); // use get to sync download one by one
+        } catch (const std::exception &e) {
+            std::cerr << "Exception during file download: " << e.what() << std::endl;
+            // 通知回调发生网络错误
+            if (auto callback = _callback.lock()) {
+                callback->onWebChanged(WEB_DISCONNECTED, "net_error");
+            }
+            timeout_done.store(ExitCount); // 确保退出下面的等待循环
+        }
 
         // Wait for download finish or no data arrived more than many times
         while (!_stop.load()) {

@@ -110,6 +110,7 @@ void MainWindowPrivate::initWidgets()
                 if (index == PageName::connectwidget || index == PageName::waitwidget || index == PageName::promptwidget)
                     stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
                 if (index == PageName::transferringwidget) {
+                    WLOG << "receiver > network offline, jump to errorwidget";
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
                     errorwidget->setErrorType(ErrorType::networkError);
                 }
@@ -121,13 +122,17 @@ void MainWindowPrivate::initWidgets()
                 int index = stackedWidget->currentIndex();
                 if (index == PageName::errorwidget)
                     return;
-                if (index == PageName::transferringwidget || index == PageName::waitwidget)
+
+                if (index == PageName::transferringwidget || index == PageName::waitwidget) {
+                    WLOG << "receiver > disconnected, jump to errorwidget";
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
-                errorwidget->setErrorType(ErrorType::networkError);
+                    errorwidget->setErrorType(ErrorType::networkError);
+                }
             });
 
     connect(TransferHelper::instance(), &TransferHelper::outOfStorage,
             [this, errorwidget](int size) {
+                WLOG << "receiver > out of storage, jump to errorwidget";
                 stackedWidget->setCurrentIndex(PageName::errorwidget);
                 errorwidget->setErrorType(ErrorType::outOfStorageError, size);
             });

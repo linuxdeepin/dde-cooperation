@@ -67,9 +67,9 @@ void TransferHelper::tryConnect(const QString &ip, const QString &password)
         emit connectSucceed();
 }
 
-bool TransferHelper::cancelTransferJob()
+bool TransferHelper::cancelTransferJob(const QString &reason)
 {
-    NetworkUtil::instance()->cancelTrans();
+    NetworkUtil::instance()->cancelTrans(reason);
     return true;
 }
 
@@ -175,7 +175,7 @@ void TransferHelper::handleMessage(QString jsonmsg)
 
 void TransferHelper::emitDisconnected()
 {
-    DLOG << "Emitting disconnected signal";
+    WLOG << "Emitting disconnected signal";
 #ifdef linux
     connectIP = "";
     if (!isSetting)
