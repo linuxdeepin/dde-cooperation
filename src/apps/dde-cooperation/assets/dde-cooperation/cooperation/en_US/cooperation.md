@@ -1,108 +1,108 @@
-# Cooperation|dde-cooperation|
+# Cross-Device Collaboration | dde-cooperation |
 
-### Overview
+## Overview
 
-Cooperation is a software that helps users to collaborate between multiple devices, it enables file drop, keystroke sharing, clipboard sharing between windows and UOS devices.
+Cross-Device Collaboration is a tool that enables multi-device collaborative work, allowing file transfer, keyboard/mouse sharing, and clipboard sharing between UOS/deepin and Windows devices. It also supports screen mirroring from mobile devices to UOS/deepin devices and direct control of mobile devices.
 
-For UOS, you can get the app by searching for "Cross-end Collaboration" in the **App Store**. For Windows, you can go to[https://www.chinauos.com/resource/assistant](https://www.chinauos.com/resource/assistant).
+For UOS/deepin devices, you can obtain the "Cross-Device Collaboration" app by searching for it in the **App Store**. For Windows and mobile devices (currently only supporting certain Android models), visit [https://www.chinauos.com/resource/assistant](https://www.chinauos.com/resource/assistant) to download the app.
 
-### Connecting devices
+## Computer Collaboration
 
-**1. Selection of connected equipment through the equipment list**
+### Connecting Devices
 
-When the "Cooperation" application is turned on, the device will automatically scan other devices under the same *** network segment***, and the scanned devices will be displayed in the device list of the application, as shown in the following figure：
+**1. Select a device from the device list**
 
-![listofdevices](./fig/listofdevices.png)
+When the "Cross-Device Collaboration" app is launched, it automatically scans for other devices on the same ***network segment***. Detected devices will appear in the app's device list, as shown below:
 
-Find the target collaborative device (which can be recognized by computer name and IP), click Connect![dde-cooperation](../common/connect.svg)after completing the connection of the two devices.。
+<img src="./fig/listofdevices.png" alt="listofdevices" style="zoom:67%;" />
 
-**2. Connection to equipment by searching for equipment IP**
+Locate the target device (identified by computer name or IP), click the connect button ![dde-cooperation](../common/connect.svg), and complete the connection between the two devices.
 
-In the search box, search for the IP of the target collaborative device and click Connect ![dde-cooperation](../common/connect.svg)and then complete the connection of the two devices.
+**2. Connect by searching for the device IP**
 
-###  File delivery
+Enter the target device's IP in the search box, click the connect button ![dde-cooperation](../common/connect.svg), and complete the connection between the two devices.
 
-**1. Delivery through the collaborative equipment list -- file delivery button **
+### File Transfer
 
-When the two devices are in a cooperative state, in the device list interface, click![dde-cooperation](../common/send.svg), in the file selection window, select the file that needs to be sent, and click **OK**, that is to start the file delivery.
+**1. Transfer files via the device list's file transfer button**
 
-**2. Delivery via file-right-click menu**
+When two devices are connected, click ![dde-cooperation](../common/send.svg) in the device list interface. In the file selection window, choose the file to send, click **OK**, and the file transfer will begin.
 
-Right click on the file you want to send, select **Send to - File Drop**, in the device list, select the target device you need to drop, that is to start the file drop.
+**2. Transfer files via right-click menu**
 
-```
-PS：If you are casting to the Windows side, you need to keep the Cooperation app on the Windows side turned on.
-```
+Right-click the file you want to send, select **Send to > File Transfer**, and choose the target device from the list to start the transfer. If transferring to a Windows device, ensure the "Cross-Device Collaboration" app on the Windows side remains open.
 
-### Keyboard and mouse sharing
+### Keyboard/Mouse Sharing
 
-When two devices A and B are in a cooperative state, and the keyboard and mouse sharing switch in the setting item of computer B is on, the mouse and keyboard of computer A can be used to directly control computer B. The mouse and keyboard of computer A can directly control computer B according to the screen splicing method in the setting item. The mouse can penetrate between the displays of the two computers according to the screen splicing method in the setting item.
+When devices A and B are connected, and the keyboard/mouse sharing option is enabled in device B's settings, you can use device A's mouse and keyboard to directly control device B. The mouse can move between the screens of both devices based on the screen alignment setting.
 
-### Clipboard sharing
+### Clipboard Sharing
 
-When two devices, A and B, are in a collaborative state, and the "Clipboard Sharing" switch in the settings of the device that initiated the sharing is on, the two computers will share a clipboard, so that you can realize the function of copying in Device A and pasting in Device B.
+When devices A and B are connected, and the "Clipboard Sharing" option is enabled in the initiating device's settings, both devices will share a clipboard, allowing you to copy on device A and paste on device B.
 
-### Cooperation settings
+## Mobile Collaboration
 
-You can access the Cross-end Collaboration settings screen by clicking on the title bar![dde-cooperation](../common/menu.svg)and selecting **Settings** to enter the settings interface of cross-end collaboration.
+### Connecting Devices
 
-1. Discoverable
+Switch the top navigation bar of the "Cross-Device Collaboration" app to the "Mobile Collaboration" page to display a connection QR code. After downloading the "UOS Assistant" app on your mobile device, scan the QR code to establish a connection. The connection process is shown below:
 
-Used to control whether the current device can be automatically searched by other devices under the same network segment, you can choose all people, not allowed.
+<img src="./fig/connecting.png" alt="connecting" />
 
-2. Equipment nicknames
+### Screen Mirroring and Control
 
-It is easy for other devices to discover you by this nickname, which defaults to the computer name of this device.
+On the mobile device, click the "Screen Mirroring" button, grant **screen privacy** permissions, and enable **accessibility services** for UOS Assistant in the device settings. This will mirror the mobile screen to the UOS/deepin device, allowing you to directly control the mobile device by clicking on the mirrored screen.
 
-3. Peripheral sharing
+<img src="./fig/Screen casting.png" alt="Screen casting" />
 
-When turned on, allows the keyboard, mouse, and touchpad of another device in the collaboration to control this device.
+## Cross-Device Collaboration Settings
 
-4. Direction of connection
+Click the title bar icon ![dde-cooperation](../common/icon_menu.svg) and select **Settings** to access the configuration interface.
 
-Used to control the positional relationship with the screen splices of the collaborative device.
+1. **Discoverable**  
+   Controls whether the device can be automatically detected by other devices on the same network segment. Options: Everyone, Not Allowed.
 
-5. The following users are permitted to submit documents to me
+2. **Device Nickname**  
+   Helps other devices identify you. Defaults to the device's computer name.
 
-Used to control the permissions of other users on the same LAN to drop files to me, with options to select everyone, those who are collaborating, and disallow.
+3. **Peripheral Sharing**  
+   When enabled, allows the keyboard, mouse, or touchpad of the connected device to control this device.
 
-6. Location of documents
+4. **Connection Direction**  
+   Controls the screen alignment relationship with the connected device.
 
-Set the storage path for the received files, which is by default in the folder named after the nickname of the other party's device in the current user's download directory. You can also set to select another directory as the default storage path.
+5. **Allow File Transfers From**  
+   Controls which users on the same LAN can send files to you. Options: Everyone, Connected Devices, Not Allowed.
 
-7. Clipboard sharing
+6. **File Save Location**  
+   Sets the storage path for received files. Defaults to a folder named after the sender's device nickname in the current user's Downloads directory. You can also specify another directory.
 
-Controls whether the clipboard is shared with the collaborating devices. The initiator of the collaboration acts as the server, and as long as the initiator turns on this feature, both parties will share the clipboard.
+7. **Clipboard Sharing**  
+   Controls whether the clipboard is shared with the connected device. The initiating device acts as the server; enabling this feature allows both devices to share the clipboard.
 
-### Frequently Asked Questions
+## Frequently Asked Questions
 
-Q: Why can't I find my other device in the device list?
-
-A: Unable to find the device has the following conditions, please check them one by one:
-
-1. Devices need to have the Cross-Collaboration application enabled in order to be discovered;
-2. The devices are not in the same LAN, or in the same LAN but not in the same network segment. In this case, please make sure both devices are under the same LAN first, and then search the IP of the target device in the search box to discover the device;
-3. Check Settings - Discoverable - "Allow everyone on the same LAN".
-
-Q: How can I tell if my two devices are under the same network segment?
-
-A: Usually, you can check the first three digits of the IP address, if they are all the same, that is, under the same network segment.
-
-Q: Is data transfer secure in cross-end collaboration or file delivery?
-
-A: The data is transmitted using SSL/TLS1.3 encryption after protobuf serialization to ensure the security of the data during transmission.
+Q: Why can't I see my other device in the device list?  
+A: Possible reasons include:  
+1. Both devices must have the "Cross-Device Collaboration" app running to be discoverable.  
+2. The devices are not on the same LAN or are on the same LAN but different network segments. Ensure they are on the same LAN and search for the target device's IP if needed.  
+3. Check Settings > Discoverable > "Allow everyone on the same LAN."
 
 
 
+Q: How do I check if my devices are on the same network segment?  
+A: Typically, compare the first three parts of the IP address. If they match, the devices are on the same segment.
 
 
 
+Q: Is data transmission in Cross-Device Collaboration or file transfer secure?  
+A: Data is serialized using protobuf and encrypted with SSL/TLS 1.3 to ensure security during transmission.
 
 
 
+Q: Why can't my Android phone connect to my computer?  
+A: Currently, only certain Android models are supported. More models will be added in future updates.
 
 
 
-
-
-
+Q: How do I control my phone from the computer after screen mirroring?  
+A: After mirroring, enable "Accessibility Services" for UOS Assistant in your phone's settings. The exact steps vary by model. For example, on a Huawei nova 9 Pro (HarmonyOS 4.2.0), go to: Settings > Accessibility > Installed Services, find UOS Assistant, and enable it.
