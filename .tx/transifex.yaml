@@ -1,0 +1,23 @@
+filters:
+- filter_type: file
+  source_file: translations/dde-cooperation/dde-cooperation.ts
+  file_format: QT
+  source_language: en
+  translation_files_expression: translations/dde-cooperation/dde-cooperation_<lang>.ts
+- filter_type: file
+  source_file: translations/deepin-data-transfer/deepin-data-transfer.ts
+  file_format: QT
+  source_language: en
+  translation_files_expression: translations/deepin-data-transfer/deepin-data-transfer_<lang>.ts
+- filter_type: file
+  source_file: translations/dde-cooperation-desktop/desktop.ts
+  file_format: QT
+  source_language: en
+  translation_files_expression: translations/dde-cooperation-desktop/desktop_<lang>.ts
+- filter_type: file
+  source_file: translations/deepin-data-transfer-desktop/desktop.ts
+  file_format: QT
+  source_language: en
+  translation_files_expression: translations/deepin-data-transfer-desktop/desktop_<lang>.ts
+settings:
+  pr_branch_name: transifex_update_<br_unique_id>
