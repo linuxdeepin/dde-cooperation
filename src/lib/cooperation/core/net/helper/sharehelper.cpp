@@ -163,6 +163,9 @@ void ShareHelperPrivate::reportConnectionData()
 void ShareHelperPrivate::onActionTriggered(const QString &action)
 {
     isReplied = true;
+    isTimeout = false;
+    confirmTimer.stop();
+
     if (action == NotifyRejectAction) {
         NetworkUtil::instance()->replyShareRequest(false, selfFingerPrint, senderDeviceIp);
     } else if (action == NotifyAcceptAction) {
@@ -340,6 +343,12 @@ void ShareHelper::notifyConnectRequest(const QString &info)
     d->isTimeout = false;
     d->isRecvMode = true;
     d->senderDeviceIp.clear();
+    
+    // 如果计时器仍在运行，停止它以避免旧请求超时干扰新请求
+    if (d->confirmTimer.isActive()) {
+        DLOG << "Stopping previous connection timer";
+        d->confirmTimer.stop();
+    }
 
     static QString body(tr("A cross-end collaboration request was received from \"%1\""));
     QStringList actions { NotifyRejectAction, tr("Reject"),
@@ -371,6 +380,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
 {
     DLOG << "Handling connection result:" << result << "clientprint:" << clientprint.toStdString();
     d->isReplied = true;
+    d->confirmTimer.stop();  // 明确停止计时器，防止后续超时触发
     if (!d->targetDeviceInfo || d->isTimeout) {
         DLOG << "No target device or timeout, ignoring result";
         return;
