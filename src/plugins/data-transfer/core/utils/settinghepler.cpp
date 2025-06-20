@@ -258,8 +258,21 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
         const QJsonArray &userFileArray = userFileValue.toArray();
         for (const auto &value : userFileArray) {
             QString filename = value.toString();
+            
+            // 过滤路径深度，确保不超过二级目录 /xx/xx
+            QStringList pathParts = filename.split('/', QString::SkipEmptyParts);
+            if (pathParts.size() > 2) {
+                // 只保留最后的二级目录及文件名
+                pathParts = pathParts.mid(pathParts.size() - 2);
+                filename = "/" + pathParts.join("/");
+            }
+            
             QString targetFile = QDir::homePath() + "/" + filename;
-            QString file = filepath + filename.mid(filename.indexOf('/'));
+            
+            // 只保留文件名部分 /filename
+            int lastSlash = filename.lastIndexOf('/');
+            QString file = filepath + filename.mid(lastSlash);
+            
             QFileInfo info = QFileInfo(targetFile);
             auto dir = info.dir();
             if (!dir.exists())
