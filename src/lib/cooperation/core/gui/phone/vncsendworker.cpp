@@ -15,16 +15,16 @@ VNCSendWorker::VNCSendWorker(QObject *parent): QObject(parent)
 
 void VNCSendWorker::sendMouseUpdateMsg(rfbClient *cl, int x, int y, int button = 0)
 {
-    DLOG << "Sending mouse event - x:" << x << "y:" << y << "button:" << button;
+    // DLOG << "Sending mouse event - x:" << x << "y:" << y << "button:" << button;
     SendPointerEvent(cl, x, y, button);
     SendIncrementalFramebufferUpdateRequest(cl);
-    DLOG << "Mouse event sent";
+    // DLOG << "Mouse event sent";
 }
 
 void VNCSendWorker::sendKeyUpdateMsg(rfbClient *cl, int key, bool down)
 {
-    DLOG << "Sending key event - key:" << key << "state:" << (down ? "down" : "up");
+    // DLOG << "Sending key event - key:" << key << "state:" << (down ? "down" : "up");
     SendKeyEvent(cl, key, down);
     SendIncrementalFramebufferUpdateRequest(cl);
-    DLOG << "Key event sent";
+    // DLOG << "Key event sent";
 }

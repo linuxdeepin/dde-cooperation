@@ -9,6 +9,7 @@
 
 #include <QDebug>
 #include <QElapsedTimer>
+#include <QMutexLocker>
 
 using namespace cooperation_core;
 
@@ -52,7 +53,7 @@ VncViewer::VncViewer(QWidget *parent)
 
     _vncRecvThread = new VNCRecvThread(this);
     connect(_vncRecvThread, &VNCRecvThread::updateImageSignal, this, &VncViewer::updateImage, Qt::BlockingQueuedConnection);
-    connect(_vncRecvThread, &VNCRecvThread::sizeChangedSignal, this, &VncViewer::onSizeChange, Qt::QueuedConnection);
+    connect(_vncRecvThread, &VNCRecvThread::sizeChangedSignal, this, &VncViewer::onSizeChange, Qt::BlockingQueuedConnection);
     connect(_vncRecvThread, &VNCRecvThread::finished, this, &VncViewer::stop);
     DLOG << "Receive thread initialized";
 
@@ -96,13 +97,19 @@ void VncViewer::onSizeChange(int width, int height)
         return;
     }
 
-    // Check the screen has been rotated
+    // 使用互斥锁保护尺寸变更
+    QMutexLocker locker(&m_mutex);
+
+    // 检测屏幕是否旋转
     int curentMode = (width < height) ? PORTRAIT : LANDSCAPE;
     if (curentMode != m_phoneMode) {
-        DLOG << "Screen rotation detected - new mode:" << curentMode;
+        DLOG << "Screen rotation detected - mode: " << curentMode;
         m_phoneMode = curentMode;
         int w = (m_phoneMode == PORTRAIT) ? m_realSize.width() : m_realSize.height();
         const QSize size = {static_cast<int>(w * m_phoneScale), height};
+
+        // 清除现有图像，防止尺寸不匹配时绘制
+        m_image = QImage();
 
         setSurfaceSize(size);
         emit sizeChanged(size);
@@ -143,10 +150,22 @@ void VncViewer::clearSurface()
     setCurrentFps(0);
     setFrameCounter(0);
 
-    if (m_surfacePixmap.isNull() && m_connected)
+    // 添加连接状态与有效性检查
+    if (!m_connected) {
+        DLOG << "Clearing surface skipped - not connected";
+        return;
+    }
+
+    // 使用互斥锁保护此关键部分
+    QMutexLocker locker(&m_mutex);
+
+    if (m_surfacePixmap.isNull() && m_rfbCli) {
+        DLOG << "Setting initial surface size from RFB client";
         setSurfaceSize({m_rfbCli->width, m_rfbCli->height});
-    else
+    } else if (!m_surfacePixmap.isNull()) {
+        DLOG << "Maintaining existing surface size";
         setSurfaceSize(m_surfacePixmap.size());
+    }
 }
 
 int VncViewer::translateMouseButton(Qt::MouseButton button)
@@ -167,6 +186,28 @@ void VncViewer::setMobileRealSize(const int w, const int h)
 
 void VncViewer::updateImage(const QImage &image)
 {
+    // 使用互斥锁保护图像更新
+    QMutexLocker locker(&m_mutex);
+
+    // 检查图像有效性
+    if (image.isNull()) {
+        return;
+    }
+
+    // 检测屏幕是否旋转 (根据图像宽高比判断)
+    int currentMode = (image.width() < image.height()) ? PORTRAIT : LANDSCAPE;
+    if (currentMode != m_phoneMode) {
+        DLOG << "Screen rotation detected from image - old mode: " << m_phoneMode << " new mode: " << currentMode;
+        m_phoneMode = currentMode;
+
+        // 更新显示尺寸
+        int w = (m_phoneMode == PORTRAIT) ? m_realSize.width() : m_realSize.height();
+        const QSize size = {static_cast<int>(w * m_phoneScale), image.height()};
+
+        setSurfaceSize(size);
+        emit sizeChanged(size);
+    }
+
     m_image = image;
 
     update();
@@ -175,18 +216,29 @@ void VncViewer::updateImage(const QImage &image)
 void VncViewer::paintEvent(QPaintEvent *event)
 {
     if (m_connected) {
-        if (m_image.isNull())
+        // 使用互斥锁保护绘制过程
+        QMutexLocker locker(&m_mutex);
+
+        // 增加图像有效性检查
+        if (m_image.isNull()) {
+            m_painter.begin(this);
+            m_painter.fillRect(rect(), backgroundBrush());
+            m_painter.end();
+            incFrameCounter();
             return;
-        
+        }
+
+        // 修正：避免直接比较m_image与m_surfacePixmap的尺寸
+        // 旋转过程中如果尺寸不匹配或模式变化，避免绘制导致崩溃
+        if (m_surfacePixmap.isNull() || 
+            ((m_phoneMode == PORTRAIT && m_image.width() > m_image.height()) || 
+             (m_phoneMode == LANDSCAPE && m_image.width() < m_image.height()))) {
+            // 静默忽略当前帧，保持当前显示不变
+            incFrameCounter();
+            return;
+        }
+
         m_painter.begin(&m_surfacePixmap);
-        // if (m_image.hasAlphaChannel()) {
-        //     // 设置合成模式为源模式
-        //     m_painter.setCompositionMode(QPainter::CompositionMode_Source);
-        //     m_painter.fillRect(this->rect(), Qt::transparent); // 用透明填充
-        // } else {
-        //     // 如果没有 alpha 通道，保留原来的内容
-        //     m_painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-        // }
         m_painter.drawImage(rect().topLeft(), m_image);
         m_painter.end();
 
@@ -219,6 +271,12 @@ void VncViewer::paintEvent(QPaintEvent *event)
 
 void VncViewer::setSurfaceSize(QSize surfaceSize)
 {
+    // 安全检查
+    if (surfaceSize.width() <= 0 || surfaceSize.height() <= 0) {
+        DLOG << "Invalid surface size";
+        return;
+    }
+
     m_surfacePixmap = QPixmap(surfaceSize);
     m_surfacePixmap.fill(backgroundBrush().color());
     m_surfaceRect = m_surfacePixmap.rect();
@@ -390,27 +448,29 @@ void VncViewer::start()
     m_frameTimer->start();
     DLOG << "Frame timer started";
 
+    // 保护初始化过程
+    QMutexLocker locker(&m_mutex);
+
     int viewWidth;
     m_phoneMode = (m_rfbCli->width < m_rfbCli->height) ? PORTRAIT : LANDSCAPE;
     if (PORTRAIT == m_phoneMode) {
         m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.height());
         viewWidth = static_cast<int>(m_realSize.width() * m_phoneScale);
-        DLOG << "Portrait mode - scale:" << m_phoneScale;
+        DLOG << "Portrait mode - scale:" << m_phoneScale << " view width:" << viewWidth;
     } else {
         m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.width());
         viewWidth = static_cast<int>(m_realSize.height() * m_phoneScale);
-        DLOG << "Landscape mode - scale:" << m_phoneScale;
+        DLOG << "Landscape mode - scale:" << m_phoneScale << " view width:" << viewWidth;
     }
     const QSize size = {viewWidth, m_rfbCli->height};
-
-    // qWarning() << "Phone mode: " << m_phoneMode << " Phone scale: " << m_phoneScale;
-    // qWarning() << "Real size: " << m_realSize << " show size: " << size;
 
     setSurfaceSize(size);
     emit sizeChanged(size);
 
-    _vncRecvThread->startRun(m_rfbCli);
+    // 先启动发送线程
     _vncSendThread->start();
+    // 最后启动接收线程，开始接收图像
+    _vncRecvThread->startRun(m_rfbCli);
     DLOG << "Worker threads started";
 }
 

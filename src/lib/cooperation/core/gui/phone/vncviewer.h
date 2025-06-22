@@ -16,6 +16,7 @@
 #include <QPainter>
 #include <QWidget>
 #include <QTimer>
+#include <QMutex>
 
 namespace cooperation_core {
 
@@ -107,6 +108,8 @@ private:
     QTimer *m_frameTimer;
     uint m_frameCounter;
     uint m_currentFps;
+
+    QMutex m_mutex;
 };
 
 }   // namespace cooperation_core
