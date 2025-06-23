@@ -39,7 +39,7 @@
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="164"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished"/>
+        <translation>Svi u istom LAN-u</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="165"/>
@@ -59,7 +59,7 @@
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="171"/>
         <source>File save location</source>
-        <translation type="unfinished"/>
+        <translation>Mjesto spremanja datoteke</translation>
     </message>
 </context>
 </TS>

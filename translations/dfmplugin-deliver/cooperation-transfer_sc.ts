@@ -4,13 +4,13 @@
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/cooperationplugin.cpp" line="60"/>
         <source>File transfer settings</source>
-        <translation type="unfinished"/>
+        <translation>Ρυθμίσεις μεταφοράς αρχείων</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/cooperationplugin.cpp" line="62"/>
         <source>Settings</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ρυθμίσεις</translation>
     </message>
 </context>
 <context>
@@ -18,7 +18,7 @@
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/menu/cooperationmenuscene.cpp" line="32"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>Μεταφορά αρχείων</translation>
     </message>
 </context>
 <context>
@@ -26,7 +26,7 @@
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/cooperationplugin.cpp" line="55"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>Μεταφορά αρχείων</translation>
     </message>
 </context>
 <context>
@@ -34,32 +34,32 @@
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="150"/>
         <source>File transfer settings</source>
-        <translation type="unfinished"/>
+        <translation>Ρυθμίσεις μεταφοράς αρχείων</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="164"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished"/>
+        <translation>Όλοι στην ίδια LAN</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="165"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished"/>
+        <translation>Επιτρέπονται μόνο εκείνοι που συνεργάζονται</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="166"/>
         <source>Not allow</source>
-        <translation type="unfinished"/>
+        <translation>Δεν επιτρέπεται</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="170"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"/>
+        <translation>Επιτρέπει στους ακόλουθους χρήστες να στέλνουν αρχεία σε μένα</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="171"/>
         <source>File save location</source>
-        <translation type="unfinished"/>
+        <translation>Τοποθεσία αποθήκευσης αρχείων</translation>
     </message>
 </context>
 </TS>

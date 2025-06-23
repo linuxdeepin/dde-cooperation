@@ -1,0 +1,958 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1">
+<context>
+    <name>AppSelectWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="42"/>
+        <source>Check transfer application will automatically install the corresponding UOS version of the application.</source>
+        <translation>Pregled prenosa aplikacije avtomatično namesti ustrezno različico aplikacije za UOS.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="56"/>
+        <source>Confirm</source>
+        <translation>Potrdi</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="54"/>
+        <source>Cancel</source>
+        <translation>Prekliči</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="77"/>
+        <source>Application</source>
+        <translation>Aplikacija</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="77"/>
+        <source>Recommendation</source>
+        <translation>Priporočilo</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="102"/>
+        <source>Transferable</source>
+        <translation>Prenosna</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="112"/>
+        <source>Not Suitable</source>
+        <translation>Ne primeren</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="46"/>
+        <source>Select apps to transfer</source>
+        <translation>Izberite aplikacije za prenos</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="47"/>
+        <source>Please select the applications to back up</source>
+        <translation>Prosimo, izberite aplikacije za varnostno kopijo</translation>
+    </message>
+</context>
+<context>
+    <name>Application</name>
+    <message>
+        <location filename="../../src/apps/data-transfer/main.cpp" line="86"/>
+        <source>UOS data transfer</source>
+        <translation>Prenos podatkov za UOS</translation>
+    </message>
+    <message>
+        <location filename="../../src/apps/data-transfer/main.cpp" line="91"/>
+        <source>UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system.</source>
+        <translation>UOS prenosni orodje omogoča enoklikov prenos vaših datotek, osebnih podatkov in aplikacij v UOS, kar vam omogoči preprost zamenjava sistema.</translation>
+    </message>
+</context>
+<context>
+    <name>ChooseWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="35"/>
+        <source>Export to local directory</source>
+        <translation>Izvozi v lokalno direktorij</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="41"/>
+        <source>Select a transfer way</source>
+        <translation>Izberite način prenosa</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="56"/>
+        <source>Unable to connect to the network， please check your network connection or select export to local directory.</source>
+        <translation>Ni mogoče povezati s omrežjem, prosimo preverite povezavo s omrežjem ali izberite izvoz v lokalno direktorij.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="69"/>
+        <source>Next</source>
+        <translation>Naprej</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="33"/>
+        <source>From Windows PC</source>
+        <translation>Iz Windows računalnika</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="39"/>
+        <source>Import from backup files</source>
+        <translation>Uvoz iz varnostnih kopij</translation>
+    </message>
+</context>
+<context>
+    <name>ConfigSelectWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="39"/>
+        <source>Check transfer configuration will automatically apply to UOS.</source>
+        <translation>Pregled prenosa konfiguracije avtomatično uporabi konfiguracijo za UOS.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="51"/>
+        <source>Confirm</source>
+        <translation>Potrdi</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="49"/>
+        <source>Cancel</source>
+        <translation>Prekliči</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
+        <source>Browser bookmarks</source>
+        <translation>Preglednica in zaznamke</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
+        <source>Recommendation</source>
+        <translation>Priporočilo</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
+        <source>Transferable</source>
+        <translation>Prenosna</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
+        <source>Personal Settings</source>
+        <translation>Osebna nastavitev</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="138"/>
+        <source>Customized Wallpaper</source>
+        <translation>Prilagojeno ozadje</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="49"/>
+        <source>Select the configuration to transfer</source>
+        <translation>Izberite konfiguracijo za prenos</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="50"/>
+        <source>Please select the configurations to back up</source>
+        <translation>Prosimo, izberite konfiguracije za varnostno kopijo</translation>
+    </message>
+</context>
+<context>
+    <name>ConnectWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="36"/>
+        <source>Ready to connect</source>
+        <translation>Pripravljen za povezavo</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="41"/>
+        <source>Please open data transfer on Windows, and imput the IP and connect code</source>
+        <translation>Prosimo, odprite prenos podatkov na Windowsu in vnesite IP naslov in kod za povezavo.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="48"/>
+        <source>Download Windows client</source>
+        <translation>Prenesi Windows klient</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="59"/>
+        <source>Connect code is expired, please refresh for new code</source>
+        <translation>Kод за връзка е изтекъл, моля, обновете за нов код</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="75"/>
+        <source>Back</source>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="104"/>
+        <source>computer</source>
+        <translation>компютър</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="107"/>
+        <source>Local IP</source>
+        <translation>Локален IP</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="163"/>
+        <source>Refresh</source>
+        <translation>Обнови</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
+        <source>The code will be expired in</source>
+        <translation>Кодът ще изтече след</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
+        <source>please input connect code as soon as possible</source>
+        <translation>Моля, въведете код за връзка веднага</translation>
+    </message>
+</context>
+<context>
+    <name>CreateBackupFileWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="87"/>
+        <source>Create data backup</source>
+        <translation>Създаване на резервна копие на данни</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="95"/>
+        <source>File information</source>
+        <translation>Информация за файла</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="115"/>
+        <source>Name</source>
+        <translation>Име</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="133"/>
+        <source>size:0B</source>
+        <translation>размер:0B</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="152"/>
+        <source>Location</source>
+        <translation>Локация</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="162"/>
+        <source>(Select Backup Disk)</source>
+        <translation>(Изберете резервно дискове)</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="187"/>
+        <source>Insufficient space in the selected disk, please clean the space</source>
+        <translation>Недостатъчно пространство в избраното дискове, моля, освободете пространство</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="195"/>
+        <source>Backup</source>
+        <translation>Резервно копие</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="193"/>
+        <source>Cancel</source>
+        <translation>Отказ</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="339"/>
+        <source>Size:%1</source>
+        <translation>Размер:%1</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="382"/>
+        <source>local disk</source>
+        <translation>локално дискове</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
+        <source>%1/%2 available</source>
+        <translation>'%1/%2 налични'</translation>
+    </message>
+</context>
+<context>
+    <name>CustomMessageBox</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="66"/>
+        <source>Reselect</source>
+        <translation>Повторно избор</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="81"/>
+        <source>Continue</source>
+        <translation>Продължи</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
+        <source>The presence of outstanding transfer tasks between you and the target device has been detected.</source>
+        <translation>>-
+ Беше открито наличие на непривършени преносни задачи между вас и целевото
+ устройство.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
+        <source>Do you want to continue with the last transfer?</source>
+        <translation>Искате ли да продължите с последния пренос?</translation>
+    </message>
+</context>
+<context>
+    <name>ErrorWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="54"/>
+        <source>Transfer will be completed in</source>
+        <translation>Преносът ще бъде завършен след</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="69"/>
+        <source>Try again</source>
+        <translation>Опитайте отново</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="66"/>
+        <source>Back</source>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="29"/>
+        <source>Network Error</source>
+        <translation>Мрежова грешка</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="30"/>
+        <source>Transfer interrupted</source>
+        <translation>Преносът е прекъснат</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="32"/>
+        <source>The network disconnected, transfer failed, please connect the network and try again</source>
+        <translation>>-
+ Мрежата е прекъсната, преносът е провален, моля, свържете мрежата и опитайте отново</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="34"/>
+        <source>Insufficient space in UOS, please clear at least %1 GB and try again</source>
+        <translation>Недостатъчно пространство в UOS, моля, освободете поне %1 GB и опитайте отново</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="36"/>
+        <source>Insufficient space in UOS, Please reserve enough space</source>
+        <translation>غير كافٍ مساحة في UOS، الرجاء تخصيص مساحة كافية</translation>
+    </message>
+</context>
+<context>
+    <name>FileSelectWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="50"/>
+        <source>Name</source>
+        <translation>اسم</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="50"/>
+        <source>Size</source>
+        <translation>الحجم</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="60"/>
+        <source>When transfer completed, the data will be placed in the user's home directory</source>
+        <translation>عند الانتهاء من النقل، سيتم وضع البيانات في دليل المستخدم الخاص</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="73"/>
+        <source>Confirm</source>
+        <translation>تؤكد</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="71"/>
+        <source>Cancel</source>
+        <translation>إلغاء</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.h" line="56"/>
+        <source>Select the file to transfer</source>
+        <translation>اختر الملف الذي تريد نقله</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.h" line="57"/>
+        <source>Please select the files to back up</source>
+        <translation>الرجاء اختيار الملفات التي تريد إجراء نسخ احتياطي منها</translation>
+    </message>
+</context>
+<context>
+    <name>NetworkDisconnectionWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="34"/>
+        <source>The network has been disconnected. Please check your network</source>
+        <translation>تم قطع الشبكة، الرجاء التحقق من اتصالك بالشبكة</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="40"/>
+        <source>Back</source>
+        <translation>الخلف</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="41"/>
+        <source>Try again</source>
+        <translation>حاول مرة أخرى</translation>
+    </message>
+</context>
+<context>
+    <name>ProcessWindow</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="297"/>
+        <source>Installing</source>
+        <translation>تثبيت</translation>
+    </message>
+</context>
+<context>
+    <name>PromptWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="29"/>
+        <source>Before tranfer</source>
+        <translation>قبل النقل</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
+        <source>Data transfer requires some time, to avoid interrupting the migration due to low battery, please keep connect to the  power.</source>
+        <translation>يتطلب نقل البيانات وقتًا، للحفاظ على استمرارية الهجرة وتجنب تعطيلها بسبب انخفاض البطارية، من فضلك ابقَ متصلًا بالطاقة.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="36"/>
+        <source>Other applications may slowdown the transfer speed. For smoother experience, please close other applications.</source>
+        <translation>قد تؤثر التطبيقات الأخرى على سرعة النقل، للحصول على تجربة أكثر سلاسة، من فضلك أغلق التطبيقات الأخرى.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="38"/>
+        <source>For the security of your transfer, please use a trusted network.</source>
+        <translation>للحفاظ على أمان نقلك، من فضلك استخدم شبكة موثوقة.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
+        <source>Back</source>
+        <translation>الخلف</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="64"/>
+        <source>Confirm</source>
+        <translation>تؤكد</translation>
+    </message>
+</context>
+<context>
+    <name>ReadyWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="48"/>
+        <source>Ready to connect</source>
+        <translation>جاهز للاتصال</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="52"/>
+        <source>IP</source>
+        <translation>IP</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="59"/>
+        <source>Please input the IP of UOS</source>
+        <translation>الرجاء إدخال IP لـ UOS</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="79"/>
+        <source>Please open data transfer on UOS, and get the IP</source>
+        <translation>الرجاء فتح نقل البيانات في UOS واحصل على IP</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="85"/>
+        <source>Connect code</source>
+        <translation>رمز الاتصال</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="95"/>
+        <source>Please input the connect code on UOS</source>
+        <translation>الرجاء إدخال رمز الاتصال في UOS</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="118"/>
+        <source>Back</source>
+        <translation>الخلف</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
+        <source>connect...</source>
+        <translation>اتصل...</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="120"/>
+        <source>Connect</source>
+        <translation>اتصل</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="258"/>
+        <source>Failed to connect, please check your input</source>
+        <translation>فشل الاتصال، من فضلك تحقق من مدخلاتك</translation>
+    </message>
+</context>
+<context>
+    <name>ResultDisplayWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="128"/>
+        <source>Transfer completed partially</source>
+        <translation>تم نقل البيانات جزئيًا</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
+        <source>Transfer completed</source>
+        <translation>تم نقل البيانات</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="38"/>
+        <source>Partial information migration failed, please go to UOS for manual transfer</source>
+        <translation>Povsemška migracija podatkov je spodletela, prosim, se zavrnite v UOS za ročno prenos</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="50"/>
+        <source>Back</source>
+        <translation>Nazaj</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="52"/>
+        <source>Exit</source>
+        <translation>Izhod</translation>
+    </message>
+</context>
+<context>
+    <name>SelectItem</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="216"/>
+        <source>Selected:0</source>
+        <translation>Izbrano:0</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="237"/>
+        <source>Selected:%1</source>
+        <translation>Izbrano:%1</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="304"/>
+        <source>Edit</source>
+        <translation>Ureditev</translation>
+    </message>
+</context>
+<context>
+    <name>SelectMainWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="90"/>
+        <source>File</source>
+        <translation>Datoteka</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="95"/>
+        <source>App</source>
+        <translation>Aplikacija</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="97"/>
+        <source>Config</source>
+        <translation>Konfiguracija</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="112"/>
+        <source>Back</source>
+        <translation>Nazaj</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="72"/>
+        <source>Select data to transfer</source>
+        <translation>Izberite podatke za prenos</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="73"/>
+        <source>Please select the content to back up</source>
+        <translation>Prosim, izberite vsebino za varnostno kopijo</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="74"/>
+        <source>Start transfer</source>
+        <translation>Začnite prenos</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="75"/>
+        <source>Next</source>
+        <translation>Naprej</translation>
+    </message>
+</context>
+<context>
+    <name>SettingHelper</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
+        <source>Profiles</source>
+        <translation>Profile</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
+        <source>Wrong or missing profile</source>
+        <translation>Napačen ali manjkajoč profil</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
+        <source>My Wallpaper</source>
+        <translation>Moje ozadje</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
+        <source>Transfer completed</source>
+        <translation>Prenos zaključen</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
+        <source>Browser Bookmarks</source>
+        <translation>Prenos zaznamkov bralnika</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
+        <source>BrowserBookMark</source>
+        <translation>Zaznamov bralnika</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="176"/>
+        <source>is installed</source>
+        <translation>je nameščen</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="200"/>
+        <source>Installing</source>
+        <translation>Nameščanje</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
+        <source>Transfer failed</source>
+        <translation>Prenos je spodletel</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
+        <source>Format error</source>
+        <translation>Napaka v formatu</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
+        <source>Setup failed, configuration can be imported manually</source>
+        <translation>Postavitev je spodletela, konfiguracija lahko izvozite ročno</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
+        <source>Installation failed, please go to the app store to install</source>
+        <translation>Nameščanje je spodletelo, prosim, se zavrnite v trgovino aplikacij za nameščanje</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="249"/>
+        <source>Transfer Complete</source>
+        <translation>Prenos zaključen</translation>
+    </message>
+</context>
+<context>
+    <name>SidebarWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="21"/>
+        <source>Videos</source>
+        <translation>Video</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="22"/>
+        <source>Pictures</source>
+        <translation>Slike</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="23"/>
+        <source>Documents</source>
+        <translation>Dokumenti</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="24"/>
+        <source>Downloads</source>
+        <translation>Загрузки</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="25"/>
+        <source>Music</source>
+        <translation>Музика</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="26"/>
+        <source>Desktop</source>
+        <translation>Рабочий стол</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
+        <source>Select:%1</source>
+        <translation>Izberi:%1</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="225"/>
+        <source>local disk</source>
+        <translation>локални диск</translation>
+    </message>
+</context>
+<context>
+    <name>StartWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="35"/>
+        <source>UOS data transfer</source>
+        <translation>Пренос податков UOS</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="39"/>
+        <source>UOS transfer tool enables one click migration of your files, personal data, and applications to
+UOS, helping you seamlessly replace your system.</source>
+        <translation>UOS transfer tool omogoča enoklikov prenos vaših datotek, osebnih podatkov in programske opreme na UOS, kar vam omogoči nenazadovan zamenjavo sistema.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="46"/>
+        <source>Next</source>
+        <translation>Naprej</translation>
+    </message>
+</context>
+<context>
+    <name>TransferHandle</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/utils/transferworker.cpp" line="326"/>
+        <source>Transfering</source>
+        <translation>Prenos</translation>
+    </message>
+</context>
+<context>
+    <name>TransferringWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="42"/>
+        <source>Transferring...</source>
+        <translation>Prenos...</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
+        <source>Calculationing...</source>
+        <translation>Izračunava...</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
+        <source>Show processes</source>
+        <translation>Pokaži postopke</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="119"/>
+        <source>Hide processes</source>
+        <translation>Skrij postopke</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
+        <source>Transfer will be completed in %1 minutes</source>
+        <translation>Prenos bo zaključen v %1 minutah</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
+        <source>Transfering</source>
+        <translation>Prenos</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="199"/>
+        <source>Transfer will be completed in %1 secondes</source>
+        <translation>Prenos bo zaključen v %1 sekundah</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="202"/>
+        <source>Transfer will be completed in --</source>
+        <translation>Prenos bo zaključen v --</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
+        <source>Decompressing</source>
+        <translation>Razširjanje</translation>
+    </message>
+</context>
+<context>
+    <name>UnzipWorker</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
+        <source>Decompressing</source>
+        <translation>Razširjanje</translation>
+    </message>
+</context>
+<context>
+    <name>UploadFileFrame</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
+        <source>Drag file here </source>
+        <translation>Potegnite datoteko tukaj </translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
+        <source>Import file</source>
+        <translation>Uvozite datoteko</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="276"/>
+        <source>Only .zip is supported, please</source>
+        <translation>Podpira le .zip, prosimo</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="277"/>
+        <source>reselect</source>
+        <translation>povrnite izbiro</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
+        <source>select zip file</source>
+        <translation>izberite zip datoteko</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
+        <source>ZIP file (*.zip)</source>
+        <translation>ZIP datoteka (*.zip)</translation>
+    </message>
+</context>
+<context>
+    <name>UploadFileWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="40"/>
+        <source>Select data transfer file</source>
+        <translation>Izberite datoteko za prenos podatkov</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="49"/>
+        <source>File error, cannot transfer, please reselect</source>
+        <translation>Napaka datoteke, prenos ni mogoč, prosim, povrnite izbiro</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="62"/>
+        <source>Back</source>
+        <translation>Nazaj</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
+        <source>Next</source>
+        <translation>Naprej</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
+        <source>Retry</source>
+        <translation>Ponovno poskus</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="122"/>
+        <source>The file is corrupted and cannot be migrated. Please replace it with a backup file.</source>
+        <translation>Datoteka je poškodena in ne može biti premaknjena. Prosím, zamenjajte jo z varnostno kopijo.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
+        <source>Insufficient space on UOS. Please reserve at least %1G of space and try again.</source>
+        <translation>Pomanjkljivo prostora na UOS. Prosím, rezervirajte najmanj %1G prostora in poskusite ponovno.</translation>
+    </message>
+</context>
+<context>
+    <name>UserSelectFileSize</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/userselectfilesize.cpp" line="22"/>
+        <source>Calculating</source>
+        <translation>Računanje</translation>
+    </message>
+</context>
+<context>
+    <name>WaitTransferWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="32"/>
+        <source>Waiting for transfer...</source>
+        <translation>Čakanje na prenos...</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="37"/>
+        <source>Please select the data to transfer on Windows</source>
+        <translation>Izberite podatke, ki jih želite prenesti na Windows</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
+        <source>Cancel</source>
+        <translation>Prekliči</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="99"/>
+        <source>Close</source>
+        <translation>Zatvori</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="101"/>
+        <source>This operation will clear the transmission progress, Do you want to continue.</source>
+        <translation>Ta operacija bo zbrisala napredek prenosa. Želite nadaljevati?</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="102"/>
+        <source>This operation is not recoverable</source>
+        <translation>Ta operacija ni ponovno varnostna</translation>
+    </message>
+</context>
+<context>
+    <name>ZipFileProcessResultWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="32"/>
+        <source>Exit</source>
+        <translation>Izhod</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="49"/>
+        <source>Back</source>
+        <translation>Nazaj</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="84"/>
+        <source>Back up succeed</source>
+        <translation>Varnostna kopija je uspela</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="90"/>
+        <source>Congratulations, Your Information has been Successfully Backed Up.</source>
+        <translation>Brača, vaša podatka so bila uspešno varnostno kopirana.</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="95"/>
+        <source>Go to View</source>
+        <translation>Pojdi k Pregledu</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="120"/>
+        <source>Back up failed</source>
+        <translation>Varnostna kopija je spodletela</translation>
+    </message>
+</context>
+<context>
+    <name>ZipFileProcessWidget</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="44"/>
+        <source>Packing  %1</source>
+        <translation>Pakiranje %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
+        <source>Transfer will be completed in %1 minutes</source>
+        <translation>Prenos bo zaključen v %1 minutah</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="56"/>
+        <source>Transfer will be completed in %1 secondes</source>
+        <translation>Prenos bo zaključen v %1 sekundah</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="84"/>
+        <source>Creating Backup File...</source>
+        <translation>Ustvarjanje varnostne kopije...</translation>
+    </message>
+</context>
+<context>
+    <name>ZipWork</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
+        <source>%1 File compression failed</source>
+        <translation>'%1 kompresija datoteke je spodletela'</translation>
+    </message>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
+        <source>Back up file done</source>
+        <translation>Varnostna kopija datoteke je gotova</translation>
+    </message>
+</context>
+<context>
+    <name>data_transfer_core::MainWindowPrivate</name>
+    <message>
+        <location filename="../../src/plugins/data-transfer/core/gui/linux/mainwindow_p_linux.cpp" line="32"/>
+        <source>UOS data transfer</source>
+        <translation>Prenos podatkov UOS</translation>
+    </message>
+</context>
+</TS>
