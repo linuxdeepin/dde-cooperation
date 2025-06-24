@@ -1,3 +1,10 @@
+dde-cooperation (1.1.9) unstable; urgency=medium
+
+  * v1.1.9 version update.
+  * fix: Fix dman icon show.
+
+ -- re2zero <yangwu@uniontech.com>  Tue, 24 Jun 2025 17:23:45 +0800
+
 dde-cooperation (1.1.8) unstable; urgency=medium
 
   * chore: New version 1.1.8.
