@@ -43,20 +43,21 @@ int SortFilterWorker::calculateIndex(const QList<DeviceInfoPointer> &list, const
         DLOG << "Connected device placed at index 0";
         break;
     case DeviceInfo::Connectable: {
+        DLOG << "Connectable device";
         index = findLast(list, DeviceInfo::Connectable, info);
         if (index != -1) {
-            DLOG << "Connectable device placed at index:" << index;
+            DLOG << "Connectable device found at index:" << index;
             break;
         }
 
         index = findFirst(list, DeviceInfo::Offline);
         if (index != -1) {
-            DLOG << "Connectable device placed before offline at index:" << index;
+            DLOG << "Connectable device placed before offline devices at index:" << index;
             break;
         }
 
         index = list.size();
-        DLOG << "Connectable device placed at end:" << index;
+        DLOG << "Connectable device placed at the end of the list:" << index;
     } break;
     case DeviceInfo::Offline:
     default:
@@ -65,6 +66,7 @@ int SortFilterWorker::calculateIndex(const QList<DeviceInfoPointer> &list, const
         break;
     }
 
+    DLOG << "Calculation completed, index:" << index;
     return index;
 }
 
@@ -77,32 +79,45 @@ void SortFilterWorker::addDevice(const QList<DeviceInfoPointer> &infoList)
     }
 
     for (auto info : infoList) {
-        if (isStoped)
+        if (isStoped) {
+            DLOG << "Worker stopped during device addition, returning";
             return;
-        if (info->ipAddress() == selfip)
-            continue;
-
-        // 分别进行更新
-        if (contains(allDeviceList, info)) {
-            updateDevice(allDeviceList, info, false);
-            if (contains(visibleDeviceList, info))
-                updateDevice(visibleDeviceList, info, true);
+        }
+        if (info->ipAddress() == selfip) {
+            DLOG << "Skipping self IP:" << selfip.toStdString();
             continue;
         }
 
-        if (info->connectStatus() == DeviceInfo::Unknown)
+        // 分别进行更新
+        if (contains(allDeviceList, info)) {
+            DLOG << "Device already in allDeviceList, updating";
+            updateDevice(allDeviceList, info, false);
+            if (contains(visibleDeviceList, info)) {
+                DLOG << "Device also in visibleDeviceList, updating";
+                updateDevice(visibleDeviceList, info, true);
+            }
+            continue;
+        }
+
+        if (info->connectStatus() == DeviceInfo::Unknown) {
+            DLOG << "Device status is Unknown, setting to Connectable";
             info->setConnectStatus(DeviceInfo::Connectable);
+        }
 
         auto index = calculateIndex(allDeviceList, info);
         allDeviceList.insert(index, info);
 
         // 判断是否需要过滤
         if (!filterText.isEmpty()) {
+            DLOG << "Filter text is not empty:" << filterText.toStdString();
             if (info->deviceName().contains(filterText, Qt::CaseInsensitive)
-                || info->ipAddress().contains(filterText, Qt::CaseInsensitive))
+                || info->ipAddress().contains(filterText, Qt::CaseInsensitive)) {
+                DLOG << "Device matches filter, adding to visible list";
                 index = calculateIndex(visibleDeviceList, info);
-            else
+            } else {
+                DLOG << "Device does not match filter, skipping";
                 continue;
+            }
         }
 
         visibleDeviceList.insert(index, info);
@@ -151,12 +166,14 @@ void SortFilterWorker::filterDevice(const QString &filter)
 
 void SortFilterWorker::clear()
 {
+    DLOG << "Clearing all devices";
     allDeviceList.clear();
     visibleDeviceList.clear();
 }
 
 int SortFilterWorker::findFirst(const QList<DeviceInfoPointer> &list, DeviceInfo::ConnectStatus state)
 {
+    // DLOG << "Searching for first device with status:" << (int)state;
     int index = -1;
     auto iter = std::find_if(list.cbegin(), list.cend(),
                              [&](const DeviceInfoPointer info) {
@@ -166,14 +183,18 @@ int SortFilterWorker::findFirst(const QList<DeviceInfoPointer> &list, DeviceInfo
                                  return info->connectStatus() == state;
                              });
 
-    if (iter == list.cend())
+    if (iter == list.cend()) {
+        DLOG << "No device found with status:" << (int)state;
         return -1;
+    }
 
+    // DLOG << "Found first device with status:" << (int)state << "at index:" << index;
     return index;
 }
 
 int SortFilterWorker::findLast(const QList<DeviceInfoPointer> &list, DeviceInfo::ConnectStatus state, const DeviceInfoPointer info)
 {
+    // DLOG << "Searching for last device with status:" << (int)state;
     bool isRecord = transHistory->contains(info->ipAddress());
     int startPos = -1;
     int endPos = -1;
@@ -191,11 +212,13 @@ int SortFilterWorker::findLast(const QList<DeviceInfoPointer> &list, DeviceInfo:
         }
     }
 
+    // DLOG << "Last device with status:" << (int)state << "not found";
     return qMin(startPos, endPos);
 }
 
 void SortFilterWorker::updateDevice(QList<DeviceInfoPointer> &list, const DeviceInfoPointer info, bool needNotify)
 {
+    DLOG << "Updating device with IP:" << info->ipAddress().toStdString();
     int index = indexOf(list, info);
 
     // 当连接状态不一致时，需要更新位置
@@ -222,6 +245,7 @@ void SortFilterWorker::updateDevice(QList<DeviceInfoPointer> &list, const Device
 
 bool SortFilterWorker::contains(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info)
 {
+    // DLOG << "Checking if list contains device with IP:" << info->ipAddress().toStdString();
     auto iter = std::find_if(list.begin(), list.end(),
                              [&info](const DeviceInfoPointer it) {
                                  return it->ipAddress() == info->ipAddress();
@@ -232,6 +256,7 @@ bool SortFilterWorker::contains(const QList<DeviceInfoPointer> &list, const Devi
 
 int SortFilterWorker::indexOf(const QList<DeviceInfoPointer> &list, const DeviceInfoPointer info)
 {
+    // DLOG << "Searching for index of device with IP:" << info->ipAddress().toStdString();
     int index = -1;
     auto iter = std::find_if(list.begin(), list.end(),
                              [&](const DeviceInfoPointer it) {
@@ -239,13 +264,17 @@ int SortFilterWorker::indexOf(const QList<DeviceInfoPointer> &list, const Device
                                  return it->ipAddress() == info->ipAddress();
                              });
 
-    if (iter == list.end())
+    if (iter == list.end()) {
+        DLOG << "Device not found in list";
         return -1;
+    }
 
+    // DLOG << "Found device at index:" << index << "with IP:" << info->ipAddress().toStdString();
     return index;
 }
 
 void SortFilterWorker::setSelfip(const QString &value)
 {
+    DLOG << "Setting self IP to:" << value.toStdString();
     selfip = value;
 }

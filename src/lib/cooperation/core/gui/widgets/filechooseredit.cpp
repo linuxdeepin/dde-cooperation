@@ -31,12 +31,14 @@ FileChooserEdit::FileChooserEdit(QWidget *parent)
 void FileChooserEdit::initUI()
 {
 #ifdef linux
+    DLOG << "Initializing UI for Linux";
     pathLabel = new CooperationLineEdit(this);
     pathLabel->setClearButtonEnabled(false);
     pathLabel->lineEdit()->setReadOnly(true);
     fileChooserBtn = new CooperationSuggestButton(this);
     fileChooserBtn->setIcon(DTK_WIDGET_NAMESPACE::DStyleHelper(style()).standardIcon(DTK_WIDGET_NAMESPACE::DStyle::SP_SelectElement, nullptr));
 #else
+    DLOG << "Initializing UI for non-Linux";
     pathLabel = new QLabel(this);
     auto margins = pathLabel->contentsMargins();
     margins.setLeft(8);
@@ -50,6 +52,7 @@ void FileChooserEdit::initUI()
             "   color: white;"
             "   font-weight: bold;"
             "}");
+    DLOG << "File chooser button style set";
 #endif
     fileChooserBtn->setFocusPolicy(Qt::NoFocus);
     connect(fileChooserBtn, &QPushButton::clicked, this, &FileChooserEdit::onButtonClicked);
@@ -154,10 +157,12 @@ void InformationDialog::initUI()
     connect(okBtn, &QPushButton::clicked, this, &InformationDialog::close);
 
 #ifdef linux
+    DLOG << "Initializing InformationDialog UI for Linux";
     setIcon(QIcon::fromTheme("dde-cooperation"));
     setTitle(tr("the file save location is invalid"));
     addContent(contentWidget);
 #else
+    DLOG << "Initializing InformationDialog UI for non-Linux";
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addSpacing(30);
     layout->addWidget(contentWidget);

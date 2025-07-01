@@ -92,11 +92,13 @@ void PhoneWidget::switchWidget(PageName page)
 QRCodeWidget::QRCodeWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "Initializing QRCodeWidget";
     initUI();
 }
 
 void QRCodeWidget::initUI()
 {
+    DLOG << "Initializing QRCodeWidget UI";
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
     QLabel *title = new QLabel(tr("Scan code connection"), this);
@@ -156,6 +158,7 @@ void QRCodeWidget::initUI()
     linkLable1->setAlignment(Qt::AlignCenter);
     linkLable1->setText(content1);
     connect(linkLable1, &QLabel::linkActivated, this, [](const QString &link) {
+        DLOG << "Link activated: " << link.toStdString();
         QDesktopServices::openUrl(QUrl(link));
     });
 
@@ -171,10 +174,12 @@ void QRCodeWidget::initUI()
     mainLayout->addWidget(linkLable1);
     mainLayout->addSpacing(120);
     setLayout(mainLayout);
+    DLOG << "QRCodeWidget initialized";
 }
 
 void QRCodeWidget::setQRcodeInfo(const QString &info)
 {
+    DLOG << "Setting QR code info:" << info.toStdString();
     QPixmap qrImage = generateQRCode(info, 7);
     qrCode->setPixmap(qrImage);
 }

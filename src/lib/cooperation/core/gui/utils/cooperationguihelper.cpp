@@ -53,10 +53,13 @@ bool CooperationGuiHelper::autoUpdateTextColor(QWidget *widget, const QList<QCol
         return false;
     }
 
-    if (isDarkTheme())
+    if (isDarkTheme()) {
+        DLOG << "Current theme is dark, setting dark color";
         setFontColor(widget, colorList.last());
-    else
+    } else {
+        DLOG << "Current theme is light, setting light color";
         setFontColor(widget, colorList.first());
+    }
 
     if (!widget->property("isConnected").toBool()) {
         DLOG << "Connecting theme change signals for widget";
@@ -156,10 +159,14 @@ void CooperationGuiHelper::initThemeTypeConnect(QWidget *w, const QString &light
     else
         w->setStyleSheet(lightstyle);
     connect(CooperationGuiHelper::instance(), &CooperationGuiHelper::themeTypeChanged, w, [w, lightstyle, darkstyle] {
-        if (CooperationGuiHelper::instance()->isDarkTheme())
+        DLOG << "Theme type changed signal received";
+        if (CooperationGuiHelper::instance()->isDarkTheme()) {
+            DLOG << "Theme changed to dark, applying dark style";
             w->setStyleSheet(darkstyle);
-        else
+        } else {
+            DLOG << "Theme changed to light, applying light style";
             w->setStyleSheet(lightstyle);
+        }
     });
     DLOG << "Theme connection initialized";
 }

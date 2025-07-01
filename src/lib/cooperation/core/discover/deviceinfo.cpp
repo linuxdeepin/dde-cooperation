@@ -5,6 +5,7 @@
 #include "deviceinfo.h"
 #include "deviceinfo_p.h"
 #include "global_defines.h"
+#include "common/log.h"
 
 #include <QJsonDocument>
 
@@ -14,16 +15,19 @@ using namespace deepin_cross;
 DeviceInfoPrivate::DeviceInfoPrivate(DeviceInfo *qq)
     : q(qq)
 {
+    DLOG << "DeviceInfoPrivate created";
 }
 
 DeviceInfo::DeviceInfo()
     : d(new DeviceInfoPrivate(this))
 {
+    DLOG << "DeviceInfo created";
 }
 
 DeviceInfo::DeviceInfo(const QString &ip, const QString &name)
     : d(new DeviceInfoPrivate(this))
 {
+    DLOG << "DeviceInfo created with ip:" << ip.toStdString() << "and name:" << name.toStdString();
     d->deviceName = name;
     d->ipAddress = ip;
 }
@@ -31,20 +35,25 @@ DeviceInfo::DeviceInfo(const QString &ip, const QString &name)
 DeviceInfo::DeviceInfo(const DeviceInfo &other)
     : DeviceInfo()
 {
+    DLOG << "DeviceInfo copy constructor";
     operator=(other);
 }
 
 DeviceInfo::~DeviceInfo()
 {
+    DLOG << "DeviceInfo destroyed";
 }
 
 bool DeviceInfo::isValid()
 {
-    return !(deviceName().isEmpty() || ipAddress().isEmpty());
+    bool valid = !(deviceName().isEmpty() || ipAddress().isEmpty());
+    DLOG << "Device is valid:" << valid;
+    return valid;
 }
 
 void DeviceInfo::setOsType(BaseUtils::OS_TYPE type)
 {
+    DLOG << "Setting OS type to:" << type;
     d->osType = type;
 }
 
@@ -55,6 +64,7 @@ BaseUtils::OS_TYPE DeviceInfo::osType() const
 
 void DeviceInfo::setIpAddress(const QString &ip)
 {
+    DLOG << "Setting IP address to:" << ip.toStdString();
     d->ipAddress = ip;
 }
 
@@ -65,6 +75,7 @@ QString DeviceInfo::ipAddress() const
 
 void DeviceInfo::setConnectStatus(ConnectStatus status)
 {
+    DLOG << "Setting connect status to:" << (int)status;
     d->conStatus = status;
 }
 
@@ -75,6 +86,7 @@ DeviceInfo::ConnectStatus DeviceInfo::connectStatus() const
 
 void DeviceInfo::setDeviceName(const QString &name)
 {
+    DLOG << "Setting device name to:" << name.toStdString();
     d->deviceName = name;
 }
 
@@ -85,6 +97,7 @@ QString DeviceInfo::deviceName() const
 
 void DeviceInfo::setTransMode(DeviceInfo::TransMode mode)
 {
+    DLOG << "Setting transfer mode to:" << (int)mode;
     d->transMode = mode;
 }
 
@@ -95,6 +108,7 @@ DeviceInfo::TransMode DeviceInfo::transMode() const
 
 void DeviceInfo::setDiscoveryMode(DeviceInfo::DiscoveryMode mode)
 {
+    DLOG << "Setting discovery mode to:" << (int)mode;
     d->discoveryMode = mode;
 }
 
@@ -105,6 +119,7 @@ DeviceInfo::DiscoveryMode DeviceInfo::discoveryMode() const
 
 void DeviceInfo::setLinkMode(DeviceInfo::LinkMode mode)
 {
+    DLOG << "Setting link mode to:" << (int)mode;
     d->linkMode = mode;
 }
 
@@ -115,6 +130,7 @@ DeviceInfo::LinkMode DeviceInfo::linkMode() const
 
 void DeviceInfo::setDeviceType(DeviceInfo::DeviceType type)
 {
+    DLOG << "Setting device type to:" << (int)type;
     d->deviceType = type;
 }
 
@@ -125,6 +141,7 @@ DeviceInfo::DeviceType DeviceInfo::deviceType() const
 
 void DeviceInfo::setPeripheralShared(bool b)
 {
+    DLOG << "Setting peripheral shared to:" << b;
     d->isPeripheralShared = b;
 }
 
@@ -135,6 +152,7 @@ bool DeviceInfo::peripheralShared() const
 
 void DeviceInfo::setClipboardShared(bool b)
 {
+    DLOG << "Setting clipboard shared to:" << b;
     d->isClipboardShared = b;
 }
 
@@ -145,6 +163,7 @@ bool DeviceInfo::clipboardShared() const
 
 void DeviceInfo::setCooperationEnable(bool enable)
 {
+    DLOG << "Setting cooperation enable to:" << enable;
     d->cooperationEnabled = enable;
 }
 
@@ -155,6 +174,7 @@ bool DeviceInfo::cooperationEnable() const
 
 QVariantMap DeviceInfo::toVariantMap()
 {
+    // DLOG << "Converting DeviceInfo to QVariantMap";
     QVariantMap map;
     map.insert(AppSettings::IPAddress, d->ipAddress);
     map.insert(AppSettings::OSType, d->osType);
@@ -171,8 +191,11 @@ QVariantMap DeviceInfo::toVariantMap()
 
 DeviceInfoPointer DeviceInfo::fromVariantMap(const QVariantMap &map)
 {
-    if (map.isEmpty())
+    // DLOG << "Creating DeviceInfo from QVariantMap";
+    if (map.isEmpty()) {
+        DLOG << "Map is empty, returning null pointer";
         return {};
+    }
 
     DeviceInfoPointer info = DeviceInfoPointer(new DeviceInfo);
     info->setIpAddress(map.value(AppSettings::IPAddress).toString());
@@ -190,6 +213,7 @@ DeviceInfoPointer DeviceInfo::fromVariantMap(const QVariantMap &map)
 
 DeviceInfo &DeviceInfo::operator=(const DeviceInfo &info)
 {
+    // DLOG << "Assigning DeviceInfo from another object";
     d->deviceName = info.d->deviceName;
     d->ipAddress = info.d->ipAddress;
     d->conStatus = info.d->conStatus;

@@ -87,9 +87,12 @@ void PhoneHelper::onConnect(const DeviceInfoPointer info, int w, int h)
 
 void PhoneHelper::onScreenMirroring()
 {
+    DLOG << "onScreenMirroring called";
     //todo
-    if (!m_mobileInfo)
+    if (!m_mobileInfo) {
+        DLOG << "No mobile info, returning";
         return;
+    }
     QString mes = QString(tr("“%1”apply to initiate screen casting")).arg(m_mobileInfo.data()->deviceName());
     QStringList actions;
     actions.append(tr("cancel"));
@@ -97,8 +100,10 @@ void PhoneHelper::onScreenMirroring()
 
     DLOG << "Showing screen mirroring confirmation dialog";
     int res = notifyMessage(mes, actions);
-    if (res != 1)
+    if (res != 1) {
+        DLOG << "Screen mirroring not confirmed, returning";
         return;
+    }
 
     DLOG << "Creating screen mirroring window";
     m_screenwindow = new ScreenMirroringWindow(m_mobileInfo.data()->deviceName());
@@ -116,8 +121,11 @@ void PhoneHelper::onScreenMirroringStop()
 
 void PhoneHelper::onScreenMirroringResize(int w, int h)
 {
-    if (!m_screenwindow)
+    DLOG << "Screen mirroring resize requested:" << w << "x" << h;
+    if (!m_screenwindow) {
+        DLOG << "No screen window, returning";
         return;
+    }
     m_screenwindow->resize(w, h);
 }
 
@@ -153,13 +161,17 @@ int PhoneHelper::notifyMessage(const QString &message, QStringList actions)
     dlg.setIcon(QIcon::fromTheme("dde-cooperation"));
     dlg.setMessage(message);
 
-    if (actions.isEmpty())
+    if (actions.isEmpty()) {
+        DLOG << "Actions list is empty, adding default 'comfirm' action";
         actions.append(tr("comfirm"));
+    }
 
     dlg.addButton(actions.first(), false, CooperationDialog::ButtonNormal);
 
-    if (actions.size() > 1)
+    if (actions.size() > 1) {
+        DLOG << "More than one action, adding second button";
         dlg.addButton(actions[1], true, CooperationDialog::ButtonRecommend);
+    }
 
     if (qApp->activeWindow()) {
         QWidget *activeWindow = qApp->activeWindow();
@@ -227,11 +239,16 @@ void PhoneHelper::buttonClicked(const QString &id, const DeviceInfoPointer info)
 
 bool PhoneHelper::buttonVisible(const QString &id, const DeviceInfoPointer info)
 {
-    if (id == ConnectButtonId && info->connectStatus() == DeviceInfo::ConnectStatus::Connectable)
+    if (id == ConnectButtonId && info->connectStatus() == DeviceInfo::ConnectStatus::Connectable) {
+        DLOG << "Button ID is ConnectButtonId and device is Connectable, returning true";
         return true;
+    }
 
-    if (id == DisconnectButtonId && info->connectStatus() == DeviceInfo::ConnectStatus::Connected)
+    if (id == DisconnectButtonId && info->connectStatus() == DeviceInfo::ConnectStatus::Connected) {
+        DLOG << "Button ID is DisconnectButtonId and device is Connected, returning true";
         return true;
+    }
 
+    DLOG << "Button not visible, returning false";
     return false;
 }

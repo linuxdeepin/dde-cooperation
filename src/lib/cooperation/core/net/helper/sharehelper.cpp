@@ -71,8 +71,11 @@ CooperationTaskDialog *ShareHelperPrivate::taskDialog()
 void ShareHelperPrivate::initConnect()
 {
 #ifdef __linux__
+    DLOG << "Linux platform, initializing NoticeUtil";
     notice = new NoticeUtil(q);
     connect(notice, &NoticeUtil::ActionInvoked, this, &ShareHelperPrivate::onActionTriggered);
+#else
+    DLOG << "Non-Linux platform, skipping NoticeUtil initialization";
 #endif
 
     confirmTimer.setInterval(10 * 1000);
@@ -105,6 +108,7 @@ void ShareHelperPrivate::notifyMessage(const QString &body, const QStringList &a
     Q_UNUSED(actions)
     Q_UNUSED(expireTimeout)
 
+    DLOG << "Non-Linux platform, activating window and showing task dialog";
     CooperationUtil::instance()->activateWindow();
     taskDialog()->switchInfomationPage(tr("Cooperation"), body);
     taskDialog()->show();
@@ -122,10 +126,14 @@ void ShareHelperPrivate::stopCooperation()
 
 void ShareHelperPrivate::onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value)
 {
-    if (group != AppSettings::GenericGroup)
+    DLOG << "App attribute changed - group:" << group.toStdString() << "key:" << key.toStdString();
+    if (group != AppSettings::GenericGroup) {
+        DLOG << "Group is not GenericGroup, returning";
         return;
+    }
 
     if (key == AppSettings::PeripheralShareKey) {
+        DLOG << "Key is PeripheralShareKey, switching peripheral shared state";
         q->switchPeripheralShared(value.toBool());
     }
 }
@@ -133,16 +141,22 @@ void ShareHelperPrivate::onAppAttributeChanged(const QString &group, const QStri
 void ShareHelperPrivate::reportConnectionData()
 {
 #ifdef __linux__
-    if (!targetDeviceInfo)
+    DLOG << "Reporting connection data for Linux";
+    if (!targetDeviceInfo) {
+        DLOG << "No target device info, returning";
         return;
+    }
 
     auto osName = [](BaseUtils::OS_TYPE type) {
         switch (type) {
         case BaseUtils::kLinux:
+            DLOG << "OS type: Linux";
             return "UOS";
         case BaseUtils::kWindows:
+            DLOG << "OS type: Windows";
             return "Windows";
         default:
+            DLOG << "Unknown OS type";
             break;
         }
 
@@ -151,12 +165,16 @@ void ShareHelperPrivate::reportConnectionData()
 
     QString selfOsName = osName(BaseUtils::osType());
     QString targetOsName = osName(targetDeviceInfo->osType());
-    if (selfOsName.isEmpty() || targetOsName.isEmpty())
+    if (selfOsName.isEmpty() || targetOsName.isEmpty()) {
+        DLOG << "Self or target OS name is empty, returning";
         return;
+    }
 
     QVariantMap map;
     map.insert("osOfDevices", QString("%1&%2").arg(selfOsName, targetOsName));
     ReportLogManager::instance()->commit(ReportAttribute::ConnectionInfo, map);
+#else
+    DLOG << "Skipping connection data reporting for non-Linux";
 #endif
 }
 
@@ -167,8 +185,10 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
     confirmTimer.stop();
 
     if (action == NotifyRejectAction) {
+        DLOG << "Action is NotifyRejectAction";
         NetworkUtil::instance()->replyShareRequest(false, selfFingerPrint, senderDeviceIp);
     } else if (action == NotifyAcceptAction) {
+        DLOG << "Action is NotifyAcceptAction";
         NetworkUtil::instance()->replyShareRequest(true, selfFingerPrint, senderDeviceIp);
 
         auto client = ShareCooperationServiceManager::instance()->client();
@@ -176,6 +196,7 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
         bool enable = !recvServerPrint.isEmpty();
         client->setEnableCrypto(enable);
         if (enable) {
+            DLOG << "Crypto enabled, writing trust print";
             // write server's fingerprint into trust server file.
             SslCertConf::ins()->writeTrustPrint(true, recvServerPrint.toStdString());
         }
@@ -184,6 +205,7 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
         auto info = DiscoverController::instance()->findDeviceByIP(senderDeviceIp);
         if (!info) {
             WLOG << "AcceptAction, but not find: " << senderDeviceIp.toStdString();
+            DLOG << "Device info not found, creating new DeviceInfo";
             // create by remote connect info, that is not discoveried.
             info = DeviceInfoPointer(new DeviceInfo(senderDeviceIp, targetDevName));
             info->setPeripheralShared(true);
@@ -203,6 +225,8 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
         // check setting and turn on/off client
         auto on = CooperationUtil::deviceInfo().value(AppSettings::PeripheralShareKey).toBool();
         q->switchPeripheralShared(on);
+    } else {
+        DLOG << "Unknown action:" << action.toStdString();
     }
     recvServerPrint = ""; // clear received server's ingerprint
 }
@@ -389,6 +413,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
     switch (result) {
     case SHARE_CONNECT_UNABLE: {
         WLOG << "Unable to connect to device";
+        DLOG << "Connection result: SHARE_CONNECT_UNABLE";
         static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("Connect to \"%1\" failed"));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
@@ -398,7 +423,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         d->targetDeviceInfo.reset();
     } break;
     case SHARE_CONNECT_COMFIRM: {
-        DLOG << "Connection confirmed, setting up server";
+        DLOG << "Connection result: SHARE_CONNECT_COMFIRM";
         auto server = ShareCooperationServiceManager::instance()->server();
 
         bool crypto = !clientprint.isEmpty();
@@ -406,6 +431,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         // remove "--disable-crypto" if receive client has fingerprint.
         server->setEnableCrypto(crypto);
         if (crypto) {
+            DLOG << "Crypto enabled, writing trust print";
             // write its fingerprint into trust client file.
             SslCertConf::ins()->writeTrustPrint(false, clientprint.toStdString());
         }
@@ -415,6 +441,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         auto started = server->restartBarrier();
         if (!started) {
             WLOG << "Failed to start barrier server!";
+            DLOG << "Failed to start barrier server";
             static QString title(tr("Unable to collaborate"));
             static QString msg(tr("Failed to run process!"));
             d->taskDialog()->switchFailPage(title, msg, false);
@@ -425,6 +452,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
 #ifdef ENABLE_COMPAT
         // the server has started, notify remote client connect
         if (!crypto) {
+            DLOG << "Crypto disabled, sending compat start share";
             // only for old protocol which disabled crypto
             NetworkUtil::instance()->compatSendStartShare(d->targetDeviceInfo->ipAddress());
         }
@@ -444,7 +472,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         DLOG << "Connection established successfully";
     } break;
     case SHARE_CONNECT_REFUSE: {
-        DLOG << "Connection request was refused";
+        DLOG << "Connection result: SHARE_CONNECT_REFUSE";
         static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("\"%1\" has rejected your request for collaboration"));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
@@ -454,7 +482,7 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         d->targetDeviceInfo.reset();
     } break;
     case SHARE_CONNECT_ERR_CONNECTED: {
-        DLOG << "Target device is already connected to another device";
+        DLOG << "Connection result: SHARE_CONNECT_ERR_CONNECTED";
         static QString title(tr("Unable to collaborate to \"%1\""));
         static QString msg(tr("\"%1\" is connecting with other devices"));
         d->taskDialog()->switchFailPage(title.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)),
@@ -519,12 +547,16 @@ void ShareHelper::handleCancelCooperApply()
 {
     d->recvServerPrint = ""; //reset if server has canceled.
     if (d->isRecvMode) {
-        if (d->isReplied)
+        DLOG << "In receive mode";
+        if (d->isReplied) {
+            DLOG << "Already replied, returning";
             return;
+        }
         static QString body(tr("The other party has cancelled the connection request !"));
 #ifdef __linux__
         d->notifyMessage(body, {}, 3 * 1000);
 #else
+        DLOG << "Non-Linux platform, showing information page";
         static QString title(tr("connect failed"));
         d->taskDialog()->switchInfomationPage(title, body);
         d->taskDialog()->show();
@@ -534,13 +566,18 @@ void ShareHelper::handleCancelCooperApply()
 
 void ShareHelper::handleNetworkDismiss(const QString &msg)
 {
+    DLOG << "Handling network dismiss with message:" << msg.toStdString();
     if (!msg.contains("\"errorType\":-1")) {
+        DLOG << "Message does not contain errorType -1, showing generic network error";
         static QString body(tr("Network not connected, file delivery failed this time.\
                                Please connect to the network and try again!"));
         d->notifyMessage(body, {}, 5 * 1000);
     } else {
-        if (!d->taskDialog()->isVisible())
+        DLOG << "Message contains errorType -1";
+        if (!d->taskDialog()->isVisible()) {
+            DLOG << "Task dialog not visible, returning";
             return;
+        }
 
         static QString title(tr("File transfer failed"));
         d->taskDialog()->switchFailPage(title,
@@ -559,6 +596,7 @@ void ShareHelper::onShareExcepted(int type, const QString &remote)
 
     switch (type) {
     case EX_NETWORK_PINGOUT: {
+        DLOG << "Exception type: EX_NETWORK_PINGOUT";
         static QString title(tr("Network exception"));
         static QString msg(tr("Please check the network \"%1\""));
 
@@ -567,37 +605,47 @@ void ShareHelper::onShareExcepted(int type, const QString &remote)
     } break;
     case EX_OTHER:
     default:
+        DLOG << "Exception type: EX_OTHER or unknown";
         break;
     }
 }
 
 int ShareHelper::selfSharing(const QString &shareIp)
 {
+    DLOG << "Checking self sharing for IP:" << shareIp.toStdString();
     if (shareIp == CooperationUtil::localIPAddress()) {
+        DLOG << "Share IP matches local IP";
         auto server = ShareCooperationServiceManager::instance()->server();
         auto client = ShareCooperationServiceManager::instance()->client();
         if (server.isNull() && client.isNull()) {
+            DLOG << "Server and client are null, returning 1";
             return 1;
         }
 
         auto sharing =  (server && server->isRunning()) || (client && client->isRunning());
+        DLOG << "Sharing status:" << sharing;
         return sharing ? 0 : 1;
     }
 
+    DLOG << "Share IP does not match local IP, returning -1";
     return -1;
 }
 
 
 bool ShareHelper::switchPeripheralShared(bool on)
 {
+    DLOG << "Switching peripheral shared state to:" << on;
     auto client = ShareCooperationServiceManager::instance()->client();
     if (client.isNull()) {
+        DLOG << "Client is null, returning false";
         return false;
     }
 
     if (on) {
+        DLOG << "Starting barrier";
         return client->startBarrier();
     }
+    DLOG << "Stopping barrier";
     client->stopBarrier();
     return true;
 }

@@ -66,6 +66,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
     std::string err = picojson::parse(json_obj, msg.toStdString());
     if (!err.empty()) {
         WLOG << "Failed to parse JSON data: " << err;
+        DLOG << "JSON parsing failed for IPC message";
         return;
     }
 
@@ -74,6 +75,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         DLOG << "Received IPC ping message";
     } break;
     case ipc::FRONT_PEER_CB: {
+        DLOG << "Received FRONT_PEER_CB message";
         // WLOG << "recv IPC json:" << json_obj;
 
         ipc::GenericResult param;
@@ -86,6 +88,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         if (!err.empty()) {
             WLOG << "Failed to parse peer data:" << err.c_str();
             WLOG << "Failed to parse peer data: " << err;
+            DLOG << "Failed to parse peer data";
             return;
         }
 
@@ -96,6 +99,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         auto sharedip = QString::fromStdString(nodeInfo.os.share_connect_ip);
         auto sharing = ShareHelper::instance()->selfSharing(sharedip);
         if (sharing > 0) {
+            DLOG << "Self shared IP is running, resetting sharedip";
             // self shared ip but not running, reset the sharedip as empty.
             sharedip = "";
         }
@@ -105,8 +109,10 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         for (const auto &appInfo : nodeInfo.apps) {
             // DLOG << find << " Append peer : " << appInfo.appname << " " << appInfo.json;
             // 非跨端应用无需处理
-            if (appInfo.appname != ipc::CooperRegisterName)
+            if (appInfo.appname != ipc::CooperRegisterName) {
+                // DLOG << "App is not CooperRegisterName, skipping";
                 continue;
+            }
 
             auto info = QString::fromStdString(appInfo.json);
             auto combinedIP = ip + ", " + sharedip;
@@ -114,14 +120,17 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         }
 
         if (infoMap.empty()) {
+            DLOG << "Info map is empty";
             if (!find) {
-                DLOG << "Removing device from discovery list:" << ip.toStdString();
+                DLOG << "Peer not found, removing device";
                 q->metaObject()->invokeMethod(DiscoverController::instance(),
                                               "compatRemoveDeivce",
                                               Qt::QueuedConnection,
                                               Q_ARG(QString, ip));
             }
-        } else {
+        }
+        else {
+            DLOG << "Info map is not empty, adding devices";
             // update this device info to discovery list
             q->metaObject()->invokeMethod(DiscoverController::instance(),
                                           "compatAddDeivces",
@@ -130,6 +139,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         }
     } break;
     case ipc::FRONT_CONNECT_CB: {
+        DLOG << "Received FRONT_CONNECT_CB message";
         ipc::GenericResult param;
         param.from_json(json_obj);
         QString msg(param.msg.c_str());
@@ -140,6 +150,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         emit q->compatConnectResult(param.result, ip);
     } break;
     case ipc::FRONT_TRANS_STATUS_CB: {
+        DLOG << "Received FRONT_TRANS_STATUS_CB message";
         ipc::GenericResult param;
         param.from_json(json_obj);
         QString msg(param.msg.c_str());   // job path
@@ -151,6 +162,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
                                       Q_ARG(QString, msg));
     } break;
     case ipc::FRONT_NOTIFY_FILE_STATUS: {
+        DLOG << "Received FRONT_NOTIFY_FILE_STATUS message";
         ipc::FileStatus param;
         param.from_json(json_obj);
 
@@ -162,11 +174,13 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
                                       Q_ARG(quint64, param.millisec));
     } break;
     case ipc::FRONT_APPLY_TRANS_FILE: {
+        DLOG << "Received FRONT_APPLY_TRANS_FILE message";
         ipc::ApplyTransFiles transferInfo;
         transferInfo.from_json(json_obj);
         LOG << "apply transfer info: " << json_obj;
 
         if (transferInfo.type == ipc::ApplyTransType::APPLY_TRANS_APPLY) {
+            DLOG << "Transfer type is APPLY_TRANS_APPLY, showing confirm UI";
             // show confirm UI
             QString ip = QString::fromStdString(transferInfo.selfIp);
             QString host = QString::fromStdString(transferInfo.machineName);
@@ -176,6 +190,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
                                           Q_ARG(QString, host),
                                           Q_ARG(QString, ip));
         } else {
+            DLOG << "Transfer type is not APPLY_TRANS_APPLY";
             //ipc::ApplyTransType::APPLY_TRANS_REFUSED  false
             bool agree = (transferInfo.type == ipc::ApplyTransType::APPLY_TRANS_CONFIRM);
             q->metaObject()->invokeMethod(TransferHelper::instance(),
@@ -184,12 +199,14 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         }
     } break;
     case ipc::FRONT_SERVER_ONLINE:
+        DLOG << "Received FRONT_SERVER_ONLINE message";
         // backend startup, start discovery. ignore
         // q->metaObject()->invokeMethod(MainController::instance(),
         //                               "start",
         //                               Qt::QueuedConnection);
         break;
     case ipc::FRONT_SHARE_APPLY_CONNECT: {
+        DLOG << "Received FRONT_SHARE_APPLY_CONNECT message";
         ipc::ShareConnectApply conApply;
         conApply.from_json(json_obj);
         // "data":"zerowf,10.8.11.98" -> "data":"10.8.11.98,zerowf"
@@ -203,6 +220,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
                                       Q_ARG(QString, info));
     } break;
     case ipc::FRONT_SHARE_APPLY_CONNECT_REPLY: {
+        DLOG << "Received FRONT_SHARE_APPLY_CONNECT_REPLY message";
         ipc::ShareConnectReply conReply;
         conReply.from_json(json_obj);
 
@@ -214,6 +232,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
                                       Q_ARG(QString, "")); // non fingerprint
     } break;
     case ipc::FRONT_SHARE_DISCONNECT: {
+        DLOG << "Received FRONT_SHARE_DISCONNECT message";
         ipc::ShareDisConnect disCon;
         disCon.from_json(json_obj);
 
@@ -224,6 +243,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
                                       Q_ARG(QString, QString(disCon.msg.c_str())));
     } break;
     case ipc::FRONT_SHARE_DISAPPLY_CONNECT: {
+        DLOG << "Received FRONT_SHARE_DISAPPLY_CONNECT message";
         ipc::ShareConnectDisApply param;
         param.from_json(json_obj);
         LOG << "share cancel apply : " << json_obj;
@@ -232,19 +252,23 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
                                       Qt::QueuedConnection);
     } break;
     case ipc::FRONT_SEND_STATUS: {
+        DLOG << "Received FRONT_SEND_STATUS message";
         ipc::SendStatus param;
         param.from_json(json_obj);
         LOG << " FRONT_SEND_STATUS  : " << json_obj;
         //{"curstatus":1,"msg":"{\"app\":\"dde-cooperation\",\"offline\":true}","status":1,"type":2}
 
         if (param.status < 0) {
+            DLOG << "Param status is negative";
             picojson::value obj;
             std::string err = picojson::parse(obj, param.msg);
             if (!err.empty()) {
                 WLOG << "Failed to parse status msg: " << err;
+                DLOG << "Failed to parse status message";
                 return;
             }
             if (param.type == 999) {
+                DLOG << "Param type is 999 (LOGIN_INFO)";
                 // LOGIN_INFO
                 ipc::SendResult result;
                 result.from_json(obj);
@@ -255,6 +279,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         break;
     }
     case ipc::FRONT_SEARCH_IP_DEVICE_RESULT: {
+        DLOG << "Received FRONT_SEARCH_IP_DEVICE_RESULT message";
         ipc::SearchDeviceResult param;
         param.from_json(json_obj);
         WLOG << "SearchDeviceResult : " << json_obj;
@@ -266,6 +291,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
                                       Q_ARG(QString, info));
     } break;
     default:
+        DLOG << "Received unknown IPC message type:" << type;
         break;
     }
 }

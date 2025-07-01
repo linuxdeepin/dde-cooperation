@@ -52,7 +52,7 @@ std::string CommonUitls::getFirstIp()
             if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol && entry.ip() != QHostAddress::LocalHost) {
                 //IP地址
                 ip = QString(entry.ip().toString());
-                qInfo() << "Found available IP: " << ip.toStdString();
+                qInfo() << "Found available IP: " << ip;
                 return ip.toStdString();
             }
         }
@@ -62,7 +62,7 @@ std::string CommonUitls::getFirstIp()
 
 void CommonUitls::loadTranslator()
 {
-    qInfo() << "Loading translator for locale: " << QLocale::system().name().toStdString();
+    qInfo() << "Loading translator for locale: " << QLocale::system().name();
     QStringList translateDirs;
 #ifdef _WIN32
     translateDirs << QDir::currentPath() + QDir::separator() + "translations";
@@ -87,7 +87,7 @@ void CommonUitls::loadTranslator()
             QString translatePath = dir + QDir::separator() + translateFilename;
             if (QFile::exists(translatePath + ".qm")) {
                 qDebug() << "load translate" << translatePath;
-                qInfo() << "Successfully loaded translator: " << translatePath.toStdString();
+                qInfo() << "Successfully loaded translator: " << translatePath;
                 auto translator = new QTranslator(qApp);
                 translator->load(translatePath);
                 qApp->installTranslator(translator);
@@ -110,7 +110,7 @@ void CommonUitls::loadTranslator()
 
 void CommonUitls::initLog()
 {
-    qInfo() << "Initializing logger in directory: " << logDir().toStdString();
+    qInfo() << "Initializing logger in directory: " << logDir();
     deepin_cross::Logger::GetInstance().init(logDir().toStdString(), qApp->applicationName().toStdString());
 #ifdef QT_DEBUG
     deepin_cross::g_logLevel = deepin_cross::debug;
@@ -243,7 +243,7 @@ bool CommonUitls::detailLog()
 
 bool CommonUitls::isProcessRunning(const QString &processName)
 {
-    qInfo() << "Checking if process is running: " << processName.toStdString();
+    qInfo() << "Checking if process is running: " << processName;
     QProcess ps;
     ps.start("pidof", QStringList() << processName);
     ps.waitForFinished();
@@ -313,7 +313,7 @@ bool CommonUitls::isPortInUse(int port)
 
 QString CommonUitls::ipcServerName(const QString &appName)
 {
-    qInfo() << "Generating IPC server name for application: " << appName.toStdString();
+    qInfo() << "Generating IPC server name for application: " << appName;
     QString key = appName + ".ipc";
     // create ipc socket under user's tmp
     QString userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation), key);

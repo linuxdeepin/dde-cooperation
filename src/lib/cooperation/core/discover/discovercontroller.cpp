@@ -22,17 +22,20 @@ using namespace cooperation_core;
 DiscoverControllerPrivate::DiscoverControllerPrivate(DiscoverController *qq)
     : q(qq)
 {
+    DLOG << "DiscoverControllerPrivate created";
 }
 
 DiscoverController::DiscoverController(QObject *parent)
     : QObject(parent),
       d(new DiscoverControllerPrivate(this))
 {
+    DLOG << "DiscoverController created";
     qRegisterMetaType<StringMap>("StringMap");
 }
 
 DiscoverController::~DiscoverController()
 {
+    DLOG << "DiscoverController destroyed";
 }
 
 void DiscoverController::init()
@@ -75,6 +78,7 @@ void DiscoverController::init()
 
 void DiscoverController::startServiceWaitLoop()
 {
+    DLOG << "Starting service wait loop";
     QTimer *serviceTimer = new QTimer(this);
     int retryCount = 0;
     const int maxRetries = 5; // 5 retries with 2 second intervals = 10 seconds total
@@ -135,6 +139,7 @@ void DiscoverController::connectZeroConfSignals()
         return;
     }
 
+    DLOG << "Connecting ZeroConf signals";
     connect(d->zeroConf, &QZeroConf::serviceAdded, this, &DiscoverController::addService);
     connect(d->zeroConf, &QZeroConf::serviceRemoved, this, &DiscoverController::removeService);
     connect(d->zeroConf, &QZeroConf::serviceUpdated, this, &DiscoverController::updateService);
@@ -153,8 +158,11 @@ void DiscoverController::initConnect()
     connected = true;
 
     connect(CooperationUtil::instance(), &CooperationUtil::onlineStateChanged, this, [this](const QString &validIP) {
-        if (validIP.isEmpty())
+        if (validIP.isEmpty()) {
+            DLOG << "Online state changed with empty IP, ignoring";
             return;
+        }
+        DLOG << "Online state changed for IP:" << validIP.toStdString() << ", updating publish and discovering";
         updatePublish();
         startDiscover();
     });
@@ -169,14 +177,18 @@ void DiscoverController::initConnect()
 
 bool DiscoverController::isVaildDevice(const DeviceInfoPointer info)
 {
-    if (!info || info->ipAddress().isEmpty() || !info->ipAddress().startsWith(d->ipfilter))
+    if (!info || info->ipAddress().isEmpty() || !info->ipAddress().startsWith(d->ipfilter)) {
+        DLOG << "Device is not valid or does not match IP filter";
         return false;
-    else
+    } else {
+        DLOG << "Device is valid";
         return true;
+    }
 }
 
 DeviceInfoPointer DiscoverController::parseDeviceJson(const QString &info)
 {
+    DLOG << "Parsing device JSON";
     QJsonParseError error;
     auto doc = QJsonDocument::fromJson(info.toUtf8(), &error);
     if (error.error != QJsonParseError::NoError) {
@@ -193,19 +205,24 @@ DeviceInfoPointer DiscoverController::parseDeviceJson(const QString &info)
 
 DeviceInfoPointer DiscoverController::parseDeviceService(QZeroConfService zcs)
 {
+    DLOG << "Parsing device service";
     QVariantMap infomap;
     for (const auto &key : zcs->txt().keys())
         infomap.insert(key, QString::fromUtf8(QByteArray::fromBase64(zcs->txt().value(key))));
 
     auto devInfo = DeviceInfo::fromVariantMap(infomap);
-    if (!isVaildDevice(devInfo))
+    if (!isVaildDevice(devInfo)) {
+        DLOG << "Parsed device is not valid";
         return nullptr;
+    }
 
     auto old = findDeviceByIP(devInfo->ipAddress());
     if (old) {
+        DLOG << "Found existing device with the same IP, updating status";
         // update its status
         devInfo->setConnectStatus(old->connectStatus());
     } else {
+        DLOG << "No existing device found, setting status to Connectable";
         // set default status
         devInfo->setConnectStatus(DeviceInfo::Connectable);
     }
@@ -215,15 +232,18 @@ DeviceInfoPointer DiscoverController::parseDeviceService(QZeroConfService zcs)
 
 void DiscoverController::deviceLosted(const QString &ip)
 {
+    DLOG << "Device lost with IP:" << ip.toStdString();
     // update its status or remove it
     auto oldinfo = findDeviceByIP(ip);
     if (oldinfo) {
         if (_historyDevices.contains(ip)) {
+            DLOG << "Device is in history, setting status to Offline";
             // just need to update status
             oldinfo->setConnectStatus(DeviceInfo::Offline);
             Q_EMIT deviceOnline({oldinfo});
             return;
         } else {
+            DLOG << "Device is not in history, removing from online list";
             d->onlineDeviceList.removeOne(oldinfo);
         }
     }
@@ -234,11 +254,13 @@ void DiscoverController::deviceLosted(const QString &ip)
 
 QList<DeviceInfoPointer> DiscoverController::getOnlineDeviceList() const
 {
+    DLOG << "Getting online device list, count:" << d->onlineDeviceList.size();
     return d->onlineDeviceList;
 }
 
 bool DiscoverController::openZeroConfDaemonDailog()
 {
+    DLOG << "Opening ZeroConf daemon dialog";
 #ifdef __linux__
     CooperationDialog dlg;
     dlg.setIcon(QIcon::fromTheme("dialog-warning"));
@@ -250,6 +272,7 @@ bool DiscoverController::openZeroConfDaemonDailog()
 
     int code = dlg.exec();
     if (code == 0) {
+        DLOG << "User confirmed, starting avahi-daemon service";
         QProcess::startDetached("systemctl", QStringList() << "start" << "avahi-daemon.service");
         return true;
     }
@@ -258,13 +281,16 @@ bool DiscoverController::openZeroConfDaemonDailog()
                                       tr("Unable to discover and be discovered by other devices when LAN discovery service is not turned on"
                                          "Right click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service"),
                                       QMessageBox::Ok);
+    DLOG << "Opening services.msc for user to enable Bonjour service";
     QDesktopServices::openUrl(QUrl("services.msc"));
 #endif
+    DLOG << "User did not confirm or platform not supported";
     return false;
 }
 
 bool DiscoverController::isZeroConfDaemonActive()
 {
+    DLOG << "Checking if ZeroConf daemon is active";
 #ifdef __linux__
     QProcess process;
     process.start("systemctl", QStringList() << "is-active"
@@ -294,38 +320,51 @@ bool DiscoverController::isZeroConfDaemonActive()
     QByteArray output = process.readAllStandardOutput();
     QString res = QString::fromLocal8Bit(output);
 
-    if (res.contains("RUNNING"))
+    if (res.contains("RUNNING")) {
+        DLOG << "Bonjour service is running";
         return true;
-    else
+    } else {
+        DLOG << "Bonjour service is not running";
         return false;
+    }
 #endif
 }
 
 DeviceInfoPointer DiscoverController::findDeviceByIP(const QString &ip)
 {
+    DLOG << "Finding device by IP:" << ip.toStdString();
     for (int i = 0; i < d->onlineDeviceList.size(); ++i) {
         auto info = d->onlineDeviceList[i];
-        if (info->ipAddress() == ip)
+        if (info->ipAddress() == ip) {
+            DLOG << "Device found";
             return info;
+        }
     }
+    DLOG << "Device not found";
     return nullptr;
 }
 
 DeviceInfoPointer DiscoverController::selfInfo()
 {
+    DLOG << "Getting self device info";
     return DeviceInfo::fromVariantMap(CooperationUtil::deviceInfo());
 }
 
 void DiscoverController::updateDeviceState(const DeviceInfoPointer info)
 {
+    DLOG << "Updating device state for IP:" << info->ipAddress().toStdString();
     auto oldinfo = findDeviceByIP(info->ipAddress());
-    if (oldinfo)
+    if (oldinfo) {
+        DLOG << "Removing old device info";
         d->onlineDeviceList.removeOne(oldinfo);
+    }
 
     if (DeviceInfo::Connected == info->connectStatus()) {
+        DLOG << "Device is connected, updating connected device IP";
         //record the connected status IP
         _connectedDevice = info->ipAddress();
     } else {
+        DLOG << "Device is not connected, clearing connected device IP";
         _connectedDevice = "";
     }
 
@@ -335,34 +374,45 @@ void DiscoverController::updateDeviceState(const DeviceInfoPointer info)
 
 void DiscoverController::onDConfigValueChanged(const QString &config, const QString &key)
 {
+    DLOG << "DConfig value changed, config:" << config.toStdString() << "key:" << key.toStdString();
     Q_UNUSED(key);
-    if (config != kDefaultCfgPath)
+    if (config != kDefaultCfgPath) {
+        DLOG << "Config path does not match, ignoring";
         return;
+    }
 
     updatePublish();
 }
 
 void DiscoverController::onAppAttributeChanged(const QString &group, const QString &key, const QVariant &value)
 {
-    if (group != AppSettings::GenericGroup)
+    DLOG << "App attribute changed, group:" << group.toStdString() << "key:" << key.toStdString();
+    if (group != AppSettings::GenericGroup) {
+        DLOG << "Group does not match, ignoring";
         return;
+    }
 
-    if (key == AppSettings::StoragePathKey)
+    if (key == AppSettings::StoragePathKey) {
+        DLOG << "Storage path changed, updating config";
         CooperationUtil::instance()->setStorageConfig(value.toString());
+    }
 
     updatePublish();
 }
 
 void DiscoverController::addService(QZeroConfService zcs)
 {
+    DLOG << "Adding service:" << zcs->name().toStdString();
     if (zcs.get()->name() == d->zeroconfname) {
         LOG << "add service, ignore self zcs service";
         return;
     }
     auto devInfo = parseDeviceService(zcs);
 
-    if (!devInfo)
+    if (!devInfo) {
+        DLOG << "Parsed device info is invalid, ignoring";
         return;
+    }
 
     d->onlineDeviceList.append(devInfo);
     Q_EMIT deviceOnline({ devInfo });
@@ -370,17 +420,22 @@ void DiscoverController::addService(QZeroConfService zcs)
 
 void DiscoverController::updateService(QZeroConfService zcs)
 {
+    DLOG << "Updating service:" << zcs->name().toStdString();
     if (zcs.get()->name() == d->zeroconfname) {
         LOG << "update service, ignore self zcs service";
         return;
     }
     auto devInfo = parseDeviceService(zcs);
 
-    if (!devInfo)
+    if (!devInfo) {
+        DLOG << "Parsed device info is invalid, ignoring";
         return;
+    }
     auto oldinfo = findDeviceByIP(devInfo->ipAddress());
-    if (oldinfo)
+    if (oldinfo) {
+        DLOG << "Removing old device info before updating";
         d->onlineDeviceList.removeOne(oldinfo);
+    }
 
     d->onlineDeviceList.append(devInfo);
     Q_EMIT deviceOnline({ devInfo });
@@ -388,16 +443,20 @@ void DiscoverController::updateService(QZeroConfService zcs)
 
 void DiscoverController::removeService(QZeroConfService zcs)
 {
+    DLOG << "Removing service:" << zcs->name().toStdString();
     auto devInfo = parseDeviceService(zcs);
 
-    if (!devInfo)
+    if (!devInfo) {
+        DLOG << "Parsed device info is invalid, ignoring";
         return;
+    }
 
     deviceLosted(devInfo->ipAddress());
 }
 
 void DiscoverController::updateHistoryDevices(const QMap<QString, QString> &connectMap)
 {
+    DLOG << "Updating history devices, count:" << connectMap.size();
     _historyDevices.clear();
     d->historyDeviceMap.clear(); // Store complete history device info
 
@@ -410,16 +469,20 @@ void DiscoverController::updateHistoryDevices(const QMap<QString, QString> &conn
         _historyDevices.append(ip);
         d->historyDeviceMap[ip] = deviceName; // Store complete info
 
-        if (findDeviceByIP(ip))
+        if (findDeviceByIP(ip)) {
+            DLOG << "Device is already online, skipping history update for IP:" << ip.toStdString();
             continue;
+        }
 
         DeviceInfoPointer info(new DeviceInfo(ip, deviceName));
         info->setConnectStatus(DeviceInfo::Offline);
         offlineDevList << info;
     }
 
-    if (!offlineDevList.isEmpty())
+    if (!offlineDevList.isEmpty()) {
+        DLOG << "Emitting online signal for offline history devices";
         Q_EMIT deviceOnline(offlineDevList);
+    }
 }
 
 DiscoverController *DiscoverController::instance()
@@ -435,6 +498,7 @@ void DiscoverController::publish()
     QVariantMap deviceInfo = CooperationUtil::deviceInfo();
     // Set to not discoverable on LAN
     if (deviceInfo.value(AppSettings::DiscoveryModeKey) == 1) {
+        DLOG << "Discovery mode is set to not discoverable, unpublishing";
         unpublish();
         return;
     }
@@ -503,6 +567,7 @@ void DiscoverController::refresh()
 
 void DiscoverController::refreshDeviceList()
 {
+    DLOG << "Refreshing device list";
     // Preserve current online/connected history devices before clearing
     QList<DeviceInfoPointer> preservedHistoryDevices;
     for (const auto &device : d->onlineDeviceList) {
@@ -524,6 +589,7 @@ void DiscoverController::refreshDeviceList()
 
 void DiscoverController::addPreservedHistoryDevices(const QList<DeviceInfoPointer> &preservedDevices)
 {
+    DLOG << "Adding preserved history devices, count:" << preservedDevices.size();
     for (const auto &device : preservedDevices) {
         // Check if device was found by avahi (might have updated status)
         auto existingDevice = findDeviceByIP(device->ipAddress());
@@ -559,6 +625,7 @@ void DiscoverController::collectOfflineHistoryDevices()
 
 void DiscoverController::collectAvahiDevices()
 {
+    DLOG << "Collecting Avahi devices";
     // Check if avahi service is available for actual discovery
     if (!isZeroConfDaemonActive()) {
         DLOG << "Avahi service not active, skipping avahi device discovery";
@@ -573,6 +640,7 @@ void DiscoverController::collectAvahiDevices()
         auto devInfo = parseDeviceService(zcs);
 
         if (!devInfo || devInfo->ipAddress() == CooperationUtil::localIPAddress()) {
+            DLOG << "Ignoring self or invalid device";
             continue;
         }
 
@@ -587,6 +655,7 @@ void DiscoverController::collectAvahiDevices()
 
         // Update connection status for known connected device
         if (_connectedDevice == devInfo->ipAddress()) {
+            DLOG << "Device is the connected device, setting status to Connected";
             devInfo->setConnectStatus(DeviceInfo::Connected);
         }
 
@@ -597,7 +666,9 @@ void DiscoverController::collectAvahiDevices()
 
 void DiscoverController::addSearchDeviceIfExists()
 {
+    DLOG << "Adding search device if it exists";
     if (!d->searchDevice) {
+        DLOG << "No search device to add";
         return;
     }
 
@@ -614,6 +685,7 @@ void DiscoverController::addSearchDeviceIfExists()
 
 void DiscoverController::finishDiscovery()
 {
+    DLOG << "Finishing discovery";
     Q_EMIT deviceOnline({ d->onlineDeviceList });
     bool hasFound = !d->onlineDeviceList.isEmpty();
     DLOG << "Discovery finished, found" << d->onlineDeviceList.size() << "devices";
@@ -629,8 +701,10 @@ void DiscoverController::addSearchDeivce(const QString &info)
         return;
     }
     d->searchDevice = devInfo;
-    if (devInfo->isValid())
+    if (devInfo->isValid()) {
+        DLOG << "Search device is valid, emitting deviceOnline signal";
         Q_EMIT deviceOnline({ d->searchDevice });
+    }
 }
 
 void DiscoverController::compatAddDeivces(StringMap infoMap)
@@ -664,6 +738,7 @@ void DiscoverController::compatAddDeivces(StringMap infoMap)
 
         devInfo->setIpAddress(ip);
         if (devInfo->discoveryMode() == DeviceInfo::DiscoveryMode::Everyone) {
+            DLOG << "Device is discoverable by everyone";
             if (sharedip == CooperationUtil::localIPAddress() || _connectedDevice == devInfo->ipAddress())
                 devInfo->setConnectStatus(DeviceInfo::Connected);
 
@@ -673,6 +748,7 @@ void DiscoverController::compatAddDeivces(StringMap infoMap)
     }
 
     if (!addedList.isEmpty()) {
+        DLOG << "Emitting deviceOnline signal for added compatible devices";
         Q_EMIT deviceOnline(addedList);
     }
 }
@@ -695,6 +771,7 @@ void DiscoverController::startDiscover()
 
     // Delay to show discovery interface
     QTimer::singleShot(500, [this]() {
+        DLOG << "Executing delayed discovery tasks";
         // clear current list first.
         refresh();
         // compation: start get nodes

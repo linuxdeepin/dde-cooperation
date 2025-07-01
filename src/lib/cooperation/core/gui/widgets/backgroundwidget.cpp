@@ -34,6 +34,7 @@ void BackgroundWidget::paintEvent(QPaintEvent *event)
 
     switch (roundRole) {
     case Top:
+        // DLOG << "Painting top rounded background";
         path.moveTo(paintRect.bottomRight());
         path.lineTo(paintRect.topRight() + QPoint(0, radius));
         path.arcTo(QRect(QPoint(paintRect.topRight() - QPoint(radius * 2, 0)),
@@ -45,6 +46,7 @@ void BackgroundWidget::paintEvent(QPaintEvent *event)
         path.lineTo(paintRect.bottomRight());
         break;
     case Bottom:
+        // DLOG << "Painting bottom rounded background";
         path.moveTo(paintRect.bottomRight() - QPoint(0, radius));
         path.lineTo(paintRect.topRight());
         path.lineTo(paintRect.topLeft());
@@ -58,6 +60,7 @@ void BackgroundWidget::paintEvent(QPaintEvent *event)
                    270, 90);
         break;
     case TopAndBottom:
+        // DLOG << "Painting top and bottom rounded background";
         path.moveTo(paintRect.bottomRight() - QPoint(0, radius));
         path.lineTo(paintRect.topRight() + QPoint(0, radius));
         path.arcTo(QRect(QPoint(paintRect.topRight() - QPoint(radius * 2, 0)),
@@ -75,6 +78,7 @@ void BackgroundWidget::paintEvent(QPaintEvent *event)
                    270, 90);
         break;
     default:
+        // DLOG << "Painting default background";
         break;
     }
 
@@ -87,16 +91,21 @@ QColor BackgroundWidget::backgroundColor()
     QColor color(255, 255, 255);
     switch (colorType) {
     case ItemBackground:
+        // DLOG << "Color type is ItemBackground";
         color.setRgb(0, 0, 0, static_cast<int>(255 * 0.05));
 #ifdef linux
-        if (DTK_GUI_NAMESPACE::DGuiApplicationHelper::instance()->themeType() == DTK_GUI_NAMESPACE::DGuiApplicationHelper::DarkType)
+        if (DTK_GUI_NAMESPACE::DGuiApplicationHelper::instance()->themeType() == DTK_GUI_NAMESPACE::DGuiApplicationHelper::DarkType) {
+            // DLOG << "Linux dark theme detected for ItemBackground";
             color.setRgb(255, 255, 255, static_cast<int>(255 * 0.05));
+        }
 #endif
         break;
     default:
 #ifdef linux
-        if (DTK_GUI_NAMESPACE::DGuiApplicationHelper::instance()->themeType() == DTK_GUI_NAMESPACE::DGuiApplicationHelper::DarkType)
+        if (DTK_GUI_NAMESPACE::DGuiApplicationHelper::instance()->themeType() == DTK_GUI_NAMESPACE::DGuiApplicationHelper::DarkType) {
+            // DLOG << "Linux dark theme detected for default background";
             color.setRgb(255, 255, 255, static_cast<int>(255 * 0.03));
+        }
 #endif
         break;
     }

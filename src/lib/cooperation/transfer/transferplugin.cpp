@@ -83,4 +83,5 @@ bool TransferPlugin::start()
 
 void TransferPlugin::stop()
 {
+    DLOG << "TransferPlugin stopped";
 }

@@ -72,6 +72,7 @@ void WaitConfirmWidget::init()
     spinner->setAttribute(Qt::WA_TransparentForMouseEvents);
     spinner->setFocusPolicy(Qt::NoFocus);
 #ifndef linux
+    DLOG << "Non-Linux platform, initializing title label and spinner movie";
     QLabel *titleLabel = new QLabel(tr("File Transfer"), this);
     QFont font;
     font.setWeight(QFont::DemiBold);
@@ -155,12 +156,15 @@ void ResultWidget::setResult(bool success, const QString &msg, bool view)
                               << "message:" << msg.toStdString() << "viewable:" << view;
     res = success;
     if (success) {
+        DLOG << "Transfer successful, setting success icon";
         QIcon icon(":/icons/deepin/builtin/icons/transfer_success_128px.svg");
         iconLabel->setPixmap(icon.pixmap(48, 48));
 #ifndef __linux__
+        DLOG << "Non-Linux platform, setting view button visibility";
         viewBtn->setVisible(view);
 #endif
     } else {
+        DLOG << "Transfer failed, setting failure icon";
         QIcon icon(":/icons/deepin/builtin/icons/transfer_fail_128px.svg");
         iconLabel->setPixmap(icon.pixmap(48, 48));
         viewBtn->setVisible(false);
@@ -249,8 +253,10 @@ void CooperationTransDialog::updateProgress(int value, const QString &msg)
 
 void CooperationTransDialog::closeEvent(QCloseEvent *e)
 {
-    if (!isVisible())
+    if (!isVisible()) {
+        DLOG << "Dialog is not visible, accepting close event";
         e->accept();
+    }
 
     if (mainLayout->currentWidget() == confirmWidget) {
         DLOG << "User closed confirmation dialog, emitting rejected";
@@ -262,8 +268,11 @@ void CooperationTransDialog::closeEvent(QCloseEvent *e)
         DLOG << "User closed wait confirmation dialog, canceling apply";
         Q_EMIT cancelApply();
     } else if (mainLayout->currentWidget() == resultWidget) {
-        if (qApp->property("onlyTransfer").toBool() && resultWidget->getResult())
+        DLOG << "User closed result dialog";
+        if (qApp->property("onlyTransfer").toBool() && resultWidget->getResult()) {
+            DLOG << "onlyTransfer is true and result is success, exiting application";
             qApp->exit();
+        }
     }
 }
 

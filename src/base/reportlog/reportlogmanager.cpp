@@ -60,7 +60,7 @@ void ReportLogManager::init()
 
 void ReportLogManager::commit(const QString &type, const QVariantMap &args)
 {
-    qInfo() << "Committing log of type:" << type.toStdString() << "with args:" << args;
+    qInfo() << "Committing log of type:" << type << "with args:" << args;
     Q_EMIT requestCommitLog(type, args);
 }
 

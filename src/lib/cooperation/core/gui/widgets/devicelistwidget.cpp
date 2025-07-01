@@ -45,13 +45,18 @@ void DeviceListWidget::initUI()
                              "}";
     verticalScrollBar()->setStyleSheet(scrollBarStyle);
     connect(verticalScrollBar(), &QScrollBar::rangeChanged, this, [this](int min, int max) {
-        if (max)
+        DLOG << "Scroll bar range changed, min:" << min << "max:" << max;
+        if (max) {
+            DLOG << "Max scroll value is not zero, setting margins";
             mainLayout->setContentsMargins(10, 0, 0, 10);
-        else
+        } else {
+            DLOG << "Max scroll value is zero, setting default margins";
             mainLayout->setContentsMargins(0, 0, 0, 10);
+        }
     });
     mainLayout->setContentsMargins(0, 0, 0, 10);
 #else
+    DLOG << "Linux platform, setting default margins";
     mainLayout->setContentsMargins(0, 0, 0, 10);
 #endif
 
@@ -66,8 +71,10 @@ void DeviceListWidget::initUI()
 bool DeviceListWidget::event(QEvent *e)
 {
     if (e->type() == QEvent::MouseButtonPress) {
+        DLOG << "Mouse button press event detected";
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(e);
         if (mouseEvent->button() == Qt::LeftButton) {
+            DLOG << "Left mouse button pressed, accepting event";
             return true;
         }
     }
@@ -94,6 +101,7 @@ void DeviceListWidget::insertItem(int index, const DeviceInfoPointer info)
 
 void DeviceListWidget::updateItem(int index, const DeviceInfoPointer info)
 {
+    DLOG << "Updating device at index:" << index << "IP:" << info->ipAddress().toStdString();
     if (!info || index < 0 || index >= mainLayout->count()) {
         WLOG << "Invalid index or info, index: " << index;
         return;
@@ -148,17 +156,23 @@ void DeviceListWidget::moveItem(int srcIndex, int toIndex)
 
 int DeviceListWidget::indexOf(const QString &ipStr)
 {
+    DLOG << "Searching for device with IP:" << ipStr.toStdString();
     const int count = mainLayout->count();
     for (int i = 0; i != count; ++i) {
         QLayoutItem *item = mainLayout->itemAt(i);
         DeviceItem *w = qobject_cast<DeviceItem *>(item->widget());
-        if (!w)
+        if (!w) {
+            DLOG << "Item at index" << i << "is not a DeviceItem, skipping";
             continue;
+        }
 
-        if (w->deviceInfo()->ipAddress() == ipStr)
+        if (w->deviceInfo()->ipAddress() == ipStr) {
+            DLOG << "Device found at index:" << i;
             return i;
+        }
     }
 
+    DLOG << "Device not found";
     return -1;
 }
 
@@ -169,8 +183,10 @@ DeviceInfoPointer DeviceListWidget::findDeviceInfo(const QString &ipStr)
     for (int i = 0; i != count; ++i) {
         QLayoutItem *item = mainLayout->itemAt(i);
         DeviceItem *w = qobject_cast<DeviceItem *>(item->widget());
-        if (!w)
+        if (!w) {
+            DLOG << "Item at index" << i << "is not a DeviceItem, skipping";
             continue;
+        }
 
         if (w->deviceInfo()->ipAddress() == ipStr) {
             DLOG << "Device found at index:" << i;
@@ -184,6 +200,7 @@ DeviceInfoPointer DeviceListWidget::findDeviceInfo(const QString &ipStr)
 
 int DeviceListWidget::itemCount()
 {
+    DLOG << "Current item count:" << mainLayout->count();
     return mainLayout->count();
 }
 

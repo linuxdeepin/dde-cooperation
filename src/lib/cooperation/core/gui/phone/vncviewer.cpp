@@ -97,6 +97,8 @@ void VncViewer::onSizeChange(int width, int height)
         return;
     }
 
+    DLOG << "Handling size change: " << width << "x" << height;
+
     // 使用互斥锁保护尺寸变更
     QMutexLocker locker(&m_mutex);
 
@@ -118,23 +120,33 @@ void VncViewer::onSizeChange(int width, int height)
 
 void VncViewer::onShortcutAction(int action)
 {
-    if (!m_connected)
+    DLOG << "Shortcut action triggered: " << action;
+    if (!m_connected) {
+        DLOG << "Not connected, ignoring shortcut action";
         return;
+    }
 
     int key = 0;
     switch (action) {
     case BACK:
+        DLOG << "Action is BACK";
         key = Qt::Key_Escape;
         break;
     case HOME:
+        DLOG << "Action is HOME";
         key = Qt::Key_Home;
         break;
     case RECENTS:
+        DLOG << "Action is RECENTS";
         key = Qt::Key_PageUp;
+        break;
+    default:
+        DLOG << "Unknown action: " << action;
         break;
     }
 
     if (key > 0) {
+        DLOG << "Sending key event: " << key;
         SendKeyEvent(m_rfbCli, qt2keysym(key), true);
     }
 }
@@ -165,16 +177,26 @@ void VncViewer::clearSurface()
     } else if (!m_surfacePixmap.isNull()) {
         DLOG << "Maintaining existing surface size";
         setSurfaceSize(m_surfacePixmap.size());
+    } else {
+        DLOG << "Surface pixmap is null and no RFB client, cannot set surface size";
     }
 }
 
 int VncViewer::translateMouseButton(Qt::MouseButton button)
 {
     switch (button) {
-    case Qt::LeftButton:   return rfbButton1Mask;
-    case Qt::MiddleButton: return rfbButton2Mask;
-    case Qt::RightButton:  return rfbButton3Mask;
-    default:               return 0;
+    case Qt::LeftButton:
+        DLOG << "Translating LeftButton";
+        return rfbButton1Mask;
+    case Qt::MiddleButton:
+        DLOG << "Translating MiddleButton";
+        return rfbButton2Mask;
+    case Qt::RightButton:
+        DLOG << "Translating RightButton";
+        return rfbButton3Mask;
+    default:
+        DLOG << "Unknown button: " << button;
+        return 0;
     }
 }
 
@@ -247,10 +269,12 @@ void VncViewer::paintEvent(QPaintEvent *event)
         m_painter.setRenderHints(QPainter::SmoothPixmapTransform);
         m_painter.fillRect(rect(), backgroundBrush());
         if (scaled()) {
+            DLOG << "Drawing scaled pixmap";
             m_surfaceRect.moveCenter(rect().center());
             m_painter.scale(m_scale, m_scale);
             m_painter.drawPixmap(m_surfaceRect.x() / m_scale, m_surfaceRect.y() / m_scale, m_surfacePixmap);
         } else {
+            DLOG << "Drawing unscaled pixmap";
             m_painter.scale(1.0, 1.0);
             m_painter.drawPixmap((width() - m_surfacePixmap.width()) / 2, (height() - m_surfacePixmap.height()) / 2, m_surfacePixmap);
         }
@@ -306,39 +330,50 @@ void VncViewer::resizeEvent(QResizeEvent *e)
         m_transform = QTransform::fromScale(1.0 / m_scale, 1.0 / m_scale);
         m_transform.translate(-m_surfaceRect.x(), -m_surfaceRect.y());
     }
-    if (e)
+    if (e) {
+        // DLOG << "Calling QWidget::resizeEvent";
         QWidget::resizeEvent(e);
+    }
 }
 
 bool VncViewer::event(QEvent *e)
 {
     if (m_connected) {
+        // DLOG << "Event received, type: " << e->type();
         switch (e->type()) {
         case QEvent::MouseButtonPress:
+            DLOG << "MouseButtonPress event";
         case QEvent::MouseButtonRelease:
+            DLOG << "MouseButtonRelease event";
         case QEvent::MouseButtonDblClick:
+            DLOG << "MouseButtonDblClick event";
             m_surfaceRect.moveCenter(rect().center()); // fall through!
         case QEvent::MouseMove: {
+            DLOG << "MouseMove event";
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(e);
             QPoint mappedPos = m_transform.map(mouseEvent->pos());
             int button = translateMouseButton(mouseEvent->button());
 
             switch (e->type()) {
             case QEvent::MouseButtonPress:
+                DLOG << "Mouse button pressed";
                 m_buttonMask |= button;
                 break;
 
             case QEvent::MouseButtonRelease:
+                DLOG << "Mouse button released";
                 m_buttonMask &= ~button;
                 break;
 
             case QEvent::MouseButtonDblClick:
+                DLOG << "Mouse button double clicked";
                 emit sendMouseState(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask | button);
                 emit sendMouseState(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask);
                 emit sendMouseState(m_rfbCli, mappedPos.x(), mappedPos.y(), m_buttonMask | button);
                 break;
 
             default:
+                DLOG << "Unhandled mouse event type";
                 break;
             }
 
@@ -347,6 +382,7 @@ bool VncViewer::event(QEvent *e)
         }
 
         case QEvent::Wheel: { // 处理滚轮事件
+            DLOG << "Wheel event";
             QWheelEvent *wheelEvent = static_cast<QWheelEvent *>(e);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             QPointF mappedPos = m_transform.map(wheelEvent->position());
@@ -356,6 +392,7 @@ bool VncViewer::event(QEvent *e)
 
             // 定义一个处理滚轮的辅助函数
             auto processWheelEvent = [&](int delta, int positiveButtonMask, int negativeButtonMask) {
+                DLOG << "Processing wheel event, delta: " << delta;
                 if (delta != 0) {
                     int steps = delta / 120; // 每120个单位视为一步
                     int buttonMask = (steps > 0) ? positiveButtonMask : negativeButtonMask;
@@ -374,17 +411,24 @@ bool VncViewer::event(QEvent *e)
         }
 
         case QEvent::KeyPress:
+            DLOG << "KeyPress event";
         case QEvent::KeyRelease: {
+            DLOG << "KeyRelease event";
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
             emit sendKeyState(m_rfbCli, qt2keysym(keyEvent->key()), e->type() == QEvent::KeyPress);
-            if (keyEvent->key() == Qt::Key_Alt)
+            if (keyEvent->key() == Qt::Key_Alt) {
+                DLOG << "Alt key pressed, setting focus";
                 setFocus(); // avoid losing focus
+            }
             return true; // prevent futher processing of event
         }
 
         default:
+            DLOG << "Unhandled event type: " << e->type();
             break;
         }
+    } else {
+        DLOG << "Not connected, ignoring event";
     }
 
     return QWidget::event(e);

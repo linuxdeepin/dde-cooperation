@@ -128,15 +128,20 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
 
         if (height >= 2160) {
             // 4K
+            DLOG << "4K screen detected";
             scale = 1.0;
         } else if (height >= 1140) {
             // 2K
+            DLOG << "2K screen detected";
             scale = 1.5;
         } else {
             // 1080P
+            DLOG << "1080P screen detected";
             scale = 2.0;
         }
         DLOG << "Using scale factor:" << scale;
+    } else {
+        DLOG << "No primary screen found, using default scale";
     }
 
     auto titleBar = titlebar();
@@ -145,12 +150,14 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
     DLOG << "Calculated window size:" << w << "x" << h;
 
     if (!initShow && screen) {
+        DLOG << "First time showing window, calculating initial position";
         int width = screen->geometry().width();
         int height = screen->geometry().height();
         int offw = (size.height() / scale);
         int offh = h;
         if (size.width() > size.height()) {
             //landscape
+            DLOG << "Landscape mode detected";
             offw = w;
             offh = w +  titleBar->height() + BOTTOM_HEIGHT;
         }
@@ -176,11 +183,15 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
 void ScreenMirroringWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::WindowStateChange) {
+        DLOG << "Window state changed";
         if (isMaximized() || isMinimized()) {
+            DLOG << "Window is maximized or minimized";
             m_previousSize = size();
         } else {
+            DLOG << "Window is restored";
             if (m_vncViewer) {
                 if (m_expectSize.width() > 0) {
+                    DLOG << "Expected size exists, resizing window";
                     // back to previous size and then do expected changed.
                     resize(m_previousSize);
                     handleSizeChange(m_expectSize);

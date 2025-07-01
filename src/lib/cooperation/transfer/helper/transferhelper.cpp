@@ -178,6 +178,7 @@ void TransferHelper::timeConnectBackend()
     DLOG << "Connecting to backend IPC:" << ipcName.toStdString();
     d->backendOk = d->ipcInterface->connectToServer(ipcName);
     if (d->backendOk) {
+        DLOG << "Backend connection successful";
         // bind SIGNAL to SLOT
         d->ipcInterface->remoteConnect(SIGNAL(searched(QString)), this, SLOT(searchResultSlot(QString)));
         d->ipcInterface->remoteConnect(SIGNAL(refreshed(QStringList)), this, SLOT(refreshResultSlot(QStringList)));
@@ -195,25 +196,34 @@ void TransferHelper::timeConnectBackend()
         // TODO: show dialog
         WLOG << "can not connect to: " << ipcName.toStdString();
     }
+#else
+    DLOG << "Compatibility mode not enabled, skipping backend connection";
 #endif
 }
 
 void TransferHelper::timeWatchBackend()
 {
 #ifdef __linux__
+    DLOG << "Watching backend process on Linux";
     QProcess process;
     // get the related process count
     process.start("pgrep", QStringList() << "-c" << "-f" << "dde-cooperation");
 
     if (!process.waitForFinished(2000)) {
+        DLOG << "pgrep process timed out";
         return;
     }
 
     QString output = process.readAllStandardOutput();
     bool backendOK = (!output.isEmpty() && output.toInt() > 2);
     if (!backendOK) {
+        DLOG << "Backend process not running or count is too low";
         //TODO: show tip
+    } else {
+        DLOG << "Backend process is running";
     }
+#else
+    DLOG << "Skipping backend watch on non-Linux platform";
 #endif
 }
 
@@ -242,26 +252,37 @@ void TransferHelper::searchResultSlot(const QString& info)
 
 void TransferHelper::refreshResultSlot(const QStringList& infoList)
 {
+    DLOG << "Received refresh result with" << infoList.size() << "devices";
     QList<DeviceInfoPointer> devList;
     for (auto info : infoList) {
         auto devInfo = parseFromJson(info);
         if (transable(devInfo)) {
+            DLOG << "Device is transable:" << devInfo->deviceName().toStdString();
             devList << devInfo;
+        } else {
+            DLOG << "Device is not transable:" << devInfo->deviceName().toStdString();
         }
     }
 
     bool found = !devList.isEmpty();
-    if (found)
+    if (found) {
+        DLOG << "Online devices found, emitting signal";
         Q_EMIT onlineDevices(devList);
+    } else {
+        DLOG << "No online devices found";
+    }
 
     Q_EMIT finishDiscovery(found);
 }
 
 void TransferHelper::deviceChangedSlot(bool found, const QString& info)
 {
+    DLOG << "Device changed slot, found:" << found << "info:" << info.toStdString();
     if (found) {
+        DLOG << "Device found, calling searchResultSlot";
         searchResultSlot(info);
     } else {
+        DLOG << "Device not found, emitting offlineDevice";
         Q_EMIT offlineDevice(info);
     }
 }
@@ -287,18 +308,23 @@ DeviceInfoPointer TransferHelper::parseFromJson(const QString &info)
 
 bool TransferHelper::transable(const DeviceInfoPointer devInfo)
 {
+    DLOG << "Checking transability for device:" << devInfo->deviceName().toStdString();
     if (!devInfo || !devInfo->isValid()) {
+        DLOG << "Device info is invalid or null, returning false";
         return false;
     }
 
     if (DeviceInfo::TransMode::Everyone == devInfo->transMode()) {
+        DLOG << "Transfer mode is Everyone, returning true";
         return true;
     }
 
     if (DeviceInfo::TransMode::OnlyConnected == devInfo->transMode() &&
         DeviceInfo::ConnectStatus::Connected == devInfo->connectStatus()) {
+        DLOG << "Transfer mode is OnlyConnected and device is Connected, returning true";
         return true;
     }
 
+    DLOG << "Device is not transable, returning false";
     return false;
 }

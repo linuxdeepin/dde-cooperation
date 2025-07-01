@@ -59,6 +59,7 @@ void MainWindowPrivate::paintEvent(QPaintEvent *event)
 void MainWindowPrivate::mouseMoveEvent(QMouseEvent *event)
 {
     if ((event->buttons() == Qt::LeftButton) && leftButtonPressed) {
+        DLOG << "Mouse moving with left button pressed";
         q->move(event->globalPos() - lastPosition);
     }
 }
@@ -71,6 +72,7 @@ void MainWindowPrivate::mouseReleaseEvent(QMouseEvent *event)
 void MainWindowPrivate::mousePressEvent(QMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton) {
+        DLOG << "Left mouse button pressed";
         leftButtonPressed = true;
         lastPosition = event->globalPos() - q->pos();
     }
@@ -132,10 +134,15 @@ void MainWindowPrivate::initTitleBar()
     menu->addAction(action);
 
     QObject::connect(menu, &QMenu::triggered, [this](QAction *act) {
+        DLOG << "Menu triggered";
         bool ok{ false };
         int val{ act->data().toInt(&ok) };
-        if (ok)
+        if (ok) {
+            DLOG << "Handling setting menu triggered with value:" << val;
             handleSettingMenuTriggered(val);
+        } else {
+            DLOG << "Failed to convert action data to integer";
+        }
     });
 
     QObject::connect(closeButton, &QToolButton::clicked, q, &MainWindow::close);
