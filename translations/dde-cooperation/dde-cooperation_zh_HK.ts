@@ -966,7 +966,7 @@
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="34"/>
             <source>File transfer</source>
-            <translation type="unfinished"/>
+            <translation>文件投送</translation>
         </message>
     </context>
     <context>
@@ -974,7 +974,7 @@
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="64"/>
             <source>File transfer</source>
-            <translation type="unfinished"/>
+            <translation>文件投送</translation>
         </message>
     </context>
     <context>
@@ -982,7 +982,7 @@
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="154"/>
             <source>File transfer settings</source>
-            <translation type="unfinished"/>
+            <translation>文件投送設置</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="171"/>
