@@ -40,11 +40,13 @@ int main(int argc, char *argv[])
     if (cooRunning) {
         qInfo() << "cooperation App launched!";
     } else {
+        qInfo() << "Starting dde-cooperation process in minimized mode";
         // run backend and set minimize
         QProcess::startDetached(dependProc, QStringList() << "-m");
     }
 
     {
+        qInfo() << "Loading translations";
         // 加载翻译
         auto appName = app.applicationName();
         app.setApplicationName(dependProc);
@@ -54,6 +56,7 @@ int main(int argc, char *argv[])
 
     bool isSingleInstance = app.setSingleInstance(app.applicationName());
     if (!isSingleInstance) {
+        qInfo() << "Another instance is already running";
         QStringList msgs = app.arguments().mid(1); //remove first arg: app name
         if (msgs.isEmpty()) {
             msgs << "top"; // top show
@@ -62,32 +65,42 @@ int main(int argc, char *argv[])
         app.onDeliverMessage(app.applicationName(), msgs);
         return 0;
     } else {
+        qInfo() << "Running as single instance";
         CommandParser::instance().process();
         auto sendfiles = CommandParser::instance().processCommand("s");
         if (!sendfiles.isEmpty()) {
+            qInfo() << "Found files to send, count:" << sendfiles.size();
             app.setProperty("sendFiles", QVariant::fromValue(sendfiles));
         }
     }
 
     if (deepin_cross::BaseUtils::isWayland()) {
+        qInfo() << "Running under Wayland environment";
         // do something
     }
+
+    qInfo() << "Creating and starting TransferPlugin";
     TransferPlugin *plugin = new TransferPlugin();
     plugin->start();
 
     QObject::connect(&app, &deepin_cross::SingleApplication::onArrivedCommands, [&] (const QStringList &args) {
+        qInfo() << "Received new commands:" << args;
         CommandParser::instance().process(args);
         auto sendfiles = CommandParser::instance().processCommand("s");
         if (!sendfiles.isEmpty()) {
+            qInfo() << "Found new files to send from commands, count:" << sendfiles.size();
             app.setProperty("sendFiles", QVariant::fromValue(sendfiles));
         }
     });
 
     signal(SIGINT, appExitHandler);
     signal(SIGTERM, appExitHandler);
+    qInfo() << "Entering application event loop";
     int ret = app.exec();
 
+    qInfo() << "Stopping TransferPlugin";
     plugin->stop();
 
+    qInfo() << "Application exiting with code:" << ret;
     return ret;
 }

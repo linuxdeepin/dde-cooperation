@@ -4,6 +4,7 @@
 
 #include "secureconfig.h"
 
+// #include "common/log.h"
 #include "configs/crypt/cert.h"
 
 // SecureConfig::SecureConfig() {
@@ -12,6 +13,7 @@
 
 std::shared_ptr<NetUtil::Asio::SSLContext> SecureConfig::serverContext()
 {
+    // DLOG << "Creating server SSL context";
     auto rsa_crt = Cert::instance()->getRSACrt();
     auto rsa_key = Cert::instance()->getRSAKey();
     asio::const_buffer cert_buf(rsa_crt.data(), rsa_crt.size());
@@ -22,12 +24,14 @@ std::shared_ptr<NetUtil::Asio::SSLContext> SecureConfig::serverContext()
     context->use_certificate(cert_buf, asio::ssl::context::pem);
     context->use_rsa_private_key(key_buf, asio::ssl::context::pem);
 
+    // DLOG << "Server SSL context created successfully";
     return context;
 }
 
 
 std::shared_ptr<NetUtil::Asio::SSLContext> SecureConfig::clientContext()
 {
+    // DLOG << "Creating client SSL context";
     auto rsa_crt = Cert::instance()->getRSACrt();
     asio::const_buffer cert_buf(rsa_crt.data(), rsa_crt.size());
 
@@ -36,5 +40,6 @@ std::shared_ptr<NetUtil::Asio::SSLContext> SecureConfig::clientContext()
     // context->set_verify_mode(asio::ssl::verify_peer | asio::ssl::verify_fail_if_no_peer_cert);
     context->use_certificate(cert_buf, asio::ssl::context::pem);
 
+    // DLOG << "Client SSL context created successfully";
     return context;
 }

@@ -6,19 +6,23 @@
 #include "settings.h"
 
 #include <QCoreApplication>
+#include <QDebug>
 
 ConfigManager::ConfigManager(QObject *parent)
     : QObject(parent)
 {
+    qInfo() << "ConfigManager init";
     init();
 }
 
 ConfigManager::~ConfigManager()
 {
+    qInfo() << "ConfigManager destroy";
 }
 
 void ConfigManager::init()
 {
+    qInfo() << "ConfigManager init";
     const auto &orgName = qApp->organizationName();
     const auto &appName = qApp->applicationName();
 
@@ -32,6 +36,7 @@ void ConfigManager::init()
             this, &ConfigManager::appAttributeChanged);
     connect(appSettings, &Settings::valueEdited,
             this, &ConfigManager::appAttributeEdited);
+    qInfo() << "ConfigManager init end";
 }
 
 QVariant ConfigManager::appAttribute(const QString &group, const QString &key)
