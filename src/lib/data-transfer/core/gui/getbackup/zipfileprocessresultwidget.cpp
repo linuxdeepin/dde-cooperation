@@ -26,6 +26,7 @@ ZipFileProcessResultWidget::~ZipFileProcessResultWidget()
 
 void ZipFileProcessResultWidget::initUI()
 {
+    DLOG << "ZipFileProcessResultWidget initUI";
     setStyleSheet("background-color: white; border-radius: 10px;");
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -77,11 +78,12 @@ void ZipFileProcessResultWidget::initUI()
 
     QObject::connect(TransferHelper::instance(), &TransferHelper::zipTransferContent, this,
                      &ZipFileProcessResultWidget::upWidgetToFailed);
+    DLOG << "ZipFileProcessResultWidget initUI finished";
 }
 
 void ZipFileProcessResultWidget::successed()
 {
-    DLOG << "Backup process completed successfully";
+    DLOG << "ZipFileProcessResultWidget successed";
     icon = new QLabel(this);
     icon->setPixmap(QIcon(":/icon/success-128.svg").pixmap(128, 128));
     icon->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -111,13 +113,16 @@ void ZipFileProcessResultWidget::successed()
     this->layout()->addWidget(tipLabel2);
     ((QHBoxLayout *)(this->layout()))->addSpacing(100);
     this->layout()->addWidget(displayLabel);
+    DLOG << "ZipFileProcessResultWidget successed finished";
 }
 
 void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int progressbar,
                                                   int estimatedtime)
 {
+    DLOG << "ZipFileProcessResultWidget upWidgetToFailed";
     Q_UNUSED(estimatedtime)
     if (progressbar != -1) {
+        DLOG << "Progressbar is not -1, returning";
         return;
     }
     DLOG << "Backup process failed with error:" << content.toStdString();
@@ -147,6 +152,7 @@ void ZipFileProcessResultWidget::backPage()
 
 void ZipFileProcessResultWidget::informationPage()
 {
+    DLOG << "ZipFileProcessResultWidget informationPage";
     QString folderPath = OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath)[0];
     QDesktopServices::openUrl(QUrl::fromLocalFile(folderPath));
 }

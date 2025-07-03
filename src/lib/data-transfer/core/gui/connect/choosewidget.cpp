@@ -36,6 +36,7 @@ ChooseWidget::~ChooseWidget()
 
 void ChooseWidget::initUI()
 {
+    DLOG << "ChooseWidget initUI";
     setStyleSheet(".ChooseWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -92,11 +93,14 @@ void ChooseWidget::initUI()
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
             [this, tiptextlabel](bool online) {
+                DLOG << "Online state changed:" << online;
                 if (online) {
+                    DLOG << "Network is online";
                     tiptextlabel->setVisible(false);
                     winItem->setIcon(QIcon(":/icon/select1.png"));
                     nextButton->setEnabled(true);
                 } else {
+                    DLOG << "Network is offline";
                     tiptextlabel->setVisible(true);
                     winItem->checked = false;
                     nextButton->setEnabled(false);
@@ -109,6 +113,7 @@ void ChooseWidget::initUI()
         if (state == true) {
             DLOG << "User selected network transmission mode";
             if (packageItem->checked == true) {
+                DLOG << "Package item was checked, unchecking";
                 packageItem->checked = false;
                 packageItem->update();
             }
@@ -116,6 +121,7 @@ void ChooseWidget::initUI()
             nextpage = selecPage1;
             transferMethod = TransferMethod::kNetworkTransmission;
         } else {
+            DLOG << "User deselected network transmission mode";
             nextButton->setEnabled(false);
         }
     });
@@ -123,6 +129,7 @@ void ChooseWidget::initUI()
         if (state == true) {
             DLOG << "User selected local export mode";
             if (winItem->checked == true) {
+                DLOG << "Win item was checked, unchecking";
                 winItem->checked = false;
                 winItem->update();
             }
@@ -131,24 +138,30 @@ void ChooseWidget::initUI()
 
             transferMethod = TransferMethod::kLocalExport;
         } else {
+            DLOG << "User deselected local export mode";
             nextButton->setEnabled(false);
         }
     });
+    DLOG << "ChooseWidget initUI finished";
 }
 
 void ChooseWidget::sendOptions()
 {
+    DLOG << "ChooseWidget sendOptions";
     QStringList method;
     method << transferMethod;
 
     OptionsManager::instance()->addUserOption(Options::kTransferMethod, method);
+    DLOG << "ChooseWidget sendOptions finished";
 }
 
 void ChooseWidget::nextPage()
 {
+    DLOG << "ChooseWidget nextPage";
     sendOptions();
     emit TransferHelper::instance()->changeWidgetText();
     emit TransferHelper::instance()->changeWidget((PageName)nextpage);
+    DLOG << "ChooseWidget nextPage finished";
 }
 
 void ChooseWidget::themeChanged(int theme)
@@ -157,18 +170,22 @@ void ChooseWidget::themeChanged(int theme)
 
     // light
     if (theme == 1) {
+        DLOG << "Theme is light, setting stylesheet";
         setStyleSheet(".ChooseWidget{ background-color: rgba(255,255,255,1); border-radius: 10px;}");
     } else {
         // dark
+        DLOG << "Theme is dark, setting stylesheet";
         setStyleSheet(".ChooseWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
     }
     winItem->themeChanged(theme);
     packageItem->themeChanged(theme);
+    DLOG << "ChooseWidget themeChanged finished";
 }
 
 ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
     : itemText(text), QFrame(parent)
 {
+    DLOG << "ModeItem constructor called with text:" << text.toStdString();
     setStyleSheet(".ModeItem{"
                   "border-radius: 8px;"
                   "opacity: 1;"
@@ -187,6 +204,7 @@ ModeItem::ModeItem(QString text, QIcon icon, QWidget *parent)
     setLayout(mainLayout);
     mainLayout->setSpacing(0);
     mainLayout->addWidget(iconLabel);
+    DLOG << "ModeItem constructor finished";
 }
 
 ModeItem::~ModeItem() {}
@@ -195,8 +213,10 @@ void ModeItem::setEnable(bool able)
 {
     enable = able;
 #ifdef linux
+    DLOG << "Linux platform, setting enabled state:" << able;
     setEnabled(able);
 #else
+    DLOG << "Non-Linux platform, setting stylesheet based on enabled state:" << able;
     if (able)
         setStyleSheet(".ModeItem{"
                       "border-radius: 8px;"
@@ -221,8 +241,10 @@ void ModeItem::setIcon(QIcon icon)
 
 void ModeItem::themeChanged(int theme)
 {
+    DLOG << "ModeItem themeChanged called with theme:" << theme;
     // light
     if (theme == 1) {
+        DLOG << "Theme is light, setting stylesheet";
         setStyleSheet(".ModeItem{"
                       "border-radius: 8px;"
                       "opacity: 1;"
@@ -232,6 +254,7 @@ void ModeItem::themeChanged(int theme)
         dark = false;
     } else {
         // dark
+        DLOG << "Theme is dark, setting stylesheet";
         setStyleSheet(".ModeItem{"
                       "border-radius: 8px;"
                       "opacity: 1;"
@@ -245,9 +268,12 @@ void ModeItem::themeChanged(int theme)
 void ModeItem::mousePressEvent(QMouseEvent *event)
 {
     if (enable) {
+        DLOG << "Mouse pressed and item is enabled";
         checked = !checked;
         emit clicked(checked);
         update();
+    } else {
+        DLOG << "Mouse pressed but item is disabled";
     }
     return QFrame::mousePressEvent(event);
 }
@@ -257,22 +283,29 @@ void ModeItem::paintEvent(QPaintEvent *event)
     QPainter paint(this);
     paint.setRenderHint(QPainter::Antialiasing);
     if (!enable) {
+        // DLOG << "Item is disabled, setting opacity to 0.4";
         paint.setOpacity(0.4);
     } else {
+        // DLOG << "Item is enabled, setting opacity to 1";
         paint.setOpacity(1);
     }
 
     if (checked) {
+        // DLOG << "Item is checked, drawing blue ellipse";
         paint.setPen(QPen(QColor(0, 129, 255, 255), 5));
         paint.drawEllipse(12, 12, 16, 16);
     } else {
+        // DLOG << "Item is not checked, drawing gray ellipse";
         paint.setPen(QPen(QColor(65, 77, 104, 255), 1));
         paint.drawEllipse(12, 12, 16, 16);
     }
-    if (dark)
+    if (dark) {
+        // DLOG << "Theme is dark, setting pen color to light gray";
         paint.setPen(QColor(192, 198, 212, 255));
-    else
+    } else {
+        // DLOG << "Theme is light, setting pen color to dark gray";
         paint.setPen(QColor(65, 77, 104, 255));
+    }
     paint.drawText(36, 24, itemText);
     return QFrame::paintEvent(event);
 }

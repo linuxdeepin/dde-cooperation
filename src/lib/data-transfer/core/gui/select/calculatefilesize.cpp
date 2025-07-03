@@ -17,24 +17,29 @@
 
 QString fromByteToQstring(quint64 bytes)
 {
+    DLOG << "Converting bytes to string";
     float tempresult = static_cast<float>(bytes);
     float result = tempresult;
     if (tempresult < 100.0) {
+        DLOG << "Result is less than 100, returning in B";
         return QString("%1B").arg(QString::number(result));
     }
     tempresult = tempresult / 1024;
     result = roundf(tempresult * 10) / 10;
     if (result < 100.0) {
+        DLOG << "Result is less than 100KB, returning in KB";
         return QString("%1KB").arg(QString::number(result));
     }
     tempresult = tempresult / 1024;
     result = roundf(tempresult * 10) / 10;
     if (result < 100.0) {
+        DLOG << "Result is less than 100MB, returning in MB";
         return QString("%1MB").arg(QString::number(result));
     }
     tempresult = tempresult / 1024;
     result = roundf(tempresult * 10) / 10;
     if (result < 100.0) {
+        DLOG << "Result is less than 100GB, returning in GB";
         return QString("%1GB").arg(QString::number(result));
     }
     tempresult = tempresult / 1024;
@@ -43,20 +48,26 @@ QString fromByteToQstring(quint64 bytes)
 }
 quint64 fromQstringToByte(QString sizeString)
 {
+    DLOG << "Converting string to bytes";
     quint64 bytes = 0;
     if (sizeString.endsWith("KB")) {
+        DLOG << "Converting KB to bytes";
         sizeString.chop(2);
         bytes = sizeString.toDouble() * 1024;
     } else if (sizeString.endsWith("MB")) {
+        DLOG << "Converting MB to bytes";
         sizeString.chop(2);
         bytes = sizeString.toDouble() * 1024 * 1024;
     } else if (sizeString.endsWith("GB")) {
+        DLOG << "Converting GB to bytes";
         sizeString.chop(2);
         bytes = sizeString.toDouble() * 1024 * 1024 * 1024;
     } else if (sizeString.endsWith("TB")) {
+        DLOG << "Converting TB to bytes";
         sizeString.chop(2);
         bytes = sizeString.toDouble() * 1024 * 1024 * 1024 * 1024;
     } else if (sizeString.endsWith("B")) {
+        DLOG << "Converting B to bytes";
         sizeString.chop(1);
         bytes = sizeString.toDouble();
     }
@@ -66,6 +77,7 @@ quint64 fromQstringToByte(QString sizeString)
 CalculateFileSizeTask::CalculateFileSizeTask(QObject *pool, const QString &path)
     : filePath(path), calculatePool(pool)
 {
+    DLOG << "Creating calculation task for:" << filePath.toStdString();
 }
 
 CalculateFileSizeTask::~CalculateFileSizeTask() { }
@@ -88,7 +100,9 @@ void CalculateFileSizeTask::abortTask()
 
 qlonglong CalculateFileSizeTask::calculate(const QString &path)
 {
+    DLOG << "Starting calculation for path:" << path.toStdString();
     if (abort) {
+        DLOG << "Calculation aborted for path:" << path.toStdString();
         return 0;
     }
 
@@ -98,12 +112,16 @@ qlonglong CalculateFileSizeTask::calculate(const QString &path)
     qlonglong tempSize = 0;
     for (const QFileInfo &fileInfo : fileList) {
         if (fileInfo.isDir()) {
+            DLOG << "Calculating size for directory:" << fileInfo.absoluteFilePath().toStdString();
             tempSize += calculate(fileInfo.absoluteFilePath());
         } else {
+            DLOG << "Calculating size for file:" << fileInfo.absoluteFilePath().toStdString();
             tempSize += fileInfo.size();
         }
     }
 
+    DLOG << "Calculation completed for path:" << path.toStdString()
+             << "Size:" << tempSize;
     return tempSize;
 }
 
@@ -137,13 +155,16 @@ void CalculateFileSizeThreadPool::work(const QList<QString> &list)
     for (const QString &path : list) {
         QFileInfo fileInfo(path);
         if (fileInfo.isFile()) {
+            DLOG << "Path is a file, skipping:" << path.toStdString();
             continue;
         } else if (fileInfo.isDir()) {
+            DLOG << "Path is a directory, starting new task:" << path.toStdString();
             CalculateFileSizeTask *task = new CalculateFileSizeTask(this, path);
             workList.push_back(task);
             threadPool->start(task);
         } else {
             WLOG << "Path is neither a file nor a directory:" << path.toStdString();
+            DLOG << "Path is neither a file nor a directory:" << path.toStdString();
         }
     }
 }
@@ -159,8 +180,12 @@ void CalculateFileSizeThreadPool::delFileMap(const QString &path)
 {
     DLOG<< "Removing file from map:" << path.toStdString();
 
-    if (fileMap->contains(path))
+    if (fileMap->contains(path)) {
+        DLOG << "File found in map, removing:" << path.toStdString();
         fileMap->remove(path);
+    } else {
+        DLOG << "File not found in map:" << path.toStdString();
+    }
 }
 
 QMap<QString, FileInfo> *CalculateFileSizeThreadPool::getFileMap()
@@ -173,8 +198,10 @@ void CalculateFileSizeThreadPool::sendFileSizeSlots(quint64 fileSize, const QStr
     DLOG<< "Sending file size for" << path.toStdString()
              << "Size:" << fileSize;
 
-    if (!fileMap->contains(path))
+    if (!fileMap->contains(path)) {
+        DLOG << "File not found in map:" << path.toStdString();
         return;
+    }
 
     (*fileMap)[path].size = fileSize;
     (*fileMap)[path].isCalculate = true;
@@ -183,6 +210,7 @@ void CalculateFileSizeThreadPool::sendFileSizeSlots(quint64 fileSize, const QStr
 
 void CalculateFileSizeThreadPool::addFileSlots(const QList<QString> &list)
 {
+    DLOG << "Adding files to thread pool:" << list.size();
     work(list);
 }
 
@@ -208,6 +236,7 @@ void CalculateFileSizeThreadPool::delDevice(const QStandardItem *siderbarItem)
     QMap<QString, FileInfo>::iterator it = fileMap->begin();
     while (it != fileMap->end()) {
         if (it.value().siderbarItem == siderbarItem) {
+            // DLOG << "Removing entry for sidebar item:" << it.key().toStdString();
             it = fileMap->erase(it);
         } else {
             ++it;

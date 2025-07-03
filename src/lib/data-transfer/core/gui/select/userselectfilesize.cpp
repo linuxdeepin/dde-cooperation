@@ -21,8 +21,10 @@ UserSelectFileSize::UserSelectFileSize()
 void UserSelectFileSize::sendFileSize()
 {
     if (pendingFiles.isEmpty()) {
+        DLOG << "Pending files list is empty, emitting userSelectFileSize:" << fromByteToQstring(userSelectFileSize).toStdString();
         emit updateUserFileSelectSize(fromByteToQstring(userSelectFileSize));
     } else {
+        DLOG << "Pending files exist, emitting 'Calculating'";
         emit updateUserFileSelectSize(QString(tr("Calculating")));
     }
 }
@@ -59,8 +61,12 @@ void UserSelectFileSize::delPendingFiles(const QString &path)
 {
     DLOG << "Removing pending file:" << path.toStdString();
 
-    if (pendingFiles.contains(path))
+    if (pendingFiles.contains(path)) {
+        DLOG << "Pending files contains path, removing";
         pendingFiles.removeOne(path);
+    } else {
+        DLOG << "Pending files does not contain path, skipping";
+    }
 }
 
 void UserSelectFileSize::addSelectFiles(const QString &path)
@@ -75,8 +81,12 @@ void UserSelectFileSize::delSelectFiles(const QString &path)
 {
     DLOG << "Removing selected file:" << path.toStdString();
 
-    if (selectFiles.contains(path))
+    if (selectFiles.contains(path)) {
+        DLOG << "Selected files contains path, removing";
         selectFiles.removeOne(path);
+    } else {
+        DLOG << "Selected files does not contain path, skipping";
+    }
     emit updateUserFileSelectNum(path, false);
 }
 
@@ -112,9 +122,12 @@ void UserSelectFileSize::updatependingFileSize(const quint64 &size, const QStrin
              << "Size:" << size << "bytes";
 
     if (pendingFiles.contains(path)) {
+        DLOG << "Pending files contains path, updating size and removing from pending list";
         userSelectFileSize += size;
         pendingFiles.removeOne(path);
         sendFileSize();
+    } else {
+        DLOG << "Pending files does not contain path, skipping update";
     }
 }
 
@@ -126,7 +139,9 @@ void UserSelectFileSize::delDevice(QStandardItem *siderbarItem)
     QStringList::iterator it = selectFiles.begin();
     while (it != selectFiles.end()) {
         if (filemap->value(*it).siderbarItem == siderbarItem) {
+            DLOG << "File belongs to sidebar item, removing:" << it->toStdString();
             if (filemap->value(*it).isCalculate) {
+                DLOG << "File size is calculated, subtracting from userSelectFileSize";
                 userSelectFileSize -= filemap->value(*it).size;
             }
             it = selectFiles.erase(it);
@@ -145,28 +160,36 @@ void UserSelectFileSize::updateFileSelectList(QStandardItem *item)
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
     if (item->data(Qt::CheckStateRole) == Qt::Unchecked) {
         if ((*filemap)[path].isSelect == false) {
+            DLOG << "File is already deselected, returning";
             return;
         }
         // do not select the file
         (*filemap)[path].isSelect = false;
         delSelectFiles(path);
         if ((*filemap)[path].isCalculate) {
+            DLOG << "File size is calculated, deleting user select file size";
             quint64 size = (*filemap)[path].size;
             delUserSelectFileSize(size);
         } else {
+            DLOG << "File size is not calculated, deleting pending files";
             delPendingFiles(path);
         }
     } else if (item->data(Qt::CheckStateRole) == Qt::Checked) {
         if ((*filemap)[path].isSelect == true) {
+            DLOG << "File is already selected, returning";
             return;
         }
         (*filemap)[path].isSelect = true;
         addSelectFiles(path);
         if ((*filemap)[path].isCalculate) {
+            DLOG << "File size is calculated, adding user select file size";
             quint64 size = (*filemap)[path].size;
             addUserSelectFileSize(size);
         } else {
+            DLOG << "File size is not calculated, adding pending files";
             addPendingFiles(path);
         }
+    } else {
+        DLOG << "Unknown check state for item:" << item->data(Qt::CheckStateRole).toInt();
     }
 }

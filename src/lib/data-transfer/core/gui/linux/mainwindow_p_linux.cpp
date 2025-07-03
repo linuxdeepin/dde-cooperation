@@ -47,6 +47,7 @@ void MainWindowPrivate::initWindow()
     layout->setContentsMargins(8, 8, 8, 8);
 
     q->setCentralWidget(centerWidget);
+    DLOG << "Main window initialized";
 }
 
 void MainWindowPrivate::initWidgets()
@@ -103,14 +104,20 @@ void MainWindowPrivate::initWidgets()
 
     connect(TransferHelper::instance(), &TransferHelper::onlineStateChanged,
             [this, errorwidget](bool online) {
-                if (online)
+                DLOG << "Online state changed:" << online;
+                if (online) {
+                    DLOG << "Network is online, returning";
                     return;
+                }
                 int index = stackedWidget->currentIndex();
                 //only these need jump to networkdisconnectwidget
-                if (index == PageName::connectwidget || index == PageName::waitwidget || index == PageName::promptwidget)
+                if (index == PageName::connectwidget || index == PageName::waitwidget || index == PageName::promptwidget) {
+                    DLOG << "Current page is connect, wait, or prompt widget, switching to networkdisconnectwidget";
                     stackedWidget->setCurrentIndex(PageName::networkdisconnectwidget);
+                }
                 if (index == PageName::transferringwidget) {
                     WLOG << "receiver > network offline, jump to errorwidget";
+                    DLOG << "Current page is transferring widget, switching to errorwidget due to network offline";
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
                     errorwidget->setErrorType(ErrorType::networkError);
                 }
@@ -119,12 +126,16 @@ void MainWindowPrivate::initWidgets()
     //disconect transfer
     connect(TransferHelper::instance(), &TransferHelper::disconnected,
             [this, errorwidget]() {
+                DLOG << "Disconnected signal received";
                 int index = stackedWidget->currentIndex();
-                if (index == PageName::errorwidget)
+                if (index == PageName::errorwidget) {
+                    DLOG << "Current page is errorwidget, returning";
                     return;
+                }
 
                 if (index == PageName::transferringwidget || index == PageName::waitwidget) {
                     WLOG << "receiver > disconnected, jump to errorwidget";
+                    DLOG << "Current page is transferring or wait widget, switching to errorwidget due to disconnection";
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
                     errorwidget->setErrorType(ErrorType::networkError);
                 }
@@ -159,4 +170,5 @@ void MainWindowPrivate::initWidgets()
         stackedWidget->setCurrentIndex(index);
     });
     q->centralWidget()->layout()->addWidget(stackedWidget);
+    DLOG << "Main window widgets initialized";
 }

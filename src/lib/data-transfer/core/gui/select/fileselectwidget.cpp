@@ -31,6 +31,7 @@ FileSelectWidget::FileSelectWidget(SidebarWidget *siderbarWidget, QWidget *paren
                      &FileSelectWidget::updateFileViewSize);
 
     QObject::connect(sidebar, &QListView::clicked, this, &FileSelectWidget::changeFileView);
+    DLOG << "File selection widget initialized";
 }
 
 FileSelectWidget::~FileSelectWidget()
@@ -107,6 +108,7 @@ void FileSelectWidget::initUI()
     auto sortBtn2 = titlebar->getSortButton2();
     sortBtn2->setVisible(true);
     QObject::connect(sortBtn2, &SortButton::sort, this, &FileSelectWidget::sortListviewColumn2);
+    DLOG << "File selection widget initialized";
 }
 
 void FileSelectWidget::startCalcluateFileSize(QList<QString> fileList)
@@ -128,24 +130,30 @@ void FileSelectWidget::initFileView()
         SelectListView *view = addFileViewData(path, diskItem);
         sidebarFileViewList[diskItem] = view;
         stackedWidget->addWidget(view);
+        // DLOG << "Added file view for disk:" << path.toStdString();
     }
     // init sidebar user directory size
     sidebar->initSiderDataAndUi();
 
     stackedWidget->setCurrentIndex(0);
+    DLOG << "File views initialized";
 }
 
 void FileSelectWidget::changeFileView(const QModelIndex &siderbarIndex)
 {
+    DLOG << "Changing file view for sidebar item";
     QString path = sidebar->model()->data(siderbarIndex, Qt::UserRole).toString();
     QMap<QStandardItem *, DiskInfo> *list = sidebar->getSidebarDiskList();
     for (auto iteraotr = list->begin(); iteraotr != list->end(); ++iteraotr) {
         QString rootPath = iteraotr.value().rootPath;
         if (path == rootPath) {
+            DLOG << "Matching root path found:" << rootPath.toStdString();
             QStandardItem *item = iteraotr.key();
             stackedWidget->setCurrentWidget(sidebarFileViewList[item]);
             auto state = static_cast<ListSelectionState>(item->data(Qt::StatusTipRole).toInt());
             titlebar->updateSelectAllButState(state);
+        } else {
+            DLOG << "No matching root path for:" << path.toStdString();
         }
     }
 }
@@ -160,6 +168,7 @@ void FileSelectWidget::selectOrDelAllItem()
 
 void FileSelectWidget::updateFileViewSize(quint64 fileSize, const QString &path)
 {
+    DLOG << "Updating file size for path:" << path.toStdString();
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
     QStandardItem *item = (*filemap)[path].fileItem;
     item->setData(fromByteToQstring(fileSize), Qt::ToolTipRole);
@@ -167,8 +176,10 @@ void FileSelectWidget::updateFileViewSize(quint64 fileSize, const QString &path)
 
 void FileSelectWidget::updateFileViewData(QStandardItem *siderbarItem, const bool &isAdd)
 {
+    DLOG << "Updating file view data for sidebar item";
     // del fileview
     if (!isAdd) {
+        DLOG << "Removing file view for sidebar item";
         SelectListView *view = qobject_cast<SelectListView *>(sidebarFileViewList[siderbarItem]);
         stackedWidget->setCurrentIndex(0);
         stackedWidget->removeWidget(view);
@@ -178,6 +189,7 @@ void FileSelectWidget::updateFileViewData(QStandardItem *siderbarItem, const boo
 
     } else {
         // add fileview
+        DLOG << "Adding file view for sidebar item";
         QMap<QStandardItem *, DiskInfo> *diskList = sidebar->getSidebarDiskList();
         QString path = diskList->value(siderbarItem).rootPath;
         LOG << "updateFileViewData add " << path.toStdString();
@@ -186,10 +198,12 @@ void FileSelectWidget::updateFileViewData(QStandardItem *siderbarItem, const boo
         stackedWidget->addWidget(view);
         LOG << "add device";
     }
+    DLOG << "File view data updated for sidebar item";
 }
 
 void FileSelectWidget::selectOrDelAllItemFromSiderbar(QStandardItem *siderbarItem)
 {
+    DLOG << "Toggling select/deselect all items for sidebar item";
     SelectListView *listview =
             qobject_cast<SelectListView *>(sidebarFileViewList.value(siderbarItem));
     listview->selectorDelAllItem();
@@ -198,6 +212,7 @@ void FileSelectWidget::selectOrDelAllItemFromSiderbar(QStandardItem *siderbarIte
 void FileSelectWidget::updateTitleSelectBtnState(QStandardItem *siderbarItem,
                                                  ListSelectionState state)
 {
+    DLOG << "Updating titlebar select button state for sidebar item";
     SelectListView *listview =
             qobject_cast<SelectListView *>(sidebarFileViewList.value(siderbarItem));
     if (sidebarFileViewList[siderbarItem] != listview)
@@ -231,6 +246,7 @@ void FileSelectWidget::sortListview()
 
 SelectListView *FileSelectWidget::addFileViewData(const QString &path, QStandardItem *sidebaritem)
 {
+    DLOG << "Adding file view data for path:" << path.toStdString();
     QDir directory(path);
     // del . and ..
     directory.setFilter(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
@@ -247,10 +263,14 @@ SelectListView *FileSelectWidget::addFileViewData(const QString &path, QStandard
     int diskFileNUM = 0;
     QList<QString> needCalculateFileList;
     for (int i = 0; i < fileinfos.count(); i++) {
-        if (!fileinfos[i].isDir())
+        if (!fileinfos[i].isDir()) {
+            // DLOG << "File info is not a directory, skipping:" << fileinfos[i].fileName().toStdString();
             continue;
-        if (fileinfos[i].fileName() == "Users")
+        }
+        if (fileinfos[i].fileName() == "Users") {
+            // DLOG << "File name is 'Users', skipping:" << fileinfos[i].fileName().toStdString();
             continue;
+        }
         QStandardItem *item = new QStandardItem();
         item->setData(fileinfos[i].fileName(), Qt::DisplayRole);
         item->setData("", Qt::ToolTipRole);
@@ -274,8 +294,10 @@ SelectListView *FileSelectWidget::addFileViewData(const QString &path, QStandard
         ++diskFileNUM;
     }
     for (int i = 0; i < fileinfos.count(); i++) {
-        if (!fileinfos[i].isFile() || fileinfos[i].isSymLink())
+        if (!fileinfos[i].isFile() || fileinfos[i].isSymLink()) {
+            // DLOG << "File info is not a file or is a symlink, skipping:" << fileinfos[i].fileName().toStdString();
             continue;
+        }
         QStandardItem *item = new QStandardItem();
         item->setData(fileinfos[i].fileName(), Qt::DisplayRole);
         item->setData(fromByteToQstring(fileinfos[i].size()), Qt::ToolTipRole);
@@ -306,21 +328,28 @@ SelectListView *FileSelectWidget::addFileViewData(const QString &path, QStandard
     QObject::connect(model, &QStandardItemModel::itemChanged, UserSelectFileSize::instance(),
                      &UserSelectFileSize::updateFileSelectList);
 
+    DLOG << "File view data added for path:" << path.toStdString();
     return fileView;
 }
 
 void FileSelectWidget::changeText()
 {
+    DLOG << "Updating title text";
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
+        DLOG << "Transfer method is LocalExport, setting title to LocalText";
         titileLabel->setText(LocalText);
     } else if (method == TransferMethod::kNetworkTransmission) {
+        DLOG << "Transfer method is NetworkTransmission, setting title to InternetText";
         titileLabel->setText(InternetText);
+    } else {
+        DLOG << "Unknown transfer method:" << method.toStdString();
     }
 }
 
 void FileSelectWidget::clear()
 {
+    DLOG << "Clearing file select widget";
     int pageCount = stackedWidget->count();
     for (int i = 0; i < pageCount; ++i) {
         SelectListView *currentPage = qobject_cast<SelectListView *>(stackedWidget->widget(i));
@@ -331,38 +360,49 @@ void FileSelectWidget::clear()
         }
     }
     OptionsManager::instance()->addUserOption(Options::kFile, QStringList());
+    DLOG << "File select widget cleared";
 }
 
 void FileSelectWidget::updateFileSelectList(QStandardItem *item)
 {
+    DLOG << "Updating file select list";
     QString path = item->data(Qt::UserRole).toString();
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
     if (item->data(Qt::CheckStateRole) == Qt::Unchecked) {
         if ((*filemap)[path].isSelect == false) {
+            DLOG << "File is already deselected, returning";
             return;
         }
         // do not select the file
         (*filemap)[path].isSelect = false;
         UserSelectFileSize::instance()->delSelectFiles(path);
         if ((*filemap)[path].isCalculate) {
+            DLOG << "File size is calculated, deleting user select file size";
             quint64 size = (*filemap)[path].size;
             UserSelectFileSize::instance()->delUserSelectFileSize(size);
         } else {
+            DLOG << "File size is not calculated, deleting pending files";
             UserSelectFileSize::instance()->delPendingFiles(path);
         }
     } else if (item->data(Qt::CheckStateRole) == Qt::Checked) {
         if ((*filemap)[path].isSelect == true) {
+            DLOG << "File is already selected, returning";
             return;
         }
         (*filemap)[path].isSelect = true;
         UserSelectFileSize::instance()->addSelectFiles(path);
         if ((*filemap)[path].isCalculate) {
+            DLOG << "File size is calculated, adding user select file size";
             quint64 size = (*filemap)[path].size;
             UserSelectFileSize::instance()->addUserSelectFileSize(size);
         } else {
+            DLOG << "File size is not calculated, adding pending files";
             UserSelectFileSize::instance()->addPendingFiles(path);
         }
+    } else {
+        DLOG << "Unknown check state for item:" << item->data(Qt::CheckStateRole).toInt();
     }
+    DLOG << "File select list updated for path:" << path.toStdString();
 }
 
 void FileSelectWidget::nextPage()

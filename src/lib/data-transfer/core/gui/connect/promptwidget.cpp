@@ -25,6 +25,7 @@ PromptWidget::~PromptWidget()
 
 void PromptWidget::initUI()
 {
+    DLOG << "Initializing UI";
     setStyleSheet(".PromptWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -77,6 +78,7 @@ void PromptWidget::initUI()
     mainLayout->addLayout(promptLayout);
     mainLayout->addSpacing(220);
     mainLayout->addLayout(buttonLayout);
+    DLOG << "UI initialization complete";
 }
 
 void PromptWidget::nextPage()
@@ -102,10 +104,12 @@ void PromptWidget::themeChanged(int theme)
     DLOG << "Theme changed to:" << (theme == 1 ? "light" : "dark");
     // light
     if (theme == 1) {
+        DLOG << "Theme is light, setting stylesheet";
         setStyleSheet(".PromptWidget{background-color: white; border-radius: 10px;}");
 
     } else {
         // dark
+        DLOG << "Theme is dark, setting stylesheet";
         setStyleSheet(".PromptWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
     }
 }
