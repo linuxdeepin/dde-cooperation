@@ -11,7 +11,7 @@
         <message>
             <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
             <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-            <translation>跨端協同是一款強大的跨終端辦公工具，可幫助您在不同設備之間實現文件投送、共享鍵鼠、共享剪貼板。</translation>
+            <translation>跨端協同是一款強大的跨裝置辦公工具，可協助你在不同裝置之間實現檔案傳送、共享鍵盤滑鼠、共享剪貼簿。</translation>
         </message>
     </context>
     <context>
@@ -19,12 +19,12 @@
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="69"/>
             <source>File transfer settings</source>
-            <translation>文件投送設置</translation>
+            <translation>檔案傳送設定</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="71"/>
             <source>Settings</source>
-            <translation>設置</translation>
+            <translation>設定</translation>
             <comment>button</comment>
         </message>
     </context>
@@ -34,7 +34,7 @@
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
             <source>Local IP: %1</source>
-            <translation>本機IP：%1</translation>
+            <translation>本機 IP：%1</translation>
         </message>
     </context>
     <context>
@@ -42,7 +42,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
             <source>"%1" send some files to you</source>
-            <translation>“%1”向你發送一封文件</translation>
+            <translation>「%1」向你傳送了檔案</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
@@ -62,7 +62,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/win/cooperationsearchedit.cpp" line="34"/>
             <source>Search</source>
-            <translation>搜索</translation>
+            <translation>搜尋</translation>
         </message>
     </context>
     <context>
@@ -104,12 +104,12 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="275"/>
             <source>File Transfer</source>
-            <translation>文件投送</translation>
+            <translation>檔案傳送</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="278"/>
             <source>File transfer</source>
-            <translation>文件投送</translation>
+            <translation>檔案傳送</translation>
         </message>
     </context>
     <context>
@@ -117,7 +117,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="217"/>
             <source>View Help Manual</source>
-            <translation>查看幫助手冊</translation>
+            <translation>檢視說明手冊</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
@@ -127,37 +127,37 @@
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
             <source>Keyboard and mouse sharing</source>
-            <translation>鍵鼠共享</translation>
+            <translation>鍵盤滑鼠共享</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
             <source>When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device</source>
-            <translation>兩台設備間進行連接後，可使用發起方的鍵鼠控制另一設備</translation>
+            <translation>兩台裝置建立連線後，可使用發起方的鍵盤滑鼠控制另一裝置。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
             <source>Clipboard sharing</source>
-            <translation>剪貼板共享</translation>
+            <translation>剪貼簿共享</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
             <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-            <translation>兩台設備間進行連接後，將共享剪貼板，可在一台設備上複製，另一台設備黏貼</translation>
+            <translation>兩台裝置建立連線後，將會共享剪貼簿，可在一台裝置上複製，並在另一台裝置上貼上。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
             <source>Delivery of documents</source>
-            <translation>文件投送</translation>
+            <translation>檔案傳送</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
             <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
-            <translation>兩台設備間進行連接後，可向對方設備發起文件投送</translation>
+            <translation>兩台裝置建立連線後，可向對方裝置發起檔案傳送。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
             <source>For detailed instructions, please click on the Help Manual below</source>
-            <translation>詳細的使用方法，請點擊下方《幫助手冊》進行查看</translation>
+            <translation>詳細的使用說明，請點擊下方的《說明手冊》進行檢視。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
@@ -175,7 +175,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="197"/>
             <source>connectable</source>
-            <translation>可連</translation>
+            <translation>可連線</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="204"/>
@@ -199,17 +199,17 @@
             <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
             <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
             <source>Please click to confirm to enable the LAN discovery service!</source>
-            <translation>請點擊確認啟用局域網發現服務！</translation>
+            <translation>請點擊確認以啟用區域網絡探索服務！</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="249"/>
             <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned on</source>
-            <translation>未打開LAN發現服務時，無法發現其他設備，也無法被其他設備發現</translation>
+            <translation>未開啟區域網絡探索服務時，將無法搜尋到其他裝置，也無法被其他裝置搜尋到。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
-            <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
-            <translation>當LAN發現服務未打開時，無法發現其他設備，也無法被其他設備發現。按右鍵Windows“開始”選單-&gt;“電腦管理”-&gt;“服務和應用程序”-&gt;“啟用Bonjour服務的服務”</translation>
+            <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service</source>
+            <translation>當區域網絡探索服務未開啟時，將無法搜尋到或被其他裝置搜尋到。請在 Windows「開始」功能表上按一下滑鼠右鍵 ->「電腦管理」->「服務與應用程式」->「服務」以啟用 Bonjour 服務。</translation>
         </message>
     </context>
     <context>
@@ -222,7 +222,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="127"/>
             <source>The opposite end opens the application and connects to the same network</source>
-            <translation>对端开启应用，并连接同一网络</translation>
+            <translation>在另一裝置開啟應用程式，並連線至相同網絡。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="128"/>
@@ -237,22 +237,22 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="189"/>
             <source>to send the file</source>
-            <translation>发送文件</translation>
+            <translation>傳送檔案</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
             <source>to connect to the peer device</source>
-            <translation>连接对端设备</translation>
+            <translation>連線至另一裝置</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
             <source>Enter the peer IP in the search box</source>
-            <translation>在搜索框输入对端IP</translation>
+            <translation>在搜尋框中輸入另一裝置的 IP 位址</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="131"/>
             <source>Click</source>
-            <translation>点击</translation>
+            <translation>點擊</translation>
         </message>
     </context>
     <context>
@@ -266,12 +266,12 @@
             <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
             <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
             <source>the file save location is invalid</source>
-            <translation>文件保存位置無效</translation>
+            <translation>檔案儲存位置無效</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
             <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-            <translation>此路徑為只讀目錄，請更換文件保存位置。</translation>
+            <translation>此路徑為唯讀目錄，請更換檔案儲存位置。</translation>
         </message>
     </context>
     <context>
@@ -279,12 +279,12 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="204"/>
             <source>The current device has been locked</source>
-            <translation>當前設備已被鎖定</translation>
+            <translation>目前裝置已被鎖定</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="207"/>
             <source>You can unlock it on mobile devices</source>
-            <translation>你可以在移動端解鎖</translation>
+            <translation>你可以在流動裝置上解鎖</translation>
         </message>
     </context>
     <context>
@@ -292,7 +292,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="81"/>
             <source>Looking for devices</source>
-            <translation>正在尋找設備</translation>
+            <translation>正在搜尋裝置</translation>
         </message>
     </context>
     <context>
@@ -300,7 +300,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="266"/>
             <source>Minimise to system tray</source>
-            <translation>最小化到系統託盤</translation>
+            <translation>最小化至系統匣</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="268"/>
@@ -310,7 +310,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="277"/>
             <source>No more enquiries</source>
-            <translation>不再詢問</translation>
+            <translation>不再提示</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
@@ -328,12 +328,12 @@
             <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
             <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
             <source>Please select your operation</source>
-            <translation>請選擇您的操作</translation>
+            <translation>請選擇你的操作</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="338"/>
             <source>Restore</source>
-            <translation>恢復</translation>
+            <translation>還原</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="339"/>
@@ -346,33 +346,33 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="62"/>
             <source>Computer</source>
-            <translation>電腦協同</translation>
+            <translation>電腦</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="63"/>
             <source>Phone</source>
-            <translation>手機協同</translation>
+            <translation>手機</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="74"/>
             <source>Selection of delivery device</source>
-            <translation>選擇投送設備</translation>
+            <translation>選擇傳送裝置</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
             <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="126"/>
             <source>Settings</source>
-            <translation>設置</translation>
+            <translation>設定</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="88"/>
             <source>Download client</source>
-            <translation>客戶端下載</translation>
+            <translation>下載客戶端</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="130"/>
             <source>Download Windows client</source>
-            <translation>Windows客戶端下載</translation>
+            <translation>下載 Windows 客戶端</translation>
         </message>
     </context>
     <context>
@@ -380,7 +380,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="150"/>
             <source>Please connect to the network</source>
-            <translation>請連接網絡</translation>
+            <translation>請連線至網絡</translation>
         </message>
     </context>
     <context>
@@ -388,52 +388,52 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
             <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from:</source>
-            <translation>1. 開啟跨端協同應用，UOS端應用可在應用商店下載，Windows端下載地址:</translation>
+            <translation>1. 開啟跨端協同應用程式。UOS 版可於應用程式商店下載，Windows 版可從下列網址下載：</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
             <source>2. On the same LAN as the device</source>
-            <translation>2. 與本設備在同一局域網</translation>
+            <translation>2. 確認與本機連線至相同的區域網絡</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
             <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -"Everyone on the same LAN"</source>
-            <translation>3. 設置-基礎設置-可被發現-“允許同一局域網下的所有人”</translation>
+            <translation>3. 檔案總管 -> 設定 -> 檔案傳送 -> 允許下列用戶向我傳送檔案 ->「同一區域網絡下的所有人」</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
             <source>3. Settings-Basic Settings-Discovery Mode-"Allow everyone in the same LAN"</source>
-            <translation>3. 設置-基礎設置-可被發現-“允許同一局域網下的所有人”</translation>
+            <translation>3. 設定 -> 基本設定 -> 探索模式 ->「允許同一區域網絡下的所有人」</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
             <source>4. Try entering the target device IP in the top search box</source>
-            <translation>4. 嘗試在頂部搜索框輸入目標設備IP</translation>
+            <translation>4. 嘗試在頂部的搜尋框中輸入目標裝置的 IP 位址</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="216"/>
             <source>Unable to find collaborative device？</source>
-            <translation>找不到協同設備？</translation>
+            <translation>找不到協同裝置？</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="245"/>
             <source>1. The mobile phone needs to download cross end collaborative applications.</source>
-            <translation>1.手機需要下載跨端協同應用。</translation>
+            <translation>1. 手機需要下載跨端協同應用程式。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
-            <source>Go to download&gt;</source>
-            <translation>前往下載&gt;</translation>
+            <source>Go to download></source>
+            <translation>前往下載></translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
             <source>2. After installation, scan the code to connect to this device for collaboration.</source>
-            <translation>2.安裝後，掃描二維碼以連接到此設備進行協同。</translation>
+            <translation>2. 安裝後，掃描 QR Code 以連線到此裝置進行協同。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="251"/>
             <source>3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device</source>
-            <translation>3.連接此設備後，移動端需要保持跨端協同應用程式打開，並與此設備位於同一局域網上</translation>
+            <translation>3. 連線此裝置後，手機端需要保持跨端協同應用程式開啟，並與此裝置位於同一個區域網絡。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="253"/>
@@ -446,7 +446,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="293"/>
             <source>No device found</source>
-            <translation>未搜尋到任何設備</translation>
+            <translation>未搜尋到任何裝置</translation>
         </message>
     </context>
     <context>
@@ -454,12 +454,12 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="65"/>
             <source>Disconnect</source>
-            <translation>斷開</translation>
+            <translation>中斷連線</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="93"/>
             <source>“%1”apply to initiate screen casting</source>
-            <translation>「%1」請求投屏至本設備</translation>
+            <translation>「%1」請求將螢幕投放到本裝置</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
@@ -476,17 +476,17 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="139"/>
             <source>“%1”connection disconnected!</source>
-            <translation>「%1」連接已斷開!</translation>
+            <translation>與「%1」的連線已中斷！</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
             <source>Are you sure to disconnect and collaborate with '%1'?</source>
-            <translation>確定要和 '%1' 斷開連接嗎?</translation>
+            <translation>確定要中斷與「%1」的協同作業嗎？</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
             <source>disconnect</source>
-            <translation>斷開</translation>
+            <translation>中斷連線</translation>
         </message>
     </context>
     <context>
@@ -508,22 +508,22 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="102"/>
             <source>Scan code connection</source>
-            <translation>掃碼連接</translation>
+            <translation>掃描 QR Code 連線</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="108"/>
             <source>Please use the cross end collaboration app to scan the code</source>
-            <translation>請使用「UOS助手」APP掃碼</translation>
+            <translation>請使用「跨端協同」應用程式掃描</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="114"/>
             <source>Mobile phones and devices need to be connected to the same local area network</source>
-            <translation>手機和設備需要連接同一局域網</translation>
+            <translation>手機和電腦需要連線至相同的區域網絡</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="147"/>
             <source>Click to download UOS assistant APP</source>
-            <translation>點擊下載UOS助手APP</translation>
+            <translation>點擊以下載 UOS 助手應用程式</translation>
         </message>
     </context>
     <context>
@@ -537,7 +537,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="182"/>
             <source>View</source>
-            <translation>查看</translation>
+            <translation>檢視</translation>
             <comment>button</comment>
         </message>
     </context>
@@ -547,7 +547,7 @@
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
             <source>Everyone in the same LAN</source>
-            <translation>同一局域網下的所有人</translation>
+            <translation>同一區域網絡下的所有人</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
@@ -568,77 +568,77 @@
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="54"/>
             <source>Only those who are collaborating are allowed</source>
-            <translation>僅允許正在協同的人</translation>
+            <translation>僅允許正在協同的裝置</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="132"/>
             <source>Basic Settings</source>
-            <translation>基礎設置</translation>
+            <translation>基本設定</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="143"/>
             <source>Discovery mode</source>
-            <translation>可被發現</translation>
+            <translation>探索模式</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
             <source>Other devices can discover and connect with you through the "Cooperation" app</source>
-            <translation>其他設備可通過“跨端協同”應用發現您，並與您建立連接</translation>
+            <translation>其他裝置可透過「跨端協同」應用程式搜尋到你，並與你建立連線。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
             <source>Device name</source>
-            <translation>設備暱稱</translation>
+            <translation>裝置暱稱</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
             <source>Peripheral share</source>
-            <translation>外設共享</translation>
+            <translation>周邊裝置共享</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
             <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
-            <translation>允許已建立跨端協同連接的外設控制此設備，包括鍵盤、鼠標、觸控板等</translation>
+            <translation>允許已建立跨端協同連線的周邊裝置控制此裝置，包括鍵盤、滑鼠、觸控板等。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
             <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
-            <translation>當此設備作為連接方時，鼠標從此設備螢幕上穿透到被連接方的位置</translation>
+            <translation>當本機為連線方時，滑鼠可從本機螢幕邊緣穿透至被連線裝置的螢幕。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
             <source>Connection direction</source>
-            <translation>鏈接方向</translation>
+            <translation>連線方向</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
             <source>Allows the following users to send files to me</source>
-            <translation>允許以下用戶向我投送文件</translation>
+            <translation>允許下列用戶向我傳送檔案</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
             <source>File save location</source>
-            <translation>文件保存位置</translation>
+            <translation>檔案儲存位置</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
             <source>Share clipboard</source>
-            <translation>剪切板共享</translation>
+            <translation>剪貼簿共享</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
             <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
-            <translation>服務端（被連接的設備）開啟共享後，兩台電腦之間將共享剪貼板</translation>
+            <translation>在伺服器端（被連線的裝置）啟用共享後，兩台電腦之間將共享剪貼簿。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
             <source>The device name must contain 1 to 20 characters</source>
-            <translation>設備暱稱必須介於1-63個字符之內 {1 ?} {20 ?}</translation>
+            <translation>裝置暱稱長度必須為 1 至 20 個字元。</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="362"/>
             <source>The device name must contain 1 to 63 characters</source>
-            <translation>設備暱稱必須介於1-63個字符之內</translation>
+            <translation>裝置暱稱長度必須為 1 至 63 個字元。</translation>
         </message>
     </context>
     <context>
@@ -646,12 +646,12 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="238"/>
             <source>connect</source>
-            <translation>連接</translation>
+            <translation>連線</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="246"/>
             <source>Disconnect</source>
-            <translation>斷開</translation>
+            <translation>中斷連線</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
@@ -660,28 +660,28 @@
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
             <source>Unable to collaborate to "%1"</source>
-            <translation>無法協同至“%1”</translation>
+            <translation>無法協同至「%1」</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
             <source>You are connecting to another device</source>
-            <translation>您正在與其他設備進行協同</translation>
+            <translation>你正在與其他裝置進行協同作業</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
             <source>Requesting collaborate to "%1"</source>
-            <translation>正在請求協同至“%1”</translation>
+            <translation>正在請求協同至「%1」</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
             <source>Coordination with "%1" has ended</source>
-            <translation>與“%1”的協同已結束</translation>
+            <translation>與「%1」的協同作業已結束</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
             <source>A cross-end collaboration request was received from "%1"</source>
-            <translation>接收到“%1”的協同連接請求</translation>
+            <translation>收到來自「%1」的協同連線請求</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
@@ -701,7 +701,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
             <source>Connect to "%1" failed</source>
-            <translation>連接到“%1”失敗</translation>
+            <translation>連線至「%1」失敗</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
@@ -711,67 +711,67 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="419"/>
             <source>Failed to run process!</source>
-            <translation>行程運行失敗！</translation>
+            <translation>處理程序執行失敗！</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
             <source>Connection successful, coordinating with  "%1"</source>
-            <translation>連接成功，正在與“%1”進行協同</translation>
+            <translation>連線成功，正在與「%1」進行協同作業</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
             <source>"%1" has rejected your request for collaboration</source>
-            <translation>“%1”已拒絕您的協同請求</translation>
+            <translation>「%1」已拒絕你的協同請求</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
             <source>"%1" is connecting with other devices</source>
-            <translation>“%1”正在與其他設備協同</translation>
+            <translation>「%1」正在與其他裝置協同作業</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
             <source>The connection request sent to you by "%1" was interrupted due to a timeout</source>
-            <translation>“%1”向您發起連接請求因超時中斷</translation>
+            <translation>「%1」向你發出的連線請求已因逾時而中斷</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
             <source>The other party does not confirm, please try again later</source>
-            <translation>對方未確認，請稍後再發起連接</translation>
+            <translation>對方未確認，請稍後再發起連線</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="524"/>
             <source>The other party has cancelled the connection request !</source>
-            <translation>對方取消了連接請求！</translation>
+            <translation>對方已取消連線請求！</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="528"/>
             <source>connect failed</source>
-            <translation>連接失敗</translation>
+            <translation>連線失敗</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
             <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-            <translation>網絡未連接，文件發送失敗。   請連接網絡並重試！</translation>
+            <translation>網絡未連線，本次檔案傳送失敗。請連線至網絡後再試一次！</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
             <source>File transfer failed</source>
-            <translation>文件傳輸失敗</translation>
+            <translation>檔案傳輸失敗</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
             <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
-            <translation>絡未連接，文件發送失敗。請連接網絡並重試！</translation>
+            <translation>網絡未連線，本次檔案傳送失敗。請連線至網絡後再試一次！</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="562"/>
             <source>Network exception</source>
-            <translation>網絡异常</translation>
+            <translation>網絡異常</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
             <source>Please check the network "%1"</source>
-            <translation>請檢查網絡“%1”</translation>
+            <translation>請檢查網絡「%1」</translation>
         </message>
     </context>
     <context>
@@ -785,7 +785,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
             <source>Connection successful, coordinating with "%1"</source>
-            <translation>連接成功，正在與“%1”進行協同</translation>
+            <translation>連線成功，正在與「%1」進行協同作業</translation>
         </message>
     </context>
     <context>
@@ -793,41 +793,41 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
             <source>Connect to "%1" failed</source>
-            <translation>連接到“%1”失敗</translation>
+            <translation>連線至「%1」失敗</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
             <source>File read/write exception</source>
-            <translation>文件讀寫發生異常</translation>
+            <translation>檔案讀寫時發生異常</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
             <source>The other party has canceled the file transfer</source>
-            <translation>對方已取消文件投送</translation>
+            <translation>對方已取消檔案傳送</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
             <source>File sent successfully</source>
-            <translation>文件投送成功</translation>
+            <translation>檔案傳送成功</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="168"/>
             <source>View transfer history</source>
-            <translation>查看文件投送記錄</translation>
+            <translation>檢視檔案傳送記錄</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="177"/>
             <source>Send files</source>
-            <translation>發送文件</translation>
+            <translation>傳送檔案</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="302"/>
             <source>The other party did not receive, the files failed to send</source>
-            <translation>對方未接收，文件發送失敗</translation>
+            <translation>對方未接收，檔案傳送失敗</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="332"/>
@@ -837,17 +837,17 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="335"/>
             <source>File receiving %1% | Remaining time %2</source>
-            <translation>檔案接收%1%|剩餘時間%2</translation>
+            <translation>正在接收檔案 %1% | 剩餘時間 %2</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
             <source>Sending files to "%1"</source>
-            <translation>正在向“%1”投送文件</translation>
+            <translation>正在向「%1」傳送檔案</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
             <source>Receiving files from "%1"</source>
-            <translation>正在從“%1”接收檔案</translation>
+            <translation>正在從「%1」接收檔案</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
@@ -867,31 +867,31 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
             <source>"%1" send some files to you</source>
-            <translation>“%1”向你發送一封文件</translation>
+            <translation>「%1」向你傳送了檔案</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
             <source>View</source>
-            <translation>查看</translation>
+            <translation>檢視</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
             <source>The other party has cancelled the transfer request !</source>
-            <translation>對方已取消轉帳請求！</translation>
+            <translation>對方已取消傳輸請求！</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
             <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-            <translation>存儲空間不足，文件發送失敗。請清理磁盤空間並重試！</translation>
+            <translation>儲存空間不足，本次檔案傳送失敗。請清理磁碟空間後再試一次！</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
             <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-            <translation>網絡未連接，文件發送失敗。請連接網絡並重試！</translation>
+            <translation>網絡未連線，本次檔案傳送失敗。請連線至網絡後再試一次！</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
@@ -901,7 +901,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
             <source>The other party rejects your request</source>
-            <translation>對方已拒絕您的請求</translation>
+            <translation>對方已拒絕你的請求</translation>
         </message>
     </context>
     <context>
@@ -909,7 +909,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="132"/>
             <source>File transfer</source>
-            <translation>檔案投送</translation>
+            <translation>檔案傳送</translation>
         </message>
     </context>
     <context>
@@ -918,7 +918,7 @@
             <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
             <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
             <source>Disconnected</source>
-            <translation>投屏已結束</translation>
+            <translation>螢幕投放已結束</translation>
         </message>
     </context>
     <context>
@@ -926,7 +926,7 @@
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="75"/>
             <source>File Transfer</source>
-            <translation>檔案投送</translation>
+            <translation>檔案傳送</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="91"/>
@@ -940,17 +940,17 @@
             <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
             <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
             <source>Please enter the device ip/name of the collaborator</source>
-            <translation>請輸入協同對象的設備IP/暱稱</translation>
+            <translation>請輸入協同對象的裝置 IP/暱稱</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="56"/>
             <source>Nearby Device</source>
-            <translation>附近的設備</translation>
+            <translation>附近的裝置</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="72"/>
             <source>Re-scan for devices</source>
-            <translation>重新尋找設備</translation>
+            <translation>重新搜尋裝置</translation>
         </message>
     </context>
     <context>
@@ -958,7 +958,7 @@
         <message>
             <location filename="../../src/lib/cooperation/transfer/helper/transferhelper.cpp" line="105"/>
             <source>Send files</source>
-            <translation>發送文件</translation>
+            <translation>傳送檔案</translation>
         </message>
     </context>
     <context>
@@ -966,7 +966,7 @@
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="34"/>
             <source>File transfer</source>
-            <translation>文件投送</translation>
+            <translation>檔案傳送</translation>
         </message>
     </context>
     <context>
@@ -974,7 +974,7 @@
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="64"/>
             <source>File transfer</source>
-            <translation>文件投送</translation>
+            <translation>檔案傳送</translation>
         </message>
     </context>
     <context>
@@ -982,32 +982,32 @@
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="154"/>
             <source>File transfer settings</source>
-            <translation>文件投送設置</translation>
+            <translation>檔案傳送設定</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="171"/>
             <source>Everyone in the same LAN</source>
-            <translation type="unfinished">同一局域網下的所有人</translation>
+            <translation>同一區域網絡下的所有人</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="172"/>
             <source>Only those who are collaborating are allowed</source>
-            <translation type="unfinished">僅允許正在協同的人</translation>
+            <translation>僅允許正在協同的裝置</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="173"/>
             <source>Not allow</source>
-            <translation type="unfinished">不允許</translation>
+            <translation>不允許</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="178"/>
             <source>Allows the following users to send files to me</source>
-            <translation type="unfinished">允許以下用戶向我投送文件</translation>
+            <translation>允許下列用戶向我傳送檔案</translation>
         </message>
         <message>
             <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
             <source>File save location</source>
-            <translation type="unfinished">文件保存位置</translation>
+            <translation>檔案儲存位置</translation>
         </message>
     </context>
 </TS>
