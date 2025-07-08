@@ -18,7 +18,7 @@ class Pip:
   def install(self, package, commit=None):
     "Install package using pip."
     if commit:
-      package = 'git+https://github.com/{0}.git@{1}'.format(package, commit)
+      package = 'git+{0}.git@{1}'.format(package, commit)
     print('Installing {0}'.format(package))
     check_call([self.path, 'install', package])
 

@@ -33,7 +33,7 @@ if is_ci and 'KEY' not in os.environ:
 
 # Clone the fmtlib.github.io repo.
 rmtree_if_exists(repo)
-git_url = 'https://github.com/' if is_ci else 'git@github.com:'
+git_url = 'github.com/' if is_ci else 'git@github.com:'
 check_call(['git', 'clone', git_url + 'fmtlib/{}.git'.format(repo)])
 
 # Copy docs to the repo.
@@ -50,7 +50,7 @@ if call(['git', 'diff-index', '--quiet', 'HEAD'], cwd=repo):
     check_call(['git', 'commit', '-m', 'Update documentation'], cwd=repo)
     cmd = 'git push'
     if is_ci:
-        cmd += ' https://$KEY@github.com/fmtlib/fmtlib.github.io.git master'
+        cmd += ' $KEY@github.com/fmtlib/fmtlib.github.io.git master'
     p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT, cwd=repo)
     # Print the output without the key.
     print(p.communicate()[0].decode('utf-8').replace(os.environ['KEY'], '$KEY'))

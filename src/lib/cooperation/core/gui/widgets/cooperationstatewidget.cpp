@@ -6,6 +6,7 @@
 #include "backgroundwidget.h"
 #include "global_defines.h"
 #include "gui/utils/cooperationguihelper.h"
+#include "net/helper/phonehelper.h"
 
 #ifdef linux
 #    include <DPalette>
@@ -202,7 +203,7 @@ void NoResultTipWidget::initUI()
             tr("1. Enable cross-end collaborative applications. Applications on the UOS "
                "can be downloaded from the App Store, and applications on the Windows "
                "side can be downloaded from: ");
-    QString hyperlink = "https://www.chinauos.com/resource/assistant";
+    QString hyperlink = KdownloadUrl;
 
     QString websiteLinkTemplate =
             "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";
@@ -265,7 +266,7 @@ void NoResultTipWidget::initUI()
         DLOG << "isMobile is true, setting mobile specific tips";
         QString leadintText = tr("1. The mobile phone needs to download cross end collaborative applications.");
         QString hypertext = tr("Go to download>");
-        QString hyperlink = "https://www.chinauos.com/resource/assistant";
+        QString hyperlink = KdownloadUrl;
         content1 = leadintText + websiteLinkTemplate.arg(hyperlink, hypertext);
         contentLable1->setText(content1);
         contentLable2->setText(tr("2. After installation, scan the code to connect to this device for collaboration."));

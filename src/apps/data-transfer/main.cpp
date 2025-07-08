@@ -42,7 +42,6 @@ int main(int argc, char *argv[])
     app.setApplicationVersion(APP_VERSION);
     QIcon icon(":/icon/icon_256.svg");
     app.setProductIcon(icon);
-    app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" );
     app.setApplicationDescription(app.translate("Application", "UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system."));
 #endif
 #ifdef ENABLE_COMPAT

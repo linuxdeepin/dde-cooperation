@@ -6,6 +6,7 @@
 #include "gui/widgets/cooperationstatewidget.h"
 #include "gui/widgets/devicelistwidget.h"
 #include "common/commonutils.h"
+#include "net/helper/phonehelper.h"
 
 #include <QMouseEvent>
 #include <QTimer>
@@ -147,7 +148,7 @@ void QRCodeWidget::initUI()
     hLayout->setAlignment(Qt::AlignCenter);
 
     QString hypertext = tr("Click to download UOS assistant APP");
-    QString hyperlink = "https://www.chinauos.com/resource/assistant";
+    QString hyperlink = KdownloadUrl;
 
     QString websiteLinkTemplate =
         "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";

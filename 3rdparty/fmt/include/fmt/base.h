@@ -1615,7 +1615,7 @@ FMT_CONSTEXPR auto make_arg(T& val) -> value<Context> {
   static_assert(
       formattable,
       "Cannot format an argument. To make type T formattable provide a "
-      "formatter<T> specialization: https://fmt.dev/latest/api.html#udt");
+      "formatter<T> specialization: fmt.dev/latest/api.html#udt");
   return {arg_mapper<Context>().map(val)};
 }
 

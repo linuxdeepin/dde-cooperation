@@ -35,7 +35,6 @@ inline constexpr char Kdisconnect[] { ":/icons/deepin/builtin/texts/disconnect_1
 #endif
 
 inline constexpr char KprotocolVer[] { "1.0.0" };
-inline constexpr char KdownloadUrl[] { "https://www.chinauos.com/resource/assistant" };
 
 PhoneHelper::PhoneHelper(QObject *parent)
     : QObject(parent), m_viewSize(0, 0)

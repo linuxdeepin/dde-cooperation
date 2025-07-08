@@ -8,6 +8,7 @@
 #include "utils/cooperationutil.h"
 #include "widgets/cooperationstatewidget.h"
 #include "common/log.h"
+#include "net/helper/phonehelper.h"
 
 #include <QScreen>
 #include <QUrl>
@@ -95,7 +96,7 @@ void MainWindowPrivate::handleSettingMenuTriggered(int action)
     } break;
     case MenuAction::kDownloadWindowClient: {
         DLOG << "DownloadWindowClient action triggered";
-        QDesktopServices::openUrl(QUrl("https://www.chinauos.com/resource/assistant"));
+        QDesktopServices::openUrl(QUrl(KdownloadUrl));
     } break;
     }
 }

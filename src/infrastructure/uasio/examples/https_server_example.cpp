@@ -272,7 +272,7 @@ int main() {
         https_server server("0.0.0.0", 8443, cert_file, key_file);
         
         std::cout << "HTTPS服务器已启动，监听端口8443" << std::endl;
-        std::cout << "可以通过浏览器访问 https://localhost:8443" << std::endl;
+        std::cout << "可以通过浏览器访问 localhost:8443" << std::endl;
         std::cout << "（注意：由于使用自签名证书，浏览器可能会显示安全警告）" << std::endl;
         std::cout << "按Ctrl+C终止服务器..." << std::endl;
         

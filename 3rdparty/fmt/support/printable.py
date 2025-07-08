@@ -131,7 +131,7 @@ def print_normal(normal, normalname):
     print("  };")
 
 def main():
-    file = get_file("https://www.unicode.org/Public/UNIDATA/UnicodeData.txt")
+    file = get_file("unicode.org/Public/UNIDATA/UnicodeData.txt")
 
     codepoints = get_codepoints(file)
 

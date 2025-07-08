@@ -24,6 +24,6 @@ const char* kCopyright   = "Copyright (C) 2018 Debauchee Open Source Group\n"
                            "Copyright (C) 2008-2014 Nick Bolton\n"
                            "Copyright (C) 2002-2014 Chris Schoeneman";
 const char* kContact     = "Email: todo@mail.com";
-const char* kWebsite     = "https://github.com/debauchee/barrier/";
+const char* kWebsite     = "github.com/debauchee/barrier/";
 const char* kVersion     = BARRIER_VERSION;
 const char* kAppVersion  = "Barrier " BARRIER_VERSION;
