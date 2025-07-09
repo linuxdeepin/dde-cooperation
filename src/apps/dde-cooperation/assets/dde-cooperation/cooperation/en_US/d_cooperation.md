@@ -1,4 +1,4 @@
-# Cross-Device Collaboration|dde-cooperation|
+# Cross-Device Collaboration | dde-cooperation |
 
 ## Overview
 
