@@ -23,7 +23,7 @@ SlotIPCServiceConnection::SlotIPCServiceConnection(QLocalSocket* socket, SlotIPC
   connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
   connect(socket, SIGNAL(disconnected()), SLOT(deleteLater()));
   connect(this, SIGNAL(destroyed(QObject*)), parent, SLOT(_q_connectionDestroyed(QObject*)));
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   connect(socket, SIGNAL(errorOccurred(QLocalSocket::LocalSocketError)), SLOT(errorOccured(QLocalSocket::LocalSocketError)));
 #else
   connect(socket, SIGNAL(error(QLocalSocket::LocalSocketError)), SLOT(errorOccured(QLocalSocket::LocalSocketError)));

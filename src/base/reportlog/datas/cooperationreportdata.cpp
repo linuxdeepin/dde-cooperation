@@ -7,6 +7,7 @@
 #include <DSysInfo>
 
 #include <QDateTime>
+#include <QDebug>
 
 using namespace deepin_cross;
 DCORE_USE_NAMESPACE

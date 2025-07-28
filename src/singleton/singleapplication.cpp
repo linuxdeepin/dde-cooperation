@@ -323,8 +323,12 @@ bool SingleApplication::doSendMessage(const QString &socketPath, const QByteArra
         qWarning() << "Socket error:" << localSocket->error() << localSocket->errorString();
     };
 
-    // Connect error signals
+    // Connect error signals - Qt5/Qt6 compatibility
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     connect(localSocket, &QLocalSocket::errorOccurred, errorHandler);
+#else
+    connect(localSocket, QOverload<QLocalSocket::LocalSocketError>::of(&QLocalSocket::error), errorHandler);
+#endif
     connect(localSocket, &QLocalSocket::disconnected, localSocket, &QLocalSocket::deleteLater);
 
     localSocket->connectToServer(socketPath);
