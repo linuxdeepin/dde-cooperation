@@ -13,6 +13,7 @@
 #include "discover/discovercontroller.h"
 #include "helper/transferhelper.h"
 #include "helper/sharehelper.h"
+#include "share/sharecooperationservicemanager.h"
 #ifdef ENABLE_PHONE
 #include "helper/phonehelper.h"
 #endif
@@ -112,10 +113,23 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             bool agree = (req.flag == REPLY_ACCEPT);
             res.flag = DO_DONE;
             *res_msg = res.as_json().serialize();
+
+            int resultCode;
+            if (agree) {
+                resultCode = SHARE_CONNECT_COMFIRM;
+            } else if (req.nick == "BUSY_COOPERATING") {
+                WLOG << "Device is busy, use ERR_CONNECTED to show appropriate message";
+                // Device is busy, use ERR_CONNECTED to show appropriate message
+                resultCode = SHARE_CONNECT_ERR_CONNECTED;
+            } else {
+                // Normal rejection
+                resultCode = SHARE_CONNECT_REFUSE;
+            }
+
             q->metaObject()->invokeMethod(ShareHelper::instance(),
                                           "handleConnectResult",
                                           Qt::QueuedConnection,
-                                          Q_ARG(int, agree ? SHARE_CONNECT_COMFIRM : SHARE_CONNECT_REFUSE),
+                                          Q_ARG(int, resultCode),
                                           Q_ARG(QString, QString(req.fingerprint.c_str())));
         }
             return true;
@@ -846,6 +860,22 @@ void NetworkUtil::replyShareRequest(bool agree, const QString &selfprint, const 
     }
 }
 
+void NetworkUtil::replyShareRequestBusy(const QString &targetIp)
+{
+    WLOG << "Replying share request with BUSY status to:" << targetIp.toStdString();
+    
+    // 直接发送忙碌拒绝消息
+    ApplyMessage msg;
+    msg.flag = REPLY_REJECT;
+    msg.nick = "BUSY_COOPERATING"; // Special marker for busy status
+    msg.host = CooperationUtil::localIPAddress().toStdString();
+    msg.fingerprint = ""; // No fingerprint needed for busy response
+    QString jsonMsg = msg.as_json().serialize().c_str();
+    
+    d->sessionManager->sendRpcRequest(targetIp, APPLY_SHARE_RESULT, jsonMsg);
+    WLOG << "Sent BUSY_COOPERATING rejection to:" << targetIp.toStdString();
+}
+
 void NetworkUtil::cancelApply(const QString &type, const QString &targetIp)
 {
     DLOG << "Canceling apply, type:" << type.toStdString() << "target IP:" << targetIp.toStdString();
@@ -912,6 +942,32 @@ void NetworkUtil::doSendFiles(const QStringList &fileList, const QString &target
     }
 }
 
+bool NetworkUtil::isCurrentlyCooperating()
+{
+    // 检查非兼容模式状态
+    auto server = ShareCooperationServiceManager::instance()->server();
+    auto client = ShareCooperationServiceManager::instance()->client();
+    bool serverRunning = server && server->isRunning();
+    bool clientRunning = client && client->isRunning();
+    bool nonCompatCooperating = serverRunning || clientRunning;
+
+
+    // 检查兼容模式状态（通过IPC获取Comshare状态）
+    bool compatCooperating = false;
+#ifdef ENABLE_COMPAT
+    auto ipc = CompatWrapper::instance()->ipcInterface();
+    ipc->call("getCurrentCooperationStatus", Q_RETURN_ARG(bool, compatCooperating));
+#endif
+
+    bool isCooperating = nonCompatCooperating || compatCooperating;
+
+    DLOG << "NetworkUtil cooperation status check - nonCompatCooperating:" << nonCompatCooperating
+         << " compatCooperating:" << compatCooperating
+         << " isCooperating:" << isCooperating;
+
+    return isCooperating;
+}
+
 QString NetworkUtil::deviceInfoStr()
 {
     auto infomap = CooperationUtil::deviceInfo();
@@ -936,5 +992,12 @@ void NetworkUtil::stop()
     DLOG << "Stopping NetworkUtil";
     auto ipc = CompatWrapper::instance()->ipcInterface();
     ipc->call("appExit");
+}
+
+void NetworkUtil::updateCooperationStatus(int status)
+{
+    DLOG << "NetworkUtil updating cooperation status to:" << status;
+    auto ipc = CompatWrapper::instance()->ipcInterface();
+    ipc->call("updateCooperationStatus", Q_ARG(int, status));
 }
 #endif

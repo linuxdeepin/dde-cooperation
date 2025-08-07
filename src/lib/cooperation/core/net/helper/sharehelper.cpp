@@ -216,6 +216,11 @@ void ShareHelperPrivate::onActionTriggered(const QString &action)
         targetDeviceInfo->setConnectStatus(DeviceInfo::Connected);
         DiscoverController::instance()->updateDeviceState({ targetDeviceInfo });
 
+        // 更新后端Comshare状态，让兼容模式也能检测到非兼容模式的协同状态
+#ifdef ENABLE_COMPAT
+        NetworkUtil::instance()->updateCooperationStatus(6);  // 6 = CURRENT_STATUS_SHARE_START
+#endif
+
         // 记录
         HistoryManager::instance()->writeIntoConnectHistory(info->ipAddress(), info->deviceName());
 
@@ -328,6 +333,11 @@ void ShareHelper::disconnectToDevice(const DeviceInfoPointer info)
     d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
     DiscoverController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
 
+    // 清空后端Comshare状态
+#ifdef ENABLE_COMPAT
+    NetworkUtil::instance()->updateCooperationStatus(0);  // 0 = CURRENT_STATUS_DISCONNECT
+#endif
+
     static QString body(tr("Coordination with \"%1\" has ended"));
     d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
     DLOG << "Disconnection completed";
@@ -363,6 +373,26 @@ bool ShareHelper::buttonVisible(const QString &id, const DeviceInfoPointer info)
 void ShareHelper::notifyConnectRequest(const QString &info)
 {
     DLOG << "Received connection request:" << info.toStdString();
+
+    bool isCooperating = NetworkUtil::instance()->isCurrentlyCooperating();
+    // 检查是否正在协同中
+    if (isCooperating) {
+        WLOG << "Device is currently cooperating, rejecting new request immediately";
+        
+        // 解析请求信息以获取发起方信息
+        auto infoList = info.split(',');
+        if (infoList.size() >= 3) {
+            // V20 老协议没有指纹，所以这里只有新协议才发送。
+            QString senderIp = infoList[0];
+            QString senderName = infoList[1]; 
+            
+            // 立即发送忙碌拒绝消息
+            NetworkUtil::instance()->replyShareRequestBusy(senderIp);
+            WLOG << "Sent BUSY rejection response to request from:" << senderIp.toStdString();
+        }
+        return;
+    }
+
     d->isReplied = false;
     d->isTimeout = false;
     d->isRecvMode = true;
@@ -466,6 +496,11 @@ void ShareHelper::handleConnectResult(int result, const QString &clientprint)
         DiscoverController::instance()->updateDeviceState({ d->targetDeviceInfo });
         HistoryManager::instance()->writeIntoConnectHistory(d->targetDeviceInfo->ipAddress(), d->targetDeviceInfo->deviceName());
 
+        // 更新后端Comshare状态，让兼容模式也能检测到非兼容模式的协同状态
+#ifdef ENABLE_COMPAT
+        NetworkUtil::instance()->updateCooperationStatus(6);  // 6 = CURRENT_STATUS_SHARE_START
+#endif
+
         static QString body(tr("Connection successful, coordinating with  \"%1\""));
         d->notifyMessage(body.arg(CommonUitls::elidedText(d->targetDeviceInfo->deviceName(), Qt::ElideMiddle, 15)), {}, 3 * 1000);
         d->taskDialog()->close();
@@ -513,6 +548,12 @@ void ShareHelper::handleDisConnectResult(const QString &devName)
 
     d->targetDeviceInfo->setConnectStatus(DeviceInfo::Connectable);
     DiscoverController::instance()->updateDeviceState({ DeviceInfoPointer::create(*d->targetDeviceInfo.data()) });
+
+    // 清空后端Comshare状态
+#ifdef ENABLE_COMPAT
+    NetworkUtil::instance()->updateCooperationStatus(0);  // 0 = CURRENT_STATUS_DISCONNECT
+#endif
+
     d->targetDeviceInfo.reset();
     DLOG << "Disconnection completed";
 }

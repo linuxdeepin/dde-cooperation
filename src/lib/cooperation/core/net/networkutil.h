@@ -43,14 +43,18 @@ public:
     void sendShareApply(const QString &ip, bool compat);
     void sendDisconnectShareEvents(const QString &ip);
     void replyShareRequest(bool agree, const QString &selfprint, const QString &targetIp);
+    void replyShareRequestBusy(const QString &targetIp);
     void cancelApply(const QString &type, const QString &targetIp);
 
     QString deviceInfoStr();
+
+    bool isCurrentlyCooperating();
 
 #ifdef ENABLE_COMPAT
     //compat share
     void compatSendStartShare(const QString &screenName);
     void stop();
+    void updateCooperationStatus(int status);
 #endif
 
 public slots:

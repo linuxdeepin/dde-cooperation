@@ -256,14 +256,37 @@ void HandleRpcService::handleRemoteShareConnect(co::Json &info)
                                                 UNI_RPC_PORT_BASE);
     SendRpcService::instance()->setTargetAppName(lo.tarAppname.c_str(),
                                                  lo.appName.c_str());
-    // 判断当前是否连接
+    // 后端，不是一个进程
+    // 判断当前是否连接 - 使用统一的Comshare状态管理（支持兼容模式和非兼容模式）
+    CurrentStatus currentStatus = Comshare::instance()->currentStatus();
+    bool isCurrentlyCooperating = (currentStatus == CURRENT_STATUS_SHARE_START);
+
+    DLOG << "Current Comshare status:" << currentStatus << " isCurrentlyCooperating:" << isCurrentlyCooperating;
+
+    // 如果正在协同，直接拒绝新的连接请求
+    if (isCurrentlyCooperating) {
+        ShareConnectReply reply;
+        reply.ip = Util::getFirstIp();
+        reply.appName = lo.tarAppname;  // 本地（被请求方）app名称
+        reply.tarAppname = lo.appName;  // 远端（请求方）app名称
+        reply.reply = SHARE_CONNECT_ERR_CONNECTED;
+
+        // 发送给远端控制方
+        SendRpcService::instance()->doSendProtoMsg(APPLY_SHARE_CONNECT_RES,
+                                                   lo.tarAppname.c_str(), reply.as_json().str().c_str());
+        return;
+    }
+    
+    // 作为备用检查，尝试从DiscoveryJob获取详细状态信息
     co::Json baseJson;
     if (baseJson.parse_from(DiscoveryJob::instance()->baseInfo())) {
         //NodeInfo
         NodePeerInfo nodepeer;
         nodepeer.from_json(baseJson);
-        if (!nodepeer.share_connect_ip.empty()
-                && nodepeer.share_connect_ip.compare(nodepeer.ipv4) != 0) {
+        DLOG << "DiscoveryJob baseInfo share_connect_ip:" << nodepeer.share_connect_ip.c_str() 
+             << " ipv4:" << nodepeer.ipv4.c_str();
+        // Check if device is currently cooperating with any other device
+        if (!nodepeer.share_connect_ip.empty()) {
             ShareConnectReply reply;
             reply.ip = nodepeer.ipv4;
             reply.appName = lo.appName;

@@ -542,3 +542,19 @@ void HandleIpcService::handleSearchDevice(co::Json json)
         DiscoveryJob::instance()->searchDeviceByIp(de.ip.c_str(), de.remove);
     });
 }
+
+void HandleIpcService::updateCooperationStatus(int status)
+{
+    DLOG << "Updating cooperation status to:" << status;
+    // 直接更新Comshare状态
+    CurrentStatus currentStatus = static_cast<CurrentStatus>(status);
+    Comshare::instance()->updateStatus(currentStatus);
+}
+
+bool HandleIpcService::getCurrentCooperationStatus()
+{
+    CurrentStatus currentStatus = Comshare::instance()->currentStatus();
+    bool isCooperating = (currentStatus == CURRENT_STATUS_SHARE_START);
+    DLOG << "Current cooperation status:" << currentStatus << "isCooperating:" << isCooperating;
+    return isCooperating;
+}
