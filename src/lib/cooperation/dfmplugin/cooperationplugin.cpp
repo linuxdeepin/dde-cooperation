@@ -31,10 +31,13 @@ void CooperationPlugin::initialize()
     translator->load(QLocale(), "cooperation-transfer", "_", "/usr/share/dde-file-manager/translations");
     QCoreApplication::installTranslator(translator);
 
-    if (DPF_NAMESPACE::LifeCycle::isAllPluginsStarted())
+    if (DPF_NAMESPACE::LifeCycle::isAllPluginsStarted()) {
+        qDebug() << "All plugins started, binding menu scene";
         bindMenuScene();
-    else
+    } else {
+        qDebug() << "Plugins not all started, connecting to pluginsStarted signal";
         connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &CooperationPlugin::bindMenuScene, Qt::DirectConnection);
+    }
 }
 
 bool CooperationPlugin::start()
@@ -50,8 +53,12 @@ bool CooperationPlugin::start()
     qApp->setApplicationName(appName);
 
     // 添加文管设置
-    if (appName == "dde-file-manager")
+    if (appName == "dde-file-manager") {
+        qDebug() << "Application is dde-file-manager, adding cooperation setting item";
         addCooperationSettingItem();
+    } else {
+        qDebug() << "Application is not dde-file-manager, skipping cooperation setting item addition";
+    }
 
     qInfo() << "Cooperation plugin started successfully";
     return true;

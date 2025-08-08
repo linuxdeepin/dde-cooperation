@@ -20,10 +20,12 @@ ReportLogManager *ReportLogManager::instance()
 ReportLogManager::ReportLogManager(QObject *parent)
     : QObject (parent)
 {
+    qInfo() << "ReportLogManager instance created";
 }
 
 ReportLogManager::~ReportLogManager()
 {
+    qInfo() << "ReportLogManager instance destroyed";
     if (reportWorkThread) {
         qInfo() << "Log thread start to quit";
         reportWorkThread->quit();
@@ -34,29 +36,36 @@ ReportLogManager::~ReportLogManager()
 
 void ReportLogManager::init()
 {
+    qInfo() << "Initializing ReportLogManager";
     reportWorker = new ReportLogWorker();
     if (!reportWorker->init()) {
+        qInfo() << "Failed to initialize ReportLogWorker";
         reportWorker->deleteLater();
         return;
     }
 
     reportWorkThread = new QThread();
     connect(reportWorkThread, &QThread::finished, [&]() {
+        qInfo() << "ReportWorkThread finished";
         reportWorker->deleteLater();
     });
     reportWorker->moveToThread(reportWorkThread);
 
     initConnection();
 
+    qInfo() << "Starting ReportWorkThread";
     reportWorkThread->start();
+    qInfo() << "ReportLogManager initialized successfully";
 }
 
 void ReportLogManager::commit(const QString &type, const QVariantMap &args)
 {
+    qInfo() << "Committing log of type:" << type << "with args:" << args;
     Q_EMIT requestCommitLog(type, args);
 }
 
 void ReportLogManager::initConnection()
 {
+    qInfo() << "Initializing connection between ReportLogManager and ReportLogWorker";
     connect(this, &ReportLogManager::requestCommitLog, reportWorker, &ReportLogWorker::commitLog, Qt::QueuedConnection);
 }

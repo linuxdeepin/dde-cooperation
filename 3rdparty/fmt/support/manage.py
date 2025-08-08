@@ -302,7 +302,7 @@ def release(args):
     # Create a release on GitHub.
     fmt_repo.push('origin', 'release')
     auth_headers = {'Authorization': 'token ' + os.getenv('FMT_TOKEN')}
-    r = requests.post('https://api.github.com/repos/fmtlib/fmt/releases',
+    r = requests.post('api.github.com/repos/fmtlib/fmt/releases',
                       headers=auth_headers,
                       data=json.dumps({'tag_name': version,
                                        'target_commitish': 'release',
@@ -310,7 +310,7 @@ def release(args):
     if r.status_code != 201:
         raise Exception('Failed to create a release ' + str(r))
     id = r.json()['id']
-    uploads_url = 'https://uploads.github.com/repos/fmtlib/fmt/releases'
+    uploads_url = 'uploads.github.com/repos/fmtlib/fmt/releases'
     package = 'fmt-{}.zip'.format(version)
     r = requests.post(
         '{}/{}/assets?name={}'.format(uploads_url, id, package),

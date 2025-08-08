@@ -47,12 +47,15 @@ void CreateBackupFileWidget::sendOptions()
         QVariant checkboxData = model->data(index, Qt::CheckStateRole);
         Qt::CheckState checkState = static_cast<Qt::CheckState>(checkboxData.toInt());
         if (checkState == Qt::Checked) {
+            DLOG << "Checkbox at row" << row << "is checked";
             QString selectDecive = model->data(index, Qt::UserRole).toString();
             QString documentsPath =
                     QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
             if (selectDecive == QDir(documentsPath).rootPath()) {
+                DLOG << "Selected device is root path of documents, adding documents path";
                 savePath << documentsPath;
             } else {
+                DLOG << "Selected device is not root path of documents, adding selected device path";
                 savePath << selectDecive;
             }
             break;
@@ -75,15 +78,18 @@ void CreateBackupFileWidget::clear()
     }
     fileNameInput->clear();
     determineButton->setEnabled(false);
+    DLOG << "CreateBackupFileWidget clear finished";
 }
 
 void CreateBackupFileWidget::setBackupFileName(QString name)
 {
+    DLOG << "Set backup file name: " << name.toStdString();
     fileNameInput->setBackupFileName(name);
 }
 
 void CreateBackupFileWidget::initUI()
 {
+    DLOG << "CreateBackupFileWidget initUI";
     setStyleSheet(".CreateBackupFileWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -233,18 +239,22 @@ void CreateBackupFileWidget::initUI()
     mainLayout->setSpacing(0);
     QObject::connect(diskListView, &QListView::clicked, this, [this](const QModelIndex &index) {
         if (index.data(Qt::CheckStateRole) == Qt::Unchecked) {
+            DLOG << "Disk list item unchecked, disabling determine button";
             determineButton->setEnabled(false);
         } else {
+            DLOG << "Disk list item checked, enabling determine button";
             determineButton->setEnabled(true);
         }
     });
 
     QObject::connect(UserSelectFileSize::instance(), &UserSelectFileSize::updateUserFileSelectSize,
                      this, &CreateBackupFileWidget::updateuserSelectFileSize);
+    DLOG << "CreateBackupFileWidget initUI finished";
 }
 
 void CreateBackupFileWidget::initDiskListView()
 {
+    DLOG << "CreateBackupFileWidget initDiskListView";
     SaveItemDelegate *saveDelegate = new SaveItemDelegate();
     QStandardItemModel *model = new QStandardItemModel(this);
     diskListView = new QListView(this);
@@ -266,32 +276,40 @@ void CreateBackupFileWidget::initDiskListView()
         for (int row = 0; row < model->rowCount(); ++row) {
             QModelIndex itemIndex = model->index(row, 0);
             if (itemIndex != index) {
+                DLOG << "Unchecking item at row" << row << "as it's not the clicked item";
                 model->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
             }
         }
     });
+    DLOG << "CreateBackupFileWidget initDiskListView finished";
 }
 
 void CreateBackupFileWidget::checkDisk()
 {
-
+    DLOG << "CreateBackupFileWidget checkDisk";
     bool isValid = false;
     for (auto iterator = diskCapacity.begin(); iterator != diskCapacity.end(); ++iterator) {
         QStandardItem *item = iterator.key();
         quint64 size = iterator.value();
         if (size < allSize) {
+            DLOG << "Disk size" << size << "is less than allSize" << allSize << ", setting item as non-checkable";
             item->setCheckable(false);
             item->setData(true, Qt::BackgroundRole);
         } else {
+            DLOG << "Disk size" << size << "is sufficient, setting item as checkable";
             isValid = true;
             item->setCheckable(true);
             item->setData(false, Qt::BackgroundRole);
         }
     }
-    if (!isValid)
+    if (!isValid) {
+        DLOG << "No valid disk found, showing prompt label";
         promptLabel->setVisible(true);
-    else
+    } else {
+        DLOG << "Valid disk found, hiding prompt label";
         promptLabel->setVisible(false);
+    }
+    DLOG << "CreateBackupFileWidget checkDisk finished";
 }
 
 void CreateBackupFileWidget::nextPage()
@@ -311,11 +329,13 @@ void CreateBackupFileWidget::backPage()
 
 void CreateBackupFileWidget::updateuserSelectFileSize(const QString &sizeStr)
 {
+    DLOG << "CreateBackupFileWidget updateuserSelectFileSize";
     userSelectFileSize = fromQstringToByte(sizeStr);
 }
 
 void CreateBackupFileWidget::updaeBackupFileSize()
 {
+    DLOG << "CreateBackupFileWidget updaeBackupFileSize";
     QStringList filePathList = OptionsManager::instance()->getUserOption(Options::kFile);
     QStringList appList = OptionsManager::instance()->getUserOption(Options::kApp);
     QStringList browserList = OptionsManager::instance()->getUserOption(Options::kBrowserBookmarks);
@@ -335,9 +355,11 @@ void CreateBackupFileWidget::updaeBackupFileSize()
         userDataInfoJsonSize = QFileInfo(userDataInfoJsonPath[0]).size();
     }
     if (!wallpaperPath.isEmpty()) {
+        DLOG << "Wallpaper path:" << wallpaperPath[0].toStdString();
         wallpaperSize = QFileInfo(wallpaperPath[0]).size();
     }
     if (!bookmarkJsonPath.isEmpty()) {
+        DLOG << "Bookmark path:" << bookmarkJsonPath[0].toStdString();
         bookmarkJsonSize = QFileInfo(bookmarkJsonPath[0]).size();
     }
 
@@ -349,6 +371,7 @@ void CreateBackupFileWidget::updaeBackupFileSize()
     checkDisk();
 
     setBackupFileName(TransferHelper::instance()->defaultBackupFileName());
+    DLOG << "CreateBackupFileWidget updaeBackupFileSize finished";
 }
 
 void CreateBackupFileWidget::getUpdateDeviceSingla()
@@ -362,11 +385,13 @@ void CreateBackupFileWidget::getUpdateDeviceSingla()
     for (const QStorageInfo &device : devices) {
         // Exclude read-only devices
         if (device.isReadOnly() || !device.isReady()) {
+            DLOG << "Excluding read-only or unready device:" << device.rootPath().toStdString();
             devices.removeOne(device);
             continue;
         }
         QString rootPath = device.rootPath();
         if (deviceList.contains(device)) {
+            DLOG << "Device already in list, skipping:" << device.rootPath().toStdString();
             deviceList.removeOne(device);
             continue;
         }
@@ -376,6 +401,7 @@ void CreateBackupFileWidget::getUpdateDeviceSingla()
 
     for (const QStorageInfo &device : deviceList) {
         // del device
+        DLOG << "Removing device:" << device.rootPath().toStdString();
         updateDevice(device, false);
     }
     deviceList = devices;
@@ -386,7 +412,9 @@ void CreateBackupFileWidget::getUpdateDeviceSingla()
 
 void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
 {
+    DLOG << "CreateBackupFileWidget updateDevice";
     if (isAdd) {
+        DLOG << "Adding device:" << device.rootPath().toStdString();
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
         QString rootPath = device.rootPath();
         QString displayName = (device.name().isEmpty() ? tr("local disk") : device.name()) + "("
@@ -400,35 +428,41 @@ void CreateBackupFileWidget::updateDevice(const QStorageInfo &device, const bool
                               .arg(fromByteToQstring(device.bytesTotal())),
                       Qt::ToolTipRole);
         if (device.name().isEmpty()) {
+            DLOG << "Device name is empty, setting generic harddisk icon";
             item->setIcon(QIcon(":/icon/drive-harddisk-32px.svg"));
         } else {
+            DLOG << "Device has a name, setting USB harddisk icon";
             item->setIcon(QIcon(":/icon/drive-harddisk-usb-32px.svg"));
         }
         diskCapacity[item] = device.bytesAvailable();
         item->setCheckable(true);
         model->appendRow(item);
     } else {
+        DLOG << "Removing device:" << device.rootPath().toStdString();
         QString rootPath = device.rootPath();
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(diskListView->model());
         for (int row = 0; row < model->rowCount(); ++row) {
             QModelIndex itemIndex = model->index(row, 0);
             if (rootPath == model->data(itemIndex, Qt::UserRole)) {
                 model->removeRow(itemIndex.row());
-                DLOG << "Device update completed";
+                DLOG << "Device removed from model";
             }
         }
         for (auto iterator = diskCapacity.begin(); iterator != diskCapacity.end(); ++iterator) {
             QString path = iterator.key()->data(Qt::UserRole).toString();
             if (path == rootPath) {
                 diskCapacity.erase(iterator);
+                DLOG << "Device removed from diskCapacity map";
                 break;
             }
         }
     }
+    DLOG << "CreateBackupFileWidget updateDevice finished";
 }
 
 LineEditWidget::LineEditWidget(QWidget *parent) : QFrame(parent)
 {
+    DLOG << "LineEditWidget constructor called";
     setFixedSize(250, 20);
 
     QHBoxLayout *mainLayout = new QHBoxLayout();
@@ -453,20 +487,24 @@ LineEditWidget::LineEditWidget(QWidget *parent) : QFrame(parent)
     QObject::connect(editButton, &QPushButton::clicked, this, &LineEditWidget::enterEditMode);
     QObject::connect(lineEdit, &NameLineEdit::editingFinished, this, &LineEditWidget::exitEditMode);
     QObject::connect(lineEdit, &NameLineEdit::out, this, &LineEditWidget::exitEditMode);
+    DLOG << "LineEditWidget constructor finished";
 }
 
 LineEditWidget::~LineEditWidget() { }
 
 void LineEditWidget::clear()
 {
+    DLOG << "LineEditWidget clear";
     lineEdit->clear();
 }
 
 void LineEditWidget::setBackupFileName(QString name)
 {
+    DLOG << "LineEditWidget setBackupFileName";
     lineEdit->setText(name);
     lineEdit->setCursorPosition(0);
     adjustButtonPosition();
+    DLOG << "LineEditWidget setBackupFileName finished";
 }
 
 QString LineEditWidget::getBackupFileName()
@@ -476,23 +514,28 @@ QString LineEditWidget::getBackupFileName()
 
 void LineEditWidget::enterEditMode()
 {
+    DLOG << "LineEditWidget enterEditMode";
     lineEdit->setReadOnly(false);
     lineEdit->selectAll();
     lineEdit->setFocus();
     editButton->hide();
+    DLOG << "LineEditWidget enterEditMode finished";
 }
 
 void LineEditWidget::exitEditMode()
 {
+    DLOG << "LineEditWidget exitEditMode";
     lineEdit->setCursorPosition(0);
     lineEdit->setReadOnly(true);
     editButton->show();
     adjustButtonPosition();
     lineEdit->deselect();
+    DLOG << "LineEditWidget exitEditMode finished";
 }
 
 void LineEditWidget::adjustButtonPosition()
 {
+    DLOG << "LineEditWidget adjustButtonPosition";
     QFontMetrics metrics(lineEdit->font());
     int textWidth = metrics.horizontalAdvance(lineEdit->text());
     int buttonX = lineEdit->pos().x() + textWidth + 5;
@@ -501,10 +544,12 @@ void LineEditWidget::adjustButtonPosition()
     int maxButtonX = lineEdit->pos().x() + width() - editButton->width();
     buttonX = qMin(buttonX, maxButtonX);
     editButton->move(buttonX, buttonY);
+    DLOG << "LineEditWidget adjustButtonPosition finished";
 }
 
 NameLineEdit::NameLineEdit(QWidget *parent) : QLineEdit(parent)
 {
+    DLOG << "NameLineEdit constructor called";
     setStyleSheet(".NameLineEdit{background:rgba(0,0,0,0); "
                   "border: none;"
                   "color: rgba(65,77,104,1);"

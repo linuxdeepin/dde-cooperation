@@ -30,6 +30,7 @@ void ZipFileProcessWidget::updateProcess(const QString &content, int processbar,
 {
     if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
         == TransferMethod::kNetworkTransmission) {
+        DLOG << "Transfer method is NetworkTransmission, skipping updateProcess";
         return;
     }
     // Transfer success or failure to go to the next page
@@ -61,6 +62,7 @@ void ZipFileProcessWidget::changeTimeLabel(const int &time)
                 tr("Transfer will be completed in %1 minutes").arg(QString::number(textTime))));
         DLOG << "Converted to minutes:" << textTime;
     } else {
+        DLOG << "Time is 60 seconds or less, displaying in seconds";
         timeLabel->setText(QString(
                 tr("Transfer will be completed in %1 secondes").arg(QString::number(time))));
     }
@@ -74,6 +76,7 @@ void ZipFileProcessWidget::changeProgressBarLabel(const int &processbar)
 
 void ZipFileProcessWidget::initUI()
 {
+    DLOG << "ZipFileProcessWidget initUI";
     setStyleSheet(".ZipFileProcessWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -134,6 +137,7 @@ void ZipFileProcessWidget::initUI()
 
     QObject::connect(TransferHelper::instance(), &TransferHelper::zipTransferContent, this,
                      &ZipFileProcessWidget::updateProcess);
+    DLOG << "ZipFileProcessWidget initUI finished";
 }
 
 void ZipFileProcessWidget::nextPage()

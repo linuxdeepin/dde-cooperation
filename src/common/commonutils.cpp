@@ -26,12 +26,14 @@ using namespace deepin_cross;
 
 std::string CommonUitls::getFirstIp()
 {
+    qInfo() << "Getting first available IP address";
     QString ip;
     // QNetworkInterface 类提供了一个主机 IP 地址和网络接口的列表
     foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces()) {
         if (!netInterface.flags().testFlag(QNetworkInterface::IsRunning)
             || (netInterface.type() != QNetworkInterface::Ethernet
                 && netInterface.type() != QNetworkInterface::Wifi)) {
+            qInfo() << "netInterface name:" << netInterface.name();
             // 跳过非运行时, 非有线，非WiFi接口
             continue;
         }
@@ -50,6 +52,7 @@ std::string CommonUitls::getFirstIp()
             if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol && entry.ip() != QHostAddress::LocalHost) {
                 //IP地址
                 ip = QString(entry.ip().toString());
+                qInfo() << "Found available IP: " << ip;
                 return ip.toStdString();
             }
         }
@@ -59,6 +62,7 @@ std::string CommonUitls::getFirstIp()
 
 void CommonUitls::loadTranslator()
 {
+    qInfo() << "Loading translator for locale: " << QLocale::system().name();
     QStringList translateDirs;
 #ifdef _WIN32
     translateDirs << QDir::currentPath() + QDir::separator() + "translations";
@@ -73,14 +77,17 @@ void CommonUitls::loadTranslator()
     QStringList missingQmfiles;
     QStringList translateFilenames { QString("%1_%2").arg(qApp->applicationName()).arg(QLocale::system().name()) };
     const QStringList parseLocalNameList = locale.name().split("_", SKIP_EMPTY_PARTS);
-    if (parseLocalNameList.length() > 0)
+    if (parseLocalNameList.length() > 0) {
+        qInfo() << "parseLocalNameList:" << parseLocalNameList;
         translateFilenames << QString("%1_%2").arg(qApp->applicationName()).arg(parseLocalNameList.at(0));
+    }
 
     for (const auto &translateFilename : translateFilenames) {
         for (const auto &dir : translateDirs) {
             QString translatePath = dir + QDir::separator() + translateFilename;
             if (QFile::exists(translatePath + ".qm")) {
                 qDebug() << "load translate" << translatePath;
+                qInfo() << "Successfully loaded translator: " << translatePath;
                 auto translator = new QTranslator(qApp);
                 translator->load(translatePath);
                 qApp->installTranslator(translator);
@@ -89,17 +96,21 @@ void CommonUitls::loadTranslator()
             }
         }
 
-        if (locale.language() != QLocale::English)
+        if (locale.language() != QLocale::English) {
+            qInfo() << "locale language:" << locale.language();
             missingQmfiles << translateFilename + ".qm";
+        }
     }
 
     if (missingQmfiles.size() > 0) {
         qWarning() << qApp->applicationName() << "can not find qm files" << missingQmfiles;
     }
+    qInfo() << "loadTranslator end";
 }
 
 void CommonUitls::initLog()
 {
+    qInfo() << "Initializing logger in directory: " << logDir();
     deepin_cross::Logger::GetInstance().init(logDir().toStdString(), qApp->applicationName().toStdString());
 #ifdef QT_DEBUG
     deepin_cross::g_logLevel = deepin_cross::debug;
@@ -138,63 +149,78 @@ void CommonUitls::initLog()
     timer->start(2000);
 #endif
     if (detailLog()) {
+        qInfo() << "detailLog";
         deepin_cross::g_logLevel = deepin_cross::debug; //详细日志输出
     }
 }
 
 void CommonUitls::shutdownLog()
 {
+    qInfo() << "Shutting down logger";
     deepin_cross::Logger::GetInstance().stop();
 }
 
 QString CommonUitls::elidedText(const QString &text, Qt::TextElideMode mode, int maxLength)
 {
-    if (text.length() <= maxLength)
+    qInfo() << "elidedText text:" << text << "mode:" << mode << "maxLength:" << maxLength;
+    if (text.length() <= maxLength) {
+        qInfo() << "text length <= maxLength";
         return text;
+    }
 
     QString tmpText(text);
     switch (mode) {
     case Qt::ElideLeft:
+        qInfo() << "ElideLeft";
         tmpText = tmpText.right(maxLength);
         tmpText.insert(0, "...");
         break;
     case Qt::ElideMiddle: {
+        qInfo() << "ElideMiddle";
         int charsToRemove = tmpText.length() - maxLength + 3;   // 3 represents the length of "..."
         int startRemoveIndex = (tmpText.length() - charsToRemove) / 2;
         tmpText.remove(startRemoveIndex, charsToRemove);
         tmpText.insert(startRemoveIndex, "...");
     } break;
     case Qt::ElideRight:
+        qInfo() << "ElideRight";
         tmpText = tmpText.left(maxLength) + "...";
         break;
     default:
         break;
     }
 
+    qInfo() << "elidedText result:" << tmpText;
     return tmpText;
 }
 
 QString CommonUitls::tipConfPath()
 {
+    qInfo() << "tipConfPath";
     return logDir() + "tip.flag";
 }
 
 QString CommonUitls::logDir()
 {
+    qInfo() << "logDir";
     QString logPath = QString("%1/%2/%3/")
                               .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
                               .arg(qApp->organizationName())
                               .arg(qApp->applicationName());   //~/.cache/deepin/xx
 
     QDir logDir(logPath);
-    if (!logDir.exists())
+    if (!logDir.exists()) {
+        qInfo() << "logDir not exists";
         QDir().mkpath(logPath);
+    }
 
+    qInfo() << "logDir:" << logPath;
     return logPath;
 }
 
 bool CommonUitls::detailLog()
 {
+    qInfo() << "detailLog";
     QCommandLineParser parser;
     // 添加自定义选项和参数"-d"
     QCommandLineOption option("d", "Enable detail log");
@@ -202,18 +228,22 @@ bool CommonUitls::detailLog()
 
     // 解析命令行参数
     const auto &args = qApp->arguments();
-    if (args.size() != 2 || !args.contains("-d"))
+    if (args.size() != 2 || !args.contains("-d")) {
+        qInfo() << "false! args size:" << args.size();
         return false;
+    }
 
     parser.process(args);
 
     // 判断选项是否存在
     bool detailMode = parser.isSet(option);
+    qInfo() << "detailLog detailMode:" << detailMode;
     return detailMode;
 }
 
 bool CommonUitls::isProcessRunning(const QString &processName)
 {
+    qInfo() << "Checking if process is running: " << processName;
     QProcess ps;
     ps.start("pidof", QStringList() << processName);
     ps.waitForFinished();
@@ -222,15 +252,18 @@ bool CommonUitls::isProcessRunning(const QString &processName)
 
 bool CommonUitls::isFirstStart()
 {
+    qInfo() << "isFirstStart";
     QString flagPath = QString("%1/%2/%3/first_run.flag")
                                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation))
                                .arg(qApp->organizationName())
                                .arg(qApp->applicationName());   //~/.cache/deepin/xx
 
     QFile flag(flagPath);
-    if (flag.exists())
+    if (flag.exists()) {
+        qInfo() << "isFirstStart false";
         return false;
-
+    }
+    qInfo() << "isFirstStart true";
     if (flag.open(QIODevice::WriteOnly)) {
         LOG << "FirstStart";
         flag.close();
@@ -242,6 +275,7 @@ bool CommonUitls::isFirstStart()
 
 QString CommonUitls::generateRandomPassword()
 {
+    qInfo() << "generateRandomPassword";
     QString password;
     for (int i = 0; i < 6; ++i) {
         int digit = QRandomGenerator::global()->bounded(10); // 生成0到9之间的随机数字
@@ -253,10 +287,12 @@ QString CommonUitls::generateRandomPassword()
 // 获取一个未被占用的随机端口
 int CommonUitls::getAvailablePort()
 {
+    qInfo() << "Finding available port between " << WEB_MIN_PORT << " and " << WEB_MAX_PORT;
     QRandomGenerator *generator = QRandomGenerator::global();
     while (true) {
         int port = generator->bounded(WEB_MIN_PORT, WEB_MAX_PORT);
         if (!isPortInUse(port)) {
+            qInfo() << "Found available port: " << port;
             return port;
         }
     }
@@ -265,6 +301,7 @@ int CommonUitls::getAvailablePort()
 // 检查端口是否被占用
 bool CommonUitls::isPortInUse(int port)
 {
+    qInfo() << "isPortInUse port:" << port;
     QTcpSocket socket;
     socket.connectToHost("127.0.0.1", port);
     if (socket.waitForConnected(500)) {
@@ -276,10 +313,12 @@ bool CommonUitls::isPortInUse(int port)
 
 QString CommonUitls::ipcServerName(const QString &appName)
 {
+    qInfo() << "Generating IPC server name for application: " << appName;
     QString key = appName + ".ipc";
     // create ipc socket under user's tmp
     QString userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation), key);
     if (userKey.isEmpty()) {
+        qInfo() << "userKey is empty";
         userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation), key);
     }
     return userKey;

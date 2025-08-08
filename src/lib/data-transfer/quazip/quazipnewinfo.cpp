@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <QFileInfo>
+#include <QDebug>
 
 #include "quazipnewinfo.h"
 
@@ -11,6 +12,7 @@
 static void QuaZipNewInfo_setPermissions(QuaZipNewInfo *info,
         QFile::Permissions perm, bool isDir, bool isSymLink = false)
 {
+    qInfo() << "Setting permissions for QuaZipNewInfo";
     quint32 uPerm = isDir ? 0040000 : 0100000;
 
     if ( isSymLink ) {
@@ -45,6 +47,7 @@ static void QuaZipNewInfo_setPermissions(QuaZipNewInfo *info,
 template<typename FileInfo>
 void QuaZipNewInfo_init(QuaZipNewInfo &self, const FileInfo &existing)
 {
+    qInfo() << "Initializing QuaZipNewInfo from existing FileInfo";
     self.name = existing.name;
     self.dateTime = existing.dateTime;
     self.internalAttr = existing.internalAttr;
@@ -57,11 +60,13 @@ void QuaZipNewInfo_init(QuaZipNewInfo &self, const FileInfo &existing)
 
 QuaZipNewInfo::QuaZipNewInfo(const QuaZipFileInfo &existing)
 {
+    qInfo() << "Constructing QuaZipNewInfo from QuaZipFileInfo";
     QuaZipNewInfo_init(*this, existing);
 }
 
 QuaZipNewInfo::QuaZipNewInfo(const QuaZipFileInfo64 &existing)
 {
+    qInfo() << "Constructing QuaZipNewInfo from QuaZipFileInfo64";
     QuaZipNewInfo_init(*this, existing);
 }
 
@@ -69,15 +74,18 @@ QuaZipNewInfo::QuaZipNewInfo(const QString& name):
   name(name), dateTime(QDateTime::currentDateTime()), internalAttr(0), externalAttr(0),
   uncompressedSize(0)
 {
+    qInfo() << "Constructing QuaZipNewInfo with name:" << name.toStdString();
 }
 
 QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
   name(name), internalAttr(0), externalAttr(0), uncompressedSize(0)
 {
+  qInfo() << "Constructing QuaZipNewInfo with name:" << name.toStdString() << "and file:" << file.toStdString();
   QFileInfo info(file);
   QDateTime lm = info.lastModified();
   if (!info.exists()) {
     dateTime = QDateTime::currentDateTime();
+    qInfo() << "file does not exist, using current time";
   } else {
     dateTime = lm;
     QuaZipNewInfo_setPermissions(this, info.permissions(), info.isDir(), info.isSymLink());
@@ -86,14 +94,18 @@ QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
 
 void QuaZipNewInfo::setFileDateTime(const QString& file)
 {
+  qInfo() << "Setting file date time for:" << file.toStdString();
   QFileInfo info(file);
   QDateTime lm = info.lastModified();
   if (info.exists())
     dateTime = lm;
+  else
+    qInfo() << "file does not exist";
 }
 
 void QuaZipNewInfo::setFilePermissions(const QString &file)
 {
+    qInfo() << "Setting file permissions for:" << file.toStdString();
     QFileInfo info = QFileInfo(file);
     QFile::Permissions perm = info.permissions();
     QuaZipNewInfo_setPermissions(this, perm, info.isDir(), info.isSymLink());
@@ -101,15 +113,18 @@ void QuaZipNewInfo::setFilePermissions(const QString &file)
 
 void QuaZipNewInfo::setPermissions(QFile::Permissions permissions)
 {
+    qInfo() << "Setting permissions";
     QuaZipNewInfo_setPermissions(this, permissions, name.endsWith('/'));
 }
 
 void QuaZipNewInfo::setFileNTFSTimes(const QString &fileName)
 {
+    qInfo() << "Setting NTFS times for file:" << fileName.toStdString();
     QFileInfo fi(fileName);
     if (!fi.exists()) {
         qWarning("QuaZipNewInfo::setFileNTFSTimes(): '%s' doesn't exist",
                  fileName.toUtf8().constData());
+        qInfo() << "file does not exist:" << fileName.toStdString();
         return;
     }
     setFileNTFSmTime(fi.lastModified());
@@ -119,6 +134,7 @@ void QuaZipNewInfo::setFileNTFSTimes(const QString &fileName)
 
 static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
                         int fineTicks) {
+    qInfo() << "Setting NTFS time";
     int ntfsPos = -1, timesPos = -1;
     unsigned ntfsLength = 0, ntfsTimesLength = 0;
     for (int i = 0; i <= extra.size() - 4; ) {
@@ -136,6 +152,7 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
             ntfsPos = i - 4; // the beginning of the NTFS record
             ntfsLength = length;
             if (length <= 4) {
+                qInfo() << "NTFS record too short";
                 break; // no times in the NTFS record
             }
             i += 4; // reserved
@@ -167,6 +184,7 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
     }
     if (ntfsPos == -1) {
         // No NTFS record, need to create one.
+        qInfo() << "No NTFS record, creating one";
         ntfsPos = extra.size();
         ntfsLength = 32;
         extra.resize(extra.size() + 4 + ntfsLength);
@@ -189,6 +207,7 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
     }
     if (timesPos == -1) {
         // No time tag in the NTFS record, need to add one.
+        qInfo() << "No time tag in NTFS record, adding one";
         timesPos = ntfsPos + 4 + ntfsLength;
         extra.resize(extra.size() + 28);
         // Now we need to move the rest of the field
@@ -211,6 +230,7 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
     }
     if (ntfsTimesLength < 24) {
         // Broken times field. OK, this is really unlikely, but just in case...
+        qInfo() << "Broken times field";
         size_t timesEnd = timesPos + 4 + ntfsTimesLength;
         extra.resize(extra.size() + (24 - ntfsTimesLength));
         // Move it!
@@ -249,18 +269,21 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
 
 void QuaZipNewInfo::setFileNTFSmTime(const QDateTime &mTime, int fineTicks)
 {
+    qInfo() << "Setting NTFS modification time";
     setNTFSTime(extraLocal, mTime, 0, fineTicks);
     setNTFSTime(extraGlobal, mTime, 0, fineTicks);
 }
 
 void QuaZipNewInfo::setFileNTFSaTime(const QDateTime &aTime, int fineTicks)
 {
+    qInfo() << "Setting NTFS access time";
     setNTFSTime(extraLocal, aTime, 8, fineTicks);
     setNTFSTime(extraGlobal, aTime, 8, fineTicks);
 }
 
 void QuaZipNewInfo::setFileNTFScTime(const QDateTime &cTime, int fineTicks)
 {
+    qInfo() << "Setting NTFS creation time";
     setNTFSTime(extraLocal, cTime, 16, fineTicks);
     setNTFSTime(extraGlobal, cTime, 16, fineTicks);
 }

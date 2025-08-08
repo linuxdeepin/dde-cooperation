@@ -19,6 +19,7 @@ ItemTitlebar::ItemTitlebar(const QString &label1_, const QString &label2_,
       iconPosSize(iconPosSize_),
       iconRadius(iconRadius_)
 {
+    DLOG << "Creating titlebar";
     selectAllButton = new SelectAllButton(this);
     selectAllButton->move(iconPosSize.x(), iconPosSize.y());
 
@@ -74,6 +75,7 @@ void ItemTitlebar::updateSelectAllButState(ListSelectionState selectState)
 
 void ItemTitlebar::initUI()
 {
+    DLOG << "Initializing UI";
     setProperty("class", "myqframe");
     setContentsMargins(0, 0, 0, 0);
     setStyleSheet(".QLabel{"
@@ -101,6 +103,8 @@ void ItemTitlebar::initUI()
     sortButton2 = new SortButton(this);
     sortButton2->move(label2LeftMargin + 115, iconPosSize.y());
     sortButton2->setVisible(false);
+
+    DLOG << "UI initialized";
 }
 
 SortButton *ItemTitlebar::getSortButton1() const
@@ -165,6 +169,7 @@ ItemDelegate::ItemDelegate(const qreal &filenameTextLeftMargin_, const qreal &fi
       iconPos(iconPos_),
       checkBoxPos(checkBoxPos_)
 {
+    DLOG << "Creating delegate with specified parameters";
 }
 
 void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
@@ -197,10 +202,12 @@ void ItemDelegate::paintIcon(QPainter *painter, const QStyleOptionViewItem &opti
 
     if (index.data(Qt::BackgroundRole).toBool() == true) {
         painter->setOpacity(opacity);
+        // DLOG << "Setting opacity for background role";
     }
     painter->setRenderHint(QPainter::Antialiasing);
     QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
     if (!icon.isNull()) {
+        // DLOG << "Icon is not null, painting icon";
         QPoint pos = option.rect.topLeft();
         pos += iconPos;
 
@@ -219,11 +226,13 @@ void ItemDelegate::paintBackground(QPainter *painter, const QStyleOptionViewItem
 
     if (index.data(Qt::BackgroundRole).toBool() == true) {
         painter->setOpacity(opacity);
+        // DLOG << "Setting opacity for background role";
     }
     QColor evencolor = QColor(0, 0, 0, 20);
     QPoint topleft = option.rect.topLeft();
     QRect positon(backgroundColorLeftMargin, topleft.y(), 440, 36);
     if (index.row() % 2 != 0) {
+        // DLOG << "Row is odd, drawing rounded rectangle with even color";
         painter->setBrush(evencolor);
         painter->drawRoundedRect(positon, 10, 10);
     }
@@ -266,6 +275,7 @@ void ItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionViewItem &
 
     if (index.data(Qt::BackgroundRole).toBool() == true) {
         painter->setOpacity(opacity);
+        // DLOG << "Setting opacity for background role";
     }
     painter->setRenderHint(QPainter::Antialiasing);
     QPoint pos = option.rect.topLeft() + checkBoxPos;
@@ -275,6 +285,7 @@ void ItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionViewItem &
     painter->drawRoundedRect(checkBoxRect, 4, 4);
 
     if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
+    //    DLOG << "Checkbox is checked, drawing checkmark";
        QRect iconRect(checkBoxRect.left() + 3, checkBoxRect.top() + 3, 13, 11);
 //        QSvgRenderer render(QString(":/icon/check_black.svg"));
 //        render.render(painter, iconRect);
@@ -293,13 +304,17 @@ bool ItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     // make sure that the item is checkable
     Qt::ItemFlags flags = model->flags(index);
     if (!(flags & Qt::ItemIsUserCheckable) || !(option.state & QStyle::State_Enabled)
-        || !(flags & Qt::ItemIsEnabled))
+        || !(flags & Qt::ItemIsEnabled)) {
+        DLOG << "Item is not checkable, enabled, or user-enabled, returning false";
         return false;
+    }
 
     // make sure that we have a check state
     QVariant value = index.data(Qt::CheckStateRole);
-    if (!value.isValid())
+    if (!value.isValid()) {
+        DLOG << "Check state value is invalid, returning false";
         return false;
+    }
     if ((event->type() == QEvent::MouseButtonRelease)
         || (event->type() == QEvent::MouseButtonDblClick)
         || (event->type() == QEvent::MouseButtonPress)) {
@@ -308,21 +323,26 @@ bool ItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
         QRect checkBoxRect = QRect(pos.x(), pos.y(), 18, 18);
 
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-        if (mouseEvent->button() != Qt::LeftButton || !checkBoxRect.contains(mouseEvent->pos()))
+        if (mouseEvent->button() != Qt::LeftButton || !checkBoxRect.contains(mouseEvent->pos())) {
+            DLOG << "Mouse event is not left click or not within checkbox, returning false";
             return false;
+        }
 
         // eat the double click events inside the check rect
         if ((event->type() == QEvent::MouseButtonPress)
             || (event->type() == QEvent::MouseButtonDblClick)) {
+            DLOG << "Eating double click or mouse press event";
             return true;
         }
 
         if (checkBoxRect.contains(mouseEvent->pos())) {
+            DLOG << "Checkbox clicked, toggling check state";
             Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt());
             state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
             return model->setData(index, state, Qt::CheckStateRole);
         }
     }
+    return false;
 }
 
 void ItemDelegate::setCheckBoxPos(QPoint newCheckBoxPos)
@@ -394,9 +414,11 @@ void SaveItemDelegate::paintIcon(QPainter *painter, const QStyleOptionViewItem &
     painter->save();
     if (index.data(Qt::BackgroundRole).toBool() == true) {
         painter->setOpacity(opacity);
+        // DLOG << "Setting opacity for background role";
     }
     QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
     if (!icon.isNull()) {
+        // DLOG << "Icon is not null, painting icon";
         QPoint pos = option.rect.topLeft();
         pos += iconPos;
         QRect positon = QRect(pos, QSize(32, 32));
@@ -416,6 +438,7 @@ void SaveItemDelegate::paintBackground(QPainter *painter, const QStyleOptionView
     QRect positon(topleft.x(), topleft.y(), 440, 48);
 
     if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
+        // DLOG << "Item is checked, setting pen and brush for checked state";
         QPen pen;
         pen.setColor(QColor(0, 129, 255, 100));
         pen.setWidth(2);
@@ -427,6 +450,7 @@ void SaveItemDelegate::paintBackground(QPainter *painter, const QStyleOptionView
         QIcon icon(":/icon/select.svg");
         icon.paint(painter, QRect(topleft.x() + 408, topleft.y() + 13, 32, 32));
     } else {
+        // DLOG << "Item is unchecked, setting pen and brush for unchecked state";
         QColor evencolor(0, 0, 0, 12);
 
         painter->setPen(Qt::NoPen);
@@ -470,6 +494,7 @@ void SaveItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionViewIt
     painter->save();
     if (index.data(Qt::BackgroundRole).toBool() == true) {
         painter->setOpacity(opacity);
+        // DLOG << "Setting opacity for background role";
     }
     QPoint pos = option.rect.topLeft() + checkBoxPos;
     QRect checkBoxRect = QRect(pos.x(), pos.y(), 18, 18);
@@ -488,45 +513,61 @@ bool SaveItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     // make sure that the item is checkable
     Qt::ItemFlags flags = model->flags(index);
     if (!(flags & Qt::ItemIsUserCheckable) || !(option.state & QStyle::State_Enabled)
-        || !(flags & Qt::ItemIsEnabled))
+        || !(flags & Qt::ItemIsEnabled)) {
+        DLOG << "Item is not checkable, enabled, or user-enabled, returning false";
         return false;
+    }
 
     // make sure that we have a check state
     QVariant value = index.data(Qt::CheckStateRole);
-    if (!value.isValid())
+    if (!value.isValid()) {
+        DLOG << "Check state value is invalid, returning false";
         return false;
+    }
 
     // make sure that we have the right event type
     if ((event->type() == QEvent::MouseButtonRelease)
         || (event->type() == QEvent::MouseButtonDblClick)
         || (event->type() == QEvent::MouseButtonPress)) {
+        DLOG << "Mouse button event detected";
 
         QRect checkBoxRect = option.rect;
 
         QRect emptyRect;
         doLayout(option, &checkBoxRect, &emptyRect, &emptyRect, false);
         QMouseEvent *me = static_cast<QMouseEvent *>(event);
-        if (me->button() != Qt::LeftButton || !checkBoxRect.contains(me->pos()))
+        if (me->button() != Qt::LeftButton || !checkBoxRect.contains(me->pos())) {
+            DLOG << "Mouse event is not left click or not within checkbox, returning false";
             return false;
+        }
 
         // eat the double click events inside the check rect
         if ((event->type() == QEvent::MouseButtonPress)
-            || (event->type() == QEvent::MouseButtonDblClick))
+            || (event->type() == QEvent::MouseButtonDblClick)) {
+            DLOG << "Eating double click or mouse press event";
             return true;
+        }
 
     } else if (event->type() == QEvent::KeyPress) {
+        DLOG << "Key press event detected";
         if (static_cast<QKeyEvent *>(event)->key() != Qt::Key_Space
-            && static_cast<QKeyEvent *>(event)->key() != Qt::Key_Select)
+            && static_cast<QKeyEvent *>(event)->key() != Qt::Key_Select) {
+            DLOG << "Key is not Space or Select, returning false";
             return false;
+        }
     } else {
+        DLOG << "Unknown event type, returning false";
         return false;
     }
 
     Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt());
-    if (flags & Qt::ItemIsUserTristate)
+    if (flags & Qt::ItemIsUserTristate) {
+        DLOG << "Item is tristate, cycling through states";
         state = ((Qt::CheckState)((state + 1) % 3));
-    else
+    } else {
+        DLOG << "Item is not tristate, toggling checked/unchecked";
         state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
+    }
     return model->setData(index, state, Qt::CheckStateRole);
 }
 
@@ -589,9 +630,11 @@ void SidebarItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionVie
     QColor color;
     QString icon;
     if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
+        // DLOG << "Item is checked, setting white color and check_white icon";
         color = QColor(255, 255, 255, 255);
         icon = ":/icon/check_white.svg";
     } else {
+        // DLOG << "Item is unchecked, setting black color and check_black icon";
         color = QColor(0, 0, 0, 255);
         icon = ":/icon/check_black.svg";
     }
@@ -602,11 +645,13 @@ void SidebarItemDelegate::paintCheckbox(QPainter *painter, const QStyleOptionVie
     painter->drawRoundedRect(checkBoxRect, 4, 4);
 
     if (index.data(Qt::StatusTipRole).value<int>() == 0) {
+        // DLOG << "StatusTipRole is 0, drawing checkmark icon";
         QRect iconRect(checkBoxRect.left() + 3, checkBoxRect.top() + 3, 13, 11);
 //        QSvgRenderer render(icon);
         QPixmap pixmap = QIcon(icon).pixmap(13,11);
         painter->drawPixmap(iconRect,pixmap);
     } else if (index.data(Qt::StatusTipRole).value<int>() == 1) {
+        // DLOG << "StatusTipRole is 1, drawing line";
         int y = checkBoxRect.top() + 9;
         int x1 = checkBoxRect.left() + 4;
         int x2 = checkBoxRect.left() + 14;
@@ -622,9 +667,11 @@ void SidebarItemDelegate::paintBackground(QPainter *painter, const QStyleOptionV
     QRect positon(option.rect);
     painter->setPen(Qt::NoPen);
     if (index.data(Qt::CheckStateRole).value<Qt::CheckState>() == Qt::Checked) {
+        // DLOG << "Item is checked, setting brush to checked color";
         painter->setBrush(QColor(0, 129, 255, 255));
 
     } else {
+        // DLOG << "Item is unchecked, setting brush to unchecked color";
         painter->setBrush(QColor(255, 255, 255));
     }
 
@@ -678,6 +725,7 @@ bool SidebarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 
 SelectAllButton::SelectAllButton(QWidget *parent) : QFrame(parent)
 {
+    DLOG << "SelectAllButton constructor";
     setFixedSize(20, 20);
 }
 
@@ -685,6 +733,7 @@ SelectAllButton::~SelectAllButton() { }
 
 void SelectAllButton::changeState(ListSelectionState state)
 {
+    DLOG << "SelectAllButton changeState to" << (int)state;
     if (curState == state)
         return;
     curState = state;
@@ -731,6 +780,7 @@ void SelectAllButton::mousePressEvent(QMouseEvent *event)
 
 SelectListView::SelectListView(QFrame *parent) : QListView(parent)
 {
+    DLOG << "SelectListView constructor";
     QStandardItemModel *model = new QStandardItemModel(this);
     setStyleSheet(".SelectListView{"
                   "border: none;"
@@ -751,6 +801,7 @@ SelectListView::~SelectListView() { }
 
 void SelectListView::setAllSize(int size)
 {
+    DLOG << "SelectListView setAllSize to" << size;
     allSize = size;
 }
 
@@ -761,11 +812,13 @@ QStandardItemModel *SelectListView::getModel()
 
 void SelectListView::setSortRole(bool flag)
 {
+    DLOG << "SelectListView setSortRole to" << flag;
     proxyModel->setFlag(flag);
 }
 
 void SelectListView::selectorDelAllItem()
 {
+    DLOG << "SelectListView selectorDelAllItem";
     QStandardItemModel *model = getModel();
     Qt::CheckState state = Qt::Unchecked;
     for (int row = 0; row < model->rowCount(); ++row) {
@@ -787,12 +840,16 @@ void SelectListView::selectorDelAllItem()
 
 void SelectListView::updateCurSelectItem(QStandardItem *item)
 {
+    DLOG << "SelectListView updateCurSelectItem";
     if (item->data(Qt::CheckStateRole) == Qt::Checked) {
+        DLOG << "SelectListView updateCurSelectItem checked";
         curSelectItemNum++;
     } else {
+        DLOG << "SelectListView updateCurSelectItem unchecked";
         curSelectItemNum--;
     }
     if (curSelectItemNum < 0) {
+        DLOG << "SelectListView updateCurSelectItem curSelectItemNum < 0";
         curSelectItemNum = 0;
         return;
     }
@@ -801,17 +858,22 @@ void SelectListView::updateCurSelectItem(QStandardItem *item)
     int tempAllsize = allSize == -1 ? model()->rowCount() : allSize;
 
     if (curSelectItemNum == 0) {
+        DLOG << "SelectListView updateCurSelectItem curSelectItemNum == 0";
         state = ListSelectionState::unselected;
     } else if (curSelectItemNum < tempAllsize) {
+        DLOG << "SelectListView updateCurSelectItem curSelectItemNum < tempAllsize";
         state = ListSelectionState::selecthalf;
     } else {
+        DLOG << "SelectListView updateCurSelectItem curSelectItemNum >= tempAllsize";
         state = ListSelectionState::selectall;
     }
     if (state == curSelectState) {
+        DLOG << "SelectListView updateCurSelectItem state == curSelectState";
         return;
     }
     curSelectState = state;
     emit currentSelectState(curSelectState);
+    DLOG << "SelectListView currentSelectState to" << (int)state;
 }
 
 void SelectListView::sortListview()
@@ -828,6 +890,7 @@ void SelectListView::sortListview()
 
 SortButton::SortButton(QWidget *parent) : QPushButton(parent)
 {
+    DLOG << "SortButton constructor";
     setIcon(QIcon(":/icon/arrow_black.svg"));
     setStyleSheet(".SortButton { border: none; }");
     setIconSize(QSize(16, 16));
@@ -849,17 +912,21 @@ void SortButton::mousePressEvent(QMouseEvent *event)
     return QPushButton::mouseMoveEvent(event);
 }
 
-SortProxyModel::SortProxyModel(QObject *parent) : QSortFilterProxyModel(parent) { }
+SortProxyModel::SortProxyModel(QObject *parent) : QSortFilterProxyModel(parent) {
+    DLOG << "SortProxyModel constructor";
+}
 
 SortProxyModel::~SortProxyModel() { }
 
 void SortProxyModel::setMode(bool Model)
 {
+    DLOG << "SortProxyModel setMode to" << Model;
     sortModel = Model;
 }
 
 void SortProxyModel::setFlag(bool flag)
 {
+    DLOG << "SortProxyModel setFlag to" << flag;
     flagDisplayrole = flag;
 }
 

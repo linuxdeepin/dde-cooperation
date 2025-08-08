@@ -74,8 +74,10 @@ bool ShareCooperationServiceManager::stopServer()
 
 void ShareCooperationServiceManager::handleStartShareSever(const QString msg)
 {
-    if (_server.isNull())
+    if (_server.isNull()) {
+        WLOG << "Cannot start share server - server is null";
         return;
+    }
 
     DLOG << "Handling share server start with message:" << msg.toStdString();
     bool ok = _server->restartBarrier();

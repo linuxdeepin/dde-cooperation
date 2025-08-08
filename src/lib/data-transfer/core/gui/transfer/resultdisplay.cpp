@@ -77,6 +77,7 @@ void ResultDisplayWidget::initUI()
         TransferHelper::instance()->sendMessage("add_result", processText);
     });
 #endif
+    DLOG << "Result display widget initialized";
 }
 
 void ResultDisplayWidget::nextPage()
@@ -87,11 +88,14 @@ void ResultDisplayWidget::nextPage()
     QTimer::singleShot(1000, this, [this] {
         QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
         if (stackedWidget) {
-            if (stackedWidget->currentIndex() == PageName::resultwidget)
+            if (stackedWidget->currentIndex() == PageName::resultwidget) {
+                DLOG << "Current index is resultwidget, setting to choosewidget";
                 stackedWidget->setCurrentIndex(PageName::choosewidget);
+            }
         } else {
             WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
                     "nullptr";
+            DLOG << "Stacked widget not found";
         }
         emit TransferHelper::instance()->clearWidget();
     });
@@ -117,8 +121,10 @@ void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
              << "Success:" << success << "Reason:" << reason.toStdString();
 
     QString info, color;
-    if (!success)
+    if (!success) {
+        DLOG << "Transfer not successful, setting status to false";
         setStatus(false);
+    }
 
     resultWindow->updateContent(name, reason, success);
     QString res = success ? "true" : "false";
@@ -140,9 +146,11 @@ void ResultDisplayWidget::setStatus(bool success)
 
     tiptextlabel->setVisible(!success);
     if (success) {
+        DLOG << "Setting status to success";
         titileLabel->setText(tr("Transfer completed"));
         iconLabel->setPixmap(QIcon(":/icon/success-128.svg").pixmap(96, 96));
     } else {
+        DLOG << "Setting status to partial success";
         titileLabel->setText(tr("Transfer completed partially"));
         iconLabel->setPixmap(QIcon(":/icon/success half-96.svg").pixmap(96, 96));
     }
@@ -175,6 +183,7 @@ void ResultWindow::updateContent(const QString &name, const QString &type, bool 
         QModelIndex index = model->index(0, col);
         QString itemName = model->data(index, Qt::DisplayRole).toString();
         if (itemName == nameT) {
+            DLOG << "Item found, updating ToolTipRole";
             model->setData(index, typeT, Qt::ToolTipRole);
             return;
         }
@@ -184,8 +193,10 @@ void ResultWindow::updateContent(const QString &name, const QString &type, bool 
     item->setData(nameT, Qt::DisplayRole);
     item->setData(typeT, Qt::ToolTipRole);
     if (success) {
+        DLOG << "Setting StatusTipRole to 0 for success";
         item->setData(0, Qt::StatusTipRole);
     } else {
+        DLOG << "Setting StatusTipRole to 1 for failure";
         item->setData(1, Qt::StatusTipRole);
     }
 
@@ -197,12 +208,14 @@ void ResultWindow::changeTheme(int theme)
     DLOG << "Changing theme to:" << (theme == 1 ? "Light" : "Dark");
 
     if (theme == 1) {
+        DLOG << "Theme is light, setting stylesheet";
         setStyleSheet(".ResultWindow{background-color: rgba(0, 0, 0, 0.08);"
                       "border-radius: 10px;"
                       "padding: 10px 5px 10px 0px;"
                       "}");
     } else {
         // dark
+        DLOG << "Theme is dark, setting stylesheet";
         setStyleSheet(".ResultWindow{background-color: rgba(255,255,255, 0.08);"
                       "border-radius: 10px;"
                       "padding: 10px 5px 10px 0px;"

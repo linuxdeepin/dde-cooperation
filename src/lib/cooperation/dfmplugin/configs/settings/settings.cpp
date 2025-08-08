@@ -111,6 +111,7 @@ void SettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
     QFile file(fileName);
 
     if (!file.exists()) {
+        qDebug() << "File does not exist:" << fileName;
         return;
     }
 
@@ -123,6 +124,7 @@ void SettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
     const QByteArray &json = file.readAll();
 
     if (json.isEmpty()) {
+        qDebug() << "File is empty:" << fileName;
         return;
     }
 
@@ -136,6 +138,7 @@ void SettingsPrivate::fromJson(const QByteArray &json, Data *data)
 
     if (error.error != QJsonParseError::NoError) {
         qWarning() << error.errorString();
+        qDebug() << "JSON parse error:" << error.errorString();
         return;
     }
 
@@ -182,8 +185,10 @@ QByteArray SettingsPrivate::toJson(const Data &data)
 
 void SettingsPrivate::_q_onFileChanged(const QString &filePath)
 {
-    if (filePath != settingFile)
+    if (filePath != settingFile) {
+        qDebug() << "File path mismatch:" << filePath << "expected:" << settingFile;
         return;
+    }
 
     const auto old_values = writableData.values;
 
@@ -195,16 +200,19 @@ void SettingsPrivate::_q_onFileChanged(const QString &filePath)
         for (auto i = begin.value().constBegin(); i != begin.value().constEnd(); ++i) {
             if (old_values.value(begin.key()).contains(i.key())) {
                 if (old_values.value(begin.key()).value(i.key()) == i.value()) {
+                    qDebug() << "Value unchanged in old values";
                     continue;
                 }
             } else {
                 if (fallbackData.values.value(begin.key()).contains(i.key())) {
                     if (fallbackData.values.value(begin.key()).value(i.key()) == i.value()) {
+                        qDebug() << "Value unchanged in fallback data";
                         continue;
                     }
                 }
 
                 if (defaultData.values.value(begin.key()).value(i.key()) == i.value()) {
+                    qDebug() << "Value unchanged in default data";
                     continue;
                 }
             }
@@ -217,6 +225,7 @@ void SettingsPrivate::_q_onFileChanged(const QString &filePath)
     for (auto begin = old_values.constBegin(); begin != old_values.constEnd(); ++begin) {
         for (auto i = begin.value().constBegin(); i != begin.value().constEnd(); ++i) {
             if (writableData.values.value(begin.key()).contains(i.key())) {
+                qDebug() << "Value still exists in writable data";
                 continue;
             }
 
@@ -258,6 +267,7 @@ static QString getConfigFilePath(QStandardPaths::StandardLocation type, const QS
         QString path = QStandardPaths::writableLocation(type);
 
         if (path.isEmpty()) {
+            qWarning() << "Writable path is empty, using home directory";
             path = QDir::home().absoluteFilePath(QString(".config/%1/%2").arg(qApp->organizationName()).arg(qApp->applicationName()));
         }
 
@@ -445,6 +455,7 @@ QVariant Settings::value(const QString &group, const QString &key, const QVarian
         return value;
     }
 
+    qDebug() << "Found in default data or using default value:" << defaultValue;
     return d->defaultData.values.value(group).value(key, defaultValue);
 }
 
@@ -535,6 +546,7 @@ void Settings::clear()
     Q_D(Settings);
 
     if (d->writableData.values.isEmpty()) {
+        qDebug() << "Writable data is empty, nothing to clear";
         return;
     }
 
@@ -580,6 +592,7 @@ bool Settings::sync()
     Q_D(Settings);
 
     if (!d->settingFileIsDirty) {
+        qDebug() << "Setting file is not dirty, no sync needed";
         return true;
     }
 
@@ -588,6 +601,8 @@ bool Settings::sync()
     QFile file(d->settingFile);
 
     if (!file.open(QFile::WriteOnly)) {
+        qWarning() << file.errorString();
+        qDebug() << "Failed to open file for writing:" << d->settingFile;
         return false;
     }
 
@@ -620,6 +635,7 @@ void Settings::setAutoSync(bool autoSync)
     Q_D(Settings);
 
     if (d->autoSync == autoSync) {
+        qDebug() << "Auto sync state unchanged";
         return;
     }
 
@@ -667,10 +683,16 @@ void Settings::setWatchChanges(bool watchChanges)
             QFileInfo info(d->settingFile);
 
             if (!info.exists()) {
+                qDebug() << "Setting file does not exist, attempting to create path";
                 if (info.absoluteDir().mkpath(info.absolutePath())) {
+                    qDebug() << "Path created, creating file";
                     QFile file(d->settingFile);
                     file.open(QFile::WriteOnly);
+                } else {
+                    qWarning() << "Failed to create path for setting file";
                 }
+            } else {
+                qDebug() << "Setting file already exists";
             }
         }
 
@@ -680,6 +702,7 @@ void Settings::setWatchChanges(bool watchChanges)
         connect(d->settingFileWatcher, &QFileSystemWatcher::fileChanged, this, &Settings::onFileChanged);
     } else {
         if (d->settingFileWatcher) {
+            qDebug() << "Stopping file watcher";
             d->settingFileWatcher->deleteLater();
             d->settingFileWatcher = nullptr;
         }

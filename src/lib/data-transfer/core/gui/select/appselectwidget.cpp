@@ -76,6 +76,7 @@ void AppSelectWidget::initUI()
     mainLayout->addWidget(selectFrame);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(buttonLayout);
+    DLOG << "Application selection widget initialized";
 }
 
 void AppSelectWidget::initSelectFrame()
@@ -114,6 +115,7 @@ void AppSelectWidget::initSelectFrame()
         item->setIcon(QIcon(iterator.value()));
         item->setCheckable(true);
         model->appendRow(item);
+        DLOG << "Added transferable app:" << iterator.key().toStdString();
     }
 
     for (auto iterator = noRecommendList.begin(); iterator != noRecommendList.end(); ++iterator) {
@@ -124,14 +126,17 @@ void AppSelectWidget::initSelectFrame()
         item->setData(2, Qt::ToolTipPropertyRole);
         QPixmap pix = DrapWindowsData::instance()->getAppIcon(iterator.value());
         if (pix.isNull()) {
+            DLOG << "App icon is null, using default file icon";
             item->setIcon(QIcon(":/icon/file@2x.png"));
         } else {
+            DLOG << "App icon found, setting it";
             item->setIcon(QIcon(pix));
         }
 
         item->setCheckable(false);
 
         model->appendRow(item);
+        DLOG << "Added non-suitable app:" << iterator.key().toStdString();
     }
 
     selectframeLayout->addWidget(titlebar);
@@ -144,26 +149,35 @@ void AppSelectWidget::initSelectFrame()
     auto sortBtn = titlebar->getSortButton1();
     sortBtn->setVisible(true);
     QObject::connect(sortBtn, &SortButton::sort, appView, &SelectListView::sortListview);
+    DLOG << "Application selection frame initialized";
 }
 
 void AppSelectWidget::changeText()
 {
+    DLOG << "Updating application selection widget text";
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
+        DLOG << "Transfer method is LocalExport, setting title to LocalText";
         titileLabel->setText(LocalText);
     } else if (method == TransferMethod::kNetworkTransmission) {
+        DLOG << "Transfer method is NetworkTransmission, setting title to InternetText";
         titileLabel->setText(InternetText);
+    } else {
+        DLOG << "Unknown transfer method:" << method.toStdString();
     }
+    DLOG << "Application selection widget text updated";
 }
 
 void AppSelectWidget::clear()
 {
+    DLOG << "Clearing selected applications";
     QStandardItemModel *configmodel = appView->getModel();
     for (int row = 0; row < configmodel->rowCount(); ++row) {
         QModelIndex itemIndex = configmodel->index(row, 0);
         configmodel->setData(itemIndex, Qt::Unchecked, Qt::CheckStateRole);
     }
     OptionsManager::instance()->addUserOption(Options::kApp, QStringList());
+    DLOG << "Selected applications cleared";
 }
 
 void AppSelectWidget::sendOptions()
@@ -185,6 +199,7 @@ void AppSelectWidget::sendOptions()
     OptionsManager::instance()->addUserOption(Options::kApp, appName);
 
     emit isOk(SelectItemName::APP);
+    DLOG << "Selected application options sent";
 }
 
 void AppSelectWidget::delOptions()
@@ -205,6 +220,7 @@ void AppSelectWidget::delOptions()
 
     // Deselect
     emit isOk(SelectItemName::APP);
+    DLOG << "Selected application options cleared";
 }
 
 void AppSelectWidget::nextPage()

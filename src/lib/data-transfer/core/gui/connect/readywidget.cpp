@@ -28,16 +28,19 @@ ReadyWidget::~ReadyWidget()
 
 void ReadyWidget::clear()
 {
+    DLOG << "ReadyWidget clear";
     ipInput->clear();
     captchaInput->clear();
     tiptextlabel->setVisible(false);
     setnextButEnable(false);
     tiptextlabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::normal));
     tiptextlabel->setText(tr("connect..."));
+    DLOG << "ReadyWidget clear finished";
 }
 
 void ReadyWidget::initUI()
 {
+    DLOG << "ReadyWidget initUI";
     setStyleSheet(".ReadyWidget{background-color: white; border-radius: 10px;}");
 
     // init timer
@@ -74,6 +77,7 @@ void ReadyWidget::initUI()
     QObject::connect(ipInput, &QLineEdit::textChanged, [=]() {
         bool isEmpty = ipInput->text().isEmpty();
         ipInput->setClearButtonEnabled(!isEmpty);
+        DLOG << "IP input text changed, clear button enabled:" << !isEmpty;
     });
     QHBoxLayout *editLayout1 = new QHBoxLayout(this);
     editLayout1->setAlignment(Qt::AlignCenter);
@@ -104,6 +108,7 @@ void ReadyWidget::initUI()
     QObject::connect(captchaInput, &QLineEdit::textChanged, [=]() {
         bool isEmpty = captchaInput->text().isEmpty();
         captchaInput->setClearButtonEnabled(!isEmpty);
+        DLOG << "Captcha input text changed, clear button enabled:" << !isEmpty;
     });
 
     QHBoxLayout *editLayout2 = new QHBoxLayout(this);
@@ -162,10 +167,12 @@ void ReadyWidget::initUI()
     QObject::connect(timer, &QTimer::timeout, [this]() {
         connectFailed();
     });
+    DLOG << "ReadyWidget initUI finished";
 }
 
 void ReadyWidget::tryConnect()
 {
+    DLOG << "ReadyWidget tryConnect";
     tiptextlabel->setText(
             QString("<font size='3' color='#000000'>%1</font>").arg(tr("connect...")));
     tiptextlabel->setVisible(true);
@@ -173,11 +180,13 @@ void ReadyWidget::tryConnect()
 
     TransferHelper::instance()->tryConnect(ipInput->text(), captchaInput->text());
     timer->start();
+    DLOG << "ReadyWidget tryConnect finished";
 }
 
 void ReadyWidget::setnextButEnable(bool enabel)
 {
     if (enabel) {
+        DLOG << "Enabling next button";
         nextButton->setEnabled(true);
         nextButton->setStyleSheet(".QPushButton{border-radius: 8px;"
                                   "opacity: 1;"
@@ -191,6 +200,7 @@ void ReadyWidget::setnextButEnable(bool enabel)
                                   "text-align: center;"
                                   "}");
     } else {
+        DLOG << "Disabling next button";
         nextButton->setEnabled(false);
         nextButton->setStyleSheet(".QPushButton{border-radius: 8px;"
                                   "opacity: 1;"
@@ -208,9 +218,11 @@ void ReadyWidget::setnextButEnable(bool enabel)
 
 void ReadyWidget::nextPage()
 {
+    DLOG << "ReadyWidget nextPage";
     // tiptextlabel->setVisible(false);
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
+        DLOG << "Jump to next page";
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() + 1);
     } else {
         WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = "
@@ -218,10 +230,12 @@ void ReadyWidget::nextPage()
     }
 
     clear();
+    DLOG << "ReadyWidget nextPage finished";
 }
 
 void ReadyWidget::backPage()
 {
+    DLOG << "ReadyWidget backPage";
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
         stackedWidget->setCurrentIndex(stackedWidget->currentIndex() - 1);
@@ -231,15 +245,18 @@ void ReadyWidget::backPage()
     }
 
     clear();
+    DLOG << "ReadyWidget backPage finished";
 }
 
 void ReadyWidget::onLineTextChange()
 {
+    DLOG << "ReadyWidget onLineTextChange";
     QRegularExpression ipRegex(
             "^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$");
     QRegularExpressionMatch ipMatch = ipRegex.match(ipInput->text());
 
     if (!ipMatch.hasMatch()) {
+        DLOG << "IP input does not match regex, disabling next button";
         setnextButEnable(false);
         return;
     }
@@ -248,16 +265,19 @@ void ReadyWidget::onLineTextChange()
     QRegularExpressionMatch captchaMatch = captchaRegex.match(captchaInput->text());
 
     if (!captchaMatch.hasMatch()) {
+        DLOG << "Captcha input does not match regex, disabling next button";
         setnextButEnable(false);
         return;
     }
 
     DLOG << "Input validation passed, enabling connect button";
     setnextButEnable(true);
+    DLOG << "ReadyWidget onLineTextChange finished";
 }
 
 void ReadyWidget::connectFailed()
 {
+    DLOG << "ReadyWidget connectFailed";
     tiptextlabel->setStyleSheet(StyleHelper::textStyle(StyleHelper::error));
     tiptextlabel->setText(tr("Failed to connect, please check your input"));
 }

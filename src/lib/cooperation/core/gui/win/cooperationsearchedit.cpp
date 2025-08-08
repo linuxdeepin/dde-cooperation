@@ -55,8 +55,14 @@ CooperationSearchEdit::CooperationSearchEdit(QWidget *parent)
     closeBtn->setGeometry(440, 0, 35, 35);
     closeBtn->setVisible(false);
     connect(searchEdit, &QLineEdit::textChanged, this,
-            [this](const QString &str) { closeBtn->setVisible(!str.isEmpty()); });
-    connect(closeBtn, &QToolButton::clicked, this, [this] { searchEdit->setText(""); });
+            [this](const QString &str) {
+        DLOG << "Search text changed to:" << str.toStdString();
+        closeBtn->setVisible(!str.isEmpty());
+    });
+    connect(closeBtn, &QToolButton::clicked, this, [this] {
+        DLOG << "Close button clicked, clearing search text";
+        searchEdit->setText("");
+    });
 
     QHBoxLayout *mainLayout = new QHBoxLayout();
     setLayout(mainLayout);
@@ -93,11 +99,13 @@ bool CooperationSearchEdit::eventFilter(QObject *obj, QEvent *event)
             searchText->setVisible(false);
             searchEdit->setPlaceholderText(placeholderText);
         } else if (event->type() == QEvent::FocusOut && searchEdit->text().isEmpty()) {
-            DLOG << "Search edit lost focus";
+            DLOG << "Search edit lost focus and text is empty";
             searchIcon->setPixmap(searchicon.pixmap(17, 17));
             searchIcon->setGeometry(125, 7, 20, 20);
             searchText->setVisible(true);
             searchEdit->setPlaceholderText("");
+        } else {
+            DLOG << "Search edit event type:" << event->type() << "or text is not empty";
         }
     }
     return QObject::eventFilter(obj, event);

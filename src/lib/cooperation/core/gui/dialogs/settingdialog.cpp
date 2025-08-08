@@ -129,6 +129,7 @@ void SettingDialogPrivate::initWindow()
 
 void SettingDialogPrivate::createBasicWidget()
 {
+    DLOG << "Creating basic settings widget";
     CooperationLabel *basicLable = new CooperationLabel(tr("Basic Settings"), q);
     auto cm = basicLable->contentsMargins();
     cm.setLeft(10);
@@ -206,6 +207,7 @@ void SettingDialogPrivate::createBasicWidget()
 
 void SettingDialogPrivate::createDeviceShareWidget()
 {
+    DLOG << "Creating device share widget";
     devShareSwitchBtn = new CooperationSwitchButton(q);
     connect(devShareSwitchBtn, &CooperationSwitchButton::clicked, this, &SettingDialogPrivate::onDeviceShareButtonClicked);
 
@@ -265,6 +267,7 @@ void SettingDialogPrivate::createDeviceShareWidget()
 
 void SettingDialogPrivate::createTransferWidget()
 {
+    DLOG << "Creating transfer widget";
     transferCB = new QComboBox(q);
     transferCB->addItems(transferComboBoxInfo);
     transferCB->setFixedWidth(280);
@@ -290,6 +293,7 @@ void SettingDialogPrivate::createTransferWidget()
 
 void SettingDialogPrivate::createClipboardShareWidget()
 {
+    DLOG << "Creating clipboard share widget";
     clipShareSwitchBtn = new CooperationSwitchButton(q);
     connect(clipShareSwitchBtn, &CooperationSwitchButton::clicked, this, &SettingDialogPrivate::onClipboardShareButtonClicked);
     SettingItem *clipShareItem = new SettingItem(q);
@@ -348,8 +352,10 @@ void SettingDialogPrivate::onTransferComboBoxValueChanged(int index)
 
 bool SettingDialogPrivate::checkNameValid()
 {
+    DLOG << "Checking if device name is valid";
     int length = nameEdit->text().length();
     if ((length < 1) || (length > 20)) {
+        DLOG << "Device name is invalid, length:" << length;
 #ifdef linux
         nameEdit->setAlert(true);
         nameEdit->showAlertMessage(tr("The device name must contain 1 to 20 characters"));
@@ -363,6 +369,7 @@ bool SettingDialogPrivate::checkNameValid()
         nameEdit->setFocus();
         return false;
     } else {
+        DLOG << "Device name is valid";
         nameEdit->setProperty(KAlert, false);
         QToolTip::hideText();
 #endif
@@ -373,17 +380,23 @@ bool SettingDialogPrivate::checkNameValid()
 
 void SettingDialogPrivate::onEditFinished()
 {
-    if (checkNameValid())
+    DLOG << "Device name editing finished";
+    if (checkNameValid()) {
+        DLOG << "Device name is valid, saving to config";
         ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DeviceNameKey, nameEdit->text());
+    }
 }
 
 void SettingDialogPrivate::onNameChanged(const QString &text)
 {
+    DLOG << "Device name changed";
     Q_UNUSED(text)
 
 #ifdef linux
-    if (nameEdit->isAlert())
+    if (nameEdit->isAlert()) {
+        DLOG << "Resetting alert state";
         nameEdit->setAlert(false);
+    }
 #endif
 
     checkNameValid();
@@ -411,6 +424,7 @@ void SettingDialogPrivate::onFileChoosed(const QString &path)
 
 void SettingDialogPrivate::initFont()
 {
+    DLOG << "Initializing fonts";
     groupFont = q->font();
     groupFont.setWeight(QFont::DemiBold);
     groupFont.setPixelSize(16);
@@ -421,15 +435,20 @@ void SettingDialogPrivate::initFont()
 
 void SettingDialogPrivate::reportDeviceStatus(const QString &type, bool status)
 {
+    DLOG << "Reporting device status, type:" << type.toStdString() << "status:" << status;
 #ifdef linux
     QVariantMap data;
 
-    if (type == AppSettings::PeripheralShareKey)
+    if (type == AppSettings::PeripheralShareKey) {
+        DLOG << "Reporting peripheral share status";
         data.insert("enablePeripheralShare", status);
-    else if (type == DConfigKey::TransferModeKey)
+    } else if (type == DConfigKey::TransferModeKey) {
+        DLOG << "Reporting file delivery status";
         data.insert("enableFileDelivery", status);
-    else if (type == AppSettings::ClipboardShareKey)
+    } else if (type == AppSettings::ClipboardShareKey) {
+        DLOG << "Reporting clipboard share status";
         data.insert("enableClipboardShare", status);
+    }
 
     deepin_cross::ReportLogManager::instance()->commit(ReportAttribute::CooperationStatus, data);
 #endif
@@ -547,6 +566,7 @@ bool SettingDialog::eventFilter(QObject *watched, QEvent *event)
 
 void SettingDialog::showEvent(QShowEvent *event)
 {
+    DLOG << "SettingDialog show event";
     loadConfig();
     CooperationAbstractDialog::showEvent(event);
 }
@@ -555,6 +575,7 @@ void SettingDialog::keyPressEvent(QKeyEvent *event)
 {
 #ifndef linux
     if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        DLOG << "Enter key pressed, ignoring";
         event->ignore();
         return;
     }
@@ -564,6 +585,7 @@ void SettingDialog::keyPressEvent(QKeyEvent *event)
 
 void SettingDialog::loadConfig()
 {
+    DLOG << "Loading configuration";
 #ifdef linux
     auto value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::DiscoveryModeKey, 0);
     int mode = value.toInt();
@@ -574,6 +596,7 @@ void SettingDialog::loadConfig()
     if (value.isValid()) {
         d->findCB->setCurrentIndex(value.toInt());
     } else {
+        DLOG << "DiscoveryModeKey not found, setting default value";
         // sync the default value into config
         ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey, 0);
 
@@ -585,6 +608,7 @@ void SettingDialog::loadConfig()
     if (value.isValid()) {
         d->nameEdit->setText(value.toString());
     } else {
+        DLOG << "DeviceNameKey not found, setting default value";
         QString defaultName = QDir(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0)).dirName();
         d->nameEdit->setText(defaultName);
 
@@ -596,6 +620,7 @@ void SettingDialog::loadConfig()
     if (value.isValid()) {
         d->devShareSwitchBtn->setChecked(value.toBool());
     } else {
+        DLOG << "PeripheralShareKey not found, setting default value";
         // sync the default value into config
         ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::PeripheralShareKey, true);
 
@@ -607,6 +632,7 @@ void SettingDialog::loadConfig()
     if (value.isValid()) {
         d->connectCB->setCurrentIndex(value.toInt());
     } else {
+        DLOG << "LinkDirectionKey not found, setting default value";
         // sync the default value into config
         ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::LinkDirectionKey, 0);
 
@@ -623,6 +649,7 @@ void SettingDialog::loadConfig()
     if (value.isValid()) {
         d->transferCB->setCurrentIndex(value.toInt());
     } else {
+        DLOG << "TransferModeKey not found, setting default value";
         // sync the default value into config
         ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey, true);
 
@@ -634,6 +661,7 @@ void SettingDialog::loadConfig()
     if (value.isValid()) {
         d->chooserEdit->setText(value.toString());
     } else {
+        DLOG << "StoragePathKey not found, setting default value";
         QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
         d->chooserEdit->setText(defaultPath);
 
@@ -645,6 +673,7 @@ void SettingDialog::loadConfig()
     if (value.isValid()) {
         d->clipShareSwitchBtn->setChecked(value.toBool());
     } else {
+        DLOG << "ClipboardShareKey not found, setting default value";
         // sync the default path into config
         ConfigManager::instance()->setAppAttribute(AppSettings::GenericGroup, AppSettings::ClipboardShareKey, true);
 
@@ -655,6 +684,7 @@ void SettingDialog::loadConfig()
 #ifndef linux
 void SettingDialogPrivate::setQComboxWinStyle(QComboBox *combox)
 {
+    DLOG << "Setting Windows style for QComboBox";
     combox->setStyleSheet(
             "QComboBox {"
             "   border: 1px solid rgba(0,0,0,0.1);"

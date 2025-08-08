@@ -6,6 +6,7 @@
 #include "settings.h"
 
 #include <QCoreApplication>
+#include <QDebug>
 
 ConfigManager::ConfigManager(QObject *parent)
     : QObject(parent)
@@ -16,6 +17,7 @@ ConfigManager::ConfigManager(QObject *parent)
 
 ConfigManager::~ConfigManager()
 {
+    qDebug() << "ConfigManager destroyed";
 }
 
 void ConfigManager::init()
@@ -46,16 +48,19 @@ void ConfigManager::init()
 
 QVariant ConfigManager::appAttribute(const QString &group, const QString &key)
 {
+    qDebug() << "Getting attribute with group:" << group << "key:" << key;
     return appSetting()->value(group, key);
 }
 
 void ConfigManager::setAppAttribute(const QString &group, const QString &key, const QVariant &value)
 {
+    qDebug() << "Setting attribute with group:" << group << "key:" << key;
     appSetting()->setValue(group, key, value);
 }
 
 bool ConfigManager::syncAppAttribute()
 {
+    qDebug() << "Syncing app settings";
     return appSetting()->sync();
 }
 

@@ -69,14 +69,18 @@ DrapWindowsData::~DrapWindowsData()
 QStringList DrapWindowsData::getBrowserList()
 {
     DLOG << "Getting browser list";
-    if (browserList.isEmpty())
+    if (browserList.isEmpty()) {
+        DLOG << "Browser list is empty, getting browser list info";
         getBrowserListInfo();
+    }
     return browserList;
 }
 
 void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
 {
+    DLOG << "Getting browser bookmark HTML";
     if (htmlPath.isEmpty()) {
+        DLOG << "HTML path is empty, setting to current directory";
         htmlPath = QString::fromLocal8Bit(".");
     }
 
@@ -85,6 +89,7 @@ void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
         QString bookmarkItem =
                 QString("<a href=\"%1\">%2</a>").arg(bookmark.second).arg(bookmark.first);
         bookmarkItems.append(bookmarkItem);
+        DLOG << "Added bookmark item:" << bookmark.first.toStdString();
     }
 
     QString htmlTemplate = QString::fromLocal8Bit(
@@ -112,16 +117,21 @@ void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
         out.setCodec("UTF-8");
         out << htmlContent;
         outputFile.close();
+        DLOG << "HTML file saved successfully to:" << htmlFile.toStdString();
     } else {
-//        DLOG << "Failed to open file";
+        DLOG << "Failed to open file for writing:" << htmlFile.toStdString();
         return;
     }
+    DLOG << "Browser bookmark HTML collection complete";
 }
 
 QList<WinApp> DrapWindowsData::getApplianceList()
 {
-    if (applianceList.isEmpty())
+    DLOG << "Getting appliance list";
+    if (applianceList.isEmpty()) {
+        DLOG << "Appliance list is empty, getting appliance list info";
         getApplianceListInfo();
+    }
 
 //    for (auto value : applianceList)
 //        LOG << "app name:" << value.name.toStdString();
@@ -131,10 +141,13 @@ QList<WinApp> DrapWindowsData::getApplianceList()
 
 QString DrapWindowsData::getDesktopWallpaperPath()
 {
+    DLOG << "Getting desktop wallpaper path";
     if (desktopWallpaperPath.isEmpty()) {
+        DLOG << "Desktop wallpaper path is empty, trying registry info";
         getDesktopWallpaperPathRegistInfo();
     }
     if (desktopWallpaperPath.isEmpty()) {
+        DLOG << "Desktop wallpaper path is still empty, trying absolute path info";
         getDesktopWallpaperPathAbsolutePathInfo();
     }
     return desktopWallpaperPath;
@@ -159,6 +172,7 @@ void DrapWindowsData::readFirefoxBookmarks(const QString &dbPath)
             QString title = query.value(1).toString();
             QPair<QString, QString> titleAndUrl(title, url);
             insertBrowserBookmarkList(titleAndUrl);
+            DLOG << "Read Firefox bookmark - Title:" << title.toStdString() << "URL:" << url.toStdString();
         }
     } else {
         DLOG << "read firefox bookmark failed";
@@ -185,48 +199,58 @@ void DrapWindowsData::readMicrosoftEdgeAndGoogleChromeBookmark(const QString &js
     for (const QString &key : roots.keys()) {
         browserBookmarkJsonNode(roots[key].toObject());
     }
+    DLOG << "Reading Edge/Chrome bookmarks complete";
 }
 
 QList<QPair<QString, QString>> DrapWindowsData::getBrowserBookmarkPaths()
 {
+    DLOG << "Getting browser bookmark paths";
     return browserBookmarkPath;
 }
 
 QList<QPair<QString, QString>> DrapWindowsData::getBrowserBookmarkList()
 {
+    DLOG << "Getting browser bookmark list";
     return browserBookmarkList;
 }
 
 void DrapWindowsData::getBrowserBookmarkPathInfo()
 {
+    DLOG << "Getting browser bookmark path info";
     if (browserList.isEmpty()) {
+        DLOG << "Browser list is empty, getting browser list info";
         getBrowserListInfo();
     }
 
     QString appData = std::getenv("USERPROFILE");
 
     if (browserList.contains(BrowserName::MicrosoftEdge)) {
+        DLOG << "Browser list contains MicrosoftEdge";
         QString path = appData + BrowerPath::MicrosoftEdgeBookMark;
         auto bookMark = QPair<QString, QString>(BrowserName::MicrosoftEdge, path);
         browserBookmarkPath.push_back(bookMark);
     }
 
     if (browserList.contains(BrowserName::GoogleChrome)) {
+        DLOG << "Browser list contains GoogleChrome";
         QString path = appData + BrowerPath::GoogleChromeBookMark;
         auto bookMark = QPair<QString, QString>(BrowserName::GoogleChrome, path);
         browserBookmarkPath.push_back(bookMark);
     }
 
     if (browserList.contains(BrowserName::MozillaFirefox)) {
+        DLOG << "Browser list contains MozillaFirefox";
         QString path = appData + BrowerPath::MozillaFirefoxBookMark;
         QString installIni = path + QString("\\installs.ini");
         QFile file(installIni);
         QString bookMarkPath;
         if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            DLOG << "Opened installs.ini for MozillaFirefox";
             QTextStream in(&file);
             while (!in.atEnd()) {
                 QString line = in.readLine();
                 if (line.contains("Default")) {
+                    DLOG << "Found Default profile in installs.ini";
                     bookMarkPath = "\\" + line.split("=").at(1) + "\\places.sqlite";
                 }
             }
@@ -236,6 +260,7 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
         }
 
         if (!bookMarkPath.isEmpty()) {
+            DLOG << "Bookmark path is not empty, adding to browserBookmarkPath";
             path = path + bookMarkPath;
             auto bookMark = QPair<QString, QString>(BrowserName::MozillaFirefox, path);
             browserBookmarkPath.push_back(bookMark);
@@ -243,35 +268,57 @@ void DrapWindowsData::getBrowserBookmarkPathInfo()
             DLOG << "Can not find bookMark path in installs.ini";
         }
     }
+    DLOG << "Reading Firefox bookmarks complete";
 }
 
 void DrapWindowsData::getBrowserBookmarkInfo(const QSet<QString> &Browsername)
 {
+    DLOG << "Getting browser bookmark info";
     if (browserBookmarkPath.isEmpty()) {
+        DLOG << "Browser bookmark path is empty, getting bookmark path info";
         getBrowserBookmarkPathInfo();
     }
     // clear browserBookmark
     browserBookmarkList.clear();
 
     if (!Browsername.isEmpty()) {
+        DLOG << "Browser name list is not empty";
         for (auto &value : browserBookmarkPath) {
             if (value.first == BrowserName::MozillaFirefox) {
-                if (Browsername.contains(BrowserName::MozillaFirefox))
+                if (Browsername.contains(BrowserName::MozillaFirefox)) {
+                    DLOG << "Browser name contains MozillaFirefox, reading bookmarks";
                     readFirefoxBookmarks(value.second);
+                } else {
+                    DLOG << "Browser name does not contain MozillaFirefox, skipping";
+                }
             } else if (value.first == BrowserName::MicrosoftEdge) {
-                if (Browsername.contains(BrowserName::MicrosoftEdge))
+                if (Browsername.contains(BrowserName::MicrosoftEdge)) {
+                    DLOG << "Browser name contains MicrosoftEdge, reading bookmarks";
                     readMicrosoftEdgeAndGoogleChromeBookmark(value.second);
+                } else {
+                    DLOG << "Browser name does not contain MicrosoftEdge, skipping";
+                }
             } else if (value.first == BrowserName::GoogleChrome) {
-                if (Browsername.contains(BrowserName::GoogleChrome))
+                if (Browsername.contains(BrowserName::GoogleChrome)) {
+                    DLOG << "Browser name contains GoogleChrome, reading bookmarks";
                     readMicrosoftEdgeAndGoogleChromeBookmark(value.second);
+                } else {
+                    DLOG << "Browser name does not contain GoogleChrome, skipping";
+                }
+            } else {
+                DLOG << "Unknown browser name:" << value.first.toStdString();
             }
         }
+    } else {
+        DLOG << "Browser name list is empty, skipping bookmark info retrieval";
     }
 }
 
 QString DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
 {
+    DLOG << "Getting browser bookmark JSON";
     if (jsonPath.isEmpty()) {
+        DLOG << "JSON path is empty, setting to current directory";
         jsonPath = QString::fromLocal8Bit(".");
     }
 
@@ -335,10 +382,12 @@ QString DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
         WLOG << "Failed to save JSON file.";
         return QString();
     }
+    DLOG << "JSON file saved successfully.";
 }
 
 QString DrapWindowsData::getUserName()
 {
+    DLOG << "Getting user name";
     QString userDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
     QFileInfo fileInfo(userDir);
@@ -350,9 +399,11 @@ QString DrapWindowsData::getUserName()
 
 void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
 {
+    DLOG << "Getting Linux application list";
     QFile file(":/fileResource/apps.json");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 //        WLOG << "can not open app json";
+        DLOG << "Failed to open app json file";
         return;
     }
 
@@ -362,6 +413,7 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
     if (jsonDoc.isNull()) {
 //        WLOG << "app json Parsing failed";
+        DLOG << "App json parsing failed";
         return;
     }
 
@@ -386,7 +438,7 @@ void DrapWindowsData::getLinuxApplist(QList<UosApp> &list)
         list.push_back(app);
     }
 
-    return;
+    DLOG << "Linux application list loaded successfully";
 }
 
 //QString DrapWindowsData::getIP()
@@ -419,6 +471,7 @@ void DrapWindowsData::getBrowserListInfo()
     lpSubKey = _T(Registry::BrowerRegistryPath);
     queryStatus = RegOpenKeyEx(HKEY_LOCAL_MACHINE, lpSubKey, 0, KEY_READ, &hKey);
     if (queryStatus == ERROR_SUCCESS) {
+        DLOG << "Browser registry key opened successfully";
         DWORD index = 0;
         CHAR subKeyName[MAX_PATH];
         DWORD subKeyNameSize = sizeof(subKeyName);
@@ -469,6 +522,7 @@ void DrapWindowsData::getDesktopWallpaperPathRegistInfo()
 
     WCHAR wallpaperPath[MAX_PATH];
     if (SystemParametersInfo(SPI_GETDESKWALLPAPER, MAX_PATH, wallpaperPath, 0)) {
+        DLOG << "Wallpaper path retrieved successfully";
         QString wallpaperPathStr = QString::fromWCharArray(wallpaperPath);
         QFileInfo fileInfo(wallpaperPathStr);
         if (fileInfo.exists()) {
@@ -506,6 +560,7 @@ void DrapWindowsData::getDesktopWallpaperPathAbsolutePathInfo()
 
 void DrapWindowsData::applianceFromSetting(QSettings &settings, QString registryPath)
 {
+    DLOG << "Loading application information from registry path: " << registryPath.toStdString();
     settings.beginGroup(registryPath);
 
     QStringList appKeys = settings.childGroups();
@@ -529,11 +584,14 @@ void DrapWindowsData::applianceFromSetting(QSettings &settings, QString registry
         settings.endGroup();
     }
     settings.endGroup();
+    DLOG << "Application information loading completed.";
 }
 
 void DrapWindowsData::browserBookmarkJsonNode(QJsonObject node)
 {
+    DLOG << "Parsing browser bookmark JSON node";
     if (node.contains("name") && node.contains("url")) {
+        DLOG << "Browser bookmark JSON node contains name and url";
         QString url = node["url"].toString();
         QString title = node["name"].toString();
         QPair<QString, QString> titleAndUrl(title, url);
@@ -541,6 +599,7 @@ void DrapWindowsData::browserBookmarkJsonNode(QJsonObject node)
     }
 
     if (node.contains("children")) {
+        DLOG << "Browser bookmark JSON node contains children array";
         QJsonArray children = node["children"].toArray();
         for (const QJsonValue &child : children) {
             browserBookmarkJsonNode(child.toObject());
@@ -550,6 +609,7 @@ void DrapWindowsData::browserBookmarkJsonNode(QJsonObject node)
 
 void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &titleAndUrl)
 {
+    DLOG << "Inserting browser bookmark into list";
     auto find = std::find_if(browserBookmarkList.begin(), browserBookmarkList.end(),
                              [&titleAndUrl](const QPair<QString, QString> &mem) {
                                  if (mem.second == titleAndUrl.second) {
@@ -558,6 +618,7 @@ void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &t
                                  return false;
                              });
     if (find == browserBookmarkList.end()) {
+        DLOG << "Browser bookmark not found in list";
         browserBookmarkList.push_back(titleAndUrl);
         // DLOG << titleAndUrl.first << ": " << titleAndUrl.second;
     }
@@ -565,38 +626,49 @@ void DrapWindowsData::insertBrowserBookmarkList(const QPair<QString, QString> &t
 
 QPixmap DrapWindowsData::getAppIcon(const QString &path)
 {
-    if (path.isEmpty())
-       return QPixmap();
+    DLOG << "Getting icon for path: " << path.toStdString();
+    if (path.isEmpty()) {
+        DLOG << "Path is empty";
+        return QPixmap();
+    }
     HICON hIcon;
     QString tempStr = path;
     if (ExtractIconExW(tempStr.toStdWString().c_str(), 0, NULL, &hIcon, 1) <= 0) {
+        DLOG << "Failed to extract icon from path";
         return QPixmap();
     }
    if (hIcon == 0) {
+        DLOG << "Icon handle is null";
         DestroyIcon(hIcon);
         return QPixmap();
     }
 
     QPixmap pixmap = QtWin::fromHICON(hIcon);
     DestroyIcon(hIcon);
-    if (pixmap.isNull())
+    if (pixmap.isNull()) {
+        DLOG << "Pixmap is null";
         return pixmap;
+    }
     return pixmap.scaled(20, 20);
 }
 
 bool DrapWindowsData::containsAnyString(const QString &haystack, const QStringList &needles)
 {
+    DLOG << "Checking if haystack contains any string in needles";
     for (const QString &needle : needles) {
         if (!haystack.contains(needle, Qt::CaseInsensitive)) {
+            DLOG << "return false: Haystack does not contain needle: " << needle.toStdString();
             return false;
         }
     }
+    DLOG << "return true: Haystack contains at least one needle";
     return true;
 }
 
 QMap<QString, QString>
 DrapWindowsData::RecommendedInstallationAppList(QMap<QString, QString> &notRecommendedList)
 {
+    DLOG << "Getting recommended installation app list";
     notRecommendedList.clear();
 
     QList<WinApp> dataStructure;
@@ -628,5 +700,6 @@ DrapWindowsData::RecommendedInstallationAppList(QMap<QString, QString> &notRecom
     for (auto &value : dataStructure) {
         notRecommendedList[value.name] = value.iconPath;
     }
+    DLOG << "Recommended installation app list size: " << resultAPP.size();
     return resultAPP;
 }

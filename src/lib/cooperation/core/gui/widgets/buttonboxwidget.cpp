@@ -23,6 +23,7 @@ int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, Button
     CooperationIconButton *btn = new CooperationIconButton(this);
     switch (style) {
     case kNormal:
+        DLOG << "Button style: Normal";
 #ifndef linux
         btn->setStyleSheet(
                     ".QToolButton {"
@@ -35,6 +36,7 @@ int ButtonBoxWidget::addButton(const QIcon &icon, const QString &toolTip, Button
 #endif
         break;
     case kHighLight:
+        DLOG << "Button style: Highlight";
 #ifdef linux
         btn->setBackgroundRole(QPalette::Highlight);
 #else
@@ -76,17 +78,17 @@ QAbstractButton *ButtonBoxWidget::button(int index)
     auto item = mainLayout->itemAt(index);
     auto btn = item->widget();
 
-    DLOG << "Button retrieved successfully";
+    // DLOG << "Button retrieved successfully";
     return qobject_cast<QAbstractButton *>(btn);
 }
 
 void ButtonBoxWidget::setButtonVisible(int index, bool visible)
 {
-    DLOG << "Setting button visibility at index:" << index << "to:" << visible;
+    // DLOG << "Setting button visibility at index:" << index << " to:" << visible;
     auto btn = button(index);
     if (btn) {
         btn->setVisible(visible);
-        DLOG << "Button visibility set successfully";
+        // DLOG << "Button visibility set successfully";
     } else {
         WLOG << "Button not found at index:" << index;
     }

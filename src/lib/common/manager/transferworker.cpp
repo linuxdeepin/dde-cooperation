@@ -18,6 +18,7 @@ TransferWorker::TransferWorker(QString id, QObject *parent)
     : QObject(parent)
     , _bindId(id)
 {
+    DLOG << "TransferWorker created with id:" << id.toStdString();
     // create own asio service
     _asioService = std::make_shared<AsioService>();
     if (!_asioService) {
@@ -33,12 +34,15 @@ TransferWorker::~TransferWorker()
 {
     LOG << "~TransferWorker :" << _bindId.toStdString();
     if (_file_server) {
+        DLOG << "Resetting file server";
         _file_server.reset();
     }
     if (_file_client) {
+        DLOG << "Resetting file client";
         _file_client.reset();
     }
     if (_asioService) {
+        DLOG << "Resetting asio service";
         _asioService.reset();
     }
 }
@@ -46,6 +50,7 @@ TransferWorker::~TransferWorker()
 // return true -> cancel
 bool TransferWorker::onProgress(uint64_t size)
 {
+    DLOG << "Transfer progress update, size:" << size;
     _status.secsize.fetch_add(size);
 
     return _canceled;
@@ -53,8 +58,10 @@ bool TransferWorker::onProgress(uint64_t size)
 
 void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
 {
+    DLOG << "Web state changed, state:" << state << "msg:" << msg << "size:" << size;
     if (state < 1) {
         // errors: WEB_DISCONNECTED = -2,WEB_IO_ERROR = -1,WEB_NOT_FOUND = 0
+        DLOG << "Web error occurred, state:" << state;
         emit speedTimerTick(true);
         QString reason = QString::fromStdString(msg);
         emit onException(_bindId, reason);
@@ -63,6 +70,7 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
 
     switch(state) {
     case WEB_CONNECTED:
+        DLOG << "Web connected";
         break;
     case WEB_TRANS_START: {
         DLOG << "notify whole web transfer start!";
@@ -84,6 +92,7 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
     }
         break;
     case WEB_INDEX_END:
+        DLOG << "Web index end";
         break;
     case WEB_FILE_BEGIN: {
         _status.path = msg;
@@ -109,27 +118,32 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
 
 void TransferWorker::stop()
 {
+    DLOG << "Stopping transfer worker";
     _canceled = true;
     emit speedTimerTick(true); // stop the speed timer
 
     if (_file_server) {
+        DLOG << "Stopping file server";
         _file_server->clearBind();
         _file_server->setCallback(nullptr);
         _file_server->stop();
     }
 
     if (_file_client) {
+        DLOG << "Stopping file client";
         _file_client->setCallback(nullptr);
         _file_client->stop();
     }
 
     if (_asioService) {
+        DLOG << "Resetting asio service on stop";
         _asioService.reset();
     }
 }
 
 bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::string> *nameVector, std::string *token)
 {
+    DLOG << "Trying to start sending files, count:" << paths.size();
     _singleFile = false; //reset for send files
     _recvPath = "";
 
@@ -154,6 +168,7 @@ bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::
         jsonArray.push_back(picojson::value(name));
 
         if (paths.size() == 1 && fileInfo.isFile()) {
+            DLOG << "Sending a single file";
             _singleFile = true;
         }
 
@@ -167,11 +182,13 @@ bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::
     *token = _file_server->genToken(jsonString);
 
     _canceled = false;
+    DLOG << "Successfully started send";
     return true;
 }
 
 bool TransferWorker::tryStartReceive(QStringList names, QString &ip, int port, QString &token, QString &dirname)
 {
+    DLOG << "Trying to start receiving files, count:" << names.size();
     _singleFile = false; //reset for send files
     // update receive path, while will be notify after whole finish.
     _recvPath = QString(dirname);
@@ -194,35 +211,42 @@ bool TransferWorker::tryStartReceive(QStringList names, QString &ip, int port, Q
     _file_client->startFileDownload(webs);
 
     _canceled = false;
+    DLOG << "Successfully started receive";
     return true;
 }
 
 bool TransferWorker::isSyncing()
 {
+    DLOG << "Checking if syncing, canceled:" << _canceled;
     return !_canceled;
 }
 
 void TransferWorker::setEveryFileNotify(bool every)
 {
+    DLOG << "Setting every file notification to:" << every;
     _everyNotify = every;
 }
 
 bool TransferWorker::isServe()
 {
+    DLOG << "Checking if it is a server, recvPath empty:" << _recvPath.isEmpty();
     return _recvPath.isEmpty();
 }
 
 void TransferWorker::handleTimerTick(bool stop)
 {
     if (stop) {
+        DLOG << "Stopping speed timer";
         _speedTimer.stop();
     } else {
+        DLOG << "Starting speed timer";
         _speedTimer.start(1000);
     }
 }
 
 void TransferWorker::doCalculateSpeed()
 {
+    DLOG << "Calculating transfer speed";
 
     int64_t bytesize = _status.secsize.load();
     _status.secsize.store(0); // reset every second
@@ -237,6 +261,7 @@ void TransferWorker::doCalculateSpeed()
         _noDataCount = 0;
     } else {
         _noDataCount++;
+        DLOG << "No data transferred in the last second, count:" << _noDataCount;
     }
 
     // double speed = (static_cast<double>(bytesize)) / (1024 * 1024); // 计算下载速度，单位为兆字节/秒
@@ -249,6 +274,7 @@ void TransferWorker::doCalculateSpeed()
 
 void TransferWorker::sendTranEndNotify()
 {
+    DLOG << "Sending transfer end notification";
     emit speedTimerTick(true);
     emit notifyChanged(TRANS_WHOLE_FINISH, _recvPath);
 
@@ -258,8 +284,10 @@ void TransferWorker::sendTranEndNotify()
 
 bool TransferWorker::startWeb(int port)
 {
+    DLOG << "Starting web server on port:" << port;
     // Create a new file http server
     if (!_file_server) {
+        DLOG << "Creating new file server instance";
         auto context = SecureConfig::serverContext();
 
         _file_server = std::make_shared<FileServer>(_asioService, context, port);
@@ -273,8 +301,10 @@ bool TransferWorker::startWeb(int port)
 
 bool TransferWorker::startGet(const std::string &address, int port)
 {
+    DLOG << "Starting file getter for address:" << address << "port:" << port;
     // Create a new file http client
     if (!_file_client) {
+        DLOG << "Creating new file client instance";
         auto context = SecureConfig::clientContext();
 
         _file_client = std::make_shared<FileClient>(_asioService, context, address, port);

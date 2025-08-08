@@ -77,6 +77,7 @@ void CommandParser::initOptions()
 
 void CommandParser::addOption(const QCommandLineOption &option)
 {
+    qDebug() << "Adding command line option";
     cmdParser->addOption(option);
 }
 

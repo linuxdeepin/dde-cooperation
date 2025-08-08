@@ -3,8 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "quazipfileinfo.h"
+#include <QDebug>
 
 static QFile::Permissions permissionsFromExternalAttr(quint32 externalAttr) {
+    qInfo() << "Converting external attributes to file permissions";
     quint32 uPerm = (externalAttr & 0xFFFF0000u) >> 16;
     QFile::Permissions perm = 0;
     if ((uPerm & 0400) != 0)
@@ -31,16 +33,19 @@ static QFile::Permissions permissionsFromExternalAttr(quint32 externalAttr) {
 
 QFile::Permissions QuaZipFileInfo::getPermissions() const
 {
+    qInfo() << "Getting QuaZipFileInfo permissions";
     return permissionsFromExternalAttr(externalAttr);
 }
 
 QFile::Permissions QuaZipFileInfo64::getPermissions() const
 {
+    qInfo() << "Getting QuaZipFileInfo64 permissions";
     return permissionsFromExternalAttr(externalAttr);
 }
 
 bool QuaZipFileInfo64::toQuaZipFileInfo(QuaZipFileInfo &info) const
 {
+    qInfo() << "Converting QuaZipFileInfo64 to QuaZipFileInfo";
     bool noOverflow = true;
     info.name = name;
     info.versionCreated = versionCreated;
@@ -51,12 +56,14 @@ bool QuaZipFileInfo64::toQuaZipFileInfo(QuaZipFileInfo &info) const
     info.crc = crc;
     if (compressedSize > 0xFFFFFFFFu) {
         info.compressedSize = 0xFFFFFFFFu;
+        qInfo() << "compressedSize overflow";
         noOverflow = false;
     } else {
         info.compressedSize = compressedSize;
     }
     if (uncompressedSize > 0xFFFFFFFFu) {
         info.uncompressedSize = 0xFFFFFFFFu;
+        qInfo() << "uncompressedSize overflow";
         noOverflow = false;
     } else {
         info.uncompressedSize = uncompressedSize;
@@ -72,6 +79,7 @@ bool QuaZipFileInfo64::toQuaZipFileInfo(QuaZipFileInfo &info) const
 static QDateTime getNTFSTime(const QByteArray &extra, int position,
                              int *fineTicks)
 {
+    qInfo() << "Getting NTFS time";
     QDateTime dateTime;
     for (int i = 0; i <= extra.size() - 4; ) {
         unsigned type = static_cast<unsigned>(static_cast<unsigned char>(
@@ -142,15 +150,18 @@ static QDateTime getNTFSTime(const QByteArray &extra, int position,
 
 QDateTime QuaZipFileInfo64::getNTFSmTime(int *fineTicks) const
 {
+    qInfo() << "Getting NTFS modification time";
     return getNTFSTime(extra, 0, fineTicks);
 }
 
 QDateTime QuaZipFileInfo64::getNTFSaTime(int *fineTicks) const
 {
+    qInfo() << "Getting NTFS access time";
     return getNTFSTime(extra, 8, fineTicks);
 }
 
 QDateTime QuaZipFileInfo64::getNTFScTime(int *fineTicks) const
 {
+    qInfo() << "Getting NTFS creation time";
     return getNTFSTime(extra, 16, fineTicks);
 }

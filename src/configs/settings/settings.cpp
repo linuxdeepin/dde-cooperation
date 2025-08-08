@@ -75,6 +75,7 @@ public:
 
     void makeSettingFileToDirty(bool dirty)
     {
+        qInfo() << "Setting dirty flag to:" << dirty;
         if (settingFileIsDirty == dirty) {
             return;
         }
@@ -89,11 +90,14 @@ public:
 
         if (QThread::currentThread() == syncTimer->thread()) {
             if (dirty) {
+                qInfo() << "makeSettingFileToDirty start";
                 syncTimer->start();
             } else {
+                qInfo() << "makeSettingFileToDirty stop";
                 syncTimer->stop();
             }
         } else {
+            qInfo() << "makeSettingFileToDirty invokeMethod";
             syncTimer->metaObject()->invokeMethod(syncTimer, dirty ? "start" : "stop", Qt::QueuedConnection);
         }
     }
@@ -104,17 +108,21 @@ public:
 SettingsPrivate::SettingsPrivate(Settings *qq)
     : q_ptr(qq)
 {
+    qInfo() << "Constructing SettingsPrivate";
 }
 
 void SettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
 {
+    qInfo() << "Loading settings from JSON file:" << fileName;
     QFile file(fileName);
 
     if (!file.exists()) {
+        qInfo() << "File not exists:" << fileName;
         return;
     }
 
     if (!file.open(QFile::ReadOnly)) {
+        qInfo() << "Failed to open file:" << fileName << file.errorString();
         qWarning() << file.errorString();
 
         return;
@@ -123,6 +131,7 @@ void SettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
     const QByteArray &json = file.readAll();
 
     if (json.isEmpty()) {
+        qInfo() << "File is empty:" << fileName;
         return;
     }
 
@@ -131,15 +140,18 @@ void SettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
 
 void SettingsPrivate::fromJson(const QByteArray &json, Data *data)
 {
+    qInfo() << "Parsing JSON data";
     QJsonParseError error;
     const QJsonDocument &doc = QJsonDocument::fromJson(json, &error);
 
     if (error.error != QJsonParseError::NoError) {
+        qInfo() << "Json parse error:" << error.errorString();
         qWarning() << error.errorString();
         return;
     }
 
     if (!doc.isObject()) {
+        qInfo() << "Json is not an object";
         qWarning() << QString();
         return;
     }
@@ -150,6 +162,7 @@ void SettingsPrivate::fromJson(const QByteArray &json, Data *data)
         const QJsonValue &value = begin.value();
 
         if (!value.isObject()) {
+            qInfo() << "Value is not an object";
             qWarning() << QString();
             continue;
         }
@@ -171,6 +184,7 @@ void SettingsPrivate::fromJson(const QByteArray &json, Data *data)
 
 QByteArray SettingsPrivate::toJson(const Data &data)
 {
+    qInfo() << "Converting settings data to JSON";
     QJsonObject root_object;
 
     for (auto begin = data.values.constBegin(); begin != data.values.constEnd(); ++begin) {
@@ -182,6 +196,7 @@ QByteArray SettingsPrivate::toJson(const Data &data)
 
 void SettingsPrivate::_q_onFileChanged(const QString &filePath)
 {
+    qInfo() << "Handling file change notification for:" << filePath;
     if (filePath != settingFile)
         return;
 
@@ -239,6 +254,7 @@ void SettingsPrivate::_q_onFileChanged(const QString &filePath)
 Settings::Settings(const QString &defaultFile, const QString &fallbackFile, const QString &settingFile, QObject *parent)
     : QObject(parent), d_ptr(new SettingsPrivate(this))
 {
+    qInfo() << "Constructing Settings with file paths:" << defaultFile << fallbackFile << settingFile;
     d_ptr->fallbackFile = fallbackFile;
     d_ptr->settingFile = settingFile;
 
@@ -249,20 +265,21 @@ Settings::Settings(const QString &defaultFile, const QString &fallbackFile, cons
 
 static QString getConfigFilePath(QStandardPaths::StandardLocation type, const QString &fileName, bool writable)
 {
+    qInfo() << "Getting config file path";
     if (writable) {
         QString path = QStandardPaths::writableLocation(type);
 
         if (path.isEmpty()) {
             path = QDir::home().absoluteFilePath(QString(".config/%1/%2").arg(qApp->organizationName()).arg(qApp->applicationName()));
         }
-
+        qInfo() << "Get writable config file path:" << path;
         return path.append(QString("/%1.json").arg(fileName));
     }
 
     const QStringList &list = QStandardPaths::standardLocations(type);
 
     QString path = list.isEmpty() ? QString("/etc/xdg/%1/%2").arg(qApp->organizationName()).arg(qApp->applicationName()) : list.last();
-
+    qInfo() << "Get read-only config file path:" << path;
     return path.append(QString("/%1.json").arg(fileName));
 }
 
@@ -278,50 +295,60 @@ Settings::Settings(const QString &name, ConfigType type, QObject *parent)
                                     name, true),
                   parent)
 {
+    qInfo() << "Constructing Settings with name";
 }
 
 Settings::~Settings()
 {
+    qInfo() << "Destructing Settings";
     Q_D(Settings);
 
     if (d->syncTimer) {
+        qInfo() << "Stop sync timer";
         d->syncTimer->stop();
     }
 
     if (d->settingFileIsDirty) {
+        qInfo() << "Sync settings on exit";
         sync();
     }
 }
 
 bool Settings::contains(const QString &group, const QString &key) const
 {
+    qInfo() << "Checking if settings contain group:" << group << "key:" << key;
     Q_D(const Settings);
 
     if (key.isEmpty()) {
         if (d->writableData.values.contains(group)) {
+            qInfo() << "Group exists in writable data:" << group;
             return true;
         }
 
         if (d->fallbackData.values.contains(group)) {
+            qInfo() << "Group exists in fallback data:" << group;
             return true;
         }
-
+        qInfo() << "Check group in default data:" << group;
         return d->defaultData.values.contains(group);
     }
 
     if (d->writableData.values.value(group).contains(key)) {
+        qInfo() << "Key exists in writable data:" << group << key;
         return true;
     }
 
     if (d->fallbackData.values.value(group).contains(key)) {
+        qInfo() << "Key exists in fallback data:" << group << key;
         return true;
     }
-
+    qInfo() << "Check key in default data:" << group << key;
     return d->defaultData.values.value(group).contains(key);
 }
 
 QSet<QString> Settings::groups() const
 {
+    qInfo() << "Getting all group names";
     Q_D(const Settings);
 
     QSet<QString> groups;
@@ -339,12 +366,13 @@ QSet<QString> Settings::groups() const
     for (auto begin = d->defaultData.values.constBegin(); begin != d->defaultData.values.constEnd(); ++begin) {
         groups << begin.key();
     }
-
+    qInfo() << "Get all groups, count:" << groups.size();
     return groups;
 }
 
 QSet<QString> Settings::keys(const QString &group) const
 {
+    qInfo() << "Getting all keys for group:" << group;
     Q_D(const Settings);
 
     QSet<QString> keys;
@@ -366,7 +394,7 @@ QSet<QString> Settings::keys(const QString &group) const
     for (auto begin = dg.constBegin(); begin != dg.constEnd(); ++begin) {
         keys << begin.key();
     }
-
+    qInfo() << "Get all keys for group:" << group << "count:" << keys.size();
     return keys;
 }
 
@@ -377,6 +405,7 @@ QSet<QString> Settings::keys(const QString &group) const
  */
 QStringList Settings::keyList(const QString &group) const
 {
+    qInfo() << "Getting ordered key list for group:" << group;
     Q_D(const Settings);
 
     QStringList keyList;
@@ -408,44 +437,51 @@ QStringList Settings::keyList(const QString &group) const
 #else
     keyList << QStringList(keys.begin(), keys.end());
 #endif
-
+    qInfo() << "Get ordered key list for group:" << group << "count:" << keyList.size();
     return keyList;
 }
 
 QVariant Settings::value(const QString &group, const QString &key, const QVariant &defaultValue) const
 {
+    qInfo() << "Getting value for group:" << group << "key:" << key;
     Q_D(const Settings);
 
     QVariant value = d->writableData.values.value(group).value(key, QVariant());
 
     if (value.isValid()) {
+        qInfo() << "Get value from writable data:" << group << key;
         return value;
     }
 
     value = d->fallbackData.values.value(group).value(key, QVariant());
 
     if (value.isValid()) {
+        qInfo() << "Get value from fallback data:" << group << key;
         return value;
     }
-
+    qInfo() << "Get value from default data:" << group << key;
     return d->defaultData.values.value(group).value(key, defaultValue);
 }
 
 void Settings::setValue(const QString &group, const QString &key, const QVariant &value)
 {
+    qInfo() << "Setting value for group:" << group << "key:" << key;
     if (setValueNoNotify(group, key, value)) {
+        qInfo() << "Value changed, emit signal";
         Q_EMIT valueChanged(group, key, value);
     }
 }
 
 bool Settings::setValueNoNotify(const QString &group, const QString &key, const QVariant &value)
 {
+    qInfo() << "Setting value without notification for group:" << group << "key:" << key;
     Q_D(Settings);
 
     bool changed = false;
 
     if (isRemovable(group, key)) {
         if (d->writableData.value(group, key) == value) {
+            qInfo() << "Value not changed";
             return false;
         }
 
@@ -462,20 +498,24 @@ bool Settings::setValueNoNotify(const QString &group, const QString &key, const 
 
 void Settings::removeGroup(const QString &group)
 {
+    qInfo() << "Removing group:" << group;
     Q_D(Settings);
 
     if (!d->writableData.values.contains(group)) {
+        qInfo() << "Group not exists in writable data:" << group;
         return;
     }
 
     const QVariantHash &group_values = d->writableData.values.take(group);
 
     d->makeSettingFileToDirty(true);
+    qInfo() << "Remove group:" << group;
 
     for (auto begin = group_values.constBegin(); begin != group_values.constEnd(); ++begin) {
         const QVariant &new_value = value(group, begin.key());
 
         if (new_value != begin.value()) {
+            qInfo() << "Value changed, emit signal";
             Q_EMIT valueChanged(group, begin.key(), new_value);
         }
     }
@@ -483,36 +523,45 @@ void Settings::removeGroup(const QString &group)
 
 bool Settings::isRemovable(const QString &group, const QString &key) const
 {
+    qInfo() << "Checking if key is removable for group:" << group << "key:" << key;
     Q_D(const Settings);
-
-    return d->writableData.values.value(group).contains(key);
+    bool result = d->writableData.values.value(group).contains(key);
+    qInfo() << "Check if key is removable:" << group << key << result;
+    return result;
 }
 
 void Settings::remove(const QString &group, const QString &key)
 {
+    qInfo() << "Removing key for group:" << group << "key:" << key;
     Q_D(Settings);
 
     if (!d->writableData.values.value(group).contains(key)) {
+        qInfo() << "Key not exists in writable data:" << group << key;
         return;
     }
 
     const QVariant &old_value = d->writableData.values[group].take(key);
     d->makeSettingFileToDirty(true);
+    qInfo() << "Remove key:" << group << key;
 
     const QVariant &new_value = value(group, key);
 
     if (old_value == new_value) {
+        qInfo() << "Value not changed:" << group << key;
         return;
     }
 
+    qInfo() << "Value changed, emit signal";
     Q_EMIT valueChanged(group, key, new_value);
 }
 
 void Settings::clear()
 {
+    qInfo() << "Clearing all writable settings";
     Q_D(Settings);
 
     if (d->writableData.values.isEmpty()) {
+        qInfo() << "Writable data is empty, no need to clear";
         return;
     }
 
@@ -520,6 +569,7 @@ void Settings::clear()
 
     d->writableData.values.clear();
     d->makeSettingFileToDirty(true);
+    qInfo() << "Clear all writable data";
 
     for (auto begin = old_values.constBegin(); begin != old_values.constEnd(); ++begin) {
         const QVariantHash &values = begin.value();
@@ -528,6 +578,7 @@ void Settings::clear()
             const QVariant &new_value = value(begin.key(), i.key());
 
             if (new_value != i.value()) {
+                qInfo() << "Value changed, emit signal";
                 Q_EMIT valueChanged(begin.key(), i.key(), new_value);
             }
         }
@@ -542,6 +593,7 @@ void Settings::clear()
  */
 void Settings::reload()
 {
+    qInfo() << "Reloading all settings from files";
     Q_D(Settings);
 
     d->fallbackData.privateValues.clear();
@@ -555,9 +607,11 @@ void Settings::reload()
 
 bool Settings::sync()
 {
+    qInfo() << "Syncing settings to file";
     Q_D(Settings);
 
     if (!d->settingFileIsDirty) {
+        qInfo() << "Settings not dirty, no need to sync";
         return true;
     }
 
@@ -566,13 +620,17 @@ bool Settings::sync()
     QFile file(d->settingFile);
 
     if (!file.open(QFile::WriteOnly)) {
+        qInfo() << "Failed to open file for writing:" << d->settingFile << file.errorString();
         return false;
     }
 
     bool ok = file.write(json) == json.size();
 
     if (ok) {
+        qInfo() << "Sync settings to file successfully:" << d->settingFile;
         d->makeSettingFileToDirty(false);
+    } else {
+        qInfo() << "Failed to write to file:" << d->settingFile;
     }
     file.close();
 
@@ -581,6 +639,7 @@ bool Settings::sync()
 
 bool Settings::autoSync() const
 {
+    qInfo() << "Checking if auto sync is enabled";
     Q_D(const Settings);
 
     return d->autoSync;
@@ -588,6 +647,7 @@ bool Settings::autoSync() const
 
 bool Settings::watchChanges() const
 {
+    qInfo() << "Checking if watch changes is enabled";
     Q_D(const Settings);
 
     return d->watchChanges;
@@ -595,6 +655,7 @@ bool Settings::watchChanges() const
 
 void Settings::setAutoSync(bool autoSync)
 {
+    qInfo() << "Setting auto sync to:" << autoSync;
     Q_D(Settings);
 
     if (d->autoSync == autoSync) {
@@ -602,13 +663,16 @@ void Settings::setAutoSync(bool autoSync)
     }
 
     d->autoSync = autoSync;
+    qInfo() << "Set auto sync to:" << autoSync;
 
     if (autoSync) {
         if (d->settingFileIsDirty) {
+            qInfo() << "Sync dirty settings immediately";
             sync();
         }
 
         if (!d->syncTimer) {
+            qInfo() << "Create sync timer";
             d->syncTimer = new QTimer(this);
             d->syncTimer->moveToThread(thread());
             d->syncTimer->setSingleShot(true);
@@ -618,6 +682,7 @@ void Settings::setAutoSync(bool autoSync)
         }
     } else {
         if (d->syncTimer) {
+            qInfo() << "Destroy sync timer";
             d->syncTimer->stop();
             d->syncTimer->deleteLater();
             d->syncTimer = nullptr;
@@ -627,6 +692,7 @@ void Settings::setAutoSync(bool autoSync)
 
 void Settings::onFileChanged(const QString &filePath)
 {
+    qInfo() << "File changed handler, path:" << filePath;
     Q_D(Settings);
 
     d->_q_onFileChanged(filePath);
@@ -634,17 +700,20 @@ void Settings::onFileChanged(const QString &filePath)
 
 void Settings::setWatchChanges(bool watchChanges)
 {
+    qInfo() << "Setting watch changes to:" << watchChanges;
     Q_D(Settings);
 
     if (d->watchChanges == watchChanges)
         return;
 
     d->watchChanges = watchChanges;
+    qInfo() << "Set watch changes to:" << watchChanges;
     if (watchChanges) {
         {
             QFileInfo info(d->settingFile);
 
             if (!info.exists()) {
+                qInfo() << "Setting file not exists, create it:" << d->settingFile;
                 if (info.absoluteDir().mkpath(info.absolutePath())) {
                     QFile file(d->settingFile);
                     file.open(QFile::WriteOnly);
@@ -652,12 +721,14 @@ void Settings::setWatchChanges(bool watchChanges)
             }
         }
 
+        qInfo() << "Create file watcher for:" << d->settingFile;
         d->settingFileWatcher = new QFileSystemWatcher({ d->settingFile }, this);
         d->settingFileWatcher->moveToThread(thread());
 
         connect(d->settingFileWatcher, &QFileSystemWatcher::fileChanged, this, &Settings::onFileChanged);
     } else {
         if (d->settingFileWatcher) {
+            qInfo() << "Destroy file watcher";
             d->settingFileWatcher->deleteLater();
             d->settingFileWatcher = nullptr;
         }

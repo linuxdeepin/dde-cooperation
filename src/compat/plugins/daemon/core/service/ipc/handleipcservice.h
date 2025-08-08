@@ -45,7 +45,8 @@ public:
     Q_INVOKABLE void doStopShare(const QString& appname, const QString &targetname, const int flags);
     Q_INVOKABLE void doDisconnectCallback(const QString& appname);
     Q_INVOKABLE void doCancelShareApply(const QString& appname);
-
+    Q_INVOKABLE void updateCooperationStatus(int status);
+    Q_INVOKABLE bool getCurrentCooperationStatus();
 
     Q_INVOKABLE void doAsyncSearch(const QString &targetip, const bool remove);
 

@@ -8,6 +8,7 @@
 #include "utils/cooperationutil.h"
 #include "widgets/cooperationstatewidget.h"
 #include "common/log.h"
+#include "net/helper/phonehelper.h"
 
 #include <QScreen>
 #include <QUrl>
@@ -51,16 +52,22 @@ void MainWindowPrivate::moveCenter()
     QList<QScreen *> screens = qApp->screens();
     QList<QScreen *>::const_iterator it = screens.begin();
     for (; it != screens.end(); ++it) {
+        DLOG << "Checking screen: " << (*it)->name().toStdString();
         if ((*it)->geometry().contains(cursorPos)) {
+            DLOG << "Cursor is on this screen";
             cursorScreen = *it;
             break;
         }
     }
 
-    if (!cursorScreen)
+    if (!cursorScreen) {
+        DLOG << "Cursor is not on any screen, using primary screen";
         cursorScreen = qApp->primaryScreen();
-    if (!cursorScreen)
+    }
+    if (!cursorScreen) {
+        DLOG << "No primary screen found, unable to move window";
         return;
+    }
 
     int x = (cursorScreen->availableGeometry().width() - q->width()) / 2;
     int y = (cursorScreen->availableGeometry().height() - q->height()) / 2;
@@ -71,21 +78,26 @@ void MainWindowPrivate::handleSettingMenuTriggered(int action)
 {
     switch (static_cast<MenuAction>(action)) {
     case MenuAction::kSettings: {
+        DLOG << "Settings action triggered";
         if (q->property("SettingDialogShown").toBool()) {
+            DLOG << "SettingDialog is already shown";
             return;
         }
 
+        DLOG << "Showing SettingDialog";
         SettingDialog *dialog = new SettingDialog(q);
         dialog->show();
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         q->setProperty("SettingDialogShown", true);
         QObject::connect(dialog, &SettingDialog::finished, [=] {
+            DLOG << "SettingDialog finished";
             q->setProperty("SettingDialogShown", false);
         });
     } break;
-    case MenuAction::kDownloadWindowClient:
-        QDesktopServices::openUrl(QUrl("https://www.chinauos.com/resource/assistant"));
-        break;
+    case MenuAction::kDownloadWindowClient: {
+        DLOG << "DownloadWindowClient action triggered";
+        QDesktopServices::openUrl(QUrl(KdownloadUrl));
+    } break;
     }
 }
 
@@ -118,8 +130,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (qApp->property("onlyTransfer").toBool())
+    DLOG << "closeEvent triggered";
+    if (qApp->property("onlyTransfer").toBool()) {
+        DLOG << "onlyTransfer property is true, quitting application";
         QApplication::quit();
+    }
 
     showCloseDialog();
     event->ignore();
@@ -254,11 +269,14 @@ void MainWindow::showCloseDialog()
     DLOG << "Showing close dialog";
     QString option = CooperationUtil::closeOption();
     if (option == "Minimise") {
+        DLOG << "Close option is 'Minimise'";
         minimizedAPP();
         return;
     }
-    if (option == "Exit")
+    if (option == "Exit") {
+        DLOG << "Close option is 'Exit'";
         QApplication::quit();
+    }
 
     CooperationDialog dlg(this);
 
@@ -312,15 +330,22 @@ void MainWindow::showCloseDialog()
 
     int code = dlg.exec();
     if (code == QDialog::Accepted) {
+        DLOG << "Dialog accepted";
         bool isExit = op2->checkState() == Qt::Checked;
         if (op3->checkState() == Qt::Checked) {
+            DLOG << "Saving close option";
             CooperationUtil::saveOption(isExit);
         }
 
-        if (isExit)
+        if (isExit) {
+            DLOG << "Exiting application";
             QApplication::quit();
-        else
+        } else {
+            DLOG << "Minimizing application";
             minimizedAPP();
+        }
+    } else {
+        DLOG << "Dialog rejected";
     }
 }
 

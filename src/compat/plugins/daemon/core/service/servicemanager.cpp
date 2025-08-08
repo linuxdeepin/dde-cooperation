@@ -122,7 +122,7 @@ fastring ServiceManager::genPeerInfo()
         { "username", Util::getUsername() },
         { "hostname", Util::getHostname() },
         { "ipv4", Util::getFirstIp() },
-        { "share_connect_ip", Util::getFirstIp() },
+        { "share_connect_ip", "" },
         { "port", UNI_RPC_PORT_BASE },
         { "os_type", Util::getOSType() },
         { "mode_type", mode },

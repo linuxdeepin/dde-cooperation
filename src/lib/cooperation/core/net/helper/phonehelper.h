@@ -10,6 +10,9 @@
 #include <QSize>
 
 namespace cooperation_core {
+
+inline constexpr char KdownloadUrl[] { "https://www.chinauos.com/resource/assistant" };
+
 class MainWindow;
 class ScreenMirroringWindow;
 class PhoneHelper : public QObject

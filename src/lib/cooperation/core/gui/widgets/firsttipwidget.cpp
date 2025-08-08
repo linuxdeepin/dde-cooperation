@@ -44,8 +44,10 @@ void FirstTipWidget::themeTypeChanged()
         shadowEffect->setColor(QColor(10, 57, 99, 128));
         bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.png").pixmap(234, 158));
     }
-    if (!qApp->property("onlyTransfer").toBool())
+    if (!qApp->property("onlyTransfer").toBool()) {
+        DLOG << "onlyTransfer property is false, setting connect icon";
         action->setPixmap(QIcon::fromTheme("connect").pixmap(12, 12));
+    }
 #ifndef __linux__
     action->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/texts/connect_18px.svg").pixmap(12, 12));
 #endif
@@ -139,6 +141,7 @@ void FirstTipWidget::initbackgroundFrame()
         shadowEffect->setColor(QColor(122, 192, 255, 128));
         shadowEffect->setOffset(0, 2);
         if (i % 2 == 0) {
+            DLOG << "Processing even tip index:" << i;
             QString lightStyle = "color: rgba(0, 0, 0, 0.6);";
             QString darkStyle = "color: rgba(255, 255, 255, 0.6);";
             CooperationGuiHelper::initThemeTypeConnect(textLabel, lightStyle, darkStyle);
@@ -162,6 +165,7 @@ void FirstTipWidget::initbackgroundFrame()
             vLayout->addLayout(lineLayout);
             vLayout->addSpacing(4);
         } else {
+            DLOG << "Processing odd tip index:" << i;
             QString lightStyle = "color: rgba(0, 0, 0, 0.7);";
             QString darkStyle = "color: rgba(255, 255, 255, 0.7);";
             CooperationGuiHelper::setAutoFont(textLabel, 12, QFont::Medium);
@@ -174,12 +178,14 @@ void FirstTipWidget::initbackgroundFrame()
 
             //最后一句话有图标单独处理
             if (i + 1 == tips.size()) {
+                DLOG << "Last tip, handling icon";
                 action = new QLabel(this);
                 action->setAlignment(Qt::AlignCenter);
                 action->setFixedSize(20, 20);
 
                 QString remainTip;
                 if (qApp->property("onlyTransfer").toBool()) {
+                    DLOG << "onlyTransfer is true, setting send file icon";
                     action->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/texts/send_18px.svg").pixmap(12, 12));
                     QString lightStyle = "background-color: rgb(0, 129, 255); "
                                          "border-radius: 10px;";
@@ -188,6 +194,7 @@ void FirstTipWidget::initbackgroundFrame()
                     CooperationGuiHelper::initThemeTypeConnect(action, lightStyle, darkStyle);
                     remainTip = tr("to send the file");
                 } else {
+                    DLOG << "onlyTransfer is false, setting connect icon";
                     QString lightStyle = "background-color: white; "
                                          "border-radius: 10px;";
                     QString darkStyle = "background-color: rgba(255, 255, 255, 0.2); "
@@ -208,8 +215,10 @@ void FirstTipWidget::initbackgroundFrame()
                 lineLayout->addWidget(action);
                 lineLayout->addSpacing(6);
                 lineLayout->addWidget(textLabel2, Qt::AlignBottom);
-            } else
+            } else {
+                DLOG << "Not the last tip, adding vertical spacing";
                 vLayout->addSpacing(8);
+            }
         }
     }
 
@@ -230,9 +239,14 @@ void FirstTipWidget::inittipBtn()
     tipBtn->setIcon(QIcon::fromTheme(":/icons/deepin/builtin/icons/close_white.svg"));
     tipBtn->setIconSize(QSize(8, 8));
     connect(tipBtn, &QToolButton::clicked, this, [this]() {
+        DLOG << "Tip button clicked";
         QFile flag(deepin_cross::CommonUitls::tipConfPath());
-        if (flag.open(QIODevice::WriteOnly))
+        if (flag.open(QIODevice::WriteOnly)) {
+            DLOG << "Successfully opened tip config file for writing";
             flag.close();
+        } else {
+            WLOG << "Failed to open tip config file for writing";
+        }
         setVisible(false);
     });
     tipBtn->setStyleSheet("QToolButton { background-color: rgba(0, 0, 0, 0.1); border-radius: 9px; }"
@@ -258,10 +272,13 @@ void LineWidget::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     QPainter painter(this);
     QColor color;
-    if (CooperationGuiHelper::instance()->isDarkTheme())
+    if (CooperationGuiHelper::instance()->isDarkTheme()) {
+        DLOG << "Dark theme detected, setting dark line color";
         color.setRgb(189, 222, 255);
-    else
+    } else {
+        DLOG << "Light theme detected, setting light line color";
         color.setRgb(33, 138, 244);
+    }
     color.setAlphaF(0.17);
 
     QPen pen;
@@ -292,8 +309,10 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 
     int textWidth = metrics.horizontalAdvance(text());
     QString elidedtext = text();
-    if (textWidth > maxWidth)
+    if (textWidth > maxWidth) {
+        DLOG << "Text width" << textWidth << "exceeds maxWidth" << maxWidth << ", eliding text";
         elidedtext = metrics.elidedText(text(), Qt::ElideRight, maxWidth);
+    }
 
     painter.drawText(rect(), Qt::AlignLeft, elidedtext);
 }

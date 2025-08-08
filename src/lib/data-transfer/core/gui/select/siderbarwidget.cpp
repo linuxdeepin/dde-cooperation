@@ -47,6 +47,7 @@ SidebarWidget::SidebarWidget(QWidget *parent) : QListView(parent)
 
     QObject::connect(TransferHelper::instance(), &TransferHelper::remoteRemainSpace, this,
                      &SidebarWidget::updateRemoteSpaceSize);
+    DLOG << "SidebarWidget init done";
 }
 
 SidebarWidget::~SidebarWidget()
@@ -86,10 +87,13 @@ void SidebarWidget::updateSiderDataAndUi(QStandardItem *siderbarItem, quint64 si
 
 void SidebarWidget::updateSelectSizeUi(const QString &sizeStr)
 {
+    DLOG << "Updating selected size UI";
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
+        DLOG << "Transfer method is LocalExport, updating local transfer label";
         localTransferLabel->setText(QString(tr("Select:%1").arg(sizeStr)));
     } else {
+        DLOG << "Transfer method is NetworkTransmission, updating selected size label";
         selectSizeStr = sizeStr;
         updateUserSelectFileSizeUi();
         // update process
@@ -99,9 +103,12 @@ void SidebarWidget::updateSelectSizeUi(const QString &sizeStr)
 
 void SidebarWidget::updateAllSizeUi(const quint64 &size, const bool &isAdd)
 {
+    DLOG << "Updating all size UI";
     if (isAdd) {
+        DLOG << "Adding size to all size";
         allSize += size;
     } else {
+        DLOG << "Subtracting size from all size";
         allSize -= size;
     }
     updateUserSelectFileSizeUi();
@@ -109,6 +116,7 @@ void SidebarWidget::updateAllSizeUi(const quint64 &size, const bool &isAdd)
 
 void SidebarWidget::addDiskFileNum(QStandardItem *siderbarItem, int num)
 {
+    DLOG << "Updating file number for sidebar item";
     sidebarDiskList[siderbarItem].allFileNum = num;
 }
 
@@ -118,13 +126,17 @@ void SidebarWidget::changeUI()
 
     QString method = OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0];
     if (method == TransferMethod::kLocalExport) {
+        DLOG << "Transfer method is LocalExport, showing local transfer label";
         localTransferLabel->setVisible(true);
         userSelectFileSize->setVisible(false);
         processLabel->setVisible(false);
     } else if (method == TransferMethod::kNetworkTransmission) {
+        DLOG << "Transfer method is NetworkTransmission, showing network transfer labels";
         localTransferLabel->setVisible(false);
         userSelectFileSize->setVisible(true);
         processLabel->setVisible(true);
+    } else {
+        DLOG << "Unknown transfer method:" << method.toStdString();
     }
 }
 
@@ -161,6 +173,7 @@ void SidebarWidget::getUpdateDeviceSingla()
 
     for (const QStorageInfo &device : devices) {
         if (device.isReadOnly() || !device.isReady()) {
+            DLOG << "Excluding read-only or unready device:" << device.rootPath().toStdString();
             devices.removeOne(device);
             continue;
         }
@@ -168,11 +181,13 @@ void SidebarWidget::getUpdateDeviceSingla()
 
         // delete C://
         if (rootPath.contains(cPath)) {
+            DLOG << "Excluding C: drive:" << rootPath.toStdString();
             devices.removeOne(device);
             continue;
         }
 
         if (deviceList.contains(device)) {
+            DLOG << "Device already in list, skipping:" << device.rootPath().toStdString();
             deviceList.removeOne(device);
             continue;
         }
@@ -182,6 +197,7 @@ void SidebarWidget::getUpdateDeviceSingla()
 
     for (const QStorageInfo &device : deviceList) {
         // del device
+        DLOG << "Removing device:" << device.rootPath().toStdString();
         updateDevice(device, false);
     }
     deviceList = devices;
@@ -189,6 +205,7 @@ void SidebarWidget::getUpdateDeviceSingla()
 
 void SidebarWidget::updateCurSelectFileNum(const QString &path, bool isAdd)
 {
+    DLOG << "Updating current selected file number";
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
     QStandardItem *siderbarItem = filemap->value(path).siderbarItem;
     if (isAdd) {
@@ -202,6 +219,7 @@ void SidebarWidget::updateCurSelectFileNum(const QString &path, bool isAdd)
 
 void SidebarWidget::onClick(const QModelIndex &index)
 {
+    DLOG << "Sidebar item clicked";
     if (model()->data(index, Qt::WhatsThisRole).toBool()) {
         model()->setData(index, false, Qt::WhatsThisRole);
         QString path = model()->data(index, Qt::UserRole).toString();
@@ -223,9 +241,12 @@ void SidebarWidget::onClick(const QModelIndex &index)
 
 void SidebarWidget::updateRemoteSpaceSize(int size)
 {
+    DLOG << "Updating remote space size";
     if (size < 1024) {
+        DLOG << "Size is less than 1024, updating as GB";
         remoteSpaceSize = QString("%1GB").arg(size);
     } else {
+        DLOG << "Size is greater than 1024, updating as TB";
         remoteSpaceSize = QString("%1TB").arg(float(size / 1024));
     }
     updateUserSelectFileSizeUi();
@@ -237,6 +258,7 @@ void SidebarWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
 
     if (isAdd) {
         // add ui
+        DLOG << "Adding device UI";
         QString rootPath = device.rootPath();
         QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
         QStandardItem *item = new QStandardItem();
@@ -266,6 +288,7 @@ void SidebarWidget::updateDevice(const QStorageInfo &device, const bool &isAdd)
         emit updateFileview(item, true);
     } else {
         // del ui
+        DLOG << "Deleting device UI";
         QString rootPath = device.rootPath();
         LOG << "del rootPath" << rootPath.toStdString();
         auto iterator = sidebarDiskList.begin();
@@ -338,6 +361,7 @@ void SidebarWidget::initData()
         siderbarDiskInfo.size = 0;
         siderbarDiskInfo.rootPath = iterator.value();
         sidebarDiskList[item] = siderbarDiskInfo;
+        DLOG << "Added user path:" << iterator.key().toStdString() << "with root path:" << iterator.value().toStdString();
     }
 
     LOG << "sider model init size:" << model->rowCount();
@@ -375,6 +399,7 @@ void SidebarWidget::initUi()
     localTransferLabel->setText(QString(tr("Select:%1").arg("0B")));
     localTransferLabel->setGeometry(70, 460, 100, 17);
     localTransferLabel->setVisible(false);
+    DLOG << "Sidebar UI initialized";
 }
 
 void SidebarWidget::initSidebarSize()
@@ -387,8 +412,10 @@ void SidebarWidget::initSidebarSize()
     QMap<QString, FileInfo> *filemap = CalculateFileSizeThreadPool::instance()->getFileMap();
     for (auto iterator = filemap->begin(); iterator != filemap->end(); ++iterator) {
         if (iterator.value().isCalculate) {
-            if (!QDir(iterator.key()).rootPath().contains(cPath))
+            if (!QDir(iterator.key()).rootPath().contains(cPath)) {
+                // DLOG << "File is not in C: drive, skipping:" << iterator.key().toStdString();
                 continue;
+            }
             sidebarDiskList[iterator.value().siderbarItem].size += iterator.value().size;
         }
     }
@@ -409,6 +436,7 @@ void SidebarWidget::initSidebarUi()
 
 void SidebarWidget::updateSiderbarUi(QStandardItem *siderbarItem)
 {
+    DLOG << "Updating sidebar item UI";
     QString sizeStr = fromByteToQstring(sidebarDiskList.value(siderbarItem).size);
     siderbarItem->setData(sizeStr, Qt::ToolTipRole);
 }
@@ -434,10 +462,13 @@ void SidebarWidget::updateSelectFileNumState(QStandardItem *siderbarItem)
     ListSelectionState state = ListSelectionState::unselected;
     if (curNum == 0) {
         state = ListSelectionState::unselected;
+        DLOG << "Current selected item number is 0, state: unselected";
     } else if (curNum < sidebarDiskList.value(siderbarItem).allFileNum) {
         state = ListSelectionState::selecthalf;
+        DLOG << "Current selected item number is less than total, state: selecthalf";
     } else {
         state = ListSelectionState::selectall;
+        DLOG << "Current selected item number is equal to total, state: selectall";
     }
     // LOG << "root path:" << sidebarDiskList[siderbarItem].rootPath
     //        << " current :" << sidebarDiskList[siderbarItem].curSelectFileNum << "state" << state
@@ -451,5 +482,6 @@ void SidebarWidget::updateSelectFileNumState(QStandardItem *siderbarItem)
 
 void SidebarWidget::updateSidebarSize(QStandardItem *siderbarItem, quint64 size)
 {
+    DLOG << "Updating sidebar size for item";
     sidebarDiskList[siderbarItem].size += size;
 }

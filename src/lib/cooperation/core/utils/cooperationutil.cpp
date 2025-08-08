@@ -93,6 +93,7 @@ void CooperationUtil::registerDeviceOperation(const QVariantMap &map)
 {
     DLOG << "Registering device operation";
     if (d->window) {
+        DLOG << "Main window exists, registering operation";
         d->window->onRegistOperations(map);
     } else {
         WLOG << "No main window to register operation";
@@ -110,12 +111,14 @@ QVariantMap CooperationUtil::deviceInfo()
     DLOG << "Getting device info";
     QVariantMap info;
 #ifdef linux
+    DLOG << "Linux platform, getting discovery mode from DConfigManager";
     auto value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::DiscoveryModeKey, 0);
     int mode = value.toInt();
     mode = (mode < 0) ? 0 : (mode > 1) ? 1 : mode;
     info.insert(AppSettings::DiscoveryModeKey, mode);
     DLOG << "Discovery mode:" << mode;
 #else
+    DLOG << "Non-Linux platform, getting discovery mode from ConfigManager";
     auto value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::DiscoveryModeKey);
     info.insert(AppSettings::DiscoveryModeKey, value.isValid() ? value.toInt() : 0);
 #endif
@@ -133,12 +136,14 @@ QVariantMap CooperationUtil::deviceInfo()
     info.insert(AppSettings::LinkDirectionKey, value.isValid() ? value.toInt() : 0);
 
 #ifdef linux
+    DLOG << "Linux platform, getting transfer mode from DConfigManager";
     value = DConfigManager::instance()->value(kDefaultCfgPath, DConfigKey::TransferModeKey, 0);
     mode = value.toInt();
     mode = (mode < 0) ? 0 : (mode > 2) ? 2 : mode;
     info.insert(AppSettings::TransferModeKey, mode);
     DLOG << "Transfer mode:" << mode;
 #else
+    DLOG << "Non-Linux platform, getting transfer mode from ConfigManager";
     value = ConfigManager::instance()->appAttribute(AppSettings::GenericGroup, AppSettings::TransferModeKey);
     info.insert(AppSettings::TransferModeKey, value.isValid() ? value.toInt() : 0);
 #endif
@@ -198,10 +203,12 @@ void CooperationUtil::initNetworkListener()
 
 void CooperationUtil::checkNetworkState()
 {
+    DLOG << "Checking network state";
     // 网络状态检测
     bool isConnected = deepin_cross::CommonUitls::getFirstIp().size() > 0;
 
     if (isConnected != d->isOnline) {
+        DLOG << "Network state changed from" << d->isOnline << "to" << isConnected;
         d->isOnline = isConnected;
         Q_EMIT onlineStateChanged(deepin_cross::CommonUitls::getFirstIp().c_str());
     }

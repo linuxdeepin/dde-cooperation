@@ -56,8 +56,10 @@ void CooperationTaskDialog::init()
 {
     DLOG << "Initializing dialog components";
 #ifdef linux
+    DLOG << "Linux platform, setting icon";
     setIcon(QIcon::fromTheme("dde-cooperation"));
 #else
+    DLOG << "Non-Linux platform, setting window icon";
     setWindowIcon(QIcon(":/icons/deepin/builtin/icons/dde-cooperation_128px.svg"));
 #endif
     setFixedWidth(380);
@@ -120,6 +122,7 @@ QWidget *CooperationTaskDialog::createWaitPage()
 
 QWidget *CooperationTaskDialog::createFailPage()
 {
+    DLOG << "Creating fail page";
     QWidget *widget = new QWidget(this);
     QVBoxLayout *vlayout = new QVBoxLayout(widget);
     vlayout->setContentsMargins(0, 0, 0, 0);
@@ -140,6 +143,7 @@ QWidget *CooperationTaskDialog::createFailPage()
 
     vlayout->addWidget(failMsgLabel);
     vlayout->addLayout(hlayout);
+    DLOG << "Fail page created";
     return widget;
 }
 

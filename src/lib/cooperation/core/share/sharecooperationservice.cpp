@@ -50,6 +50,8 @@ void ShareCooperationService::setBarrierType(BarrierType type)
 
 void ShareCooperationService::setServerConfig(const DeviceInfoPointer selfDevice, const DeviceInfoPointer targetDevice)
 {
+    DLOG << "Setting server config with self device:" << selfDevice->ipAddress().toStdString()
+                              << "target device:" << targetDevice->ipAddress().toStdString();
     ShareServerConfig config;
     config.server_screen = selfDevice->ipAddress();
     config.client_screen = targetDevice->ipAddress();
@@ -78,16 +80,20 @@ bool ShareCooperationService::setServerConfig(const ShareServerConfig &config)
 {
     if (BarrierType::Server != _brrierType) {
         ELOG << "not the brrier server !!!!!!!";
+        DLOG << "Barrier type is not Server, returning false";
         return false;
     }
 
-    if (!checkParam(config))
+    if (!checkParam(config)) {
+        DLOG << "Config parameters are invalid, returning false";
         return false;
+    }
     auto path = configFilename();
     QFile file(path);
     if (!file.open(QFileDevice::OpenModeFlag::Truncate | QFileDevice::OpenModeFlag::WriteOnly)) {
         ELOG << "open server config error, path = " << path.toStdString() << ", case : "
              << file.errorString().toStdString();
+        DLOG << "Failed to open server config file, returning false";
         return false;
     }
 
@@ -233,16 +239,19 @@ void ShareCooperationService::stopBarrier()
     _expectedRunning = false;
 
     if (!barrierProcess()) {
+        DLOG << "No barrier process, terminating all existing barriers";
         // kill existed process.
         terminateAllBarriers();
         return;
     }
 
     if (barrierProcess()->isOpen()) {
+        DLOG << "Barrier process is open, attempting graceful shutdown";
         // try to shutdown child gracefully
         barrierProcess()->write(&ShutdownCh, 1);
 #if defined(Q_OS_WIN)
         // it will freeze UI if aync wait on windows
+        DLOG << "Waiting for barrier process to finish on Windows";
         barrierProcess()->waitForFinished(100);
 #else
         DLOG << "Waiting for barrier process to exit (Linux)";
@@ -251,6 +260,8 @@ void ShareCooperationService::stopBarrier()
         
         barrierProcess()->close();
         DLOG << "Barrier process closed";
+    } else {
+        DLOG << "Barrier process is not open";
     }
 
     delete barrierProcess();
@@ -434,8 +445,10 @@ void ShareCooperationService::barrierFinished(int exitCode, QProcess::ExitStatus
     // auto restart if expect keep running
     if (_expectedRunning) {
 #if defined(Q_OS_WIN)
+        DLOG << "Windows platform, restarting barrier immediately";
         restartBarrier();
 #else
+        DLOG << "Linux platform, restarting barrier after 1 second";
         QTimer::singleShot(1000, this, SLOT(restartBarrier()));
 #endif
         LOG << "detected process not running, auto restarting";

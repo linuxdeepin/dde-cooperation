@@ -105,6 +105,7 @@ void TransferringWidget::initUI()
     mainLayout->addSpacing(5);
     mainLayout->addLayout(indexLayout);
     fileNameFrame->setVisible(false);
+    DLOG << "Transferring widget initialized";
 }
 
 void TransferringWidget::initConnect()
@@ -122,6 +123,7 @@ void TransferringWidget::updateInformationPage()
     DLOG << "Toggling process information page visibility";
 
     if (!isVisible) {
+        DLOG << "Process information page is hidden, showing it";
         isVisible = true;
         iconWidget->setVisible(false);
         fileLabel->setVisible(false);
@@ -138,6 +140,7 @@ void TransferringWidget::updateInformationPage()
         showAnimation->start();
 
     } else {
+        DLOG << "Process information page is visible, hiding it";
         isVisible = false;
 
         QString display = QString("<a href=\"https://\" style=\"text-decoration:none;\">%1</a>")
@@ -163,6 +166,7 @@ void TransferringWidget::updateInformationPage()
 
 void TransferringWidget::changeTimeLabel(const QString &time)
 {
+    DLOG << "Updating time label with time:" << time.toStdString();
     timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes")).arg(time));
 }
 
@@ -180,31 +184,40 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
 #if defined(_WIN32) || defined(_WIN64)
     if (OptionsManager::instance()->getUserOption(Options::kTransferMethod)[0]
         == TransferMethod::kLocalExport) {
+        DLOG << "Transfer method is LocalExport, returning";
         return;
     }
 #else
-    if (tpye == tr("Transfering") && content.contains("transfer.json"))
+    if (tpye == tr("Transfering") && content.contains("transfer.json")) {
+        DLOG << "Type is Transfering and content contains transfer.json, checking size";
         TransferUtil::checkSize(content);
+    }
 #endif
 
     //处理过程内容，只显示一级目录文件
     QString str = resetContent(tpye, content);
 
     if (!str.isEmpty()) {
+        DLOG << "Content is not empty, updating process window and file label";
         processWindow->updateContent(str, tpye);
         StyleHelper::setAutoFont(fileLabel, 12, QFont::Normal);
         fileLabel->setText(
                 QString("<font>%1 %2<font style='color: rgba(0, 0, 0, 0.6);'>&nbsp;&nbsp;&nbsp;")
                         .arg(tpye, str));
+    } else {
+        DLOG << "Content is empty, skipping process window and file label update";
     }
 
-    if (estimatedtime == -1)
+    if (estimatedtime == -1) {
+        DLOG << "Estimated time is -1, returning";
         return;
+    }
 
     progressLabel->setProgress(progressbar);
 
     timeLabel->setText(QString(tr("Calculationing...")));
     if (estimatedtime > 0) {
+        DLOG << "Estimated time is positive, updating title and time label";
         titileLabel->setText(tr("Transferring..."));
         if (estimatedtime > 60)
             timeLabel->setText(QString(tr("Transfer will be completed in %1 minutes"))
@@ -214,6 +227,7 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
                     QString(tr("Transfer will be completed in %1 secondes")).arg(estimatedtime));
     }
     if (estimatedtime == -2) {
+        DLOG << "Estimated time is -2, setting time label to --";
         timeLabel->setText(QString(tr("Transfer will be completed in --")));
     }
 
@@ -254,44 +268,61 @@ void TransferringWidget::clear()
 
 QString TransferringWidget::resetContent(const QString &type, const QString &content)
 {
-    if (!type.startsWith(tr("Decompressing")))
+    DLOG << "Resetting content - Type:" << type.toStdString() << "Content:" << content.toStdString();
+    if (!type.startsWith(tr("Decompressing"))) {
+        DLOG << "Type does not start with Decompressing, returning original content";
         return content;
+    }
 
     QString res = content;
 
     if (finishJobs.isEmpty()) {
+        DLOG << "finishJobs is empty";
         if (type.startsWith(tr("Transfering"))) {
+            DLOG << "Type starts with Transfering";
             QStringList parts = content.split("/");
-            if (parts.size() > 3)
+            if (parts.size() > 3) {
+                DLOG << "Content has more than 3 parts, extracting path";
                 res = "/" + parts[1] + "/" + parts[2] + "/" + parts[3];
+            } else {
+                DLOG << "Content has 3 or less parts, using full content";
+            }
         }
         finishJobs.append(res);
         return QString();
     }
 
     res = getTransferFileName(content, finishJobs.first());
-    if (finishJobs.contains(res))
+    if (finishJobs.contains(res)) {
+        DLOG << "finishJobs already contains result, returning empty string";
         return QString();
-    else
+    } else {
+        DLOG << "finishJobs does not contain result, appending and returning result";
         finishJobs.append(res);
+    }
     return res;
 }
 
 QString TransferringWidget::getTransferFileName(const QString &fullPath, const QString &targetPath)
 {
+    DLOG << "Getting transfer file name - FullPath:" << fullPath.toStdString()
+         << "TargetPath:" << targetPath.toStdString();
     std::string path = fullPath.toStdString();
     std::string toRemove = targetPath.toStdString();
 
     size_t found = path.find(toRemove);   // 查找子字符串的位置
     auto index = found + toRemove.length() + 1;
     if (found != std::string::npos && index <= path.length()) {   // 如果找到了子字符串
+        DLOG << "Substring found, extracting file name";
         std::string result = path.substr(index);   // 截取子字符串之后的部分
         found = result.find('/');   // 查找第一个路径名
         if (found != std::string::npos) {
+            DLOG << "Slash found, extracting file name";
             result = result.substr(0, found);   // 截取第一个路径名
         }
         return QString::fromStdString(result);
     } else {
+        DLOG << "Substring not found, returning empty string";
         return QString();
     }
 }
@@ -319,8 +350,10 @@ void ProcessWindow::updateContent(const QString &name, const QString &type)
     QStandardItemModel *model = qobject_cast<QStandardItemModel *>(this->model());
     int num;
     if (type == tr("Installing")) {
+        DLOG << "Type is Installing, setting num to 1";
         num = 1;
     } else {
+        DLOG << "Type is not Installing, setting num to 0";
         num = 0;
     }
 
@@ -328,6 +361,7 @@ void ProcessWindow::updateContent(const QString &name, const QString &type)
         QModelIndex index = model->index(0, col);
         QString itemName = model->data(index, Qt::DisplayRole).toString();
         if (itemName == nameT) {
+            DLOG << "Item found, updating ToolTipRole and UserRole";
             model->setData(index, typeT, Qt::ToolTipRole);
             model->setData(index, num, Qt::UserRole);
             return;
@@ -383,11 +417,13 @@ void ProcessWindow::init()
 ProgressBarLabel::ProgressBarLabel(QWidget *parent)
     : QLabel(parent), m_progress(0)
 {
+    DLOG << "Initializing progress bar label";
     setFixedSize(280, 8);
 }
 
 void ProgressBarLabel::setProgress(int progress)
 {
+    DLOG << "Setting progress to:" << progress;
     m_progress = progress;
     update();
 }

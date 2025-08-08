@@ -53,23 +53,27 @@ void UnzipWorker::run()
 
 int UnzipWorker::getNumFiles(QString filepath)
 {
+    LOG << "UnzipWorker::getNumFiles started with file:" << filepath.toStdString();
     const char *zipFilePath = filepath.toLocal8Bit().constData();
     struct zip *archive = zip_open(zipFilePath, 0, NULL);
 
     if (archive) {
         int fileCount = zip_get_num_files(archive);
         LOG << "Number of files in ZIP file:" << fileCount;
+        DLOG << "Successfully opened ZIP file and got file count:" << fileCount;
 
         zip_close(archive);
         return fileCount;
     } else {
         LOG << "Unable to open ZIP file";
+        DLOG << "Failed to open ZIP file:" << filepath.toStdString();
         return 0;
     }
 }
 
 bool UnzipWorker::isValid(QString filepath)
 {
+    LOG << "UnzipWorker::isValid started with file:" << filepath.toStdString();
     const char *zipFilePath = filepath.toLocal8Bit().constData();
     struct zip *z = zip_open(zipFilePath, 0, nullptr);
 
@@ -108,12 +112,13 @@ bool UnzipWorker::isValid(QString filepath)
     zip_close(z);
     bool res = TransferUtil::checkSize(tempfile);
     QFile::remove(tempfile);
+    LOG << "UnzipWorker::isValid validation result:" << res;
     return res;
 }
 
 bool UnzipWorker::extract()
 {
-
+    LOG << "UnzipWorker::extract started with file:" << filepath.toStdString();
     QStringList arguments;
     arguments << "-O"
               << "utf-8"
@@ -150,11 +155,13 @@ bool UnzipWorker::extract()
     if (process.exitCode() != 0)
         LOG << "Error message:" << process.errorString().toStdString();
     process.waitForFinished();
+    LOG << "UnzipWorker::extract extraction result:" << process.exitCode();
     return true;
 }
 
 bool UnzipWorker::set()
 {
+    LOG << "UnzipWorker::set started with file:" << filepath.toStdString();
     QFile file(targetDir + "/" + datajson);
     if (!file.open(QIODevice::ReadOnly)) {
         WLOG << "could not open datajson file";
@@ -173,13 +180,16 @@ bool UnzipWorker::set()
     //Place the file in the corresponding user directory
     setUesrFile(jsonObj);
 
+    DLOG << "UnzipWorker::set finished with result true";
     return true;
 }
 
 bool UnzipWorker::setUesrFile(QJsonObject jsonObj)
 {
+    DLOG << "UnzipWorker::setUesrFile started with jsonObj";
     QJsonValue userFileValue = jsonObj["user_file"];
     if (userFileValue.isArray()) {
+        DLOG << "user_file is an array";
         const QJsonArray &userFileArray = userFileValue.toArray();
         for (const auto &value : userFileArray) {
             QString file = value.toString();

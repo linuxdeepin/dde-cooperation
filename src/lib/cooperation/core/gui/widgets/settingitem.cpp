@@ -60,12 +60,16 @@ void SettingItem::paintEvent(QPaintEvent *event)
                      QSize(radius * 2, radius * 2)),
                270, 90);
 #ifdef linux
+    // DLOG << "Linux platform, setting background color";
     QColor color(0, 0, 0, static_cast<int>(255 * 0.03));
 #else
+    // DLOG << "Non-Linux platform, setting background color";
     QColor color(0, 0, 0, static_cast<int>(255 * 0.09));
 #endif
-    if (CooperationGuiHelper::isDarkTheme())
+    if (CooperationGuiHelper::isDarkTheme()) {
+        // DLOG << "Dark theme detected, adjusting color";
         color.setRgb(255, 255, 255, static_cast<int>(255 * 0.05));
+    }
 
     painter.fillPath(path, color);
 

@@ -11492,7 +11492,7 @@ class GTEST_INTERNAL_EMPTY_BASE_CLASS NiceMock
   static_assert(!internal::HasStrictnessModifier<MockClass>(),
                 "Can't apply NiceMock to a class hierarchy that already has a "
                 "strictness modifier. See "
-                "https://google.github.io/googletest/"
+                "googletest/"
                 "gmock_cook_book.html#NiceStrictNaggy");
   NiceMock() : MockClass() {
     static_assert(sizeof(*this) == sizeof(MockClass),
@@ -11531,7 +11531,7 @@ class GTEST_INTERNAL_EMPTY_BASE_CLASS NaggyMock
   static_assert(!internal::HasStrictnessModifier<MockClass>(),
                 "Can't apply NaggyMock to a class hierarchy that already has a "
                 "strictness modifier. See "
-                "https://google.github.io/googletest/"
+                
                 "gmock_cook_book.html#NiceStrictNaggy");
 
  public:
@@ -11574,7 +11574,7 @@ class GTEST_INTERNAL_EMPTY_BASE_CLASS StrictMock
       !internal::HasStrictnessModifier<MockClass>(),
       "Can't apply StrictMock to a class hierarchy that already has a "
       "strictness modifier. See "
-      "https://google.github.io/googletest/"
+      
       "gmock_cook_book.html#NiceStrictNaggy");
   StrictMock() : MockClass() {
     static_assert(sizeof(*this) == sizeof(MockClass),

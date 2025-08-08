@@ -75,6 +75,7 @@ void UploadFileWidget::initUI()
         DLOG << "Next button clicked, checking backup file";
         if (!checkBackupFile(uploadFileFrame->getZipFilePath())) {
             qWarning() << "Backup file validation failed";
+            DLOG << "Backup file validation failed";
             tipLabel->setVisible(true);
             nextButton->setText(tr("Retry"));
             return;
@@ -86,6 +87,7 @@ void UploadFileWidget::initUI()
     });
 
     connect(this, &UploadFileWidget::Initial, this, [this]() {
+        DLOG << "Initial signal received";
         emit uploadFileFrame->updateUI(uploadStatus::Initial);
         return;
     });
@@ -108,10 +110,12 @@ void UploadFileWidget::initUI()
     connect(uploadFileFrame, &UploadFileFrame::updateUI, this, [this, indelabel](int status) {
         tipLabel->setVisible(false);
         if (status == uploadStatus::valid) {
+            DLOG << "Upload status is valid";
             nextButton->setEnabled(true);
             nextButton->setText(tr("Next"));
             indelabel->setIndex(2);
         } else {
+            DLOG << "Upload status is not valid";
             indelabel->setIndex(1);
             nextButton->setEnabled(false);
             nextButton->setText(tr("Next"));
@@ -150,6 +154,7 @@ void UploadFileWidget::nextPage()
     DLOG << "Navigating to transferring widget";
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
+        DLOG << "Stacked widget found, setting current index to transferringwidget";
         stackedWidget->setCurrentIndex(PageName::transferringwidget);
     } else {
         WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
@@ -160,6 +165,7 @@ void UploadFileWidget::backPage()
 {
     QStackedWidget *stackedWidget = qobject_cast<QStackedWidget *>(this->parent());
     if (stackedWidget) {
+        DLOG << "Stacked widget found, setting current index to choosewidget";
         stackedWidget->setCurrentIndex(PageName::choosewidget);
     } else {
         WLOG << "Jump to next page failed, qobject_cast<QStackedWidget *>(this->parent()) = nullptr";
@@ -172,10 +178,12 @@ void UploadFileWidget::themeChanged(int theme)
 
     //light
     if (theme == 1) {
+        DLOG << "Theme is light";
         setStyleSheet(".UploadFileWidget{background-color: white; border-radius: 10px;}");
         uploadFileFrame->themeChanged(1);
     } else {
         //dark
+        DLOG << "Theme is dark";
         setStyleSheet(".UploadFileWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
         uploadFileFrame->themeChanged(0);
     }
@@ -248,12 +256,15 @@ void UploadFileFrame::initUI()
     mainLayout->addSpacing(70);
 
     connect(closeBtn, &QPushButton::clicked, this, [this] {
+        DLOG << "Close button clicked, updating UI to Initial state";
         emit updateUI(uploadStatus::Initial);
     });
 
-    connect(this, &UploadFileFrame::updateUI, this, [WarningIconLabel, this, iconLabel, textLabel, displayLabel](int status) {
+    connect(this, &UploadFileFrame::updateUI, this, [this, WarningIconLabel, iconLabel, textLabel, displayLabel](int status) {
+        DLOG << "Update UI signal received with status:" << status;
         switch (status) {
         case uploadStatus::Initial: {
+            DLOG << "Setting UI to Initial state";
             fileFrame->setVisible(false);
             closeBtn->setVisible(false);
             WarningIconLabel->setVisible(false);
@@ -265,6 +276,7 @@ void UploadFileFrame::initUI()
             break;
         }
         case uploadStatus::valid: {
+            DLOG << "Setting UI to Valid state";
             fileFrame->setVisible(true);
             closeBtn->setVisible(true);
             WarningIconLabel->setVisible(false);
@@ -274,6 +286,7 @@ void UploadFileFrame::initUI()
             break;
         }
         case uploadStatus::formaterror: {
+            DLOG << "Setting UI to Format Error state";
             fileFrame->setVisible(false);
             closeBtn->setVisible(false);
             WarningIconLabel->setVisible(true);
@@ -285,6 +298,7 @@ void UploadFileFrame::initUI()
             break;
         }
         default:
+            DLOG << "Unknown upload status:" << status;
             break;
         }
     });
@@ -295,6 +309,7 @@ void UploadFileFrame::themeChanged(int theme)
     //light
     lightTheme = theme;
     if (theme == 1) {
+        DLOG << "Theme is light, setting stylesheet";
         setStyleSheet(".UploadFileFrame{background-color: rgba(0, 0, 0, 0.03);"
                       "border-radius: 10px;"
                       "border-style: dashed;"
@@ -302,6 +317,7 @@ void UploadFileFrame::themeChanged(int theme)
                       "border-color: rgba(0, 0, 0, 0.06);}");
     } else {
         //dark
+        DLOG << "Theme is dark, setting stylesheet";
         setStyleSheet(".UploadFileFrame{"
                       "background-color: rgba(255,255,255, 0.05);"
                       "border-radius: 10px;"
@@ -341,9 +357,12 @@ void UploadFileFrame::initFileFrame()
 
     connect(this, &UploadFileFrame::updateUI, this, [this, textLabel](int status) {
         if (status == uploadStatus::valid) {
+            DLOG << "Upload status is valid, updating file frame text";
             QFileInfo info(zipFilePath);
             textLabel->setText("<font color='gray' >" + info.fileName() + " </font>");
             StyleHelper::setAutoFont(textLabel, 12, QFont::Normal);
+        } else {
+            DLOG << "Upload status is not valid, not updating file frame text";
         }
     });
 }
@@ -357,8 +376,12 @@ void UploadFileFrame::uploadFile()
 {
     zipFilePath = QFileDialog::getOpenFileName(nullptr, tr("select zip file"), "", tr("ZIP file (*.zip)"));
     LOG << "set zipFilePath =" + zipFilePath.toStdString();
-    if (!zipFilePath.isEmpty())
+    if (!zipFilePath.isEmpty()) {
+        DLOG << "Zip file path is not empty, emitting updateUI signal";
         emit updateUI(uploadStatus::valid);
+    } else {
+        DLOG << "Zip file path is empty, not emitting updateUI signal";
+    }
 }
 
 void UploadFileFrame::dragEnterEvent(QDragEnterEvent *event)
@@ -391,14 +414,18 @@ void UploadFileFrame::dropEvent(QDropEvent *event)
 {
     themeChanged(lightTheme);
     const QList<QUrl> &urls = event->mimeData()->urls();
-    if (urls.size() != 1)
+    if (urls.size() != 1) {
+        DLOG << "Number of URLs is not 1, returning";
         return;
+    }
     QUrl url = urls.first();
     QFileInfo info(url.url());
     if (info.suffix() != "zip") {
+        DLOG << "File suffix is not zip, emitting formaterror";
         emit updateUI(uploadStatus::formaterror);
         return;
     } else {
+        DLOG << "File suffix is zip, setting zipFilePath and emitting valid";
         zipFilePath = url.path();
         LOG << "set zipFilePath =" + zipFilePath.toStdString();
         if (!zipFilePath.isEmpty())

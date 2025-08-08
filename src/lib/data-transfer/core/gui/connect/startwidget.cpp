@@ -25,6 +25,7 @@ StartWidget::~StartWidget()
 
 void StartWidget::initUI()
 {
+    DLOG << "StartWidget initUI";
     setStyleSheet(".StartWidget{background-color: white; border-radius: 10px;}");
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -55,6 +56,7 @@ void StartWidget::initUI()
     mainLayout->addWidget(textLabel2);
     mainLayout->addSpacing(60);
     mainLayout->addLayout(buttonLayout);
+    DLOG << "StartWidget initUI finished";
 }
 
 void StartWidget::nextPage()
@@ -69,9 +71,11 @@ void StartWidget::themeChanged(int theme)
 
     //light
     if (theme == 1) {
+        DLOG << "Theme is light, setting stylesheet";
         setStyleSheet(".StartWidget{background-color: white; border-radius: 10px;}");
     } else {
         //dark
+        DLOG << "Theme is dark, setting stylesheet";
         setStyleSheet(".StartWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
     }
 }

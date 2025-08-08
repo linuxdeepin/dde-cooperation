@@ -228,7 +228,7 @@ Copy the `boost', `doc' and `libs' directories into an existing boost 1.33.0,
 
 Before using Boost.Asio, the Boost.System library needs to be built. This can
 be done by running bjam in the libs/system/build directory. Consult the Boost
-Getting Started page (http://www.boost.org/more/getting_started.html) for more
+Getting Started page boost.org for more
 information on how to build the Boost libraries.
 EOF
 

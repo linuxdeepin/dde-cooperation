@@ -35,6 +35,7 @@ const char *Kcomputer_off_line = ":/icons/deepin/builtin/icons/computer_off_line
 StateLabel::StateLabel(QWidget *parent)
     : CooperationLabel(parent)
 {
+    DLOG << "Initializing StateLabel";
 }
 
 void StateLabel::paintEvent(QPaintEvent *event)
@@ -49,26 +50,32 @@ void StateLabel::paintEvent(QPaintEvent *event)
     QColor textColor;
     switch (st) {
     case DeviceInfo::Connected:
+        DLOG << "Device status: Connected";
         brushColor.setRgb(241, 255, 243);
         textColor.setRgb(51, 202, 78);
         if (CooperationGuiHelper::isDarkTheme()) {
+            DLOG << "Dark theme detected for Connected status";
             brushColor.setRgb(63, 70, 64, static_cast<int>(255 * 0.2));
             textColor.setRgb(67, 159, 83);
         }
         break;
     case DeviceInfo::Connectable:
+        DLOG << "Device status: Connectable";
         brushColor.setRgb(56, 127, 247, 22);
         textColor.setRgb(0, 130, 250);
         if (CooperationGuiHelper::isDarkTheme()) {
+            DLOG << "Dark theme detected for Connectable status";
             brushColor.setRgb(26, 84, 182, static_cast<int>(255 * 0.2));
             textColor.setRgb(0, 105, 202);
         }
         break;
     case DeviceInfo::Offline:
     default:
+        DLOG << "Device status: Offline or Unknown";
         brushColor.setRgb(0, 0, 0, 25);
         textColor.setRgb(0, 0, 0, 128);
         if (CooperationGuiHelper::isDarkTheme()) {
+            DLOG << "Dark theme detected for Offline status";
             brushColor.setRgb(255, 255, 255, static_cast<int>(255 * 0.05));
             textColor.setRgb(255, 255, 255, static_cast<int>(255 * 0.4));
         }
@@ -120,6 +127,7 @@ DeviceInfoPointer DeviceItem::deviceInfo() const
 
 void DeviceItem::initUI()
 {
+    DLOG << "Initializing device item";
     setFixedSize(480, qApp->property("onlyTransfer").toBool() ? 72 : 90);
     setBackground(8, NoType, TopAndBottom);
 
@@ -146,8 +154,10 @@ void DeviceItem::initUI()
 
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setContentsMargins(0, 0, 0, 0);
-    if (!qApp->property("onlyTransfer").toBool())
+    if (!qApp->property("onlyTransfer").toBool()) {
+        DLOG << "onlyTransfer property is false, adding stateLabel to layout";
         hLayout->addWidget(stateLabel);
+    }
     hLayout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding));
     vLayout->addLayout(hLayout);
 
@@ -159,10 +169,12 @@ void DeviceItem::initUI()
     mainLayout->addLayout(vLayout, 0);
     mainLayout->addWidget(btnBoxWidget, 0, Qt::AlignRight);
     setLayout(mainLayout);
+    DLOG << "Device item layout initialized";
 }
 
 void DeviceItem::initConnect()
 {
+    DLOG << "Initializing device item connections";
     connect(btnBoxWidget, &ButtonBoxWidget::buttonClicked, this, &DeviceItem::onButtonClicked);
 }
 
@@ -182,9 +194,11 @@ void DeviceItem::setDeviceName(const QString &name)
 
 void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
 {
+    DLOG << "Setting device status to:" << (int)status;
     stateLabel->setState(status);
     switch (status) {
     case DeviceInfo::Connected: {
+        DLOG << "Setting status to Connected";
         bool isPC = devInfo->deviceType() == DeviceInfo::DeviceType::PC;
         QIcon icon = QIcon::fromTheme(isPC ? Kcomputer_connected : "connect_phone");
         iconLabel->setPixmap(icon.pixmap(52, 52));
@@ -192,6 +206,7 @@ void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
         DLOG << "Device status set to Connected";
     } break;
     case DeviceInfo::Connectable: {
+        DLOG << "Setting status to Connectable";
         QIcon icon = QIcon::fromTheme(Kcomputer_can_connect);
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("connectable"));
@@ -199,6 +214,7 @@ void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
     } break;
     case DeviceInfo::Offline:
     default: {
+        DLOG << "Setting status to Offline or Unknown";
         QIcon icon = QIcon::fromTheme(Kcomputer_off_line);
         iconLabel->setPixmap(icon.pixmap(52, 52));
         stateLabel->setText(tr("offline"));
@@ -257,6 +273,7 @@ void DeviceItem::updateOperations()
 
 void DeviceItem::onButtonClicked(int index)
 {
+    DLOG << "Button clicked with index:" << index;
     if (!indexOperaMap.contains(index)) {
         WLOG << "Invalid operation index:" << index;
         return;
@@ -289,9 +306,12 @@ void DeviceItem::leaveEvent(QEvent *event)
 
 void DeviceItem::showEvent(QShowEvent *event)
 {
+    DLOG << "Item show event";
     if (hasFocus()) {
+        DLOG << "Item has focus, updating operations";
         updateOperations();
     } else {
+        DLOG << "Item has no focus, hiding operations";
         btnBoxWidget->setVisible(false);
     }
 
@@ -302,6 +322,7 @@ bool DeviceItem::eventFilter(QObject *watched, QEvent *event)
 {
     // Device name mask effect, implemented with gradient font color
     if (watched == nameLabel && event->type() == QEvent::Paint && btnBoxWidget->isVisible()) {
+        DLOG << "Painting name label";
         QPainter painter(nameLabel);
         QLinearGradient lg(nameLabel->rect().topLeft(), nameLabel->rect().bottomRight());
         lg.setColorAt(0.8, nameLabel->palette().windowText().color());

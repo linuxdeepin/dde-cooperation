@@ -6,6 +6,7 @@
 #include "gui/widgets/cooperationstatewidget.h"
 #include "gui/widgets/devicelistwidget.h"
 #include "common/commonutils.h"
+#include "net/helper/phonehelper.h"
 
 #include <QMouseEvent>
 #include <QTimer>
@@ -92,11 +93,13 @@ void PhoneWidget::switchWidget(PageName page)
 QRCodeWidget::QRCodeWidget(QWidget *parent)
     : QWidget(parent)
 {
+    DLOG << "Initializing QRCodeWidget";
     initUI();
 }
 
 void QRCodeWidget::initUI()
 {
+    DLOG << "Initializing QRCodeWidget UI";
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
     QLabel *title = new QLabel(tr("Scan code connection"), this);
@@ -145,7 +148,7 @@ void QRCodeWidget::initUI()
     hLayout->setAlignment(Qt::AlignCenter);
 
     QString hypertext = tr("Click to download UOS assistant APP");
-    QString hyperlink = "https://www.chinauos.com/resource/assistant";
+    QString hyperlink = KdownloadUrl;
 
     QString websiteLinkTemplate =
         "<br/><a href='%1' style='text-decoration: none; color: #0081FF;word-wrap: break-word;'>%2</a>";
@@ -156,6 +159,7 @@ void QRCodeWidget::initUI()
     linkLable1->setAlignment(Qt::AlignCenter);
     linkLable1->setText(content1);
     connect(linkLable1, &QLabel::linkActivated, this, [](const QString &link) {
+        DLOG << "Link activated: " << link.toStdString();
         QDesktopServices::openUrl(QUrl(link));
     });
 
@@ -171,10 +175,12 @@ void QRCodeWidget::initUI()
     mainLayout->addWidget(linkLable1);
     mainLayout->addSpacing(120);
     setLayout(mainLayout);
+    DLOG << "QRCodeWidget initialized";
 }
 
 void QRCodeWidget::setQRcodeInfo(const QString &info)
 {
+    DLOG << "Setting QR code info:" << info.toStdString();
     QPixmap qrImage = generateQRCode(info, 7);
     qrCode->setPixmap(qrImage);
 }

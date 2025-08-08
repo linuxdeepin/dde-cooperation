@@ -36,11 +36,13 @@ ZipWork::~ZipWork()
 
 void ZipWork::run()
 {
+    DLOG << "Zip worker thread started";
     getUserDataPackagingFile();
 }
 
 void ZipWork::getUserDataPackagingFile()
 {
+    DLOG << "Getting user data for packaging";
     QStringList zipFilePathList =
             OptionsManager::instance()->getUserOption(Options::kTransferFileList);
 
@@ -50,20 +52,25 @@ void ZipWork::getUserDataPackagingFile()
     allFileSize = size.toULongLong();
     LOG << "bakc up file size:" << allFileSize;
     backupFile(zipFilePathList, getBackupFilName());
+    DLOG << "User data packaging completed";
 }
 
 int ZipWork::getPathFileNum(const QString &filePath)
 {
-    if (QFileInfo(filePath).isFile())
+    if (QFileInfo(filePath).isFile()) {
+        DLOG << "File path is a file, returning 1";
         return 1;
+    }
     int fileCount = 0;
     QDir dir(filePath);
     QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs);
 
     for (const QFileInfo &entry : entries) {
         if (entry.isDir()) {
+            // DLOG << "Entry is a directory, recursively counting files:" << entry.absoluteFilePath().toStdString();
             fileCount += getPathFileNum(entry.absoluteFilePath());
         } else {
+            // DLOG << "Entry is a file, incrementing count:" << entry.absoluteFilePath().toStdString();
             fileCount++;
         }
     }
@@ -79,6 +86,7 @@ int ZipWork::getAllFileNum(const QStringList &fileList)
     for (const QString &filePath : fileList) {
         int curPathFileNum = getPathFileNum(filePath);
         fileNum += curPathFileNum;
+        // DLOG << "Current path file count:" << curPathFileNum << "Total file count:" << fileNum;
     }
     DLOG << "Total files counted:" << fileNum;
     return fileNum;
@@ -87,7 +95,9 @@ int ZipWork::getAllFileNum(const QStringList &fileList)
 bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, QuaZip &zip,
                            QElapsedTimer &timer)
 {
+    DLOG << "Adding file to zip:" << filePath.toStdString();
     if (abort) {
+        DLOG << "Aborting addFileToZip due to abort flag";
         zip.close();
         QFile::remove(zipFile);
         return false;
@@ -96,6 +106,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
     QFile sourceFile(filePath);
     if (!sourceFile.open(QIODevice::ReadOnly)) {
         qCritical() << "Error reading source file:" << filePath;
+        DLOG << "Failed to open source file for reading:" << filePath.toStdString();
         // backup file false
         sendBackupFileFailMessage(filePath);
         return false;
@@ -106,6 +117,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
     QuaZipNewInfo newInfo(destinationFileName, sourceFile.fileName());
     if (!destinationFile.open(QIODevice::WriteOnly, newInfo)) {
         qCritical() << "Error writing to ZIP file for:" << filePath;
+        DLOG << "Failed to open destination file in ZIP for writing:" << filePath.toStdString();
         // backup file false
 
         sendBackupFileFailMessage(filePath);
@@ -118,6 +130,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
         memset(buffer, 0, BUFFER_SIZE);
         qint64 bytesRead = in.readRawData(buffer, BUFFER_SIZE);
         if (bytesRead == -1) {
+            DLOG << "Error reading from source file:" << filePath.toStdString();
             free(buffer);
             qCritical() << "Error reading from source file:" << filePath;
             destinationFile.close();
@@ -128,6 +141,7 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
 
         qint64 bytesWritten = destinationFile.write(buffer, bytesRead);
         if (bytesWritten == -1) {
+            DLOG << "Error writing to ZIP file for:" << filePath.toStdString();
             free(buffer);
             qCritical() << "Error writing to ZIP file for:" << filePath;
             destinationFile.close();
@@ -155,10 +169,12 @@ bool ZipWork::addFolderToZip(const QString &sourceFolder, const QString &relativ
 
     for (QFileInfo entry : entries) {
         if (entry.isDir()) {
+            DLOG << "Entry is a directory, recursively adding folder to zip:" << entry.absoluteFilePath().toStdString();
             if (!addFolderToZip(entry.absoluteFilePath(), relativeTo, zip, timer)) {
                 return false;
             }
         } else {
+            DLOG << "Entry is a file, adding file to zip:" << entry.absoluteFilePath().toStdString();
             if (!addFileToZip(entry.absoluteFilePath(), relativeTo, zip, timer)) {
                 return false;
             }
@@ -167,6 +183,7 @@ bool ZipWork::addFolderToZip(const QString &sourceFolder, const QString &relativ
 
     // If the current folder is empty, then create an empty directory
     if (entries.isEmpty()) {
+        DLOG << "Folder is empty, creating empty directory in zip";
         QuaZipFile dirZipFile(&zip);
         QString dirFileName = QDir(relativeTo).relativeFilePath(sourceFolder) + "/";
         QuaZipNewInfo newInfo(dirFileName);
@@ -187,6 +204,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     zip.setFileNameCodec("UTF-8");
     if (!zip.open(QuaZip::mdCreate)) {
         qCritical("Error creating the ZIP file.");
+        DLOG << "Failed to create ZIP file:" << destinationZipFile.toStdString();
         // backup file false
         sendBackupFileFailMessage(destinationZipFile);
         return false;
@@ -197,15 +215,21 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
 
         QFileInfo fileInfo(entry);
         if (fileInfo.isDir()) {
+            DLOG << "Entry is a directory:" << entry.toStdString();
             QDir parent = QDir(entry);
             parent.cdUp();
             if (!addFolderToZip(entry, QDir(parent).absolutePath(), zip, timer)) {
+                DLOG << "Failed to add folder to zip:" << entry.toStdString();
                 return false;
             }
         } else if (fileInfo.isFile()) {
+            DLOG << "Entry is a file:" << entry.toStdString();
             if (!addFileToZip(entry, fileInfo.absolutePath(), zip, timer)) {
+                DLOG << "Failed to add file to zip:" << entry.toStdString();
                 return false;
             }
+        } else {
+            DLOG << "Entry is neither a file nor a directory:" << entry.toStdString();
         }
     }
 
@@ -214,6 +238,7 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
 
     if (zip.getZipError() != UNZ_OK) {
         qCritical() << "Error while compressing. Error code:" << zip.getZipError();
+        DLOG << "Error during compression, ZIP error code:" << zip.getZipError();
         // backup file false
 
         sendBackupFileFailMessage(destinationZipFile);
@@ -269,6 +294,7 @@ void ZipWork::sendBackupFileProcess(const QString &filePath, QElapsedTimer &time
 
 QString ZipWork::getBackupFilName()
 {
+    DLOG << "Getting backup file name";
     QStringList zipFileSavePath =
             OptionsManager::instance()->getUserOption(Options::kBackupFileSavePath);
     QStringList zipFileNameList =
@@ -280,8 +306,10 @@ QString ZipWork::getBackupFilName()
     QString zipFileName;
 
     if (zipFileNameList[0] == "") {
+        DLOG << "Zip file name is empty, using default";
         zipFileName = TransferHelper::instance()->defaultBackupFileName() + ".zip";
     } else {
+        DLOG << "Using provided zip file name";
         QString path = zipFileSavePath.isEmpty() ? "" : zipFileSavePath[0];
         zipFileName = path + "/" + zipFileNameList[0] + ".zip";
     }

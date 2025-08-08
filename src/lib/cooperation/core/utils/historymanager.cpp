@@ -27,8 +27,10 @@ void HistoryManager::onAttributeChanged(const QString &group, const QString &key
 {
     Q_UNUSED(value)
 
-    if (group != AppSettings::CacheGroup)
+    if (group != AppSettings::CacheGroup) {
+        DLOG << "Group is not CacheGroup, returning";
         return;
+    }
 
     if (key == AppSettings::TransHistoryKey) {
         DLOG << "Transfer history updated";
@@ -39,6 +41,8 @@ void HistoryManager::onAttributeChanged(const QString &group, const QString &key
     if (key == AppSettings::ConnectHistoryKey) {
         DLOG << "Connection history updated";
         Q_EMIT connectHistoryUpdated();
+    } else {
+        DLOG << "Unknown key:" << key.toStdString();
     }
 }
 
@@ -74,11 +78,17 @@ QMap<QString, QString> HistoryManager::getTransHistory()
 
 void HistoryManager::refreshHistory(bool found)
 {
-    if (!found) return;
+    DLOG << "Refreshing history, found:" << found;
+    if (!found) {
+        DLOG << "No devices found, returning";
+        return;
+    }
     auto connectHistory = getConnectHistory();
 
-    if (!connectHistory.isEmpty())
+    if (!connectHistory.isEmpty()) {
+        DLOG << "Connection history is not empty, emitting historyConnected";
         emit historyConnected(connectHistory);
+    }
 }
 
 void HistoryManager::writeIntoTransHistory(const QString &ip, const QString &savePath)

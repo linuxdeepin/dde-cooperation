@@ -69,11 +69,15 @@ bool CooperationMenuScene::initialize(const QVariantHash &params)
 
 AbstractMenuScene *CooperationMenuScene::scene(QAction *action) const
 {
-    if (action == nullptr)
+    if (action == nullptr) {
+        qDebug() << "Action is null, returning nullptr";
         return nullptr;
+    }
 
-    if (!d->predicateAction.key(action).isEmpty())
+    if (!d->predicateAction.key(action).isEmpty()) {
+        qDebug() << "Action found in predicateAction, returning this scene";
         return const_cast<CooperationMenuScene *>(this);
+    }
 
     return AbstractMenuScene::scene(action);
 }
@@ -93,6 +97,8 @@ bool CooperationMenuScene::create(QMenu *parent)
         d->predicateAction[kFileTransfer] = transAct;
         transAct->setProperty(ActionPropertyKey::kActionID, kFileTransfer);
         qInfo() << "Added file transfer menu item";
+    } else {
+        qDebug() << "isEmptyArea is true, skipping file transfer menu item addition";
     }
 
     bool result = AbstractMenuScene::create(parent);
@@ -110,22 +116,30 @@ void CooperationMenuScene::updateState(QMenu *parent)
         parent->removeAction(d->predicateAction[kFileTransfer]);
 
         for (auto act : actions) {
-            if (act->isSeparator())
+            if (act->isSeparator()) {
+                qDebug() << "Action is separator, skipping";
                 continue;
+            }
 
             auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (actId == "send-to") {
+                qDebug() << "Found 'send-to' action";
                 auto subMenu = act->menu();
                 if (subMenu) {
+                    qDebug() << "Submenu exists, adding file transfer item";
                     auto subActs = subMenu->actions();
                     subActs.insert(0, d->predicateAction[kFileTransfer]);
                     subMenu->addActions(subActs);
                     act->setVisible(true);
                     qDebug() << "Moved file transfer menu item to 'Send To' submenu";
                     break;
+                } else {
+                    qDebug() << "Submenu does not exist for 'send-to' action";
                 }
             }
         }
+    } else {
+        qDebug() << "isEmptyArea is true, skipping menu state update";
     }
 
     AbstractMenuScene::updateState(parent);
@@ -153,6 +167,8 @@ bool CooperationMenuScene::triggered(QAction *action)
                   << fileList;
 
         return QProcess::startDetached("dde-cooperation-transfer", arguments);
+    } else {
+        qDebug() << "Unknown action ID:" << actionId;
     }
 
     return true;

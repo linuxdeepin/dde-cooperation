@@ -14,6 +14,7 @@ VNCRecvThread::VNCRecvThread(QObject *parent): QThread(parent)
 
 void VNCRecvThread::startRun(rfbClient *cl)
 {
+    DLOG << "Entering startRun function";
     if (_runFlag) {
         DLOG << "Thread already running, skipping start";
         return;
@@ -32,6 +33,7 @@ void VNCRecvThread::startRun(rfbClient *cl)
 
 void VNCRecvThread::stopRun()
 {
+    DLOG << "Entering stopRun function";
     if (!_runFlag) {
         DLOG << "Thread not running, skipping stop";
         return;
@@ -41,6 +43,7 @@ void VNCRecvThread::stopRun()
     _runFlag = false;
     _skipFirst = false;
     if (_cl) {
+        DLOG << "Cleaning up client resources";
         rfbClientSetClientData(_cl, nullptr, nullptr);
         _cl->FinishedFrameBufferUpdate = nullptr;
         // _cl->ScreenSizeChanged = nullptr;
@@ -78,7 +81,7 @@ void VNCRecvThread::frameBufferUpdated(rfbClient *cl)
     }
     VNCRecvThread *vncRecvThread = static_cast<VNCRecvThread *>(rfbClientGetClientData(cl, nullptr));
 
-    DLOG << "Frame buffer updated, emitting image signal";
+    // DLOG << "Frame buffer updated, emitting image signal";
     emit vncRecvThread->updateImageSignal(QImage(cl->frameBuffer, cl->width, cl->height, QImage::Format_RGBA8888));
 }
 

@@ -67,6 +67,7 @@ void WaitTransferWidget::initUI()
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
+    DLOG << "UI initialization complete";
 }
 
 void WaitTransferWidget::nextPage()
@@ -90,9 +91,11 @@ void WaitTransferWidget::themeChanged(int theme)
 
     //light
     if (theme == 1) {
+        DLOG << "Theme is light, setting stylesheet";
         setStyleSheet(".WaitTransferWidget{background-color: white; border-radius: 10px;}");
     } else {
         //dark
+        DLOG << "Theme is dark, setting stylesheet";
         setStyleSheet(".WaitTransferWidget{background-color: rgb(37, 37, 37); border-radius: 10px;}");
     }
 }
@@ -120,6 +123,8 @@ void WaitTransferWidget::cancel()
         DLOG << "User confirmed cancel, disconnecting";
         backPage();
         TransferHelper::instance()->disconnectRemote();
+    } else {
+        DLOG << "User cancelled dialog, not disconnecting";
     }
 }
 

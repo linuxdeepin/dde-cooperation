@@ -78,6 +78,7 @@ void CooperaionCorePlugin::initialize()
 
 bool CooperaionCorePlugin::isMinilize()
 {
+    DLOG << "Checking for minimize option";
     QCommandLineParser parser;
     // 添加自定义选项和参数"-m"
     QCommandLineOption option("m", "Launch with minimize UI");
@@ -85,21 +86,27 @@ bool CooperaionCorePlugin::isMinilize()
 
     // 解析命令行参数
     const auto &args = qApp->arguments();
-    if (args.size() != 2 || !args.contains("-m"))
+    if (args.size() != 2 || !args.contains("-m")) {
+        DLOG << "Arguments do not match minimize condition, not minimizing";
         return false;
+    }
 
     parser.process(args);
-    return parser.isSet(option);
+    bool isSet = parser.isSet(option);
+    DLOG << "Minimize option is set:" << isSet;
+    return isSet;
 }
 
 #ifdef ENABLE_PHONE
 void CooperaionCorePlugin::initMobileModule()
 {
+    DLOG << "Initializing mobile module";
     connect(PhoneHelper::instance(), &PhoneHelper::addMobileInfo, dMain.get(), &MainWindow::addMobileDevice);
     connect(PhoneHelper::instance(), &PhoneHelper::disconnectMobile, dMain.get(), &MainWindow::disconnectMobile);
     connect(PhoneHelper::instance(), &PhoneHelper::setQRCode, dMain.get(), &MainWindow::onSetQRCode);
 
     PhoneHelper::instance()->registConnectBtn(dMain.get());
+    DLOG << "Mobile module initialized";
 }
 #endif
 

@@ -46,12 +46,17 @@ void ButtonLayout::setCount(int count)
 
     switch (count) {
     case 1:
+        DLOG << "Setting button count to 1, hiding button2";
         button1->setFixedSize(250, 36);
         button2->setVisible(false);
         break;
     case 2:
+        DLOG << "Setting button count to 2, showing button2";
         button1->setFixedSize(120, 36);
         button2->setVisible(true);
+        break;
+    default:
+        DLOG << "Unknown button count:" << count;
         break;
     }
 }
@@ -71,17 +76,21 @@ QFont StyleHelper::font(int type)
     QFont font;
     switch (type) {
     case 1:
+        DLOG << "Font type 1: pixel size 24, demi-bold";
         font.setPixelSize(24);
         font.setWeight(QFont::DemiBold);
         break;
     case 2:
+        DLOG << "Font type 2: pixel size 17, demi-bold";
         font.setPixelSize(17);
         font.setWeight(QFont::DemiBold);
         break;
     case 3:
+        DLOG << "Font type 3: pixel size 12";
         font.setPixelSize(12);
         break;
     default:
+        DLOG << "Unknown font type:" << type;
         break;
     }
     return font;
@@ -92,32 +101,41 @@ void StyleHelper::setAutoFont(QWidget *widget, int size, int weight)
 #ifdef linux
     switch (size) {
     case 54:
+        DLOG << "Setting font size 54 (T1)";
         DFontSizeManager::instance()->setFontPixelSize(DFontSizeManager::T1, 54);
         DFontSizeManager::instance()->bind(widget, DFontSizeManager::T1, weight);
         break;
     case 24:
+        DLOG << "Setting font size 24 (T3)";
         DFontSizeManager::instance()->bind(widget, DFontSizeManager::T3, weight);
         break;
     case 17:
+        DLOG << "Setting font size 17 (T5)";
         DFontSizeManager::instance()->setFontPixelSize(DFontSizeManager::T5, 17);
         DFontSizeManager::instance()->bind(widget, DFontSizeManager::T5, weight);
         break;
     case 14:
+        DLOG << "Setting font size 14 (T6)";
         DFontSizeManager::instance()->bind(widget, DFontSizeManager::T6, weight);
         break;
     case 12:
+        DLOG << "Setting font size 12 (T8)";
         DFontSizeManager::instance()->bind(widget, DFontSizeManager::T8, weight);
         break;
     case 11:
+        DLOG << "Setting font size 11 (T9)";
         DFontSizeManager::instance()->bind(widget, DFontSizeManager::T9, weight);
         break;
     case 10:
+        DLOG << "Setting font size 10 (T10)";
         DFontSizeManager::instance()->bind(widget, DFontSizeManager::T10, weight);
         break;
     default:
+        DLOG << "Setting default font size (T6)";
         DFontSizeManager::instance()->bind(widget, DFontSizeManager::T6, weight);
     }
 #else
+    DLOG << "Non-Linux platform, setting font directly";
     QFont font;
     font.setPixelSize(size);
     font.setWeight(weight);
@@ -130,10 +148,15 @@ QString StyleHelper::textStyle(StyleHelper::TextStyle type)
     QString style;
     switch (type) {
     case normal:
+        DLOG << "Text style: normal";
         style = "color: #000000; font-size: 12px;";
         break;
     case error:
+        DLOG << "Text style: error";
         style = "color: #FF5736;";
+        break;
+    default:
+        DLOG << "Unknown text style:" << type;
         break;
     }
     return style;
@@ -144,6 +167,7 @@ QString StyleHelper::buttonStyle(int type)
     QString style;
     switch (type) {
     case gray:
+        DLOG << "Button style: gray";
         style = ".QPushButton{"
                 "border-radius: 8px;"
                 "opacity: 1;"
@@ -170,6 +194,7 @@ QString StyleHelper::buttonStyle(int type)
                 "}";
         break;
     case blue:
+        DLOG << "Button style: blue";
         style = ".QPushButton{"
                 "border-radius: 8px;"
                 "opacity: 1;"
@@ -183,6 +208,9 @@ QString StyleHelper::buttonStyle(int type)
                 "text-align: center;"
                 "}";
         break;
+    default:
+        DLOG << "Unknown button style:" << type;
+        break;
     }
     return style;
 }
@@ -192,6 +220,7 @@ QString StyleHelper::textBrowserStyle(int type)
     QString style;
     switch (type) {
     case 1:
+        DLOG << "Text browser style: type 1 (light)";
         style = "QTextBrowser {"
                 "border-radius: 10px;"
                 "padding-top: 10px;"
@@ -205,6 +234,7 @@ QString StyleHelper::textBrowserStyle(int type)
                 "background-color:rgba(0, 0, 0,0.08);}";
         break;
     case 0:
+        DLOG << "Text browser style: type 0 (dark)";
         style = "QTextBrowser {"
                 "border-radius: 10px;"
                 "padding-top: 10px;"
@@ -216,6 +246,9 @@ QString StyleHelper::textBrowserStyle(int type)
                 "color: rgb(82, 106, 127);"
                 "line-height: 300%;"
                 "background-color:rgba(255,255,255, 0.1);}";
+        break;
+    default:
+        DLOG << "Unknown text browser style type:" << type;
         break;
     }
     return style;
@@ -245,10 +278,13 @@ void IndexLabel::paintEvent(QPaintEvent *event)
     QColor brushColor;
     brushColor.setNamedColor("#0081FF");
     for (int i = 0; i < 4; i++) {
-        if (i == index)
+        if (i == index) {
+            // DLOG << "Setting brush color alpha to 190 for index:" << i;
             brushColor.setAlpha(190);
-        else
+        } else {
+            // DLOG << "Setting brush color alpha to 40 for index:" << i;
             brushColor.setAlpha(40);
+        }
 
         painter.setBrush(brushColor);
         painter.drawEllipse((diam + 8) * i + 6, 0, diam, diam);
@@ -352,13 +388,16 @@ void ProcessWindowItemDelegate::paintText(QPainter *painter, const QStyleOptionV
     QColor fontNameColor;
     QColor fontStageColor;
     if (theme == 0) {
+        // DLOG << "Theme is dark, setting font colors for dark theme";
         fontNameColor = QColor(255, 255, 255, 155);
         fontStageColor = QColor(123, 159, 191, 255);
     } else {
+        // DLOG << "Theme is light, setting font colors for light theme";
         fontNameColor = QColor(0, 0, 0, 155);
         fontStageColor = QColor(0, 130, 250, 100);
     }
     if (StatusTipRole != 0) {
+        // DLOG << "StatusTipRole is not 0, setting fontStageColor to stageTextColor";
         fontStageColor = stageTextColor;
     }
 #ifdef linux
@@ -374,8 +413,10 @@ void ProcessWindowItemDelegate::paintText(QPainter *painter, const QStyleOptionV
 
     QRect remarkTextPos;
     if (!pixmaps.isEmpty()) {
+        // DLOG << "Pixmaps is not empty, adjusting remarkTextPos";
         remarkTextPos = option.rect.adjusted(40, 0, 0, 0);
     } else {
+        // DLOG << "Pixmaps is empty, adjusting remarkTextPos";
         remarkTextPos = option.rect.adjusted(20, 0, 0, 0);
     }
     painter->drawText(remarkTextPos, Qt::AlignLeft | Qt::AlignVCenter, processName);
@@ -394,8 +435,10 @@ void ProcessWindowItemDelegate::paintText(QPainter *painter, const QStyleOptionV
 void ProcessWindowItemDelegate::paintIcon(QPainter *painter, const QStyleOptionViewItem &option,
                                           const QModelIndex &index) const
 {
-    if (pixmaps.isEmpty())
+    if (pixmaps.isEmpty()) {
+        // DLOG << "Pixmaps is empty, returning";
         return;
+    }
 
     painter->save();
     int num = index.data(Qt::UserRole).toInt();

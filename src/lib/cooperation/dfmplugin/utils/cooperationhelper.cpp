@@ -7,7 +7,7 @@
 
 #include <DSettingsOption>
 #include <QApplication>
-
+#include <QDebug>
 #include <QPushButton>
 #include <QLabel>
 
