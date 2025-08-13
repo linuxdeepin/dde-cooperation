@@ -11,7 +11,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation>ຄួរព័ត្ថាកម្មគឺឧបករណ៍ការការពារការងារជាពិសេសដែលមានប្រសិទ្ធិភាព ដែលជួយអ្នកបញ្ជូនិងទទួលឯកសារ ចiaបញ្ជូននូវគីបូត មូសុង និងទ្រានំក្រវាត់វិញវិញក្នុងការប្រើប្រាស់ឧបករណ៍ផ្សេងៗ</translation>
+        <translation>ການຮ່ວມມືແມ່ນເຄື່ອງມືການເຮັດວຽກຂ້າມເທີມິນອນທີ່ມີປະສິດທິພາບ ເຊິ່ງຊ່ວຍໃຫ້ທ່ານສົ່ງໄຟລ໌, ແບ່ງປັນແປ້ນພິມ ແລະ ເມົ້າ, ແລະ ແບ່ງປັນຄລິບບອດລະຫວ່າງອຸປະກອນທີ່ແຕກຕ່າງກັນ.</translation>
     </message>
 </context>
 <context>
@@ -33,7 +33,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="330"/>
         <source>Local IP: %1</source>
-        <translation>IPផ្ទាល់: %1</translation>
+        <translation>IP ຕໍາຫຼັງ: %1</translation>
     </message>
 </context>
 <context>
@@ -53,7 +53,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="32"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation>ទទួលយក</translation>
+        <translation>ຢິບດີທີ່ຂໍ້ມູນຂອງທ່ານໄດ້ຖືກບຳຄັງສຳເລັດ</translation>
     </message>
 </context>
 <context>
@@ -61,7 +61,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/win/cooperationsearchedit.cpp" line="32"/>
         <source>Search</source>
-        <translation>ស្វែងរក</translation>
+        <translation>ຄົ້ນຫາ</translation>
     </message>
 </context>
 <context>
@@ -70,13 +70,13 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="97"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>បង្តួល</translation>
+        <translation>ຢກເລີກ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="119"/>
         <source>Retry</source>
         <comment>button</comment>
-        <translation>ព្យាយាមម្តងទៀត</translation>
+        <translation>ລອງອີກຄັ້ງ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="141"/>
@@ -88,13 +88,13 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="144"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation>ទទួលយក</translation>
+        <translation>ຢິບດີທີ່ຂໍ້ມູນຂອງທ່ານໄດ້ຖືກບຳຄັງສຳເລັດ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="166"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation>បង្ខូច</translation>
+        <translation>ປິດ</translation>
     </message>
 </context>
 <context>
@@ -102,12 +102,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="257"/>
         <source>File Transfer</source>
-        <translation>ការបញ្ជូនឯកសារ</translation>
+        <translation>ການໂອນໄຟລ໌</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="259"/>
         <source>File transfer</source>
-        <translation>การส่งไฟล์</translation>
+        <translation>ການໂອນໄຟລ໌</translation>
     </message>
 </context>
 <context>
@@ -115,42 +115,42 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="175"/>
         <source>View Help Manual</source>
-        <translation>ดูหนังสูตรช่วยเหลือ</translation>
+        <translation>ເບິ່ງຄູ່ມືຊ່ວຍເຫຼວຂ້າງ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="176"/>
         <source>Welcome to dde-cooperation</source>
-        <translation>ยินดีต้อนรับสู่ dde-cooperation</translation>
+        <translation>ຢິນດີຕ້ອນຮັບສູ່ dde-cooperation</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="178"/>
         <source>Keyboard and mouse sharing</source>
-        <translation>การแบ่งปันคีย์บอร์ดและเมาส์</translation>
+        <translation>ການແບ່ງປັນແປ້ນພິມ ແລະ ເມົ້າ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="178"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
-        <translation>เมื่อมีการเชื่อมต่อกันระหว่างสองอุปกรณ์ คีย์บอร์ดและเมาส์ของผู้เริ่มต้นสามารถใช้เพื่อควบคุมอุปกรณ์อื่นได้</translation>
+        <translation>ເມື່ອມີການເຊື່ອມຕໍ່ລະຫວ່າງສອງອຸປະກອນ, ແປ້ນພິມ ແລະ ເມົ້າຂອງຜູ້ເລີ່ມຕົ້ນສາມາດໃຊ້ເພື່ອຄວບຄຸມອຸປະກອນອື່ນໄດ້</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="180"/>
         <source>Clipboard sharing</source>
-        <translation>การแบ่งปันบัฟเฟอร์ข้อความ</translation>
+        <translation>ການແບ່ງປັນຄລິບບອດ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="180"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-        <translation>เมื่อมีการเชื่อมต่อกันระหว่างสองอุปกรณ์ บัฟเฟอร์ข้อความจะถูกแบ่งปันและสามารถคัดลอกจากอุปกรณ์หนึ่งและวางที่อุปกรณ์อื่นได้</translation>
+        <translation>ເມື່ອມີການເຊື່ອມຕໍ່ລະຫວ່າງສອງອຸປະກອນ, ຄລິບບອດຈະຖືກແບ່ງປັນແລະສາມາດຄັດລອກຈາກອຸປະກອນຫນຶ່ງແລະວາງທີ່ອຸປະກອນອື່ນໄດ້</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="182"/>
         <source>Delivery of documents</source>
-        <translation>การส่งเอกสาร</translation>
+        <translation>ການສ່ງເອກະສານ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="182"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
-        <translation>หลังจากเชื่อมต่อกันระหว่างสองอุปกรณ์ คุณสามารถเริ่มต้นการส่งไฟล์ไปยังอุปกรณ์อื่นได้</translation>
+        <translation>ເມື່ອມີການເຊື່ອມຕໍ່ລະຫວ່າງສອງອຸປະກອນ, ທ່ານສາມາດເລີ່ມຕົ້ນການສ່ງໄຟລ໌ມາອຸປະກອນອື່ນໄດ້</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="184"/>
@@ -160,7 +160,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="184"/>
         <source>Usage</source>
-        <translation>การใช้งาน</translation>
+        <translation>ການໃຊ້ງານ</translation>
     </message>
 </context>
 <context>
@@ -168,17 +168,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="177"/>
         <source>connected</source>
-        <translation>เชื่อมต่อกันแล้ว</translation>
+        <translation>ເຊື່ອມຕໍ່ກັນແລ້ວ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="182"/>
         <source>connectable</source>
-        <translation>เชื่อมต่อได้</translation>
+        <translation>ເຊື່ອມຕໍ່ໄດ້</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="188"/>
         <source>offline</source>
-        <translation>ออฟไลน์</translation>
+        <translation>ອອຟລອນ</translation>
     </message>
 </context>
 <context>
@@ -186,7 +186,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="160"/>
         <source>Confirm</source>
-        <translation>ยืนยัน</translation>
+        <translation>ຢືນຢັນ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="161"/>
@@ -196,18 +196,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="163"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
-        <translation>លើ кнопк ཡང་តែល མេད་LAN བཟུང་ནས་པར་ອະນិནුས་</translation>
+        <translation>ກະລຸນາຄລິກເພື່ອຢືນຢັນການເປີດໃຊ້ບໍລິການຄົ້ນຫາ LAN!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="164"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned on</source>
-        <translation>LAN བཟུང་ནས་མེད་པའི་སྟེང་། གྷྤྱོད་པ་དང་། དруг་ອົງ་ອົງ་ສྲིད་པ་མི་ສྲིད་པར་མི་ສྲོག་པར་</translation>
+        <translation>ບໍ່ສາມາດຄົ້ນພົບ ແລະຖືກຄົ້ນພົບໂດຍອຸປະກອນອື່ນໆເມື່ອບໍລິການຄົ້ນຫາ LAN ບໍ່ໄດ້ເປີດໃຊ້ງານ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="172"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
-        <translation>LAN བཟུང་ནས་མེད་པའི་སྟེང་། གྷྤྱོད་པ་དང་། དруг་ອົງ་ອົງ་ສྲིད་པ་མི་ສྲིད་པར་མི་ສྲོག་པར་
-Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲིད་ནི་མུ་མཐུད་པར་ཐུབ་པའི་Start menu ཐུབ་པར་ཐུབ་པ་ནི་Computer Management ལྟ་བ་དང་། Services and Applications ལྟ་བ་དང་། Services ལྟ་བ་ལ་གྱི་Bonjour བཟོ་ནས་</translation>
+        <translation>ຄລິກຂວາທີ່ເມນູ Start ຂອງ Windows -> ການຈັດການຄອມພິວເຕີ -> ການບໍລິການ ແລະ ແອັບພລິເຄຊັນ -> ການບໍລິການເພື່ອເປີດໃຊ້ງານບໍລິການ Bonjour</translation>
     </message>
 </context>
 <context>
@@ -235,12 +234,12 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="175"/>
         <source>to send the file</source>
-        <translation>ཡང་ອອນໄມ་</translation>
+        <translation>ສ່ງໄຟລ໌</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="182"/>
         <source>to connect to the peer device</source>
-        <translation>ອົງ་ອົງ་ຂ໊ອງ དྲི་བ་ກྱི་ອົງ་ອົງ་ལ་བདེན་</translation>
+        <translation>ອົງ་ອົງ་ຂ໊ອງຄູ່ຄ້າຂອງທ່ານ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="115"/>
@@ -263,12 +262,12 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="142"/>
         <source>the file save location is invalid</source>
-        <translation>ཡང་ອອນໄມ་ບཞིན་ບུ་ཆེན་</translation>
+        <translation>ສະຖານທີ່ບ౱ນທຶກໄຟລ໌ບໍ່ຖືກຕ້ອງ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="156"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation>ເປັນເນີ່ຍ འ້ື່ອ ཐໍབ་པ་ཡོད། དྲི་བ་ཁྱབ་པར་གྱི་ཡང་ອອນໄມ་ໃຫ້ ཐུབ་པ་གྱི་ທີ່ທີ່ທີ່ອົງ་ອົງ་ຫາກ ད້ານ ང་ཚོས་ເລື່ອງ དྲི་བ་ཁྱབ་པར་གྱི་ཡང་ອອນໄມ་ໃຫ້ ཐུབ་པ་</translation>
+        <translation>ເສັ້ນທາງນີ້ແມ່ນໄດເຣກທໍຣີທີ່ອ່ານໄດ້ຢ່າງດຽວ. ກະລຸນາເລືອກສະຖານທີ່ອື່ນສຳລັບການບັນທຶກໄຟລ໌.</translation>
     </message>
 </context>
 <context>
@@ -276,7 +275,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="186"/>
         <source>The current device has been locked</source>
-        <translation>ລាតົງຫຸ່ງສົນທະນາຈັນໄດ້ຖືກລຒກ</translation>
+        <translation>ອຸປະກອນປະຈຸບັນໄດ້ຖືກລຒກ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="189"/>
@@ -327,7 +326,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="309"/>
         <source>Restore</source>
-        <translation>ົກອອກຈາກລຒກ</translation>
+        <translation>ກູ້ຄືນ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="310"/>
@@ -360,7 +359,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
         <source>Download client</source>
-        <translation>ดาวน์โหลดแอปพลิเคชัน</translation>
+        <translation>ດາວໂຫລດໄຄລຽນທ໌</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="126"/>
@@ -373,7 +372,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="140"/>
         <source>Please connect to the network</source>
-        <translation>กรุณาเชื่อมต่อกับเครือข่าย</translation>
+        <translation>ກະລຸນາເຊື່ອມຕໍ່ກັບເຄືອຂ່າຍ</translation>
     </message>
 </context>
 <context>
@@ -381,12 +380,12 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="174"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
-        <translation>1. เปิดใช้งานแอปพลิเคชันการทำงานร่วมกันข้ามอุปกรณ์ แอปพลิเคชันบนระบบปฏิบัติการ UOS สามารถดาวน์โหลดได้จาก App Store และแอปพลิเคชันบนฝั่ง Windows สามารถดาวน์โหลดได้จาก:</translation>
+        <translation>1. ເປິດໃຊ້ງານໄຄລຽນທ໌ການຮ່ວມມືຂ້າມອຸປະກອນ. ໄຄລຽນທ໌ບນຣະບບປະຈຸບັນສາມາດດາວໂຫລດໄດ້ຈາກ App Store ແລະໄຄລຽນທ໌ບນຝັ່ງ Windows ສາມາດດາວໂຫລດໄດ້ຈາກ:</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="188"/>
         <source>2. On the same LAN as the device</source>
-        <translation>2. เชื่อมต่อยู่ในเครือข่าย LAN เดียวกับอุปกรณ์</translation>
+        <translation>2. ເຊື່ອມຕໍ່ຢູ່ໃນເຄືອຂ່າຍ LAN ດຽວກັນກັບອຸປະກອນ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="193"/>
@@ -406,12 +405,12 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="205"/>
         <source>Unable to find collaborative device？</source>
-        <translation>ไม่สามารถหาอุปกรณ์การทำงานร่วมกันได้？</translation>
+        <translation>ບໍ່ສາມາດຄົ້ນຫາອຸປະກອນການຮ່ວມມືໄດ້？</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="234"/>
         <source>1. The mobile phone needs to download cross end collaborative applications.</source>
-        <translation>1. ໂທລະສັບມືຖືຕ້ອງດາວໂຫລດແອັບພລິເຄຊັນການຮ່ວມມືຂ້າມປາຍ.</translation>
+        <translation>1. ໂທລະສັບມືຖືຕ້ອງດາວໂຫລດໄຄລຽນທ໌ການຮ່ວມມືຂ້າມປາຍ.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="235"/>
@@ -447,7 +446,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="59"/>
         <source>Disconnect</source>
-        <translation>ចេញចិត្ត</translation>
+        <translation>ຍົກເລີກ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="84"/>
@@ -472,12 +471,12 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="185"/>
         <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
-        <translation>តើអ្នកបានប្រាគដទៅចេញពីសហការការងារជាមួយ &apos;%1&apos; ដោយសន្ទិច?</translation>
+        <translation>ຢືນຢັນການຍົກເລີກການເຊື່ອມຕໍ່ກັບກັບ &apos;%1&apos; ຫາງານທີ່ຕ້ອງການຍົກເລີກ?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="188"/>
         <source>disconnect</source>
-        <translation>ចេញចិត្ត</translation>
+        <translation>ຍົກເລີກ</translation>
     </message>
 </context>
 <context>
@@ -504,7 +503,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="92"/>
         <source>Please use the cross end collaboration app to scan the code</source>
-        <translation>សូមប្រើប្រាស់កម្មវិធីសហការការងារជាមួយប្រភេទ cross end ដើម្បីភ្ញាក់កូដ</translation>
+        <translation>ກະລຸນາໃຊ້ໄຄລຽນທ໌ການຮ່ວມມືຂ້າມອຸປະກອນເພື່ອສະແກນໂຄດ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="98"/>
@@ -514,7 +513,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="131"/>
         <source>Click to download UOS assistant APP</source>
-        <translation>ចុចដើម្បីទាញយកកម្មវិធីសហគមន៍ UOS</translation>
+        <translation>ກະລຸນາກົດເພື່ອດາວໂຫລດໄຄລຽນທ໌ການຮ່ວມມື UOS</translation>
     </message>
 </context>
 <context>
@@ -523,13 +522,13 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="171"/>
         <source>Ok</source>
         <comment>button</comment>
-        <translation>បានស្រប</translation>
+        <translation>ສຳເລັດ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="174"/>
         <source>View</source>
         <comment>button</comment>
-        <translation>មើល</translation>
+        <translation>ເບິ່ງ</translation>
     </message>
 </context>
 <context>
@@ -537,7 +536,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="46"/>
         <source>Everyone in the same LAN</source>
-        <translation>ລិང ང្រៅ</translation>
+        <translation>ທຸກຄົນຢູ່ໃນເຄືອຂ່າຍ LAN ດຽວກັນ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="48"/>
@@ -547,12 +546,12 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
         <source>Screen right</source>
-        <translation>ឆ្អឹងខាងស្តាំ</translation>
+        <translation>ທິດທາງຂວາ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
         <source>Screen left</source>
-        <translation>ឆ្អឹងខាងឆ្អឹង</translation>
+        <translation>ທິດທາງຂວາ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
@@ -612,7 +611,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="293"/>
         <source>Share clipboard</source>
-        <translation>ແoes བືງແບ່ງ</translation>
+        <translation>ແບ່ງປັນຄລິບບອດ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="295"/>
@@ -622,12 +621,12 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="349"/>
         <source>The device name must contain 1 to 20 characters</source>
-        <translation>ຜູ້ໃຊ້ງາຈານືອຸືiceຊື່ຄໍ້ົນໄດ້ຮັບຮູ້ຈະໃ້ອຳນື້ອງຊື່ອຸືice མີໍ້ སຸດ 1 ཁາຍົນ 20 ཁອບພື້ນຖື</translation>
+        <translation>ຊື່ອົດທີ່ຕ້ອງມີຄວາມໜ້ອມຂອງ 1 ຖຶງ 20 ຕົວອັກສອນ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="356"/>
         <source>The device name must contain 1 to 63 characters</source>
-        <translation>ຜູກນືອຸືiceຊື່ຄໍ້ົນໄດ້ຮັ້ອຶງວ່າຊື່ອຸືice མີໍ້ སຸດ 1 ཁາຍົນ 63 ཁອບພື້ນຖື</translation>
+        <translation>ຊື່ອຸປະກອນຕ້ອງມີຄວາມຍາວລະຫວ່າງ 1 ຫາ 63 ຕົວອັກສອນ</translation>
     </message>
 </context>
 <context>
@@ -650,7 +649,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="251"/>
         <source>You are connecting to another device</source>
-        <translation>ມີກຳນຶງກັບອຸືiceອືຄືອືນ</translation>
+        <translation>ທ່ານກຳລັງເຊື່ອມຕໍ່ກັບອຸປະກອນອື່ນ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
@@ -665,7 +664,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="326"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
-        <translation>&quot;%1&quot; ཨສິ້ໂດຍຂ້ອງຮັບຮູ້ກັບຄຳຂ້ອງຈາກເຄື່ຂ້ອງ</translation>
+        <translation>&quot;%1&quot; ຮັບຮູ້ຄຳຂໍຮ່ວມມືຂອງທ່ານຈາກເຄື່ອຂ່າຍ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="327"/>
@@ -685,17 +684,17 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="359"/>
         <source>Connect to &quot;%1&quot; failed</source>
-        <translation>ກຳນຶngeກັບ &quot;%1&quot; མີໍ້ འບྐྵལໍ້</translation>
+        <translation>ກຳນຶງກັບ &quot;%1&quot; ລົ້ມເຫລວ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="381"/>
         <source>Unable to collaborate</source>
-        <translation>មិនអាចຮ່ວມມືງານໄດ້</translation>
+        <translation>ບໍ່ສາມາດຮ່ວມມືງານໄດ້</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="382"/>
         <source>Failed to run process!</source>
-        <translation>ຂະແຫຍුངුນ ຈະລຸດ ຈະບ້າງ!</translation>
+        <translation>ຂະແຫຍມາດບໍ່ສາມາດເລີ່ມຂຶ້ນໄດ້</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="403"/>
@@ -705,7 +704,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="409"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
-        <translation>&quot;%1&quot; ໄດ້ປະຕິເສດຄຳຂໍຮ່ວມມືຂອງທ່ານ</translation>
+        <translation>&quot;%1&quot; ໄດ້ປະຕິບັດບໍ່ຮ່ວມມືຂອງທ່ານ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
@@ -791,7 +790,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="437"/>
         <source>File sent successfully</source>
-        <translation>ເອກະສານສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງ</translation>
+        <translation>ສົ່ງເອກະສານສຳເລັດແລ້ວ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="144"/>
@@ -806,7 +805,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="269"/>
         <source>The other party did not receive, the files failed to send</source>
-        <translation>ສ່ວນຫຼົບຮູບບໍ່ໄດ້ຮັບເອກະສານ, ຄວາມສົ່ງເປັນເສີນສຳເົ້າສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງ</translation>
+        <translation>ສ່ວນຫຼົບຮູບບໍ່ໄດ້ຮັບເອກະສານ, ການສົ່ງເອກະສານລົ້ມເຫລວ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="293"/>
@@ -816,7 +815,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="296"/>
         <source>File receiving %1% | Remaining time %2</source>
-        <translation>ການຮັບເອກະສານ %1% | ມັນຕົ້ນສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງສົ່ງ</translation>
+        <translation>ການຮັບເອກະສານ %1% | ເວລາທີ່ເຫຼືອ %2</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="303"/>
@@ -876,7 +875,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="518"/>
         <source>The other party rejects your request</source>
-        <translation>ອີກຝ່າຍປະຕິເສດຄຳຂໍຂອງທ່ານ</translation>
+        <translation>ອີກຝ່າຍປະຕິບັດຄຳຂໍຂອງທ່ານ</translation>
     </message>
 </context>
 <context>
@@ -923,7 +922,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="67"/>
         <source>Re-scan for devices</source>
-        <translation>ສະແກນອຸປະກອນຄືນ</translation>
+        <translation>ສະແກນຫາອຸປະກອນອີກຄັ້ງ</translation>
     </message>
 </context>
 <context>
@@ -939,7 +938,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="32"/>
         <source>File transfer</source>
-        <translation>การถ่ายโอนไฟล์</translation>
+        <translation>ການໂອນໄຟລ໌</translation>
     </message>
 </context>
 <context>
@@ -947,7 +946,7 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="55"/>
         <source>File transfer</source>
-        <translation>การถ่ายโอนไฟล์</translation>
+        <translation>ການໂອນໄຟລ໌</translation>
     </message>
 </context>
 <context>
@@ -955,17 +954,17 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="150"/>
         <source>File transfer settings</source>
-        <translation>การตั้งค่าการถ่ายโอนไฟล์</translation>
+        <translation>ການຕັ້ງຄ່າການໂອນໄຟລ໌</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="164"/>
         <source>Everyone in the same LAN</source>
-        <translation>ทุกคนในเครือข่าย LAN เดียวกัน</translation>
+        <translation>ທຸກຄົນຢູ່ໃນເຄືອຂ່າຍ LAN ດຽວກັນ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="165"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation>เฉพาะผู้ที่ collaborating ที่ได้รับอนุญาต</translation>
+        <translation>ພຽງແຕ່ຜູ້ທີ່ກຳລັງຮ່ວມມືເທົ່ານັ້ນທີ່ອະນຸຍາດ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="166"/>
@@ -975,12 +974,12 @@ Windows འཕེལ་རྒྱས་ཐུབ་པའི་ແນ່ສྲི
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="170"/>
         <source>Allows the following users to send files to me</source>
-        <translation>อนุญาตให้ผู้ใช้ต่อไปนี้ส่งไฟล์มาหาฉัน</translation>
+        <translation>ອະນຸຍາດໃຫ້ຜູ້ໃຊ້ຕໍ່ໄປນີ້ສົ່ງໄຟລ໌ມາຫາຂ້ອຍ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="171"/>
         <source>File save location</source>
-        <translation>ตำแหน่งการเก็บไฟล์</translation>
+        <translation>ສະຖານທີ່ບັນທຶກໄຟລ໌</translation>
     </message>
 </context>
 </TS>
