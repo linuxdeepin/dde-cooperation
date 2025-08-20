@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="fr">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1">
 <context>
     <name>QObject</name>
     <message>
@@ -39,27 +41,27 @@
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="164"/>
         <source>Everyone in the same LAN</source>
-        <translation>Tout le monde sur le même LAN</translation>
+        <translation>Tout le monde sur le même réseau local</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="165"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation>Seuls ceux qui collaborent sont autorisés</translation>
+        <translation>Seuls les utilisateurs en collaboration sont autorisés</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="166"/>
         <source>Not allow</source>
-        <translation>Ne pas autoriser</translation>
+        <translation>Non autorisé</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="170"/>
         <source>Allows the following users to send files to me</source>
-        <translation>Autorise les utilisateurs suivants à envoyer des fichiers à moi</translation>
+        <translation>Autorise les utilisateurs suivants à m&apos;envoyer des fichiers</translation>
     </message>
     <message>
         <location filename="../src/dde-file-manager/dfmplugin-cooperation/dialogs/filetransfersettingsdialog.cpp" line="171"/>
         <source>File save location</source>
-        <translation>Emplacement de sauvegarde des fichiers</translation>
+        <translation>Emplacement d&apos;enregistrement des fichiers</translation>
     </message>
 </context>
 </TS>

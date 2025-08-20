@@ -6,12 +6,12 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="50"/>
         <source>Cooperation</source>
-        <translation>التعاون</translation>
+        <translation>Coopération</translation>
     </message>
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation>التعاون هو أداة مكتبية قوية تعمل عبر الأجهزة المتعددة وتُساعدك في نقل الملفات ومشاركة المفاتيح والماوس والصواعق بين الأجهزة المختلفة.</translation>
+        <translation>La Coopération est un outil de bureau puissant qui vous aide à transférer des fichiers, à partager des claviers et souris, et à partager le presse-papiers entre différents appareils.</translation>
     </message>
 </context>
 <context>
@@ -19,13 +19,13 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="69"/>
         <source>File transfer settings</source>
-        <translation>إعدادات نقل الملفات</translation>
+        <translation>Paramètres de transfert de fichiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="71"/>
         <source>Settings</source>
         <comment>button</comment>
-        <translation>الإعدادات</translation>
+        <translation>Paramètres</translation>
     </message>
 </context>
 <context>
@@ -33,27 +33,27 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
         <source>Local IP: %1</source>
-        <translation>IP المحلي: %1</translation>
+        <translation>IP locale : %1</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::ConfirmWidget</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" يرسل ملفات إلىك</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; vous envoie certains fichiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
         <source>Reject</source>
         <comment>button</comment>
-        <translation>الرفض</translation>
+        <translation>Refuser</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="35"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation>القبول</translation>
+        <translation>Accepter</translation>
     </message>
 </context>
 <context>
@@ -61,7 +61,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/win/cooperationsearchedit.cpp" line="34"/>
         <source>Search</source>
-        <translation>البحث</translation>
+        <translation>Rechercher</translation>
     </message>
 </context>
 <context>
@@ -70,31 +70,31 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="111"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>إلغاء</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="134"/>
         <source>Retry</source>
         <comment>button</comment>
-        <translation>إعادة المحاولة</translation>
+        <translation>Réessayer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="157"/>
         <source>Reject</source>
         <comment>button</comment>
-        <translation>الرفض</translation>
+        <translation>Refuser</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="160"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation>القبول</translation>
+        <translation>Accepter</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="184"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation>إغلاق</translation>
+        <translation>Fermer</translation>
     </message>
 </context>
 <context>
@@ -102,12 +102,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="275"/>
         <source>File Transfer</source>
-        <translation>نقل الملفات</translation>
+        <translation>Transfert de fichiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="278"/>
         <source>File transfer</source>
-        <translation>نقل الملفات</translation>
+        <translation>Transfert de fichiers</translation>
     </message>
 </context>
 <context>
@@ -115,52 +115,52 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="217"/>
         <source>View Help Manual</source>
-        <translation>عرض دليل المساعدة</translation>
+        <translation>Voir le manuel d&apos;aide</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
         <source>Welcome to dde-cooperation</source>
-        <translation>مرحباً بكم في dde-cooperation</translation>
+        <translation>Bienvenue dans dde-cooperation</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>Keyboard and mouse sharing</source>
-        <translation>مشاركة المفاتيح والماوس</translation>
+        <translation>Partage du clavier et de la souris</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
-        <source>When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device</source>
-        <translation>عند إنشاء اتصال بين جهازين، يمكن استخدام المفاتيح والماوس من الطرف الأول لتحكم في الجهاز الآخر</translation>
+        <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
+        <translation>Lorsqu&apos;une connexion est établie entre deux appareils, le clavier et la souris de l&apos;initiateur peuvent être utilisés pour contrôler l&apos;autre appareil</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Clipboard sharing</source>
-        <translation>مشاركة الصواعق</translation>
+        <translation>Partage du presse-papiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-        <translation>بمجرد إنشاء اتصال بين جهازين، سيتم مشاركة الصواعق ويمكن نسخها على جهاز واحد ورسملها على الآخر</translation>
+        <translation>Une fois qu&apos;une connexion est établie entre deux appareils, le presse-papiers sera partagé et pourra être copié sur un appareil et collé sur l&apos;autre</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>Delivery of documents</source>
-        <translation>توصيل الوثائق</translation>
+        <translation>Envoi de documents</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
-        <translation>بعد الاتصال بين جهازين، يمكنك بدء نقل ملف إلى الجهاز الآخر</translation>
+        <translation>Après avoir connecté deux appareils, vous pouvez lancer l&apos;envoi d&apos;un fichier à l&apos;autre appareil</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>For detailed instructions, please click on the Help Manual below</source>
-        <translation>للحصول على تعليمات تفصيلية، يرجى النقر على دليل المساعدة أدناه</translation>
+        <translation>Pour obtenir des instructions détaillées, veuillez cliquer sur le manuel d&apos;aide ci-dessous</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>Usage</source>
-        <translation>الاستخدام</translation>
+        <translation>Utilisation</translation>
     </message>
 </context>
 <context>
@@ -168,17 +168,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="191"/>
         <source>connected</source>
-        <translation>متصل</translation>
+        <translation>connecté</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="197"/>
         <source>connectable</source>
-        <translation>قابل للاتصال</translation>
+        <translation>&gt;connectable</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="204"/>
         <source>offline</source>
-        <translation>غير متصل</translation>
+        <translation>hors ligne</translation>
     </message>
 </context>
 <context>
@@ -186,27 +186,27 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="245"/>
         <source>Confirm</source>
-        <translation>تأكيد</translation>
+        <translation>Confirmer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="246"/>
         <source>Close</source>
-        <translation>إغلاق</translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
-        <translation>يرجى النقر لتأكيد تمكين خدمة اكتشاف الشبكة المحلية!</translation>
+        <translation>Veuillez cliquer pour confirmer l&apos;activation du service de découverte LAN !</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="249"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned on</source>
-        <translation>غير قادر على اكتشاف الأجهزة الأخرى أو أن تكتشفها عند عدم تمكين خدمة اكتشاف الشبكة المحلية</translation>
+        <translation>Impossible de découvrir et d&apos;être découvert par d&apos;autres appareils lorsque le service de découverte LAN n&apos;est pas activé</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
-        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service</source>
-        <translation>غير قادر على اكتشاف الأجهزة الأخرى أو أن تكتشفها عند عدم تمكين خدمة اكتشاف الشبكة المحلية، انقر بزر الماوس الأيمن على قائمة البدء في ويندوز -> إدارة الحاسوب -> الخدمات والتطبيقات -> الخدمات لتمكين خدمة Bonjour</translation>
+        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
+        <translation>Impossible de découvrir et d&apos;être découvert par d&apos;autres appareils lorsque le service de découverte LAN n&apos;est pas activé. Cliquez avec le bouton droit sur le menu Démarrer Windows -&gt; Gestion de l&apos;ordinateur -&gt; Services et applications -&gt; Services pour activer le service Bonjour</translation>
     </message>
 </context>
 <context>
@@ -214,42 +214,42 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="126"/>
         <source>First step</source>
-        <translation>الخطوة الأولى</translation>
+        <translation>Première étape</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="127"/>
         <source>The opposite end opens the application and connects to the same network</source>
-        <translation>الطرف الآخر يفتح التطبيق ويصل إلى الشبكة نفسها</translation>
+        <translation>L&apos;autre extrémité ouvre l&apos;application et se connecte au même réseau</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="128"/>
         <source>Second step</source>
-        <translation>الخطوة الثانية</translation>
+        <translation>Deuxième étape</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="130"/>
         <source>Third step</source>
-        <translation>الخطوة الثالثة</translation>
+        <translation>Troisième étape</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="189"/>
         <source>to send the file</source>
-        <translation>لإرسال الملف</translation>
+        <translation>pour envoyer le fichier</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
         <source>to connect to the peer device</source>
-        <translation>ل连接到对端设备</translation>
+        <translation>pour se connecter à l&apos;appareil pair</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
         <source>Enter the peer IP in the search box</source>
-        <translation>أدخل عنوان IP للطرف الآخر في مربع البحث</translation>
+        <translation>Entrez l&apos;IP de l&apos;appareil pair dans la zone de recherche</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="131"/>
         <source>Click</source>
-        <translation>اضغط</translation>
+        <translation>Cliquez</translation>
     </message>
 </context>
 <context>
@@ -257,17 +257,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="153"/>
         <source>OK</source>
-        <translation>موافق</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
         <source>the file save location is invalid</source>
-        <translation>مجلد حفظ الملف غير صحيح</translation>
+        <translation>le chemin d&apos;enregistrement du fichier est invalide</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation>هذا المسار هو دليل فقط للقراءة. الرجاء اختيار موقع مختلف لحفظ الملف.</translation>
+        <translation>Ce chemin est un répertoire en lecture seule. Veuillez choisir un emplacement différent pour enregistrer le fichier.</translation>
     </message>
 </context>
 <context>
@@ -275,12 +275,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="204"/>
         <source>The current device has been locked</source>
-        <translation>تم قفل الجهاز الحالي</translation>
+        <translation>L&apos;appareil actuel est verrouillé</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="207"/>
         <source>You can unlock it on mobile devices</source>
-        <translation>يمكنك فك القفل عليه من خلال الأجهزة المحمولة</translation>
+        <translation>Vous pouvez le déverrouiller sur les appareils mobiles</translation>
     </message>
 </context>
 <context>
@@ -288,7 +288,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="81"/>
         <source>Looking for devices</source>
-        <translation>يبحث عن الأجهزة</translation>
+        <translation>Recherche d&apos;appareils</translation>
     </message>
 </context>
 <context>
@@ -296,42 +296,42 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="266"/>
         <source>Minimise to system tray</source>
-        <translation>التحوّل إلى سطح المكتب</translation>
+        <translation>Minimiser dans la zone de notification</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="268"/>
         <source>Exit</source>
-        <translation>الخروج</translation>
+        <translation>Quitter</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="277"/>
         <source>No more enquiries</source>
-        <translation>لا توجد استفسارات إضافية</translation>
+        <translation>Aucune autre demande</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
         <source>Cancel</source>
-        <translation>إلغاء</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="286"/>
         <source>Confirm</source>
-        <translation>تأكيد</translation>
+        <translation>Confirmer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
         <source>Please select your operation</source>
-        <translation>يرجى اختيار عمليةك</translation>
+        <translation>Veuillez sélectionner votre opération</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="338"/>
         <source>Restore</source>
-        <translation>استعادة</translation>
+        <translation>Restaurer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="339"/>
         <source>Quit</source>
-        <translation>الخروج</translation>
+        <translation>Quitter</translation>
     </message>
 </context>
 <context>
@@ -339,32 +339,32 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="62"/>
         <source>Computer</source>
-        <translation>الحاسوب</translation>
+        <translation>Ordinateur</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="63"/>
         <source>Phone</source>
-        <translation>الهاتف</translation>
+        <translation>Téléphone</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="74"/>
         <source>Selection of delivery device</source>
-        <translation>اختيار جهاز التوصيل</translation>
+        <translation>Sélection de l&apos;appareil de livraison</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
         <source>Settings</source>
-        <translation>الإعدادات</translation>
+        <translation>Paramètres</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="88"/>
         <source>Download client</source>
-        <translation>تنزيل العميل</translation>
+        <translation>Télécharger le client</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="130"/>
         <source>Download Windows client</source>
-        <translation>تنزيل عميل ويندوز</translation>
+        <translation>Télécharger le client Windows</translation>
     </message>
 </context>
 <context>
@@ -372,7 +372,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="150"/>
         <source>Please connect to the network</source>
-        <translation>يرجى الاتصال بالشبكة</translation>
+        <translation>Veuillez vous connecter au réseau</translation>
     </message>
 </context>
 <context>
@@ -380,57 +380,57 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
-        <translation>1. تفعيل تطبيقات التعاون عبر الأجهزة. يمكن تنزيل التطبيقات على نظام UOS من متجر التطبيقات، ويمكن تنزيل التطبيقات على الجانب الويندوز من: </translation>
+        <translation>1. Activez les applications collaboratives multi-plateformes. Les applications sur UOS peuvent être téléchargées depuis l'App Store, et celles sur Windows peuvent être téléchargées depuis :</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
         <source>2. On the same LAN as the device</source>
-        <translation>2. على نفس الشبكة المحلية مع الجهاز</translation>
+        <translation>2. Être sur le même réseau local (LAN) que l'appareil</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
-        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -"Everyone on the same LAN"</source>
-        <translation>3. مدير الملفات-الإعدادات-التنزيل-السماح للمستخدمين التاليين بتنزيل الملفات إليّ -"كل من على نفس الشبكة المحلية"</translation>
+        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
+        <translation>3. Gestionnaire de fichiers - Paramètres - Dépôt de fichiers - Autoriser les utilisateurs suivants à déposer des fichiers vers moi - « Tout le monde sur le même LAN »</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
-        <source>3. Settings-Basic Settings-Discovery Mode-"Allow everyone in the same LAN"</source>
-        <translation>3. الإعدادات-الإعدادات الأساسية-وضع الاكتشاف-"السماح لكل من على نفس الشبكة المحلية"</translation>
+        <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
+        <translation>3. Paramètres - Paramètres de base - Mode de découverte - « Autoriser tout le monde sur le même LAN »</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
         <source>4. Try entering the target device IP in the top search box</source>
-        <translation>4. جرّب إدخال عنوان IP الجهاز المستهدف في مربع البحث العلوي</translation>
+        <translation>4. Essayez de saisir l'adresse IP de l'appareil cible dans la barre de recherche en haut</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="216"/>
         <source>Unable to find collaborative device？</source>
-        <translation>غير قادر على العثور على جهاز التعاون؟</translation>
+        <translation>Impossible de trouver un appareil collaboratif ?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="245"/>
         <source>1. The mobile phone needs to download cross end collaborative applications.</source>
-        <translation>1. يحتاج الهاتف المحمول إلى تنزيل تطبيقات التعاون عبر الأجهزة.</translation>
+        <translation>1. Le téléphone mobile doit télécharger des applications collaboratives multi-plateformes.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
-        <source>Go to download></source>
-        <translation>الذهاب إلى التنزيل></translation>
+        <source>Go to download&gt;</source>
+        <translation>Aller télécharger &gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
         <source>2. After installation, scan the code to connect to this device for collaboration.</source>
-        <translation>2. بعد التثبيت، امسح الشفرة للاتصال بهذا الجهاز للتعاون.</translation>
+        <translation>2. Après l'installation, scannez le code pour connecter ce périphérique à des fins de collaboration.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="251"/>
         <source>3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device</source>
-        <translation>3. بعد الاتصال بهذا الجهاز، يحتاج الجانب المحمول إلى الحفاظ على تطبيقات التعاون عبر الأجهزة مفتوحة و على نفس الشبكة المحلية مع هذا الجهاز</translation>
+        <translation>3. Après avoir connecté cet appareil, le téléphone doit garder les applications collaboratives ouvertes et être sur le même réseau local (LAN) que cet appareil.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="253"/>
         <source>Instructions for use</source>
-        <translation>تعليمات الاستخدام</translation>
+        <translation>Instructions d&apos;utilisation</translation>
     </message>
 </context>
 <context>
@@ -438,7 +438,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="293"/>
         <source>No device found</source>
-        <translation>لا يوجد جهاز</translation>
+        <translation>Aucun appareil trouvé</translation>
     </message>
 </context>
 <context>
@@ -446,37 +446,37 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="65"/>
         <source>Disconnect</source>
-        <translation>قطع الاتصال</translation>
+        <translation>Déconnecter</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="93"/>
         <source>“%1”apply to initiate screen casting</source>
-        <translation>“%1” التطبيق لبدء التصوير الشاشة</translation>
+        <translation>«%1» appliquer pour lancer la diffusion d&apos;écran</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
         <source>cancel</source>
-        <translation>إلغاء</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
         <source>comfirm</source>
-        <translation>تأكيد</translation>
+        <translation>Confirmer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="139"/>
         <source>“%1”connection disconnected!</source>
-        <translation>“%1” الاتصال تم قطعه!</translation>
+        <translation>«%1» connexion déconnectée !</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
-        <source>Are you sure to disconnect and collaborate with '%1'?</source>
-        <translation>هل أنت متأكد من قطع الاتصال والتعاون مع '%1'؟</translation>
+        <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
+        <translation>Êtes-vous sûr de vouloir déconnecter et collaborer avec «%1» ?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
         <source>disconnect</source>
-        <translation>قطع</translation>
+        <translation>Déconnecter</translation>
     </message>
 </context>
 <context>
@@ -484,13 +484,13 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="115"/>
         <source>Remaining time %1 | %2%</source>
-        <translation>الوقت المتبقي %1 | %2%</translation>
+        <translation>Temps restant %1 | %2%</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="133"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>الغاء</translation>
+        <translation>Annuler</translation>
     </message>
 </context>
 <context>
@@ -498,22 +498,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="102"/>
         <source>Scan code connection</source>
-        <translation>اتصال امسح الشفرة</translation>
+        <translation>Connexion par scan de code</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="108"/>
         <source>Please use the cross end collaboration app to scan the code</source>
-        <translation>يرجى استخدام تطبيق التعاون عبر الأجهزة لمسح الشفرة</translation>
+        <translation>Veuillez utiliser l&apos;application de collaboration entre terminaux pour scanner le code</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="114"/>
         <source>Mobile phones and devices need to be connected to the same local area network</source>
-        <translation>تحتاج الهواتف المحمولة والأجهزة إلى الاتصال بنفس الشبكة المحلية</translation>
+        <translation>Les téléphones mobiles et les appareils doivent être connectés au même réseau local</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="147"/>
         <source>Click to download UOS assistant APP</source>
-        <translation>اضغط للتنزيل UOS مساعد التطبيق</translation>
+        <translation>Cliquez pour télécharger l&apos;application UOS Assistant</translation>
     </message>
 </context>
 <context>
@@ -522,13 +522,13 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="179"/>
         <source>Ok</source>
         <comment>button</comment>
-        <translation>موافق</translation>
+        <translation>Okay</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="182"/>
         <source>View</source>
         <comment>button</comment>
-        <translation>عرض</translation>
+        <translation>Voir</translation>
     </message>
 </context>
 <context>
@@ -536,97 +536,97 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
         <source>Everyone in the same LAN</source>
-        <translation>كل شخص في نفس الشبكة المحلية</translation>
+        <translation>Tout le monde sur le même LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
         <source>Not allow</source>
-        <translation>التصاريح غير مسموح</translation>
+        <translation>Non autorisé</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
         <source>Screen right</source>
-        <translation>الشاشة اليمنى</translation>
+        <translation>Écran droit</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="51"/>
         <source>Screen left</source>
-        <translation>الشاشة اليسرى</translation>
+        <translation>Écran gauche</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="54"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation>التصاريح مسموح فقط لمن يتعاونون</translation>
+        <translation>Seuls ceux qui collaborent sont autorisés</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="132"/>
         <source>Basic Settings</source>
-        <translation>الإعدادات الأساسية</translation>
+        <translation>Paramètres basiques</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="143"/>
         <source>Discovery mode</source>
-        <translation>وضع الاكتشاف</translation>
+        <translation>Mode découverte</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
-        <source>Other devices can discover and connect with you through the "Cooperation" app</source>
-        <translation>يمكن لجهاز آخر أن يكتشف ويصل إليك عبر تطبيق "Cooperation"</translation>
+        <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
+        <translation>Les autres appareils peuvent vous découvrir et se connecter à vous via l&apos;application &quot;Coopération&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
         <source>Device name</source>
-        <translation>اسم الجهاز</translation>
+        <translation>Nom de l&apos;appareil</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
         <source>Peripheral share</source>
-        <translation>مشاركة المعدات</translation>
+        <translation>Partage des périphériques</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
-        <translation>يسمح للمعدات التي تم إنشاؤها بالتعاون عبر الأجهزة للتحكم في هذا الجهاز، بما في ذلك لوحة المفاتيح، والماوس، واللوحة اللمسية، إلخ</translation>
+        <translation>Autorise les périphériques ayant été établis pour collaborer entre appareils afin de contrôler cet appareil, notamment clavier, souris, pavé tactile, etc.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
-        <translation>عندما يكون هذا الجهاز طرف الاتصال، يمرر الماوس من شاشة هذا الجهاز إلى موقع طرف الاتصال</translation>
+        <translation>Lorsque cet appareil est le partenaire connecté, la souris pénètre de l&apos;écran de cet appareil à la position du partenaire connecté</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
         <source>Connection direction</source>
-        <translation>اتجاه الاتصال</translation>
+        <translation>Direction de la connexion</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
         <source>Allows the following users to send files to me</source>
-        <translation>يسمح للمستخدمين التاليين بإرسال ملفات إليّ</translation>
+        <translation>Autorise les utilisateurs suivants à m&apos;envoyer des fichiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
         <source>File save location</source>
-        <translation>مكان حفظ الملف</translation>
+        <translation>Emplacement d&apos;enregistrement des fichiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
         <source>Share clipboard</source>
-        <translation>مشاركة لوحة المفاتيح</translation>
+        <translation>Partager le presse-papiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
         <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
-        <translation>عند تمكين مشاركة لوحة المفاتيح على الخادم (الجهاز المرتبط)، سيتم مشاركة لوحة المفاتيح بين الكمبيوترين</translation>
+        <translation>Lorsque le partage est activé sur le serveur (l&apos;appareil connecté), le presse-papiers sera partagé entre les deux ordinateurs</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
         <source>The device name must contain 1 to 20 characters</source>
-        <translation>يجب أن يحتوي اسم الجهاز على 1 إلى 20 حرفًا</translation>
+        <translation>Le nom de l&apos;appareil doit contenir entre 1 et 20 caractères</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="362"/>
         <source>The device name must contain 1 to 63 characters</source>
-        <translation>يجب أن يحتوي اسم الجهاز على 1 إلى 63 حرفًا</translation>
+        <translation>Le nom de l&apos;appareil doit contenir entre 1 et 63 caractères</translation>
     </message>
 </context>
 <context>
@@ -634,127 +634,127 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="238"/>
         <source>connect</source>
-        <translation>الاتصال</translation>
+        <translation>connecter</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="246"/>
         <source>Disconnect</source>
-        <translation>قطع الاتصال</translation>
+        <translation>Déconnecter</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
-        <source>Unable to collaborate to "%1"</source>
-        <translation>غير قادر على التعاون مع "%1"</translation>
+        <source>Unable to collaborate to &quot;%1&quot;</source>
+        <translation>Impossible de collaborer avec &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
         <source>You are connecting to another device</source>
-        <translation>أنت تصل إلى جهاز آخر</translation>
+        <translation>Vous vous connectez à un autre appareil</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
-        <source>Requesting collaborate to "%1"</source>
-        <translation>طلب التعاون مع "%1"</translation>
+        <source>Requesting collaborate to &quot;%1&quot;</source>
+        <translation>Demande de collaboration avec &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
-        <source>Coordination with "%1" has ended</source>
-        <translation>تم إنهاء التنسيق مع "%1"</translation>
+        <source>Coordination with &quot;%1&quot; has ended</source>
+        <translation>La coordination avec &quot;%1&quot; est terminée</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
-        <source>A cross-end collaboration request was received from "%1"</source>
-        <translation>تم استقبال طلب التعاون عبر الأطراف من "%1"</translation>
+        <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
+        <translation>Une demande de collaboration entre appareils a été reçue de &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
         <source>Reject</source>
-        <translation>الرفض</translation>
+        <translation>Refuser</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="355"/>
         <source>Accept</source>
-        <translation>الموافقة</translation>
+        <translation>Accepter</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
         <source>Cooperation</source>
-        <translation>التعاون</translation>
+        <translation>Collaboration</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
-        <source>Connect to "%1" failed</source>
-        <translation>فشل الاتصال "%1"</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>Échec de la connexion à &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
         <source>Unable to collaborate</source>
-        <translation>غير قادر على التعاون</translation>
+        <translation>Impossible de collaborer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="419"/>
         <source>Failed to run process!</source>
-        <translation>فشل في تشغيل العملية!</translation>
+        <translation>Échec de l&apos;exécution du processus !</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
-        <source>Connection successful, coordinating with  "%1"</source>
-        <translation>الاتصال ناجح، يتم التنسيق مع "%1"</translation>
+        <source>Connection successful, coordinating with  &quot;%1&quot;</source>
+        <translation>Connexion réussie, coordination avec &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
-        <source>"%1" has rejected your request for collaboration</source>
-        <translation>"%1" رفض طلب التعاون الخاص بك</translation>
+        <source>&quot;%1&quot; has rejected your request for collaboration</source>
+        <translation>&quot;%1&quot; a rejeté votre demande de collaboration</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
-        <source>"%1" is connecting with other devices</source>
-        <translation>"%1" في اتصال مع أجهزة أخرى</translation>
+        <source>&quot;%1&quot; is connecting with other devices</source>
+        <translation>&quot;%1&quot; se connecte à d&apos;autres appareils</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
-        <source>The connection request sent to you by "%1" was interrupted due to a timeout</source>
-        <translation>طلب الاتصال المرسل إليك من "%1" توقف بسبب انتهاء الوقت</translation>
+        <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
+        <translation>La demande de connexion envoyée à vous par &quot;%1&quot; a été interrompue en raison d&apos;un délai d&apos;attente</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
         <source>The other party does not confirm, please try again later</source>
-        <translation>الطرف الآخر لم يؤكد، يرجى المحاولة مرة أخرى لاحقاً</translation>
+        <translation>La partie opposée ne confirme pas, veuillez réessayer plus tard</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="524"/>
         <source>The other party has cancelled the connection request !</source>
-        <translation>الطرف الآخر ألغى طلب الاتصال!</translation>
+        <translation>La partie opposée a annulé la demande de connexion !</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="528"/>
         <source>connect failed</source>
-        <translation>فشل الاتصال</translation>
+        <translation>échec de la connexion</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation>الشبكة غير متصلة، فشل في تسليم الملف هذه المرة. من فضلك اتصل بالشبكة وحاول مرة أخرى!</translation>
+        <translation>Réseau non connecté, l&apos;envoi du fichier a échoué cette fois-ci. Veuillez vous connecter au réseau et réessayer !</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
         <source>File transfer failed</source>
-        <translation>فشل نقل الملف</translation>
+        <translation>Transfert de fichier échoué</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
-        <translation>الشبكة غير متصلة، فشل في تسليم الملف هذه المرة. من فضلك اتصل بالشبكة وحاول مرة أخرى!</translation>
+        <translation>Réseau non connecté, l&apos;envoi du fichier a échoué cette fois-ci. Veuillez vous connecter au réseau et réessayer !</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="562"/>
         <source>Network exception</source>
-        <translation>خطأ في الشبكة</translation>
+        <translation>Exception réseau</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
-        <source>Please check the network "%1"</source>
-        <translation>من فضلك تحقق من الشبكة "%1"</translation>
+        <source>Please check the network &quot;%1&quot;</source>
+        <translation>Veuillez vérifier le réseau &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -762,124 +762,120 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
         <source>Cooperation</source>
-        <translation>التعاون</translation>
+        <translation>Coopération</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
-        <source>Connection successful, coordinating with "%1"</source>
-        <translation>الاتصال ناجح، يتم التنسيق مع "%1"</translation>
+        <source>Connection successful, coordinating with &quot;%1&quot;</source>
+        <translation>Connexion réussie, coordination avec &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
-        <source>Connect to "%1" failed</source>
-        <translation>فشل الاتصال "%1"</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>Échec de la connexion à &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
         <source>File read/write exception</source>
-        <translation>خطأ في قراءة/كتابة الملف</translation>
+        <translation>Exception de lecture/écriture de fichier</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
         <source>The other party has canceled the file transfer</source>
-        <translation>الطرف الآخر ألغي نقل الملف</translation>
+        <translation>L&apos;autre partie a annulé le transfert de fichier</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
         <source>File sent successfully</source>
-        <translation>تم إرسال الملف بنجاح</translation>
+        <translation>Fichier envoyé avec succès</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="168"/>
         <source>View transfer history</source>
-        <translation>عرض سجل نقل الملف</translation>
+        <translation>Voir l&apos;historique des transferts</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="177"/>
         <source>Send files</source>
-        <translation>إرسال الملفات</translation>
+        <translation>Envoyer des fichiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="302"/>
         <source>The other party did not receive, the files failed to send</source>
-        <translation>الطرف الآخر لم يتلق، فشلت الملفات في الإرسال</translation>
+        <translation>L&apos;autre partie n&apos;a pas reçu, les fichiers n&apos;ont pas été envoyés</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="332"/>
         <source>Cancel</source>
-        <translation>الغاء</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="335"/>
         <source>File receiving %1% | Remaining time %2</source>
-        <translation>الملف يتم تلقيه %1% | الوقت المتبقى %2</translation>
+        <translation>Reception du fichier %1% | Temps restant %2</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Sending files to "%1"</source>
-        <translation>إرسال الملفات إلى "%1"</translation>
+        <source>Sending files to &quot;%1&quot;</source>
+        <translation>Envoi des fichiers vers &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Receiving files from "%1"</source>
-        <translation>تلقي الملفات من "%1"</translation>
+        <source>Receiving files from &quot;%1&quot;</source>
+        <translation>Réception des fichiers de &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
         <source>Reject</source>
-        <translation>الرفض</translation>
+        <translation>Refuser</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="400"/>
         <source>Accept</source>
-        <translation>الموافقة</translation>
+        <translation>Accepter</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="401"/>
         <source>Close</source>
-        <translation>إغلاق</translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" أرسل بعض الملفات إليك</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; vous envoie certains fichiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
         <source>View</source>
-        <translation>عرض</translation>
+        <translation>Afficher</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
         <source>The other party has cancelled the transfer request !</source>
-        <translation>لقد ألغى الطرف الآخر طلب النقل ! </translation>
+        <translation>La partie opposée a annulé la demande de transfert !</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>>-
- مساحة تخزين غير كافية، فشل في تسليم الملف هذه المرة. من فضلك أчист
- مساحة القرص الصلب وحاول مرة أخرى!</translation>
+        <translation>Espace de stockage insuffisant, le transfert de fichier a échoué cette fois-ci. Veuillez libérer de l&apos;espace disque et réessayer !</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>>-
- الشبكة غير متصلة، فشل في تسليم الملف هذه المرة. من فضلك قم بالاتصال
- بالشبكة وحاول مرة أخرى!</translation>
+        <translation>Réseau non connecté, le transfert de fichier a échoué cette fois-ci. Veuillez connecter le réseau et réessayer !</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
         <source>calculating</source>
-        <translation>جارٍ الحساب</translation>
+        <translation>calcul</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
         <source>The other party rejects your request</source>
-        <translation>الطرف الآخر رفض طلبك</translation>
+        <translation>La partie opposée rejette votre demande</translation>
     </message>
 </context>
 <context>
@@ -887,7 +883,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="132"/>
         <source>File transfer</source>
-        <translation>نقل الملف</translation>
+        <translation>Transfert de fichier</translation>
     </message>
 </context>
 <context>
@@ -895,7 +891,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
         <source>Disconnected</source>
-        <translation>الاتصال مقطوع</translation>
+        <translation>Déconnecté</translation>
     </message>
 </context>
 <context>
@@ -903,12 +899,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="75"/>
         <source>File Transfer</source>
-        <translation>نقل الملف</translation>
+        <translation>Transfert de fichier</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="91"/>
         <source>Wait for confirmation...</source>
-        <translation>انتظر التأكيد...</translation>
+        <translation>En attente de confirmation...</translation>
     </message>
 </context>
 <context>
@@ -916,17 +912,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
         <source>Please enter the device ip/name of the collaborator</source>
-        <translation>من فضلك أدخل عنوان الجهاز (IP أو الاسم) للشريك</translation>
+        <translation>Veuillez entrer l&apos;adresse IP ou le nom de l&apos;appareil du collaborateur</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="56"/>
         <source>Nearby Device</source>
-        <translation>جهاز قريب</translation>
+        <translation>Appareil proche</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="72"/>
         <source>Re-scan for devices</source>
-        <translation>إعادة التفتيش عن الأجهزة</translation>
+        <translation>Relancer la scan des appareils</translation>
     </message>
 </context>
 <context>
@@ -934,7 +930,7 @@
     <message>
         <location filename="../../src/lib/cooperation/transfer/helper/transferhelper.cpp" line="105"/>
         <source>Send files</source>
-        <translation>إرسال الملفات</translation>
+        <translation>Envoyer des fichiers</translation>
     </message>
 </context>
 <context>
@@ -942,7 +938,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="34"/>
         <source>File transfer</source>
-        <translation>نقل الملف</translation>
+        <translation>Transfert de fichiers</translation>
     </message>
 </context>
 <context>
@@ -950,7 +946,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="64"/>
         <source>File transfer</source>
-        <translation>نقل الملف</translation>
+        <translation>Transfert de fichiers</translation>
     </message>
 </context>
 <context>
@@ -958,32 +954,32 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="154"/>
         <source>File transfer settings</source>
-        <translation>إعدادات نقل الملف</translation>
+        <translation>Paramètres du transfert de fichiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="171"/>
         <source>Everyone in the same LAN</source>
-        <translation>كل شخص في نفس الشبكة المحلية</translation>
+        <translation>Tout le monde sur le même réseau local</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="172"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation>يسمح فقط بالأشخاص الذين يتعاونون</translation>
+        <translation>Seuls ceux qui collaborent sont autorisés</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="173"/>
         <source>Not allow</source>
-        <translation>عدم السماح</translation>
+        <translation>Interdire</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="178"/>
         <source>Allows the following users to send files to me</source>
-        <translation>يسمح للأفراد التاليين بإرسال المفاتل إلىي</translation>
+        <translation>Autorise les utilisateurs suivants à m&apos;envoyer des fichiers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
         <source>File save location</source>
-        <translation>مكان حفظ الملف</translation>
+        <translation>Emplacement d&apos;enregistrement des fichiers</translation>
     </message>
 </context>
 </TS>
