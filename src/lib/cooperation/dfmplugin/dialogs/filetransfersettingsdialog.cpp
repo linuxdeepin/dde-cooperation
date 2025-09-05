@@ -246,6 +246,16 @@ void FileTransferSettingsDialog::addItem(const QString &text, QWidget *widget, i
     bgWidget->setLayout(vLayout);
 
     QLabel *label = new QLabel(text, this);
+
+    // 设置打点省略显示，使用固定宽度计算
+    QFontMetrics fontMetrics(label->font());
+    int availableWidth = 360;  // 对话框宽度400px减去左右边距
+    QString elidedText = fontMetrics.elidedText(text, Qt::ElideRight, availableWidth);
+    label->setText(elidedText);
+    if (elidedText != text) {
+        label->setToolTip(text);  // 如果文本被截断，设置完整文本为工具提示
+    }
+
     vLayout->addWidget(label);
     vLayout->addWidget(widget);
 
