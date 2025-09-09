@@ -464,11 +464,13 @@ void ShareCooperationService::appendLogRaw(const QString &text, bool error)
 #endif
     for (QString line : text.split(regExp)) {
         if (!line.isEmpty()) {
-            if (error) {
-                ELOG << line.toStdString();
-            } else {
-                DLOG << line.toStdString();
-            }
+            // disable for privacy output
+            // if (error) {
+            //     ELOG << line.toStdString();
+            // } else {
+            //     DLOG << line.toStdString();
+            // }
+            DLOG << line.toStdString();
         }
     }
 }

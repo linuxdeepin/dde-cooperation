@@ -121,7 +121,7 @@ int SessionManager::sessionConnect(QString ip, int port, QString password)
         return 1;
     }
     if (!_session_worker->netTouch(ip, port)) {
-        ELOG << "Fail to connect remote:" << ip.toStdString();
+        // ELOG << "Fail to connect remote:" << ip.toStdString();
         return -1;
     }
 

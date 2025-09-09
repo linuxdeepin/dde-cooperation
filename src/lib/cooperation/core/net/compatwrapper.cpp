@@ -282,7 +282,7 @@ void CompatWrapperPrivate::ipcCompatSlot(int type, const QString& msg)
         DLOG << "Received FRONT_SEARCH_IP_DEVICE_RESULT message";
         ipc::SearchDeviceResult param;
         param.from_json(json_obj);
-        WLOG << "SearchDeviceResult : " << json_obj;
+        // WLOG << "SearchDeviceResult : " << json_obj;
         QString info = param.result ? msg : "";
         // update this device info to discovery list
         q->metaObject()->invokeMethod(DiscoverController::instance(),
