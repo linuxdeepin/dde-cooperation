@@ -673,12 +673,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="25"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Músicas</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="26"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Área de Trabalho</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
@@ -708,7 +708,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="46"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Próximo</translation>
     </message>
 </context>
 <context>
