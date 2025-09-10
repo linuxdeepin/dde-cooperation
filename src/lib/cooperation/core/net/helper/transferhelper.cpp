@@ -337,7 +337,8 @@ void TransferHelper::transferResult(bool result, const QString &msg)
             d->notifyMessage(msg, actions, -1, hints);
         } else {
             DLOG << "Transfer failed, showing message";
-            d->notifyMessage(msg, {}, 3 * 1000);
+            QVariantMap hitMap { { "x-deepin-ShowInNotifyCenter", false } };
+            d->notifyMessage(msg, {}, 3 * 1000, hitMap);
         }
         return;
     }
@@ -434,8 +435,9 @@ void TransferHelper::notifyTransferRequest(const QString &nick, const QString &i
     QStringList actions { NotifyRejectAction, tr("Reject"),
                           NotifyAcceptAction, tr("Accept"),
                           NotifyCloseAction, tr("Close") };
+    QVariantMap hitMap { { "x-deepin-ShowInNotifyCenter", false } };
 
-    d->notifyMessage(msg.arg(CommonUitls::elidedText(nick, Qt::ElideMiddle, 25)), actions, 10 * 1000);
+    d->notifyMessage(msg.arg(CommonUitls::elidedText(nick, Qt::ElideMiddle, 25)), actions, 10 * 1000, hitMap);
 #else
     DLOG << "Showing transfer confirmation dialog";
     d->transDialog()->showConfirmDialog(nick);
@@ -446,7 +448,8 @@ void TransferHelper::handleCancelTransferApply()
 {
     static QString body(tr("The other party has cancelled the transfer request !"));
 #ifdef __linux__
-    d->notifyMessage(body, {}, 3 * 1000);
+    QVariantMap hitMap { { "x-deepin-ShowInNotifyCenter", false } };
+    d->notifyMessage(body, {}, 3 * 1000, hitMap);
 #else
     DLOG << "Non-Linux platform, showing result dialog";
     d->transDialog()->showResultDialog(false, body);
