@@ -320,7 +320,7 @@
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="286"/>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="295"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Confirmar</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
@@ -331,12 +331,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="338"/>
         <source>Restore</source>
-        <translation type="unfinished"/>
+        <translation>Restaurar</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="339"/>
         <source>Quit</source>
-        <translation type="unfinished"/>
+        <translation>Sair</translation>
     </message>
 </context>
 <context>
@@ -344,12 +344,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="62"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation>Computador</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="63"/>
         <source>Phone</source>
-        <translation type="unfinished"/>
+        <translation>Telefone</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="74"/>
