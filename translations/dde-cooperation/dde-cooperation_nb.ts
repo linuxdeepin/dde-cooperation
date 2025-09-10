@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="nb">
 <context>
     <name>Application</name>
     <message>
@@ -32,6 +30,7 @@
     <name>cooperation_core::BottomLabel</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
         <source>Local IP: %1</source>
         <translation>IP محلي: %1</translation>
     </message>
@@ -40,8 +39,8 @@
     <name>cooperation_core::ConfirmWidget</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" sender noen filer til deg</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; sender noen filer til deg</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
@@ -68,6 +67,7 @@
     <name>cooperation_core::CooperationTaskDialog</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="111"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Avbryt</translation>
@@ -129,7 +129,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
-        <source>When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device</source>
+        <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
         <translation>Når en forbindelse opprettes mellom to enheter, kan initiators tastatur og mus brukes til å kontrollere den andre enheten</translation>
     </message>
     <message>
@@ -195,6 +195,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
         <translation>Vennligst klikk for å bekrefte og slå på LAN-oppdagerfunksjonen!</translation>
     </message>
@@ -205,8 +206,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
-        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service</source>
-        <translation>Det er ikke mulig å oppdage og bli oppdaga av andre enheter når LAN-oppdagerfunksjonen ikke er slått på. Høyreklikk på Windows Start meny ->Computer Management ->Services and Applications ->Services for å slå på Bonjour-tjenesten</translation>
+        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
+        <translation>Det er ikke mulig å oppdage og bli oppdaga av andre enheter når LAN-oppdagerfunksjonen ikke er slått på. Høyreklikk på Windows Start meny -&gt;Computer Management -&gt;Services and Applications -&gt;Services for å slå på Bonjour-tjenesten</translation>
     </message>
 </context>
 <context>
@@ -261,6 +262,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
         <translation>fila-lagringsstedet er ugyldig</translation>
     </message>
@@ -310,16 +312,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="296"/>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="286"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="295"/>
         <source>Confirm</source>
         <translation>Bekrefte</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
         <source>Please select your operation</source>
         <translation>Vennligst velg operasjonen din</translation>
     </message>
@@ -353,6 +358,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
+        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="126"/>
         <source>Settings</source>
         <translation>Innstillinger</translation>
     </message>
@@ -389,13 +395,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
-        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -"Everyone on the same LAN"</source>
-        <translation>3. Filbehandler - Innstillinger - Filkast - Tillat følgende brukere å kaste filer til meg - "Alle på samme LAN"</translation>
+        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
+        <translation>3. Filbehandler - Innstillinger - Filkast - Tillat følgende brukere å kaste filer til meg - &quot;Alle på samme LAN&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
-        <source>3. Settings-Basic Settings-Discovery Mode-"Allow everyone in the same LAN"</source>
-        <translation>3. Innstillinger - Grunnleggende innstillinger - Oppdagingsmodus - "Tillat alle på samme LAN"</translation>
+        <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
+        <translation>3. Innstillinger - Grunnleggende innstillinger - Oppdagingsmodus - &quot;Tillat alle på samme LAN&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
@@ -414,8 +420,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
-        <source>Go to download></source>
-        <translation>Gå til nedlastning></translation>
+        <source>Go to download&gt;</source>
+        <translation>Gå til nedlastning&gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
@@ -455,11 +461,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="212"/>
         <source>cancel</source>
         <translation>avslå</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="157"/>
         <source>comfirm</source>
         <translation>bekrefte</translation>
     </message>
@@ -470,8 +478,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
-        <source>Are you sure to disconnect and collaborate with '%1'?</source>
-        <translation>Er du sikker på å koble av og samarbeide med '%1'?</translation>
+        <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
+        <translation>Er du sikker på å koble av og samarbeide med &apos;%1&apos;?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
@@ -535,11 +543,13 @@
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
         <translation>Alle i samme LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="55"/>
         <source>Not allow</source>
         <translation>Ikke tillatt</translation>
     </message>
@@ -570,8 +580,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
-        <source>Other devices can discover and connect with you through the "Cooperation" app</source>
-        <translation>Andre enheter kan oppdage og koble til deg gjennom "Cooperation"-appen</translation>
+        <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
+        <translation>Andre enheter kan oppdage og koble til deg gjennom &quot;Cooperation&quot;-appen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
@@ -643,8 +653,12 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
-        <source>Unable to collaborate to "%1"</source>
-        <translation>Kan ikke samarbeide med "%1"</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="392"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="448"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
+        <source>Unable to collaborate to &quot;%1&quot;</source>
+        <translation>Kan ikke samarbeide med &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
@@ -653,18 +667,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
-        <source>Requesting collaborate to "%1"</source>
-        <translation>Forespørsel om samarbeid med "%1"</translation>
+        <source>Requesting collaborate to &quot;%1&quot;</source>
+        <translation>Forespørsel om samarbeid med &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
-        <source>Coordination with "%1" has ended</source>
-        <translation>Samarbeid med "%1" har slutt</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
+        <source>Coordination with &quot;%1&quot; has ended</source>
+        <translation>Samarbeid med &quot;%1&quot; har slutt</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
-        <source>A cross-end collaboration request was received from "%1"</source>
-        <translation>En kryss-endepunkt-samarbeid-forespørsel ble mottatt fra "%1"</translation>
+        <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
+        <translation>En kryss-endepunkt-samarbeid-forespørsel ble mottatt fra &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
@@ -683,8 +698,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
-        <source>Connect to "%1" failed</source>
-        <translation>Kobling til "%1" feilet</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>Kobling til &quot;%1&quot; feilet</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
@@ -698,23 +713,23 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
-        <source>Connection successful, coordinating with  "%1"</source>
-        <translation>Forbindelse lykkes, koordinerer med "%1"</translation>
+        <source>Connection successful, coordinating with  &quot;%1&quot;</source>
+        <translation>Forbindelse lykkes, koordinerer med &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
-        <source>"%1" has rejected your request for collaboration</source>
-        <translation>"%1" har avslått din forespørsel om samarbeid</translation>
+        <source>&quot;%1&quot; has rejected your request for collaboration</source>
+        <translation>&quot;%1&quot; har avslått din forespørsel om samarbeid</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
-        <source>"%1" is connecting with other devices</source>
-        <translation>"%1" kobler til andre enheter</translation>
+        <source>&quot;%1&quot; is connecting with other devices</source>
+        <translation>&quot;%1&quot; kobler til andre enheter</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
-        <source>The connection request sent to you by "%1" was interrupted due to a timeout</source>
-        <translation>Forbindelsesforespørselen fra "%1" ble avbrutt på grunn av en tidsavbrudd</translation>
+        <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
+        <translation>Forbindelsesforespørselen fra &quot;%1&quot; ble avbrutt på grunn av en tidsavbrudd</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
@@ -753,42 +768,47 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
-        <source>Please check the network "%1"</source>
-        <translation>Vennligst sjekk nettverket "%1"</translation>
+        <source>Please check the network &quot;%1&quot;</source>
+        <translation>Vennligst sjekk nettverket &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::ShareHelperPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
         <translation>Samarbeid</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
-        <source>Connection successful, coordinating with "%1"</source>
-        <translation>Forbindelse lykkes, koordinerer med "%1"</translation>
+        <source>Connection successful, coordinating with &quot;%1&quot;</source>
+        <translation>Forbindelse lykkes, koordinerer med &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
-        <source>Connect to "%1" failed</source>
-        <translation>Forbindelse til "%1" feilet</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>Forbindelse til &quot;%1&quot; feilet</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
         <source>File read/write exception</source>
         <translation>Fillesning/skriving feil</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
         <source>The other party has canceled the file transfer</source>
         <translation>Den andre parten har kansellert filoverføringen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
         <source>File sent successfully</source>
         <translation>Fil sendt vellykket</translation>
     </message>
@@ -819,13 +839,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Sending files to "%1"</source>
-        <translation>Sender filer til "%1"</translation>
+        <source>Sending files to &quot;%1&quot;</source>
+        <translation>Sender filer til &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Receiving files from "%1"</source>
-        <translation>Mottar filer fra "%1"</translation>
+        <source>Receiving files from &quot;%1&quot;</source>
+        <translation>Mottar filer fra &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
@@ -844,8 +864,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" sender sendte noen filer til deg</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; sender sendte noen filer til deg</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
@@ -859,14 +879,18 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  Ikke nok tilgangskapasitet, filoverføringen feilet denne gangen. Vennligst renn opp skrivebordet og prøv på nytt!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  Netverk ikke tilkoblet, filoverføringen feilet denne gangen. Vennligst tilkoblet til netverket og prøv på nytt!</translation>
     </message>
     <message>
@@ -892,6 +916,7 @@
     <name>cooperation_core::VncViewer</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
         <translation>Avsluttet</translation>
     </message>
@@ -913,6 +938,7 @@
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>Vennligst oppgi enhetens IP/navn på samarbeidspartneren</translation>
     </message>
