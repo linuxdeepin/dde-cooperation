@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="af">
 <context>
     <name>AppSelectWidget</name>
     <message>
@@ -72,7 +70,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="41"/>
         <source>Select a transfer way</source>
-        <translation>Kies 'n omskakelingswyse</translation>
+        <translation>Kies &apos;n omskakelingswyse</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="56"/>
@@ -119,11 +117,13 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Recommendation</source>
         <translation>Aanbeveling</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="139"/>
         <source>Transferable</source>
         <translation>Omskakelbaar</translation>
     </message>
@@ -168,7 +168,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="59"/>
         <source>Connect code is expired, please refresh for new code</source>
-        <translation>Die skakode is verouderd, skakel asseblief vir 'n nuwe skakode</translation>
+        <translation>Die skakode is verouderd, skakel asseblief vir &apos;n nuwe skakode</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="75"/>
@@ -261,7 +261,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
         <source>%1/%2 available</source>
-        <translation>'%1/%2 beskikbaar'</translation>
+        <translation>&apos;%1/%2 beskikbaar&apos;</translation>
     </message>
 </context>
 <context>
@@ -344,7 +344,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="60"/>
-        <source>When transfer completed, the data will be placed in the user's home directory</source>
+        <source>When transfer completed, the data will be placed in the user&apos;s home directory</source>
         <translation>Wanneer die oordrag voltooi is, sal die data in die gebruiker se huismap geplaas word</translation>
     </message>
     <message>
@@ -404,17 +404,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
         <source>Data transfer requires some time, to avoid interrupting the migration due to low battery, please keep connect to the  power.</source>
-        <translation>Data-oordrag neem 'n paar tyd in, om te voorkom dat die migrasie onderbreek word deur laag batterie, asseblief bly aangesluit by die krag.</translation>
+        <translation>Data-oordrag neem &apos;n paar tyd in, om te voorkom dat die migrasie onderbreek word deur laag batterie, asseblief bly aangesluit by die krag.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="36"/>
         <source>Other applications may slowdown the transfer speed. For smoother experience, please close other applications.</source>
-        <translation>Ander toepassings kan die oordrag spoed vertraag. Vir 'n gladder ervaring, asseblief sluit ander toepassings af.</translation>
+        <translation>Ander toepassings kan die oordrag spoed vertraag. Vir &apos;n gladder ervaring, asseblief sluit ander toepassings af.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="38"/>
         <source>For the security of your transfer, please use a trusted network.</source>
-        <translation>Vir die veiligheid van u oordrag, asseblief gebruik 'n vertroude netwerk.</translation>
+        <translation>Vir die veiligheid van u oordrag, asseblief gebruik &apos;n vertroude netwerk.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
@@ -466,6 +466,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="112"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="167"/>
         <source>connect...</source>
         <translation>verbind...</translation>
     </message>
@@ -489,6 +491,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
         <translation>Oordrag voltooi</translation>
     </message>
@@ -517,6 +520,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="239"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="241"/>
         <source>Selected:%1</source>
         <translation>Gekoos:%1</translation>
     </message>
@@ -588,11 +593,15 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
         <translation>Oorgang voltooi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
         <translation>Browser Boekmerke</translation>
     </message>
@@ -628,6 +637,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
         <translation>Installatie het misluk, gaan asseblief na die toepassingswinkel om te installeer</translation>
     </message>
@@ -671,6 +682,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="351"/>
         <source>Select:%1</source>
         <translation>Kies:%1</translation>
     </message>
@@ -711,16 +723,21 @@ UOS, helping you seamlessly replace your system.</source>
     <name>TransferringWidget</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="42"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="193"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="230"/>
         <source>Transferring...</source>
         <translation>Oordeling...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="191"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
         <source>Calculationing...</source>
         <translation>Berekening...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="132"/>
         <source>Show processes</source>
         <translation>Toon prosesse</translation>
     </message>
@@ -731,11 +748,14 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="195"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>Die oordeling sal voltooi wees in %1 minute</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
         <translation>Oordeling</translation>
     </message>
@@ -759,6 +779,7 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UnzipWorker</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="137"/>
         <source>Decompressing</source>
         <translation>Ontpakteer</translation>
     </message>
@@ -767,11 +788,13 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UploadFileFrame</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
         <translation>Sleep lêer hier </translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="257"/>
         <source>Import file</source>
         <translation>Importeer lêer</translation>
     </message>
@@ -815,18 +838,21 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="108"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="113"/>
         <source>Next</source>
         <translation>Volgende</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="76"/>
         <source>Retry</source>
         <translation>Probeer weer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="122"/>
         <source>The file is corrupted and cannot be migrated. Please replace it with a backup file.</source>
-        <translation>Die lêer is beskadig en kan nie oorgedra word nie. Vennig dit met 'n back-up lêer.</translation>
+        <translation>Die lêer is beskadig en kan nie oorgedra word nie. Vennig dit met &apos;n back-up lêer.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
@@ -856,6 +882,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="98"/>
         <source>Cancel</source>
         <translation>Annuleer</translation>
     </message>
@@ -917,6 +944,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>Die oorgedra sal voltooi word in %1 minute</translation>
     </message>
@@ -936,7 +964,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation>'%1 Lêer komprimering het misluk'</translation>
+        <translation>&apos;%1 Lêer komprimering het misluk&apos;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
