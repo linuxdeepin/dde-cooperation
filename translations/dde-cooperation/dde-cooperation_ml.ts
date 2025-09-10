@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ml">
 <context>
     <name>Application</name>
     <message>
@@ -32,6 +30,7 @@
     <name>cooperation_core::BottomLabel</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
         <source>Local IP: %1</source>
         <translation>ലോകൽ ഐപി: %1</translation>
     </message>
@@ -40,8 +39,8 @@
     <name>cooperation_core::ConfirmWidget</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" നിങ്ങൾക്ക് ചില ഫയൽ അയയ്ക്കുന്നു</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; നിങ്ങൾക്ക് ചില ഫയൽ അയയ്ക്കുന്നു</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
@@ -68,6 +67,7 @@
     <name>cooperation_core::CooperationTaskDialog</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="111"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>റദ്ദാക്കുക</translation>
@@ -129,7 +129,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
-        <source>When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device</source>
+        <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
         <translation>രണ്ട് ഉപകരണങ്ങൾ തമ്മിൽ ബന്ധം ഉണ്ടായാൽ, ആരംഭകർ കീബോർഡ് ആൻഡ് മൗസ് ഉപയോഗിച്ച് മറ്റ് ഉപകരണത്തെ നയിക്കാൻ കഴിയും.</translation>
     </message>
     <message>
@@ -195,6 +195,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
         <translation>LAN-ൽ നിന്നുള്ള ഡിസ്കോവറി സേവനം പ്രവർത്തിപ്പിക്കാൻ ഇത് സ്ഥിരീകരിക്കാൻ കൃത്യമായി ക്ലിക്ക് ചെയ്യുക!</translation>
     </message>
@@ -205,8 +206,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
-        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service</source>
-        <translation>നിങ്ങൾ മറ്റ് ഉപകരണങ്ങളെ കണ്ടെത്തുകയും മറ്റ് ഉപകരണങ്ങൾ നിങ്ങളെ കണ്ടെത്തുകയും ചെയ്യാൻ കഴിയില്ല എന്ന് പറയുന്നു, വിൻഡോസ് സ്റ്റാർട്ട് മെനുവിൽ പ്രവർത്തനം നടത്തുക -> കമ്പ്യൂട്ടർ മാനേജ്മെന്റ് -> സേവിക്കുക മെനുവിൽ സേവിക്കുക -> സേവിക്കുക ആവശ്യമാണ് ബോണ്ജൂർ സേവിക്കുക പ്രവർത്തനം നടത്തുക</translation>
+        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
+        <translation>നിങ്ങൾ മറ്റ് ഉപകരണങ്ങളെ കണ്ടെത്തുകയും മറ്റ് ഉപകരണങ്ങൾ നിങ്ങളെ കണ്ടെത്തുകയും ചെയ്യാൻ കഴിയില്ല എന്ന് പറയുന്നു, വിൻഡോസ് സ്റ്റാർട്ട് മെനുവിൽ പ്രവർത്തനം നടത്തുക -&gt; കമ്പ്യൂട്ടർ മാനേജ്മെന്റ് -&gt; സേവിക്കുക മെനുവിൽ സേവിക്കുക -&gt; സേവിക്കുക ആവശ്യമാണ് ബോണ്ജൂർ സേവിക്കുക പ്രവർത്തനം നടത്തുക</translation>
     </message>
 </context>
 <context>
@@ -261,6 +262,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
         <translation>ഫയൽ സേവനം ചെയ്യുന്ന സ്ഥലം തെറ്റായതാണ്</translation>
     </message>
@@ -310,16 +312,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="296"/>
         <source>Cancel</source>
         <translation>റദ്ദായിക്കുക</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="286"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="295"/>
         <source>Confirm</source>
         <translation>സ്ഥിരീകരിക്കുക</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
         <source>Please select your operation</source>
         <translation>നിങ്ങളുടെ പ്രവർത്തനം തിരഞ്ഞെടുക്കുക</translation>
     </message>
@@ -353,6 +358,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
+        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="126"/>
         <source>Settings</source>
         <translation>സെറ്റിങ്സ്</translation>
     </message>
@@ -389,13 +395,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
-        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -"Everyone on the same LAN"</source>
-        <translation>3. ഫയൽ മാനാജർ-സെറ്റിംഗ്സ്-ഫയൽ ഡ്രോപ്പ്-ഇതിനു പിന്നിലെ ഉപയോക്താക്കളെ ഡ്രോപ്പ് ചെയ്യാൻ അനുവദിക്കുക -"എല്ലാവർക്കും ഒരേ എൽജിനിൽ"</translation>
+        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
+        <translation>3. ഫയൽ മാനാജർ-സെറ്റിംഗ്സ്-ഫയൽ ഡ്രോപ്പ്-ഇതിനു പിന്നിലെ ഉപയോക്താക്കളെ ഡ്രോപ്പ് ചെയ്യാൻ അനുവദിക്കുക -&quot;എല്ലാവർക്കും ഒരേ എൽജിനിൽ&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
-        <source>3. Settings-Basic Settings-Discovery Mode-"Allow everyone in the same LAN"</source>
-        <translation>3. സെറ്റിംഗ്സ്-ബേസിക് സെറ്റിംഗ്സ്-ഡിസ്കവറി മോഡ്-"എല്ലാവർക്കും ഒരേ എൽജിനിൽ അനുവദിക്കുക"</translation>
+        <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
+        <translation>3. സെറ്റിംഗ്സ്-ബേസിക് സെറ്റിംഗ്സ്-ഡിസ്കവറി മോഡ്-&quot;എല്ലാവർക്കും ഒരേ എൽജിനിൽ അനുവദിക്കുക&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
@@ -414,8 +420,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
-        <source>Go to download></source>
-        <translation>ഫയൽ ഡൗൺലോഡ് ചെയ്യാൻ പോകുക></translation>
+        <source>Go to download&gt;</source>
+        <translation>ഫയൽ ഡൗൺലോഡ് ചെയ്യാൻ പോകുക&gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
@@ -455,11 +461,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="212"/>
         <source>cancel</source>
         <translation>സാന്റ്</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="157"/>
         <source>comfirm</source>
         <translation>കോൺഫർമ്</translation>
     </message>
@@ -470,8 +478,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
-        <source>Are you sure to disconnect and collaborate with '%1'?</source>
-        <translation>നിങ്ങൾ '%1' ക്രമീകരണം ഡിസ്കോൺണെട്ടി കോളബറേറ്റ് ചെയ്യുന്നത് ഉറപ്പായിരിക്കുക?</translation>
+        <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
+        <translation>നിങ്ങൾ &apos;%1&apos; ക്രമീകരണം ഡിസ്കോൺണെട്ടി കോളബറേറ്റ് ചെയ്യുന്നത് ഉറപ്പായിരിക്കുക?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
@@ -535,11 +543,13 @@
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
         <translation>എല്ലാവരും ഒരേ എൽആൻ സാഹചര്യത്തിലാണ്</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="55"/>
         <source>Not allow</source>
         <translation>അനുവാദിക്കാൻ പാടില്ല</translation>
     </message>
@@ -570,8 +580,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
-        <source>Other devices can discover and connect with you through the "Cooperation" app</source>
-        <translation>പിന്തുണയുള്ള മറ്റ് ഉപകരണങ്ങൾ നിങ്ങൾക്ക് 'പ്രവർത്തനം' ആപ്പ് മുഖാന്തരം കണ്ടെത്താനും ബന്ധം ഉണ്ടാക്കാനും കഴിയും</translation>
+        <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
+        <translation>പിന്തുണയുള്ള മറ്റ് ഉപകരണങ്ങൾ നിങ്ങൾക്ക് &apos;പ്രവർത്തനം&apos; ആപ്പ് മുഖാന്തരം കണ്ടെത്താനും ബന്ധം ഉണ്ടാക്കാനും കഴിയും</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
@@ -643,8 +653,12 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
-        <source>Unable to collaborate to "%1"</source>
-        <translation>പ്രവർത്തനം നടത്താൻ "%1" ക്ക് കഴിയുന്നില്ല</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="392"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="448"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
+        <source>Unable to collaborate to &quot;%1&quot;</source>
+        <translation>പ്രവർത്തനം നടത്താൻ &quot;%1&quot; ക്ക് കഴിയുന്നില്ല</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
@@ -653,18 +667,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
-        <source>Requesting collaborate to "%1"</source>
-        <translation>"%1" നോട് പ്രവർത്തനം നടത്താൻ ആവശ്യപ്പെടുകയാണ്</translation>
+        <source>Requesting collaborate to &quot;%1&quot;</source>
+        <translation>&quot;%1&quot; നോട് പ്രവർത്തനം നടത്താൻ ആവശ്യപ്പെടുകയാണ്</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
-        <source>Coordination with "%1" has ended</source>
-        <translation> "%1" നോട് പ്രവർത്തനം നടത്താൻ സംവിധാനം അവസാനിച്ചു</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
+        <source>Coordination with &quot;%1&quot; has ended</source>
+        <translation> &quot;%1&quot; നോട് പ്രവർത്തനം നടത്താൻ സംവിധാനം അവസാനിച്ചു</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
-        <source>A cross-end collaboration request was received from "%1"</source>
-        <translation> "%1" നിൽനിന്ന് ഒരു പരിസ്ഥിതി പ്രവർത്തനം ആവശ്യപ്പെടൽ എത്തിയിട്ടുണ്ട്</translation>
+        <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
+        <translation> &quot;%1&quot; നിൽനിന്ന് ഒരു പരിസ്ഥിതി പ്രവർത്തനം ആവശ്യപ്പെടൽ എത്തിയിട്ടുണ്ട്</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
@@ -683,8 +698,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
-        <source>Connect to "%1" failed</source>
-        <translation> "%1" നോട് ബന്ധപ്പെടാൻ പാടില്ല</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation> &quot;%1&quot; നോട് ബന്ധപ്പെടാൻ പാടില്ല</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
@@ -698,23 +713,23 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
-        <source>Connection successful, coordinating with  "%1"</source>
-        <translation>സംവാദം വിജയിച്ചു, "%1" കൂടാതെ സഹപ്രവർത്തനം നടക്കുന്നു</translation>
+        <source>Connection successful, coordinating with  &quot;%1&quot;</source>
+        <translation>സംവാദം വിജയിച്ചു, &quot;%1&quot; കൂടാതെ സഹപ്രവർത്തനം നടക്കുന്നു</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
-        <source>"%1" has rejected your request for collaboration</source>
-        <translation>"%1" നിങ്ങളുടെ സഹപ്രവർത്തനം ആവശ്യപ്പെട്ട അപേക്ഷ തള്ളി</translation>
+        <source>&quot;%1&quot; has rejected your request for collaboration</source>
+        <translation>&quot;%1&quot; നിങ്ങളുടെ സഹപ്രവർത്തനം ആവശ്യപ്പെട്ട അപേക്ഷ തള്ളി</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
-        <source>"%1" is connecting with other devices</source>
-        <translation>"%1" മറ്റ് ഉപകരണങ്ങളുമായി ബന്ധപ്പെടുന്നു</translation>
+        <source>&quot;%1&quot; is connecting with other devices</source>
+        <translation>&quot;%1&quot; മറ്റ് ഉപകരണങ്ങളുമായി ബന്ധപ്പെടുന്നു</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
-        <source>The connection request sent to you by "%1" was interrupted due to a timeout</source>
-        <translation>"%1" നിങ്ങൾ അയച്ച സംവാദം ആവശ്യപ്പെട്ടത് ടൈമൗട്ട് കാരണം തടഞ്ഞു</translation>
+        <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
+        <translation>&quot;%1&quot; നിങ്ങൾ അയച്ച സംവാദം ആവശ്യപ്പെട്ടത് ടൈമൗട്ട് കാരണം തടഞ്ഞു</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
@@ -753,42 +768,47 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
-        <source>Please check the network "%1"</source>
-        <translation>ഓൺലൈൻ നിങ്ങൾ പровер ചെയ്യുക "%1" </translation>
+        <source>Please check the network &quot;%1&quot;</source>
+        <translation>ഓൺലൈൻ നിങ്ങൾ പровер ചെയ്യുക &quot;%1&quot; </translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::ShareHelperPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
         <translation>സഹപ്രവർത്തനം</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
-        <source>Connection successful, coordinating with "%1"</source>
-        <translation>സംവാദം വിജയിച്ചു, "%1" കൂടാതെ സഹപ്രവർത്തനം നടക്കുന്നു</translation>
+        <source>Connection successful, coordinating with &quot;%1&quot;</source>
+        <translation>സംവാദം വിജയിച്ചു, &quot;%1&quot; കൂടാതെ സഹപ്രവർത്തനം നടക്കുന്നു</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
-        <source>Connect to "%1" failed</source>
-        <translation>കൂടാതെ "%1" കൈമാറ്റം വിജയിച്ചില്ല</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>കൂടാതെ &quot;%1&quot; കൈമാറ്റം വിജയിച്ചില്ല</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
         <source>File read/write exception</source>
         <translation>ഫയൽ വായിക്കുക/എഴുതുക പരാജයം</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
         <source>The other party has canceled the file transfer</source>
         <translation>മറ്റ് കക്ഷി ഫയൽ കൈമാറ്റം തള്ളി</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
         <source>File sent successfully</source>
         <translation>ഫയൽ പരിപാടിക്ക് വിജയിച്ചു</translation>
     </message>
@@ -819,13 +839,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Sending files to "%1"</source>
-        <translation>ഫയൽ കൈമാറ്റം നടത്തുന്നു "%1" </translation>
+        <source>Sending files to &quot;%1&quot;</source>
+        <translation>ഫയൽ കൈമാറ്റം നടത്തുന്നു &quot;%1&quot; </translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Receiving files from "%1"</source>
-        <translation>ഫയൽ കൈമാറ്റം നടത്തുന്നു "%1" </translation>
+        <source>Receiving files from &quot;%1&quot;</source>
+        <translation>ഫയൽ കൈമാറ്റം നടത്തുന്നു &quot;%1&quot; </translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
@@ -844,8 +864,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" നിങ്ങൾക്ക് ചില ഫയൽ അയയ്ക്കുന്നു</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; നിങ്ങൾക്ക് ചില ഫയൽ അയയ്ക്കുന്നു</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
@@ -859,14 +879,18 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  സംഭരണ സ്ഥലം കുറവ്, ഇത് പരസ്പര ആവശ്യം പരിഗണിച്ചിട്ടില്ല. ഡിസ്ക് സ്ഥലം വീണ്ടും തിരിച്ചെടുക്കുക പരിഗണിച്ചിട്ടില്ല അല്ലെങ്കിൽ മീണ്ടും ശ്രമിക്കുക!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  നെറ്റ്‌വർക്ക് ഇനിയും പരസ്പര ആവശ്യം പരിഗണിച്ചിട്ടില്ല. നെറ്റ്‌വർക്ക് ബന്ധപ്പെടുക പരിഗണിച്ചിട്ടില്ല അല്ലെങ്കിൽ മീണ്ടും ശ്രമിക്കുക!</translation>
     </message>
     <message>
@@ -892,6 +916,7 @@
     <name>cooperation_core::VncViewer</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
         <translation>ഇടയ്ക്ക് വേർപിരിഞ്ഞു</translation>
     </message>
@@ -913,6 +938,7 @@
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>സഹപ്രവർത്തിക്കുന്നവൻ ഉപകരണത്തിന്റെ IP/നാമം ഇടം ചെയ്യുക</translation>
     </message>
