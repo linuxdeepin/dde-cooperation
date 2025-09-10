@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ta">
 <context>
     <name>AppSelectWidget</name>
     <message>
@@ -119,11 +117,13 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Recommendation</source>
         <translation>தொடர்ந்து மாற்றும் திட்டத்தை Windows இல் திறந்து, IP மற்றும் இணைப்பு குறியீட்டைச் சேர்த்து இணைக்கவும்.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="139"/>
         <source>Transferable</source>
         <translation>Windows க்கான குறியீட்டை மின்னல் கையேடு</translation>
     </message>
@@ -261,7 +261,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
         <source>%1/%2 available</source>
-        <translation>'%1/%2 வசதி'</translation>
+        <translation>&apos;%1/%2 வசதி&apos;</translation>
     </message>
 </context>
 <context>
@@ -279,7 +279,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>The presence of outstanding transfer tasks between you and the target device has been detected.</source>
-        <translation>>-
+        <translation>&gt;-
  உங்களுடன் இருக்கின்ற இறுதியில்லாத மாற்று காரியங்கள் கண்டறியப்பட்டுள்ளது.</translation>
     </message>
     <message>
@@ -318,7 +318,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="32"/>
         <source>The network disconnected, transfer failed, please connect the network and try again</source>
-        <translation>>-
+        <translation>&gt;-
  நெட்வொர்க் இணைப்பு நீट்டிக்கப்பட்டுள்ளது, மாற்று காரியம் தவறாக சென்றது, நெட்வொர்க் இணைப்பை மீண்டும் இணைக்கவும் மீண்டும் முத்திய செய்யவும்</translation>
     </message>
     <message>
@@ -346,7 +346,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="60"/>
-        <source>When transfer completed, the data will be placed in the user's home directory</source>
+        <source>When transfer completed, the data will be placed in the user&apos;s home directory</source>
         <translation>தரவு மாற்றம் முடிந்தால், தரவு பயனரின் வீட்டு தொகுப்பில் விடைபெறும்</translation>
     </message>
     <message>
@@ -468,6 +468,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="112"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="167"/>
         <source>connect...</source>
         <translation>இணைக்க...</translation>
     </message>
@@ -491,6 +493,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
         <translation>தரவு மாற்றம் முடிந்தது</translation>
     </message>
@@ -519,6 +522,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="239"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="241"/>
         <source>Selected:%1</source>
         <translation>தேர்ந்தெடுக்கப்பட்டது:%1</translation>
     </message>
@@ -590,11 +595,15 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
         <translation>மாற்றம் முடிவு</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
         <translation>பிரேவர் புள்ளியின் குறிப்புகள்</translation>
     </message>
@@ -630,6 +639,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
         <translation>அமைப்பு வெற்றிகரமாக முடியவில்லை, அப்ப் கட்டுரை அமைப்பில் இருந்து அமைப்பு செய்யவும்</translation>
     </message>
@@ -673,6 +684,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="351"/>
         <source>Select:%1</source>
         <translation>தேர்வு செய்:%1</translation>
     </message>
@@ -713,16 +725,21 @@ UOS, helping you seamlessly replace your system.</source>
     <name>TransferringWidget</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="42"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="193"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="230"/>
         <source>Transferring...</source>
         <translation>மாற்றுத் தொடர்பு...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="191"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
         <source>Calculationing...</source>
         <translation>கணக்கிடுதல்...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="132"/>
         <source>Show processes</source>
         <translation>தொடர்பு விவரங்களை காட்டு</translation>
     </message>
@@ -733,11 +750,14 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="195"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>%1 நிமிடங்களில் மாற்றுத் தொடர்பு முடியும்</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
         <translation>மாற்றுத் தொடர்பு</translation>
     </message>
@@ -761,6 +781,7 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UnzipWorker</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="137"/>
         <source>Decompressing</source>
         <translation>தொடர்பு விரிவாக்கு</translation>
     </message>
@@ -769,11 +790,13 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UploadFileFrame</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
         <translation>இங்கே கோப்பை இழுக்கவும்</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="257"/>
         <source>Import file</source>
         <translation>கோப்பை இறக்குமதி செய்</translation>
     </message>
@@ -817,11 +840,14 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="108"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="113"/>
         <source>Next</source>
         <translation>அடுத்து</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="76"/>
         <source>Retry</source>
         <translation>மீண்டும் முயற்சி</translation>
     </message>
@@ -858,6 +884,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="98"/>
         <source>Cancel</source>
         <translation>தவிர்க்க</translation>
     </message>
@@ -919,6 +946,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>%1 நிமிடங்களில் மாற்றம் முடியும்</translation>
     </message>
@@ -938,7 +966,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation>'%1 கோப்பு எளிதாக மாற்றம் செய்ய முடியவில்லை'</translation>
+        <translation>&apos;%1 கோப்பு எளிதாக மாற்றம் செய்ய முடியவில்லை&apos;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
