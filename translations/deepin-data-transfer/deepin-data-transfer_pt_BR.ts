@@ -378,12 +378,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="40"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Voltar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="41"/>
         <source>Try again</source>
-        <translation type="unfinished"/>
+        <translation>Tentar novamente</translation>
     </message>
 </context>
 <context>
@@ -391,7 +391,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="297"/>
         <source>Installing</source>
-        <translation type="unfinished"/>
+        <translation>Instalando</translation>
     </message>
 </context>
 <context>
@@ -419,12 +419,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Voltar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="64"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Confirmar</translation>
     </message>
 </context>
 <context>
@@ -432,12 +432,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="48"/>
         <source>Ready to connect</source>
-        <translation type="unfinished"/>
+        <translation>Pronto para conectar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="52"/>
         <source>IP</source>
-        <translation type="unfinished"/>
+        <translation>IP</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="59"/>
