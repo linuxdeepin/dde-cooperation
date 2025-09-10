@@ -589,7 +589,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
         <source>My Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Meu Papel de Parede</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
@@ -597,7 +597,7 @@
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
-        <translation type="unfinished"/>
+        <translation>Transferência concluída</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
