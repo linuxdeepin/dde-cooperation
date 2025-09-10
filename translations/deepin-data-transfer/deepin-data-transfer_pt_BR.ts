@@ -130,7 +130,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Personal Settings</source>
-        <translation type="unfinished"/>
+        <translation>Configurações pessoais</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="138"/>
@@ -153,7 +153,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="36"/>
         <source>Ready to connect</source>
-        <translation type="unfinished"/>
+        <translation>Pronto para conectar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="41"/>
@@ -163,7 +163,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="48"/>
         <source>Download Windows client</source>
-        <translation type="unfinished"/>
+        <translation>Baixar cliente para Windows</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="59"/>
@@ -173,7 +173,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="75"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Voltar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="104"/>
