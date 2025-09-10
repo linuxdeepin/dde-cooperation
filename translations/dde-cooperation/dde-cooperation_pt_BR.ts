@@ -115,7 +115,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="217"/>
         <source>View Help Manual</source>
-        <translation type="unfinished"/>
+        <translation>Exibir manual de ajuda</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
@@ -125,7 +125,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>Keyboard and mouse sharing</source>
-        <translation type="unfinished"/>
+        <translation>Compartilhando teclado e mouse</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
