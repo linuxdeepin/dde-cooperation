@@ -221,12 +221,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="133"/>
         <source>size:0B</source>
-        <translation type="unfinished"/>
+        <translation>Tamanho: 0B</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="152"/>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Localização</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="162"/>
@@ -241,7 +241,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="195"/>
         <source>Backup</source>
-        <translation type="unfinished"/>
+        <translation>Backup</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="193"/>
