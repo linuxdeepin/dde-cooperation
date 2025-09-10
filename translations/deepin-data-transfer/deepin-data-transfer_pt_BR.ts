@@ -246,17 +246,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="193"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="339"/>
         <source>Size:%1</source>
-        <translation type="unfinished"/>
+        <translation>Tamanho: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="382"/>
         <source>local disk</source>
-        <translation type="unfinished"/>
+        <translation>Disco local</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
