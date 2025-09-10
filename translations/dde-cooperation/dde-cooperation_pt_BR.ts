@@ -644,12 +644,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="238"/>
         <source>connect</source>
-        <translation type="unfinished"/>
+        <translation>Conectar</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="246"/>
         <source>Disconnect</source>
-        <translation type="unfinished"/>
+        <translation>Desconectar</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
@@ -684,12 +684,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
         <source>Reject</source>
-        <translation type="unfinished"/>
+        <translation>Rejeitar</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="355"/>
         <source>Accept</source>
-        <translation type="unfinished"/>
+        <translation>Aceitar</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
