@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>Application</name>
     <message>
@@ -751,7 +749,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation>网络未连接，文件发送失败。&#xa0;&#xa0; 请连接网络并重试！</translation>
+        <translation>网络未连接，文件发送失败。   请连接网络并重试！</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
@@ -966,7 +964,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="34"/>
         <source>File transfer</source>
-        <translation type="unfinished">文件投送</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -974,7 +972,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="64"/>
         <source>File transfer</source>
-        <translation type="unfinished">文件投送</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -982,32 +980,32 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="154"/>
         <source>File transfer settings</source>
-        <translation type="unfinished">文件投送设置</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="171"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished">同一局域网下的所有人</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="172"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished">仅允许正在协同的人</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="173"/>
         <source>Not allow</source>
-        <translation type="unfinished">不允许</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="178"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished">允许以下用户向我投送文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
         <source>File save location</source>
-        <translation type="unfinished">文件保存位置</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
