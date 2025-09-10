@@ -716,7 +716,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/transferworker.cpp" line="326"/>
         <source>Transfering</source>
-        <translation type="unfinished"/>
+        <translation>Transferindo</translation>
     </message>
 </context>
 <context>
@@ -726,20 +726,20 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="193"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="230"/>
         <source>Transferring...</source>
-        <translation type="unfinished"/>
+        <translation>Transferindo...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="191"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
         <source>Calculationing...</source>
-        <translation type="unfinished"/>
+        <translation>Calculando...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="132"/>
         <source>Show processes</source>
-        <translation type="unfinished"/>
+        <translation>Exibir processos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="119"/>
