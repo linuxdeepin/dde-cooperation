@@ -621,7 +621,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
         <source>Share clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Compartilhar área de transferência</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
