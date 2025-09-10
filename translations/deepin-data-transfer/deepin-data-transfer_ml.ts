@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ml">
 <context>
     <name>AppSelectWidget</name>
     <message>
@@ -119,11 +117,13 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Recommendation</source>
         <translation>നിർദ്ദേശം</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="139"/>
         <source>Transferable</source>
         <translation>ട്രാൻസ്ഫർ ചെയ്യാവുന്നത്</translation>
     </message>
@@ -261,7 +261,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
         <source>%1/%2 available</source>
-        <translation>'%1/%2 ലഭ്യമാണ്'</translation>
+        <translation>&apos;%1/%2 ലഭ്യമാണ്&apos;</translation>
     </message>
 </context>
 <context>
@@ -344,7 +344,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="60"/>
-        <source>When transfer completed, the data will be placed in the user's home directory</source>
+        <source>When transfer completed, the data will be placed in the user&apos;s home directory</source>
         <translation>ഡാറ്റ പ്രക്ഷേപിക്കുമ്പോൾ, ഡാറ്റ ഉപയോക്താവിന്റെ വീടിന്റെ അടിസ്ഥാനത്തിൽ സൂക്ഷിക്കും</translation>
     </message>
     <message>
@@ -466,6 +466,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="112"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="167"/>
         <source>connect...</source>
         <translation>കണക്ട്...</translation>
     </message>
@@ -489,6 +491,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
         <translation>ഡാറ്റ പ്രക്ഷേപണം പൂർത്തിയായി</translation>
     </message>
@@ -517,6 +520,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="239"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="241"/>
         <source>Selected:%1</source>
         <translation>പരിഗണിച്ചിട്ടുള്ളത്:%1</translation>
     </message>
@@ -588,11 +593,15 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
         <translation>ട്രാൻസ്ഫർ പൂർത്തിയായി</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
         <translation>ബ്രൗസർ ബുക്ക്‌മാർക്ക്</translation>
     </message>
@@ -628,6 +637,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
         <translation>ഇൻസ്റ്റാൾ ഫെയിൽ ആയി, അപ്പ് സ്റ്റോർ ക്ക് പോകുക അല്ലെങ്കിലും ഇൻസ്റ്റാൾ ചെയ്യുക</translation>
     </message>
@@ -671,6 +682,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="351"/>
         <source>Select:%1</source>
         <translation>തിരഞ്ഞെടുക്കുക:%1</translation>
     </message>
@@ -711,16 +723,21 @@ UOS, helping you seamlessly replace your system.</source>
     <name>TransferringWidget</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="42"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="193"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="230"/>
         <source>Transferring...</source>
         <translation>ട്രാൻസ്ഫർ ചെയ്യുന്നത്...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="191"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
         <source>Calculationing...</source>
         <translation>കണക്കാക്കുന്നത്...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="132"/>
         <source>Show processes</source>
         <translation>പ്രക്രിയകൾ കാണിക്കുക</translation>
     </message>
@@ -731,11 +748,14 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="195"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>ട്രാൻസ്ഫർ %1 മിനിറ്റിനുള്ളിൽ പൂർത്തിയാകും</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
         <translation>ട്രാൻസ്ഫർ ചെയ്യുന്നത്</translation>
     </message>
@@ -759,6 +779,7 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UnzipWorker</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="137"/>
         <source>Decompressing</source>
         <translation>ഡിക്കമ്പ്രഷൻ</translation>
     </message>
@@ -767,11 +788,13 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UploadFileFrame</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
         <translation>ഫയൽ ഇവിടെ കൊണ്ടുവരുക</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="257"/>
         <source>Import file</source>
         <translation>ഫയൽ ഇറക്കുക</translation>
     </message>
@@ -815,11 +838,14 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="108"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="113"/>
         <source>Next</source>
         <translation>അടുത്തത്</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="76"/>
         <source>Retry</source>
         <translation>പുനഃസോധന</translation>
     </message>
@@ -856,6 +882,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="98"/>
         <source>Cancel</source>
         <translation>റദ്ദാക്കുക</translation>
     </message>
@@ -917,6 +944,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>പരമ്പരാഗത പൂർത്തിയാകും %1 മിനിറ്റിന് ശേഷം</translation>
     </message>
@@ -936,7 +964,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation>'%1 ഫയൽ കമ്പ്രഷൻ വിജയിച്ചില്ല'</translation>
+        <translation>&apos;%1 ഫയൽ കമ്പ്രഷൻ വിജയിച്ചില്ല&apos;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
