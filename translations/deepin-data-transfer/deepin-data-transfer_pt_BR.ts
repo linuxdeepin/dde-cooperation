@@ -528,7 +528,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="304"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Editar</translation>
     </message>
 </context>
 <context>
@@ -536,7 +536,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="90"/>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>Arquivo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="95"/>
