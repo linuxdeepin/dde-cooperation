@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="lt">
 <context>
     <name>Application</name>
     <message>
@@ -32,6 +30,7 @@
     <name>cooperation_core::BottomLabel</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
         <source>Local IP: %1</source>
         <translation>Vietinė IP adresas: %1</translation>
     </message>
@@ -40,8 +39,8 @@
     <name>cooperation_core::ConfirmWidget</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" siųsto kai kuriuos failus jums</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; siųsto kai kuriuos failus jums</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
@@ -68,6 +67,7 @@
     <name>cooperation_core::CooperationTaskDialog</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="111"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Atsisakyti</translation>
@@ -129,7 +129,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
-        <source>When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device</source>
+        <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
         <translation>Kai tarp dviejų įrenginių kuriamas ryšys, pradininko klaviatūra ir pelė gali būti naudojamos valdyti kitą įrenginį</translation>
     </message>
     <message>
@@ -195,6 +195,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
         <translation>Spustykite, kad įjungti LAN atradimo paslaugą!</translation>
     </message>
@@ -205,8 +206,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
-        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service</source>
-        <translation>Nepavyksta atrasti ir būti atradtu kitais įrenginiais, kai LAN atradimo paslauga nėra įjungta. Spustykite dešinį mygtuką Windows Pradžios meniu ->Kompiuterio valdymas ->Paslaugos ir programos ->Paslaugos, kad įjungti Bonjour paslaugą</translation>
+        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
+        <translation>Nepavyksta atrasti ir būti atradtu kitais įrenginiais, kai LAN atradimo paslauga nėra įjungta. Spustykite dešinį mygtuką Windows Pradžios meniu -&gt;Kompiuterio valdymas -&gt;Paslaugos ir programos -&gt;Paslaugos, kad įjungti Bonjour paslaugą</translation>
     </message>
 </context>
 <context>
@@ -261,6 +262,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
         <translation>failo išsaugojimo vietos nėra galima naudoti</translation>
     </message>
@@ -310,16 +312,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="296"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="286"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="295"/>
         <source>Confirm</source>
         <translation>Patvirtinti</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
         <source>Please select your operation</source>
         <translation>Pasirinkite savo operaciją</translation>
     </message>
@@ -353,6 +358,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
+        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="126"/>
         <source>Settings</source>
         <translation>Nustatymai</translation>
     </message>
@@ -389,13 +395,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
-        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -"Everyone on the same LAN"</source>
-        <translation>3. Failų tvarkyklė-Parametrai-Failų perleidimas-Leiskite šiems vartotojams perleisti man failus -"Visi tą pačią LAN"</translation>
+        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
+        <translation>3. Failų tvarkyklė-Parametrai-Failų perleidimas-Leiskite šiems vartotojams perleisti man failus -&quot;Visi tą pačią LAN&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
-        <source>3. Settings-Basic Settings-Discovery Mode-"Allow everyone in the same LAN"</source>
-        <translation>3. Nustatymai-Bazinių nustatymų-Atsisiųstų režimas-"Leiskite visiems tą pačią LAN"</translation>
+        <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
+        <translation>3. Nustatymai-Bazinių nustatymų-Atsisiųstų režimas-&quot;Leiskite visiems tą pačią LAN&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
@@ -414,8 +420,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
-        <source>Go to download></source>
-        <translation>Eiti į atsisiuntimą></translation>
+        <source>Go to download&gt;</source>
+        <translation>Eiti į atsisiuntimą&gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
@@ -455,11 +461,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="212"/>
         <source>cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="157"/>
         <source>comfirm</source>
         <translation>Patvirtinti</translation>
     </message>
@@ -470,8 +478,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
-        <source>Are you sure to disconnect and collaborate with '%1'?</source>
-        <translation>Ar tikrai norite atjungti ir bendrauti su '%1'?</translation>
+        <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
+        <translation>Ar tikrai norite atjungti ir bendrauti su &apos;%1&apos;?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
@@ -535,11 +543,13 @@
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
         <translation>Visi žmonės tame pačiame LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="55"/>
         <source>Not allow</source>
         <translation>Neleisti</translation>
     </message>
@@ -570,8 +580,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
-        <source>Other devices can discover and connect with you through the "Cooperation" app</source>
-        <translation>Kiti įrenginiai gali rasti ir prisijungti prie jūsų per "Cooperation" programą</translation>
+        <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
+        <translation>Kiti įrenginiai gali rasti ir prisijungti prie jūsų per &quot;Cooperation&quot; programą</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
@@ -643,8 +653,12 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
-        <source>Unable to collaborate to "%1"</source>
-        <translation>Nepavyko kolabuoti "%1"</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="392"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="448"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
+        <source>Unable to collaborate to &quot;%1&quot;</source>
+        <translation>Nepavyko kolabuoti &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
@@ -653,18 +667,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
-        <source>Requesting collaborate to "%1"</source>
-        <translation>Klausiama kolabuoti "%1"</translation>
+        <source>Requesting collaborate to &quot;%1&quot;</source>
+        <translation>Klausiama kolabuoti &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
-        <source>Coordination with "%1" has ended</source>
-        <translation>Koordinacija su "%1" baigėsi</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
+        <source>Coordination with &quot;%1&quot; has ended</source>
+        <translation>Koordinacija su &quot;%1&quot; baigėsi</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
-        <source>A cross-end collaboration request was received from "%1"</source>
-        <translation>Gautas kriptinio kolaboravimo prašymas nuo "%1"</translation>
+        <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
+        <translation>Gautas kriptinio kolaboravimo prašymas nuo &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
@@ -683,8 +698,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
-        <source>Connect to "%1" failed</source>
-        <translation>Nepavyko prisijungti prie "%1"</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>Nepavyko prisijungti prie &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
@@ -698,22 +713,22 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
-        <source>Connection successful, coordinating with  "%1"</source>
-        <translation>Sukurtas ryšys, koordinuojamas su "%1"</translation>
+        <source>Connection successful, coordinating with  &quot;%1&quot;</source>
+        <translation>Sukurtas ryšys, koordinuojamas su &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
-        <source>"%1" has rejected your request for collaboration</source>
-        <translation>"%1" atsisakė bendravimo prašymo</translation>
+        <source>&quot;%1&quot; has rejected your request for collaboration</source>
+        <translation>&quot;%1&quot; atsisakė bendravimo prašymo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
-        <source>"%1" is connecting with other devices</source>
-        <translation>"%1" ryšioja su kitais įrenginiais</translation>
+        <source>&quot;%1&quot; is connecting with other devices</source>
+        <translation>&quot;%1&quot; ryšioja su kitais įrenginiais</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
-        <source>The connection request sent to you by "%1" was interrupted due to a timeout</source>
+        <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
         <translation>Nepavykojo pasirašyti ryšio, nes pasiekė laikas</translation>
     </message>
     <message>
@@ -753,42 +768,47 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
-        <source>Please check the network "%1"</source>
-        <translation>Patikrinkite tinklą "%1"</translation>
+        <source>Please check the network &quot;%1&quot;</source>
+        <translation>Patikrinkite tinklą &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::ShareHelperPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
         <translation>Bendradarbiavimas</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
-        <source>Connection successful, coordinating with "%1"</source>
-        <translation>Sukurtas ryšys, koordinuojamas su "%1"</translation>
+        <source>Connection successful, coordinating with &quot;%1&quot;</source>
+        <translation>Sukurtas ryšys, koordinuojamas su &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
-        <source>Connect to "%1" failed</source>
-        <translation>Nepavykojo prisijungti prie "%1"</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>Nepavykojo prisijungti prie &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
         <source>File read/write exception</source>
         <translation>Failo skaitymo/rašymo klaida</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
         <source>The other party has canceled the file transfer</source>
         <translation>Kita pusė atsisakė failo perduodama</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
         <source>File sent successfully</source>
         <translation>Failas sėkmingai išsiųstas</translation>
     </message>
@@ -819,13 +839,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Sending files to "%1"</source>
-        <translation>Siųsti failus "%1"</translation>
+        <source>Sending files to &quot;%1&quot;</source>
+        <translation>Siųsti failus &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Receiving files from "%1"</source>
-        <translation>Gavimas failų iš "%1"</translation>
+        <source>Receiving files from &quot;%1&quot;</source>
+        <translation>Gavimas failų iš &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
@@ -844,8 +864,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" siųsta keli failus jums</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; siųsta keli failus jums</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
@@ -859,14 +879,18 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  Niekada nėra vietos, failo perduodimas nepavyko šį kartą. Prašom išvalyti diską ir bandykite dar kartą!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  Tinklas nėra prisijungęs, failo perduodimas nepavyko šį kartą. Prašom prisijungti prie tinklo ir bandykite dar kartą!</translation>
     </message>
     <message>
@@ -892,6 +916,7 @@
     <name>cooperation_core::VncViewer</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
         <translation>Atjungta</translation>
     </message>
@@ -913,6 +938,7 @@
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>Įveskite įrengimo IP/vardą bendradarbiaujančiam draugui</translation>
     </message>
