@@ -261,7 +261,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
         <source>%1/%2 available</source>
-        <translation type="unfinished"/>
+        <translation>%1 / %2 disponível</translation>
     </message>
 </context>
 <context>
@@ -269,12 +269,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="66"/>
         <source>Reselect</source>
-        <translation type="unfinished"/>
+        <translation>Selecionar novamente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="81"/>
         <source>Continue</source>
-        <translation type="unfinished"/>
+        <translation>Continuar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
