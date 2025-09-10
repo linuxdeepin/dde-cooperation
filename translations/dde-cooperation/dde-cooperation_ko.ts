@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ko">
 <context>
     <name>Application</name>
     <message>
@@ -32,6 +30,7 @@
     <name>cooperation_core::BottomLabel</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
         <source>Local IP: %1</source>
         <translation>로컬 IP: %1</translation>
     </message>
@@ -40,8 +39,8 @@
     <name>cooperation_core::ConfirmWidget</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1"가 파일을 보내드릴 수 있습니다.</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot;가 파일을 보내드릴 수 있습니다.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
@@ -68,6 +67,7 @@
     <name>cooperation_core::CooperationTaskDialog</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="111"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>취소</translation>
@@ -129,7 +129,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
-        <source>When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device</source>
+        <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
         <translation>두 기기 간 연결이 이루어지면, 시작자의 키보드 및 마우스를 통해 다른 기기를 제어할 수 있습니다.</translation>
     </message>
     <message>
@@ -195,6 +195,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
         <translation>로컬 네트워크 탐색 서비스를 활성화하려면 확인을 클릭해 주세요!</translation>
     </message>
@@ -205,8 +206,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
-        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service</source>
-        <translation>로컬 네트워크 탐색 서비스를 켜지 않은 경우 다른 기기와의 탐색 및 발견이 불가능합니다. Windows 시작 메뉴에서 마우스 우클릭 -> 컴퓨터 관리 -> 서비스 및 응용 프로그램 -> 서비스를 선택하여 Bonjour 서비스를 활성화하세요</translation>
+        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
+        <translation>로컬 네트워크 탐색 서비스를 켜지 않은 경우 다른 기기와의 탐색 및 발견이 불가능합니다. Windows 시작 메뉴에서 마우스 우클릭 -&gt; 컴퓨터 관리 -&gt; 서비스 및 응용 프로그램 -&gt; 서비스를 선택하여 Bonjour 서비스를 활성화하세요</translation>
     </message>
 </context>
 <context>
@@ -261,6 +262,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
         <translation>파일 저장 위치가 잘못되었습니다</translation>
     </message>
@@ -310,16 +312,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="296"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="286"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="295"/>
         <source>Confirm</source>
         <translation>확인</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
         <source>Please select your operation</source>
         <translation>작업을 선택해 주세요</translation>
     </message>
@@ -353,6 +358,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
+        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="126"/>
         <source>Settings</source>
         <translation>설정</translation>
     </message>
@@ -389,13 +395,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
-        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -"Everyone on the same LAN"</source>
-        <translation>3. 파일 관리자-설정-파일 드롭-다음 사용자를 파일로 드롭할 수 있도록 허용 -"같은 LAN에 있는 모든 사용자"</translation>
+        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
+        <translation>3. 파일 관리자-설정-파일 드롭-다음 사용자를 파일로 드롭할 수 있도록 허용 -&quot;같은 LAN에 있는 모든 사용자&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
-        <source>3. Settings-Basic Settings-Discovery Mode-"Allow everyone in the same LAN"</source>
-        <translation>3. 설정-기본 설정-탐색 모드-"같은 LAN에 있는 모든 사용자를 허용"</translation>
+        <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
+        <translation>3. 설정-기본 설정-탐색 모드-&quot;같은 LAN에 있는 모든 사용자를 허용&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
@@ -414,8 +420,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
-        <source>Go to download></source>
-        <translation>다운로드하러 가기></translation>
+        <source>Go to download&gt;</source>
+        <translation>다운로드하러 가기&gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
@@ -455,11 +461,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="212"/>
         <source>cancel</source>
         <translation>취소</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="157"/>
         <source>comfirm</source>
         <translation>확인</translation>
     </message>
@@ -470,8 +478,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
-        <source>Are you sure to disconnect and collaborate with '%1'?</source>
-        <translation>'%1'과 연결 해제 및 협업하시겠습니까?</translation>
+        <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
+        <translation>&apos;%1&apos;과 연결 해제 및 협업하시겠습니까?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
@@ -535,11 +543,13 @@
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
         <translation>같은 LAN에 있는 모든 사용자</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="55"/>
         <source>Not allow</source>
         <translation>허용하지 않음</translation>
     </message>
@@ -570,8 +580,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
-        <source>Other devices can discover and connect with you through the "Cooperation" app</source>
-        <translation>다른 기기에서 "Cooperation" 앱을 통해 당신을 발견하고 연결할 수 있습니다</translation>
+        <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
+        <translation>다른 기기에서 &quot;Cooperation&quot; 앱을 통해 당신을 발견하고 연결할 수 있습니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
@@ -643,8 +653,12 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
-        <source>Unable to collaborate to "%1"</source>
-        <translation>"%1"와의 협업이 불가능합니다</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="392"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="448"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
+        <source>Unable to collaborate to &quot;%1&quot;</source>
+        <translation>&quot;%1&quot;와의 협업이 불가능합니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
@@ -653,18 +667,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
-        <source>Requesting collaborate to "%1"</source>
-        <translation>"%1"와의 협업 요청 중입니다</translation>
+        <source>Requesting collaborate to &quot;%1&quot;</source>
+        <translation>&quot;%1&quot;와의 협업 요청 중입니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
-        <source>Coordination with "%1" has ended</source>
-        <translation>"%1"와의 협업이 종료되었습니다</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
+        <source>Coordination with &quot;%1&quot; has ended</source>
+        <translation>&quot;%1&quot;와의 협업이 종료되었습니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
-        <source>A cross-end collaboration request was received from "%1"</source>
-        <translation>"%1"에서 크로스 엔드 협업 요청이 수신되었습니다</translation>
+        <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
+        <translation>&quot;%1&quot;에서 크로스 엔드 협업 요청이 수신되었습니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
@@ -683,8 +698,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
-        <source>Connect to "%1" failed</source>
-        <translation>"%1" 연결 실패</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>&quot;%1&quot; 연결 실패</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
@@ -698,23 +713,23 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
-        <source>Connection successful, coordinating with  "%1"</source>
-        <translation>연결 성공, "%1"와 협업 중입니다</translation>
+        <source>Connection successful, coordinating with  &quot;%1&quot;</source>
+        <translation>연결 성공, &quot;%1&quot;와 협업 중입니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
-        <source>"%1" has rejected your request for collaboration</source>
-        <translation>"%1"가 협업 요청을 거절했습니다</translation>
+        <source>&quot;%1&quot; has rejected your request for collaboration</source>
+        <translation>&quot;%1&quot;가 협업 요청을 거절했습니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
-        <source>"%1" is connecting with other devices</source>
-        <translation>"%1"가 다른 기기와 연결 중입니다</translation>
+        <source>&quot;%1&quot; is connecting with other devices</source>
+        <translation>&quot;%1&quot;가 다른 기기와 연결 중입니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
-        <source>The connection request sent to you by "%1" was interrupted due to a timeout</source>
-        <translation>"%1"가 보낸 연결 요청이 타임아웃으로 인해 중단되었습니다</translation>
+        <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
+        <translation>&quot;%1&quot;가 보낸 연결 요청이 타임아웃으로 인해 중단되었습니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
@@ -753,42 +768,47 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
-        <source>Please check the network "%1"</source>
-        <translation>네트워크 "%1"를 확인해 주세요</translation>
+        <source>Please check the network &quot;%1&quot;</source>
+        <translation>네트워크 &quot;%1&quot;를 확인해 주세요</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::ShareHelperPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
         <translation>협업</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
-        <source>Connection successful, coordinating with "%1"</source>
-        <translation>연결 성공, "%1"와 협업 중입니다</translation>
+        <source>Connection successful, coordinating with &quot;%1&quot;</source>
+        <translation>연결 성공, &quot;%1&quot;와 협업 중입니다</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
-        <source>Connect to "%1" failed</source>
-        <translation>"%1"에 연결 실패</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>&quot;%1&quot;에 연결 실패</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
         <source>File read/write exception</source>
         <translation>파일 읽기/쓰기 예외</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
         <source>The other party has canceled the file transfer</source>
         <translation>상대방이 파일 전송을 취소했습니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
         <source>File sent successfully</source>
         <translation>파일 전송 성공</translation>
     </message>
@@ -819,13 +839,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Sending files to "%1"</source>
-        <translation>"%1"로 파일 전송 중입니다</translation>
+        <source>Sending files to &quot;%1&quot;</source>
+        <translation>&quot;%1&quot;로 파일 전송 중입니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Receiving files from "%1"</source>
-        <translation>"%1"에서 파일 수신 중입니다</translation>
+        <source>Receiving files from &quot;%1&quot;</source>
+        <translation>&quot;%1&quot;에서 파일 수신 중입니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
@@ -844,8 +864,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" 파일을 당신에게 전송했습니다</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; 파일을 당신에게 전송했습니다</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
@@ -859,14 +879,18 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  저장 공간이 부족하여 이번에는 파일 전송이 실패했습니다. 디스크 공간을 정리하고 다시 시도해 주세요!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  네트워크 연결이 되지 않았습니다. 파일 전송이 실패했습니다. 네트워크에 연결하고 다시 시도해 주세요!</translation>
     </message>
     <message>
@@ -892,6 +916,7 @@
     <name>cooperation_core::VncViewer</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
         <translation>연결 해제됨</translation>
     </message>
@@ -913,6 +938,7 @@
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>협업자를 위한 장치 IP/명을 입력해 주세요</translation>
     </message>
