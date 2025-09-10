@@ -492,13 +492,13 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="115"/>
         <source>Remaining time %1 | %2%</source>
-        <translation type="unfinished"/>
+        <translation>Tempo restante %1 | %2%</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="133"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -530,7 +530,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="179"/>
         <source>Ok</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="182"/>
