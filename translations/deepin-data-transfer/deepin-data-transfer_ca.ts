@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ca">
 <context>
     <name>AppSelectWidget</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="42"/>
         <source>Check transfer application will automatically install the corresponding UOS version of the application.</source>
-        <translation>La transferència de l'aplicació verificarà que s'instal·li automàticament la versió corresponent de l'aplicació UOS.</translation>
+        <translation>La transferència de l&apos;aplicació verificarà que s&apos;instal·li automàticament la versió corresponent de l&apos;aplicació UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="56"/>
@@ -59,7 +57,7 @@
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="91"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system.</source>
-        <translation>L'eina de transferència UOS permet la migració en un clic dels seus fitxers, dades personals i aplicacions a UOS, ajudant-lo a substituir el seu sistema de forma senzilla.</translation>
+        <translation>L&apos;eina de transferència UOS permet la migració en un clic dels seus fitxers, dades personals i aplicacions a UOS, ajudant-lo a substituir el seu sistema de forma senzilla.</translation>
     </message>
 </context>
 <context>
@@ -87,7 +85,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="33"/>
         <source>From Windows PC</source>
-        <translation>Des d'una màquina Windows</translation>
+        <translation>Des d&apos;una màquina Windows</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="39"/>
@@ -100,7 +98,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="39"/>
         <source>Check transfer configuration will automatically apply to UOS.</source>
-        <translation>La configuració de transferència verificarà que s'apliqui automàticament a UOS.</translation>
+        <translation>La configuració de transferència verificarà que s&apos;apliqui automàticament a UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="51"/>
@@ -119,11 +117,13 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Recommendation</source>
         <translation>Recomanació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="139"/>
         <source>Transferable</source>
         <translation>Transfereixible</translation>
     </message>
@@ -158,7 +158,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="41"/>
         <source>Please open data transfer on Windows, and imput the IP and connect code</source>
-        <translation>Si us plau obri la transferència de dades a Windows, i introdueixi l'IP i el codi de connexió</translation>
+        <translation>Si us plau obri la transferència de dades a Windows, i introdueixi l&apos;IP i el codi de connexió</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="48"/>
@@ -261,7 +261,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
         <source>%1/%2 available</source>
-        <translation>'%1/%2 متاح'</translation>
+        <translation>&apos;%1/%2 متاح&apos;</translation>
     </message>
 </context>
 <context>
@@ -344,7 +344,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="60"/>
-        <source>When transfer completed, the data will be placed in the user's home directory</source>
+        <source>When transfer completed, the data will be placed in the user&apos;s home directory</source>
         <translation>عند الانتهاء من النقل، سيتم وضع البيانات في دليل المستخدم</translation>
     </message>
     <message>
@@ -466,6 +466,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="112"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="167"/>
         <source>connect...</source>
         <translation>اتصال...</translation>
     </message>
@@ -489,6 +491,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
         <translation>تم نقل البيانات</translation>
     </message>
@@ -517,6 +520,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="239"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="241"/>
         <source>Selected:%1</source>
         <translation>المختارة:%1</translation>
     </message>
@@ -588,11 +593,15 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
         <translation>تم النقل</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
         <translation>رموز التبويب لمتصفح الويب</translation>
     </message>
@@ -628,6 +637,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
         <translation>فشل التثبيت، الرجاء الذهاب إلى متجر التطبيقات للحصول على التطبيق</translation>
     </message>
@@ -671,6 +682,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="351"/>
         <source>Select:%1</source>
         <translation>Selecciona:%1</translation>
     </message>
@@ -691,7 +703,7 @@
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="39"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to
 UOS, helping you seamlessly replace your system.</source>
-        <translation>L'eina de transferència de UOS permet la migració en un clic dels vostres fitxers, dades personals i aplicacions a UOS, ajudant-vos a substituir el vostre sistema de manera senzilla.</translation>
+        <translation>L&apos;eina de transferència de UOS permet la migració en un clic dels vostres fitxers, dades personals i aplicacions a UOS, ajudant-vos a substituir el vostre sistema de manera senzilla.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="46"/>
@@ -711,16 +723,21 @@ UOS, helping you seamlessly replace your system.</source>
     <name>TransferringWidget</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="42"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="193"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="230"/>
         <source>Transferring...</source>
         <translation>Transferint...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="191"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
         <source>Calculationing...</source>
         <translation>Calculant...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="132"/>
         <source>Show processes</source>
         <translation>Mostra processos</translation>
     </message>
@@ -731,23 +748,26 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="195"/>
         <source>Transfer will be completed in %1 minutes</source>
-        <translation>La transferència s'acabará en %1 minuts</translation>
+        <translation>La transferència s&apos;acabará en %1 minuts</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
         <translation>Transferint</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="199"/>
         <source>Transfer will be completed in %1 secondes</source>
-        <translation>La transferència s'acabará en %1 segons</translation>
+        <translation>La transferència s&apos;acabará en %1 segons</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="202"/>
         <source>Transfer will be completed in --</source>
-        <translation>La transferència s'acabará en --</translation>
+        <translation>La transferència s&apos;acabará en --</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
@@ -759,6 +779,7 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UnzipWorker</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="137"/>
         <source>Decompressing</source>
         <translation>Descomprimir</translation>
     </message>
@@ -767,11 +788,13 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UploadFileFrame</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
         <translation>Arrossega el fitxer aquí </translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="257"/>
         <source>Import file</source>
         <translation>Importa fitxer</translation>
     </message>
@@ -815,11 +838,14 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="108"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="113"/>
         <source>Next</source>
         <translation>Següent</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="76"/>
         <source>Retry</source>
         <translation>Reintentar</translation>
     </message>
@@ -856,6 +882,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="98"/>
         <source>Cancel</source>
         <translation>Cancel·lar</translation>
     </message>
@@ -917,6 +944,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>La transferència es completarà en %1 minuts</translation>
     </message>
@@ -936,7 +964,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation>'%1 Arxiu de compressió ha fallat'</translation>
+        <translation>&apos;%1 Arxiu de compressió ha fallat&apos;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
