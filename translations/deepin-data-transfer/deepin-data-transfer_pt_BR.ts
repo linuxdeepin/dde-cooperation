@@ -29,12 +29,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="102"/>
         <source>Transferable</source>
-        <translation type="unfinished"/>
+        <translation>Transferível</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="112"/>
         <source>Not Suitable</source>
-        <translation type="unfinished"/>
+        <translation>Não adequado</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="46"/>
