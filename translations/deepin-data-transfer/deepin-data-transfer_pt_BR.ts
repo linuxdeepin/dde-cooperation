@@ -603,12 +603,12 @@
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
-        <translation type="unfinished"/>
+        <translation>Favoritos do navegador</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
         <source>BrowserBookMark</source>
-        <translation type="unfinished"/>
+        <translation>Favoritos do navegador</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="176"/>
