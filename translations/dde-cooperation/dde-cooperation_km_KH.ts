@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="km_KH">
 <context>
     <name>Application</name>
     <message>
@@ -32,6 +30,7 @@
     <name>cooperation_core::BottomLabel</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
         <source>Local IP: %1</source>
         <translation>អ៊ីភីក្នុងប្រព័ន្ធដែលប្រើបាន: %1</translation>
     </message>
@@ -40,8 +39,8 @@
     <name>cooperation_core::ConfirmWidget</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" បានផ្ទះឯកសារមកកាន់អ្នក</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; បានផ្ទះឯកសារមកកាន់អ្នក</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
@@ -68,6 +67,7 @@
     <name>cooperation_core::CooperationTaskDialog</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="111"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>បោះបង់</translation>
@@ -129,7 +129,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
-        <source>When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device</source>
+        <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
         <translation>នៅពេលដែលមានការតភ្ជាប់រវាងឧបករណ៍ពីរ កូដ និងមូលដ្ឋាន នៃអ្នកដំណើរការអាចប្រើបានដើម្បីគ្រប់គ្រងឧបករណ៍មួយទៀត</translation>
     </message>
     <message>
@@ -195,6 +195,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
         <translation>សូមចុចដើម្បីបញ្ជាក់ដើម្បីបើកសេវាកម្មការស្វែងរក LAN</translation>
     </message>
@@ -205,8 +206,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
-        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service</source>
-        <translation>មិនអាចស្វែងរកនិងត្រូវបានស្វែងរកដោយឧបករណ៍ផ្សេងទៀតនៅពេលដែលសេវាកម្មការស្វែងរក LAN មិនបានបើក ចុចលើសំណើចនៅលើមេ뉴ការចាប់ផ្ដើម Windows -> ការគ្រប់គ្រងកុំព្យូទ័រ -> សេវាកម្មនិងការប្រើប្រាស់ -> សេវាកម្មដើម្បីបើកសេវាកម្ម Bonjour</translation>
+        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
+        <translation>មិនអាចស្វែងរកនិងត្រូវបានស្វែងរកដោយឧបករណ៍ផ្សេងទៀតនៅពេលដែលសេវាកម្មការស្វែងរក LAN មិនបានបើក ចុចលើសំណើចនៅលើមេ뉴ការចាប់ផ្ដើម Windows -&gt; ការគ្រប់គ្រងកុំព្យូទ័រ -&gt; សេវាកម្មនិងការប្រើប្រាស់ -&gt; សេវាកម្មដើម្បីបើកសេវាកម្ម Bonjour</translation>
     </message>
 </context>
 <context>
@@ -261,6 +262,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
         <translation>ទីតាំងរក្សារូបភាពមិនមានន័យ</translation>
     </message>
@@ -310,16 +312,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="296"/>
         <source>Cancel</source>
         <translation>បំបាក់</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="286"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="295"/>
         <source>Confirm</source>
         <translation>បញ្ជាក់</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
         <source>Please select your operation</source>
         <translation>សូមជ្រើសរើសការប្រព្រឹត្តរបស់អ្នក</translation>
     </message>
@@ -353,6 +358,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
+        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="126"/>
         <source>Settings</source>
         <translation>ការកំណត់</translation>
     </message>
@@ -389,13 +395,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
-        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -"Everyone on the same LAN"</source>
-        <translation>៣. ប្រព័ន្ធប្រតិបត្តិ-ការកំណត់-ការបញ្ចូលឯកសារ-អនុញ្ញាតឱ្យអ្នកប្រើប្រាស់ខាងក្រោមបញ្ចូលឯកសារទៅខ្ញុំ -"អ្នកទាំងអស់នៅលើ LAN ដែលស្ថិតនៅក្នុងឧបករណ៍" </translation>
+        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
+        <translation>៣. ប្រព័ន្ធប្រតិបត្តិ-ការកំណត់-ការបញ្ចូលឯកសារ-អនុញ្ញាតឱ្យអ្នកប្រើប្រាស់ខាងក្រោមបញ្ចូលឯកសារទៅខ្ញុំ -&quot;អ្នកទាំងអស់នៅលើ LAN ដែលស្ថិតនៅក្នុងឧបករណ៍&quot; </translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
-        <source>3. Settings-Basic Settings-Discovery Mode-"Allow everyone in the same LAN"</source>
-        <translation>៣. ការកំណត់-ការកំណត់គ្រប់គ្រង-ការស្គែករក-"អនុញ្ញាតឱ្យអ្នកទាំងអស់នៅលើ LAN ដែលស្ថិតនៅក្នុងឧបករណ៍" </translation>
+        <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
+        <translation>៣. ការកំណត់-ការកំណត់គ្រប់គ្រង-ការស្គែករក-&quot;អនុញ្ញាតឱ្យអ្នកទាំងអស់នៅលើ LAN ដែលស្ថិតនៅក្នុងឧបករណ៍&quot; </translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
@@ -414,8 +420,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
-        <source>Go to download></source>
-        <translation>ទៅដំឡើង></translation>
+        <source>Go to download&gt;</source>
+        <translation>ទៅដំឡើង&gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
@@ -455,11 +461,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="212"/>
         <source>cancel</source>
         <translation>បោះបង់</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="157"/>
         <source>comfirm</source>
         <translation>បញ្ចាក់</translation>
     </message>
@@ -470,8 +478,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
-        <source>Are you sure to disconnect and collaborate with '%1'?</source>
-        <translation>តើអ្នកពិតប្រាកដថា ត្រូវបំបែក និងសហការជាប់នឹង '%1'?</translation>
+        <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
+        <translation>តើអ្នកពិតប្រាកដថា ត្រូវបំបែក និងសហការជាប់នឹង &apos;%1&apos;?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
@@ -535,11 +543,13 @@
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
         <translation>ទាំងអ្នកទាំងអ្នកនៅក្នុង LAN ដូចគ្នា</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="55"/>
         <source>Not allow</source>
         <translation>មិនអនុញ្ញាត</translation>
     </message>
@@ -570,8 +580,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
-        <source>Other devices can discover and connect with you through the "Cooperation" app</source>
-        <translation>ឧបករណ៍ផ្សេងទៀតអាចស្វែងរកនិងភ្ជាប់ជាមួយអ្នកតាមរយៈកម្មវិធី "Cooperation" បាន</translation>
+        <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
+        <translation>ឧបករណ៍ផ្សេងទៀតអាចស្វែងរកនិងភ្ជាប់ជាមួយអ្នកតាមរយៈកម្មវិធី &quot;Cooperation&quot; បាន</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
@@ -643,8 +653,12 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
-        <source>Unable to collaborate to "%1"</source>
-        <translation>មិនអាចសហការទៅ "%1" បាន</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="392"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="448"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
+        <source>Unable to collaborate to &quot;%1&quot;</source>
+        <translation>មិនអាចសហការទៅ &quot;%1&quot; បាន</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
@@ -653,18 +667,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
-        <source>Requesting collaborate to "%1"</source>
-        <translation>ស្នើសុំសហការទៅ "%1"</translation>
+        <source>Requesting collaborate to &quot;%1&quot;</source>
+        <translation>ស្នើសុំសហការទៅ &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
-        <source>Coordination with "%1" has ended</source>
-        <translation>អាជីវកម្មនឹង "%1" បានបញ្ចប់</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
+        <source>Coordination with &quot;%1&quot; has ended</source>
+        <translation>អាជីវកម្មនឹង &quot;%1&quot; បានបញ្ចប់</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
-        <source>A cross-end collaboration request was received from "%1"</source>
-        <translation>មានការស្នើសុំសហការដោយប្រើប្រាស់បើកប្រាក់ពី "%1"</translation>
+        <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
+        <translation>មានការស្នើសុំសហការដោយប្រើប្រាស់បើកប្រាក់ពី &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
@@ -683,8 +698,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
-        <source>Connect to "%1" failed</source>
-        <translation>ភ្ជាប់ទៅ "%1" បានបរាជ័យ</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>ភ្ជាប់ទៅ &quot;%1&quot; បានបរាជ័យ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
@@ -698,23 +713,23 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
-        <source>Connection successful, coordinating with  "%1"</source>
-        <translation>ការតភ្ជាប់បានជោគជ័យ កំពុងធ្វើការសហការជាមួយ "%1"</translation>
+        <source>Connection successful, coordinating with  &quot;%1&quot;</source>
+        <translation>ការតភ្ជាប់បានជោគជ័យ កំពុងធ្វើការសហការជាមួយ &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
-        <source>"%1" has rejected your request for collaboration</source>
-        <translation>"%1" បានបដិសេធ សួរសហការរបស់អ្នក</translation>
+        <source>&quot;%1&quot; has rejected your request for collaboration</source>
+        <translation>&quot;%1&quot; បានបដិសេធ សួរសហការរបស់អ្នក</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
-        <source>"%1" is connecting with other devices</source>
-        <translation>"%1" កំពុងតភ្ជាប់ទៅឧបករណ៍ផ្សេងទៀត</translation>
+        <source>&quot;%1&quot; is connecting with other devices</source>
+        <translation>&quot;%1&quot; កំពុងតភ្ជាប់ទៅឧបករណ៍ផ្សេងទៀត</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
-        <source>The connection request sent to you by "%1" was interrupted due to a timeout</source>
-        <translation>ការសួរតភ្ជាប់ដែល "%1" បានផ្ញើទៅអ្នកត្រូវបានកាត់បន្ថយដោយសារតែការផ្ទះស្តាំដោយអាកាសធាតុ</translation>
+        <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
+        <translation>ការសួរតភ្ជាប់ដែល &quot;%1&quot; បានផ្ញើទៅអ្នកត្រូវបានកាត់បន្ថយដោយសារតែការផ្ទះស្តាំដោយអាកាសធាតុ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
@@ -753,42 +768,47 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
-        <source>Please check the network "%1"</source>
-        <translation>សូមពិនិត្យមើលអ៊ីនធឺណែត "%1"</translation>
+        <source>Please check the network &quot;%1&quot;</source>
+        <translation>សូមពិនិត្យមើលអ៊ីនធឺណែត &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::ShareHelperPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
         <translation>សហការ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
-        <source>Connection successful, coordinating with "%1"</source>
-        <translation>ការតភ្ជាប់បានជោគជ័យ កំពុងធ្វើការសហការជាមួយ "%1"</translation>
+        <source>Connection successful, coordinating with &quot;%1&quot;</source>
+        <translation>ការតភ្ជាប់បានជោគជ័យ កំពុងធ្វើការសហការជាមួយ &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
-        <source>Connect to "%1" failed</source>
-        <translation>ការតភ្ជាប់ទៅ "%1" បានបដិសេធ</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>ការតភ្ជាប់ទៅ &quot;%1&quot; បានបដិសេធ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
         <source>File read/write exception</source>
         <translation>ការអាន/សរសេរីលីបានបដិសេធ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
         <source>The other party has canceled the file transfer</source>
         <translation>ផ្នែកផ្សេងបានបដិសេធការផ្ទះីលី</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
         <source>File sent successfully</source>
         <translation>ឯកសារបានផ្ទះីលីបានជោគជ័យ</translation>
     </message>
@@ -819,13 +839,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Sending files to "%1"</source>
-        <translation>កំពុងផ្ទះីលីឯកសារទៅ "%1"</translation>
+        <source>Sending files to &quot;%1&quot;</source>
+        <translation>កំពុងផ្ទះីលីឯកសារទៅ &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Receiving files from "%1"</source>
-        <translation>កំពុងទទួលឯកសារពី "%1"</translation>
+        <source>Receiving files from &quot;%1&quot;</source>
+        <translation>កំពុងទទួលឯកសារពី &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
@@ -844,8 +864,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" បានបញ្ជូនឯកសារមួយចំនួនទៅកាន់អ្នក</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; បានបញ្ជូនឯកសារមួយចំនួនទៅកាន់អ្នក</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
@@ -859,14 +879,18 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  ទំហំផ្ទះនៃកុំព្យូទ័រមិនគ្រប់គ្រាន់ ការបញ្ជូនឯកសារបានបរាជ័យនៅពេលនេះ។ សូមស្ទួលបន្ទះទំហំផ្ទះ និងសាកល្បងម្ដងទៀត!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  ប្រព័ន្ធអ៊ីនធឺណិតមិនតភ្ជាប់ ការបញ្ជូនឯកសារបានបរាជ័យនៅពេលនេះ។ សូមតភ្ជាប់ទៅកាន់ប្រព័ន្ធអ៊ីនធឺណិត និងសាកល្បងម្ដងទៀត!</translation>
     </message>
     <message>
@@ -892,6 +916,7 @@
     <name>cooperation_core::VncViewer</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
         <translation>បានបំពាន</translation>
     </message>
@@ -913,6 +938,7 @@
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>សូមបញ្ចូនអាសយដ្ឋានរបស់ឧបករណ៍ ឬឈ្មោះរបស់អ្នកសហការី</translation>
     </message>
