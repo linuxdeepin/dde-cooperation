@@ -623,7 +623,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer failed</source>
-        <translation type="unfinished"/>
+        <translation>A transferência falhou</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
@@ -653,22 +653,22 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="21"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="22"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Imagens</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="23"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Documentos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="24"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Downloads</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="25"/>
