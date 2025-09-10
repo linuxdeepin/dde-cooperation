@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="et">
 <context>
     <name>AppSelectWidget</name>
     <message>
@@ -119,11 +117,13 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Recommendation</source>
         <translation>Soovitus</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="139"/>
         <source>Transferable</source>
         <translation>Ülekanduv</translation>
     </message>
@@ -261,7 +261,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
         <source>%1/%2 available</source>
-        <translation>'%1/%2 saadaval'</translation>
+        <translation>&apos;%1/%2 saadaval&apos;</translation>
     </message>
 </context>
 <context>
@@ -344,7 +344,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="60"/>
-        <source>When transfer completed, the data will be placed in the user's home directory</source>
+        <source>When transfer completed, the data will be placed in the user&apos;s home directory</source>
         <translation>Kui ülekandmine on valmis, salvestatakse andmed kasutaja kodutseinte kataloogis</translation>
     </message>
     <message>
@@ -466,6 +466,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="112"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="167"/>
         <source>connect...</source>
         <translation>ühendamine...</translation>
     </message>
@@ -489,6 +491,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
         <translation>Ülekandmine on valmis</translation>
     </message>
@@ -517,6 +520,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="239"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="241"/>
         <source>Selected:%1</source>
         <translation>Valis:%1</translation>
     </message>
@@ -588,11 +593,15 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
         <translation>Ülekandmine on valmis</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
         <translation>Brwseri siltid</translation>
     </message>
@@ -628,6 +637,8 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
+        <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
         <translation>Installimisel ebaõnnestus, küsige rakendusmärkusest installimiseks</translation>
     </message>
@@ -671,6 +682,7 @@
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="351"/>
         <source>Select:%1</source>
         <translation>Vali:%1</translation>
     </message>
@@ -711,16 +723,21 @@ UOS, helping you seamlessly replace your system.</source>
     <name>TransferringWidget</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="42"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="193"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="230"/>
         <source>Transferring...</source>
         <translation>Ülekandemine...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="191"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
         <source>Calculationing...</source>
         <translation>Arvutamine...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="132"/>
         <source>Show processes</source>
         <translation>Kuva protsessid</translation>
     </message>
@@ -731,11 +748,14 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="195"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>Ülekandmine on valmis %1 minutit pärast</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
         <translation>Ülekandemine</translation>
     </message>
@@ -759,6 +779,7 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UnzipWorker</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="137"/>
         <source>Decompressing</source>
         <translation>Pakendamise lõpetamine</translation>
     </message>
@@ -767,11 +788,13 @@ UOS, helping you seamlessly replace your system.</source>
     <name>UploadFileFrame</name>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
         <translation>Tõsta fail siia </translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="257"/>
         <source>Import file</source>
         <translation>Faili importimine</translation>
     </message>
@@ -815,11 +838,14 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="108"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="113"/>
         <source>Next</source>
         <translation>Järgmine</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="76"/>
         <source>Retry</source>
         <translation>Proovige uuesti</translation>
     </message>
@@ -831,7 +857,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
         <source>Insufficient space on UOS. Please reserve at least %1G of space and try again.</source>
-        <translation>UOS'il on liiga vähe ruumi. Palun tagage vähemalt %1G ruumi ja proovige uuesti.</translation>
+        <translation>UOS&apos;il on liiga vähe ruumi. Palun tagage vähemalt %1G ruumi ja proovige uuesti.</translation>
     </message>
 </context>
 <context>
@@ -856,6 +882,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="98"/>
         <source>Cancel</source>
         <translation>Loobumine</translation>
     </message>
@@ -917,6 +944,7 @@ UOS, helping you seamlessly replace your system.</source>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
+        <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
         <translation>Ülekandmine saab lõppeda %1 minutiga</translation>
     </message>
@@ -936,7 +964,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation>'%1 faili ümberkandmine ebaõnnestus'</translation>
+        <translation>&apos;%1 faili ümberkandmine ebaõnnestus&apos;</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
