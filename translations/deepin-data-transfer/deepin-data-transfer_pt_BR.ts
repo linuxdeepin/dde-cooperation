@@ -206,17 +206,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="87"/>
         <source>Create data backup</source>
-        <translation type="unfinished"/>
+        <translation>Criar backup de dados</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="95"/>
         <source>File information</source>
-        <translation type="unfinished"/>
+        <translation>Informações do arquivo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="115"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="133"/>
