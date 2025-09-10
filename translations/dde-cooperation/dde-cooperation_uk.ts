@@ -70,7 +70,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="134"/>
