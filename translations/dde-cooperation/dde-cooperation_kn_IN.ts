@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="kn_IN">
 <context>
     <name>Application</name>
     <message>
@@ -32,6 +30,7 @@
     <name>cooperation_core::BottomLabel</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
         <source>Local IP: %1</source>
         <translation>ಖಾಸ್ಯ ಐಪಿ: %1</translation>
     </message>
@@ -40,8 +39,8 @@
     <name>cooperation_core::ConfirmWidget</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
-        <source>"%1" send some files to you</source>
-        <translation>"%1" ನಿಮ್ಮಿಗೆ ಕೆಲವು ಪತ್ರಗಳನ್ನು ಕಳುಹಿಸುತ್ತದೆ</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation>&quot;%1&quot; ನಿಮ್ಮಿಗೆ ಕೆಲವು ಪತ್ರಗಳನ್ನು ಕಳುಹಿಸುತ್ತದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
@@ -68,6 +67,7 @@
     <name>cooperation_core::CooperationTaskDialog</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="111"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ರದ್ದುಗೊಳಿಸಿ</translation>
@@ -129,7 +129,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
-        <source>When a connection is made between two devices, the initiator's keyboard and mouse can be used to control the other device</source>
+        <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
         <translation>ಎರಡು ಸಾಧನಗಳ ನಡುವೆ ಸಂಪರ್ಕ ಸೃಷ್ಟಿಸಿದ ನಂತರ, ಪ್ರಾರಂಭಕನ ಕೀಬೋರ್ಡ್ ಮತ್ತು ಮೌಸ್ ಅನ್ನು ಇನ್ನೊಂದು ಸಾಧನವನ್ನು ನಿಯಂತ್ರಿಸಲು ಬಳಸಬಹುದು</translation>
     </message>
     <message>
@@ -195,6 +195,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
         <translation>ಲ್ಯಾಂ ಡಿಸ್ಕವರಿ ಸೇವೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಲು ದಯವಿಟ್ಟು ಅನುಮತಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ</translation>
     </message>
@@ -205,8 +206,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
-        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu ->Computer Management ->Services and Applications ->Services to enable Bonjour service</source>
-        <translation>ಲ್ಯಾಂ ಡಿಸ್ಕವರಿ ಸೇವೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸದಿದ್ದರೆ, ಇತರ ಉಪಕರಣಗಳಿಂದ ಡಿಸ್ಕವರಿ ಮಾಡಲು ಮತ್ತು ಡಿಸ್ಕವರಿಯಾಗಲು ಸಾಧ್ಯವಿಲ್ಲ. Windows Start menu ಗೆ ಬಲ ಕ್ಲಿಕ್ ಮಾಡಿ -> Computer Management -> Services and Applications -> Services ಅನ್ನು ಅನುಮತಿಸಲು Bonjour ಸೇವೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ</translation>
+        <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
+        <translation>ಲ್ಯಾಂ ಡಿಸ್ಕವರಿ ಸೇವೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸದಿದ್ದರೆ, ಇತರ ಉಪಕರಣಗಳಿಂದ ಡಿಸ್ಕವರಿ ಮಾಡಲು ಮತ್ತು ಡಿಸ್ಕವರಿಯಾಗಲು ಸಾಧ್ಯವಿಲ್ಲ. Windows Start menu ಗೆ ಬಲ ಕ್ಲಿಕ್ ಮಾಡಿ -&gt; Computer Management -&gt; Services and Applications -&gt; Services ಅನ್ನು ಅನುಮತಿಸಲು Bonjour ಸೇವೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ</translation>
     </message>
 </context>
 <context>
@@ -261,6 +262,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
         <translation>ಅನ್ನು ಉಳಿಸಲು ಆಯ್ಕೆ ಮಾಡಿದ ಸ್ಥಳವು ಅನುಮತಿಸದು</translation>
     </message>
@@ -310,16 +312,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="296"/>
         <source>Cancel</source>
         <translation>ವಾಪಸ್</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="286"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="295"/>
         <source>Confirm</source>
         <translation>ಆನುಮತಿಸಿ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
         <source>Please select your operation</source>
         <translation>ದಯವಿಟ್ಟು ನಿಮ್ಮ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ</translation>
     </message>
@@ -353,6 +358,7 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
+        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="126"/>
         <source>Settings</source>
         <translation>ಸೆಟ್ಟಿಂಗ್ಸ್</translation>
     </message>
@@ -389,13 +395,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
-        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -"Everyone on the same LAN"</source>
-        <translation>ಫೈಲ್ ಮ್ಯಾನೇಜರ್-ಸೆಟ್ಟಿಂಗ್ಸ್-ಫೈಲ್ ಡ್ರಾಪ್-ನಾನಿಗೆ ಫೈಲ್ ಡ್ರಾಪ್ ಮಾಡಲು ಈ ಬಳಕೆದಾರರನ್ನು ಅನುಮತಿಸಿ -"ಒಟ್ಟಾರಂಭ ಲ್ಯಾಂನಲ್ಲಿರುವ ಎಲ್ಲರು"</translation>
+        <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
+        <translation>ಫೈಲ್ ಮ್ಯಾನೇಜರ್-ಸೆಟ್ಟಿಂಗ್ಸ್-ಫೈಲ್ ಡ್ರಾಪ್-ನಾನಿಗೆ ಫೈಲ್ ಡ್ರಾಪ್ ಮಾಡಲು ಈ ಬಳಕೆದಾರರನ್ನು ಅನುಮತಿಸಿ -&quot;ಒಟ್ಟಾರಂಭ ಲ್ಯಾಂನಲ್ಲಿರುವ ಎಲ್ಲರು&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
-        <source>3. Settings-Basic Settings-Discovery Mode-"Allow everyone in the same LAN"</source>
-        <translation>ಸೆಟ್ಟಿಂಗ್ಸ್-ಬೇಸಿಕ್ ಸೆಟ್ಟಿಂಗ್ಸ್-ಡಿಸ್ಕವರಿ ಮೋಡ್-"ಒಟ್ಟಾರಂಭ ಲ್ಯಾಂನಲ್ಲಿರುವ ಎಲ್ಲರನ್ನು ಅನುಮತಿಸಿ"</translation>
+        <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
+        <translation>ಸೆಟ್ಟಿಂಗ್ಸ್-ಬೇಸಿಕ್ ಸೆಟ್ಟಿಂಗ್ಸ್-ಡಿಸ್ಕವರಿ ಮೋಡ್-&quot;ಒಟ್ಟಾರಂಭ ಲ್ಯಾಂನಲ್ಲಿರುವ ಎಲ್ಲರನ್ನು ಅನುಮತಿಸಿ&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
@@ -414,8 +420,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
-        <source>Go to download></source>
-        <translation>ಆಟೋಮೇಟಿಕ್ ಡೌನ್ಲೋಡ್ ಮಾಡಲು ಹೋಗಿ></translation>
+        <source>Go to download&gt;</source>
+        <translation>ಆಟೋಮೇಟಿಕ್ ಡೌನ್ಲೋಡ್ ಮಾಡಲು ಹೋಗಿ&gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
@@ -455,11 +461,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="212"/>
         <source>cancel</source>
         <translation>ವಾಪಸ್ ಮಾಡಿ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="157"/>
         <source>comfirm</source>
         <translation>ನಿರ್ಧರಿಸಿ</translation>
     </message>
@@ -470,8 +478,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
-        <source>Are you sure to disconnect and collaborate with '%1'?</source>
-        <translation>ನೀವು '%1' ನಿಗ್ಗು ಮತ್ತು ಕೋಲಬರ್ಬರ ಕೆಲಸ ಮಾಡಲು ನಿಶ್ಚಯಿಸಿದ್ದೀರಾ?</translation>
+        <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
+        <translation>ನೀವು &apos;%1&apos; ನಿಗ್ಗು ಮತ್ತು ಕೋಲಬರ್ಬರ ಕೆಲಸ ಮಾಡಲು ನಿಶ್ಚಯಿಸಿದ್ದೀರಾ?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
@@ -535,11 +543,13 @@
     <name>cooperation_core::SettingDialogPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
         <translation>ಊರ್ವಾರ್ಜನ್ ಸೇರಿದ್ದವು</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="55"/>
         <source>Not allow</source>
         <translation>ಅನುಮತಿಸಲಾಗಿಲ್ಲ</translation>
     </message>
@@ -570,8 +580,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
-        <source>Other devices can discover and connect with you through the "Cooperation" app</source>
-        <translation>ನಿಮ್ಮನ್ನು "ನಿಯಮಿತ" ಆವೃತ್ತಿಯ ಮೂಲಕ ಇತರ ಉಪಕರಣಗಳುಗಳು ತೊಡಕು ಮಾಡಬಹುದು ಮತ್ತು ನಿಮಗೆ ಸಂಪರ್ಕ ಹೊಂದಬಹುದು</translation>
+        <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
+        <translation>ನಿಮ್ಮನ್ನು &quot;ನಿಯಮಿತ&quot; ಆವೃತ್ತಿಯ ಮೂಲಕ ಇತರ ಉಪಕರಣಗಳುಗಳು ತೊಡಕು ಮಾಡಬಹುದು ಮತ್ತು ನಿಮಗೆ ಸಂಪರ್ಕ ಹೊಂದಬಹುದು</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
@@ -643,8 +653,12 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
-        <source>Unable to collaborate to "%1"</source>
-        <translation> "%1" ಸಹಯೋಗ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="392"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="448"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
+        <source>Unable to collaborate to &quot;%1&quot;</source>
+        <translation> &quot;%1&quot; ಸಹಯೋಗ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
@@ -653,18 +667,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
-        <source>Requesting collaborate to "%1"</source>
-        <translation> "%1" ಸಹಯೋಗ ಮಾಡಲು ಅರ್ಥಹರಿಸುತ್ತಿದ್ದೀರಿ</translation>
+        <source>Requesting collaborate to &quot;%1&quot;</source>
+        <translation> &quot;%1&quot; ಸಹಯೋಗ ಮಾಡಲು ಅರ್ಥಹರಿಸುತ್ತಿದ್ದೀರಿ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
-        <source>Coordination with "%1" has ended</source>
-        <translation> "%1" ಸಹಯೋಗ ಮುಖ್ಯವಾಗಿ ಮುಗಿದಿದೆ</translation>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
+        <source>Coordination with &quot;%1&quot; has ended</source>
+        <translation> &quot;%1&quot; ಸಹಯೋಗ ಮುಖ್ಯವಾಗಿ ಮುಗಿದಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
-        <source>A cross-end collaboration request was received from "%1"</source>
-        <translation> "%1" ಮೂಲಕ ಒಂದು ಅನುಮತಿಸಿದ ಸಹಯೋಗ ಅರ್ಥಹರಿಸಲಾಗಿದೆ</translation>
+        <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
+        <translation> &quot;%1&quot; ಮೂಲಕ ಒಂದು ಅನುಮತಿಸಿದ ಸಹಯೋಗ ಅರ್ಥಹರಿಸಲಾಗಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
@@ -683,8 +698,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
-        <source>Connect to "%1" failed</source>
-        <translation> "%1" ಸಂಪರ್ಕ ಹೊಂದಲು ವಿಫಲವಾಗಿದೆ</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation> &quot;%1&quot; ಸಂಪರ್ಕ ಹೊಂದಲು ವಿಫಲವಾಗಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
@@ -698,23 +713,23 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
-        <source>Connection successful, coordinating with  "%1"</source>
-        <translation>ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಸ್ಥಾಪನೆಯಾಗಿದೆ, "%1" ಸಹಯೋಗ ನಡೆಸುತ್ತಿದೆ</translation>
+        <source>Connection successful, coordinating with  &quot;%1&quot;</source>
+        <translation>ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಸ್ಥಾಪನೆಯಾಗಿದೆ, &quot;%1&quot; ಸಹಯೋಗ ನಡೆಸುತ್ತಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
-        <source>"%1" has rejected your request for collaboration</source>
-        <translation>"%1" ನಿಮ್ಮ ಸಹಯೋಗ ಪ್ರಾರಂಭಿಸುವ ಅರ್ಥಹೀನತೆಯನ್ನು ನಿರಾಕರಿಸಿದೆ</translation>
+        <source>&quot;%1&quot; has rejected your request for collaboration</source>
+        <translation>&quot;%1&quot; ನಿಮ್ಮ ಸಹಯೋಗ ಪ್ರಾರಂಭಿಸುವ ಅರ್ಥಹೀನತೆಯನ್ನು ನಿರಾಕರಿಸಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
-        <source>"%1" is connecting with other devices</source>
-        <translation>"%1" ಇತರ ಯಂತ್ರಗಳೊಂದಿಗೆ ಸಂಪರ್ಕ ಹೊಂದುತ್ತಿದೆ</translation>
+        <source>&quot;%1&quot; is connecting with other devices</source>
+        <translation>&quot;%1&quot; ಇತರ ಯಂತ್ರಗಳೊಂದಿಗೆ ಸಂಪರ್ಕ ಹೊಂದುತ್ತಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
-        <source>The connection request sent to you by "%1" was interrupted due to a timeout</source>
-        <translation>"%1" ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕ ಪ್ರಾರಂಭಿಸಲು ಕೊಡುವ ಅರ್ಥಹೀನತೆಯನ್ನು ಸಮಯ ಸಾಧ್ಯವಿಲ್ಲದೆ ಅಡ್ಡಗೊಳಿಸಲಾಗಿದೆ</translation>
+        <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
+        <translation>&quot;%1&quot; ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕ ಪ್ರಾರಂಭಿಸಲು ಕೊಡುವ ಅರ್ಥಹೀನತೆಯನ್ನು ಸಮಯ ಸಾಧ್ಯವಿಲ್ಲದೆ ಅಡ್ಡಗೊಳಿಸಲಾಗಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
@@ -753,42 +768,47 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
-        <source>Please check the network "%1"</source>
-        <translation>ನೆಟ್ವರ್ಕ್ "%1" ನ್ನು ತಪ್ಪಿಸಿ</translation>
+        <source>Please check the network &quot;%1&quot;</source>
+        <translation>ನೆಟ್ವರ್ಕ್ &quot;%1&quot; ನ್ನು ತಪ್ಪಿಸಿ</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::ShareHelperPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
         <translation>ಸಹಯೋಗ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
-        <source>Connection successful, coordinating with "%1"</source>
-        <translation>ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಸ್ಥಾಪನೆಯಾಗಿದೆ, "%1" ಸಹಯೋಗ ನಡೆಸುತ್ತಿದೆ</translation>
+        <source>Connection successful, coordinating with &quot;%1&quot;</source>
+        <translation>ನೆಟ್ವರ್ಕ್ ಸಂಪರ್ಕ ಸ್ಥಾಪನೆಯಾಗಿದೆ, &quot;%1&quot; ಸಹಯೋಗ ನಡೆಸುತ್ತಿದೆ</translation>
     </message>
 </context>
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
-        <source>Connect to "%1" failed</source>
-        <translation>"%1" ಸಂಪರ್ಕ ವಿಫಲವಾಯಿತು</translation>
+        <source>Connect to &quot;%1&quot; failed</source>
+        <translation>&quot;%1&quot; ಸಂಪರ್ಕ ವಿಫಲವಾಯಿತು</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
         <source>File read/write exception</source>
         <translation>ಅಂತರ್ಜಾಲ ಓದು/ರುಜುವಾದ ಅಪವಾದ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
         <source>The other party has canceled the file transfer</source>
         <translation>ಇತರ ಪಕ್ಷ ಅಂತರ್ಜಾಲ ಹರಿವನ್ನು ರದ್ದುಪಡಿಸಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
         <source>File sent successfully</source>
         <translation>ಅಂತರ್ಜಾಲ ಹರಿವು ಯಶಸ್ವಿಯಾಗಿದೆ</translation>
     </message>
@@ -819,13 +839,13 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Sending files to "%1"</source>
-        <translation>ಅಂತರ್ಜಾಲ ಹರಿವು "%1" ಗೆ ಕಳುಹಿಸಲಾಗಿದೆ</translation>
+        <source>Sending files to &quot;%1&quot;</source>
+        <translation>ಅಂತರ್ಜಾಲ ಹರಿವು &quot;%1&quot; ಗೆ ಕಳುಹಿಸಲಾಗಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
-        <source>Receiving files from "%1"</source>
-        <translation>ಅಂತರ್ಜಾಲ ಹರಿವು "%1" ಗೆ ಬರಲಾಗಿದೆ</translation>
+        <source>Receiving files from &quot;%1&quot;</source>
+        <translation>ಅಂತರ್ಜಾಲ ಹರಿವು &quot;%1&quot; ಗೆ ಬರಲಾಗಿದೆ</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
@@ -844,8 +864,8 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
-        <source>"%1" send some files to you</source>
-        <translation> "%1" أرسل بعض الملفات إليك</translation>
+        <source>&quot;%1&quot; send some files to you</source>
+        <translation> &quot;%1&quot; أرسل بعض الملفات إليك</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
@@ -859,15 +879,19 @@
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  مساحة تخزين غير كافية، فشل في تسليم الملف هذه المرة. من فضلك حظّر
  مساحة القرص وحاول مرة أخرى!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>>-
+        <translation>&gt;-
  لم يتم الاتصال بالشبكة، فشل في تسليم الملف هذه المرة. من فضلك اتصل
  بالشبكة وحاول مرة أخرى!</translation>
     </message>
@@ -894,6 +918,7 @@
     <name>cooperation_core::VncViewer</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
         <translation>تم الانفصال</translation>
     </message>
@@ -915,6 +940,7 @@
     <name>cooperation_core::WorkspaceWidgetPrivate</name>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
         <translation>من فضلك أدخل عنوان الجهاز / الاسم من Collaborator</translation>
     </message>
