@@ -744,7 +744,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="119"/>
         <source>Hide processes</source>
-        <translation type="unfinished"/>
+        <translation>Ocultar processos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
