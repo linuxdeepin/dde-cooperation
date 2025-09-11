@@ -1,3 +1,11 @@
+dde-cooperation (1.1.19) unstable; urgency=medium
+
+  * chore: Update version to 1.1.19.
+  * fix: Update notification handling to prevent showing in notification center
+  * fix: disable logging for sensitive information
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 11 Sep 2025 13:56:43 +0800
+
 dde-cooperation (1.1.18) unstable; urgency=medium
 
   * chore: Update version to 1.1.18. 
