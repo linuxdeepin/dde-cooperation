@@ -46,13 +46,13 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
         <source>Reject</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ablehnen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="35"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Annehmen</translation>
     </message>
 </context>
 <context>
@@ -60,7 +60,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/win/cooperationsearchedit.cpp" line="34"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Suche</translation>
     </message>
 </context>
 <context>
@@ -70,31 +70,31 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="134"/>
         <source>Retry</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Erneut versuchen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="157"/>
         <source>Reject</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ablehnen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="160"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Annehmen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="184"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
