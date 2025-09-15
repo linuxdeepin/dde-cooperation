@@ -4,7 +4,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="50"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Zusammenarbeit</translation>
     </message>
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
