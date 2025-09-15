@@ -4,12 +4,12 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="50"/>
         <source>Cooperation</source>
-        <translation>Zusammenarbeit</translation>
+        <translation>Mitbenutzung</translation>
     </message>
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation>Zusammenarbeit ist ein mächtiges geräteübergreifendes Werkzeug, das hilft zwischen verschiedenen Geräten Dateien bereitzustellen sowie Tastatur, Maus und Klemmbrett auszutauschen.</translation>
+        <translation>Mitbenutzung ist ein mächtiges geräteübergreifendes Werkzeug, das hilft zwischen verschiedenen Geräten Dateien bereitzustellen sowie Tastatur, Maus und Klemmbrett auszutauschen.</translation>
     </message>
 </context>
 <context>
@@ -120,7 +120,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
         <source>Welcome to dde-cooperation</source>
-        <translation>Willkommen zu dde-Zusammenarbeit</translation>
+        <translation>Willkommen zu dde-Mitbenutzung</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
@@ -581,7 +581,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
-        <translation>Andere Geräte können entdecken und sich verbinden mit Dir über das Programm &quot;Zusammenarbeit&quot;</translation>
+        <translation>Andere Geräte können entdecken und sich verbinden mit Dir über das Programm &quot;Mitbenutzung&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
