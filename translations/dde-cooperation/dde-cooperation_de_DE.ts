@@ -9,7 +9,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation type="unfinished"/>
+        <translation>Zusammenarbeit ist ein mächtiges Tool, das hilft Dateien bereitzustellen, Tastatur, Maus und Klemmbrett auszutauschen zwischen verschiedenen Geräten.</translation>
     </message>
 </context>
 <context>
@@ -120,7 +120,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
         <source>Welcome to dde-cooperation</source>
-        <translation>Willkommen zu dde-Kooperation</translation>
+        <translation>Willkommen zu dde-Zusammenarbeit</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
@@ -694,7 +694,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Zusammenarbeit</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
@@ -778,7 +778,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Zusammenarbeit</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
