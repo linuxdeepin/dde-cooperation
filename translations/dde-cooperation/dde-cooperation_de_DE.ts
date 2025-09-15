@@ -308,7 +308,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="277"/>
         <source>No more enquiries</source>
-        <translation type="unfinished"/>
+        <translation>Keine weiteren Anfragen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
@@ -421,7 +421,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
         <source>Go to download&gt;</source>
-        <translation type="unfinished"/>
+        <translation>gehe zu Download&gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
@@ -626,7 +626,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
         <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
-        <translation type="unfinished"/>
+        <translation>Wenn mitbenutzen ermöglicht ist auf dem Server (das verbundene Gerät),kann auf das Klemmbrett von beiden Computern zugegriffen weden.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
