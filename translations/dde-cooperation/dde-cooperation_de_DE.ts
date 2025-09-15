@@ -9,7 +9,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation>Zusammenarbeit ist ein mächtiges Tool, das hilft Dateien bereitzustellen, Tastatur, Maus und Klemmbrett auszutauschen zwischen verschiedenen Geräten.</translation>
+        <translation>Zusammenarbeit ist ein mächtiges geräteübergreifendes Werkzeug, das hilft zwischen verschiedenen Geräten Dateien bereitzustellen sowie Tastatur, Maus und Klemmbrett auszutauschen.</translation>
     </message>
 </context>
 <context>
