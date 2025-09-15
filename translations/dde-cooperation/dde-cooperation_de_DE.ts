@@ -140,12 +140,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-        <translation type="unfinished"/>
+        <translation>Sobald zwei Geräte miteinander verbunden sind, kann von einem Gerät in die Zwischenablage kopiert und auf dem anderen eingefügt werden</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>Delivery of documents</source>
-        <translation type="unfinished"/>
+        <translation>Bereitstellung von Dokumenten</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
