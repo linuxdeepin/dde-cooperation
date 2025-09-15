@@ -436,7 +436,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="253"/>
         <source>Instructions for use</source>
-        <translation type="unfinished"/>
+        <translation>Anleitung zur Benutzung</translation>
     </message>
 </context>
 <context>
