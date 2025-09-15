@@ -479,7 +479,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
         <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
-        <translation type="unfinished"/>
+        <translation>Soll wirklich getrennt und zusammengearbeitet werden mit &quot;%1&quot;?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
