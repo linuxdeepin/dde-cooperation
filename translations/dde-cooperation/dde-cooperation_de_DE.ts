@@ -269,7 +269,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation type="unfinished"/>
+        <translation>Dieser Pfad weist auf ein ein schreibgeschütztes Verzeichnis</translation>
     </message>
 </context>
 <context>
@@ -277,12 +277,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="204"/>
         <source>The current device has been locked</source>
-        <translation type="unfinished"/>
+        <translation>Das derzeitige Verzeichnis ist gesperrt</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="207"/>
         <source>You can unlock it on mobile devices</source>
-        <translation type="unfinished"/>
+        <translation>Sie können es auf mobilen Geräten entsperren</translation>
     </message>
 </context>
 <context>
