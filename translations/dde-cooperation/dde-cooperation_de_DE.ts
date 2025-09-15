@@ -506,7 +506,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="102"/>
         <source>Scan code connection</source>
-        <translation type="unfinished"/>
+        <translation>Verbindung über Scan-Code</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="108"/>
@@ -530,13 +530,13 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="179"/>
         <source>Ok</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="182"/>
         <source>View</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ansehen</translation>
     </message>
 </context>
 <context>
@@ -545,23 +545,23 @@
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished"/>
+        <translation>Alle im selben LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="55"/>
         <source>Not allow</source>
-        <translation type="unfinished"/>
+        <translation>Nicht erlauben</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
         <source>Screen right</source>
-        <translation type="unfinished"/>
+        <translation>Bildschirm rechts</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="51"/>
         <source>Screen left</source>
-        <translation type="unfinished"/>
+        <translation>ildschirm links</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="54"/>
