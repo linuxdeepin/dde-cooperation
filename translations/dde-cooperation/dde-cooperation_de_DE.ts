@@ -798,13 +798,13 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
         <source>File read/write exception</source>
-        <translation type="unfinished"/>
+        <translation>Datei schreiben/lesen-Ausnahme</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
         <source>The other party has canceled the file transfer</source>
-        <translation type="unfinished"/>
+        <translation>Die andere Seite hat die Dateiübertragung abgebrochen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
