@@ -679,7 +679,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Eine Anfrage auf überkreuzende Zusammenarbeit wurde von &quot;%1&quot; erhalten</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
