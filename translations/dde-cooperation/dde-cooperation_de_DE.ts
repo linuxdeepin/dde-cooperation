@@ -120,17 +120,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
         <source>Welcome to dde-cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Willkommen zu dde-Kooperation</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>Keyboard and mouse sharing</source>
-        <translation>Tastatur- und Maus-Zuordnung</translation>
+        <translation>Tastatur- und Maus-Mitbenutzung</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
-        <translation type="unfinished"/>
+        <translation>Wenn zwischen zwei Geräten eine Verbindung hergestellt wurde, können Tastatur und Maus des Ausgangsgerätes für das verbundene benutzt werden</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
