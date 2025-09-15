@@ -220,22 +220,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="127"/>
         <source>The opposite end opens the application and connects to the same network</source>
-        <translation type="unfinished"/>
+        <translation>Die gegenüberliegende Seite öffnet ein Programm und verbindet sich mit demselben Netzwerk</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="128"/>
         <source>Second step</source>
-        <translation type="unfinished"/>
+        <translation>Zweiter Schritt</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="130"/>
         <source>Third step</source>
-        <translation type="unfinished"/>
+        <translation>Dritter Schritt</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="189"/>
         <source>to send the file</source>
-        <translation type="unfinished"/>
+        <translation>um die Datei zu senden</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
