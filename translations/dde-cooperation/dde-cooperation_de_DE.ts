@@ -240,12 +240,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
         <source>to connect to the peer device</source>
-        <translation>um sich mit dem zu verknüpfenden Gerät zu verbinden</translation>
+        <translation>um sich mit dem Gerät zu verbinden, mit dem sich ausgetauscht werden soll</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
         <source>Enter the peer IP in the search box</source>
-        <translation type="unfinished"/>
+        <translation>Geben Sie die IP des Gerätes  mit dem sich ausgestauscht werden soll in die Suchbox ein</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="131"/>
