@@ -674,7 +674,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
-        <translation type="unfinished"/>
+        <translation>Zusammenwirken mit &quot;%1&quot; ist beendet</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
@@ -684,12 +684,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
         <source>Reject</source>
-        <translation type="unfinished"/>
+        <translation>Zurückweisen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="355"/>
         <source>Accept</source>
-        <translation type="unfinished"/>
+        <translation>Annehmen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
