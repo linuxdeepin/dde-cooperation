@@ -601,7 +601,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
-        <translation>Wenn dieses Gerät die verbundene Partei ist, greift die Maus über vom Bildschirm dieses Gerätes zur Position des verbundenen</translation>
+        <translation>Wenn dieses Gerät die verbundene Seite ist, greift die Maus über vom Bildschirm dieses Gerätes zur Position der damit verbundenen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
@@ -734,7 +734,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
         <source>The other party does not confirm, please try again later</source>
-        <translation type="unfinished"/>
+        <translation>Die andere Seite bestätigt nicht, bitte später erneut versuchen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="524"/>
