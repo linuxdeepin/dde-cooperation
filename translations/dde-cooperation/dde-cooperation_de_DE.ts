@@ -566,17 +566,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="54"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished"/>
+        <translation>Nur die, denen Zusammenarbeit erlaubt ist</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="132"/>
         <source>Basic Settings</source>
-        <translation type="unfinished"/>
+        <translation>Grundeinstellungen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="143"/>
         <source>Discovery mode</source>
-        <translation type="unfinished"/>
+        <translation>Entdeckungs-Modus</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
@@ -586,7 +586,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
         <source>Device name</source>
-        <translation type="unfinished"/>
+        <translation>Gerätename</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
@@ -606,7 +606,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
         <source>Connection direction</source>
-        <translation type="unfinished"/>
+        <translation>Verbindungsrichtung</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
