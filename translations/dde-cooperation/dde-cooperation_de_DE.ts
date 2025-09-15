@@ -591,7 +591,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
         <source>Peripheral share</source>
-        <translation type="unfinished"/>
+        <translation>Peripherie-Teilen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
