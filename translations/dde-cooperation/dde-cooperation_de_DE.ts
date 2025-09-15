@@ -140,7 +140,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-        <translation>Sobald zwei Geräte miteinander verbunden sind, kann von einem Gerät in die Zwischenablage kopiert und auf dem anderen eingefügt werden</translation>
+        <translation>Sobald zwei Geräte miteinander verbunden sind, kann die Zwischenablage mitbenutzt werden, von einem Gerät aus kopiert und in das andere eingefügt werden</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
@@ -591,7 +591,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
         <source>Peripheral share</source>
-        <translation>Peripherie-Teilen</translation>
+        <translation>Peripherie-Mitbenutzung</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
@@ -621,7 +621,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
         <source>Share clipboard</source>
-        <translation>Klemmbrett austauschen</translation>
+        <translation>Klemmbrett mitbenutzen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
