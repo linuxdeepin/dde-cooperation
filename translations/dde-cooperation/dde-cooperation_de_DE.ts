@@ -596,7 +596,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
-        <translation type="unfinished"/>
+        <translation>Erlaubt für Zusammenarbeit eingerichtete Peripherie-Geräten, inkl. Tastatur, Maus, Trackpad usw., dieses Gerät zu steuern, </translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
