@@ -19,6 +19,7 @@
 #include <QMenu>
 #include <QVBoxLayout>
 #include <QStackedLayout>
+#include <QTimer>
 
 using namespace cooperation_core;
 
@@ -331,19 +332,24 @@ void MainWindow::showCloseDialog()
     int code = dlg.exec();
     if (code == QDialog::Accepted) {
         DLOG << "Dialog accepted";
+        int delay = 0;
         bool isExit = op2->checkState() == Qt::Checked;
         if (op3->checkState() == Qt::Checked) {
             DLOG << "Saving close option";
             CooperationUtil::saveOption(isExit);
+            delay = 1000; // Wait 1000ms to ensure config is written to disk before exit, because the config is async 1s to write to disk
         }
 
         if (isExit) {
-            DLOG << "Exiting application";
-            QApplication::quit();
+            DLOG << "Exiting application with delay:" << delay;
+            QTimer::singleShot(delay, []() {
+                QApplication::quit();
+            });
         } else {
             DLOG << "Minimizing application";
             minimizedAPP();
         }
+        this->hide();
     } else {
         DLOG << "Dialog rejected";
     }
