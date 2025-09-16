@@ -40,19 +40,19 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
         <source>&quot;%1&quot; send some files to you</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot;がこのデバイスにファイルを送信しようとしています</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
         <source>Reject</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>拒否</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="35"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>許可</translation>
     </message>
 </context>
 <context>
@@ -60,7 +60,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/win/cooperationsearchedit.cpp" line="34"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>検索</translation>
     </message>
 </context>
 <context>
@@ -70,7 +70,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="134"/>
@@ -82,19 +82,19 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="157"/>
         <source>Reject</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>拒否</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="160"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>許可</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="184"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>閉じる</translation>
     </message>
 </context>
 <context>
@@ -102,12 +102,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="275"/>
         <source>File Transfer</source>
-        <translation type="unfinished"/>
+        <translation>ファイル転送</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="278"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>ファイル転送</translation>
     </message>
 </context>
 <context>
@@ -115,7 +115,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="217"/>
         <source>View Help Manual</source>
-        <translation type="unfinished"/>
+        <translation>ヘルプマニュアルを表示</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
