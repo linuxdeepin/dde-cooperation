@@ -148,6 +148,13 @@ void WorkspaceWidgetPrivate::onSearchDevice()
         return;
     }
 
+    // 过滤本机IP，防止搜索自己的设备
+    QString localIp = QString::fromStdString(deepin_cross::CommonUitls::getFirstIp());
+    if (ip == localIp) {
+        DLOG << "Cannot search for local IP:" << ip.toStdString();
+        return;
+    }
+
     q->switchWidget(WorkspaceWidget::kLookignForDeviceWidget);
     emit q->search(ip);
 }
