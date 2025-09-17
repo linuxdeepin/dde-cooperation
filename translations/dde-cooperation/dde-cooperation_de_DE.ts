@@ -719,12 +719,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; hat ihre Anfrage nach Zusammenarbeit abgewiesen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; verbindet sich mit anderen Geräten</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
