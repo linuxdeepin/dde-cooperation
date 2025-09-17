@@ -401,12 +401,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
-        <translation type="unfinished"/>
+        <translation>3. Einstellungen - Grundeinstellungen - Entdeckungsmodus - &quot;Alle Nutzer im selben LAN erlauben&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
         <source>4. Try entering the target device IP in the top search box</source>
-        <translation type="unfinished"/>
+        <translation>4. Versuchen Sie die Zielgeräte-IP in das obige Suchfeld einzutragen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="216"/>
