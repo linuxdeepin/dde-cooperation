@@ -907,7 +907,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="132"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>Dateiübertragung</translation>
     </message>
 </context>
 <context>
@@ -916,7 +916,7 @@
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
-        <translation type="unfinished"/>
+        <translation>Getrennt</translation>
     </message>
 </context>
 <context>
@@ -924,12 +924,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="75"/>
         <source>File Transfer</source>
-        <translation type="unfinished"/>
+        <translation>Dateiübertragung</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="91"/>
         <source>Wait for confirmation...</source>
-        <translation type="unfinished"/>
+        <translation>Warten auf Bestätigung…</translation>
     </message>
 </context>
 <context>
