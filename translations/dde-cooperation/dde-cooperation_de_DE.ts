@@ -882,7 +882,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation type="unfinished"/>
+        <translation>Zu wenig Speicherplatz, Dateilieferung schlug dieses Mal fehl. Bitte schaffen Sie Platz auf derFestplatte und versuchen es erneut!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
