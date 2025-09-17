@@ -202,12 +202,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="249"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned on</source>
-        <translation>Solange das LAN-Entdeckungshilfsprogramm nicht an ist, kann dies Gerät nicht entdeckt, und auch keine anderen entdeckt werden</translation>
+        <translation>Solange ers LAN-Entdeckungsdienst nicht an ist, kann dies Gerät nicht entdeckt, und auch keine anderen entdeckt werden</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
-        <translation type="unfinished"/>
+        <translation>Solange der LAN-Entdeckungsdienst nicht an ist, kann dies Gerät nicht entdeckt, und auch keine anderen entdeckt werden. Richtsklick auf Winsows &lt; Startmenü &gt; Computerverwaltung &gt; Programme und Dienste &gt; Programme um Bonjour-Dienst zu ermöglichen</translation>
     </message>
 </context>
 <context>
