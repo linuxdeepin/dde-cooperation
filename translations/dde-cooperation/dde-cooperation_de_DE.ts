@@ -431,7 +431,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="251"/>
         <source>3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device</source>
-        <translation type="unfinished"/>
+        <translation>3. Nach dem Verbinden mit dem Gerät muss das mobile Endgerät das Zusammenarbeitsprogramm offen und im selben LAN bleiben wie dieses Gerät.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="253"/>
@@ -511,7 +511,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="108"/>
         <source>Please use the cross end collaboration app to scan the code</source>
-        <translation type="unfinished"/>
+        <translation>Bitte nutzen Sie das Zusammenarbeitsprogramm zum Scannen des Codes</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="114"/>
