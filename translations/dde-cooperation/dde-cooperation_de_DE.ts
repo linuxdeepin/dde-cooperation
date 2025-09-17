@@ -416,7 +416,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="245"/>
         <source>1. The mobile phone needs to download cross end collaborative applications.</source>
-        <translation type="unfinished"/>
+        <translation>1. Das Smartphone muss Zusammenarbeits-Programme herunterladen.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
