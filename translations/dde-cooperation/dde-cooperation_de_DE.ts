@@ -815,12 +815,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="168"/>
         <source>View transfer history</source>
-        <translation type="unfinished"/>
+        <translation>Übertragungshistorie ansehen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="177"/>
         <source>Send files</source>
-        <translation type="unfinished"/>
+        <translation>Dateien senden</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="302"/>
@@ -830,7 +830,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="332"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="335"/>
