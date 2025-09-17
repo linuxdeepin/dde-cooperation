@@ -631,12 +631,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
         <source>The device name must contain 1 to 20 characters</source>
-        <translation type="unfinished"/>
+        <translation>Der Gerätename darf zwischen 1 und 20 Zeichen lang sein</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="362"/>
         <source>The device name must contain 1 to 63 characters</source>
-        <translation type="unfinished"/>
+        <translation>Der Gerätename darf zwischen 1 und 23Zeichen lang sein</translation>
     </message>
 </context>
 <context>
