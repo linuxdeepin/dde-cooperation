@@ -769,7 +769,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
         <source>Please check the network &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Bitte überprüfen Sie das Netzwek &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
