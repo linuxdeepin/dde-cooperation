@@ -118,26 +118,28 @@ void ConnectWidget::initConnectLayout()
                            "border-radius: 16; "
                            "border: 1px solid rgba(0, 129, 255, 0.2);"
                            "}");
-    ipFrame->setFixedSize(204, 32);
+	ipFrame->setFixedHeight(32);
+	ipFrame->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     ipLabel->setText(ipaddress);
     ipLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     StyleHelper::setAutoFont(ipLabel, 17, QFont::Bold);
     StyleHelper::setAutoFont(ipLabel1, 12, QFont::Normal);
 
-    QHBoxLayout *ipHLayout = new QHBoxLayout(ipFrame);
-    ipHLayout->addWidget(ipLabel1);
-    ipHLayout->addWidget(ipLabel);
-    ipHLayout->setSpacing(8);
-    ipHLayout->addSpacing(26);
-    ipHLayout->setContentsMargins(0, 0, 0, 0);
+	// keep both the localized prefix and IP value inside the rounded frame
+	QHBoxLayout *ipInnerLayout = new QHBoxLayout(ipFrame);
+	ipInnerLayout->addWidget(ipLabel1);
+	ipInnerLayout->addSpacing(8);
+	ipInnerLayout->addWidget(ipLabel);
+	ipInnerLayout->setSpacing(8);
+	ipInnerLayout->setContentsMargins(12, 0, 12, 0);
 
     iconLabel->setAlignment(Qt::AlignCenter);
     nameLabel->setAlignment(Qt::AlignCenter);
 
     ipVLayout->addWidget(iconLabel);
     ipVLayout->addWidget(nameLabel);
-    ipVLayout->addWidget(ipFrame);
+	ipVLayout->addWidget(ipFrame);
     ipVLayout->setAlignment(Qt::AlignCenter);
 
     //passwordLayout
