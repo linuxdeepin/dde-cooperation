@@ -882,19 +882,19 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>Zu wenig Speicherplatz, Dateilieferung schlug dieses Mal fehl. Bitte schaffen Sie Platz auf der Festplatte und versuchen es erneut!</translation>
+        <translation>Zu wenig Speicherplatz, Dateiversand schlug dieses Mal fehl. Bitte schaffen Sie Platz auf der Festplatte und versuchen es erneut!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>Nicht mit Netzwerk verbunden, Dateilieferung schlug dieses Mal fehl. Bitte verbinden Sie sich mit dem Netzwerk und versuchen es erneut!</translation>
+        <translation>Nicht mit Netzwerk verbunden, Dateiversand schlug dieses Mal fehl. Bitte verbinden Sie sich mit dem Netzwerk und versuchen es erneut!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
         <source>calculating</source>
-        <translation type="unfinished"/>
+        <translation>wird berechnet</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
