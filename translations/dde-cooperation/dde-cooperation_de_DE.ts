@@ -674,7 +674,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
-        <translation>Zusammenwirken mit &quot;%1&quot; ist beendet</translation>
+        <translation>Abstimmung mit &quot;%1&quot; ist beendet</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
