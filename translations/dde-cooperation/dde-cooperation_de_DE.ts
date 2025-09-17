@@ -396,7 +396,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
-        <translation type="unfinished"/>
+        <translation>3. Dateiverwaltungs-Einstellungen - Datei-Drop - Folgeneden Benutzern das Droppen von Dateien hin zu mir - &quot;Alle im selbern LAN&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
