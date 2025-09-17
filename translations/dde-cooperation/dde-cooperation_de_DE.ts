@@ -516,12 +516,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="114"/>
         <source>Mobile phones and devices need to be connected to the same local area network</source>
-        <translation type="unfinished"/>
+        <translation>Mobile Endgerät müssen mit dem selben lokalen Netzwerk verbunden sein wie dieses Gerät.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="147"/>
         <source>Click to download UOS assistant APP</source>
-        <translation type="unfinished"/>
+        <translation>Klicken Sie, um das UOS Assistenz-Programm herunterzuladen</translation>
     </message>
 </context>
 <context>
