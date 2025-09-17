@@ -995,17 +995,17 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="173"/>
         <source>Not allow</source>
-        <translation type="unfinished"/>
+        <translation>Nicht erlauben</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="178"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"/>
+        <translation>Erlaubt folgenden Benutzern mir Dateien zu schicken</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
         <source>File save location</source>
-        <translation type="unfinished"/>
+        <translation>Dateispeicherort</translation>
     </message>
 </context>
 </TS>
