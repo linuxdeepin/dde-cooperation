@@ -783,7 +783,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Verbindung steht, Abstimmen mit &quot;%1&quot; läuft gerade</translation>
     </message>
 </context>
 <context>
@@ -810,7 +810,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
         <source>File sent successfully</source>
-        <translation type="unfinished"/>
+        <translation>Datei erfolgreich versendet</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="168"/>
