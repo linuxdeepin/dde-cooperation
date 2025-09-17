@@ -729,7 +729,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
-        <translation type="unfinished"/>
+        <translation>Die Verbindungsanfrage, die von &quot;%1&quot; an Sie gesendet wurde wurde unterbrochen wegen Zeitüberschreitung</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
@@ -744,7 +744,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="528"/>
         <source>connect failed</source>
-        <translation type="unfinished"/>
+        <translation>Verbinden fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
