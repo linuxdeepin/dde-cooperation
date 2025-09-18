@@ -344,7 +344,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="62"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation>PC</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="63"/>
