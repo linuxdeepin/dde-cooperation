@@ -62,7 +62,7 @@ void CooperationTaskDialog::init()
     DLOG << "Non-Linux platform, setting window icon";
     setWindowIcon(QIcon(":/icons/deepin/builtin/icons/dde-cooperation_128px.svg"));
 #endif
-    setFixedWidth(380);
+    setFixedSize(380, 240);
 
     switchLayout = new QStackedLayout;
     switchLayout->addWidget(createWaitPage());

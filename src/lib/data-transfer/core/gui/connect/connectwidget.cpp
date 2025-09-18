@@ -43,7 +43,7 @@ void ConnectWidget::initUI()
 
     QLabel *tipLabel = new QLabel(tr("Please open data transfer on Windows, and imput the IP and connect code"), this);
     tipLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    tipLabel->setFixedHeight(20);
+    tipLabel->setFixedHeight(30);
 
     QLabel *downloadLabel = new QLabel("", this);
     downloadLabel->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -88,10 +88,10 @@ void ConnectWidget::initUI()
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel);
     mainLayout->addWidget(downloadLabel);
-    mainLayout->addSpacing(60);
+    mainLayout->addSpacing(50);
     mainLayout->addLayout(connectLayout);
     mainLayout->addWidget(WarnningLabel);
-    mainLayout->addSpacing(60);
+    mainLayout->addSpacing(50);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
@@ -119,7 +119,7 @@ void ConnectWidget::initConnectLayout()
                            "border: 1px solid rgba(0, 129, 255, 0.2);"
                            "}");
 	ipFrame->setFixedHeight(32);
-	ipFrame->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+	ipFrame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     ipLabel->setText(ipaddress);
     ipLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -209,6 +209,8 @@ void ConnectWidget::initConnectLayout()
     passwordHLayout->addWidget(passwordLabel);
     passwordHLayout->addWidget(refreshLabel);
 
+    passwordVLayout->setContentsMargins(0, 0, 0, 0);
+    passwordVLayout->setSpacing(0);
     passwordVLayout->addLayout(passwordHLayout);
     passwordVLayout->addWidget(tipLabel);
     passwordVLayout->setAlignment(Qt::AlignCenter);

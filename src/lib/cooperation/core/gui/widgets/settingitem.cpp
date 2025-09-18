@@ -33,6 +33,15 @@ void SettingItem::setItemInfo(const QString &text, QWidget *w)
     font.setWeight(QFont::Medium);
     label->setFont(font);
 
+    // 设置打点省略显示，使用固定宽度计算
+    QFontMetrics fontMetrics(label->font());
+    int availableWidth = 300;  // 对话框宽度600px减去左右边距-280
+    QString elidedText = fontMetrics.elidedText(text, Qt::ElideRight, availableWidth);
+    label->setText(elidedText);
+    if (elidedText != text) {
+        label->setToolTip(text);  // 如果文本被截断，设置完整文本为工具提示
+    }
+
     mainLayout->addWidget(label, 0, Qt::AlignLeft);
     mainLayout->addWidget(w, 0, Qt::AlignRight);
     DLOG << "Item info set successfully";

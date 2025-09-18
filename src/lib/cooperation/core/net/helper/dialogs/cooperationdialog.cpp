@@ -192,10 +192,11 @@ void ResultWidget::init()
     btnLayout->addWidget(viewBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(0, 5, 0, 0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
     mainLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
-    mainLayout->addWidget(msgLabel);
-    mainLayout->addLayout(btnLayout);
+    mainLayout->addWidget(msgLabel, 1, Qt::AlignHCenter);
+    mainLayout->addLayout(btnLayout, 1);
 }
 
 bool ResultWidget::getResult() const
@@ -289,7 +290,7 @@ void CooperationTransDialog::init()
     DLOG << "Set Windows theme icon and title";
 #endif
     // it has to set fixed size, which may crash on treeland and workaround UI not smooth.
-    setFixedSize(380, 220);
+    setFixedSize(380, 240);
 
     confirmWidget = new ConfirmWidget(this);
     connect(confirmWidget, &ConfirmWidget::rejected, this, &CooperationTransDialog::rejected);
@@ -316,6 +317,7 @@ void CooperationTransDialog::init()
     QWidget *contentWidget = new QWidget(this);
     contentWidget->setLayout(mainLayout);
     addContent(contentWidget);
+    setSpacing(0);
     setContentsMargins(0, 0, 0, 0);
 #else
     DLOG << "Configuring Windows style dialog";
