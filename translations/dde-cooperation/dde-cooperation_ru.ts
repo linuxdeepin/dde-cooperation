@@ -882,18 +882,14 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>&gt;-
- Недостаточно места на диске, передача файлов провалилась в этот раз. Пожалуйста, освободите
- место на диске и попробуйте снова!</translation>
+        <translation>Недостаточно места на диске, передача файлов провалилась в этот раз. Пожалуйста, освободите место на диске и попробуйте снова!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>&gt;-
- Сеть не подключена, передача файлов провалилась в этот раз. Пожалуйста, подключитесь к
- сети и попробуйте снова!</translation>
+        <translation>Сеть не подключена, передача файлов провалилась в этот раз. Пожалуйста, подключитесь к сети и попробуйте снова!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
