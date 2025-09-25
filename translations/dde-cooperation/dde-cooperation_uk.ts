@@ -120,12 +120,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
         <source>Welcome to dde-cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Вітаємо у dde-cooperation</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>Keyboard and mouse sharing</source>
-        <translation type="unfinished"/>
+        <translation>Спільне використання клавіатури і миші</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
