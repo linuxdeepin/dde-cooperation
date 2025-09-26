@@ -160,7 +160,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>Usage</source>
-        <translation type="unfinished"/>
+        <translation>Користування</translation>
     </message>
 </context>
 <context>
@@ -168,17 +168,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="191"/>
         <source>connected</source>
-        <translation type="unfinished"/>
+        <translation>з&apos;єднано</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="197"/>
         <source>connectable</source>
-        <translation type="unfinished"/>
+        <translation>придатний до з&apos;єднання</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="204"/>
         <source>offline</source>
-        <translation type="unfinished"/>
+        <translation>поза мережею</translation>
     </message>
 </context>
 <context>
@@ -186,12 +186,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="245"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Підтвердити</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="246"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Закрити</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
