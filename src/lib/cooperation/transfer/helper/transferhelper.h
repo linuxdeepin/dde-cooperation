@@ -46,6 +46,9 @@ public Q_SLOTS:
     void refreshResultSlot(const QStringList& infoList);
     void deviceChangedSlot(bool found, const QString& info);
 
+    // graceful shutdown methods
+    void gracefulShutdown();
+
 private:
     explicit TransferHelper(QObject *parent = nullptr);
     ~TransferHelper();
