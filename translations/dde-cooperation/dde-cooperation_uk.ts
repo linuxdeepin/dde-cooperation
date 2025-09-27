@@ -140,17 +140,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-        <translation type="unfinished"/>
+        <translation>При створенні з&apos;єднання між двома пристроями буфер обміну даними буде спільним, і після копіювання даних на одному пристрої їх можна буде вставити на іншому</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>Delivery of documents</source>
-        <translation type="unfinished"/>
+        <translation>Передавання документів</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
-        <translation type="unfinished"/>
+        <translation>При створенні з&apos;єднання між двома пристроями ви зможете ініціювати перенесення файлів на інший пристрій</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
