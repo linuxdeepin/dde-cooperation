@@ -130,12 +130,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
-        <translation type="unfinished"/>
+        <translation>При створенні з&apos;єднання між двома пристроями клавіатуру і мишу з пристрою-ініціатора можна буде використати для керування іншим пристроєм</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Clipboard sharing</source>
-        <translation type="unfinished"/>
+        <translation>Спільний буфер обміну</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
