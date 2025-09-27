@@ -240,17 +240,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
         <source>to connect to the peer device</source>
-        <translation type="unfinished"/>
+        <translation>для встановлення з парним пристроєм</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
         <source>Enter the peer IP in the search box</source>
-        <translation type="unfinished"/>
+        <translation>Введіть IP пари у поле пошуку</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="131"/>
         <source>Click</source>
-        <translation type="unfinished"/>
+        <translation>Натисніть</translation>
     </message>
 </context>
 <context>
@@ -258,13 +258,13 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="153"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>Гаразд</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
-        <translation type="unfinished"/>
+        <translation>місце збереження файла є некоректним</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
