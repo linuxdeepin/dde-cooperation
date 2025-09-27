@@ -365,12 +365,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="88"/>
         <source>Download client</source>
-        <translation type="unfinished"/>
+        <translation>Клієнт отримання даних</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="130"/>
         <source>Download Windows client</source>
-        <translation type="unfinished"/>
+        <translation>Клієнт отримання даних Windows</translation>
     </message>
 </context>
 <context>
@@ -378,7 +378,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="150"/>
         <source>Please connect to the network</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, встановіть з&apos;єднання з мережею</translation>
     </message>
 </context>
 <context>
