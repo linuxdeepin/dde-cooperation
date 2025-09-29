@@ -154,6 +154,9 @@ bool TransferHelper::buttonVisible(const QString &id, const DeviceInfoPointer in
             return info->connectStatus() != DeviceInfo::Offline;
         case DeviceInfo::TransMode::OnlyConnected:
             return info->connectStatus() == DeviceInfo::Connected;
+        case DeviceInfo::TransMode::NotAllow:
+            DLOG << "Transfer mode is NotAllow, hiding transfer button";
+            return false;
         default:
             return false;
         }
@@ -322,6 +325,13 @@ bool TransferHelper::transable(const DeviceInfoPointer devInfo)
     if (DeviceInfo::TransMode::OnlyConnected == devInfo->transMode() &&
         DeviceInfo::ConnectStatus::Connected == devInfo->connectStatus()) {
         DLOG << "Transfer mode is OnlyConnected and device is Connected, returning true";
+        return true;
+    }
+
+    // For NotAllow mode, return true to show device in list
+    // Button visibility will be controlled by buttonVisible() function
+    if (DeviceInfo::TransMode::NotAllow == devInfo->transMode()) {
+        DLOG << "Transfer mode is NotAllow, showing device but disabling transfer";
         return true;
     }
 
