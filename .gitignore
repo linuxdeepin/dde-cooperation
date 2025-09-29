@@ -17,7 +17,7 @@ CMake*.json
 .roo_temp/
 .roo_temp_$$/
 .cursor/
-memory-bank/
+.spec-workflow/
 .cursorrules
 .cursorindexingignore
 .specstory/

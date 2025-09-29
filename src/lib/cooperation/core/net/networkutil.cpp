@@ -863,7 +863,7 @@ void NetworkUtil::replyShareRequest(bool agree, const QString &selfprint, const 
 void NetworkUtil::replyShareRequestBusy(const QString &targetIp)
 {
     WLOG << "Replying share request with BUSY status to:" << targetIp.toStdString();
-    
+
     // 直接发送忙碌拒绝消息
     ApplyMessage msg;
     msg.flag = REPLY_REJECT;
@@ -871,7 +871,7 @@ void NetworkUtil::replyShareRequestBusy(const QString &targetIp)
     msg.host = CooperationUtil::localIPAddress().toStdString();
     msg.fingerprint = ""; // No fingerprint needed for busy response
     QString jsonMsg = msg.as_json().serialize().c_str();
-    
+
     d->sessionManager->sendRpcRequest(targetIp, APPLY_SHARE_RESULT, jsonMsg);
     WLOG << "Sent BUSY_COOPERATING rejection to:" << targetIp.toStdString();
 }
@@ -979,6 +979,25 @@ QString NetworkUtil::deviceInfoStr()
     return jsonString;
 }
 
+void NetworkUtil::stop()
+{
+    DLOG << "Stopping NetworkUtil";
+    metaObject()->invokeMethod(TransferHelper::instance(),
+                               "closeAllNotifications",
+                               Qt::QueuedConnection);
+
+    // Disconnect current target if exists
+    if (!d->confirmTargetAddress.isEmpty()) {
+        DLOG << "Disconnecting current target:" << d->confirmTargetAddress.toStdString();
+        disconnectRemote(d->confirmTargetAddress);
+        d->confirmTargetAddress.clear();
+    }
+
+#ifdef ENABLE_COMPAT
+    compatAppExit();
+#endif
+}
+
 #ifdef ENABLE_COMPAT
 void NetworkUtil::compatSendStartShare(const QString &screenName)
 {
@@ -987,7 +1006,7 @@ void NetworkUtil::compatSendStartShare(const QString &screenName)
     ipc->call("doStartShare", Q_ARG(QString, qAppName()), Q_ARG(QString, screenName));
 }
 
-void NetworkUtil::stop()
+void NetworkUtil::compatAppExit()
 {
     DLOG << "Stopping NetworkUtil";
     auto ipc = CompatWrapper::instance()->ipcInterface();

@@ -350,6 +350,12 @@ void TransferHelper::transferResult(bool result, const QString &msg)
 
 void TransferHelper::updateProgress(int value, const QString &remainTime)
 {
+    // Check if transfer is still active before updating progress
+    if (d->status.loadAcquire() != Transfering) {
+        DLOG << "Transfer is not active (status:" << d->status.loadAcquire() << "), skipping progress update";
+        return;
+    }
+
 #ifdef __linux__
     if (d->role != Server) {
         DLOG << "Role is not Server, updating notification";
@@ -737,5 +743,21 @@ void TransferHelper::onTransferExcepted(int type, const QString &remote)
     case EX_OTHER:
     default:
         break;
+    }
+}
+
+void TransferHelper::closeAllNotifications()
+{
+    DLOG << "Closing all transfer notifications";
+#ifdef __linux__
+    if (d->notice) {
+        DLOG << "Closing active notification";
+        d->notice->closeNotification();
+    }
+#endif
+    // Close any transfer dialog
+    if (d->dialog) {
+        DLOG << "Closing transfer dialog";
+        d->dialog->close();
     }
 }

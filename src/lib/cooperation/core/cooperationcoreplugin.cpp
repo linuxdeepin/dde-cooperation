@@ -200,9 +200,8 @@ bool CooperaionCorePlugin::start()
 void CooperaionCorePlugin::stop()
 {
     DLOG << "Stopping cooperation core plugin";
-#ifdef ENABLE_COMPAT
     NetworkUtil::instance()->stop();
-    DLOG << "Network util stopped";
+#ifdef ENABLE_COMPAT
     TransferWrapper::instance()->close();
 #endif
     DLOG << "Cleanup complete";

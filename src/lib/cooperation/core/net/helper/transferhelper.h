@@ -69,6 +69,9 @@ public Q_SLOTS:
     // exception: network connection(ping out) or other io
     void onTransferExcepted(int type, const QString &remote);
 
+    // notification management
+    void closeAllNotifications();
+
 private:
     explicit TransferHelper(QObject *parent = nullptr);
     ~TransferHelper();

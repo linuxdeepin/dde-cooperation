@@ -50,10 +50,11 @@ public:
 
     bool isCurrentlyCooperating();
 
+    void stop();
 #ifdef ENABLE_COMPAT
     //compat share
     void compatSendStartShare(const QString &screenName);
-    void stop();
+    void compatAppExit();
     void updateCooperationStatus(int status);
 #endif
 
