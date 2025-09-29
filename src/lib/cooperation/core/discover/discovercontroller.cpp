@@ -177,13 +177,25 @@ void DiscoverController::initConnect()
 
 bool DiscoverController::isVaildDevice(const DeviceInfoPointer info)
 {
-    if (!info || info->ipAddress().isEmpty() || !info->ipAddress().startsWith(d->ipfilter)) {
-        DLOG << "Device is not valid or does not match IP filter";
+    if (!info || info->ipAddress().isEmpty()) {
+        DLOG << "Device is not valid or IP address is empty";
         return false;
-    } else {
-        DLOG << "Device is valid";
+    }
+    
+    // Skip IP filter check for history devices (including offline ones)
+    if (_historyDevices.contains(info->ipAddress())) {
+        DLOG << "Device is in history, skipping IP filter check";
         return true;
     }
+    
+    // Apply IP filter only for non-history devices
+    if (!info->ipAddress().startsWith(d->ipfilter)) {
+        DLOG << "Device does not match IP filter";
+        return false;
+    }
+    
+    DLOG << "Device is valid";
+    return true;
 }
 
 DeviceInfoPointer DiscoverController::parseDeviceJson(const QString &info)
