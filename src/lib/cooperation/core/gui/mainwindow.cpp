@@ -165,6 +165,18 @@ void MainWindow::setFirstTipVisible()
 void MainWindow::onLookingForDevices()
 {
     DLOG << "Looking for devices";
+
+    // Check network status before refreshing device list
+    QString localIP = CooperationUtil::localIPAddress();
+    bool isNetworkConnected = !localIP.isEmpty();
+
+    if (!isNetworkConnected) {
+        DLOG << "Network is not connected, showing network disconnected page";
+        d->workspaceWidget->clear();
+        d->workspaceWidget->switchWidget(WorkspaceWidget::kNoNetworkWidget);
+        return;
+    }
+
     _userAction = true;
     emit refreshDevices();
     d->workspaceWidget->clear();
