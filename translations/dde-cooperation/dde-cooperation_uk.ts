@@ -207,7 +207,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
-        <translation type="unfinished"/>
+        <translation>Неможливо виявляти інші пристрої і бути виявленим іншими пристроями, якщо службу виявлення LAN не увімкнено. Клацніть на меню «Пуск» Windows Start -&gt; Керування комп&apos;ютером -&gt; Служби і програми -&gt; Служби, щоб увімкнети службу Bonjour</translation>
     </message>
 </context>
 <context>
@@ -436,7 +436,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="253"/>
         <source>Instructions for use</source>
-        <translation type="unfinished"/>
+        <translation>Інструкції щодо користування</translation>
     </message>
 </context>
 <context>
@@ -444,7 +444,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="293"/>
         <source>No device found</source>
-        <translation type="unfinished"/>
+        <translation>Не знайдено жодного пристрою</translation>
     </message>
 </context>
 <context>
@@ -452,7 +452,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="65"/>
         <source>Disconnect</source>
-        <translation type="unfinished"/>
+        <translation>Від&apos;єднати</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="93"/>
