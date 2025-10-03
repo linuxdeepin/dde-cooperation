@@ -506,12 +506,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="102"/>
         <source>Scan code connection</source>
-        <translation type="unfinished"/>
+        <translation>З&apos;єднання за сканованим кодом</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="108"/>
         <source>Please use the cross end collaboration app to scan the code</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, скористайтеся програмою для співпрацію для сканування коду</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="114"/>
