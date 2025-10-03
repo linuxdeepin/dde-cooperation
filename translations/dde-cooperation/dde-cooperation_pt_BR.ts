@@ -4,7 +4,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="50"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Link</translation>
     </message>
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
@@ -694,7 +694,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Link</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
@@ -778,7 +778,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Link</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>

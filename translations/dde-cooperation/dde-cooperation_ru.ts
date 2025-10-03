@@ -277,7 +277,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="204"/>
         <source>The current device has been locked</source>
-        <translation>Сurrent устройство было заблокировано</translation>
+        <translation>Текущее устройство было заблокировано</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="207"/>
@@ -545,7 +545,7 @@
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
-        <translation>Все в том же ЛАНИ</translation>
+        <translation>Все в том же LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
@@ -882,18 +882,14 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>&gt;-
- Недостаточно места на диске, передача файлов провалилась в этот раз. Пожалуйста, освободите
- место на диске и попробуйте снова!</translation>
+        <translation>Недостаточно места на диске, передача файлов провалилась в этот раз. Пожалуйста, освободите место на диске и попробуйте снова!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>&gt;-
- Сеть не подключена, передача файлов провалилась в этот раз. Пожалуйста, подключитесь к
- сети и попробуйте снова!</translation>
+        <translation>Сеть не подключена, передача файлов провалилась в этот раз. Пожалуйста, подключитесь к сети и попробуйте снова!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
