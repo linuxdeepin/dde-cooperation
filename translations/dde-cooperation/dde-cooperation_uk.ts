@@ -463,18 +463,18 @@
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="212"/>
         <source>cancel</source>
-        <translation type="unfinished"/>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="157"/>
         <source>comfirm</source>
-        <translation type="unfinished"/>
+        <translation>Підтвердити</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="139"/>
         <source>“%1”connection disconnected!</source>
-        <translation type="unfinished"/>
+        <translation>З&apos;єднання «%1» розірвано!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
