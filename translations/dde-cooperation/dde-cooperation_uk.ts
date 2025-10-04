@@ -591,7 +591,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
         <source>Peripheral share</source>
-        <translation type="unfinished"/>
+        <translation>Спільна периферія</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
@@ -606,22 +606,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
         <source>Connection direction</source>
-        <translation type="unfinished"/>
+        <translation>Напрямок з&apos;єднання</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"/>
+        <translation>Дозволити вказаним нижче користувачам надсилати вам файли</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
         <source>File save location</source>
-        <translation type="unfinished"/>
+        <translation>Місце зберігання файлів</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
         <source>Share clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Спільний буфер обміну</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
