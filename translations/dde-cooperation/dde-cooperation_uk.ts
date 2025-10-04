@@ -724,7 +724,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
-        <translation type="unfinished"/>
+        <translation>«%1» встановлює з&apos;єднання з іншими пристроями</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
