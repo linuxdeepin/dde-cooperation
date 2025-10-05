@@ -125,22 +125,22 @@
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="139"/>
         <source>Transferable</source>
-        <translation type="unfinished"/>
+        <translation>Придатна до передавання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Personal Settings</source>
-        <translation type="unfinished"/>
+        <translation>Особисті параметри</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="138"/>
         <source>Customized Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Власне фонове зображення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="49"/>
         <source>Select the configuration to transfer</source>
-        <translation type="unfinished"/>
+        <translation>Виберіть налаштування для передавання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="50"/>
