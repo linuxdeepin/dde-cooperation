@@ -938,17 +938,17 @@
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, введіть ip/назву пристрою для співпраці</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="56"/>
         <source>Nearby Device</source>
-        <translation type="unfinished"/>
+        <translation>Сусідній пристрій</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="72"/>
         <source>Re-scan for devices</source>
-        <translation type="unfinished"/>
+        <translation>Повторний пошук пристроїв</translation>
     </message>
 </context>
 <context>
@@ -956,7 +956,7 @@
     <message>
         <location filename="../../src/lib/cooperation/transfer/helper/transferhelper.cpp" line="105"/>
         <source>Send files</source>
-        <translation type="unfinished"/>
+        <translation>Надіслати файли</translation>
     </message>
 </context>
 <context>
@@ -964,7 +964,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="34"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>Передавання файлів</translation>
     </message>
 </context>
 <context>
@@ -972,7 +972,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="64"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>Передавання файлів</translation>
     </message>
 </context>
 <context>
