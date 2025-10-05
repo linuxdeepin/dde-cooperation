@@ -759,17 +759,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>Немає доступу до мережі. Цього разу перенести файли не вдалося. Встановіть з&apos;єднання з мережею і повторіть спробу!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="562"/>
         <source>Network exception</source>
-        <translation type="unfinished"/>
+        <translation>Виключення мережі</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
         <source>Please check the network &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, перевірте, чи працює мережа «%1»</translation>
     </message>
 </context>
 <context>
@@ -778,12 +778,12 @@
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Співпраця</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>З&apos;єднання встановлено, співпрацюємо з «%1»</translation>
     </message>
 </context>
 <context>
@@ -791,7 +791,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
         <source>Connect to &quot;%1&quot; failed</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося з&apos;єднатися з «%1»</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
