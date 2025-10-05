@@ -749,12 +749,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>Немає доступу до мережі. Цього разу перенести файли не вдалося. Встановіть з&apos;єднання з мережею і повторіть спробу!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
         <source>File transfer failed</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося перенести файл</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
