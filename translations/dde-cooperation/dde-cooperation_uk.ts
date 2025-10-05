@@ -729,22 +729,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
-        <translation type="unfinished"/>
+        <translation>Запит щодо встановлення з&apos;єднання з вашим комп&apos;ютером, надісланий «%1», було перервано через перевищення часу очікування на відповідь</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
         <source>The other party does not confirm, please try again later</source>
-        <translation type="unfinished"/>
+        <translation>Не підтверджено з іншого боку з&apos;єднання. Будь ласка, повторіть спробу пізніше</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="524"/>
         <source>The other party has cancelled the connection request !</source>
-        <translation type="unfinished"/>
+        <translation>У запиті щодо з&apos;єднання було відмовлено з іншого боку!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="528"/>
         <source>connect failed</source>
-        <translation type="unfinished"/>
+        <translation>не вдалося з&apos;єднатися</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
