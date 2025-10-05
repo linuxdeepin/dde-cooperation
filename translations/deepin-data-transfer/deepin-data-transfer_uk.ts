@@ -145,7 +145,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="50"/>
         <source>Please select the configurations to back up</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, виберіть налаштування для резервного копіювання</translation>
     </message>
 </context>
 <context>
