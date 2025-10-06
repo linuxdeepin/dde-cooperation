@@ -193,12 +193,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>The code will be expired in</source>
-        <translation type="unfinished"/>
+        <translation>Строк дії коду буде вичерпано за</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>please input connect code as soon as possible</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, введіть код з&apos;єднання якомога швидше</translation>
     </message>
 </context>
 <context>
