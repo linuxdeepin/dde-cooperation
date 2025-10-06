@@ -90,7 +90,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="39"/>
         <source>Import from backup files</source>
-        <translation type="unfinished"/>
+        <translation>Імпортувати з файлів резервних копій</translation>
     </message>
 </context>
 <context>
