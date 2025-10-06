@@ -75,7 +75,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="56"/>
         <source>Unable to connect to the network， please check your network connection or select export to local directory.</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося встановити з&apos;єднання з мережею. Будь ласка, перевірте, чи працює з&apos;єднання мережею, або виберіть експорт до локального каталогу.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="69"/>
