@@ -85,7 +85,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="33"/>
         <source>From Windows PC</source>
-        <translation type="unfinished"/>
+        <translation>З ПК Windows</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="39"/>
