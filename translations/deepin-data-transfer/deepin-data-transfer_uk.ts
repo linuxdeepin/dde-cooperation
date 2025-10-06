@@ -98,7 +98,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="39"/>
         <source>Check transfer configuration will automatically apply to UOS.</source>
-        <translation type="unfinished"/>
+        <translation>Позначення налаштувань передавання автотоматично застосується до UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="51"/>
@@ -153,7 +153,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="36"/>
         <source>Ready to connect</source>
-        <translation type="unfinished"/>
+        <translation>Готовність до з&apos;єднання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="41"/>
