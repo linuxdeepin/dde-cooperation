@@ -399,7 +399,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="29"/>
         <source>Before tranfer</source>
-        <translation type="unfinished"/>
+        <translation>До передавання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
@@ -419,12 +419,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Назад</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="64"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Підтвердити</translation>
     </message>
 </context>
 <context>
@@ -432,12 +432,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="48"/>
         <source>Ready to connect</source>
-        <translation type="unfinished"/>
+        <translation>Готовність до з&apos;єднання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="52"/>
         <source>IP</source>
-        <translation type="unfinished"/>
+        <translation>IP-адреса</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="59"/>
@@ -452,7 +452,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="85"/>
         <source>Connect code</source>
-        <translation type="unfinished"/>
+        <translation>Код з&apos;єднання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="95"/>
@@ -462,7 +462,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="118"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Назад</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
