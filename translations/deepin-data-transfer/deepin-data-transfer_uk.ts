@@ -589,7 +589,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
         <source>My Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Моє фонове зображення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
@@ -597,38 +597,38 @@
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
-        <translation type="unfinished"/>
+        <translation>Передавання завершено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
-        <translation type="unfinished"/>
+        <translation>Закладки браузера</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
         <source>BrowserBookMark</source>
-        <translation type="unfinished"/>
+        <translation>Закладка браузера</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="176"/>
         <source>is installed</source>
-        <translation type="unfinished"/>
+        <translation>встановлено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="200"/>
         <source>Installing</source>
-        <translation type="unfinished"/>
+        <translation>Встановлення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer failed</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося передати</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
         <source>Format error</source>
-        <translation type="unfinished"/>
+        <translation>Помилка форматування</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
