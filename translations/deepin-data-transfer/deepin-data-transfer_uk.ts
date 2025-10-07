@@ -739,12 +739,12 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="132"/>
         <source>Show processes</source>
-        <translation type="unfinished"/>
+        <translation>Показати процеси</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="119"/>
         <source>Hide processes</source>
-        <translation type="unfinished"/>
+        <translation>Приховати процеси</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
