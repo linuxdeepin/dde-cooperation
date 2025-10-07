@@ -811,12 +811,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>select zip file</source>
-        <translation type="unfinished"/>
+        <translation>виберіть файл zip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>ZIP file (*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>файл ZIP (*.zip)</translation>
     </message>
 </context>
 <context>
@@ -824,24 +824,24 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="40"/>
         <source>Select data transfer file</source>
-        <translation type="unfinished"/>
+        <translation>Виберіть файл для передавання даних</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="49"/>
         <source>File error, cannot transfer, please reselect</source>
-        <translation type="unfinished"/>
+        <translation>Помилка, не вдалося передати, будь ласка, виберіть ще раз</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="62"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Назад</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="108"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="113"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Далі</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
