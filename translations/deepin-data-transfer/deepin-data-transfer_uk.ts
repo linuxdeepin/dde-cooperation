@@ -684,12 +684,12 @@
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="351"/>
         <source>Select:%1</source>
-        <translation type="unfinished"/>
+        <translation>Вибрано: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="225"/>
         <source>local disk</source>
-        <translation type="unfinished"/>
+        <translation>локальний диск</translation>
     </message>
 </context>
 <context>
@@ -697,7 +697,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="35"/>
         <source>UOS data transfer</source>
-        <translation type="unfinished"/>
+        <translation>Передавання даних UOS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="39"/>
@@ -708,7 +708,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="46"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Далі</translation>
     </message>
 </context>
 <context>
@@ -716,7 +716,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/transferworker.cpp" line="326"/>
         <source>Transfering</source>
-        <translation type="unfinished"/>
+        <translation>Передавання</translation>
     </message>
 </context>
 <context>
@@ -726,14 +726,14 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="193"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="230"/>
         <source>Transferring...</source>
-        <translation type="unfinished"/>
+        <translation>Передавання…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="191"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
         <source>Calculationing...</source>
-        <translation type="unfinished"/>
+        <translation>Обчислення…</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
