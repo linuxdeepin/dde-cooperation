@@ -750,24 +750,24 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="195"/>
         <source>Transfer will be completed in %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>Передавання буде завершено за %1 хвилин</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
-        <translation type="unfinished"/>
+        <translation>Передавання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="199"/>
         <source>Transfer will be completed in %1 secondes</source>
-        <translation type="unfinished"/>
+        <translation>Передавання буде завершено за %1 секунд</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="202"/>
         <source>Transfer will be completed in --</source>
-        <translation type="unfinished"/>
+        <translation>Передавання буде завершено за --</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
