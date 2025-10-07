@@ -474,12 +474,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="120"/>
         <source>Connect</source>
-        <translation type="unfinished"/>
+        <translation>З&apos;єднатися</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="258"/>
         <source>Failed to connect, please check your input</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося встановити з&apos;єднання. Будь ласка, перевірте введені дані</translation>
     </message>
 </context>
 <context>
@@ -487,13 +487,13 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="128"/>
         <source>Transfer completed partially</source>
-        <translation type="unfinished"/>
+        <translation>Передавання завершено частково</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
-        <translation type="unfinished"/>
+        <translation>Передавання завершено</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="38"/>
