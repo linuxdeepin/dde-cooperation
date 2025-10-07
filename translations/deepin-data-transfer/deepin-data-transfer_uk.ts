@@ -633,19 +633,19 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Setup failed, configuration can be imported manually</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося налаштувати — налаштування можна імпортувати вручну</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося встановити. Будь ласка, перейдіть до крамниці програм для встановлення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="249"/>
         <source>Transfer Complete</source>
-        <translation type="unfinished"/>
+        <translation>Передавання завершено</translation>
     </message>
 </context>
 <context>
@@ -653,32 +653,32 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="21"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Відео</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="22"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Зображення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="23"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Документи</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="24"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Завантаження</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="25"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Музика</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="26"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Стільниця</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
