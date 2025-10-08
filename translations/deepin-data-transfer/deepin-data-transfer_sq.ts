@@ -618,29 +618,29 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="200"/>
         <source>Installing</source>
-        <translation type="unfinished"/>
+        <translation>Instalim</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer failed</source>
-        <translation type="unfinished"/>
+        <translation>Shpërngulja dështoi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
         <source>Format error</source>
-        <translation type="unfinished"/>
+        <translation>Gabim formati</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Setup failed, configuration can be imported manually</source>
-        <translation type="unfinished"/>
+        <translation>Ujdisja dështoi, formësimi mund të importohet dorazi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
-        <translation type="unfinished"/>
+        <translation>Instalimi dështoi, ju lutemi, që ta instaloni, kaloni te shitorja e aplikacioneve</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="249"/>
