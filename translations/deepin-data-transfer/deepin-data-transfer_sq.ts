@@ -317,12 +317,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="32"/>
         <source>The network disconnected, transfer failed, please connect the network and try again</source>
-        <translation type="unfinished"/>
+        <translation>Rrjeti u shkëput, shpërngulja dështoi, ju lutemi, lidhuni me rrjetin dhe riprovoni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="34"/>
         <source>Insufficient space in UOS, please clear at least %1 GB and try again</source>
-        <translation type="unfinished"/>
+        <translation>Hapësirë e pamjaftueshme në UOS, ju lutemi, spastroni të paktën $1 GB dhe riprovoni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="36"/>
