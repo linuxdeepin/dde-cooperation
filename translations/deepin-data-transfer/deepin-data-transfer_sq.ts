@@ -899,7 +899,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="102"/>
         <source>This operation is not recoverable</source>
-        <translation type="unfinished"/>
+        <translation>Ky veprim s’do të jetë i prapakthyeshëm</translation>
     </message>
 </context>
 <context>
@@ -907,27 +907,27 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="32"/>
         <source>Exit</source>
-        <translation type="unfinished"/>
+        <translation>Dalje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="49"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Mprapsht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="84"/>
         <source>Back up succeed</source>
-        <translation type="unfinished"/>
+        <translation>Kopjeruajtja doli me sukses</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="90"/>
         <source>Congratulations, Your Information has been Successfully Backed Up.</source>
-        <translation type="unfinished"/>
+        <translation>Përgëzime, Informacioni Juaj Është Kopjeruajtur me Sukses.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="95"/>
         <source>Go to View</source>
-        <translation type="unfinished"/>
+        <translation>Kaloni te Shiheni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="120"/>
