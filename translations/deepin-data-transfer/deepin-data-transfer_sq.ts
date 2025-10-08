@@ -767,12 +767,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="202"/>
         <source>Transfer will be completed in --</source>
-        <translation type="unfinished"/>
+        <translation>Shpërngulja do të plotësohet për --</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
         <source>Decompressing</source>
-        <translation type="unfinished"/>
+        <translation>Çngjeshje</translation>
     </message>
 </context>
 <context>
@@ -781,7 +781,7 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="137"/>
         <source>Decompressing</source>
-        <translation type="unfinished"/>
+        <translation>Çngjeshje</translation>
     </message>
 </context>
 <context>
@@ -790,33 +790,33 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
-        <translation type="unfinished"/>
+        <translation>Tërhiqni këtu kartela</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="257"/>
         <source>Import file</source>
-        <translation type="unfinished"/>
+        <translation>Importoni kartelë</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="276"/>
         <source>Only .zip is supported, please</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, mbulohen vetëm .zip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="277"/>
         <source>reselect</source>
-        <translation type="unfinished"/>
+        <translation>ripërzgjidhni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>select zip file</source>
-        <translation type="unfinished"/>
+        <translation>përzgjidhni kartelë zip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>ZIP file (*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>Kartelë ZIP (*.zip)</translation>
     </message>
 </context>
 <context>
