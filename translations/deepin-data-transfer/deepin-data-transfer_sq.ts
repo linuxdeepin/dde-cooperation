@@ -327,7 +327,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="36"/>
         <source>Insufficient space in UOS, Please reserve enough space</source>
-        <translation type="unfinished"/>
+        <translation>Hapësirë e pamjaftueshme në UOS, ju lutemi, rezervoni hapësirë të mjaftueshme</translation>
     </message>
 </context>
 <context>
@@ -335,27 +335,27 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="50"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Emër</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="50"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Madhësi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="60"/>
         <source>When transfer completed, the data will be placed in the user&apos;s home directory</source>
-        <translation type="unfinished"/>
+        <translation>Kur të plotësohet shpërngulja, të dhënat do të vendosen në drejtorinë shtëpi të përdoruesit</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="73"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Ripohojeni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="71"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Anuloje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.h" line="56"/>
