@@ -645,7 +645,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="249"/>
         <source>Transfer Complete</source>
-        <translation type="unfinished"/>
+        <translation>Shpërngulje e Plotësuar</translation>
     </message>
 </context>
 <context>
@@ -653,43 +653,43 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="21"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Video</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="22"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Foto</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="23"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Dokumente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="24"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Shkarkime</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="25"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Muzikë</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="26"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Desktop</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="80"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="351"/>
         <source>Select:%1</source>
-        <translation type="unfinished"/>
+        <translation>Përzgjidhni: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="225"/>
         <source>local disk</source>
-        <translation type="unfinished"/>
+        <translation>disk vendor</translation>
     </message>
 </context>
 <context>
@@ -697,7 +697,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="35"/>
         <source>UOS data transfer</source>
-        <translation type="unfinished"/>
+        <translation>Shpërngulje të dhënash UOS</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="39"/>
@@ -708,7 +708,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="46"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Pasuesi</translation>
     </message>
 </context>
 <context>
