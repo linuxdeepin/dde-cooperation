@@ -399,7 +399,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="29"/>
         <source>Before tranfer</source>
-        <translation type="unfinished"/>
+        <translation>Para shpërnguljeje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
@@ -419,12 +419,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Mprapsht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="64"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Ripohojeni</translation>
     </message>
 </context>
 <context>
@@ -432,17 +432,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="48"/>
         <source>Ready to connect</source>
-        <translation type="unfinished"/>
+        <translation>Gati për lidhje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="52"/>
         <source>IP</source>
-        <translation type="unfinished"/>
+        <translation>IP</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="59"/>
         <source>Please input the IP of UOS</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, jepni IP-në e UOS-it</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="79"/>
