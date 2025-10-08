@@ -80,7 +80,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="69"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Pasuesi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="33"/>
@@ -977,7 +977,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/linux/mainwindow_p_linux.cpp" line="32"/>
         <source>UOS data transfer</source>
-        <translation type="unfinished"/>
+        <translation>Shpërngulje të dhënash UOS</translation>
     </message>
 </context>
 </TS>
