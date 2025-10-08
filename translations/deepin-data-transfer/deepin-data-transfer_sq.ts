@@ -125,27 +125,27 @@
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="139"/>
         <source>Transferable</source>
-        <translation type="unfinished"/>
+        <translation>I shpërngulshëm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
         <source>Personal Settings</source>
-        <translation type="unfinished"/>
+        <translation>Rregullime Persnale</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="138"/>
         <source>Customized Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Sfond i Përshtatur</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="49"/>
         <source>Select the configuration to transfer</source>
-        <translation type="unfinished"/>
+        <translation>Përzgjidhni formësimin për shpërngulje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="50"/>
         <source>Please select the configurations to back up</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, përzgjidhni formësimet për t’u kopjeruajtur</translation>
     </message>
 </context>
 <context>
