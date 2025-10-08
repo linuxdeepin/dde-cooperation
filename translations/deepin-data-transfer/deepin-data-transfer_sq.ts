@@ -561,17 +561,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="73"/>
         <source>Please select the content to back up</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, përzgjidhni lëndën për kopjeruajtje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="74"/>
         <source>Start transfer</source>
-        <translation type="unfinished"/>
+        <translation>Nis shpërnguljen</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="75"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Pasuesi</translation>
     </message>
 </context>
 <context>
@@ -579,17 +579,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
         <source>Profiles</source>
-        <translation type="unfinished"/>
+        <translation>Profile</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
         <source>Wrong or missing profile</source>
-        <translation type="unfinished"/>
+        <translation>Profil i gabuar, ose që mungon</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
         <source>My Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Sfondi Im</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
@@ -597,7 +597,7 @@
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
-        <translation type="unfinished"/>
+        <translation>Shpërngulja u plotësua</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
@@ -613,7 +613,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="176"/>
         <source>is installed</source>
-        <translation type="unfinished"/>
+        <translation>është instaluar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="200"/>
