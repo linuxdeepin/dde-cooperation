@@ -889,12 +889,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="99"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Mbylle</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="101"/>
         <source>This operation will clear the transmission progress, Do you want to continue.</source>
-        <translation type="unfinished"/>
+        <translation>Ky veprim do të spastrojë ecurinë e transmetimit. Doni të vazhdohet?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="102"/>
