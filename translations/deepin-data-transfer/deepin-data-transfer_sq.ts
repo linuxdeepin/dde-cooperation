@@ -932,7 +932,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="120"/>
         <source>Back up failed</source>
-        <translation type="unfinished"/>
+        <translation>Kopjeruajtja dështoi</translation>
     </message>
 </context>
 <context>
@@ -946,17 +946,17 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>Shpërngulja do të plotësohet për %1 minuta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="56"/>
         <source>Transfer will be completed in %1 secondes</source>
-        <translation type="unfinished"/>
+        <translation>Shpërngulja do të plotësohet për %1 sekonda</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="84"/>
         <source>Creating Backup File...</source>
-        <translation type="unfinished"/>
+        <translation>Po Krijohet Kartelë Kopjeruajtje…</translation>
     </message>
 </context>
 <context>
@@ -964,12 +964,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation type="unfinished"/>
+        <translation>Ngjeshja e Kartelës %1 dështoi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
         <source>Back up file done</source>
-        <translation type="unfinished"/>
+        <translation>Kopjeruajtja e kartelës u bë</translation>
     </message>
 </context>
 <context>
