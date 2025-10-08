@@ -153,17 +153,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="36"/>
         <source>Ready to connect</source>
-        <translation type="unfinished"/>
+        <translation>Gati për lidhje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="41"/>
         <source>Please open data transfer on Windows, and imput the IP and connect code</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, hapni shpërngulje të dhënash në Windows dhe jepni IP-në dhe kodin e lidhjes</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="48"/>
         <source>Download Windows client</source>
-        <translation type="unfinished"/>
+        <translation>Shkarko klient Windows</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="59"/>
@@ -183,7 +183,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="107"/>
         <source>Local IP</source>
-        <translation type="unfinished"/>
+        <translation>IP vendore</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="163"/>
