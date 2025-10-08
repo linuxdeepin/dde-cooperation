@@ -503,12 +503,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="50"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Mprapsht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="52"/>
         <source>Exit</source>
-        <translation type="unfinished"/>
+        <translation>Dalje</translation>
     </message>
 </context>
 <context>
@@ -516,19 +516,19 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="216"/>
         <source>Selected:0</source>
-        <translation type="unfinished"/>
+        <translation>Përzgjedhur: 0</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="237"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="239"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="241"/>
         <source>Selected:%1</source>
-        <translation type="unfinished"/>
+        <translation>Përzgjedhur: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="304"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Përpunoni</translation>
     </message>
 </context>
 <context>
@@ -536,27 +536,27 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="90"/>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>Kartelë</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="95"/>
         <source>App</source>
-        <translation type="unfinished"/>
+        <translation>Aplikacion</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="97"/>
         <source>Config</source>
-        <translation type="unfinished"/>
+        <translation>Formësim</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="112"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Mprapsht</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="72"/>
         <source>Select data to transfer</source>
-        <translation type="unfinished"/>
+        <translation>Përzgjidhni të dhëna për shpërngulje</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="73"/>
