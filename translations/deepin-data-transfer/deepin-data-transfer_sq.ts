@@ -4,7 +4,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="42"/>
         <source>Check transfer application will automatically install the corresponding UOS version of the application.</source>
-        <translation type="unfinished"/>
+        <translation>Kontrolli i aplikacionit të shpërnguljeve do të instalojë automatikisht versionin përkatës UOS të aplikacionit.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="56"/>
@@ -29,12 +29,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="102"/>
         <source>Transferable</source>
-        <translation type="unfinished"/>
+        <translation>I shpërngulshëm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="112"/>
         <source>Not Suitable</source>
-        <translation type="unfinished"/>
+        <translation>I papërshtatshëm</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="46"/>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="91"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system.</source>
-        <translation type="unfinished"/>
+        <translation>Mjeti UOS i shpërnguljes lejon migrim me një klikim të kartelave tuaja, të dhënave personale dhe aplikacioneve në UOS, duke ju ndihmuar të zëvendësoni rrjedhshëm sistemin tuaj.</translation>
     </message>
 </context>
 <context>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="56"/>
         <source>Unable to connect to the network， please check your network connection or select export to local directory.</source>
-        <translation type="unfinished"/>
+        <translation>S’arrihet të lidhet te rrjeti, ju lutemi, kontrolloni lidhjen tuaj në rrjet, ose përzgjidhni eksportim te drejtori vendore.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="69"/>
@@ -98,7 +98,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="39"/>
         <source>Check transfer configuration will automatically apply to UOS.</source>
-        <translation type="unfinished"/>
+        <translation>Kontrolli i formësimit të shpërnguljeve do të aplikohet automatikisht te UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="51"/>
@@ -269,7 +269,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="66"/>
         <source>Reselect</source>
-        <translation>Ripërzgjidhrni</translation>
+        <translation>Ripërzgjidhni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="81"/>
@@ -279,7 +279,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>The presence of outstanding transfer tasks between you and the target device has been detected.</source>
-        <translation type="unfinished"/>
+        <translation>Është pikasur prania e shpërnguljeve ende të papërfunduara mes jush dhe pajisjesh së synuar.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
@@ -322,7 +322,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="34"/>
         <source>Insufficient space in UOS, please clear at least %1 GB and try again</source>
-        <translation>Hapësirë e pamjaftueshme në UOS, ju lutemi, spastroni të paktën $1 GB dhe riprovoni</translation>
+        <translation>Hapësirë e pamjaftueshme në UOS, ju lutemi, spastroni të paktën %1 GB dhe riprovoni</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="36"/>
@@ -404,12 +404,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
         <source>Data transfer requires some time, to avoid interrupting the migration due to low battery, please keep connect to the  power.</source>
-        <translation type="unfinished"/>
+        <translation>Shpërngulja e të dhënave lyp ca kohë, që të shmagni ndërprerjen e migrimit  për shkak niveli të ulët të baterisë, mbani lidhjen me rrjetin e energjisë.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="36"/>
         <source>Other applications may slowdown the transfer speed. For smoother experience, please close other applications.</source>
-        <translation type="unfinished"/>
+        <translation>Aplikacione të tjera mund të ngadalësojnë shpejtësinë e shpërnguljeve. Për funksionim më të rrjedhshëm, ju lutemi, mbyllini aplikacionet e tjera.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="38"/>
@@ -498,7 +498,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="38"/>
         <source>Partial information migration failed, please go to UOS for manual transfer</source>
-        <translation type="unfinished"/>
+        <translation>Dështoi migrim i pjesshëm informacionesh, ju lutemi, kaloni te UOS, për shpërngulje dorazi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="50"/>
@@ -603,7 +603,7 @@
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
-        <translation type="unfinished"/>
+        <translation>Faqerojtës Shfletuesi</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
@@ -703,7 +703,8 @@
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="39"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to
 UOS, helping you seamlessly replace your system.</source>
-        <translation type="unfinished"/>
+        <translation>Mjeti UOS i shpërnguljes lejon migrim me një klikim të kartelave tuaja, të dhënave personale
+dhe aplikacioneve në UOS, duke ju ndihmuar të zëvendësoni rrjedhshëm sistemin tuaj.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="46"/>
@@ -790,7 +791,7 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
-        <translation>Tërhiqni këtu kartela</translation>
+        <translation>Tërhiqni këtu kartela </translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
@@ -857,7 +858,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
         <source>Insufficient space on UOS. Please reserve at least %1G of space and try again.</source>
-        <translation>Hapësirë e pamjaftueshme në UOS Ju lutemi, rezervoni të paktën $1G hapësirë dhe riprovoni.</translation>
+        <translation>Hapësirë e pamjaftueshme në UOS. Ju lutemi, rezervoni të paktën %1G hapësirë dhe riprovoni.</translation>
     </message>
 </context>
 <context>
@@ -940,7 +941,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="44"/>
         <source>Packing  %1</source>
-        <translation type="unfinished"/>
+        <translation>Po paketohet  %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
