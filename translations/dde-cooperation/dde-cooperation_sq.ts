@@ -197,7 +197,7 @@
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, klikoni që të riphoni aktivizimin e shërbimit të pikasjes së rrjeteve LAN!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="249"/>
@@ -215,7 +215,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="126"/>
         <source>First step</source>
-        <translation type="unfinished"/>
+        <translation>Hapi i [arë</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="127"/>
@@ -225,12 +225,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="128"/>
         <source>Second step</source>
-        <translation type="unfinished"/>
+        <translation>Hapi i dytë</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="130"/>
         <source>Third step</source>
-        <translation type="unfinished"/>
+        <translation>Hapi i tretë</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="189"/>
@@ -258,13 +258,13 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="153"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
-        <translation type="unfinished"/>
+        <translation>vendndodhja për ruajtje kartelash është e pavlefshme</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
@@ -290,7 +290,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="81"/>
         <source>Looking for devices</source>
-        <translation type="unfinished"/>
+        <translation>Po shihet për pajisje</translation>
     </message>
 </context>
 <context>
