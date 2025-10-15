@@ -684,37 +684,37 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
         <source>Reject</source>
-        <translation type="unfinished"/>
+        <translation>Hidhe poshtë</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="355"/>
         <source>Accept</source>
-        <translation type="unfinished"/>
+        <translation>Pranoje</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Bashkëpunim</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
         <source>Connect to &quot;%1&quot; failed</source>
-        <translation type="unfinished"/>
+        <translation>Lidhja me “%1” dështoi</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
         <source>Unable to collaborate</source>
-        <translation type="unfinished"/>
+        <translation>S’arrihet të bashkëpunohet</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="419"/>
         <source>Failed to run process!</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të xhirohej procesi!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Lidhje e suksesshme, po bëhet bashkërendim me   “%1”</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
