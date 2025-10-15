@@ -130,22 +130,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
-        <translation type="unfinished"/>
+        <translation>Kur mes dy pajisjeve bëhet një lidhje, tastiera dhe miu i atij që e filloi lidhjen mund të përdoren për të kontrolluar pajisjen tjetër</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Clipboard sharing</source>
-        <translation type="unfinished"/>
+        <translation>Ndarje të papastre me të tjerë</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-        <translation type="unfinished"/>
+        <translation>Kur mes dy pajisjeve bëhet një lidhje, e papastra do të jetë e përbashkët dhe mund kopjohet te njëra pajisje dhe të ngjitet te pajisja tjetër</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>Delivery of documents</source>
-        <translation type="unfinished"/>
+        <translation>Dërgim dokumentesh</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
