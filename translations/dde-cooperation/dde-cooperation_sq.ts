@@ -150,17 +150,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
-        <translation type="unfinished"/>
+        <translation>Pas lidhjes mes dy pajisjeve, mund të nisni dërgim kartelash te pajisja tjetër</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>For detailed instructions, please click on the Help Manual below</source>
-        <translation type="unfinished"/>
+        <translation>Për udhëzime të hollësishme, ju lutemi, klikoni më poshtë mbi Doracak Ndihme</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>Usage</source>
-        <translation type="unfinished"/>
+        <translation>Përdorim</translation>
     </message>
 </context>
 <context>
@@ -168,17 +168,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="191"/>
         <source>connected</source>
-        <translation type="unfinished"/>
+        <translation>e lidhur</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="197"/>
         <source>connectable</source>
-        <translation type="unfinished"/>
+        <translation>mund të lidhet</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="204"/>
         <source>offline</source>
-        <translation type="unfinished"/>
+        <translation>jo në linjë</translation>
     </message>
 </context>
 <context>
@@ -186,12 +186,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="245"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Ripohojeni</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="246"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Mbylle</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
