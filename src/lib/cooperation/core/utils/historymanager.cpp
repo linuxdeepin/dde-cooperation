@@ -79,15 +79,14 @@ QMap<QString, QString> HistoryManager::getTransHistory()
 void HistoryManager::refreshHistory(bool found)
 {
     DLOG << "Refreshing history, found:" << found;
-    if (!found) {
-        DLOG << "No devices found, returning";
-        return;
-    }
+    
     auto connectHistory = getConnectHistory();
 
     if (!connectHistory.isEmpty()) {
         DLOG << "Connection history is not empty, emitting historyConnected";
         emit historyConnected(connectHistory);
+    } else {
+        DLOG << "Connection history is empty, no history devices to show";
     }
 }
 
@@ -144,10 +143,8 @@ QMap<QString, QString> HistoryManager::getConnectHistory()
     DLOG << "Getting connection history";
     QMap<QString, QString> dataMap;
 
-    if (qApp->property("onlyTransfer").toBool()) {
-        DLOG << "In transfer-only mode, skipping connection history";
-        return dataMap;
-    }
+    // Note: Connection history should be available even in transfer-only mode
+    // because users need to see previously connected devices for file transfer
     const auto &list = ConfigManager::instance()->appAttribute(AppSettings::CacheGroup, AppSettings::ConnectHistoryKey).toList();
     DLOG << "Found" << list.size() << "connection history entries";
 

@@ -668,6 +668,13 @@ void Settings::onFileChanged(const QString &filePath)
     Q_D(Settings);
 
     d->_q_onFileChanged(filePath);
+    
+    // Re-add file to watcher as some editors delete and recreate files
+    // which causes QFileSystemWatcher to stop monitoring
+    if (d->settingFileWatcher && !d->settingFileWatcher->files().contains(d->settingFile)) {
+        qDebug() << "Re-adding file to watcher:" << d->settingFile;
+        d->settingFileWatcher->addPath(d->settingFile);
+    }
 }
 
 void Settings::setWatchChanges(bool watchChanges)

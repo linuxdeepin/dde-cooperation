@@ -50,6 +50,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void updateHistoryDevices(const QMap<QString, QString> &connectMap);
+    void onConnectHistoryUpdated();
 
 private Q_SLOTS:
     void addService(QZeroConfService zcs);

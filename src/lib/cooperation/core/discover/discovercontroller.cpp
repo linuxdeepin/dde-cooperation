@@ -5,6 +5,7 @@
 #include "discovercontroller.h"
 #include "discovercontroller_p.h"
 #include "utils/cooperationutil.h"
+#include "utils/historymanager.h"
 #include "common/log.h"
 
 #include <QProcess>
@@ -412,6 +413,49 @@ void DiscoverController::onAppAttributeChanged(const QString &group, const QStri
     updatePublish();
 }
 
+void DiscoverController::onConnectHistoryUpdated()
+{
+    DLOG << "Connection history configuration updated";
+
+    auto newConnectHistory = HistoryManager::instance()->getConnectHistory();
+
+    // 1. Remove obsolete history devices (send deviceOffline signal)
+    for (const QString &oldIP : _historyDevices) {
+        if (!newConnectHistory.contains(oldIP)) {
+            auto device = findDeviceByIP(oldIP);
+            if (device) {
+                d->onlineDeviceList.removeOne(device);
+                Q_EMIT deviceOffline(oldIP);
+            }
+        }
+    }
+
+    // 2. Update internal history cache
+    _historyDevices.clear();
+    d->historyDeviceMap.clear();
+
+    // 3. Add new history devices (send deviceOnline signal for new ones only)
+    QList<DeviceInfoPointer> newDevices;
+    for (auto iter = newConnectHistory.begin(); iter != newConnectHistory.end(); ++iter) {
+        QString ip = iter.key();
+        QString deviceName = iter.value();
+
+        _historyDevices.append(ip);
+        d->historyDeviceMap[ip] = deviceName;
+
+        if (!findDeviceByIP(ip)) {
+            DeviceInfoPointer info(new DeviceInfo(ip, deviceName));
+            info->setConnectStatus(DeviceInfo::Offline);
+            d->onlineDeviceList.append(info);
+            newDevices.append(info);
+        }
+    }
+
+    if (!newDevices.isEmpty()) {
+        Q_EMIT deviceOnline(newDevices);
+    }
+}
+
 void DiscoverController::addService(QZeroConfService zcs)
 {
     DLOG << "Adding service:" << zcs->name().toStdString();
@@ -488,6 +532,7 @@ void DiscoverController::updateHistoryDevices(const QMap<QString, QString> &conn
 
         DeviceInfoPointer info(new DeviceInfo(ip, deviceName));
         info->setConnectStatus(DeviceInfo::Offline);
+        d->onlineDeviceList.append(info);
         offlineDevList << info;
     }
 
@@ -595,7 +640,8 @@ void DiscoverController::refreshDeviceList()
     // Collect devices from different sources
     collectAvahiDevices();
     addPreservedHistoryDevices(preservedHistoryDevices);
-    collectOfflineHistoryDevices();
+    // Note: collectOfflineHistoryDevices() will be called later via refreshHistory() -> updateHistoryDevices()
+    // This ensures we use the latest history data from config, not cached data
     addSearchDeviceIfExists();
 }
 
@@ -619,7 +665,13 @@ void DiscoverController::collectOfflineHistoryDevices()
 {
     DLOG << "Collecting offline history devices, count:" << _historyDevices.size();
 
+    if (_historyDevices.isEmpty()) {
+        DLOG << "No history devices to collect";
+        return;
+    }
+
     // Add offline history devices that are not already in the list
+    int addedCount = 0;
     for (const QString &historyIP : _historyDevices) {
         if (findDeviceByIP(historyIP)) {
             DLOG << "History device already in list:" << historyIP.toStdString();
@@ -631,8 +683,11 @@ void DiscoverController::collectOfflineHistoryDevices()
         DeviceInfoPointer historyDevice(new DeviceInfo(historyIP, deviceName));
         historyDevice->setConnectStatus(DeviceInfo::Offline);
         d->onlineDeviceList.append(historyDevice);
+        addedCount++;
         DLOG << "Added offline history device:" << historyIP.toStdString() << "name:" << deviceName.toStdString();
     }
+
+    DLOG << "Collected" << addedCount << "offline history devices";
 }
 
 void DiscoverController::collectAvahiDevices()

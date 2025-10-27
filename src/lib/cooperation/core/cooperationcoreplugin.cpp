@@ -157,6 +157,8 @@ bool CooperaionCorePlugin::start()
         // bridge: update the connected history after discover finish.
         connect(DiscoverController::instance(), &DiscoverController::discoveryFinished, HistoryManager::instance(), &HistoryManager::refreshHistory);
         connect(HistoryManager::instance(), &HistoryManager::historyConnected, DiscoverController::instance(), &DiscoverController::updateHistoryDevices);
+        // bridge: update device list when connection history config changes
+        connect(HistoryManager::instance(), &HistoryManager::connectHistoryUpdated, DiscoverController::instance(), &DiscoverController::onConnectHistoryUpdated);
         DLOG << "Connected history update signals";
 
         DiscoverController::instance()->init();   // init zeroconf and regist
