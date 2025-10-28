@@ -8,6 +8,7 @@
 #include <DDialog>
 #include <DSuggestButton>
 #include <DComboBox>
+#include <DLabel>
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -36,6 +37,20 @@ private:
 
     QLabel *pathLabel {nullptr};
     DTK_WIDGET_NAMESPACE::DSuggestButton *fileChooserBtn { nullptr };
+};
+
+class InformationDialog : public DTK_WIDGET_NAMESPACE::DDialog
+{
+    Q_OBJECT
+
+public:
+    explicit InformationDialog(QWidget *parent = nullptr);
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+private:
+    void initUI();
+
 };
 
 class BackgroundWidget : public QFrame

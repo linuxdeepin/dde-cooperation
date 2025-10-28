@@ -87,9 +87,53 @@ void FileChooserEdit::onButtonClicked()
         return;
     }
 
+    if (!QFileInfo(dirPath).isWritable() || QDir(dirPath).entryInfoList().isEmpty()) {
+        qInfo() << "Invalid directory selected:" << dirPath.toStdString();
+        InformationDialog dialog;
+        dialog.exec();
+        onButtonClicked();
+        return;
+    }
+
     setText(dirPath);
     emit fileChoosed(dirPath);
     qInfo() << "File path emitted:" << dirPath;
+}
+
+InformationDialog::InformationDialog(QWidget *parent)
+    : DDialog(parent)
+{
+    initUI();
+}
+
+void InformationDialog::closeEvent(QCloseEvent *event)
+{
+    DAbstractDialog::closeEvent(event);
+}
+
+void InformationDialog::initUI()
+{
+    setFixedSize(320, 180);
+    setContentsMargins(0, 0, 0, 0);
+    QWidget *contentWidget = new QWidget(this);
+    QPushButton *okBtn = new QPushButton(this);
+    okBtn->setText(tr("OK"));
+    connect(okBtn, &QPushButton::clicked, this, &InformationDialog::close);
+
+    qInfo() << "Initializing InformationDialog UI for Linux";
+    setIcon(QIcon::fromTheme("dde-file-manager"));
+    setTitle(tr("the file save location is invalid"));
+    addContent(contentWidget);
+
+    DLabel *msgLabel = new DLabel(this);
+    msgLabel->setAlignment(Qt::AlignCenter);
+    msgLabel->setText(tr("This path is a read-only directory. Please choose a different location for saving the file."));
+    msgLabel->setWordWrap(true);
+    QVBoxLayout *vLayout = new QVBoxLayout(contentWidget);
+    vLayout->setContentsMargins(0, 0, 0, 0);
+    vLayout->addWidget(msgLabel, Qt::AlignVCenter);
+    vLayout->addSpacing(10);
+    vLayout->addWidget(okBtn, 0, Qt::AlignBottom);
 }
 
 BackgroundWidget::BackgroundWidget(QWidget *parent)
