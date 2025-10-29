@@ -68,7 +68,7 @@ CooperationSearchEdit::CooperationSearchEdit(QWidget *parent)
     setLayout(mainLayout);
     mainLayout->addSpacing(25);
     mainLayout->addWidget(searchEdit);
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     DLOG << "Initialization completed";
 }

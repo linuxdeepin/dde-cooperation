@@ -8,6 +8,11 @@
 #include <QDebug>
 #include <QSortFilterProxyModel>
 #include <QtSvg/QSvgRenderer>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <QMatrix>
+#else
+#include <QTransform>
+#endif
 ItemTitlebar::ItemTitlebar(const QString &label1_, const QString &label2_,
                            const qreal &label1LeftMargin_, const qreal &label2LeftMargin_,
                            const QRectF &iconPosSize_, const qreal &iconRadius_, QWidget *parent)
@@ -901,9 +906,15 @@ SortButton::~SortButton() { }
 void SortButton::mousePressEvent(QMouseEvent *event)
 {
     if (flag) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QMatrix matrix;
         matrix.rotate(180);
         setIcon(QPixmap(":/icon/arrow_black.svg").transformed(matrix, Qt::SmoothTransformation));
+#else
+        QTransform transform;
+        transform.rotate(180);
+        setIcon(QPixmap(":/icon/arrow_black.svg").transformed(transform, Qt::SmoothTransformation));
+#endif
     } else {
         setIcon(QIcon(":/icon/arrow_black.svg"));
     }

@@ -4,18 +4,12 @@
 
 # 根据组件名获取库文件的目标
 function(get_qt_library_target component_name target_var)
-    if (TARGET Qt5::${component_name})
-        set(${target_var} Qt5::${component_name} PARENT_SCOPE)
-    elseif (TARGET Qt6::${component_name})
-        set(${target_var} Qt6::${component_name} PARENT_SCOPE)
-    else()
-        message(FATAL_ERROR "Unknown Qt component: ${component_name}")
-    endif()
+    set(${target_var} Qt${QT_VERSION_MAJOR}::${component_name} PARENT_SCOPE)
 endfunction()
 
 # 项目使用
 function(deployqt_qt_runtime arg_target)
-    get_target_property(qt_qmake_executable Qt5::qmake IMPORTED_LOCATION)
+    get_target_property(qt_qmake_executable Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
     get_filename_component(qt_bin_directory "${qt_qmake_executable}" DIRECTORY)
 
     find_program(qt_deployqt_executable NAMES windeployqt macdeployqt HINTS "${qt_bin_directory}")

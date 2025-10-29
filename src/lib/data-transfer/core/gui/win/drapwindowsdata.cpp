@@ -23,7 +23,15 @@
 #include <QPixmap>
 #include <QSettings>
 #include <ShlObj.h>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QtWin>
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QPixmap>
+#include <QGuiApplication>
+#include <QScreen>
+#include <windows.h>
+#endif
 
 #define MAXNAME 256
 
@@ -114,7 +122,11 @@ void DrapWindowsData::getBrowserBookmarkHtml(QString &htmlPath)
     QFile outputFile(htmlFile);
     if (outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out(&outputFile);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec("UTF-8");
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         out << htmlContent;
         outputFile.close();
         DLOG << "HTML file saved successfully to:" << htmlFile.toStdString();
@@ -373,7 +385,11 @@ QString DrapWindowsData::getBrowserBookmarkJSON(QString &jsonPath)
     QFile file(jsonfilePath);
     if (file.open(QFile::WriteOnly | QFile::Text)) {
         QTextStream stream(&file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         stream.setCodec("UTF-8");
+#else
+        stream.setEncoding(QStringConverter::Utf8);
+#endif
         stream << doc.toJson();
         file.close();
 //        DLOG << "JSON file saved successfully.";
@@ -476,7 +492,7 @@ void DrapWindowsData::getBrowserListInfo()
         CHAR subKeyName[MAX_PATH];
         DWORD subKeyNameSize = sizeof(subKeyName);
 
-        while (RegEnumKeyEx(hKey, index, subKeyName, &subKeyNameSize, NULL, NULL, NULL, NULL)
+        while (RegEnumKeyExA(hKey, index, subKeyName, &subKeyNameSize, NULL, NULL, NULL, NULL)
                != ERROR_NO_MORE_ITEMS) {
             QString strBuffer(subKeyName);
             QString strMidReg;
@@ -643,7 +659,44 @@ QPixmap DrapWindowsData::getAppIcon(const QString &path)
         return QPixmap();
     }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QPixmap pixmap = QtWin::fromHICON(hIcon);
+#else
+    // Qt6 replacement for QtWin::fromHICON
+    QPixmap pixmap;
+    if (hIcon) {
+        ICONINFO iconInfo;
+        if (GetIconInfo(hIcon, &iconInfo)) {
+            BITMAP bm;
+            GetObject(iconInfo.hbmColor, sizeof(bm), &bm);
+            
+            HDC hdc = GetDC(NULL);
+            HDC hdcMem = CreateCompatibleDC(hdc);
+            HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, iconInfo.hbmColor);
+            
+            QImage image(bm.bmWidth, bm.bmHeight, QImage::Format_ARGB32_Premultiplied);
+            
+            BITMAPINFO bmi;
+            memset(&bmi, 0, sizeof(bmi));
+            bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+            bmi.bmiHeader.biWidth = bm.bmWidth;
+            bmi.bmiHeader.biHeight = -bm.bmHeight; // negative for top-down
+            bmi.bmiHeader.biPlanes = 1;
+            bmi.bmiHeader.biBitCount = 32;
+            bmi.bmiHeader.biCompression = BI_RGB;
+            
+            GetDIBits(hdcMem, iconInfo.hbmColor, 0, bm.bmHeight, image.bits(), &bmi, DIB_RGB_COLORS);
+            
+            SelectObject(hdcMem, hbmOld);
+            DeleteDC(hdcMem);
+            ReleaseDC(NULL, hdc);
+            DeleteObject(iconInfo.hbmColor);
+            DeleteObject(iconInfo.hbmMask);
+            
+            pixmap = QPixmap::fromImage(image);
+        }
+    }
+#endif
     DestroyIcon(hIcon);
     if (pixmap.isNull()) {
         DLOG << "Pixmap is null";

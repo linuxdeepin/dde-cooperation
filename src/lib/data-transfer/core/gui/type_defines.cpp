@@ -138,7 +138,7 @@ void StyleHelper::setAutoFont(QWidget *widget, int size, int weight)
     DLOG << "Non-Linux platform, setting font directly";
     QFont font;
     font.setPixelSize(size);
-    font.setWeight(weight);
+    font.setWeight((QFont::Weight)weight);
     widget->setFont(font);
 #endif
 }

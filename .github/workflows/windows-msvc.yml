@@ -10,7 +10,7 @@ jobs:
       matrix:
         include:
           - name: win64_msvc
-            os: windows-2019
+            os: windows-2022
             build_type: Release
             compiler_type: msvc2019_64
             msvc_arch: x64
@@ -23,6 +23,8 @@ jobs:
       COMPILER_TYPE: ${{ matrix.compiler_type }}
       QT_VERSION: ${{ matrix.qt_version }}
       OPENSSL_ROOT_DIR: C:\Program Files\OpenSSL
+      OPENSSL_INCLUDE_DIR: C:\Program Files\OpenSSL\include
+      OPENSSL_CRYPTO_LIBRARY: C:\Program Files\OpenSSL\lib
     steps:
       # force 6.2.2 version of Inno Setup
       # - name: Install Inno Setup
@@ -43,14 +45,15 @@ jobs:
           version: ${{ env.QT_VERSION }}
           target: ${{ matrix.qt_target }}
           arch: ${{ matrix.qt_arch }}
+          # modules: 'qt5compat'
           # cached: 'false'
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
-      # 3.20.0 高版本无法找到OPENSSL和ZLIB
+      # Use CMake 3.31.x for better OpenSSL 3.x compatibility while supporting VS 2022
       - name: Setup cmake
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: 3.20.0
+          cmakeVersion: 3.31.5
           ninjaVersion: 1.11.1
 
       - name: Checkout
@@ -64,24 +67,65 @@ jobs:
         shell: cmd
         env:
           vc_arch: ${{ matrix.msvc_arch }}
-          cmake_gen: Visual Studio 16 2019
+          cmake_gen: Visual Studio 17 2022
           COO_PROJECT: dde-cooperation
           DT_PROJECT: data-transfer
           BONJOUR_SDK: ${{ github.workspace }}\source\3rdparty\ext\BonjourSDK
         run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          REM Use Visual Studio 2022 Enterprise (pre-installed on Windows 2022 runner)
+          set "VS2022_PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+          if not exist "%VS2022_PATH%\VC\Auxiliary\Build\vcvarsall.bat" (
+            echo Visual Studio 2022 Enterprise not found at expected location!
+            exit /b 1
+          )
+          echo Using Visual Studio 2022 at: %VS2022_PATH%
+          call "%VS2022_PATH%\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          
+          REM Initialize OpenSSL environment (based on start.bat logic)
+          echo ============== OpenSSL Initialization ==============
+          echo Setting up OpenSSL environment...
+          
+          REM Add OpenSSL bin directory to PATH (following start.bat pattern)
+          set "PATH=%PATH%;%OPENSSL_ROOT_DIR%\bin"
+          echo Updated PATH: %OPENSSL_ROOT_DIR%\bin added to PATH
+          
+          REM Verify OpenSSL installation (like start.bat does)
+          echo.
+          echo Verifying OpenSSL installation:
+          openssl version -a
+          echo.
+          echo OpenSSL environment ready
+          echo ================================================
+          
+          REM Display key OpenSSL environment variables
+          echo OpenSSL Configuration:
+          echo   OPENSSL_ROOT_DIR: %OPENSSL_ROOT_DIR%
+          echo   OPENSSL_INCLUDE_DIR: %OPENSSL_INCLUDE_DIR%
+          echo   OPENSSL_CRYPTO_LIBRARY: %OPENSSL_CRYPTO_LIBRARY%
+          echo.
+          
           mkdir build && cd build
           mkdir installer-inno
-          cmake -G "%cmake_gen%" -A %vc_arch% -D CMAKE_BUILD_TYPE=%BUILD_TYPE% -D APP_VERSION="${{ github.ref_name }}" ../source/
+          echo Current working directory: %CD%
+          echo Source directory: %GITHUB_WORKSPACE%\source
+          if exist "%GITHUB_WORKSPACE%\source\CMakeLists.txt" (
+            echo Found CMakeLists.txt in source directory
+            cmake -G "%cmake_gen%" -A %vc_arch% -D CMAKE_BUILD_TYPE=%BUILD_TYPE% -D APP_VERSION="${{ github.ref_name }}" "%GITHUB_WORKSPACE%\source"
+          ) else (
+            echo ERROR: CMakeLists.txt not found in source directory
+            dir "%GITHUB_WORKSPACE%\source"
+            exit /b 1
+          )
           cmake --build . --config %BUILD_TYPE%
 
           echo ------------copy files to output directory------------
 
           if exist output\%BUILD_TYPE% (
               copy output\%BUILD_TYPE%\* output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
-              del output\%COO_PROJECT%\%BUILD_TYPE%\quazip5.* > NUL
-              copy "%OPENSSL_ROOT_DIR%\libcrypto-1_1-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
-              copy "%OPENSSL_ROOT_DIR%\libssl-1_1-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
+              REM del output\%COO_PROJECT%\%BUILD_TYPE%\quazip* > NUL
+              
+              copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
+              copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
               
               mkdir installer-inno\%COO_PROJECT%
               copy "%BONJOUR_SDK%\Bonjour64.msi" installer-inno\%COO_PROJECT%\ > NUL
@@ -90,9 +134,10 @@ jobs:
               )
 
 
-              copy output\%BUILD_TYPE%\quazip5.* output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
-              copy "%OPENSSL_ROOT_DIR%\libcrypto-1_1-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
-              copy "%OPENSSL_ROOT_DIR%\libssl-1_1-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
+              REM copy output\%BUILD_TYPE%\quazip* output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
+              
+              copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
+              copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
               mkdir installer-inno\%DT_PROJECT%
               copy "%B_BONJOUR%\Bonjour64.msi" installer-inno\%DT_PROJECT%\ > NUL
               if exist output\%DT_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe (

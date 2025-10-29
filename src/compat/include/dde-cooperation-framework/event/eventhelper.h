@@ -226,7 +226,11 @@ template<class Result>
 inline QVariant resultGenerator()
 {
     int typeId = qMetaTypeId<Result>();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     return QVariant(QVariant::Type(typeId));
+#else
+    return QVariant(QMetaType(typeId));
+#endif
 }
 template<>
 inline QVariant resultGenerator<void>()

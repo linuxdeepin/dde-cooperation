@@ -33,7 +33,11 @@ DeviceListener *DeviceListener::instance()
     return &ins;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 bool DeviceListener::nativeEvent(const QByteArray &eventType, void *message, long *result)
+#else
+bool DeviceListener::nativeEvent(const QByteArray &eventType, void *message, qintptr *result)
+#endif
 {
     MSG *msg = reinterpret_cast<MSG *>(message);
     if (msg->message == WM_DEVICECHANGE) {

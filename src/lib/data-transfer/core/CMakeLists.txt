@@ -83,7 +83,11 @@ else()
 endif()
 
 if (WIN32)
-    set(qt_required_components Core Gui Network Widgets Sql WinExtras)
+    if (QT_VERSION_MAJOR EQUAL 5)
+        set(qt_required_components Core Gui Network Widgets Sql WinExtras)
+    else()
+        set(qt_required_components Core Gui Network Widgets Sql)
+    endif()
 else()
     set(qt_required_components Core Gui Network Widgets DBus)
 endif()
@@ -161,8 +165,12 @@ if (CMAKE_SYSTEM MATCHES "Windows")
         PRIVATE
         ${QUAZIP_LIBRARIES}
         Qt${QT_VERSION_MAJOR}::Sql
-        Qt${QT_VERSION_MAJOR}::WinExtras
     )
+    
+    # Link WinExtras only for Qt5
+    if (QT_VERSION_MAJOR EQUAL 5)
+        target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::WinExtras)
+    endif()
 
     target_include_directories(${PROJECT_NAME}
         PRIVATE
