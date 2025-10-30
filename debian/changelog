@@ -1,3 +1,12 @@
+dde-cooperation (1.1.22) unstable; urgency=medium
+
+  * chore: Update version to 1.1.22.
+  * fix: [CI] Fix windows building env issue.
+  * fix: Enhance file watcher and connection history management
+  * fix: Add file transfer settings dialog improvements
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 30 Oct 2025 19:39:19 +0800
+
 dde-cooperation (1.1.21) unstable; urgency=medium
 
   * chore: Update version to 1.1.21.
