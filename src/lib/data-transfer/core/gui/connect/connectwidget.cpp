@@ -9,7 +9,7 @@
 #    include <QLineEdit>
 #    include <QTimer>
 #    include <QHostInfo>
-#    include <QNetworkInterface>
+#    include <common/commonutils.h>
 #    include <QDesktopServices>
 
 #    include <net/helper/transferhepler.h>
@@ -102,8 +102,7 @@ void ConnectWidget::initConnectLayout()
 {
     DLOG << "ConnectWidget initConnectLayout";
     //ipLayout
-    QList<QHostAddress> address = QNetworkInterface::allAddresses();
-    QString ipaddress = address.count() > 2 ? address[2].toString() : "";
+    QString ipaddress = deepin_cross::CommonUitls::getFirstIp().data();
 
     QVBoxLayout *ipVLayout = new QVBoxLayout();
     QLabel *iconLabel = new QLabel(this);
