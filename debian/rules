@@ -1,6 +1,9 @@
 #!/usr/bin/make -f
 include /usr/share/dpkg/default.mk
 
+# 启用立即绑定和只读重定位，提高安全性
+export DEB_LDFLAGS_APPEND = -Wl,-z,now -Wl,-z,relro
+
 # 检测当前安装的Qt版本，优先使用Qt6，否则使用Qt5
 define detect_qt_version
 ifneq (,$(shell which qmake6 2>/dev/null))
