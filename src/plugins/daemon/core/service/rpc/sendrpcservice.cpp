@@ -63,6 +63,14 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
                 QString tar = sender->targetAppname();
                 info.tarAppname = tar.isEmpty() ?
                                   appName.toStdString() : tar.toStdString();
+
+                // 安全验证：用户确认接收文件时，记录确认状态
+                if (info.type == APPLY_TRANS_CONFIRM) {
+                    JobManager::instance()->confirmTransfer(appName);
+                } else if (info.type == APPLY_TRANS_REFUSED) {
+                    // 用户拒绝时，移除确认状态
+                    JobManager::instance()->removeConfirmedTransfer(appName);
+                }
             }
             res = sender->doSendProtoMsg(type, info.as_json().str().c_str(), data);
         } else if (type == APPLY_SHARE_CONNECT_RES) {

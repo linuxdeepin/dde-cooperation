@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QSet>
 #include <QSharedPointer>
 #include <QReadWriteLock>
 
@@ -20,6 +21,11 @@ class JobManager : public QObject
 public:
     static JobManager *instance();
     ~JobManager();
+
+    // 安全验证：记录用户已确认接收文件的appName
+    void confirmTransfer(const QString &appName);
+    void removeConfirmedTransfer(const QString &appName);
+    bool isTransferConfirmed(const QString &appName);
 
 public slots:
     bool handleRemoteRequestJob(QString json, QString *targetAppName);
@@ -42,6 +48,10 @@ private:
     QMap<int, QSharedPointer<TransferJob>> _transjob_break;
     fastring _connected_target;
     QReadWriteLock g_m;
+
+    // 安全验证：存储用户已确认接收文件的appName集合
+    QSet<QString> _confirmed_transfers;
+    QReadWriteLock _confirm_mutex;
 };
 
 #endif // JOBMANAGER_H

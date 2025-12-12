@@ -165,7 +165,8 @@ public:
     {
         fastring home = os::homedir();
         if (_targetName.empty()) {
-            _storageDir = home;
+            // 默认使用下载目录
+            _storageDir = path::join(home, "Downloads");
         } else {
             _storageDir = path::join(home, _targetName);
         }
@@ -177,7 +178,8 @@ public:
         fastring home;
         home = getAppConfig(appName, "storagedir");
         if (home.empty())
-            home = getStorageDir();
+            // 默认使用下载目录
+            home = path::join(os::homedir(), "Downloads");
 
         return home;
     }

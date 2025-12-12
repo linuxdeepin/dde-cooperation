@@ -21,6 +21,26 @@ JobManager::~JobManager()
 {
 }
 
+void JobManager::confirmTransfer(const QString &appName)
+{
+    QWriteLocker lk(&_confirm_mutex);
+    _confirmed_transfers.insert(appName);
+    DLOG << "Transfer confirmed for app: " << appName.toStdString();
+}
+
+void JobManager::removeConfirmedTransfer(const QString &appName)
+{
+    QWriteLocker lk(&_confirm_mutex);
+    _confirmed_transfers.remove(appName);
+    DLOG << "Transfer confirmation removed for app: " << appName.toStdString();
+}
+
+bool JobManager::isTransferConfirmed(const QString &appName)
+{
+    QReadLocker lk(&_confirm_mutex);
+    return _confirmed_transfers.contains(appName);
+}
+
 bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
 {
     co::Json info;
@@ -38,6 +58,17 @@ bool JobManager::handleRemoteRequestJob(QString json, QString *targetAppName)
     if (targetAppName)
         *targetAppName = QString(tarAppname.c_str());
     SendRpcService::instance()->removePing(tarAppname.c_str());
+
+    // 安全验证：如果是写入作业（接收文件），必须验证用户已确认接收
+    if (fsjob.write) {
+        QString sourceApp = QString(appName.c_str());
+        if (!isTransferConfirmed(sourceApp)) {
+            ELOG << "Security: Rejected file transfer from " << appName
+                 << " - user has not confirmed acceptance";
+            return false;
+        }
+    }
+
     QSharedPointer<TransferJob> job(new TransferJob());
     job->initJob(fsjob.app_who, tarAppname, jobId, fsjob.path, fsjob.sub, savedir, fsjob.write);
     if (!job->initRpc(fsjob.ip.empty() ? _connected_target : fsjob.ip, UNI_RPC_PORT_TRANS) || !job->initSuccess()) {
@@ -289,6 +320,11 @@ void JobManager::handleJobTransStatus(QString appname, int jobid, int status, QS
 
     req.add_member("api", "Frontend.cbTransStatus");
     SendIpcService::instance()->handleSendToClient(appname, req.str().c_str());
+
+    // 安全验证：作业完成、取消或失败时，清理确认状态
+    if (status == JOB_TRANS_FINISHED || status == JOB_TRANS_CANCELED || status == JOB_TRANS_FAILED) {
+        removeConfirmedTransfer(appname);
+    }
 }
 
 void JobManager::handleRemoveJob(const int jobid)
