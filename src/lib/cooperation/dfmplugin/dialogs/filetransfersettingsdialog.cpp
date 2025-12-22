@@ -88,7 +88,7 @@ void FileChooserEdit::onButtonClicked()
     }
 
     if (!QFileInfo(dirPath).isWritable() || QDir(dirPath).entryInfoList().isEmpty()) {
-        qInfo() << "Invalid directory selected:" << dirPath.toStdString();
+        qInfo() << "Invalid directory selected:" << dirPath;
         InformationDialog dialog;
         dialog.exec();
         onButtonClicked();
