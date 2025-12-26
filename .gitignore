@@ -24,6 +24,8 @@ CMake*.json
 .taskmaster/
 .kilocode/
 .marscode/
+.qoder/
+.serena/
 
 # Modules
 modules/*
