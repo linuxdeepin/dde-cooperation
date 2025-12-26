@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi"
+         xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <!-- Dependency detection: VC++ Redistributable -->
+  <util:RegistrySearch
+      Id="VCRedist64Installed"
+      Root="HKLM"
+      Key="SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64"
+      Value="Installed"
+      Type="raw"
+      Result="value" />
+
+  <util:RegistrySearch
+      Id="VCRedist86Installed"
+      Root="HKLM"
+      Key="SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86"
+      Value="Installed"
+      Type="raw"
+      Result="value" />
+
+  <!-- Dependency detection: Bonjour -->
+  <util:RegistrySearch
+      Id="BonjourInstalled"
+      Root="HKLM"
+      Key="SOFTWARE\Apple Inc.\Bonjour"
+      Value="Version"
+      Type="raw"
+      Result="value" />
+
+</Include>

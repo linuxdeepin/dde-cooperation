@@ -1,5 +1,5 @@
 name: Windows MSVC Release
-on: 
+on:
   push:
     tags:
       - "*"
@@ -9,47 +9,47 @@ jobs:
     strategy:
       matrix:
         include:
+          # 64-bit build
           - name: win64_msvc
             os: windows-2022
             build_type: Release
-            compiler_type: msvc2019_64
             msvc_arch: x64
             qt_arch: win64_msvc2019_64
+            qt_version: 5.15.2
+            qt_target: desktop
+          # 32-bit build
+          - name: win32_msvc
+            os: windows-2022
+            build_type: Release
+            msvc_arch: x86
+            qt_arch: win32_msvc2019_64
             qt_version: 5.15.2
             qt_target: desktop
     runs-on: ${{ matrix.os }}
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
-      COMPILER_TYPE: ${{ matrix.compiler_type }}
       QT_VERSION: ${{ matrix.qt_version }}
-      OPENSSL_ROOT_DIR: C:\Program Files\OpenSSL
-      OPENSSL_INCLUDE_DIR: C:\Program Files\OpenSSL\include
-      OPENSSL_CRYPTO_LIBRARY: C:\Program Files\OpenSSL\lib
+      COO_PROJECT: dde-cooperation
+      DT_PROJECT: data-transfer
+      # OpenSSL paths based on architecture
+      OPENSSL_ROOT_DIR: ${{ matrix.msvc_arch == 'x64' && 'C:\Program Files\OpenSSL' || 'C:\Program Files (x86)\OpenSSL' }}
     steps:
-      # force 6.2.2 version of Inno Setup
-      # - name: Install Inno Setup
-      #   run: |
-      #     choco install innosetup --version 6.2.2 --allow-downgrade -y
-
-      - name: '⚙️ Cache Qt'
+      - name: "⚙️ Cache Qt"
         id: cache-qt
         uses: actions/cache@v3
         with:
           path: ..\Qt
-          key: Windows-QtCache-${{ env.QT_VERSION }}
+          key: Windows-QtCache-${{ env.QT_VERSION }}-${{ matrix.qt_arch }}
 
-      - name: Install Qt ${{ env.QT_VERSION }}
+      - name: Install Qt ${{ env.QT_VERSION }} ${{ matrix.qt_arch }}
         uses: jurplel/install-qt-action@v3
         with:
-          aqtversion: '==3.1.*'
+          aqtversion: "==3.1.*"
           version: ${{ env.QT_VERSION }}
           target: ${{ matrix.qt_target }}
           arch: ${{ matrix.qt_arch }}
-          # modules: 'qt5compat'
-          # cached: 'false'
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
-      # Use CMake 3.31.x for better OpenSSL 3.x compatibility while supporting VS 2022
       - name: Setup cmake
         uses: lukka/get-cmake@latest
         with:
@@ -63,108 +63,82 @@ jobs:
           fetch-depth: 0
 
       - name: msvc-build
-        id: build
         shell: cmd
         env:
           vc_arch: ${{ matrix.msvc_arch }}
           cmake_gen: Visual Studio 17 2022
-          COO_PROJECT: dde-cooperation
-          DT_PROJECT: data-transfer
-          BONJOUR_SDK: ${{ github.workspace }}\source\3rdparty\ext\BonjourSDK
+          APP_VERSION: ${{ github.ref_name }}
         run: |
-          REM Use Visual Studio 2022 Enterprise (pre-installed on Windows 2022 runner)
+          REM Use Visual Studio 2022 Enterprise
           set "VS2022_PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
-          if not exist "%VS2022_PATH%\VC\Auxiliary\Build\vcvarsall.bat" (
-            echo Visual Studio 2022 Enterprise not found at expected location!
-            exit /b 1
-          )
-          echo Using Visual Studio 2022 at: %VS2022_PATH%
           call "%VS2022_PATH%\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
-          
-          REM Initialize OpenSSL environment (based on start.bat logic)
-          echo ============== OpenSSL Initialization ==============
-          echo Setting up OpenSSL environment...
-          
-          REM Add OpenSSL bin directory to PATH (following start.bat pattern)
-          set "PATH=%PATH%;%OPENSSL_ROOT_DIR%\bin"
-          echo Updated PATH: %OPENSSL_ROOT_DIR%\bin added to PATH
-          
-          REM Verify OpenSSL installation (like start.bat does)
-          echo.
-          echo Verifying OpenSSL installation:
-          openssl version -a
-          echo.
-          echo OpenSSL environment ready
+
+          echo ============== Build Configuration ==============
+          echo Architecture: %vc_arch%
+          echo OpenSSL: %OPENSSL_ROOT_DIR%
+          echo App Version: %APP_VERSION%
           echo ================================================
-          
-          REM Display key OpenSSL environment variables
-          echo OpenSSL Configuration:
-          echo   OPENSSL_ROOT_DIR: %OPENSSL_ROOT_DIR%
-          echo   OPENSSL_INCLUDE_DIR: %OPENSSL_INCLUDE_DIR%
-          echo   OPENSSL_CRYPTO_LIBRARY: %OPENSSL_CRYPTO_LIBRARY%
-          echo.
-          
+
           mkdir build && cd build
-          mkdir installer-inno
-          echo Current working directory: %CD%
-          echo Source directory: %GITHUB_WORKSPACE%\source
-          if exist "%GITHUB_WORKSPACE%\source\CMakeLists.txt" (
-            echo Found CMakeLists.txt in source directory
-            cmake -G "%cmake_gen%" -A %vc_arch% -D CMAKE_BUILD_TYPE=%BUILD_TYPE% -D APP_VERSION="${{ github.ref_name }}" "%GITHUB_WORKSPACE%\source"
-          ) else (
-            echo ERROR: CMakeLists.txt not found in source directory
-            dir "%GITHUB_WORKSPACE%\source"
-            exit /b 1
-          )
+
+          echo ------------CMake Configuration------------
+          cmake -G "%cmake_gen%" -A %vc_arch% ^
+            -D CMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+            -D CMAKE_PREFIX_PATH="%Qt5_DIR%" ^
+            -D QT_VERSION=%QT_VERSION% ^
+            -D APP_VERSION=%APP_VERSION% ^
+            -D ENABLE_WIX=ON ^
+            "%GITHUB_WORKSPACE%\source"
+          if ERRORLEVEL 1 exit /b 1
+
+          echo ------------Build Project------------
           cmake --build . --config %BUILD_TYPE%
+          if ERRORLEVEL 1 exit /b 1
 
-          echo ------------copy files to output directory------------
-
+          echo ------------Copy Dependencies------------
           if exist output\%BUILD_TYPE% (
-              copy output\%BUILD_TYPE%\* output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
-              REM del output\%COO_PROJECT%\%BUILD_TYPE%\quazip* > NUL
-              
-              copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
-              copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
-              
-              mkdir installer-inno\%COO_PROJECT%
-              copy "%BONJOUR_SDK%\Bonjour64.msi" installer-inno\%COO_PROJECT%\ > NUL
-              if exist output\%COO_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe (
-                  move output\%COO_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe installer-inno\%COO_PROJECT%\ > NUL
+              if "%vc_arch%"=="x64" (
+                  copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
+                  copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
+                  copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
+                  copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
+              ) else (
+                  copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x86.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
+                  copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x86.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
+                  copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x86.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
+                  copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x86.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
               )
-
-
-              REM copy output\%BUILD_TYPE%\quazip* output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
-              
-              copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
-              copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
-              mkdir installer-inno\%DT_PROJECT%
-              copy "%B_BONJOUR%\Bonjour64.msi" installer-inno\%DT_PROJECT%\ > NUL
-              if exist output\%DT_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe (
-                  move output\%DT_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe installer-inno\%DT_PROJECT%\ > NUL
-              )
-          ) else (
-              echo Remember to copy supporting binaries and configuration files!
           )
 
-          echo Build completed successfully
+          echo ------------Build Packages (Inno + WiX)------------
+          cmake --build . --config %BUILD_TYPE% --target package
+          if ERRORLEVEL 1 echo Warning: Package build failed, continuing...
 
-      - name: Inno Setup data-transfer
-        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
-        with:
-          filepath: build/deepin-data-transfer-setup.iss
-
-      - name: Inno Setup cooperation
-        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
-        with:
-          filepath: build/dde-cooperation-setup.iss
-
-      - name: Make Installer Directories
+      - name: Make Installer Archives
         run: |
-          move build/installer-inno/deepin-cooperation-* build/installer-inno/dde-cooperation/ > NUL
-          powershell -Command "Compress-Archive -Path build/installer-inno/dde-cooperation/* -DestinationPath build/installer-inno/dde-cooperation.zip"
-          move build/installer-inno/deepin-datatransfer-* build/installer-inno/data-transfer/ > NUL
-          powershell -Command "Compress-Archive -Path build/installer-inno/data-transfer/* -DestinationPath build/installer-inno/deepin-data-transfer.zip"
+          # Archive all installers
+          if exist "build/_CPack_Packages" (
+            New-Item -ItemType Directory -Force -Path build/installers
+            Get-ChildItem -Path build/_CPack_Packages -Recurse -Filter *.msi | ForEach-Object {
+              $dest = "build/installers/$($_.Name)"
+              Move-Item $_.FullName -Destination $dest -Force
+            }
+            Compress-Archive -Path build/installers/* -DestinationPath build/installers-${{ matrix.msvc_arch }}.zip
+          }
+          if exist "build/_CPack_Packages" (
+            Get-ChildItem -Path build/_CPack_Packages -Recurse -Filter *.7z | ForEach-Object {
+              Copy-Item $_.FullName -Destination build/
+            }
+          }
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installers-${{ matrix.msvc_arch }}
+          path: |
+            build/*.zip
+            build/*.7z
+          retention-days: 30
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -172,6 +146,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: build/installer-inno/*.zip
+          files: build/*.zip
           generate_release_notes: true
           draft: true

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization xmlns="http://schemas.microsoft.com/wix/2006/localization" Culture="en-us">
+
+  <String Id="Culture">en-us</String>
+
+  <!-- Application names -->
+  <String Id="ProductName">deepin-cooperation</String>
+  <String Id="ProductNameFull">Deepin Cooperation</String>
+
+  <!-- UI strings -->
+  <String Id="WelcomeDlgTitle">Welcome to the [ProductName] Setup Wizard</String>
+  <String Id="WelcomeDlgDescription">Setup will install [ProductName] on your computer. Click Next to continue.</String>
+
+  <String Id="LicenseAgreementDlgTitle">License Agreement</String>
+  <String Id="LicenseAgreementDlgDescription">Please read the following license agreement. You must accept the agreement to continue.</String>
+
+  <String Id="InstallDirDlgTitle">Select Installation Folder</String>
+  <String Id="InstallDirDlgDescription">Setup will install [ProductName] in the folder shown below. To install to a different folder, click Browse and select another folder.</String>
+
+  <String Id="VerifyReadyDlgInstall">Click Install to begin the installation.</String>
+  <String Id="VerifyReadyDlgRepair">Click Repair to repair the installation of [ProductName].</String>
+  <String Id="VerifyReadyDlgRemove">Click Remove to remove [ProductName] from your computer.</String>
+
+  <String Id="ExitDlgTitle">Completing the [ProductName] Setup Wizard</String>
+  <String Id="ExitDlgDescription">[ProductName] has been successfully installed.</String>
+
+  <!-- Custom messages -->
+  <String Id="LaunchApplication">Launch [ProductName]</String>
+  <String Id="CreateDesktopIcon">Create a desktop icon</String>
+
+  <!-- Feature descriptions -->
+  <String Id="FeatureProductFeatureTitle">[ProductName]</String>
+  <String Id="FeatureProductFeatureDescription">The complete [ProductName] installation package.</String>
+
+  <!-- Progress text -->
+  <String Id="ProgressTextInstallFiles">Copying new files</String>
+  <String Id="ProgressTextInstallFilesTemplate">Copying file: File: [1], Directory: [9], Size: [6]</String>
+  <String Id="ProgressTextCreateShortcuts">Creating shortcuts</String>
+  <String Id="ProgressTextRegisterProduct">Registering product</String>
+  <String Id="ProgressTextPublishComponents">Publishing components</String>
+  <String Id="ProgressTextPublishFeatures">Publishing features</String>
+  <String Id="ProgressTextPublishProduct">Publishing product information</String>
+
+</WixLocalization>
