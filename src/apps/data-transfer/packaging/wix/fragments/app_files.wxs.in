@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi"
+         xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <!-- Application files component group -->
+  <ComponentGroup Id="ApplicationFiles" Directory="INSTALLFOLDER">
+
+    <!-- Main executable file -->
+    <Component Id="MainExecutable" Guid="*">
+      <File Id="ExeFile"
+            Name="$(var.ProjName).exe"
+            Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/$(var.ProjName).exe"
+            KeyPath="yes">
+      </File>
+    </Component>
+
+    <!-- Translation files directory -->
+    <Component Id="TranslationFiles" Guid="*">
+      <File Id="TranslationsDir"
+            Name="translations"
+            Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/translations"
+            KeyPath="no" />
+    </Component>
+
+  </ComponentGroup>
+
+  <!-- Qt runtime files - collected by windeployqt -->
+  <ComponentGroup Id="QtRuntimeFiles" Directory="INSTALLFOLDER">
+    <!-- Core Qt DLLs -->
+    <Component Id="Qt5Core" Guid="*">
+      <File Id="Qt5CoreDll"
+            Name="Qt5Core.dll"
+            Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/Qt5Core.dll"
+            Vital="yes" />
+    </Component>
+
+    <Component Id="Qt5Gui" Guid="*">
+      <File Id="Qt5GuiDll"
+            Name="Qt5Gui.dll"
+            Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/Qt5Gui.dll"
+            Vital="yes" />
+    </Component>
+
+    <Component Id="Qt5Widgets" Guid="*">
+      <File Id="Qt5WidgetsDll"
+            Name="Qt5Widgets.dll"
+            Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/Qt5Widgets.dll"
+            Vital="yes" />
+    </Component>
+
+    <Component Id="Qt5Network" Guid="*">
+      <File Id="Qt5NetworkDll"
+            Name="Qt5Network.dll"
+            Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/Qt5Network.dll"
+            Vital="yes" />
+    </Component>
+
+    <Component Id="Qt5Sql" Guid="*">
+      <File Id="Qt5SqlDll"
+            Name="Qt5Sql.dll"
+            Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/Qt5Sql.dll"
+            Vital="yes" />
+    </Component>
+
+    <!-- Qt platforms plugin directory -->
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Directory Id="QtPlatformsDir" Name="platforms">
+        <Component Id="QtPlatformsPlugin" Guid="*">
+          <File Id="QtPlatformsPluginDll"
+                Name="qwindows.dll"
+                Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/platforms/qwindows.dll"
+                Vital="yes" />
+        </Component>
+      </Directory>
+    </DirectoryRef>
+
+    <!-- Qt imageformats plugin directory -->
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Directory Id="QtImageFormatsDir" Name="imageformats">
+        <Component Id="QtImageFormatsPlugin" Guid="*">
+          <!-- Common image format plugins -->
+          <File Id="QJpegPlugin"
+                Name="qjpeg.dll"
+                Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/imageformats/qjpeg.dll"
+                Vital="no" />
+          <File Id="QIcoPlugin"
+                Name="qico.dll"
+                Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/imageformats/qico.dll"
+                Vital="no" />
+          <File Id="QSvgPlugin"
+                Name="qsvg.dll"
+                Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/imageformats/qsvg.dll"
+                Vital="no" />
+        </Component>
+      </Directory>
+    </DirectoryRef>
+
+    <!-- Qt styles plugin directory -->
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Directory Id="QtStylesDir" Name="styles">
+        <Component Id="QtStylesPlugin" Guid="*">
+          <File Id="QWindowsVistaStyle"
+                Name="qwindowsvistastyle.dll"
+                Source="@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/styles/qwindowsvistastyle.dll"
+                Vital="no" />
+        </Component>
+      </Directory>
+    </DirectoryRef>
+  </ComponentGroup>
+
+  <!-- OpenSSL library files -->
+  <ComponentGroup Id="OpenSSLFiles" Directory="INSTALLFOLDER">
+    <?if $(var.Platform) = x64 ?>
+    <!-- 64-bit OpenSSL -->
+    <Component Id="OpenSSL_Crypto64" Guid="*">
+      <File Id="OpenSSL_Crypto"
+            Name="libcrypto-3-x64.dll"
+            Source="@OPENSSL_ROOT_DIR@/bin/libcrypto-3-x64.dll"
+            Vital="yes" />
+    </Component>
+    <Component Id="OpenSSL_SSL64" Guid="*">
+      <File Id="OpenSSL_SSL"
+            Name="libssl-3-x64.dll"
+            Source="@OPENSSL_ROOT_DIR@/bin/libssl-3-x64.dll"
+            Vital="yes" />
+    </Component>
+    <?elseif $(var.Platform) = x86 ?>
+    <!-- 32-bit OpenSSL -->
+    <Component Id="OpenSSL_Crypto86" Guid="*">
+      <File Id="OpenSSL_Crypto"
+            Name="libcrypto-3-x86.dll"
+            Source="@OPENSSL_ROOT_DIR@/bin/libcrypto-3-x86.dll"
+            Vital="yes" />
+    </Component>
+    <Component Id="OpenSSL_SSL86" Guid="*">
+      <File Id="OpenSSL_SSL"
+            Name="libssl-3-x86.dll"
+            Source="@OPENSSL_ROOT_DIR@/bin/libssl-3-x86.dll"
+            Vital="yes" />
+    </Component>
+    <?endif ?>
+  </ComponentGroup>
+
+</Include>

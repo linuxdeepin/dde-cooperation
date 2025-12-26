@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <!-- Start menu shortcut -->
+  <DirectoryRef Id="ApplicationProgramsFolder">
+    <Component Id="ApplicationShortcut" Guid="*">
+      <Shortcut Id="StartMenuShortcut"
+                Name="$(var.ProductName)"
+                Description="Launch $(var.ProductName)"
+                Target="[INSTALLFOLDER]$(var.ProjName).exe"
+                Icon="AppIcon"
+                IconIndex="0"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+      <RegistryValue Root="HKCU"
+                     Key="Software\Uniontech\$(var.ProductName)"
+                     Name="installed"
+                     Type="integer"
+                     Value="1"
+                     KeyPath="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <!-- Uninstall shortcut -->
+  <DirectoryRef Id="ApplicationProgramsFolder">
+    <Component Id="UninstallShortcut" Guid="*">
+      <Shortcut Id="UninstallShortcut"
+                Name="Uninstall $(var.ProductName)"
+                Target="[SystemFolder]msiexec.exe"
+                Arguments="/x [ProductCode]"
+                Description="Uninstall $(var.ProductName)" />
+      <RemoveFolder Id="ApplicationProgramsFolderCleanup" On="uninstall" />
+      <RegistryValue Root="HKCU"
+                     Key="Software\Uniontech\$(var.ProductName)"
+                     Name="uninstall_shortcut"
+                     Type="integer"
+                     Value="1"
+                     KeyPath="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <!-- Desktop shortcut (optional) -->
+  <DirectoryRef Id="DesktopFolder">
+    <Component Id="DesktopShortcut" Guid="*">
+      <Condition>INSTALLDESKTOPSHORTCUT</Condition>
+      <Shortcut Id="DesktopShortcut"
+                Name="$(var.ProductName)"
+                Description="Launch $(var.ProductName)"
+                Target="[INSTALLFOLDER]$(var.ProjName).exe"
+                Icon="AppIcon"
+                IconIndex="0"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RegistryValue Root="HKCU"
+                     Key="Software\Uniontech\$(var.ProductName)"
+                     Name="desktop_shortcut"
+                     Type="integer"
+                     Value="1"
+                     KeyPath="yes" />
+    </Component>
+  </DirectoryRef>
+
+  <!-- Property to enable desktop shortcut - set to 0 by default (don't create) -->
+  <Property Id="INSTALLDESKTOPSHORTCUT" Secure="yes" Value="0" />
+
+</Include>
