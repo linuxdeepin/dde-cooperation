@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.13)
 
 project(dde-cooperation VERSION 0.1 LANGUAGES CXX)
 
@@ -72,8 +72,8 @@ if (WIN32)
 
     # windows runtime output defined
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
-#    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
-#    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
+    #    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
+    #    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY})
 
     file(GLOB INNO_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/dist/inno/scripts)
     file(COPY ${INNO_SCRIPTS} DESTINATION ${CMAKE_BINARY_DIR})
@@ -81,16 +81,16 @@ endif()
 
 # 如果未设置CMAKE_BUILD_TYPE，则将其设置为Release
 if(NOT CMAKE_BUILD_TYPE)
-   message("Build type is not defined, default to Debug")
-   set(CMAKE_BUILD_TYPE "Debug")
+    message("Build type is not defined, default to Debug")
+    set(CMAKE_BUILD_TYPE "Debug")
 endif()
 message("   >>> CMAKE_BUILD_TYPE  ${CMAKE_BUILD_TYPE}")
 
 # 后台进程安装目录
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  set(EXECUTABLE_INSTALL_DIR "")
+    set(EXECUTABLE_INSTALL_DIR "")
 else()
-  set(EXECUTABLE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/libexec/${PROJECT_NAME}")
+    set(EXECUTABLE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/libexec/${PROJECT_NAME}")
 endif()
 
 option(ENABLE_SLOTIPC "Enable SlotIPC for compatible with old daemon" ON)
@@ -130,3 +130,19 @@ if(MSVC)
     add_compile_options(/utf-8)
 endif()
 add_subdirectory(src)
+
+# CPack configuration for Windows WiX packaging
+if(WIN32 AND ENABLE_WIX)
+    # Basic CPack settings
+    set(CPACK_PACKAGE_VENDOR "Uniontech, Inc.")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Deepin Cooperation and Data Transfer Tools")
+
+    # Find WiX tools
+    find_program(WIX_CANDLE_EXE candle PATHS "C:/Program Files/WiX Toolset v6.0/bin" "C:/Program Files (x86)/WiX Toolset v6.0/bin")
+    find_program(WIX_LIGHT_EXE light PATHS "C:/Program Files/WiX Toolset v6.0/bin" "C:/Program Files (x86)/WiX Toolset v6.0/bin")
+
+    if(WIX_CANDLE_EXE AND WIX_LIGHT_EXE)
+        message(STATUS "WiX Toolset found, enabling CPack WiX generator")
+        include(CPack)
+    endif()
+endif()

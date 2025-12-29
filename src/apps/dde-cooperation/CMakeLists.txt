@@ -1,4 +1,4 @@
-﻿set(PROJ_NAME "dde-cooperation")
+set(PROJ_NAME "dde-cooperation")
 set(PKG_NAME "dde-cooperation")
 
 # enable qt build support
@@ -46,6 +46,12 @@ if (WIN32)
 
     # 安装包制作inno脚本
     configure_file(${CMAKE_SOURCE_DIR}/dist/inno/setup.iss.in ${CMAKE_BINARY_DIR}/${PROJ_NAME}-setup.iss)
+
+    # WiX packaging using CPack (optional)
+    option(ENABLE_WIX "Enable WiX MSI packaging using CPack" ON)
+    if(ENABLE_WIX)
+        include(packaging/wix/cpack_config.cmake)
+    endif()
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization xmlns="http://schemas.microsoft.com/wix/2006/localization" Culture="zh-cn">
+
+  <String Id="Culture">zh-cn</String>
+
+  <!-- Application names -->
+  <String Id="ProductName">数据迁移</String>
+  <String Id="ProductNameFull">数据迁移</String>
+
+  <!-- UI strings -->
+  <String Id="WelcomeDlgTitle">欢迎使用 [ProductName] 安装向导</String>
+  <String Id="WelcomeDlgDescription">安装程序将在您的计算机上安装 [ProductName]。点击"下一步"继续。</String>
+
+  <String Id="LicenseAgreementDlgTitle">许可协议</String>
+  <String Id="LicenseAgreementDlgDescription">请阅读以下许可协议。您必须接受该协议才能继续安装。</String>
+
+  <String Id="InstallDirDlgTitle">选择安装文件夹</String>
+  <String Id="InstallDirDlgDescription">安装程序将把 [ProductName] 安装到下面的文件夹中。要安装到其他文件夹，请点击"浏览"并选择另一个文件夹。</String>
+
+  <String Id="VerifyReadyDlgInstall">点击"安装"开始安装。</String>
+  <String Id="VerifyReadyDlgRepair">点击"修复"修复 [ProductName] 的安装。</String>
+  <String Id="VerifyReadyDlgRemove">点击"移除"从您的计算机上移除 [ProductName]。</String>
+
+  <String Id="ExitDlgTitle">正在完成 [ProductName] 安装向导</String>
+  <String Id="ExitDlgDescription">[ProductName] 已成功安装。</String>
+
+  <!-- Custom messages -->
+  <String Id="LaunchApplication">启动 [ProductName]</String>
+  <String Id="CreateDesktopIcon">创建桌面图标</String>
+
+  <!-- Feature descriptions -->
+  <String Id="FeatureProductFeatureTitle">[ProductName]</String>
+  <String Id="FeatureProductFeatureDescription">完整的 [ProductName] 安装包。</String>
+
+  <!-- Progress text -->
+  <String Id="ProgressTextInstallFiles">正在复制新文件</String>
+  <String Id="ProgressTextInstallFilesTemplate">正在复制文件: 文件: [1], 目录: [9], 大小: [6]</String>
+  <String Id="ProgressTextCreateShortcuts">正在创建快捷方式</String>
+  <String Id="ProgressTextRegisterProduct">正在注册产品</String>
+  <String Id="ProgressTextPublishComponents">正在发布组件</String>
+  <String Id="ProgressTextPublishFeatures">正在发布功能</String>
+  <String Id="ProgressTextPublishProduct">正在发布产品信息</String>
+
+</WixLocalization>

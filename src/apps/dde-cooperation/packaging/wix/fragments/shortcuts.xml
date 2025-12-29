@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CPackWiXPatch>
+  <!-- Desktop Shortcut Creation for dde-cooperation -->
+  <UIRef Id="WixUI_InstallDir" />
+  
+  <!-- Add desktop shortcut option to feature -->
+  <Feature Id="Complete" Level="1">
+    <FeatureRef Id="ProductFeature" />
+  </Feature>
+</CPackWiXPatch>

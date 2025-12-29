@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <Product Id="*"
+           Name="@PRODUCT_NAME@"
+           Language="1033"
+           Version="$(var.AppVersion)"
+           Manufacturer="Uniontech, Inc."
+           UpgradeCode="@UPGRADE_CODE@">
+
+    <!-- Package configuration -->
+    <Package InstallerVersion="500"
+             Compressed="yes"
+             InstallScope="perMachine"
+             Description="@PRODUCT_NAME@ Installer"
+             Comments="Deepin Data Transfer Application"
+             Platform="$(var.Platform)" />
+
+    <!-- Media configuration -->
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <!-- Directory structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="@PRODUCT_NAME@" />
+      </Directory>
+
+      <!-- Desktop directory -->
+      <Directory Id="DesktopFolder" Name="Desktop" />
+
+      <!-- Start menu -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="@PRODUCT_NAME@" />
+      </Directory>
+
+      <!-- Common application data -->
+      <Directory Id="CommonAppDataFolder">
+        <Directory Id="COMMONAPPDATADIR" Name="@PRODUCT_NAME@" />
+      </Directory>
+    </Directory>
+
+    <!-- Main feature -->
+    <Feature Id="ProductFeature"
+             Title="@PRODUCT_NAME@"
+             Level="1"
+             ConfigurableDirectory="INSTALLFOLDER"
+             Display="expand"
+             AllowAdvertise="no">
+      <ComponentGroupRef Id="ApplicationFiles" />
+      <ComponentGroupRef Id="QtRuntimeFiles" />
+      <ComponentGroupRef Id="OpenSSLFiles" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="UninstallShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+
+    <!-- Upgrade configuration -->
+    <Upgrade Id="@UPGRADE_CODE@">
+      <UpgradeVersion Minimum="$(var.AppVersion)"
+                      IncludeMinimum="no"
+                      OnlyDetect="yes"
+                      Property="NEWERVERSIONDETECTED" />
+      <UpgradeVersion Minimum="0.0.0.0"
+                      IncludeMinimum="yes"
+                      Maximum="$(var.AppVersion)"
+                      IncludeMaximum="no"
+                      Property="OLDERVERSIONBEINGUPGRADED" />
+    </Upgrade>
+
+    <!-- Prevent downgrading -->
+    <Condition Message="A newer version is already installed.">
+      NOT NEWERVERSIONDETECTED
+    </Condition>
+
+    <!-- Windows 7 SP1 or later required -->
+    <Condition Message="Windows 7 SP1 or later is required.">
+      Installed OR (VersionNT >= 601)
+    </Condition>
+
+    <!-- UI configuration -->
+    <UI>
+      <UIRef Id="WixUI_InstallDir" />
+      <Publish Dialog="ExitDialog"
+               Control="Finish"
+               Event="DoAction"
+               Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+    </UI>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch @PRODUCT_NAME@" />
+
+    <!-- Launch application after install -->
+    <CustomAction Id="LaunchApplication"
+                  FileKey="MainExecutable"
+                  ExeCommand=""
+                  Execute="immediate"
+                  Impersonate="yes"
+                  Return="asyncNoWait" />
+
+    <!-- Include fragments -->
+    <?include fragments/app_files.wxs ?>
+    <?include fragments/shortcuts.wxs ?>
+
+    <!-- License file -->
+    <WixVariable Id="WixUILicenseRtf" Value="@CMAKE_SOURCE_DIR@/dist/License.rtf" />
+
+    <!-- Icon -->
+    <Icon Id="AppIcon" SourceFile="@CMAKE_CURRENT_SOURCE_DIR@/res/win/@PROJ_NAME@.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+  </Product>
+</Wix>
