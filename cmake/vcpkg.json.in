@@ -1,0 +1,12 @@
+{
+  "$comment": "Generated file do not hand edit",
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "dde-cooperation",
+  "version": "@APP_VERSION@",
+  "builtin-baseline": "74ec888e385d189b42d6b398d0bbaa6f1b1d3b0e",
+  "dependencies": [
+    {
+      "name": "zlib"
+    }
+  ]
+}

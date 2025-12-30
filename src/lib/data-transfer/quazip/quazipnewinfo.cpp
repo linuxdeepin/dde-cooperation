@@ -74,13 +74,13 @@ QuaZipNewInfo::QuaZipNewInfo(const QString& name):
   name(name), dateTime(QDateTime::currentDateTime()), internalAttr(0), externalAttr(0),
   uncompressedSize(0)
 {
-    qInfo() << "Constructing QuaZipNewInfo with name:" << name.toStdString();
+    // qInfo() << "Constructing QuaZipNewInfo with name:" << name.toStdString();
 }
 
 QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
   name(name), internalAttr(0), externalAttr(0), uncompressedSize(0)
 {
-  qInfo() << "Constructing QuaZipNewInfo with name:" << name.toStdString() << "and file:" << file.toStdString();
+//   qInfo() << "Constructing QuaZipNewInfo with name:" << name.toStdString() << "and file:" << file.toStdString();
   QFileInfo info(file);
   QDateTime lm = info.lastModified();
   if (!info.exists()) {
@@ -94,7 +94,7 @@ QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
 
 void QuaZipNewInfo::setFileDateTime(const QString& file)
 {
-  qInfo() << "Setting file date time for:" << file.toStdString();
+//   qInfo() << "Setting file date time for:" << file.toStdString();
   QFileInfo info(file);
   QDateTime lm = info.lastModified();
   if (info.exists())
@@ -105,7 +105,7 @@ void QuaZipNewInfo::setFileDateTime(const QString& file)
 
 void QuaZipNewInfo::setFilePermissions(const QString &file)
 {
-    qInfo() << "Setting file permissions for:" << file.toStdString();
+    // qInfo() << "Setting file permissions for:" << file.toStdString();
     QFileInfo info = QFileInfo(file);
     QFile::Permissions perm = info.permissions();
     QuaZipNewInfo_setPermissions(this, perm, info.isDir(), info.isSymLink());
@@ -119,12 +119,12 @@ void QuaZipNewInfo::setPermissions(QFile::Permissions permissions)
 
 void QuaZipNewInfo::setFileNTFSTimes(const QString &fileName)
 {
-    qInfo() << "Setting NTFS times for file:" << fileName.toStdString();
+    // qInfo() << "Setting NTFS times for file:" << fileName.toStdString();
     QFileInfo fi(fileName);
     if (!fi.exists()) {
         qWarning("QuaZipNewInfo::setFileNTFSTimes(): '%s' doesn't exist",
                  fileName.toUtf8().constData());
-        qInfo() << "file does not exist:" << fileName.toStdString();
+        // qInfo() << "file does not exist:" << fileName.toStdString();
         return;
     }
     setFileNTFSmTime(fi.lastModified());

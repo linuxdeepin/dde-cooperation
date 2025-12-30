@@ -46,6 +46,7 @@ target_link_libraries(${PROJECT_NAME}
     uniapi
     co
     slotipc
+    zrpc
 )
 
 #System libraries

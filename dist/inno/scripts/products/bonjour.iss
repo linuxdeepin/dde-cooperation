@@ -25,7 +25,7 @@ begin
 				'/passive /norestart',
 				CustomMessage('bonjour_title' + GetArchitectureString()),
 				CustomMessage('bonjour_size' + GetArchitectureString()),
-				GetString(bonjour_url, bonjour_url_x64, ''),
+				'',  // Empty URL to prevent download - use local file only
 				false, false, false);
 	end;
 end;

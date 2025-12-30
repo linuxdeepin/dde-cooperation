@@ -3,6 +3,7 @@
 
 #include "zipworker.h"
 #include "../win/drapwindowsdata.h"
+#include "compressutil.h"
 #include <common/commonutils.h>
 #include <QProcess>
 #include <QDebug>
@@ -16,7 +17,6 @@
 #include <QElapsedTimer>
 #include <QDirIterator>
 #include <QCoreApplication>
-#include <JlCompress.h>
 #include <QDataStream>
 
 #define BUFFER_SIZE 8 * 1024

@@ -9,6 +9,11 @@ CMake*.json
 *.o
 *.--quiet
 .cache/
+/vcpkg
+/vcpkg_installed
+
+# generated vcpkg file
+vcpkg.json
 
 # AI configuration files
 .roomodes

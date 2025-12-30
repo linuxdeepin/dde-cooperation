@@ -159,14 +159,12 @@ if (CMAKE_SYSTEM MATCHES "Linux")
 endif()
 if (CMAKE_SYSTEM MATCHES "Windows")
     # quazip
-    set(QUAZIP_DIR "${CMAKE_SOURCE_DIR}/3rdparty/quazip")
-    set(QUAZIP_LIBRARIES "${QUAZIP_DIR}/lib/quazip5.lib")
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        ${QUAZIP_LIBRARIES}
+        quazip
         Qt${QT_VERSION_MAJOR}::Sql
     )
-    
+
     # Link WinExtras only for Qt5
     if (QT_VERSION_MAJOR EQUAL 5)
         target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::WinExtras)
@@ -174,13 +172,8 @@ if (CMAKE_SYSTEM MATCHES "Windows")
 
     target_include_directories(${PROJECT_NAME}
         PRIVATE
-        ${QUAZIP_DIR}/include
+        "${CMAKE_CURRENT_SOURCE_DIR}/../quazip"
     )
-
-    # 拷贝文件到应用
-    file(GLOB DLLFILE "${QUAZIP_DIR}/lib/quazip5.dll")
-    file(COPY ${DLLFILE} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
-    message("   >>> copy quazip dll libraries:  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 endif()
 
 

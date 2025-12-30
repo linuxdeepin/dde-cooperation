@@ -54,7 +54,13 @@ if (WIN32)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${DEPLOY_OUTPUT_DIRECTORY}/${PKG_NAME})
 
     # 安装包制作inno脚本
-    configure_file(${CMAKE_SOURCE_DIR}/dist/inno/setup.iss.in ${CMAKE_BINARY_DIR}/${PROJ_NAME}-setup.iss)
+    # 检测构建架构 (x64 或 x86)
+    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(ARCH "x64")
+    else()
+        set(ARCH "x86")
+    endif()
+    configure_file(${CMAKE_SOURCE_DIR}/dist/inno/setup.iss.in ${CMAKE_BINARY_DIR}/${PROJ_NAME}-setup.iss @ONLY)
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

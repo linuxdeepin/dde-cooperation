@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef JLCOMPRESSFOLDER_H_
-#define JLCOMPRESSFOLDER_H_
+#ifndef COMPRESSUTIL_H_
+#define COMPRESSUTIL_H_
 
 #include "quazip.h"
 #include "quazipfile.h"
@@ -60,4 +60,4 @@ public:
     static QStringList getFileList(QIODevice *ioDevice); 
 };
 
-#endif /* JLCOMPRESSFOLDER_H_ */
+#endif /* COMPRESSUTIL_H_ */

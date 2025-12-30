@@ -27,6 +27,7 @@ endif()
 if(WIN32)
     # windows7 support
     add_definitions(-D_WIN32_WINNT=0x0601)
+    add_definitions(-DWINVER=0x0601)
 
     # windeployqt 依赖
     include (cmake/qt-helper.cmake)
@@ -41,7 +42,7 @@ include(GNUInstallDirs)
 option(FPIC "build with -fPIC" FALSE)
 
 if(MSVC)
-    add_compile_options(/fp:fast /EHsc)
+    add_compile_options(/fp:fast /EHsc /wd4324 /wd4244)
     add_link_options(/SAFESEH:NO)
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
         string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -67,6 +68,8 @@ include_directories(include)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 if (WIN32)
+    configure_file(cmake/vcpkg.json.in ${CMAKE_SOURCE_DIR}/vcpkg.json @ONLY)
+
     set(DEPLOY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output")
     message("   >>> DEPLOY_OUTPUT_DIRECTORY  ${DEPLOY_OUTPUT_DIRECTORY}")
 
