@@ -99,6 +99,9 @@ if (CMAKE_SYSTEM MATCHES "Linux")
     INSTALL_DCONFIG("org.deepin.dde.cooperation.json")
 endif()
 
+# 若编译器是 GNU/Clang, 则添加 -pie
+target_link_options(${PROJ_NAME} PRIVATE "$<IF:$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>,-pie,>")
+
 install(TARGETS ${PROJ_NAME} DESTINATION bin)
 
 # translation files

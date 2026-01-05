@@ -42,6 +42,8 @@ endif()
 add_executable(barriers ${sources})
 target_link_libraries(barriers
     arch base client common io mt net ipc platform server synlib ${libs} ${OPENSSL_LIBS})
+# 若编译器是 GNU/Clang, 则添加 -pie
+target_link_options(barriers PRIVATE "$<IF:$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>,-pie,>")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     install (TARGETS barriers DESTINATION ${BARRIER_BUNDLE_BINARY_DIR})
