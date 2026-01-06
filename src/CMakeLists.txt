@@ -1,3 +1,7 @@
+
+# it causes barrier build failed on MSVC, so only enable it for src
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # some base common libraries
 add_subdirectory(infrastructure)
 

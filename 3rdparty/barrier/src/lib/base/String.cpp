@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// #include "arch/Arch.h"
+#include "arch/Arch.h"
 #include "base/String.h"
 #include "common/common.h"
 #include "common/stdvector.h"

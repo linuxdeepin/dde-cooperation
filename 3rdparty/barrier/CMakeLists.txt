@@ -299,27 +299,39 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         /D_CRT_SECURE_NO_WARNINGS
         /DBARRIER_VERSION=\"${BARRIER_VERSION}\"
         /D_XKEYCHECK_H
+        /D_WIN32_WINNT=0x0601  # windows7 support
+        /DWINVER=0x0601
     )
 endif()
 
-include_directories("${CMAKE_SOURCE_DIR}/ext/gulrak-filesystem/include")
+include_directories("CMAKE_CURRENT_SOURCE_DIR/../../include")
 
 #
 # OpenSSL
 #
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set (OPENSSL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/ext/openssl/windows)
-    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set (OPENSSL_ROOT "${OPENSSL_ROOT}/x64")
-    else()
-        set (OPENSSL_ROOT "${OPENSSL_ROOT}/x86")
-    endif()
+    # redefine the bin output
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output/dde-cooperation/")
 
-    include_directories (BEFORE SYSTEM ${OPENSSL_ROOT}/include)
-    set (OPENSSL_LIBS
-        ${OPENSSL_ROOT}/lib/libeay32.lib
-        ${OPENSSL_ROOT}/lib/ssleay32.lib
-    )
+    find_package(OpenSSL)
+    if (OpenSSL_FOUND)
+        message(STATUS "Find system OpenSSL version: ${OPENSSL_VERSION} ${OPENSSL_INCLUDE_DIR} ${OPENSSL_LIBRARIES}")
+        include_directories(BEFORE SYSTEM ${OPENSSL_INCLUDE_DIR})
+        set (OPENSSL_LIBS ${OPENSSL_LIBRARIES})
+    else()
+        set (OPENSSL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/ext/openssl/windows)
+        if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set (OPENSSL_ROOT "${OPENSSL_ROOT}/x64")
+        else()
+            set (OPENSSL_ROOT "${OPENSSL_ROOT}/x86")
+        endif()
+
+        include_directories (BEFORE SYSTEM ${OPENSSL_ROOT}/include)
+        set (OPENSSL_LIBS
+            ${OPENSSL_ROOT}/lib/libeay32.lib
+            ${OPENSSL_ROOT}/lib/ssleay32.lib
+        )
+    endif()
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_program(APT_PROGRAM "apt")
     find_program(BREW_PROGRAM "brew")
