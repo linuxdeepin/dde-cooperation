@@ -36,13 +36,24 @@ FILE(GLOB SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.cpp"
     )
 
-add_library(${PROJECT_NAME} SHARED 
+add_library(${PROJECT_NAME} SHARED
     ${SRC_FILES}
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+# Ensure import library is generated and can be found by linker
+if(WIN32)
+    # Must be added to enable export macro
+    add_definitions(-DEXPORT_ZRPC_API)
+
+    # Explicitly enable import library generation
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${DEPLOY_OUTPUT_DIRECTORY}"
+        WINDOWS_EXPORT_ALL_SYMBOLS ON
+    )
+endif()
+
 target_link_libraries(${PROJECT_NAME} ${PROTOBUF_LIB} co)
-add_compile_definitions(${PROJECT_NAME} EXPORT_ZRPC_API)
 
 #install library file
 install(TARGETS

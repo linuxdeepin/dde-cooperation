@@ -1,11 +1,25 @@
 @echo off
 
+set BUILD_ARCH=%~1
+if "%BUILD_ARCH%"=="" set BUILD_ARCH=x64
+echo Build architecture: %BUILD_ARCH%
+
 REM defaults - override them by creating a build_env.bat file
-set B_BUILD_TYPE=Debug
-set B_QT_ROOT=C:\Qt
-set B_QT_VER=5.11.1
-set B_QT_MSVC=msvc2017_64
-set B_BONJOUR=C:\Program Files\Bonjour SDK
+set B_BUILD_TYPE=Release
+set B_QT_ROOT=D:\Qt
+set B_QT_VER=5.15.2
+@REM set B_QT_MSVC=msvc2019_64
+set B_BONJOUR=D:\repo\barrier-2.4.0\Bonjour SDK
+
+if "%BUILD_ARCH%"=="x86" (
+    set VS_ARCH=Win32
+    set B_QT_MSVC=msvc2019
+    set "OPENSSL_ROOT_DIR=C:\Program Files (x86)\OpenSSL-Win32"
+) else (
+    set VS_ARCH=x64
+    set B_QT_MSVC=msvc2019_64
+    set "OPENSSL_ROOT_DIR=C:\Program Files\OpenSSL-Win64"
+)
 
 set savedir=%cd%
 cd /d %~dp0
@@ -19,7 +33,7 @@ if "%VisualStudioVersion%"=="15.0" (
     echo Visual Studio version was not detected.
     echo Did you forget to run inside a VS developer prompt?
     echo Using the default cmake generator.
-    set cmake_gen=Visual Studio 16 2019
+    set cmake_gen=Visual Studio 17 2022
 )
 
 if exist build_env.bat call build_env.bat
@@ -39,7 +53,8 @@ rmdir /q /s build
 mkdir build
 if ERRORLEVEL 1 goto failed
 cd build
-cmake -G "%cmake_gen%" -A x64 -D CMAKE_BUILD_TYPE=%B_BUILD_TYPE% -D CMAKE_PREFIX_PATH="%B_QT_FULLPATH%" -D DNSSD_LIB="%B_BONJOUR%\Lib\x64\dnssd.lib" -D QT_VERSION=%B_QT_VER% ..
+@REM cmake -G "%cmake_gen%" -A %VS_ARCH% -D CMAKE_BUILD_TYPE=%B_BUILD_TYPE% -D CMAKE_PREFIX_PATH="%B_QT_FULLPATH%" -D DNSSD_LIB="%B_BONJOUR%\Lib\%BUILD_ARCH%\dnssd.lib" -D QT_VERSION=%B_QT_VER% ..
+cmake -G "%cmake_gen%" -A %VS_ARCH% -D CMAKE_BUILD_TYPE=%B_BUILD_TYPE% -D CMAKE_PREFIX_PATH="%B_QT_FULLPATH%" -D QT_VERSION=%B_QT_VER% ..
 if ERRORLEVEL 1 goto failed
 cmake --build . --config %B_BUILD_TYPE%
 if ERRORLEVEL 1 goto failed

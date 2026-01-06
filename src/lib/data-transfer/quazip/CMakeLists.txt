@@ -36,10 +36,11 @@ else()
     endmacro()
 endif()
 
-# Use system zlib on unix and Qt ZLIB on Windows
-if(UNIX OR MINGW)
-    find_package(ZLIB REQUIRED)
-endif()
+# Must be added to enable export macro
+add_definitions(-DBUILD)
+
+# Use system zlib on unix and vcpkg ZLIB on Windows
+find_package(ZLIB REQUIRED)
 
 # Generate moc files for headers
 file(GLOB PUBLIC_HEADERS "*.h")
@@ -52,23 +53,22 @@ set(SRCS ${SRCS} ${MOC_SRCS})
 # Create libraries with position independent code
 add_library(quazip SHARED ${SRCS})
 set_property(TARGET quazip PROPERTY POSITION_INDEPENDENT_CODE ON)
-add_library(quazip_static STATIC ${SRCS})
-set_property(TARGET quazip_static PROPERTY POSITION_INDEPENDENT_CODE ON)
+# add_library(quazip_static STATIC ${SRCS})
+# set_property(TARGET quazip_static PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-# Handle library naming
-if(NOT WIN32)
-    set_target_properties(quazip_static PROPERTIES OUTPUT_NAME quazip${LIB_VERSION_SUFFIX})
-endif()
+# # Handle library naming
+# if(NOT WIN32)
+#     set_target_properties(quazip_static PROPERTIES OUTPUT_NAME quazip${LIB_VERSION_SUFFIX})
+# endif()
 
-set_target_properties(quazip quazip_static PROPERTIES
-    VERSION 1.0.0
-    SOVERSION 1
-    DEBUG_POSTFIX d
-)
+# set_target_properties(quazip quazip_static PROPERTIES
+#     VERSION 1.0.0
+#     SOVERSION 1
+#     DEBUG_POSTFIX d
+# )
 
 # Link libraries
 target_link_libraries(quazip PRIVATE
-    quazip_static
     ${QTCORE_LIBRARIES}
     ${ZLIB_LIBRARIES}
 )
@@ -78,6 +78,8 @@ target_include_directories(quazip PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
 )
+# Include as public for other library include.
+target_include_directories(quazip PUBLIC "${ZLIB_INCLUDE_DIRS}")
 
 target_compile_definitions(quazip PRIVATE BUILD)
 
@@ -85,7 +87,6 @@ target_compile_definitions(quazip PRIVATE BUILD)
 install(FILES ${PUBLIC_HEADERS} DESTINATION include/quazip${LIB_VERSION_SUFFIX})
 install(TARGETS
     quazip
-    quazip_static
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION lib

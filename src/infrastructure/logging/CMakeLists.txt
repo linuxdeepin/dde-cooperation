@@ -20,11 +20,13 @@ file(GLOB_RECURSE LIB_HEADER_FILES "include/*.h" "src/*.h")
 file(GLOB_RECURSE LIB_INLINE_FILES "include/*.inl" "src/*.inl")
 file(GLOB_RECURSE LIB_SOURCE_FILES "src/*.cpp")
 add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${MINIZIP_FILES})
-if(MSVC)
-  # zlib
-  target_include_directories(${PROJECT_NAME} PRIVATE "zlib/include")
-  set(ZLIB_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/zlib/zlib.lib")
 
+# Find zlib package (supports vcpkg and system-installed zlib)
+find_package(ZLIB REQUIRED)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${ZLIB_INCLUDE_DIRS})
+
+if(MSVC)
   # C4067: unexpected tokens following preprocessor directive - expected a newline
   # C4131: 'function' : uses old-style declarator
   # C4189: 'identifier' : local variable is initialized but not referenced
@@ -32,8 +34,6 @@ if(MSVC)
   # C4456: declaration of 'identifier' hides previous local declaration
   set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS} /wd4067 /wd4131 /wd4189 /wd4244 /wd4456" FOLDER "libraries")
 else()
-  find_package(ZLIB REQUIRED)
-
   set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS} -Wno-shadow -Wno-unused-variable" FOLDER "libraries")
 endif()
 if(CYGWIN OR MINGW)

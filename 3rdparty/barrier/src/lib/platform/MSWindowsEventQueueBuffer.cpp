@@ -51,6 +51,7 @@ MSWindowsEventQueueBuffer::MSWindowsEventQueueBuffer(IEventQueue* events) :
     PeekMessage(&dummy, NULL, WM_USER, WM_USER, PM_NOREMOVE);
 
     m_os_supported_message_types = QS_ALLINPUT;
+#if defined(QS_TOUCH) && defined(QS_POINTER)
     if (!IsWindows8OrGreater())
     {
         // don't use QS_POINTER, QS_TOUCH
@@ -58,6 +59,7 @@ MSWindowsEventQueueBuffer::MSWindowsEventQueueBuffer(IEventQueue* events) :
         // since those flags are confusing Windows 7. See QTBUG-29097 for related info
         m_os_supported_message_types &= ~(QS_TOUCH | QS_POINTER);
     }
+#endif
 }
 
 MSWindowsEventQueueBuffer::~MSWindowsEventQueueBuffer()

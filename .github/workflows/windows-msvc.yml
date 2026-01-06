@@ -13,30 +13,87 @@ jobs:
             os: windows-2022
             build_type: Release
             compiler_type: msvc2019_64
+            build_arch: x64
             msvc_arch: x64
             qt_arch: win64_msvc2019_64
             qt_version: 5.15.2
             qt_target: desktop
+            openssl_root: C:\Program Files\OpenSSL-Win64
+            cmake_gen: Visual Studio 17 2022
+            vcpkg_triplet: x64-windows-release
+          - name: win32_msvc
+            os: windows-2022
+            build_type: Release
+            compiler_type: msvc2019
+            build_arch: x86
+            msvc_arch: Win32
+            qt_arch: win32_msvc2019
+            qt_version: 5.15.2
+            qt_target: desktop
+            openssl_root: C:\Program Files (x86)\OpenSSL-Win32
+            cmake_gen: Visual Studio 17 2022
+            vcpkg_triplet: x86-windows
     runs-on: ${{ matrix.os }}
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
       COMPILER_TYPE: ${{ matrix.compiler_type }}
       QT_VERSION: ${{ matrix.qt_version }}
-      OPENSSL_ROOT_DIR: C:\Program Files\OpenSSL
-      OPENSSL_INCLUDE_DIR: C:\Program Files\OpenSSL\include
-      OPENSSL_CRYPTO_LIBRARY: C:\Program Files\OpenSSL\lib
+      OPENSSL_ROOT_DIR: ${{ matrix.openssl_root }}
+      OPENSSL_INCLUDE_DIR: ${{ matrix.openssl_root }}\include
+      OPENSSL_CRYPTO_LIBRARY: ${{ matrix.openssl_root }}\lib
     steps:
-      # force 6.2.2 version of Inno Setup
-      # - name: Install Inno Setup
+      # Cache OpenSSL to speed up builds
+      # - name: '⚙️ Cache OpenSSL'
+      #   id: cache-openssl
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ matrix.openssl_root }}
+      #     key: Windows-OpenSSL-${{ matrix.build_arch }}-3.2.6
+
+      # # Install OpenSSL 3.2.6 for both x86 and x64 architectures
+      # - name: Install OpenSSL ${{ matrix.build_arch }}
+      #   shell: pwsh
       #   run: |
-      #     choco install innosetup --version 6.2.2 --allow-downgrade -y
+      #     $arch = "${{ matrix.build_arch }}"
+      #     $version = "3_2_6"
+      #     $opensslUrl = if ($arch -eq "x64") {
+      #       "https://slproweb.com/download/Win64OpenSSL-${version}.msi"
+      #     } else {
+      #       "https://slproweb.com/download/Win32OpenSSL-${version}.msi"
+      #     }
+      #     $installerPath = "$env:TEMP\OpenSSL-${version}_${arch}.msi"
+      #     $installDir = "${{ matrix.openssl_root }}"
+        
+      #     # 下载安装包
+      #     Invoke-WebRequest -Uri $opensslUrl -OutFile $installerPath
+
+      #     # 静默安装到指定目录并等待完成
+      #     Start-Process msiexec.exe -ArgumentList "/i $installerPath /quiet /qn INSTALLDIR=$installDir"
+
+      #     # 等待安装完全完成
+      #     Start-Sleep -Seconds 10
+          
+      # - name: Verify OpenSSL installation
+      #   run: |
+      #     openssl version
+      #     echo "OPENSSL_ROOT_DIR is: $env:OPENSSL_ROOT_DIR"
+
+
+      # - name: Verify OpenSSL cached
+      #   if: steps.cache-openssl.outputs.cache-hit == 'true'
+      #   shell: pwsh
+      #   run: |
+      #     Write-Host "Using cached OpenSSL:"
+      #     & "${{ matrix.openssl_root }}\bin\openssl.exe" version
 
       - name: '⚙️ Cache Qt'
         id: cache-qt
         uses: actions/cache@v3
         with:
-          path: ..\Qt
-          key: Windows-QtCache-${{ env.QT_VERSION }}
+          path: ${{ env.HOME }}/Qt
+          key: Windows-${{ matrix.os }}-Qt-${{ env.QT_VERSION }}-${{ matrix.qt_arch }}
+          restore-keys: |
+            Windows-${{ matrix.os }}-Qt-${{ env.QT_VERSION }}-
 
       - name: Install Qt ${{ env.QT_VERSION }}
         uses: jurplel/install-qt-action@v3
@@ -46,7 +103,6 @@ jobs:
           target: ${{ matrix.qt_target }}
           arch: ${{ matrix.qt_arch }}
           # modules: 'qt5compat'
-          # cached: 'false'
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
       # Use CMake 3.31.x for better OpenSSL 3.x compatibility while supporting VS 2022
@@ -62,15 +118,28 @@ jobs:
           path: source
           fetch-depth: 0
 
+      - name: Build and cache vcpkg
+        id: vcpkg
+        uses: johnwason/vcpkg-action@v7
+        with:
+          pkgs: zlib openssl
+          # manifest-dir: ${{ github.workspace }}\source
+          extra-args: --classic --host-triplet=${{matrix.vcpkg_triplet}}
+          triplet: ${{matrix.vcpkg_triplet}}
+          token: ${{ github.token }}
+          revision: master
+
       - name: msvc-build
         id: build
         shell: cmd
         env:
+          build_arch: ${{ matrix.build_arch }}
           vc_arch: ${{ matrix.msvc_arch }}
-          cmake_gen: Visual Studio 17 2022
+          cmake_gen: ${{ matrix.cmake_gen }}
           COO_PROJECT: dde-cooperation
           DT_PROJECT: data-transfer
           BONJOUR_SDK: ${{ github.workspace }}\source\3rdparty\ext\BonjourSDK
+          VCPKG_INSTALLED: ${{ github.workspace }}\vcpkg\installed\${{ matrix.vcpkg_triplet }}
         run: |
           REM Use Visual Studio 2022 Enterprise (pre-installed on Windows 2022 runner)
           set "VS2022_PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
@@ -79,7 +148,7 @@ jobs:
             exit /b 1
           )
           echo Using Visual Studio 2022 at: %VS2022_PATH%
-          call "%VS2022_PATH%\VC\Auxiliary\Build\vcvarsall.bat" %vc_arch%
+          call "%VS2022_PATH%\VC\Auxiliary\Build\vcvarsall.bat" %build_arch%
           
           REM Initialize OpenSSL environment (based on start.bat logic)
           echo ============== OpenSSL Initialization ==============
@@ -108,43 +177,74 @@ jobs:
           mkdir installer-inno
           echo Current working directory: %CD%
           echo Source directory: %GITHUB_WORKSPACE%\source
-          if exist "%GITHUB_WORKSPACE%\source\CMakeLists.txt" (
-            echo Found CMakeLists.txt in source directory
-            cmake -G "%cmake_gen%" -A %vc_arch% -D CMAKE_BUILD_TYPE=%BUILD_TYPE% -D APP_VERSION="${{ github.ref_name }}" "%GITHUB_WORKSPACE%\source"
-          ) else (
-            echo ERROR: CMakeLists.txt not found in source directory
-            dir "%GITHUB_WORKSPACE%\source"
-            exit /b 1
-          )
+          echo Using vcpkg triplet: ${{ matrix.vcpkg_triplet }}
+          echo Vcpkg toolchain file: %GITHUB_WORKSPACE%\vcpkg\scripts\buildsystems\vcpkg.cmake
+
+          cmake -G "%cmake_gen%" -A %vc_arch% -D CMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+            -D CMAKE_TOOLCHAIN_FILE="%GITHUB_WORKSPACE%\vcpkg\scripts\buildsystems\vcpkg.cmake" ^
+            -D VCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} ^
+            -D APP_VERSION="${{ github.ref_name }}" "%GITHUB_WORKSPACE%\source"
+
           cmake --build . --config %BUILD_TYPE%
 
           echo ------------copy files to output directory------------
 
-          if exist output\%BUILD_TYPE% (
-              copy output\%BUILD_TYPE%\* output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
-              REM del output\%COO_PROJECT%\%BUILD_TYPE%\quazip* > NUL
-              
-              copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
-              copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x64.dll" output\%COO_PROJECT%\%BUILD_TYPE%\ > NUL
-              
-              mkdir installer-inno\%COO_PROJECT%
-              copy "%BONJOUR_SDK%\Bonjour64.msi" installer-inno\%COO_PROJECT%\ > NUL
-              if exist output\%COO_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe (
-                  move output\%COO_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe installer-inno\%COO_PROJECT%\ > NUL
-              )
-
-
-              REM copy output\%BUILD_TYPE%\quazip* output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
-              
-              copy "%OPENSSL_ROOT_DIR%\bin\libcrypto-3-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
-              copy "%OPENSSL_ROOT_DIR%\bin\libssl-3-x64.dll" output\%DT_PROJECT%\%BUILD_TYPE%\ > NUL
-              mkdir installer-inno\%DT_PROJECT%
-              copy "%B_BONJOUR%\Bonjour64.msi" installer-inno\%DT_PROJECT%\ > NUL
-              if exist output\%DT_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe (
-                  move output\%DT_PROJECT%\%BUILD_TYPE%\vc_redist.x64.exe installer-inno\%DT_PROJECT%\ > NUL
-              )
+          REM Set architecture-specific file names
+          if "%build_arch%"=="x86" (
+              set OPENSSL_CRYPTO=libcrypto-3.dll
+              set OPENSSL_SSL=libssl-3.dll
+              set BONJOUR_FILE=Bonjour.msi
           ) else (
-              echo Remember to copy supporting binaries and configuration files!
+              set OPENSSL_CRYPTO=libcrypto-3-x64.dll
+              set OPENSSL_SSL=libssl-3-x64.dll
+              set BONJOUR_FILE=Bonjour64.msi
+          )
+
+          REM Create output directories if they don't exist
+          if not exist "output\%COO_PROJECT%\%BUILD_TYPE%" mkdir "output\%COO_PROJECT%\%BUILD_TYPE%"
+          if not exist "output\%DT_PROJECT%\%BUILD_TYPE%" mkdir "output\%DT_PROJECT%\%BUILD_TYPE%"
+
+          REM Copy files for cooperation
+          if exist "output\%BUILD_TYPE%\*" (
+              copy output\%BUILD_TYPE%\* output\%COO_PROJECT%\%BUILD_TYPE%\
+              REM quazip is only used by data-transfer, not cooperation
+              if exist "output\%COO_PROJECT%\%BUILD_TYPE%\quazip*" del output\%COO_PROJECT%\%BUILD_TYPE%\quazip*
+          )
+
+          REM Copy OpenSSL DLLs from vcpkg installed directory
+          if exist "%VCPKG_INSTALLED%\bin\%OPENSSL_CRYPTO%" (
+              copy "%VCPKG_INSTALLED%\bin\%OPENSSL_CRYPTO%" output\%COO_PROJECT%\%BUILD_TYPE%\
+          ) else (
+              echo WARNING: OpenSSL DLL not found in vcpkg: %VCPKG_INSTALLED%\bin\%OPENSSL_CRYPTO%
+          )
+
+          if exist "%VCPKG_INSTALLED%\bin\%OPENSSL_SSL%" (
+              copy "%VCPKG_INSTALLED%\bin\%OPENSSL_SSL%" output\%COO_PROJECT%\%BUILD_TYPE%\
+          ) else (
+              echo WARNING: OpenSSL DLL not found in vcpkg: %VCPKG_INSTALLED%\bin\%OPENSSL_SSL%
+          )
+
+          REM Copy Bonjour SDK
+          if exist "%BONJOUR_SDK%\%BONJOUR_FILE%" (
+              copy "%BONJOUR_SDK%\%BONJOUR_FILE%" output\%COO_PROJECT%\%BUILD_TYPE%\
+          ) else (
+              echo WARNING: Bonjour file not found: %BONJOUR_SDK%\%BONJOUR_FILE%
+          )
+
+          REM Copy files for data-transfer
+          REM quazip is only built and used by data-transfer
+          if exist "output\%BUILD_TYPE%\quazip.dll" (
+              copy output\%BUILD_TYPE%\quazip.dll output\%DT_PROJECT%\%BUILD_TYPE%\
+          ) else (
+              echo WARNING: quazip.dll not found in output\%BUILD_TYPE%
+          )
+
+          if exist "%VCPKG_INSTALLED%\bin\%OPENSSL_CRYPTO%" (
+              copy "%VCPKG_INSTALLED%\bin\%OPENSSL_CRYPTO%" output\%DT_PROJECT%\%BUILD_TYPE%\
+          )
+
+          if exist "%VCPKG_INSTALLED%\bin\%OPENSSL_SSL%" (
+              copy "%VCPKG_INSTALLED%\bin\%OPENSSL_SSL%" output\%DT_PROJECT%\%BUILD_TYPE%\
           )
 
           echo Build completed successfully
@@ -159,19 +259,12 @@ jobs:
         with:
           filepath: build/dde-cooperation-setup.iss
 
-      - name: Make Installer Directories
-        run: |
-          move build/installer-inno/deepin-cooperation-* build/installer-inno/dde-cooperation/ > NUL
-          powershell -Command "Compress-Archive -Path build/installer-inno/dde-cooperation/* -DestinationPath build/installer-inno/dde-cooperation.zip"
-          move build/installer-inno/deepin-datatransfer-* build/installer-inno/data-transfer/ > NUL
-          powershell -Command "Compress-Archive -Path build/installer-inno/data-transfer/* -DestinationPath build/installer-inno/deepin-data-transfer.zip"
-
       - name: Create Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: build/installer-inno/*.zip
+          files: build/installer-inno/*.exe
           generate_release_notes: true
           draft: true

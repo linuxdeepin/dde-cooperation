@@ -8,7 +8,22 @@
 #define MyAppServiceName "Cooperation"
 #define MyAppServiceDesc "Deepin cooperation background processes."
 #define MyAppListenerDesc "Deepin cooperation Listener"
-#define RuntimeDepend "vc_redist.x64.exe"
+
+#if "@ARCH@" == "x64"
+    #define RuntimeDepend "vc_redist.x64.exe"
+    #define BonjourDepend "Bonjour64.msi"
+    #define ArchitectureFlags "ArchitecturesInstallIn64BitMode=x64"
+#else
+    #define RuntimeDepend "vc_redist.x86.exe"
+    #define BonjourDepend "Bonjour.msi"
+    ; x86 packages can install on both x86 and x64 systems (via WOW64)
+    #define ArchitectureFlags ""
+#endif
+
+; Check if this is dde-cooperation (needs Bonjour) or data-transfer (no Bonjour)
+#if "@PROJ_NAME@" == "dde-cooperation"
+    #define NEED_BONJOUR
+#endif
 
 [Setup]
 AppId={{@PRODUCT_ID@}
@@ -24,7 +39,7 @@ DefaultGroupName={cm:CmAppName}
 DisableProgramGroupPage=yes
 LicenseFile=@CMAKE_SOURCE_DIR@/dist/License.rtf
 OutputDir=@CMAKE_BINARY_DIR@/installer-inno
-OutputBaseFilename={#MyAppName}-{#MyAppTextVersion}-setup
+OutputBaseFilename={#MyAppName}-{#MyAppTextVersion}-@ARCH@
 SetupIconFile=@CMAKE_CURRENT_SOURCE_DIR@/res/win/@PROJ_NAME@.ico
 VersionInfoProductTextVersion={#MyAppTextVersion}
 VersionInfoProductVersion={#MyAppVersion}
@@ -35,7 +50,7 @@ VersionInfoCopyright={#MyAppCopyright}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesInstallIn64BitMode=x64
+{#ArchitectureFlags}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName={cm:CmAppName}
 Uninstallable=yes
@@ -50,9 +65,20 @@ DependenciesDir=
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
 ; Name: "startupicon"; Description: "{cm:CmAutoStart}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkablealone
+Name: "install_vcredist"; Description: "Install Visual C++ 2015-2022 Redistributable (Recommended)"; GroupDescription: "Dependencies:"; Flags: checkedonce
+#ifdef NEED_BONJOUR
+Name: "install_bonjour"; Description: "Install Bonjour for network discovery (Optional)"; GroupDescription: "Dependencies:"; Flags: unchecked
+#endif
 
 [Files]
+; Main application files
 Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Dependency installers (will be installed after main app)
+; Dependencies are copied to output directory by clean_build.bat
+Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/{#RuntimeDepend}"; DestDir: "{tmp}"; Flags: deleteafterinstall nocompression; Tasks: install_vcredist
+#ifdef NEED_BONJOUR
+Source: "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/@CMAKE_BUILD_TYPE@/{#BonjourDepend}"; DestDir: "{tmp}"; Flags: deleteafterinstall nocompression; Tasks: install_bonjour
+#endif
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -67,7 +93,10 @@ Name: "{autodesktop}\{cm:CmAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 ; Filename: {sys}\sc.exe; Parameters: "delete {#MyAppServiceName}"; Flags: runhidden
 ; Filename: {sys}\sc.exe; Parameters: "description {#MyAppServiceName} ""{#MyAppServiceDesc}"""; Flags: runhidden
 ; Filename: {sys}\sc.exe; Parameters: "start {#MyAppServiceName}"; Flags: runhidden
-; Filename: "{app}\{#RuntimeDepend}"; Parameters: /q; WorkingDir: {app}; StatusMsg: "Install Microsoft Visual C++ 2015-2022 64-Bit Redistributable ..."; Flags: shellexec nowait postinstall skipifsilent
+Filename: "{tmp}\{#RuntimeDepend}"; Parameters: /q; WorkingDir: {tmp}; StatusMsg: "Installing Microsoft Visual C++ 2015-2022 Redistributable..."; Flags: waituntilterminated skipifsilent; Tasks: install_vcredist
+#ifdef NEED_BONJOUR
+Filename: "{tmp}\{#BonjourDepend}"; Parameters: /passive /norestart; WorkingDir: {tmp}; StatusMsg: "Installing Bonjour..."; Flags: waituntilterminated skipifsilent; Tasks: install_bonjour
+#endif
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{cm:CmAppName}}"; Flags: shellexec nowait postinstall skipifsilent
 
 [UninstallDelete]
@@ -80,21 +109,17 @@ Filename: {sys}\taskkill; Parameters: "/im {#MyAppExeName} /f /t"; Flags: runhid
 ;Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""{#MyAppListenerDesc}"""; Flags: runhidden
 
 ; shared code for installing the products
-#include "scripts\products.iss"
-#include "scripts\products\stringversion.iss"
-#include "scripts\products\winversion.iss"
-#include "scripts\products\msiproduct.iss"
-#include "scripts\products\vcredist2015-2022.iss"
-#include "scripts\products\bonjour.iss"
+; Disabled - using manual dependency installation in [Run] section
+; #include "scripts\products.iss"
+; #include "scripts\products\stringversion.iss"
+; #include "scripts\products\winversion.iss"
+; #include "scripts\products\msiproduct.iss"
+; #include "scripts\products\vcredist2015-2022.iss"
+; #include "scripts\products\bonjour.iss"
 
 [Code]
 function InitializeSetup(): boolean;
 begin
-	// initialize windows version
-	initwinversion();
-
-	vcredist201522('14'); // min allowed version is 14.0
-	bonjour('3') // 3.0.0.10
-
+	// Dependency checking disabled - using optional tasks instead
 	Result := true;
 end;

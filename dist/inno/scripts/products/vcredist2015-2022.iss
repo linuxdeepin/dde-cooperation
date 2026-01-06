@@ -20,11 +20,11 @@ procedure vcredist201522(minVersion: string);
 begin
 	if (not IsIA64()) then begin
 		if (not msiproductupgrade(GetString(vcredist_upgradecode, vcredist_upgradecode_x64, ''), minVersion)) then
-			AddProduct('vc_redist.x64.exe',
+			AddProduct(GetString('vc_redist.x86.exe', 'vc_redist.x64.exe', ''),
 				'/passive /norestart',
 				CustomMessage('vcredist_title' + GetArchitectureString()),
 				CustomMessage('vcredist_size' + GetArchitectureString()),
-				GetString(vcredist_url, vcredist_url_x64, ''),
+				'',  // Empty URL to prevent download - use local file only
 				false, false, false);
 	end;
 end;

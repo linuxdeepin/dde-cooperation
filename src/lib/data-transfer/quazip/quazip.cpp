@@ -554,6 +554,7 @@ bool QuaZip::goToNextFile()
   if(p->zipError==UNZ_END_OF_LIST_OF_FILE) {
     qInfo() << "End of file list";
     p->zipError=UNZ_OK;
+  }
   return p->hasCurrentFile_f;
 }
 
