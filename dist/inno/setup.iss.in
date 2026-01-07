@@ -95,7 +95,7 @@ Name: "{autodesktop}\{cm:CmAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: 
 ; Filename: {sys}\sc.exe; Parameters: "start {#MyAppServiceName}"; Flags: runhidden
 Filename: "{tmp}\{#RuntimeDepend}"; Parameters: /q; WorkingDir: {tmp}; StatusMsg: "Installing Microsoft Visual C++ 2015-2022 Redistributable..."; Flags: waituntilterminated skipifsilent; Tasks: install_vcredist
 #ifdef NEED_BONJOUR
-Filename: "{tmp}\{#BonjourDepend}"; Parameters: /passive /norestart; WorkingDir: {tmp}; StatusMsg: "Installing Bonjour..."; Flags: waituntilterminated skipifsilent; Tasks: install_bonjour
+Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\{#BonjourDepend}"" /passive /norestart"; WorkingDir: {tmp}; StatusMsg: "Installing Bonjour..."; Flags: waituntilterminated skipifsilent; Tasks: install_bonjour
 #endif
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{cm:CmAppName}}"; Flags: shellexec nowait postinstall skipifsilent
 
