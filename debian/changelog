@@ -1,3 +1,13 @@
+dde-cooperation (1.2.0) unstable; urgency=medium
+
+  * chore: Update version to 1.2.0.
+  * fix: Fix sw64 gcc not support pie by default
+  * feat: Enable build barrier for win
+  * ci: add Windows MSVC 32-bit build support and improve installer packaging
+  * chore: improve translation tool detection
+
+ -- re2zero <yangwu@uniontech.com>  Wed, 07 Jan 2026 15:39:14 +0800
+
 dde-cooperation (1.1.23) unstable; urgency=medium
 
   * chore: Update version to 1.1.23.
