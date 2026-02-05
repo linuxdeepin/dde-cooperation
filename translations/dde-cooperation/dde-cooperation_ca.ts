@@ -130,17 +130,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
-        <translation>عند إنشاء اتصال بين جهازين، يمكن استخدام المفاتيح والماوس من الطرف الأول للتحكم في الجهاز الآخر</translation>
+        <translation>Quan s&apos;estableix una connexió entre dos dispositius, el teclat i el ratolí de l&apos;iniciador es poden usar per controlar l&apos;altre dispositiu.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Clipboard sharing</source>
-        <translation>مشاركة لوحة المفاتيح</translation>
+        <translation>Compartició de porta-retalls</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-        <translation>بمجرد إنشاء اتصال بين جهازين، سيتم مشاركة لوحة المفاتيح ويمكن نسخ النص على جهاز واحد ووضعه على الآخر.</translation>
+        <translation>Un cop s&apos;estableixi una connexió entre dos dispositius, el porta-retalls es compartirà i es podrà copiar un element en un dispositiu i enganxar-lo a l&apos;altre.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
