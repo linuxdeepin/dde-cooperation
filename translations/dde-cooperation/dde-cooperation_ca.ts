@@ -734,27 +734,27 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
         <source>The other party does not confirm, please try again later</source>
-        <translation>L&apos;altre part no confirma, si us plau, torni a provar més endavant</translation>
+        <translation>L&apos;altra part no ho confirma. Si us plau, torneu-ho a intentar més tard.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="524"/>
         <source>The other party has cancelled the connection request !</source>
-        <translation>L&apos;altre part ha cancel·lat la sol·licitud de connexió !</translation>
+        <translation>L&apos;altre part ha cancel·lat la sol·licitud de connexió!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="528"/>
         <source>connect failed</source>
-        <translation>Conexió fallida</translation>
+        <translation>Ha fallat la connexió.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation>Xarxa no connectada, l&apos;enviament del fitxer ha fallat aquesta vegada. Si us plau, connecti a la xarxa i torni a provar!</translation>
+        <translation>Xarxa no connectada, l&apos;enviament de fitxers ha fallat aquest cop. Connecteu-vos a la xarxa i torneu-ho a provar!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
         <source>File transfer failed</source>
-        <translation>Transmissió de fitxers fallida</translation>
+        <translation>Ha fallat la transferència de fitxers.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
