@@ -995,17 +995,17 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="173"/>
         <source>Not allow</source>
-        <translation>لا يُسمح</translation>
+        <translation>No ho permetis</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="178"/>
         <source>Allows the following users to send files to me</source>
-        <translation>يسمح للمستخدمين التاليين بإرسال الملفات إليّ</translation>
+        <translation>Permet que els usuaris següents us enviïn fitxers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
         <source>File save location</source>
-        <translation>مكان حفظ الملف</translation>
+        <translation>Ubicació per desar-hi el fitxer</translation>
     </message>
 </context>
 </TS>
