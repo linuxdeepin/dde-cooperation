@@ -23,7 +23,7 @@
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="71"/>
         <source>Settings</source>
         <comment>button</comment>
-        <translation>إعدادات</translation>
+        <translation>Configuració</translation>
     </message>
 </context>
 <context>
@@ -32,7 +32,7 @@
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
         <source>Local IP: %1</source>
-        <translation>IP المحلي: %1</translation>
+        <translation>IP local  %1</translation>
     </message>
 </context>
 <context>
@@ -40,13 +40,13 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="25"/>
         <source>&quot;%1&quot; send some files to you</source>
-        <translation>&quot;%1&quot; يرسل لك بعض الملفات</translation>
+        <translation>%1 us envia alguns fitxers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="34"/>
         <source>Reject</source>
         <comment>button</comment>
-        <translation>الرفض</translation>
+        <translation>Rebutja-ho</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="35"/>
