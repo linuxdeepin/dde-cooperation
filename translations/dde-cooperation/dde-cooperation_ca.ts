@@ -591,12 +591,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
         <source>Peripheral share</source>
-        <translation>Compartiment de perifèrics</translation>
+        <translation>Compartició de perifèrics</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
-        <translation>Permet als perifèrics establerts per col·laborar entre dispositius de controlar aquest dispositiu, incloent teclat, ratolí, ratolí tàctil, etc.</translation>
+        <translation>Permet que els perifèrics que s&apos;han configurat col·laborin entre dispositius per controlar aquest dispositiu, com ara el teclat, el ratolí, el ratolí tàctil, etc.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
