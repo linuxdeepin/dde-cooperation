@@ -506,17 +506,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="102"/>
         <source>Scan code connection</source>
-        <translation>Connexió de codi de barras</translation>
+        <translation>Escaneja el codi de connexió</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="108"/>
         <source>Please use the cross end collaboration app to scan the code</source>
-        <translation>Si us plau, utilitza l&apos;aplicació de col·laboració entre dispositius per escanejar el codi</translation>
+        <translation>Si us plau, useu l&apos;aplicació de col·laboració entre dispositius per escanejar el codi.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="114"/>
         <source>Mobile phones and devices need to be connected to the same local area network</source>
-        <translation>Telèfons mòbils i dispositius han de connectar-se a la mateixa xarxa local</translation>
+        <translation>Els telèfons mòbils i els dispositius han de connectar-se a la mateixa xarxa local.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="147"/>
