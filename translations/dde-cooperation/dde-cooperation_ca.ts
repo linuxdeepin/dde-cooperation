@@ -668,28 +668,28 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
         <source>Requesting collaborate to &quot;%1&quot;</source>
-        <translation>Sol·licitant col·laboració amb &quot;%1&quot;</translation>
+        <translation>Se sol·licita col·laboració amb %1</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
-        <translation>La coordinació amb &quot;%1&quot; ha acabat</translation>
+        <translation>La coordinació amb %1 ha acabat.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
-        <translation>S&apos;ha rebut una sol·licitud de col·laboració entre dispositius des de &quot;%1&quot;</translation>
+        <translation>S&apos;ha rebut una sol·licitud de col·laboració entre dispositius des de %1.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
         <source>Reject</source>
-        <translation>Rebutjar</translation>
+        <translation>Rebutja-la</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="355"/>
         <source>Accept</source>
-        <translation>Acceptar</translation>
+        <translation>Accepta-la</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
