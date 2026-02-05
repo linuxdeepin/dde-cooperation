@@ -386,7 +386,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
-        <translation>1. Habilitar les aplicacions de col·laboració entre dispositius. Les aplicacions en UOS es poden descarregar des de la Botiga d&apos;Aplicacions, i les aplicacions en el costat Windows es poden descarregar des de: </translation>
+        <translation>1. Habiliteu les aplicacions de col·laboració entre dispositius. Les aplicacions de l&apos;UOS es poden baixar des de la Botiga d&apos;aplicacions, i les aplicacions de Windows es poden baixar des de </translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
