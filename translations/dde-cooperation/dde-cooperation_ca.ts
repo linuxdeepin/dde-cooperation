@@ -714,7 +714,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
-        <translation>Conexió correcta. Es coordina amb %1.</translation>
+        <translation>Connexió correcta. Es coordina amb %1.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
@@ -759,17 +759,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
-        <translation>Xarxa no connectada, l&apos;enviament del fitxer ha fallat aquesta vegada. Si us plau, connecti a la xarxa i torni a provar!</translation>
+        <translation>Xarxa no connectada, l&apos;enviament de fitxers ha fallat aquest cop. Connecteu-vos a la xarxa i torneu-ho a provar!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="562"/>
         <source>Network exception</source>
-        <translation>Excepció de xarxa</translation>
+        <translation>Excepció de la xarxa</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
         <source>Please check the network &quot;%1&quot;</source>
-        <translation>Si us plau, comprovi la xarxa &quot;%1&quot;</translation>
+        <translation>Si us plau, comproveu la xarxa %1.</translation>
     </message>
 </context>
 <context>
@@ -778,12 +778,12 @@
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
-        <translation>Col·laboració</translation>
+        <translation>Cooperació</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
-        <translation>Conexió correcta, coordinant amb &quot;%1&quot;</translation>
+        <translation>Connexió correcta. Es coordina amb %1.</translation>
     </message>
 </context>
 <context>
@@ -791,7 +791,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
         <source>Connect to &quot;%1&quot; failed</source>
-        <translation>Conexió a &quot;%1&quot; fallida</translation>
+        <translation>La connexió amb %1 ha fallat.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
