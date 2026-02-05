@@ -145,22 +145,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>Delivery of documents</source>
-        <translation>توصيل المستندات</translation>
+        <translation>Lliurament de documents</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
-        <translation>بعد الاتصال بين جهازين، يمكنك بدء نقل ملف إلى الجهاز الآخر.</translation>
+        <translation>Després de connectar dos dispositius, podeu iniciar un lliurament de fitxers a l&apos;altre dispositiu.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>For detailed instructions, please click on the Help Manual below</source>
-        <translation>للتعليمات التفصيلية، يرجى النقر على دليل المساعدة أدناه.</translation>
+        <translation>Per obtenir-ne instruccions detallades, feu clic al Manual d&apos;ajuda que hi ha a continuació.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>Usage</source>
-        <translation>الاستخدام</translation>
+        <translation>Ús</translation>
     </message>
 </context>
 <context>
@@ -168,12 +168,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="191"/>
         <source>connected</source>
-        <translation>متصل</translation>
+        <translation>connectat</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="197"/>
         <source>connectable</source>
-        <translation>قابل للاتصال</translation>
+        <translation>connectable</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="204"/>
