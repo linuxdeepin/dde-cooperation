@@ -929,7 +929,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="91"/>
         <source>Wait for confirmation...</source>
-        <translation>انتظر التأكيد...</translation>
+        <translation>S&apos;espera la confirmació...</translation>
     </message>
 </context>
 <context>
@@ -938,17 +938,17 @@
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
-        <translation>يرجى إدخال عنوان الجهاز (IP أو الاسم) للشريك</translation>
+        <translation>Si us plau, introduïu la IP o el nom del dispositiu col·laborador.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="56"/>
         <source>Nearby Device</source>
-        <translation>جهاز قريب</translation>
+        <translation>Dispositiu proper</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="72"/>
         <source>Re-scan for devices</source>
-        <translation>إعادة المسح للجهاز</translation>
+        <translation>Torna a escanejar els dispositius</translation>
     </message>
 </context>
 <context>
