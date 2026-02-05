@@ -719,17 +719,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
-        <translation>&quot;%1&quot; ha rebutjat la teva sol·licitud de col·laboració</translation>
+        <translation>%1 ha rebutjat la sol·licitud de col·laboració.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
-        <translation>&quot;%1&quot; està connectant-se amb altres dispositius</translation>
+        <translation>%1 es connecta amb altres dispositius.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
-        <translation>La sol·licitud de connexió enviat a tu per &quot;%1&quot; s&apos;ha interromput per causa d&apos;un temps d&apos;espera</translation>
+        <translation>La sol·licitud de connexió que us ha enviat %1 s&apos;ha interromput a causa del temps d&apos;espera.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
