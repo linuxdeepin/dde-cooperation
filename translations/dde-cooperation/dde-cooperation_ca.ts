@@ -616,27 +616,27 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
         <source>File save location</source>
-        <translation>Ubicació de desament del fitxer</translation>
+        <translation>Ubicació per desar-hi el fitxer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
         <source>Share clipboard</source>
-        <translation>Compartir portapapers</translation>
+        <translation>Comparteix el porta-retalls</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
         <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
-        <translation>Quan es habiliti el compartiment en el servidor (el dispositiu connectat), el portapapers s&apos;entrelliscarà entre els dos ordinadors</translation>
+        <translation>Quan l&apos;opció de compartir està habilitada al servidor (el dispositiu connectat), el porta-retalls es compartirà entre els dos ordinadors.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
         <source>The device name must contain 1 to 20 characters</source>
-        <translation>El nom del dispositiu ha de contenir entre 1 i 20 caràcters</translation>
+        <translation>El nom del dispositiu ha de contenir entre 1 i 20 caràcters.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="362"/>
         <source>The device name must contain 1 to 63 characters</source>
-        <translation>El nom del dispositiu ha de contenir entre 1 i 63 caràcters</translation>
+        <translation>El nom del dispositiu ha de contenir entre 1 i 63 caràcters.</translation>
     </message>
 </context>
 <context>
@@ -644,12 +644,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="238"/>
         <source>connect</source>
-        <translation>Connectar</translation>
+        <translation>Connecta</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="246"/>
         <source>Disconnect</source>
-        <translation>Desconnectar</translation>
+        <translation>Desconnecta</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
