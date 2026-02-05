@@ -20,6 +20,9 @@ using namespace deepin_cross;
 TransferPlugin::TransferPlugin(QObject *parent)
     : QObject(parent)
 {
+    // 必须首先初始化日志系统，否则后续的 DLOG 宏会访问未初始化的 Logger
+    CommonUitls::initLog();
+
     DLOG << "TransferPlugin constructor entered";
     initialize();
     DLOG << "TransferPlugin initialized";
@@ -43,8 +46,8 @@ void TransferPlugin::initialize()
     ConfigManager::instance();
     DLOG << "Configuration manager initialized";
 
-    CommonUitls::initLog();
-    DLOG << "Log system initialized";
+    // 注意：initLog() 已移至构造函数开头，确保日志系统最先初始化
+    // CommonUitls::initLog();
 
     CommonUitls::loadTranslator();
     DLOG << "Translations loaded";

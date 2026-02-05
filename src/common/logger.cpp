@@ -3,12 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logger.h"
+#include <mutex>
 
 using namespace deepin_cross;
 
 const char *Logger::_levels[] = {"Debug  ", "Info   ", "Warning", "Error  ", "Fatal  "};
 
 Logger::Logger()
+    : _initialized(false)  // atomic<bool> 的初始化
 {
 }
 
@@ -16,14 +18,30 @@ Logger::~Logger()
 {
 }
 
+Logger::ThreadLocalData& Logger::getThreadLocalData()
+{
+    // thread_local 确保每个线程都有独立的缓冲区和级别
+    thread_local ThreadLocalData data;
+    return data;
+}
+
 LogStream Logger::log(const char* fname, unsigned line, int level)
 {
-    _lv = level;
-    _buffer << "["<< _levels[level] << "]" << " [" << fname << ':' << line << "] ";
-    return LogStream(*this);
+    ThreadLocalData& data = getThreadLocalData();
+    data.level = level;
+    data.buffer << "["<< _levels[level] << "]" << " [" << fname << ':' << line << "] ";
+    return LogStream(*this, data);
 }
 
 void Logger::init(const std::string &logpath, const std::string &logname) {
+    // 使用互斥锁确保 init 只被调用一次，且不会被并发调用
+    std::lock_guard<std::mutex> lock(_initMutex);
+
+    // 使用 atomic load 确保线程安全地检查初始化状态
+    if (_initialized.load(std::memory_order_acquire)) {
+        return;
+    }
+
     BaseKit::Path savepath = BaseKit::Path(logpath);
     // Create a custom text layout pattern {LocalDate} {LocalTime}
     // std::string fileAndLine = std::string(__FILE__) + ":" + std::to_string(__LINE__);
@@ -56,39 +74,54 @@ void Logger::init(const std::string &logpath, const std::string &logname) {
 
     // last: get the configed logger
     _logger = Logging::Config::CreateLogger("dde-cooperation");
+
+    // 标记日志系统已初始化（使用 atomic store 确保线程安全）
+    _initialized.store(true, std::memory_order_release);
 }
 
 void Logger::stop()
 {
+    std::lock_guard<std::mutex> lock(_initMutex);
     // Shutdown the logging
     Logging::Config::Shutdown();
+    // 使用 atomic store 确保线程安全
+    _initialized.store(false, std::memory_order_release);
 }
 
-std::ostringstream& Logger::buffer()
+void Logger::logout(ThreadLocalData& data, const std::string& message)
 {
-    return _buffer;
-}
+    // 检查日志系统是否已初始化，防止访问未初始化的 _logger
+    // 使用 atomic load 确保线程安全
+    if (!_initialized.load(std::memory_order_acquire)) {
+        // 未初始化时，使用 stderr 作为备用输出
+        fprintf(stderr, "%s\n", message.c_str());
+        fflush(stderr);
+        // 清除错误标志和内容，避免后续日志调用受影响
+        data.buffer.clear();
+        data.buffer.str("");
+        return;
+    }
 
-void Logger::logout()
-{
-    switch (_lv) {
+    switch (data.level) {
     case debug:
-        _logger.Debug(_buffer.str());
+        _logger.Debug(message);
         break;
     case info:
-        _logger.Info(_buffer.str());
+        _logger.Info(message);
         break;
     case warning:
-        _logger.Warn(_buffer.str());
+        _logger.Warn(message);
         break;
     case error:
-        _logger.Error(_buffer.str());
+        _logger.Error(message);
         break;
     case fatal:
-        _logger.Fatal(_buffer.str());
+        _logger.Fatal(message);
         break;
     default:
         break;
     }
-    _buffer.str(""); // clear
+    // 清除错误标志和内容
+    data.buffer.clear();
+    data.buffer.str("");
 }

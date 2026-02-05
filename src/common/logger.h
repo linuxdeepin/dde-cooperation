@@ -9,6 +9,8 @@
 #include "logging/logger.h"
 
 #include <sstream>
+#include <mutex>
+#include <atomic>
 
 namespace deepin_cross {
 
@@ -46,41 +48,51 @@ public:
 
     LogStream log(const char* fname, unsigned line, int level);
 
-    std::ostringstream& buffer();
-    void logout();
+    // 使用 thread_local 确保每个线程有自己的缓冲区和级别
+    struct ThreadLocalData {
+        std::ostringstream buffer;
+        int level;
+        ThreadLocalData() : level(0) {}
+    };
+
+    ThreadLocalData& getThreadLocalData();
+    void logout(ThreadLocalData& data, const std::string& message);
 
 private:
     static const char *_levels[];
     Logging::Logger _logger;
-    std::ostringstream _buffer;
-    int _lv;
+    std::atomic<bool> _initialized;  // 使用原子变量防止数据竞争
+
+    // 互斥锁保护 init/stop 操作
+    std::mutex _initMutex;
 };
 
 // 代理类 LogStream
 class LogStream {
 public:
-    LogStream(Logger& logger) : _logger(logger) {};
+    LogStream(Logger& logger, Logger::ThreadLocalData& data) : _logger(logger), _data(data) {};
 
     ~LogStream() {
-        // 在构时调用输出
-        _logger.logout();
+        // 在析构时调用输出
+        _logger.logout(_data, _data.buffer.str());
     }
 
     template<typename T>
     LogStream& operator<<(const T& data) {
-        _logger.buffer() << data;
+        _data.buffer << data;
         return *this;
     };
 
     // 处理 std::endl 和其他操纵符
     LogStream& operator<<(std::ostream& (*manip)(std::ostream&)) {
-        manip(_logger.buffer());
-        _logger.logout();
+        manip(_data.buffer);
+        _logger.logout(_data, _data.buffer.str());
         return *this;
     };
 
 private:
     Logger& _logger;
+    Logger::ThreadLocalData& _data;
 };
 
 }

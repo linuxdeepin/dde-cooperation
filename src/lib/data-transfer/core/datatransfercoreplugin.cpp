@@ -16,6 +16,9 @@ using namespace deepin_cross;
 DataTransferCorePlugin::DataTransferCorePlugin(QObject *parent)
     : QObject(parent)
 {
+    // 必须首先初始化日志系统，否则后续的 DLOG 宏会访问未初始化的 Logger
+    CommonUitls::initLog();
+
     DLOG << "Creating DataTransferCorePlugin instance";
     initialize();
     DLOG << "DataTransferCorePlugin instance created";
@@ -29,7 +32,7 @@ DataTransferCorePlugin::~DataTransferCorePlugin()
 void DataTransferCorePlugin::initialize()
 {
     DLOG << "Initializing DataTransferCorePlugin";
-    CommonUitls::initLog();
+    // 注意：initLog() 已移至构造函数开头，确保日志系统最先初始化
     CommonUitls::loadTranslator();
     DLOG << "DataTransferCorePlugin initialized";
 }
