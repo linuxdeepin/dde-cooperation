@@ -431,7 +431,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="251"/>
         <source>3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device</source>
-        <translation>3. Després de connectar aquest dispositiu, el costat mòbil ha de mantenir obertes les aplicacions de col·laboració entre dispositius i al mateix LAN que aquest dispositiu</translation>
+        <translation>3. Després de connectar aquest dispositiu, l&apos;extrem mòbil ha de mantenir les aplicacions de col·laboració obertes i a la mateixa LAN que aquest dispositiu.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="253"/>
@@ -452,24 +452,24 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="65"/>
         <source>Disconnect</source>
-        <translation>Desconnectar</translation>
+        <translation>Desconnecta</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="93"/>
         <source>“%1”apply to initiate screen casting</source>
-        <translation>“%1”aplica per iniciacions de transmissió de pantalla</translation>
+        <translation>Aplica %1 per iniciar la transmissió de pantalla</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="212"/>
         <source>cancel</source>
-        <translation>cancel·lar</translation>
+        <translation>cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="157"/>
         <source>comfirm</source>
-        <translation>confirmar</translation>
+        <translation>confirmeu-ho</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="139"/>
