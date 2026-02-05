@@ -52,7 +52,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="35"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation>الموافقة</translation>
+        <translation>Accepta-ho</translation>
     </message>
 </context>
 <context>
@@ -60,7 +60,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/win/cooperationsearchedit.cpp" line="34"/>
         <source>Search</source>
-        <translation>البحث</translation>
+        <translation>Cerca</translation>
     </message>
 </context>
 <context>
@@ -70,31 +70,31 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>إلغاء</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="134"/>
         <source>Retry</source>
         <comment>button</comment>
-        <translation>إعادة المحاولة</translation>
+        <translation>Torna-ho a provar</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="157"/>
         <source>Reject</source>
         <comment>button</comment>
-        <translation>الرفض</translation>
+        <translation>Rebutja-ho</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="160"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation>الموافقة</translation>
+        <translation>Accepta-ho</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="184"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation>إغلاق</translation>
+        <translation>Tanca</translation>
     </message>
 </context>
 <context>
@@ -102,12 +102,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="275"/>
         <source>File Transfer</source>
-        <translation>نقل الملفات</translation>
+        <translation>Transferència de fitxer</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="278"/>
         <source>File transfer</source>
-        <translation>نقل الملفات</translation>
+        <translation>Transferència de fitxer</translation>
     </message>
 </context>
 <context>
