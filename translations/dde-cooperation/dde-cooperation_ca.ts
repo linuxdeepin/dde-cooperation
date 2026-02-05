@@ -416,17 +416,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="245"/>
         <source>1. The mobile phone needs to download cross end collaborative applications.</source>
-        <translation>1. El telèfon mòbil ha de descarregar aplicacions de col·laboració entre dispositius.</translation>
+        <translation>1. El telèfon mòbil necessita baixar aplicacions de col·laboració.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
         <source>Go to download&gt;</source>
-        <translation>Anar a descarregar&gt;</translation>
+        <translation>Ves a la baixada&gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
         <source>2. After installation, scan the code to connect to this device for collaboration.</source>
-        <translation>2. Després de l&apos;instal·lació, escaneja el codi per connectar-te a aquest dispositiu per a la col·laboració.</translation>
+        <translation>2. Després de la instal·lació, escanegeu el codi per connectar amb aquest dispositiu per a la col·laboració.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="251"/>
