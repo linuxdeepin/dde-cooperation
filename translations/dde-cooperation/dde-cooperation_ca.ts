@@ -245,12 +245,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
         <source>Enter the peer IP in the search box</source>
-        <translation>Introduïu l&apos;IP del dispositiu de companyia a la caixa de cerca</translation>
+        <translation>Introduïu l&apos;IP de l&apos;altre dispositiu al camp de cerca</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="131"/>
         <source>Click</source>
-        <translation>Fes clic</translation>
+        <translation>Cliqueu</translation>
     </message>
 </context>
 <context>
@@ -264,12 +264,12 @@
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
-        <translation>l&apos;ubicació de desament del fitxer és invàlida</translation>
+        <translation>La ubicació de desament del fitxer no és vàlida.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation>Aquesta ruta és un directori només de lectura. Si us plau, tria una ubicació diferent per desar el fitxer.</translation>
+        <translation>Aquest camí és un directori de només lectura. Trieu una ubicació diferent per desar-hi el fitxer.</translation>
     </message>
 </context>
 <context>
