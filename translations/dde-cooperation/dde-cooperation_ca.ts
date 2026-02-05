@@ -401,17 +401,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
-        <translation>3. Configuració-Configuració bàsica-Mode de descoberta-&quot;Permetre a tots al mateix LAN&quot;</translation>
+        <translation>3. Configuració - Configuració bàsica - Mode de descobriment - Permet tothom a la mateixa LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
         <source>4. Try entering the target device IP in the top search box</source>
-        <translation>4. Prova d&apos;entrar l&apos;IP del dispositiu objectiu a la caixa de cerca superior</translation>
+        <translation>4. Proveu d&apos;introduir la IP del dispositiu de destinació al quadre de cerca superior.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="216"/>
         <source>Unable to find collaborative device？</source>
-        <translation>No es pot trobar dispositiu de col·laboració?</translation>
+        <translation>No s&apos;ha pogut trobar el dispositiu de col·laboració?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="245"/>
