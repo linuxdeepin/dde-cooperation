@@ -277,12 +277,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="204"/>
         <source>The current device has been locked</source>
-        <translation>El dispositiu actual s&apos;ha bloquejat</translation>
+        <translation>El dispositiu actual s&apos;ha blocat.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="207"/>
         <source>You can unlock it on mobile devices</source>
-        <translation>Pot desbloquejar-lo en dispositius mòbils</translation>
+        <translation>Podeu desblocar-lo en dispositius mòbils.</translation>
     </message>
 </context>
 <context>
@@ -290,7 +290,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="81"/>
         <source>Looking for devices</source>
-        <translation>Buscant dispositius</translation>
+        <translation>Se cerquen dispositius</translation>
     </message>
 </context>
 <context>
@@ -298,12 +298,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="266"/>
         <source>Minimise to system tray</source>
-        <translation>Minimitzar a la barra de sistema</translation>
+        <translation>Minimitza a la safata del sistema</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="268"/>
         <source>Exit</source>
-        <translation>Sortir</translation>
+        <translation>Surt</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="277"/>
