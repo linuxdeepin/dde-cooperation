@@ -9,7 +9,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation>التعاون هو أداة مكتبية قوية تعمل عبر المنصات المختلفة وتسمح لك بإرسال الملفات ومشاركة المفاتيح والماوس والصواعق بين الأجهزة المختلفة.</translation>
+        <translation>La Cooperació és una eina d&apos;oficina potent entre terminals que us ajuda a transferir fitxers, compartir teclats i ratolins, i compartir porta-retalls entre diferents dispositius.</translation>
     </message>
 </context>
 <context>
@@ -17,7 +17,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="69"/>
         <source>File transfer settings</source>
-        <translation>إعدادات نقل الملفات</translation>
+        <translation>Configuració de la transferència de fitxers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="71"/>
@@ -135,7 +135,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Clipboard sharing</source>
-        <translation>Compartició de porta-retalls</translation>
+        <translation>Compartició del porta-retalls</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
@@ -245,7 +245,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
         <source>Enter the peer IP in the search box</source>
-        <translation>Introduïu l&apos;IP de l&apos;altre dispositiu al camp de cerca</translation>
+        <translation>Introduïu l&apos;adreça IP de l&apos;altre dispositiu al camp de cerca.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="131"/>
@@ -264,7 +264,7 @@
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
-        <translation>La ubicació de desament del fitxer no és vàlida.</translation>
+        <translation>La ubicació per desar-hi el fitxer no és vàlida.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
@@ -444,7 +444,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="293"/>
         <source>No device found</source>
-        <translation>No s&apos;ha trobat cap dispositiu</translation>
+        <translation>No s&apos;ha trobat cap dispositiu.</translation>
     </message>
 </context>
 <context>
@@ -492,7 +492,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="115"/>
         <source>Remaining time %1 | %2%</source>
-        <translation>Temps restant %1 | %2%</translation>
+        <translation>Temps restant: %1 | %2%</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="133"/>
@@ -611,7 +611,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
         <source>Allows the following users to send files to me</source>
-        <translation>Permet que els següents usuaris m&apos;enviïn fitxers</translation>
+        <translation>Permet que els usuaris següents us enviïn fitxers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
