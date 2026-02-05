@@ -474,17 +474,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="139"/>
         <source>“%1”connection disconnected!</source>
-        <translation>“%1”connexió desconnectada!</translation>
+        <translation>Connexió %1 desconnectada!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
         <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
-        <translation>Has d&apos;estar segur de desconnectar i col·laborar amb &apos;%1&apos;?</translation>
+        <translation>Segur que voleu desconnectar-vos i col·laborar amb %1?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
         <source>disconnect</source>
-        <translation>desconnectar</translation>
+        <translation>desconnecta</translation>
     </message>
 </context>
 <context>
@@ -498,7 +498,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="133"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel·lar</translation>
+        <translation>Cancel·la</translation>
     </message>
 </context>
 <context>
