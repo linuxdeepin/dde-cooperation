@@ -197,17 +197,17 @@
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
-        <translation>Fes clic per confirmar i activar el servei de detecció de xarxa!</translation>
+        <translation>Feu clic per confirmar-ho i activar el servei de detecció de xarxa!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="249"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned on</source>
-        <translation>No es pot descobrir ni ser descobert per altres dispositius quan el servei de detecció de xarxa no està activat</translation>
+        <translation>No es pot descobrir ni ser descobert per altres dispositius quan el servei de descobriment de LAN no està activat.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
-        <translation>No es pot descobrir ni ser descobert per altres dispositius quan el servei de detecció de xarxa no està activat. Fes doble clic al menú Iniciar de Windows -&gt;Gestió de dispositius -&gt;Serveis i aplicacions -&gt;Serveis per activar el servei Bonjour</translation>
+        <translation>No es pot descobrir ni ser descobert per altres dispositius quan el servei de detecció de xarxa no està activat. Feu clic doble al menú Iniciar de Windows -&gt; Gestió de dispositius -&gt; Serveis i aplicacions -&gt; Serveis per activar el servei Bonjour.</translation>
     </message>
 </context>
 <context>
@@ -215,7 +215,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="126"/>
         <source>First step</source>
-        <translation>Primera etapa</translation>
+        <translation>Primer pas</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="127"/>
