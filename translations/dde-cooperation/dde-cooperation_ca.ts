@@ -566,7 +566,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="54"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation>Només es permeten aquells que estiguin col·laborant</translation>
+        <translation>Només es permeten els que facin la col·laboració.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="132"/>
@@ -576,12 +576,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="143"/>
         <source>Discovery mode</source>
-        <translation>Mode de descoberta</translation>
+        <translation>Mode de descobriment</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
-        <translation>Altres dispositius poden descobrir i connectar-se amb tu a través de l&apos;aplicació &quot;Cooperation&quot;</translation>
+        <translation>Altres dispositius us poden descobrir i connectar-se a través de l&apos;aplicació de Cooperació.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
