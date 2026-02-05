@@ -956,7 +956,7 @@
     <message>
         <location filename="../../src/lib/cooperation/transfer/helper/transferhelper.cpp" line="105"/>
         <source>Send files</source>
-        <translation>أرسل الملفات</translation>
+        <translation>Envia fitxers</translation>
     </message>
 </context>
 <context>
@@ -964,7 +964,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="34"/>
         <source>File transfer</source>
-        <translation>نقل الملف</translation>
+        <translation>Transferència de fitxers</translation>
     </message>
 </context>
 <context>
@@ -972,7 +972,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="64"/>
         <source>File transfer</source>
-        <translation>نقل الملف</translation>
+        <translation>Transferència de fitxers</translation>
     </message>
 </context>
 <context>
@@ -980,17 +980,17 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="154"/>
         <source>File transfer settings</source>
-        <translation>إعدادات نقل الملف</translation>
+        <translation>Configuració de la transferència de fitxers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="171"/>
         <source>Everyone in the same LAN</source>
-        <translation>كل شخص في نفس الشبكة المحلية</translation>
+        <translation>Tots a la mateixa LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="172"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation>يُسمح فقط لمن يتعاونون</translation>
+        <translation>Només hi estan permesos els que col·laboren.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="173"/>
