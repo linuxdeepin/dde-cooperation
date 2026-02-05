@@ -889,17 +889,17 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation>الشبكة غير متصلة، فشل في إرسال الملف هذه المرة. يرجى الاتصال بالشبكة وحاول مرة أخرى!</translation>
+        <translation>Xarxa no connectada. L&apos;enviament de fitxers ha fallat aquest cop. Connecteu-vos a la xarxa i torneu-ho a provar!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
         <source>calculating</source>
-        <translation>يتم الحساب</translation>
+        <translation>Es calcula</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
         <source>The other party rejects your request</source>
-        <translation>الطرف الآخر رفض طلبك</translation>
+        <translation>L&apos;altra part rebutja la sol·licitud.</translation>
     </message>
 </context>
 <context>
@@ -907,7 +907,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="132"/>
         <source>File transfer</source>
-        <translation>نقل الملف</translation>
+        <translation>Transferència de fitxer</translation>
     </message>
 </context>
 <context>
