@@ -365,12 +365,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="88"/>
         <source>Download client</source>
-        <translation>Client de baixada</translation>
+        <translation>Baixa el client</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="130"/>
         <source>Download Windows client</source>
-        <translation>Descarregar client Windows</translation>
+        <translation>Baixa el client de Windows</translation>
     </message>
 </context>
 <context>
@@ -378,7 +378,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="150"/>
         <source>Please connect to the network</source>
-        <translation>Si us plau, connecti&apos;s a la xarxa</translation>
+        <translation>Si us plau, connecteu-vos a la xarxa.</translation>
     </message>
 </context>
 <context>
