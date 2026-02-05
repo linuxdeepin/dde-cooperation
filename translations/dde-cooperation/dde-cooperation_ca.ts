@@ -601,17 +601,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
-        <translation>Quan aquest dispositiu és la part connectada, el ratolí penetra des de la pantalla d&apos;aquest dispositiu cap a la posició de la part connectada</translation>
+        <translation>Quan aquest dispositiu és la part connectada, el ratolí penetra des de la pantalla d&apos;aquest dispositiu fins a la posició de la part connectada.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
         <source>Connection direction</source>
-        <translation>Direcció de connexió</translation>
+        <translation>Sentit de la connexió</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
         <source>Allows the following users to send files to me</source>
-        <translation>Permet als següents usuaris enviar fitxers a mi</translation>
+        <translation>Permet que els següents usuaris m&apos;enviïn fitxers</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
