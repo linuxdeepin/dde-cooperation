@@ -870,19 +870,19 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
         <source>View</source>
-        <translation>عرض</translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
         <source>The other party has cancelled the transfer request !</source>
-        <translation>لقد تم إلغاء طلب النقل من قبل الطرف الآخر !</translation>
+        <translation>L&apos;altra part ha cancel·lat la sol·licitud de transferència!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation>مساحة تخزين غير كافية، فشل في إرسال الملف هذه المرة. يرجى تنظIME مساحة القرص الصلب وحاول مرة أخرى!</translation>
+        <translation>Espai d&apos;emmagatzematge insuficient. L&apos;enviament de fitxers ha fallat aquest cop. Si us plau, allibereu espai de disc i torneu-ho a provar!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
