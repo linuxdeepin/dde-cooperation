@@ -220,17 +220,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="127"/>
         <source>The opposite end opens the application and connects to the same network</source>
-        <translation>A l&apos;extrem oposat s&apos;obre l&apos;aplicació i es connecta a la xarxa igual</translation>
+        <translation>L&apos;extrem oposat obre l&apos;aplicació i es connecta a la mateixa xarxa.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="128"/>
         <source>Second step</source>
-        <translation>Segona etapa</translation>
+        <translation>Segon pas</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="130"/>
         <source>Third step</source>
-        <translation>Tercera etapa</translation>
+        <translation>Tercer pas</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="189"/>
@@ -240,7 +240,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
         <source>to connect to the peer device</source>
-        <translation>per connectar-te al dispositiu de companyia</translation>
+        <translation>per connectar amb l&apos;altre dispositiu </translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
