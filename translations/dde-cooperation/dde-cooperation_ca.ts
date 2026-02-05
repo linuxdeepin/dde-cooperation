@@ -391,12 +391,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
         <source>2. On the same LAN as the device</source>
-        <translation>2. Al mateix LAN que l&apos;equip</translation>
+        <translation>2. A la mateixa LAN que el dispositiu</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
-        <translation>3. Gestionador de fitxers-Configuració-Transferència de fitxers-permetre als següents usuaris deixar caure fitxers a mi -&quot;Tot el món al mateix LAN&quot;</translation>
+        <translation>3. Gestor de fitxers - Configuració - Transferència de fitxers - Permet que els usuaris següents transfereixin fitxers - Tots a la mateixa LAN.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
