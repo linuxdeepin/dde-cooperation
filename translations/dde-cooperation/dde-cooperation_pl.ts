@@ -207,7 +207,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
-        <translation type="unfinished"/>
+        <translation>Nie można znaleźć i zostać znalezionym przez inne urządzenia, jeśli usługa znajdywania jest wyłączona. W systemie Windows kliknij prawym przyciskiem na menu Start -&gt; Zarządzanie komputerem -&gt; Usługi i aplikacje -&gt; Usługi, a następnie włącz usługę Bonjur.</translation>
     </message>
 </context>
 <context>
