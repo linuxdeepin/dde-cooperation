@@ -521,7 +521,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="147"/>
         <source>Click to download UOS assistant APP</source>
-        <translation type="unfinished"/>
+        <translation>Kliknij, aby pobrać aplikację asystenta UOS</translation>
     </message>
 </context>
 <context>
@@ -530,13 +530,13 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="179"/>
         <source>Ok</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="182"/>
         <source>View</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Wyświetl</translation>
     </message>
 </context>
 <context>
@@ -545,13 +545,13 @@
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished"/>
+        <translation>Wszyscy w tej samej sieci LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="55"/>
         <source>Not allow</source>
-        <translation type="unfinished"/>
+        <translation>Nie zezwalaj</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
