@@ -699,27 +699,27 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
         <source>Connect to &quot;%1&quot; failed</source>
-        <translation type="unfinished"/>
+        <translation>Błąd połączenia z &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
         <source>Unable to collaborate</source>
-        <translation type="unfinished"/>
+        <translation>Błąd połączenia</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="419"/>
         <source>Failed to run process!</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się uruchomić procesu!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Połączono pomyślnie, synchronizowanie z &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; odrzucił Twoją prośbę o połączenie</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
