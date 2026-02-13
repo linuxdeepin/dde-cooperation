@@ -215,32 +215,32 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="126"/>
         <source>First step</source>
-        <translation>Pierwszy krok</translation>
+        <translation>Krok pierwszy</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="127"/>
         <source>The opposite end opens the application and connects to the same network</source>
-        <translation type="unfinished"/>
+        <translation>Włącz aplikację na drugim urządzeniu i połącz ją do tej samej sieci</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="128"/>
         <source>Second step</source>
-        <translation type="unfinished"/>
+        <translation>Krok drugi</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="130"/>
         <source>Third step</source>
-        <translation type="unfinished"/>
+        <translation>Krok trzeci</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="189"/>
         <source>to send the file</source>
-        <translation type="unfinished"/>
+        <translation>aby wysłać plik</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
         <source>to connect to the peer device</source>
-        <translation type="unfinished"/>
+        <translation>aby połączyć się z drugim urządzeniem</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
