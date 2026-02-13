@@ -827,52 +827,52 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="302"/>
         <source>The other party did not receive, the files failed to send</source>
-        <translation type="unfinished"/>
+        <translation>Wystąpił błąd wysyłania plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="332"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="335"/>
         <source>File receiving %1% | Remaining time %2</source>
-        <translation type="unfinished"/>
+        <translation>Odbieranie plików %1% | Pozostało %2</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
         <source>Sending files to &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Wysyłanie plików do &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
         <source>Receiving files from &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Odbieranie plików od &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
         <source>Reject</source>
-        <translation type="unfinished"/>
+        <translation>Odrzuć</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="400"/>
         <source>Accept</source>
-        <translation type="unfinished"/>
+        <translation>Akceptuj</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="401"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Zamknij</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
         <source>&quot;%1&quot; send some files to you</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; chce przesłać Ci kilka plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Wyświetl</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
