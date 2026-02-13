@@ -601,27 +601,27 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
-        <translation type="unfinished"/>
+        <translation>Jeśli twoje urządzenie zainicjowało połączenie, Twoja mysz będzie mogła przejść na ekran drugiego urządzenia</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
         <source>Connection direction</source>
-        <translation type="unfinished"/>
+        <translation>Kierunek połączenia</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"/>
+        <translation>Zezwól wybranym użytkownikom na transfer plików do mnie</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
         <source>File save location</source>
-        <translation type="unfinished"/>
+        <translation>Lokalizacja zapisu plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
         <source>Share clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Udostępnij schowek</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
