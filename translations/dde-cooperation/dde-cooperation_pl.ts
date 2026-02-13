@@ -32,7 +32,7 @@
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
         <source>Local IP: %1</source>
-        <translation>Lokalne IP: %1</translation>
+        <translation>IP lokalne: %1</translation>
     </message>
 </context>
 <context>
@@ -940,7 +940,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
-        <translation>Wprowadź adres ip/nazwę urządzenia kolaboranta</translation>
+        <translation>Wprowadź adres IP/nazwę urządzenia kolaboranta</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="56"/>
