@@ -130,17 +130,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
-        <translation type="unfinished"/>
+        <translation>Po nawiązaniu połączenia między urządzeniami, mysz i klawiatura osoby inicjującej może sterować drugim urządzeniem</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Clipboard sharing</source>
-        <translation type="unfinished"/>
+        <translation>Udostępnianie klawiatury</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-        <translation type="unfinished"/>
+        <translation>Po nawiązaniu połączenia, schowek zostanie współdzielony co umożliwi skopiowanie pliku na jednym urządzeniu i wklejenia na drugim</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
