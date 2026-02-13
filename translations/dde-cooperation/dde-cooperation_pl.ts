@@ -378,7 +378,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="150"/>
         <source>Please connect to the network</source>
-        <translation type="unfinished"/>
+        <translation>Prosimy o połączenie z siecią</translation>
     </message>
 </context>
 <context>
