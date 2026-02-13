@@ -877,7 +877,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
         <source>The other party has cancelled the transfer request !</source>
-        <translation type="unfinished"/>
+        <translation>Druga strona odrzuciła prośbę transferu!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
