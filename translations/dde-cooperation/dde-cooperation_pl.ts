@@ -82,19 +82,19 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="157"/>
         <source>Reject</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Odrzuć</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="160"/>
         <source>Accept</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Akceptuj</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="184"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Zamknij</translation>
     </message>
 </context>
 <context>
@@ -102,12 +102,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="275"/>
         <source>File Transfer</source>
-        <translation type="unfinished"/>
+        <translation>Transfer plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="278"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>Transfer plików</translation>
     </message>
 </context>
 <context>
@@ -115,17 +115,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="217"/>
         <source>View Help Manual</source>
-        <translation type="unfinished"/>
+        <translation>Pokaż instrukcję obsługi</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
         <source>Welcome to dde-cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Witamy w dde-cooperation</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>Keyboard and mouse sharing</source>
-        <translation type="unfinished"/>
+        <translation>Udostępnianie myszy i klawiatury</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
