@@ -197,7 +197,7 @@
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
-        <translation type="unfinished"/>
+        <translation>Potwierdź, aby włączyć usługę znajdywania w sieci LAN!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="249"/>
