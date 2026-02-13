@@ -130,7 +130,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
-        <translation>Po nawiązaniu połączenia między urządzeniami, mysz i klawiatura osoby inicjującej może sterować drugim urządzeniem</translation>
+        <translation>Po nawiązaniu połączenia, mysz i klawiatura osoby inicjującej może sterować drugim urządzeniem</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
@@ -150,12 +150,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
-        <translation>Po nawiązaniu połączenia między urządzeniami, możesz zainicjować transfer pliku na drugie urządzenie</translation>
+        <translation>Po nawiązaniu połączenia, możesz zainicjować transfer pliku na drugie urządzenie</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>For detailed instructions, please click on the Help Manual below</source>
-        <translation type="unfinished"/>
+        <translation>Aby uzyskać szczegółowe instrukcje, przejdź do instrukcji obsługi poniżej</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
