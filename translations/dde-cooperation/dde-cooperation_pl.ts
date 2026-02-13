@@ -668,33 +668,33 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
         <source>Requesting collaborate to &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Wysyłanie prośby połączenia do &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
-        <translation type="unfinished"/>
+        <translation>Połączenie z &quot;%1&quot; zostało zakończone</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Otrzymano prośbę o połączenie od &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
         <source>Reject</source>
-        <translation type="unfinished"/>
+        <translation>Odrzuć</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="355"/>
         <source>Accept</source>
-        <translation type="unfinished"/>
+        <translation>Akceptuj</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Współpraca</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
