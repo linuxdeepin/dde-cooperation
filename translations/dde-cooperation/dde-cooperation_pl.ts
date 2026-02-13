@@ -411,7 +411,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="216"/>
         <source>Unable to find collaborative device？</source>
-        <translation type="unfinished"/>
+        <translation>Nie znaleziono urządzenia kolaboranta?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="245"/>
@@ -421,7 +421,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
         <source>Go to download&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Przejdź do pobierania</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
@@ -966,7 +966,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="34"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>Transfer plików</translation>
     </message>
 </context>
 <context>
@@ -974,7 +974,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="64"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>Transfer plików</translation>
     </message>
 </context>
 <context>
@@ -982,32 +982,32 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="154"/>
         <source>File transfer settings</source>
-        <translation type="unfinished"/>
+        <translation>Ustawienia transferu plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="171"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished"/>
+        <translation>Wszyscy w tej samej sieci LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="172"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished"/>
+        <translation>Zezwól tylko kolaborantom</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="173"/>
         <source>Not allow</source>
-        <translation type="unfinished"/>
+        <translation>Nie zezwalaj</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="178"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"/>
+        <translation>Zezwól wybranym użytkownikom na transfer plików do mnie</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
         <source>File save location</source>
-        <translation type="unfinished"/>
+        <translation>Lokalizacja zapisu plików</translation>
     </message>
 </context>
 </TS>
