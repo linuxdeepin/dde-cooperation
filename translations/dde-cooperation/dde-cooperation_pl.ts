@@ -945,12 +945,12 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="56"/>
         <source>Nearby Device</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie w pobliżu</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="72"/>
         <source>Re-scan for devices</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj urządzeń</translation>
     </message>
 </context>
 <context>
@@ -958,7 +958,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/transfer/helper/transferhelper.cpp" line="105"/>
         <source>Send files</source>
-        <translation type="unfinished"/>
+        <translation>Wyślij pliki</translation>
     </message>
 </context>
 <context>
