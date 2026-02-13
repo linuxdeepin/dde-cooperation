@@ -749,27 +749,29 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>Utracono połączenie z siecią, co przerwało transfer plików.
+Połącz się z siecią i spróbuj ponownie!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
         <source>File transfer failed</source>
-        <translation type="unfinished"/>
+        <translation>Wystąpił błąd transferu plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>Utracono połączenie z siecią, co przerwało transfer plików.
+Połącz się z siecią i spróbuj ponownie!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="562"/>
         <source>Network exception</source>
-        <translation type="unfinished"/>
+        <translation>Błąd sieci</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
         <source>Please check the network &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Sprawdź sieć &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -778,12 +780,12 @@
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
         <source>Cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Współpraca</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Połączono pomyślnie, synchronizowanie z &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -791,7 +793,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
         <source>Connect to &quot;%1&quot; failed</source>
-        <translation type="unfinished"/>
+        <translation>Błąd połączenia z &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
