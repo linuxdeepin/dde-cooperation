@@ -155,12 +155,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>For detailed instructions, please click on the Help Manual below</source>
-        <translation>Aby uzyskać szczegółowe instrukcje, przejdź do instrukcji obsługi poniżej</translation>
+        <translation>Aby uzyskać szczegółowe informacje, przejdź do instrukcji obsługi poniżej</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>Usage</source>
-        <translation type="unfinished"/>
+        <translation>Korzystanie</translation>
     </message>
 </context>
 <context>
@@ -168,17 +168,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="191"/>
         <source>connected</source>
-        <translation type="unfinished"/>
+        <translation>połączono</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="197"/>
         <source>connectable</source>
-        <translation type="unfinished"/>
+        <translation>można połączyć</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="204"/>
         <source>offline</source>
-        <translation type="unfinished"/>
+        <translation>offline</translation>
     </message>
 </context>
 <context>
@@ -186,12 +186,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="245"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Potwierdź</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="246"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Zamknij</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
