@@ -386,7 +386,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
-        <translation type="unfinished"/>
+        <translation>1. Włącz aplikacje do współpracy międzyplatformowej. Aplikację w systemie UOS można pobrać ze sklepu App Store, natomiast aplikację Windows znajdziesz na stronie:</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
