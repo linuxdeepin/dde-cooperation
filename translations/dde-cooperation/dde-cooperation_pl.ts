@@ -556,27 +556,27 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
         <source>Screen right</source>
-        <translation type="unfinished"/>
+        <translation>Ekran prawy</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="51"/>
         <source>Screen left</source>
-        <translation type="unfinished"/>
+        <translation>Ekran lewy</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="54"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished"/>
+        <translation>Zezwól tylko kolaborantom</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="132"/>
         <source>Basic Settings</source>
-        <translation type="unfinished"/>
+        <translation>Ustawienia podstawowe</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="143"/>
         <source>Discovery mode</source>
-        <translation type="unfinished"/>
+        <translation>Tryb wyszukiwania</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
