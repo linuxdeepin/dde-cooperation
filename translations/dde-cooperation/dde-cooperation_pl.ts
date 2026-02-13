@@ -626,17 +626,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
         <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
-        <translation type="unfinished"/>
+        <translation>Jeśli udostępnianie jest włączone na serwerze (połączonym urządzeniu), schowek zostanie współdzielony.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
         <source>The device name must contain 1 to 20 characters</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa urządzenia musi zawierać od 1 do 20 znaków</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="362"/>
         <source>The device name must contain 1 to 63 characters</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa urządzenia musi zawierać od 1 do 63 znaków</translation>
     </message>
 </context>
 <context>
@@ -644,12 +644,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="238"/>
         <source>connect</source>
-        <translation type="unfinished"/>
+        <translation>Połącz</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="246"/>
         <source>Disconnect</source>
-        <translation type="unfinished"/>
+        <translation>Rozłącz</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
@@ -658,12 +658,12 @@
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
         <source>Unable to collaborate to &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Nie można połączyć się z &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
         <source>You are connecting to another device</source>
-        <translation type="unfinished"/>
+        <translation>Trwa łączenie z drugim urządzeniem</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
