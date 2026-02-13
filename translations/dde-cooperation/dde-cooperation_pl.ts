@@ -581,17 +581,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
-        <translation type="unfinished"/>
+        <translation>Inne urządzenia mogą znaleźć i połączyć się z Tobą poprzez aplikację &quot;Współpracy&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
         <source>Device name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa urządzenia</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
         <source>Peripheral share</source>
-        <translation type="unfinished"/>
+        <translation>Udostępnianie peryferiów</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
