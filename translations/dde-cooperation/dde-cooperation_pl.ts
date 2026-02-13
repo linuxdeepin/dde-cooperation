@@ -884,24 +884,24 @@ Połącz się z siecią i spróbuj ponownie!</translation>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation type="unfinished"/>
+        <translation>Wystąpił błąd transferu plików, ponieważ zabrakło miejsca na dysku. Uprzątnij go i spróbuj ponownie.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>Utracono połączenie z siecią, co przerwało transfer plików. Połącz się z siecią i spróbuj ponownie!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
         <source>calculating</source>
-        <translation type="unfinished"/>
+        <translation>Obliczanie</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
         <source>The other party rejects your request</source>
-        <translation type="unfinished"/>
+        <translation>Druga strona odrzuciła Twoją prośbę</translation>
     </message>
 </context>
 <context>
@@ -909,7 +909,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="132"/>
         <source>File transfer</source>
-        <translation type="unfinished"/>
+        <translation>Transfer plików</translation>
     </message>
 </context>
 <context>
@@ -918,7 +918,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
-        <translation type="unfinished"/>
+        <translation>Rozłączono</translation>
     </message>
 </context>
 <context>
@@ -926,12 +926,12 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="75"/>
         <source>File Transfer</source>
-        <translation type="unfinished"/>
+        <translation>Transfer plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="91"/>
         <source>Wait for confirmation...</source>
-        <translation type="unfinished"/>
+        <translation>Oczekiwanie na potwierdzenie...</translation>
     </message>
 </context>
 <context>
@@ -940,7 +940,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
-        <translation type="unfinished"/>
+        <translation>Wprowadź adres ip/nazwę urządzenia kolaboranta</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="56"/>
