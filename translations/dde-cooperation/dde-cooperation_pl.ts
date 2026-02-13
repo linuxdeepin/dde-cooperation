@@ -145,12 +145,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>Delivery of documents</source>
-        <translation type="unfinished"/>
+        <translation>Przesyłanie dokumentów</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
-        <translation type="unfinished"/>
+        <translation>Po nawiązaniu połączenia między urządzeniami, możesz zainicjować transfer pliku na drugie urządzenie</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
