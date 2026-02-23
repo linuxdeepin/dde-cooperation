@@ -327,7 +327,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="36"/>
         <source>Insufficient space in UOS, Please reserve enough space</source>
-        <translation type="unfinished"/>
+        <translation>Espaço insuficiente no UOS. Libere espaço</translation>
     </message>
 </context>
 <context>
