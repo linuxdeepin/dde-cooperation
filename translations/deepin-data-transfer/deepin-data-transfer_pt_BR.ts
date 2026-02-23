@@ -98,7 +98,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="39"/>
         <source>Check transfer configuration will automatically apply to UOS.</source>
-        <translation type="unfinished"/>
+        <translation>A configuração de verificação de transferência será aplicada automaticamente ao UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="51"/>
