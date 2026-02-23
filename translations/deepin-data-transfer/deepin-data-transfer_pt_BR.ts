@@ -198,7 +198,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>please input connect code as soon as possible</source>
-        <translation type="unfinished"/>
+        <translation>insira o código de conexão o mais rápido possível</translation>
     </message>
 </context>
 <context>
