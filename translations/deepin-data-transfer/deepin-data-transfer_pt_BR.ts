@@ -284,7 +284,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>Do you want to continue with the last transfer?</source>
-        <translation type="unfinished"/>
+        <translation>Continuar a última transferência?</translation>
     </message>
 </context>
 <context>
@@ -292,7 +292,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="54"/>
         <source>Transfer will be completed in</source>
-        <translation type="unfinished"/>
+        <translation>A transferência será concluída em</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="69"/>
@@ -307,7 +307,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="29"/>
         <source>Network Error</source>
-        <translation type="unfinished"/>
+        <translation>Erro de rede</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="30"/>
