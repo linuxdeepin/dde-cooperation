@@ -168,7 +168,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="59"/>
         <source>Connect code is expired, please refresh for new code</source>
-        <translation type="unfinished"/>
+        <translation>O código de conexão expirou, atualize para obter um novo código</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="75"/>
