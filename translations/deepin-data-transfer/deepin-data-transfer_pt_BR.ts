@@ -373,7 +373,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="34"/>
         <source>The network has been disconnected. Please check your network</source>
-        <translation type="unfinished"/>
+        <translation>A rede foi desconectada. Verifique sua conexão de rede</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="40"/>
@@ -399,7 +399,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="29"/>
         <source>Before tranfer</source>
-        <translation type="unfinished"/>
+        <translation>Antes de transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
