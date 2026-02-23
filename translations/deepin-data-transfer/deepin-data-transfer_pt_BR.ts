@@ -140,12 +140,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="49"/>
         <source>Select the configuration to transfer</source>
-        <translation type="unfinished"/>
+        <translation>Selecione a configuração para transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="50"/>
         <source>Please select the configurations to back up</source>
-        <translation type="unfinished"/>
+        <translation>Selecione as configurações para fazer backup</translation>
     </message>
 </context>
 <context>
