@@ -404,12 +404,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
         <source>Data transfer requires some time, to avoid interrupting the migration due to low battery, please keep connect to the  power.</source>
-        <translation type="unfinished"/>
+        <translation>A transferência de dados requer algum tempo. Para evitar interrupções na migração devido à bateria fraca, mantenha o dispositivo conectado à energia.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="36"/>
         <source>Other applications may slowdown the transfer speed. For smoother experience, please close other applications.</source>
-        <translation type="unfinished"/>
+        <translation>Outros aplicativos podem reduzir a velocidade da transferência. Para uma experiência mais fluida, feche os outros aplicativos.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="38"/>
