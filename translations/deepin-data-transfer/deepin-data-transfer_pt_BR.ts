@@ -193,7 +193,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>The code will be expired in</source>
-        <translation type="unfinished"/>
+        <translation>O código expirará em</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
