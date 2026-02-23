@@ -365,7 +365,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.h" line="57"/>
         <source>Please select the files to back up</source>
-        <translation type="unfinished"/>
+        <translation>Selecione os arquivos para fazer backup</translation>
     </message>
 </context>
 <context>
