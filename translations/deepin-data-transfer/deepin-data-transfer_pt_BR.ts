@@ -39,7 +39,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="46"/>
         <source>Select apps to transfer</source>
-        <translation>Selecionar aplicativos para transferir</translation>
+        <translation>Selecione os aplicativos para transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="47"/>
@@ -52,7 +52,7 @@
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="86"/>
         <source>UOS data transfer</source>
-        <translation type="unfinished"/>
+        <translation>Transferência de dados do UOS</translation>
     </message>
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="91"/>
