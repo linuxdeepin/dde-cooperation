@@ -221,7 +221,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="133"/>
         <source>size:0B</source>
-        <translation>Tamanho: 0B</translation>
+        <translation>Tamanho: 0 B</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="152"/>
