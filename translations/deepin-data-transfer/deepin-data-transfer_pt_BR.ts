@@ -158,7 +158,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="41"/>
         <source>Please open data transfer on Windows, and imput the IP and connect code</source>
-        <translation type="unfinished"/>
+        <translation>Abra a transferência de dados no Windows e insira o IP e o código de conexão</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="48"/>
