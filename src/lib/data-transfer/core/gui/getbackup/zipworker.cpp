@@ -1,4 +1,8 @@
-﻿#include <utils/optionsmanager.h>
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include <utils/optionsmanager.h>
 #include <net/helper/transferhepler.h>
 
 #include "zipworker.h"
@@ -109,7 +113,6 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
 
     QFile sourceFile(filePath);
     if (!sourceFile.open(QIODevice::ReadOnly)) {
-        qCritical() << "Error reading source file:" << filePath;
         DLOG << "Failed to open source file for reading:" << filePath.toStdString();
         // backup file false
         sendBackupFileFailMessage(filePath);
@@ -120,7 +123,6 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
     QString destinationFileName = QDir(relativeTo).relativeFilePath(filePath);
     QuaZipNewInfo newInfo(destinationFileName, sourceFile.fileName());
     if (!destinationFile.open(QIODevice::WriteOnly, newInfo)) {
-        qCritical() << "Error writing to ZIP file for:" << filePath;
         DLOG << "Failed to open destination file in ZIP for writing:" << filePath.toStdString();
         // backup file false
 
@@ -136,7 +138,6 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
         if (bytesRead == -1) {
             DLOG << "Error reading from source file:" << filePath.toStdString();
             free(buffer);
-            qCritical() << "Error reading from source file:" << filePath;
             destinationFile.close();
             sourceFile.close();
             sendBackupFileFailMessage(filePath);
@@ -147,7 +148,6 @@ bool ZipWork::addFileToZip(const QString &filePath, const QString &relativeTo, Q
         if (bytesWritten == -1) {
             DLOG << "Error writing to ZIP file for:" << filePath.toStdString();
             free(buffer);
-            qCritical() << "Error writing to ZIP file for:" << filePath;
             destinationFile.close();
             sourceFile.close();
             sendBackupFileFailMessage(filePath);
@@ -207,7 +207,6 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     QElapsedTimer timer;
     zip.setFileNameCodec("UTF-8");
     if (!zip.open(QuaZip::mdCreate)) {
-        qCritical("Error creating the ZIP file.");
         DLOG << "Failed to create ZIP file:" << destinationZipFile.toStdString();
         // backup file false
         sendBackupFileFailMessage(destinationZipFile);
@@ -241,7 +240,6 @@ bool ZipWork::backupFile(const QStringList &entries, const QString &destinationZ
     DLOG << "ZIP file closed, verifying integrity...";
 
     if (zip.getZipError() != UNZ_OK) {
-        qCritical() << "Error while compressing. Error code:" << zip.getZipError();
         DLOG << "Error during compression, ZIP error code:" << zip.getZipError();
         // backup file false
 
