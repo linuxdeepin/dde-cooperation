@@ -2,6 +2,7 @@
  * barrier -- mouse and keyboard sharing utility
  * Copyright (C) 2012-2016 Symless Ltd.
  * Copyright (C) 2002 Chris Schoeneman
+ * Copyright (C) 2024-2026 UnionTech Software Technology Co., Ltd.
  *
  * This package is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +23,7 @@
 #include "platform/XWindowsClipboardUCS2Converter.h"
 #include "platform/XWindowsClipboardUTF8Converter.h"
 #include "platform/XWindowsClipboardHTMLConverter.h"
-#include "platform/XWindowsClipboardBMPConverter.h"
+#include "platform/XWindowsClipboardImageConverter.h"
 #include "platform/XWindowsUtil.h"
 #include "mt/Thread.h"
 #include "arch/Arch.h"
@@ -33,6 +34,9 @@
 #include <cstdio>
 #include <cstring>
 #include <X11/Xatom.h>
+
+// Maximum clipboard data size limit (50MB)
+static const size_t kMaxClipboardSize = 50 * 1024 * 1024;
 
 //
 // XWindowsClipboard
@@ -86,7 +90,10 @@ XWindowsClipboard::XWindowsClipboard(IXWindowsImpl* impl, Display* display,
                                 "text/html"));
     m_converters.push_back(new XWindowsClipboardHTMLConverter(m_display,
                                 "application/x-moz-nativehtml"));
-    m_converters.push_back(new XWindowsClipboardBMPConverter(m_display));
+    // Image converters - PNG/JPEG first (more efficient), then BMP
+    m_converters.push_back(new XWindowsClipboardImageConverter(m_display, "image/png"));
+    m_converters.push_back(new XWindowsClipboardImageConverter(m_display, "image/jpeg"));
+    m_converters.push_back(new XWindowsClipboardImageConverter(m_display, "image/bmp"));
     m_converters.push_back(new XWindowsClipboardUTF8Converter(m_display,
                                 "text/plain;charset=UTF-8"));
     m_converters.push_back(new XWindowsClipboardUTF8Converter(m_display,
@@ -567,9 +574,18 @@ XWindowsClipboard::icccmFillCache()
 
         // add to clipboard and note we've done it
         IClipboard::EFormat format = converter->getFormat();
-        m_data[format]  = converter->toIClipboard(targetData);
-        m_added[format] = true;
-        LOG((CLOG_DEBUG "added format %d for target %s (%u %s)", format, XWindowsUtil::atomToString(m_display, target).c_str(), targetData.size(), targetData.size() == 1 ? "byte" : "bytes"));
+        std::string converted = converter->toIClipboard(targetData);
+        if (!converted.empty()) {
+            if (converted.size() > kMaxClipboardSize) {
+                LOG((CLOG_DEBUG1 "image too large (%zu bytes), skipping", converted.size()));
+                continue;
+            }
+            m_data[format]  = converted;
+            m_added[format] = true;
+            LOG((CLOG_DEBUG "added format %d for target %s (%u %s)", format, XWindowsUtil::atomToString(m_display, target).c_str(), converted.size(), converted.size() == 1 ? "byte" : "bytes"));
+        } else {
+            LOG((CLOG_DEBUG1 "conversion failed for target %s", XWindowsUtil::atomToString(m_display, target).c_str()));
+        }
     }
 }
 
@@ -807,9 +823,18 @@ XWindowsClipboard::motifFillCache()
 
         // add to clipboard and note we've done it
         IClipboard::EFormat format = converter->getFormat();
-        m_data[format]  = converter->toIClipboard(targetData);
-        m_added[format] = true;
-        LOG((CLOG_DEBUG "added format %d for target %s", format, XWindowsUtil::atomToString(m_display, target).c_str()));
+        std::string converted = converter->toIClipboard(targetData);
+        if (!converted.empty()) {
+            if (converted.size() > kMaxClipboardSize) {
+                LOG((CLOG_DEBUG1 "image too large (%zu bytes), skipping", converted.size()));
+                continue;
+            }
+            m_data[format]  = converted;
+            m_added[format] = true;
+            LOG((CLOG_DEBUG "added format %d for target %s (%u %s)", format, XWindowsUtil::atomToString(m_display, target).c_str(), converted.size(), converted.size() == 1 ? "byte" : "bytes"));
+        } else {
+            LOG((CLOG_DEBUG1 "conversion failed for target %s", XWindowsUtil::atomToString(m_display, target).c_str()));
+        }
     }
 }
 
