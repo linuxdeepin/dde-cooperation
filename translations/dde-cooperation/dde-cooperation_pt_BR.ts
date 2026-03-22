@@ -536,7 +536,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="182"/>
         <source>View</source>
         <comment>button</comment>
-        <translation>Visualizar</translation>
+        <translation>Exibir</translation>
     </message>
 </context>
 <context>
@@ -870,7 +870,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
         <source>View</source>
-        <translation>Visualizar</translation>
+        <translation>Exibir</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
