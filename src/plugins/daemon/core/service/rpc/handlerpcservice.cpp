@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -133,6 +133,10 @@ bool HandleRpcService::handleRemoteLogin(co::Json &info)
             fastring pass = Util::decodeBase64(pwd.c_str());
             //            LOG << "pass= " << pass << " getPin=" << DaemonConfig::instance()->getPin();
             authOK = DaemonConfig::instance()->getPin().compare(pass) == 0;
+            // 密码认证成功时，添加文件传输确认状态，允许后续的文件传输
+            if (authOK) {
+                JobManager::instance()->confirmTransfer(lo.appName.c_str());
+            }
         }
         bool statu = true;//Comshare::instance()->checkTransCanConnect();
         if (!authOK || !statu) {
