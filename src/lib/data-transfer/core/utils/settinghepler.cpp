@@ -1,4 +1,8 @@
-﻿#include "settinghepler.h"
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "settinghepler.h"
 
 #include "common/log.h"
 
@@ -71,7 +75,7 @@ bool SettingHelper::handleDataConfiguration(const QString &path)
 
     QDir pdir(path);
     QString filepath = pdir.absolutePath() + "/";
-    QJsonObject jsonObj = ParseJson(filepath + "transfer.json");
+    QJsonObject jsonObj = ParseJson(QDir(filepath).filePath("transfer.json"));
     if (jsonObj.isEmpty()) {
         addTaskcounter(-1);
         WLOG << "transfer.json is invaild";
@@ -100,8 +104,10 @@ bool SettingHelper::handleDataConfiguration(const QString &path)
         }
     }
     addTaskcounter(-1);
-    //remove dir
-    pdir.removeRecursively();
+    //remove transfer.json
+    const QString jsonFile = QDir(filepath).filePath("transfer.json");
+    if (!QFile::remove(jsonFile))
+        WLOG << "Failed to remove transfer.json: " << jsonFile.toStdString();
     return true;
 }
 
@@ -309,8 +315,11 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
         const QJsonArray &userFileArray = userFileValue.toArray();
         for (const auto &value : userFileArray) {
             QString filename = value.toString();
+
+            // 只保留文件名部分，兼容相对路径和绝对路径格式
+            QString file = filepath + QFileInfo(filename).fileName();
+
             QString targetFile = QDir::homePath() + "/" + filename;
-            QString file = filepath + filename.mid(filename.indexOf('/') + 1);
             QFileInfo info = QFileInfo(targetFile);
             auto dir = info.dir();
             if (!dir.exists())
