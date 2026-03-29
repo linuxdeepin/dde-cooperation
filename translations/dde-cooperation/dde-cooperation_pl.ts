@@ -386,12 +386,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
-        <translation>1. Włącz aplikacje do współpracy międzyplatformowej. Aplikację w systemie UOS można pobrać ze sklepu App Store, natomiast aplikację Windows znajdziesz na stronie:</translation>
+        <translation>1. Włącz aplikacje do współpracy międzyplatformowej. Aplikację na system UOS można pobrać ze sklepu App Store, natomiast aplikację Windows znajdziesz na stronie:</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
         <source>2. On the same LAN as the device</source>
-        <translation>2. W tej samej sieci LAN co urządzenie</translation>
+        <translation>2. Upewnij się, że urządzenia znajdują się w tej samej sieci LAN</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
