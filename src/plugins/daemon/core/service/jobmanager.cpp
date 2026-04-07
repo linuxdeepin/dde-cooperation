@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -321,10 +321,7 @@ void JobManager::handleJobTransStatus(QString appname, int jobid, int status, QS
     req.add_member("api", "Frontend.cbTransStatus");
     SendIpcService::instance()->handleSendToClient(appname, req.str().c_str());
 
-    // 安全验证：作业完成、取消或失败时，清理确认状态
-    if (status == JOB_TRANS_FINISHED || status == JOB_TRANS_CANCELED || status == JOB_TRANS_FAILED) {
-        removeConfirmedTransfer(appname);
-    }
+
 }
 
 void JobManager::handleRemoveJob(const int jobid)
