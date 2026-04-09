@@ -1,4 +1,7 @@
-﻿#include "settinghepler.h"
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+#include "settinghepler.h"
 #include "transferhepler.h"
 
 #include <QDebug>
@@ -56,7 +59,7 @@ QJsonObject SettingHelper::ParseJson(const QString &filepath)
 bool SettingHelper::handleDataConfiguration(const QString &filepath)
 {
     addTaskcounter(1);
-    QJsonObject jsonObj = ParseJson(filepath + "/" + "transfer.json");
+    QJsonObject jsonObj = ParseJson(QDir(filepath).filePath("transfer.json"));
     if (jsonObj.isEmpty()) {
         addTaskcounter(-1);
         WLOG << "transfer.json is invaild";
@@ -85,8 +88,13 @@ bool SettingHelper::handleDataConfiguration(const QString &filepath)
         }
     }
     addTaskcounter(-1);
-    //remove dir
-    QDir(filepath).removeRecursively();
+    const QString jsonFile = QDir(filepath).filePath("transfer.json");
+    if (QFile::exists(jsonFile)) {
+        LOG << "Removing transfer.json: " << jsonFile.toStdString();
+        if (!QFile::remove(jsonFile)) {
+            WLOG << "Failed to remove transfer.json: " << jsonFile.toStdString();
+        }
+    }
     return true;
 }
 
