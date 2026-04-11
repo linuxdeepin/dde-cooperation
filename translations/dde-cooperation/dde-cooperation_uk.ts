@@ -431,7 +431,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="251"/>
         <source>3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device</source>
-        <translation type="unfinished"/>
+        <translation>3. Після встановлення з&apos;єднання з цим пристроєм на боці мобільного пристрою слід підтримувати спільні програми відкритими між кінцями, а пристрій має перебувати у тій самій локальній мережі, що й цей пристрій.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="253"/>
@@ -581,7 +581,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
-        <translation type="unfinished"/>
+        <translation>Інші пристрої можуть виявляти і встановлювати з&apos;єднання з вашим пристроєм за допомогою програми «Співпраця»</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
