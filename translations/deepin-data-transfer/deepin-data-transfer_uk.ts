@@ -857,7 +857,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
         <source>Insufficient space on UOS. Please reserve at least %1G of space and try again.</source>
-        <translation type="unfinished"/>
+        <translation>IНедостатньо місця в UOS, будь ласка, ззарезервуйте принаймні %1 ГБ і повторіть спробу</translation>
     </message>
 </context>
 <context>
@@ -878,7 +878,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="37"/>
         <source>Please select the data to transfer on Windows</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, виберіть у Windows дані для перенесення</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
