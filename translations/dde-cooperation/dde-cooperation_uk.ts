@@ -596,12 +596,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
-        <translation type="unfinished"/>
+        <translation>Дозволяє периферійним пристроям, налаштованим для взаємодії між різними пристроями, керувати цим пристроєм, зокрема клавіатурою, мишею, сенсорною панеллю тощо.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
-        <translation type="unfinished"/>
+        <translation>Коли цей пристрій є стороною з&apos;єднання, миша переміщується з екрана цього пристрою до позиції з&apos;єднаної сторони</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
