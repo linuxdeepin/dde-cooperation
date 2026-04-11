@@ -236,12 +236,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="187"/>
         <source>Insufficient space in the selected disk, please clean the space</source>
-        <translation type="unfinished"/>
+        <translation>Недостатньо місця на вибраному диску — будь ласка, звільніть місце</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="195"/>
         <source>Backup</source>
-        <translation type="unfinished"/>
+        <translation>Резервне копіювання</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="193"/>
