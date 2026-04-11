@@ -279,12 +279,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>The presence of outstanding transfer tasks between you and the target device has been detected.</source>
-        <translation type="unfinished"/>
+        <translation>Виявлено наявність невиконаних завдань передавання даних між вашим та цільовим пристроєм.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>Do you want to continue with the last transfer?</source>
-        <translation type="unfinished"/>
+        <translation>Хочете продовжити останнє передавання даних?</translation>
     </message>
 </context>
 <context>
