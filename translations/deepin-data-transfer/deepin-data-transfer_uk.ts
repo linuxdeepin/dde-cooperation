@@ -404,17 +404,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
         <source>Data transfer requires some time, to avoid interrupting the migration due to low battery, please keep connect to the  power.</source>
-        <translation type="unfinished"/>
+        <translation>Передавання даних потребує певного часу, тому, щоб уникнути переривання перенесення даних через низький заряд акумулятора, будь ласка, з&apos;єднайте пристрій із джерелом живлення.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="36"/>
         <source>Other applications may slowdown the transfer speed. For smoother experience, please close other applications.</source>
-        <translation type="unfinished"/>
+        <translation>Інші програми можуть уповільнювати швидкість передачі даних. Для плавнішої роботи закрийте інші програми.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="38"/>
         <source>For the security of your transfer, please use a trusted network.</source>
-        <translation type="unfinished"/>
+        <translation>Для захисту передавання даних, будь ласка, скористайтеся довіреною мережею.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
