@@ -956,7 +956,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="84"/>
         <source>Creating Backup File...</source>
-        <translation type="unfinished"/>
+        <translation>Створення файла резервної копії…</translation>
     </message>
 </context>
 <context>
@@ -964,7 +964,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося стиснути файл %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
