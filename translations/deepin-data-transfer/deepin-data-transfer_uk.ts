@@ -969,7 +969,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
         <source>Back up file done</source>
-        <translation type="unfinished"/>
+        <translation>Файл резервної копії завершено</translation>
     </message>
 </context>
 <context>
@@ -977,7 +977,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/linux/mainwindow_p_linux.cpp" line="32"/>
         <source>UOS data transfer</source>
-        <translation type="unfinished"/>
+        <translation>Передавання даних UOS</translation>
     </message>
 </context>
 </TS>
