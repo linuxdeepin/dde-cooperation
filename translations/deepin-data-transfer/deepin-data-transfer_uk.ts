@@ -852,7 +852,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="122"/>
         <source>The file is corrupted and cannot be migrated. Please replace it with a backup file.</source>
-        <translation type="unfinished"/>
+        <translation>Файл пошкоджено — його не може бути перенесено. Будь ласка, замініть його резервною копією.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
