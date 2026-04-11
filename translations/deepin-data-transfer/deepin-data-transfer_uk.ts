@@ -52,7 +52,7 @@
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="86"/>
         <source>UOS data transfer</source>
-        <translation type="unfinished"/>
+        <translation>Передавання даних UOS</translation>
     </message>
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="91"/>
@@ -231,7 +231,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="162"/>
         <source>(Select Backup Disk)</source>
-        <translation type="unfinished"/>
+        <translation>(Виберіть диск для резервного копіювання)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="187"/>
