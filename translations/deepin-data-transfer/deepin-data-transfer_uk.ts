@@ -4,7 +4,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="42"/>
         <source>Check transfer application will automatically install the corresponding UOS version of the application.</source>
-        <translation type="unfinished"/>
+        <translation>Програма перевірки передавання даних автоматично встановить відповідну версію програми UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="56"/>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="91"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system.</source>
-        <translation type="unfinished"/>
+        <translation>Інструмент передавання даних UOS надає змогу одним клацанням миші перенести ваші файли, особисті дані та програми до UOS, допомагаючи вам безперешкодно замінити вашу систему.</translation>
     </message>
 </context>
 <context>
@@ -703,7 +703,7 @@
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="39"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to
 UOS, helping you seamlessly replace your system.</source>
-        <translation type="unfinished"/>
+        <translation>Інструмент передавання даних UOS надає змогу одним клацанням миші перенести ваші файли, особисті дані та програми до UOS, допомагаючи вам безперешкодно замінити вашу систему.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="46"/>
