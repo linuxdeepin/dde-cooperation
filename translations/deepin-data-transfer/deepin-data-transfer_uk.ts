@@ -317,12 +317,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="32"/>
         <source>The network disconnected, transfer failed, please connect the network and try again</source>
-        <translation type="unfinished"/>
+        <translation>З&apos;єднання мережі розірвано, не вдалося передати дані, будь ласка, відновіть з&apos;єднання мережею і повторіть спробу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="34"/>
         <source>Insufficient space in UOS, please clear at least %1 GB and try again</source>
-        <translation type="unfinished"/>
+        <translation>IНедостатньо місця в UOS, будь ласка, звільніть принаймні %1 ГБ і повторіть спробу</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="36"/>
