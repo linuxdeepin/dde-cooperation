@@ -447,7 +447,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="79"/>
         <source>Please open data transfer on UOS, and get the IP</source>
-        <translation type="unfinished"/>
+        <translation>Abra a transferência de dados no UOS e obtenha o IP</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="85"/>
