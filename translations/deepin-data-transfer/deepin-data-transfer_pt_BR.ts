@@ -493,7 +493,7 @@
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
-        <translation type="unfinished"/>
+        <translation>Transferência concluída</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="38"/>
