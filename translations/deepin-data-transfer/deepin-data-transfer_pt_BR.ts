@@ -561,7 +561,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="73"/>
         <source>Please select the content to back up</source>
-        <translation type="unfinished"/>
+        <translation>Selecione o conteúdo para backup</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="74"/>
@@ -584,7 +584,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
         <source>Wrong or missing profile</source>
-        <translation type="unfinished"/>
+        <translation>Perfil incorreto ou ausente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
