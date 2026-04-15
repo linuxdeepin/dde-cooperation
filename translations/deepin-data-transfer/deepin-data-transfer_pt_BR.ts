@@ -479,7 +479,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="258"/>
         <source>Failed to connect, please check your input</source>
-        <translation type="unfinished"/>
+        <translation>A conexão falhou. Verifique os dados inseridos</translation>
     </message>
 </context>
 <context>
@@ -487,7 +487,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="128"/>
         <source>Transfer completed partially</source>
-        <translation type="unfinished"/>
+        <translation>Transferência concluída parcialmente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
