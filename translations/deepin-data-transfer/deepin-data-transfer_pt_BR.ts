@@ -613,12 +613,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="176"/>
         <source>is installed</source>
-        <translation type="unfinished"/>
+        <translation>está instalado</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="200"/>
         <source>Installing</source>
-        <translation type="unfinished"/>
+        <translation>instalando</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
