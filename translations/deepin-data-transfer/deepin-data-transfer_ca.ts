@@ -4,7 +4,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="42"/>
         <source>Check transfer application will automatically install the corresponding UOS version of the application.</source>
-        <translation>La transferència de l&apos;aplicació verificarà que s&apos;instal·li automàticament la versió corresponent de l&apos;aplicació UOS.</translation>
+        <translation>L&apos;aplicació de comprovació de transferència instal·larà automàticament la versió d&apos;UOS corresponent de l&apos;aplicació.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="56"/>
@@ -52,7 +52,7 @@
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="86"/>
         <source>UOS data transfer</source>
-        <translation>Transferència de dades UOS</translation>
+        <translation>Transferència de dades d&apos;UOS</translation>
     </message>
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="91"/>
