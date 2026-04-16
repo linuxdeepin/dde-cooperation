@@ -772,7 +772,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
         <source>Decompressing</source>
-        <translation type="unfinished"/>
+        <translation>Descompactando</translation>
     </message>
 </context>
 <context>
@@ -781,7 +781,7 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="137"/>
         <source>Decompressing</source>
-        <translation type="unfinished"/>
+        <translation>Descompactando</translation>
     </message>
 </context>
 <context>
@@ -790,23 +790,23 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
-        <translation type="unfinished"/>
+        <translation>Arraste o arquivo aqui</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="257"/>
         <source>Import file</source>
-        <translation type="unfinished"/>
+        <translation>Importar arquivo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="276"/>
         <source>Only .zip is supported, please</source>
-        <translation type="unfinished"/>
+        <translation>Somente arquivos .zip são suportados</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="277"/>
         <source>reselect</source>
-        <translation type="unfinished"/>
+        <translation>Reselecionar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
