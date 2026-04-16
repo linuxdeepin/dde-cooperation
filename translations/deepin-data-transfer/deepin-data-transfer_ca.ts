@@ -767,12 +767,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="202"/>
         <source>Transfer will be completed in --</source>
-        <translation>La transferència s&apos;acabará en --</translation>
+        <translation>La transferència s&apos;acabarà d&apos;aquí a -</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
         <source>Decompressing</source>
-        <translation>Descomprimir</translation>
+        <translation>Es descomprimeix</translation>
     </message>
 </context>
 <context>
@@ -781,7 +781,7 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="137"/>
         <source>Decompressing</source>
-        <translation>Descomprimir</translation>
+        <translation>Es descomprimeix</translation>
     </message>
 </context>
 <context>
@@ -790,13 +790,13 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
-        <translation>Arrossega el fitxer aquí </translation>
+        <translation>Arrossegueu el fitxer aquí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="257"/>
         <source>Import file</source>
-        <translation>Importa fitxer</translation>
+        <translation>Importa un fitxer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="276"/>
