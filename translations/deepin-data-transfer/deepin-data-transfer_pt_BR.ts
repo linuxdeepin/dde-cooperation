@@ -865,7 +865,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/userselectfilesize.cpp" line="22"/>
         <source>Calculating</source>
-        <translation type="unfinished"/>
+        <translation>Calculando</translation>
     </message>
 </context>
 <context>
