@@ -645,7 +645,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="249"/>
         <source>Transfer Complete</source>
-        <translation type="unfinished"/>
+        <translation>Transferência concluída</translation>
     </message>
 </context>
 <context>
