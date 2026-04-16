@@ -493,22 +493,22 @@
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
-        <translation>تم نقل البيانات</translation>
+        <translation>Transferència completada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="38"/>
         <source>Partial information migration failed, please go to UOS for manual transfer</source>
-        <translation>النقل الجزئي للبيانات فشل، الرجاء الذهاب إلى UOS للنقل اليدوي</translation>
+        <translation>La migració parcial d&apos;informació ha fallat. Si us plau, aneu a UOS per a la transferència manual.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="50"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="52"/>
         <source>Exit</source>
-        <translation>الخروج</translation>
+        <translation>Surt</translation>
     </message>
 </context>
 <context>
@@ -516,14 +516,14 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="216"/>
         <source>Selected:0</source>
-        <translation>المختارة:0</translation>
+        <translation>Seleccionat: 0</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="237"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="239"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="241"/>
         <source>Selected:%1</source>
-        <translation>المختارة:%1</translation>
+        <translation>Seleccionats: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="304"/>
