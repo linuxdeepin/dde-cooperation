@@ -528,7 +528,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="304"/>
         <source>Edit</source>
-        <translation>تعديل</translation>
+        <translation>Edita</translation>
     </message>
 </context>
 <context>
@@ -536,32 +536,32 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="90"/>
         <source>File</source>
-        <translation>ملف</translation>
+        <translation>Fitxer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="95"/>
         <source>App</source>
-        <translation>التطبيق</translation>
+        <translation>Aplicació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="97"/>
         <source>Config</source>
-        <translation>الإعدادات</translation>
+        <translation>Configuració</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="112"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="72"/>
         <source>Select data to transfer</source>
-        <translation>اختر البيانات للنقل</translation>
+        <translation>Seleccioneu les dades per transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="73"/>
         <source>Please select the content to back up</source>
-        <translation>الرجاء اختيار المحتوى للنسخ الاحتياطي</translation>
+        <translation>Seleccioneu el contingut del qual voleu fer una còpia de seguretat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="74"/>
