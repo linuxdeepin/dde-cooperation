@@ -327,7 +327,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="36"/>
         <source>Insufficient space in UOS, Please reserve enough space</source>
-        <translation>لا يوجد مساحة كافية في نظام UOS، يرجى الحفاظ على مساحة كافية</translation>
+        <translation>Espai insuficient a l&apos;UOS. Si us plau, reserveu prou espai.</translation>
     </message>
 </context>
 <context>
@@ -335,27 +335,27 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="50"/>
         <source>Name</source>
-        <translation>الاسم</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="50"/>
         <source>Size</source>
-        <translation>الحجم</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="60"/>
         <source>When transfer completed, the data will be placed in the user&apos;s home directory</source>
-        <translation>عند الانتهاء من النقل، سيتم وضع البيانات في دليل المستخدم</translation>
+        <translation>Quan la transferència s&apos;hagi completat, les dades es col·locaran al directori principal de l&apos;usuari.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="73"/>
         <source>Confirm</source>
-        <translation>تأكيد</translation>
+        <translation>Confirmeu-ho</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="71"/>
         <source>Cancel</source>
-        <translation>إلغاء</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.h" line="56"/>
