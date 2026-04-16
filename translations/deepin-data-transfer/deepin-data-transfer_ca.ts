@@ -312,17 +312,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="30"/>
         <source>Transfer interrupted</source>
-        <translation>تم قطع النقل</translation>
+        <translation>S&apos;ha interromput la transferència.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="32"/>
         <source>The network disconnected, transfer failed, please connect the network and try again</source>
-        <translation>تم قطع الشبكة، فشل النقل، من فضلك ا连 the network وحاول مرة أخرى</translation>
+        <translation>La xarxa s&apos;ha desconnectat i la transferència ha fallat. Connecteu la xarxa i torneu-ho a intentar.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="34"/>
         <source>Insufficient space in UOS, please clear at least %1 GB and try again</source>
-        <translation>المساحة غير كافية في UOS، من فضلك أчист على الأقل %1 جيجابايت وحاول مرة أخرى</translation>
+        <translation>Espai insuficient a l&apos;UOS; si us plau, allibereu almenys %1 GB i torneu-ho a provar.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="36"/>
