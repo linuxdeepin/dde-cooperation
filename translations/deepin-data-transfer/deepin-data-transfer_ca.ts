@@ -442,27 +442,27 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="59"/>
         <source>Please input the IP of UOS</source>
-        <translation>يرجى إدخال IP لنظام UOS</translation>
+        <translation>Si us plau, introduïu l&apos;adreça IP d&apos;UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="79"/>
         <source>Please open data transfer on UOS, and get the IP</source>
-        <translation>يرجى تشغيل نقل البيانات على UOS، واستخرج IP</translation>
+        <translation>Si us plau, obriu la transferència de dades a UOS i obteniu l&apos;adreça IP.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="85"/>
         <source>Connect code</source>
-        <translation>رمز الاتصال</translation>
+        <translation>Codi de connexió</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="95"/>
         <source>Please input the connect code on UOS</source>
-        <translation>يرجى إدخال رمز الاتصال على UOS</translation>
+        <translation>Si us plau, introduïu el codi de connexió a UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="118"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
