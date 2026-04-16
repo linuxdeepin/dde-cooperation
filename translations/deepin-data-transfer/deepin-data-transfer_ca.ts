@@ -198,7 +198,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>please input connect code as soon as possible</source>
-        <translation>الرجاء إدخال رمز الاتصال في أقرب وقت ممكن</translation>
+        <translation>Si us plau, introduïu el codi de connexió tan aviat com sigui possible.</translation>
     </message>
 </context>
 <context>
@@ -206,22 +206,22 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="87"/>
         <source>Create data backup</source>
-        <translation>إنشاء نسخة احتياطية للبيانات</translation>
+        <translation>Crea una còpia de seguretat de les dades</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="95"/>
         <source>File information</source>
-        <translation>معلومات الملف</translation>
+        <translation>Informació del fitxer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="115"/>
         <source>Name</source>
-        <translation>الاسم</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="133"/>
         <source>size:0B</source>
-        <translation>الحجم: 0B</translation>
+        <translation>mida: 0B</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="152"/>
