@@ -34,7 +34,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="112"/>
         <source>Not Suitable</source>
-        <translation>No adequat</translation>
+        <translation>No adequada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="46"/>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="91"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system.</source>
-        <translation>L&apos;eina de transferència UOS permet la migració en un clic dels seus fitxers, dades personals i aplicacions a UOS, ajudant-lo a substituir el seu sistema de forma senzilla.</translation>
+        <translation>L&apos;eina de transferència d&apos;UOS permet la migració amb un sol clic dels vostres fitxers, dades personals i aplicacions a UOS, cosa que us ajuda a substituir el sistema sense problemes.</translation>
     </message>
 </context>
 <context>
@@ -65,12 +65,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="35"/>
         <source>Export to local directory</source>
-        <translation>Exportar a la carpeta local</translation>
+        <translation>Exporta a la carpeta local</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="41"/>
         <source>Select a transfer way</source>
-        <translation>Seleccionar un mètode de transferència</translation>
+        <translation>Seleccioneu un mètode de transferència</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="56"/>
