@@ -750,19 +750,19 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="195"/>
         <source>Transfer will be completed in %1 minutes</source>
-        <translation>La transferència s&apos;acabará en %1 minuts</translation>
+        <translation>La transferència s&apos;acabarà d&apos;aquí a %1 minuts.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
-        <translation>Transferint</translation>
+        <translation>Es transfereix</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="199"/>
         <source>Transfer will be completed in %1 secondes</source>
-        <translation>La transferència s&apos;acabará en %1 segons</translation>
+        <translation>La transferència s&apos;acabarà d&apos;aquí a %1 segons.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="202"/>
