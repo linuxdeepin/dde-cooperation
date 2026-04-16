@@ -633,19 +633,19 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Setup failed, configuration can be imported manually</source>
-        <translation>فشل التثبيت، يمكن استيراد الإعداد يدويًا</translation>
+        <translation>La configuració ha fallat. Es pot importar manualment.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
-        <translation>فشل التثبيت، الرجاء الذهاب إلى متجر التطبيقات للحصول على التطبيق</translation>
+        <translation>La instal·lació ha fallat. Si us plau, aneu a la Botiga d&apos;aplicacions per instal·lar-la.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="249"/>
         <source>Transfer Complete</source>
-        <translation>النقل مكتمل</translation>
+        <translation>Transferència completada</translation>
     </message>
 </context>
 <context>
@@ -653,12 +653,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="21"/>
         <source>Videos</source>
-        <translation>الفيديو</translation>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="22"/>
         <source>Pictures</source>
-        <translation>الصور</translation>
+        <translation>Imatges</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="23"/>
