@@ -566,12 +566,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="74"/>
         <source>Start transfer</source>
-        <translation>ابدأ النقل</translation>
+        <translation>Comença la transferència</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="75"/>
         <source>Next</source>
-        <translation>التالي</translation>
+        <translation>Següent</translation>
     </message>
 </context>
 <context>
@@ -579,7 +579,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
         <source>Profiles</source>
-        <translation>الملفات الشخصية</translation>
+        <translation>Perfils</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
