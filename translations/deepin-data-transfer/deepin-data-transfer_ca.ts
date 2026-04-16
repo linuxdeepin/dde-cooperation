@@ -584,12 +584,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
         <source>Wrong or missing profile</source>
-        <translation>ملف شخصي خاطئ أو مفقود</translation>
+        <translation>Perfil incorrecte o que manca</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
         <source>My Wallpaper</source>
-        <translation>خلفيتي</translation>
+        <translation>El meu fons de pantalla</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
@@ -597,18 +597,18 @@
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
-        <translation>تم النقل</translation>
+        <translation>Transferència completada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
-        <translation>رموز التبويب لمتصفح الويب</translation>
+        <translation>Adreces d&apos;interès del navegador</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
         <source>BrowserBookMark</source>
-        <translation>BrowserBookMark</translation>
+        <translation>Marcador del navegador</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="176"/>
