@@ -399,22 +399,22 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="29"/>
         <source>Before tranfer</source>
-        <translation>قبل النقل</translation>
+        <translation>Abans de la transferència</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
         <source>Data transfer requires some time, to avoid interrupting the migration due to low battery, please keep connect to the  power.</source>
-        <translation>يتطلب نقل البيانات وقتًا، لتجنب تعطيل الهجرة بسبب انخفاض البطارية، يرجى البقاء متصلًا بالطاقة.</translation>
+        <translation>La transferència de dades requereix una mica de temps. Per evitar interrompre la migració a causa de la bateria baixa, mantingueu-la connectada a la xarxa elèctrica.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="36"/>
         <source>Other applications may slowdown the transfer speed. For smoother experience, please close other applications.</source>
-        <translation>قد تبطئ التطبيقات الأخرى سرعة النقل. لتجربة أكثر سلاسة، يرجى إغلاق التطبيقات الأخرى.</translation>
+        <translation>Altres aplicacions poden alentir la velocitat de transferència. Per a una experiència més fluida, tanqueu les altres aplicacions.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="38"/>
         <source>For the security of your transfer, please use a trusted network.</source>
-        <translation>لسلامة نقلك، يرجى استخدام شبكة موثوقة.</translation>
+        <translation>Per a la seguretat de la vostra transferència, useu una xarxa de confiança.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
