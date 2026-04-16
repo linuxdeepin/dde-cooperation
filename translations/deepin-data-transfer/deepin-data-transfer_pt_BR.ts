@@ -811,12 +811,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>select zip file</source>
-        <translation type="unfinished"/>
+        <translation>Selecionar arquivo .zip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>ZIP file (*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>Arquivo .zip (*.zip)</translation>
     </message>
 </context>
 <context>
