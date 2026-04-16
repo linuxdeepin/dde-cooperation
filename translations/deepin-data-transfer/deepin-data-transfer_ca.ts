@@ -168,32 +168,32 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="59"/>
         <source>Connect code is expired, please refresh for new code</source>
-        <translation>رمز الاتصال منتهي الصلاحية، الرجاء تحديثه للحصول على رمز جديد</translation>
+        <translation>El codi de connexió ha caducat, actualitzeu-lo per veure&apos;l per veure&apos;l de nou.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="75"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="104"/>
         <source>computer</source>
-        <translation>الكمبيوتر</translation>
+        <translation>ordinador</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="107"/>
         <source>Local IP</source>
-        <translation>IP المحلي</translation>
+        <translation>IP local</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="163"/>
         <source>Refresh</source>
-        <translation>تحديث</translation>
+        <translation>Actualitza</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>The code will be expired in</source>
-        <translation>سيتم إنتهاء رمز الاتصال في</translation>
+        <translation>El codi caducarà d&apos;aquí a</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
