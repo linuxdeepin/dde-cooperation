@@ -419,12 +419,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="64"/>
         <source>Confirm</source>
-        <translation>تأكيد</translation>
+        <translation>Confirmeu-ho</translation>
     </message>
 </context>
 <context>
@@ -432,7 +432,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="48"/>
         <source>Ready to connect</source>
-        <translation>مستعد للاتصال</translation>
+        <translation>A punt per connectar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="52"/>
