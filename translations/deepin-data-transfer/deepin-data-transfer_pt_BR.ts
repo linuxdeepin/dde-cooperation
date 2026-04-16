@@ -703,7 +703,7 @@
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="39"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to
 UOS, helping you seamlessly replace your system.</source>
-        <translation type="unfinished"/>
+        <translation>A ferramenta de transferência do UOS permite migrar arquivos, dados pessoais e aplicativos com um clique para o UOS, ajudando você a substituir seu sistema de forma simples.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/startwidget.cpp" line="46"/>
