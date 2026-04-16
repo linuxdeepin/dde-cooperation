@@ -628,12 +628,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
         <source>Format error</source>
-        <translation type="unfinished"/>
+        <translation>Erro de formato</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Setup failed, configuration can be imported manually</source>
-        <translation type="unfinished"/>
+        <translation>A configuração falhou. A configuração pode ser importada manualmente</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
