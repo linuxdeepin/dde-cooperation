@@ -757,17 +757,17 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
-        <translation type="unfinished"/>
+        <translation>Transferindo</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="199"/>
         <source>Transfer will be completed in %1 secondes</source>
-        <translation type="unfinished"/>
+        <translation>A transferência será concluída em %1 segundos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="202"/>
         <source>Transfer will be completed in --</source>
-        <translation type="unfinished"/>
+        <translation>A transferência será concluída em --</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
