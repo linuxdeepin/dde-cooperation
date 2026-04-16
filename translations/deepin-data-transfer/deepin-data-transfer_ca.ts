@@ -360,12 +360,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.h" line="56"/>
         <source>Select the file to transfer</source>
-        <translation>اختر الملف الذي تريد نقله</translation>
+        <translation>Seleccioneu el fitxer per transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.h" line="57"/>
         <source>Please select the files to back up</source>
-        <translation>يرجى اختيار الملفات التي تريد نسخها الاحتياطي</translation>
+        <translation>Seleccioneu els fitxers dels quals voleu fer una còpia de seguretat</translation>
     </message>
 </context>
 <context>
@@ -373,17 +373,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="34"/>
         <source>The network has been disconnected. Please check your network</source>
-        <translation>تم قطع الشبكة. يرجى التحقق من اتصالك بالشبكة</translation>
+        <translation>La xarxa s&apos;ha desconnectat. Si us plau, comproveu la xarxa.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="40"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="41"/>
         <source>Try again</source>
-        <translation>حاول مرة أخرى</translation>
+        <translation>Torna-ho a provar</translation>
     </message>
 </context>
 <context>
@@ -391,7 +391,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="297"/>
         <source>Installing</source>
-        <translation>جارٍ التثبيت</translation>
+        <translation>S&apos;instal·la</translation>
     </message>
 </context>
 <context>
