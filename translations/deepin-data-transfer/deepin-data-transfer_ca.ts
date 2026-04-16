@@ -873,23 +873,23 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="32"/>
         <source>Waiting for transfer...</source>
-        <translation>Esperant per a transferir...</translation>
+        <translation>S&apos;espera per a la transferència...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="37"/>
         <source>Please select the data to transfer on Windows</source>
-        <translation>Por favor selecciona els dades per a transferir a Windows</translation>
+        <translation>Seleccioneu les dades que voleu transferir a Windows</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="98"/>
         <source>Cancel</source>
-        <translation>Cancel·lar</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="99"/>
         <source>Close</source>
-        <translation>Tancar</translation>
+        <translation>Tanca</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="101"/>
