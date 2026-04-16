@@ -852,12 +852,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="122"/>
         <source>The file is corrupted and cannot be migrated. Please replace it with a backup file.</source>
-        <translation type="unfinished"/>
+        <translation>O arquivo está corrompido. Impossível migrar. Substitua pelo arquivo de backup.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
         <source>Insufficient space on UOS. Please reserve at least %1G of space and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Espaço insuficiente no UOS. Reserve pelo menos %1GB e tente novamente.</translation>
     </message>
 </context>
 <context>
