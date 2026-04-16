@@ -801,17 +801,17 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="276"/>
         <source>Only .zip is supported, please</source>
-        <translation>Només es suporta .zip, si us plau</translation>
+        <translation>Només s&apos;admet .zip.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="277"/>
         <source>reselect</source>
-        <translation>re-selecciona</translation>
+        <translation>Torna a seleccionar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>select zip file</source>
-        <translation>selecciona un fitxer zip</translation>
+        <translation>Seleccioneu un fitxer zip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
@@ -824,7 +824,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="40"/>
         <source>Select data transfer file</source>
-        <translation>Selecciona el fitxer de transferència de dades</translation>
+        <translation>Seleccioneu el fitxer de transferència de dades</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="49"/>
