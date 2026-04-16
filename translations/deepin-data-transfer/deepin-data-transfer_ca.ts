@@ -140,12 +140,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="49"/>
         <source>Select the configuration to transfer</source>
-        <translation>Seleccionar la configuració per transferir</translation>
+        <translation>Seleccioneu la configuració per transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="50"/>
         <source>Please select the configurations to back up</source>
-        <translation>Si us plau, seleccioni les configuracions per fer una còpia de seguretat</translation>
+        <translation>Seleccioneu les configuracions de les quals voleu fer una còpia de seguretat.</translation>
     </message>
 </context>
 <context>
@@ -153,7 +153,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="36"/>
         <source>Ready to connect</source>
-        <translation>Preparat per connectar</translation>
+        <translation>A punt per connectar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="41"/>
