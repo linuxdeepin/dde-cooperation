@@ -951,12 +951,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="56"/>
         <source>Transfer will be completed in %1 secondes</source>
-        <translation>La transferència es completarà en %1 segons</translation>
+        <translation>La transferència es completarà d&apos;aquí a %1 segons.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="84"/>
         <source>Creating Backup File...</source>
-        <translation>Creant un arxiu de còpia de seguretat...</translation>
+        <translation>Es crea un fitxer de còpia de seguretat...</translation>
     </message>
 </context>
 <context>
@@ -964,7 +964,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation>&apos;%1 Arxiu de compressió ha fallat&apos;</translation>
+        <translation>%1 La compressió del fitxer ha fallat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
