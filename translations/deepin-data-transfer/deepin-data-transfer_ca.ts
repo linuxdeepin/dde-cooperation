@@ -829,12 +829,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="49"/>
         <source>File error, cannot transfer, please reselect</source>
-        <translation>Error de fitxer, no es pot transferir, si us plau re-selecciona</translation>
+        <translation>Error de fitxer, no es pot transferir. Torneu a la selecció.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="62"/>
         <source>Back</source>
-        <translation>Retro</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
@@ -847,17 +847,17 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="76"/>
         <source>Retry</source>
-        <translation>Reintentar</translation>
+        <translation>Torna-ho a provar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="122"/>
         <source>The file is corrupted and cannot be migrated. Please replace it with a backup file.</source>
-        <translation>الملف تالف ولا يمكن نقله. من فضلك استبدلته بملف نسخ احتياطي.</translation>
+        <translation>El fitxer està malmès i no es pot migrar. Si us plau, substituïu-lo per un fitxer de còpia de seguretat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
         <source>Insufficient space on UOS. Please reserve at least %1G of space and try again.</source>
-        <translation>لا يوجد مساحة كافية على UOS. من فضلك احتفظ بمساحة لا تقل عن %1G وحاول مرة أخرى.</translation>
+        <translation>Espai insuficient a UOS. Reserveu com a mínim %1G d&apos;espai i torneu-ho a provar.</translation>
     </message>
 </context>
 <context>
@@ -865,7 +865,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/userselectfilesize.cpp" line="22"/>
         <source>Calculating</source>
-        <translation>Calculating</translation>
+        <translation>Es calcula</translation>
     </message>
 </context>
 <context>
