@@ -927,12 +927,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="95"/>
         <source>Go to View</source>
-        <translation>Anar a Veure</translation>
+        <translation>Ves a la visualització</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="120"/>
         <source>Back up failed</source>
-        <translation>La còpia de seguretat ha fallat</translation>
+        <translation>La còpia de seguretat ha fallat.</translation>
     </message>
 </context>
 <context>
@@ -940,13 +940,13 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="44"/>
         <source>Packing  %1</source>
-        <translation>Empaquetat %1</translation>
+        <translation>S&apos;empaqueta %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
-        <translation>La transferència es completarà en %1 minuts</translation>
+        <translation>La transferència es completarà d&apos;aquí a %1 minuts.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="56"/>
