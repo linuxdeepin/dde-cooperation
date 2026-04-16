@@ -226,32 +226,32 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="152"/>
         <source>Location</source>
-        <translation>الموقع</translation>
+        <translation>Ubicació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="162"/>
         <source>(Select Backup Disk)</source>
-        <translation>(اختيار القرص الاحتياطي)</translation>
+        <translation>(Seleccioneu el disc per a la còpia de seguretat)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="187"/>
         <source>Insufficient space in the selected disk, please clean the space</source>
-        <translation>مساحة غير كافية على القرص المختار، من فضلك نظف المساحة</translation>
+        <translation>No hi ha prou espai al disc seleccionat. Si us plau, netegeu l&apos;espai.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="195"/>
         <source>Backup</source>
-        <translation>النسخ الاحتياطي</translation>
+        <translation>Còpia de seguretat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="193"/>
         <source>Cancel</source>
-        <translation>إلغاء</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="339"/>
         <source>Size:%1</source>
-        <translation>الحجم:%1</translation>
+        <translation>Mida: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="382"/>
