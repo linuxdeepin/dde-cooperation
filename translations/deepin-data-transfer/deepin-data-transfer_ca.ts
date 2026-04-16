@@ -9,12 +9,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="56"/>
         <source>Confirm</source>
-        <translation>Confirmar</translation>
+        <translation>Confirmeu-ho</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="54"/>
         <source>Cancel</source>
-        <translation>Cancel·lar</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="77"/>
@@ -29,7 +29,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="102"/>
         <source>Transferable</source>
-        <translation>Transfereixible</translation>
+        <translation>Transferible</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="112"/>
@@ -39,12 +39,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="46"/>
         <source>Select apps to transfer</source>
-        <translation>Seleccionar aplicacions per transferir</translation>
+        <translation>Seleccioneu aplicacions per transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="47"/>
         <source>Please select the applications to back up</source>
-        <translation>Si us plau, seleccioni les aplicacions per fer una còpia de seguretat</translation>
+        <translation>Si us plau, seleccioneu les aplicacions per fer-ne una còpia de seguretat.</translation>
     </message>
 </context>
 <context>
@@ -969,7 +969,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
         <source>Back up file done</source>
-        <translation>Còpia de seguretat del arxiu completada</translation>
+        <translation>Còpia de seguretat feta</translation>
     </message>
 </context>
 <context>
@@ -977,7 +977,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/linux/mainwindow_p_linux.cpp" line="32"/>
         <source>UOS data transfer</source>
-        <translation>Transferència de dades UOS</translation>
+        <translation>Transferència de dades d&apos;UOS</translation>
     </message>
 </context>
 </TS>
