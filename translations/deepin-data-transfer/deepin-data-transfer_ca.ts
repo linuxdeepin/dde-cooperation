@@ -469,17 +469,17 @@
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="112"/>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="167"/>
         <source>connect...</source>
-        <translation>اتصال...</translation>
+        <translation>connecta...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="120"/>
         <source>Connect</source>
-        <translation>اتصال</translation>
+        <translation>Connecta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="258"/>
         <source>Failed to connect, please check your input</source>
-        <translation>فشل الاتصال، يرجى التحقق من إدخالك</translation>
+        <translation>No s&apos;ha pogut connectar, reviseu l&apos;entrada.</translation>
     </message>
 </context>
 <context>
@@ -487,7 +487,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="128"/>
         <source>Transfer completed partially</source>
-        <translation>تم نقل البيانات جزئيًا</translation>
+        <translation>Transferència completada parcialment</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
