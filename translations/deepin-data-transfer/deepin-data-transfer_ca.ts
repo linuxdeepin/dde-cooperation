@@ -279,12 +279,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>The presence of outstanding transfer tasks between you and the target device has been detected.</source>
-        <translation>تم اكتشاف مهام نقل معلقة بينك وبين الجهاز الهدف.</translation>
+        <translation>S&apos;ha detectat la presència de tasques de transferència pendents entre aquest dispositiu i el dispositiu de destinació.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>Do you want to continue with the last transfer?</source>
-        <translation>هل ترغب في المتابعة مع آخر مهمة للنقل؟</translation>
+        <translation>Voleu continuar l&apos;última transferència?</translation>
     </message>
 </context>
 <context>
@@ -292,22 +292,22 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="54"/>
         <source>Transfer will be completed in</source>
-        <translation>سيتم إكمال النقل في</translation>
+        <translation>La transferència es completarà d&apos;aquí a </translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="69"/>
         <source>Try again</source>
-        <translation>حاول مرة أخرى</translation>
+        <translation>Torna-ho a provar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="66"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="29"/>
         <source>Network Error</source>
-        <translation>خطأ في الشبکة</translation>
+        <translation>Error de xarxa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="30"/>
