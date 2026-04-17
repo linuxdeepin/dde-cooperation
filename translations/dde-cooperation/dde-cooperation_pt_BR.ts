@@ -626,7 +626,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
         <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
-        <translation type="unfinished"/>
+        <translation>Quando o compartilhamento estiver ativado no servidor (dispositivo conectado), a área de transferência será compartilhada entre os dois computadores</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
