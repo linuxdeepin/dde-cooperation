@@ -611,7 +611,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"/>
+        <translation>Permite que os seguintes usuários enviem arquivos para este dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
