@@ -308,7 +308,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="277"/>
         <source>No more enquiries</source>
-        <translation type="unfinished"/>
+        <translation>Não há consultas restantes</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
@@ -326,7 +326,7 @@
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
         <source>Please select your operation</source>
-        <translation type="unfinished"/>
+        <translation>Selecione sua operação</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="338"/>
@@ -354,7 +354,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="74"/>
         <source>Selection of delivery device</source>
-        <translation type="unfinished"/>
+        <translation>Selecionar dispositivo de destino</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
