@@ -714,12 +714,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>A conexão foi bem-sucedida, iniciando a integração com &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; recusou sua solicitação de integração</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
