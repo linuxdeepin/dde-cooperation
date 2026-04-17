@@ -240,7 +240,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
         <source>to connect to the peer device</source>
-        <translation type="unfinished"/>
+        <translation>para conectar ao outro dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
