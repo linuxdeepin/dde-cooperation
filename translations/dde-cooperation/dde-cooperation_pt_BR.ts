@@ -749,7 +749,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>A rede não está conectada, o envio de arquivos falhou. Conecte-se à rede e tente novamente</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
@@ -759,7 +759,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>A rede não está conectada, o envio de arquivos falhou. Conecte-se à rede e tente novamente</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="562"/>
