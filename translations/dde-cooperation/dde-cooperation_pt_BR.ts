@@ -601,7 +601,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
-        <translation type="unfinished"/>
+        <translation>Quando este dispositivo está conectado, o cursor do mouse pode atravessar a borda da tela e ir para o dispositivo conectado.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
