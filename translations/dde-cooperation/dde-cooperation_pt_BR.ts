@@ -401,7 +401,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
-        <translation type="unfinished"/>
+        <translation>3. Configurações -&gt; Configurações básicas -&gt; Modo de descoberta -&gt; “Permitir todos na mesma rede local”</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
