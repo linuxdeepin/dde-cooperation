@@ -269,7 +269,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation type="unfinished"/>
+        <translation>Este caminho é um diretório somente leitura. Escolha outro local para salvar o arquivo.</translation>
     </message>
 </context>
 <context>
