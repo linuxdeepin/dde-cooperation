@@ -9,7 +9,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation type="unfinished"/>
+        <translation>Link permite transferir arquivos, compartilhar teclado e mouse e usar a área de transferência entre dispositivos.</translation>
     </message>
 </context>
 <context>
@@ -536,7 +536,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="182"/>
         <source>View</source>
         <comment>button</comment>
-        <translation>Visualizar</translation>
+        <translation>Exibir</translation>
     </message>
 </context>
 <context>
@@ -870,7 +870,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
         <source>View</source>
-        <translation>Visualizar</translation>
+        <translation>Exibir</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
