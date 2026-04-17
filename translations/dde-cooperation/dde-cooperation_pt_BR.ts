@@ -631,7 +631,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
         <source>The device name must contain 1 to 20 characters</source>
-        <translation type="unfinished"/>
+        <translation>O nome do dispositivo deve conter de 1 a 20 caracteres</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="362"/>
