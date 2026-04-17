@@ -709,7 +709,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="419"/>
         <source>Failed to run process!</source>
-        <translation type="unfinished"/>
+        <translation>A execução do processo falhou</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
