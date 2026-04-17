@@ -704,7 +704,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
         <source>Unable to collaborate</source>
-        <translation type="unfinished"/>
+        <translation>A conexão com o dispositivo falhou</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="419"/>
