@@ -202,7 +202,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="249"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned on</source>
-        <translation type="unfinished"/>
+        <translation>Quando o serviço de descoberta na rede local não estiver ativado, é impossível localizar e ser localizado por outros dispositivos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
