@@ -783,7 +783,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>A conexão foi bem-sucedida, iniciando a integração com &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
