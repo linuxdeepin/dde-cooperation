@@ -474,7 +474,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="139"/>
         <source>“%1”connection disconnected!</source>
-        <translation type="unfinished"/>
+        <translation>Conexão “%1” desconectada!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
