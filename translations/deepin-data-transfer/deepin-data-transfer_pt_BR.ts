@@ -922,7 +922,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="90"/>
         <source>Congratulations, Your Information has been Successfully Backed Up.</source>
-        <translation type="unfinished"/>
+        <translation>Suas informações foram salvas com sucesso.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="95"/>
