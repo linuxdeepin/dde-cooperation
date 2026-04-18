@@ -940,13 +940,13 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="44"/>
         <source>Packing  %1</source>
-        <translation type="unfinished"/>
+        <translation>Compactando %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>A transferência será concluída em %1 minutos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="56"/>
