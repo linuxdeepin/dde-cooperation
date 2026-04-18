@@ -804,7 +804,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
         <source>The other party has canceled the file transfer</source>
-        <translation type="unfinished"/>
+        <translation>O outro dispositivo cancelou a transferência de arquivos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
