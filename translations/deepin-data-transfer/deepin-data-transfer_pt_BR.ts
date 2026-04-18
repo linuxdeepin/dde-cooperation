@@ -932,7 +932,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="120"/>
         <source>Back up failed</source>
-        <translation type="unfinished"/>
+        <translation>O backup falhou</translation>
     </message>
 </context>
 <context>
