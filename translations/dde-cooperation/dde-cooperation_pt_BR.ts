@@ -825,7 +825,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="302"/>
         <source>The other party did not receive, the files failed to send</source>
-        <translation type="unfinished"/>
+        <translation>O outro dispositivo não recebeu os arquivos, o envio falhou</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="332"/>
