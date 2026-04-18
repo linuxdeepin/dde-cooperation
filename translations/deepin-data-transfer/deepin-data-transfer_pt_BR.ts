@@ -964,12 +964,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation type="unfinished"/>
+        <translation>A compactação do arquivo %1 falhou</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
         <source>Back up file done</source>
-        <translation type="unfinished"/>
+        <translation>Arquivo de backup concluído</translation>
     </message>
 </context>
 <context>
