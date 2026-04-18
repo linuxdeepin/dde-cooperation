@@ -810,7 +810,7 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
         <source>File sent successfully</source>
-        <translation type="unfinished"/>
+        <translation>Arquivo enviado com sucesso</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="168"/>
