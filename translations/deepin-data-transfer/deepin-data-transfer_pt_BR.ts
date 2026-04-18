@@ -917,7 +917,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="84"/>
         <source>Back up succeed</source>
-        <translation type="unfinished"/>
+        <translation>Backup concluído com sucesso</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="90"/>
