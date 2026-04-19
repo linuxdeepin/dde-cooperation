@@ -899,7 +899,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
         <source>The other party rejects your request</source>
-        <translation type="unfinished"/>
+        <translation>O outro dispositivo recusou sua solicitação</translation>
     </message>
 </context>
 <context>
@@ -916,7 +916,7 @@
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
-        <translation type="unfinished"/>
+        <translation>Desconectado</translation>
     </message>
 </context>
 <context>
