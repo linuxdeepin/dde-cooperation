@@ -1000,7 +1000,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="178"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"/>
+        <translation>Permitir que os seguintes usuários me enviem arquivos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
