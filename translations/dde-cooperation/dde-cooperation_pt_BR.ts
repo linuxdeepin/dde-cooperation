@@ -845,7 +845,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
         <source>Receiving files from &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Recebendo arquivos de &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
