@@ -865,7 +865,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
         <source>&quot;%1&quot; send some files to you</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; enviou alguns arquivos para você</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
