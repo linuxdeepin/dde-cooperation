@@ -889,12 +889,12 @@
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>A rede não está conectada, o envio de arquivos falhou. Conecte-se à rede e tente novamente</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
         <source>calculating</source>
-        <translation type="unfinished"/>
+        <translation>Calculando</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
