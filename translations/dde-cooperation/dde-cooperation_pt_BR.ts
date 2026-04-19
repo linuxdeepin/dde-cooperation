@@ -840,7 +840,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
         <source>Sending files to &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Enviando arquivos para &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
