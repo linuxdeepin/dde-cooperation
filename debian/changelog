@@ -1,3 +1,11 @@
+dde-cooperation (1.2.3) unstable; urgency=medium
+
+  * chore: Update version to 1.2.3
+  * fix(network): filter virtual network interfaces correctly on Windows
+  * fix: add PNG/JPEG to BMP DIB conversion for X11 clipboard
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 23 Apr 2026 16:42:52 +0800
+
 dde-cooperation (1.2.2) unstable; urgency=medium
 
   * fix(log): remove duplicate qCritical logs
