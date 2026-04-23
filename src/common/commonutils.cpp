@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -24,6 +24,27 @@ using namespace deepin_cross;
 #define WEB_MIN_PORT 13628
 #define WEB_MAX_PORT 23628
 
+static bool isVirtualInterface(const QNetworkInterface &netInterface)
+{
+    QString name = netInterface.name().toLower();
+    if (name.startsWith("virbr") || name.startsWith("vmnet")
+        || name.startsWith("docker") || name.startsWith("veth")
+        || name.startsWith("br-")) {
+        qInfo() << "Filtering virtual interface (by name):" << netInterface.name();
+        return true;
+    }
+
+    QString humanName = netInterface.humanReadableName().toLower();
+    if (humanName.contains("vmware") || humanName.contains("virtualbox")
+        || humanName.contains("hyper-v") || humanName.contains("virtual ethernet")
+        || humanName.contains("vethernet") || humanName.contains("bluetooth")) {
+        qInfo() << "Filtering virtual interface (by humanReadableName):" << netInterface.humanReadableName();
+        return true;
+    }
+
+    return false;
+}
+
 std::string CommonUitls::getFirstIp()
 {
     qInfo() << "Getting first available IP address";
@@ -38,10 +59,7 @@ std::string CommonUitls::getFirstIp()
             continue;
         }
 
-        if (netInterface.name().startsWith("virbr") || netInterface.name().startsWith("vmnet")
-            || netInterface.name().startsWith("docker")) {
-            // 跳过桥接，虚拟机和docker的网络接口
-            qInfo() << "netInterface name:" << netInterface.name();
+        if (isVirtualInterface(netInterface)) {
             continue;
         }
 
@@ -52,7 +70,7 @@ std::string CommonUitls::getFirstIp()
             if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol && entry.ip() != QHostAddress::LocalHost) {
                 //IP地址
                 ip = QString(entry.ip().toString());
-                qInfo() << "Found available IP: " << ip;
+                qInfo() << "Found available IP: " << ip << "on interface:" << netInterface.name();
                 return ip.toStdString();
             }
         }
