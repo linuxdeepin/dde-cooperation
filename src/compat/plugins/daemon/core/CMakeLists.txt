@@ -63,3 +63,6 @@ install(TARGETS
     ${DEEPIN_DAEMON_PLUGIN_DIR}
 )
 
+# 日志级别配置（只读，由deb包安装）
+install(FILES ${CMAKE_SOURCE_DIR}/src/common/config.conf DESTINATION share/dde-cooperation-daemon)
+

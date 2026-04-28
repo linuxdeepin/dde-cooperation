@@ -31,3 +31,9 @@ Files: android/*
 Copyright:
  2018 Huang JinQun <jinqun0730@gmail.com>
 License: Apache-2.0
+
+# config files without inline SPDX headers
+Files: src/common/config.conf
+Copyright:
+ 2023 - 2026 UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later

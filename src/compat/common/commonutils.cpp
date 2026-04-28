@@ -172,12 +172,15 @@ void CommonUitls::initLog()
     QString logConfPath = logDir();
 #endif
     QString configFile = logConfPath + "config.conf";   //日志级别配置
-    QFile file(configFile);
     QSettings settings(configFile, QSettings::IniFormat);
+#ifndef linux
+    // On Windows, create config file if not exists (logDir is user-writable)
+    QFile file(configFile);
     if (!file.exists()) {
         settings.setValue("g_minLogLevel", 2);
         settings.sync();
     }
+#endif
 
 #ifndef QT_DEBUG
     int level = settings.value("g_minLogLevel", 2).toInt();

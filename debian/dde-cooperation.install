@@ -10,6 +10,8 @@ usr/lib/*/libco.so*
 usr/lib/*/libzrpc.so*
 usr/lib/*/dde-cooperation/plugins/daemon/libdaemon-core.so
 usr/share/dde-cooperation/translations/*.qm
+usr/share/dde-cooperation/config.conf
+usr/share/dde-cooperation-daemon/config.conf
 usr/share/icons/hicolor/scalable/apps/dde-cooperation.svg
 usr/share/dsg/configs/org.deepin.dde.cooperation/*.json
 usr/share/applications/dde-cooperation.desktop

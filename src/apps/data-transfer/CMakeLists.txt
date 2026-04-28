@@ -147,5 +147,8 @@ else()
 
     # 日志收集配置
     install(FILES res/linux/deepin-data-transfer.json DESTINATION share/deepin-log-viewer/deepin-log.conf.d)
+
+    # 日志级别配置（只读，由deb包安装）
+    install(FILES ${CMAKE_SOURCE_DIR}/src/common/config.conf DESTINATION share/${PROJ_NAME})
 endif()
 
