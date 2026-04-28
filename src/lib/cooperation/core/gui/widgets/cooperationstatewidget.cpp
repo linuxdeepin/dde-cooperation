@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -459,7 +459,7 @@ void BottomLabel::initUI()
     contentLayout->setAlignment(Qt::AlignCenter);
 
     dialog->setLayout(contentLayout);
-    dialog->setWindowFlags(Qt::ToolTip);
+    dialog->setWindowFlags(Qt::Tool);
 
     CooperationGuiHelper::setAutoFont(tipWidgt, 14, QFont::Normal);
     CooperationGuiHelper::setAutoFont(tipWidgt, 12, QFont::Normal);
