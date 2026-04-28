@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -25,6 +25,7 @@
 #include <QJsonDocument>
 #include <QDebug>
 #include <QDir>
+#include <QStandardPaths>
 #include <QScreen>
 
 using namespace cooperation_core;
@@ -35,6 +36,7 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
     LOG << "This is only transfer?" << onlyTransfer;
 
     sessionManager = new SessionManager(this);
+    sessionManager->setStorageRoot(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
     if (onlyTransfer) {
         DLOG << "Running in transfer-only mode, skipping full initialization";
         return;
