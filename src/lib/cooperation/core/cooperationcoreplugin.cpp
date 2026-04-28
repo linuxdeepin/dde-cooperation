@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -24,6 +24,7 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QStandardPaths>
+#include <QTimer>
 #ifdef __linux__
 #    include "base/reportlog/reportlogmanager.h"
 #    include <DFeatureDisplayDialog>
@@ -164,9 +165,6 @@ bool CooperaionCorePlugin::start()
         connect(HistoryManager::instance(), &HistoryManager::connectHistoryUpdated, DiscoverController::instance(), &DiscoverController::onConnectHistoryUpdated);
         DLOG << "Connected history update signals";
 
-        DiscoverController::instance()->init();   // init zeroconf and regist
-        DLOG << "Discover controller initialized";
-
         // start network status listen after all ready
         CooperationUtil::instance()->initNetworkListener();
         DLOG << "Network listener initialized";
@@ -197,6 +195,15 @@ bool CooperaionCorePlugin::start()
     } else {
         DLOG << "Showing main window";
         dMain->show();
+    }
+
+    if (!onlyTransfer) {
+        // Delay discovery init to ensure main window is visible first,
+        // preventing focus stealing from the discovery/auth dialog
+        QTimer::singleShot(500, this, []() {
+            DiscoverController::instance()->init();
+            DLOG << "Discover controller initialized (delayed)";
+        });
     }
 
     return true;
