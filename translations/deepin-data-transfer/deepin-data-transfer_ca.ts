@@ -4,17 +4,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="42"/>
         <source>Check transfer application will automatically install the corresponding UOS version of the application.</source>
-        <translation>La transferència de l&apos;aplicació verificarà que s&apos;instal·li automàticament la versió corresponent de l&apos;aplicació UOS.</translation>
+        <translation>L&apos;aplicació de comprovació de transferència instal·larà automàticament la versió d&apos;UOS corresponent de l&apos;aplicació.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="56"/>
         <source>Confirm</source>
-        <translation>Confirmar</translation>
+        <translation>Confirmeu-ho</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="54"/>
         <source>Cancel</source>
-        <translation>Cancel·lar</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="77"/>
@@ -29,22 +29,22 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="102"/>
         <source>Transferable</source>
-        <translation>Transfereixible</translation>
+        <translation>Transferible</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.cpp" line="112"/>
         <source>Not Suitable</source>
-        <translation>No adequat</translation>
+        <translation>No adequada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="46"/>
         <source>Select apps to transfer</source>
-        <translation>Seleccionar aplicacions per transferir</translation>
+        <translation>Seleccioneu aplicacions per transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="47"/>
         <source>Please select the applications to back up</source>
-        <translation>Si us plau, seleccioni les aplicacions per fer una còpia de seguretat</translation>
+        <translation>Si us plau, seleccioneu les aplicacions per fer-ne una còpia de seguretat.</translation>
     </message>
 </context>
 <context>
@@ -52,12 +52,12 @@
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="86"/>
         <source>UOS data transfer</source>
-        <translation>Transferència de dades UOS</translation>
+        <translation>Transferència de dades d&apos;UOS</translation>
     </message>
     <message>
         <location filename="../../src/apps/data-transfer/main.cpp" line="91"/>
         <source>UOS transfer tool enables one click migration of your files, personal data, and applications to UOS, helping you seamlessly replace your system.</source>
-        <translation>L&apos;eina de transferència UOS permet la migració en un clic dels seus fitxers, dades personals i aplicacions a UOS, ajudant-lo a substituir el seu sistema de forma senzilla.</translation>
+        <translation>L&apos;eina de transferència d&apos;UOS permet la migració amb un sol clic dels vostres fitxers, dades personals i aplicacions a UOS, cosa que us ajuda a substituir el sistema sense problemes.</translation>
     </message>
 </context>
 <context>
@@ -65,17 +65,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="35"/>
         <source>Export to local directory</source>
-        <translation>Exportar a la carpeta local</translation>
+        <translation>Exporta a la carpeta local</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="41"/>
         <source>Select a transfer way</source>
-        <translation>Seleccionar un mètode de transferència</translation>
+        <translation>Seleccioneu un mètode de transferència</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="56"/>
         <source>Unable to connect to the network， please check your network connection or select export to local directory.</source>
-        <translation>No es pot connectar a la xarxa, si us plau comprovi la connexió a la xarxa o seleccioni exportar a la carpeta local.</translation>
+        <translation>No es pot connectar a la xarxa; comproveu la connexió de xarxa o seleccioneu Exporta al directori local.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.cpp" line="69"/>
@@ -90,7 +90,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="39"/>
         <source>Import from backup files</source>
-        <translation>Importar des de fitxers de còpia de seguretat</translation>
+        <translation>Importa des de fitxers de còpia de seguretat</translation>
     </message>
 </context>
 <context>
@@ -98,22 +98,22 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="39"/>
         <source>Check transfer configuration will automatically apply to UOS.</source>
-        <translation>La configuració de transferència verificarà que s&apos;apliqui automàticament a UOS.</translation>
+        <translation>La comprovació de la transferència verificarà que s&apos;apliqui automàticament a UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="51"/>
         <source>Confirm</source>
-        <translation>Confirmar</translation>
+        <translation>Confirmeu-ho</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="49"/>
         <source>Cancel</source>
-        <translation>Cancel·lar</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
         <source>Browser bookmarks</source>
-        <translation>Marcadors del navegador</translation>
+        <translation>Adreces d&apos;interès del navegador</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="75"/>
@@ -125,7 +125,7 @@
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="98"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="139"/>
         <source>Transferable</source>
-        <translation>Transfereixible</translation>
+        <translation>Transferible</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.cpp" line="116"/>
@@ -140,12 +140,12 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="49"/>
         <source>Select the configuration to transfer</source>
-        <translation>Seleccionar la configuració per transferir</translation>
+        <translation>Seleccioneu la configuració per transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="50"/>
         <source>Please select the configurations to back up</source>
-        <translation>Si us plau, seleccioni les configuracions per fer una còpia de seguretat</translation>
+        <translation>Seleccioneu les configuracions de les quals voleu fer una còpia de seguretat.</translation>
     </message>
 </context>
 <context>
@@ -153,52 +153,52 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="36"/>
         <source>Ready to connect</source>
-        <translation>Preparat per connectar</translation>
+        <translation>A punt per connectar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="41"/>
         <source>Please open data transfer on Windows, and imput the IP and connect code</source>
-        <translation>Si us plau obri la transferència de dades a Windows, i introdueixi l&apos;IP i el codi de connexió</translation>
+        <translation>Obriu la transferència de dades a Windows i introduïu la IP i el codi de connexió.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="48"/>
         <source>Download Windows client</source>
-        <translation>Descarregar client Windows</translation>
+        <translation>Baixa el client de Windows</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="59"/>
         <source>Connect code is expired, please refresh for new code</source>
-        <translation>رمز الاتصال منتهي الصلاحية، الرجاء تحديثه للحصول على رمز جديد</translation>
+        <translation>El codi de connexió ha caducat, actualitzeu-lo per veure&apos;l per veure&apos;l de nou.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="75"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="104"/>
         <source>computer</source>
-        <translation>الكمبيوتر</translation>
+        <translation>ordinador</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="107"/>
         <source>Local IP</source>
-        <translation>IP المحلي</translation>
+        <translation>IP local</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="163"/>
         <source>Refresh</source>
-        <translation>تحديث</translation>
+        <translation>Actualitza</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>The code will be expired in</source>
-        <translation>سيتم إنتهاء رمز الاتصال في</translation>
+        <translation>El codi caducarà d&apos;aquí a</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/connectwidget.cpp" line="171"/>
         <source>please input connect code as soon as possible</source>
-        <translation>الرجاء إدخال رمز الاتصال في أقرب وقت ممكن</translation>
+        <translation>Si us plau, introduïu el codi de connexió tan aviat com sigui possible.</translation>
     </message>
 </context>
 <context>
@@ -206,62 +206,62 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="87"/>
         <source>Create data backup</source>
-        <translation>إنشاء نسخة احتياطية للبيانات</translation>
+        <translation>Crea una còpia de seguretat de les dades</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="95"/>
         <source>File information</source>
-        <translation>معلومات الملف</translation>
+        <translation>Informació del fitxer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="115"/>
         <source>Name</source>
-        <translation>الاسم</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="133"/>
         <source>size:0B</source>
-        <translation>الحجم: 0B</translation>
+        <translation>mida: 0B</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="152"/>
         <source>Location</source>
-        <translation>الموقع</translation>
+        <translation>Ubicació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="162"/>
         <source>(Select Backup Disk)</source>
-        <translation>(اختيار القرص الاحتياطي)</translation>
+        <translation>(Seleccioneu el disc per a la còpia de seguretat)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="187"/>
         <source>Insufficient space in the selected disk, please clean the space</source>
-        <translation>مساحة غير كافية على القرص المختار، من فضلك نظف المساحة</translation>
+        <translation>No hi ha prou espai al disc seleccionat. Si us plau, netegeu l&apos;espai.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="195"/>
         <source>Backup</source>
-        <translation>النسخ الاحتياطي</translation>
+        <translation>Còpia de seguretat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="193"/>
         <source>Cancel</source>
-        <translation>إلغاء</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="339"/>
         <source>Size:%1</source>
-        <translation>الحجم:%1</translation>
+        <translation>Mida: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="382"/>
         <source>local disk</source>
-        <translation>القرص المحلي</translation>
+        <translation>disc local</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="388"/>
         <source>%1/%2 available</source>
-        <translation>&apos;%1/%2 متاح&apos;</translation>
+        <translation>%1 / %2 disponible</translation>
     </message>
 </context>
 <context>
@@ -269,22 +269,22 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="66"/>
         <source>Reselect</source>
-        <translation>إعادة الاختيار</translation>
+        <translation>Torna a seleccionar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="81"/>
         <source>Continue</source>
-        <translation>المتابعة</translation>
+        <translation>Continua</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>The presence of outstanding transfer tasks between you and the target device has been detected.</source>
-        <translation>تم اكتشاف مهام نقل معلقة بينك وبين الجهاز الهدف.</translation>
+        <translation>S&apos;ha detectat la presència de tasques de transferència pendents entre aquest dispositiu i el dispositiu de destinació.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/custommessagebox.cpp" line="138"/>
         <source>Do you want to continue with the last transfer?</source>
-        <translation>هل ترغب في المتابعة مع آخر مهمة للنقل؟</translation>
+        <translation>Voleu continuar l&apos;última transferència?</translation>
     </message>
 </context>
 <context>
@@ -292,42 +292,42 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="54"/>
         <source>Transfer will be completed in</source>
-        <translation>سيتم إكمال النقل في</translation>
+        <translation>La transferència es completarà d&apos;aquí a </translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="69"/>
         <source>Try again</source>
-        <translation>حاول مرة أخرى</translation>
+        <translation>Torna-ho a provar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.cpp" line="66"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="29"/>
         <source>Network Error</source>
-        <translation>خطأ في الشبکة</translation>
+        <translation>Error de xarxa</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="30"/>
         <source>Transfer interrupted</source>
-        <translation>تم قطع النقل</translation>
+        <translation>S&apos;ha interromput la transferència.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="32"/>
         <source>The network disconnected, transfer failed, please connect the network and try again</source>
-        <translation>تم قطع الشبكة، فشل النقل، من فضلك ا连 the network وحاول مرة أخرى</translation>
+        <translation>La xarxa s&apos;ha desconnectat i la transferència ha fallat. Connecteu la xarxa i torneu-ho a intentar.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="34"/>
         <source>Insufficient space in UOS, please clear at least %1 GB and try again</source>
-        <translation>المساحة غير كافية في UOS، من فضلك أчист على الأقل %1 جيجابايت وحاول مرة أخرى</translation>
+        <translation>Espai insuficient a l&apos;UOS; si us plau, allibereu almenys %1 GB i torneu-ho a provar.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/errorwidget.h" line="36"/>
         <source>Insufficient space in UOS, Please reserve enough space</source>
-        <translation>لا يوجد مساحة كافية في نظام UOS، يرجى الحفاظ على مساحة كافية</translation>
+        <translation>Espai insuficient a l&apos;UOS. Si us plau, reserveu prou espai.</translation>
     </message>
 </context>
 <context>
@@ -335,37 +335,37 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="50"/>
         <source>Name</source>
-        <translation>الاسم</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="50"/>
         <source>Size</source>
-        <translation>الحجم</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="60"/>
         <source>When transfer completed, the data will be placed in the user&apos;s home directory</source>
-        <translation>عند الانتهاء من النقل، سيتم وضع البيانات في دليل المستخدم</translation>
+        <translation>Quan la transferència s&apos;hagi completat, les dades es col·locaran al directori principal de l&apos;usuari.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="73"/>
         <source>Confirm</source>
-        <translation>تأكيد</translation>
+        <translation>Confirmeu-ho</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.cpp" line="71"/>
         <source>Cancel</source>
-        <translation>إلغاء</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.h" line="56"/>
         <source>Select the file to transfer</source>
-        <translation>اختر الملف الذي تريد نقله</translation>
+        <translation>Seleccioneu el fitxer per transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/fileselectwidget.h" line="57"/>
         <source>Please select the files to back up</source>
-        <translation>يرجى اختيار الملفات التي تريد نسخها الاحتياطي</translation>
+        <translation>Seleccioneu els fitxers dels quals voleu fer una còpia de seguretat</translation>
     </message>
 </context>
 <context>
@@ -373,17 +373,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="34"/>
         <source>The network has been disconnected. Please check your network</source>
-        <translation>تم قطع الشبكة. يرجى التحقق من اتصالك بالشبكة</translation>
+        <translation>La xarxa s&apos;ha desconnectat. Si us plau, comproveu la xarxa.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="40"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/networkdisconnectionwidget.cpp" line="41"/>
         <source>Try again</source>
-        <translation>حاول مرة أخرى</translation>
+        <translation>Torna-ho a provar</translation>
     </message>
 </context>
 <context>
@@ -391,7 +391,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="297"/>
         <source>Installing</source>
-        <translation>جارٍ التثبيت</translation>
+        <translation>S&apos;instal·la</translation>
     </message>
 </context>
 <context>
@@ -399,32 +399,32 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="29"/>
         <source>Before tranfer</source>
-        <translation>قبل النقل</translation>
+        <translation>Abans de la transferència</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="34"/>
         <source>Data transfer requires some time, to avoid interrupting the migration due to low battery, please keep connect to the  power.</source>
-        <translation>يتطلب نقل البيانات وقتًا، لتجنب تعطيل الهجرة بسبب انخفاض البطارية، يرجى البقاء متصلًا بالطاقة.</translation>
+        <translation>La transferència de dades requereix una mica de temps. Per evitar interrompre la migració a causa de la bateria baixa, mantingueu-la connectada a la xarxa elèctrica.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="36"/>
         <source>Other applications may slowdown the transfer speed. For smoother experience, please close other applications.</source>
-        <translation>قد تبطئ التطبيقات الأخرى سرعة النقل. لتجربة أكثر سلاسة، يرجى إغلاق التطبيقات الأخرى.</translation>
+        <translation>Altres aplicacions poden alentir la velocitat de transferència. Per a una experiència més fluida, tanqueu les altres aplicacions.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="38"/>
         <source>For the security of your transfer, please use a trusted network.</source>
-        <translation>لسلامة نقلك، يرجى استخدام شبكة موثوقة.</translation>
+        <translation>Per a la seguretat de la vostra transferència, useu una xarxa de confiança.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="62"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/promptwidget.cpp" line="64"/>
         <source>Confirm</source>
-        <translation>تأكيد</translation>
+        <translation>Confirmeu-ho</translation>
     </message>
 </context>
 <context>
@@ -432,7 +432,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="48"/>
         <source>Ready to connect</source>
-        <translation>مستعد للاتصال</translation>
+        <translation>A punt per connectar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="52"/>
@@ -442,44 +442,44 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="59"/>
         <source>Please input the IP of UOS</source>
-        <translation>يرجى إدخال IP لنظام UOS</translation>
+        <translation>Si us plau, introduïu l&apos;adreça IP d&apos;UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="79"/>
         <source>Please open data transfer on UOS, and get the IP</source>
-        <translation>يرجى تشغيل نقل البيانات على UOS، واستخرج IP</translation>
+        <translation>Si us plau, obriu la transferència de dades a UOS i obteniu l&apos;adreça IP.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="85"/>
         <source>Connect code</source>
-        <translation>رمز الاتصال</translation>
+        <translation>Codi de connexió</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="95"/>
         <source>Please input the connect code on UOS</source>
-        <translation>يرجى إدخال رمز الاتصال على UOS</translation>
+        <translation>Si us plau, introduïu el codi de connexió a UOS.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="118"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="33"/>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="112"/>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="167"/>
         <source>connect...</source>
-        <translation>اتصال...</translation>
+        <translation>connecta...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="120"/>
         <source>Connect</source>
-        <translation>اتصال</translation>
+        <translation>Connecta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/readywidget.cpp" line="258"/>
         <source>Failed to connect, please check your input</source>
-        <translation>فشل الاتصال، يرجى التحقق من إدخالك</translation>
+        <translation>No s&apos;ha pogut connectar, reviseu l&apos;entrada.</translation>
     </message>
 </context>
 <context>
@@ -487,28 +487,28 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="128"/>
         <source>Transfer completed partially</source>
-        <translation>تم نقل البيانات جزئيًا</translation>
+        <translation>Transferència completada parcialment</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="32"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="125"/>
         <source>Transfer completed</source>
-        <translation>تم نقل البيانات</translation>
+        <translation>Transferència completada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="38"/>
         <source>Partial information migration failed, please go to UOS for manual transfer</source>
-        <translation>النقل الجزئي للبيانات فشل، الرجاء الذهاب إلى UOS للنقل اليدوي</translation>
+        <translation>La migració parcial d&apos;informació ha fallat. Si us plau, aneu a UOS per a la transferència manual.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="50"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/resultdisplay.cpp" line="52"/>
         <source>Exit</source>
-        <translation>الخروج</translation>
+        <translation>Surt</translation>
     </message>
 </context>
 <context>
@@ -516,19 +516,19 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="216"/>
         <source>Selected:0</source>
-        <translation>المختارة:0</translation>
+        <translation>Seleccionat: 0</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="237"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="239"/>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="241"/>
         <source>Selected:%1</source>
-        <translation>المختارة:%1</translation>
+        <translation>Seleccionats: %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="304"/>
         <source>Edit</source>
-        <translation>تعديل</translation>
+        <translation>Edita</translation>
     </message>
 </context>
 <context>
@@ -536,42 +536,42 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="90"/>
         <source>File</source>
-        <translation>ملف</translation>
+        <translation>Fitxer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="95"/>
         <source>App</source>
-        <translation>التطبيق</translation>
+        <translation>Aplicació</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="97"/>
         <source>Config</source>
-        <translation>الإعدادات</translation>
+        <translation>Configuració</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.cpp" line="112"/>
         <source>Back</source>
-        <translation>العودة</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="72"/>
         <source>Select data to transfer</source>
-        <translation>اختر البيانات للنقل</translation>
+        <translation>Seleccioneu les dades per transferir</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="73"/>
         <source>Please select the content to back up</source>
-        <translation>الرجاء اختيار المحتوى للنسخ الاحتياطي</translation>
+        <translation>Seleccioneu el contingut del qual voleu fer una còpia de seguretat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="74"/>
         <source>Start transfer</source>
-        <translation>ابدأ النقل</translation>
+        <translation>Comença la transferència</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/selectmainwidget.h" line="75"/>
         <source>Next</source>
-        <translation>التالي</translation>
+        <translation>Següent</translation>
     </message>
 </context>
 <context>
@@ -579,17 +579,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
         <source>Profiles</source>
-        <translation>الملفات الشخصية</translation>
+        <translation>Perfils</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="63"/>
         <source>Wrong or missing profile</source>
-        <translation>ملف شخصي خاطئ أو مفقود</translation>
+        <translation>Perfil incorrecte o que manca</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
         <source>My Wallpaper</source>
-        <translation>خلفيتي</translation>
+        <translation>El meu fons de pantalla</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="111"/>
@@ -597,55 +597,55 @@
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="234"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer completed</source>
-        <translation>تم النقل</translation>
+        <translation>Transferència completada</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Browser Bookmarks</source>
-        <translation>رموز التبويب لمتصفح الويب</translation>
+        <translation>Adreces d&apos;interès del navegador</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="146"/>
         <source>BrowserBookMark</source>
-        <translation>BrowserBookMark</translation>
+        <translation>Marcador del navegador</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="176"/>
         <source>is installed</source>
-        <translation>تمت التركيب</translation>
+        <translation>està instal·lat</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="200"/>
         <source>Installing</source>
-        <translation>جارٍ التركيب</translation>
+        <translation>S&apos;instal·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="268"/>
         <source>Transfer failed</source>
-        <translation>فشل النقل</translation>
+        <translation>La transferència ha fallat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="133"/>
         <source>Format error</source>
-        <translation>خطأ في التنسيق</translation>
+        <translation>Error de format</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="143"/>
         <source>Setup failed, configuration can be imported manually</source>
-        <translation>فشل التثبيت، يمكن استيراد الإعداد يدويًا</translation>
+        <translation>La configuració ha fallat. Es pot importar manualment.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="157"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="188"/>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="238"/>
         <source>Installation failed, please go to the app store to install</source>
-        <translation>فشل التثبيت، الرجاء الذهاب إلى متجر التطبيقات للحصول على التطبيق</translation>
+        <translation>La instal·lació ha fallat. Si us plau, aneu a la Botiga d&apos;aplicacions per instal·lar-la.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/settinghepler.cpp" line="249"/>
         <source>Transfer Complete</source>
-        <translation>النقل مكتمل</translation>
+        <translation>Transferència completada</translation>
     </message>
 </context>
 <context>
@@ -653,17 +653,17 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="21"/>
         <source>Videos</source>
-        <translation>الفيديو</translation>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="22"/>
         <source>Pictures</source>
-        <translation>الصور</translation>
+        <translation>Imatges</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="23"/>
         <source>Documents</source>
-        <translation>الوثائق</translation>
+        <translation>Documents</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/siderbarwidget.cpp" line="24"/>
@@ -716,7 +716,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/utils/transferworker.cpp" line="326"/>
         <source>Transfering</source>
-        <translation>Transferint</translation>
+        <translation>Es transfereix</translation>
     </message>
 </context>
 <context>
@@ -726,53 +726,53 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="193"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="230"/>
         <source>Transferring...</source>
-        <translation>Transferint...</translation>
+        <translation>Es transfereix...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="57"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="191"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="229"/>
         <source>Calculationing...</source>
-        <translation>Calculant...</translation>
+        <translation>Es calcula...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="63"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="132"/>
         <source>Show processes</source>
-        <translation>Mostra processos</translation>
+        <translation>Mostra els processos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="119"/>
         <source>Hide processes</source>
-        <translation>Amaga processos</translation>
+        <translation>Amaga els processos</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="154"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="195"/>
         <source>Transfer will be completed in %1 minutes</source>
-        <translation>La transferència s&apos;acabará en %1 minuts</translation>
+        <translation>La transferència s&apos;acabarà d&apos;aquí a %1 minuts.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="171"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="243"/>
         <source>Transfering</source>
-        <translation>Transferint</translation>
+        <translation>Es transfereix</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="199"/>
         <source>Transfer will be completed in %1 secondes</source>
-        <translation>La transferència s&apos;acabará en %1 segons</translation>
+        <translation>La transferència s&apos;acabarà d&apos;aquí a %1 segons.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="202"/>
         <source>Transfer will be completed in --</source>
-        <translation>La transferència s&apos;acabará en --</translation>
+        <translation>La transferència s&apos;acabarà d&apos;aquí a -</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/transferringwidget.cpp" line="237"/>
         <source>Decompressing</source>
-        <translation>Descomprimir</translation>
+        <translation>Es descomprimeix</translation>
     </message>
 </context>
 <context>
@@ -781,7 +781,7 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="126"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/unzipwoker.cpp" line="137"/>
         <source>Decompressing</source>
-        <translation>Descomprimir</translation>
+        <translation>Es descomprimeix</translation>
     </message>
 </context>
 <context>
@@ -790,28 +790,28 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="197"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="256"/>
         <source>Drag file here </source>
-        <translation>Arrossega el fitxer aquí </translation>
+        <translation>Arrossegueu el fitxer aquí</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="202"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="257"/>
         <source>Import file</source>
-        <translation>Importa fitxer</translation>
+        <translation>Importa un fitxer</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="276"/>
         <source>Only .zip is supported, please</source>
-        <translation>Només es suporta .zip, si us plau</translation>
+        <translation>Només s&apos;admet .zip.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="277"/>
         <source>reselect</source>
-        <translation>re-selecciona</translation>
+        <translation>Torna a seleccionar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
         <source>select zip file</source>
-        <translation>selecciona un fitxer zip</translation>
+        <translation>Seleccioneu un fitxer zip</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="351"/>
@@ -824,17 +824,17 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="40"/>
         <source>Select data transfer file</source>
-        <translation>Selecciona el fitxer de transferència de dades</translation>
+        <translation>Seleccioneu el fitxer de transferència de dades</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="49"/>
         <source>File error, cannot transfer, please reselect</source>
-        <translation>Error de fitxer, no es pot transferir, si us plau re-selecciona</translation>
+        <translation>Error de fitxer, no es pot transferir. Torneu a la selecció.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="62"/>
         <source>Back</source>
-        <translation>Retro</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="64"/>
@@ -847,17 +847,17 @@ UOS, helping you seamlessly replace your system.</source>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="69"/>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="76"/>
         <source>Retry</source>
-        <translation>Reintentar</translation>
+        <translation>Torna-ho a provar</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="122"/>
         <source>The file is corrupted and cannot be migrated. Please replace it with a backup file.</source>
-        <translation>الملف تالف ولا يمكن نقله. من فضلك استبدلته بملف نسخ احتياطي.</translation>
+        <translation>El fitxer està malmès i no es pot migrar. Si us plau, substituïu-lo per un fitxer de còpia de seguretat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
         <source>Insufficient space on UOS. Please reserve at least %1G of space and try again.</source>
-        <translation>لا يوجد مساحة كافية على UOS. من فضلك احتفظ بمساحة لا تقل عن %1G وحاول مرة أخرى.</translation>
+        <translation>Espai insuficient a UOS. Reserveu com a mínim %1G d&apos;espai i torneu-ho a provar.</translation>
     </message>
 </context>
 <context>
@@ -865,7 +865,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/userselectfilesize.cpp" line="22"/>
         <source>Calculating</source>
-        <translation>Calculating</translation>
+        <translation>Es calcula</translation>
     </message>
 </context>
 <context>
@@ -873,33 +873,33 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="32"/>
         <source>Waiting for transfer...</source>
-        <translation>Esperant per a transferir...</translation>
+        <translation>S&apos;espera per a la transferència...</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="37"/>
         <source>Please select the data to transfer on Windows</source>
-        <translation>Por favor selecciona els dades per a transferir a Windows</translation>
+        <translation>Seleccioneu les dades que voleu transferir a Windows</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="47"/>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="98"/>
         <source>Cancel</source>
-        <translation>Cancel·lar</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="99"/>
         <source>Close</source>
-        <translation>Tancar</translation>
+        <translation>Tanca</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="101"/>
         <source>This operation will clear the transmission progress, Do you want to continue.</source>
-        <translation>Aquesta operació esborrará el progrés de la transmissió, Vols continuar?</translation>
+        <translation>Aquesta operació esborrarà el progrés de la transmissió. Voleu continuar?</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/transfer/waittransferwidget.cpp" line="102"/>
         <source>This operation is not recoverable</source>
-        <translation>Aquesta operació no és recuperable</translation>
+        <translation>Aquesta operació no és recuperable.</translation>
     </message>
 </context>
 <context>
@@ -907,32 +907,32 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="32"/>
         <source>Exit</source>
-        <translation>Sortir</translation>
+        <translation>Surt</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="49"/>
         <source>Back</source>
-        <translation>Tornar</translation>
+        <translation>Torna</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="84"/>
         <source>Back up succeed</source>
-        <translation>La còpia de seguretat ha estat correcta</translation>
+        <translation>Còpia de seguretat correcta</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="90"/>
         <source>Congratulations, Your Information has been Successfully Backed Up.</source>
-        <translation>Congratulations, Your Information has been Successfully Backed Up.</translation>
+        <translation>Enhorabona, s&apos;ha fet una còpia de seguretat de la informació correctament.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="95"/>
         <source>Go to View</source>
-        <translation>Anar a Veure</translation>
+        <translation>Ves a la visualització</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="120"/>
         <source>Back up failed</source>
-        <translation>La còpia de seguretat ha fallat</translation>
+        <translation>La còpia de seguretat ha fallat.</translation>
     </message>
 </context>
 <context>
@@ -940,23 +940,23 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="44"/>
         <source>Packing  %1</source>
-        <translation>Empaquetat %1</translation>
+        <translation>S&apos;empaqueta %1</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="53"/>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="101"/>
         <source>Transfer will be completed in %1 minutes</source>
-        <translation>La transferència es completarà en %1 minuts</translation>
+        <translation>La transferència es completarà d&apos;aquí a %1 minuts.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="56"/>
         <source>Transfer will be completed in %1 secondes</source>
-        <translation>La transferència es completarà en %1 segons</translation>
+        <translation>La transferència es completarà d&apos;aquí a %1 segons.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocesswidget.cpp" line="84"/>
         <source>Creating Backup File...</source>
-        <translation>Creant un arxiu de còpia de seguretat...</translation>
+        <translation>Es crea un fitxer de còpia de seguretat...</translation>
     </message>
 </context>
 <context>
@@ -964,12 +964,12 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="283"/>
         <source>%1 File compression failed</source>
-        <translation>&apos;%1 Arxiu de compressió ha fallat&apos;</translation>
+        <translation>%1 La compressió del fitxer ha fallat.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
         <source>Back up file done</source>
-        <translation>Còpia de seguretat del arxiu completada</translation>
+        <translation>Còpia de seguretat feta</translation>
     </message>
 </context>
 <context>
@@ -977,7 +977,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/linux/mainwindow_p_linux.cpp" line="32"/>
         <source>UOS data transfer</source>
-        <translation>Transferència de dades UOS</translation>
+        <translation>Transferència de dades d&apos;UOS</translation>
     </message>
 </context>
 </TS>
