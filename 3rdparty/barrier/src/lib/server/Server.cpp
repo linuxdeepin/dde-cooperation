@@ -738,6 +738,18 @@ Server::mapToNeighbor(BaseClientProxy* src,
 	assert(lastGoodScreen != NULL);
 	dst = lastGoodScreen;
 
+	// clamp coordinates to destination screen bounds. when screens
+	// have different resolutions, mapToNeighbor can produce values
+	// outside the valid range (e.g. x == dw from the kLeft path).
+	{
+		SInt32 dx, dy, dw, dh;
+		dst->getShape(dx, dy, dw, dh);
+		if (x < dx) { x = dx; }
+		else if (x >= dx + dw) { x = dx + dw - 1; }
+		if (y < dy) { y = dy; }
+		else if (y >= dy + dh) { y = dy + dh - 1; }
+	}
+
 	// if entering primary screen then be sure to move in far enough
 	// to avoid the jump zone.  if entering a side that doesn't have
 	// a neighbor (i.e. an asymmetrical side) then we don't need to

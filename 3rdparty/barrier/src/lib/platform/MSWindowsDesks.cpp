@@ -463,15 +463,27 @@ MSWindowsDesks::secondaryDeskProc(
 void
 MSWindowsDesks::deskMouseMove(SInt32 x, SInt32 y) const
 {
-    // when using absolute positioning with mouse_event(),
-    // the normalized device coordinates range over only
-    // the primary screen.
-    SInt32 w = GetSystemMetrics(SM_CXSCREEN);
-    SInt32 h = GetSystemMetrics(SM_CYSCREEN);
-    mouse_event(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE,
-                            (DWORD)((65535.0f * x) / (w - 1) + 0.5f),
-                            (DWORD)((65535.0f * y) / (h - 1) + 0.5f),
-                            0, 0);
+    // clamp coordinates to virtual screen bounds to prevent
+    // overflow in mouse_event normalization and out-of-range
+    // cursor positions on high-resolution or multi-monitor setups.
+    if (x < m_x) { x = m_x; }
+    else if (x > m_x + m_w - 1) { x = m_x + m_w - 1; }
+    if (y < m_y) { y = m_y; }
+    else if (y > m_y + m_h - 1) { y = m_y + m_h - 1; }
+
+    // use SetCursorPos which accepts virtual screen pixel coordinates
+    // directly, avoiding the 0-65535 normalization that mouse_event
+    // requires and the DPI context mismatch after SetThreadDesktop.
+    if (!SetCursorPos(x, y)) {
+        // fallback to mouse_event for cases where SetCursorPos
+        // is blocked (e.g. Vista/7 secure desktop).
+        SInt32 w = GetSystemMetrics(SM_CXSCREEN);
+        SInt32 h = GetSystemMetrics(SM_CYSCREEN);
+        mouse_event(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE,
+                                (DWORD)((65535.0f * x) / (w - 1) + 0.5f),
+                                (DWORD)((65535.0f * y) / (h - 1) + 0.5f),
+                                0, 0);
+    }
 }
 
 void
