@@ -44,7 +44,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/appselectwidget.h" line="47"/>
         <source>Please select the applications to back up</source>
-        <translation>Proszę wybrać aplikacje do zapisania</translation>
+        <translation>Wybierz aplikacje do zachowania</translation>
     </message>
 </context>
 <context>
@@ -145,7 +145,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/select/configselectwidget.h" line="50"/>
         <source>Please select the configurations to back up</source>
-        <translation>Proszę wybrać konfiguracje do zapisania</translation>
+        <translation>Wybierz konfigurację do zachowania</translation>
     </message>
 </context>
 <context>
@@ -852,7 +852,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="122"/>
         <source>The file is corrupted and cannot be migrated. Please replace it with a backup file.</source>
-        <translation>Plik jest uszkodzony i nie można go przenieść. Proszę zastąpić go plikiem zapasowym.</translation>
+        <translation>Plik jest uszkodzony i nie można go przenieść. Zastąp go plikiem z kopii zapasowej.</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/backupload/uploadfilewidget.cpp" line="133"/>
