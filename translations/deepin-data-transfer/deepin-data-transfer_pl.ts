@@ -917,7 +917,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="84"/>
         <source>Back up succeed</source>
-        <translation>Kopia zapasowa powiodła się</translation>
+        <translation>Backup zakończony pomyślnie</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipfileprocessresultwidget.cpp" line="90"/>
@@ -969,7 +969,7 @@ UOS, helping you seamlessly replace your system.</source>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/zipworker.cpp" line="213"/>
         <source>Back up file done</source>
-        <translation>Kopia zapasowa pliku zakończona</translation>
+        <translation>Backup pliku zakończony</translation>
     </message>
 </context>
 <context>
