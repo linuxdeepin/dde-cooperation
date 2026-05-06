@@ -90,7 +90,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/connect/choosewidget.h" line="39"/>
         <source>Import from backup files</source>
-        <translation>Importuj z plików zapisu</translation>
+        <translation>Importuj z plików kopii zapasowej</translation>
     </message>
 </context>
 <context>
@@ -206,7 +206,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="87"/>
         <source>Create data backup</source>
-        <translation>Utwórz kopię danych</translation>
+        <translation>Utwórz kopię zapasową danych</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="95"/>
@@ -231,7 +231,7 @@
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="162"/>
         <source>(Select Backup Disk)</source>
-        <translation>(Wybierz dysk z kopią)</translation>
+        <translation>(Wybierz dysk kopii zapasowej)</translation>
     </message>
     <message>
         <location filename="../../src/plugins/data-transfer/core/gui/getbackup/createbackupfilewidget.cpp" line="187"/>
