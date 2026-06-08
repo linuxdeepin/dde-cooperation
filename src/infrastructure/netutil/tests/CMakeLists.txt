@@ -32,5 +32,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE netutil Catch2::Catch2WithMain)
 
 # 启用测试
 include(CTest)
-include(Catch)
+include("${Catch2_SOURCE_DIR}/extras/Catch.cmake")
 catch_discover_tests(${PROJECT_NAME}) 
