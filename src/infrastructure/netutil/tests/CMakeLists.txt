@@ -32,5 +32,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE netutil Catch2::Catch2WithMain)
 
 # 启用测试
 include(CTest)
+find_package(Catch2)
 include(Catch)
 catch_discover_tests(${PROJECT_NAME}) 

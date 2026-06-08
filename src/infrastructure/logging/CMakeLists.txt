@@ -49,8 +49,8 @@ endif()
 # 添加测试支持
 option(BUILD_LOGGING_TESTS "Build logging tests" OFF)
 if(BUILD_LOGGING_TESTS)
-    # 启用测试
-    enable_testing()
-    # 添加tests子目录
+    if(NOT BUILD_TESTS)
+        enable_testing()
+    endif()
     add_subdirectory(tests)
 endif()

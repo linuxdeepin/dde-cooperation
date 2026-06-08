@@ -2,6 +2,12 @@ if(ENABLE_SLOTIPC)
     include("slotipc.cmake")
 endif()
 
+# Unit tests configuration
+option(BUILD_TESTS "Build unit tests" OFF)
+if(BUILD_TESTS)
+    enable_testing()
+endif()
+
 # the ssl configuration module, must before Compiler features
 add_subdirectory(sslconf)
 

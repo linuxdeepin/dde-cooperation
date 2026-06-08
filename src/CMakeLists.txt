@@ -2,6 +2,9 @@
 # it causes barrier build failed on MSVC, so only enable it for src
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# Enable testing globally (per-module options control which tests are built)
+enable_testing()
+
 # some base common libraries
 add_subdirectory(infrastructure)
 
