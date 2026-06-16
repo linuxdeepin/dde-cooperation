@@ -1,0 +1,17 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "cooperation.transfer.port":{
+            "value":0,
+            "serial":0,
+            "flags":[],
+            "name":"Data Transfer Session Port",
+            "name[zh_CN]":"数据传输会话端口",
+            "description[zh_CN]":"用于配置数据迁移工具的控制通信端口。为0时使用默认端口或用户设置，非0时覆盖用户设置且不受端口范围限制。",
+            "description":"Configures the control communication port for the data transfer tool. When set to 0, the default port or user setting is used. Non-zero values override user settings without range restrictions.",
+            "permissions":"readwrite",
+            "visibility":"private"
+        }
+    }
+}

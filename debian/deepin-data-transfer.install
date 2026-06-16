@@ -6,3 +6,4 @@ usr/share/icons/hicolor/scalable/apps/deepin-data-transfer.svg
 usr/share/applications/deepin-data-transfer.desktop
 usr/share/deepin-log-viewer/deepin-log.conf.d/deepin-data-transfer.json
 usr/share/deepin-manual/manual-assets/application/deepin-data-transfer
+usr/share/dsg/configs/org.deepin.dde.cooperation.transfer/*.json
