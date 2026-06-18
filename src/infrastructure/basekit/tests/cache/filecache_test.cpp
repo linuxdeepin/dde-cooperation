@@ -9,6 +9,14 @@
 
 using namespace BaseKit;
 
+namespace {
+// Path::RemoveAll 对不存在的路径会抛异常，这里吞掉以保证幂等清理。
+void SafeCleanup(const Path& p) noexcept
+{
+    try { Path::RemoveAll(p); } catch (const std::exception&) {}
+}
+} // namespace
+
 // 测试基本文件缓存操作
 TEST(FileCacheTest, BasicOperations) {
     // 创建一个文件缓存实例
@@ -122,32 +130,41 @@ TEST(FileCacheTest, TimeoutQuery) {
 // 测试文件路径操作
 TEST(FileCacheTest, PathOperations) {
     FileCache cache;
-    Path testFile = Path::temp() / "test_file.txt";
-    
-    // 确保测试文件存在
+    // insert_path 面向目录：会递归读取目录下文件内容并缓存。
+    Path testDir = Path::temp() / "basekit_fc_pathops";
+    SafeCleanup(testDir);
+    Directory::Create(testDir);
+
+    // 在目录中创建一个文件
+    Path inner = testDir / "inner.txt";
     {
-        File file(testFile);
-        file.Open(true, true, true); // read=true, write=true, truncate=true
-        file.Write("Test content");
+        File file(inner);
+        file.OpenOrCreate(true, true, true); // read=true, write=true, truncate=true
+        std::string content = "Test content";
+        file.Write(content.data(), content.size());
         file.Close();
     }
-    
-    // 插入文件路径到缓存
-    EXPECT_TRUE(cache.insert_path(testFile, "/test/"));
-    
+
+    // 插入目录路径到缓存（prefix 不带尾部 '/'，避免键中出现双斜杠）
+    EXPECT_TRUE(cache.insert_path(testDir, "/test"));
+
+    // 目录内的文件内容应被缓存
+    auto [found, value] = cache.find("/test/inner.txt");
+    EXPECT_TRUE(found);
+    EXPECT_EQ(value, "Test content");
+
     // 查找路径
-    EXPECT_TRUE(cache.find_path(testFile));
-    
+    EXPECT_TRUE(cache.find_path(testDir));
+
     // 查找路径和超时信息
     Timestamp timeout;
-    EXPECT_TRUE(cache.find_path(testFile, timeout));
-    
+    EXPECT_TRUE(cache.find_path(testDir, timeout));
+
     // 移除路径
-    EXPECT_TRUE(cache.remove_path(testFile));
-    EXPECT_FALSE(cache.find_path(testFile));
-    
-    // 删除测试文件
-    File::Remove(testFile);
+    EXPECT_TRUE(cache.remove_path(testDir));
+    EXPECT_FALSE(cache.find_path(testDir));
+
+    SafeCleanup(testDir);
 }
 
 // 测试缓存交换
@@ -214,12 +231,12 @@ TEST(FileCacheTest, CustomPathHandler) {
     
     {
         File file1(testFile1);
-        file1.Open(true, true, true); // read=true, write=true, truncate=true
+        file1.OpenOrCreate(true, true, true); // read=true, write=true, truncate=true
         file1.Write("Content 1");
         file1.Close();
         
         File file2(testFile2);
-        file2.Open(true, true, true); // read=true, write=true, truncate=true
+        file2.OpenOrCreate(true, true, true); // read=true, write=true, truncate=true
         file2.Write("Content 2");
         file2.Close();
     }
@@ -234,7 +251,7 @@ TEST(FileCacheTest, CustomPathHandler) {
     };
     
     // 插入目录，使用自定义处理器
-    EXPECT_TRUE(cache.insert_path(testDir, "/test/", Timespan(0), customHandler));
+    EXPECT_TRUE(cache.insert_path(testDir, "/test", Timespan(0), customHandler));
     
     // 查找处理后的文件内容
     auto [found1, value1] = cache.find("/test/file1.txt");
@@ -246,7 +263,5 @@ TEST(FileCacheTest, CustomPathHandler) {
     EXPECT_EQ(value2, "CONTENT 2");
     
     // 清理
-    File::Remove(testFile1);
-    File::Remove(testFile2);
-    Directory::Remove(testDir);
-} 
+    SafeCleanup(testDir);
+}

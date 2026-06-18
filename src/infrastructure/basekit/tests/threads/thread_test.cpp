@@ -3,6 +3,7 @@
 #include "threads/mutex.h"
 #include "time/timestamp.h"
 #include <atomic>
+#include <sstream>
 #include <vector>
 #include <future>
 
@@ -185,4 +186,21 @@ TEST(ThreadTest, ThreadWithExceptions) {
     t.join();
     std::string message = futureMessage.get();
     EXPECT_EQ(message, "测试线程异常");
-} 
+}
+
+// 测试 ThreadPriority 流输出 (operator<<)
+TEST(ThreadTest, ThreadPriorityStream) {
+    auto toStr = [](ThreadPriority p) {
+        std::ostringstream oss;
+        oss << p;
+        return oss.str();
+    };
+
+    EXPECT_EQ(toStr(ThreadPriority::IDLE), "IDLE");
+    EXPECT_EQ(toStr(ThreadPriority::LOWEST), "LOWEST");
+    EXPECT_EQ(toStr(ThreadPriority::LOW), "LOW");
+    EXPECT_EQ(toStr(ThreadPriority::NORMAL), "NORMAL");
+    EXPECT_EQ(toStr(ThreadPriority::HIGH), "HIGH");
+    EXPECT_EQ(toStr(ThreadPriority::HIGHEST), "HIGHEST");
+    EXPECT_EQ(toStr(ThreadPriority::REALTIME), "REALTIME");
+}

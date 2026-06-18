@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -69,6 +69,9 @@ int main(int argc, char *argv[])
 #endif
 
     bool canSetSingle = app.setSingleInstance(app.applicationName());
+#ifdef ENABLE_AUTO_UNIT_TEST
+    canSetSingle = true; // 单元/集成测试模式: 跳过单例互斥, 允许多实例并行采集覆盖率
+#endif
     if (!canSetSingle) {
         qCritical() << app.applicationName() << "is already running.";
         return 0;

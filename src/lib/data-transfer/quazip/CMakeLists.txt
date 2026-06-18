@@ -12,8 +12,8 @@ option(BUILD_WITH_QT4 "Build QuaZip with Qt4 no matter if Qt5/Qt6 was found" OFF
 if(NOT BUILD_WITH_QT4)
     # Find Qt version
     find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
-    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
-    set(QTCORE_LIBRARIES Qt${QT_VERSION_MAJOR}::Core)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Core5Compat)
+    set(QTCORE_LIBRARIES Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Core5Compat)
     set(LIB_VERSION_SUFFIX ${QT_VERSION_MAJOR})
     include_directories(${Qt${QT_VERSION_MAJOR}Core_INCLUDE_DIRS})
     macro(qt_wrap_cpp)
