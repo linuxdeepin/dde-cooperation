@@ -119,10 +119,37 @@ TEST(HashMapTest, Iterators) {
     EXPECT_EQ(keys[2], 3);
 }
 
+// 测试反向迭代器 (rbegin/rend, crbegin/crend)
+TEST(HashMapTest, ReverseIterators) {
+    HashMap<int, std::string> map;
+    map.insert(std::make_pair(1, "one"));
+    map.insert(std::make_pair(2, "two"));
+    map.insert(std::make_pair(3, "three"));
+
+    // 反向遍历
+    std::vector<int> keys;
+    for (auto it = map.rbegin(); it != map.rend(); ++it)
+        keys.push_back(it->first);
+    EXPECT_EQ(keys.size(), 3u);
+
+    // const 反向遍历
+    const HashMap<int, std::string>& constMap = map;
+    std::vector<int> constKeys;
+    for (auto it = constMap.crbegin(); it != constMap.crend(); ++it)
+        constKeys.push_back(it->first);
+    EXPECT_EQ(constKeys.size(), 3u);
+
+    // 空表的反向迭代器应与 rend 相等
+    HashMap<int, std::string> empty;
+    EXPECT_EQ(empty.rbegin(), empty.rend());
+}
+
 // 测试HashMap的rehash和reserve功能
 TEST(HashMapTest, RehashAndReserve) {
     // 创建较小容量的哈希表
-    HashMap<int, std::string> map(10);
+    // 注意: HashMap 用 TKey() 作为空桶哨兵(blank)，int 的默认哨兵是 0，
+    // 因此不能用 0 作为键。这里显式指定 blank=-1，使 0 成为合法键。
+    HashMap<int, std::string> map(10, -1);
     
     // 由于HashMap实现可能会调整容量为2的幂，所以使用大于等于判断
     EXPECT_GE(map.bucket_count(), 10);
@@ -273,7 +300,8 @@ TEST(HashMapTest, CustomKeyAndHash) {
 // 测试大量数据下的性能和正确性
 TEST(HashMapTest, LargeDataSet) {
     const int COUNT = 1000;
-    HashMap<int, int> map;
+    // 显式指定 blank=-1，避免 int 默认哨兵 0 与键 0 冲突导致断言失败。
+    HashMap<int, int> map(128, -1);
     
     // 添加大量元素
     for (int i = 0; i < COUNT; ++i) {

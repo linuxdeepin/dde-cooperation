@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,6 +21,11 @@
 
 using namespace deepin_cross;
 
+#ifdef ENABLE_AUTO_UNIT_TEST
+// 测试模式: 显式 flush gcov 覆盖率(因 SingleApplication 析构里的 _exit 跳过 atexit)。
+extern "C" void __gcov_dump(void);
+#endif
+
 SingleApplication::SingleApplication(int &argc, char **argv, int)
     : CrossApplication(argc, argv)
     , localServer(new QLocalServer(this))
@@ -40,6 +45,10 @@ SingleApplication::~SingleApplication()
     qDebug() << "SingleApplication shutdown completed";
     // if (qAppName() == "dde-cooperation-daemon") {
         // daemon process should exit after all work is done
+#ifdef ENABLE_AUTO_UNIT_TEST
+        // 测试模式: _exit 会跳过 atexit 导致 gcov 不落盘, 这里显式 flush 覆盖率。
+        __gcov_dump();
+#endif
         _exit(0); // FIXME: always double free if without this.
     // }
 }
