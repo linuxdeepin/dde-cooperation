@@ -15,6 +15,7 @@
 #    include <QHostInfo>
 #    include <QRegularExpressionValidator>
 #    include <QVBoxLayout>
+#    include <QGridLayout>
 #    include <common/commonutils.h>
 #    include <QDesktopServices>
 #    include <QMouseEvent>
@@ -97,9 +98,10 @@ void ConnectWidget::initUI()
     mainLayout->addWidget(titileLabel);
     mainLayout->addWidget(tipLabel);
     mainLayout->addWidget(downloadLabel);
-    mainLayout->addSpacing(50);
+    mainLayout->addSpacing(30);
     mainLayout->addLayout(connectLayout);
-    mainLayout->addSpacing(50);
+    mainLayout->setStretchFactor(connectLayout, 1);
+    mainLayout->addSpacing(30);
     mainLayout->addLayout(buttonLayout);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(indexLayout);
@@ -117,48 +119,26 @@ void ConnectWidget::initConnectLayout()
     QLabel *iconLabel = new QLabel(this);
     QLabel *nameLabel = new QLabel(QHostInfo::localHostName() + tr("computer"), this);
 
-    // ---- IP 和端口放在同一个圆角框内 ----
-    QFrame *ipFrame = new QFrame(this);
-    ipFrame->setStyleSheet(".QFrame{"
-                           "background-color: rgba(0, 129, 255, 0.1); "
-                           "border-radius: 16; "
-                           "border: 1px solid rgba(0, 129, 255, 0.2);"
-                           "}");
-    ipFrame->setFixedHeight(60);
-    ipFrame->setFixedWidth(180);
-    ipFrame->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    QVBoxLayout *ipFrameLayout = new QVBoxLayout(ipFrame);
-    ipFrameLayout->setSpacing(2);
-    ipFrameLayout->setContentsMargins(12, 0, 12, 0);
-    ipFrameLayout->setAlignment(Qt::AlignVCenter);
-
-    // 第一行：IP 标签
-    QHBoxLayout *ipRow = new QHBoxLayout();
+    // ---- IP 信息区（无外框） ----
     ipLabel = new QLabel(ipaddress, this);
     ipLabel1 = new QLabel(tr("Local IP") + ":", this);
     StyleHelper::setAutoFont(ipLabel, 14, QFont::Bold);
     StyleHelper::setAutoFont(ipLabel1, 12, QFont::Normal);
-    ipLabel1->setAlignment(Qt::AlignVCenter);
-    ipRow->addStretch();
-    ipRow->addWidget(ipLabel1);
-    ipRow->addSpacing(8);
-    ipRow->addWidget(ipLabel);
-    ipRow->addStretch();
 
-    // 第二行：端口（无框，双击可编辑）
-    QHBoxLayout *portRow = new QHBoxLayout();
+    // 端口（可见输入框，可直接编辑）
     QLabel *portLabel = new QLabel(tr("Port") + ":", this);
     StyleHelper::setAutoFont(portLabel, 12, QFont::Normal);
-    portLabel->setAlignment(Qt::AlignVCenter);
 
     portInput = new QLineEdit(QString::number(m_savedPort), this);
-    portInput->setStyleSheet("border: none;"
-                             "background: transparent;"
-                             "padding: 0px;");
-    portInput->setFixedWidth(60);
+    portInput->setStyleSheet("background-color: white;"
+                             "border: 1px solid #d8d7d7;"
+                             "border-radius: 8px;"
+                             "padding: 2px 8px;");
+    portInput->setFixedHeight(36);
+    portInput->setFixedWidth(80);
     portInput->setValidator(new QRegularExpressionValidator(QRegularExpression("^[0-9]*$"), this));
-    StyleHelper::setAutoFont(portInput, 14, QFont::Bold);
+    portInput->setAlignment(Qt::AlignLeft);
+    StyleHelper::setAutoFont(portInput, 14, QFont::Normal);
     connect(portInput, &QLineEdit::editingFinished, this, &ConnectWidget::onPortEditingFinished);
 
     // 监听端口变更
@@ -167,23 +147,28 @@ void ConnectWidget::initConnectLayout()
         portInput->setText(QString::number(newPort));
     });
 
-    portRow->addStretch();
-    portRow->addWidget(portLabel);
-    portRow->addSpacing(8);
-    portRow->addWidget(portInput);
-    portRow->addStretch();
-
-    ipFrameLayout->addLayout(ipRow);
-    ipFrameLayout->addLayout(portRow);
+    // 网格布局：IP 行与端口行的标签、值分别列对齐
+    // 两侧 stretch（列0/3）使标签+值整体水平居中，标签列右对齐、值列左对齐，两行严格对齐
+    QGridLayout *infoGrid = new QGridLayout();
+    infoGrid->setHorizontalSpacing(8);
+    infoGrid->setVerticalSpacing(8);
+    infoGrid->setColumnStretch(0, 1);   // 左侧弹性，把内容推到中间
+    infoGrid->setColumnStretch(3, 1);   // 右侧弹性
+    infoGrid->addWidget(ipLabel1, 0, 1, Qt::AlignRight | Qt::AlignVCenter);
+    infoGrid->addWidget(ipLabel, 0, 2, Qt::AlignLeft | Qt::AlignVCenter);
+    infoGrid->addWidget(portLabel, 1, 1, Qt::AlignRight | Qt::AlignVCenter);
+    infoGrid->addWidget(portInput, 1, 2, Qt::AlignLeft | Qt::AlignVCenter);
 
     iconLabel->setPixmap(QIcon(":/icon/computer.svg").pixmap(96, 96));
-    iconLabel->setFixedSize(96, 96);
+    // 容器宽度（220）大于图标（96）：撑开左侧信息区宽度，使 IP/端口列与右侧密码区比例协调
+    iconLabel->setFixedSize(220, 96);
     iconLabel->setAlignment(Qt::AlignCenter);
     nameLabel->setAlignment(Qt::AlignCenter);
 
     ipVLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
+    ipVLayout->setSpacing(10);
     ipVLayout->addWidget(nameLabel, 0, Qt::AlignCenter);
-    ipVLayout->addWidget(ipFrame, 0, Qt::AlignCenter);
+    ipVLayout->addLayout(infoGrid);
 
     // ---- 密码区 ----
     QString password = TransferHelper::instance()->updateConnectPassword();
@@ -265,12 +250,15 @@ void ConnectWidget::initConnectLayout()
     separatorLabel->setFixedSize(2, 160);
     separatorLabel->setStyleSheet(".QLabel { background-color: rgba(0, 0, 0, 0.1); width: 2px; }");
 
+    connectLayout->addStretch();
     connectLayout->addSpacing(37);
     connectLayout->addLayout(ipVLayout);
     connectLayout->addSpacing(30);
     connectLayout->addWidget(separatorLabel);
     connectLayout->addSpacing(30);
     connectLayout->addLayout(passwordVLayout);
+    connectLayout->addSpacing(37);
+    connectLayout->addStretch();
     connectLayout->setSpacing(15);
     connectLayout->setAlignment(Qt::AlignCenter);
     DLOG << "ConnectWidget initConnectLayout finished";
