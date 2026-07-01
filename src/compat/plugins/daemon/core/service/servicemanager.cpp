@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,7 +12,6 @@
 #include "jobmanager.h"
 
 #include "utils/config.h"
-#include "utils/cert.h"
 #include "common/commonutils.h"
 
 #include <QCoreApplication>

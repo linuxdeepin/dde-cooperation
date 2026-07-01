@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,6 +13,7 @@
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QStorageInfo>
+#include <QUuid>
 
 SessionWorker::SessionWorker(QObject *parent)
     : QObject(parent)
@@ -82,7 +83,8 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         QString dePin = QString::fromUtf8(QByteArray::fromBase64(pinByte));
         if (dePin == _savedPin) {
             DLOG << "PIN code matched";
-            res.auth = "thatsgood";
+            res.auth = QUuid::createUuid().toString(QUuid::WithoutBraces).toStdString();
+            updateLogin(nice, true);
             emit onConnectChanged(LOGIN_SUCCESS, nice);
         } else {
             DLOG << "PIN code mismatch";
@@ -112,6 +114,14 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         DLOG << "Handling REQ_TRANS_DATAS";
         TransDataMessage req, res;
         req.from_json(v);
+
+        if (_savedPin.isEmpty() || _login_hosts.isEmpty()) {
+            WLOG << "REQ_TRANS_DATAS rejected: no authenticated session";
+            res.id = req.id;
+            res.flag = false;
+            response->json_msg = res.as_json().serialize();
+            return;
+        }
 
         QString endpoint = QString::fromStdString(req.endpoint);
         QStringList nameList;

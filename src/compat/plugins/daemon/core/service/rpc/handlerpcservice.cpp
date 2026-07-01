@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -17,10 +17,12 @@
 #include "utils/config.h"
 #include "service/fsadapter.h"
 
-#include "utils/cert.h"
+#include "sslcertconf.h"
 
 #include <QPointer>
 #include <QCoreApplication>
+#include <QStandardPaths>
+#include <QUuid>
 
 co::chan<IncomeData> _income_chan(10, 300);
 co::chan<OutData> _outgo_chan(10, 20);
@@ -138,8 +140,9 @@ bool HandleRpcService::handleRemoteLogin(co::Json &info)
         } else {
             DaemonConfig::instance()->saveRemoteSession(lo.session_id);
 
-            //TODO: generate auth token
-            fastring auth_token = "thatsgood";
+            std::string tokenStr = QUuid::createUuid().toString(QUuid::WithoutBraces).toStdString();
+            fastring auth_token = tokenStr.c_str();
+            DaemonConfig::instance()->saveAuthed(auth_token);
             DaemonConfig::instance()->setTargetName(lo.my_name.c_str());   // save the login name
             fastring plattsr;
             if (WINDOWS == Util::getOSType()) {
@@ -494,8 +497,9 @@ void HandleRpcService::startRemoteServer(const quint16 port)
     if (_rpc_trans.isNull() && port == UNI_RPC_PORT_TRANS)
         return;
     auto rpc = port != UNI_RPC_PORT_TRANS ? _rpc : _rpc_trans;
-    fastring key = Cert::instance()->writeKey();
-    fastring crt = Cert::instance()->writeCrt();
+    auto configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation).toStdString();
+    SslCertConf::ins()->generateCertificate(configDir);
+    fastring certfile = SslCertConf::ins()->getCertificatePath().c_str();
     QPointer<HandleRpcService> my = this;
     auto callback = [my](const int type, const fastring &ip, const uint16 port){
         if (type < 0) {
@@ -507,16 +511,27 @@ void HandleRpcService::startRemoteServer(const quint16 port)
         }
     };
     if (port == UNI_RPC_PORT_TRANS) {
-        rpc->startRpcListen(key.c_str(), crt.c_str(), port, callback);
+        rpc->startRpcListen(certfile.c_str(), certfile.c_str(), port, callback);
     } else {
-        rpc->startRpcListen(key.c_str(), crt.c_str(), port);
+        rpc->startRpcListen(certfile.c_str(), certfile.c_str(), port);
     }
-    Cert::instance()->removeFile(key);
-    Cert::instance()->removeFile(crt);
 
     QPointer<HandleRpcService> self = this;
     UNIGO([self]() {
         // 这里已经是线程或者协程
+        static const auto requiresAuth = [](int type) -> bool {
+            switch (type) {
+            case LOGIN_INFO:
+            case LOGIN_RESULT:
+            case RPC_PING:
+            case SEARCH_DEVICE_BY_IP:
+            case DISCOVER_BY_TCP:
+                return false;
+            default:
+                return true;
+            }
+        };
+
         while (!self.isNull()) {
             IncomeData indata;
             _income_chan >> indata;
@@ -530,6 +545,16 @@ void HandleRpcService::startRemoteServer(const quint16 port)
                 ELOG << "parse error from: " << indata.json;
                 continue;
             }
+
+            if (requiresAuth(indata.type)
+                && DaemonConfig::instance()->getAuthed().empty()) {
+                ELOG << "auth required but not logged in, drop message type=" << indata.type;
+                OutData data;
+                data.type = UNKOWN;
+                _outgo_chan << data;
+                continue;
+            }
+
             switch (indata.type) {
             case LOGIN_INFO:
             {

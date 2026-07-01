@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,6 +12,7 @@
 #include "http/https_client.h"
 
 #include <iostream>
+#include <filesystem>
 
 // timeout if no data arrived
 inline constexpr int ExitCount = 5000;
@@ -655,8 +656,29 @@ bool FileClient::createNotExistPath(std::string &abspath, bool isfile)
 
 std::string FileClient::createNextAvailableName(const std::string &name, bool isfile)
 {
-    BaseKit::Path path = BaseKit::Path(_savedir) / name;
-    path = path.canonical(); // remove all '.' and '..' properly
+    namespace fs = std::filesystem;
+    fs::path resolvedTarget = (fs::path(_savedir) / name).lexically_normal();
+    fs::path resolvedBase = fs::path(_savedir).lexically_normal();
+
+    std::string target = resolvedTarget.string();
+    std::string base = resolvedBase.string();
+    // GCC's lexically_normal() does not strip trailing separators —
+    // _savedir comes from sessionmanager.cpp with a trailing QDir::separator(),
+    // so base would be "/home/user/Downloads/" causing target[base.size()]
+    // to land on the filename's first char instead of '/', falsely blocking
+    // legitimate paths.
+    while (!base.empty() && (base.back() == '/' || base.back() == '\\'))
+        base.pop_back();
+
+    if (target != base
+        && !(target.size() > base.size()
+             && target.compare(0, base.size(), base) == 0
+             && (target[base.size()] == '/' || target[base.size()] == '\\'))) {
+        std::cout << "path traversal blocked: " << target << " not within " << base << std::endl;
+        return "";
+    }
+
+    BaseKit::Path path(target);
 
     // save file security check
     if (isfile) {
