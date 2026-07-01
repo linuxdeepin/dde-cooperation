@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -348,6 +348,7 @@ int FileServer::webUnbind(std::string webDir)
 void FileServer::clearBind()
 {
     WebBinder::GetInstance().clear();
+    TokenCache::GetInstance().clearTokens();
 }
 
 std::string FileServer::genToken(std::string info)

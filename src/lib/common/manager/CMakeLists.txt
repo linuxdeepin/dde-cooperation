@@ -34,6 +34,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Network)
 list(APPEND LINKLIBS logging)
 list(APPEND LINKLIBS session)
 list(APPEND LINKLIBS httpweb)
+list(APPEND LINKLIBS sslconf)
 
 add_library(${PROJECT_NAME} ${SRC_FILES})
 
