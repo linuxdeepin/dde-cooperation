@@ -148,6 +148,16 @@ fastring TransferJob::acName(const fastring &name)
 
 fastring TransferJob::getSaveFullpath(const fastring &rootdir, const fastring &filename)
 {
+    // V20 增强：第一层安全检查（文件名合法性）
+    if (filename.empty()) {
+        ELOG << "Empty filename rejected";
+        return "";
+    }
+    if (filename.contains("..") || filename.starts_with("/") || filename.starts_with("\\")) {
+        ELOG << "Path traversal attempt detected, filename rejected: " << filename;
+        return "";
+    }
+
     // 第一层子目录已存在则尝试获取已重命名后的名字，比如 abc/ddd/eee.txt -> abc(1)/ddd/eee.txt
     auto acfilename = filename;
     if (acfilename.contains("/")) {
@@ -166,6 +176,30 @@ fastring TransferJob::getSaveFullpath(const fastring &rootdir, const fastring &f
     }
 
     fastring fullpath = path::join(rootdir, acfilename);
+
+    // isPathWithinDir 只做词法规范化（. / ..），realpath 额外处理符号链接
+    // 以 DaemonConfig::getStorageDir() 作为可信根目录，而非客户端传来的 rootdir
+    fastring allowedRoot = DaemonConfig::instance()->getStorageDir(_app_name);
+    char *realRoot = realpath(allowedRoot.c_str(), nullptr);
+    char *realFull = realpath(fullpath.c_str(), nullptr);
+    if (realFull == nullptr) {
+        std::pair<fastring, fastring> pairs = path::split(fullpath);
+        fastring parentDir = pairs.first;
+        realFull = realpath(parentDir.c_str(), nullptr);
+    }
+    if (realRoot != nullptr && realFull != nullptr) {
+        fastring rootPath(realRoot);
+        fastring fullPath(realFull);
+        if (!fullPath.starts_with(rootPath)) {
+            ELOG << "Path traversal detected! Target outside allowed directory: " << fullpath;
+            free(realRoot);
+            free(realFull);
+            return "";
+        }
+    }
+    if (realRoot) free(realRoot);
+    if (realFull) free(realFull);
+
     if (!isPathWithinDir(fullpath, rootdir)) {
         ELOG << "path traversal blocked in getSaveFullpath: fullpath=" << fullpath
              << " rootdir=" << rootdir;
@@ -667,6 +701,15 @@ void TransferJob::readFileBlock(fastring filepath, int fileid, const fastring su
 bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block, const fastring fullpath)
 {
     _notify_fileid = block->file_id;
+
+    // 安全检查：路径为空表示路径验证失败（可能是路径穿越攻击）
+    if (fullpath.empty() && !(block->flags & JobTransFileOp::FILE_COUNTED)
+        && !(block->flags & JobTransFileOp::FILE_COUNTING)
+        && !(block->flags & JobTransFileOp::FILE_TRANS_OVER)) {
+        ELOG << "Invalid file path, possible path traversal attack";
+        return false;
+    }
+
     // 创建文件
     if (block->flags & JobTransFileOp::FIlE_DIR_CREATE) {
         if (!createFile(fullpath, true))
