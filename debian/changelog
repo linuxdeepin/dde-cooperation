@@ -1,3 +1,10 @@
+dde-cooperation (1.2.6) unstable; urgency=medium
+
+  * fix(security): fix hardcoded credentials and path traversal issues
+  * chore(tests): enable unit tests build options for basekit and netutil modules
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 02 Jul 2026 11:48:47 +0800
+
 dde-cooperation (1.2.5) unstable; urgency=medium
 
   * fix(barrier): prevent mouse freeze when crossing different-resolution screens
