@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -63,6 +63,13 @@ void SendRpcWork::handleDoSendProtoMsg(const uint32 type, const QString appName,
                 QString tar = sender->targetAppname();
                 info.tarAppname = tar.isEmpty() ?
                                   appName.toStdString() : tar.toStdString();
+
+                // 安全验证：用户确认/拒绝接收文件时，更新确认状态
+                if (info.type == APPLY_TRANS_CONFIRM) {
+                    JobManager::instance()->confirmTransfer(appName);
+                } else if (info.type == APPLY_TRANS_REFUSED) {
+                    JobManager::instance()->removeConfirmedTransfer(appName);
+                }
             }
             res = sender->doSendProtoMsg(type, info.as_json().str().c_str(), data);
         } else if (type == APPLY_SHARE_CONNECT_RES) {

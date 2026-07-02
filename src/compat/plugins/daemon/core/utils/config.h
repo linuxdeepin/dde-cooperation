@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -165,7 +165,8 @@ public:
     {
         fastring home = os::homedir();
         if (_targetName.empty()) {
-            _storageDir = home;
+            // 默认使用下载目录
+            _storageDir = path::join(home, "Downloads");
         } else {
             _storageDir = path::join(home, _targetName);
         }
@@ -177,7 +178,8 @@ public:
         fastring home;
         home = getAppConfig(appName, "storagedir");
         if (home.empty())
-            home = getStorageDir();
+            // 默认使用下载目录
+            home = path::join(os::homedir(), "Downloads");
 
         return home;
     }
