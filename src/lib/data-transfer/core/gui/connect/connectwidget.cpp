@@ -126,7 +126,7 @@ void ConnectWidget::initConnectLayout()
     StyleHelper::setAutoFont(ipLabel1, 12, QFont::Normal);
 
     // 端口（可见输入框，可直接编辑）
-    QLabel *portLabel = new QLabel(tr("Port") + ":", this);
+    portLabel = new QLabel(tr("Port") + ":", this);
     StyleHelper::setAutoFont(portLabel, 12, QFont::Normal);
 
     portInput = new QLineEdit(QString::number(m_savedPort), this);
@@ -339,12 +339,23 @@ void ConnectWidget::themeChanged(int theme)
         separatorLabel->setStyleSheet("QLabel { background-color: rgba(0, 0, 0, 0.1); width: 2px; }");
         ipLabel->setStyleSheet(" ");
         ipLabel1->setStyleSheet(" ");
+        portLabel->setStyleSheet(" ");
+        portInput->setStyleSheet("background-color: white;"
+                                 "border: 1px solid #d8d7d7;"
+                                 "border-radius: 8px;"
+                                 "padding: 2px 8px;");
     } else {
         DLOG << "Theme is dark, setting stylesheet";
         setStyleSheet(".ConnectWidget{background-color: rgba(37, 37, 37,1); border-radius: 10px;}");
         separatorLabel->setStyleSheet("background-color: rgba(220, 220, 220,0.1); width: 2px;");
         ipLabel->setStyleSheet("color: rgb(192, 192, 192);");
         ipLabel1->setStyleSheet("color: rgb(192, 192, 192);");
+        portLabel->setStyleSheet("color: rgb(192, 192, 192);");
+        portInput->setStyleSheet("background-color: rgb(45, 45, 45);"
+                                 "border: 1px solid rgba(220, 220, 220, 0.2);"
+                                 "border-radius: 8px;"
+                                 "padding: 2px 8px;"
+                                 "color: rgb(192, 192, 192);");
     }
 }
 
