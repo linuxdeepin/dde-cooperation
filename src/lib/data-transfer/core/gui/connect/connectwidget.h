@@ -35,6 +35,7 @@ private:
 private:
     QLabel *ipLabel = nullptr;
     QLabel *ipLabel1 = nullptr;
+    QLabel *portLabel = nullptr;
     QLabel *WarnningLabel = nullptr;
     QHBoxLayout *connectLayout = nullptr;
     int remainingTime = 300;
