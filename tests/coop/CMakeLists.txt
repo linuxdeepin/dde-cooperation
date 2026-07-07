@@ -57,7 +57,10 @@ add_executable(coop_tests ${COOP_SRC}
     ${CMAKE_CURRENT_SOURCE_DIR}/sharehelper_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/transferhelper_core_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/compatwrapper_test.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/transferwrapper_test.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/transferwrapper_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sharecooperationservice_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/dfmconfig_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/reportlog_test.cpp)
 target_compile_options(coop_tests PRIVATE -fno-access-control -fprofile-arcs -ftest-coverage)
 target_compile_definitions(coop_tests PRIVATE EXECUTABLE_PROG_DIR="${CMAKE_BINARY_DIR}" ENABLE_PHONE=1)
 target_include_directories(coop_tests PRIVATE
