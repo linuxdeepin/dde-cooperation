@@ -45,7 +45,9 @@ add_executable(coop_gui_tests ${COOP_GUI_SRC}
     ${CMAKE_CURRENT_SOURCE_DIR}/cooperationguihelper_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sortfilterworker_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/devicelistwidget_test.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/filechooseredit_test.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/filechooseredit_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/cooperationdialog_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/cooperationtaskdialog_test.cpp)
 target_compile_options(coop_gui_tests PRIVATE -fno-access-control -fprofile-arcs -ftest-coverage)
 target_compile_definitions(coop_gui_tests PRIVATE EXECUTABLE_PROG_DIR="${CMAKE_BINARY_DIR}" ENABLE_PHONE=1)
 target_include_directories(coop_gui_tests PRIVATE
