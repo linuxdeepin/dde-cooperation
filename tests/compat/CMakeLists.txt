@@ -26,7 +26,7 @@ endif()
 
 # ---- framework_tests: Event / EventChannel / EventSequence / EventDispatcher ----
 if(TARGET dde-cooperation-framework)
-    add_executable(framework_tests event_test.cpp)
+    add_executable(framework_tests event_test.cpp lifecycle_test.cpp)
     target_link_libraries(framework_tests PRIVATE
         GTest::GTest
         GTest::Main

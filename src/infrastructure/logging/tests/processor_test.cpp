@@ -23,7 +23,7 @@ Record createTestProcessorRecord(Level level, const std::string& message) {
 }
 
 // 辅助函数：将Level转换为字符串
-std::string levelToString(const Level& level) {
+inline std::string levelToString(const Level& level) {
     std::ostringstream oss;
     oss << level;
     return oss.str();
