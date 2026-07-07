@@ -16,10 +16,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-# 添加测试可执行文件 - 只包含layout_test.cpp文件
+# 添加测试可执行文件 - 包含全部 *_test.cpp（version_test 宏缺失，暂排除）
+file(GLOB LOGGING_TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*_test.cpp")
+list(REMOVE_ITEM LOGGING_TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/version_test.cpp")
+# trigger_test API 已变更（Trigger::OnRecord 不再是虚接口），暂排除
+list(REMOVE_ITEM LOGGING_TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/trigger_test.cpp")
 set(TEST_SOURCES
     "main.cpp"
-    "layout_test.cpp"
+    ${LOGGING_TEST_SOURCES}
 )
 add_executable(${PROJECT_NAME} ${TEST_SOURCES})
 
