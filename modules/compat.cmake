@@ -50,6 +50,14 @@ include_directories(${COOST_DIR}/include)
 set(BUILD_SHARED_LIBS ON)
 add_subdirectory("${COOST_DIR}" coost)
 
+# 单元测试构建：禁用 coost 在静态初始化阶段预热 hook（详见 log.cc 注释）。
+# 仅影响 init_hook 的早调用时机，不改业务行为。
+if(DOTEST OR BUILD_TESTS)
+    if(TARGET co)
+        target_compile_definitions(co PRIVATE CO_DEFER_HOOK_AT_MOD_INIT)
+    endif()
+endif()
+
 
 
 endif()
