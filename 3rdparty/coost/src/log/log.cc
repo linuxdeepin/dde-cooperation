@@ -1092,7 +1092,14 @@ Mod::Mod() {
     except_handler = co::_make_static<ExceptHandler>();
     check_failed = false;
   #ifndef _WIN32
+    // 测试构建中（CO_DEFER_HOOK_AT_MOD_INIT）跳过静态初始化阶段的 hook 预热：
+    // 此处调用 co::init_hook() 会触发 ::read(-1,0,0)，而 co 自身的 fishhook 此时
+    // 已重定向 read 但 __sys_api(read) 尚未通过 dlsym(RTLD_NEXT) 解析（在缺少完整
+    // 链接环境的单元测试二进制中 dlsym 返回 NULL），导致段错误。
+    // 正常进程在 main 之后首次使用 socket I/O 时仍会惰性解析，行为不受影响。
+    #ifndef CO_DEFER_HOOK_AT_MOD_INIT
     co::init_hook();
+    #endif
   #endif
 }
 

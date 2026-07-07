@@ -53,7 +53,14 @@ REPORT_ONLY=0
 if [[ "$REPORT_ONLY" -eq 0 ]]; then
 step "1/9  配置全量构建 (覆盖率 flags)"
 rm -rf "$BUILD_DIR"
+# 强制使用 Qt6 (find_package(QT NAMES Qt6 Qt5) 在本机默认会落到 Qt5,
+# 需显式把 Qt6 的 cmake 配置目录放到 CMAKE_PREFIX_PATH 前面)
+QT6_CMAKE_DIR="${QT6_CMAKE_DIR:-/usr/lib/x86_64-linux-gnu/cmake/Qt6}"
+[[ -d "$QT6_CMAKE_DIR" ]] || { echo "Qt6 cmake 目录不存在: $QT6_CMAKE_DIR"; exit 1; }
+
 cmake -S . -B "$BUILD_DIR" \
+  -DCMAKE_PREFIX_PATH="$QT6_CMAKE_DIR" \
+  -DQT_DESIRED_VERSION=6 \
   -DDOTEST=ON \
   -DBUILD_BASEKIT_TESTS=ON \
   -DBUILD_LOGGING_TESTS=ON \
