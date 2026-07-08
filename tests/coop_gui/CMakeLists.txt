@@ -53,7 +53,12 @@ add_executable(coop_gui_tests ${COOP_GUI_SRC}
     ${CMAKE_CURRENT_SOURCE_DIR}/vncviewer_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/workspacewidget_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/settingitem_test.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/firsttipwidget_test.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/firsttipwidget_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/phonewidget_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/mainwindow_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/settingdialog_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/discovercontroller_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/backgroundwidget_test.cpp)
 target_compile_options(coop_gui_tests PRIVATE -fno-access-control -fprofile-arcs -ftest-coverage)
 target_compile_definitions(coop_gui_tests PRIVATE EXECUTABLE_PROG_DIR="${CMAKE_BINARY_DIR}" ENABLE_PHONE=1)
 target_include_directories(coop_gui_tests PRIVATE
