@@ -1,0 +1,31 @@
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+// data-transfer 测试自定义 main (参考 tests/coop/main.cpp)
+// QApplication(offscreen) 覆盖 widget 构造; __gcov_dump() 在静态析构前 flush,
+// 避免 exit-134 abort 导致 .gcda 丢失 (见记忆 coop-tests-qtapp-environment-and-exit-134)。
+
+#include <QApplication>
+#include <gtest/gtest.h>
+
+extern "C" void __gcov_dump() __attribute__((weak));
+extern "C" void __gcov_flush() __attribute__((weak));
+
+static void flushCoverage()
+{
+    if (__gcov_dump) {
+        __gcov_dump();
+    } else if (__gcov_flush) {
+        __gcov_flush();
+    }
+}
+
+int main(int argc, char **argv)
+{
+    qputenv("QT_QPA_PLATFORM", "offscreen");
+    QApplication app(argc, argv);
+    ::testing::InitGoogleTest(&argc, argv);
+    int result = RUN_ALL_TESTS();
+    flushCoverage();
+    return result;
+}
