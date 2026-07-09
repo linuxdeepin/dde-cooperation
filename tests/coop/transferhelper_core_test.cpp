@@ -3,17 +3,53 @@
 
 #include <gtest/gtest.h>
 #include <QSignalSpy>
+#include <QString>
 #include "lib/cooperation/core/net/helper/transferhelper.h"
+#include "lib/cooperation/core/net/helper/transferhelper_p.h"
+#include "lib/cooperation/core/net/networkutil.h"
 #include "lib/cooperation/core/discover/deviceinfo.h"
+#include "stub.h"
 
 using cooperation_core::DeviceInfo;
 using cooperation_core::TransferHelper;
+using cooperation_core::TransferHelperPrivate;
+using cooperation_core::NetworkUtil;
 using ::DeviceInfoPointer;
+
+// stub: TransferHelperPrivate::notifyMessage (DBus) → no-op
+static void stub_thp_notifyMessage(TransferHelperPrivate *, const QString &, const QStringList &, int, const QVariantMap &) {}
+static void stub_thp_reportTransferResult(TransferHelperPrivate *, bool) {}
+// stub: NetworkUtil 网络/IPC 方法
+static void stub_setStorageFolder(NetworkUtil *, const QString &) {}
+static void stub_cancelTrans(NetworkUtil *, const QString &) {}
+static void stub_replyTransRequest(NetworkUtil *, bool, const QString &) {}
+
+struct TransferHelperStubScope {
+    Stub stub;
+    TransferHelperStubScope()
+    {
+        stub.set(ADDR(TransferHelperPrivate, notifyMessage), stub_thp_notifyMessage);
+        stub.set(ADDR(TransferHelperPrivate, reportTransferResult), stub_thp_reportTransferResult);
+        stub.set(ADDR(NetworkUtil, setStorageFolder), stub_setStorageFolder);
+        stub.set(ADDR(NetworkUtil, cancelTrans), stub_cancelTrans);
+        stub.set(ADDR(NetworkUtil, replyTransRequest), stub_replyTransRequest);
+    }
+};
 
 class TransferHelperCoreTest : public ::testing::Test {
 protected:
     TransferHelper *helper = nullptr;
     void SetUp() override { helper = TransferHelper::instance(); }
+    void TearDown() override
+    {
+        helper->d->status.storeRelease(TransferHelper::Idle);
+        helper->d->role = TransferHelper::Server;
+        helper->d->who.clear();
+        helper->d->targetDeviceIp.clear();
+        helper->d->recvFilesSavePath.clear();
+        helper->d->transferInfo.clear();
+        helper->d->isTransTimeout = false;
+    }
 };
 
 TEST_F(TransferHelperCoreTest, InstanceReturnsSameSingleton)
@@ -146,4 +182,187 @@ TEST_F(TransferHelperCoreTest, OnActionTriggeredCloseBranchDoesNotCrash)
 {
     // "close" matches NotifyCloseAction; calls notice->closeNotification() on linux
     EXPECT_NO_FATAL_FAILURE(helper->onActionTriggered("close"));
+}
+
+// ===== 深挖: 状态机分支 (stub notifyMessage + NetworkUtil) =====
+
+TEST_F(TransferHelperCoreTest, NotifyTransferRequestNoCrash)
+{
+    TransferHelperStubScope s;
+    EXPECT_NO_FATAL_FAILURE(helper->notifyTransferRequest("nick", "10.0.0.30"));
+}
+
+TEST_F(TransferHelperCoreTest, HandleCancelTransferApplyNotifies)
+{
+    TransferHelperStubScope s;
+    EXPECT_NO_FATAL_FAILURE(helper->handleCancelTransferApply());
+}
+
+// onConnectStatusChanged: result>0 + isself → Confirming
+TEST_F(TransferHelperCoreTest, OnConnectStatusChangedSuccessSelf)
+{
+    TransferHelperStubScope s;
+    EXPECT_NO_FATAL_FAILURE(helper->onConnectStatusChanged(1, "10.0.0.31", true));
+    EXPECT_EQ(helper->transferStatus(), TransferHelper::Confirming);
+}
+
+// onConnectStatusChanged: result>0 + !isself → 早返回
+TEST_F(TransferHelperCoreTest, OnConnectStatusChangedSuccessNotSelf)
+{
+    TransferHelperStubScope s;
+    EXPECT_NO_FATAL_FAILURE(helper->onConnectStatusChanged(1, "10.0.0.32", false));
+}
+
+// onConnectStatusChanged: result<=0 + Idle → 早返回
+TEST_F(TransferHelperCoreTest, OnConnectStatusChangedFailIdle)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Idle);
+    EXPECT_NO_FATAL_FAILURE(helper->onConnectStatusChanged(0, "10.0.0.33", false));
+}
+
+// onConnectStatusChanged: result<=0 + 非 Idle → transferResult(false)
+TEST_F(TransferHelperCoreTest, OnConnectStatusChangedFailTransfering)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Transfering);
+    EXPECT_NO_FATAL_FAILURE(helper->onConnectStatusChanged(0, "10.0.0.34", false));
+}
+
+// onTransChanged: TRANS_CANCELED → cancelTransfer(false)
+TEST_F(TransferHelperCoreTest, OnTransChangedCanceled)
+{
+    TransferHelperStubScope s;
+    EXPECT_NO_FATAL_FAILURE(helper->onTransChanged(48, "", 0));
+}
+
+// onTransChanged: TRANS_EXCEPTION io_error
+TEST_F(TransferHelperCoreTest, OnTransChangedExceptionIoError)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Transfering);
+    EXPECT_NO_FATAL_FAILURE(helper->onTransChanged(49, "io_error", 0));
+}
+
+// onTransChanged: TRANS_EXCEPTION net_error
+TEST_F(TransferHelperCoreTest, OnTransChangedExceptionNetError)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Transfering);
+    EXPECT_NO_FATAL_FAILURE(helper->onTransChanged(49, "net_error", 0));
+}
+
+// onTransChanged: TRANS_EXCEPTION other
+TEST_F(TransferHelperCoreTest, OnTransChangedExceptionOther)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Transfering);
+    EXPECT_NO_FATAL_FAILURE(helper->onTransChanged(49, "fs_exception", 0));
+}
+
+// onActionTriggered: cancel → cancelTransfer(true) + cancelTrans (stubbed)
+TEST_F(TransferHelperCoreTest, OnActionTriggeredCancelBranch)
+{
+    TransferHelperStubScope s;
+    helper->d->targetDeviceIp = "10.0.0.40";
+    EXPECT_NO_FATAL_FAILURE(helper->onActionTriggered("cancel"));
+}
+
+// onActionTriggered: reject → replyTransRequest(false) (stubbed)
+TEST_F(TransferHelperCoreTest, OnActionTriggeredRejectBranch)
+{
+    TransferHelperStubScope s;
+    helper->d->targetDeviceIp = "10.0.0.41";
+    EXPECT_NO_FATAL_FAILURE(helper->onActionTriggered("reject"));
+}
+
+// onActionTriggered: accept → role=Client + replyTransRequest(true)
+TEST_F(TransferHelperCoreTest, OnActionTriggeredAcceptBranch)
+{
+    TransferHelperStubScope s;
+    helper->d->targetDeviceIp = "10.0.0.42";
+    EXPECT_NO_FATAL_FAILURE(helper->onActionTriggered("accept"));
+}
+
+// transferResult: role!=Server + result=true → notifyMessage(view action + hints)
+TEST_F(TransferHelperCoreTest, TransferResultClientSuccess)
+{
+    TransferHelperStubScope s;
+    helper->d->role = TransferHelper::Client;
+    EXPECT_NO_FATAL_FAILURE(helper->transferResult(true, "done"));
+}
+
+// transferResult: role!=Server + result=false → notifyMessage
+TEST_F(TransferHelperCoreTest, TransferResultClientFail)
+{
+    TransferHelperStubScope s;
+    helper->d->role = TransferHelper::Client;
+    EXPECT_NO_FATAL_FAILURE(helper->transferResult(false, "fail"));
+}
+
+// transferResult: role==Server → transDialog + reportTransferResult (stubbed)
+TEST_F(TransferHelperCoreTest, TransferResultServer)
+{
+    TransferHelperStubScope s;
+    helper->d->role = TransferHelper::Server;
+    EXPECT_NO_FATAL_FAILURE(helper->transferResult(true, "ok"));
+}
+
+// updateProgress: status!=Transfering → 早返回
+TEST_F(TransferHelperCoreTest, UpdateProgressIdleEarlyReturn)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Idle);
+    EXPECT_NO_FATAL_FAILURE(helper->updateProgress(50, "00:01"));
+}
+
+// updateProgress: Transfering + role!=Server → notifyMessage (stubbed)
+TEST_F(TransferHelperCoreTest, UpdateProgressClientNotifies)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Transfering);
+    helper->d->role = TransferHelper::Client;
+    helper->d->who = "dev50";
+    EXPECT_NO_FATAL_FAILURE(helper->updateProgress(50, "00:01"));
+}
+
+// updateProgress: Transfering + role==Server → transDialog
+TEST_F(TransferHelperCoreTest, UpdateProgressServerDialog)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Transfering);
+    helper->d->role = TransferHelper::Server;
+    helper->d->who = "dev51";
+    EXPECT_NO_FATAL_FAILURE(helper->updateProgress(60, "00:02"));
+}
+
+// onVerifyTimeout: Confirming → transDialog showResultDialog
+TEST_F(TransferHelperCoreTest, OnVerifyTimeoutConfirmingShowsDialog)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Confirming);
+    EXPECT_NO_FATAL_FAILURE(helper->onVerifyTimeout());
+    EXPECT_EQ(helper->transferStatus(), TransferHelper::Idle);
+}
+
+// compatTransJobStatusChanged: success branch (result>=0)
+TEST_F(TransferHelperCoreTest, CompatTransJobStatusChangedSuccess)
+{
+    TransferHelperStubScope s;
+    EXPECT_NO_FATAL_FAILURE(helper->compatTransJobStatusChanged(1, 1, "/tmp/job"));
+}
+
+// compatTransJobStatusChanged: canceled branch (result == JOB_TRANS_CANCELED 13)
+TEST_F(TransferHelperCoreTest, CompatTransJobStatusChangedCanceled)
+{
+    TransferHelperStubScope s;
+    EXPECT_NO_FATAL_FAILURE(helper->compatTransJobStatusChanged(1, 13, "/tmp/job"));
+}
+
+// compatFileTransStatusChanged: progress update
+TEST_F(TransferHelperCoreTest, CompatFileTransStatusChangedProgress)
+{
+    TransferHelperStubScope s;
+    helper->d->status.storeRelease(TransferHelper::Transfering);
+    EXPECT_NO_FATAL_FAILURE(helper->compatFileTransStatusChanged(1000, 500, 200));
 }
