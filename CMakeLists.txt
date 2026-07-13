@@ -141,3 +141,4 @@ if(DOTEST)
     add_compile_definitions(ENABLE_AUTO_UNIT_TEST)
     add_subdirectory(tests)
 endif()
+
