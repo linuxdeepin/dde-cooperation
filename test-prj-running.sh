@@ -125,6 +125,12 @@ lcov -r "$COV_DIR/src.info" \
      "*/${BUILD_DIR}/*" \
      '*/autogen_*' '*/moc_*.cpp' '*_qml_files*' '*_autogen/*' \
      '*/tests/*' '*/test/*' '*/3rdparty/*' '*/_deps/*' \
+     '*/compat/protocol/message.pb.*' \
+     '*/lib/common/proto/fbe_models.*' '*/lib/common/proto/fbe_final_models.*' \
+     '*/lib/common/proto/fbe_protocol.*' '*/lib/common/proto/proto_final_protocol.*' \
+     '*/lib/common/proto/proto_protocol.*' '*/lib/common/proto/proto_models.*' \
+     '*/lib/common/proto/proto_final_models.*' \
+     '*/apps/*/main.cpp' '*/compat/apps/*/main.cpp' \
      -o "$COV_DIR/final.info" "${LCOV_RC[@]}" -q 2>/dev/null
 ok "final 文件数: $(grep -c '^SF:' "$COV_DIR/final.info")  (残留 build 生成文件: $(grep -c "${BUILD_DIR}" "$COV_DIR/final.info"))"
 
