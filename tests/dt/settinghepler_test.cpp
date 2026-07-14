@@ -7,15 +7,18 @@
 // setBrowserBookMark 早返回 / handleDataConfiguration 非法路径。
 
 #include "utils/settinghepler.h"
+#include "net/helper/transferhepler.h"
 
 #include <gtest/gtest.h>
 #include <QApplication>
+#include <QSignalSpy>
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDir>
+#include <QTemporaryDir>
 
 static QString writeTemp(const QString &name, const QByteArray &data)
 {
@@ -146,4 +149,98 @@ TEST(SettingHelperTest, HandleDataConfigurationInvalid)
     SettingHelper sh;
     // 不存在的 dir, transfer.json 解析为空 → addResult + return false
     EXPECT_FALSE(sh.handleDataConfiguration("/nonexistent/dir/"));
+}
+
+// ---- setBrowserBookMark 成功路径 (.json 文件 move 到 home) ----
+TEST(SettingHelperTest, SetBrowserBookMarkValidJson)
+{
+    SettingHelper sh;
+    QString src = writeTemp("dt_bm_src.json", "{\"k\":\"v\"}");
+    EXPECT_TRUE(sh.setBrowserBookMark(src));
+    // 目标: $HOME/.config/browser/Default/book/dt_bm_src.json
+    QString target = QDir::homePath() + "/.config/browser/Default/book/dt_bm_src.json";
+    EXPECT_TRUE(QFileInfo::exists(target));
+    QFile::remove(target);
+    QFile::remove(src);
+}
+
+// ---- handleDataConfiguration 合法 transfer.json (各子方法空/非法分支) ----
+TEST(SettingHelperTest, HandleDataConfigurationValid)
+{
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    QJsonObject obj;
+    obj["user_file"] = QJsonArray();           // 空数组 → setFile 进 isArray 分支无迭代
+    obj["wallpapers"] = QString("nope.png");   // 文件不存在 → setWallpaper 早返回 false
+    obj["browserbookmark"] = QString("");      // 空 → 跳过 setBrowserBookMark
+    QJsonArray apps;
+    apps.append(QString(""));                  // 空 app → installApps 早返回 true
+    obj["app"] = apps;
+    QFile f(dir.path() + "/transfer.json");
+    f.open(QIODevice::WriteOnly);
+    f.write(QJsonDocument(obj).toJson());
+    f.close();
+
+    SettingHelper sh;
+    EXPECT_TRUE(sh.handleDataConfiguration(dir.path()));
+    EXPECT_FALSE(QFileInfo::exists(dir.path() + "/transfer.json"));   // 末尾 QFile::remove
+}
+
+// ---- setFile 相对路径含子目录 (mkpath 分支) ----
+TEST(SettingHelperTest, SetFileCreatesSubdirInHome)
+{
+    QString srcName = "dt_setfile_sub.txt";
+    QString srcAbs = writeTemp(srcName, "subdata");
+    QJsonObject obj;
+    QJsonArray arr;
+    arr.append("dt_subdir/" + srcName);   // 相对路径带目录 → 目标父目录 mkpath
+    obj["user_file"] = arr;
+
+    SettingHelper sh;
+    EXPECT_TRUE(sh.setFile(obj, QDir::tempPath() + "/"));
+    QString target = QDir::homePath() + "/dt_subdir/" + srcName;
+    EXPECT_TRUE(QFileInfo::exists(target));
+    // 清理
+    QFile::remove(target);
+    QDir().rmdir(QDir::homePath() + "/dt_subdir");
+    QFile::remove(srcAbs);
+}
+
+// ---- addTaskcounter: 计数归零 emit transferFinished ----
+TEST(SettingHelperTest, AddTaskCounterEmitsTransferFinishedOnZero)
+{
+    SettingHelper *sh = SettingHelper::instance();
+    sh->taskcounter = 0;   // -fno-access-control: 确定初态, 免受单例跨用例状态干扰
+    QSignalSpy spy(TransferHelper::instance(), &TransferHelper::transferFinished);
+    sh->addTaskcounter(2);
+    EXPECT_EQ(spy.count(), 0);
+    sh->addTaskcounter(-2);   // 归零 → emit
+    EXPECT_EQ(spy.count(), 1);
+}
+
+// ---- installApps 未登记应用 (applist 无项 → false) ----
+TEST(SettingHelperTest, InstallAppsUnknownReturnsFalse)
+{
+    SettingHelper sh;
+    EXPECT_FALSE(sh.installApps("com.nonexistent.app.xyz"));   // applist 中无 → 包名空 → false
+}
+
+// ---- setWallpaper 不存在文件 (早返回 false, 不触 DBus) ----
+TEST(SettingHelperTest, SetWallpaperMissingFileReturnsFalse)
+{
+    SettingHelper sh;
+    EXPECT_FALSE(sh.setWallpaper("/nonexistent/dt_nope.png"));
+}
+
+// ---- setWallpaper 存在文件 (move + DBus 尝试; 无服务返回失败, 但不应崩溃) ----
+TEST(SettingHelperTest, SetWallpaperExistingFileNoThrow)
+{
+    if (QGuiApplication::screens().isEmpty())
+        GTEST_SKIP() << "offscreen 无屏幕, setWallpaper 会取 screens().first() 跳过";
+    SettingHelper sh;
+    QString img = writeTemp("dt_wall.png", "pngdata");
+    EXPECT_NO_THROW(sh.setWallpaper(img));
+    // 清理可能的 home 副本
+    QFile::remove(QDir::homePath() + "/Pictures/Wallpapers/ConvertedWallpaper.png");
+    QFile::remove(img);
 }
