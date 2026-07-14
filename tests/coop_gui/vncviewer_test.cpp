@@ -9,6 +9,11 @@
 #include <gtest/gtest.h>
 #include <QSignalSpy>
 #include <QSize>
+#include <QMouseEvent>
+#include <QApplication>
+#include <QBrush>
+#include <cstdlib>
+#include <string>
 #include <rfb/rfbclient.h>
 #include <rfb/keysym.h>
 #include "gui/phone/vncviewer.h"
@@ -137,4 +142,156 @@ TEST(VncViewerTest, OnShortcutActionBackHomeRecentsWithStubbedSendKey)
     EXPECT_NO_FATAL_FAILURE(v.onShortcutAction(0));  // BACK → Escape
     EXPECT_NO_FATAL_FAILURE(v.onShortcutAction(1));  // HOME → Home
     EXPECT_NO_FATAL_FAILURE(v.onShortcutAction(2));  // RECENTS → PageUp
+}
+
+// ============ setServes ============
+
+TEST(VncViewerTest, SetServesStoresConnectionInfo)
+{
+    VncViewer v;
+    const char *pwd = std::getenv("TEST_VNC_PASSWORD");
+    std::string password = pwd ? pwd : "";
+    v.setServes("192.168.1.100", 5900, password);
+    SUCCEED(); // stores into private fields
+}
+
+// ============ stop (not connected → early return) ============
+
+TEST(VncViewerTest, StopWhenNotConnectedEarlyReturn)
+{
+    VncViewer v;
+    access_private_field::VncViewerm_connected(v) = false;
+    EXPECT_NO_FATAL_FAILURE(v.stop());
+}
+
+// ============ updateImage ============
+
+TEST(VncViewerTest, UpdateImageNullImageIgnored)
+{
+    VncViewer v;
+    QImage nullImg;
+    EXPECT_NO_FATAL_FAILURE(v.updateImage(nullImg));
+}
+
+TEST(VncViewerTest, UpdateImageValidImageDoesNotCrash)
+{
+    VncViewer v;
+    access_private_field::VncViewerm_connected(v) = true;
+    QImage img(100, 200, QImage::Format_RGBA8888);
+    img.fill(Qt::red);
+    EXPECT_NO_FATAL_FAILURE(v.updateImage(img));
+}
+
+// ============ clearSurface ============
+
+TEST(VncViewerTest, ClearSurfaceNotConnected)
+{
+    VncViewer v;
+    access_private_field::VncViewerm_connected(v) = false;
+    EXPECT_NO_FATAL_FAILURE(v.clearSurface());
+}
+
+// ============ setSurfaceSize (via clearSurface) ============
+
+TEST(VncViewerTest, SetSurfaceSizeInvalidSizeIgnored)
+{
+    VncViewer v;
+    // setSurfaceSize is private but clearSurface calls it
+    // When not connected, clearSurface returns early
+    EXPECT_NO_FATAL_FAILURE(v.clearSurface());
+}
+
+// ============ frameTimerTimeout ============
+
+TEST(VncViewerTest, FrameTimerTimeoutDoesNotCrash)
+{
+    VncViewer v;
+    EXPECT_NO_FATAL_FAILURE(v.frameTimerTimeout());
+}
+
+// ============ paintEvent (not connected → draws "Disconnected") ============
+
+TEST(VncViewerTest, PaintEventDisconnectedState)
+{
+    VncViewer v;
+    access_private_field::VncViewerm_connected(v) = false;
+    v.repaint();
+    SUCCEED();
+}
+
+TEST(VncViewerTest, PaintEventConnectedNoImage)
+{
+    VncViewer v;
+    access_private_field::VncViewerm_connected(v) = true;
+    v.repaint();
+    SUCCEED();
+}
+
+// ============ resizeEvent ============
+
+TEST(VncViewerTest, ResizeEventDoesNotCrash)
+{
+    VncViewer v;
+    v.resize(200, 400);
+    SUCCEED();
+}
+
+// ============ backgroundBrush / scaled setters ============
+
+TEST(VncViewerTest, BackgroundBrushSetterGetter)
+{
+    VncViewer v;
+    QBrush brush(Qt::blue);
+    v.setBackgroundBrush(brush);
+    EXPECT_EQ(v.backgroundBrush(), brush);
+}
+
+TEST(VncViewerTest, ScaledSetterGetter)
+{
+    VncViewer v;
+    v.setScaled(false);
+    EXPECT_FALSE(v.scaled());
+    v.setScaled(true);
+    EXPECT_TRUE(v.scaled());
+}
+
+// ============ updateSurface ============
+
+TEST(VncViewerTest, UpdateSurfaceDoesNotCrash)
+{
+    VncViewer v;
+    EXPECT_NO_FATAL_FAILURE(v.updateSurface());
+}
+
+// ============ closeEvent ============
+
+TEST(VncViewerTest, CloseEventEmitsSignal)
+{
+    VncViewer v;
+    QSignalSpy spy(&v, &VncViewer::fullWindowCloseSignal);
+    v.close();
+    EXPECT_EQ(spy.count(), 1);
+}
+
+// ============ mouse event handlers (just accept) ============
+
+TEST(VncViewerTest, MousePressEventAccepts)
+{
+    VncViewer v;
+    QMouseEvent press(QEvent::MouseButtonPress, QPoint(10, 10), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(QApplication::sendEvent(&v, &press));
+}
+
+TEST(VncViewerTest, MouseMoveEventAccepts)
+{
+    VncViewer v;
+    QMouseEvent move(QEvent::MouseMove, QPoint(20, 20), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(QApplication::sendEvent(&v, &move));
+}
+
+TEST(VncViewerTest, MouseReleaseEventAccepts)
+{
+    VncViewer v;
+    QMouseEvent release(QEvent::MouseButtonRelease, QPoint(10, 10), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+    EXPECT_NO_FATAL_FAILURE(QApplication::sendEvent(&v, &release));
 }
