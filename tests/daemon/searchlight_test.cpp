@@ -355,3 +355,234 @@ TEST(SearchlightAnnouncerTest, SameAppCleansBadEntries)
     EXPECT_EQ(idx, -1);
     EXPECT_EQ(ann._app_infos.size(), static_cast<size_t>(1));
 }
+
+// ===========================================================================
+// SearchlightCov2Test — additional coverage for Announcer dedup / updateBase
+// propagation, Discoverer handle_message edge cases, handleChanges update
+// branches and remove_idle_services mixed scenarios.
+// ===========================================================================
+
+// updateBase changes the base info, and the new value propagates into the
+// "os" object emitted by udpSendPackage (there is no separate version field;
+// baseInfo() is the canonical state).
+TEST(SearchlightCov2Test, UpdateBaseReflectedInUdpPackage)
+{
+    searchlight::Announcer ann("svc", 51597, "{\"uuid\":\"v1\"}");
+    EXPECT_EQ(ann.baseInfo(), fastring("{\"uuid\":\"v1\"}"));
+    ann.updateBase("{\"uuid\":\"v2\"}");
+    EXPECT_EQ(ann.baseInfo(), fastring("{\"uuid\":\"v2\"}"));
+
+    fastring pkg = ann.udpSendPackage();
+    co::Json j;
+    ASSERT_TRUE(j.parse_from(pkg));
+    EXPECT_EQ(j.get("info", "os", "uuid").as_string(), fastring("v2"));
+}
+
+// appendApp with the same appname but different payload replaces the old entry
+// (dedup), leaving a single latest entry.
+TEST(SearchlightCov2Test, AppendAppDedupDifferentJson)
+{
+    searchlight::Announcer ann("svc", 51597, "{\"uuid\":\"base\"}");
+    fastring a1 = "{\"appname\":\"dup\",\"json\":\"v1\"}";
+    fastring a2 = "{\"appname\":\"dup\",\"json\":\"v2\"}";
+
+    ann.appendApp(a1);
+    ASSERT_EQ(ann._app_infos.size(), static_cast<size_t>(1));
+    ann.appendApp(a2); // same appname -> dedup+replace
+
+    EXPECT_EQ(ann._app_infos.size(), static_cast<size_t>(1));
+    EXPECT_EQ(ann._app_infos[0], a2);
+}
+
+// removeApp on a name that was never appended leaves the list unchanged.
+TEST(SearchlightCov2Test, RemoveAppNonexistent)
+{
+    searchlight::Announcer ann("svc", 51597, "{\"uuid\":\"base\"}");
+    ann.appendApp("{\"appname\":\"app1\",\"json\":\"{}\"}");
+    ASSERT_EQ(ann._app_infos.size(), static_cast<size_t>(1));
+
+    ann.removeApp("{\"appname\":\"other\",\"json\":\"{}\"}");
+
+    EXPECT_EQ(ann._app_infos.size(), static_cast<size_t>(1));
+}
+
+// appendApp three distinct apps then removeApp the middle one -> size 2 and the
+// remaining entries are the first and third.
+TEST(SearchlightCov2Test, AppendRemoveMultiple)
+{
+    searchlight::Announcer ann("svc", 51597, "{\"uuid\":\"base\"}");
+    ann.appendApp("{\"appname\":\"a1\",\"json\":\"{}\"}");
+    ann.appendApp("{\"appname\":\"a2\",\"json\":\"{}\"}");
+    ann.appendApp("{\"appname\":\"a3\",\"json\":\"{}\"}");
+    ASSERT_EQ(ann._app_infos.size(), static_cast<size_t>(3));
+
+    ann.removeApp("{\"appname\":\"a2\",\"json\":\"{}\"}");
+
+    ASSERT_EQ(ann._app_infos.size(), static_cast<size_t>(2));
+    co::Json j0; ASSERT_TRUE(j0.parse_from(ann._app_infos[0]));
+    co::Json j1; ASSERT_TRUE(j1.parse_from(ann._app_infos[1]));
+    EXPECT_EQ(j0.get("appname").as_string(), fastring("a1"));
+    EXPECT_EQ(j1.get("appname").as_string(), fastring("a3"));
+}
+
+// handle_message with valid JSON that is NOT an object (e.g. an array) must be
+// rejected gracefully without crashing.
+TEST(SearchlightCov2Test, HandleMessageNonObjectJson)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("myservice", cb);
+    dis.handle_message("[]", "1.1.1.1:80");
+    EXPECT_TRUE(dis._discovered_services.isEmpty());
+}
+
+// handle_message with a JSON object missing the "name" field: name/info resolve
+// to empty strings and no service matches the listen prefix.
+TEST(SearchlightCov2Test, HandleMessageMissingName)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("myservice", cb);
+    co::Json node;
+    node.add_member("info", "{\"os\":{\"uuid\":\"u\"}}");
+    dis.handle_message(node.str(), "2.2.2.2:80");
+    EXPECT_TRUE(dis._discovered_services.isEmpty());
+}
+
+// handle_message with a JSON object missing the "info" field: handled without
+// crashing, nothing inserted.
+TEST(SearchlightCov2Test, HandleMessageMissingInfo)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("myservice", cb);
+    co::Json node;
+    node.add_member("name", "myservice");
+    dis.handle_message(node.str(), "3.3.3.3:80");
+    EXPECT_TRUE(dis._discovered_services.isEmpty());
+}
+
+// handle_message whose "name" does NOT start with the listen prefix is ignored
+// (the non-matching branch constructs a throwaway service but inserts nothing).
+TEST(SearchlightCov2Test, HandleMessageNameMismatch)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("myservice", cb); // listen "myservice"
+    co::Json node;
+    node.add_member("name", "other_service");
+    node.add_member("info", "{\"os\":{\"uuid\":\"x\"}}");
+    dis.handle_message(node.str(), "4.4.4.4:80", false);
+    EXPECT_TRUE(dis._discovered_services.isEmpty());
+}
+
+// setSearchIp installs the ip into the static filter; a subsequent
+// handle_message whose advertised ipv4 equals that filter and whose payload
+// matches the listen prefix ("{") reaches handleChanges, even with isFilter
+// enabled. The static filter is reset at the end so other tests are unaffected.
+TEST(SearchlightCov2Test, SetSearchIpThenFilterMatch)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("{", cb); // listen "{" so "{"-prefixed JSON matches
+    dis.setSearchIp("192.168.1.1");
+
+    Stub stub;
+    stub.set((void *)deepin_cross::CommonUitls::getFirstIp, fakeFirstIpOther); // 10.0.0.99
+
+    co::Json os;
+    os.add_member("uuid", "match");
+    os.add_member("ipv4", "192.168.1.1"); // == filtered ip
+    co::Json info;
+    info.add_member("os", os);
+    co::Json node;
+    node.add_member("name", "myservice");
+    node.add_member("info", info);
+
+    dis.handle_message(node.str(), "192.168.1.1:80", true); // isFilter=true
+    EXPECT_FALSE(dis._discovered_services.value("192.168.1.1").isNull());
+
+    dis.setSearchIp(""); // reset static filter
+}
+
+// handleChanges updating an existing endpoint with empty info refreshes
+// last_seen, stores the new info, and queues a flags=2 (info-changed) entry.
+TEST(SearchlightCov2Test, HandleChangesUpdateEmptyInfo)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("myservice", cb);
+    dis.handleChanges("9.9.9.9", "{\"os\":{\"uuid\":\"u1\"}}", 1000);
+    ASSERT_EQ(dis._discovered_services.size(), 1);
+
+    dis.handleChanges("9.9.9.9", "", 2000);
+
+    auto ser = dis._discovered_services.value("9.9.9.9");
+    ASSERT_FALSE(ser.isNull());
+    EXPECT_EQ(ser->info, fastring(""));
+    EXPECT_EQ(ser->last_seen, static_cast<qint64>(2000));
+    bool foundChange = false;
+    for (const auto &s : dis._change_sevices) {
+        if (s.endpoint == "9.9.9.9" && s.flags == 2) foundChange = true;
+    }
+    EXPECT_TRUE(foundChange);
+}
+
+// handleChanges updating an existing endpoint with identical info refreshes
+// last_seen but does NOT queue a flags=2 change entry.
+TEST(SearchlightCov2Test, HandleChangesUpdateSameInfoNoChangeFlag)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("myservice", cb);
+    dis.handleChanges("8.8.8.8", "{\"os\":{\"uuid\":\"u\"}}", 1000);
+
+    dis.handleChanges("8.8.8.8", "{\"os\":{\"uuid\":\"u\"}}", 2000);
+
+    auto ser = dis._discovered_services.value("8.8.8.8");
+    ASSERT_FALSE(ser.isNull());
+    EXPECT_EQ(ser->last_seen, static_cast<qint64>(2000));
+    int flags2 = 0;
+    for (const auto &s : dis._change_sevices) {
+        if (s.endpoint == "8.8.8.8" && s.flags == 2) flags2++;
+    }
+    EXPECT_EQ(flags2, 0);
+}
+
+// handleChanges inserting a second endpoint keeps both entries distinct.
+TEST(SearchlightCov2Test, HandleChangesInsertMultiple)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("myservice", cb);
+    dis.handleChanges("1.1.1.1", "{\"os\":{\"uuid\":\"a\"}}", 1000);
+    dis.handleChanges("2.2.2.2", "{\"os\":{\"uuid\":\"b\"}}", 1000);
+
+    EXPECT_EQ(dis._discovered_services.size(), 2);
+    EXPECT_FALSE(dis._discovered_services.value("1.1.1.1").isNull());
+    EXPECT_FALSE(dis._discovered_services.value("2.2.2.2").isNull());
+}
+
+// remove_idle_services on an empty discovered map returns false and changes
+// nothing.
+TEST(SearchlightCov2Test, RemoveIdleServicesEmpty)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("myservice", cb);
+    EXPECT_FALSE(dis.remove_idle_services());
+    EXPECT_TRUE(dis._discovered_services.isEmpty());
+}
+
+// remove_idle_services with a mix of one stale and one fresh service evicts
+// only the stale entry.
+TEST(SearchlightCov2Test, RemoveIdleServicesMixed)
+{
+    searchlight::Discoverer::on_services_changed_t cb = [](const QList<searchlight::Discoverer::service>&){};
+    searchlight::Discoverer dis("myservice", cb);
+
+    // service A: drive last_seen far into the past via the update path
+    dis.handleChanges("1.1.1.1", "{\"os\":{\"uuid\":\"a\"}}", 0);
+    dis.handleChanges("1.1.1.1", "{\"os\":{\"uuid\":\"a2\"}}", -50000); // stale
+    // service B: freshly inserted (insert path stores _timer.ms() ~ now)
+    dis.handleChanges("2.2.2.2", "{\"os\":{\"uuid\":\"b\"}}", 0);
+    ASSERT_EQ(dis._discovered_services.size(), 2);
+
+    bool removed = dis.remove_idle_services();
+
+    EXPECT_TRUE(removed);
+    EXPECT_EQ(dis._discovered_services.size(), 1);
+    EXPECT_TRUE(dis._discovered_services.value("1.1.1.1").isNull()); // evicted
+    EXPECT_FALSE(dis._discovered_services.value("2.2.2.2").isNull()); // kept
+}

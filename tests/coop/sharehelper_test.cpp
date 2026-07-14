@@ -25,6 +25,7 @@
 #include "lib/cooperation/core/net/networkutil.h"
 #include "lib/cooperation/core/discover/deviceinfo.h"
 #include "lib/cooperation/core/discover/discovercontroller.h"
+#include "lib/cooperation/core/utils/cooperationutil.h"
 #include "lib/cooperation/core/share/sharecooperationservicemanager.h"
 #include "stub.h"
 
@@ -33,6 +34,7 @@ using cooperation_core::ShareHelper;
 using cooperation_core::ShareHelperPrivate;
 using cooperation_core::NetworkUtil;
 using cooperation_core::DiscoverController;
+using cooperation_core::CooperationUtil;
 using ::ShareCooperationServiceManager;
 using ::DeviceInfoPointer;
 
@@ -45,6 +47,11 @@ static void stub_disconnectRemote(NetworkUtil *, const QString &) {}
 static void stub_scs_stop(ShareCooperationServiceManager *) {}
 static void stub_updateDeviceState(DiscoverController *, const DeviceInfoPointer) {}
 static void stub_replyShareRequest(NetworkUtil *, bool, const QString &, const QString &) {}
+static void stub_tryShareApply(NetworkUtil *, const QString &, const QString &) {}
+static void stub_sendDisconnectShareEvents(NetworkUtil *, const QString &) {}
+static void stub_replyShareRequestBusy(NetworkUtil *, const QString &) {}
+static bool stub_isCurrentlyCooperating(NetworkUtil *) { return false; }
+static bool stub_isCurrentlyCooperating_true(NetworkUtil *) { return true; }
 
 struct ShareHelperStubScope {
     Stub stub;
@@ -56,6 +63,10 @@ struct ShareHelperStubScope {
         stub.set(ADDR(NetworkUtil, updateCooperationStatus), stub_updateCooperationStatus);
         stub.set(ADDR(NetworkUtil, disconnectRemote), stub_disconnectRemote);
         stub.set(ADDR(NetworkUtil, replyShareRequest), stub_replyShareRequest);
+        stub.set(ADDR(NetworkUtil, tryShareApply), stub_tryShareApply);
+        stub.set(ADDR(NetworkUtil, sendDisconnectShareEvents), stub_sendDisconnectShareEvents);
+        stub.set(ADDR(NetworkUtil, replyShareRequestBusy), stub_replyShareRequestBusy);
+        stub.set(ADDR(NetworkUtil, isCurrentlyCooperating), stub_isCurrentlyCooperating);
         stub.set(ADDR(ShareCooperationServiceManager, stop), stub_scs_stop);
         stub.set(ADDR(DiscoverController, updateDeviceState), stub_updateDeviceState);
     }
@@ -320,4 +331,207 @@ TEST_F(ShareHelperTest, ConnectToDeviceAlreadyConnectedBranch)
     helper->d->targetDeviceInfo = makeConnectedDev("10.0.0.61", "dev61");
     auto info = makeConnectedDev("10.0.0.62", "dev62");
     EXPECT_NO_FATAL_FAILURE(helper->connectToDevice(info));
+}
+
+// ===== onShareExcepted: 已连接目标 → EX_NETWORK_PINGOUT 显示失败页 =====
+
+TEST_F(ShareHelperTest, OnShareExceptedConnectedPingOutShowsDialog)
+{
+    ShareHelperStubScope s;
+    helper->d->targetDeviceInfo = makeConnectedDev("10.0.0.70", "dev70");
+    EXPECT_NO_FATAL_FAILURE(helper->onShareExcepted(EX_NETWORK_PINGOUT, "10.0.0.70"));
+}
+
+// onShareExcepted: 已连接目标 → EX_OTHER 分支 (无操作)
+TEST_F(ShareHelperTest, OnShareExceptedConnectedOtherBranch)
+{
+    ShareHelperStubScope s;
+    helper->d->targetDeviceInfo = makeConnectedDev("10.0.0.71", "dev71");
+    EXPECT_NO_FATAL_FAILURE(helper->onShareExcepted(EX_OTHER, "10.0.0.71"));
+}
+
+// onShareExcepted: 已连接但状态非 Connected → 早返回
+TEST_F(ShareHelperTest, OnShareExceptedConnectedButNotConnectedStatus)
+{
+    ShareHelperStubScope s;
+    auto info = DeviceInfoPointer(new DeviceInfo("10.0.0.72", "dev72"));
+    info->setConnectStatus(DeviceInfo::Connectable);
+    helper->d->targetDeviceInfo = info;
+    EXPECT_NO_FATAL_FAILURE(helper->onShareExcepted(EX_NETWORK_PINGOUT, "10.0.0.72"));
+}
+
+// ===== notifyConnectRequest: info 过短 (< 2 段) → 早返回 =====
+
+TEST_F(ShareHelperTest, NotifyConnectRequestShortInfoEarlyReturn)
+{
+    ShareHelperStubScope s;
+    EXPECT_NO_FATAL_FAILURE(helper->notifyConnectRequest("only-one-part"));
+    // 不到 2 段, senderDeviceIp 不应被设置
+    EXPECT_TRUE(helper->d->senderDeviceIp.isEmpty());
+}
+
+// notifyConnectRequest: 合法 info → 设置 senderDeviceIp / targetDevName
+TEST_F(ShareHelperTest, NotifyConnectRequestValidSetsState)
+{
+    ShareHelperStubScope s;
+    helper->notifyConnectRequest("10.0.0.74,dev74,fingerprint123");
+    EXPECT_EQ(helper->d->senderDeviceIp, "10.0.0.74");
+    EXPECT_EQ(helper->d->targetDevName, "dev74");
+    EXPECT_EQ(helper->d->recvServerPrint, "fingerprint123");
+    EXPECT_TRUE(helper->d->isRecvMode);
+}
+
+// notifyConnectRequest: 合法 info 但无指纹 → recvServerPrint 保持空
+TEST_F(ShareHelperTest, NotifyConnectRequestValidNoFingerprint)
+{
+    ShareHelperStubScope s;
+    helper->notifyConnectRequest("10.0.0.75,dev75");
+    EXPECT_EQ(helper->d->senderDeviceIp, "10.0.0.75");
+    EXPECT_TRUE(helper->d->recvServerPrint.isEmpty());
+}
+
+// notifyConnectRequest: 正在协同中 → busy 回复 (replyShareRequestBusy 已 stub)
+TEST_F(ShareHelperTest, NotifyConnectRequestWhenCooperating)
+{
+    Stub stub;
+    stub.set(ADDR(NetworkUtil, isCurrentlyCooperating), stub_isCurrentlyCooperating_true);
+    stub.set(ADDR(NetworkUtil, replyShareRequestBusy), stub_replyShareRequestBusy);
+    stub.set(ADDR(ShareHelperPrivate, notifyMessage), stub_shp_notifyMessage);
+    EXPECT_NO_FATAL_FAILURE(helper->notifyConnectRequest("10.0.0.76,dev76"));
+    // 正在协同 → 直接返回, 不设置接收模式
+    EXPECT_FALSE(helper->d->isRecvMode);
+}
+
+// ===== handleConnectResult: SHARE_CONNECT_COMFIRM → restartBarrier 失败 → 失败页 =====
+
+TEST_F(ShareHelperTest, HandleConnectResultComfirmBarrierFail)
+{
+    ShareHelperStubScope s;
+    helper->d->targetDeviceInfo = makeConnectedDev("10.0.0.80", "dev80");
+    // 空 clientprint → crypto=false; restartBarrier 在测试环境返回 false
+    EXPECT_NO_FATAL_FAILURE(helper->handleConnectResult(SHARE_CONNECT_COMFIRM, ""));
+    // 失败路径: targetDeviceInfo 被重置
+    EXPECT_EQ(helper->d->targetDeviceInfo, nullptr);
+}
+
+// handleConnectResult: isTimeout=true → 早返回
+TEST_F(ShareHelperTest, HandleConnectResultTimeoutEarlyReturn)
+{
+    ShareHelperStubScope s;
+    helper->d->targetDeviceInfo = makeConnectedDev("10.0.0.81", "dev81");
+    helper->d->isTimeout = true;
+    EXPECT_NO_FATAL_FAILURE(helper->handleConnectResult(SHARE_CONNECT_UNABLE, ""));
+    // 超时早返回, targetDeviceInfo 保留
+    EXPECT_NE(helper->d->targetDeviceInfo, nullptr);
+}
+
+// ===== buttonClicked: connect-button → connectToDevice (tryShareApply 已 stub) =====
+
+TEST_F(ShareHelperTest, ButtonClickedConnectButtonNoCrash)
+{
+    ShareHelperStubScope s;
+    DeviceInfoPointer info(new DeviceInfo("10.0.0.82", "dev82"));
+    info->setConnectStatus(DeviceInfo::Connectable);
+    EXPECT_NO_FATAL_FAILURE(ShareHelper::buttonClicked("connect-button", info));
+    // connectToDevice 设置 targetDeviceInfo
+    EXPECT_NE(helper->d->targetDeviceInfo, nullptr);
+}
+
+// buttonClicked: disconnect-button → disconnectToDevice (sendDisconnectShareEvents 已 stub)
+TEST_F(ShareHelperTest, ButtonClickedDisconnectButtonNoCrash)
+{
+    ShareHelperStubScope s;
+    DeviceInfoPointer info(new DeviceInfo("10.0.0.83", "dev83"));
+    info->setConnectStatus(DeviceInfo::Connected);
+    EXPECT_NO_FATAL_FAILURE(ShareHelper::buttonClicked("disconnect-button", info));
+}
+
+// ===== switchPeripheralShared(false) → stopBarrier, 返回 true =====
+
+TEST_F(ShareHelperTest, SwitchPeripheralSharedFalseReturnsTrue)
+{
+    // client 非空 → on=false → stopBarrier() → 返回 true
+    EXPECT_TRUE(helper->switchPeripheralShared(false));
+}
+
+// switchPeripheralShared(true) → startBarrier (在测试环境可能返回 false)
+TEST_F(ShareHelperTest, SwitchPeripheralSharedTrueReturnsBool)
+{
+    EXPECT_NO_FATAL_FAILURE({ bool v = helper->switchPeripheralShared(true); (void)v; });
+}
+
+// ===== buttonVisible: qApp onlyTransfer=true → 一律 false =====
+
+TEST_F(ShareHelperTest, ButtonVisibleOnlyTransferPropertyReturnsFalse)
+{
+    qApp->setProperty("onlyTransfer", true);
+    DeviceInfoPointer info(new DeviceInfo("10.0.0.85", "dev85"));
+    info->setConnectStatus(DeviceInfo::Connectable);
+    EXPECT_FALSE(ShareHelper::buttonVisible("connect-button", info));
+    qApp->setProperty("onlyTransfer", QVariant());
+}
+
+// buttonVisible: 未知 id → false (默认)
+TEST_F(ShareHelperTest, ButtonVisibleUnknownIdReturnsFalse)
+{
+    DeviceInfoPointer info(new DeviceInfo("10.0.0.86", "dev86"));
+    info->setConnectStatus(DeviceInfo::Connectable);
+    EXPECT_FALSE(ShareHelper::buttonVisible("unknown-id", info));
+}
+
+// buttonVisible: disconnect-button + Connected → true
+TEST_F(ShareHelperTest, ButtonVisibleDisconnectConnectedReturnsTrue)
+{
+    DeviceInfoPointer info(new DeviceInfo("10.0.0.87", "dev87"));
+    info->setConnectStatus(DeviceInfo::Connected);
+    EXPECT_TRUE(ShareHelper::buttonVisible("disconnect-button", info));
+}
+
+// ===== onActionTriggered (private): accept 分支 (replyShareRequest 已 stub) =====
+
+TEST_F(ShareHelperTest, OnActionTriggeredAcceptBranchNoCrash)
+{
+    ShareHelperStubScope s;
+    helper->d->senderDeviceIp = "10.0.0.90";
+    helper->d->selfFingerPrint = "selfprint";
+    EXPECT_NO_FATAL_FAILURE(helper->d->onActionTriggered("accept"));
+    EXPECT_TRUE(helper->d->isReplied);
+}
+
+// ===== handleNetworkDismiss: errorType -1 + 对话框不可见 → 早返回 (已覆盖, 这里验证不崩) =====
+
+TEST_F(ShareHelperTest, HandleNetworkDismissGenericMessageNotifies)
+{
+    ShareHelperStubScope s;
+    EXPECT_NO_FATAL_FAILURE(helper->handleNetworkDismiss("generic network error"));
+}
+
+// ===== selfSharing: 本机 IP 且 server/client 均未运行 → 1 =====
+
+static QString stub_sh_localIPAddress() { return QStringLiteral("127.0.0.1"); }
+TEST_F(ShareHelperTest, SelfSharingLocalIpReturnsOneWhenIdle)
+{
+    Stub stub;
+    stub.set(ADDR(CooperationUtil, localIPAddress), stub_sh_localIPAddress);
+    // server/client 存在但 isRunning()=false → 返回 1
+    EXPECT_EQ(helper->selfSharing("127.0.0.1"), 1);
+}
+
+// ===== handleCancelCooperApply: 发送模式 (isRecvMode=false) → 无操作 =====
+
+TEST_F(ShareHelperTest, HandleCancelCooperApplySendModeNoCrash)
+{
+    ShareHelperStubScope s;
+    helper->d->isRecvMode = false;
+    EXPECT_NO_FATAL_FAILURE(helper->handleCancelCooperApply());
+}
+
+// ===== onVerifyTimeout: 发送模式 + 已回复 → 早返回 =====
+
+TEST_F(ShareHelperTest, OnVerifyTimeoutSendModeReplied)
+{
+    ShareHelperStubScope s;
+    helper->d->isRecvMode = false;
+    helper->d->isReplied = true;
+    EXPECT_NO_FATAL_FAILURE(helper->onVerifyTimeout());
 }

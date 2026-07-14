@@ -7,14 +7,22 @@
 // setConnectIP/getConnectIP/addFinshedFiles 等。
 
 #include "net/helper/transferhepler.h"
+#include "utils/transferutil.h"
 
 #include <gtest/gtest.h>
 #include <QApplication>
 #include <QSignalSpy>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QFile>
+#include <QFileInfo>
 #include <QDir>
+#include <QTemporaryDir>
+
+// 注: TransferHelper::getJsonfile 在头文件声明但 transferhepler.cpp 未提供实现
+// (同名实现位于 TransferUtil::getJsonfile)。调用成员版本会触发链接错误,
+// 故此处不覆盖; 见 TransferUtil 测试以获取 getJsonfile 覆盖。
 
 TEST(TransferHelperTest, ConnectIpSetterGetter)
 {
@@ -132,5 +140,76 @@ TEST(TransferHelperMessageTest, TransferContentBranch)
 TEST(TransferHelperTest, AddFinshedFilesEmpty)
 {
     TransferHelper::instance()->addFinshedFiles(QString(), 100);   // 空 → 直接 return
+    SUCCEED();
+}
+
+// ---- updateConnectPassword (generateRandomNumber -> 6 位 0-9) ----
+TEST(TransferHelperTest, UpdateConnectPasswordReturnsSixDigits)
+{
+    QString pwd = TransferHelper::instance()->updateConnectPassword();
+    EXPECT_EQ(pwd.length(), 6);
+    for (const QChar &c : pwd)
+        EXPECT_TRUE(c.isDigit());
+}
+
+// ---- setting: 委托 handleDataConfiguration, 非法路径触发 addResult ----
+TEST(TransferHelperTest, SettingInvalidPathEmitsAddResult)
+{
+    TransferHelper *h = TransferHelper::instance();
+    QSignalSpy addSpy(h, &TransferHelper::addResult);
+    h->setting("/nonexistent/dt_setting_dir/");
+    EXPECT_GE(addSpy.count(), 1);   // handleDataConfiguration 解析失败 emit addResult(Profiles,false,...)
+}
+
+// ---- recordTranferJob: copy 到 temp + transferFinished 连接清理 ----
+TEST(TransferHelperTest, RecordTranferJobCopiesToTemp)
+{
+    TransferHelper *h = TransferHelper::instance();
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    QString fp = dir.path() + "/transfer.json";
+    {
+        QJsonObject obj;
+        QJsonArray files;
+        files.append("sub/a.txt");
+        obj["user_file"] = files;
+        obj["user_data"] = QString("100");
+        QFile f(fp);
+        f.open(QIODevice::WriteOnly);
+        f.write(QJsonDocument(obj).toJson());
+        f.close();
+    }
+    // 被引用子文件 (interruption lambda 中 move 使用; 此处不触发该 lambda)
+    QDir(dir.path()).mkpath("sub");
+    QFile af(dir.path() + "/sub/a.txt");
+    af.open(QIODevice::WriteOnly);
+    af.write("data");
+    af.close();
+
+    h->setConnectIP("9.9.9.9");
+    h->recordTranferJob(fp);
+
+    QString tempPath = TransferUtil::tempCacheDir() + "9.9.9.9" + "transfer-temp.json";
+    EXPECT_TRUE(QFileInfo::exists(tempPath));   // copy 成功
+
+    // add_result 分支 emit transferFinished -> recordTranferJob 连接的清理 lambda 移除 temp
+    QSignalSpy finSpy(h, &TransferHelper::transferFinished);
+    h->handleMessage("{\"add_result\":\"x true ok\"}");
+    EXPECT_GE(finSpy.count(), 1);
+    EXPECT_FALSE(QFileInfo::exists(tempPath));
+}
+
+// ---- addFinshedFiles 普通路径 (非 transfer.json -> 仅入 finshedFiles 表) ----
+TEST(TransferHelperTest, AddFinshedFilesNormalPath)
+{
+    TransferHelper *h = TransferHelper::instance();
+    QString p = QDir::tempPath() + "/dt_finished_normal.txt";
+    QFile f(p);
+    f.open(QIODevice::WriteOnly);
+    f.write("x");
+    f.close();
+    h->addFinshedFiles(p, 42);   // 不以 transfer.json 结尾 -> 仅 finshedFiles.insert
+    EXPECT_TRUE(QFileInfo::exists(p));
+    QFile::remove(p);
     SUCCEED();
 }
