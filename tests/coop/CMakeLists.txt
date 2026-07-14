@@ -65,12 +65,18 @@ add_executable(coop_tests ${COOP_SRC}
     ${CMAKE_CURRENT_SOURCE_DIR}/phonehelper_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/networkutil_stub_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/taskdialog_test.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/commandparser_test.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/commandparser_test.cpp
+    ${CMAKE_SOURCE_DIR}/tests/session_core/protoendpoint_test.cpp
+    ${CMAKE_SOURCE_DIR}/tests/session_core/protoclient_server_test.cpp
+    ${CMAKE_SOURCE_DIR}/tests/session_core/cooperationcore_test.cpp
+    ${CMAKE_SOURCE_DIR}/tests/session_core/discover_extra_test.cpp)
 target_compile_options(coop_tests PRIVATE -fno-access-control -fprofile-arcs -ftest-coverage)
 target_compile_definitions(coop_tests PRIVATE EXECUTABLE_PROG_DIR="${CMAKE_BINARY_DIR}" ENABLE_PHONE=1)
 target_include_directories(coop_tests PRIVATE
     ${CMAKE_SOURCE_DIR}/src ${CD}
     ${CMAKE_SOURCE_DIR}/src/lib/common
+    ${CMAKE_SOURCE_DIR}/src/lib/common/session
+    ${CMAKE_SOURCE_DIR}/tests/common
     ${CMAKE_SOURCE_DIR}/3rdparty/QtZeroConf
     ${CD}/gui/win)
 target_link_libraries(coop_tests PRIVATE
