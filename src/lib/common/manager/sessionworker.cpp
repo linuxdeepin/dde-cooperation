@@ -227,7 +227,18 @@ bool SessionWorker::onStateChanged(int state, std::string &msg)
     case RPC_ERROR: {
         // code = 110: timeout, unabled ping
         WLOG << "error remote code: " << msg;
+#ifdef ENABLE_AUTO_UNIT_TEST
+        int code = 0;
+        try {
+            code = std::stoi(msg);
+        } catch (...) {
+            ELOG << "invalid error code: " << msg;
+            emit onConnectChanged(state, addr);
+            return false;
+        }
+#else
         int code = std::stoi(msg);
+#endif
         if (asio::error::host_unreachable == code
             || asio::error::timed_out == code) {
             ELOG << "ping failed or timeout: " << msg;

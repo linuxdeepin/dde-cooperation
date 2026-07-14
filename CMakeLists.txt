@@ -127,18 +127,22 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/include)
 # Modules
 add_subdirectory("modules")
 
-if(MSVC)
-    add_compile_options(/utf-8)
-endif()
-add_subdirectory(src)
-
 option(DOTEST "option for test" OFF)
 
 # 单元测试 (参考 deepin-system-monitor 模式)
 if(DOTEST)
     # 激活 ENABLE_AUTO_UNIT_TEST: 让 app 跳过单例互斥 + singleapplication 在退出路径 flush gcov,
     # 配合 tools/coverage/gcov_flush_shim.c 实现运行真实程序采集覆盖率。
+    # 必须在 add_subdirectory(src) 之前, 让源码中的测试隔离宏也生效。
     add_compile_definitions(ENABLE_AUTO_UNIT_TEST)
+endif()
+
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
+add_subdirectory(src)
+
+if(DOTEST)
     add_subdirectory(tests)
 endif()
 

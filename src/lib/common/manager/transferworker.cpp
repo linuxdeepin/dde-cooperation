@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -202,7 +202,17 @@ bool TransferWorker::tryStartReceive(QStringList names, QString &ip, int port, Q
     std::string savePath = dirname.toStdString();
     _file_client->setConfig(accessToken, savePath);
 
+#ifdef ENABLE_AUTO_UNIT_TEST
+    std::vector<std::string> webs;
+    try {
+        webs = _file_client->parseWeb(accessToken);
+    } catch (...) {
+        ELOG << "invalid access token, JWT parse failed";
+        return false;
+    }
+#else
     std::vector<std::string> webs = _file_client->parseWeb(accessToken);
+#endif
 #ifdef QT_DEBUG
     for (const auto& web : webs) {
         DLOG << "Web: " << web;
