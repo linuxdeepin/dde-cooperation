@@ -60,7 +60,8 @@ add_executable(coop_gui_tests ${COOP_GUI_SRC}
     ${CMAKE_CURRENT_SOURCE_DIR}/discovercontroller_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/backgroundwidget_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/vncrecvthread_vncsendworker_test.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/screenmirroringwindow_test.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/screenmirroringwindow_test.cpp
+    ${CMAKE_SOURCE_DIR}/tests/session_core/session_core_deep_test.cpp)
 target_compile_options(coop_gui_tests PRIVATE -fno-access-control -fprofile-arcs -ftest-coverage)
 target_compile_definitions(coop_gui_tests PRIVATE EXECUTABLE_PROG_DIR="${CMAKE_BINARY_DIR}" ENABLE_PHONE=1)
 target_include_directories(coop_gui_tests PRIVATE
