@@ -134,3 +134,138 @@ TEST(NamedEventAutoResetMetaTest, SignalWithoutWaiter)
     NamedEventAutoReset ev(name, false);
     EXPECT_NO_THROW(ev.Signal());
 }
+
+// ===== NamedCriticalSection：可递归 =====
+TEST(NamedCriticalSectionTest, LockRecursiveThenUnlock)
+{
+    const auto name = uniq("cs_lock");
+    NamedCriticalSection cs(name);
+    cs.Lock();
+    EXPECT_TRUE(cs.TryLock());   // 同线程递归获取成功
+    cs.Unlock();
+    cs.Unlock();
+    EXPECT_TRUE(cs.TryLock());   // 完全释放后可再次获取
+    cs.Unlock();
+}
+
+TEST(NamedCriticalSectionTest, DoubleLockDoubleUnlock)
+{
+    const auto name = uniq("cs_rec");
+    NamedCriticalSection cs(name);
+    cs.Lock();
+    cs.Lock();   // 递归
+    cs.Unlock();
+    cs.Unlock();
+}
+
+TEST(NamedCriticalSectionTest, TryLockForTimeoutThenAcquire)
+{
+    const auto name = uniq("cs_for");
+    NamedCriticalSection cs(name);
+    std::thread holder([&] {
+        cs.Lock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+        cs.Unlock();
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(15));   // 让 holder 先获取
+    EXPECT_FALSE(cs.TryLockFor(Timespan::milliseconds(30)));      // 被其他线程持有 -> 超时
+    holder.join();
+    EXPECT_TRUE(cs.TryLockFor(Timespan::milliseconds(200)));      // 已释放 -> 成功
+    cs.Unlock();
+}
+
+// ===== NamedSemaphore：Lock 与 resources =====
+TEST(NamedSemaphoreTest, LockAndResources)
+{
+    const auto name = uniq("sem_lr");
+    NamedSemaphore sem(name, 1);
+    EXPECT_EQ(sem.resources(), 1);
+    sem.Lock();                                                   // 阻塞获取，耗尽资源
+    EXPECT_EQ(sem.resources(), 1);                                // 配置值不变
+    sem.Unlock();
+    EXPECT_TRUE(sem.TryLockFor(Timespan::milliseconds(50)));
+    sem.Unlock();
+}
+
+TEST(NamedSemaphoreTest, TryLockForTimeout)
+{
+    const auto name = uniq("sem_to");
+    NamedSemaphore sem(name, 1);
+    ASSERT_TRUE(sem.TryLock());                                   // 耗尽唯一资源
+    EXPECT_FALSE(sem.TryLockFor(Timespan::milliseconds(30)));     // 超时失败
+    sem.Unlock();
+    EXPECT_TRUE(sem.TryLockFor(Timespan::milliseconds(100)));     // 成功
+    sem.Unlock();
+}
+
+// ===== NamedMutex：非递归，Lock 后 TryLock/TryLockFor 失败（用 holder 线程）=====
+TEST(NamedMutexTest, LockAndTryLockFor)
+{
+    const auto name = uniq("mtx_tlf");
+    NamedMutex m(name);
+    std::thread holder([&] {
+        m.Lock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+        m.Unlock();
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(15));   // 让 holder 先获取
+    EXPECT_FALSE(m.TryLock());                                    // 被持有 -> 失败
+    EXPECT_FALSE(m.TryLockFor(Timespan::milliseconds(30)));       // 超时失败
+    holder.join();
+    EXPECT_TRUE(m.TryLockFor(Timespan::milliseconds(200)));       // 已释放 -> 成功
+    m.Unlock();
+}
+
+// ===== NamedEventAutoReset：跨线程 Wait/Signal =====
+TEST(NamedEventAutoResetTest, CrossThreadWaitAndSignal)
+{
+    const auto name = uniq("ea_ws");
+    NamedEventAutoReset ev(name, false);
+    std::atomic<int> hit{0};
+    std::thread w([&] {
+        ev.Wait();
+        hit.fetch_add(1);
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    EXPECT_EQ(hit.load(), 0);   // 仍在等待
+    ev.Signal();
+    w.join();
+    EXPECT_EQ(hit.load(), 1);
+}
+
+// ===== NamedEventManualReset：Signal/Wait/Reset =====
+TEST(NamedEventManualResetTest, CrossThreadWaitSignalReset)
+{
+    const auto name = uniq("em_wr");
+    NamedEventManualReset ev(name, false);
+    std::atomic<int> hit{0};
+    std::thread w([&] {
+        ev.Wait();   // 阻塞直到 Signal
+        hit.fetch_add(1);
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    ev.Signal();     // 手动重置：保持信号
+    w.join();
+    EXPECT_EQ(hit.load(), 1);
+    // 仍处于信号态
+    EXPECT_TRUE(ev.TryWait());
+    ev.Reset();
+    EXPECT_FALSE(ev.TryWait());   // Reset 后未信号（TryWaitFor 在未信号时会挂死，故用非阻塞 TryWait）
+}
+
+// ===== NamedConditionVariable：跨线程 NotifyOne 唤醒 Wait =====
+TEST(NamedConditionVariableTest, NotifyOneWakesWaiter)
+{
+    const auto name = uniq("cv_wake");
+    NamedConditionVariable cv(name);
+    std::atomic<int> hit{0};
+    std::thread w([&] {
+        cv.Wait();
+        hit.fetch_add(1);
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    EXPECT_EQ(hit.load(), 0);   // 仍在等待
+    cv.NotifyOne();
+    w.join();
+    EXPECT_EQ(hit.load(), 1);
+}
