@@ -23,6 +23,7 @@
 
 #include <QApplication>
 #include <gtest/gtest.h>
+#include <csignal>
 
 extern "C" void __gcov_dump() __attribute__((weak));
 extern "C" void __gcov_flush() __attribute__((weak));
@@ -36,15 +37,23 @@ static void flushCoverage()
     }
 }
 
+static void crash_handler(int sig)
+{
+    flushCoverage();
+    _exit(128 + sig);
+}
+
 int main(int argc, char **argv)
 {
+    std::signal(SIGSEGV, crash_handler);
+    std::signal(SIGABRT, crash_handler);
+    std::signal(SIGFPE, crash_handler);
+    std::signal(SIGILL, crash_handler);
+
     qputenv("QT_QPA_PLATFORM", "offscreen");
     QApplication app(argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
     int result = RUN_ALL_TESTS();
-    // Flush coverage counters *before* static destructors run (the
-    // ConfigManager/QApplication teardown races cause the exit-134 abort that
-    // would otherwise skip gcov finalization).
     flushCoverage();
     return result;
 }

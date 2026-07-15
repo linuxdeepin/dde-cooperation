@@ -69,7 +69,15 @@ add_executable(coop_tests ${COOP_SRC}
     ${CMAKE_SOURCE_DIR}/tests/session_core/protoendpoint_test.cpp
     ${CMAKE_SOURCE_DIR}/tests/session_core/protoclient_server_test.cpp
     ${CMAKE_SOURCE_DIR}/tests/session_core/cooperationcore_test.cpp
-    ${CMAKE_SOURCE_DIR}/tests/session_core/discover_extra_test.cpp)
+    ${CMAKE_SOURCE_DIR}/tests/session_core/discover_extra_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/settings_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/configmanager_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/commonutils_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/filesystem_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/cooperation_extra_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/phone_smoke_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/discover_safe_test.cpp
+    ${CMAKE_SOURCE_DIR}/tests/session_core/session_integration_test.cpp)
 target_compile_options(coop_tests PRIVATE -fno-access-control -fprofile-arcs -ftest-coverage)
 target_compile_definitions(coop_tests PRIVATE EXECUTABLE_PROG_DIR="${CMAKE_BINARY_DIR}" ENABLE_PHONE=1)
 target_include_directories(coop_tests PRIVATE
@@ -91,5 +99,5 @@ endif()
 if(VNCCLIENT_LIBRARY)
     target_link_libraries(coop_tests PRIVATE ${VNCCLIENT_LIBRARY})
 endif()
-target_link_options(coop_tests PRIVATE -fprofile-arcs -ftest-coverage)
+target_link_options(coop_tests PRIVATE -fprofile-arcs -ftest-coverage -Wl,--allow-multiple-definition)
 add_test(NAME coop_tests COMMAND coop_tests)
