@@ -48,6 +48,17 @@ include_directories(${COOST_DIR}/include)
 # coost 打开SSL和动态库
 # cmake .. -DWITH_LIBCURL=ON -DWITH_OPENSSL=ON -DBUILD_SHARED_LIBS=ON
 set(BUILD_SHARED_LIBS ON)
+
+# 单元测试/覆盖率构建: 关闭 coost 的系统调用 hook。
+# coost 通过符号介入 interpose 了 open/fcntl/close 等; 进程退出时 gcov 落盘
+# (__gcov_exit -> __gcov_open) 会调用这些被 hook 的 syscall, 进而触发 co::gHook()
+# 的惰性分配, 而此刻 coost 静态分配器正处于 teardown 之中 -> SIGSEGV, 并留下损坏
+# 的 .gcda 导致 lcov 中途 abort、覆盖率大幅丢失。测试不依赖协程 socket hook,
+# 关闭后这些调用直接走 libc, 从根上消除该崩溃。须在 add_subdirectory(coost) 之前
+# 设置, 以覆盖 coost 自带 option(DISABLE_HOOK ... OFF) 的默认值。
+if(DOTEST OR BUILD_TESTS)
+    set(DISABLE_HOOK ON)
+endif()
 add_subdirectory("${COOST_DIR}" coost)
 
 # 单元测试构建：禁用 coost 在静态初始化阶段预热 hook（详见 log.cc 注释）。

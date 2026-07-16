@@ -18,6 +18,28 @@ void hook_sleep(bool x);
 #ifdef _CO_DISABLE_HOOK
 #define __sys_api(x) ::x
 
+// __sys_api(x) 解析为 ::x 时, 仍需保证这些原生 syscall 的声明可见。
+// 开启 hook 时下方 #else 分支会引入这些头文件; 关闭 hook 时该分支被跳过,
+// 故在此补齐, 否则 co 自身源码(sock.cc 等用到 __sys_api(fcntl/ioctl/...))
+// 会因缺少 <fcntl.h>/<sys/ioctl.h> 等而编译失败。
+#ifndef _WIN32
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <poll.h>
+#include <sys/select.h>
+#include <sys/ioctl.h>
+#ifdef __linux__
+#include <sys/epoll.h>
+#else
+#include <time.h>
+#include <sys/event.h>
+#endif
+#endif
+
 #else
 // We have to hook some native APIs, as third-party network libraries may block the 
 // coroutine schedulers.
