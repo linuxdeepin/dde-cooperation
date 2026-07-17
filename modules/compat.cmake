@@ -57,7 +57,12 @@ set(BUILD_SHARED_LIBS ON)
 # 关闭后这些调用直接走 libc, 从根上消除该崩溃。须在 add_subdirectory(coost) 之前
 # 设置, 以覆盖 coost 自带 option(DISABLE_HOOK ... OFF) 的默认值。
 if(DOTEST OR BUILD_TESTS)
-    set(DISABLE_HOOK ON)
+    # 必须用 CACHE+FORCE: coost 子目录自带 cmake_minimum_required(VERSION 3.12),
+    # 进入子作用域后 CMake policy CMP0077 退化为 OLD/WARN, option(DISABLE_HOOK OFF)
+    # 会无视父级 set() 设置的 normal 变量, 直接写 cache 为 OFF, 导致
+    # _CO_DISABLE_HOOK 编译宏不会生效。用 FORCE 强制写 cache 可确保子目录的
+    # option() 看到已存在的 cache 值而不覆盖, 从而让 if(DISABLE_HOOK) 为真。
+    set(DISABLE_HOOK ON CACHE BOOL "disable hooks for system APIs" FORCE)
 endif()
 add_subdirectory("${COOST_DIR}" coost)
 
