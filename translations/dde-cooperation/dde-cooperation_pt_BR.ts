@@ -9,7 +9,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation type="unfinished"/>
+        <translation>Link permite transferir arquivos, compartilhar teclado e mouse e usar a área de transferência entre dispositivos.</translation>
     </message>
 </context>
 <context>
@@ -120,7 +120,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
         <source>Welcome to dde-cooperation</source>
-        <translation type="unfinished"/>
+        <translation>Bem-vindo ao Link</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
@@ -130,7 +130,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
-        <translation type="unfinished"/>
+        <translation>Ao conectar dois dispositivos, o teclado e o mouse de quem inicia a conexão podem controlar o outro dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
@@ -140,7 +140,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
-        <translation type="unfinished"/>
+        <translation>Após conectar dois dispositivos, a área de transferência será compartilhada, permitindo copiar em um dispositivo e colar no outro</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
@@ -150,12 +150,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
-        <translation type="unfinished"/>
+        <translation>Após conectar dois dispositivos, você pode enviar arquivos para o outro dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>For detailed instructions, please click on the Help Manual below</source>
-        <translation type="unfinished"/>
+        <translation>Para instruções detalhadas, clique no Manual de Ajuda abaixo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
@@ -197,17 +197,17 @@
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
-        <translation type="unfinished"/>
+        <translation>Clique para confirmar e ativar o serviço de descoberta na rede local</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="249"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned on</source>
-        <translation type="unfinished"/>
+        <translation>Quando o serviço de descoberta na rede local não estiver ativado, é impossível localizar e ser localizado por outros dispositivos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
-        <translation type="unfinished"/>
+        <translation>Ative a descoberta na rede local para encontrar ou ser encontrado por outros dispositivos. No Windows: botão direito no Iniciar -&gt; Gerenciamento do Computador -&gt; Serviços -&gt; ative o serviço Bonjour</translation>
     </message>
 </context>
 <context>
@@ -220,7 +220,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="127"/>
         <source>The opposite end opens the application and connects to the same network</source>
-        <translation type="unfinished"/>
+        <translation>No outro dispositivo, abra o aplicativo e conecte-se à mesma rede</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="128"/>
@@ -235,22 +235,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="189"/>
         <source>to send the file</source>
-        <translation type="unfinished"/>
+        <translation>para enviar o arquivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
         <source>to connect to the peer device</source>
-        <translation type="unfinished"/>
+        <translation>para conectar ao outro dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
         <source>Enter the peer IP in the search box</source>
-        <translation type="unfinished"/>
+        <translation>Insira o IP do outro dispositivo na caixa de busca</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="131"/>
         <source>Click</source>
-        <translation type="unfinished"/>
+        <translation>Clique</translation>
     </message>
 </context>
 <context>
@@ -258,18 +258,18 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="153"/>
         <source>OK</source>
-        <translation>Ok</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
         <source>the file save location is invalid</source>
-        <translation type="unfinished"/>
+        <translation>o local de salvamento do arquivo é inválido</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation type="unfinished"/>
+        <translation>Este caminho é um diretório somente leitura. Escolha outro local para salvar o arquivo.</translation>
     </message>
 </context>
 <context>
@@ -277,12 +277,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="204"/>
         <source>The current device has been locked</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo atual foi bloqueado</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="207"/>
         <source>You can unlock it on mobile devices</source>
-        <translation type="unfinished"/>
+        <translation>Você pode desbloqueá-lo em dispositivos móveis</translation>
     </message>
 </context>
 <context>
@@ -290,7 +290,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="81"/>
         <source>Looking for devices</source>
-        <translation type="unfinished"/>
+        <translation>Procurando dispositivos</translation>
     </message>
 </context>
 <context>
@@ -298,7 +298,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="266"/>
         <source>Minimise to system tray</source>
-        <translation type="unfinished"/>
+        <translation>Minimizar para a bandeja do sistema</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="268"/>
@@ -308,7 +308,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="277"/>
         <source>No more enquiries</source>
-        <translation type="unfinished"/>
+        <translation>Não há consultas restantes</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
@@ -326,7 +326,7 @@
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
         <source>Please select your operation</source>
-        <translation type="unfinished"/>
+        <translation>Selecione sua operação</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="338"/>
@@ -354,7 +354,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="74"/>
         <source>Selection of delivery device</source>
-        <translation type="unfinished"/>
+        <translation>Selecionar dispositivo de destino</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
@@ -386,57 +386,57 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
-        <translation type="unfinished"/>
+        <translation>1. Ative a colaboração entre dispositivos. Os aplicativos no UOS podem ser baixados pela loja de aplicativos, e os aplicativos no Windows podem ser baixados em:</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
         <source>2. On the same LAN as the device</source>
-        <translation type="unfinished"/>
+        <translation>2. Na mesma rede local do dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
-        <translation type="unfinished"/>
+        <translation>3. Gerenciador de Arquivos -&gt; Configurações -&gt; Compartilhar por Proximidade -&gt; Permitir que os seguintes usuários enviem arquivos para mim: “Todos na mesma rede local”</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
-        <translation type="unfinished"/>
+        <translation>3. Configurações -&gt; Configurações básicas -&gt; Modo de descoberta -&gt; “Permitir todos na mesma rede local”</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
         <source>4. Try entering the target device IP in the top search box</source>
-        <translation type="unfinished"/>
+        <translation>4. Tente inserir o IP do dispositivo de destino na caixa de busca superior</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="216"/>
         <source>Unable to find collaborative device？</source>
-        <translation type="unfinished"/>
+        <translation>Impossível encontrar algum dispositivo compatível?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="245"/>
         <source>1. The mobile phone needs to download cross end collaborative applications.</source>
-        <translation type="unfinished"/>
+        <translation>1. O smartphone precisa instalar o aplicativo de colaboração entre dispositivos.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
         <source>Go to download&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Acessar download &gt;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
         <source>2. After installation, scan the code to connect to this device for collaboration.</source>
-        <translation type="unfinished"/>
+        <translation>2. Após a instalação, escaneie o código para conectar a este dispositivo e iniciar a conexão.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="251"/>
         <source>3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device</source>
-        <translation type="unfinished"/>
+        <translation>3. Após conectar este dispositivo, o celular precisa manter o aplicativo de compartilhamento entre dispositivos aberto e estar na mesma rede local</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="253"/>
         <source>Instructions for use</source>
-        <translation type="unfinished"/>
+        <translation>Instruções de uso</translation>
     </message>
 </context>
 <context>
@@ -457,7 +457,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="93"/>
         <source>“%1”apply to initiate screen casting</source>
-        <translation type="unfinished"/>
+        <translation>“%1” para iniciar a transmissão de tela</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
@@ -474,12 +474,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="139"/>
         <source>“%1”connection disconnected!</source>
-        <translation type="unfinished"/>
+        <translation>Conexão “%1” desconectada!</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
         <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
-        <translation type="unfinished"/>
+        <translation>Desconectar e conectar-se a &apos;%1&apos;?</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
@@ -506,22 +506,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="102"/>
         <source>Scan code connection</source>
-        <translation type="unfinished"/>
+        <translation>Ler o código de conexão</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="108"/>
         <source>Please use the cross end collaboration app to scan the code</source>
-        <translation type="unfinished"/>
+        <translation>Use o aplicativo de compartilhamento entre dispositivos para ler o código</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="114"/>
         <source>Mobile phones and devices need to be connected to the same local area network</source>
-        <translation type="unfinished"/>
+        <translation>Smartphones e outros dispositivos devem estar conectados à mesma rede local</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="147"/>
         <source>Click to download UOS assistant APP</source>
-        <translation type="unfinished"/>
+        <translation>Clique para baixar o Assistente UOS</translation>
     </message>
 </context>
 <context>
@@ -530,13 +530,13 @@
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="179"/>
         <source>Ok</source>
         <comment>button</comment>
-        <translation>Ok</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="182"/>
         <source>View</source>
         <comment>button</comment>
-        <translation>Visualizar</translation>
+        <translation>Exibir</translation>
     </message>
 </context>
 <context>
@@ -545,7 +545,7 @@
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="47"/>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="53"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished"/>
+        <translation>Todos na mesma rede local</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="49"/>
@@ -556,17 +556,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="50"/>
         <source>Screen right</source>
-        <translation type="unfinished"/>
+        <translation>Lado direito da tela</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="51"/>
         <source>Screen left</source>
-        <translation type="unfinished"/>
+        <translation>Lado esquerdo da tela</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="54"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished"/>
+        <translation>Apenas dispositivos conectados são permitidos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="132"/>
@@ -581,7 +581,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
-        <translation type="unfinished"/>
+        <translation>Outros dispositivos podem encontrá-lo e conectar-se a você pelo Link</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
@@ -596,12 +596,12 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
-        <translation type="unfinished"/>
+        <translation>Permite que dispositivos já conectados controlem este dispositivo, incluindo teclado, mouse, trackpad e etc.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
-        <translation type="unfinished"/>
+        <translation>Quando este dispositivo está conectado, o cursor do mouse pode atravessar a borda da tela e ir para o dispositivo conectado.</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
@@ -611,7 +611,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"/>
+        <translation>Permite que os seguintes usuários enviem arquivos para este dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
@@ -626,17 +626,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
         <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
-        <translation type="unfinished"/>
+        <translation>Quando o compartilhamento estiver ativado no servidor (dispositivo conectado), a área de transferência será compartilhada entre os dois computadores</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
         <source>The device name must contain 1 to 20 characters</source>
-        <translation type="unfinished"/>
+        <translation>O nome do dispositivo deve conter de 1 a 20 caracteres</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="362"/>
         <source>The device name must contain 1 to 63 characters</source>
-        <translation type="unfinished"/>
+        <translation>O nome do dispositivo deve conter de 1 a 63 caracteres</translation>
     </message>
 </context>
 <context>
@@ -658,28 +658,28 @@
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
         <source>Unable to collaborate to &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Impossível conectar a “%1”</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
         <source>You are connecting to another device</source>
-        <translation type="unfinished"/>
+        <translation>Você está conectando a outro dispositivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
         <source>Requesting collaborate to &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Solicitando conexão com &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
-        <translation type="unfinished"/>
+        <translation>A conexão com &quot;%1&quot; foi encerrada</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Recebida uma solicitação de conexão de &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
@@ -699,57 +699,57 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
         <source>Connect to &quot;%1&quot; failed</source>
-        <translation type="unfinished"/>
+        <translation>A conexão com &quot;%1&quot; falhou</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
         <source>Unable to collaborate</source>
-        <translation type="unfinished"/>
+        <translation>A conexão com o dispositivo falhou</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="419"/>
         <source>Failed to run process!</source>
-        <translation type="unfinished"/>
+        <translation>A execução do processo falhou</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>A conexão foi bem-sucedida, iniciando a integração com &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; recusou sua solicitação de integração</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; está se conectando a outros dispositivos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
-        <translation type="unfinished"/>
+        <translation>A solicitação de conexão enviada por &quot;%1&quot; foi interrompida pelo tempo limite</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
         <source>The other party does not confirm, please try again later</source>
-        <translation type="unfinished"/>
+        <translation>O outro dispositivo não confirmou. Tente novamente mais tarde</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="524"/>
         <source>The other party has cancelled the connection request !</source>
-        <translation type="unfinished"/>
+        <translation>O outro dispositivo cancelou a solicitação de conexão</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="528"/>
         <source>connect failed</source>
-        <translation type="unfinished"/>
+        <translation>A conexão falhou</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>A rede não está conectada, o envio de arquivos falhou. Conecte-se à rede e tente novamente</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
@@ -759,17 +759,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>A rede não está conectada, o envio de arquivos falhou. Conecte-se à rede e tente novamente</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="562"/>
         <source>Network exception</source>
-        <translation type="unfinished"/>
+        <translation>Exceção de rede</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
         <source>Please check the network &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Verifique a rede &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -783,7 +783,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>A conexão foi bem-sucedida, iniciando a integração com &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -791,41 +791,41 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
         <source>Connect to &quot;%1&quot; failed</source>
-        <translation type="unfinished"/>
+        <translation>A conexão com &quot;%1&quot; falhou</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
         <source>File read/write exception</source>
-        <translation type="unfinished"/>
+        <translation>Exceção de leitura/escrita de arquivo</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
         <source>The other party has canceled the file transfer</source>
-        <translation type="unfinished"/>
+        <translation>O outro dispositivo cancelou a transferência de arquivos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
         <source>File sent successfully</source>
-        <translation type="unfinished"/>
+        <translation>Arquivo enviado com sucesso</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="168"/>
         <source>View transfer history</source>
-        <translation type="unfinished"/>
+        <translation>Ver histórico de transferências</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="177"/>
         <source>Send files</source>
-        <translation type="unfinished"/>
+        <translation>Enviar arquivos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="302"/>
         <source>The other party did not receive, the files failed to send</source>
-        <translation type="unfinished"/>
+        <translation>O outro dispositivo não recebeu os arquivos, o envio falhou</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="332"/>
@@ -835,17 +835,17 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="335"/>
         <source>File receiving %1% | Remaining time %2</source>
-        <translation type="unfinished"/>
+        <translation>Recebendo arquivo %1% | Tempo restante %2</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
         <source>Sending files to &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Enviando arquivos para &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
         <source>Receiving files from &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Recebendo arquivos de &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
@@ -865,41 +865,41 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
         <source>&quot;%1&quot; send some files to you</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; enviou alguns arquivos para você</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
         <source>View</source>
-        <translation>Visualizar</translation>
+        <translation>Exibir</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
         <source>The other party has cancelled the transfer request !</source>
-        <translation type="unfinished"/>
+        <translation>O outro dispositivo cancelou sua solicitação de transferência</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
-        <translation type="unfinished"/>
+        <translation>Espaço de armazenamento insuficiente, o envio de arquivos falhou. Libere espaço no disco e tente novamente</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
-        <translation type="unfinished"/>
+        <translation>A rede não está conectada, o envio de arquivos falhou. Conecte-se à rede e tente novamente</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
         <source>calculating</source>
-        <translation type="unfinished"/>
+        <translation>Calculando</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
         <source>The other party rejects your request</source>
-        <translation type="unfinished"/>
+        <translation>O outro dispositivo recusou sua solicitação</translation>
     </message>
 </context>
 <context>
@@ -916,7 +916,7 @@
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
         <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
         <source>Disconnected</source>
-        <translation type="unfinished"/>
+        <translation>Desconectado</translation>
     </message>
 </context>
 <context>
@@ -938,7 +938,7 @@
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="52"/>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="53"/>
         <source>Please enter the device ip/name of the collaborator</source>
-        <translation type="unfinished"/>
+        <translation>Insira o IP ou nome do dispositivo para integração</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="56"/>
@@ -948,7 +948,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="72"/>
         <source>Re-scan for devices</source>
-        <translation type="unfinished"/>
+        <translation>Procurar dispositivos novamente</translation>
     </message>
 </context>
 <context>
@@ -985,12 +985,12 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="171"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished"/>
+        <translation>Todos na mesma rede local</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="172"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished"/>
+        <translation>Apenas aqueles que estão colaborando têm permissão</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="173"/>
@@ -1000,7 +1000,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="178"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished"/>
+        <translation>Permitir que os seguintes usuários me enviem arquivos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
