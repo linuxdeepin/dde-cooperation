@@ -1,3 +1,37 @@
+dde-cooperation (1.2.7) unstable; urgency=medium
+
+  * chore: Update version to 1.2.7
+  * fix(coverage): force DISABLE_HOOK cache var to fix fresh-configure crash
+  * fix: add X-Deepin-Singleton flag to desktop file
+  * fix: remove deepin prefix from Chinese translations in desktop file
+  * fix(coost): disable syscall hooks in test build to fix gcov crash
+  * test(ci): update coverage filter and register test targets
+  * test(coop): add cooperation core module coverage tests
+  * test(compat-logic): add compat framework and httpweb/session tests
+  * test(basekit): add threads, system and filesystem coverage tests
+  * test: add unit tests for session, discover and phone modules
+  * test: add unit tests for sslconf and manager modules
+  * test(netutil): add asio/tcp/timer/ssl coverage tests and lcov filters
+  * test(coop): add logic/coop/daemon/dt tests with quality fixes
+  * test(basekit): add filesystem/system/threads and logging appender tests
+  * test(daemon): add unit tests reaching 80% line coverage
+  * test(dfmplugin): add unit test framework for cooperation plugins
+  * test(coop): add net coverage tests reaching 80% + logging appenders tests
+  * test(slotipc): add slotipc unit tests with merge-moc + RPC round-trip
+  * test(dt): add data-transfer unit tests with NetworkUtil stub
+  * test(coop_gui): 覆盖 MainWindow/PhoneWidget/SettingDialog 等 Phase 2B 第二批
+  * test(coop_gui): 覆盖 WorkspaceWidget、SettingItem、FirstTipWidget
+  * test(coop_gui): 覆盖 DeviceItem、CooperationStateWidget、VncViewer 纯逻辑
+  * test(coop): 覆盖 ShareCooperationService/Manager、DConfigManager/ConfigManager、reportlog
+  * test(coop_gui): 覆盖 CooperationDialog/CooperationTaskDialog 页面切换
+  * test(coop): 搭建 lib/cooperation 单元测试框架并覆盖核心/GUI 模块
+  * test: expand coverage for logging/netutil/basekit/framework
+  * test(basekit): add unit tests for core pure-logic modules
+  * test(compat): add zrpc and framework/event unit tests
+  * test: add unit tests and coverage infrastructure across modules
+
+ -- zhanghongyuan <zhanghongyuan@uniontech.com>  Thu, 30 Jul 2026 15:23:48 +0800
+
 dde-cooperation (1.2.6) unstable; urgency=medium
 
   * fix(security): fix hardcoded credentials and path traversal issues
