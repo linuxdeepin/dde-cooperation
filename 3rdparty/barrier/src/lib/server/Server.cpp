@@ -1265,6 +1265,25 @@ Server::handleClipboardGrabbed(const Event& event, void* vclient)
 			client->grabClipboard(info->m_id);
 		}
 	}
+
+	// if the primary screen grabbed the clipboard (i.e. the user copied
+	// on the server side), read the actual clipboard data now and push
+	// it to all other clients.  without this the data would only be
+	// transferred when the mouse crosses the screen boundary (via
+	// switchScreen), leaving remote clients without clipboard content
+	// when the user never moves the mouse off the primary screen.
+	if (grabber == m_primaryClient) {
+		if (grabber->getClipboard(info->m_id, &clipboard.m_clipboard)) {
+			clipboard.m_clipboardData = clipboard.m_clipboard.marshall();
+			for (ClientList::iterator index = m_clients.begin();
+								index != m_clients.end(); ++index) {
+				BaseClientProxy* client = index->second;
+				if (client != grabber) {
+					client->setClipboard(info->m_id, &clipboard.m_clipboard);
+				}
+			}
+		}
+	}
 }
 
 void
