@@ -33,7 +33,7 @@ public:
 
     TcpConnection *getConnection();
 
-    void setTimeout(const int v) { m_max_timeout = v; }
+    void setTimeout(const int v) { m_max_timeout = v; if (m_connection) m_connection->setTransTimeout(v); }
 
     void setTryCounts(const int v) { m_try_counts = v; }
 

@@ -125,7 +125,7 @@ void SendRpcWork::handlePing(const QStringList apps)
         if (rs.data.empty() || rs.errorType < INVOKE_OK) {
             DLOG << "remote server no reply ping !!!!! " << appName.toStdString();
             auto count = _ping_failed_count.take(appName);
-            if (count > 2) {
+            if (count > 1) {
                 // 通知客户端ping超时
                 ELOG << "timeout: server no reply ping: " << count;
                 fastring msg = co::Json({{"app", appName.toStdString()}, {"offline", true}}).str();

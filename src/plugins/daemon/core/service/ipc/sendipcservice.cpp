@@ -302,7 +302,7 @@ void SendIpcService::handleAddJob(const QString appName, const int jobId)
 
 void SendIpcService::preprocessOfflineStatus(const QString appName, int32 type, const fastring msg)
 {
-    //缓存一下要通知的状态，如果3秒未更新，才发送通知
+    //缓存一下要通知的状态，如果短时间未更新，才发送通知
     SendStatus st;
     st.type = type;
     st.status = REMOTE_CLIENT_OFFLINE;
@@ -311,23 +311,7 @@ void SendIpcService::preprocessOfflineStatus(const QString appName, int32 type, 
     _offline_status.remove(appName);
     _offline_status.insert(appName, st);
 
-    _cacheTimer.setInterval(3000);
-    connect(&_cacheTimer, &QTimer::timeout, [this, appName]() {
-        auto names = _offline_status.keys();
-        for (const auto &name : names) {
-            auto st = _offline_status.take(name);
-            co::Json req = st.as_json();
-            req.add_member("api", "Frontend.notifySendStatus");
-            if (name.compare("all") == 0) {
-                DLOG << "notify all offline: " << req.dbg();
-                handleSendToAllClient(req.str().c_str());
-            } else {
-                DLOG << "notify " << name.toStdString() << " offline: " << req.dbg();
-                handleSendToClient(name, req.str().c_str());
-            }
-        }
-    });
-
+    _cacheTimer.setInterval(500);
     emit startOfflineTimer();
 }
 
@@ -382,4 +366,20 @@ void SendIpcService::initConnect()
 
     connect(this, &SendIpcService::startOfflineTimer, this, &SendIpcService::handleStartOfflineTimer, Qt::QueuedConnection);
     connect(this, &SendIpcService::stopOfflineTimer, this, &SendIpcService::handleStopOfflineTimer, Qt::QueuedConnection);
+
+    connect(&_cacheTimer, &QTimer::timeout, [this]() {
+        auto names = _offline_status.keys();
+        for (const auto &name : names) {
+            auto st = _offline_status.take(name);
+            co::Json req = st.as_json();
+            req.add_member("api", "Frontend.notifySendStatus");
+            if (name.compare("all") == 0) {
+                DLOG << "notify all offline: " << req.dbg();
+                handleSendToAllClient(req.str().c_str());
+            } else {
+                DLOG << "notify " << name.toStdString() << " offline: " << req.dbg();
+                handleSendToClient(name, req.str().c_str());
+            }
+        }
+    });
 }

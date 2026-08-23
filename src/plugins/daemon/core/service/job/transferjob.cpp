@@ -728,6 +728,8 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
 {
     if (_device_not_enough)
         return false;
+    if (_offlined)
+        return false;
     FileTransBlock file_block;
     file_block.job_id = (_jobid);
     file_block.file_id = (block->file_id);

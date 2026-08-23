@@ -91,6 +91,8 @@ public:
 
     bool waited();
 
+    void setTransTimeout(int v) { m_trans_timeout = v; }
+
 private:
     int64 read_hook(char *buf, int len);
     int64 write_hook(const void *buf, int count);
