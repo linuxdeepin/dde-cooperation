@@ -8,6 +8,9 @@
 #include <QTextBrowser>
 #include <QTimer>
 #include <QStackedWidget>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <utils/transferhepler.h>
 
 ResultDisplayWidget::ResultDisplayWidget(QWidget *parent)
@@ -67,7 +70,8 @@ void ResultDisplayWidget::initUI()
             &ResultDisplayWidget::addResult);
 #ifdef linux
     connect(TransferHelper::instance(), &TransferHelper::transferFinished, this, [this] {
-        TransferHelper::instance()->sendMessage("add_result", processText);
+        QJsonDocument doc(resultArray);
+        TransferHelper::instance()->sendMessage("add_result", QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
     });
 #endif
 }
@@ -107,14 +111,17 @@ void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
         setStatus(false);
 
     resultWindow->updateContent(name, reason, success);
-    QString res = success ? "true" : "false";
-    processText.append(name + " " + res + " " + reason + ";");
+    QJsonObject resultObj;
+    resultObj["name"] = name;
+    resultObj["success"] = success;
+    resultObj["reason"] = reason;
+    resultArray.append(resultObj);
 }
 
 void ResultDisplayWidget::clear()
 {
     resultWindow->clear();
-    processText.clear();
+    resultArray = QJsonArray();
     setStatus(true);
 }
 

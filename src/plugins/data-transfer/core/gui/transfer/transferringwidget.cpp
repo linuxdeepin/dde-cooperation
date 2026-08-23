@@ -17,6 +17,9 @@
 #include <utils/optionsmanager.h>
 #include <common/commonutils.h>
 
+#include <QJsonDocument>
+#include <QJsonObject>
+
 TransferringWidget::TransferringWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -202,9 +205,13 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
         timeLabel->setText(QString(tr("Transfer will be completed in --")));
 #ifdef linux
         //通知对方进程情况
-        QString mes = tpye + " " + content + " " + QString::number(progressbar) + " "
-                + QString::number(estimatedtime) + ";";
-        TransferHelper::instance()->sendMessage("transfer_content", mes);
+        QJsonObject contentObj;
+        contentObj["type"] = tpye;
+        contentObj["content"] = content;
+        contentObj["progressbar"] = progressbar;
+        contentObj["estimatedtime"] = estimatedtime;
+        QJsonDocument doc(contentObj);
+        TransferHelper::instance()->sendMessage("transfer_content", QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
 #endif
     }
 }
