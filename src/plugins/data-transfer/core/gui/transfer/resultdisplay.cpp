@@ -1,4 +1,6 @@
 ﻿#include "resultdisplay.h"
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QToolButton>
@@ -67,7 +69,8 @@ void ResultDisplayWidget::initUI()
             &ResultDisplayWidget::addResult);
 #ifdef linux
     connect(TransferHelper::instance(), &TransferHelper::transferFinished, this, [this] {
-        TransferHelper::instance()->sendMessage("add_result", processText);
+        TransferHelper::instance()->sendMessage(
+            "add_result", QString::fromUtf8(QJsonDocument(processText).toJson(QJsonDocument::Compact)));
     });
 #endif
 }
@@ -107,8 +110,11 @@ void ResultDisplayWidget::addResult(QString name, bool success, QString reason)
         setStatus(false);
 
     resultWindow->updateContent(name, reason, success);
-    QString res = success ? "true" : "false";
-    processText.append(name + " " + res + " " + reason + ";");
+    QJsonObject obj;
+    obj["name"] = name;
+    obj["success"] = success;
+    obj["reason"] = reason;
+    processText.append(obj);
 }
 
 void ResultDisplayWidget::clear()

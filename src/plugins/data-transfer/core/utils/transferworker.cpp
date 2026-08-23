@@ -17,6 +17,9 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QFile>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #pragma execution_character_set("utf-8")
 TransferHandle::TransferHandle()
@@ -350,11 +353,15 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
     if (miscJson.has_member("add_result")) {
         QString result = miscJson.get("add_result").as_c_str();
         LOG << "add_result" << result.data();
-        for (QString str : result.split(";")) {
-            auto res = str.split(" ");
-            if (res.size() != 3)
-                continue;
-            emit TransferHelper::instance()->addResult(res.at(0), res.at(1) == "true", res.at(2));
+        QJsonDocument doc = QJsonDocument::fromJson(result.toUtf8());
+        if (doc.isArray()) {
+            for (const QJsonValue &value : doc.array()) {
+                QJsonObject obj = value.toObject();
+                emit TransferHelper::instance()->addResult(
+                    obj.value("name").toString(),
+                    obj.value("success").toBool(),
+                    obj.value("reason").toString());
+            }
         }
         emit TransferHelper::instance()->transferFinished();
     }
@@ -376,11 +383,17 @@ void TransferHandle::handleMiscMessage(QString jsonmsg)
 
     if (miscJson.has_member("transfer_content")) {
         QString result = miscJson.get("transfer_content").as_c_str();
-        for (QString str : result.split(";")) {
-            auto res = str.split(" ");
-            if (res.size() != 4)
-                continue;
-            emit TransferHelper::instance()->transferContent(res.at(0), res.at(1), res.at(2).toInt(), res.at(3).toInt());
+        QJsonDocument doc = QJsonDocument::fromJson(result.toUtf8());
+        QJsonArray contents = doc.isArray() ? doc.array() : QJsonArray();
+        if (doc.isObject())
+            contents.append(doc.object());
+        for (const QJsonValue &value : contents) {
+            QJsonObject obj = value.toObject();
+            emit TransferHelper::instance()->transferContent(
+                obj.value("type").toString(),
+                obj.value("content").toString(),
+                obj.value("progressbar").toInt(),
+                obj.value("estimatedtime").toInt());
         }
     }
 }
