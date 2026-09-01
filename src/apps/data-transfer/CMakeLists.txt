@@ -21,7 +21,7 @@ endif()
 if (WIN32)
     set(qt_required_components Core Gui Network Widgets Sql WinExtras)
 else()
-    set(qt_required_components Core Gui Network Widgets)
+    set(qt_required_components Core Gui Network Widgets DBus)
 endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_required_components})
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_required_components})
@@ -76,11 +76,19 @@ target_link_libraries(${PROJ_NAME}
 if (CMAKE_SYSTEM MATCHES "Linux")
     target_link_libraries(${PROJ_NAME}
           PRIVATE
+        Qt${QT_VERSION_MAJOR}::DBus
         ${DtkWidget_LIBRARIES}
     )
 endif()
 
-install(TARGETS ${PROJ_NAME} DESTINATION bin)
+if (WIN32)
+    install(TARGETS ${PROJ_NAME} DESTINATION bin)
+else()
+    # 真实二进制安装到 libexec，/usr/bin 由启动脚本占用（见下），
+    # 以便经 deepin-security-loader 附加 deepin-daemon 组启动
+    install(TARGETS ${PROJ_NAME} DESTINATION libexec/deepin)
+    install(PROGRAMS res/linux/deepin-data-transfer.sh DESTINATION bin RENAME deepin-data-transfer)
+endif()
 
 # translation files
 TRANSLATION_GENERATE(QM_FILES ${CMAKE_SOURCE_DIR}/translations/${PROJ_NAME})

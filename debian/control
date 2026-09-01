@@ -43,6 +43,7 @@ Description: Deepin cooperation backend
 Package: deepin-data-transfer
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, dde-cooperation-daemon
+Recommends: deepin-security-loader
 Description: deepin data transfer frontend
  Deepin Desktop Environment (DDE) - data transfer frontend.
 
