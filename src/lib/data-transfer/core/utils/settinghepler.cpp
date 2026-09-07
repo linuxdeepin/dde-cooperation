@@ -333,12 +333,37 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
     return true;
 }
 
+// 递归复制目录, 用于跨设备(EXDEV) rename 失败时的退化搬运
+static bool copyDirectory(const QString &src, const QString &dst)
+{
+    QDir srcDir(src);
+    if (!srcDir.exists())
+        return false;
+    if (!QDir().mkpath(dst))
+        return false;
+
+    const auto entries = srcDir.entryInfoList(
+                QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+    for (const auto &entry : entries) {
+        const QString target = dst + QLatin1Char('/') + entry.fileName();
+        if (entry.isDir()) {
+            if (!copyDirectory(entry.absoluteFilePath(), target))
+                return false;
+        } else if (!QFile::copy(entry.absoluteFilePath(), target)) {
+            WLOG << "copy file failed: " << entry.absoluteFilePath().toStdString()
+                 << " -> " << target.toStdString();
+            return false;
+        }
+    }
+    return true;
+}
+
 bool SettingHelper::moveFile(const QString &src, QString &dst)
 {
     if (QFile::exists(dst)) {
         int i = 1;
-        QString fileName = dst.split("/").last();
-        QString dstDir = dst.remove(fileName);
+        QString fileName = dst.section('/', -1);                 // 只取结尾的文件名
+        QString dstDir = dst.left(dst.size() - fileName.size()); // 只截掉结尾段，避免误删路径中间的同名段
         QStringList filenamelist = fileName.split(".");
         QString suffix;
         if (!QFileInfo(src).isDir() && filenamelist.size() >= 2) {
@@ -346,17 +371,41 @@ bool SettingHelper::moveFile(const QString &src, QString &dst)
             suffix = "." + suffix;
         }
         QString baseName = fileName;
-        baseName = fileName.remove(suffix);
+        if (baseName.endsWith(suffix))                           // 只去掉结尾的后缀
+            baseName.chop(suffix.size());
 
         while (QFile::exists(dst)) {
-            dst = dstDir + baseName + "(" + QString::number(i) + ")" + suffix;
+            dst = dstDir + "/" + baseName + "(" + QString::number(i) + ")" + suffix;
             i++;
         }
     }
+    // 兜底确保目标父目录存在(如 ~/D: 这类盘符目录)
+    QDir().mkpath(QFileInfo(dst).absolutePath());
+
+    // ---------- 目录处理 ----------
+    // 优先 QDir::rename 移动; 跨设备(EXDEV) rename 失败时, 退化为递归复制整棵目录树后删除源
+    if (QFileInfo(src).isDir()) {
+        QDir dir;
+        if (dir.rename(src, dst))
+            return true;
+        if (copyDirectory(src, dst)) {
+            QDir(src).removeRecursively();   // 数据已就位, 源清理失败不影响结果
+            return true;
+        }
+
+        WLOG << "moveFile error: rename dir failed: " << src.toStdString() << " -> " << dst.toStdString();
+        return false;
+    }
+    // ---------- 文件处理 ----------
+    // 优先 rename 移动; 跨设备时退化为复制后删除源
     QFile f(src);
     LOG << "moveFile dst: " << src.toStdString() << "   " << dst.toStdString();
     if (f.rename(dst))
         return true;
+    if (QFile::copy(src, dst)) {             // 跨设备时退化为复制后删除源
+        QFile::remove(src);
+        return true;
+    }
 
     WLOG << "moveFile error: " << f.errorString().toStdString();
     return false;
