@@ -11,6 +11,10 @@
 #include <QProcess>
 #include <QTimer>
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
 #define BASEPROTO_PORT 51597
 
 static constexpr char kPluginInterface[] { "org.deepin.plugin.daemon" };
@@ -73,6 +77,7 @@ bool isActiveUser()
     return "admin";
 #endif
     QString username = "";
+    QString activeUid = "";
     // 执行 loginctl user-status 命令
     QProcess process;
     process.start("loginctl list-sessions");
@@ -86,6 +91,7 @@ bool isActiveUser()
     }
     qCritical() << output;
     QMap<QString, QString> sessions;
+    QMap<QString, QString> sessionUids;
     auto infoList = output.split("\n");
     if (infoList.length() < 2) {
         qCritical() << "loginctl list-sessions empty session!";
@@ -106,6 +112,7 @@ bool isActiveUser()
             continue;
 
         sessions.insert(lineInfo.at(0), lineInfo.at(2));
+        sessionUids.insert(lineInfo.at(0), lineInfo.at(1));
     }
 
     foreach (auto session, sessions.keys()) {
@@ -136,14 +143,16 @@ bool isActiveUser()
         // 判断用户状态和桌面状态
         if (isActive && isDesktopActive) {
             username = sessions.take(session);
+            activeUid = sessionUids.value(session);
         }
     }
 
-    QString curUser = QDir::home().dirName();
-    qApp->setProperty(KEY_CURRENT_ACTIVE_USER, username);
-    qCritical() << "active session user:" << username << " current user:" << curUser;
+    // 域账号场景下会话用户名与家目录名可能不一致(如 "@xxx"),改用 UID 比对判定活动会话
+    QString curUid = QString::number(getuid());
+    qApp->setProperty(KEY_CURRENT_ACTIVE_USER, activeUid);
+    qCritical() << "active session user:" << username << " active uid:" << activeUid << " current uid:" << curUid;
 
-    return (curUser.compare(username) == 0 || curUser.startsWith(username + "@"));
+    return (activeUid == curUid);
 }
 
 int main(int argc, char *argv[])
