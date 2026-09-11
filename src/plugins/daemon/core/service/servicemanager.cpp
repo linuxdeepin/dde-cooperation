@@ -18,6 +18,10 @@
 
 #include <QCoreApplication>
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
 
 ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 {
@@ -50,12 +54,12 @@ ServiceManager::ServiceManager(QObject *parent) : QObject(parent)
 #ifndef _WIN32
     _userTimer.setInterval(500);
     connect(&_userTimer, &QTimer::timeout, this, [this](){
-        QString curUser = QDir::home().dirName();
+        // 与 isActiveUser 一致, 按活动会话 UID 判定当前用户是否仍是活动桌面用户
+        QString curUid = QString::number(getuid());
         auto active = qApp->property(KEY_CURRENT_ACTIVE_USER).toString();
-        if (!active.isEmpty() && curUser != active && !curUser.startsWith(active + "@")) {
-            qCritical() << "active session user:" << active << " current user:" << curUser;
+        if (!active.isEmpty() && curUid != active) {
+            qCritical() << "active session uid:" << active << " current uid:" << curUid;
             _userTimer.stop();
-            qCritical() <<  curUser << active;
             qApp->exit(0);
         }
     });
