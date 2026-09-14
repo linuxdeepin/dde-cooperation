@@ -616,7 +616,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
         <source>File save location</source>
-        <translation>Lokalizacja zapisu plików</translation>
+        <translation>Lokalizacja zapisywania plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
@@ -1007,7 +1007,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
         <source>File save location</source>
-        <translation>Lokalizacja zapisu plików</translation>
+        <translation>Lokalizacja zapisywania plików</translation>
     </message>
 </context>
 </TS>
