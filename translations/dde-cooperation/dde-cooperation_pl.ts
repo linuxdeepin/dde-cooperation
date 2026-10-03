@@ -160,7 +160,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>Usage</source>
-        <translation>Korzystanie</translation>
+        <translation>Obsługa</translation>
     </message>
 </context>
 <context>
@@ -616,7 +616,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
         <source>File save location</source>
-        <translation>Lokalizacja zapisywania plików</translation>
+        <translation>Lokalizacja zapisu plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
