@@ -135,7 +135,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Clipboard sharing</source>
-        <translation>Udostępnianie klawiatury</translation>
+        <translation>Udostępnianie schowka</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
