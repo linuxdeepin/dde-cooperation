@@ -9,7 +9,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation>Współpraca to potężne narzędzie, które umożliwia transfer plików, udostępnianie klawiatury i myszy oraz współdzielenie schowka między urządzeniami.</translation>
+        <translation>Współpraca to innowacyjne narzędzie, które umożliwia transfer plików, udostępnianie klawiatury i myszy oraz współdzielenie schowka między urządzeniami.</translation>
     </message>
 </context>
 <context>
@@ -1007,7 +1007,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
         <source>File save location</source>
-        <translation>Lokalizacja zapisywania plików</translation>
+        <translation>Lokalizacja zapisu plików</translation>
     </message>
 </context>
 </TS>
