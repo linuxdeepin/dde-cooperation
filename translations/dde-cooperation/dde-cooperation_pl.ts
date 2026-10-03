@@ -9,7 +9,7 @@
     <message>
         <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
-        <translation>Współpraca to potężne narzędzie, które umożliwia transfer plików, udostępnianie klawiatury i myszy oraz współdzielenie schowka między urządzeniami.</translation>
+        <translation>Współpraca to innowacyjne narzędzie, które umożliwia transfer plików, udostępnianie klawiatury i myszy oraz współdzielenie schowka między urządzeniami.</translation>
     </message>
 </context>
 <context>
@@ -135,7 +135,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>Clipboard sharing</source>
-        <translation>Udostępnianie klawiatury</translation>
+        <translation>Udostępnianie schowka</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
@@ -160,7 +160,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
         <source>Usage</source>
-        <translation>Korzystanie</translation>
+        <translation>Obsługa</translation>
     </message>
 </context>
 <context>
@@ -616,7 +616,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
         <source>File save location</source>
-        <translation>Lokalizacja zapisywania plików</translation>
+        <translation>Lokalizacja zapisu plików</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
@@ -1007,7 +1007,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
         <source>File save location</source>
-        <translation>Lokalizacja zapisywania plików</translation>
+        <translation>Lokalizacja zapisu plików</translation>
     </message>
 </context>
 </TS>
