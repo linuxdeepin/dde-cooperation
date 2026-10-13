@@ -21,6 +21,7 @@
 #include <QElapsedTimer>
 #include <QStorageInfo>
 #include <cstring>
+#include <cstdlib>
 #include <filesystem>
 
 // Security helper: check if resolved target is within baseDir (inclusive)
@@ -42,6 +43,16 @@ static bool isPathWithinDir(const fastring &target, const fastring &baseDir) {
     return targetStr.size() > baseStr.size()
         && targetStr.compare(0, baseStr.size(), baseStr) == 0
         && (targetStr[baseStr.size()] == '/' || targetStr[baseStr.size()] == '\\');
+}
+
+// realpath() is POSIX-only and missing on MSVC; _fullpath() is its closest
+// counterpart there (absolute, normalized path in a malloc'ed buffer).
+static char *resolveRealPath(const char *path) {
+#ifdef _WIN32
+    return _fullpath(nullptr, path, 0);
+#else
+    return realpath(path, nullptr);
+#endif
 }
 
 TransferJob::TransferJob(QObject *parent)
@@ -180,12 +191,12 @@ fastring TransferJob::getSaveFullpath(const fastring &rootdir, const fastring &f
     // isPathWithinDir 只做词法规范化（. / ..），realpath 额外处理符号链接
     // 以 DaemonConfig::getStorageDir() 作为可信根目录，而非客户端传来的 rootdir
     fastring allowedRoot = DaemonConfig::instance()->getStorageDir(_app_name);
-    char *realRoot = realpath(allowedRoot.c_str(), nullptr);
-    char *realFull = realpath(fullpath.c_str(), nullptr);
+    char *realRoot = resolveRealPath(allowedRoot.c_str());
+    char *realFull = resolveRealPath(fullpath.c_str());
     if (realFull == nullptr) {
         std::pair<fastring, fastring> pairs = path::split(fullpath);
         fastring parentDir = pairs.first;
-        realFull = realpath(parentDir.c_str(), nullptr);
+        realFull = resolveRealPath(parentDir.c_str());
     }
     if (realRoot != nullptr && realFull != nullptr) {
         fastring rootPath(realRoot);
