@@ -80,6 +80,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
     private var mIsMainServiceRunning = false
     private var mMainServiceBroadcastReceiver: BroadcastReceiver? = null
     private var mDefaults: Defaults? = null
+    private var isInitialNetworkCallback = true
 
     private val viewPager: ViewPager? by lazy { findViewById(R.id.vp_home_pager) }
     private var navigationAdapter: NavigationAdapter? = null
@@ -124,9 +125,17 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                 Log.d(TAG, "Connection changed: result $result, reason: $reason")
                 when (result) {
                     JniCooperation.CONNECT_STATUS_FALSE -> {
-                        toast(R.string.scan_activity_disconnect)
-                        start(this@HomeActivity, FirstFragment::class.java)
-                        initScreenMirroring()
+                        // 该回调由原生线程触发，涉及视图的操作必须切回主线程
+                        runOnUiThread {
+                            toast(R.string.scan_activity_disconnect)
+                            // 用切片段代替 start()：HomeActivity 不在栈顶时不会新起实例盖住子 Activity
+                            switchToScanPage()
+                            // WiFi 与移动网络互切会先断开与远端的连接，此时手机上仍有可用网络，
+                            // 停掉投屏会导致重连后必须重新发起投屏；只有真无网络才停
+                            if (::connectivityManager.isInitialized && connectivityManager.activeNetwork == null) {
+                                initScreenMirroring()
+                            }
+                        }
                     }
                 }
             }
@@ -248,10 +257,21 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                 // 网络连接可用时调用
                 runOnUiThread {
                     // 执行网络连接时的操作
-                    val hosts = MainService.getIPv4s()
-                    val host = hosts[0]
+                    // onAvailable 早于 DHCP 完成，接口可能还没拿到 IPv4（getIPv4s 返回空表），
+                    // 直接取下标会抛 IndexOutOfBoundsException 把进程打崩，这里按"暂无网络"处理
+                    val host = MainService.getIPv4s().firstOrNull()
+                    if (host == null) {
+                        Log.w(TAG, "network available but no IPv4 yet")
+                        mCooperation?.initNative("")
+                        viewModel.updateSelfIp(getString(R.string.scan_activity_no_network))
+                        return@runOnUiThread
+                    }
                     mCooperation?.initNative(host)
                     viewModel.updateSelfIp(host)
+                    if (!isInitialNetworkCallback) {
+                        switchToScanPage()
+                    }
+                    isInitialNetworkCallback = false
                 }
             }
 
@@ -261,6 +281,12 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                 runOnUiThread {
                     // 执行网络断开时的操作
                     viewModel.updateSelfIp(getString(R.string.scan_activity_no_network))
+                    switchToScanPage()
+                    if (connectivityManager.activeNetwork == null) {
+                        initScreenMirroring()
+                    }
+                    // 首次网络回调到此结束：无论先到的是 onAvailable 还是 onLost
+                    isInitialNetworkCallback = false
                 }
             }
         }
@@ -309,6 +335,22 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         super.onRestoreInstanceState(savedInstanceState)
         // 恢复当前 Fragment 索引位置
         switchFragment(savedInstanceState.getInt(INTENT_KEY_IN_FRAGMENT_INDEX))
+    }
+
+    /**
+     * 回到扫码页。
+     *
+     * 网络回调、连接断开回调等多条路径都会触发，统一在这里做生命周期与幂等检查：
+     * Activity 已销毁时不再操作视图，已经在扫码页时不重复切换。
+     */
+    private fun switchToScanPage() {
+        if (isFinishing || isDestroyed) {
+            return
+        }
+        if (viewPager?.currentItem == 0) {
+            return
+        }
+        switchFragment(0)
     }
 
     private fun switchFragment(fragmentIndex: Int) {
@@ -366,6 +408,14 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
         navigationAdapter?.setOnNavigationListener(null)
         unregisterReceiver(mMainServiceBroadcastReceiver)
+        // 不注销的话，Activity 销毁后网络回调仍会更新 ViewModel、切页面甚至停掉投屏服务
+        if (::connectivityManager.isInitialized && ::networkCallback.isInitialized) {
+            try {
+                connectivityManager.unregisterNetworkCallback(networkCallback)
+            } catch (e: IllegalArgumentException) {
+                Log.w(TAG, "networkCallback already unregistered: $e")
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
