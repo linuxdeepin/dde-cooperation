@@ -8,11 +8,26 @@
 #include "manager/secureconfig.h"
 #include "protoserver.h"
 
+#include <QElapsedTimer>
+#include <QRandomGenerator>
 #include <QSignalSpy>
 #include <QString>
+#include <QTest>
 #include "stub.h"
 
+#include <functional>
 #include <shared_mutex>
+
+namespace {
+bool waitFor(const std::function<bool()> &condition, int timeoutMs = 3000)
+{
+    QElapsedTimer timer;
+    timer.start();
+    while (!condition() && timer.elapsed() < timeoutMs)
+        QTest::qWait(10);
+    return condition();
+}
+}
 
 class SessionWorkerTest : public ::testing::Test {
 protected:
@@ -73,34 +88,46 @@ TEST_F(SessionWorkerTest, IsClientLoginNotLoggedIn)
 
 TEST_F(SessionWorkerTest, IsServerLoginedOnlyWithConnectedSession)
 {
-    const QString ip = QStringLiteral("10.0.0.9");
+    const QString ip = QStringLiteral("127.0.0.1");
     worker->updateLogin(ip, true);
     // Login state alone is not enough: the incoming session must exist.
     EXPECT_FALSE(worker->isServerLogined(ip));
 
     auto service = std::make_shared<AsioService>();
     service->Start();
-    auto server = std::make_shared<ProtoServer>(service, SecureConfig::serverContext(), 0);
-    ASSERT_TRUE(server->Start());
-    worker->_server = server;
-    {
-        std::unique_lock<std::shared_mutex> locker(server->_sessionids_lock);
-        server->_session_ids.insert(std::make_pair(ip.toStdString(),
-                                                   BaseKit::UUID::Sequential()));
-    }
 
-    EXPECT_TRUE(worker->isServerLogined(ip));
+    std::shared_ptr<ProtoServer> server;
+    int port = 0;
+    bool started = false;
+    for (int attempt = 0; attempt < 10 && !started; ++attempt) {
+        port = 19000 + QRandomGenerator::global()->bounded(1000);
+        server = std::make_shared<ProtoServer>(service, SecureConfig::serverContext(), port);
+        server->SetupReuseAddress(true);
+        server->SetupReusePort(true);
+        server->setCallbacks(worker);
+        started = server->Start();
+    }
+    ASSERT_TRUE(started);
+    worker->_server = server;
+
+    // Use a real connection instead of injecting a fake entry into the
+    // session table.
+    auto client = std::make_shared<ProtoClient>(service, SecureConfig::clientContext(),
+                                                "127.0.0.1", port);
+    client->ConnectAsync();
+    ASSERT_TRUE(waitFor([&] { return client->IsHandshaked(); }));
+    ASSERT_TRUE(waitFor([&] { return worker->isServerLogined(ip); }));
+
     EXPECT_FALSE(worker->isServerLogined(QStringLiteral("10.0.0.10")));
 
     // A failed login must not make the session reusable.
-    {
-        std::unique_lock<std::shared_mutex> locker(server->_sessionids_lock);
-        server->_session_ids.insert(std::make_pair(std::string("10.0.0.10"),
-                                                   BaseKit::UUID::Sequential()));
-    }
     worker->updateLogin(QStringLiteral("10.0.0.10"), false);
     EXPECT_FALSE(worker->isServerLogined(QStringLiteral("10.0.0.10")));
 
+    client->DisconnectAndStop();
+    server->Stop();
+    // TearDown stops the worker, which would stop the already stopped server.
+    worker->_server.reset();
     service->Stop();
 }
 

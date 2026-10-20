@@ -14,6 +14,8 @@
 
 #include <functional>
 
+namespace proto { struct OriginMessage; }
+
 class SessionWorker;
 class TransferWorker;
 class FileSizeCounter;
@@ -85,6 +87,7 @@ private:
     std::shared_ptr<TransferWorker> createTransWorker(const QString &jobid);
     void releaseTransWorker(const QString &jobid);
     void releaseTunnelJob(const QString &jobid);
+    void scheduleRpcRetry(const QString &target, const proto::OriginMessage &request, int remaining);
 
     struct TunnelJob {
         QString serviceId;

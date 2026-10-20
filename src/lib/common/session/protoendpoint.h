@@ -27,8 +27,9 @@ public:
     void sendDisRequest();
     proto::OriginMessage syncRequest(const std::string &target, const proto::OriginMessage &msg);
 
-    // async call request and with 3s timeout result callback
-    void asyncRequestWithHandler(const std::string &target, const proto::OriginMessage &request, RpcHandler resultHandler);
+    // async call request and with 3s timeout result callback. Returns false
+    // when the request could not be handed to the session at all.
+    bool asyncRequestWithHandler(const std::string &target, const proto::OriginMessage &request, RpcHandler resultHandler);
 
     // Send a one-way frame to a specific peer. It does not create a request
     // future and must not be routed through the multicast fallback.
@@ -50,7 +51,7 @@ protected:
     }
 
 private:
-    void asyncRequest(const std::string &target, const proto::OriginMessage &msg);
+    bool asyncRequest(const std::string &target, const proto::OriginMessage &msg);
     std::string getResponse(int32_t type);
 
 protected:

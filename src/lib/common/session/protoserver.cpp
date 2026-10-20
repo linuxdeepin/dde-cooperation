@@ -146,37 +146,32 @@ private:
 
 bool ProtoServer::hasConnected(const std::string &ip)
 {
-    // std::cout << "check hasConnected: " << ip << std::endl;
+    bool found = false;
 
     // Use consistent lock ordering to avoid deadlock: always acquire mapping_lock before session_lock
-    std::shared_lock<std::shared_mutex> mapping_locker(_ipmapping_lock);
-    std::shared_lock<std::shared_mutex> session_locker(_sessionids_lock);
+    {
+        std::shared_lock<std::shared_mutex> mapping_locker(_ipmapping_lock);
+        std::shared_lock<std::shared_mutex> session_locker(_sessionids_lock);
 
-    // print all session ids
-    // for (auto &session : _session_ids) {
-    //     std::cout << "session ip: " << session.first << " id: " << session.second << std::endl;
-    // }
+        found = _session_ids.find(ip) != _session_ids.end();
 
-    // First try to find by direct IP match
-    auto direct_it = _session_ids.find(ip);
-    if (direct_it != _session_ids.end()) {
-        std::cout << "hasConnected: " << ip << " true (direct match)" << std::endl;
-        return true;
-    }
-
-    // If not found, try to find via IP mapping (for NAT/Router scenarios)
-    // Check if this IP is a real IP that maps to a remote endpoint IP
-    auto real_to_remote = _real_to_remote_ip.find(ip);
-    if (real_to_remote != _real_to_remote_ip.end()) {
-        auto session_it = _session_ids.find(real_to_remote->second);
-        if (session_it != _session_ids.end()) {
-            std::cout << "hasConnected: " << ip << " true (via IP mapping: " << real_to_remote->second << ")" << std::endl;
-            return true;
+        // If not found, try via IP mapping (for NAT/Router scenarios)
+        if (!found) {
+            auto real_to_remote = _real_to_remote_ip.find(ip);
+            if (real_to_remote != _real_to_remote_ip.end())
+                found = _session_ids.find(real_to_remote->second) != _session_ids.end();
         }
     }
 
-    std::cout << "hasConnected: " << ip << " false" << std::endl;
-    return false;
+    if (!found) {
+        std::cout << "hasConnected: " << ip << " false" << std::endl;
+        return false;
+    }
+
+    // A registered session may still be completing its TLS handshake; onSend
+    // reports that as a send failure, which lets the caller retry.
+    std::cout << "hasConnected: " << ip << " true" << std::endl;
+    return true;
 }
 
 bool ProtoServer::startHeartbeat()
@@ -315,8 +310,9 @@ void ProtoServer::onConnected(std::shared_ptr<NetUtil::Asio::SSLSession>& sessio
 
     {
         std::unique_lock<std::shared_mutex> locker(_sessionids_lock);
-        // std::cout << "Server onConnected insert session ip: " << addr << " id: " << session->id() << std::endl;
-        _session_ids.insert(std::make_pair(addr, session->id()));
+        // Keep every session: a reconnect can register a new session before
+        // the old one is torn down. Routing always picks the newest one.
+        _session_ids.emplace(addr, session->id());
     }
 
     _callbacks->onStateChanged(RPC_CONNECTED, addr);
@@ -329,34 +325,45 @@ void ProtoServer::onDisconnected(std::shared_ptr<NetUtil::Asio::SSLSession>& ses
     auto search_uuid = session->id();
     std::string addr = "";
     std::string real_ip = "";
-    
+    bool replaced = false;
+
     // Use consistent lock ordering: mapping_lock before session_lock to avoid deadlock
     {
         std::unique_lock<std::shared_mutex> mapping_locker(_ipmapping_lock);
         std::unique_lock<std::shared_mutex> session_locker(_sessionids_lock);
-        
+
         // Find and remove session
         auto it = std::find_if(_session_ids.begin(), _session_ids.end(), [search_uuid](const std::pair<std::string, BaseKit::UUID>& pair) {
             return pair.second == search_uuid;
         });
 
         if (it != _session_ids.end()) {
-            //std::cout << "find connected by uuid, ip：" << it->first << std::endl;
             addr = it->first;
             _session_ids.erase(it);
-            
-            // Clean up IP mapping for this remote endpoint
-            auto remote_to_real = _remote_to_real_ip.find(addr);
-            if (remote_to_real != _remote_to_real_ip.end()) {
-                real_ip = remote_to_real->second;
-                _real_to_remote_ip.erase(real_ip);
-                _remote_to_real_ip.erase(addr);
-                std::cout << "Cleaned up IP mapping for disconnected session: " << real_ip << " -> " << addr << std::endl;
+
+            // A newer session for the same peer may already be connected.
+            // Keep its routing state and do not report the peer as gone.
+            replaced = _session_ids.find(addr) != _session_ids.end();
+
+            if (!replaced) {
+                // Clean up IP mapping for this remote endpoint
+                auto remote_to_real = _remote_to_real_ip.find(addr);
+                if (remote_to_real != _remote_to_real_ip.end()) {
+                    real_ip = remote_to_real->second;
+                    _real_to_remote_ip.erase(real_ip);
+                    _remote_to_real_ip.erase(addr);
+                    std::cout << "Cleaned up IP mapping for disconnected session: " << real_ip << " -> " << addr << std::endl;
+                }
             }
         } else {
             std::cout << "did not find connected id:" << search_uuid << std::endl;
             return;
         }
+    }
+
+    if (replaced) {
+        std::cout << "Session superseded, keep connection state for: " << addr << std::endl;
+        return;
     }
 
     _callbacks->onStateChanged(RPC_DISCONNECTED, addr);
@@ -372,40 +379,51 @@ size_t ProtoServer::onSend(const void *data, size_t size)
         return size;
     }
 
-    std::shared_ptr<NetUtil::Asio::SSLSession> session = nullptr;
     std::string target_ip = _active_target;
+    _active_target.clear();
 
-    // First try direct session lookup
+    BaseKit::UUID sessionId;
+    bool found = false;
+
+    // Use consistent lock ordering: mapping_lock before session_lock. Prefer
+    // the newest session when a reconnecting peer has both an old and a new
+    // one registered.
     {
-        std::shared_lock<std::shared_mutex> session_locker(_sessionids_lock);
-        auto session_it = _session_ids.find(target_ip);
-        if (session_it != _session_ids.end()) {
-            session = FindSession(session_it->second);
-        }
-    }
-
-    // If not found, try via IP mapping (for NAT/Router scenarios)
-    if (!session) {
-        // Use consistent lock ordering: mapping_lock before session_lock
         std::shared_lock<std::shared_mutex> mapping_locker(_ipmapping_lock);
-        auto real_to_remote = _real_to_remote_ip.find(target_ip);
-        if (real_to_remote != _real_to_remote_ip.end()) {
-            std::string remote_ip = real_to_remote->second;
-            std::shared_lock<std::shared_mutex> session_locker(_sessionids_lock);
-            auto session_it = _session_ids.find(remote_ip);
-            if (session_it != _session_ids.end()) {
-                session = FindSession(session_it->second);
-                std::cout << "Found session via IP mapping: " << target_ip << " -> " << remote_ip << std::endl;
-            }
+        std::shared_lock<std::shared_mutex> session_locker(_sessionids_lock);
+
+        auto newestFor = [this](const std::string &addr, BaseKit::UUID *id) {
+            auto range = _session_ids.equal_range(addr);
+            if (range.first == range.second)
+                return false;
+            auto newest = range.second;
+            --newest;
+            *id = newest->second;
+            return true;
+        };
+
+        found = newestFor(target_ip, &sessionId);
+
+        // If not found, try via IP mapping (for NAT/Router scenarios)
+        if (!found) {
+            auto real_to_remote = _real_to_remote_ip.find(target_ip);
+            if (real_to_remote != _real_to_remote_ip.end())
+                found = newestFor(real_to_remote->second, &sessionId);
         }
     }
 
-    if (session) {
-        session->SendAsync(data, size);
-    } else {
+    if (!found) {
         std::cout << "No session found for target: " << target_ip << std::endl;
+        return 0;
     }
 
-    _active_target = "";
-    return size;
+    auto session = FindSession(sessionId);
+    if (!session || !session->IsHandshaked()) {
+        std::cout << "Session not ready for target: " << target_ip << std::endl;
+        return 0;
+    }
+
+    // Report failure instead of pretending the frame was delivered; the FBE
+    // request then fails its future instead of hanging until timeout.
+    return session->SendAsync(data, size) ? size : 0;
 }

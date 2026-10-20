@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -40,9 +40,10 @@ private:
     void onHeartbeatTimeout(bool canceled);
 
 private:
-    // <ip, sessionid>
+    // <ip, sessionid>. A reconnecting peer can briefly have both the old and
+    // the new session, so keep all of them and route to the newest one.
     std::shared_mutex _sessionids_lock;
-    std::map<std::string, BaseKit::UUID> _session_ids;
+    std::multimap<std::string, BaseKit::UUID> _session_ids;
 
     // IP mapping for NAT/Router scenarios: <real_ip, remote_endpoint_ip>
     std::shared_mutex _ipmapping_lock;

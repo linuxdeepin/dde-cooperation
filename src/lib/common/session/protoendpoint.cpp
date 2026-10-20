@@ -38,9 +38,10 @@ proto::OriginMessage ProtoEndpoint::syncRequest(const std::string &target, const
     return proto::OriginMessage();
 }
 
-void ProtoEndpoint::asyncRequestWithHandler(const std::string &target, const proto::OriginMessage &request, RpcHandler resultHandler)
+bool ProtoEndpoint::asyncRequestWithHandler(const std::string &target, const proto::OriginMessage &request, RpcHandler resultHandler)
 {
-    asyncRequest(target, request);  // 发送异步请求
+    if (!asyncRequest(target, request))  // 发送异步请求
+        return false;
 
     int32_t type = request.mask;  // 获取请求的类型
     // 启动一个新的线程来处理结果
@@ -51,10 +52,11 @@ void ProtoEndpoint::asyncRequestWithHandler(const std::string &target, const pro
 
     // 在启动的新线程中处理结果，主线程可以继续执行其他任务
     handlerThread.detach();
+    return true;
 }
 
 
-void ProtoEndpoint::asyncRequest(const std::string &target, const proto::OriginMessage &msg)
+bool ProtoEndpoint::asyncRequest(const std::string &target, const proto::OriginMessage &msg)
 {
     int32_t type = msg.mask;
     std::future<proto::OriginMessage> futureResponse;
@@ -69,8 +71,24 @@ void ProtoEndpoint::asyncRequest(const std::string &target, const proto::OriginM
         clearActiveTarget();
     }
 
+    // request() fails synchronously when the session cannot send (for
+    // example it is not handshaked or the target lookup failed). Surface that
+    // so the caller can retry instead of silently dropping the RPC.
+    if (futureResponse.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready) {
+        try {
+            const auto early = futureResponse.get();
+            // Preserve a (theoretical) immediate response.
+            std::promise<proto::OriginMessage> ready;
+            ready.set_value(early);
+            futureResponse = ready.get_future();
+        } catch (const std::exception &) {
+            return false;
+        }
+    }
+
     std::lock_guard<std::mutex> locker(_lock);
     _responses_by_type.insert(std::make_pair(type, PendingResponse { std::move(futureResponse), msg.id }));
+    return true;
 }
 
 void ProtoEndpoint::sendMessage(const std::string &target, int32_t mask, const std::string &payload)

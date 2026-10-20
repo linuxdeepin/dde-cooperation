@@ -15,6 +15,8 @@ void ProtoClient::DisconnectAndStop()
 
 bool ProtoClient::hasConnected(const std::string &ip)
 {
+    // A stale host is tolerated here: onSend returns 0 when the session is
+    // not handshaked, and the caller then retries or falls back.
     return ip == connectedHost();
 }
 

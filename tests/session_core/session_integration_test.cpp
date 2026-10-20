@@ -10,6 +10,7 @@
 #include "manager/secureconfig.h"
 #include "session.h"
 
+#include <atomic>
 #include <memory>
 #include <thread>
 #include <chrono>
@@ -22,13 +23,15 @@ public:
     int lastState = -999;
     std::string lastMsg;
     int msgCount = 0;
+    bool silent = false;
 
     void onReceivedMessage(const proto::OriginMessage &req, proto::OriginMessage *resp) override
     {
         msgCount++;
         resp->id = req.id;
         resp->mask = req.mask;
-        resp->json_msg = R"({"reply":"ok"})";
+        if (!silent)
+            resp->json_msg = R"({"reply":"ok"})";
     }
 
     bool onStateChanged(int state, std::string &msg) override
@@ -196,20 +199,40 @@ TEST_F(SessionIntegrationTest, ClientSendDisRequestNoConnection)
 
 TEST_F(SessionIntegrationTest, AsyncRequestWithHandlerTimeout)
 {
-    auto context = SecureConfig::clientContext();
-    ProtoClient client(service, context, "127.0.0.1", 16009);
-    client.setCallbacks(cb);
+    // A real session whose handler deliberately sends no response: the
+    // request is delivered, but the caller must still get its timeout result.
+    auto serverCb = std::make_shared<TestCallback>();
+    serverCb->silent = true;
+    auto server = std::make_shared<ProtoServer>(service, SecureConfig::serverContext(), 16009);
+    server->SetupReuseAddress(true);
+    server->SetupReusePort(true);
+    server->setCallbacks(serverCb);
+    ASSERT_TRUE(server->Start());
+
+    auto client = std::make_shared<ProtoClient>(service, SecureConfig::clientContext(),
+                                                "127.0.0.1", 16009);
+    client->setCallbacks(cb);
+    client->ConnectAsync();
+    for (int i = 0; i < 300 && !client->IsHandshaked(); ++i)
+        std::this_thread::sleep_for(10ms);
+    ASSERT_TRUE(client->IsHandshaked());
 
     proto::OriginMessage msg;
     msg.mask = 1000;
     msg.json_msg = R"({"test":"async"})";
 
-    bool called = false;
-    client.asyncRequestWithHandler("192.168.1.1", msg, [&](int32_t type, const std::string &) {
-        called = true;
-    });
-    std::this_thread::sleep_for(std::chrono::milliseconds(3500));
-    EXPECT_TRUE(called);
+    auto called = std::make_shared<std::atomic<bool>>(false);
+    EXPECT_TRUE(client->asyncRequestWithHandler(
+            "127.0.0.1", msg, [called](int32_t, const std::string &) {
+                called->store(true);
+            }));
+
+    for (int i = 0; i < 400 && !called->load(); ++i)
+        std::this_thread::sleep_for(10ms);
+    EXPECT_TRUE(called->load());
+
+    client->DisconnectAndStop();
+    server->Stop();
 }
 
 TEST_F(SessionIntegrationTest, PendingResponsesInitiallyEmpty)

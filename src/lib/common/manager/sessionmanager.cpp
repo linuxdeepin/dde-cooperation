@@ -14,9 +14,12 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QCoreApplication>
+#include <QTimer>
 #include <QUuid>
 
 namespace {
+constexpr int kRpcRetryCount = 3;
+constexpr int kRpcRetryDelayMs = 300;
 // Transfer services are generated as random UUIDs. Restricting the accepted
 // format keeps a peer from naming a reserved service such as "barrier" and
 // stopping that forward when the transfer is released.
@@ -368,7 +371,28 @@ void SessionManager::sendRpcRequest(const QString &ip, int type, const QString &
     DLOG << "sendRpcRequest " << request;
 #endif
     WLOG << "sendRpcRequest " << request;
-    _session_worker->sendAsyncRequest(ip, request);
+    if (!_session_worker->sendAsyncRequest(ip, request))
+        scheduleRpcRetry(ip, request, kRpcRetryCount);
+}
+
+void SessionManager::scheduleRpcRetry(const QString &ip, const proto::OriginMessage &request,
+                                      int remaining)
+{
+    if (remaining <= 0) {
+        WLOG << "Giving up RPC after retries, target:" << ip.toStdString()
+             << "mask:" << request.mask;
+        return;
+    }
+
+    // No endpoint claimed the target, so nothing was sent. The session may be
+    // reconnecting or its IP mapping may not be ready yet; retry briefly
+    // instead of dropping the request silently.
+    WLOG << "RPC target not connected, retry in" << kRpcRetryDelayMs
+         << "ms, target:" << ip.toStdString() << "mask:" << request.mask;
+    QTimer::singleShot(kRpcRetryDelayMs, this, [this, ip, request, remaining] {
+        if (_session_worker && !_session_worker->sendAsyncRequest(ip, request))
+            scheduleRpcRetry(ip, request, remaining - 1);
+    });
 }
 
 void SessionManager::sendTunnelMessage(const QString &target, int mask, const QByteArray &payload)

@@ -395,7 +395,8 @@ bool SessionWorker::sendAsyncRequest(const QString &target, const proto::OriginM
         return true;
     }
 
-    DLOG << "Failed to send async request to target:" << target.toStdString();
+    WLOG << "Failed to send async request to target:" << target.toStdString()
+         << "mask:" << request.mask;
     return false;
 }
 
@@ -586,12 +587,11 @@ bool SessionWorker::doAsyncRequest(T *endpoint, const std::string& target, const
 {
     if (endpoint && endpoint->hasConnected(target)) {
         DLOG << "doAsyncRequest to " << target;
-        endpoint->asyncRequestWithHandler(target, request, [this](int32_t type, const std::string &response) {
+        return endpoint->asyncRequestWithHandler(target, request, [this](int32_t type, const std::string &response) {
             DLOG << "doAsyncRequest callback: " << type << " " << response;
             QString res = QString::fromStdString(response);
             emit onRpcResult(type, res);
         });
-        return true;
     }
     return false;
 }
