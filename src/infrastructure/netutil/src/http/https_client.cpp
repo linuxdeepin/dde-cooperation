@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -70,6 +70,7 @@ std::future<HTTPResponse> HTTPSClientEx::SendRequest(const HTTPRequest& request,
         _timeout = std::make_shared<Asio::Timer>(service());
 
     _promise = std::promise<HTTPResponse>();
+    _promise_pending.store(true);
     _request = request;
 
     // Check if the HTTP request is valid
@@ -135,7 +136,14 @@ void HTTPSClientEx::onDisconnected()
     if (_timeout)
         _timeout->Cancel();
 
+    // Give a partially received response a chance to complete first.
     HTTPSClient::onDisconnected();
+
+    // The connection dropped while the request was still pending and the
+    // timeout timer above is now canceled: nothing else would ever resolve
+    // the future. Fail it so synchronous callers (FileClient::downloadFile)
+    // do not block forever.
+    SetPromiseError("Disconnected!");
 }
 
 void HTTPSClientEx::onReceivedResponse(const HTTPResponse& response)
@@ -158,12 +166,20 @@ void HTTPSClientEx::onReceivedResponseError(const HTTPResponse& response, const 
 
 void HTTPSClientEx::SetPromiseValue(const HTTPResponse& response)
 {
+    // A late response after a timeout/disconnect must not complete the
+    // promise twice, which throws std::future_error on the IO thread.
+    if (!_promise_pending.exchange(false))
+        return;
+
     _promise.set_value(response);
     _request.Clear();
 }
 
 void HTTPSClientEx::SetPromiseError(const std::string& error)
 {
+    if (!_promise_pending.exchange(false))
+        return;
+
     _promise.set_exception(std::make_exception_ptr(std::runtime_error(error)));
     _request.Clear();
 }

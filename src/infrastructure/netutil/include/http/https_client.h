@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,6 +11,7 @@
 #include "asio/ssl_client.h"
 #include "asio/timer.h"
 
+#include <atomic>
 #include <future>
 
 namespace NetUtil {
@@ -272,6 +273,10 @@ private:
     std::shared_ptr<Asio::TCPResolver> _resolver;
     std::shared_ptr<Asio::Timer> _timeout;
     std::promise<HTTPResponse> _promise;
+    // Guards the promise against being completed twice: the timeout handler
+    // and a disconnect can race, and a duplicate set_value/set_exception
+    // throws std::future_error on the IO thread.
+    std::atomic<bool> _promise_pending { false };
 
     void SetPromiseValue(const HTTPResponse& response);
     void SetPromiseError(const std::string& error);
