@@ -10,6 +10,9 @@
 
 #include <QObject>
 #include <QByteArray>
+#include <QHash>
+
+#include <functional>
 
 class SessionWorker;
 class TransferWorker;
@@ -31,9 +34,27 @@ public:
     bool sessionPing(QString ip, int port);
     int sessionConnect(QString ip, int port, QString password);
     void sessionDisconnect(QString ip);
-    void sendFiles(QString &ip, int port, QStringList paths);
-    void recvFiles(QString &ip, int port, QString &token, QStringList names);
+    // useTunnel makes the file server listen on loopback only and announces a
+    // temporary tunnel service instead of a directly reachable endpoint.
+    void sendFiles(QString &ip, int port, QStringList paths, bool useTunnel = false);
+    // jobid identifies the transfer worker; it defaults to ip and is kept
+    // separate when the data connection itself is a loopback tunnel port.
+    bool recvFiles(QString &ip, int port, QString &token, QStringList names,
+                   const QString &jobid = QString());
     void cancelSyncFile(const QString &ip, const QString &reason = "");
+
+    // Tunnel bridge used by transfer workers. An empty handler means the
+    // tunnel is unavailable and transfers fall back to the direct endpoint.
+    using TunnelRegisterHandler = std::function<bool(const QString &serviceId, quint16 port)>;
+    using TunnelUnregisterHandler = std::function<void(const QString &serviceId)>;
+    using TunnelForwardHandler = std::function<quint16(const QString &serviceId,
+                                                       const QString &peerIp)>;
+    using TunnelStopForwardHandler = std::function<void(const QString &serviceId)>;
+    void setTunnelHandlers(TunnelRegisterHandler registerService,
+                           TunnelUnregisterHandler unregisterService,
+                           TunnelForwardHandler startForward,
+                           TunnelStopForwardHandler stopForward);
+    void clearTunnelHandlers();
 
     void sendRpcRequest(const QString &target, int type, const QString &reqJson);
 
@@ -51,7 +72,8 @@ signals:
     void tunnelMessageReceived(int mask, const QByteArray &payload, const QString &remote);
 
 public slots:
-    void handleTransData(const QString endpoint, const QStringList nameVector);
+    void handleTransData(const QString endpoint, const QStringList nameVector,
+                         bool tunnel = false, const QString &service = QString());
     void handleTransCount(const QString names, quint64 size);
     void handleCancelTrans(const QString jobid, const QString reason);
     void handleFileCounted(const QString ip, const QStringList paths, quint64 totalSize);
@@ -62,6 +84,12 @@ public slots:
 private:
     std::shared_ptr<TransferWorker> createTransWorker(const QString &jobid);
     void releaseTransWorker(const QString &jobid);
+    void releaseTunnelJob(const QString &jobid);
+
+    struct TunnelJob {
+        QString serviceId;
+        bool sender { false };
+    };
 
 private:
     // session worker
@@ -75,6 +103,13 @@ private:
 
     QString _save_root = "";
     QString _save_dir = "";
+
+    // jobid -> temporary tunnel service owned by that transfer
+    QHash<QString, TunnelJob> _tunnel_jobs;
+    TunnelRegisterHandler _tunnel_register;
+    TunnelUnregisterHandler _tunnel_unregister;
+    TunnelForwardHandler _tunnel_start_forward;
+    TunnelStopForwardHandler _tunnel_stop_forward;
 };
 
 #endif // SESSIONMANAGER_H

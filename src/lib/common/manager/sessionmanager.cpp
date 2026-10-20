@@ -14,6 +14,35 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QCoreApplication>
+#include <QUuid>
+
+namespace {
+// Transfer services are generated as random UUIDs. Restricting the accepted
+// format keeps a peer from naming a reserved service such as "barrier" and
+// stopping that forward when the transfer is released.
+bool isTransferServiceId(const QString &serviceId)
+{
+    if (serviceId.size() != 36)
+        return false;
+
+    for (int i = 0; i < serviceId.size(); ++i) {
+        if (i == 8 || i == 13 || i == 18 || i == 23) {
+            if (serviceId.at(i) != QLatin1Char('-'))
+                return false;
+            continue;
+        }
+
+        const ushort ch = serviceId.at(i).unicode();
+        const bool hex = (ch >= '0' && ch <= '9')
+                || (ch >= 'a' && ch <= 'f')
+                || (ch >= 'A' && ch <= 'F');
+        if (!hex)
+            return false;
+    }
+
+    return true;
+}
+}   // namespace
 
 SessionManager::SessionManager(QObject *parent) : QObject(parent)
 {
@@ -58,12 +87,43 @@ SessionManager::~SessionManager()
         it = _trans_workers.erase(it);
     }
     _trans_workers.clear();
+
+    // Drop the temporary tunnel listeners/services owned by transfer jobs.
+    for (auto job = _tunnel_jobs.cbegin(); job != _tunnel_jobs.cend(); ++job) {
+        if (job->sender) {
+            if (_tunnel_unregister)
+                _tunnel_unregister(job->serviceId);
+        } else if (_tunnel_stop_forward) {
+            _tunnel_stop_forward(job->serviceId);
+        }
+    }
+    _tunnel_jobs.clear();
 }
 
 void SessionManager::setSessionExtCallback(ExtenMessageHandler cb)
 {
     DLOG << "setSessionExtCallback";
     _session_worker->setExtMessageHandler(cb);
+}
+
+void SessionManager::setTunnelHandlers(TunnelRegisterHandler registerService,
+                                       TunnelUnregisterHandler unregisterService,
+                                       TunnelForwardHandler startForward,
+                                       TunnelStopForwardHandler stopForward)
+{
+    _tunnel_register = std::move(registerService);
+    _tunnel_unregister = std::move(unregisterService);
+    _tunnel_start_forward = std::move(startForward);
+    _tunnel_stop_forward = std::move(stopForward);
+}
+
+void SessionManager::clearTunnelHandlers()
+{
+    _tunnel_register = nullptr;
+    _tunnel_unregister = nullptr;
+    _tunnel_start_forward = nullptr;
+    _tunnel_stop_forward = nullptr;
+    _tunnel_jobs.clear();
 }
 
 void SessionManager::updatePin(QString code)
@@ -173,21 +233,62 @@ void SessionManager::releaseTransWorker(const QString &jobid)
     } else {
         WLOG << "Worker not found for job id: " << jobid.toStdString();
     }
+
+    releaseTunnelJob(jobid);
 }
 
-void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
+void SessionManager::releaseTunnelJob(const QString &jobid)
 {
-    LOG << "sendFiles: " << ip.toStdString();
+    auto it = _tunnel_jobs.find(jobid);
+    if (it == _tunnel_jobs.end())
+        return;
+
+    const TunnelJob job = it.value();
+    _tunnel_jobs.erase(it);
+
+    if (job.sender) {
+        DLOG << "Releasing tunnel service:" << job.serviceId.toStdString();
+        if (_tunnel_unregister)
+            _tunnel_unregister(job.serviceId);
+    } else {
+        DLOG << "Stopping transfer tunnel forward:" << job.serviceId.toStdString();
+        if (_tunnel_stop_forward)
+            _tunnel_stop_forward(job.serviceId);
+    }
+}
+
+void SessionManager::sendFiles(QString &ip, int port, QStringList paths, bool useTunnel)
+{
+    LOG << "sendFiles: " << ip.toStdString() << "tunnel:" << useTunnel;
     std::vector<std::string> name_vector;
     std::string token;
 
+    // Register the reverse tunnel service before the file server binds so a
+    // failure can still fall back to the directly reachable endpoint.
+    bool tunnelActive = useTunnel && _tunnel_register && _tunnel_unregister;
+    QString serviceId;
+    if (tunnelActive) {
+        serviceId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        if (!_tunnel_register(serviceId, static_cast<quint16>(port))) {
+            WLOG << "Failed to register transfer tunnel service, using direct endpoint";
+            tunnelActive = false;
+            serviceId.clear();
+        }
+    }
+
     auto worker = createTransWorker(ip);
+    worker->setServerLoopback(tunnelActive);
     bool success = worker->tryStartSend(paths, port, &name_vector, &token);
     if (!success) {
         ELOG << "Fail to send size: " << paths.size() << " at:" << port;
+        if (tunnelActive && _tunnel_unregister)
+            _tunnel_unregister(serviceId);
         return;
     }
     _trans_workers[ip] = worker;
+
+    if (tunnelActive)
+        _tunnel_jobs.insert(ip, TunnelJob { serviceId, true });
 
     QString localIp = deepin_cross::CommonUitls::getFirstIp().data();
     QString accesstoken = QString::fromStdString(token);
@@ -202,6 +303,8 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
     req.endpoint = endpoint.toStdString();
     req.flag = needCount; // many folders
     req.size = total; // unkown size
+    req.tunnel = tunnelActive;
+    req.service = serviceId.toStdString();
 
     QString jsonMsg = req.as_json().serialize().c_str();
     sendRpcRequest(ip, REQ_TRANS_DATAS, jsonMsg);
@@ -213,17 +316,19 @@ void SessionManager::sendFiles(QString &ip, int port, QStringList paths)
     }
 }
 
-void SessionManager::recvFiles(QString &ip, int port, QString &token, QStringList names)
+bool SessionManager::recvFiles(QString &ip, int port, QString &token, QStringList names,
+                               const QString &jobid)
 {
-    
-    auto worker = createTransWorker(ip);
+    const QString id = jobid.isEmpty() ? ip : jobid;
+    auto worker = createTransWorker(id);
     bool success = worker->tryStartReceive(names, ip, port, token, _save_dir);
     if (!success) {
         ELOG << "Fail to recv name size: " << names.size() << " at:" << ip.toStdString();
-        return;
+        return false;
     }
 
-    _trans_workers[ip] = worker;
+    _trans_workers[id] = worker;
+    return true;
 }
 
 void SessionManager::cancelSyncFile(const QString &ip, const QString &reason)
@@ -268,18 +373,37 @@ void SessionManager::sendTunnelMessage(const QString &target, int mask, const QB
     _session_worker->sendTunnelMessage(target, mask, payload);
 }
 
-void SessionManager::handleTransData(const QString endpoint, const QStringList nameVector)
+void SessionManager::handleTransData(const QString endpoint, const QStringList nameVector,
+                                     bool tunnel, const QString &service)
 {
-    DLOG << "handleTransData from: " << endpoint.toStdString();
+    DLOG << "handleTransData from: " << endpoint.toStdString() << "tunnel:" << tunnel;
     QStringList parts = endpoint.split(":");
-    if (parts.length() == 3) {
-        DLOG << "Handling transfer data for endpoint:" << endpoint.toStdString();
-        // 现在ip、port和token中分别包含了拆解后的内容
-        recvFiles(parts[0], parts[1].toInt(), parts[2], nameVector);
-    } else {
+    if (parts.length() != 3) {
         // 错误处理，确保parts包含了3个元素
         WLOG << "endpoint format should be: ip:port:token";
+        return;
     }
+
+    QString host = parts[0];
+    int port = parts[1].toInt();
+    QString token = parts[2];
+
+    if (tunnel && isTransferServiceId(service) && _tunnel_start_forward && _tunnel_stop_forward) {
+        const quint16 localPort = _tunnel_start_forward(service, host);
+        if (localPort != 0) {
+            DLOG << "Receiving through tunnel service" << service.toStdString()
+                 << "on 127.0.0.1:" << localPort;
+            QString localIp = QStringLiteral("127.0.0.1");
+            _tunnel_jobs.insert(host, TunnelJob { service, false });
+            if (!recvFiles(localIp, localPort, token, nameVector, host))
+                releaseTunnelJob(host);
+            return;
+        }
+        WLOG << "Failed to start transfer tunnel, falling back to direct endpoint";
+    }
+
+    // 现在ip、port和token中分别包含了拆解后的内容
+    recvFiles(host, port, token, nameVector);
 }
 
 void SessionManager::handleTransCount(const QString names, quint64 size)

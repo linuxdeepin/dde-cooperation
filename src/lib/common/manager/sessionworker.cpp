@@ -154,7 +154,8 @@ void SessionWorker::onReceivedMessage(const proto::OriginMessage &request, proto
         res.size = 0;//TransferHelper::getRemainSize();
         response->json_msg = res.as_json().serialize();
 
-        emit onTransData(endpoint, nameList);
+        emit onTransData(endpoint, nameList, req.tunnel,
+                         QString::fromStdString(req.service));
 
         uint64_t total = req.size;
         if (total > 0) {

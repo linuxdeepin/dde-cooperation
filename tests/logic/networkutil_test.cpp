@@ -348,6 +348,32 @@ TEST(TransDataMessageTest, SerializeRoundTrip)
     EXPECT_EQ(dst.names[1], src.names[1]);
 }
 
+TEST(TransDataMessageTest, TunnelFieldsRoundTrip)
+{
+    TransDataMessage src;
+    src.id = "peer";
+    src.names = { "a.txt" };
+    src.endpoint = "10.0.0.2:7000:tok";
+    src.flag = false;
+    src.size = 12;
+    src.tunnel = true;
+    src.service = "2f8a6a44-7a2e-4b38-a0e5-2a7d1b8a7c11";
+
+    TransDataMessage dst;
+    dst.from_json(parseJson(src.as_json().serialize()));
+    EXPECT_TRUE(dst.tunnel);
+    EXPECT_EQ(dst.service, src.service);
+    EXPECT_EQ(dst.endpoint, src.endpoint);
+}
+
+TEST(TransDataMessageTest, OldPeerWithoutTunnelFields)
+{
+    TransDataMessage dst;
+    dst.from_json(parseJson(R"({"id":"peer","token":"1.2.3.4:9:tok","flag":false,"size":0,"names":[]})"));
+    EXPECT_FALSE(dst.tunnel);
+    EXPECT_TRUE(dst.service.empty());
+}
+
 TEST(TransDataMessageTest, EmptyNamesRoundTrip)
 {
     TransDataMessage src;

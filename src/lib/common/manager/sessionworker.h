@@ -49,7 +49,8 @@ public:
     QString getRealIP() const;
 
 signals:
-    void onTransData(const QString endpoint, const QStringList nameVector);
+    void onTransData(const QString endpoint, const QStringList nameVector,
+                     bool tunnel, const QString service);
     void onTransCount(const QString names, quint64 size);
     void onCancelJob(const QString jobid, const QString reason);
     void onConnectChanged(int result, QString reason);

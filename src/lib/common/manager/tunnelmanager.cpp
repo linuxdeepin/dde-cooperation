@@ -56,11 +56,13 @@ void TunnelManager::setSendHandler(SendHandler handler)
     _send = std::move(handler);
 }
 
-void TunnelManager::registerService(const QString &serviceId, const QString &host, quint16 port)
+bool TunnelManager::registerService(const QString &serviceId, const QString &host, quint16 port)
 {
-    if (serviceId.isEmpty() || host.isEmpty() || port == 0)
-        return;
+    if (serviceId.isEmpty() || serviceId.size() > kMaxServiceIdLength
+        || host.isEmpty() || port == 0)
+        return false;
     _services.insert(serviceId, Service { host, port });
+    return true;
 }
 
 void TunnelManager::unregisterService(const QString &serviceId)
@@ -82,54 +84,78 @@ void TunnelManager::setPeer(const QString &peerIp)
 
 quint16 TunnelManager::startLocalForward(const QString &serviceId)
 {
-    if (serviceId.isEmpty() || _peerIp.isEmpty()) {
+    if (serviceId.isEmpty() || serviceId.size() > kMaxServiceIdLength
+        || _peerIp.isEmpty()) {
         WLOG << "TunnelManager: cannot start forward, service or peer is empty";
         emit localForwardFailed(serviceId, "no peer");
         return 0;
     }
 
-    if (_server && _server->isListening() && _forwardService == serviceId)
-        return _localPort;
+    auto existing = _forwards.find(serviceId);
+    if (existing != _forwards.end()) {
+        if (existing->server && existing->server->isListening())
+            return existing->port;
+        // A stale entry without a live listener: drop it and start over.
+        stopLocalForward(serviceId);
+    }
 
-    if (_server)
-        stopLocalForward();
+    if (_forwards.size() >= kMaxForwards) {
+        WLOG << "TunnelManager: too many local forwards, reject service:"
+             << serviceId.toStdString();
+        emit localForwardFailed(serviceId, "too many forwards");
+        return 0;
+    }
 
-    _server = new QTcpServer(this);
-    connect(_server, &QTcpServer::newConnection, this, &TunnelManager::acceptLocalConnection);
-    if (!_server->listen(QHostAddress::LocalHost, 0)) {
-        const QString error = _server->errorString();
+    auto server = new QTcpServer(this);
+    connect(server, &QTcpServer::newConnection, this, [this, serviceId] {
+        acceptLocalConnection(serviceId);
+    });
+    if (!server->listen(QHostAddress::LocalHost, 0)) {
+        const QString error = server->errorString();
         WLOG << "TunnelManager: listen failed:" << error.toStdString();
-        _server->deleteLater();
-        _server = nullptr;
+        server->deleteLater();
         emit localForwardFailed(serviceId, error);
         return 0;
     }
 
-    _forwardService = serviceId;
-    _localPort = _server->serverPort();
+    const quint16 port = server->serverPort();
+    _forwards.insert(serviceId, Forward { server, port });
     DLOG << "TunnelManager: forwarding service" << serviceId.toStdString()
-         << "on 127.0.0.1:" << _localPort;
-    emit localForwardReady(serviceId, _localPort);
-    return _localPort;
+         << "on 127.0.0.1:" << port;
+    emit localForwardReady(serviceId, port);
+    return port;
+}
+
+void TunnelManager::stopLocalForward(const QString &serviceId)
+{
+    auto it = _forwards.find(serviceId);
+    if (it == _forwards.end())
+        return;
+
+    QTcpServer *server = it->server;
+    _forwards.erase(it);
+
+    if (server) {
+        server->disconnect(this);
+        server->close();
+        server->deleteLater();
+    }
+
+    // Only the streams belonging to this service are useless without its
+    // listener. Other services keep forwarding.
+    const auto ids = _streams.keys();
+    for (auto id : ids) {
+        Stream *stream = _streams.value(id);
+        if (stream && !stream->dialer && stream->serviceId == serviceId)
+            destroyStream(id, "forward stopped", true);
+    }
 }
 
 void TunnelManager::stopLocalForward()
 {
-    if (_server) {
-        _server->close();
-        _server->deleteLater();
-        _server = nullptr;
-    }
-    _localPort = 0;
-    _forwardService.clear();
-
-    // Local forward streams are useless without the listener.
-    const auto ids = _streams.keys();
-    for (auto id : ids) {
-        Stream *stream = _streams.value(id);
-        if (stream && !stream->dialer)
-            destroyStream(id, "forward stopped", true);
-    }
+    const auto services = _forwards.keys();
+    for (const auto &serviceId : services)
+        stopLocalForward(serviceId);
 }
 
 void TunnelManager::stopAll()
@@ -145,16 +171,39 @@ void TunnelManager::stopAll()
 
 bool TunnelManager::isForwarding() const
 {
-    return _server && _server->isListening() && _localPort != 0;
+    for (const auto &forward : _forwards) {
+        if (forward.server && forward.server->isListening() && forward.port != 0)
+            return true;
+    }
+    return false;
 }
 
-void TunnelManager::acceptLocalConnection()
+quint16 TunnelManager::localPort() const
 {
-    if (!_server)
+    for (const auto &forward : _forwards) {
+        if (forward.server && forward.server->isListening())
+            return forward.port;
+    }
+    return 0;
+}
+
+quint16 TunnelManager::localPort(const QString &serviceId) const
+{
+    const auto it = _forwards.constFind(serviceId);
+    if (it == _forwards.constEnd())
+        return 0;
+    return it->port;
+}
+
+void TunnelManager::acceptLocalConnection(const QString &serviceId)
+{
+    const auto forward = _forwards.constFind(serviceId);
+    if (forward == _forwards.constEnd() || !forward->server)
         return;
 
-    while (_server->hasPendingConnections()) {
-        QTcpSocket *socket = _server->nextPendingConnection();
+    QTcpServer *server = forward->server;
+    while (server->hasPendingConnections()) {
+        QTcpSocket *socket = server->nextPendingConnection();
         if (!socket)
             break;
 
@@ -163,7 +212,7 @@ void TunnelManager::acceptLocalConnection()
             _nextStreamId = 1;
 
         const QString token = makeToken();
-        Stream *stream = createStream(id, _forwardService, token, false);
+        Stream *stream = createStream(id, serviceId, token, false);
         stream->sock = socket;
         socket->setParent(this);
         socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
@@ -175,8 +224,8 @@ void TunnelManager::acceptLocalConnection()
             continue;
         }
 
-        _send(_peerIp, TUNNEL_OPEN, makeOpen(id, _forwardService, token));
-        DLOG << "TunnelManager: open stream" << id << "service" << _forwardService.toStdString();
+        _send(_peerIp, TUNNEL_OPEN, makeOpen(id, serviceId, token));
+        DLOG << "TunnelManager: open stream" << id << "service" << serviceId.toStdString();
     }
 }
 

@@ -270,12 +270,11 @@ ProtoServer::CreateSession(const std::shared_ptr<NetUtil::Asio::SSLServer> &serv
 {
     // data and state handle callback
     MessageHandler msg_cb([this](const proto::OriginMessage &request, proto::OriginMessage *response) {
-        // rpc from server, notify the response to request.get()
-        if (_self_request.load(std::memory_order_relaxed)) {
-            _self_request.store(false, std::memory_order_relaxed);
-            FinalClient::onReceiveResponse(request);
+        // A response is matched by its request id. A message that does not
+        // match any pending request was initiated by the peer and is handled
+        // as such, even while another RPC is still waiting for its result.
+        if (FinalClient::onReceiveResponse(request))
             return;
-        }
 
         _callbacks->onReceivedMessage(request, response);
     });

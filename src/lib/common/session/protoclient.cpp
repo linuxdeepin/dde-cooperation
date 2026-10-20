@@ -191,12 +191,11 @@ void ProtoClient::onReceive(const ::proto::OriginMessage &response)
     if (_callbacks && _callbacks->onTunnelMessage(connectedHost(), response))
         return;
 
-    // notify response if the request from myself, request.get()
-    if (_self_request.load(std::memory_order_relaxed)) {
-        _self_request.store(false, std::memory_order_relaxed);
-        FinalClient::onReceiveResponse(response);
+    // A response is identified by the id of the request it answers. Anything
+    // that does not match a pending request was initiated by the peer and must
+    // be handled as an incoming request instead of being dropped.
+    if (FinalClient::onReceiveResponse(response))
         return;
-    }
 
     // Send response
     proto::OriginMessage reply;

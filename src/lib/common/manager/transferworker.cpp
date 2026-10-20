@@ -297,10 +297,14 @@ bool TransferWorker::startWeb(int port)
     DLOG << "Starting web server on port:" << port;
     // Create a new file http server
     if (!_file_server) {
-        DLOG << "Creating new file server instance";
+        DLOG << "Creating new file server instance, loopback:" << _serverLoopback;
         auto context = SecureConfig::serverContext();
 
-        _file_server = std::make_shared<FileServer>(_asioService, context, port);
+        if (_serverLoopback)
+            _file_server = std::make_shared<FileServer>(_asioService, context,
+                                                        std::string("127.0.0.1"), port);
+        else
+            _file_server = std::make_shared<FileServer>(_asioService, context, port);
 
         auto self(this->shared_from_this());
         _file_server->setCallback(self);

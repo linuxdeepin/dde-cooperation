@@ -91,6 +91,8 @@ struct TransDataMessage {
     std::string endpoint; // ip:port:token
     bool flag;  // request: dir or file;  response: ready to receive or error(not enough space)
     int64_t size;  // the space need, total folder size or all file size
+    bool tunnel { false };  // the sender offers a reverse-tunnel endpoint
+    std::string service;    // tunnel service id of the file server
 
     void from_json(const picojson::value& _x_) {
         id = _x_.get("id").to_str();
@@ -98,6 +100,22 @@ struct TransDataMessage {
         endpoint = _x_.get("token").to_str();
         flag = _x_.get("flag").get<bool>();
         size = _x_.get("size").get<int64_t>();
+
+        // Old peers omit these fields and keep using the direct endpoint.
+        tunnel = false;
+        service.clear();
+        if (_x_.contains("tunnel")) {
+            const auto &value = _x_.get("tunnel");
+            if (value.is<bool>())
+                tunnel = value.get<bool>();
+            else if (value.is<double>())
+                tunnel = value.get<double>() != 0;
+        }
+        if (_x_.contains("service")) {
+            const auto &value = _x_.get("service");
+            if (value.is<std::string>())
+                service = value.get<std::string>();
+        }
 
         if (_x_.get("names").is<picojson::array>()) {
             const picojson::array &namesArr = _x_.get("names").get<picojson::array>();
@@ -115,6 +133,8 @@ struct TransDataMessage {
         obj["token"] = picojson::value(endpoint);
         obj["flag"] = picojson::value(flag);
         obj["size"] = picojson::value(size);
+        obj["tunnel"] = picojson::value(tunnel);
+        obj["service"] = picojson::value(service);
 
         picojson::array namesArr;
         for (const auto &name : names) {

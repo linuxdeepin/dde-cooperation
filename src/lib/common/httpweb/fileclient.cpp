@@ -311,6 +311,11 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
     bool result = false;
     {
         std::atomic<int> timeout_done(0);
+        // A failed download must not leave the empty placeholder file that
+        // createNextAvailableName() just created behind. The flags are written
+        // by the HTTP callback thread and read by the download thread.
+        std::atomic<bool> completed { false };
+        std::atomic<bool> failed { false };
 
         uint64_t offset = 0;
         auto tempFile = BaseKit::File(avaipath);
@@ -331,6 +336,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
 
                 // error：not found
                 shouldExit = true;
+                failed.store(true);
                 if (auto callback = _callback.lock()) {
                     callback->onWebChanged(WEB_NOT_FOUND, "not_found");
                 }
@@ -360,6 +366,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                 } catch (const BaseKit::FileSystemException &ex) {
                     std::cout << "Header create throw FS exception: " << ex.message() << std::endl;
                     shouldExit = true;
+                    failed.store(true);
                     if (auto callback = _callback.lock()) {
                         callback->onWebChanged(WEB_IO_ERROR, "io_error");
                     }
@@ -378,6 +385,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                     } catch (const BaseKit::FileSystemException &ex) {
                         std::cout << "Write throw FS exception: " << ex.message() << std::endl;
                         shouldExit = true;
+                        failed.store(true);
                         if (auto callback = _callback.lock()) {
                             callback->onWebChanged(WEB_IO_ERROR, "io_error");
                         }
@@ -388,6 +396,7 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
             case RES_ERROR: {
                 // error：break off
                 shouldExit = true;
+                failed.store(true);
 
                 if (auto callback = _callback.lock()) {
                     callback->onWebChanged(WEB_DISCONNECTED, "net_error");
@@ -401,12 +410,14 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                         tempFile.Write(buffer, size);
                     } catch (const BaseKit::FileSystemException &ex) {
                         std::cout << "Write&Close throw FS exception: " << ex.message() << std::endl;
+                        failed.store(true);
                         if (auto callback = _callback.lock()) {
                             callback->onWebChanged(WEB_IO_ERROR, "io_error");
                         }
                     }
                 }
 
+                completed.store(!failed.load());
                 shouldExit = true;
                 if (auto callback = _callback.lock()) {
                     callback->onWebChanged(WEB_FILE_END, tempFile.string(), size);
@@ -466,6 +477,20 @@ bool FileClient::downloadFile(const std::string &name, const std::string &rename
                 tempFile.Clear();
             } catch (const BaseKit::FileSystemException &ex) {
                 std::cout << "Close throw FS exception: " << ex.message() << std::endl;
+            }
+        }
+
+        // Remove the placeholder without touching a legitimately empty file:
+        // it is only kept when the transfer completed successfully.
+        if ((!completed.load() || failed.load()) && !avaipath.empty()) {
+            std::error_code ec;
+            if (std::filesystem::exists(avaipath, ec) && !ec
+                && std::filesystem::file_size(avaipath, ec) == 0 && !ec) {
+                std::filesystem::remove(avaipath, ec);
+                if (ec) {
+                    std::cout << "Remove empty file failed: " << avaipath
+                              << " error: " << ec.message() << std::endl;
+                }
             }
         }
 

@@ -32,7 +32,7 @@ int g_sessionConnectReturn = 0;
 static int stub_sessionConnect(SessionManager *, QString, int, QString) { return g_sessionConnectReturn; }
 static void stub_sendRpcRequest(SessionManager *, const QString &, int, const QString &) {}
 static void stub_sessionDisconnect(SessionManager *, QString) {}
-static void stub_sendFiles(SessionManager *, QString &, int, QStringList) {}
+static void stub_sendFiles(SessionManager *, QString &, int, QStringList, bool) {}
 static void stub_cancelSyncFile(SessionManager *, const QString &, const QString &) {}
 static void stub_updateSaveFolder(SessionManager *, const QString &) {}
 static void stub_setStorageRoot(SessionManager *, const QString &) {}

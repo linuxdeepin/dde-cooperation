@@ -10,6 +10,8 @@
 
 #include <QObject>
 
+#include <atomic>
+
 class SessionManager;
 class TunnelManager;
 namespace cooperation_core {
@@ -27,6 +29,11 @@ public:
 
     QString getConfirmTargetAddress() const;
 
+    // Select the tunnel peer when no cooperation is active. A different peer
+    // already using the tunnel is never replaced, so an active barrier
+    // session keeps working.
+    bool ensureTunnelPeer(const QString &ip);
+
 public Q_SLOTS:
     void handleConnectStatus(int result, QString reason);
     void handleTransChanged(int status, const QString &path, quint64 size);
@@ -41,6 +48,11 @@ private:
     QString storageRoot = {};   //storage dir config
     QString storageFolder = {};   //sub folder under storage dir config
     int servePort;
+    // Transfer tunnel negotiation result for the current apply/send. The
+    // session callbacks run on the ASIO thread, the actions using them on the
+    // GUI thread.
+    std::atomic<bool> transTunnelOffered { false };   // peer offers the tunnel
+    std::atomic<bool> peerTransTunnel { false };      // peer can forward for us
 };
 
 }

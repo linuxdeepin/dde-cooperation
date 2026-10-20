@@ -269,14 +269,6 @@ TEST_F(SessionTest, ProtoEndpointActiveTargetDefault)
     EXPECT_EQ(client._active_target, "1.2.3.4");
 }
 
-TEST_F(SessionTest, ProtoEndpointSelfRequestDefault)
-{
-    ProtoServer server(service, context, 19025);
-    EXPECT_FALSE(server._self_request.load());
-    server._self_request.store(true);
-    EXPECT_TRUE(server._self_request.load());
-}
-
 TEST_F(SessionTest, ProtoEndpointHasConnectedServerOverride)
 {
     ProtoServer server(service, context, 19026);

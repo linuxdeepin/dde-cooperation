@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -30,6 +30,10 @@ public:
     void onWebChanged(int state, std::string msg = "", uint64_t size = 0) override;
 
     void stop();
+
+    // Bind the file server to loopback only. Used when the receiver reaches
+    // it through the reverse tunnel instead of a directly reachable address.
+    void setServerLoopback(bool enable) { _serverLoopback = enable; }
 
     bool tryStartSend(QStringList paths, int port, std::vector<std::string> *nameVector, std::string *token);
     bool tryStartReceive(QStringList names, QString &ip, int port, QString &token, QString &dirname);
@@ -71,6 +75,7 @@ private:
     file_stats_s _status;
     bool _canceled { false };
     bool _singleFile { false }; //send single file
+    bool _serverLoopback { false };
 
     // notify process for every file
     bool _everyNotify { false };

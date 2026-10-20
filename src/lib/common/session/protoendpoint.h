@@ -56,19 +56,22 @@ private:
 protected:
     std::shared_ptr<SessionCallInterface> _callbacks { nullptr };
 
-    //mask self request, default false for remote
-    std::atomic<bool> _self_request { false };
-
     //current active request target
     std::string _active_target = { "" };
 
 private:
+    struct PendingResponse {
+        std::future<proto::OriginMessage> future;
+        FBE::uuid_t id;
+    };
+
     std::mutex _lock;
     // Serializes access to the FBE sender buffer. RPC and tunnel frames can be
     // sent from different threads.
     std::mutex _send_lock;
-    // type, future
-    std::unordered_map<int32_t, std::future<proto::OriginMessage>> _responses_by_type;
+    // type -> pending response. The request id lets a timed out request be
+    // removed from the FBE table without touching other in-flight requests.
+    std::unordered_map<int32_t, PendingResponse> _responses_by_type;
 };
 
 #endif // PROTOENDPOINT_H

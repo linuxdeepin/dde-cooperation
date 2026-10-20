@@ -212,9 +212,9 @@ TEST_F(SessionIntegrationTest, AsyncRequestWithHandlerTimeout)
     EXPECT_TRUE(called);
 }
 
-TEST_F(SessionIntegrationTest, SelfRequestFlagDefault)
+TEST_F(SessionIntegrationTest, PendingResponsesInitiallyEmpty)
 {
     auto context = SecureConfig::clientContext();
     ProtoClient client(service, context, "127.0.0.1", 16010);
-    EXPECT_FALSE(client._self_request.load());
+    EXPECT_TRUE(client._responses_by_type.empty());
 }

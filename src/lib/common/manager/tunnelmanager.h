@@ -36,7 +36,7 @@ public:
     void setSendHandler(SendHandler handler);
 
     // A side: local services that the peer is allowed to open.
-    void registerService(const QString &serviceId, const QString &host, quint16 port);
+    bool registerService(const QString &serviceId, const QString &host, quint16 port);
     void unregisterService(const QString &serviceId);
     void clearServices();
 
@@ -49,12 +49,16 @@ public:
 
     // B side: listen on 127.0.0.1 and forward every accepted connection to the
     // peer's service. Returns the bound port, or 0 on failure.
+    // One forward per service, several services can be active at the same
+    // time (barrier plus concurrent file transfers).
     quint16 startLocalForward(const QString &serviceId);
+    void stopLocalForward(const QString &serviceId);
     void stopLocalForward();
     void stopAll();
 
     bool isForwarding() const;
-    quint16 localPort() const { return _localPort; }
+    quint16 localPort() const;
+    quint16 localPort(const QString &serviceId) const;
 
 signals:
     void localForwardReady(const QString &serviceId, quint16 port);
@@ -83,6 +87,10 @@ private:
         QString host;
         quint16 port { 0 };
     };
+    struct Forward {
+        QTcpServer *server { nullptr };
+        quint16 port { 0 };
+    };
 
     void handleOpen(const QString &remote, const QByteArray &payload);
     void handleOpenAck(const QString &remote, const QByteArray &payload);
@@ -94,7 +102,7 @@ private:
     Stream *createStream(quint32 id, const QString &serviceId, const QString &token, bool dialer);
     void destroyStream(quint32 id, const QString &reason, bool notifyPeer);
 
-    void acceptLocalConnection();
+    void acceptLocalConnection(const QString &serviceId);
     void setupSocket(Stream *stream);
     void startConnectTimeout(Stream *stream);
     void pump(quint32 id);
@@ -118,15 +126,15 @@ private:
     static constexpr int kConnectTimeoutMs = 5000;
     static constexpr int kDialAttempts = 4;
     static constexpr int kDialRetryMs = 300;
+    static constexpr int kMaxForwards = 16;
+    static constexpr int kMaxServiceIdLength = 128;
 
     SendHandler _send;
     QHash<QString, Service> _services;
+    QHash<QString, Forward> _forwards;
     QHash<quint32, Stream *> _streams;
     QString _peerIp;
     QString _peerRemote;
-    QTcpServer *_server { nullptr };
-    QString _forwardService;
-    quint16 _localPort { 0 };
     quint32 _nextStreamId { 1 };
 };
 
