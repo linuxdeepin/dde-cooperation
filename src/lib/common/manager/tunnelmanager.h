@@ -124,6 +124,10 @@ private:
     static constexpr int kWindowSize = 256 * 1024;
     static constexpr int kWindowLowWater = 64 * 1024;
     static constexpr int kMaxPending = 1024 * 1024;
+    // QAbstractSocket buffers incoming bytes in user space without a limit by
+    // default, bypassing the credit window. Keep enough headroom for the
+    // window while still letting TCP backpressure throttle the writer.
+    static constexpr int kReadBufferSize = 2 * kWindowSize;
     static constexpr int kConnectTimeoutMs = 5000;
     static constexpr int kDialAttempts = 4;
     static constexpr int kDialRetryMs = 300;

@@ -342,6 +342,56 @@ TEST(TunnelManagerTest, BothSidesCanInitiateStreams)
     a.stopAll();
 }
 
+TEST(TunnelManagerTest, StreamSocketsLimitReadBuffer)
+{
+    QTcpServer echo;
+    ASSERT_TRUE(echo.listen(QHostAddress::LocalHost, 0));
+    QObject::connect(&echo, &QTcpServer::newConnection, &echo, [&echo] {
+        while (QTcpSocket *socket = echo.nextPendingConnection()) {
+            QObject::connect(socket, &QTcpSocket::readyRead, socket, [socket] {
+                socket->write(socket->readAll());
+            });
+            QObject::connect(socket, &QTcpSocket::disconnected, socket, &QObject::deleteLater);
+        }
+    });
+
+    TunnelManager a;
+    TunnelManager b;
+    a.setPeer(QStringLiteral("B"));
+    b.setPeer(QStringLiteral("A"));
+    a.registerService(QStringLiteral("echo"), QStringLiteral("127.0.0.1"), echo.serverPort());
+    a.setSendHandler([&b](const QString &, int mask, const QByteArray &payload) {
+        b.onTunnelMessage(mask, payload, QStringLiteral("A"));
+    });
+    b.setSendHandler([&a](const QString &, int mask, const QByteArray &payload) {
+        a.onTunnelMessage(mask, payload, QStringLiteral("B"));
+    });
+
+    const quint16 localPort = b.startLocalForward(QStringLiteral("echo"));
+    ASSERT_NE(localPort, 0);
+    QTcpSocket client;
+    client.connectToHost(QHostAddress::LocalHost, localPort);
+    ASSERT_TRUE(waitFor([&] {
+        return client.state() == QAbstractSocket::ConnectedState && !b._streams.isEmpty();
+    }));
+
+    // QAbstractSocket buffers incoming data without a limit by default, which
+    // would bypass the tunnel credit window. Both the dialer and the local
+    // stream sockets must be capped.
+    for (auto *stream : b._streams) {
+        ASSERT_NE(stream->sock, nullptr);
+        EXPECT_EQ(stream->sock->readBufferSize(), qint64(TunnelManager::kReadBufferSize));
+    }
+    ASSERT_TRUE(waitFor([&] { return !a._streams.isEmpty(); }));
+    for (auto *stream : a._streams) {
+        ASSERT_NE(stream->sock, nullptr);
+        EXPECT_EQ(stream->sock->readBufferSize(), qint64(TunnelManager::kReadBufferSize));
+    }
+
+    b.stopAll();
+    a.stopAll();
+}
+
 TEST(TunnelManagerTest, IncomingRequestIsNotSwallowedByPendingAsyncRequest)
 {
     auto service = std::make_shared<AsioService>();

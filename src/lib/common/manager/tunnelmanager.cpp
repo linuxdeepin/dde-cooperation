@@ -249,6 +249,13 @@ void TunnelManager::setupSocket(Stream *stream)
     const quint32 id = stream->id;
     QTcpSocket *socket = stream->sock;
 
+    // By default QAbstractSocket drains the kernel into an unbounded user
+    // space buffer as soon as data arrives. That would defeat the credit
+    // window below: the peer could push an entire large file into memory and
+    // report 100% while the receiver is still downloading. Capping the read
+    // buffer makes the kernel apply backpressure to the writer instead.
+    socket->setReadBufferSize(kReadBufferSize);
+
     connect(socket, &QTcpSocket::readyRead, this, [this, id] { pump(id); });
     connect(socket, &QTcpSocket::bytesWritten, this, [this, id](qint64 bytes) {
         // Acknowledge only after the data has left Qt's write buffer. This is
