@@ -12,6 +12,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QRandomGenerator>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QTimer>
@@ -195,6 +196,19 @@ quint16 TunnelManager::localPort(const QString &serviceId) const
     return it->port;
 }
 
+quint32 TunnelManager::nextStreamId()
+{
+    // Stream ids are chosen by the initiating side but live in a namespace
+    // shared by both peers. A counter starting at 1 on each side collides as
+    // soon as both initiate a stream (barrier plus a reverse file transfer),
+    // so pick a random id and skip ids already known locally.
+    for (;;) {
+        const quint32 id = QRandomGenerator::global()->generate();
+        if (id != 0 && !_streams.contains(id))
+            return id;
+    }
+}
+
 void TunnelManager::acceptLocalConnection(const QString &serviceId)
 {
     const auto forward = _forwards.constFind(serviceId);
@@ -207,9 +221,7 @@ void TunnelManager::acceptLocalConnection(const QString &serviceId)
         if (!socket)
             break;
 
-        quint32 id = _nextStreamId++;
-        if (_nextStreamId == 0)
-            _nextStreamId = 1;
+        const quint32 id = nextStreamId();
 
         const QString token = makeToken();
         Stream *stream = createStream(id, serviceId, token, false);

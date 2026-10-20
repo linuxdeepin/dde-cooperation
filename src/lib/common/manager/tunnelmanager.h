@@ -101,6 +101,7 @@ private:
     Stream *findStream(quint32 id) const;
     Stream *createStream(quint32 id, const QString &serviceId, const QString &token, bool dialer);
     void destroyStream(quint32 id, const QString &reason, bool notifyPeer);
+    quint32 nextStreamId();
 
     void acceptLocalConnection(const QString &serviceId);
     void setupSocket(Stream *stream);
@@ -135,7 +136,6 @@ private:
     QHash<quint32, Stream *> _streams;
     QString _peerIp;
     QString _peerRemote;
-    quint32 _nextStreamId { 1 };
 };
 
 #endif   // TUNNELMANAGER_H

@@ -17,6 +17,7 @@
 
 #include <QAbstractSocket>
 #include <QFile>
+#include <QElapsedTimer>
 #include <QHostAddress>
 #include <QRandomGenerator>
 #include <QSignalSpy>
@@ -26,8 +27,22 @@
 #include <QTest>
 
 #include <atomic>
+#include <functional>
 #include <memory>
 #include <mutex>
+
+namespace {
+// QTest's QTRY_* macros abort the test function without registering a failure
+// with GoogleTest, so a timed out condition would silently pass here.
+bool waitFor(const std::function<bool()> &condition, int timeoutMs = 3000)
+{
+    QElapsedTimer timer;
+    timer.start();
+    while (!condition() && timer.elapsed() < timeoutMs)
+        QTest::qWait(10);
+    return condition();
+}
+}
 
 TEST(TunnelManagerTest, EchoThroughReverseTunnel)
 {
@@ -253,6 +268,75 @@ TEST(TunnelManagerTest, MultipleForwardsRunIndependently)
     client2.write(QByteArrayLiteral("still-alive"));
     QTRY_VERIFY_WITH_TIMEOUT(client2.bytesAvailable() >= 11, 3000);
     EXPECT_EQ(client2.readAll(), QByteArrayLiteral("still-alive"));
+
+    b.stopAll();
+    a.stopAll();
+}
+
+TEST(TunnelManagerTest, BothSidesCanInitiateStreams)
+{
+    auto makeEcho = [](QTcpServer &server) {
+        EXPECT_TRUE(server.listen(QHostAddress::LocalHost, 0));
+        QObject::connect(&server, &QTcpServer::newConnection, &server, [&server] {
+            while (QTcpSocket *socket = server.nextPendingConnection()) {
+                QObject::connect(socket, &QTcpSocket::readyRead, socket, [socket] {
+                    socket->write(socket->readAll());
+                });
+                QObject::connect(socket, &QTcpSocket::disconnected, socket, &QObject::deleteLater);
+            }
+        });
+    };
+
+    QTcpServer echoA;
+    QTcpServer echoB;
+    makeEcho(echoA);
+    makeEcho(echoB);
+
+    TunnelManager a;
+    TunnelManager b;
+    a.setPeer(QStringLiteral("B"));
+    b.setPeer(QStringLiteral("A"));
+    // A hosts the barrier web service, B hosts a file transfer service.
+    a.registerService(QStringLiteral("barrier"), QStringLiteral("127.0.0.1"), echoA.serverPort());
+    b.registerService(QStringLiteral("transfer"), QStringLiteral("127.0.0.1"), echoB.serverPort());
+
+    a.setSendHandler([&b](const QString &, int mask, const QByteArray &payload) {
+        b.onTunnelMessage(mask, payload, QStringLiteral("A"));
+    });
+    b.setSendHandler([&a](const QString &, int mask, const QByteArray &payload) {
+        a.onTunnelMessage(mask, payload, QStringLiteral("B"));
+    });
+
+    // B opens the barrier stream first, as in an A -> B collaboration.
+    const quint16 barrierPort = b.startLocalForward(QStringLiteral("barrier"));
+    ASSERT_NE(barrierPort, 0);
+    QTcpSocket barrierClient;
+    barrierClient.connectToHost(QHostAddress::LocalHost, barrierPort);
+    ASSERT_TRUE(waitFor([&] {
+        return barrierClient.state() == QAbstractSocket::ConnectedState;
+    }));
+    barrierClient.write(QByteArrayLiteral("barrier"));
+    ASSERT_TRUE(waitFor([&] { return barrierClient.bytesAvailable() >= 7; }));
+    EXPECT_EQ(barrierClient.readAll(), QByteArrayLiteral("barrier"));
+
+    // While that stream is still open, A opens the transfer stream, as in a
+    // B -> A file transfer. Both sides used to allocate stream id 1 here and
+    // B rejected the second OPEN as a duplicate.
+    const quint16 transferPort = a.startLocalForward(QStringLiteral("transfer"));
+    ASSERT_NE(transferPort, 0);
+    QTcpSocket transferClient;
+    transferClient.connectToHost(QHostAddress::LocalHost, transferPort);
+    ASSERT_TRUE(waitFor([&] {
+        return transferClient.state() == QAbstractSocket::ConnectedState;
+    }));
+    transferClient.write(QByteArrayLiteral("transfer"));
+    ASSERT_TRUE(waitFor([&] { return transferClient.bytesAvailable() >= 8; }));
+    EXPECT_EQ(transferClient.readAll(), QByteArrayLiteral("transfer"));
+
+    // The first stream must survive the second one being opened.
+    barrierClient.write(QByteArrayLiteral("still-alive"));
+    ASSERT_TRUE(waitFor([&] { return barrierClient.bytesAvailable() >= 11; }));
+    EXPECT_EQ(barrierClient.readAll(), QByteArrayLiteral("still-alive"));
 
     b.stopAll();
     a.stopAll();
