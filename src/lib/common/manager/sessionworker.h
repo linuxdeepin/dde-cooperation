@@ -44,6 +44,9 @@ public:
     void updatePincode(QString code);
     void updateLogin(QString ip, bool logined);
     bool isClientLogin(QString &ip);
+    // An authenticated peer may be connected through our server side (the
+    // peer dialed us). That session is usable for outgoing RPCs as well.
+    bool isServerLogined(const QString &ip);
 
     void setRealIP(const QString &realIP);
     QString getRealIP() const;

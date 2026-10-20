@@ -5,9 +5,14 @@
 #include "sessionworker.h"
 #include "sessionproto.h"
 
+#include "manager/secureconfig.h"
+#include "protoserver.h"
+
 #include <QSignalSpy>
 #include <QString>
 #include "stub.h"
+
+#include <shared_mutex>
 
 class SessionWorkerTest : public ::testing::Test {
 protected:
@@ -64,6 +69,39 @@ TEST_F(SessionWorkerTest, IsClientLoginNotLoggedIn)
 {
     QString ip = "192.168.1.99";
     EXPECT_FALSE(worker->isClientLogin(ip));
+}
+
+TEST_F(SessionWorkerTest, IsServerLoginedOnlyWithConnectedSession)
+{
+    const QString ip = QStringLiteral("10.0.0.9");
+    worker->updateLogin(ip, true);
+    // Login state alone is not enough: the incoming session must exist.
+    EXPECT_FALSE(worker->isServerLogined(ip));
+
+    auto service = std::make_shared<AsioService>();
+    service->Start();
+    auto server = std::make_shared<ProtoServer>(service, SecureConfig::serverContext(), 0);
+    ASSERT_TRUE(server->Start());
+    worker->_server = server;
+    {
+        std::unique_lock<std::shared_mutex> locker(server->_sessionids_lock);
+        server->_session_ids.insert(std::make_pair(ip.toStdString(),
+                                                   BaseKit::UUID::Sequential()));
+    }
+
+    EXPECT_TRUE(worker->isServerLogined(ip));
+    EXPECT_FALSE(worker->isServerLogined(QStringLiteral("10.0.0.10")));
+
+    // A failed login must not make the session reusable.
+    {
+        std::unique_lock<std::shared_mutex> locker(server->_sessionids_lock);
+        server->_session_ids.insert(std::make_pair(std::string("10.0.0.10"),
+                                                   BaseKit::UUID::Sequential()));
+    }
+    worker->updateLogin(QStringLiteral("10.0.0.10"), false);
+    EXPECT_FALSE(worker->isServerLogined(QStringLiteral("10.0.0.10")));
+
+    service->Stop();
 }
 
 TEST_F(SessionWorkerTest, SetGetRealIP)

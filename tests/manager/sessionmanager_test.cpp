@@ -195,6 +195,7 @@ static bool stub_netTouch_true(SessionWorker *, QString &, int) { return true; }
 static bool stub_netTouch_false(SessionWorker *, QString &, int) { return false; }
 static bool stub_isClientLogin_true(SessionWorker *, QString &) { return true; }
 static bool stub_isClientLogin_false(SessionWorker *, QString &) { return false; }
+static bool stub_isServerLogined_true(SessionWorker *, const QString &) { return true; }
 
 TEST_F(SessionManagerTest, SessionListenSuccess)
 {
@@ -231,6 +232,18 @@ TEST_F(SessionManagerTest, SessionConnectAlreadyLoggedIn)
     Stub stub;
     stub.set(ADDR(SessionWorker, isClientLogin), stub_isClientLogin_true);
     int result = mgr->sessionConnect("192.168.1.1", 8080, "1234");
+    EXPECT_EQ(result, 1);
+}
+
+TEST_F(SessionManagerTest, SessionConnectReusesServerSideSession)
+{
+    Stub stub;
+    stub.set(ADDR(SessionWorker, isClientLogin), stub_isClientLogin_false);
+    stub.set(ADDR(SessionWorker, isServerLogined), stub_isServerLogined_true);
+    // A new outgoing connection would fail; the server-side session must be
+    // reused without even trying it.
+    stub.set(ADDR(SessionWorker, netTouch), stub_netTouch_false);
+    int result = mgr->sessionConnect("10.0.0.9", 8080, "1234");
     EXPECT_EQ(result, 1);
 }
 

@@ -178,8 +178,11 @@ bool SessionManager::sessionPing(QString ip, int port)
 int SessionManager::sessionConnect(QString ip, int port, QString password)
 {
     LOG << "sessionConnect: " << ip.toStdString();
-    if (_session_worker->isClientLogin(ip)) {
-        DLOG << "Client is already logged in:" << ip.toStdString();
+    // Reuse any authenticated session with this peer. The peer may be the one
+    // that dialed us (server side); on a one-way network a new outgoing
+    // connection is impossible, but the existing session is fully usable.
+    if (_session_worker->isClientLogin(ip) || _session_worker->isServerLogined(ip)) {
+        DLOG << "Peer is already logged in:" << ip.toStdString();
         return 1;
     }
     if (!_session_worker->netTouch(ip, port)) {

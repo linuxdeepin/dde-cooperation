@@ -469,6 +469,18 @@ bool SessionWorker::isClientLogin(QString &ip)
     return foundValue && hasConnected;
 }
 
+bool SessionWorker::isServerLogined(const QString &ip)
+{
+    auto it = _login_hosts.constFind(ip);
+    if (it == _login_hosts.constEnd() || !it.value())
+        return false;
+
+    const bool connected = _server && _server->hasConnected(ip.toStdString());
+    DLOG << "Checking server session for:" << ip.toStdString()
+         << "connected:" << connected;
+    return connected;
+}
+
 void SessionWorker::setRealIP(const QString &realIP)
 {
     DLOG << "SessionWorker: Setting real IP to " << realIP.toStdString();
