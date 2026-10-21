@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -52,6 +52,11 @@ void VNCRecvThread::stopRun()
     DLOG << "Thread stopped";
 }
 
+void VNCRecvThread::markFrameProcessed()
+{
+    _framePending.storeRelaxed(0);
+}
+
 
 void VNCRecvThread::run()
 {
@@ -81,8 +86,15 @@ void VNCRecvThread::frameBufferUpdated(rfbClient *cl)
     }
     VNCRecvThread *vncRecvThread = static_cast<VNCRecvThread *>(rfbClientGetClientData(cl, nullptr));
 
-    // DLOG << "Frame buffer updated, emitting image signal";
-    emit vncRecvThread->updateImageSignal(QImage(cl->frameBuffer, cl->width, cl->height, QImage::Format_RGBA8888));
+    // Coalesce: skip this frame if a previous frame is still pending in the UI queue
+    if (!vncRecvThread->_framePending.testAndSetRelaxed(0, 1)) {
+        return;
+    }
+
+    // Deep copy the framebuffer so the receive thread can safely reuse/free it
+    // before the UI thread processes the queued signal
+    QImage img(cl->frameBuffer, cl->width, cl->height, QImage::Format_RGBA8888);
+    emit vncRecvThread->updateImageSignal(img.copy());
 }
 
 void VNCRecvThread::screenSizeChanged(rfbClient *cl, int width, int height)

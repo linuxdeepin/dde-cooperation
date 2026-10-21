@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,11 @@
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QMutexLocker>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <unistd.h>
 
 using namespace cooperation_core;
 
@@ -52,8 +57,8 @@ VncViewer::VncViewer(QWidget *parent)
     DLOG << "Send worker initialized";
 
     _vncRecvThread = new VNCRecvThread(this);
-    connect(_vncRecvThread, &VNCRecvThread::updateImageSignal, this, &VncViewer::updateImage, Qt::BlockingQueuedConnection);
-    connect(_vncRecvThread, &VNCRecvThread::sizeChangedSignal, this, &VncViewer::onSizeChange, Qt::BlockingQueuedConnection);
+    connect(_vncRecvThread, &VNCRecvThread::updateImageSignal, this, &VncViewer::updateImage, Qt::QueuedConnection);
+    connect(_vncRecvThread, &VNCRecvThread::sizeChangedSignal, this, &VncViewer::onSizeChange, Qt::QueuedConnection);
     connect(_vncRecvThread, &VNCRecvThread::finished, this, &VncViewer::stop);
     DLOG << "Receive thread initialized";
 
@@ -231,6 +236,9 @@ void VncViewer::updateImage(const QImage &image)
     }
 
     m_image = image;
+
+    // Allow the receive thread to emit the next frame
+    _vncRecvThread->markFrameProcessed();
 
     update();
 }
@@ -481,6 +489,20 @@ void VncViewer::start()
         return;
     }
 
+    // Enable TCP keepalive to detect half-open connections (e.g. phone Wi-Fi off)
+    int sockFd = m_rfbCli->sock;
+    if (sockFd >= 0) {
+        int keepAlive = 1;
+        int keepIdle = 10;   // seconds before first probe
+        int keepIntvl = 5;   // seconds between probes
+        int keepCnt = 3;     // probes before giving up
+        setsockopt(sockFd, SOL_SOCKET, SO_KEEPALIVE, &keepAlive, sizeof(keepAlive));
+        setsockopt(sockFd, IPPROTO_TCP, TCP_KEEPIDLE, &keepIdle, sizeof(keepIdle));
+        setsockopt(sockFd, IPPROTO_TCP, TCP_KEEPINTVL, &keepIntvl, sizeof(keepIntvl));
+        setsockopt(sockFd, IPPROTO_TCP, TCP_KEEPCNT, &keepCnt, sizeof(keepCnt));
+        DLOG << "TCP keepalive enabled on VNC socket";
+    }
+
     DLOG << "VNC screen size:" << m_rfbCli->width << "x" << m_rfbCli->height;
 #ifdef HIDED_CURSOR
     QPixmap pixmap(1, 1);
@@ -532,7 +554,11 @@ void VncViewer::stop()
 
     _vncRecvThread->stopRun();
     _vncRecvThread->quit();
-    _vncRecvThread->wait();
+    if (!_vncRecvThread->wait(3000)) {
+        DLOG << "Receive thread did not exit in 3s, terminating";
+        _vncRecvThread->terminate();
+        _vncRecvThread->wait(1000);
+    }
     DLOG << "Receive thread stopped";
 
     _vncSendThread->quit();
