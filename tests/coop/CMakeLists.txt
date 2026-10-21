@@ -56,6 +56,7 @@ add_executable(coop_tests ${COOP_SRC}
     ${CMAKE_CURRENT_SOURCE_DIR}/cooperationutil_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sharehelper_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/transferhelper_core_test.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/noticeutil_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/compatwrapper_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/transferwrapper_test.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sharecooperationservice_test.cpp

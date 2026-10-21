@@ -106,6 +106,8 @@ NetworkUtilPrivate::NetworkUtilPrivate(NetworkUtil *qq)
             DLOG << "Handling APPLY_TRANS message";
             ApplyMessage req, res;
             req.from_json(json_value);
+            WLOG << "Received transfer request from:" << req.host << "nick:" << req.nick
+                 << "tunnel:" << req.tunnel;
             res.flag = DO_WAIT;
             *res_msg = res.as_json().serialize();
             confirmTargetAddress = QString::fromStdString(req.host);

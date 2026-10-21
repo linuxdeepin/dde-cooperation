@@ -51,24 +51,54 @@ void NoticeUtil::onActionTriggered(uint replacesId, const QString &action)
         return;
     }
 
+    // Invoking an action dismisses the notification, so its id is no longer
+    // usable for follow-up updates.
+    recvNotifyId = 0;
     emit ActionInvoked(action);
 }
 
-void NoticeUtil::notifyMessage(const QString &title, const QString &body, const QStringList &actions, QVariantMap hitMap, int expireTimeout)
+void NoticeUtil::notifyMessage(const QString &title, const QString &body, const QStringList &actions,
+                               QVariantMap hitMap, int expireTimeout, bool replaceExisting)
 {
-    // If hitMap is not empty, use previous recvNotifyId for progress updates
-    uint notifyId = hitMap.isEmpty() ? 0 : recvNotifyId;
-    
-    QDBusReply<uint> reply = notifyIfc->call(QString("Notify"), QString("dde-cooperation"), notifyId,
-                                             QString("dde-cooperation"), title, body,
-                                             actions, hitMap, expireTimeout);
+    uint notifyId = replaceExisting ? recvNotifyId : 0;
+    uint shownId = sendNotify(title, body, actions, hitMap, expireTimeout, notifyId);
+    if (shownId == 0) {
+        // Do not keep a stale id around: the next notification must be able to
+        // create a fresh bubble.
+        WLOG << "Failed to show notification, replaces_id:" << notifyId;
+        recvNotifyId = 0;
+        return;
+    }
 
-    recvNotifyId = reply.value();
+    recvNotifyId = shownId;
+}
+
+uint NoticeUtil::sendNotify(const QString &title, const QString &body, const QStringList &actions,
+                            const QVariantMap &hints, int expireTimeout, uint replacesId)
+{
+    QDBusReply<uint> reply = notifyIfc->call(QString("Notify"), QString("dde-cooperation"), replacesId,
+                                             QString("dde-cooperation"), title, body,
+                                             actions, hints, expireTimeout);
+    if (!reply.isValid()) {
+        WLOG << "Notification D-Bus call failed:" << reply.error().message().toStdString();
+        return 0;
+    }
+
+    return reply.value();
+}
+
+void NoticeUtil::sendClose(uint notificationId)
+{
+    notifyIfc->call("CloseNotification", notificationId);
 }
 
 void NoticeUtil::closeNotification()
 {
-    notifyIfc->call("CloseNotification", recvNotifyId);
+    if (recvNotifyId == 0)
+        return;
+
+    sendClose(recvNotifyId);
+    recvNotifyId = 0;
 }
 
 void NoticeUtil::resetNotifyId()

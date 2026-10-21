@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -44,7 +44,8 @@ public:
     CooperationTransDialog *transDialog();
 
     void reportTransferResult(bool result);
-    void notifyMessage(const QString &body, const QStringList &actions, int expireTimeout, const QVariantMap &hitMap = QVariantMap());
+    void notifyMessage(const QString &body, const QStringList &actions, int expireTimeout,
+                       const QVariantMap &hitMap = QVariantMap(), bool replaceExisting = false);
     void initConnect();
     QVariantMap createViewFileHints(const QString &path);
 

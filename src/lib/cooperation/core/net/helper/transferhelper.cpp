@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -129,15 +129,17 @@ void TransferHelperPrivate::reportTransferResult(bool result)
 #endif
 }
 
-void TransferHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout, const QVariantMap &hitMap)
+void TransferHelperPrivate::notifyMessage(const QString &body, const QStringList &actions, int expireTimeout,
+                                          const QVariantMap &hitMap, bool replaceExisting)
 {
 #ifdef __linux__
-    notice->notifyMessage(tr("File transfer"), body, actions, hitMap, expireTimeout);
+    notice->notifyMessage(tr("File transfer"), body, actions, hitMap, expireTimeout, replaceExisting);
 #else
     Q_UNUSED(body)
     Q_UNUSED(actions)
     Q_UNUSED(expireTimeout)
     Q_UNUSED(hitMap)
+    Q_UNUSED(replaceExisting)
     DLOG << "Non-Linux platform, skipping notification message";
 #endif
 }
@@ -365,7 +367,7 @@ void TransferHelper::updateProgress(int value, const QString &remainTime)
         QVariantMap hitMap { { "x-deepin-ShowInNotifyCenter", false } };
         QString msg(tr("File receiving %1% | Remaining time %2").arg(QString::number(value), remainTime));
 
-        d->notifyMessage(msg, actions, 15 * 1000, hitMap);
+        d->notifyMessage(msg, actions, 15 * 1000, hitMap, true);
         return;
     }
 #endif
