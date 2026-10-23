@@ -50,23 +50,106 @@ inline char* wideCharToChar(const wchar_t* wideStr) {
     return narrowStr;
 }
 
+inline wchar_t* toLongPath(wchar_t* path) {
+    if (!path || !*path) {
+        delete[] path;
+        return nullptr;
+    }
+
+    size_t len = wcslen(path);
+    wchar_t* buf = new wchar_t[len + 1];
+    wcscpy(buf, path);
+    for (size_t i = 0; i < len; ++i) {
+        if (buf[i] == L'/') buf[i] = L'\\';
+    }
+
+    bool isUNC = (len >= 2 && buf[0] == L'\\' && buf[1] == L'\\');
+    const wchar_t* prefix = isUNC ? L"\\\\?\\UNC\\" : L"\\\\?\\";
+    size_t prefixLen = isUNC ? 8 : 4;
+    size_t start = isUNC ? 2 : 0;
+    if (!isUNC && len >= 2 && buf[1] == L':') start = 2;
+    size_t copyLen = isUNC ? 0 : start;
+
+    size_t maxComps = (len / 2) + 1;
+    size_t* compStarts = new size_t[maxComps];
+    size_t* compLens = new size_t[maxComps];
+    size_t nComps = 0;
+
+    size_t i = start;
+    while (i < len && buf[i] == L'\\') i++;
+    while (i < len) {
+        size_t cs = i;
+        while (i < len && buf[i] != L'\\') i++;
+        size_t cl = i - cs;
+        if (cl == 1 && buf[cs] == L'.') {
+        } else if (cl == 2 && buf[cs] == L'.' && buf[cs + 1] == L'.') {
+            if (nComps > 0) nComps--;
+        } else if (cl > 0) {
+            compStarts[nComps] = cs;
+            compLens[nComps] = cl;
+            nComps++;
+        }
+        while (i < len && buf[i] == L'\\') i++;
+    }
+
+    size_t resultLen = prefixLen + copyLen;
+    for (size_t k = 0; k < nComps; k++) {
+        if (k > 0) resultLen++;
+        resultLen += compLens[k];
+    }
+    resultLen++;
+
+    wchar_t* result = new wchar_t[resultLen];
+    size_t pos = 0;
+    wcscpy(result, prefix);
+    pos = prefixLen;
+    if (copyLen > 0) {
+        wcsncpy(result + pos, buf, copyLen);
+        pos += copyLen;
+        if (nComps > 0) {
+            result[pos++] = L'\\';
+        }
+    }
+    for (size_t k = 0; k < nComps; k++) {
+        if (k > 0) result[pos++] = L'\\';
+        wcsncpy(result + pos, buf + compStarts[k], compLens[k]);
+        pos += compLens[k];
+    }
+    result[pos] = L'\0';
+
+    delete[] compStarts;
+    delete[] compLens;
+    delete[] buf;
+    delete[] path;
+    return result;
+}
+
 bool exists(const char* path) {
-    return GetFileAttributesW(charToWideChar(path)) != INVALID_FILE_ATTRIBUTES;
+    wchar_t* lp = toLongPath(charToWideChar(path));
+    DWORD attr = GetFileAttributesW(lp);
+    delete[] lp;
+    return attr != INVALID_FILE_ATTRIBUTES;
 }
 
 bool isdir(const char* path) {
-    const DWORD x = GetFileAttributesW(charToWideChar(path));
+    wchar_t* lp = toLongPath(charToWideChar(path));
+    DWORD x = GetFileAttributesW(lp);
+    delete[] lp;
     return x != INVALID_FILE_ATTRIBUTES && (x & FILE_ATTRIBUTE_DIRECTORY);
 }
 
 bool isSymlink(const char* path) {
-    const DWORD x = GetFileAttributesW(charToWideChar(path));
+    wchar_t* lp = toLongPath(charToWideChar(path));
+    DWORD x = GetFileAttributesW(lp);
+    delete[] lp;
     return x != INVALID_FILE_ATTRIBUTES && (x & FILE_ATTRIBUTE_REPARSE_POINT);
 }
 
 int64 mtime(const char* path) {
     WIN32_FILE_ATTRIBUTE_DATA info;
-    BOOL r = GetFileAttributesExW(charToWideChar(path), GetFileExInfoStandard, &info);
+    wchar_t* lp = toLongPath(charToWideChar(path));
+    BOOL r = GetFileAttributesExW(lp, GetFileExInfoStandard, &info);
+    delete[] lp;
     if (!r) return -1;
 
     const FILETIME& wt = info.ftLastWriteTime;
@@ -75,21 +158,37 @@ int64 mtime(const char* path) {
 
 int64 fsize(const char* path) {
     WIN32_FILE_ATTRIBUTE_DATA info;
-    BOOL r = GetFileAttributesExW(charToWideChar(path), GetFileExInfoStandard, &info);
+    wchar_t* lp = toLongPath(charToWideChar(path));
+    BOOL r = GetFileAttributesExW(lp, GetFileExInfoStandard, &info);
+    delete[] lp;
     if (!r) return -1;
     return ((int64)info.nFileSizeHigh << 32) | info.nFileSizeLow;
 }
 
 bool mkdir(const char* path, bool p) {
-    if (!p) return CreateDirectoryW(charToWideChar(path), 0);
+    if (!p) {
+        wchar_t* lp = toLongPath(charToWideChar(path));
+        BOOL ret = CreateDirectoryW(lp, 0);
+        delete[] lp;
+        return ret;
+    }
 
     const char* s = strrchr(path, '/');
     if (s == 0) s = strrchr(path, '\\');
     if (s == 0) return CreateDirectoryA(path, 0);
 
     fastring parent(path, s - path);
-    if (fs::exists(parent.c_str())) return CreateDirectoryW(charToWideChar(path), 0);
-    return fs::mkdir(parent.c_str(), true) && CreateDirectoryW(charToWideChar(path), 0);
+    if (fs::exists(parent.c_str())) {
+        wchar_t* lp = toLongPath(charToWideChar(path));
+        BOOL ret = CreateDirectoryW(lp, 0);
+        delete[] lp;
+        return ret;
+    }
+    if (!fs::mkdir(parent.c_str(), true)) return false;
+    wchar_t* lp = toLongPath(charToWideChar(path));
+    BOOL ret = CreateDirectoryW(lp, 0);
+    delete[] lp;
+    return ret;
 }
 
 bool mkdir(char* path, bool p) {
@@ -97,18 +196,30 @@ bool mkdir(char* path, bool p) {
 
     char* s = (char*) strrchr(path, '/');
     if (s == 0) s = (char*) strrchr(path, '\\');
-    if (s == 0) return CreateDirectoryW(charToWideChar(path), 0);
+    if (s == 0) {
+        wchar_t* lp = toLongPath(charToWideChar(path));
+        BOOL ret = CreateDirectoryW(lp, 0);
+        delete[] lp;
+        return ret;
+    }
 
     const char c = *s;
     *s = '\0';
 
     if (fs::exists(path)) {
         *s = c;
-        return CreateDirectoryW(charToWideChar(path), 0);
+        wchar_t* lp = toLongPath(charToWideChar(path));
+        BOOL ret = CreateDirectoryW(lp, 0);
+        delete[] lp;
+        return ret;
     } else {
         bool x = fs::mkdir(path, true);
         *s = c;
-        return x ? CreateDirectoryW(charToWideChar(path), 0) : false;
+        if (!x) return false;
+        wchar_t* lp = toLongPath(charToWideChar(path));
+        BOOL ret = CreateDirectoryW(lp, 0);
+        delete[] lp;
+        return ret;
     }
 }
 
@@ -116,17 +227,38 @@ bool remove(const char* path, bool rf) {
     if (!fs::exists(path)) return true;
 
     if (!rf) {
-        if (fs::isdir(path)) return RemoveDirectoryW(charToWideChar(path));
-        return DeleteFileW(charToWideChar(path));
+        if (fs::isdir(path)) {
+            wchar_t* lp = toLongPath(charToWideChar(path));
+            BOOL ret = RemoveDirectoryW(lp);
+            delete[] lp;
+            return ret;
+        }
+        wchar_t* lp = toLongPath(charToWideChar(path));
+        BOOL ret = DeleteFileW(lp);
+        delete[] lp;
+        return ret;
     } else {
-        fastring cmd(strlen(path) + 12);
-        cmd.append("rd /s /q \"").append(path).append('"');
-        return system(cmd.c_str()) != -1;
+        wchar_t* wpath = toLongPath(charToWideChar(path));
+        if (!wpath) return false;
+        size_t cmdLen = wcslen(wpath) + 20;
+        wchar_t* wcmd = new wchar_t[cmdLen];
+        wcscpy(wcmd, L"rd /s /q \"");
+        wcscat(wcmd, wpath);
+        wcscat(wcmd, L"\"");
+        int ret = _wsystem(wcmd);
+        delete[] wcmd;
+        delete[] wpath;
+        return ret != -1;
     }
 }
 
 bool rename(const char* from, const char* to) {
-    return MoveFileW(charToWideChar(from), charToWideChar(to));
+    wchar_t* lpf = toLongPath(charToWideChar(from));
+    wchar_t* lpt = toLongPath(charToWideChar(to));
+    BOOL ret = MoveFileW(lpf, lpt);
+    delete[] lpf;
+    delete[] lpt;
+    return ret;
 }
 
 bool symlink(const char* dst, const char* lnk) {
@@ -138,20 +270,30 @@ bool symlink(const char* dst, const char* lnk) {
 
 namespace xx {
 HANDLE open(const char* path, char mode) {
+    wchar_t* lp = toLongPath(charToWideChar(path));
+    HANDLE h;
     switch (mode) {
       case 'r':
-        return CreateFileW(charToWideChar(path), GENERIC_READ, 7, 0, OPEN_EXISTING, 0, 0);
+        h = CreateFileW(lp, GENERIC_READ, 7, 0, OPEN_EXISTING, 0, 0);
+        break;
       case 'a':
-        return CreateFileW(charToWideChar(path), FILE_APPEND_DATA, 7, 0, OPEN_ALWAYS, 0, 0);
+        h = CreateFileW(lp, FILE_APPEND_DATA, 7, 0, OPEN_ALWAYS, 0, 0);
+        break;
       case 'w':
-        return CreateFileW(charToWideChar(path), GENERIC_WRITE, 7, 0, CREATE_ALWAYS, 0, 0);
+        h = CreateFileW(lp, GENERIC_WRITE, 7, 0, CREATE_ALWAYS, 0, 0);
+        break;
       case 'm':
-        return CreateFileW(charToWideChar(path), GENERIC_WRITE, 7, 0, OPEN_ALWAYS, 0, 0);
+        h = CreateFileW(lp, GENERIC_WRITE, 7, 0, OPEN_ALWAYS, 0, 0);
+        break;
       case '+':
-        return CreateFileW(charToWideChar(path), GENERIC_READ | GENERIC_WRITE, 7, 0, OPEN_ALWAYS, 0, 0);
+        h = CreateFileW(lp, GENERIC_READ | GENERIC_WRITE, 7, 0, OPEN_ALWAYS, 0, 0);
+        break;
       default:
+        delete[] lp;
         return nullfd;
     }
+    delete[] lp;
+    return h;
 }
 } // xx
 
@@ -323,7 +465,9 @@ bool dir::open(const char* path) {
         p[n] = '*';
         p[n + 1] = '\0';
     }
-    d->d = ::FindFirstFileW(charToWideChar(p), &d->e);
+    wchar_t* lp = toLongPath(charToWideChar(p));
+    d->d = ::FindFirstFileW(lp, &d->e);
+    delete[] lp;
     p[n] = '\0';
     return d->d != INVALID_HANDLE_VALUE;
 }
