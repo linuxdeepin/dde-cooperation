@@ -55,11 +55,14 @@ void CooperaionCorePlugin::initialize()
 
 bool CooperaionCorePlugin::start()
 {
-    CooperationUtil::instance()->mainWindow()->show();
+    bool onlyTransfer = qApp->property("onlyTransfer").toBool();
+    if (!onlyTransfer)
+        CooperationUtil::instance()->mainWindow()->show();
     MainController::instance()->regist();
     TransferHelper::instance()->regist();
     CooperationManager::instance()->regist();
-    MainController::instance()->start();
+    if (!onlyTransfer)
+        MainController::instance()->start();
 
     if (CommonUitls::isFirstStart() && !qApp->property("onlyTransfer").toBool()) {
 #ifdef linux
