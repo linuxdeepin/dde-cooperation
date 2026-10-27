@@ -61,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="phone : 10.8.11.xxx"
+        tools:text="phone : 10.8.11.xxx"
         android:textColor="#80000000"
         android:textSize="@dimen/sp_12"
         app:layout_constraintEnd_toEndOf="parent"
