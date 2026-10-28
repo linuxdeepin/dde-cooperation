@@ -1,3 +1,10 @@
+dde-cooperation (1.2.8) unstable; urgency=medium
+
+  * docs(cooperation): add Portuguese help manual
+  * docs(data-transfer): add Portuguese help manual
+
+ -- re2zero <yangwu@uniontech.com>  Wed, 28 Oct 2026 11:01:10 +0800
+
 dde-cooperation (1.2.7) unstable; urgency=medium
 
   * chore: Update version to 1.2.7
