@@ -277,9 +277,8 @@ bool SettingHelper::setFile(QJsonObject jsonObj, QString filepath)
             
             QString targetFile = QDir::homePath() + "/" + filename;
             
-            // 只保留文件名部分 /filename
-            int lastSlash = filename.lastIndexOf('/');
-            QString file = filepath + filename.mid(lastSlash);
+            // 只保留文件名部分 /filename，并确保顶层路径也含 / 分隔符
+            QString file = filepath + "/" + filename.mid(filename.lastIndexOf('/') + 1);
             
             QFileInfo info = QFileInfo(targetFile);
             auto dir = info.dir();
