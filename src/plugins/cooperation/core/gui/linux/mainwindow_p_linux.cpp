@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -31,6 +31,7 @@ void MainWindowPrivate::initTitleBar()
 {
     bool isOnlyTransfer = qApp->property("onlyTransfer").toBool();
     auto titleBar = q->titlebar();
+    q->setWindowFlags(q->windowFlags() & ~Qt::WindowMaximizeButtonHint);
     if (!isOnlyTransfer) {
         titleBar->setIcon(QIcon::fromTheme("dde-cooperation"));
     }
