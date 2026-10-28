@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -44,10 +44,13 @@ typedef enum chan_type_t {
     DISCOVER_BY_TCP = 1023, // 通过ip搜索的设备，模拟udp包的发送
 } ChanType;
 
+struct OutData;
+
 struct IncomeData {
     ChanType type;
     fastring json; // json数据结构实例
     fastring buf; // 二进制数据
+    co::chan<OutData> *resp_chan{nullptr}; // per-request 局部响应通道，消除全局 FIFO 串扰
 };
 
 typedef enum communication_type_t {

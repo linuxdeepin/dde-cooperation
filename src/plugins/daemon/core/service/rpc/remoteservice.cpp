@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -43,16 +43,13 @@ void RemoteServiceImpl::proto_msg(google::protobuf::RpcController *controller,
     in.json = request->msg();
     std::string buffer = request->data();
     in.buf = buffer;
+    // 创建 per-request 局部响应通道，避免全局 FIFO 串扰
+    co::chan<OutData> resp_chan(1, 30000);
+    in.resp_chan = &resp_chan;
     _income_chan << in;
 
     OutData out;
-    _outgo_chan >> out;
-    if (in.type != out.type) {
-        WLOG << "RPC response not match type:" << in.type << " != " << out.type;
-        // skip this, try next data
-        _outgo_chan >> out;
-        if (in.type != out.type) return;
-    }
+    resp_chan >> out;
     response->set_type(out.type);
     response->set_msg(out.json.c_str());
 
