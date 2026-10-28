@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -18,6 +18,8 @@ DWIDGET_USE_NAMESPACE
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QBitmap>
+#include <QPalette>
+#include <QToolTip>
 
 using namespace cooperation_core;
 
@@ -162,8 +164,15 @@ void DeviceItem::setDeviceName(const QString &name)
     auto showName = fm.elidedText(name, Qt::ElideMiddle, 385);
 
     nameLabel->setText(showName);
-    if (showName != name)
+#ifndef linux
+    QPalette tipPalette;
+    tipPalette.setColor(QPalette::ToolTipBase, Qt::white);
+    tipPalette.setColor(QPalette::ToolTipText, Qt::black);
+    QToolTip::setPalette(tipPalette);
+#endif
+    if (showName != name) {
         nameLabel->setToolTip(name);
+    }
 }
 
 void DeviceItem::setDeviceStatus(DeviceInfo::ConnectStatus status)
