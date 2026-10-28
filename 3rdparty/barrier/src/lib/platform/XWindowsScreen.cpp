@@ -1037,7 +1037,11 @@ XWindowsScreen::openWindow() const
 	}
 
 	// create and return the window
+#ifdef LIBDJK_SUPPORT
     unsigned inputType = WaylandUtils::isWayland() ? InputOutput : InputOnly;
+#else
+    unsigned inputType = InputOnly;
+#endif
     Window window = m_impl->XCreateWindow(m_display, m_root, x, y, w, h, 0, 0,
                             inputType, CopyFromParent,
 							CWDontPropagate | CWEventMask |
