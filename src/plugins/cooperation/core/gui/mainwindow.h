@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -30,7 +30,7 @@ public:
 #endif
     void closeEvent(QCloseEvent *event) override;
 
-    void showCloseDialog();
+    bool showCloseDialog();
     void minimizedAPP();
 public Q_SLOTS:
     void setFirstTipVisible();

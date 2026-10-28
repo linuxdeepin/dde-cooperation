@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -179,27 +179,29 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if (qApp->property("onlyTransfer").toBool())
         QApplication::quit();
 
-    showCloseDialog();
-    event->ignore();
+    if (showCloseDialog())
+        event->ignore();
 }
 
-void MainWindow::showCloseDialog()
+bool MainWindow::showCloseDialog()
 {
     QString option = CooperationUtil::closeOption();
     if (option == "Minimise") {
         minimizedAPP();
-        return;
+        return true;
     }
-    if (option == "Exit")
+    if (option == "Exit") {
         QApplication::quit();
+        return false;
+    }
 
     CooperationDialog dlg(qApp->activeWindow());
     dlg.setFixedSize(360, 260);
 
     QVBoxLayout *layout = new QVBoxLayout();
     QCheckBox *op1 = new QCheckBox(tr("Minimise to system tray"));
-    op1->setChecked(true);
     QCheckBox *op2 = new QCheckBox(tr("Exit"));
+    op2->setChecked(true);
 
     connect(op1, &QCheckBox::stateChanged, op1, [op2](int state) {
         op2->setChecked(state != Qt::Checked);
@@ -246,10 +248,15 @@ void MainWindow::showCloseDialog()
         }
 
         if (isExit)
+        {
             QApplication::quit();
-        else
+            return false;
+        } else {
             minimizedAPP();
+            return true;
+        }
     }
+    return false;
 }
 
 void MainWindow::minimizedAPP()
