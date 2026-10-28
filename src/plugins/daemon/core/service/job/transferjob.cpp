@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -18,6 +18,7 @@
 #include <QPointer>
 #include <QElapsedTimer>
 #include <QStorageInfo>
+#include <limits>
 
 TransferJob::TransferJob(QObject *parent)
     : QObject(parent)
@@ -197,7 +198,9 @@ void TransferJob::start()
         DLOG << "start write job: " << _savedir << " fullpath = " << _save_fulldir;
         handleJobStatus(JOB_TRANS_DOING);
         QStorageInfo info(_save_fulldir.c_str());
-        _device_free_size = info.bytesFree();
+        qint64 freeBytes = info.bytesFree();
+        // INT64_MAX skips space check when bytesFree() returns invalid value
+        _device_free_size = (freeBytes < 0) ? std::numeric_limits<qint64>::max() : freeBytes;
     } else {
         // 读取所有文件的信息
         DLOG << "doTransfileJob path to save:" << _savedir;
