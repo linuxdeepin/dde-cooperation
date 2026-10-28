@@ -566,8 +566,12 @@ void CooperationManager::handleNetworkDismiss(const QString &msg)
                                Please connect to the network and try again!"));
         d->notifyMessage(d->recvReplacesId, body, {}, 5 * 1000);
     } else {
-        if (!d->taskDialog()->isVisible())
+        if (!d->taskDialog()->isVisible()) {
+            static QString body(tr("Network not connected, file delivery failed this time.\
+                                   Please connect to the network and try again!"));
+            d->notifyMessage(d->recvReplacesId, body, {}, 5 * 1000);
             return;
+        }
 
         static QString title(tr("File transfer failed"));
         d->taskDialog()->switchFailPage(title,
