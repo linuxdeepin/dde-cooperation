@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -164,6 +164,7 @@ enum FileType {
 
 enum FileTransRe {
   IO_ERROR = -2, // 出现读写错误
+  ENOSPC_ERROR = -3, // 储存空间不足
   OK = 1,  //无错误
   FINIASH = 2, // 完成
 };

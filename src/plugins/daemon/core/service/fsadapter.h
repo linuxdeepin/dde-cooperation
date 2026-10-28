@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -22,8 +22,8 @@ public:
     static bool newFile(const char *path, bool isdir);
     static bool newFileByFullPath(const char *fullpath, bool isdir);
     static bool writeBlock(const char *name, int64 seek_len, const char *data, size_t size);
-    static bool writeBlock(const char *name, int64 seek_len, const char *data, size_t size,
-                           const int flags, fs::file **fx);
+    static int writeBlock(const char *name, int64 seek_len, const char *data, size_t size,
+                          const int flags, fs::file **fx);
     static bool reacquirePath(fastring filepath, fastring *newpath);
 
 signals:

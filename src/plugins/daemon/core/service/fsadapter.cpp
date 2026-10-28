@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,8 @@
 
 #include "co/log.h"
 #include "co/path.h"
+
+#include <cerrno>
 
 //using namespace deamon_core;
 
@@ -116,7 +118,7 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len,
             (*fx)->close();
             delete (*fx);
             (*fx) = nullptr;
-            return false;
+            return IO_ERROR;
         }
         fastring parent = path::dir(name);
         fs::mkdir(parent, true);   // 创建文件保存的根/子目录
@@ -126,15 +128,15 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len,
             (*fx)->close();
             delete (*fx);
             (*fx) = nullptr;
-            return false;
+            return IO_ERROR;
         }
     }
 
     if ((*fx) == nullptr) {
         ELOG << "fx is nullptr !!!!!! " << name << " flags = " << flags << " len " << size;
-        return false;
+        return IO_ERROR;
     }
-    bool write = true;
+    int result = OK;
     if (size != 0) {
         size_t wirted_size = 0;
         size_t rem_size = size;
@@ -142,7 +144,8 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len,
         do {
             size_t wsize = (*fx)->write(data, rem_size);
             if (wsize <= 0) {
-                write = false;
+                int saved_errno = errno;
+                result = (saved_errno == ENOSPC) ? ENOSPC_ERROR : IO_ERROR;
                 ELOG << "fx write done: " << rem_size << " => " << wsize;
                 break;
             }
@@ -151,13 +154,13 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len,
         } while (wirted_size < size);
     }
 
-    if (flags & JobTransFileOp::FILE_CLOSE || !write) {
+    if (flags & JobTransFileOp::FILE_CLOSE || result != OK) {
         (*fx)->close();
         delete (*fx);
         (*fx) = nullptr;
     }
 
-    return write;
+    return result;
 }
 
 bool FSAdapter::reacquirePath(fastring filepath, fastring *newpath)

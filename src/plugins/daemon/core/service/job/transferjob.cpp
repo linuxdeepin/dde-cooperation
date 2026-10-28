@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -705,14 +705,18 @@ bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block, co
     // ELOG << "file : " << name << " write : " << len << " totol = " << _total_size << " curent " <<  _cur_size
     //      << "  flags !!! " << block->flags;
     int count = 3;
-    bool good = false;
+    int ret = IO_ERROR;
     do {
-        good = FSAdapter::writeBlock(fullpath.c_str(), offset, buffer.c_str(), len, block->flags, &fx);
+        ret = FSAdapter::writeBlock(fullpath.c_str(), offset, buffer.c_str(), len, block->flags, &fx);
         count--;
-    } while(!good && count > 0);
+    } while(ret != OK && count > 0);
 
 
-    if (!good) {
+    if (ret == ENOSPC_ERROR) {
+        _device_not_enough = true;
+    }
+
+    if (ret != OK) {
         ELOG << "file : " << fullpath << " write BLOCK error";
     } else {
         if (len == 0 && block->flags & JobTransFileOp::FIlE_CREATE) {
@@ -721,7 +725,7 @@ bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block, co
             _cur_size += static_cast<int64>(len);
         }
     }
-    return good;
+    return ret == OK;
 }
 
 bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
