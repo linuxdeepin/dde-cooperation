@@ -1,4 +1,7 @@
-﻿#include "transferringwidget.h"
+﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+#include "transferringwidget.h"
 
 #include "errorwidget.h"
 
@@ -172,7 +175,7 @@ void TransferringWidget::updateProcess(const QString &tpye, const QString &conte
         TransferHelper::instance()->checkSize(content);
 #endif
 
-    if (estimatedtime == -1)
+    if (estimatedtime == -1 && tpye.isEmpty())
         return;
 
     //处理过程内容，只显示一级目录文件
@@ -246,7 +249,7 @@ QString TransferringWidget::resetContent(const QString &type, const QString &con
                 res = "/" + parts[1] + "/" + parts[2] + "/" + parts[3];
         }
         finishJobs.append(res);
-        return QString();
+        return res;
     }
 
     res = getTransferFileName(content, finishJobs.first());
@@ -259,21 +262,15 @@ QString TransferringWidget::resetContent(const QString &type, const QString &con
 
 QString TransferringWidget::getTransferFileName(const QString &fullPath, const QString &targetPath)
 {
-    std::string path = fullPath.toStdString();
-    std::string toRemove = targetPath.toStdString();
-
-    size_t found = path.find(toRemove);   // 查找子字符串的位置
-    auto index = found + toRemove.length() + 1;
-    if (found != std::string::npos && index <= path.length()) {   // 如果找到了子字符串
-        std::string result = path.substr(index);   // 截取子字符串之后的部分
-        found = result.find('/');   // 查找第一个路径名
-        if (found != std::string::npos) {
-            result = result.substr(0, found);   // 截取第一个路径名
-        }
-        return QString::fromStdString(result);
-    } else {
-        return QString();
+    int index = fullPath.indexOf(targetPath);
+    if (index >= 0) {
+        QString remaining = fullPath.mid(index + targetPath.length());
+        int lastSlash = remaining.lastIndexOf('/');
+        if (lastSlash >= 0)
+            return remaining.mid(lastSlash + 1);
+        return remaining;
     }
+    return QString();
 }
 
 ProcessWindow::ProcessWindow(QFrame *parent)
