@@ -679,7 +679,7 @@ MSWindowsScreen::fakeInputEnd()
 SInt32
 MSWindowsScreen::getJumpZoneSize() const
 {
-    return 1;
+    return 12;
 }
 
 bool
@@ -1569,8 +1569,8 @@ MSWindowsScreen::updateScreenShape()
     m_h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     m_x = GetSystemMetrics(SM_XVIRTUALSCREEN);
     m_y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-    m_xCenter = GetSystemMetrics(SM_CXSCREEN) >> 1;
-    m_yCenter = GetSystemMetrics(SM_CYSCREEN) >> 1;
+    m_xCenter = m_x + (m_w >> 1);
+    m_yCenter = m_y + (m_h >> 1);
 
     // check for multiple monitors
     m_multimon = (m_w != GetSystemMetrics(SM_CXSCREEN) ||
