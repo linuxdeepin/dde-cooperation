@@ -170,10 +170,9 @@ void ScreenMirroringWindow::handleSizeChange(const QSize &size)
         initShow = true;
     }
 
-    // only the size is biger current size can be resized.
-    if (w > this->width() || h > this->height()) {
+    if (w != this->width() || h != this->height()) {
         DLOG << "Resizing window to:" << w << "x" << h;
-        m_expectSize = QSize(0, 0); // has been resize, reset.
+        m_expectSize = QSize(0, 0);
         this->resize(w, h);
     } else {
         m_expectSize = size; // record expected size which is not resized

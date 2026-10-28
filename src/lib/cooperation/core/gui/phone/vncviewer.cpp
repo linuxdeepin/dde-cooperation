@@ -88,6 +88,30 @@ void VncViewer::frameTimerTimeout()
 #ifdef QT_DEBUG
     DLOG << " FPS: " << currentFps();
 #endif
+
+    if (!m_connected || !m_rfbCli)
+        return;
+
+    QMutexLocker locker(&m_mutex);
+
+    int curentMode = (m_rfbCli->width < m_rfbCli->height) ? PORTRAIT : LANDSCAPE;
+    if (curentMode != m_phoneMode) {
+        DLOG << "Screen rotation detected by timer - old mode: " << m_phoneMode << " new mode: " << curentMode;
+        m_phoneMode = curentMode;
+
+        if (PORTRAIT == m_phoneMode) {
+            m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.height());
+        } else {
+            m_phoneScale = static_cast<qreal>(m_rfbCli->height) / static_cast<qreal>(m_realSize.width());
+        }
+
+        int w = (m_phoneMode == PORTRAIT) ? m_realSize.width() : m_realSize.height();
+        const QSize size = {static_cast<int>(w * m_phoneScale), m_rfbCli->height};
+
+        m_image = QImage();
+        setSurfaceSize(size);
+        emit sizeChanged(size);
+    }
 }
 
 void VncViewer::onSizeChange(int width, int height)
@@ -208,26 +232,10 @@ void VncViewer::setMobileRealSize(const int w, const int h)
 
 void VncViewer::updateImage(const QImage &image)
 {
-    // 使用互斥锁保护图像更新
     QMutexLocker locker(&m_mutex);
 
-    // 检查图像有效性
     if (image.isNull()) {
         return;
-    }
-
-    // 检测屏幕是否旋转 (根据图像宽高比判断)
-    int currentMode = (image.width() < image.height()) ? PORTRAIT : LANDSCAPE;
-    if (currentMode != m_phoneMode) {
-        DLOG << "Screen rotation detected from image - old mode: " << m_phoneMode << " new mode: " << currentMode;
-        m_phoneMode = currentMode;
-
-        // 更新显示尺寸
-        int w = (m_phoneMode == PORTRAIT) ? m_realSize.width() : m_realSize.height();
-        const QSize size = {static_cast<int>(w * m_phoneScale), image.height()};
-
-        setSurfaceSize(size);
-        emit sizeChanged(size);
     }
 
     m_image = image;
