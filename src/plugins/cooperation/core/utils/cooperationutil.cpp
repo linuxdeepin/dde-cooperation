@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -336,6 +336,11 @@ CooperationUtil *CooperationUtil::instance()
 {
     static CooperationUtil ins;
     return &ins;
+}
+
+bool CooperationUtil::isBackendOk() const
+{
+    return d->backendOk;
 }
 
 QWidget *CooperationUtil::mainWindow()

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QSet>
 #include "co/json.h"
 
 class BackendService;
@@ -39,6 +40,7 @@ public slots:
     void handleDisConnectCb(co::Json json);
     void handleShareServerStart(const bool ok, const QString msg);
     void handleSearchDevice(co::Json json);
+    void cancelLoginTimeout(const QString &appName);
 private:
     void ipcServiceStart();
     void createIpcBackend(const quint16 port);
@@ -52,6 +54,7 @@ private:
     QMap<QString, QString> _sessionIDs;
     // <appName, ip>
     QMap<QString, QString> _ips;
+    QSet<QString> _pendingLogins;
 };
 
 #endif // HANDLEIPDSERVICE_H

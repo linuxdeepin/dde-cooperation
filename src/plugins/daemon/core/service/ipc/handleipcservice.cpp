@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -365,6 +365,26 @@ void HandleIpcService::handleTryConnect(co::Json json)
     SendRpcService::instance()->setTargetAppName(appName, targetAppname);
     SendRpcService::instance()->doSendProtoMsg(LOGIN_INFO, appName, login.as_json().str().c_str());
 
+    _pendingLogins.insert(appName);
+    QTimer::singleShot(5000, this, [this, appName] {
+        if (_pendingLogins.contains(appName)) {
+            _pendingLogins.remove(appName);
+            co::Json req;
+            req = {
+                { "id", 0 },
+                { "result", 0 },
+                { "msg", appName.toStdString() },
+                { "isself", true },
+            };
+            req.add_member("api", "Frontend.cbConnect");
+            SendIpcService::instance()->handleSendToClient(appName, req.str().c_str());
+        }
+    });
+}
+
+void HandleIpcService::cancelLoginTimeout(const QString &appName)
+{
+    _pendingLogins.remove(appName);
 }
 
 bool HandleIpcService::handleJobActions(const uint type, co::Json &msg)

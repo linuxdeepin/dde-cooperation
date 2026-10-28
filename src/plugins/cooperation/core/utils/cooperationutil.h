@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -20,6 +20,7 @@ class CooperationUtil : public QObject
 public:
     static CooperationUtil *instance();
 
+    bool isBackendOk() const;
     QWidget *mainWindow();
     QString sessionId() const;
     DeviceInfoPointer findDeviceInfo(const QString &ip);

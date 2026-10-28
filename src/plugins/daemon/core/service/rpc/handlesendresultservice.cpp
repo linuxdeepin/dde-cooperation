@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -75,4 +75,5 @@ void HandleSendResultService::handleLogin(const QString &appName, const QString 
     };
     req.add_member("api", "Frontend.cbConnect");
     SendIpcService::instance()->handleSendToClient(appName, req.str().c_str());
+    emit loginResultReceived(appName);
 }

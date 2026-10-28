@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -157,6 +157,11 @@ void TransferHelperPrivate::handleTryConnect(const QString &ip)
     req.add_member("api", "Backend.tryConnect");
     rpcClient.call(req, res);
     rpcClient.close();
+
+    if (!res.get("result").as_bool()) {
+        QMetaObject::invokeMethod(q, "onConnectStatusChanged", Qt::QueuedConnection,
+            Q_ARG(int, 0), Q_ARG(QString, tr("Failed to connect to backend service")), Q_ARG(bool, true));
+    }
 }
 
 void TransferHelperPrivate::handleSearchDevice(const QString &ip)
@@ -218,8 +223,13 @@ void TransferHelperPrivate::reportTransferResult(bool result)
 void TransferHelperPrivate::onVerifyTimeout()
 {
     isTransTimeout = true;
-    if (status.loadAcquire() != TransferHelper::Confirming)
+    if (status.loadAcquire() != TransferHelper::Confirming) {
+        if (status.loadAcquire() == TransferHelper::Connecting) {
+            status.storeRelease(TransferHelper::Idle);
+            transDialog()->switchResultPage(false, tr("Connection timed out, please check the network and try again"));
+        }
         return;
+    }
 
     transDialog()->switchResultPage(false, tr("The other party did not receive, the files failed to send"));
 }
@@ -278,6 +288,11 @@ void TransferHelper::sendFiles(const QString &ip, const QString &devName, const 
     d->readyToSendFiles = fileList;
     if (fileList.isEmpty())
         return;
+
+    if (!CooperationUtil::instance()->isBackendOk()) {
+        d->transferResult(false, tr("Backend service is not ready, please try again later"));
+        return;
+    }
 
     if (!d->status.testAndSetRelease(TransferHelper::Idle, TransferHelper::Connecting)) {
         d->status.storeRelease(TransferHelper::Idle);

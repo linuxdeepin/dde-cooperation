@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -14,6 +14,10 @@ class HandleSendResultService : public QObject
 public:
     explicit HandleSendResultService(QObject *parent = nullptr);
     ~HandleSendResultService() = default;
+
+signals:
+    void loginResultReceived(const QString &appName);
+
 public slots:
     void handleSendResultMsg(const QString appName, const QString msg);
 private:
