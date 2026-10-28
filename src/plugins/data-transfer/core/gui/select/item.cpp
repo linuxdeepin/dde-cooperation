@@ -724,7 +724,7 @@ SelectListView::SelectListView(QFrame *parent) : QListView(parent)
                   "border: none;"
                   "}");
     setEditTriggers(QAbstractItemView::NoEditTriggers);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setSelectionMode(QAbstractItemView::NoSelection);
     setVerticalScrollMode(QListView::ScrollPerPixel);
     QObject::connect(model, &QStandardItemModel::itemChanged, this,
