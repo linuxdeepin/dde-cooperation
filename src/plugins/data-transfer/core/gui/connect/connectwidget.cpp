@@ -173,10 +173,17 @@ void ConnectWidget::initConnectLayout()
             remainingTime--;
             QString tip = QString("%1<font color='#6199CA'> %2s </font>%3").arg(tr("The code will be expired in")).arg(QString::number(remainingTime)).arg(tr("please input connect code as soon as possible"));
             tipLabel->setText(tip);
+        } else if (passwordLabel->text().isEmpty()) {
+            tipLabel->setVisible(false);
+            passwordLabel->setVisible(false);
+            nullLabel->setVisible(true);
+            WarnningLabel->setText(tr("Backend service is unavailable, please try refreshing later"));
+            WarnningLabel->setVisible(true);
         } else {
             tipLabel->setVisible(false);
             passwordLabel->setVisible(false);
             nullLabel->setVisible(true);
+            WarnningLabel->setText(tr("Connect code is expired, please refresh for new code"));
             WarnningLabel->setVisible(true);
             timer->stop();
             emit refreshLabel->linkActivated(" ");
