@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2020 - 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ﻿#include "createbackupfilewidget.h"
 #include "../select/item.h"
 #include "../type_defines.h"
@@ -253,7 +257,7 @@ void CreateBackupFileWidget::initDiskListView()
 
     diskListView->setModel(model);
     diskListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    diskListView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    diskListView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     diskListView->setSelectionMode(QAbstractItemView::SingleSelection);
 
     QObject::connect(diskListView, &QListView::clicked, [model](const QModelIndex &index) {

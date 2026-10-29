@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2020 - 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ﻿#include "item.h"
 #include "calculatefilesize.h"
 #include <QApplication>
@@ -724,7 +728,7 @@ SelectListView::SelectListView(QFrame *parent) : QListView(parent)
                   "border: none;"
                   "}");
     setEditTriggers(QAbstractItemView::NoEditTriggers);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setSelectionMode(QAbstractItemView::NoSelection);
     setVerticalScrollMode(QListView::ScrollPerPixel);
     QObject::connect(model, &QStandardItemModel::itemChanged, this,
