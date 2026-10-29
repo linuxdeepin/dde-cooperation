@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -706,13 +706,16 @@ bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block, co
     //      << "  flags !!! " << block->flags;
     int count = 3;
     bool good = false;
+    bool not_enough = false;
     do {
-        good = FSAdapter::writeBlock(fullpath.c_str(), offset, buffer.c_str(), len, block->flags, &fx);
+        good = FSAdapter::writeBlock(fullpath.c_str(), offset, buffer.c_str(), len, block->flags, &fx, &not_enough);
         count--;
     } while(!good && count > 0);
 
 
     if (!good) {
+        if (not_enough)
+            _device_not_enough = true;
         ELOG << "file : " << fullpath << " write BLOCK error";
     } else {
         if (len == 0 && block->flags & JobTransFileOp::FIlE_CREATE) {
@@ -754,7 +757,7 @@ bool TransferJob::sendToRemote(const QSharedPointer<FSDataBlock> block)
         transres.from_json(resJson);
         if (transres.result == IO_ERROR) {
             DLOG << "remote return: IO_ERROR!";
-            _device_not_enough = block->flags & JobTransFileOp::FILE_COUNTED;
+            _device_not_enough = transres.not_enough;
             return false;
         }
     } else {

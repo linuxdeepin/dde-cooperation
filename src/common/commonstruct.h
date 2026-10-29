@@ -225,11 +225,13 @@ struct FileTransResponse {
     int32 id { -1 };
     fastring name;
     int32 result { -1 };
+    bool not_enough { false };
 
     void from_json(const co::Json& _x_) {
         id = (int32)_x_.get("id").as_int64();
         name = _x_.get("name").as_c_str();
         result = (int32)_x_.get("result").as_int64();
+        not_enough = _x_.get("not_enough").as_bool();
     }
 
     co::Json as_json() const {
@@ -237,6 +239,7 @@ struct FileTransResponse {
         _x_.add_member("id", id);
         _x_.add_member("name", name);
         _x_.add_member("result", result);
+        _x_.add_member("not_enough", not_enough);
         return _x_;
     }
 };

@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,8 @@
 
 #include "co/log.h"
 #include "co/path.h"
+
+#include <cerrno>
 
 //using namespace deamon_core;
 
@@ -81,7 +83,7 @@ bool FSAdapter::newFileByFullPath(const char *fullpath, bool isdir)
     return fs::exists(fullpath);
 }
 
-bool FSAdapter::writeBlock(const char *name, int64 seek_len, const char *data, size_t size)
+bool FSAdapter::writeBlock(const char *name, int64 seek_len, const char *data, size_t size, bool *not_enough)
 {
     fs::file fx(name, 'm');
     if (!fx.exists()) {
@@ -89,12 +91,16 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len, const char *data, s
         return false;
     }
 
+    bool write = true;
     size_t wirted_size = 0;
     size_t rem_size = size;
     fx.seek(seek_len);
     do {
         size_t wsize = fx.write(data, rem_size);
         if (wsize <= 0) {
+            write = false;
+            if (not_enough && (errno == ENOSPC || errno == EFBIG))
+                *not_enough = true;
             ELOG << "fx write done: " << rem_size << " => " << wsize;
             break;
         }
@@ -103,11 +109,12 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len, const char *data, s
     } while (wirted_size < size);
     fx.close();
 
-    return true;
+    return write;
 }
 
 bool FSAdapter::writeBlock(const char *name, int64 seek_len,
-                           const char *data, size_t size, const int flags, fs::file **fx)
+                           const char *data, size_t size, const int flags, fs::file **fx,
+                           bool *not_enough)
 {
     if (flags & JobTransFileOp::FIlE_CREATE) {
         if ((*fx) != nullptr) {
@@ -143,6 +150,8 @@ bool FSAdapter::writeBlock(const char *name, int64 seek_len,
             size_t wsize = (*fx)->write(data, rem_size);
             if (wsize <= 0) {
                 write = false;
+                if (not_enough && (errno == ENOSPC || errno == EFBIG))
+                    *not_enough = true;
                 ELOG << "fx write done: " << rem_size << " => " << wsize;
                 break;
             }
