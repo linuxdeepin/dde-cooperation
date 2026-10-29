@@ -135,6 +135,7 @@ void ZipFileProcessResultWidget::upWidgetToFailed(const QString &content, int pr
 
 void ZipFileProcessResultWidget::backPage()
 {
+    emit TransferHelper::instance()->clearWidget();
     emit TransferHelper::instance()->changeWidget(PageName::choosewidget);
 }
 
