@@ -7,6 +7,7 @@
 #include <QRandomGenerator>
 #include <QDebug>
 #include <QDir>
+#include <QDirIterator>
 #include <QStorageInfo>
 #include <QCoreApplication>
 #include <QTimer>
@@ -255,6 +256,26 @@ QString TransferHelper::getTransferJson(QStringList appList, QStringList fileLis
         if (file.contains(QDir::homePath()))
             file.replace(QDir::homePath() + "/", "");
         fileArray.append(file);
+    }
+    // recursively enumerate empty subdirectories under selected directories
+    for (const QString &file : fileList) {
+        QString absPath = file;
+        if (!QDir::isAbsolutePath(absPath))
+            absPath = QDir::homePath() + "/" + absPath;
+        QDir dir(absPath);
+        if (dir.exists()) {
+            QDirIterator it(absPath, QDir::Dirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+            while (it.hasNext()) {
+                QDir subDir(it.next());
+                if (subDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot).isEmpty()) {
+                    QString relPath = subDir.absolutePath();
+                    if (relPath.startsWith(QDir::homePath() + "/"))
+                        relPath = relPath.mid(QDir::homePath().length() + 1);
+                    if (!fileArray.contains(relPath))
+                        fileArray.append(relPath);
+                }
+            }
+        }
     }
     // add browser
     QJsonArray browserArray;
