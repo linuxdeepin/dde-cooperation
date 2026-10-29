@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -17,6 +17,7 @@
 #include "ipc/proto/backend.h"
 
 #include <QDir>
+#include <QFileInfo>
 #include <QUrl>
 #include <QTime>
 #include <QTimer>
@@ -148,7 +149,8 @@ void CooperationProxy::onFileTransStatusChanged(const QString &status)
     LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
     LOG_IF(FLG_log_detail) << "totalSize: " << transferInfo.totalSize << " transferSize=" << transferInfo.transferSize;
 
-    updateProgress(progressValue, time.toString("hh:mm:ss"));
+    QString fileName = QFileInfo(QString(param.name.c_str())).fileName();
+    updateProgress(progressValue, time.toString("hh:mm:ss"), fileName);
 }
 
 void CooperationProxy::onConfirmTimeout()
@@ -347,9 +349,9 @@ void CooperationProxy::showTransResult(bool success, const QString &msg)
     cooperationDialog()->showResultDialog(success, msg);
 }
 
-void CooperationProxy::updateProgress(int value, const QString &msg)
+void CooperationProxy::updateProgress(int value, const QString &msg, const QString &filename)
 {
     static QString title(tr("Receiving files from \"%1\""));
     cooperationDialog()->showProgressDialog(title.arg(CommonUitls::elidedText(fromWho, Qt::ElideMiddle, 15)));
-    cooperationDialog()->updateProgressData(value, msg);
+    cooperationDialog()->updateProgressData(value, msg, filename);
 }

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -41,7 +41,7 @@ public:
     explicit ProgressWidget(QWidget *parent = nullptr);
 
     void setTitle(const QString &title);
-    void setProgress(int value, const QString &msg);
+    void setProgress(int value, const QString &msg, const QString &filename = QString());
 
 Q_SIGNALS:
     void canceled();
@@ -50,6 +50,7 @@ private:
     void init();
 
     CooperationLabel *titleLabel { nullptr };
+    CooperationLabel *fileNameLabel { nullptr };
     CooperationLabel *msgLabel { nullptr };
     QProgressBar *progressBar { nullptr };
     QPushButton *cancelBtn { nullptr };
@@ -85,7 +86,7 @@ public:
     void showConfirmDialog(const QString &name);
     void showResultDialog(bool success, const QString &msg);
     void showProgressDialog(const QString &title);
-    void updateProgressData(int value, const QString &msg);
+    void updateProgressData(int value, const QString &msg, const QString &filename = QString());
 
 protected:
     void closeEvent(QCloseEvent *e) override;

@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -19,6 +19,7 @@
 #include <QDesktopServices>
 #include <QApplication>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QStandardPaths>
 #include <QTime>
 #include <QTimer>
@@ -199,11 +200,11 @@ void TransferHelperPrivate::transferResult(bool result, const QString &msg)
     reportTransferResult(result);
 }
 
-void TransferHelperPrivate::updateProgress(int value, const QString &remainTime)
+void TransferHelperPrivate::updateProgress(int value, const QString &remainTime, const QString &filename)
 {
     QString title = tr("Sending files to \"%1\"").arg(CommonUitls::elidedText(sendToWho, Qt::ElideMiddle, 15));
     transDialog()->switchProgressPage(title);
-    transDialog()->updateProgress(value, remainTime);
+    transDialog()->updateProgress(value, remainTime, filename);
 }
 
 void TransferHelperPrivate::reportTransferResult(bool result)
@@ -439,7 +440,8 @@ void TransferHelper::onFileTransStatusChanged(const QString &status)
     LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
     LOG_IF(FLG_log_detail) << "totalSize: " << d->transferInfo.totalSize << " transferSize=" << d->transferInfo.transferSize;
 
-    d->updateProgress(progressValue, time.toString("hh:mm:ss"));
+    QString fileName = QFileInfo(QString(param.name.c_str())).fileName();
+    d->updateProgress(progressValue, time.toString("hh:mm:ss"), fileName);
 }
 
 void TransferHelper::waitForConfirm()

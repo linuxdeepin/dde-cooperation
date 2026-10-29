@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -27,7 +27,7 @@ public:
     bool isInProgress() const;
 
 public Q_SLOTS:
-    void updateProgress(int value, const QString &remainTime);
+    void updateProgress(int value, const QString &remainTime, const QString &filename = QString());
 
 Q_SIGNALS:
     void cancel();
@@ -49,6 +49,7 @@ private:
     CooperationLabel *iconLabel { nullptr };
     CooperationLabel *msgLabel { nullptr };
     CooperationLabel *titleLabel { nullptr };
+    CooperationLabel *fileNameLabel { nullptr };
     CooperationLabel *progressMsgLael { nullptr };
     QProgressBar *progressBar { nullptr };
     bool result { false };

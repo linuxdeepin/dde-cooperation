@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -57,7 +57,7 @@ private:
     CooperationTransDialog *cooperationDialog();
 
     void showTransResult(bool success, const QString &msg);
-    void updateProgress(int value, const QString &msg);
+    void updateProgress(int value, const QString &msg, const QString &filename = QString());
 
 private:
     FrontendService *frontendIpcSer { nullptr };

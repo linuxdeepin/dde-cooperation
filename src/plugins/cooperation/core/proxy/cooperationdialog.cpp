@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -6,6 +6,8 @@
 
 #include <QHBoxLayout>
 #include <QCloseEvent>
+#include <QFont>
+#include "common/commonutils.h"
 
 using namespace cooperation_core;
 
@@ -50,8 +52,10 @@ void ProgressWidget::setTitle(const QString &title)
     titleLabel->setText(title);
 }
 
-void ProgressWidget::setProgress(int value, const QString &msg)
+void ProgressWidget::setProgress(int value, const QString &msg, const QString &filename)
 {
+    if (!filename.isEmpty())
+        fileNameLabel->setText(CommonUitls::elidedText(filename, Qt::ElideMiddle, 30));
     progressBar->setValue(value);
     QString remainTimeMsg(tr("Remaining time %1 | %2%").arg(msg, QString::number(value)));
     msgLabel->setText(remainTimeMsg);
@@ -60,7 +64,13 @@ void ProgressWidget::setProgress(int value, const QString &msg)
 void ProgressWidget::init()
 {
     titleLabel = new CooperationLabel(this);
+    fileNameLabel = new CooperationLabel(this);
     msgLabel = new CooperationLabel(this);
+
+    QFont font;
+    font.setWeight(QFont::DemiBold);
+    font.setPixelSize(14);
+    fileNameLabel->setFont(font);
 
     progressBar = new QProgressBar(this);
     progressBar->setRange(0, 100);
@@ -72,6 +82,7 @@ void ProgressWidget::init()
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(titleLabel, 1, Qt::AlignHCenter);
+    mainLayout->addWidget(fileNameLabel, 1, Qt::AlignHCenter);
     mainLayout->addWidget(progressBar, 1);
     mainLayout->addWidget(msgLabel, 1, Qt::AlignHCenter);
     mainLayout->addWidget(cancelBtn, 1);
@@ -151,9 +162,9 @@ void CooperationTransDialog::showProgressDialog(const QString &title)
     setHidden(false);
 }
 
-void CooperationTransDialog::updateProgressData(int value, const QString &msg)
+void CooperationTransDialog::updateProgressData(int value, const QString &msg, const QString &filename)
 {
-    progressWidget->setProgress(value, msg);
+    progressWidget->setProgress(value, msg, filename);
 }
 
 void CooperationTransDialog::closeEvent(QCloseEvent *e)

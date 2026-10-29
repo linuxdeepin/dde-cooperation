@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -23,6 +23,7 @@
 #include <QVariantMap>
 #include <QJsonDocument>
 #include <QFontMetrics>
+#include <QFileInfo>
 #include <QDBusReply>
 #include <QProcess>
 
@@ -88,13 +89,15 @@ void MainController::transferResult(bool result, const QString &msg)
     recvNotifyId = notifyMessage(recvNotifyId, msg, actions, {}, 3 * 1000);
 }
 
-void MainController::updateProgress(int value, const QString &remainTime)
+void MainController::updateProgress(int value, const QString &remainTime, const QString &filename)
 {
     // 在通知中心中，如果通知内容包含“%”且actions中存在“cancel”，则不会在通知中心显示
     QStringList actions { NotifyCancelAction, tr("Cancel") };
     // dde-session-ui 5.7.2.2 版本后，支持设置该属性使消息不进通知中心
     QVariantMap hitMap { { "x-deepin-ShowInNotifyCenter", false } };
     QString msg(tr("File receiving %1% | Remaining time %2").arg(QString::number(value), remainTime));
+    if (!filename.isEmpty())
+        msg = tr("%1 | File receiving %2% | Remaining time %3").arg(filename, QString::number(value), remainTime);
 
     recvNotifyId = notifyMessage(recvNotifyId, msg, actions, hitMap, 15 * 1000);
 }
@@ -283,7 +286,8 @@ void MainController::onFileTransStatusChanged(const QString &status)
     LOG_IF(FLG_log_detail) << "progressbar: " << progressValue << " remain_time=" << remain_time;
     LOG_IF(FLG_log_detail) << "totalSize: " << transferInfo.totalSize << " transferSize=" << transferInfo.transferSize;
 
-    updateProgress(progressValue, time.toString("hh:mm:ss"));
+    QString fileName = QFileInfo(QString(param.name.c_str())).fileName();
+    updateProgress(progressValue, time.toString("hh:mm:ss"), fileName);
 }
 
 void MainController::onConfirmTimeout()

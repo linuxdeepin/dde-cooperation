@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -51,7 +51,7 @@ private:
     uint notifyMessage(uint replacesId, const QString &body,
                        const QStringList &actions, QVariantMap hitMap, int expireTimeout);
     void transferResult(bool result, const QString &msg);
-    void updateProgress(int value, const QString &remainTime);
+    void updateProgress(int value, const QString &remainTime, const QString &filename = QString());
     void openFileLocation(const QString &path);
 
 private:

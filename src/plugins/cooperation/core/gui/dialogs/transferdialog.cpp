@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,6 +7,7 @@
 #include <QMovie>
 
 #include <maincontroller/maincontroller.h>
+#include "common/commonutils.h"
 
 using namespace cooperation_core;
 #ifdef linux
@@ -118,6 +119,10 @@ void TransferDialog::createProgressPage()
     font.setPixelSize(14);
     titleLabel->setFont(font);
 
+    fileNameLabel = new CooperationLabel(this);
+    fileNameLabel->setAlignment(Qt::AlignHCenter);
+    fileNameLabel->setFont(font);
+
     progressBar = new QProgressBar(this);
     progressBar->setRange(0, 100);
     progressBar->setValue(1);
@@ -130,6 +135,8 @@ void TransferDialog::createProgressPage()
     progressMsgLael->setFont(font);
 
     vLayout->addWidget(titleLabel);
+    vLayout->addSpacing(8);
+    vLayout->addWidget(fileNameLabel);
     vLayout->addSpacing(20);
     vLayout->addWidget(progressBar);
     vLayout->addSpacing(18);
@@ -192,10 +199,13 @@ void TransferDialog::switchProgressPage(const QString &title)
     okBtn->setVisible(true);
 }
 
-void TransferDialog::updateProgress(int value, const QString &remainTime)
+void TransferDialog::updateProgress(int value, const QString &remainTime, const QString &filename)
 {
     if (progressBar->value() < value)
         progressBar->setValue(value);
+
+    if (!filename.isEmpty())
+        fileNameLabel->setText(CommonUitls::elidedText(filename, Qt::ElideMiddle, 30));
 
     QString remainTimeMsg(tr("Remaining time %1 | %2%").arg(remainTime, QString::number(value)));
     progressMsgLael->setText(remainTimeMsg);
