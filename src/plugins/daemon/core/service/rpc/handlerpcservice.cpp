@@ -138,7 +138,7 @@ bool HandleRpcService::handleRemoteLogin(co::Json &info)
                 JobManager::instance()->confirmTransfer(lo.appName.c_str());
             }
         }
-        bool statu = true;//Comshare::instance()->checkTransCanConnect();
+        bool statu = Comshare::instance()->checkTransCanConnect();
         if (!authOK || !statu) {
             lores.result = false;
             lores.token = authOK ? "connect file status error!" : "Invalid auth code";
