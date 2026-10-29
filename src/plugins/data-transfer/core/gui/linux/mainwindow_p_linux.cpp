@@ -113,7 +113,7 @@ void MainWindowPrivate::initWidgets()
                 int index = stackedWidget->currentIndex();
                 if (index == PageName::errorwidget)
                     return;
-                if (index == PageName::transferringwidget || index == PageName::waitwidget)
+                if (index == PageName::transferringwidget || index == PageName::waitwidget || index == PageName::connectwidget)
                     stackedWidget->setCurrentIndex(PageName::errorwidget);
                 errorwidget->setErrorType(ErrorType::networkError);
             });
