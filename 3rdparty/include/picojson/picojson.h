@@ -252,7 +252,8 @@ inline value::value(double n) : type_(number_type), u_() {
       isnan(n) || isinf(n)
 #endif
           ) {
-    throw std::overflow_error("");
+    u_.number_ = 0.0;
+    return;
   }
   u_.number_ = n;
 }
@@ -916,6 +917,17 @@ template <typename Context, typename Iter> inline bool _parse(Context &ctx, inpu
 #endif
       f = strtod(num_str.c_str(), &endp);
       if (endp == num_str.c_str() + num_str.size()) {
+        if (
+#ifdef _MSC_VER
+            !_finite(f)
+#elif __cplusplus >= 201103L
+            std::isinf(f) || std::isnan(f)
+#else
+            isinf(f) || isnan(f)
+#endif
+                ) {
+          return false;
+        }
         ctx.set_number(f);
         return true;
       }
