@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -124,7 +124,106 @@ void SlotIPCSignalHandler::listenerDestroyed(QObject* listener)
 // the relaySlot slot has local ID 1 (we use this when calling QMetaObject::connect)
 // it also gets called with the void** array
 
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+// Qt 6.9+ 改用 QtMocHelpers 格式的 moc 输出(按 6.12 重生成)。
+// 手工保留原技巧:relaySlot 在元数据中声明为无参,使 indexOfSlot("relaySlot()")
+// 可命中,并在 metacall 中把原始参数数组 _a 直接传给 void** 实现。
+#include <QtCore/qmetatype.h>
+#include <QtCore/qtmochelpers.h>
+#include <memory>
+#include <QtCore/qxptype_traits.h>
+
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_DEPRECATED
+QT_WARNING_DISABLE_GCC("-Wuseless-cast")
+namespace {
+struct qt_meta_tag_ZN20SlotIPCSignalHandlerE_t {};
+} // unnamed namespace
+
+template <> constexpr inline auto SlotIPCSignalHandler::qt_create_metaobjectdata<qt_meta_tag_ZN20SlotIPCSignalHandlerE_t>()
+{
+    namespace QMC = QtMocConstants;
+    QtMocHelpers::StringRefStorage qt_stringData {
+        "SlotIPCSignalHandler",
+        "signalCaptured",
+        "",
+        "data",
+        "destroyed",
+        "signature",
+        "relaySlot",
+        "addListener",
+        "SlotIPCServiceConnection*",
+        "removeListener",
+        "listenerDestroyed"
+    };
+
+    QtMocHelpers::UintData qt_methods {
+        // Signal 'signalCaptured'
+        QtMocHelpers::SignalData<void(const QByteArray &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QByteArray, 3 },
+        }}),
+        // Signal 'destroyed'
+        QtMocHelpers::SignalData<void(QString)>(4, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 5 },
+        }}),
+        // Slot 'relaySlot'
+        QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'addListener'
+        QtMocHelpers::SlotData<void(SlotIPCServiceConnection *)>(7, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 8, 2 },
+        }}),
+        // Slot 'removeListener'
+        QtMocHelpers::SlotData<void(SlotIPCServiceConnection *)>(9, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 8, 2 },
+        }}),
+        // Slot 'listenerDestroyed'
+        QtMocHelpers::SlotData<void(QObject *)>(10, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QObjectStar, 2 },
+        }}),
+    };
+    QtMocHelpers::UintData qt_properties {
+    };
+    QtMocHelpers::UintData qt_enums {
+    };
+    return QtMocHelpers::metaObjectData<SlotIPCSignalHandler, qt_meta_tag_ZN20SlotIPCSignalHandlerE_t>(QMC::MetaObjectFlag{}, qt_stringData,
+            qt_methods, qt_properties, qt_enums);
+}
+Q_CONSTINIT const QMetaObject SlotIPCSignalHandler::staticMetaObject = { {
+    QMetaObject::SuperData::link<QObject::staticMetaObject>(),
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN20SlotIPCSignalHandlerE_t>.stringdata,
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN20SlotIPCSignalHandlerE_t>.data,
+    qt_static_metacall,
+    nullptr,
+    qt_staticMetaObjectRelocatingContent<qt_meta_tag_ZN20SlotIPCSignalHandlerE_t>.metaTypes,
+    nullptr
+} };
+
+void SlotIPCSignalHandler::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    auto *_t = static_cast<SlotIPCSignalHandler *>(_o);
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: _t->signalCaptured((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1]))); break;
+        case 1: _t->destroyed((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 2: _t->relaySlot(_a); break;
+        case 3: _t->addListener((*reinterpret_cast<std::add_pointer_t<SlotIPCServiceConnection*>>(_a[1]))); break;
+        case 4: _t->removeListener((*reinterpret_cast<std::add_pointer_t<SlotIPCServiceConnection*>>(_a[1]))); break;
+        case 5: _t->listenerDestroyed((*reinterpret_cast<std::add_pointer_t<QObject*>>(_a[1]))); break;
+        default: ;
+        }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (SlotIPCSignalHandler::*)(const QByteArray & )>(_a, &SlotIPCSignalHandler::signalCaptured, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (SlotIPCSignalHandler::*)(QString )>(_a, &SlotIPCSignalHandler::destroyed, 1))
+            return;
+    }
+}
+
+QT_WARNING_POP
+
+#elif QT_VERSION >= 0x060000
+
 namespace {
 struct qt_meta_stringdata_CLASSSlotIPCSignalHandlerENDCLASS_t {
     uint offsetsAndSizes[24];
@@ -417,7 +516,9 @@ void *SlotIPCSignalHandler::qt_metacast(const char *_clname)
 {
   if (!_clname) return 0;
 
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+  if (!strcmp(_clname, qt_staticMetaObjectStaticContent<qt_meta_tag_ZN20SlotIPCSignalHandlerE_t>.strings))
+#elif QT_VERSION >= 0x060000
   if (!strcmp(_clname, qt_meta_stringdata_CLASSSlotIPCSignalHandlerENDCLASS.stringdata0))
 #elif QT_VERSION >= 0x050000
   if (!strcmp(_clname, qt_meta_stringdata_SlotIPCSignalHandler.stringdata))
