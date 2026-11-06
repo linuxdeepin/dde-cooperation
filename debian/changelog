@@ -1,3 +1,9 @@
+dde-cooperation (1.2.9) unstable; urgency=medium
+
+  * fix: handle overflow in picojson number parsing
+
+ -- re2zero <yangwu@uniontech.com>  Fri, 06 Nov 2026 09:20:05 +0800
+
 dde-cooperation (1.2.8) unstable; urgency=medium
 
   * docs(cooperation): add Portuguese help manual
