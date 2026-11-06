@@ -94,6 +94,13 @@ class HomeFragment : TitleBarFragment<HomeActivity>() {
         val deviceName = Utils.getDeviceName(requireContext())
         val ipAddress = Utils.getIPAddress(requireContext())
         deviceInfoTextView?.text = "$deviceName | IP：${ipAddress ?: ""}"
+        // 还没连接过任何 PC 时给中性占位，不要留下空壳标签
+        if (viewModel.name().value.isNullOrBlank()) {
+            nameTextView?.text = "--"
+        }
+        if (viewModel.ip().value.isNullOrBlank()) {
+            ipTextView?.text = "IP：--"
+        }
     }
 
     override fun isStatusBarEnabled(): Boolean {
