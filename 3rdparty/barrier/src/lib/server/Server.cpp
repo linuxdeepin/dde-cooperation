@@ -780,26 +780,26 @@ Server::avoidJumpZone(BaseClientProxy* dst,
 	switch (dir) {
 	case kLeft:
 		if (!m_config->getNeighbor(dstName, kRight, t, NULL).empty() &&
-			x > dx + dw - 1 - z)
-			x = dx + dw - 1 - z;
+			x > dx + dw - 1 - 2 * z)
+			x = dx + dw - 1 - 2 * z;
 		break;
 
 	case kRight:
 		if (!m_config->getNeighbor(dstName, kLeft, t, NULL).empty() &&
-			x < dx + z)
-			x = dx + z;
+			x < dx + 2 * z)
+			x = dx + 2 * z;
 		break;
 
 	case kTop:
 		if (!m_config->getNeighbor(dstName, kBottom, t, NULL).empty() &&
-			y > dy + dh - 1 - z)
-			y = dy + dh - 1 - z;
+			y > dy + dh - 1 - 2 * z)
+			y = dy + dh - 1 - 2 * z;
 		break;
 
 	case kBottom:
 		if (!m_config->getNeighbor(dstName, kTop, t, NULL).empty() &&
-			y < dy + z)
-			y = dy + z;
+			y < dy + 2 * z)
+			y = dy + 2 * z;
 		break;
 
 	case kNoDirection:
