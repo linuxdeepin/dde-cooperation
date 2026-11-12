@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2023-2024 UnionTech Software Technology Co., Ltd.
+﻿// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -37,12 +37,12 @@ void FirstTipWidget::themeTypeChanged()
     if (CooperationGuiHelper::instance()->isDarkTheme()) {
         DLOG << "Switching to dark theme";
         shadowEffect->setColor(QColor(122, 192, 255, 128));
-        bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/dark/icons/banner_128px.png").pixmap(234, 158));
+        bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/dark/icons/banner_128px.svg").pixmap(234, 158));
 
     } else {
         DLOG << "Switching to light theme";
         shadowEffect->setColor(QColor(10, 57, 99, 128));
-        bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.png").pixmap(234, 158));
+        bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.svg").pixmap(234, 158));
     }
     if (!qApp->property("onlyTransfer").toBool()) {
         DLOG << "onlyTransfer property is false, setting connect icon";
@@ -118,7 +118,7 @@ void FirstTipWidget::initbackgroundFrame()
     backgroundFrame->setFixedWidth(480);
 
     bannerLabel = new QLabel(this);
-    bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.png").pixmap(234, 158));
+    bannerLabel->setPixmap(QIcon::fromTheme(":/icons/deepin/builtin/light/icons/banner_128px.svg").pixmap(234, 158));
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setSpacing(0);
