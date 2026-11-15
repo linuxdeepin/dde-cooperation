@@ -730,7 +730,7 @@ bool TransferJob::writeAndCreateFile(const QSharedPointer<FSDataBlock> block, co
     } else if (block->flags & JobTransFileOp::FILE_COUNTED) {
         _total_size = block->data_size;
         // 磁盘空间不足判断
-        if (_total_size >= _device_free_size) {
+        if (_device_free_size != -1 && _total_size > _device_free_size) {
             // 通知发送端磁盘空间不足
             _device_not_enough = true;
             return false;

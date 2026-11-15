@@ -169,7 +169,7 @@ bool JobManager::handleFSData(const co::Json &info, fastring buf, FileTransRespo
 
     if (!job.isNull()) {
         job->pushQueque(datablock);
-        if (datablock->flags & JobTransFileOp::FILE_COUNTED && job->freeBytes() < datablock->data_size) {
+        if (datablock->flags & JobTransFileOp::FILE_COUNTED && job->freeBytes() != -1 && job->freeBytes() < datablock->data_size) {
             return false;
         } else if (datablock->flags & JobTransFileOp::FIlE_DIR_CREATE || datablock->flags & JobTransFileOp::FIlE_CREATE) {
             co::sleep(10);
