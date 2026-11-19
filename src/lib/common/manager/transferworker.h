@@ -12,6 +12,9 @@
 #include <QObject>
 #include <QTimer>
 
+#include <atomic>
+#include <mutex>
+
 class TransferWorker : public QObject, public ProgressCallInterface
 {
     Q_OBJECT
@@ -73,7 +76,10 @@ private:
     int _noDataCount = 0;
 
     file_stats_s _status;
-    bool _canceled { false };
+    // guards _status.path / _status.total, which are written on the HTTP
+    // callback thread and read on the Qt timer thread.
+    mutable std::mutex _statusMutex;
+    std::atomic<bool> _canceled { false };
     bool _singleFile { false }; //send single file
     bool _serverLoopback { false };
 

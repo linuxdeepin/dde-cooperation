@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <functional>
+#include <mutex>
 #include <string>
 
 #define BLOCK_SIZE 4096
@@ -64,12 +65,23 @@ public:
 class WebInterface
 {
 public:
+    // The callback is installed by the owner thread and read from the Asio IO
+    // thread and the download thread, so both sides go through the mutex.
     void setCallback(std::shared_ptr<ProgressCallInterface> callback)
     {
-        _callback = callback;
+        std::lock_guard<std::mutex> lock(_callbackMutex);
+        _callback = std::move(callback);
     }
 
 protected:
+    // Returns a strong reference to the callback, or nullptr once it is gone.
+    std::shared_ptr<ProgressCallInterface> callback() const
+    {
+        std::lock_guard<std::mutex> lock(_callbackMutex);
+        return _callback.lock();
+    }
+
+    mutable std::mutex _callbackMutex;
     std::weak_ptr<ProgressCallInterface> _callback;
 };
 
