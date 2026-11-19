@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -6,7 +6,35 @@
 #include "common/log.h"
 
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
+#include <QSet>
+#include <QVector>
+
+#ifndef Q_OS_WIN
+#include <sys/stat.h>
+#endif
+
+namespace {
+
+// Stable identity of a directory, used to break symlink cycles. Comparing path
+// strings is not enough: a symlink loop produces a new string on every hop.
+QString directoryIdentity(const QString &path)
+{
+#ifdef Q_OS_WIN
+    return QFileInfo(path).canonicalFilePath().toCaseFolded();
+#else
+    struct stat st;
+    const QByteArray local = QFile::encodeName(path);
+    if (::stat(local.constData(), &st) == 0) {
+        return QString::number(static_cast<qulonglong>(st.st_dev)) + ":"
+                + QString::number(static_cast<qulonglong>(st.st_ino));
+    }
+    return QFileInfo(path).canonicalFilePath();
+#endif
+}
+
+} // namespace
 
 FileSizeCounter::FileSizeCounter(QObject *parent)
     : QThread{parent}
@@ -27,6 +55,7 @@ quint64 FileSizeCounter::countFiles(const QString &targetIp, const QStringList p
         if (fileInfo.isDir()) {
             DLOG << "Start counting file size in directory";
             _paths = paths;
+            _stoped = false;
             _targetIp = targetIp;
             start();
             return 0;
@@ -48,11 +77,10 @@ void FileSizeCounter::stop()
 void FileSizeCounter::run()
 {
     DLOG << "Starting file size counting in thread";
-    _stoped = false;
     _totalSize = 0;
     QStringList names;
     foreach (const QString &path, _paths) {
-        if (_stoped) {
+        if (_stoped.load()) {
             DLOG << "File size counting stopped";
             return;
         }
@@ -68,41 +96,51 @@ void FileSizeCounter::run()
     emit onCountFinish(_targetIp, names, _totalSize);
 }
 
+// Iterative traversal: a symlink loop or a very deep tree must terminate
+// instead of overflowing the stack or spinning forever.
 void FileSizeCounter::countFilesInDir(const QString &path)
 {
     DLOG << "Counting files in directory:" << path.toStdString();
-    if (_stoped) {
-        DLOG << "File size counting stopped in directory";
-        return;
-    }
 
-    QDir dir(path);
-    QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
-    foreach (const QFileInfo &info, infoList) {
-        if (_stoped) {
+    QSet<QString> visited;
+    QVector<QString> pending;
+    pending.append(path);
+
+    while (!pending.isEmpty()) {
+        if (_stoped.load()) {
             DLOG << "File size counting stopped in directory traversal";
             return;
         }
 
-        if (info.isSymLink()) {
-            // DLOG << "Handling symbolic link:" << info.filePath().toStdString();
-            // 处理符号链接
-            QFileInfo targetInfo(info.symLinkTarget());
-            if (targetInfo.exists()) {
-                if (targetInfo.isDir()) {
-                    // DLOG << "Symbolic link target is a directory, recursively counting";
-                    countFilesInDir(targetInfo.filePath());
-                } else {
-                    // DLOG << "Symbolic link target is a file, adding its size";
+        const QString current = pending.takeLast();
+        const QString identity = directoryIdentity(current);
+        if (identity.isEmpty() || visited.contains(identity)) {
+            if (!identity.isEmpty())
+                DLOG << "Skipping already visited directory:" << current.toStdString();
+            continue;
+        }
+        visited.insert(identity);
+
+        QDir dir(current);
+        const QFileInfoList infoList =
+                dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+        foreach (const QFileInfo &info, infoList) {
+            if (_stoped.load())
+                return;
+
+            if (info.isSymLink()) {
+                const QFileInfo targetInfo(info.symLinkTarget());
+                if (!targetInfo.exists())
+                    continue;
+                if (targetInfo.isDir())
+                    pending.append(targetInfo.filePath());
+                else
                     _totalSize += targetInfo.size();
-                }
+            } else if (info.isDir()) {
+                pending.append(info.filePath());
+            } else {
+                _totalSize += info.size();
             }
-        } else if (info.isDir()) {
-            // DLOG << "Recursively counting files in subdirectory:" << info.filePath().toStdString();
-            countFilesInDir(info.filePath()); // 递归遍历子目录
-        } else {
-            // DLOG << "Adding file size for:" << info.filePath().toStdString();
-            _totalSize += info.size(); // 统计文件大小
         }
     }
 }
