@@ -53,7 +53,7 @@ bool TransferWorker::onProgress(uint64_t size)
     DLOG << "Transfer progress update, size:" << size;
     _status.secsize.fetch_add(size);
 
-    return _canceled;
+    return _canceled.load();
 }
 
 void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
@@ -95,8 +95,11 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
         DLOG << "Web index end";
         break;
     case WEB_FILE_BEGIN: {
-        _status.path = msg;
-        _status.total = size;
+        {
+            std::lock_guard<std::mutex> lock(_statusMutex);
+            _status.path = msg;
+            _status.total = size;
+        }
         if (_everyNotify) {
             DLOG << "notify file begin: " << msg;
             QString path = QString::fromStdString(msg);
@@ -105,11 +108,16 @@ void TransferWorker::onWebChanged(int state, std::string msg, uint64_t size)
     }
         break;
     case WEB_FILE_END: {
-        _status.path = msg;
+        uint64_t total = 0;
+        {
+            std::lock_guard<std::mutex> lock(_statusMutex);
+            _status.path = msg;
+            total = _status.total;
+        }
         if (_everyNotify) {
             DLOG << "notify file end: " << msg;
             QString path = QString::fromStdString(msg);
-            emit notifyChanged(TRANS_FILE_DONE, path, _status.total);
+            emit notifyChanged(TRANS_FILE_DONE, path, total);
         }
     }
         break;
@@ -158,13 +166,17 @@ bool TransferWorker::tryStartSend(QStringList paths, int port, std::vector<std::
     for (auto path : paths) {
         QFileInfo fileInfo(path);
         std::string name = fileInfo.fileName().toStdString();
-        nameVector->push_back(name);
         try {
             _file_server->webBind(name, path.toStdString());
-        } catch (...) {
-            WLOG << "web bind (" << name << ") throw exception.";
+        } catch (const std::exception &e) {
+            // Binding failed: the receiver would get a 404 for this name while
+            // the transfer still claimed success. Fail loudly instead.
+            ELOG << "web bind (" << name << ") failed: " << e.what();
+            _file_server->clearBind();
+            return false;
         }
 
+        nameVector->push_back(name);
         jsonArray.push_back(picojson::value(name));
 
         if (paths.size() == 1 && fileInfo.isFile()) {
@@ -227,8 +239,8 @@ bool TransferWorker::tryStartReceive(QStringList names, QString &ip, int port, Q
 
 bool TransferWorker::isSyncing()
 {
-    DLOG << "Checking if syncing, canceled:" << _canceled;
-    return !_canceled;
+    DLOG << "Checking if syncing, canceled:" << _canceled.load();
+    return !_canceled.load();
 }
 
 void TransferWorker::setEveryFileNotify(bool every)
@@ -278,7 +290,12 @@ void TransferWorker::doCalculateSpeed()
     // QString formattedSpeed = QString::number(speed, 'f', 2); // 格式化速度为保留两位小数的字符串
     // DLOG << "Transfer speed: " << formattedSpeed.toStdString() << " M/s";
 
-    QString path = QString::fromStdString(_status.path);
+    std::string currentPath;
+    {
+        std::lock_guard<std::mutex> lock(_statusMutex);
+        currentPath = _status.path;
+    }
+    QString path = QString::fromStdString(currentPath);
     emit notifyChanged(TRANS_FILE_SPEED, path, bytesize);
 }
 
