@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,8 @@
 
 #include "system/uuid.h"
 #include "time/timespan.h"
+
+#include <atomic>
 
 #include <mutex>
 #include <vector>
@@ -233,6 +235,15 @@ public:
     //! Receive data from the server (asynchronous)
     virtual void ReceiveAsync();
 
+    //! Pause receiving after the current in-flight read completes
+    void PauseReceive() noexcept { _paused.store(true); }
+
+    //! Resume receiving (safe to call from any thread)
+    void ResumeReceive();
+
+    //! Is receiving paused?
+    bool receive_paused() const noexcept { return _paused.load(); }
+
     //! Setup option: keep alive
     /*!
         This option will setup SO_KEEPALIVE if the OS support this feature.
@@ -358,6 +369,7 @@ private:
     uint64_t _bytes_received;
     // Receive buffer
     bool _receiving;
+    std::atomic<bool> _paused { false };
     size_t _receive_buffer_limit{0};
     std::vector<uint8_t> _receive_buffer;
     HandlerStorage _receive_storage;
