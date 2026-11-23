@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -484,6 +484,11 @@ void SSLSession::TryReceive()
     if (!IsHandshaked())
         return;
 
+    // The consumer asked for backpressure: keep the socket open but stop
+    // re-arming reads. ResumeReceive() posts another TryReceive().
+    if (_paused.load())
+        return;
+
     // Async receive with the receive handler
     _receiving = true;
     auto self(this->shared_from_this());
@@ -532,6 +537,22 @@ void SSLSession::TryReceive()
         _stream.async_read_some(asio::buffer(_receive_buffer.data(), _receive_buffer.size()), bind_executor(_strand, async_receive_handler));
     else
         _stream.async_read_some(asio::buffer(_receive_buffer.data(), _receive_buffer.size()), async_receive_handler);
+}
+
+void SSLSession::ResumeReceive()
+{
+    if (!_paused.exchange(false))
+        return;
+
+    auto self(this->shared_from_this());
+    auto resume_handler = [this, self]() {
+        if (IsHandshaked() && !_paused.load())
+            TryReceive();
+    };
+    if (_strand_required)
+        _strand.post(resume_handler);
+    else
+        _io_service->post(resume_handler);
 }
 
 void SSLSession::TrySend()

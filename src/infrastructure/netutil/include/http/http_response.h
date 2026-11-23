@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -83,8 +83,26 @@ public:
     //! Clear the HTTP response cache
     HTTPResponse& Clear();
 
+    //! Drop the parsed header bytes while keeping body bytes that arrived in
+    //! the same read. Required by streaming clients: ClearCache() would lose
+    //! body data that was read together with the header.
+    HTTPResponse& ConsumeHeader();
+
     //! Clear the HTTP response cache
     HTTPResponse& ClearCache();
+
+    //! Mark the response as an open ended stream: no Content-Length is present
+    //! and the body ends when the peer closes the connection. Disables the
+    //! CRLFCRLF body terminator heuristic, which cannot be used for binary
+    //! archive streams.
+    HTTPResponse& SetStreamMode(bool enabled);
+
+    //! Is this response an open ended stream?
+    bool stream_mode() const noexcept { return _stream; }
+
+    //! Looks for "X-DTP-Stream: 1" among the parsed headers and enables stream
+    //! mode when found.
+    bool DetectStreamMode();
 
     //! Set the HTTP response begin with a given status and protocol
     /*!
@@ -132,6 +150,14 @@ public:
         \param length - Body length
     */
     HTTPResponse& SetBodyLength(size_t length);
+
+    //! Terminate the response header without a Content-Length
+    /*!
+        Used by open ended stream responses: the peer reads the body until the
+        connection closes. The response cache then contains only the header,
+        so SendResponse() followed by SendResponseBody() works.
+    */
+    HTTPResponse& SetOpenEndedBody();
 
     //! Make OK response
     /*!
@@ -204,6 +230,11 @@ private:
     size_t _body_size;
     size_t _body_length;
     bool _body_length_provided;
+    // Header parsed and not yet Clear()ed. Cannot be derived from _body_index:
+    // ConsumeHeader() keeps the body bytes and rebases the index to 0.
+    bool _header_parsed;
+    // Open ended response: body ends on disconnect, no CRLFCRLF heuristic.
+    bool _stream;
 
     // HTTP response cache
     std::string _cache;

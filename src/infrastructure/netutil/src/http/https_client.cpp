@@ -13,7 +13,12 @@ void HTTPSClient::onReceived(const void* buffer, size_t size)
     if (_response.IsPendingHeader())
     {
         if (_response.ReceiveHeader(buffer, size))
+        {
+            // Open ended archive streams have no Content-Length and must not be
+            // terminated by the CRLFCRLF heuristic.
+            _response.DetectStreamMode();
             onReceivedResponseHeader(_response);
+        }
 
         size = 0;
     }

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -109,9 +109,37 @@ HTTPResponse& HTTPResponse::Clear()
     _body_size = 0;
     _body_length = 0;
     _body_length_provided = false;
+    _header_parsed = false;
+    _stream = false;
 
     _cache.clear();
     _cache_size = 0;
+    return *this;
+}
+
+HTTPResponse& HTTPResponse::ConsumeHeader()
+{
+    // Drop the parsed header so cache() only exposes body bytes, but keep the
+    // body bytes that may have arrived in the same read. ClearCache() would
+    // silently discard them.
+    if (_body_index > 0 && _body_index <= _cache.size())
+    {
+        _cache.erase(_cache.begin(), _cache.begin() + static_cast<std::ptrdiff_t>(_body_index));
+        _body_size = _cache.size();
+    }
+    else
+    {
+        _body_size = 0;
+    }
+    _body_index = 0;
+    _cache_size = _cache.size();
+
+    // Header views and indices pointed into the erased prefix.
+    _headers.clear();
+    _protocol_index = 0;
+    _protocol_size = 0;
+    _status_phrase_index = 0;
+    _status_phrase_size = 0;
     return *this;
 }
 
@@ -120,6 +148,32 @@ HTTPResponse& HTTPResponse::ClearCache()
     _cache.clear();
     _cache_size = 0;
     return *this;
+}
+
+HTTPResponse& HTTPResponse::SetStreamMode(bool enabled)
+{
+    _stream = enabled;
+    return *this;
+}
+
+bool HTTPResponse::DetectStreamMode()
+{
+    for (size_t i = 0; i < _headers.size(); ++i)
+    {
+        const auto item = header(i);
+        if (!BaseKit::StringUtils::CompareNoCase(std::get<0>(item), "X-DTP-Stream"))
+            continue;
+
+        std::string_view value = std::get<1>(item);
+        while (!value.empty() && (value.front() == ' ' || value.front() == '\t' || value.front() == '\r'))
+            value.remove_prefix(1);
+        while (!value.empty() && (value.back() == ' ' || value.back() == '\t' || value.back() == '\r'))
+            value.remove_suffix(1);
+
+        _stream = (value == "1");
+        return _stream;
+    }
+    return false;
 }
 
 HTTPResponse& HTTPResponse::SetBegin(int status, std::string_view protocol)
@@ -359,6 +413,19 @@ HTTPResponse& HTTPResponse::SetBodyLength(size_t length)
     return *this;
 }
 
+HTTPResponse& HTTPResponse::SetOpenEndedBody()
+{
+    // Header/body separator only: no Content-Length. The body ends when the
+    // server closes the connection (HTTP/1.1, Connection: close).
+    _cache.append("\r\n");
+
+    _body_index = _cache.size();
+    _body_size = 0;
+    _body_length = 0;
+    _body_length_provided = false;
+    return *this;
+}
+
 HTTPResponse& HTTPResponse::MakeOKResponse(int status)
 {
     Clear();
@@ -415,12 +482,12 @@ HTTPResponse& HTTPResponse::MakeTraceResponse(std::string_view request)
 
 bool HTTPResponse::IsPendingHeader() const
 {
-    return (!_error && (_body_index == 0));
+    return (!_error && !_header_parsed);
 }
 
 bool HTTPResponse::IsPendingBody() const
 {
-    return (!_error && (_body_index > 0) && (_body_size > 0));
+    return (!_error && _header_parsed);
 }
 
 bool HTTPResponse::ReceiveHeader(const void* buffer, size_t size)
@@ -577,6 +644,7 @@ bool HTTPResponse::ReceiveHeader(const void* buffer, size_t size)
 
             // Update the parsed cache size
             _cache_size = _cache.size();
+            _header_parsed = true;
 
             return true;
         }
@@ -609,9 +677,11 @@ bool HTTPResponse::ReceiveBody(const void* buffer, size_t size)
             return true;
         }
     }
-    else
+    else if (!_stream)
     {
-        // Check the body content to find the response body end
+        // Check the body content to find the response body end. Not allowed for
+        // open ended archive streams: the payload is binary and may contain the
+        // terminator. There the body ends when the peer disconnects.
         if (_body_size >= 4)
         {
             size_t index = _body_index + _body_size - 4;
@@ -673,6 +743,8 @@ void HTTPResponse::swap(HTTPResponse& response) noexcept
     swap(_body_length_provided, response._body_length_provided);
     swap(_cache, response._cache);
     swap(_cache_size, response._cache_size);
+    swap(_header_parsed, response._header_parsed);
+    swap(_stream, response._stream);
 }
 
 } // namespace HTTP
