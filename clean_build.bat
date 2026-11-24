@@ -70,11 +70,14 @@ cd build
 mkdir installer-inno
 
 echo ------------starting cmake------------
-REM Set vcpkg triplet based on build architecture
+REM Set vcpkg triplet based on build architecture.
+REM Use the static-md triplet: zlib/zstd are linked into the binaries (no
+REM extra DLLs in the installer) while the MSVC runtime stays dynamic, matching
+REM Qt and the rest of the toolchain.
 if "%BUILD_ARCH%"=="x86" (
-    set VCPKG_TRIPLET=x86-windows
+    set VCPKG_TRIPLET=x86-windows-static-md
 ) else (
-    set VCPKG_TRIPLET=x64-windows
+    set VCPKG_TRIPLET=x64-windows-static-md
 )
 echo Using vcpkg triplet: %VCPKG_TRIPLET%
 

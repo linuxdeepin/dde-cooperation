@@ -17,6 +17,12 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++17"
+                // Optional cross-built zstd package (header + per-ABI libzstd.a
+                // + zstdConfig.cmake). Without it the library builds deflate-only.
+                def zstdDir = System.getenv("ANDROID_ZSTD_DIR")
+                if (zstdDir != null && !zstdDir.isEmpty()) {
+                    arguments "-Dzstd_DIR=${zstdDir}/lib/cmake/zstd"
+                }
             }
         }
 

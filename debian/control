@@ -15,6 +15,7 @@ Build-Depends:
  libdtk6core-dev,
  libssl-dev,
  libzip-dev,
+ libzstd-dev,
  libcurl4-openssl-dev,
  libxtst-dev,
  libavahi-compat-libdnssd-dev,
@@ -37,7 +38,8 @@ Homepage: https://github.com/linuxdeepin/dde-cooperation
 Package: dde-cooperation-dev
 Section: libdevel
 Architecture: any
-Depends: dde-cooperation (= ${binary:Version}), ${misc:Depends}
+Depends: dde-cooperation (= ${binary:Version}), ${misc:Depends},
+ libzstd-dev
 Description: Development package for deepin cooperation application
  This package contains the header files and static libraries
 
