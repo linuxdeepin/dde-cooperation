@@ -13,6 +13,7 @@
 #include "asio/ssl_context.h"
 #include "sslcertconf.h"
 
+#include <atomic>
 #include <filesystem>
 #include <fstream>
 #include <thread>
@@ -26,9 +27,15 @@ protected:
     std::shared_ptr<FileServer> server;
     std::filesystem::path srvDir;
     std::filesystem::path cliDir;
+    int port {0};
 
     void SetUp() override
     {
+        // SO_REUSEPORT lets a lingering listener from the previous test share
+        // the port, so each test instance must use its own port.
+        static std::atomic<int> nextPort {18500};
+        port = nextPort.fetch_add(1);
+
         srvDir = std::filesystem::temp_directory_path() / "hw_srv_int";
         cliDir = std::filesystem::temp_directory_path() / "hw_cli_int";
         std::filesystem::remove_all(srvDir);
@@ -52,7 +59,7 @@ protected:
         srvCtx->use_certificate_chain_file(certPath);
         srvCtx->use_private_key_file(certPath, asio::ssl::context::pem);
 
-        server = std::make_shared<FileServer>(service, srvCtx, "127.0.0.1", 18456);
+        server = std::make_shared<FileServer>(service, srvCtx, "127.0.0.1", port);
     }
 
     void TearDown() override
@@ -87,8 +94,10 @@ TEST_F(HttpWebIntegrationTest, FullDownloadRoundTrip)
     class WaitCallback : public ProgressCallInterface {
     public:
         std::promise<void> done;
+        std::atomic<int> lastState {0};
         bool onProgress(uint64_t) override { return false; }
         void onWebChanged(int state, std::string, uint64_t) override {
+            lastState.store(state);
             if (state == WEB_TRANS_FINISH || state == WEB_DISCONNECTED || state == WEB_IO_ERROR) {
                 try { done.set_value(); } catch (...) {}
             }
@@ -96,7 +105,7 @@ TEST_F(HttpWebIntegrationTest, FullDownloadRoundTrip)
     };
 
     auto cb = std::make_shared<WaitCallback>();
-    FileClient client(service, cliCtx, "127.0.0.1", 18456);
+    FileClient client(service, cliCtx, "127.0.0.1", port);
     client.setCallback(cb);
     std::string token = server->genToken(R"(["/files/test.txt"])");
     client.setConfig(token, cliDir.string());
@@ -106,5 +115,11 @@ TEST_F(HttpWebIntegrationTest, FullDownloadRoundTrip)
     ASSERT_EQ(fut.wait_for(std::chrono::seconds(10)), std::future_status::ready);
     client.stop();
 
-    SUCCEED();
+    // A disconnect used to count as success here, hiding a broken receiver.
+    EXPECT_EQ(cb->lastState.load(), WEB_TRANS_FINISH);
+    ASSERT_TRUE(std::filesystem::exists(cliDir / "test.txt"));
+    std::ifstream in(cliDir / "test.txt", std::ios::binary);
+    const std::string content((std::istreambuf_iterator<char>(in)),
+                              std::istreambuf_iterator<char>());
+    EXPECT_EQ(content, "Hello HTTPWeb!");
 }
