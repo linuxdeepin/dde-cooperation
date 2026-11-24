@@ -17,6 +17,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
 #include <mutex>
 #include <stdexcept>
@@ -25,6 +26,14 @@
 #include <vector>
 
 namespace {
+
+// Rollout kill switch: a server can stop advertising/handling the stream
+// endpoint without downgrading the binary. Clients then fall back to legacy.
+bool serverStreamEnabled()
+{
+    const char *value = std::getenv("DDE_COOPERATION_HTTPWEB_SERVER_STREAM");
+    return !(value && std::string(value) == "0");
+}
 
 // Strict unsigned parser: no sign, no trailing garbage. Used for the stream
 // endpoint's resume parameters.
@@ -521,6 +530,10 @@ protected:
                 } else if (method == "stream") {
                     // [GET]stream/<base64name>&token=xxx&codec=zstd&level=3
                     //                      &from=N&off=M
+                    if (!serverStreamEnabled()) {
+                        SendResponseAsync(response().MakeErrorResponse(404, "Stream disabled."));
+                        return;
+                    }
                     dtp::Codec codec = dtp::codecSupported(dtp::Codec::Zstd)
                             ? dtp::Codec::Zstd
                             : dtp::Codec::Deflate;
@@ -765,7 +778,9 @@ void FileServer::clearBind()
 
 std::string FileServer::genToken(std::string info)
 {
-    return TokenCache::GetInstance().genToken(info);
+    // Do not advertise a capability the server has switched off: clients would
+    // otherwise spend one 404 per selection before falling back to legacy.
+    return TokenCache::GetInstance().genToken(info, serverStreamEnabled());
 }
 
 bool FileServer::verifyToken(std::string &token)

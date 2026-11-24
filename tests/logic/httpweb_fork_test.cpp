@@ -14,6 +14,7 @@
 #include "sslcertconf.h"
 
 #include <atomic>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <thread>
@@ -64,6 +65,9 @@ protected:
 
     void TearDown() override
     {
+        ::setenv("DDE_COOPERATION_HTTPWEB_TOKEN_DTP", "", 1);
+        ::setenv("DDE_COOPERATION_HTTPWEB_STREAM", "", 1);
+        ::setenv("DDE_COOPERATION_HTTPWEB_SERVER_STREAM", "", 1);
         if (server && server->IsStarted()) server->stop();
         service->Stop();
         server.reset();
@@ -122,4 +126,161 @@ TEST_F(HttpWebIntegrationTest, FullDownloadRoundTrip)
     const std::string content((std::istreambuf_iterator<char>(in)),
                               std::istreambuf_iterator<char>());
     EXPECT_EQ(content, "Hello HTTPWeb!");
+}
+
+// Old peers issue tokens without the `dtp` claim. A new client must go straight
+// to the legacy per-file protocol instead of paying a failed stream request.
+TEST_F(HttpWebIntegrationTest, LegacyTokenUsesLegacyProtocol)
+{
+    std::ofstream(srvDir / "second.txt") << "second";
+    server->webBind("files", srvDir.string());
+    ASSERT_TRUE(server->start());
+
+    auto cliCtx = std::make_shared<NetUtil::Asio::SSLContext>(asio::ssl::context::tlsv12);
+    cliCtx->set_verify_mode(asio::ssl::verify_none);
+    try { cliCtx->load_verify_file((srvDir / "SSL" / "Barrier.pem").string()); } catch (...) {}
+
+    class WaitCallback : public ProgressCallInterface {
+    public:
+        std::promise<void> done;
+        std::atomic<int> lastState {0};
+        bool onProgress(uint64_t) override { return false; }
+        void onWebChanged(int state, std::string, uint64_t) override {
+            lastState.store(state);
+            if (state == WEB_TRANS_FINISH || state == WEB_DISCONNECTED || state == WEB_IO_ERROR) {
+                try { done.set_value(); } catch (...) {}
+            }
+        }
+    };
+
+    // Simulate a pre-DTP2 token: no `dtp` claim. The relative web name keeps
+    // the legacy path resolver inside the save directory.
+    ::setenv("DDE_COOPERATION_HTTPWEB_TOKEN_DTP", "0", 1);
+    const std::string token = server->genToken(R"(["files"])");
+    ::setenv("DDE_COOPERATION_HTTPWEB_TOKEN_DTP", "", 1);
+
+    auto cb = std::make_shared<WaitCallback>();
+    FileClient client(service, cliCtx, "127.0.0.1", port);
+    client.setCallback(cb);
+    client.setConfig(token, cliDir.string());
+    client.startFileDownload({"files"});
+
+    auto fut = cb->done.get_future();
+    ASSERT_EQ(fut.wait_for(std::chrono::seconds(10)), std::future_status::ready);
+    client.stop();
+
+    EXPECT_EQ(cb->lastState.load(), WEB_TRANS_FINISH);
+    const auto counters = client.requestCounters();
+    // Legacy needs a directory listing and one request per file; the stream
+    // path would have used one download request and zero info requests.
+    EXPECT_GE(counters.infoRequests, 1u);
+    EXPECT_GE(counters.downloadRequests, 2u);
+    EXPECT_TRUE(std::filesystem::exists(cliDir / "files" / "test.txt"));
+    EXPECT_TRUE(std::filesystem::exists(cliDir / "files" / "second.txt"));
+}
+
+// A pre-DTP2 client ignores the `dtp` claim and only knows info/download.
+// `DDE_COOPERATION_HTTPWEB_STREAM=0` reproduces that behavior against a new
+// server, proving the legacy endpoints stay usable during rollout.
+TEST_F(HttpWebIntegrationTest, StreamDisabledByEnvUsesLegacyProtocol)
+{
+    std::ofstream(srvDir / "second.txt") << "second";
+    server->webBind("files", srvDir.string());
+    ASSERT_TRUE(server->start());
+
+    auto cliCtx = std::make_shared<NetUtil::Asio::SSLContext>(asio::ssl::context::tlsv12);
+    cliCtx->set_verify_mode(asio::ssl::verify_none);
+    try { cliCtx->load_verify_file((srvDir / "SSL" / "Barrier.pem").string()); } catch (...) {}
+
+    class WaitCallback : public ProgressCallInterface {
+    public:
+        std::promise<void> done;
+        std::atomic<int> lastState {0};
+        bool onProgress(uint64_t) override { return false; }
+        void onWebChanged(int state, std::string, uint64_t) override {
+            lastState.store(state);
+            if (state == WEB_TRANS_FINISH || state == WEB_DISCONNECTED || state == WEB_IO_ERROR) {
+                try { done.set_value(); } catch (...) {}
+            }
+        }
+    };
+
+    const std::string token = server->genToken(R"(["files"])");
+
+    auto cb = std::make_shared<WaitCallback>();
+    FileClient client(service, cliCtx, "127.0.0.1", port);
+    client.setCallback(cb);
+    client.setConfig(token, cliDir.string());
+    ::setenv("DDE_COOPERATION_HTTPWEB_STREAM", "0", 1);
+    client.startFileDownload({"files"});
+
+    auto fut = cb->done.get_future();
+    ASSERT_EQ(fut.wait_for(std::chrono::seconds(10)), std::future_status::ready);
+    ::setenv("DDE_COOPERATION_HTTPWEB_STREAM", "", 1);
+    client.stop();
+
+    EXPECT_EQ(cb->lastState.load(), WEB_TRANS_FINISH);
+    const auto counters = client.requestCounters();
+    EXPECT_GE(counters.infoRequests, 1u);
+    EXPECT_GE(counters.downloadRequests, 2u);
+    EXPECT_TRUE(std::filesystem::exists(cliDir / "files" / "test.txt"));
+    EXPECT_TRUE(std::filesystem::exists(cliDir / "files" / "second.txt"));
+}
+
+TEST_F(HttpWebIntegrationTest, ServerStreamDisabledTokenOmitsDtpClaim)
+{
+    ::setenv("DDE_COOPERATION_HTTPWEB_SERVER_STREAM", "0", 1);
+    const std::string token = server->genToken(R"(["files"])");
+    ::setenv("DDE_COOPERATION_HTTPWEB_SERVER_STREAM", "", 1);
+
+    ASSERT_FALSE(token.empty());
+    EXPECT_FALSE(TokenCache::GetInstance().getDtpFromToken(token).present);
+}
+
+// New client, new token, but the server's stream endpoint is switched off.
+// The client must treat the 404 as "peer cannot stream" and finish via legacy.
+TEST_F(HttpWebIntegrationTest, ServerStreamDisabledFallsBackToLegacy)
+{
+    std::ofstream(srvDir / "second.txt") << "second";
+    server->webBind("files", srvDir.string());
+    ASSERT_TRUE(server->start());
+
+    auto cliCtx = std::make_shared<NetUtil::Asio::SSLContext>(asio::ssl::context::tlsv12);
+    cliCtx->set_verify_mode(asio::ssl::verify_none);
+    try { cliCtx->load_verify_file((srvDir / "SSL" / "Barrier.pem").string()); } catch (...) {}
+
+    class WaitCallback : public ProgressCallInterface {
+    public:
+        std::promise<void> done;
+        std::atomic<int> lastState {0};
+        bool onProgress(uint64_t) override { return false; }
+        void onWebChanged(int state, std::string, uint64_t) override {
+            lastState.store(state);
+            if (state == WEB_TRANS_FINISH || state == WEB_DISCONNECTED || state == WEB_IO_ERROR) {
+                try { done.set_value(); } catch (...) {}
+            }
+        }
+    };
+
+    const std::string token = server->genToken(R"(["files"])");
+
+    auto cb = std::make_shared<WaitCallback>();
+    FileClient client(service, cliCtx, "127.0.0.1", port);
+    client.setCallback(cb);
+    client.setConfig(token, cliDir.string());
+    // Server-side kill switch: stream/ returns 404.
+    ::setenv("DDE_COOPERATION_HTTPWEB_SERVER_STREAM", "0", 1);
+    client.startFileDownload({"files"});
+
+    auto fut = cb->done.get_future();
+    ASSERT_EQ(fut.wait_for(std::chrono::seconds(10)), std::future_status::ready);
+    ::setenv("DDE_COOPERATION_HTTPWEB_SERVER_STREAM", "", 1);
+    client.stop();
+
+    EXPECT_EQ(cb->lastState.load(), WEB_TRANS_FINISH);
+    const auto counters = client.requestCounters();
+    EXPECT_GE(counters.infoRequests, 1u);
+    EXPECT_GE(counters.downloadRequests, 2u);
+    EXPECT_TRUE(std::filesystem::exists(cliDir / "files" / "test.txt"));
+    EXPECT_TRUE(std::filesystem::exists(cliDir / "files" / "second.txt"));
 }

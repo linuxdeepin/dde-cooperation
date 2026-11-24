@@ -15,6 +15,28 @@
 #include <memory>
 #include <random>
 #include <algorithm>
+#include <cstdlib>
+
+namespace {
+
+// Token generation can be forced back to the pre-DTP2 shape for compatibility
+// tests and for rolling back a deployment without downgrading the binary.
+bool advertiseDtp()
+{
+    const char *value = std::getenv("DDE_COOPERATION_HTTPWEB_TOKEN_DTP");
+    return !(value && std::string(value) == "0");
+}
+
+std::string dtpClaimJson()
+{
+#ifdef HTTPWEB_HAVE_ZSTD
+    return R"({"v":2,"codecs":["zstd","deflate"]})";
+#else
+    return R"({"v":2,"codecs":["deflate"]})";
+#endif
+}
+
+} // namespace
 
 TokenCache::Es256kKeyPair TokenCache::generateEs256kKeyPair()
 {
@@ -62,7 +84,7 @@ TokenCache::Es256kKeyPair TokenCache::generateEs256kKeyPair()
     return {std::string(privData, privLen), std::string(pubData, pubLen)};
 }
 
-std::string TokenCache::genToken(std::string info)
+std::string TokenCache::genToken(std::string info, bool includeDtp)
 {
     Es256kKeyPair keyPair;
     try {
@@ -81,14 +103,16 @@ std::string TokenCache::genToken(std::string info)
 
     constexpr auto expiry = std::chrono::seconds{36000};
 
-    auto token = jwt::create()
-                     .set_issuer("deepin")
-                     .set_type("JWT")
-                     .set_id(jti)
-                     .set_issued_now()
-                     .set_expires_in(expiry)
-                     .set_payload_claim("web", jwt::claim(info))
-                     .sign(jwt::algorithm::es256k(keyPair.publicKey, keyPair.privateKey, "", ""));
+    auto builder = jwt::create()
+                           .set_issuer("deepin")
+                           .set_type("JWT")
+                           .set_id(jti)
+                           .set_issued_now()
+                           .set_expires_in(expiry)
+                           .set_payload_claim("web", jwt::claim(info));
+    if (includeDtp && advertiseDtp())
+        builder.set_payload_claim("dtp", jwt::claim(dtpClaimJson()));
+    auto token = builder.sign(jwt::algorithm::es256k(keyPair.publicKey, keyPair.privateKey, "", ""));
 
     keyPair.expireTime = now + expiry;
 
@@ -184,4 +208,35 @@ std::vector<std::string> TokenCache::getWebfromToken(const std::string &token)
     }
     
     return web_vector;
+}
+
+TokenCache::DtpCapability TokenCache::getDtpFromToken(const std::string &token) const
+{
+    DtpCapability capability;
+    try {
+        auto decoded = jwt::decode(token);
+        const std::string claim = decoded.get_payload_claim("dtp").as_string();
+
+        picojson::value value;
+        const std::string error = picojson::parse(value, claim);
+        if (!error.empty() || !value.is<picojson::object>())
+            return capability;
+
+        const auto &object = value.get<picojson::object>();
+        auto version = object.find("v");
+        if (version != object.end() && version->second.is<double>())
+            capability.version = static_cast<int>(version->second.get<double>());
+
+        auto codecs = object.find("codecs");
+        if (codecs != object.end() && codecs->second.is<picojson::array>()) {
+            for (const auto &codec : codecs->second.get<picojson::array>()) {
+                if (codec.is<std::string>())
+                    capability.codecs.push_back(codec.get<std::string>());
+            }
+        }
+        capability.present = true;
+    } catch (...) {
+        capability = DtpCapability {};
+    }
+    return capability;
 }

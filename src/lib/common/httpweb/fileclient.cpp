@@ -13,6 +13,7 @@
 
 #include "http/https_client.h"
 
+#include <algorithm>
 #include <chrono>
 #include <condition_variable>
 #include <cstdio>
@@ -57,6 +58,16 @@ bool clientNoDelayEnabled()
 {
     const char *value = std::getenv("DDE_COOPERATION_HTTPWEB_CLIENT_NODELAY");
     return !(value && std::string(value) == "0");
+}
+
+dtp::Codec negotiatedStreamCodec(const std::string &token)
+{
+    const auto capability = TokenCache::GetInstance().getDtpFromToken(token);
+    const bool serverZstd = std::find(capability.codecs.begin(), capability.codecs.end(), "zstd")
+            != capability.codecs.end();
+    if (serverZstd && dtp::codecSupported(dtp::Codec::Zstd))
+        return dtp::Codec::Zstd;
+    return dtp::Codec::Deflate;
 }
 
 } // namespace
@@ -631,6 +642,11 @@ FileClient::StreamAttempt FileClient::downloadStream(const std::string &name)
 {
     if (!streamTransferEnabled() || name.empty())
         return StreamAttempt::Fallback;
+    // Tokens issued before DTP2 (or tokens generated with the compatibility
+    // switch) carry no `dtp` claim: go straight to legacy instead of paying a
+    // failed stream request.
+    if (!TokenCache::GetInstance().getDtpFromToken(_token).supportsStream())
+        return StreamAttempt::Fallback;
 
     StreamResumeState state = loadCheckpoint(name);
     static constexpr int kMaxAttempts = 3;
@@ -756,8 +772,7 @@ FileClient::StreamAttempt FileClient::downloadStreamOnce(
     std::string url = "stream/";
     url.append(BaseKit::Encoding::Base64Encode(name));
     url.append("&token=").append(_token);
-    url.append("&codec=").append(dtp::codecName(
-            dtp::codecSupported(dtp::Codec::Zstd) ? dtp::Codec::Zstd : dtp::Codec::Deflate));
+    url.append("&codec=").append(dtp::codecName(negotiatedStreamCodec(_token)));
     if (resume.nextFrame > 0)
         url.append("&from=").append(std::to_string(resume.nextFrame));
 

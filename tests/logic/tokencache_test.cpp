@@ -5,13 +5,19 @@
 
 #include "tokencache.h"
 
+#include <algorithm>
 #include <chrono>
+#include <cstdlib>
 #include <thread>
 
 class TokenCacheTest : public ::testing::Test {
 protected:
     void SetUp() override { TokenCache::GetInstance().clearTokens(); }
-    void TearDown() override { TokenCache::GetInstance().clearTokens(); }
+    void TearDown() override
+    {
+        TokenCache::GetInstance().clearTokens();
+        ::setenv("DDE_COOPERATION_HTTPWEB_TOKEN_DTP", "", 1);
+    }
 };
 
 TEST_F(TokenCacheTest, GenTokenNonEmpty)
@@ -90,6 +96,44 @@ TEST_F(TokenCacheTest, ClearTokensInvalidatesCached)
     TokenCache::GetInstance().clearTokens();
     std::string mut = token;
     EXPECT_FALSE(TokenCache::GetInstance().verifyToken(mut));
+}
+
+TEST_F(TokenCacheTest, GenTokenAdvertisesDtp2)
+{
+    auto token = TokenCache::GetInstance().genToken(R"(["a"])");
+    ASSERT_FALSE(token.empty());
+
+    const auto capability = TokenCache::GetInstance().getDtpFromToken(token);
+    EXPECT_TRUE(capability.present);
+    EXPECT_TRUE(capability.supportsStream());
+    EXPECT_GE(capability.version, 2);
+    EXPECT_NE(std::find(capability.codecs.begin(), capability.codecs.end(), "deflate"),
+              capability.codecs.end());
+}
+
+TEST_F(TokenCacheTest, LegacyTokenHasNoDtpClaim)
+{
+    ::setenv("DDE_COOPERATION_HTTPWEB_TOKEN_DTP", "0", 1);
+    auto token = TokenCache::GetInstance().genToken(R"(["a"])");
+    ::setenv("DDE_COOPERATION_HTTPWEB_TOKEN_DTP", "", 1);
+    ASSERT_FALSE(token.empty());
+
+    const auto capability = TokenCache::GetInstance().getDtpFromToken(token);
+    EXPECT_FALSE(capability.present);
+    EXPECT_FALSE(capability.supportsStream());
+}
+
+TEST_F(TokenCacheTest, GenTokenCanOmitDtpClaim)
+{
+    auto token = TokenCache::GetInstance().genToken(R"(["a"])", false);
+    ASSERT_FALSE(token.empty());
+    EXPECT_FALSE(TokenCache::GetInstance().getDtpFromToken(token).present);
+}
+
+TEST_F(TokenCacheTest, GetDtpFromInvalidTokenIsUnsupported)
+{
+    EXPECT_FALSE(TokenCache::GetInstance().getDtpFromToken("not.a.token").present);
+    EXPECT_FALSE(TokenCache::GetInstance().getDtpFromToken("").present);
 }
 
 TEST_F(TokenCacheTest, GenTokenMultipleWebEntries)
