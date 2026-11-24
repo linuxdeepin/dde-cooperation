@@ -85,14 +85,18 @@ TEST_F(FileClientStubTest, SendInfobyHeaderFinish)
 
 TEST_F(FileClientStubTest, RequestInfoStubbed)
 {
-    auto info = client->requestInfo("testfile");
+    InfoEntry info;
+    // The stub answers 404, which must surface as NotFound (not a transport
+    // error) so callers can distinguish a missing remote file from an
+    // unreachable server.
+    EXPECT_EQ(client->requestInfo("testfile", &info), FileClient::InfoStatus::NotFound);
     EXPECT_EQ(info.name, "");
 }
 
 TEST_F(FileClientStubTest, WalkFolderEntryStubbed)
 {
     std::queue<std::string> q;
-    client->walkFolderEntry("subfolder", &q);
+    client->walkFolderEntry("subfolder", &q, 0);
     EXPECT_TRUE(q.empty());
 }
 
