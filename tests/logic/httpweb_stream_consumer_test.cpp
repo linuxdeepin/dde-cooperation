@@ -55,12 +55,15 @@ protected:
     };
 
     Archive produce(const fs::path &source, const std::string &name,
-                    Codec codec = Codec::Deflate, int level = -1)
+                    Codec codec = Codec::Deflate, int level = -1,
+                    bool preserveLinks = false)
     {
         Archive archive;
         StreamProducerOptions options;
         options.codec = codec;
         options.level = level;
+        options.walker.preserveSymlinks = preserveLinks;
+        options.walker.followSymlinks = !preserveLinks;
         StreamProducer producer(options);
         StreamProducerStats stats;
         archive.ok = producer.run(
@@ -154,6 +157,44 @@ TEST_F(StreamConsumerTest, RoundTripThroughOneByteChunks)
     EXPECT_EQ(consumer.stats().bytes, 5012u);  // 5 + 5000 + 0 + 7
     EXPECT_EQ(countParts(target), size_t(0));
 }
+
+#ifndef _WIN32
+TEST_F(StreamConsumerTest, RoundTripPreservesSymlinks)
+{
+    writeFile(root / "src" / "real.txt", "payload");
+    fs::create_directories(root / "src" / "sub");
+    std::error_code ec;
+    fs::create_symlink("../real.txt", root / "src" / "sub" / "file-link", ec);
+    ASSERT_FALSE(ec) << ec.message();
+    fs::create_directory_symlink(root / "src" / "sub", root / "src" / "dir-link", ec);
+    ASSERT_FALSE(ec) << ec.message();
+
+    const Archive archive = produce(root / "src", "src", Codec::Deflate, -1, true);
+    ASSERT_TRUE(archive.ok) << archive.error;
+
+    const fs::path target = root / "dst";
+    StreamConsumer consumer({target.u8string()});
+    feedPattern(consumer, archive.bytes, {3, 17, 1});
+
+    std::string error;
+    ASSERT_TRUE(consumer.finish(&error)) << error;
+    const fs::path out = consumer.rootPath();
+
+    ASSERT_TRUE(fs::is_symlink(out / "sub" / "file-link"));
+    EXPECT_EQ(fs::read_symlink(out / "sub" / "file-link").generic_u8string(), "../real.txt");
+    EXPECT_EQ(fs::read_symlink(out / "sub" / "file-link").generic_u8string(),
+              fs::read_symlink(root / "src" / "sub" / "file-link").generic_u8string());
+
+    ASSERT_TRUE(fs::is_symlink(out / "dir-link"));
+    EXPECT_TRUE(fs::is_directory(out / "dir-link"));
+    EXPECT_EQ(fs::read_symlink(out / "dir-link").generic_u8string(), "sub");
+
+    EXPECT_EQ(consumer.stats().files, 1u);
+    EXPECT_EQ(consumer.stats().symlinks, 2u);
+    EXPECT_EQ(consumer.stats().bytes, 7u);
+    EXPECT_EQ(countParts(target), size_t(0));
+}
+#endif
 
 TEST_F(StreamConsumerTest, RoundTripWithZstd)
 {

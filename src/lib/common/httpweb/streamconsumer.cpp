@@ -109,6 +109,9 @@ struct StreamConsumer::Impl {
         }
         parser.onHeader([this](const FrameHeader &header) { return handleHeader(header); });
         parser.onData([this](const char *data, size_t size) { return handleData(data, size); });
+        parser.onSymlink([this](const FrameHeader &header, const std::string &target) {
+            return createSymlink(header, target);
+        });
         parser.onError([this](const std::string &path, const std::string &message) {
             if (onError)
                 onError(path, message);
@@ -264,6 +267,57 @@ struct StreamConsumer::Impl {
         return true;
     }
 
+    bool createSymlink(const FrameHeader &header, const std::string &target)
+    {
+        if (root.empty())
+            return fail("symlink frame before the root frame");
+
+        const fs::path linkPath = root / fs::u8path(header.path);
+        if (!isInside(root, linkPath))
+            return fail("symlink path escapes the destination: " + header.path);
+        if (hasSymlinkComponent(root, linkPath))
+            return fail("symlink path crosses a symlink: " + header.path);
+        if (resumeMode && pathExists(linkPath))
+            return fail("resume conflict, symlink already exists: " + header.path);
+
+        std::error_code ec;
+        fs::create_directories(linkPath.parent_path(), ec);
+        if (ec)
+            return fail("cannot create symlink parent directory: " + ec.message());
+
+        const fs::path targetPath =
+                (linkPath.parent_path() / fs::u8path(target)).lexically_normal();
+        if (!isInside(root, targetPath))
+            return fail("symlink target escapes the destination: " + header.path);
+
+        // A pre-existing symlink inside the destination could redirect the
+        // target outside even though the lexical path is inside.
+        const fs::path canonicalTarget = fs::weakly_canonical(targetPath, ec);
+        if (!ec) {
+            std::error_code rootEc;
+            const fs::path canonicalRoot = fs::weakly_canonical(root, rootEc);
+            if (!rootEc && !isInside(canonicalRoot, canonicalTarget))
+                return fail("symlink target resolves outside the destination: " + header.path);
+        }
+        ec.clear();
+
+        const bool toDirectory = (header.flags & FrameFlagLinkDirectory) != 0;
+        const fs::path resolvedLink = uniquePath(linkPath, toDirectory);
+        if (resolvedLink.empty())
+            return fail("cannot find a free name for symlink: " + header.path);
+
+        if (toDirectory)
+            fs::create_directory_symlink(fs::u8path(target), resolvedLink, ec);
+        else
+            fs::create_symlink(fs::u8path(target), resolvedLink, ec);
+        if (ec)
+            return fail("cannot create symlink " + header.path + ": " + ec.message());
+
+        stats.symlinks++;
+        markCompleted();
+        return true;
+    }
+
     bool handleHeader(const FrameHeader &header)
     {
         // A new header means the previous file frame ended and its trailer CRC
@@ -328,6 +382,11 @@ struct StreamConsumer::Impl {
         case FrameType::End:
             // ERROR carries a message (handled by the parser's onError), END is
             // handled by onEnd. Neither opens a file.
+            return true;
+
+        case FrameType::Symlink:
+            // The target bytes arrive after this header; createSymlink() is
+            // invoked by the parser's SymlinkCallback.
             return true;
         }
         return fail("unknown frame type");

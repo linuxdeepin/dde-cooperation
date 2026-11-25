@@ -214,6 +214,132 @@ TEST_F(StreamWalkerTest, SymlinkLoopTerminates)
     EXPECT_EQ(std::adjacent_find(paths.begin(), paths.end()), paths.end());
 }
 
+TEST_F(StreamWalkerTest, SymlinkInsideRootIsFollowed)
+{
+    writeFile(root / "src" / "real.txt", "data");
+    std::error_code ec;
+    fs::create_symlink(root / "src" / "real.txt", root / "src" / "link.txt", ec);
+    ASSERT_FALSE(ec) << ec.message();
+
+    const Result result = run(root / "src", "src");
+
+    EXPECT_EQ(result.stats.skippedOutside, 0u);
+    EXPECT_EQ(result.stats.files, 2u);
+    const auto paths = pathsOf(result.entries);
+    EXPECT_NE(std::find(paths.begin(), paths.end(), "link.txt"), paths.end());
+}
+
+TEST_F(StreamWalkerTest, SymlinkToSiblingDirectoryKeepsBothPaths)
+{
+    writeFile(root / "src" / "real" / "data.txt", "payload");
+    std::error_code ec;
+    fs::create_directory_symlink(root / "src" / "real", root / "src" / "alias", ec);
+    ASSERT_FALSE(ec) << ec.message();
+
+    const Result result = run(root / "src", "src");
+
+    EXPECT_EQ(result.stats.cycles, 0u);
+    EXPECT_EQ(result.stats.files, 2u);
+    const auto paths = pathsOf(result.entries);
+    EXPECT_NE(std::find(paths.begin(), paths.end(), "real/data.txt"), paths.end());
+    EXPECT_NE(std::find(paths.begin(), paths.end(), "alias/data.txt"), paths.end());
+}
+
+TEST_F(StreamWalkerTest, SymlinkOutsideRootIsSkipped)
+{
+    writeFile(root / "outside.txt", "secret");
+    writeFile(root / "src" / "inside.txt", "ok");
+    std::error_code ec;
+    fs::create_symlink(root / "outside.txt", root / "src" / "link.txt", ec);
+    ASSERT_FALSE(ec) << ec.message();
+
+    const Result result = run(root / "src", "src");
+
+    EXPECT_EQ(result.stats.skippedOutside, 1u);
+    EXPECT_EQ(result.stats.files, 1u);
+    const auto paths = pathsOf(result.entries);
+    EXPECT_EQ(std::find(paths.begin(), paths.end(), "link.txt"), paths.end());
+    ASSERT_EQ(result.errors.size(), 1u);
+}
+
+TEST_F(StreamWalkerTest, PreserveSymlinksEmitsLinksWithoutFollowing)
+{
+    writeFile(root / "src" / "real" / "data.txt", "payload");
+    std::error_code ec;
+    fs::create_symlink(root / "src" / "real" / "data.txt", root / "src" / "file-link", ec);
+    ASSERT_FALSE(ec) << ec.message();
+    fs::create_directory_symlink(root / "src" / "real", root / "src" / "dir-link", ec);
+    ASSERT_FALSE(ec) << ec.message();
+
+    StreamWalker::Options options;
+    options.preserveSymlinks = true;
+    const Result result = run(root / "src", "src", options);
+
+    EXPECT_EQ(result.stats.symlinks, 2u);
+    EXPECT_EQ(result.stats.files, 1u);
+    EXPECT_EQ(result.stats.directories, 2u);  // root + real
+    EXPECT_EQ(result.stats.cycles, 0u);
+
+    const WalkEntry *fileLink = nullptr;
+    const WalkEntry *dirLink = nullptr;
+    for (const auto &entry : result.entries) {
+        if (entry.path == "file-link")
+            fileLink = &entry;
+        if (entry.path == "dir-link")
+            dirLink = &entry;
+    }
+    ASSERT_NE(fileLink, nullptr);
+    ASSERT_NE(dirLink, nullptr);
+    EXPECT_EQ(fileLink->type, FrameType::Symlink);
+    EXPECT_EQ(fileLink->linkTarget, "real/data.txt");
+    EXPECT_FALSE(fileLink->linkToDirectory);
+    EXPECT_EQ(dirLink->type, FrameType::Symlink);
+    EXPECT_EQ(dirLink->linkTarget, "real");
+    EXPECT_TRUE(dirLink->linkToDirectory);
+
+    const auto paths = pathsOf(result.entries);
+    EXPECT_EQ(std::find(paths.begin(), paths.end(), "dir-link/data.txt"), paths.end());
+}
+
+TEST_F(StreamWalkerTest, PreserveOutsideSymlinkIsSkipped)
+{
+    writeFile(root / "outside.txt", "secret");
+    writeFile(root / "src" / "inside.txt", "ok");
+    std::error_code ec;
+    fs::create_symlink(root / "outside.txt", root / "src" / "link.txt", ec);
+    ASSERT_FALSE(ec) << ec.message();
+
+    StreamWalker::Options options;
+    options.preserveSymlinks = true;
+    const Result result = run(root / "src", "src", options);
+
+    EXPECT_EQ(result.stats.skippedOutside, 1u);
+    EXPECT_EQ(result.stats.symlinks, 0u);
+    EXPECT_EQ(result.stats.files, 1u);
+    const auto paths = pathsOf(result.entries);
+    EXPECT_EQ(std::find(paths.begin(), paths.end(), "link.txt"), paths.end());
+    ASSERT_EQ(result.errors.size(), 1u);
+}
+
+TEST_F(StreamWalkerTest, PreserveDanglingInsideSymlink)
+{
+    writeFile(root / "src" / "real.txt", "x");
+    std::error_code ec;
+    fs::create_symlink("missing.txt", root / "src" / "dangling", ec);
+    ASSERT_FALSE(ec) << ec.message();
+
+    StreamWalker::Options options;
+    options.preserveSymlinks = true;
+    const Result result = run(root / "src", "src", options);
+
+    EXPECT_EQ(result.stats.symlinks, 1u);
+    ASSERT_EQ(result.entries.size(), size_t(3));  // root + dangling + real.txt
+    const WalkEntry &link = result.entries[1];
+    EXPECT_EQ(link.type, FrameType::Symlink);
+    EXPECT_EQ(link.path, "dangling");
+    EXPECT_EQ(link.linkTarget, "missing.txt");
+}
+
 TEST_F(StreamWalkerTest, SpecialFilesAreSkipped)
 {
     fs::create_directories(root / "src");

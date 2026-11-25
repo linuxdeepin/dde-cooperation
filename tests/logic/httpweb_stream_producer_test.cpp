@@ -53,6 +53,7 @@ protected:
     struct Parsed {
         bool ok {false};
         std::map<std::string, std::string> files;
+        std::map<std::string, std::string> symlinks;
         std::vector<std::string> dirs;
         std::vector<std::string> errors;
         FrameEnd end;
@@ -106,6 +107,10 @@ protected:
         });
         parser.onError([&](const std::string &path, const std::string &message) {
             parsed.errors.push_back(path + "|" + message);
+            return true;
+        });
+        parser.onSymlink([&](const FrameHeader &header, const std::string &target) {
+            parsed.symlinks[header.path] = target;
             return true;
         });
         parser.onEnd([&](const FrameEnd &end) { parsed.end = end; return true; });
@@ -177,6 +182,31 @@ TEST_F(StreamProducerTest, ProducesAParseableArchive)
     EXPECT_EQ(run.stats.bytesRead, 5005u);
     EXPECT_GT(run.stats.bytesSent, 0u);
 }
+
+#ifndef _WIN32
+TEST_F(StreamProducerTest, PreservesInRootSymlinkWithoutDuplicatingTarget)
+{
+    writeFile(root / "src" / "real.txt", "payload");
+    std::error_code ec;
+    fs::create_symlink(root / "src" / "real.txt", root / "src" / "link.txt", ec);
+    ASSERT_FALSE(ec) << ec.message();
+
+    StreamProducerOptions options;
+    options.walker.preserveSymlinks = true;
+    options.walker.followSymlinks = false;
+    const RunResult run = produce(root / "src", "src", options);
+    ASSERT_TRUE(run.ok) << run.error;
+
+    const Parsed parsed = parse(run.archive);
+    ASSERT_TRUE(parsed.ok) << parsed.error;
+    EXPECT_EQ(parsed.files.size(), size_t(1));
+    ASSERT_EQ(parsed.symlinks.count("link.txt"), size_t(1));
+    EXPECT_EQ(parsed.symlinks.at("link.txt"), "real.txt");
+    EXPECT_EQ(run.stats.files, 1u);
+    EXPECT_EQ(run.stats.symlinks, 1u);
+    EXPECT_EQ(parsed.end.entryCount, run.stats.frames);
+}
+#endif
 
 TEST_F(StreamProducerTest, OutputIsDeterministic)
 {

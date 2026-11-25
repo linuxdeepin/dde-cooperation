@@ -89,6 +89,8 @@ const char *frameTypeName(FrameType type)
         return "error";
     case FrameType::End:
         return "end";
+    case FrameType::Symlink:
+        return "symlink";
     }
     return "";
 }
@@ -223,6 +225,79 @@ bool isSafeLeafName(const std::string &name, std::string *error)
     return true;
 }
 
+// Symlink targets are relative to the link's parent directory, so they may
+// legitimately contain "." and "..". They must not escape the archive root:
+// walk the components and reject the first ".." that would go above it.
+bool isSafeSymlinkTarget(const std::string &linkPath, const std::string &target,
+                         std::string *error)
+{
+    if (target.empty()) {
+        if (error)
+            *error = "empty symlink target";
+        return false;
+    }
+    if (target.find('\0') != std::string::npos) {
+        if (error)
+            *error = "NUL byte in symlink target";
+        return false;
+    }
+    if (target.front() == '/') {
+        if (error)
+            *error = "absolute symlink target";
+        return false;
+    }
+    if (target.find('\\') != std::string::npos) {
+        if (error)
+            *error = "backslash in symlink target";
+        return false;
+    }
+
+    int depth = static_cast<int>(std::count(linkPath.begin(), linkPath.end(), '/'));
+    size_t start = 0;
+    for (;;) {
+        const size_t slash = target.find('/', start);
+        const std::string segment =
+                target.substr(start, slash == std::string::npos ? std::string::npos : slash - start);
+        if (segment.empty()) {
+            if (error)
+                *error = "empty symlink target segment";
+            return false;
+        }
+        if (segment == ".") {
+            // Stay in the link's parent directory.
+        } else if (segment == "..") {
+            if (depth == 0) {
+                if (error)
+                    *error = "symlink target escapes the archive root";
+                return false;
+            }
+            --depth;
+        } else {
+            ++depth;
+            for (char raw : segment) {
+                const unsigned char ch = static_cast<unsigned char>(raw);
+                if (ch < 0x20) {
+                    if (error)
+                        *error = "control character in symlink target";
+                    return false;
+                }
+#ifdef _WIN32
+                if (ch == ':' || ch == '<' || ch == '>' || ch == '"' || ch == '|'
+                    || ch == '?' || ch == '*') {
+                    if (error)
+                        *error = "character not allowed on Windows in symlink target";
+                    return false;
+                }
+#endif
+            }
+        }
+        if (slash == std::string::npos)
+            break;
+        start = slash + 1;
+    }
+    return true;
+}
+
 // ---------------------------------------------------------------------------
 // FrameWriter
 // ---------------------------------------------------------------------------
@@ -261,12 +336,13 @@ struct FrameWriter::Impl {
     }
 
     bool appendHeader(std::string *out, FrameType type, const std::string &path, uint64_t size,
-                      uint64_t offset, uint32_t mode, uint64_t mtime, bool countCrc)
+                      uint64_t offset, uint32_t mode, uint64_t mtime, bool countCrc,
+                      uint8_t extraFlags = 0)
     {
         std::string header;
         header.reserve(kFrameHeaderFixedSize + path.size());
         header.push_back(static_cast<char>(static_cast<uint8_t>(type)));
-        uint8_t flags = 0;
+        uint8_t flags = extraFlags;
         if (mode != 0)
             flags |= FrameFlagHasMode;
         if (mtime != 0)
@@ -428,6 +504,40 @@ bool FrameWriter::writeError(std::string *out, const std::string &path, const st
     return true;
 }
 
+bool FrameWriter::writeSymlink(std::string *out, const std::string &path,
+                               const std::string &target, bool toDirectory, uint32_t mode,
+                               uint64_t mtime)
+{
+    if (!out)
+        return d->fail("null output buffer");
+    if (d->ended)
+        return d->fail("frame after END frame");
+    if (d->inFile)
+        return d->fail("symlink frame while a file frame is still open");
+    if (target.size() > d->options.maxPathLen)
+        return d->fail("symlink target exceeds limit");
+    if (!d->checkPath(path, false))
+        return false;
+    if (d->options.validatePaths) {
+        std::string reason;
+        if (!isSafeSymlinkTarget(path, target, &reason))
+            return d->fail(reason + ": " + path);
+    } else if (target.empty() || target.find('\0') != std::string::npos) {
+        return d->fail("invalid symlink target: " + path);
+    }
+
+    const uint8_t extraFlags = toDirectory ? FrameFlagLinkDirectory : 0;
+    if (!d->appendHeader(out, FrameType::Symlink, path, target.size(), 0, mode, mtime,
+                         true, extraFlags))
+        return false;
+    if (!target.empty()) {
+        out->append(target);
+        d->streamCrc = crcUpdate(d->streamCrc, target.data(), target.size());
+    }
+    d->entryCount++;
+    return true;
+}
+
 bool FrameWriter::writeEnd(std::string *out)
 {
     return writeEnd(out, d->entryCount, d->totalBytes);
@@ -513,6 +623,7 @@ struct FrameParser::Impl {
         Data,
         DataCrc,
         ErrorMessage,
+        SymlinkTarget,
         EndBody,
         Done,
         Failed,
@@ -522,6 +633,7 @@ struct FrameParser::Impl {
     HeaderCallback headerCb;
     DataCallback dataCb;
     ErrorCallback errorCb;
+    SymlinkCallback symlinkCb;
     EndCallback endCb;
 
     State state {State::Prefix};
@@ -537,6 +649,7 @@ struct FrameParser::Impl {
 
     std::string path;
     std::string message;
+    std::string linkTarget;
     size_t textPos {0};
 
     uint64_t dataRemaining {0};
@@ -571,6 +684,8 @@ struct FrameParser::Impl {
     {
         header = FrameHeader {};
         path.clear();
+        message.clear();
+        linkTarget.clear();
         prefixPos = 0;
         trailerPos = 0;
         pathLen = 0;
@@ -584,7 +699,7 @@ struct FrameParser::Impl {
     bool finishPrefix()
     {
         const uint8_t type = static_cast<uint8_t>(prefixBuf[0]);
-        if (type == 0 || type > static_cast<uint8_t>(FrameType::End))
+        if (type == 0 || type > static_cast<uint8_t>(FrameType::Symlink))
             return fail("unknown frame type " + std::to_string(type));
         header.type = static_cast<FrameType>(type);
         header.flags = static_cast<uint8_t>(prefixBuf[1]);
@@ -679,6 +794,21 @@ struct FrameParser::Impl {
             state = State::ErrorMessage;
             return true;
 
+        case FrameType::Symlink:
+            if (header.offset != 0)
+                return fail("symlink frame carries an offset");
+            if (header.size == 0)
+                return fail("empty symlink target");
+            if (header.size > options.maxPathLen)
+                return fail("symlink target exceeds limit");
+            entryCount++;
+            if (!callHeader())
+                return false;
+            linkTarget.clear();
+            linkTarget.reserve(static_cast<size_t>(header.size));
+            state = State::SymlinkTarget;
+            return true;
+
         case FrameType::End:
             if (header.size != 0 || header.offset != 0)
                 return fail("END frame carries unexpected fields");
@@ -738,6 +868,11 @@ void FrameParser::onData(DataCallback callback)
 void FrameParser::onError(ErrorCallback callback)
 {
     d->errorCb = std::move(callback);
+}
+
+void FrameParser::onSymlink(SymlinkCallback callback)
+{
+    d->symlinkCb = std::move(callback);
 }
 
 void FrameParser::onEnd(EndCallback callback)
@@ -847,6 +982,26 @@ bool FrameParser::feed(const char *data, size_t size)
             break;
         }
 
+        case Impl::State::SymlinkTarget: {
+            const size_t need = static_cast<size_t>(d->header.size) - d->linkTarget.size();
+            const size_t take = std::min(need, size - pos);
+            d->linkTarget.append(data + pos, take);
+            d->streamCrc = crcUpdate(d->streamCrc, data + pos, take);
+            pos += take;
+            if (d->linkTarget.size() == d->header.size) {
+                if (d->options.validatePaths) {
+                    std::string reason;
+                    if (!isSafeSymlinkTarget(d->header.path, d->linkTarget, &reason))
+                        return d->fail(reason + " (symlink)");
+                }
+                if (d->symlinkCb && !d->symlinkCb(d->header, d->linkTarget))
+                    return d->fail("consumer rejected symlink frame: " + d->header.path);
+                if (!d->nextFrame())
+                    return false;
+            }
+            break;
+        }
+
         case Impl::State::EndBody: {
             const size_t need = kFrameEndPayloadSize - d->endPos;
             const size_t take = std::min(need, size - pos);
@@ -924,6 +1079,7 @@ void FrameParser::reset()
     d->suppressCrc = false;
     d->path.clear();
     d->message.clear();
+    d->linkTarget.clear();
     d->textPos = 0;
     d->dataRemaining = 0;
     d->fileCrc = 0;

@@ -282,7 +282,7 @@ protected:
     // has no Content-Length (the body ends when the connection closes), and
     // the producer runs on its own thread: this handler only sends the header.
     void serveStream(const BaseKit::Path &path, const std::string &webName,
-                     dtp::Codec codec, int level, uint64_t from)
+                     dtp::Codec codec, int level, uint64_t from, bool links)
     {
         BaseKit::File info(path);
         if (!info.IsExists() || (!info.IsRegularFile() && !info.IsDirectory())) {
@@ -299,6 +299,7 @@ protected:
         response().SetHeader("X-DTP-Stream", "1");
         response().SetHeader("X-DTP-Version", "1");
         response().SetHeader("X-DTP-Codec", dtp::codecName(codec));
+        response().SetHeader("X-DTP-Links", links ? "1" : "0");
         response().SetHeader("Connection", "close");
         response().SetHeader("Cache-Control", "no-store");
         response().SetOpenEndedBody();
@@ -332,11 +333,13 @@ protected:
         if (displayName.empty())
             displayName = "root";
 
-        auto task = [self, source, displayName, codec, level, from]() {
+        auto task = [self, source, displayName, codec, level, from, links]() {
             dtp::StreamProducerOptions options;
             options.codec = codec;
             options.level = level;
             options.skipEntries = from;
+            options.walker.preserveSymlinks = links;
+            options.walker.followSymlinks = !links;
             dtp::StreamProducer producer(options);
 
             // The events feed the same RES_* mapping the legacy download path
@@ -567,6 +570,20 @@ protected:
                         SendResponseAsync(response().MakeErrorResponse(400, "Invalid resume offset."));
                         return;
                     }
+
+                    // Newer clients ask for symlink frames explicitly. An old
+                    // client omits the parameter and keeps the historical
+                    // follow-and-materialize behavior.
+                    bool links = false;
+                    const std::string linksParam = queryParams["links"];
+                    if (!linksParam.empty()) {
+                        if (linksParam == "1") {
+                            links = true;
+                        } else if (linksParam != "0") {
+                            SendResponseAsync(response().MakeErrorResponse(400, "Invalid links flag."));
+                            return;
+                        }
+                    }
                     // v1 resumes at whole frame granularity; per-file offsets
                     // are deliberately not guessed by the sender.
                     if (off != 0) {
@@ -575,7 +592,7 @@ protected:
                         return;
                     }
 
-                    serveStream(diskpath, name, codec, level, from);
+                    serveStream(diskpath, name, codec, level, from, links);
                 } else {
                     SendResponseAsync(response().MakeErrorResponse("Unsupported HTTP request: " + method));
                 }

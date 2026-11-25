@@ -141,6 +141,15 @@ bool StreamProducer::run(const std::string &sourcePath, const std::string &displ
         const bool isRoot = entry.type == FrameType::RootDir || entry.type == FrameType::RootFile;
         pending.clear();
 
+        if (entry.type == FrameType::Symlink) {
+            if (!writer.writeSymlink(&pending, entry.path, entry.linkTarget,
+                                     entry.linkToDirectory, entry.mode))
+                { fatal = writer.lastError(); return false; }
+            if (!flushPending() || !drainEncoded())
+                { fatal = "sink refused data"; return false; }
+            return true;
+        }
+
         if (entry.type == FrameType::RootDir) {
             if (!writer.writeRootDir(&pending, entry.path, entry.mode))
                 { fatal = writer.lastError(); return false; }
@@ -260,9 +269,11 @@ bool StreamProducer::run(const std::string &sourcePath, const std::string &displ
 
     counters->files = walkStats.files;
     counters->directories = walkStats.directories;
+    counters->symlinks = walkStats.symlinks;
     counters->frames = writer.entryCount();
     counters->skippedSpecial = walkStats.skippedSpecial;
     counters->skippedUnsafe = walkStats.skippedUnsafe;
+    counters->skippedOutside = walkStats.skippedOutside;
     counters->cycles = walkStats.cycles;
     counters->walkErrors = walkStats.errors;
     counters->bytesSent = bytesSent;

@@ -177,6 +177,7 @@ protected:
     struct Parsed {
         bool ok {false};
         std::map<std::string, std::string> files;
+        std::map<std::string, std::string> symlinks;
         std::vector<std::string> dirs;
         FrameEnd end;
         std::string error;
@@ -218,6 +219,10 @@ protected:
         });
         parser.onData([&](const char *data, size_t size) {
             parsed.files[currentPath].append(data, size);
+            return true;
+        });
+        parser.onSymlink([&](const FrameHeader &header, const std::string &target) {
+            parsed.symlinks[header.path] = target;
             return true;
         });
         parser.onEnd([&](const FrameEnd &end) { parsed.end = end; return true; });
@@ -267,6 +272,39 @@ TEST_F(StreamSenderTest, DirectoryTreeRoundTripWithZstd)
     EXPECT_EQ(parsed.dirs.size(), size_t(3));  // root + sub + emptydir
     EXPECT_EQ(parsed.end.totalBytes, 70005u);
 }
+
+#ifndef _WIN32
+TEST_F(StreamSenderTest, SymlinkFramesAreOptIn)
+{
+    writeFile(srvDir / "files" / "real.txt", "payload");
+    std::error_code ec;
+    fs::create_symlink(srvDir / "files" / "real.txt", srvDir / "files" / "link.txt", ec);
+    ASSERT_FALSE(ec) << ec.message();
+
+    ASSERT_NO_THROW(server->webBind("/files/", (srvDir / "files").string() + "/"));
+    ASSERT_TRUE(server->start());
+
+    // Old clients omit links=1: the sender keeps the historical behavior and
+    // materializes the link target as a regular file.
+    const RawResponse legacyShape = get("/files/", "&codec=deflate");
+    ASSERT_TRUE(legacyShape.error.empty()) << legacyShape.error;
+    const Parsed materialized = decode(legacyShape.body);
+    ASSERT_TRUE(materialized.ok) << materialized.error;
+    EXPECT_TRUE(materialized.symlinks.empty());
+    EXPECT_EQ(materialized.files.count("link.txt"), size_t(1));
+
+    // New clients opt in: the target is not duplicated, the link is recreated.
+    const RawResponse preserved = get("/files/", "&codec=deflate&links=1");
+    ASSERT_TRUE(preserved.error.empty()) << preserved.error;
+    EXPECT_NE(preserved.header.find("X-DTP-Links: 1"), std::string::npos) << preserved.header;
+    const Parsed linked = decode(preserved.body);
+    ASSERT_TRUE(linked.ok) << linked.error;
+    EXPECT_EQ(linked.files.count("link.txt"), size_t(0));
+    ASSERT_EQ(linked.symlinks.count("link.txt"), size_t(1));
+    EXPECT_EQ(linked.symlinks.at("link.txt"), "real.txt");
+    EXPECT_EQ(linked.end.totalBytes, 7u);
+}
+#endif
 
 TEST_F(StreamSenderTest, SingleFileWithDeflate)
 {
