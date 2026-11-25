@@ -60,6 +60,14 @@ bool clientNoDelayEnabled()
     return !(value && std::string(value) == "0");
 }
 
+// Preserving in-root symlinks is negotiated per request. Set to 0 to make a
+// new client fall back to the historical materialize-links behavior.
+bool streamLinksEnabled()
+{
+    const char *value = std::getenv("DDE_COOPERATION_HTTPWEB_STREAM_LINKS");
+    return !(value && std::string(value) == "0");
+}
+
 dtp::Codec negotiatedStreamCodec(const std::string &token)
 {
     const auto capability = TokenCache::GetInstance().getDtpFromToken(token);
@@ -773,6 +781,8 @@ FileClient::StreamAttempt FileClient::downloadStreamOnce(
     url.append(BaseKit::Encoding::Base64Encode(name));
     url.append("&token=").append(_token);
     url.append("&codec=").append(dtp::codecName(negotiatedStreamCodec(_token)));
+    if (streamLinksEnabled())
+        url.append("&links=1");
     if (resume.nextFrame > 0)
         url.append("&from=").append(std::to_string(resume.nextFrame));
 

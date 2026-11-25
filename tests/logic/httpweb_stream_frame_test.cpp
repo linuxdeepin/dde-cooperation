@@ -56,6 +56,7 @@ std::string craftFrameBytes(FrameType type, const std::string &path, uint64_t si
 struct Collected {
     std::vector<FrameHeader> headers;
     std::vector<std::string> files;
+    std::vector<std::pair<FrameHeader, std::string>> symlinks;
     std::vector<std::string> errors;
     FrameEnd end;
     bool sawEnd {false};
@@ -77,6 +78,10 @@ void attach(FrameParser *parser, Collected *collected)
     });
     parser->onError([collected](const std::string &path, const std::string &message) {
         collected->errors.push_back(path + "|" + message);
+        return true;
+    });
+    parser->onSymlink([collected](const FrameHeader &header, const std::string &target) {
+        collected->symlinks.emplace_back(header, target);
         return true;
     });
     parser->onEnd([collected](const FrameEnd &end) {
@@ -213,6 +218,58 @@ TEST(HttpWebStreamFrameTest, WriterRoundTripAllFrameTypes)
     EXPECT_EQ(collected.end.entryCount, 5u);
     EXPECT_EQ(collected.end.totalBytes, archive.fileA.size() + archive.fileB.size());
     EXPECT_EQ(collected.end.streamCrc, parser.streamCrc());
+}
+
+TEST(HttpWebStreamFrameTest, SymlinkRoundTrip)
+{
+    std::string bytes;
+    FrameWriter writer;
+    ASSERT_TRUE(writer.writeRootDir(&bytes, "src"));
+    ASSERT_TRUE(writer.writeDir(&bytes, "sub"));
+    ASSERT_TRUE(writer.writeSymlink(&bytes, "sub/file-link", "../real.txt", false));
+    ASSERT_TRUE(writer.writeSymlink(&bytes, "dir-link", ".", true));
+    ASSERT_TRUE(writer.writeEnd(&bytes));
+
+    FrameParser parser;
+    Collected collected;
+    attach(&parser, &collected);
+    ASSERT_TRUE(parseAll(&parser, bytes, 1));
+    EXPECT_TRUE(parser.finished());
+
+    ASSERT_EQ(collected.headers.size(), size_t(4));
+    EXPECT_EQ(collected.headers[2].type, FrameType::Symlink);
+    EXPECT_EQ(collected.headers[2].path, "sub/file-link");
+    EXPECT_FALSE((collected.headers[2].flags & FrameFlagLinkDirectory) != 0);
+    EXPECT_EQ(collected.headers[2].size, std::strlen("../real.txt"));
+    EXPECT_EQ(collected.headers[3].type, FrameType::Symlink);
+    EXPECT_TRUE((collected.headers[3].flags & FrameFlagLinkDirectory) != 0);
+
+    ASSERT_EQ(collected.symlinks.size(), size_t(2));
+    EXPECT_EQ(collected.symlinks[0].second, "../real.txt");
+    EXPECT_EQ(collected.symlinks[1].second, ".");
+    EXPECT_EQ(collected.end.entryCount, 4u);
+    EXPECT_EQ(collected.end.totalBytes, 0u);
+}
+
+TEST(HttpWebStreamFrameTest, WriterRejectsUnsafeSymlinkTargets)
+{
+    std::string bytes;
+    FrameWriter writer;
+    EXPECT_FALSE(writer.writeSymlink(&bytes, "a/link", "../../escape", false));
+    EXPECT_FALSE(writer.writeSymlink(&bytes, "link", "/absolute", false));
+    EXPECT_FALSE(writer.writeSymlink(&bytes, "link", "", false));
+}
+
+TEST(HttpWebStreamFrameTest, ParserRejectsEscapingSymlinkTarget)
+{
+    const std::string frame =
+            craftFrameBytes(FrameType::Symlink, "a/link", 12, 0, "../../escape");
+    FrameParser parser;
+    Collected collected;
+    attach(&parser, &collected);
+    EXPECT_FALSE(parser.feed(frame.data(), frame.size()));
+    EXPECT_TRUE(parser.failed());
+    EXPECT_NE(parser.lastError().find("escapes"), std::string::npos) << parser.lastError();
 }
 
 TEST(HttpWebStreamFrameTest, RootFileCarriesData)

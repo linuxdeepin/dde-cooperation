@@ -21,12 +21,13 @@
 //   16+N    8      offset
 //   24+N    4      mode
 //   28+N    8      mtime
-//   36+N    size   file data (FILE/RootFile only)
+//   36+N    size   file data (FILE/RootFile) or link target (Symlink)
 //   36+N+size 4    CRC32 of the file data (FILE/RootFile only)
 //
 // ERROR frames use `size` as the message length and append the message bytes;
-// they have no CRC trailer. END frames carry 20 extra bytes:
-// entryCount u64, totalBytes u64, streamCRC u32.
+// they have no CRC trailer. Symlink frames use `size` as the target length and
+// append the target bytes; they have no CRC trailer. END frames carry 20 extra
+// bytes: entryCount u64, totalBytes u64, streamCRC u32.
 //
 // The CRC trailer sits at the end of the frame because the producer can only
 // know it after reading the data; this keeps the sender streaming instead of
@@ -57,6 +58,7 @@ enum class FrameType : uint8_t {
     File = 4,      // file relative to the root; carries data
     Error = 5,     // producer side error for a path; transfer continues
     End = 6,       // last frame; validates the whole stream
+    Symlink = 7,   // symlink relative to the root; carries the target text
 };
 
 const char *frameTypeName(FrameType type);
@@ -65,6 +67,7 @@ enum FrameFlag : uint8_t {
     FrameFlagHasMode = 0x01,   // header.mode is meaningful
     FrameFlagHasMtime = 0x02,  // header.mtime is meaningful
     FrameFlagResume = 0x04,    // frame produced for a resumed transfer
+    FrameFlagLinkDirectory = 0x08,  // Symlink target is a directory
 };
 
 // A frame header is split around the path: type/flags/reserved/pathLen come
@@ -86,7 +89,7 @@ struct FrameHeader {
     FrameType type {FrameType::File};
     uint8_t flags {0};
     std::string path;
-    uint64_t size {0};    // bytes of file data carried by this frame
+    uint64_t size {0};    // file data bytes, ERROR message bytes, or link target bytes
     uint64_t offset {0};  // offset of this data inside the file
     uint32_t mode {0};
     uint64_t mtime {0};
@@ -153,6 +156,10 @@ public:
     bool endFile(std::string *out);
 
     bool writeError(std::string *out, const std::string &path, const std::string &message);
+    // target is relative to the link's parent directory and must resolve inside
+    // the archive root. toDirectory selects the platform-specific link kind.
+    bool writeSymlink(std::string *out, const std::string &path, const std::string &target,
+                      bool toDirectory, uint32_t mode = 0, uint64_t mtime = 0);
     // Writes END using the counters accumulated by the writer itself.
     bool writeEnd(std::string *out);
     bool writeEnd(std::string *out, uint64_t entryCount, uint64_t totalBytes);
@@ -181,6 +188,7 @@ public:
     using HeaderCallback = std::function<bool(const FrameHeader &)>;
     using DataCallback = std::function<bool(const char *, size_t)>;
     using ErrorCallback = std::function<bool(const std::string &, const std::string &)>;
+    using SymlinkCallback = std::function<bool(const FrameHeader &, const std::string &target)>;
     using EndCallback = std::function<bool(const FrameEnd &)>;
 
     struct Options {
@@ -206,6 +214,7 @@ public:
     void onHeader(HeaderCallback callback);
     void onData(DataCallback callback);
     void onError(ErrorCallback callback);
+    void onSymlink(SymlinkCallback callback);
     void onEnd(EndCallback callback);
 
     bool feed(const char *data, size_t size);
