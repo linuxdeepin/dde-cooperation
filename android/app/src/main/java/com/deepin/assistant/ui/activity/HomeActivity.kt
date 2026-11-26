@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -112,10 +112,10 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         viewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
         if (hosts.isNotEmpty()) {
             val host = hosts[0]
-            mCooperation?.initNative(host)
+            mCooperation?.initNative(host, filesDir.absolutePath)
             viewModel.updateSelfIp(host)
         } else {
-            mCooperation?.initNative("")
+            mCooperation?.initNative("", filesDir.absolutePath)
             viewModel.updateSelfIp(getString(R.string.scan_activity_no_network))
         }
 
@@ -250,7 +250,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
                     // 执行网络连接时的操作
                     val hosts = MainService.getIPv4s()
                     val host = hosts[0]
-                    mCooperation?.initNative(host)
+                    mCooperation?.initNative(host, filesDir.absolutePath)
                     viewModel.updateSelfIp(host)
                 }
             }
