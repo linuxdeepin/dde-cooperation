@@ -315,6 +315,12 @@ void TransferHelper::onVerifyTimeout()
 {
     DLOG << "Transfer verification timeout";
     d->isTransTimeout = true;
+    if (d->status.loadAcquire() == TransferHelper::Connecting) {
+        DLOG << "Connection timeout, device may be unavailable";
+        d->status.storeRelease(Idle);
+        d->transDialog()->showResultDialog(false, tr("The device is unavailable, the files failed to send"));
+        return;
+    }
     if (d->status.loadAcquire() != TransferHelper::Confirming) {
         DLOG << "Not in confirming state, ignoring timeout";
         return;
