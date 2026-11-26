@@ -790,7 +790,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="767"/>
         <source>Unable to establish a connection to the remote device</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się ustanowić połączenia z urządzeniem zewnętrznym</translation>
     </message>
 </context>
 <context>
@@ -832,7 +832,7 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="321"/>
         <source>The device is unavailable, the files failed to send</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się przesłać plików, ponieważ urządzenie jest niedostępne</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="330"/>
@@ -1025,17 +1025,17 @@ Połącz się z siecią i spróbuj ponownie!</translation>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="120"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="125"/>
         <source>the file save location is invalid</source>
-        <translation type="unfinished"/>
+        <translation>Ścieżka zapisu pliku jest nieprawidłowa</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="130"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation type="unfinished"/>
+        <translation>Katalog w tej ścieżce jest tylko-do-odczytu. Wybierz inną ścieżkę, aby zapisać plik.</translation>
     </message>
 </context>
 </TS>
