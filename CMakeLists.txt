@@ -134,6 +134,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/include)
 add_subdirectory("modules")
 
 option(DOTEST "option for test" OFF)
+option(BUILD_HTTPWEB_BENCH "build the httpweb transfer benchmark" OFF)
 
 # 单元测试 (参考 deepin-system-monitor 模式)
 if(DOTEST)
@@ -150,5 +151,10 @@ add_subdirectory(src)
 
 if(DOTEST)
     add_subdirectory(tests)
+endif()
+
+# The benchmark is independent from DOTEST: it needs no GTest.
+if(BUILD_HTTPWEB_BENCH)
+    add_subdirectory(tests/benchmarks)
 endif()
 
