@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,6 +7,7 @@
 
 #include "sessionhelper.h"
 #include "manager/log.h"
+#include "manager/secureconfig.h"
 #include "utils.h"
 
 #define LIBCOOPERATION_VERSION "0.1.0"
@@ -30,7 +31,13 @@ Java_com_deepin_cooperation_JniCooperation_nativeVersion(
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_deepin_cooperation_JniCooperation_initNative(JNIEnv *env, jobject thiz, jstring ip) {
+Java_com_deepin_cooperation_JniCooperation_initNative(JNIEnv *env, jobject thiz, jstring ip,
+                                                      jstring config_dir) {
+    if (config_dir) {
+        const std::string dir = jstringToString(env, config_dir);
+        if (!dir.empty())
+            SecureConfig::setConfigDir(dir + "/.cooperation");
+    }
     SessionHelper::getInstance().init(env, thiz, ip);
 }
 

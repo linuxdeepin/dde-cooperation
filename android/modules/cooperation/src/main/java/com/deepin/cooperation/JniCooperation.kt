@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -17,7 +17,7 @@ class JniCooperation {
      * which is packaged with this application.
      */
     external fun nativeVersion(): String
-    external fun initNative(ip: String)
+    external fun initNative(ip: String, configDir: String)
     external fun setStorageFolder(rootPath: String, dirName: String)
     external fun setDeviceName(nickName: String)
     external fun connectRemote(ip: String, port: Int, pin: String): Int
