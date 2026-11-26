@@ -1028,12 +1028,12 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="125"/>
         <source>the file save location is invalid</source>
-        <translation type="unfinished"/>
+        <translation>o local de salvamento do arquivo é inválido</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="130"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation type="unfinished"/>
+        <translation>Este diretório é somente leitura. Escolha outro local para salvar o arquivo.</translation>
     </message>
 </context>
 </TS>
