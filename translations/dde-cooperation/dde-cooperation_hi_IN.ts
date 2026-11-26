@@ -7,7 +7,7 @@
         <translation>सहयोग</translation>
     </message>
     <message>
-        <location filename="../../src/apps/dde-cooperation/main.cpp" line="54"/>
+        <location filename="../../src/apps/dde-cooperation/main.cpp" line="53"/>
         <source>Cooperation is a powerful cross-terminal office tool that helps you deliver files, share keys and mice, and share clipboards between different devices.</source>
         <translation>सहयोग एक शक्तिशाली क्रॉस-टर्मिनल ऑफिस टूल है जो आपको फ़ाइलों के वितरण, कुंजी और माउस के साझा करने, और अलग-अलग उपकरणों के बीच क्लिपबोर्ड साझा करने में सहायता करता है।</translation>
     </message>
@@ -15,12 +15,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="69"/>
+        <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="76"/>
         <source>File transfer settings</source>
         <translation>फ़ाइल ट्रांसफर सेटिंग्स</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="71"/>
+        <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="78"/>
         <source>Settings</source>
         <comment>button</comment>
         <translation>सेटिंग्स</translation>
@@ -29,8 +29,8 @@
 <context>
     <name>cooperation_core::BottomLabel</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="341"/>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="373"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="370"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="410"/>
         <source>Local IP: %1</source>
         <translation>लोकल आईपी: %1</translation>
     </message>
@@ -66,32 +66,32 @@
 <context>
     <name>cooperation_core::CooperationTaskDialog</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="111"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="131"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="113"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="134"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>रद्द करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="134"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="137"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>पुन: प्रयास करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="157"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="161"/>
         <source>Reject</source>
         <comment>button</comment>
         <translation>अस्वीकृत करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="160"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="164"/>
         <source>Accept</source>
         <comment>button</comment>
         <translation>स्वीकृत करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="184"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationtaskdialog.cpp" line="188"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>बंद करें</translation>
@@ -100,12 +100,12 @@
 <context>
     <name>cooperation_core::CooperationTransDialog</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="275"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="285"/>
         <source>File Transfer</source>
         <translation>फ़ाइल ट्रांसफर</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="278"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="288"/>
         <source>File transfer</source>
         <translation>फ़ाइल ट्रांसफर</translation>
     </message>
@@ -113,52 +113,52 @@
 <context>
     <name>cooperation_core::CooperationUtil</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="217"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
         <source>View Help Manual</source>
         <translation>हेल्प मैनुअल देखें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="218"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="225"/>
         <source>Welcome to dde-cooperation</source>
         <translation>dde-cooperation में आपका स्वागत है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="229"/>
         <source>Keyboard and mouse sharing</source>
         <translation>कुंजी और माउस साझा करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="222"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="229"/>
         <source>When a connection is made between two devices, the initiator&apos;s keyboard and mouse can be used to control the other device</source>
         <translation>जब दो उपकरणों के बीच एक जोड़ा जाता है, तो शुरूआत करने वाले की कुंजी और माउस का उपयोग दूसरे उपकरण को नियंत्रित करने के लिए किया जा सकता है।</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="231"/>
         <source>Clipboard sharing</source>
         <translation>क्लिपबोर्ड साझा करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="224"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="231"/>
         <source>Once a connection is made between two devices, the clipboard will be shared and can be copied on one device and pasted on the other device</source>
         <translation>दो उपकरणों के बीच एक जोड़ा जाने के बाद, क्लिप्बोर्ड साझा किया जाएगा और एक उपकरण में कॉपी करके दूसरे उपकरण में पेस्ट किया जा सकता है।</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="233"/>
         <source>Delivery of documents</source>
         <translation>दस्तावेज़ के वितरण</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="226"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="233"/>
         <source>After connecting between two devices, you can initiate a file delivery to the other device</source>
         <translation>दो उपकरणों के बीच जोड़े जाने के बाद, आप दूसरे उपकरण में फ़ाइल वितरण शुरू कर सकते हैं।</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="235"/>
         <source>For detailed instructions, please click on the Help Manual below</source>
         <translation>विस्तृत निर्देश के लिए, कृपया नीचे दिए गए हेल्प मैनुअल पर क्लिक करें।</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="228"/>
+        <location filename="../../src/lib/cooperation/core/utils/cooperationutil.cpp" line="235"/>
         <source>Usage</source>
         <translation>उपयोग</translation>
     </message>
@@ -166,17 +166,17 @@
 <context>
     <name>cooperation_core::DeviceItem</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="191"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="205"/>
         <source>connected</source>
         <translation>जुड़ा हुआ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="197"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="212"/>
         <source>connectable</source>
         <translation>जुड़ा जा सकता है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="204"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/deviceitem.cpp" line="220"/>
         <source>offline</source>
         <translation>ऑफलाइन</translation>
     </message>
@@ -184,28 +184,28 @@
 <context>
     <name>cooperation_core::DiscoverController</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="245"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="280"/>
         <source>Confirm</source>
         <translation>पुष्टि करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="246"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="281"/>
         <source>Close</source>
         <translation>बंद करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="248"/>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="257"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="283"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="293"/>
         <source>Please click to confirm to enable the LAN discovery service!</source>
         <translation>लैं डिस्कवरी सर्विस एक्टिवेट करने के लिए कृपया पुष्टि करें!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="249"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="284"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned on</source>
         <translation>लैं डिस्कवरी सर्विस सक्षम नहीं कर रहे हैं, तो अन्य डिवाइस से डिस्कवर और डिस्कवर करना संभव नहीं है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="258"/>
+        <location filename="../../src/lib/cooperation/core/discover/discovercontroller.cpp" line="294"/>
         <source>Unable to discover and be discovered by other devices when LAN discovery service is not turned onRight click on Windows Start menu -&gt;Computer Management -&gt;Services and Applications -&gt;Services to enable Bonjour service</source>
         <translation>लैं डिस्कवरी सर्विस सक्षम नहीं कर रहे हैं, तो अन्य डिवाइस से डिस्कवर और डिस्कवर करना संभव नहीं है। विंडोज स्टार्ट मेनू पर राइट क्लिक करें -&gt; कंप्यूटर मैनेजमेंट -&gt; सर्विस एंड एप्लिकेशन -&gt; सर्विस के माध्यम से बोनजूर सर्विस सक्षम करें</translation>
     </message>
@@ -213,42 +213,42 @@
 <context>
     <name>cooperation_core::FirstTipWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="126"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="128"/>
         <source>First step</source>
         <translation>पहला कदम</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="127"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
         <source>The opposite end opens the application and connects to the same network</source>
         <translation>विपरीत छोर एप्लिकेशन खोलता है और समान नेटवर्क में जुड़ता है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="128"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="130"/>
         <source>Second step</source>
         <translation>दूसरा कदम</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="130"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="132"/>
         <source>Third step</source>
         <translation>तीसरा कदम</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="189"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="195"/>
         <source>to send the file</source>
         <translation>फ़ाइल भेजने के लिए</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="196"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="203"/>
         <source>to connect to the peer device</source>
         <translation>पीयर डिवाइस के साथ जुड़ने के लिए</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="129"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="131"/>
         <source>Enter the peer IP in the search box</source>
         <translation>खोज बॉक्स में पीयर IP प्रविष्ट करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="131"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/firsttipwidget.cpp" line="133"/>
         <source>Click</source>
         <translation>क्लिक करें</translation>
     </message>
@@ -256,18 +256,18 @@
 <context>
     <name>cooperation_core::InformationDialog</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="153"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="156"/>
         <source>OK</source>
         <translation>हां</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="158"/>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="166"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="162"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="171"/>
         <source>the file save location is invalid</source>
         <translation>फ़ाइल सेव करने की जगह अमान्य है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="172"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/filechooseredit.cpp" line="177"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
         <translation>इस पथ पर केवल लेखन के लिए डायरेक्टरी है। कृपया फ़ाइल सेव करने के लिए एक अलग स्थान चुनें।</translation>
     </message>
@@ -275,12 +275,12 @@
 <context>
     <name>cooperation_core::LockScreenWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="204"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="215"/>
         <source>The current device has been locked</source>
         <translation>वर्तमान डिवाइस लॉक कर दिया गया है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="207"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/screenmirroringwindow.cpp" line="218"/>
         <source>You can unlock it on mobile devices</source>
         <translation>आप मोबाइल डिवाइस पर इसे अनलॉक कर सकते हैं</translation>
     </message>
@@ -288,7 +288,7 @@
 <context>
     <name>cooperation_core::LookingForDeviceWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="81"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="90"/>
         <source>Looking for devices</source>
         <translation>डिवाइस खोज रहे हैं</translation>
     </message>
@@ -296,45 +296,45 @@
 <context>
     <name>cooperation_core::MainWindow</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="266"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="297"/>
         <source>Minimise to system tray</source>
         <translation>सिस्टम ट्रे में छोटा करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="268"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="299"/>
         <source>Exit</source>
         <translation>बाहर निकलें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="277"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="308"/>
         <source>No more enquiries</source>
         <translation>अधिक प्रश्न नहीं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="285"/>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="296"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="316"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="327"/>
         <source>Cancel</source>
         <translation>रद्द करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="286"/>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="295"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="317"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="326"/>
         <source>Confirm</source>
         <translation>पुष्टि करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="287"/>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="294"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="318"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="325"/>
         <source>Please select your operation</source>
         <translation>कृपया अपना कार्य चुनें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="338"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="381"/>
         <source>Restore</source>
         <translation>पुनः स्थापित करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="339"/>
+        <location filename="../../src/lib/cooperation/core/gui/mainwindow.cpp" line="382"/>
         <source>Quit</source>
         <translation>बाहर निकलें</translation>
     </message>
@@ -342,33 +342,33 @@
 <context>
     <name>cooperation_core::MainWindowPrivate</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="62"/>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="64"/>
         <source>Computer</source>
         <translation>कंप्यूटर</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="63"/>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="65"/>
         <source>Phone</source>
         <translation>फ़ोन</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="74"/>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="77"/>
         <source>Selection of delivery device</source>
         <translation>सौंपने वाले डिवाइस का चयन</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="84"/>
-        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="126"/>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="87"/>
+        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="128"/>
         <source>Settings</source>
         <translation>सेटिंग्स</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="88"/>
+        <location filename="../../src/lib/cooperation/core/gui/linux/mainwindow_p_linux.cpp" line="91"/>
         <source>Download client</source>
         <translation>डाउनलोड क्लाइंट</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="130"/>
+        <location filename="../../src/lib/cooperation/core/gui/win/mainwindow_p_win.cpp" line="132"/>
         <source>Download Windows client</source>
         <translation>विंडोज क्लाइंट डाउनलोड करें</translation>
     </message>
@@ -376,7 +376,7 @@
 <context>
     <name>cooperation_core::NoNetworkWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="150"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="164"/>
         <source>Please connect to the network</source>
         <translation>कृपया नेटवर्क से जुड़ें</translation>
     </message>
@@ -384,57 +384,57 @@
 <context>
     <name>cooperation_core::NoResultTipWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="185"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="203"/>
         <source>1. Enable cross-end collaborative applications. Applications on the UOS can be downloaded from the App Store, and applications on the Windows side can be downloaded from: </source>
         <translation>1. क्रॉस-एंड कोलाबोरेटिव एप्लिकेशन को सक्षम करें। यूओएस पर एप्लिकेशन एप स्टोर से डाउनलोड किए जा सकते हैं, और विंडोज पर एप्लिकेशन इस पर से डाउनलोड किए जा सकते हैं: </translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="199"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="217"/>
         <source>2. On the same LAN as the device</source>
         <translation>2. उपकरण के साथ एक ही LAN पर</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="204"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="223"/>
         <source>3. File Manager-Settings-File Drop-Allow the following users to drop files to me -&quot;Everyone on the same LAN&quot;</source>
         <translation>3. फ़ाइल मैनेजर-सेटिंग्स-फ़ाइल ड्रॉप-निम्नलिखित उपयोगकर्ताओं को मेरे पास फ़ाइल ड्रॉप करने की अनुमति दें -&quot;सभी एक ही LAN पर&quot; </translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="206"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="226"/>
         <source>3. Settings-Basic Settings-Discovery Mode-&quot;Allow everyone in the same LAN&quot;</source>
         <translation>3. सेटिंग्स-बेसिक सेटिंग्स-डिस्कवरी मोड-&quot;सभी एक ही LAN में&quot; </translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="212"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="232"/>
         <source>4. Try entering the target device IP in the top search box</source>
         <translation>4. लक्ष्य उपकरण का IP पता शीर्ष खोज बॉक्स में दर्ज करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="216"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="236"/>
         <source>Unable to find collaborative device？</source>
         <translation>सहयोगी उपकरण नहीं खोजा जा सकता है?</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="245"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="267"/>
         <source>1. The mobile phone needs to download cross end collaborative applications.</source>
         <translation>1. मोबाइल फोन को क्रॉस-एंड कोलाबोरेटिव एप्लिकेशन डाउनलोड करने की आवश्यकता है।</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="246"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="268"/>
         <source>Go to download&gt;</source>
         <translation>डाउनलोड करें&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="250"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="272"/>
         <source>2. After installation, scan the code to connect to this device for collaboration.</source>
         <translation>2. इंस्टॉलेशन के बाद, इस उपकरण के लिए सहयोग के लिए कोड स्कैन करें।</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="251"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="273"/>
         <source>3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device</source>
         <translation>3. इस उपकरण के संबंध में, मोबाइल छोर को क्रॉस-एंड कोलाबोरेटिव एप्लिकेशन खोले रखने की आवश्यकता है और इस उपकरण के साथ एक ही LAN पर होना चाहिए</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="253"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="275"/>
         <source>Instructions for use</source>
         <translation>उपयोग के निर्देश</translation>
     </message>
@@ -442,7 +442,7 @@
 <context>
     <name>cooperation_core::NoResultWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="293"/>
+        <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="318"/>
         <source>No device found</source>
         <translation>कोई उपकरण नहीं मिला</translation>
     </message>
@@ -450,39 +450,39 @@
 <context>
     <name>cooperation_core::PhoneHelper</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="65"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="64"/>
         <source>Disconnect</source>
         <translation>“%1” एप्लाई करें ताकि स्क्रीन कास्टिंग शुरू किया जा सके</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="93"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
         <source>“%1”apply to initiate screen casting</source>
         <translation>रद्द करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="212"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="97"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="223"/>
         <source>cancel</source>
         <translation>पुष्टि करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="96"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="157"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="98"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="165"/>
         <source>comfirm</source>
         <translation>“%1” कनेक्शन अलग कर दिया गया!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="139"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="146"/>
         <source>“%1”connection disconnected!</source>
         <translation>क्या आप &apos;%1&apos; के साथ अलग कर देना और सहयोग करना चाहते हैं?</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="210"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="221"/>
         <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
         <translation>अलग करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="213"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="224"/>
         <source>disconnect</source>
         <translation>शेष समय %1 | %2%</translation>
     </message>
@@ -490,12 +490,12 @@
 <context>
     <name>cooperation_core::ProgressWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="115"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="116"/>
         <source>Remaining time %1 | %2%</source>
         <translation>रद्द करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="133"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="134"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>कोड स्कैन कनेक्शन</translation>
@@ -504,22 +504,22 @@
 <context>
     <name>cooperation_core::QRCodeWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="102"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="105"/>
         <source>Scan code connection</source>
         <translation>कृपया क्रॉस-एंड कोलाबोरेशन एप्लिकेशन का उपयोग करें ताकि कोड स्कैन किया जा सके</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="108"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="111"/>
         <source>Please use the cross end collaboration app to scan the code</source>
         <translation>मोबाइल फोन और उपकरण एक ही लोकल एरिया नेटवर्क में जुड़े होना चाहिए</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="114"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="117"/>
         <source>Mobile phones and devices need to be connected to the same local area network</source>
         <translation>क्लिक करें ताकि UOS हेल्पर एप्प डाउनलोड किया जा सके</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="147"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="150"/>
         <source>Click to download UOS assistant APP</source>
         <translation>ठीक</translation>
     </message>
@@ -527,13 +527,13 @@
 <context>
     <name>cooperation_core::ResultWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="179"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="183"/>
         <source>Ok</source>
         <comment>button</comment>
         <translation>देखें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="182"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="186"/>
         <source>View</source>
         <comment>button</comment>
         <translation>देखें</translation>
@@ -569,72 +569,72 @@
         <translation>केवल सहयोग करने वाले लोग ही अनुमति देते हैं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="132"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="133"/>
         <source>Basic Settings</source>
         <translation>मूल सेटिंग</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="143"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="144"/>
         <source>Discovery mode</source>
         <translation>खोजना मोड</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="145"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="146"/>
         <source>Other devices can discover and connect with you through the &quot;Cooperation&quot; app</source>
         <translation>अन्य उपकरण आपके साथ &apos;सहयोग&apos; एप्प के माध्यम से खोज सकते हैं और जुड़ सकते हैं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="195"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="196"/>
         <source>Device name</source>
         <translation>उपकरण का नाम</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="213"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
         <source>Peripheral share</source>
         <translation>परिपरियों का साझा करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="215"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="217"/>
         <source>Allows peripherals that have been established to collaborate across devices to control this device, including keyboard, mouse, trackpad, etc</source>
         <translation>उपकरणों के सहयोग के माध्यम से अन्य उपकरणों के माध्यम से इस उपकरण को नियंत्रित करने की अनुमति देता है, जिसमें कीबोर्ड, माउस, ट्रैकपैड आदि शामिल हैं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="224"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="226"/>
         <source>When this device is the connected party, the mouse penetrates from the screen of this device to the position of the connected party</source>
         <translation>जब यह उपकरण संबद्ध व्यक्ति होता है, तो माउस इस उपकरण के स्क्रीन से संबद्ध व्यक्ति के स्थान तक छूता है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="254"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="256"/>
         <source>Connection direction</source>
         <translation>संबंध दिशा</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="273"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="276"/>
         <source>Allows the following users to send files to me</source>
         <translation>निम्नलिखित उपयोगकर्ताओं को मुझे फ़ाइल भेजने की अनुमति देता है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="280"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="283"/>
         <source>File save location</source>
         <translation>फ़ाइल बचाने की स्थिति</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="296"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="300"/>
         <source>Share clipboard</source>
         <translation>क्लिपबोर्ड साझा करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="298"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="302"/>
         <source>When sharing is enabled on the server (the connected device), the clipboard will be shared between the two computers</source>
         <translation>जब सर्वर (संबंध उपकरण) पर साझा सक्षम होता है, तो दो कंप्यूटरों के बीच क्लिपबोर्ड साझा किया जाता है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="355"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="361"/>
         <source>The device name must contain 1 to 20 characters</source>
         <translation>उपकरण का नाम 1 से 20 अक्षर तक होना चाहिए</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="362"/>
+        <location filename="../../src/lib/cooperation/core/gui/dialogs/settingdialog.cpp" line="368"/>
         <source>The device name must contain 1 to 63 characters</source>
         <translation>उपकरण का नाम 1 से 63 अक्षर तक होना चाहिए</translation>
     </message>
@@ -642,132 +642,132 @@
 <context>
     <name>cooperation_core::ShareHelper</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="238"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="309"/>
         <source>connect</source>
         <translation>जुड़ें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="246"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="317"/>
         <source>Disconnect</source>
         <translation>_DISCONNECT</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="263"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="392"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="448"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="458"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="511"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="334"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="516"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="588"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="598"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="828"/>
         <source>Unable to collaborate to &quot;%1&quot;</source>
         <translation>सहयोग करना &quot;%1&quot; के लिए संभव नहीं है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="265"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="336"/>
         <source>You are connecting to another device</source>
         <translation>आप दूसरे उपकरण के साथ जुड़ रहे हैं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="280"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="355"/>
         <source>Requesting collaborate to &quot;%1&quot;</source>
         <translation>&quot;%1&quot; के सहयोग करने के लिए अनुरोध कर रहे हैं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="307"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="483"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="794"/>
         <source>Coordination with &quot;%1&quot; has ended</source>
         <translation>&quot;%1&quot; के सहयोग खत्म हो गए हैं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="353"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="471"/>
         <source>A cross-end collaboration request was received from &quot;%1&quot;</source>
         <translation>&quot;%1&quot; से एक क्रॉस-एंड सहयोग अनुरोध प्राप्त हुआ है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="354"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="472"/>
         <source>Reject</source>
         <translation>अस्वीकृत करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="355"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="473"/>
         <source>Accept</source>
         <translation>स्वीकृत करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="374"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="497"/>
         <source>Cooperation</source>
         <translation>सहयोग</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="393"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="517"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation>&quot;%1&quot; के साथ जुड़ना असफल रहा</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="418"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="544"/>
         <source>Unable to collaborate</source>
         <translation>सहयोग करने में असमर्थ</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="419"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
         <source>Failed to run process!</source>
         <translation>प्रक्रिया चलाने में विफल</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="441"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="581"/>
         <source>Connection successful, coordinating with  &quot;%1&quot;</source>
         <translation>जुड़ाव सफल, &quot;%1&quot; सहयोग कर रहा है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="449"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="589"/>
         <source>&quot;%1&quot; has rejected your request for collaboration</source>
         <translation>&quot;%1&quot; ने आपके सहयोग के लिए अपनी अनुमति नहीं दी है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="459"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="599"/>
         <source>&quot;%1&quot; is connecting with other devices</source>
         <translation>&quot;%1&quot; अन्य उपकरणों के साथ जुड़ रहा है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="503"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="820"/>
         <source>The connection request sent to you by &quot;%1&quot; was interrupted due to a timeout</source>
         <translation>&quot;%1&quot; द्वारा आपको भेजे गए जुड़ाव के अनुरोध के कारण समय सीमा के कारण बाधित हो गए</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="513"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="830"/>
         <source>The other party does not confirm, please try again later</source>
         <translation>दूसरा पक्ष पुष्टि नहीं कर रहा है, कृपया बाद में फिर से कोशिश करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="524"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="844"/>
         <source>The other party has cancelled the connection request !</source>
         <translation>दूसरा पक्ष जुड़ाव के अनुरोध को रद्द कर दिया है !</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="528"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="849"/>
         <source>connect failed</source>
         <translation>जुड़ाव असफल</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="538"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="861"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
         <translation>नेटवर्क नहीं जुड़ा है, इस बार फ़ाइल भेजने में विफल। नेटवर्क के साथ जुड़ें और फिर से कोशिश करें!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="545"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="871"/>
         <source>File transfer failed</source>
         <translation>फ़ाइल अंतरण विफल</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="547"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="873"/>
         <source>Network not connected, file delivery failed this time.                                           Please connect to the network and try again!</source>
         <translation>नेटवर्क नहीं जुड़ा है, इस बार फ़ाइल भेजने में विफल। नेटवर्क के साथ जुड़ें और फिर से कोशिश करें!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="562"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="893"/>
         <source>Network exception</source>
         <translation>नेटवर्क के अपवाद</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="563"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="894"/>
         <source>Please check the network &quot;%1&quot;</source>
         <translation>कृपया नेटवर्क &quot;%1&quot; को चेक करें</translation>
     </message>
@@ -775,131 +775,141 @@
 <context>
     <name>cooperation_core::ShareHelperPrivate</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="103"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="109"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="129"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="136"/>
         <source>Cooperation</source>
         <translation>सहयोग</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="200"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="259"/>
         <source>Connection successful, coordinating with &quot;%1&quot;</source>
         <translation>जुड़ाव सफल, &quot;%1&quot; सहयोग कर रहा है</translation>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="767"/>
+        <source>Unable to establish a connection to the remote device</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>cooperation_core::TransferHelper</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="433"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="492"/>
         <source>Connect to &quot;%1&quot; failed</source>
         <translation> &quot;%1&quot; के साथ जुड़ाव असफल</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="458"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="609"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="683"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="518"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="675"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="749"/>
         <source>File read/write exception</source>
         <translation>फ़ाइल पढ़ाई/लिखाई अपवाद</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="579"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="630"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="645"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="696"/>
         <source>The other party has canceled the file transfer</source>
         <translation>दूसरा पक्ष फ़ाइल अंतरण को रद्द कर दिया है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="478"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="626"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="540"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="692"/>
         <source>File sent successfully</source>
         <translation>फ़ाइल सफलतापूर्वक भेज दी गई</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="168"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="179"/>
         <source>View transfer history</source>
         <translation>अंतरण इतिहास देखें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="177"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="188"/>
         <source>Send files</source>
         <translation>फ़ाइल भेजें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="302"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="321"/>
+        <source>The device is unavailable, the files failed to send</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="330"/>
         <source>The other party did not receive, the files failed to send</source>
         <translation>दूसरा पक्ष ने प्राप्त नहीं किया, फ़ाइल भेजने में विफल</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="332"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="371"/>
         <source>Cancel</source>
         <translation>रद्द करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="335"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="374"/>
         <source>File receiving %1% | Remaining time %2</source>
         <translation>फ़ाइल प्राप्त करते हुए %1% | शेष समय %2</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="381"/>
         <source>Sending files to &quot;%1&quot;</source>
         <translation>फ़ाइल &quot;%1&quot; के साथ भेज रहे हैं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="342"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="381"/>
         <source>Receiving files from &quot;%1&quot;</source>
         <translation>फ़ाइल &quot;%1&quot; से प्राप्त कर रहे हैं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="399"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="449"/>
         <source>Reject</source>
         <translation>अस्वीकृत करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="400"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="450"/>
         <source>Accept</source>
         <translation>स्वीकृत करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="401"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="451"/>
         <source>Close</source>
         <translation>बंद करें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="394"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="443"/>
         <source>&quot;%1&quot; send some files to you</source>
         <translation>&quot;%1&quot; आपको कुछ फ़ाइल भेज रहा है</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="313"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="343"/>
         <source>View</source>
         <translation>देखें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="412"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="463"/>
         <source>The other party has cancelled the transfer request !</source>
         <translation>दूसरा पक्ष आपके ट्रांसफर अनुरोध को रद्द कर दिया है ! </translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="452"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="605"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="680"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="512"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="671"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="746"/>
         <source>Insufficient storage space, file delivery failed this time. Please clean up disk space and try again!</source>
         <translation>&gt;-
  भंडार जगह कम है, इस बार फ़ाइल भेजन में विफलता। कृपया डिस्क स्थान साफ़ करें और पुनः प्रयास करें!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="455"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="607"/>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="677"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="515"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="673"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="743"/>
         <source>Network not connected, file delivery failed this time. Please connect to the network and try again!</source>
         <translation>&gt;-
  नेटवर्क कनेक्ट नहीं है, इस बार फ़ाइल भेजन में विफलता। कृपया नेटवर्क कनेक्ट करें और पुनः प्रयास करें!</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="554"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="620"/>
         <source>calculating</source>
         <translation>गणना कर रहे हैं</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="563"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="629"/>
         <source>The other party rejects your request</source>
         <translation>दूसरा पक्ष आपके अनुरोध को अस्वीकृत कर दिया है</translation>
     </message>
@@ -907,7 +917,7 @@
 <context>
     <name>cooperation_core::TransferHelperPrivate</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="132"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="136"/>
         <source>File transfer</source>
         <translation>फ़ाइल ट्रांसफर</translation>
     </message>
@@ -915,8 +925,8 @@
 <context>
     <name>cooperation_core::VncViewer</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="211"/>
-        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="213"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="287"/>
+        <location filename="../../src/lib/cooperation/core/gui/phone/vncviewer.cpp" line="289"/>
         <source>Disconnected</source>
         <translation>अलग हो गया</translation>
     </message>
@@ -924,12 +934,12 @@
 <context>
     <name>cooperation_core::WaitConfirmWidget</name>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="75"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="76"/>
         <source>File Transfer</source>
         <translation>फ़ाइल ट्रांसफर</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="91"/>
+        <location filename="../../src/lib/cooperation/core/net/helper/dialogs/cooperationdialog.cpp" line="92"/>
         <source>Wait for confirmation...</source>
         <translation>पुष्टि के लिए इंतज़ार करें...</translation>
     </message>
@@ -956,7 +966,7 @@
 <context>
     <name>cooperation_transfer::TransferHelper</name>
     <message>
-        <location filename="../../src/lib/cooperation/transfer/helper/transferhelper.cpp" line="105"/>
+        <location filename="../../src/lib/cooperation/transfer/helper/transferhelper.cpp" line="118"/>
         <source>Send files</source>
         <translation>फ़ाइल भेजें</translation>
     </message>
@@ -972,7 +982,7 @@
 <context>
     <name>dfmplugin_cooperation::CooperationPlugin</name>
     <message>
-        <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="64"/>
+        <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="71"/>
         <source>File transfer</source>
         <translation>फ़ाइल ट्रांसफर</translation>
     </message>
@@ -980,34 +990,52 @@
 <context>
     <name>dfmplugin_cooperation::FileTransferSettingsDialog</name>
     <message>
-        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="154"/>
+        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="215"/>
         <source>File transfer settings</source>
         <translation>फ़ाइल ट्रांसफर सेटिंग्स</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="171"/>
+        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="232"/>
         <source>Everyone in the same LAN</source>
         <translation>समान LAN में हर कोई</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="172"/>
+        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="233"/>
         <source>Only those who are collaborating are allowed</source>
         <translation>केवल सहयोग कर रहे लोग ही अनुमति दिए जाएंगे</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="173"/>
+        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="234"/>
         <source>Not allow</source>
         <translation>अनुमति नहीं दें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="178"/>
+        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="239"/>
         <source>Allows the following users to send files to me</source>
         <translation>निम्नलिखित उपयोगकर्ताओं को मेरे लिए फ़ाइल भेजने की अनुमति दें</translation>
     </message>
     <message>
-        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="179"/>
+        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="240"/>
         <source>File save location</source>
         <translation>फ़ाइल संग्रहण स्थान</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_cooperation::InformationDialog</name>
+    <message>
+        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="120"/>
+        <source>OK</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="125"/>
+        <source>the file save location is invalid</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="130"/>
+        <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
