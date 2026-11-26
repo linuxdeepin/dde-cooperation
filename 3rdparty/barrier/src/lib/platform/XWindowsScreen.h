@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * barrier -- mouse and keyboard sharing utility
  * Copyright (C) 2012-2016 Symless Ltd.
@@ -25,6 +27,7 @@
 #include "XWindowsImpl.h"
 
 #include <X11/Xlib.h>
+#include <atomic>
 
 class XWindowsClipboard;
 class XWindowsKeyState;
@@ -193,7 +196,7 @@ private:
     Window                m_window;
 
     // true if mouse has entered the screen
-    bool                m_isOnScreen;
+    std::atomic<bool>   m_isOnScreen;
 
     // screen shape stuff
     SInt32                m_x, m_y;
