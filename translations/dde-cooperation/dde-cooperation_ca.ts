@@ -1033,7 +1033,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="130"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation type="unfinished"/>
+        <translation>Aquest camí és un directori de només lectura. Si us plau, trieu una ubicació diferent per desar-hi el fitxer.</translation>
     </message>
 </context>
 </TS>
