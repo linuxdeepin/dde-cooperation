@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="ug">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ug">
 <context>
     <name>Application</name>
     <message>
@@ -25,7 +23,7 @@
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="78"/>
         <source>Settings</source>
         <comment>button</comment>
-        <translation type="unfinished">تەڭشەك</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -454,7 +452,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="64"/>
         <source>Disconnect</source>
-        <translation type="unfinished">ئۈزۈش</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
@@ -790,7 +788,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="767"/>
         <source>Unable to establish a connection to the remote device</source>
-        <translation>يىراقتىكى ئۈسكۈنە بىلەن ئۇلانغىلى بولمىدى</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -832,7 +830,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="321"/>
         <source>The device is unavailable, the files failed to send</source>
-        <translation>ئۈسكۈنە ئىشلەتكىلى بولمايدۇ، ھۆججەت يوللانمىدى</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="330"/>
@@ -960,7 +958,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="72"/>
         <source>Re-scan for devices</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -976,7 +974,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="34"/>
         <source>File transfer</source>
-        <translation type="unfinished">ھۆججەت يوللاش</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -984,7 +982,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="71"/>
         <source>File transfer</source>
-        <translation type="unfinished">ھۆججەت يوللاش</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -997,27 +995,27 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="232"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished">ئوخشاش دائىرىلىك توردىكى بارلىق كىشى</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="233"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished">ھەمكارلىشىۋاتقانلارغىلا رۇخسەت قىلىش</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="234"/>
         <source>Not allow</source>
-        <translation type="unfinished">رەت قىلىش</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="239"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished">تۆۋەندىكى ئىشلەتكۈچىلەرنىڭ ماڭا ھۆججەت يوللىشىغا يول قويسۇن</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="240"/>
         <source>File save location</source>
-        <translation type="unfinished">ھۆججەت ساقلاش ئورنى</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1025,17 +1023,17 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="120"/>
         <source>OK</source>
-        <translation>جەزملەش</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="125"/>
         <source>the file save location is invalid</source>
-        <translation>ھۆججەتنى ساقلاش ئورنى ئىناۋەتسىز</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="130"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation>بۇ مۇندەرىجىنى ئوقۇشقىلا بولىدۇ، ھۆججەت ساقلاش ئورنىنى ئالماشتۇرۇڭ.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
