@@ -1033,7 +1033,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="130"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation type="unfinished"/>
+        <translation>Ky shteg është një drejtori vetëm-lexim. Ju lutemi, zgjidhni një vendndodhje tjetër për ruajtjen e kartelës.</translation>
     </message>
 </context>
 </TS>
