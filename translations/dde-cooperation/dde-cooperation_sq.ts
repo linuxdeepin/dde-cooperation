@@ -788,7 +788,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="767"/>
         <source>Unable to establish a connection to the remote device</source>
-        <translation type="unfinished"/>
+        <translation>S’arrihet të vendoset lidhje me pajisjen e largët</translation>
     </message>
 </context>
 <context>
@@ -830,7 +830,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="321"/>
         <source>The device is unavailable, the files failed to send</source>
-        <translation type="unfinished"/>
+        <translation>S’mund të përdoret pajisja, s’u arrit të dërgohen kartelat</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="330"/>
@@ -1023,12 +1023,12 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="120"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="125"/>
         <source>the file save location is invalid</source>
-        <translation type="unfinished"/>
+        <translation>vendndodhja për ruajtje kartelash është e pavlefshme</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="130"/>
