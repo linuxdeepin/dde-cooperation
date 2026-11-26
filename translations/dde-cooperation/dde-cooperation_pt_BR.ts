@@ -788,7 +788,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="767"/>
         <source>Unable to establish a connection to the remote device</source>
-        <translation type="unfinished"/>
+        <translation>Não foi possível estabelecer uma conexão com o dispositivo remoto</translation>
     </message>
 </context>
 <context>
@@ -830,7 +830,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="321"/>
         <source>The device is unavailable, the files failed to send</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está indisponível. Não foi possível enviar os arquivos</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="330"/>
