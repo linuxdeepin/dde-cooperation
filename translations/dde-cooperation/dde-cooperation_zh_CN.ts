@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>Application</name>
     <message>
@@ -751,7 +749,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="861"/>
         <source>Network not connected, file delivery failed this time.                               Please connect to the network and try again!</source>
-        <translation>网络未连接，文件发送失败。&#xa0;&#xa0; 请连接网络并重试！</translation>
+        <translation>网络未连接，文件发送失败。   请连接网络并重试！</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="871"/>
@@ -790,7 +788,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="767"/>
         <source>Unable to establish a connection to the remote device</source>
-        <translation>无法与远程设备建立连接</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -832,7 +830,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="321"/>
         <source>The device is unavailable, the files failed to send</source>
-        <translation>设备不可用，文件发送失败</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="330"/>
@@ -1025,17 +1023,17 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="120"/>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="125"/>
         <source>the file save location is invalid</source>
-        <translation>文件保存位置无效</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="130"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation>此路径为只读目录，请更换文件保存位置。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
