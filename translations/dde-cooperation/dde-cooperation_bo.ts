@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="bo">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="bo">
 <context>
     <name>Application</name>
     <message>
@@ -25,7 +23,7 @@
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="78"/>
         <source>Settings</source>
         <comment>button</comment>
-        <translation type="unfinished">སྒྲིག་བཀོད།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -423,22 +421,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="268"/>
         <source>Go to download&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="272"/>
         <source>2. After installation, scan the code to connect to this device for collaboration.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="273"/>
         <source>3. After connecting this device, the mobile end needs to keep cross end collaborative applications open and on the same LAN as this device</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/cooperationstatewidget.cpp" line="275"/>
         <source>Instructions for use</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -454,24 +452,24 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="64"/>
         <source>Disconnect</source>
-        <translation type="unfinished">བཅད་པ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="95"/>
         <source>“%1”apply to initiate screen casting</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="97"/>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="223"/>
         <source>cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="98"/>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="165"/>
         <source>comfirm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="146"/>
@@ -481,7 +479,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="221"/>
         <source>Are you sure to disconnect and collaborate with &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/phonehelper.cpp" line="224"/>
@@ -508,22 +506,22 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="105"/>
         <source>Scan code connection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="111"/>
         <source>Please use the cross end collaboration app to scan the code</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="117"/>
         <source>Mobile phones and devices need to be connected to the same local area network</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/gui/phone/phonewidget.cpp" line="150"/>
         <source>Click to download UOS assistant APP</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -790,7 +788,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/sharehelper.cpp" line="767"/>
         <source>Unable to establish a connection to the remote device</source>
-        <translation>ཕ་རོལ་སྒྲིག་ཆས་དང་སྦྲེལ་མཐུད་བྱེད་མི་ཐུབ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -832,7 +830,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="321"/>
         <source>The device is unavailable, the files failed to send</source>
-        <translation>སྒྲིག་ཆས་བཀོལ་སྤྱོད་བྱེད་མི་ཐུབ་པས། ཡིག་ཆ་བསྐུར་མི་ཐུབ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="330"/>
@@ -847,7 +845,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="374"/>
         <source>File receiving %1% | Remaining time %2</source>
-        <translation>ཡིག་ཆ་ལེན་བཞིན་པ།%1% |&#xa0; དུས་ཚོད་ལྷག་མ།%2</translation>
+        <translation>ཡིག་ཆ་ལེན་བཞིན་པ།%1% |  དུས་ཚོད་ལྷག་མ།%2</translation>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/core/net/helper/transferhelper.cpp" line="381"/>
@@ -960,7 +958,7 @@
     <message>
         <location filename="../../src/lib/cooperation/core/gui/widgets/workspacewidget.cpp" line="72"/>
         <source>Re-scan for devices</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -976,7 +974,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/menu/cooperationmenuscene.cpp" line="34"/>
         <source>File transfer</source>
-        <translation type="unfinished">ཡིག་ཆ་བསྐུར་བ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -984,7 +982,7 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/cooperationplugin.cpp" line="71"/>
         <source>File transfer</source>
-        <translation type="unfinished">ཡིག་ཆ་བསྐུར་བ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -997,27 +995,27 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="232"/>
         <source>Everyone in the same LAN</source>
-        <translation type="unfinished">དྲ་རྒྱ་གཅིག་པའི་སྤྱོད་མཁན་ཚང་མ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="233"/>
         <source>Only those who are collaborating are allowed</source>
-        <translation type="unfinished">མཉམ་སྒྲུབ་བྱེད་བཞིན་པའི་སྤྱོད་མཁན་གཅིག་པུས་ཆོག</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="234"/>
         <source>Not allow</source>
-        <translation type="unfinished">མི་ཆོག</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="239"/>
         <source>Allows the following users to send files to me</source>
-        <translation type="unfinished">གཤམ་གྱི་སྤྱོད་མཁན་གྱིས་ང་ལ་ཡིག་ཆ་བསྐུར་ཆོག</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="240"/>
         <source>File save location</source>
-        <translation type="unfinished">ཡིག་ཆ་ཉར་ཚགས་བྱེད་ཡུལ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1025,17 +1023,17 @@
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="120"/>
         <source>OK</source>
-        <translation>གཏན་ཁེལ།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="125"/>
         <source>the file save location is invalid</source>
-        <translation>ཡིག་ཆ་ཉར་ས་གོ་མི་ཆོད།</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../src/lib/cooperation/dfmplugin/dialogs/filetransfersettingsdialog.cpp" line="130"/>
         <source>This path is a read-only directory. Please choose a different location for saving the file.</source>
-        <translation>འདི་ནི་ཀློག་ཙམ་གྱི་དཀར་ཆག་ཡིན་པས། ཡིག་ཆ་ཉར་ས་བརྗེ་པོ་རྒྱོབ།</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
