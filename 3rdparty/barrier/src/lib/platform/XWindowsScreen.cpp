@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
  * barrier -- mouse and keyboard sharing utility
  * Copyright (C) 2012-2016 Symless Ltd.
@@ -125,7 +127,7 @@ XWindowsScreen::XWindowsScreen(
 
         if( WaylandUtils::isWayland()){
             LOG((CLOG_DEBUG "run on Wayland"));
-            WaylandUtils::initWaylandKvm(this);
+            WaylandUtils::initWaylandKvm(this, m_display);
         }
 	}
 	catch (...) {
@@ -175,6 +177,10 @@ XWindowsScreen::~XWindowsScreen()
 {
 	assert(s_screen  != NULL);
 	assert(m_display != NULL);
+
+	// 先停掉 kvm 回调：回调在 libdisplayjack 的线程上，屏幕/事件队列销毁期间
+	// 再回调进来会访问已释放的 EventQueue
+	WaylandUtils::shutdownKvm();
 
 	m_events->adoptBuffer(NULL);
 	m_events->removeHandler(Event::kSystem, m_events->getSystemTarget());
@@ -487,6 +493,8 @@ XWindowsScreen::getClipboard(ClipboardID id, IClipboard* clipboard) const
 void
 XWindowsScreen::getShape(SInt32& x, SInt32& y, SInt32& w, SInt32& h) const
 {
+	// saveShape() 可能在 X 事件线程上改写这些字段，读侧也加锁取快照
+	std::lock_guard<std::recursive_timed_mutex> lock(WaylandUtils::s_callbackMutex);
 	x = m_x;
 	y = m_y;
 	w = m_w;
@@ -505,6 +513,7 @@ XWindowsScreen::getCursorPos(SInt32& x, SInt32& y) const
 		y = my;
 	}
 	else {
+		std::lock_guard<std::recursive_timed_mutex> lock(WaylandUtils::s_callbackMutex);
 		x = m_xCenter;
 		y = m_yCenter;
 	}
@@ -533,8 +542,11 @@ XWindowsScreen::warpCursor(SInt32 x, SInt32 y)
 	}
 
 	// save position as last position
-	m_xCursor = x;
-	m_yCursor = y;
+	{
+		std::lock_guard<std::recursive_timed_mutex> lock(WaylandUtils::s_callbackMutex);
+		m_xCursor = x;
+		m_yCursor = y;
+	}
 }
 
 UInt32
@@ -801,6 +813,7 @@ XWindowsScreen::isAnyMouseButtonDown(UInt32& buttonID) const
 void
 XWindowsScreen::getCursorCenter(SInt32& x, SInt32& y) const
 {
+	std::lock_guard<std::recursive_timed_mutex> lock(WaylandUtils::s_callbackMutex);
 	x = m_xCenter;
 	y = m_yCenter;
 }
@@ -819,12 +832,33 @@ XWindowsScreen::fakeMouseButton(ButtonID button, bool press)
 void
 XWindowsScreen::fakeMouseMove(SInt32 x, SInt32 y)
 {
+	// Wayland 下 XWarpPointer 只动 XWayland 自己的指针，不会移动合成器光标；
+	// 多屏时 m_xinerama 通常为真，原来那条分支会绕过换算，这里统一走 kvm 接口。
+	if (WaylandUtils::isWayland()) {
+		if (!WaylandUtils::setPointerPos(x, y)) {
+			SInt32 deviceX = x;
+			SInt32 deviceY = y;
+			WaylandUtils::physicalToDevice(deviceX, deviceY);
+			XTestFakeMotionEvent(m_display, DefaultScreen(m_display),
+								deviceX, deviceY, CurrentTime);
+		}
+		WaylandUtils::markSyntheticPosition(x, y);
+		m_impl->XFlush(m_display);
+		return;
+	}
+
 	if (m_xinerama && m_xtestIsXineramaUnaware) {
         m_impl->XWarpPointer(m_display, None, m_root, 0, 0, 0, 0, x, y);
 	}
 	else {
+		SInt32 deviceX = x;
+		SInt32 deviceY = y;
+		// Wayland 下合成器按逻辑坐标处理 XTest 注入，需先换算
+		WaylandUtils::physicalToDevice(deviceX, deviceY);
 		XTestFakeMotionEvent(m_display, DefaultScreen(m_display),
-							x, y, CurrentTime);
+							deviceX, deviceY, CurrentTime);
+		// 记录本次注入位置，忽略合成器随之回来的回显事件
+		WaylandUtils::markSyntheticPosition(x, y);
 	}
     m_impl->XFlush(m_display);
 }
@@ -837,6 +871,8 @@ XWindowsScreen::fakeMouseRelativeMove(SInt32 dx, SInt32 dy) const
 //		m_impl->XWarpPointer(m_display, None, m_root, 0, 0, 0, 0, x, y);
 	}
 	else {
+		// Wayland 下相对位移同样按逻辑坐标处理
+		WaylandUtils::physicalDeltaToDevice(dx, dy);
         m_impl->XTestFakeRelativeMotionEvent(m_display, dx, dy, CurrentTime);
 	}
     m_impl->XFlush(m_display);
@@ -950,16 +986,16 @@ XWindowsScreen::openDisplay(const char* displayName)
 void
 XWindowsScreen::saveShape()
 {
-	// get shape of default screen
-	m_x = 0;
-	m_y = 0;
-
-	m_w = WidthOfScreen(DefaultScreenOfDisplay(m_display));
-	m_h = HeightOfScreen(DefaultScreenOfDisplay(m_display));
+	// 几何查询（含 Xinerama 的三次 X 往返）全部在锁外完成，
+	// 只在写入 barrier 共享的屏幕形状时短暂持锁，避免阻塞 kvm 回调线程。
+	const SInt32 x = 0;
+	const SInt32 y = 0;
+	const SInt32 w = WidthOfScreen(DefaultScreenOfDisplay(m_display));
+	const SInt32 h = HeightOfScreen(DefaultScreenOfDisplay(m_display));
 
 	// get center of default screen
-	m_xCenter = m_x + (m_w >> 1);
-	m_yCenter = m_y + (m_h >> 1);
+	SInt32 xCenter = x + (w >> 1);
+	SInt32 yCenter = y + (h >> 1);
 
 	// check if xinerama is enabled and there is more than one screen.
 	// get center of first Xinerama screen.  Xinerama appears to have
@@ -974,7 +1010,7 @@ XWindowsScreen::saveShape()
 	// has been moved when it hasn't.  to work around the problem,
 	// we warp the pointer to the center of the first physical
 	// screen instead of the logical screen.
-	m_xinerama = false;
+	bool xinerama = false;
 #if HAVE_X11_EXTENSIONS_XINERAMA_H
 	int eventBase, errorBase;
     if (m_impl->XineramaQueryExtension(m_display, &eventBase, &errorBase) &&
@@ -986,14 +1022,23 @@ XWindowsScreen::saveShape()
 
 		if (screens != NULL) {
 			if (numScreens > 1) {
-				m_xinerama = true;
-				m_xCenter  = screens[0].x_org + (screens[0].width  >> 1);
-				m_yCenter  = screens[0].y_org + (screens[0].height >> 1);
+				xinerama = true;
+				xCenter  = screens[0].x_org + (screens[0].width  >> 1);
+				yCenter  = screens[0].y_org + (screens[0].height >> 1);
 			}
 			XFree(screens);
 		}
 	}
 #endif
+
+	std::lock_guard<std::recursive_timed_mutex> lock(WaylandUtils::s_callbackMutex);
+	m_x = x;
+	m_y = y;
+	m_w = w;
+	m_h = h;
+	m_xCenter = xCenter;
+	m_yCenter = yCenter;
+	m_xinerama = xinerama;
 }
 
 Window
@@ -1402,12 +1447,21 @@ XWindowsScreen::handleSystemEvent(const Event& event, void*)
 				// requery/recalculate the screen shape
 				saveShape();
 
+				// Wayland 下物理/逻辑尺寸和缩放会随屏幕变化，需要一起刷新；
+				// 尺寸在锁内取快照，避免直接读 m_w/m_h 与 kvm 回调线程竞争
+				SInt32 shapeX = 0;
+				SInt32 shapeY = 0;
+				SInt32 shapeW = 0;
+				SInt32 shapeH = 0;
+				getShape(shapeX, shapeY, shapeW, shapeH);
+				WaylandUtils::refreshScreen(m_display, shapeW, shapeH);
+
 				// we need to resize m_window, otherwise we'll get a weird problem where moving
 				// off the server onto the client causes the pointer to warp to the
 				// center of the server (so you can't move the pointer off the server)
 				if (m_isPrimary) {
-                    m_impl->XMoveWindow(m_display, m_window, m_x, m_y);
-                    m_impl->XResizeWindow(m_display, m_window, m_w, m_h);
+                    m_impl->XMoveWindow(m_display, m_window, shapeX, shapeY);
+                    m_impl->XResizeWindow(m_display, m_window, shapeW, shapeH);
 				}
 
 				sendEvent(m_events->forIScreen().shapeChanged());
@@ -1573,13 +1627,32 @@ XWindowsScreen::onMouseMove(const XMotionEvent& xmotion)
 	LOG((CLOG_DEBUG2 "event: MotionNotify %d,%d", xmotion.x_root, xmotion.y_root));
 
 	// compute motion delta (relative to the last known
-	// mouse position)
-	SInt32 x = xmotion.x_root - m_xCursor;
-	SInt32 y = xmotion.y_root - m_yCursor;
+	// mouse position)；Wayland 下 kvm 回调线程也会走到这里，
+	// 只在读写 m_xCursor/m_yCursor 时短暂持锁，后面不跨 X 调用持锁
+	SInt32 x = 0;
+	SInt32 y = 0;
+	SInt32 cursorX = 0;
+	SInt32 cursorY = 0;
+	{
+		std::lock_guard<std::recursive_timed_mutex> lock(WaylandUtils::s_callbackMutex);
+		x = xmotion.x_root - m_xCursor;
+		y = xmotion.y_root - m_yCursor;
+		// save position to compute delta of next motion
+		m_xCursor = xmotion.x_root;
+		m_yCursor = xmotion.y_root;
+		cursorX = m_xCursor;
+		cursorY = m_yCursor;
+	}
 
-	// save position to compute delta of next motion
-	m_xCursor = xmotion.x_root;
-	m_yCursor = xmotion.y_root;
+	// Wayland 下我们自己的 warp/注入会被合成器当作指针移动上报回来，
+	// 这类回显不能算作真实位移，否则会来回切屏。
+	// warpCursorNoFlush() 用来配对丢弃的哨兵事件带 send_event 标记，必须放过，
+	// 否则残留的 eventAfter 会触发空转丢弃循环，吞掉真实位移。
+	if (!xmotion.send_event && WaylandUtils::isWayland() &&
+		WaylandUtils::isSyntheticEcho(xmotion.x_root, xmotion.y_root)) {
+		LOG((CLOG_DEBUG2 "ignore synthetic motion %d,%d", xmotion.x_root, xmotion.y_root));
+		return;
+	}
 
 	if (xmotion.send_event) {
 		// we warped the mouse.  discard events until we
@@ -1598,10 +1671,10 @@ XWindowsScreen::onMouseMove(const XMotionEvent& xmotion)
 		} while (!xevent.xany.send_event);
 		cntr = 0;
 	}
-	else if (m_isOnScreen) {
+	else if (m_isOnScreen.load()) {
 		// motion on primary screen
 		sendEvent(m_events->forIPrimaryScreen().motionOnPrimary(),
-							MotionInfo::alloc(m_xCursor, m_yCursor));
+							MotionInfo::alloc(cursorX, cursorY));
 	}
 	else {
 		// motion on secondary screen.  warp mouse back to
@@ -1617,11 +1690,18 @@ XWindowsScreen::onMouseMove(const XMotionEvent& xmotion)
 		// it we only warp when the mouse has moved more
 		// than s_size pixels from the center.
 		static const SInt32 s_size = 32;
-		if (xmotion.x_root - m_xCenter < -s_size ||
-			xmotion.x_root - m_xCenter >  s_size ||
-			xmotion.y_root - m_yCenter < -s_size ||
-			xmotion.y_root - m_yCenter >  s_size) {
-			warpCursorNoFlush(m_xCenter, m_yCenter);
+		SInt32 centerX = 0;
+		SInt32 centerY = 0;
+		{
+			std::lock_guard<std::recursive_timed_mutex> lock(WaylandUtils::s_callbackMutex);
+			centerX = m_xCenter;
+			centerY = m_yCenter;
+		}
+		if (xmotion.x_root - centerX < -s_size ||
+			xmotion.x_root - centerX >  s_size ||
+			xmotion.y_root - centerY < -s_size ||
+			xmotion.y_root - centerY >  s_size) {
+			warpCursorNoFlush(centerX, centerY);
 		}
 
 		// send event if mouse moved.  do this after warping
@@ -1937,6 +2017,9 @@ XWindowsScreen::warpCursorNoFlush(SInt32 x, SInt32 y)
 	// send an event that we can recognize after the mouse warp
     m_impl->XSendEvent(m_display, m_window, False, 0, &eventAfter);
     m_impl->XSync(m_display, False);
+
+	// 记录 warp 目标位置，忽略合成器随之回来的回显事件
+	WaylandUtils::markSyntheticPosition(x, y);
 
 	LOG((CLOG_DEBUG2 "warped to %d,%d", x, y));
 }

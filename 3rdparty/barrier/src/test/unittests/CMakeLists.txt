@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # barrier -- mouse and keyboard sharing utility
 # Copyright (C) 2012-2016 Symless Ltd.
 # Copyright (C) 2009 Nick Bolton
@@ -61,6 +64,16 @@ endif()
 
 if (BARRIER_ADD_HEADERS)
     list(APPEND sources ${headers})
+endif()
+
+# Wayland 坐标换算/回显/余数的单元测试：只依赖 gtest 与 X11，
+# 不链接其他 barrier 目标，可以单独构建运行
+find_package(GTest QUIET)
+if (GTest_FOUND)
+    add_executable(waylandutils_unittests platform/WaylandUtilsTests.cpp)
+    target_include_directories(waylandutils_unittests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
+    target_link_libraries(waylandutils_unittests GTest::GTest GTest::Main X11 dl pthread)
+    add_test(NAME waylandutils_unittests COMMAND waylandutils_unittests)
 endif()
 
 add_executable(unittests ${sources})
